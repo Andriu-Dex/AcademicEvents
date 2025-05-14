@@ -1,0 +1,22 @@
+# Conexión a la base de datos PostgreSQL
+DATABASE_URL=postgresql://postgres:tu_contraseña@localhost:5432/academicevents
+
+# Configuración del servidor
+PORT_BACKEND=3000
+
+# JWT y Email
+JWT_SECRET=clave_secreta_segura
+
+#Dirección del servidor SMTP. Gmail usa smtp.gmail.com
+SMTP_HOST=smtp.gmail.com
+
+#Puerto del servidor. El 587 es para conexiones seguras (STARTTLS)
+SMTP_PORT=587
+
+#Tu dirección de correo electrónico desde la cual se enviarán los correos
+SMTP_USER=correo@gmail.com
+
+#Contraseña de aplicación Gmail
+#Entrar a ese link: https://myaccount.google.com/security
+
+SMTP_PASS=contraseña_aplicacion

@@ -1,0 +1,71 @@
+##################################
+# Ignorar dependencias instaladas
+##################################
+
+# Ignora las carpetas node_modules que contienen las dependencias instaladas por npm o yarn.
+# Estas pueden regenerarse ejecutando `npm install` o `yarn install`, por lo tanto no deben incluirse en el control de versiones.
+node_modules/
+frontend/node_modules/
+
+##################################
+# Ignorar archivos de entorno
+##################################
+
+# Ignora archivos que contienen variables de entorno sensibles como claves API, URIs de bases de datos, etc.
+# Incluye tanto el archivo base como posibles variantes como .env.local, .env.development, etc.
+.env
+.env.*
+
+##################################
+# Ignorar carpetas de construcción
+##################################
+
+# Ignora la carpeta dist/ generada al compilar el proyecto backend (por herramientas como Babel o TypeScript).
+# También se usa en frontend cuando se compila con Vite o Webpack.
+dist/
+backend/dist/
+frontend/dist/
+
+# Ignora archivos temporales generados por Vite para cacheo local.
+frontend/.vite
+
+##################################
+# Ignorar base de datos local y migraciones (Prisma)
+##################################
+
+# Base de datos SQLite temporal usada en desarrollo local (no debe subirse al repositorio).
+backend/prisma/dev.db
+
+# Migraciones pueden generarse nuevamente a partir del schema y por convención suelen ignorarse en algunos flujos.
+backend/prisma/migrations/
+
+##################################
+# Ignorar archivos temporales y de log
+##################################
+
+# Archivos de log generales y archivos temporales del sistema o herramientas.
+*.log
+*.tmp
+
+# Logs específicos de gestores de paquetes.
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+##################################
+# Ignorar configuración del editor
+##################################
+
+# Configuración específica de VS Code (extensiones, settings personales).
+.vscode/
+
+##################################
+# Ignorar archivos generados por el sistema operativo
+##################################
+
+# Archivo creado por macOS en cada carpeta que contiene metadatos de Finder (no relevante para el código).
+.DS_Store
+
+# Archivo similar generado por Windows en carpetas con vistas en miniatura.
+Thumbs.db
