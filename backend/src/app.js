@@ -6,8 +6,12 @@ dotenv.config();
 
 const app = express(); // ← también te faltaba crear la instancia de la app
 
+const authRoutes = require("./routes/auth.routes");
+
 app.use(cors());
 app.use(express.json());
+
+app.use("/api", authRoutes);
 
 app.get("/", (req, res) => {
   res.send("API AcademicEvents funcionando");
