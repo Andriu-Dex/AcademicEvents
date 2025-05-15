@@ -120,9 +120,26 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
+exports.Prisma.CarreraScalarFieldEnum = {
+  id: 'id',
+  nombre: 'nombre',
+  estado: 'estado',
+  creadaEn: 'creadaEn'
+};
+
+exports.Prisma.SortOrder = {
+  asc: 'asc',
+  desc: 'desc'
+};
+
+exports.Prisma.QueryMode = {
+  default: 'default',
+  insensitive: 'insensitive'
+};
+
 
 exports.Prisma.ModelName = {
-
+  Carrera: 'Carrera'
 };
 
 /**

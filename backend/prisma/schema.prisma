@@ -13,3 +13,11 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+// Modelo Carrera
+model Carrera {
+  id        String   @id @default(uuid())
+  nombre    String   @unique
+  estado    Boolean  @default(true)
+  creadaEn  DateTime @default(now())
+}
