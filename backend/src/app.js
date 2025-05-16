@@ -8,6 +8,9 @@ dotenv.config();
 // Crear instancia de la aplicación Express
 const app = express();
 
+const carreraRoutes = require("./routes/carrera.routes");
+app.use("/api", carreraRoutes);
+
 // Importar rutas de autenticación
 const authRoutes = require("./routes/auth.routes");
 
