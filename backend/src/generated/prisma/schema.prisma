@@ -20,6 +20,13 @@ model usuario {
   fec_cre_usu DateTime    @default(now())
 }
 
+model Carrera {
+  id       String   @id @default(uuid())
+  nombre   String   @unique
+  estado   Boolean  @default(true)
+  creadaEn DateTime @default(now())
+}
+
 enum rol_usuario {
   ADMIN
   ESTUDIANTE
