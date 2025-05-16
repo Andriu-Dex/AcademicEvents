@@ -6,29 +6,32 @@ const prisma = require("../config/db");
 // =====================
 const crearCarrera = async (req, res) => {
   try {
-    // Extraemos el nombre de la carrera desde el cuerpo de la solicitud
     const { nom_car } = req.body;
 
-    // Verificamos si ya existe una carrera con ese nombre
+    if (!nom_car || nom_car.trim() === "") {
+      return res
+        .status(400)
+        .json({ msg: "El nombre de la carrera es obligatorio" });
+    }
+
     const carreraExistente = await prisma.carrera.findUnique({
       where: { nom_car },
     });
 
-    // Si ya existe, enviamos una respuesta de error
     if (carreraExistente) {
       return res.status(400).json({ msg: "La carrera ya existe" });
     }
 
-    // Si no existe, creamos una nueva carrera
     const nuevaCarrera = await prisma.carrera.create({
       data: { nom_car },
     });
 
-    // Respondemos con la carrera creada y un código 201 (creado)
     res.status(201).json(nuevaCarrera);
   } catch (error) {
-    // Si ocurre un error, respondemos con estado 500 (error interno)
-    res.status(500).json({ msg: "Error al crear carrera", error });
+    res.status(500).json({
+      msg: "Error al crear carrera",
+      error: error.message,
+    });
   }
 };
 
@@ -39,7 +42,7 @@ const obtenerCarreras = async (req, res) => {
   try {
     // Consultamos todas las carreras en la base de datos
     const carreras = await prisma.carrera.findMany();
-    
+
     // Respondemos con las carreras obtenidas
     res.status(200).json(carreras);
   } catch (error) {
@@ -53,23 +56,28 @@ const obtenerCarreras = async (req, res) => {
 // =======================
 const actualizarCarrera = async (req, res) => {
   try {
-    // Obtenemos el ID de la carrera desde los parámetros de la URL
     const { id } = req.params;
-
-    // Obtenemos el nuevo nombre de la carrera desde el cuerpo de la solicitud
     const { nom_car } = req.body;
 
-    // Actualizamos la carrera en la base de datos
+    const carreraExistente = await prisma.carrera.findUnique({
+      where: { id_car: id },
+    });
+
+    if (!carreraExistente) {
+      return res.status(404).json({ msg: "Carrera no encontrada" });
+    }
+
     const actualizada = await prisma.carrera.update({
-      where: { id_car: id }, // usamos id_car como identificador
+      where: { id_car: id },
       data: { nom_car },
     });
 
-    // Respondemos con la carrera actualizada
     res.status(200).json(actualizada);
   } catch (error) {
-    // Si ocurre un error, respondemos con estado 500
-    res.status(500).json({ msg: "Error al actualizar carrera", error });
+    res.status(500).json({
+      msg: "Error al actualizar carrera",
+      error: error.message || error,
+    });
   }
 };
 
