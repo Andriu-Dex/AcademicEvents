@@ -18,6 +18,11 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
  * 
  */
 export type usuario = $Result.DefaultSelection<Prisma.$usuarioPayload>
+/**
+ * Model carrera
+ * 
+ */
+export type carrera = $Result.DefaultSelection<Prisma.$carreraPayload>
 
 /**
  * Enums
@@ -170,6 +175,16 @@ export class PrismaClient<
     * ```
     */
   get usuario(): Prisma.usuarioDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.carrera`: Exposes CRUD operations for the **carrera** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Carreras
+    * const carreras = await prisma.carrera.findMany()
+    * ```
+    */
+  get carrera(): Prisma.carreraDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -228,8 +243,8 @@ export namespace Prisma {
   export import Exact = $Public.Exact
 
   /**
-   * Prisma Client JS version: 6.7.0
-   * Query Engine version: 3cff47a7f5d65c3ea74883f1d736e41d68ce91ed
+   * Prisma Client JS version: 6.8.2
+   * Query Engine version: 2060c79ba17c6bb9f5823312b6f6b7f4a845738e
    */
   export type PrismaVersion = {
     client: string
@@ -610,7 +625,8 @@ export namespace Prisma {
 
 
   export const ModelName: {
-    usuario: 'usuario'
+    usuario: 'usuario',
+    carrera: 'carrera'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -629,7 +645,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "usuario"
+      modelProps: "usuario" | "carrera"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -704,6 +720,80 @@ export namespace Prisma {
           count: {
             args: Prisma.usuarioCountArgs<ExtArgs>
             result: $Utils.Optional<UsuarioCountAggregateOutputType> | number
+          }
+        }
+      }
+      carrera: {
+        payload: Prisma.$carreraPayload<ExtArgs>
+        fields: Prisma.carreraFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.carreraFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$carreraPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.carreraFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$carreraPayload>
+          }
+          findFirst: {
+            args: Prisma.carreraFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$carreraPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.carreraFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$carreraPayload>
+          }
+          findMany: {
+            args: Prisma.carreraFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$carreraPayload>[]
+          }
+          create: {
+            args: Prisma.carreraCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$carreraPayload>
+          }
+          createMany: {
+            args: Prisma.carreraCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.carreraCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$carreraPayload>[]
+          }
+          delete: {
+            args: Prisma.carreraDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$carreraPayload>
+          }
+          update: {
+            args: Prisma.carreraUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$carreraPayload>
+          }
+          deleteMany: {
+            args: Prisma.carreraDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.carreraUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.carreraUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$carreraPayload>[]
+          }
+          upsert: {
+            args: Prisma.carreraUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$carreraPayload>
+          }
+          aggregate: {
+            args: Prisma.CarreraAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCarrera>
+          }
+          groupBy: {
+            args: Prisma.carreraGroupByArgs<ExtArgs>
+            result: $Utils.Optional<CarreraGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.carreraCountArgs<ExtArgs>
+            result: $Utils.Optional<CarreraCountAggregateOutputType> | number
           }
         }
       }
@@ -792,6 +882,7 @@ export namespace Prisma {
   }
   export type GlobalOmitConfig = {
     usuario?: usuarioOmit
+    carrera?: carreraOmit
   }
 
   /* Types for Logging */
@@ -1934,6 +2025,988 @@ export namespace Prisma {
 
 
   /**
+   * Model carrera
+   */
+
+  export type AggregateCarrera = {
+    _count: CarreraCountAggregateOutputType | null
+    _min: CarreraMinAggregateOutputType | null
+    _max: CarreraMaxAggregateOutputType | null
+  }
+
+  export type CarreraMinAggregateOutputType = {
+    id_car: string | null
+    nom_car: string | null
+    est_car: boolean | null
+    fec_cre_car: Date | null
+  }
+
+  export type CarreraMaxAggregateOutputType = {
+    id_car: string | null
+    nom_car: string | null
+    est_car: boolean | null
+    fec_cre_car: Date | null
+  }
+
+  export type CarreraCountAggregateOutputType = {
+    id_car: number
+    nom_car: number
+    est_car: number
+    fec_cre_car: number
+    _all: number
+  }
+
+
+  export type CarreraMinAggregateInputType = {
+    id_car?: true
+    nom_car?: true
+    est_car?: true
+    fec_cre_car?: true
+  }
+
+  export type CarreraMaxAggregateInputType = {
+    id_car?: true
+    nom_car?: true
+    est_car?: true
+    fec_cre_car?: true
+  }
+
+  export type CarreraCountAggregateInputType = {
+    id_car?: true
+    nom_car?: true
+    est_car?: true
+    fec_cre_car?: true
+    _all?: true
+  }
+
+  export type CarreraAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which carrera to aggregate.
+     */
+    where?: carreraWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of carreras to fetch.
+     */
+    orderBy?: carreraOrderByWithRelationInput | carreraOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: carreraWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` carreras from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` carreras.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned carreras
+    **/
+    _count?: true | CarreraCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: CarreraMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: CarreraMaxAggregateInputType
+  }
+
+  export type GetCarreraAggregateType<T extends CarreraAggregateArgs> = {
+        [P in keyof T & keyof AggregateCarrera]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCarrera[P]>
+      : GetScalarType<T[P], AggregateCarrera[P]>
+  }
+
+
+
+
+  export type carreraGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: carreraWhereInput
+    orderBy?: carreraOrderByWithAggregationInput | carreraOrderByWithAggregationInput[]
+    by: CarreraScalarFieldEnum[] | CarreraScalarFieldEnum
+    having?: carreraScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: CarreraCountAggregateInputType | true
+    _min?: CarreraMinAggregateInputType
+    _max?: CarreraMaxAggregateInputType
+  }
+
+  export type CarreraGroupByOutputType = {
+    id_car: string
+    nom_car: string
+    est_car: boolean
+    fec_cre_car: Date
+    _count: CarreraCountAggregateOutputType | null
+    _min: CarreraMinAggregateOutputType | null
+    _max: CarreraMaxAggregateOutputType | null
+  }
+
+  type GetCarreraGroupByPayload<T extends carreraGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<CarreraGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof CarreraGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], CarreraGroupByOutputType[P]>
+            : GetScalarType<T[P], CarreraGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type carreraSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_car?: boolean
+    nom_car?: boolean
+    est_car?: boolean
+    fec_cre_car?: boolean
+  }, ExtArgs["result"]["carrera"]>
+
+  export type carreraSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_car?: boolean
+    nom_car?: boolean
+    est_car?: boolean
+    fec_cre_car?: boolean
+  }, ExtArgs["result"]["carrera"]>
+
+  export type carreraSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_car?: boolean
+    nom_car?: boolean
+    est_car?: boolean
+    fec_cre_car?: boolean
+  }, ExtArgs["result"]["carrera"]>
+
+  export type carreraSelectScalar = {
+    id_car?: boolean
+    nom_car?: boolean
+    est_car?: boolean
+    fec_cre_car?: boolean
+  }
+
+  export type carreraOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_car" | "nom_car" | "est_car" | "fec_cre_car", ExtArgs["result"]["carrera"]>
+
+  export type $carreraPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "carrera"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id_car: string
+      nom_car: string
+      est_car: boolean
+      fec_cre_car: Date
+    }, ExtArgs["result"]["carrera"]>
+    composites: {}
+  }
+
+  type carreraGetPayload<S extends boolean | null | undefined | carreraDefaultArgs> = $Result.GetResult<Prisma.$carreraPayload, S>
+
+  type carreraCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<carreraFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: CarreraCountAggregateInputType | true
+    }
+
+  export interface carreraDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['carrera'], meta: { name: 'carrera' } }
+    /**
+     * Find zero or one Carrera that matches the filter.
+     * @param {carreraFindUniqueArgs} args - Arguments to find a Carrera
+     * @example
+     * // Get one Carrera
+     * const carrera = await prisma.carrera.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends carreraFindUniqueArgs>(args: SelectSubset<T, carreraFindUniqueArgs<ExtArgs>>): Prisma__carreraClient<$Result.GetResult<Prisma.$carreraPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Carrera that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {carreraFindUniqueOrThrowArgs} args - Arguments to find a Carrera
+     * @example
+     * // Get one Carrera
+     * const carrera = await prisma.carrera.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends carreraFindUniqueOrThrowArgs>(args: SelectSubset<T, carreraFindUniqueOrThrowArgs<ExtArgs>>): Prisma__carreraClient<$Result.GetResult<Prisma.$carreraPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Carrera that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {carreraFindFirstArgs} args - Arguments to find a Carrera
+     * @example
+     * // Get one Carrera
+     * const carrera = await prisma.carrera.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends carreraFindFirstArgs>(args?: SelectSubset<T, carreraFindFirstArgs<ExtArgs>>): Prisma__carreraClient<$Result.GetResult<Prisma.$carreraPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Carrera that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {carreraFindFirstOrThrowArgs} args - Arguments to find a Carrera
+     * @example
+     * // Get one Carrera
+     * const carrera = await prisma.carrera.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends carreraFindFirstOrThrowArgs>(args?: SelectSubset<T, carreraFindFirstOrThrowArgs<ExtArgs>>): Prisma__carreraClient<$Result.GetResult<Prisma.$carreraPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Carreras that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {carreraFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Carreras
+     * const carreras = await prisma.carrera.findMany()
+     * 
+     * // Get first 10 Carreras
+     * const carreras = await prisma.carrera.findMany({ take: 10 })
+     * 
+     * // Only select the `id_car`
+     * const carreraWithId_carOnly = await prisma.carrera.findMany({ select: { id_car: true } })
+     * 
+     */
+    findMany<T extends carreraFindManyArgs>(args?: SelectSubset<T, carreraFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$carreraPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Carrera.
+     * @param {carreraCreateArgs} args - Arguments to create a Carrera.
+     * @example
+     * // Create one Carrera
+     * const Carrera = await prisma.carrera.create({
+     *   data: {
+     *     // ... data to create a Carrera
+     *   }
+     * })
+     * 
+     */
+    create<T extends carreraCreateArgs>(args: SelectSubset<T, carreraCreateArgs<ExtArgs>>): Prisma__carreraClient<$Result.GetResult<Prisma.$carreraPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Carreras.
+     * @param {carreraCreateManyArgs} args - Arguments to create many Carreras.
+     * @example
+     * // Create many Carreras
+     * const carrera = await prisma.carrera.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends carreraCreateManyArgs>(args?: SelectSubset<T, carreraCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Carreras and returns the data saved in the database.
+     * @param {carreraCreateManyAndReturnArgs} args - Arguments to create many Carreras.
+     * @example
+     * // Create many Carreras
+     * const carrera = await prisma.carrera.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Carreras and only return the `id_car`
+     * const carreraWithId_carOnly = await prisma.carrera.createManyAndReturn({
+     *   select: { id_car: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends carreraCreateManyAndReturnArgs>(args?: SelectSubset<T, carreraCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$carreraPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Carrera.
+     * @param {carreraDeleteArgs} args - Arguments to delete one Carrera.
+     * @example
+     * // Delete one Carrera
+     * const Carrera = await prisma.carrera.delete({
+     *   where: {
+     *     // ... filter to delete one Carrera
+     *   }
+     * })
+     * 
+     */
+    delete<T extends carreraDeleteArgs>(args: SelectSubset<T, carreraDeleteArgs<ExtArgs>>): Prisma__carreraClient<$Result.GetResult<Prisma.$carreraPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Carrera.
+     * @param {carreraUpdateArgs} args - Arguments to update one Carrera.
+     * @example
+     * // Update one Carrera
+     * const carrera = await prisma.carrera.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends carreraUpdateArgs>(args: SelectSubset<T, carreraUpdateArgs<ExtArgs>>): Prisma__carreraClient<$Result.GetResult<Prisma.$carreraPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Carreras.
+     * @param {carreraDeleteManyArgs} args - Arguments to filter Carreras to delete.
+     * @example
+     * // Delete a few Carreras
+     * const { count } = await prisma.carrera.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends carreraDeleteManyArgs>(args?: SelectSubset<T, carreraDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Carreras.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {carreraUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Carreras
+     * const carrera = await prisma.carrera.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends carreraUpdateManyArgs>(args: SelectSubset<T, carreraUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Carreras and returns the data updated in the database.
+     * @param {carreraUpdateManyAndReturnArgs} args - Arguments to update many Carreras.
+     * @example
+     * // Update many Carreras
+     * const carrera = await prisma.carrera.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Carreras and only return the `id_car`
+     * const carreraWithId_carOnly = await prisma.carrera.updateManyAndReturn({
+     *   select: { id_car: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends carreraUpdateManyAndReturnArgs>(args: SelectSubset<T, carreraUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$carreraPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Carrera.
+     * @param {carreraUpsertArgs} args - Arguments to update or create a Carrera.
+     * @example
+     * // Update or create a Carrera
+     * const carrera = await prisma.carrera.upsert({
+     *   create: {
+     *     // ... data to create a Carrera
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Carrera we want to update
+     *   }
+     * })
+     */
+    upsert<T extends carreraUpsertArgs>(args: SelectSubset<T, carreraUpsertArgs<ExtArgs>>): Prisma__carreraClient<$Result.GetResult<Prisma.$carreraPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Carreras.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {carreraCountArgs} args - Arguments to filter Carreras to count.
+     * @example
+     * // Count the number of Carreras
+     * const count = await prisma.carrera.count({
+     *   where: {
+     *     // ... the filter for the Carreras we want to count
+     *   }
+     * })
+    **/
+    count<T extends carreraCountArgs>(
+      args?: Subset<T, carreraCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], CarreraCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Carrera.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CarreraAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends CarreraAggregateArgs>(args: Subset<T, CarreraAggregateArgs>): Prisma.PrismaPromise<GetCarreraAggregateType<T>>
+
+    /**
+     * Group by Carrera.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {carreraGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends carreraGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: carreraGroupByArgs['orderBy'] }
+        : { orderBy?: carreraGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, carreraGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCarreraGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the carrera model
+   */
+  readonly fields: carreraFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for carrera.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__carreraClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the carrera model
+   */
+  interface carreraFieldRefs {
+    readonly id_car: FieldRef<"carrera", 'String'>
+    readonly nom_car: FieldRef<"carrera", 'String'>
+    readonly est_car: FieldRef<"carrera", 'Boolean'>
+    readonly fec_cre_car: FieldRef<"carrera", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * carrera findUnique
+   */
+  export type carreraFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the carrera
+     */
+    select?: carreraSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the carrera
+     */
+    omit?: carreraOmit<ExtArgs> | null
+    /**
+     * Filter, which carrera to fetch.
+     */
+    where: carreraWhereUniqueInput
+  }
+
+  /**
+   * carrera findUniqueOrThrow
+   */
+  export type carreraFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the carrera
+     */
+    select?: carreraSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the carrera
+     */
+    omit?: carreraOmit<ExtArgs> | null
+    /**
+     * Filter, which carrera to fetch.
+     */
+    where: carreraWhereUniqueInput
+  }
+
+  /**
+   * carrera findFirst
+   */
+  export type carreraFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the carrera
+     */
+    select?: carreraSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the carrera
+     */
+    omit?: carreraOmit<ExtArgs> | null
+    /**
+     * Filter, which carrera to fetch.
+     */
+    where?: carreraWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of carreras to fetch.
+     */
+    orderBy?: carreraOrderByWithRelationInput | carreraOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for carreras.
+     */
+    cursor?: carreraWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` carreras from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` carreras.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of carreras.
+     */
+    distinct?: CarreraScalarFieldEnum | CarreraScalarFieldEnum[]
+  }
+
+  /**
+   * carrera findFirstOrThrow
+   */
+  export type carreraFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the carrera
+     */
+    select?: carreraSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the carrera
+     */
+    omit?: carreraOmit<ExtArgs> | null
+    /**
+     * Filter, which carrera to fetch.
+     */
+    where?: carreraWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of carreras to fetch.
+     */
+    orderBy?: carreraOrderByWithRelationInput | carreraOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for carreras.
+     */
+    cursor?: carreraWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` carreras from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` carreras.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of carreras.
+     */
+    distinct?: CarreraScalarFieldEnum | CarreraScalarFieldEnum[]
+  }
+
+  /**
+   * carrera findMany
+   */
+  export type carreraFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the carrera
+     */
+    select?: carreraSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the carrera
+     */
+    omit?: carreraOmit<ExtArgs> | null
+    /**
+     * Filter, which carreras to fetch.
+     */
+    where?: carreraWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of carreras to fetch.
+     */
+    orderBy?: carreraOrderByWithRelationInput | carreraOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing carreras.
+     */
+    cursor?: carreraWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` carreras from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` carreras.
+     */
+    skip?: number
+    distinct?: CarreraScalarFieldEnum | CarreraScalarFieldEnum[]
+  }
+
+  /**
+   * carrera create
+   */
+  export type carreraCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the carrera
+     */
+    select?: carreraSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the carrera
+     */
+    omit?: carreraOmit<ExtArgs> | null
+    /**
+     * The data needed to create a carrera.
+     */
+    data: XOR<carreraCreateInput, carreraUncheckedCreateInput>
+  }
+
+  /**
+   * carrera createMany
+   */
+  export type carreraCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many carreras.
+     */
+    data: carreraCreateManyInput | carreraCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * carrera createManyAndReturn
+   */
+  export type carreraCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the carrera
+     */
+    select?: carreraSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the carrera
+     */
+    omit?: carreraOmit<ExtArgs> | null
+    /**
+     * The data used to create many carreras.
+     */
+    data: carreraCreateManyInput | carreraCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * carrera update
+   */
+  export type carreraUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the carrera
+     */
+    select?: carreraSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the carrera
+     */
+    omit?: carreraOmit<ExtArgs> | null
+    /**
+     * The data needed to update a carrera.
+     */
+    data: XOR<carreraUpdateInput, carreraUncheckedUpdateInput>
+    /**
+     * Choose, which carrera to update.
+     */
+    where: carreraWhereUniqueInput
+  }
+
+  /**
+   * carrera updateMany
+   */
+  export type carreraUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update carreras.
+     */
+    data: XOR<carreraUpdateManyMutationInput, carreraUncheckedUpdateManyInput>
+    /**
+     * Filter which carreras to update
+     */
+    where?: carreraWhereInput
+    /**
+     * Limit how many carreras to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * carrera updateManyAndReturn
+   */
+  export type carreraUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the carrera
+     */
+    select?: carreraSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the carrera
+     */
+    omit?: carreraOmit<ExtArgs> | null
+    /**
+     * The data used to update carreras.
+     */
+    data: XOR<carreraUpdateManyMutationInput, carreraUncheckedUpdateManyInput>
+    /**
+     * Filter which carreras to update
+     */
+    where?: carreraWhereInput
+    /**
+     * Limit how many carreras to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * carrera upsert
+   */
+  export type carreraUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the carrera
+     */
+    select?: carreraSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the carrera
+     */
+    omit?: carreraOmit<ExtArgs> | null
+    /**
+     * The filter to search for the carrera to update in case it exists.
+     */
+    where: carreraWhereUniqueInput
+    /**
+     * In case the carrera found by the `where` argument doesn't exist, create a new carrera with this data.
+     */
+    create: XOR<carreraCreateInput, carreraUncheckedCreateInput>
+    /**
+     * In case the carrera was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<carreraUpdateInput, carreraUncheckedUpdateInput>
+  }
+
+  /**
+   * carrera delete
+   */
+  export type carreraDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the carrera
+     */
+    select?: carreraSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the carrera
+     */
+    omit?: carreraOmit<ExtArgs> | null
+    /**
+     * Filter which carrera to delete.
+     */
+    where: carreraWhereUniqueInput
+  }
+
+  /**
+   * carrera deleteMany
+   */
+  export type carreraDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which carreras to delete
+     */
+    where?: carreraWhereInput
+    /**
+     * Limit how many carreras to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * carrera without action
+   */
+  export type carreraDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the carrera
+     */
+    select?: carreraSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the carrera
+     */
+    omit?: carreraOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -1960,6 +3033,16 @@ export namespace Prisma {
   };
 
   export type UsuarioScalarFieldEnum = (typeof UsuarioScalarFieldEnum)[keyof typeof UsuarioScalarFieldEnum]
+
+
+  export const CarreraScalarFieldEnum: {
+    id_car: 'id_car',
+    nom_car: 'nom_car',
+    est_car: 'est_car',
+    fec_cre_car: 'fec_cre_car'
+  };
+
+  export type CarreraScalarFieldEnum = (typeof CarreraScalarFieldEnum)[keyof typeof CarreraScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -2022,6 +3105,13 @@ export namespace Prisma {
    * Reference to a field of type 'DateTime[]'
    */
   export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Boolean'
+   */
+  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
 
@@ -2114,6 +3204,53 @@ export namespace Prisma {
     fec_cre_usu?: DateTimeWithAggregatesFilter<"usuario"> | Date | string
   }
 
+  export type carreraWhereInput = {
+    AND?: carreraWhereInput | carreraWhereInput[]
+    OR?: carreraWhereInput[]
+    NOT?: carreraWhereInput | carreraWhereInput[]
+    id_car?: StringFilter<"carrera"> | string
+    nom_car?: StringFilter<"carrera"> | string
+    est_car?: BoolFilter<"carrera"> | boolean
+    fec_cre_car?: DateTimeFilter<"carrera"> | Date | string
+  }
+
+  export type carreraOrderByWithRelationInput = {
+    id_car?: SortOrder
+    nom_car?: SortOrder
+    est_car?: SortOrder
+    fec_cre_car?: SortOrder
+  }
+
+  export type carreraWhereUniqueInput = Prisma.AtLeast<{
+    id_car?: string
+    nom_car?: string
+    AND?: carreraWhereInput | carreraWhereInput[]
+    OR?: carreraWhereInput[]
+    NOT?: carreraWhereInput | carreraWhereInput[]
+    est_car?: BoolFilter<"carrera"> | boolean
+    fec_cre_car?: DateTimeFilter<"carrera"> | Date | string
+  }, "id_car" | "nom_car">
+
+  export type carreraOrderByWithAggregationInput = {
+    id_car?: SortOrder
+    nom_car?: SortOrder
+    est_car?: SortOrder
+    fec_cre_car?: SortOrder
+    _count?: carreraCountOrderByAggregateInput
+    _max?: carreraMaxOrderByAggregateInput
+    _min?: carreraMinOrderByAggregateInput
+  }
+
+  export type carreraScalarWhereWithAggregatesInput = {
+    AND?: carreraScalarWhereWithAggregatesInput | carreraScalarWhereWithAggregatesInput[]
+    OR?: carreraScalarWhereWithAggregatesInput[]
+    NOT?: carreraScalarWhereWithAggregatesInput | carreraScalarWhereWithAggregatesInput[]
+    id_car?: StringWithAggregatesFilter<"carrera"> | string
+    nom_car?: StringWithAggregatesFilter<"carrera"> | string
+    est_car?: BoolWithAggregatesFilter<"carrera"> | boolean
+    fec_cre_car?: DateTimeWithAggregatesFilter<"carrera"> | Date | string
+  }
+
   export type usuarioCreateInput = {
     id_usu?: string
     ced_usu: string
@@ -2196,6 +3333,55 @@ export namespace Prisma {
     cel_usu?: StringFieldUpdateOperationsInput | string
     rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
     fec_cre_usu?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type carreraCreateInput = {
+    id_car?: string
+    nom_car: string
+    est_car?: boolean
+    fec_cre_car?: Date | string
+  }
+
+  export type carreraUncheckedCreateInput = {
+    id_car?: string
+    nom_car: string
+    est_car?: boolean
+    fec_cre_car?: Date | string
+  }
+
+  export type carreraUpdateInput = {
+    id_car?: StringFieldUpdateOperationsInput | string
+    nom_car?: StringFieldUpdateOperationsInput | string
+    est_car?: BoolFieldUpdateOperationsInput | boolean
+    fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type carreraUncheckedUpdateInput = {
+    id_car?: StringFieldUpdateOperationsInput | string
+    nom_car?: StringFieldUpdateOperationsInput | string
+    est_car?: BoolFieldUpdateOperationsInput | boolean
+    fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type carreraCreateManyInput = {
+    id_car?: string
+    nom_car: string
+    est_car?: boolean
+    fec_cre_car?: Date | string
+  }
+
+  export type carreraUpdateManyMutationInput = {
+    id_car?: StringFieldUpdateOperationsInput | string
+    nom_car?: StringFieldUpdateOperationsInput | string
+    est_car?: BoolFieldUpdateOperationsInput | boolean
+    fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type carreraUncheckedUpdateManyInput = {
+    id_car?: StringFieldUpdateOperationsInput | string
+    nom_car?: StringFieldUpdateOperationsInput | string
+    est_car?: BoolFieldUpdateOperationsInput | boolean
+    fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -2309,6 +3495,40 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type carreraCountOrderByAggregateInput = {
+    id_car?: SortOrder
+    nom_car?: SortOrder
+    est_car?: SortOrder
+    fec_cre_car?: SortOrder
+  }
+
+  export type carreraMaxOrderByAggregateInput = {
+    id_car?: SortOrder
+    nom_car?: SortOrder
+    est_car?: SortOrder
+    fec_cre_car?: SortOrder
+  }
+
+  export type carreraMinOrderByAggregateInput = {
+    id_car?: SortOrder
+    nom_car?: SortOrder
+    est_car?: SortOrder
+    fec_cre_car?: SortOrder
+  }
+
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
   export type StringFieldUpdateOperationsInput = {
     set?: string
   }
@@ -2319,6 +3539,10 @@ export namespace Prisma {
 
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
+  }
+
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -2403,6 +3627,19 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
   }
 
 

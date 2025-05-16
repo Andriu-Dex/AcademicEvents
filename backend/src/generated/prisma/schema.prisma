@@ -20,6 +20,13 @@ model usuario {
   fec_cre_usu DateTime    @default(now())
 }
 
+model carrera {
+  id_car      String   @id @default(uuid())
+  nom_car     String   @unique
+  est_car     Boolean  @default(true)
+  fec_cre_car DateTime @default(now())
+}
+
 enum rol_usuario {
   ADMIN
   ESTUDIANTE

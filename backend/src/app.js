@@ -2,27 +2,23 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 
-// Cargar variables de entorno desde el archivo .env
+// Configuración inicial
 dotenv.config();
-
-// Crear instancia de la aplicación Express
 const app = express();
 
-// Importar rutas de autenticación
-const authRoutes = require("./routes/auth.routes");
+// Middlewares
+app.use(cors());
+app.use(express.json());
 
-// Aplicar middlewares globales
-app.use(cors()); // Habilita CORS para todas las rutas
-app.use(express.json()); // Habilita parseo de JSON en las peticiones
+// Rutas
+app.use("/api", require("./routes/carrera.routes"));
+app.use("/api", require("./routes/auth.routes"));
 
-// Montar rutas bajo /api
-app.use("/api", authRoutes);
-
-// Ruta base para verificar que el backend funciona
+// Verificación
 app.get("/", (req, res) => {
   res.send("API AcademicEvents funcionando");
 });
 
-// Definir el puerto de escucha
+// Puerto
 const PORT = process.env.PORT_BACKEND || 3000;
 app.listen(PORT, () => console.log(`Servidor en puerto ${PORT}`));
