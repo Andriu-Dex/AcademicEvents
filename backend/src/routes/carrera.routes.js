@@ -14,3 +14,4 @@ router.put('/carreras/:id', actualizarCarrera);
 router.delete('/carreras/:id', eliminarCarrera);
 
 export default router;
+// router.get('/carreras/:id', obtenerCarreraPorId);
