@@ -50,6 +50,10 @@ app.use("/api", eventoRoutes);
 const inscripcionRoutes = require("./routes/inscripcion.routes");
 app.use("/api", inscripcionRoutes);
 
+// Rutas para generación y descarga de certificados
+const certificadoRoutes = require("./routes/certificado.routes");
+app.use("/api", certificadoRoutes);
+
 // ============================
 //  Iniciar el servidor
 // ============================
