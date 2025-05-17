@@ -17,16 +17,16 @@ const app = express(); // Crear instancia de la aplicación
 //  Middlewares globales
 // ============================
 app.use(cors()); // Habilita CORS para todas las rutas
-app.use(express.json()); // Habilita el parseo de JSON en peticiones
+app.use(express.json()); // Habilita el parseo de JSON en las peticiones
 
-// Servir archivos subidos (por ejemplo, comprobantes, documentos PDF, etc.)
+// Servir archivos subidos (comprobantes, PDF, etc.)
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 // ============================
-// 🧩 Rutas de la aplicación
+//  Rutas de la aplicación
 // ============================
 
-// Ruta pública para verificar funcionamiento del backend
+// Ruta de prueba para verificar funcionamiento del backend
 app.get("/", (req, res) => {
   res.send("API AcademicEvents funcionando");
 });
@@ -38,14 +38,22 @@ app.use("/api", authRoutes);
 const comprobanteRoutes = require("./routes/comprobante.routes");
 app.use("/api", comprobanteRoutes);
 
-// Rutas protegidas (requieren autenticación, como acceso a datos internos)
+// Rutas protegidas (requieren autenticación)
 const protectedRoutes = require("./routes/protected.routes");
 app.use("/api", protectedRoutes);
+
+// Rutas de gestión de eventos
+const eventoRoutes = require("./routes/evento.routes");
+app.use("/api", eventoRoutes);
+
+// Rutas de gestión de inscripciones
+const inscripcionRoutes = require("./routes/inscripcion.routes");
+app.use("/api", inscripcionRoutes);
 
 // ============================
 //  Iniciar el servidor
 // ============================
 const PORT = process.env.PORT_BACKEND || 3000;
 app.listen(PORT, () => {
-  console.log(`✅ Servidor corriendo en puerto ${PORT}`);
+  console.log(`✅Servidor corriendo en puerto ${PORT}✅`);
 });

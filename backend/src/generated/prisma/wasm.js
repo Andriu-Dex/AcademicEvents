@@ -139,6 +139,33 @@ exports.Prisma.CarreraScalarFieldEnum = {
   fec_cre_car: 'fec_cre_car'
 };
 
+exports.Prisma.EventoScalarFieldEnum = {
+  id_eve: 'id_eve',
+  nom_eve: 'nom_eve',
+  des_eve: 'des_eve',
+  tip_eve: 'tip_eve',
+  fec_ini_eve: 'fec_ini_eve',
+  fec_fin_eve: 'fec_fin_eve',
+  dur_hrs_eve: 'dur_hrs_eve',
+  pagado_eve: 'pagado_eve',
+  nota_min_eve: 'nota_min_eve',
+  por_asist_eve: 'por_asist_eve',
+  est_eve: 'est_eve',
+  fec_cre_eve: 'fec_cre_eve',
+  carreraId: 'carreraId'
+};
+
+exports.Prisma.InscripcionScalarFieldEnum = {
+  id_ins: 'id_ins',
+  id_usu: 'id_usu',
+  id_eve: 'id_eve',
+  comprobante: 'comprobante',
+  nota_final: 'nota_final',
+  asistencia: 'asistencia',
+  estado: 'estado',
+  fec_ins: 'fec_ins'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -148,14 +175,37 @@ exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
 };
+
+exports.Prisma.NullsOrder = {
+  first: 'first',
+  last: 'last'
+};
 exports.rol_usuario = exports.$Enums.rol_usuario = {
   ADMIN: 'ADMIN',
   ESTUDIANTE: 'ESTUDIANTE'
 };
 
+exports.tipo_evento = exports.$Enums.tipo_evento = {
+  CURSO: 'CURSO',
+  CONGRESO: 'CONGRESO',
+  WEBINAR: 'WEBINAR',
+  CHARLA: 'CHARLA',
+  SOCIALIZACION: 'SOCIALIZACION',
+  PUBLICO: 'PUBLICO'
+};
+
+exports.estado_inscripcion = exports.$Enums.estado_inscripcion = {
+  PENDIENTE: 'PENDIENTE',
+  ACEPTADA: 'ACEPTADA',
+  RECHAZADA: 'RECHAZADA',
+  FINALIZADA: 'FINALIZADA'
+};
+
 exports.Prisma.ModelName = {
   usuario: 'usuario',
-  carrera: 'carrera'
+  carrera: 'carrera',
+  evento: 'evento',
+  inscripcion: 'inscripcion'
 };
 
 /**
