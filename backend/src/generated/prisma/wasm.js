@@ -132,6 +132,13 @@ exports.Prisma.UsuarioScalarFieldEnum = {
   fec_cre_usu: 'fec_cre_usu'
 };
 
+exports.Prisma.CarreraScalarFieldEnum = {
+  id_car: 'id_car',
+  nom_car: 'nom_car',
+  est_car: 'est_car',
+  fec_cre_car: 'fec_cre_car'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -147,7 +154,8 @@ exports.rol_usuario = exports.$Enums.rol_usuario = {
 };
 
 exports.Prisma.ModelName = {
-  usuario: 'usuario'
+  usuario: 'usuario',
+  carrera: 'carrera'
 };
 
 /**
