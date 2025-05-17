@@ -151,8 +151,63 @@ const obtenerInscripcionesPorUsuario = async (req, res) => {
   }
 };
 
+// ==============================
+// Verificar si se puede generar certificado
+// ==============================
+const puedeGenerarCertificado = async (req, res) => {
+  try {
+    const { id } = req.params; // ID de la inscripción
+
+    const inscripcion = await prisma.inscripcion.findUnique({
+      where: { id_ins: id },
+      include: { evento: true },
+    });
+
+    if (!inscripcion) {
+      return res.status(404).json({ msg: "Inscripción no encontrada" });
+    }
+
+    if (inscripcion.estado !== "FINALIZADA") {
+      return res.status(400).json({ msg: "Inscripción no está finalizada" });
+    }
+
+    if (inscripcion.evento.tip_eve === "CURSO") {
+      const notaMinima = inscripcion.evento.nota_min_eve ?? 8;
+      const asistenciaMinima = inscripcion.evento.por_asist_eve ?? 80;
+
+      if (
+        inscripcion.nota_final >= notaMinima &&
+        inscripcion.asistencia >= asistenciaMinima
+      ) {
+        return res.status(200).json({ puedeGenerar: true, tipo: "APROBADO" });
+      } else {
+        return res
+          .status(200)
+          .json({ puedeGenerar: false, tipo: "NO_APROBADO" });
+      }
+    } else {
+      // Otros tipos de evento: solo asistencia requerida
+      if ((inscripcion.asistencia ?? 0) >= 80) {
+        return res.status(200).json({ puedeGenerar: true, tipo: "ASISTENTE" });
+      } else {
+        return res
+          .status(200)
+          .json({ puedeGenerar: false, tipo: "ASISTENCIA_INSUFICIENTE" });
+      }
+    }
+  } catch (error) {
+    res
+      .status(500)
+      .json({
+        msg: "Error al verificar elegibilidad de certificado",
+        error: error.message,
+      });
+  }
+};
+
 module.exports = {
   crearInscripcion,
   validarInscripcion,
   obtenerInscripcionesPorUsuario,
+  puedeGenerarCertificado,
 };
