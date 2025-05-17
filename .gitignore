@@ -69,3 +69,6 @@ pnpm-debug.log*
 
 # Archivo similar generado por Windows en carpetas con vistas en miniatura.
 Thumbs.db
+
+# Archivos cargados por los usuarios o archivos temporales generados durante el desarrollo
+/uploads

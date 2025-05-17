@@ -1,34 +1,50 @@
-// Importación de módulos principales
+// ============================
+//  Importación de módulos
+// ============================
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
+const path = require("path");
 
-// Configuración inicial
-dotenv.config();
+// ============================
+//  Configuración inicial
+// ============================
+dotenv.config(); // Cargar variables de entorno desde .env
 
-// Crear instancia de la aplicación Express
-const app = express();
+const app = express(); // Crear instancia de la aplicación
 
-// Importar rutas de autenticación
-const authRoutes = require("./routes/auth.routes");
-
-// Aplicar middlewares globales
+// ============================
+//  Middlewares globales
+// ============================
 app.use(cors()); // Habilita CORS para todas las rutas
-app.use(express.json()); // Habilita parseo de JSON en las peticiones
+app.use(express.json()); // Habilita el parseo de JSON en peticiones
 
-// Montar rutas bajo /api
-app.use("/api", authRoutes);
+// Servir archivos subidos (por ejemplo, comprobantes, documentos PDF, etc.)
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
-// Ruta base para verificar que el backend funciona
+// ============================
+// 🧩 Rutas de la aplicación
+// ============================
+
+// Ruta pública para verificar funcionamiento del backend
 app.get("/", (req, res) => {
   res.send("API AcademicEvents funcionando");
 });
 
-// Importación de rutas protegidas
-const protectedRoutes = require("./routes/protected.routes");
-app.use("/api", protectedRoutes); // Monta las rutas protegidas bajo /api
+// Rutas no protegidas
+const authRoutes = require("./routes/auth.routes");
+app.use("/api", authRoutes);
 
-// Puerto de escucha
+const comprobanteRoutes = require("./routes/comprobante.routes");
+app.use("/api", comprobanteRoutes);
+
+// Rutas protegidas (requieren autenticación, como acceso a datos internos)
+const protectedRoutes = require("./routes/protected.routes");
+app.use("/api", protectedRoutes);
+
+// ============================
+//  Iniciar el servidor
+// ============================
 const PORT = process.env.PORT_BACKEND || 3000;
 app.listen(PORT, () => {
   console.log(`✅ Servidor corriendo en puerto ${PORT}`);
