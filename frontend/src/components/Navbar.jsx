@@ -8,16 +8,27 @@ const MiComponente = ({ usuario }) => {
   return (
     <nav>
       <ul className="space-y-2">
-        {/* Renderiza solo si es estudiante */}
+        {/* Renderiza enlace a certificados solo si es estudiante */}
         {esEstudiante && (
-          <li>
-            <Link
-              to="/certificados"
-              className="hover:underline text-sm text-blue-600 font-medium"
-            >
-              Certificados
-            </Link>
-          </li>
+          <>
+            <li>
+              <Link
+                to="/certificados"
+                className="hover:underline text-sm text-blue-600 font-medium"
+              >
+                Certificados
+              </Link>
+            </li>
+
+            <li>
+              <Link
+                to="/eventos"
+                className="hover:underline text-sm text-blue-600 font-medium"
+              >
+                Eventos
+              </Link>
+            </li>
+          </>
         )}
       </ul>
     </nav>
