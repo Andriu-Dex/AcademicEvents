@@ -41,8 +41,35 @@ const EventsRoute = () => {
     obtenerEventos(); // Llamada a la función
   }, [usuario, token, loading, navigate]);
 
+  const [inscripciones, setInscripciones] = useState([]);
+
+  useEffect(() => {
+    const obtenerInscripciones = async () => {
+      try {
+        const res = await axios.get(
+          `http://localhost:3000/api/inscripciones/${usuario.id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setInscripciones(res.data);
+      } catch (error) {
+        console.error("Error al obtener inscripciones:", error.message);
+      }
+    };
+
+    if (usuario) obtenerInscripciones();
+  }, [usuario]);
+
   const inscribirse = async () => {
     if (!archivo) return toast.error("Debes subir un archivo PDF");
+
+    // Validar el tamaño del archivo
+    if (archivo.size > 5 * 1024 * 1024) {
+      return toast.error("El archivo no debe superar los 5MB");
+    }
 
     const formData = new FormData();
     formData.append("id_usu", usuario.id);
@@ -72,6 +99,10 @@ const EventsRoute = () => {
     ev.nom_eve.toLowerCase().includes(filtro.toLowerCase())
   );
 
+  const eventosDisponibles = eventos.filter((evento) => {
+    return !inscripciones.some((ins) => ins.id_eve === evento.id_eve);
+  });
+
   if (loading) return <p className="p-6">Cargando sesión...</p>;
 
   return (
@@ -91,34 +122,39 @@ const EventsRoute = () => {
       />
 
       {/* Resultado */}
-      {eventosFiltrados.length === 0 ? (
-        <p>No hay eventos disponibles.</p>
+      {eventosDisponibles.length === 0 ? (
+        <p className="text-gray-600">No hay eventos disponibles para ti.</p>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {eventosFiltrados.map((evento) => (
-            <div
-              key={evento.id_eve}
-              className="border rounded p-4 shadow hover:shadow-lg transition"
-            >
-              <h2 className="text-lg font-semibold">{evento.nom_eve}</h2>
-              <p className="text-sm text-gray-600">{evento.tip_eve}</p>
-              <p className="text-sm">
-                Fecha: {new Date(evento.fec_ini_eve).toLocaleDateString()} a{" "}
-                {new Date(evento.fec_fin_eve).toLocaleDateString()}
-              </p>
-              <p className="text-sm">Duración: {evento.dur_hrs_eve} horas</p>
-              {evento.pagado_eve && (
-                <p className="text-sm text-red-600 font-semibold">Pagado</p>
-              )}
-
-              <button
-                onClick={() => setEventoSeleccionado(evento)}
-                className="mt-3 w-full bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          {eventosDisponibles
+            .filter((ev) =>
+              ev.nom_eve.toLowerCase().includes(filtro.toLowerCase())
+            )
+            .map((evento) => (
+              <div
+                key={evento.id_eve}
+                className="border rounded p-4 shadow hover:shadow-lg transition"
               >
-                Inscribirme
-              </button>
-            </div>
-          ))}
+                <h2 className="text-lg font-semibold">{evento.nom_eve}</h2>
+                <p className="text-sm text-gray-600">{evento.tip_eve}</p>
+                <p className="text-sm">
+                  Fecha:{" "}
+                  {new Date(evento.fec_ini_eve).toLocaleDateString("es-EC")} a{" "}
+                  {new Date(evento.fec_fin_eve).toLocaleDateString("es-EC")}
+                </p>
+                <p className="text-sm">Duración: {evento.dur_hrs_eve} horas</p>
+                {evento.pagado_eve && (
+                  <p className="text-sm text-red-600 font-semibold">Pagado</p>
+                )}
+
+                <button
+                  onClick={() => setEventoSeleccionado(evento)}
+                  className="mt-3 w-full bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                >
+                  Inscribirme
+                </button>
+              </div>
+            ))}
         </div>
       )}
 
@@ -131,7 +167,7 @@ const EventsRoute = () => {
 
             <input
               type="file"
-              accept="application/pdf"
+              accept=".pdf,.jpg,.jpeg,.png,image/jpeg,image/png,application/pdf"
               onChange={(e) => setArchivo(e.target.files[0])}
               className="w-full border p-2 mb-4"
             />

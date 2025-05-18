@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const upload = require("../middlewares/upload");
 
 // Controladores
 const {
@@ -15,7 +16,7 @@ const {
 
 // Crear nueva inscripción a un evento
 // POST /api/inscripciones
-router.post("/inscripciones", crearInscripcion);
+router.post("/inscripciones", upload.single("archivo"), crearInscripcion);
 
 // Obtener todas las inscripciones de un usuario
 // GET /api/inscripciones/:id
