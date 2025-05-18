@@ -1,35 +1,97 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/prisma" 
+  output   = "../src/generated/prisma"
 }
-
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
+// ============================
+// MODELOS PRINCIPALES
+// ============================
+
 model usuario {
-  id_usu String @id @default(uuid())
-  ced_usu String @unique
-  nom_usu String
-  ape_usu String
-  cor_usu String @unique
-  con_usu String
-  cel_usu String @db.Char(10) //Acepta solo 10 caracteres
-  rol_usu rol_usuario
-  fec_cre_usu DateTime @default(now())
+  id_usu       String      @id @default(uuid())
+  ced_usu      String      @unique
+  nom_usu      String
+  ape_usu      String
+  cor_usu      String      @unique
+  con_usu      String
+  cel_usu      String      @db.Char(10) // Solo 10 caracteres exactos
+  rol_usu      rol_usuario
+  fec_cre_usu  DateTime    @default(now())
+
+  inscripciones inscripcion[] // Un usuario puede tener muchas inscripciones
 }
 
 model carrera {
-  id_car     String   @id @default(uuid())
-  nom_car    String   @unique
-  est_car    Boolean  @default(true)
-  fec_cre_car DateTime @default(now())
+  id_car       String      @id @default(uuid())
+  nom_car      String      @unique
+  est_car      Boolean     @default(true)
+  fec_cre_car  DateTime    @default(now())
+
+  eventos      evento[]    // Una carrera puede tener varios eventos
 }
 
+model evento {
+  id_eve        String      @id @default(uuid())
+  nom_eve       String
+  des_eve       String?
+  tip_eve       tipo_evento
+  fec_ini_eve   DateTime
+  fec_fin_eve   DateTime
+  dur_hrs_eve   Int
+  pagado_eve    Boolean     @default(false)
+  nota_min_eve  Float?      // Solo si es curso
+  por_asist_eve Float?      // Solo si es curso, asistencia requerida (0–100)
+  est_eve       Boolean     @default(true)
+  fec_cre_eve   DateTime    @default(now())
+
+  carreraId     String?
+  carrera       carrera?    @relation(fields: [carreraId], references: [id_car])
+
+  inscripciones inscripcion[]
+}
+
+model inscripcion {
+  id_ins        String      @id @default(uuid())
+  id_usu        String
+  id_eve        String
+
+  usuario       usuario     @relation(fields: [id_usu], references: [id_usu])
+  evento        evento      @relation(fields: [id_eve], references: [id_eve])
+
+  comprobante   String?     // Nombre del archivo subido (comprobante de pago o carta)
+  nota_final    Float?      // Nota final del curso (si aplica)
+  asistencia    Float?      // Asistencia del estudiante (0–100)
+  estado        estado_inscripcion @default(PENDIENTE)
+  fec_ins       DateTime    @default(now())
+  cert_enviado  Boolean  @default(false)
+}
+
+// ============================
+// ENUMS
+// ============================
 
 enum rol_usuario {
   ADMIN
-  ESTUDIANTE
+  ESTUDIANTE
+}
+
+enum tipo_evento {
+  CURSO
+  CONGRESO
+  WEBINAR
+  CHARLA
+  SOCIALIZACION
+  PUBLICO
+}
+
+enum estado_inscripcion {
+  PENDIENTE
+  ACEPTADA
+  RECHAZADA
+  FINALIZADA
 }
