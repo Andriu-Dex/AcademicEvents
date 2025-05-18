@@ -63,11 +63,12 @@ model inscripcion {
   usuario usuario @relation(fields: [id_usu], references: [id_usu])
   evento  evento  @relation(fields: [id_eve], references: [id_eve])
 
-  comprobante String? // Nombre del archivo subido (comprobante de pago o carta)
-  nota_final  Float? // Nota final del curso (si aplica)
-  asistencia  Float? // Asistencia del estudiante (0–100)
-  estado      estado_inscripcion @default(PENDIENTE)
-  fec_ins     DateTime           @default(now())
+  comprobante  String? // Nombre del archivo subido (comprobante de pago o carta)
+  nota_final   Float? // Nota final del curso (si aplica)
+  asistencia   Float? // Asistencia del estudiante (0–100)
+  estado       estado_inscripcion @default(PENDIENTE)
+  fec_ins      DateTime           @default(now())
+  cert_enviado Boolean            @default(false)
 }
 
 // ============================

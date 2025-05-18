@@ -68,6 +68,7 @@ model inscripcion {
   asistencia    Float?      // Asistencia del estudiante (0–100)
   estado        estado_inscripcion @default(PENDIENTE)
   fec_ins       DateTime    @default(now())
+  cert_enviado  Boolean  @default(false)
 }
 
 // ============================

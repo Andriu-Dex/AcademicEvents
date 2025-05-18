@@ -4744,6 +4744,7 @@ export namespace Prisma {
     asistencia: number | null
     estado: $Enums.estado_inscripcion | null
     fec_ins: Date | null
+    cert_enviado: boolean | null
   }
 
   export type InscripcionMaxAggregateOutputType = {
@@ -4755,6 +4756,7 @@ export namespace Prisma {
     asistencia: number | null
     estado: $Enums.estado_inscripcion | null
     fec_ins: Date | null
+    cert_enviado: boolean | null
   }
 
   export type InscripcionCountAggregateOutputType = {
@@ -4766,6 +4768,7 @@ export namespace Prisma {
     asistencia: number
     estado: number
     fec_ins: number
+    cert_enviado: number
     _all: number
   }
 
@@ -4789,6 +4792,7 @@ export namespace Prisma {
     asistencia?: true
     estado?: true
     fec_ins?: true
+    cert_enviado?: true
   }
 
   export type InscripcionMaxAggregateInputType = {
@@ -4800,6 +4804,7 @@ export namespace Prisma {
     asistencia?: true
     estado?: true
     fec_ins?: true
+    cert_enviado?: true
   }
 
   export type InscripcionCountAggregateInputType = {
@@ -4811,6 +4816,7 @@ export namespace Prisma {
     asistencia?: true
     estado?: true
     fec_ins?: true
+    cert_enviado?: true
     _all?: true
   }
 
@@ -4909,6 +4915,7 @@ export namespace Prisma {
     asistencia: number | null
     estado: $Enums.estado_inscripcion
     fec_ins: Date
+    cert_enviado: boolean
     _count: InscripcionCountAggregateOutputType | null
     _avg: InscripcionAvgAggregateOutputType | null
     _sum: InscripcionSumAggregateOutputType | null
@@ -4939,6 +4946,7 @@ export namespace Prisma {
     asistencia?: boolean
     estado?: boolean
     fec_ins?: boolean
+    cert_enviado?: boolean
     usuario?: boolean | usuarioDefaultArgs<ExtArgs>
     evento?: boolean | eventoDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["inscripcion"]>
@@ -4952,6 +4960,7 @@ export namespace Prisma {
     asistencia?: boolean
     estado?: boolean
     fec_ins?: boolean
+    cert_enviado?: boolean
     usuario?: boolean | usuarioDefaultArgs<ExtArgs>
     evento?: boolean | eventoDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["inscripcion"]>
@@ -4965,6 +4974,7 @@ export namespace Prisma {
     asistencia?: boolean
     estado?: boolean
     fec_ins?: boolean
+    cert_enviado?: boolean
     usuario?: boolean | usuarioDefaultArgs<ExtArgs>
     evento?: boolean | eventoDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["inscripcion"]>
@@ -4978,9 +4988,10 @@ export namespace Prisma {
     asistencia?: boolean
     estado?: boolean
     fec_ins?: boolean
+    cert_enviado?: boolean
   }
 
-  export type inscripcionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_ins" | "id_usu" | "id_eve" | "comprobante" | "nota_final" | "asistencia" | "estado" | "fec_ins", ExtArgs["result"]["inscripcion"]>
+  export type inscripcionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_ins" | "id_usu" | "id_eve" | "comprobante" | "nota_final" | "asistencia" | "estado" | "fec_ins" | "cert_enviado", ExtArgs["result"]["inscripcion"]>
   export type inscripcionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     usuario?: boolean | usuarioDefaultArgs<ExtArgs>
     evento?: boolean | eventoDefaultArgs<ExtArgs>
@@ -5009,6 +5020,7 @@ export namespace Prisma {
       asistencia: number | null
       estado: $Enums.estado_inscripcion
       fec_ins: Date
+      cert_enviado: boolean
     }, ExtArgs["result"]["inscripcion"]>
     composites: {}
   }
@@ -5442,6 +5454,7 @@ export namespace Prisma {
     readonly asistencia: FieldRef<"inscripcion", 'Float'>
     readonly estado: FieldRef<"inscripcion", 'estado_inscripcion'>
     readonly fec_ins: FieldRef<"inscripcion", 'DateTime'>
+    readonly cert_enviado: FieldRef<"inscripcion", 'Boolean'>
   }
     
 
@@ -5922,7 +5935,8 @@ export namespace Prisma {
     nota_final: 'nota_final',
     asistencia: 'asistencia',
     estado: 'estado',
-    fec_ins: 'fec_ins'
+    fec_ins: 'fec_ins',
+    cert_enviado: 'cert_enviado'
   };
 
   export type InscripcionScalarFieldEnum = (typeof InscripcionScalarFieldEnum)[keyof typeof InscripcionScalarFieldEnum]
@@ -6302,6 +6316,7 @@ export namespace Prisma {
     asistencia?: FloatNullableFilter<"inscripcion"> | number | null
     estado?: Enumestado_inscripcionFilter<"inscripcion"> | $Enums.estado_inscripcion
     fec_ins?: DateTimeFilter<"inscripcion"> | Date | string
+    cert_enviado?: BoolFilter<"inscripcion"> | boolean
     usuario?: XOR<UsuarioScalarRelationFilter, usuarioWhereInput>
     evento?: XOR<EventoScalarRelationFilter, eventoWhereInput>
   }
@@ -6315,6 +6330,7 @@ export namespace Prisma {
     asistencia?: SortOrderInput | SortOrder
     estado?: SortOrder
     fec_ins?: SortOrder
+    cert_enviado?: SortOrder
     usuario?: usuarioOrderByWithRelationInput
     evento?: eventoOrderByWithRelationInput
   }
@@ -6331,6 +6347,7 @@ export namespace Prisma {
     asistencia?: FloatNullableFilter<"inscripcion"> | number | null
     estado?: Enumestado_inscripcionFilter<"inscripcion"> | $Enums.estado_inscripcion
     fec_ins?: DateTimeFilter<"inscripcion"> | Date | string
+    cert_enviado?: BoolFilter<"inscripcion"> | boolean
     usuario?: XOR<UsuarioScalarRelationFilter, usuarioWhereInput>
     evento?: XOR<EventoScalarRelationFilter, eventoWhereInput>
   }, "id_ins">
@@ -6344,6 +6361,7 @@ export namespace Prisma {
     asistencia?: SortOrderInput | SortOrder
     estado?: SortOrder
     fec_ins?: SortOrder
+    cert_enviado?: SortOrder
     _count?: inscripcionCountOrderByAggregateInput
     _avg?: inscripcionAvgOrderByAggregateInput
     _max?: inscripcionMaxOrderByAggregateInput
@@ -6363,6 +6381,7 @@ export namespace Prisma {
     asistencia?: FloatNullableWithAggregatesFilter<"inscripcion"> | number | null
     estado?: Enumestado_inscripcionWithAggregatesFilter<"inscripcion"> | $Enums.estado_inscripcion
     fec_ins?: DateTimeWithAggregatesFilter<"inscripcion"> | Date | string
+    cert_enviado?: BoolWithAggregatesFilter<"inscripcion"> | boolean
   }
 
   export type usuarioCreateInput = {
@@ -6628,6 +6647,7 @@ export namespace Prisma {
     asistencia?: number | null
     estado?: $Enums.estado_inscripcion
     fec_ins?: Date | string
+    cert_enviado?: boolean
     usuario: usuarioCreateNestedOneWithoutInscripcionesInput
     evento: eventoCreateNestedOneWithoutInscripcionesInput
   }
@@ -6641,6 +6661,7 @@ export namespace Prisma {
     asistencia?: number | null
     estado?: $Enums.estado_inscripcion
     fec_ins?: Date | string
+    cert_enviado?: boolean
   }
 
   export type inscripcionUpdateInput = {
@@ -6650,6 +6671,7 @@ export namespace Prisma {
     asistencia?: NullableFloatFieldUpdateOperationsInput | number | null
     estado?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
+    cert_enviado?: BoolFieldUpdateOperationsInput | boolean
     usuario?: usuarioUpdateOneRequiredWithoutInscripcionesNestedInput
     evento?: eventoUpdateOneRequiredWithoutInscripcionesNestedInput
   }
@@ -6663,6 +6685,7 @@ export namespace Prisma {
     asistencia?: NullableFloatFieldUpdateOperationsInput | number | null
     estado?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
+    cert_enviado?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type inscripcionCreateManyInput = {
@@ -6674,6 +6697,7 @@ export namespace Prisma {
     asistencia?: number | null
     estado?: $Enums.estado_inscripcion
     fec_ins?: Date | string
+    cert_enviado?: boolean
   }
 
   export type inscripcionUpdateManyMutationInput = {
@@ -6683,6 +6707,7 @@ export namespace Prisma {
     asistencia?: NullableFloatFieldUpdateOperationsInput | number | null
     estado?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
+    cert_enviado?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type inscripcionUncheckedUpdateManyInput = {
@@ -6694,6 +6719,7 @@ export namespace Prisma {
     asistencia?: NullableFloatFieldUpdateOperationsInput | number | null
     estado?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
+    cert_enviado?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -7061,6 +7087,7 @@ export namespace Prisma {
     asistencia?: SortOrder
     estado?: SortOrder
     fec_ins?: SortOrder
+    cert_enviado?: SortOrder
   }
 
   export type inscripcionAvgOrderByAggregateInput = {
@@ -7077,6 +7104,7 @@ export namespace Prisma {
     asistencia?: SortOrder
     estado?: SortOrder
     fec_ins?: SortOrder
+    cert_enviado?: SortOrder
   }
 
   export type inscripcionMinOrderByAggregateInput = {
@@ -7088,6 +7116,7 @@ export namespace Prisma {
     asistencia?: SortOrder
     estado?: SortOrder
     fec_ins?: SortOrder
+    cert_enviado?: SortOrder
   }
 
   export type inscripcionSumOrderByAggregateInput = {
@@ -7553,6 +7582,7 @@ export namespace Prisma {
     asistencia?: number | null
     estado?: $Enums.estado_inscripcion
     fec_ins?: Date | string
+    cert_enviado?: boolean
     evento: eventoCreateNestedOneWithoutInscripcionesInput
   }
 
@@ -7564,6 +7594,7 @@ export namespace Prisma {
     asistencia?: number | null
     estado?: $Enums.estado_inscripcion
     fec_ins?: Date | string
+    cert_enviado?: boolean
   }
 
   export type inscripcionCreateOrConnectWithoutUsuarioInput = {
@@ -7604,6 +7635,7 @@ export namespace Prisma {
     asistencia?: FloatNullableFilter<"inscripcion"> | number | null
     estado?: Enumestado_inscripcionFilter<"inscripcion"> | $Enums.estado_inscripcion
     fec_ins?: DateTimeFilter<"inscripcion"> | Date | string
+    cert_enviado?: BoolFilter<"inscripcion"> | boolean
   }
 
   export type eventoCreateWithoutCarreraInput = {
@@ -7709,6 +7741,7 @@ export namespace Prisma {
     asistencia?: number | null
     estado?: $Enums.estado_inscripcion
     fec_ins?: Date | string
+    cert_enviado?: boolean
     usuario: usuarioCreateNestedOneWithoutInscripcionesInput
   }
 
@@ -7720,6 +7753,7 @@ export namespace Prisma {
     asistencia?: number | null
     estado?: $Enums.estado_inscripcion
     fec_ins?: Date | string
+    cert_enviado?: boolean
   }
 
   export type inscripcionCreateOrConnectWithoutEventoInput = {
@@ -7925,6 +7959,7 @@ export namespace Prisma {
     asistencia?: number | null
     estado?: $Enums.estado_inscripcion
     fec_ins?: Date | string
+    cert_enviado?: boolean
   }
 
   export type inscripcionUpdateWithoutUsuarioInput = {
@@ -7934,6 +7969,7 @@ export namespace Prisma {
     asistencia?: NullableFloatFieldUpdateOperationsInput | number | null
     estado?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
+    cert_enviado?: BoolFieldUpdateOperationsInput | boolean
     evento?: eventoUpdateOneRequiredWithoutInscripcionesNestedInput
   }
 
@@ -7945,6 +7981,7 @@ export namespace Prisma {
     asistencia?: NullableFloatFieldUpdateOperationsInput | number | null
     estado?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
+    cert_enviado?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type inscripcionUncheckedUpdateManyWithoutUsuarioInput = {
@@ -7955,6 +7992,7 @@ export namespace Prisma {
     asistencia?: NullableFloatFieldUpdateOperationsInput | number | null
     estado?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
+    cert_enviado?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type eventoCreateManyCarreraInput = {
@@ -8027,6 +8065,7 @@ export namespace Prisma {
     asistencia?: number | null
     estado?: $Enums.estado_inscripcion
     fec_ins?: Date | string
+    cert_enviado?: boolean
   }
 
   export type inscripcionUpdateWithoutEventoInput = {
@@ -8036,6 +8075,7 @@ export namespace Prisma {
     asistencia?: NullableFloatFieldUpdateOperationsInput | number | null
     estado?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
+    cert_enviado?: BoolFieldUpdateOperationsInput | boolean
     usuario?: usuarioUpdateOneRequiredWithoutInscripcionesNestedInput
   }
 
@@ -8047,6 +8087,7 @@ export namespace Prisma {
     asistencia?: NullableFloatFieldUpdateOperationsInput | number | null
     estado?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
+    cert_enviado?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type inscripcionUncheckedUpdateManyWithoutEventoInput = {
@@ -8057,6 +8098,7 @@ export namespace Prisma {
     asistencia?: NullableFloatFieldUpdateOperationsInput | number | null
     estado?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
+    cert_enviado?: BoolFieldUpdateOperationsInput | boolean
   }
 
 

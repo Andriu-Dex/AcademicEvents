@@ -163,7 +163,8 @@ exports.Prisma.InscripcionScalarFieldEnum = {
   nota_final: 'nota_final',
   asistencia: 'asistencia',
   estado: 'estado',
-  fec_ins: 'fec_ins'
+  fec_ins: 'fec_ins',
+  cert_enviado: 'cert_enviado'
 };
 
 exports.Prisma.SortOrder = {
