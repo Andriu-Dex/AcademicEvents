@@ -12,6 +12,9 @@ const EventsRoute = () => {
   const [eventos, setEventos] = useState([]);
   const [filtro, setFiltro] = useState("");
 
+  const [eventoSeleccionado, setEventoSeleccionado] = useState(null);
+  const [archivo, setArchivo] = useState(null);
+
   // Validación de sesión y obtención de eventos
   useEffect(() => {
     if (loading) return; // Esperar a que termine de cargar la sesión
@@ -37,6 +40,32 @@ const EventsRoute = () => {
 
     obtenerEventos(); // Llamada a la función
   }, [usuario, token, loading, navigate]);
+
+  const inscribirse = async () => {
+    if (!archivo) return toast.error("Debes subir un archivo PDF");
+
+    const formData = new FormData();
+    formData.append("id_usu", usuario.id);
+    formData.append("id_eve", eventoSeleccionado.id_eve);
+    formData.append("archivo", archivo);
+
+    try {
+      await axios.post("http://localhost:3000/api/inscripciones", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      toast.success("Inscripción enviada con éxito");
+      setEventoSeleccionado(null);
+      setArchivo(null);
+    } catch (error) {
+      toast.error(
+        error.response?.data?.msg || "Error al inscribirse en el evento"
+      );
+    }
+  };
 
   // Filtro en tiempo real
   const eventosFiltrados = eventos.filter((ev) =>
@@ -83,13 +112,48 @@ const EventsRoute = () => {
               )}
 
               <button
-                onClick={() => toast.info("Pronto: inscripción")}
+                onClick={() => setEventoSeleccionado(evento)}
                 className="mt-3 w-full bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
               >
                 Inscribirme
               </button>
             </div>
           ))}
+        </div>
+      )}
+
+      {eventoSeleccionado && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md relative">
+            <h2 className="text-xl font-bold mb-4">
+              Inscripción a: {eventoSeleccionado.nom_eve}
+            </h2>
+
+            <input
+              type="file"
+              accept="application/pdf"
+              onChange={(e) => setArchivo(e.target.files[0])}
+              className="w-full border p-2 mb-4"
+            />
+
+            <div className="flex justify-between">
+              <button
+                onClick={inscribirse}
+                className="bg-blue-600 text-white px-4 py-2 rounded"
+              >
+                Enviar inscripción
+              </button>
+              <button
+                onClick={() => {
+                  setEventoSeleccionado(null);
+                  setArchivo(null);
+                }}
+                className="text-gray-600 hover:text-black"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
