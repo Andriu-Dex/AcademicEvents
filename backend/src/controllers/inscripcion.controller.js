@@ -61,14 +61,30 @@ const crearInscripcion = async (req, res) => {
       return res.status(400).json({ msg: "Ya estás inscrito en este evento" });
     }
 
-    const nuevaInscripcion = await prisma.inscripcion.create({
-      data: {
-        id_usu,
-        id_eve,
-        comprobante: archivo.filename, // ← Guarda nombre del archivo
-        estado: "PENDIENTE",
-      },
-    });
+    try {
+      const nuevaInscripcion = await prisma.inscripcion.create({
+        data: {
+          id_usu,
+          id_eve,
+          comprobante: archivo.filename,
+          estado: "PENDIENTE",
+        },
+      });
+
+      res.status(201).json(nuevaInscripcion);
+    } catch (error) {
+      if (
+        error.code === "P2002" &&
+        error.meta?.target?.includes("id_usu_id_eve")
+      ) {
+        return res.status(400).json({
+          msg: "Ya existe una inscripción para este evento con este usuario",
+        });
+      }
+
+      // Otro tipo de error desconocido
+      throw error;
+    }
 
     res.status(201).json(nuevaInscripcion);
   } catch (error) {

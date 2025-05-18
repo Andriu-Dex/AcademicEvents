@@ -6337,6 +6337,7 @@ export namespace Prisma {
 
   export type inscripcionWhereUniqueInput = Prisma.AtLeast<{
     id_ins?: string
+    id_usu_id_eve?: inscripcionId_usuId_eveCompoundUniqueInput
     AND?: inscripcionWhereInput | inscripcionWhereInput[]
     OR?: inscripcionWhereInput[]
     NOT?: inscripcionWhereInput | inscripcionWhereInput[]
@@ -6350,7 +6351,7 @@ export namespace Prisma {
     cert_enviado?: BoolFilter<"inscripcion"> | boolean
     usuario?: XOR<UsuarioScalarRelationFilter, usuarioWhereInput>
     evento?: XOR<EventoScalarRelationFilter, eventoWhereInput>
-  }, "id_ins">
+  }, "id_ins" | "id_usu_id_eve">
 
   export type inscripcionOrderByWithAggregationInput = {
     id_ins?: SortOrder
@@ -7076,6 +7077,11 @@ export namespace Prisma {
   export type EventoScalarRelationFilter = {
     is?: eventoWhereInput
     isNot?: eventoWhereInput
+  }
+
+  export type inscripcionId_usuId_eveCompoundUniqueInput = {
+    id_usu: string
+    id_eve: string
   }
 
   export type inscripcionCountOrderByAggregateInput = {

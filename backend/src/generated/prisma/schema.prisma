@@ -69,6 +69,8 @@ model inscripcion {
   estado       estado_inscripcion @default(PENDIENTE)
   fec_ins      DateTime           @default(now())
   cert_enviado Boolean            @default(false)
+
+  @@unique([id_usu, id_eve])
 }
 
 // ============================
