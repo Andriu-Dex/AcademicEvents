@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./views/Login.jsx";
 import CertificatesRoute from "./routes/CertificatesRoute";
 import EventsRoute from "./routes/EventsRoute";
+import Register from "./views/Register";
 
 // Importación de ToastContainer y estilos para mostrar notificaciones tipo toast
 import { ToastContainer } from "react-toastify";
@@ -18,6 +19,9 @@ function App() {
 
           {/* Página de login */}
           <Route path="/login" element={<Login />} />
+
+          {/* Página de registro */}
+          <Route path="/registro" element={<Register />} />
 
           {/* Certificados disponibles para estudiantes */}
           <Route path="/certificados" element={<CertificatesRoute />} />

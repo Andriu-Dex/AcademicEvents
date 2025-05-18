@@ -129,7 +129,9 @@ exports.Prisma.UsuarioScalarFieldEnum = {
   con_usu: 'con_usu',
   cel_usu: 'cel_usu',
   rol_usu: 'rol_usu',
-  fec_cre_usu: 'fec_cre_usu'
+  fec_cre_usu: 'fec_cre_usu',
+  comprobante: 'comprobante',
+  carrera: 'carrera'
 };
 
 exports.Prisma.CarreraScalarFieldEnum = {
