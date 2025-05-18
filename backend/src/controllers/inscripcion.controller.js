@@ -5,12 +5,42 @@ const prisma = require("../config/db");
 // ==========================================
 const crearInscripcion = async (req, res) => {
   try {
-    const { id_usu, id_eve, comprobante } = req.body;
+    const { id_usu, id_eve } = req.body;
+    const archivo = req.file;
 
     if (!id_usu || !id_eve) {
       return res
         .status(400)
         .json({ msg: "Faltan campos obligatorios: id_usu o id_eve" });
+    }
+
+    if (!archivo) {
+      return res
+        .status(400)
+        .json({ msg: "Debe adjuntar un archivo PDF o imagen válida" });
+    }
+
+    // Validar tipo de archivo
+    const tiposPermitidos = [
+      "application/pdf",
+      "image/jpeg",
+      "image/jpg",
+      "image/png",
+      "image/webp",
+    ];
+
+    if (!tiposPermitidos.includes(archivo.mimetype)) {
+      return res.status(400).json({
+        msg: "Tipo de archivo no permitido. Solo se aceptan PDF o imágenes (JPG, PNG, WEBP)",
+      });
+    }
+
+    // Validar tamaño del archivo (máximo 5 MB)
+    const tamMaximo = 5 * 1024 * 1024; // 5MB
+    if (archivo.size > tamMaximo) {
+      return res.status(400).json({
+        msg: "El archivo excede el tamaño máximo permitido (5 MB)",
+      });
     }
 
     const usuario = await prisma.usuario.findUnique({ where: { id_usu } });
@@ -31,17 +61,34 @@ const crearInscripcion = async (req, res) => {
       return res.status(400).json({ msg: "Ya estás inscrito en este evento" });
     }
 
-    const nuevaInscripcion = await prisma.inscripcion.create({
-      data: {
-        id_usu,
-        id_eve,
-        comprobante,
-        estado: "PENDIENTE",
-      },
-    });
+    try {
+      const nuevaInscripcion = await prisma.inscripcion.create({
+        data: {
+          id_usu,
+          id_eve,
+          comprobante: archivo.filename,
+          estado: "PENDIENTE",
+        },
+      });
+
+      res.status(201).json(nuevaInscripcion);
+    } catch (error) {
+      if (
+        error.code === "P2002" &&
+        error.meta?.target?.includes("id_usu_id_eve")
+      ) {
+        return res.status(400).json({
+          msg: "Ya existe una inscripción para este evento con este usuario",
+        });
+      }
+
+      // Otro tipo de error desconocido
+      throw error;
+    }
 
     res.status(201).json(nuevaInscripcion);
   } catch (error) {
+    console.error("Error en crearInscripcion:", error);
     res.status(500).json({
       msg: "Error al inscribirse al evento",
       error: error.message,
@@ -196,12 +243,10 @@ const puedeGenerarCertificado = async (req, res) => {
       }
     }
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        msg: "Error al verificar elegibilidad de certificado",
-        error: error.message,
-      });
+    res.status(500).json({
+      msg: "Error al verificar elegibilidad de certificado",
+      error: error.message,
+    });
   }
 };
 
