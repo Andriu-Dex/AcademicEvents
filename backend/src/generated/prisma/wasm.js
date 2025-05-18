@@ -120,9 +120,93 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
+exports.Prisma.UsuarioScalarFieldEnum = {
+  id_usu: 'id_usu',
+  ced_usu: 'ced_usu',
+  nom_usu: 'nom_usu',
+  ape_usu: 'ape_usu',
+  cor_usu: 'cor_usu',
+  con_usu: 'con_usu',
+  cel_usu: 'cel_usu',
+  rol_usu: 'rol_usu',
+  fec_cre_usu: 'fec_cre_usu'
+};
+
+exports.Prisma.CarreraScalarFieldEnum = {
+  id_car: 'id_car',
+  nom_car: 'nom_car',
+  est_car: 'est_car',
+  fec_cre_car: 'fec_cre_car'
+};
+
+exports.Prisma.EventoScalarFieldEnum = {
+  id_eve: 'id_eve',
+  nom_eve: 'nom_eve',
+  des_eve: 'des_eve',
+  tip_eve: 'tip_eve',
+  fec_ini_eve: 'fec_ini_eve',
+  fec_fin_eve: 'fec_fin_eve',
+  dur_hrs_eve: 'dur_hrs_eve',
+  pagado_eve: 'pagado_eve',
+  nota_min_eve: 'nota_min_eve',
+  por_asist_eve: 'por_asist_eve',
+  est_eve: 'est_eve',
+  fec_cre_eve: 'fec_cre_eve',
+  carreraId: 'carreraId'
+};
+
+exports.Prisma.InscripcionScalarFieldEnum = {
+  id_ins: 'id_ins',
+  id_usu: 'id_usu',
+  id_eve: 'id_eve',
+  comprobante: 'comprobante',
+  nota_final: 'nota_final',
+  asistencia: 'asistencia',
+  estado: 'estado',
+  fec_ins: 'fec_ins',
+  cert_enviado: 'cert_enviado'
+};
+
+exports.Prisma.SortOrder = {
+  asc: 'asc',
+  desc: 'desc'
+};
+
+exports.Prisma.QueryMode = {
+  default: 'default',
+  insensitive: 'insensitive'
+};
+
+exports.Prisma.NullsOrder = {
+  first: 'first',
+  last: 'last'
+};
+exports.rol_usuario = exports.$Enums.rol_usuario = {
+  ADMIN: 'ADMIN',
+  ESTUDIANTE: 'ESTUDIANTE'
+};
+
+exports.tipo_evento = exports.$Enums.tipo_evento = {
+  CURSO: 'CURSO',
+  CONGRESO: 'CONGRESO',
+  WEBINAR: 'WEBINAR',
+  CHARLA: 'CHARLA',
+  SOCIALIZACION: 'SOCIALIZACION',
+  PUBLICO: 'PUBLICO'
+};
+
+exports.estado_inscripcion = exports.$Enums.estado_inscripcion = {
+  PENDIENTE: 'PENDIENTE',
+  ACEPTADA: 'ACEPTADA',
+  RECHAZADA: 'RECHAZADA',
+  FINALIZADA: 'FINALIZADA'
+};
 
 exports.Prisma.ModelName = {
-
+  usuario: 'usuario',
+  carrera: 'carrera',
+  evento: 'evento',
+  inscripcion: 'inscripcion'
 };
 
 /**

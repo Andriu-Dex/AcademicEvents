@@ -92,9 +92,93 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
+exports.Prisma.UsuarioScalarFieldEnum = {
+  id_usu: 'id_usu',
+  ced_usu: 'ced_usu',
+  nom_usu: 'nom_usu',
+  ape_usu: 'ape_usu',
+  cor_usu: 'cor_usu',
+  con_usu: 'con_usu',
+  cel_usu: 'cel_usu',
+  rol_usu: 'rol_usu',
+  fec_cre_usu: 'fec_cre_usu'
+};
+
+exports.Prisma.CarreraScalarFieldEnum = {
+  id_car: 'id_car',
+  nom_car: 'nom_car',
+  est_car: 'est_car',
+  fec_cre_car: 'fec_cre_car'
+};
+
+exports.Prisma.EventoScalarFieldEnum = {
+  id_eve: 'id_eve',
+  nom_eve: 'nom_eve',
+  des_eve: 'des_eve',
+  tip_eve: 'tip_eve',
+  fec_ini_eve: 'fec_ini_eve',
+  fec_fin_eve: 'fec_fin_eve',
+  dur_hrs_eve: 'dur_hrs_eve',
+  pagado_eve: 'pagado_eve',
+  nota_min_eve: 'nota_min_eve',
+  por_asist_eve: 'por_asist_eve',
+  est_eve: 'est_eve',
+  fec_cre_eve: 'fec_cre_eve',
+  carreraId: 'carreraId'
+};
+
+exports.Prisma.InscripcionScalarFieldEnum = {
+  id_ins: 'id_ins',
+  id_usu: 'id_usu',
+  id_eve: 'id_eve',
+  comprobante: 'comprobante',
+  nota_final: 'nota_final',
+  asistencia: 'asistencia',
+  estado: 'estado',
+  fec_ins: 'fec_ins',
+  cert_enviado: 'cert_enviado'
+};
+
+exports.Prisma.SortOrder = {
+  asc: 'asc',
+  desc: 'desc'
+};
+
+exports.Prisma.QueryMode = {
+  default: 'default',
+  insensitive: 'insensitive'
+};
+
+exports.Prisma.NullsOrder = {
+  first: 'first',
+  last: 'last'
+};
+exports.rol_usuario = exports.$Enums.rol_usuario = {
+  ADMIN: 'ADMIN',
+  ESTUDIANTE: 'ESTUDIANTE'
+};
+
+exports.tipo_evento = exports.$Enums.tipo_evento = {
+  CURSO: 'CURSO',
+  CONGRESO: 'CONGRESO',
+  WEBINAR: 'WEBINAR',
+  CHARLA: 'CHARLA',
+  SOCIALIZACION: 'SOCIALIZACION',
+  PUBLICO: 'PUBLICO'
+};
+
+exports.estado_inscripcion = exports.$Enums.estado_inscripcion = {
+  PENDIENTE: 'PENDIENTE',
+  ACEPTADA: 'ACEPTADA',
+  RECHAZADA: 'RECHAZADA',
+  FINALIZADA: 'FINALIZADA'
+};
 
 exports.Prisma.ModelName = {
-
+  usuario: 'usuario',
+  carrera: 'carrera',
+  evento: 'evento',
+  inscripcion: 'inscripcion'
 };
 /**
  * Create the Client
@@ -143,13 +227,13 @@ const config = {
       }
     }
   },
-  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n",
-  "inlineSchemaHash": "f4defb510352aeb258e32fd0e4e744b44176032e921a554a415dd34c135bd53c",
+  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\n// ============================\n// MODELOS PRINCIPALES\n// ============================\n\nmodel usuario {\n  id_usu      String      @id @default(uuid())\n  ced_usu     String      @unique\n  nom_usu     String\n  ape_usu     String\n  cor_usu     String      @unique\n  con_usu     String\n  cel_usu     String      @db.Char(10) // Solo 10 caracteres exactos\n  rol_usu     rol_usuario\n  fec_cre_usu DateTime    @default(now())\n\n  inscripciones inscripcion[] // Un usuario puede tener muchas inscripciones\n}\n\nmodel carrera {\n  id_car      String   @id @default(uuid())\n  nom_car     String   @unique\n  est_car     Boolean  @default(true)\n  fec_cre_car DateTime @default(now())\n\n  eventos evento[] // Una carrera puede tener varios eventos\n}\n\nmodel evento {\n  id_eve        String      @id @default(uuid())\n  nom_eve       String\n  des_eve       String?\n  tip_eve       tipo_evento\n  fec_ini_eve   DateTime\n  fec_fin_eve   DateTime\n  dur_hrs_eve   Int\n  pagado_eve    Boolean     @default(false)\n  nota_min_eve  Float? // Solo si es curso\n  por_asist_eve Float? // Solo si es curso, asistencia requerida (0–100)\n  est_eve       Boolean     @default(true)\n  fec_cre_eve   DateTime    @default(now())\n\n  carreraId String?\n  carrera   carrera? @relation(fields: [carreraId], references: [id_car])\n\n  inscripciones inscripcion[]\n}\n\nmodel inscripcion {\n  id_ins String @id @default(uuid())\n  id_usu String\n  id_eve String\n\n  usuario usuario @relation(fields: [id_usu], references: [id_usu])\n  evento  evento  @relation(fields: [id_eve], references: [id_eve])\n\n  comprobante  String? // Nombre del archivo subido (comprobante de pago o carta)\n  nota_final   Float? // Nota final del curso (si aplica)\n  asistencia   Float? // Asistencia del estudiante (0–100)\n  estado       estado_inscripcion @default(PENDIENTE)\n  fec_ins      DateTime           @default(now())\n  cert_enviado Boolean            @default(false)\n}\n\n// ============================\n// ENUMS\n// ============================\n\nenum rol_usuario {\n  ADMIN\n  ESTUDIANTE\n}\n\nenum tipo_evento {\n  CURSO\n  CONGRESO\n  WEBINAR\n  CHARLA\n  SOCIALIZACION\n  PUBLICO\n}\n\nenum estado_inscripcion {\n  PENDIENTE\n  ACEPTADA\n  RECHAZADA\n  FINALIZADA\n}\n",
+  "inlineSchemaHash": "13c32d6eb9ebcbd38f0d2e2dfe86c65ee6922fcf6a3acc3d473309eec862b7fb",
   "copyEngine": true
 }
 config.dirname = '/'
 
-config.runtimeDataModel = JSON.parse("{\"models\":{},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"usuario\":{\"dbName\":null,\"schema\":null,\"fields\":[{\"name\":\"id_usu\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":true,\"isReadOnly\":false,\"hasDefaultValue\":true,\"type\":\"String\",\"nativeType\":null,\"default\":{\"name\":\"uuid\",\"args\":[4]},\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"ced_usu\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":true,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"String\",\"nativeType\":null,\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"nom_usu\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"String\",\"nativeType\":null,\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"ape_usu\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"String\",\"nativeType\":null,\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"cor_usu\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":true,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"String\",\"nativeType\":null,\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"con_usu\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"String\",\"nativeType\":null,\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"cel_usu\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"String\",\"nativeType\":[\"Char\",[\"10\"]],\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"rol_usu\",\"kind\":\"enum\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"rol_usuario\",\"nativeType\":null,\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"fec_cre_usu\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":true,\"type\":\"DateTime\",\"nativeType\":null,\"default\":{\"name\":\"now\",\"args\":[]},\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"inscripciones\",\"kind\":\"object\",\"isList\":true,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"inscripcion\",\"nativeType\":null,\"relationName\":\"inscripcionTousuario\",\"relationFromFields\":[],\"relationToFields\":[],\"isGenerated\":false,\"isUpdatedAt\":false}],\"primaryKey\":null,\"uniqueFields\":[],\"uniqueIndexes\":[],\"isGenerated\":false},\"carrera\":{\"dbName\":null,\"schema\":null,\"fields\":[{\"name\":\"id_car\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":true,\"isReadOnly\":false,\"hasDefaultValue\":true,\"type\":\"String\",\"nativeType\":null,\"default\":{\"name\":\"uuid\",\"args\":[4]},\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"nom_car\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":true,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"String\",\"nativeType\":null,\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"est_car\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":true,\"type\":\"Boolean\",\"nativeType\":null,\"default\":true,\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"fec_cre_car\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":true,\"type\":\"DateTime\",\"nativeType\":null,\"default\":{\"name\":\"now\",\"args\":[]},\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"eventos\",\"kind\":\"object\",\"isList\":true,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"evento\",\"nativeType\":null,\"relationName\":\"carreraToevento\",\"relationFromFields\":[],\"relationToFields\":[],\"isGenerated\":false,\"isUpdatedAt\":false}],\"primaryKey\":null,\"uniqueFields\":[],\"uniqueIndexes\":[],\"isGenerated\":false},\"evento\":{\"dbName\":null,\"schema\":null,\"fields\":[{\"name\":\"id_eve\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":true,\"isReadOnly\":false,\"hasDefaultValue\":true,\"type\":\"String\",\"nativeType\":null,\"default\":{\"name\":\"uuid\",\"args\":[4]},\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"nom_eve\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"String\",\"nativeType\":null,\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"des_eve\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":false,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"String\",\"nativeType\":null,\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"tip_eve\",\"kind\":\"enum\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"tipo_evento\",\"nativeType\":null,\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"fec_ini_eve\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"DateTime\",\"nativeType\":null,\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"fec_fin_eve\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"DateTime\",\"nativeType\":null,\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"dur_hrs_eve\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"Int\",\"nativeType\":null,\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"pagado_eve\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":true,\"type\":\"Boolean\",\"nativeType\":null,\"default\":false,\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"nota_min_eve\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":false,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"Float\",\"nativeType\":null,\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"por_asist_eve\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":false,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"Float\",\"nativeType\":null,\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"est_eve\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":true,\"type\":\"Boolean\",\"nativeType\":null,\"default\":true,\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"fec_cre_eve\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":true,\"type\":\"DateTime\",\"nativeType\":null,\"default\":{\"name\":\"now\",\"args\":[]},\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"carreraId\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":false,\"isUnique\":false,\"isId\":false,\"isReadOnly\":true,\"hasDefaultValue\":false,\"type\":\"String\",\"nativeType\":null,\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"carrera\",\"kind\":\"object\",\"isList\":false,\"isRequired\":false,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"carrera\",\"nativeType\":null,\"relationName\":\"carreraToevento\",\"relationFromFields\":[\"carreraId\"],\"relationToFields\":[\"id_car\"],\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"inscripciones\",\"kind\":\"object\",\"isList\":true,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"inscripcion\",\"nativeType\":null,\"relationName\":\"eventoToinscripcion\",\"relationFromFields\":[],\"relationToFields\":[],\"isGenerated\":false,\"isUpdatedAt\":false}],\"primaryKey\":null,\"uniqueFields\":[],\"uniqueIndexes\":[],\"isGenerated\":false},\"inscripcion\":{\"dbName\":null,\"schema\":null,\"fields\":[{\"name\":\"id_ins\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":true,\"isReadOnly\":false,\"hasDefaultValue\":true,\"type\":\"String\",\"nativeType\":null,\"default\":{\"name\":\"uuid\",\"args\":[4]},\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"id_usu\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":true,\"hasDefaultValue\":false,\"type\":\"String\",\"nativeType\":null,\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"id_eve\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":true,\"hasDefaultValue\":false,\"type\":\"String\",\"nativeType\":null,\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"usuario\",\"kind\":\"object\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"usuario\",\"nativeType\":null,\"relationName\":\"inscripcionTousuario\",\"relationFromFields\":[\"id_usu\"],\"relationToFields\":[\"id_usu\"],\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"evento\",\"kind\":\"object\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"evento\",\"nativeType\":null,\"relationName\":\"eventoToinscripcion\",\"relationFromFields\":[\"id_eve\"],\"relationToFields\":[\"id_eve\"],\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"comprobante\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":false,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"String\",\"nativeType\":null,\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"nota_final\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":false,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"Float\",\"nativeType\":null,\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"asistencia\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":false,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"Float\",\"nativeType\":null,\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"estado\",\"kind\":\"enum\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":true,\"type\":\"estado_inscripcion\",\"nativeType\":null,\"default\":\"PENDIENTE\",\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"fec_ins\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":true,\"type\":\"DateTime\",\"nativeType\":null,\"default\":{\"name\":\"now\",\"args\":[]},\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"cert_enviado\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":true,\"type\":\"Boolean\",\"nativeType\":null,\"default\":false,\"isGenerated\":false,\"isUpdatedAt\":false}],\"primaryKey\":null,\"uniqueFields\":[],\"uniqueIndexes\":[],\"isGenerated\":false}},\"enums\":{\"rol_usuario\":{\"values\":[{\"name\":\"ADMIN\",\"dbName\":null},{\"name\":\"ESTUDIANTE\",\"dbName\":null}],\"dbName\":null},\"tipo_evento\":{\"values\":[{\"name\":\"CURSO\",\"dbName\":null},{\"name\":\"CONGRESO\",\"dbName\":null},{\"name\":\"WEBINAR\",\"dbName\":null},{\"name\":\"CHARLA\",\"dbName\":null},{\"name\":\"SOCIALIZACION\",\"dbName\":null},{\"name\":\"PUBLICO\",\"dbName\":null}],\"dbName\":null},\"estado_inscripcion\":{\"values\":[{\"name\":\"PENDIENTE\",\"dbName\":null},{\"name\":\"ACEPTADA\",\"dbName\":null},{\"name\":\"RECHAZADA\",\"dbName\":null},{\"name\":\"FINALIZADA\",\"dbName\":null}],\"dbName\":null}},\"types\":{}}")
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
 config.engineWasm = undefined
 config.compilerWasm = undefined
