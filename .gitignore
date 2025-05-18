@@ -4,8 +4,7 @@
 
 # Ignora las carpetas node_modules que contienen las dependencias instaladas por npm o yarn.
 # Estas pueden regenerarse ejecutando `npm install` o `yarn install`, por lo tanto no deben incluirse en el control de versiones.
-node_modules/
-frontend/node_modules/
+**/node_modules/
 
 ##################################
 # Ignorar archivos de entorno

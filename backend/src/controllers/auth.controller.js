@@ -9,6 +9,7 @@ const login = async (req, res) => {
     const user = await prisma.usuario.findUnique({
       where: { cor_usu: correo },
     });
+
     if (!user || user.rol_usu !== "ESTUDIANTE") {
       return res.status(401).json({ msg: "Credenciales inválidas" });
     }

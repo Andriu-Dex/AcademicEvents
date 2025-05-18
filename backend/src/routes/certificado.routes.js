@@ -1,26 +1,38 @@
 const express = require("express");
 const router = express.Router();
 
-const { generarCertificado } = require("../controllers/certificado.controller");
-
-// ============================
-// Ruta para descargar certificado académico
-// ============================
-
-// Generar y descargar el certificado en formato PDF
-// Endpoint: GET /api/certificados/:id
-// Requiere: ID de la inscripción
-router.get("/certificados/:id", generarCertificado);
-
+// Controladores
 const {
   generarCertificado,
   enviarCertificadoPorCorreo,
 } = require("../controllers/certificado.controller");
 
-// Descargar certificado (PDF en navegador)
-router.get("/certificados/:id", generarCertificado);
+// Middlewares
+const verificarToken = require("../middlewares/auth");
+const verificarPropietario = require("../middlewares/verificarPropietarioCertificado");
 
-// Enviar certificado por correo (PDF adjunto)
-router.post("/certificados/enviar/:id", enviarCertificadoPorCorreo);
+// ============================
+// Rutas protegidas de certificados
+// ============================
+
+// Descargar certificado (PDF en navegador)
+// Endpoint: GET /api/certificados/:id
+// Requiere token válido y que el usuario sea dueño de la inscripción
+router.get(
+  "/certificados/:id",
+  verificarToken,
+  verificarPropietario,
+  generarCertificado
+);
+
+// Enviar certificado por correo (PDF adjunto por email)
+// Endpoint: POST /api/certificados/enviar/:id
+// Requiere token y propiedad sobre el certificado
+router.post(
+  "/certificados/enviar/:id",
+  verificarToken,
+  verificarPropietario,
+  enviarCertificadoPorCorreo
+);
 
 module.exports = router;
