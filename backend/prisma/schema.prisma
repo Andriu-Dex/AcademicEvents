@@ -22,6 +22,8 @@ model usuario {
   cel_usu      String      @db.Char(10) // Solo 10 caracteres exactos
   rol_usu      rol_usuario
   fec_cre_usu  DateTime    @default(now())
+  comprobante  String?  //Nombre del archivo
+  carrera      String?
 
   inscripciones inscripcion[] // Un usuario puede tener muchas inscripciones
 }

@@ -4,7 +4,8 @@ import axios from "axios"; // Cliente HTTP
 import { useNavigate } from "react-router-dom"; // Navegación programática
 import { toast } from "react-toastify"; // Notificaciones tipo toast
 import { useAuth } from "../hooks/useAuth"; // Hook personalizado de autenticación
-import { Eye, EyeOff } from "lucide-react"; // Íconos para mostrar/ocultar contraseña
+import { Eye, EyeOff, Lock, AtSign } from "lucide-react"; // Íconos para mostrar/ocultar contraseña
+import { Link } from "react-router-dom";
 
 // Componente principal de Login
 const Login = () => {
@@ -267,7 +268,9 @@ const Login = () => {
                 Correo electrónico
               </label>
               <div className="input-group">
-                <span className="input-group-text">@</span>
+                <span className="input-group-text">
+                  <AtSign size={18} color="#ffffff" />
+                </span>
                 <input
                   type="email"
                   className="form-control py-2"
@@ -285,7 +288,10 @@ const Login = () => {
                 Contraseña
               </label>
               <div className="input-group">
-                <span className="input-group-text">🔒</span>
+                {/* <span className="input-group-text">🔒</span> */}
+                <span className="input-group-text">
+                  <Lock size={18} strokeWidth={1.8} className="text-gray-700" />
+                </span>
                 <input
                   type={showPassword ? "text" : "password"} // Alterna tipo input
                   className="form-control py-2"
@@ -302,7 +308,11 @@ const Login = () => {
                   style={{ border: "none", background: "transparent" }}
                   tabIndex={-1}
                 >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  {showPassword ? (
+                    <EyeOff size={18} color="#323232" />
+                  ) : (
+                    <Eye size={18} color="#323232" />
+                  )}
                 </button>
               </div>
             </div>
@@ -338,6 +348,13 @@ const Login = () => {
               )}
             </button>
           </form>
+          <p className="mt-3 text-sm text-center">
+            ¿No tienes cuenta?{" "}
+            <Link to="/registro" className="text-blue-600 hover:underline">
+              Regístrate
+            </Link>
+          </p>
+
           <div
             className="mt-4 text-center"
             style={{

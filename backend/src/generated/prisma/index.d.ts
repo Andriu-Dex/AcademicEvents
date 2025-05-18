@@ -1301,6 +1301,8 @@ export namespace Prisma {
     cel_usu: string | null
     rol_usu: $Enums.rol_usuario | null
     fec_cre_usu: Date | null
+    comprobante: string | null
+    carrera: string | null
   }
 
   export type UsuarioMaxAggregateOutputType = {
@@ -1313,6 +1315,8 @@ export namespace Prisma {
     cel_usu: string | null
     rol_usu: $Enums.rol_usuario | null
     fec_cre_usu: Date | null
+    comprobante: string | null
+    carrera: string | null
   }
 
   export type UsuarioCountAggregateOutputType = {
@@ -1325,6 +1329,8 @@ export namespace Prisma {
     cel_usu: number
     rol_usu: number
     fec_cre_usu: number
+    comprobante: number
+    carrera: number
     _all: number
   }
 
@@ -1339,6 +1345,8 @@ export namespace Prisma {
     cel_usu?: true
     rol_usu?: true
     fec_cre_usu?: true
+    comprobante?: true
+    carrera?: true
   }
 
   export type UsuarioMaxAggregateInputType = {
@@ -1351,6 +1359,8 @@ export namespace Prisma {
     cel_usu?: true
     rol_usu?: true
     fec_cre_usu?: true
+    comprobante?: true
+    carrera?: true
   }
 
   export type UsuarioCountAggregateInputType = {
@@ -1363,6 +1373,8 @@ export namespace Prisma {
     cel_usu?: true
     rol_usu?: true
     fec_cre_usu?: true
+    comprobante?: true
+    carrera?: true
     _all?: true
   }
 
@@ -1448,6 +1460,8 @@ export namespace Prisma {
     cel_usu: string
     rol_usu: $Enums.rol_usuario
     fec_cre_usu: Date
+    comprobante: string | null
+    carrera: string | null
     _count: UsuarioCountAggregateOutputType | null
     _min: UsuarioMinAggregateOutputType | null
     _max: UsuarioMaxAggregateOutputType | null
@@ -1477,6 +1491,8 @@ export namespace Prisma {
     cel_usu?: boolean
     rol_usu?: boolean
     fec_cre_usu?: boolean
+    comprobante?: boolean
+    carrera?: boolean
     inscripciones?: boolean | usuario$inscripcionesArgs<ExtArgs>
     _count?: boolean | UsuarioCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["usuario"]>
@@ -1491,6 +1507,8 @@ export namespace Prisma {
     cel_usu?: boolean
     rol_usu?: boolean
     fec_cre_usu?: boolean
+    comprobante?: boolean
+    carrera?: boolean
   }, ExtArgs["result"]["usuario"]>
 
   export type usuarioSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -1503,6 +1521,8 @@ export namespace Prisma {
     cel_usu?: boolean
     rol_usu?: boolean
     fec_cre_usu?: boolean
+    comprobante?: boolean
+    carrera?: boolean
   }, ExtArgs["result"]["usuario"]>
 
   export type usuarioSelectScalar = {
@@ -1515,9 +1535,11 @@ export namespace Prisma {
     cel_usu?: boolean
     rol_usu?: boolean
     fec_cre_usu?: boolean
+    comprobante?: boolean
+    carrera?: boolean
   }
 
-  export type usuarioOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_usu" | "ced_usu" | "nom_usu" | "ape_usu" | "cor_usu" | "con_usu" | "cel_usu" | "rol_usu" | "fec_cre_usu", ExtArgs["result"]["usuario"]>
+  export type usuarioOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_usu" | "ced_usu" | "nom_usu" | "ape_usu" | "cor_usu" | "con_usu" | "cel_usu" | "rol_usu" | "fec_cre_usu" | "comprobante" | "carrera", ExtArgs["result"]["usuario"]>
   export type usuarioInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     inscripciones?: boolean | usuario$inscripcionesArgs<ExtArgs>
     _count?: boolean | UsuarioCountOutputTypeDefaultArgs<ExtArgs>
@@ -1540,6 +1562,8 @@ export namespace Prisma {
       cel_usu: string
       rol_usu: $Enums.rol_usuario
       fec_cre_usu: Date
+      comprobante: string | null
+      carrera: string | null
     }, ExtArgs["result"]["usuario"]>
     composites: {}
   }
@@ -1973,6 +1997,8 @@ export namespace Prisma {
     readonly cel_usu: FieldRef<"usuario", 'String'>
     readonly rol_usu: FieldRef<"usuario", 'rol_usuario'>
     readonly fec_cre_usu: FieldRef<"usuario", 'DateTime'>
+    readonly comprobante: FieldRef<"usuario", 'String'>
+    readonly carrera: FieldRef<"usuario", 'String'>
   }
     
 
@@ -5892,7 +5918,9 @@ export namespace Prisma {
     con_usu: 'con_usu',
     cel_usu: 'cel_usu',
     rol_usu: 'rol_usu',
-    fec_cre_usu: 'fec_cre_usu'
+    fec_cre_usu: 'fec_cre_usu',
+    comprobante: 'comprobante',
+    carrera: 'carrera'
   };
 
   export type UsuarioScalarFieldEnum = (typeof UsuarioScalarFieldEnum)[keyof typeof UsuarioScalarFieldEnum]
@@ -6092,6 +6120,8 @@ export namespace Prisma {
     cel_usu?: StringFilter<"usuario"> | string
     rol_usu?: Enumrol_usuarioFilter<"usuario"> | $Enums.rol_usuario
     fec_cre_usu?: DateTimeFilter<"usuario"> | Date | string
+    comprobante?: StringNullableFilter<"usuario"> | string | null
+    carrera?: StringNullableFilter<"usuario"> | string | null
     inscripciones?: InscripcionListRelationFilter
   }
 
@@ -6105,6 +6135,8 @@ export namespace Prisma {
     cel_usu?: SortOrder
     rol_usu?: SortOrder
     fec_cre_usu?: SortOrder
+    comprobante?: SortOrderInput | SortOrder
+    carrera?: SortOrderInput | SortOrder
     inscripciones?: inscripcionOrderByRelationAggregateInput
   }
 
@@ -6121,6 +6153,8 @@ export namespace Prisma {
     cel_usu?: StringFilter<"usuario"> | string
     rol_usu?: Enumrol_usuarioFilter<"usuario"> | $Enums.rol_usuario
     fec_cre_usu?: DateTimeFilter<"usuario"> | Date | string
+    comprobante?: StringNullableFilter<"usuario"> | string | null
+    carrera?: StringNullableFilter<"usuario"> | string | null
     inscripciones?: InscripcionListRelationFilter
   }, "id_usu" | "ced_usu" | "cor_usu">
 
@@ -6134,6 +6168,8 @@ export namespace Prisma {
     cel_usu?: SortOrder
     rol_usu?: SortOrder
     fec_cre_usu?: SortOrder
+    comprobante?: SortOrderInput | SortOrder
+    carrera?: SortOrderInput | SortOrder
     _count?: usuarioCountOrderByAggregateInput
     _max?: usuarioMaxOrderByAggregateInput
     _min?: usuarioMinOrderByAggregateInput
@@ -6152,6 +6188,8 @@ export namespace Prisma {
     cel_usu?: StringWithAggregatesFilter<"usuario"> | string
     rol_usu?: Enumrol_usuarioWithAggregatesFilter<"usuario"> | $Enums.rol_usuario
     fec_cre_usu?: DateTimeWithAggregatesFilter<"usuario"> | Date | string
+    comprobante?: StringNullableWithAggregatesFilter<"usuario"> | string | null
+    carrera?: StringNullableWithAggregatesFilter<"usuario"> | string | null
   }
 
   export type carreraWhereInput = {
@@ -6395,6 +6433,8 @@ export namespace Prisma {
     cel_usu: string
     rol_usu: $Enums.rol_usuario
     fec_cre_usu?: Date | string
+    comprobante?: string | null
+    carrera?: string | null
     inscripciones?: inscripcionCreateNestedManyWithoutUsuarioInput
   }
 
@@ -6408,6 +6448,8 @@ export namespace Prisma {
     cel_usu: string
     rol_usu: $Enums.rol_usuario
     fec_cre_usu?: Date | string
+    comprobante?: string | null
+    carrera?: string | null
     inscripciones?: inscripcionUncheckedCreateNestedManyWithoutUsuarioInput
   }
 
@@ -6421,6 +6463,8 @@ export namespace Prisma {
     cel_usu?: StringFieldUpdateOperationsInput | string
     rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
     fec_cre_usu?: DateTimeFieldUpdateOperationsInput | Date | string
+    comprobante?: NullableStringFieldUpdateOperationsInput | string | null
+    carrera?: NullableStringFieldUpdateOperationsInput | string | null
     inscripciones?: inscripcionUpdateManyWithoutUsuarioNestedInput
   }
 
@@ -6434,6 +6478,8 @@ export namespace Prisma {
     cel_usu?: StringFieldUpdateOperationsInput | string
     rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
     fec_cre_usu?: DateTimeFieldUpdateOperationsInput | Date | string
+    comprobante?: NullableStringFieldUpdateOperationsInput | string | null
+    carrera?: NullableStringFieldUpdateOperationsInput | string | null
     inscripciones?: inscripcionUncheckedUpdateManyWithoutUsuarioNestedInput
   }
 
@@ -6447,6 +6493,8 @@ export namespace Prisma {
     cel_usu: string
     rol_usu: $Enums.rol_usuario
     fec_cre_usu?: Date | string
+    comprobante?: string | null
+    carrera?: string | null
   }
 
   export type usuarioUpdateManyMutationInput = {
@@ -6459,6 +6507,8 @@ export namespace Prisma {
     cel_usu?: StringFieldUpdateOperationsInput | string
     rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
     fec_cre_usu?: DateTimeFieldUpdateOperationsInput | Date | string
+    comprobante?: NullableStringFieldUpdateOperationsInput | string | null
+    carrera?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type usuarioUncheckedUpdateManyInput = {
@@ -6471,6 +6521,8 @@ export namespace Prisma {
     cel_usu?: StringFieldUpdateOperationsInput | string
     rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
     fec_cre_usu?: DateTimeFieldUpdateOperationsInput | Date | string
+    comprobante?: NullableStringFieldUpdateOperationsInput | string | null
+    carrera?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type carreraCreateInput = {
@@ -6756,10 +6808,30 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
+  export type StringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
   export type InscripcionListRelationFilter = {
     every?: inscripcionWhereInput
     some?: inscripcionWhereInput
     none?: inscripcionWhereInput
+  }
+
+  export type SortOrderInput = {
+    sort: SortOrder
+    nulls?: NullsOrder
   }
 
   export type inscripcionOrderByRelationAggregateInput = {
@@ -6776,6 +6848,8 @@ export namespace Prisma {
     cel_usu?: SortOrder
     rol_usu?: SortOrder
     fec_cre_usu?: SortOrder
+    comprobante?: SortOrder
+    carrera?: SortOrder
   }
 
   export type usuarioMaxOrderByAggregateInput = {
@@ -6788,6 +6862,8 @@ export namespace Prisma {
     cel_usu?: SortOrder
     rol_usu?: SortOrder
     fec_cre_usu?: SortOrder
+    comprobante?: SortOrder
+    carrera?: SortOrder
   }
 
   export type usuarioMinOrderByAggregateInput = {
@@ -6800,6 +6876,8 @@ export namespace Prisma {
     cel_usu?: SortOrder
     rol_usu?: SortOrder
     fec_cre_usu?: SortOrder
+    comprobante?: SortOrder
+    carrera?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -6842,6 +6920,24 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
+  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type BoolFilter<$PrismaModel = never> = {
@@ -6888,21 +6984,6 @@ export namespace Prisma {
     _max?: NestedBoolFilter<$PrismaModel>
   }
 
-  export type StringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
-  }
-
   export type Enumtipo_eventoFilter<$PrismaModel = never> = {
     equals?: $Enums.tipo_evento | Enumtipo_eventoFieldRefInput<$PrismaModel>
     in?: $Enums.tipo_evento[] | ListEnumtipo_eventoFieldRefInput<$PrismaModel>
@@ -6935,11 +7016,6 @@ export namespace Prisma {
   export type CarreraNullableScalarRelationFilter = {
     is?: carreraWhereInput | null
     isNot?: carreraWhereInput | null
-  }
-
-  export type SortOrderInput = {
-    sort: SortOrder
-    nulls?: NullsOrder
   }
 
   export type eventoCountOrderByAggregateInput = {
@@ -7000,24 +7076,6 @@ export namespace Prisma {
     dur_hrs_eve?: SortOrder
     nota_min_eve?: SortOrder
     por_asist_eve?: SortOrder
-  }
-
-  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type Enumtipo_eventoWithAggregatesFilter<$PrismaModel = never> = {
@@ -7166,6 +7224,10 @@ export namespace Prisma {
     set?: Date | string
   }
 
+  export type NullableStringFieldUpdateOperationsInput = {
+    set?: string | null
+  }
+
   export type inscripcionUpdateManyWithoutUsuarioNestedInput = {
     create?: XOR<inscripcionCreateWithoutUsuarioInput, inscripcionUncheckedCreateWithoutUsuarioInput> | inscripcionCreateWithoutUsuarioInput[] | inscripcionUncheckedCreateWithoutUsuarioInput[]
     connectOrCreate?: inscripcionCreateOrConnectWithoutUsuarioInput | inscripcionCreateOrConnectWithoutUsuarioInput[]
@@ -7258,10 +7320,6 @@ export namespace Prisma {
     connectOrCreate?: inscripcionCreateOrConnectWithoutEventoInput | inscripcionCreateOrConnectWithoutEventoInput[]
     createMany?: inscripcionCreateManyEventoInputEnvelope
     connect?: inscripcionWhereUniqueInput | inscripcionWhereUniqueInput[]
-  }
-
-  export type NullableStringFieldUpdateOperationsInput = {
-    set?: string | null
   }
 
   export type Enumtipo_eventoFieldUpdateOperationsInput = {
@@ -7386,6 +7444,20 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
+  export type NestedStringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
   export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -7438,51 +7510,6 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
-  export type NestedBoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
-  }
-
-  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
-  }
-
-  export type NestedStringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
-  }
-
-  export type NestedEnumtipo_eventoFilter<$PrismaModel = never> = {
-    equals?: $Enums.tipo_evento | Enumtipo_eventoFieldRefInput<$PrismaModel>
-    in?: $Enums.tipo_evento[] | ListEnumtipo_eventoFieldRefInput<$PrismaModel>
-    notIn?: $Enums.tipo_evento[] | ListEnumtipo_eventoFieldRefInput<$PrismaModel>
-    not?: NestedEnumtipo_eventoFilter<$PrismaModel> | $Enums.tipo_evento
-  }
-
-  export type NestedFloatNullableFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
-  }
-
   export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -7509,6 +7536,37 @@ export namespace Prisma {
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type NestedEnumtipo_eventoFilter<$PrismaModel = never> = {
+    equals?: $Enums.tipo_evento | Enumtipo_eventoFieldRefInput<$PrismaModel>
+    in?: $Enums.tipo_evento[] | ListEnumtipo_eventoFieldRefInput<$PrismaModel>
+    notIn?: $Enums.tipo_evento[] | ListEnumtipo_eventoFieldRefInput<$PrismaModel>
+    not?: NestedEnumtipo_eventoFilter<$PrismaModel> | $Enums.tipo_evento
+  }
+
+  export type NestedFloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
 
   export type NestedEnumtipo_eventoWithAggregatesFilter<$PrismaModel = never> = {
@@ -7823,6 +7881,8 @@ export namespace Prisma {
     cel_usu: string
     rol_usu: $Enums.rol_usuario
     fec_cre_usu?: Date | string
+    comprobante?: string | null
+    carrera?: string | null
   }
 
   export type usuarioUncheckedCreateWithoutInscripcionesInput = {
@@ -7835,6 +7895,8 @@ export namespace Prisma {
     cel_usu: string
     rol_usu: $Enums.rol_usuario
     fec_cre_usu?: Date | string
+    comprobante?: string | null
+    carrera?: string | null
   }
 
   export type usuarioCreateOrConnectWithoutInscripcionesInput = {
@@ -7900,6 +7962,8 @@ export namespace Prisma {
     cel_usu?: StringFieldUpdateOperationsInput | string
     rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
     fec_cre_usu?: DateTimeFieldUpdateOperationsInput | Date | string
+    comprobante?: NullableStringFieldUpdateOperationsInput | string | null
+    carrera?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type usuarioUncheckedUpdateWithoutInscripcionesInput = {
@@ -7912,6 +7976,8 @@ export namespace Prisma {
     cel_usu?: StringFieldUpdateOperationsInput | string
     rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
     fec_cre_usu?: DateTimeFieldUpdateOperationsInput | Date | string
+    comprobante?: NullableStringFieldUpdateOperationsInput | string | null
+    carrera?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type eventoUpsertWithoutInscripcionesInput = {
