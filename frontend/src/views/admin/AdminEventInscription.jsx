@@ -1,14 +1,14 @@
 import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { BadgeCheck, Clock, Ban, Eye, Download, Loader } from "lucide-react";
 import { toast } from "react-toastify";
 
 const colores = {
-  PENDIENTE: "text-yellow-600",
-  ACEPTADA: "text-green-600",
-  RECHAZADA: "text-red-600",
-  FINALIZADA: "text-blue-600",
+  PENDIENTE: "text-yellow-700 bg-yellow-100",
+  ACEPTADA: "text-green-700 bg-green-100",
+  RECHAZADA: "text-red-700 bg-red-100",
+  FINALIZADA: "text-blue-700 bg-blue-100",
 };
 
 const AdminEventInscription = () => {
@@ -16,6 +16,7 @@ const AdminEventInscription = () => {
   const [inscripciones, setInscripciones] = useState([]);
   const [filtro, setFiltro] = useState("TODOS");
   const [loading, setLoading] = useState(true);
+  const [nombreEvento, setNombreEvento] = useState("");
 
   const obtenerInscripciones = useCallback(async () => {
     try {
@@ -31,9 +32,21 @@ const AdminEventInscription = () => {
     }
   }, [id]);
 
+  const obtenerNombreEvento = useCallback(async () => {
+    try {
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/eventos/${id}`
+      );
+      setNombreEvento(res.data.nom_eve);
+    } catch (err) {
+      console.error("Error al obtener nombre del evento", err);
+    }
+  }, [id]);
+
   useEffect(() => {
     obtenerInscripciones();
-  }, [obtenerInscripciones]);
+    obtenerNombreEvento();
+  }, [obtenerInscripciones, obtenerNombreEvento]);
 
   const cambiarEstado = async (id_ins, estado) => {
     try {
@@ -54,21 +67,27 @@ const AdminEventInscription = () => {
 
   return (
     <div className="max-w-5xl mx-auto mt-6 px-4">
-      <h2 className="text-2xl font-bold mb-4">Inscripciones del evento</h2>
+      <h2 className="text-2xl font-bold mb-4">
+        Inscripciones para:{" "}
+        <span className="text-blue-700">{nombreEvento}</span>
+      </h2>
 
-      <div className="mb-4">
-        <label className="mr-2 font-medium">Filtrar por estado:</label>
-        <select
-          value={filtro}
-          onChange={(e) => setFiltro(e.target.value)}
-          className="border rounded px-3 py-1"
-        >
-          <option value="TODOS">Todos</option>
-          <option value="PENDIENTE">Pendientes</option>
-          <option value="ACEPTADA">Aceptadas</option>
-          <option value="RECHAZADA">Rechazadas</option>
-          <option value="FINALIZADA">Finalizadas</option>
-        </select>
+      <div className="flex gap-2 flex-wrap mb-4">
+        {["TODOS", "PENDIENTE", "ACEPTADA", "RECHAZADA", "FINALIZADA"].map(
+          (estado) => (
+            <button
+              key={estado}
+              className={`px-3 py-1 rounded-full text-sm font-semibold border transition ${
+                filtro === estado
+                  ? "bg-blue-600 text-white border-blue-600"
+                  : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+              }`}
+              onClick={() => setFiltro(estado)}
+            >
+              {estado}
+            </button>
+          )
+        )}
       </div>
 
       {loading ? (
@@ -90,12 +109,13 @@ const AdminEventInscription = () => {
                 <div className="flex justify-between items-center">
                   <div>
                     <p className="font-medium">
-                      {inscripcion.usuario.nom_usu}{" "}
-                      {inscripcion.usuario.ape_usu}
+                      {inscripcion.usuario?.nom_usu}{" "}
+                      {inscripcion.usuario?.ape_usu}
                     </p>
                     <p className="text-sm text-gray-600">
-                      {inscripcion.usuario.cor_usu}
+                      {inscripcion.usuario?.cor_usu}
                     </p>
+
                     <p className="text-sm mt-1">
                       Asistencia: {inscripcion.asistencia ?? "-"}% | Nota:{" "}
                       {inscripcion.nota_final ?? "-"}
@@ -105,7 +125,7 @@ const AdminEventInscription = () => {
                   <span
                     className={`text-sm font-semibold px-2 py-1 rounded ${
                       colores[inscripcion.estado]
-                    } bg-opacity-10`}
+                    }`}
                   >
                     {inscripcion.estado}
                   </span>

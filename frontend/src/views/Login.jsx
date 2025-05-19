@@ -36,13 +36,6 @@ const Login = () => {
       return;
     }
 
-    // Validación de dominio institucional
-    if (!email.endsWith("@uta.edu.ec")) {
-      toast.error("Debes usar tu correo institucional (@uta.edu.ec)");
-      setIsLoading(false);
-      return;
-    }
-
     try {
       // Enviar credenciales al backend
       const response = await axios.post("http://localhost:3000/api/login", {
@@ -60,10 +53,10 @@ const Login = () => {
       toast.success("¡Bienvenido!");
 
       // Redirige según el rol del usuario
-      if (usuario.rol === "ESTUDIANTE") {
-        navigate("/certificados");
+      if (usuario.rol_usu === "ADMIN") {
+        navigate("/admin/eventos");
       } else {
-        navigate("/"); // Redirección por defecto o para futuros roles
+        navigate("/certificados"); // o "/eventos" si prefieres
       }
     } catch (err) {
       // Muestra mensaje de error si la petición falla

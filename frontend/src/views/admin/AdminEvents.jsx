@@ -1,6 +1,8 @@
 import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+
 import {
   Pencil,
   Eye,
@@ -13,6 +15,7 @@ import {
 
 const AdminEvents = () => {
   const [eventos, setEventos] = useState([]);
+  const navigate = useNavigate();
 
   const cargarEventos = useCallback(async () => {
     try {
@@ -109,7 +112,9 @@ const AdminEvents = () => {
                   <button
                     title="Ver inscripciones"
                     className="text-sm text-gray-700 hover:underline flex items-center gap-1"
-                    onClick={() => console.log("Ver inscripciones", eve.id_eve)}
+                    onClick={() =>
+                      navigate(`/admin/eventos/${eve.id_eve}/inscripciones`)
+                    }
                   >
                     <Eye size={14} />
                     Ver inscritos
