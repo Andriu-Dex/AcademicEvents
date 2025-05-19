@@ -55,6 +55,13 @@ const crearInscripcion = async (req, res) => {
       });
     }
 
+    // Validar que el usuario que hace la inscripción sea el mismo que el id_usu
+    if (req.usuario?.id !== Number(id_usu)) {
+      return res
+        .status(403)
+        .json({ msg: "No tienes permiso para esta operación" });
+    }
+
     // Validar tamaño del archivo (máximo 5 MB)
     const tamMaximo = 5 * 1024 * 1024; // 5MB
     if (archivo.size > tamMaximo) {
@@ -105,8 +112,6 @@ const crearInscripcion = async (req, res) => {
       // Otro tipo de error desconocido
       throw error;
     }
-
-    res.status(201).json(nuevaInscripcion);
   } catch (error) {
     console.error("Error en crearInscripcion:", error);
     res.status(500).json({
@@ -158,7 +163,32 @@ const validarInscripcion = async (req, res) => {
       }
 
       // Si se intenta finalizar, validar requisitos académicos
-      if (estado === "FINALIZADA") {
+      if (estado === "FINALIZADA" && inscripcion.evento.tip_eve === "CURSO") {
+        // Verificar que se manden ambos campos
+        if (asistencia === undefined || nota_final === undefined) {
+          return res.status(400).json({
+            msg: "Para finalizar el curso debes ingresar asistencia y nota final",
+          });
+        }
+
+        // Validar rangos
+        if (
+          typeof asistencia !== "number" ||
+          asistencia < 0 ||
+          asistencia > 100
+        ) {
+          return res.status(400).json({ msg: "Asistencia inválida (0–100)" });
+        }
+
+        if (
+          typeof nota_final !== "number" ||
+          nota_final < 0 ||
+          nota_final > 10
+        ) {
+          return res.status(400).json({ msg: "Nota inválida (0–10)" });
+        }
+
+        // Validar si cumple requisitos para FINALIZAR
         const notaMinima = inscripcion.evento.nota_min_eve ?? 8;
         const asistenciaMinima = inscripcion.evento.por_asist_eve ?? 80;
 
@@ -316,10 +346,39 @@ const reenviarComprobante = async (req, res) => {
   }
 };
 
+// Obtener inscripciones por evento para el administrador
+const obtenerInscripcionesPorEvento = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const inscripciones = await prisma.inscripcion.findMany({
+      where: { id_eve: id },
+      include: {
+        usuario: {
+          select: {
+            nom_usu: true,
+            ape_usu: true,
+            cor_usu: true,
+          },
+        },
+      },
+      orderBy: { fec_ins: "desc" },
+    });
+
+    res.status(200).json(inscripciones);
+  } catch (error) {
+    res.status(500).json({
+      msg: "Error al obtener inscripciones del evento",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   crearInscripcion,
   validarInscripcion,
   obtenerInscripcionesPorUsuario,
   puedeGenerarCertificado,
   reenviarComprobante,
+  obtenerInscripcionesPorEvento,
 };
