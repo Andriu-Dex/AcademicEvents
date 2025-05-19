@@ -54,10 +54,14 @@ app.use("/api", inscripcionRoutes);
 const certificadoRoutes = require("./routes/certificado.routes");
 app.use("/api", certificadoRoutes);
 
+const adminRoutes = require("./routes/admin.routes");
+app.use("/api/admin", adminRoutes);
+
 // ============================
 //  Iniciar el servidor
 // ============================
 const PORT = process.env.PORT_BACKEND || 3000;
+
 app.listen(PORT, () => {
   console.log(`✅Servidor corriendo en puerto ${PORT}✅`);
 });

@@ -2,8 +2,7 @@ const express = require("express");
 const router = express.Router();
 const verificarToken = require("../middlewares/auth");
 const upload = require("../middlewares/upload");
-const manejarErroresDeMulter = require("../middlewares/manejarErroresDeMulter");
-const onlyAdmin = require("../middlewares/onlyAdmin");
+const manejarErroresDeMulter = require("../middlewares/errores/manejarErroresDeMulter");
 
 // Controladores
 const {
@@ -12,7 +11,6 @@ const {
   validarInscripcion,
   puedeGenerarCertificado,
   reenviarComprobante,
-  obtenerInscripcionesPorEvento,
 } = require("../controllers/inscripcion.controller");
 
 // ============================
@@ -46,14 +44,6 @@ router.put(
   verificarToken,
   upload.single("archivo"),
   reenviarComprobante
-);
-
-// Ruta para obtener inscripciones por evento (solo admin)
-router.get(
-  "/admin/inscripciones/:id",
-  verificarToken,
-  onlyAdmin,
-  obtenerInscripcionesPorEvento
 );
 
 module.exports = router;
