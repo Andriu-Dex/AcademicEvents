@@ -1,5 +1,25 @@
 const prisma = require("../config/db");
 
+// Mmanejo de errores de multer
+const manejarErroresDeMulter = (err, req, res, next) => {
+  if (err) {
+    if (err.code === "LIMIT_FILE_SIZE") {
+      return res.status(400).json({
+        msg: "El archivo excede el tamaño máximo permitido (5 MB)",
+      });
+    }
+
+    if (err.message.includes("Solo se permiten archivos")) {
+      return res.status(400).json({ msg: err.message });
+    }
+
+    // Otro error desconocido de multer
+    return res.status(400).json({ msg: "Error al subir archivo" });
+  }
+
+  next();
+};
+
 // ==========================================
 // Crear inscripción a un evento académico
 // ==========================================
@@ -250,9 +270,56 @@ const puedeGenerarCertificado = async (req, res) => {
   }
 };
 
+const path = require("path");
+
+const reenviarComprobante = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const archivo = req.file;
+
+    if (!archivo) {
+      return res.status(400).json({ msg: "Debes subir un archivo" });
+    }
+
+    const inscripcion = await prisma.inscripcion.findUnique({
+      where: { id_ins: id },
+      include: { usuario: true },
+    });
+
+    if (!inscripcion) {
+      return res.status(404).json({ msg: "Inscripción no encontrada" });
+    }
+
+    // Solo puede reenviar el mismo estudiante
+    if (inscripcion.id_usu !== req.usuario.id) {
+      return res
+        .status(403)
+        .json({ msg: "No tienes permiso para modificar esta inscripción" });
+    }
+
+    const actualizada = await prisma.inscripcion.update({
+      where: { id_ins: id },
+      data: {
+        comprobante: archivo.filename,
+        estado: "PENDIENTE",
+      },
+    });
+
+    res.status(200).json({
+      msg: "Comprobante reenviado correctamente",
+      inscripcion: actualizada,
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ msg: "Error al reenviar comprobante", error: error.message });
+  }
+};
+
 module.exports = {
   crearInscripcion,
   validarInscripcion,
   obtenerInscripcionesPorUsuario,
   puedeGenerarCertificado,
+  reenviarComprobante,
 };

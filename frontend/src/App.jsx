@@ -3,6 +3,7 @@ import Login from "./views/Login.jsx";
 import CertificatesRoute from "./routes/CertificatesRoute";
 import EventsRoute from "./routes/EventsRoute";
 import Register from "./views/Register";
+import MyInscriptions from "./views/MyInscriptions";
 
 // Importación de ToastContainer y estilos para mostrar notificaciones tipo toast
 import { ToastContainer } from "react-toastify";
@@ -28,6 +29,9 @@ function App() {
 
           {/* Listado de eventos académicos */}
           <Route path="/eventos" element={<EventsRoute />} />
+
+          {/* Página de inscripciones */}
+          <Route path="/inscripciones" element={<MyInscriptions />} />
         </Routes>
 
         {/* Contenedor global para notificaciones tipo toast */}

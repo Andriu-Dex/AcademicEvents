@@ -1,7 +1,9 @@
 import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import { User, Mail, Lock, Phone, FileText, BookText } from "lucide-react";
+import "./styles/Register.css"; // Importa el archivo CSS
 
 const Register = () => {
   const navigate = useNavigate();
@@ -16,8 +18,9 @@ const Register = () => {
   });
 
   const [archivo, setArchivo] = useState(null);
-  const [archivoNombre, setArchivoNombre] = useState(""); // ← nombre visible
+  const [archivoNombre, setArchivoNombre] = useState("");
   const [loading, setLoading] = useState(false);
+  const esUTA = datos.cor_usu.endsWith("@uta.edu.ec");
 
   const handleChange = (e) =>
     setDatos({ ...datos, [e.target.name]: e.target.value });
@@ -25,27 +28,20 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validación de archivo
-    if (!archivo) return toast.error("Debes subir un archivo PDF.");
-
-    // Validación de correo institucional
-    if (!datos.cor_usu.endsWith("@uta.edu.ec")) {
-      return toast.error("El correo debe ser institucional (@uta.edu.ec)");
-    }
-
-    // Validación de contraseña
-    if (datos.con_usu.length < 6) {
+    if (datos.con_usu.length < 6)
       return toast.error("La contraseña debe tener al menos 6 caracteres");
-    }
-
-    // Validación de celular (exactamente 10 dígitos)
-    if (!/^\d{10}$/.test(datos.cel_usu)) {
+    if (!/^\d{10}$/.test(datos.cel_usu))
       return toast.error("El celular debe tener exactamente 10 dígitos");
+    if (esUTA) {
+      if (!archivo)
+        return toast.error("Debes subir el documento PDF obligatorio.");
+      if (!datos.carrera.trim())
+        return toast.error("Debes seleccionar una carrera");
     }
 
     const formData = new FormData();
     Object.entries(datos).forEach(([key, val]) => formData.append(key, val));
-    formData.append("archivo", archivo);
+    if (archivo) formData.append("archivo", archivo);
 
     try {
       setLoading(true);
@@ -63,61 +59,125 @@ const Register = () => {
   };
 
   return (
-    <div className="max-w-xl mx-auto p-6 mt-10 bg-white shadow rounded">
-      <h1 className="text-2xl font-bold mb-4">Registro de Estudiante</h1>
+    <div className="container-page">
+      {/* IMAGEN FIJA */}
+      <div className="fixed-image" />
 
-      <form onSubmit={handleSubmit}>
-        {[
-          { label: "Cédula", name: "ced_usu" },
-          { label: "Nombres", name: "nom_usu" },
-          { label: "Apellidos", name: "ape_usu" },
-          { label: "Correo institucional", name: "cor_usu", type: "email" },
-          { label: "Contraseña", name: "con_usu", type: "password" },
-          { label: "Celular", name: "cel_usu" },
-          { label: "Carrera", name: "carrera" },
-        ].map(({ label, name, type = "text" }) => (
-          <div key={name} className="mb-4">
-            <label className="block font-semibold">{label}</label>
-            <input
-              type={type}
-              name={name}
-              value={datos[name]}
-              onChange={handleChange}
-              className="w-full border rounded px-3 py-2"
-              required
-            />
+      {/* FORMULARIO SCROLLABLE */}
+      <div className="form-scroll">
+        <div className="form-content">
+          <div className="text-center mb-4">
+            <div>
+              <img
+                src="https://i.imgur.com/ZDlLQ2T.png"
+                alt="Logo"
+                style={{ width: "180px", marginBottom: "10px" }}
+              />
+            </div>
+            <h2 className="registro-titulo">Registro de Usuario</h2>
           </div>
-        ))}
 
-        <div className="mb-4">
-          <label className="block font-semibold">
-            Documento PDF (matrícula)
-          </label>
-          <input
-            type="file"
-            accept=".pdf"
-            onChange={(e) => {
-              setArchivo(e.target.files[0]);
-              setArchivoNombre(e.target.files[0]?.name || "");
-            }}
-            className="w-full"
-            required
-          />
-          {archivoNombre && (
-            <p className="text-sm text-gray-600 mt-1">
-              Archivo seleccionado: <strong>{archivoNombre}</strong>
+          <form onSubmit={handleSubmit}>
+            {[
+              { label: "Cédula", name: "ced_usu", icon: <User size={18} /> },
+              { label: "Nombres", name: "nom_usu", icon: <User size={18} /> },
+              { label: "Apellidos", name: "ape_usu", icon: <User size={18} /> },
+              {
+                label: "Correo electrónico",
+                name: "cor_usu",
+                icon: <Mail size={18} />,
+                type: "email",
+              },
+              {
+                label: "Contraseña",
+                name: "con_usu",
+                icon: <Lock size={18} />,
+                type: "password",
+              },
+              { label: "Celular", name: "cel_usu", icon: <Phone size={18} /> },
+            ].map(({ label, name, icon, type = "text" }) => (
+              <div key={name} className="mb-3">
+                <label className="form-label fw-semibold">{label}</label>
+                <div className="input-group">
+                  <span className="input-group-text bg-primary text-white">
+                    {icon}
+                  </span>
+                  <input
+                    type={type}
+                    name={name}
+                    value={datos[name]}
+                    onChange={handleChange}
+                    className="form-control"
+                    required
+                  />
+                </div>
+              </div>
+            ))}
+
+            {esUTA && (
+              <>
+                <div className="mb-3">
+                  <label className="form-label fw-semibold">Carrera</label>
+                  <div className="input-group">
+                    <span className="input-group-text bg-primary text-white">
+                      <BookText size={18} />
+                    </span>
+                    <input
+                      type="text"
+                      name="carrera"
+                      value={datos.carrera}
+                      onChange={handleChange}
+                      className="form-control"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="mb-3">
+                  <label className="form-label fw-semibold">
+                    Documento PDF (matrícula, cédula, votación, motivación)
+                  </label>
+                  <div className="input-group">
+                    <span className="input-group-text bg-primary text-white">
+                      <FileText size={18} />
+                    </span>
+                    <input
+                      type="file"
+                      accept=".pdf"
+                      onChange={(e) => {
+                        setArchivo(e.target.files[0]);
+                        setArchivoNombre(e.target.files[0]?.name || "");
+                      }}
+                      className="form-control"
+                      required
+                    />
+                  </div>
+                  {archivoNombre && (
+                    <small className="text-muted">
+                      Archivo seleccionado: <strong>{archivoNombre}</strong>
+                    </small>
+                  )}
+                </div>
+              </>
+            )}
+
+            <button
+              type="submit"
+              className="btn btn-primary w-100 fw-bold py-2"
+              disabled={loading}
+            >
+              {loading ? "Registrando..." : "Registrarse"}
+            </button>
+
+            <p className="mt-3 text-center">
+              ¿Ya tienes cuenta?{" "}
+              <Link to="/login" className="text-decoration-none text-primary">
+                Inicia sesión
+              </Link>
             </p>
-          )}
+          </form>
         </div>
-
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded"
-          disabled={loading}
-        >
-          {loading ? "Registrando..." : "Registrarse"}
-        </button>
-      </form>
+      </div>
     </div>
   );
 };
