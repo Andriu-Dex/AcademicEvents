@@ -19,15 +19,24 @@ const CertificatesRoute = () => {
 
   // useEffect para ejecutar lógica al cargar el componente
   useEffect(() => {
+    // Verifica si el usuario está autenticado
+    console.log("Usuario autenticado:", usuario);
+
     // Si no hay usuario, redirige al login
     if (!usuario) return navigate("/login");
 
-    // Función asíncrona para obtener inscripciones finalizadas
+    // Si no hay token, redirige al login
+    if (!usuario.id) {
+      console.warn("El usuario no tiene ID, evitando llamada a la API");
+      return;
+    }
+
+    // Función asíncrona para obtener inscripciones del usuario
     const obtenerInscripciones = async () => {
       try {
         // Llamada al backend para obtener inscripciones del usuario
         const res = await axios.get(
-          `http://localhost:3000/api/inscripciones/${usuario.id_usu}`,
+          `http://localhost:3000/api/inscripciones/usuario/${usuario.id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`, // Envía token en cabecera
@@ -40,6 +49,11 @@ const CertificatesRoute = () => {
       } catch (error) {
         // Muestra error en consola si falla la solicitud
         console.error("Error al obtener certificados:", error);
+        toast.error(
+          <span className="inline-flex items-center gap-2 text-red-600">
+            <XCircle size={18} /> Error al obtener certificados
+          </span>
+        );
       } finally {
         setLoading(false); // Desactiva la carga independientemente del resultado
       }

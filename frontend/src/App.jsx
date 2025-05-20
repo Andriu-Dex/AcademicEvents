@@ -5,6 +5,7 @@ import EventsRoute from "./routes/EventsRoute";
 import Register from "./views/Register";
 import MyInscriptions from "./views/MyInscriptions";
 import AdminEventInscription from "./views/admin/AdminEventInscription";
+import AdminEvents from "./views/admin/AdminEvents.jsx";
 
 // Importación de ToastContainer y estilos para mostrar notificaciones tipo toast
 import { ToastContainer } from "react-toastify";
@@ -33,6 +34,9 @@ function App() {
 
           {/* Página de inscripciones */}
           <Route path="/inscripciones" element={<MyInscriptions />} />
+
+          {/* Página de administración de eventos */}
+          <Route path="/admin/eventos" element={<AdminEvents />} />
 
           {/* Página de administración de inscripciones para eventos */}
           <Route

@@ -8,12 +8,4 @@ const {
   obtenerInscripcionesPorEvento,
 } = require("../controllers/inscripcion.controller");
 
-// Ruta: Obtener inscripciones de un evento (solo admins)
-router.get(
-  "/inscripciones/evento/:id",
-  verificarToken,
-  onlyAdmin,
-  obtenerInscripcionesPorEvento
-);
-
 module.exports = router;

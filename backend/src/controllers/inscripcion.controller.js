@@ -348,6 +348,7 @@ const reenviarComprobante = async (req, res) => {
 
 // Obtener inscripciones por evento para el administrador
 const obtenerInscripcionesPorEvento = async (req, res) => {
+  console.log("Se llamó a obtenerInscripcionesPorEvento");
   try {
     const { id } = req.params;
 

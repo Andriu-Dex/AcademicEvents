@@ -46,16 +46,17 @@ app.use("/api", protectedRoutes);
 const eventoRoutes = require("./routes/evento.routes");
 app.use("/api", eventoRoutes);
 
-// Rutas de gestión de inscripciones
-const inscripcionRoutes = require("./routes/inscripcion.routes");
-app.use("/api", inscripcionRoutes);
-
 // Rutas para generación y descarga de certificados
 const certificadoRoutes = require("./routes/certificado.routes");
 app.use("/api", certificadoRoutes);
 
+// Rutas de gestión de usuarios (solo admins)
 const adminRoutes = require("./routes/admin.routes");
 app.use("/api/admin", adminRoutes);
+
+// Rutas de gestión de inscripciones para eventos (solo admins)
+const inscripcionRoutes = require("./routes/inscripcion.routes");
+app.use("/api/admin", inscripcionRoutes);
 
 // ============================
 //  Iniciar el servidor

@@ -22,6 +22,7 @@ const AdminEvents = () => {
       const res = await axios.get(
         `${import.meta.env.VITE_API_URL}/api/eventos`
       );
+      console.log("Respuesta de eventos:", res.data);
       setEventos(res.data);
     } catch (error) {
       console.error("Error al cargar eventos", error);
