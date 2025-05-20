@@ -21,6 +21,16 @@ const AdminDashboard = () => {
             Gestionar Carreras
           </Link>
         </li>
+        <li>
+          <Link to="/admin/configuracion" className="text-blue-600 underline">
+            Configuración institucional
+          </Link>
+        </li>
+        <li>
+          <Link to="/admin/inscripciones" className="text-blue-600 underline">
+            Validar Inscripciones
+          </Link>
+        </li>
       </ul>
     </div>
   );

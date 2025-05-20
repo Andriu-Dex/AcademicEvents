@@ -9,6 +9,8 @@ import AdminEvents from "./views/admin/AdminEvents.jsx";
 import AdminDashboard from "./views/admin/AdminDashboard.jsx";
 import AdminCarreras from "./views/admin/AdminCarreras.jsx";
 import PrivateRouteAdmin from "./components/PrivateRouteAdmin";
+import AdminConfiguracion from "./views/admin/AdminConfiguracion";
+import AdminInscripciones from "./views/admin/AdminInscripciones";
 
 // Importación de ToastContainer y estilos para mostrar notificaciones tipo toast
 import { ToastContainer } from "react-toastify";
@@ -74,6 +76,26 @@ function App() {
             element={
               <PrivateRouteAdmin>
                 <AdminCarreras />
+              </PrivateRouteAdmin>
+            }
+          />
+
+          {/* Página de administración de configuraciones */}
+          <Route
+            path="/admin/configuracion"
+            element={
+              <PrivateRouteAdmin>
+                <AdminConfiguracion />
+              </PrivateRouteAdmin>
+            }
+          />
+
+          {/* Página de administración de inscripciones */}
+          <Route
+            path="/admin/inscripciones"
+            element={
+              <PrivateRouteAdmin>
+                <AdminInscripciones />
               </PrivateRouteAdmin>
             }
           />
