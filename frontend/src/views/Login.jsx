@@ -1,7 +1,7 @@
 // Importación de módulos necesarios
 import React, { useState, useEffect } from "react"; // React y hooks
 import axios from "axios"; // Cliente HTTP
-import { useNavigate } from "react-router-dom"; // Navegación programática
+import { useNavigate, useLocation } from "react-router-dom"; // Navegación programática
 import { toast } from "react-toastify"; // Notificaciones tipo toast
 import { useAuth } from "../hooks/useAuth";
 //import { useAuth } from "../context/AuthContext"; // Contexto de autenticación
@@ -11,12 +11,7 @@ import { Link } from "react-router-dom";
 // Componente principal de Login
 const Login = () => {
   const { login, usuario } = useAuth();
-
-  if (usuario) {
-    console.log("Redirigiendo como", usuario.rol_usu);
-  } else {
-    console.log("Usuario no autenticado aún");
-  }
+  const location = useLocation();
 
   const navigate = useNavigate(); // Hook para redireccionar
 
@@ -27,6 +22,12 @@ const Login = () => {
   const [fadeIn, setFadeIn] = useState(false); // Animación de aparición
   const [isLoading, setIsLoading] = useState(false); // Estado de carga del botón
 
+  if (usuario) {
+    console.log("Redirigiendo como", usuario.rol_usu);
+  } else {
+    console.log("Usuario no autenticado aún");
+  }
+
   // Ejecuta efecto de animación cuando se monta el componente
   useEffect(() => {
     setFadeIn(true);
@@ -34,15 +35,15 @@ const Login = () => {
 
   // Redirecciona al usuario según su rol almacenado en localStorage
   useEffect(() => {
-    if (usuario) {
-      console.log("ROL:", usuario.rol_usu);
+    // Solo redirige si estás en /login
+    if (location.pathname === "/login" && usuario) {
       if (usuario.rol_usu === "ADMIN") {
-        navigate("/admin/eventos");
+        navigate("/admin"); // ✅ Redirige al panel principal
       } else if (usuario.rol_usu === "ESTUDIANTE") {
         navigate("/eventos");
       }
     }
-  }, [usuario]);
+  }, [usuario, location.pathname]);
 
   // Manejo del formulario al enviar
   const handleSubmit = async (e) => {
@@ -63,8 +64,6 @@ const Login = () => {
         contrasena: password,
       });
 
-      console.log("Respuesta del backend:", response.data);
-
       const data = response.data;
 
       // Si `data.usuario` existe, úsalo. Si no, considera que `data` ES el usuario.
@@ -73,6 +72,14 @@ const Login = () => {
 
       login(usuarioFinal, token);
       toast.success("¡Bienvenido!");
+
+      // Redirigir directamente con los datos devueltos, no del contexto
+      if (usuario.rol_usu === "ADMIN") {
+        navigate("/admin/eventos");
+      } else if (usuario.rol_usu === "ESTUDIANTE") {
+        navigate("/eventos");
+      }
+
       // ---------------------------------
     } catch (err) {
       // Muestra mensaje de error si la petición falla

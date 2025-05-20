@@ -65,7 +65,7 @@ function App() {
             path="/admin"
             element={
               <PrivateRouteAdmin>
-                <AdminEvents />
+                <AdminDashboard />
               </PrivateRouteAdmin>
             }
           />
