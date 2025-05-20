@@ -1,6 +1,6 @@
 const prisma = require("../config/db");
 
-// Mmanejo de errores de multer
+// Manejo de errores de multer
 const manejarErroresDeMulter = (err, req, res, next) => {
   if (err) {
     if (err.code === "LIMIT_FILE_SIZE") {
@@ -230,11 +230,23 @@ const obtenerInscripcionesPorUsuario = async (req, res) => {
     const { id } = req.params;
 
     const inscripciones = await prisma.inscripcion.findMany({
-      where: { id_usu: id },
+      where: { id_eve: id },
       include: {
-        evento: {
-          include: { carrera: true },
+        usuario: {
+          select: {
+            nom_usu: true,
+            ape_usu: true,
+            cor_usu: true,
+          },
         },
+      },
+      select: {
+        id_ins: true,
+        estado: true,
+        comprobante: true, // ✅ importante para mostrar el archivo
+        nota_final: true,
+        asistencia: true,
+        usuario: true,
       },
       orderBy: { fec_ins: "desc" },
     });

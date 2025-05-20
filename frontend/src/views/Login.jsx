@@ -3,15 +3,22 @@ import React, { useState, useEffect } from "react"; // React y hooks
 import axios from "axios"; // Cliente HTTP
 import { useNavigate } from "react-router-dom"; // Navegación programática
 import { toast } from "react-toastify"; // Notificaciones tipo toast
-import { useAuth } from "../hooks/useAuth"; // Hook personalizado de autenticación
+import { useAuth } from "../hooks/useAuth";
+//import { useAuth } from "../context/AuthContext"; // Contexto de autenticación
 import { Eye, EyeOff, Lock, AtSign } from "lucide-react"; // Íconos para mostrar/ocultar contraseña
 import { Link } from "react-router-dom";
 
 // Componente principal de Login
 const Login = () => {
-  const { login } = useAuth(); // Función de login desde el hook de autenticación
+  const { login, usuario } = useAuth();
+
+  if (usuario) {
+    console.log("Redirigiendo como", usuario.rol_usu);
+  } else {
+    console.log("Usuario no autenticado aún");
+  }
+
   const navigate = useNavigate(); // Hook para redireccionar
-  const { usuario } = useAuth();
 
   // Estados para manejar formulario, animaciones y carga
   const [email, setEmail] = useState(""); // Correo electrónico
@@ -28,6 +35,7 @@ const Login = () => {
   // Redirecciona al usuario según su rol almacenado en localStorage
   useEffect(() => {
     if (usuario) {
+      console.log("ROL:", usuario.rol_usu);
       if (usuario.rol_usu === "ADMIN") {
         navigate("/admin/eventos");
       } else if (usuario.rol_usu === "ESTUDIANTE") {
@@ -55,14 +63,17 @@ const Login = () => {
         contrasena: password,
       });
 
-      // Extrae token y usuario de la respuesta
-      const { token, usuario } = response.data;
+      console.log("Respuesta del backend:", response.data);
 
-      // Guarda usuario y token en el contexto de autenticación
-      login(usuario, token);
+      const data = response.data;
 
-      // Muestra mensaje de bienvenida
+      // Si `data.usuario` existe, úsalo. Si no, considera que `data` ES el usuario.
+      const usuarioFinal = data.usuario ?? data;
+      const token = data.token;
+
+      login(usuarioFinal, token);
       toast.success("¡Bienvenido!");
+      // ---------------------------------
     } catch (err) {
       // Muestra mensaje de error si la petición falla
       toast.error(err.response?.data?.msg || "Error al iniciar sesión");

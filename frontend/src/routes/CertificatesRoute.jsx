@@ -1,7 +1,8 @@
 // Importa hooks y librerías necesarias
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useAuth } from "../hooks/useAuth"; // Hook personalizado para autenticación
+import { useAuth } from "../hooks/useAuth";
+//import { useAuth } from "../context/AuthContext"; // Contexto de autenticación
 import { useNavigate } from "react-router-dom"; // Hook para redirección
 import { toast } from "react-toastify"; // Notificaciones tipo toast
 
