@@ -58,6 +58,11 @@ app.use("/api/admin", adminRoutes);
 const inscripcionRoutes = require("./routes/inscripcion.routes");
 app.use("/api/admin", inscripcionRoutes);
 
+// Rutas de gestión de carreras
+
+const carreraRoutes = require("./routes/carrera.routes");
+app.use("/api/carreras", carreraRoutes);
+
 // ============================
 //  Iniciar el servidor
 // ============================

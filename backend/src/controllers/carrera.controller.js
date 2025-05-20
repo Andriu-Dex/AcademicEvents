@@ -41,7 +41,12 @@ const crearCarrera = async (req, res) => {
 const obtenerCarreras = async (req, res) => {
   try {
     // Consultamos todas las carreras en la base de datos
-    const carreras = await prisma.carrera.findMany();
+    // const carreras = await prisma.carrera.findMany();
+
+    const carreras = await prisma.carrera.findMany({
+      where: { est_car: true },
+      orderBy: { nom_car: "asc" },
+    });
 
     // Respondemos con las carreras obtenidas
     res.status(200).json(carreras);

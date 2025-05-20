@@ -11,6 +11,7 @@ import { Link } from "react-router-dom";
 const Login = () => {
   const { login } = useAuth(); // Función de login desde el hook de autenticación
   const navigate = useNavigate(); // Hook para redireccionar
+  const { usuario } = useAuth();
 
   // Estados para manejar formulario, animaciones y carga
   const [email, setEmail] = useState(""); // Correo electrónico
@@ -23,6 +24,17 @@ const Login = () => {
   useEffect(() => {
     setFadeIn(true);
   }, []);
+
+  // Redirecciona al usuario según su rol almacenado en localStorage
+  useEffect(() => {
+    if (usuario) {
+      if (usuario.rol_usu === "ADMIN") {
+        navigate("/admin/eventos");
+      } else if (usuario.rol_usu === "ESTUDIANTE") {
+        navigate("/eventos");
+      }
+    }
+  }, [usuario]);
 
   // Manejo del formulario al enviar
   const handleSubmit = async (e) => {
@@ -51,13 +63,6 @@ const Login = () => {
 
       // Muestra mensaje de bienvenida
       toast.success("¡Bienvenido!");
-
-      // Redirige según el rol del usuario
-      if (usuario.rol_usu === "ADMIN") {
-        navigate("/admin/eventos");
-      } else {
-        navigate("/certificados"); // o "/eventos" si prefieres
-      }
     } catch (err) {
       // Muestra mensaje de error si la petición falla
       toast.error(err.response?.data?.msg || "Error al iniciar sesión");

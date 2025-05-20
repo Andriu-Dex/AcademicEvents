@@ -43,6 +43,12 @@ function App() {
             path="/admin/eventos/:id/inscripciones"
             element={<AdminEventInscription />}
           />
+
+          {/* Página de administración */}
+          <Route path="/admin" element={<AdminDashboard />} />
+
+          {/* Página de administración de carreras */}
+          <Route path="/admin/carreras" element={<AdminCarreras />} />
         </Routes>
 
         {/* Contenedor global para notificaciones tipo toast */}
