@@ -61,7 +61,7 @@ const obtenerCarreras = async (req, res) => {
 // =======================
 const actualizarCarrera = async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = parseInt(req.params.id);
     const { nom_car } = req.body;
 
     const carreraExistente = await prisma.carrera.findUnique({
@@ -77,7 +77,7 @@ const actualizarCarrera = async (req, res) => {
       data: { nom_car },
     });
 
-    res.status(200).json(actualizada);
+    res.json(actualizada);
   } catch (error) {
     res.status(500).json({
       msg: "Error al actualizar carrera",

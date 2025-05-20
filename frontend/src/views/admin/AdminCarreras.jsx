@@ -15,6 +15,7 @@ const AdminCarreras = () => {
     }
   };
 
+  // Función para crear una nueva carrera
   const crearCarrera = async () => {
     if (!nuevaCarrera.trim()) return toast.warning("Nombre vacío");
     try {
@@ -29,6 +30,7 @@ const AdminCarreras = () => {
     }
   };
 
+  // Función para eliminar una carrera
   const eliminarCarrera = async (id) => {
     if (!window.confirm("¿Seguro de eliminar esta carrera?")) return;
     try {
@@ -37,6 +39,21 @@ const AdminCarreras = () => {
       cargarCarreras();
     } catch (error) {
       toast.error("Error al eliminar carrera");
+    }
+  };
+
+  // Función para actualizar el nombre de una carrera
+  const actualizarCarrera = async (id, nuevoNombre) => {
+    if (!nuevoNombre || !nuevoNombre.trim())
+      return toast.warning("El nombre no puede estar vacío");
+    try {
+      await axios.put(`http://localhost:3000/api/carreras/${id}`, {
+        nom_car: nuevoNombre.trim(),
+      });
+      toast.success("Carrera actualizada");
+      cargarCarreras();
+    } catch (error) {
+      toast.error("Error al actualizar carrera");
     }
   };
 
@@ -68,9 +85,30 @@ const AdminCarreras = () => {
         {carreras.map((carrera) => (
           <li
             key={carrera.id_car}
-            className="border p-2 flex justify-between items-center"
+            className="border p-2 flex justify-between items-center gap-2"
           >
-            <span>{carrera.nom_car}</span>
+            <input
+              type="text"
+              value={carrera.nomEditable || carrera.nom_car}
+              onChange={(e) => {
+                setCarreras((prev) =>
+                  prev.map((c) =>
+                    c.id_car === carrera.id_car
+                      ? { ...c, nomEditable: e.target.value }
+                      : c
+                  )
+                );
+              }}
+              className="border p-1 flex-1"
+            />
+            <button
+              onClick={() =>
+                actualizarCarrera(carrera.id_car, carrera.nomEditable)
+              }
+              className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
+            >
+              Guardar
+            </button>
             <button
               onClick={() => eliminarCarrera(carrera.id_car)}
               className="text-red-600 hover:underline"

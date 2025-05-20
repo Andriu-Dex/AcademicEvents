@@ -6,6 +6,9 @@ import Register from "./views/Register";
 import MyInscriptions from "./views/MyInscriptions";
 import AdminEventInscription from "./views/admin/AdminEventInscription";
 import AdminEvents from "./views/admin/AdminEvents.jsx";
+import AdminDashboard from "./views/admin/AdminDashboard.jsx";
+import AdminCarreras from "./views/admin/AdminCarreras.jsx";
+import PrivateRouteAdmin from "./components/PrivateRouteAdmin";
 
 // Importación de ToastContainer y estilos para mostrar notificaciones tipo toast
 import { ToastContainer } from "react-toastify";
@@ -36,19 +39,44 @@ function App() {
           <Route path="/inscripciones" element={<MyInscriptions />} />
 
           {/* Página de administración de eventos */}
-          <Route path="/admin/eventos" element={<AdminEvents />} />
+          <Route
+            path="/admin/eventos"
+            element={
+              <PrivateRouteAdmin>
+                <AdminEvents />
+              </PrivateRouteAdmin>
+            }
+          />
 
           {/* Página de administración de inscripciones para eventos */}
           <Route
             path="/admin/eventos/:id/inscripciones"
-            element={<AdminEventInscription />}
+            element={
+              <PrivateRouteAdmin>
+                <AdminEvents />
+              </PrivateRouteAdmin>
+            }
           />
 
           {/* Página de administración */}
-          <Route path="/admin" element={<AdminDashboard />} />
+          <Route
+            path="/admin"
+            element={
+              <PrivateRouteAdmin>
+                <AdminEvents />
+              </PrivateRouteAdmin>
+            }
+          />
 
           {/* Página de administración de carreras */}
-          <Route path="/admin/carreras" element={<AdminCarreras />} />
+          <Route
+            path="/admin/carreras"
+            element={
+              <PrivateRouteAdmin>
+                <AdminCarreras />
+              </PrivateRouteAdmin>
+            }
+          />
         </Routes>
 
         {/* Contenedor global para notificaciones tipo toast */}
