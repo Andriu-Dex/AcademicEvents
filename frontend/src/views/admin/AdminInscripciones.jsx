@@ -3,7 +3,6 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/AuthContext";
 import { FileText, XCircle } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 
 const estados = {
   PENDIENTE: "bg-yellow-200",
@@ -66,14 +65,6 @@ const AdminInscripciones = () => {
     } catch {
       toast.error("Error al actualizar estado");
     }
-  };
-
-  const { logout } = useAuth();
-  const navigate = useNavigate();
-
-  const cerrarSesion = () => {
-    logout(); // Limpiar token y usuario
-    navigate("/login"); // Redirigir al login
   };
 
   useEffect(() => {
@@ -251,12 +242,6 @@ const AdminInscripciones = () => {
           ))}
         </tbody>
       </table>
-      <button
-        onClick={cerrarSesion}
-        className="mb-4 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-      >
-        Cerrar sesión
-      </button>
     </div>
   );
 };

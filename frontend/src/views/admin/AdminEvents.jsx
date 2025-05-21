@@ -1,8 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../hooks/useAuth";
 
 import {
   Pencil,
@@ -11,13 +9,10 @@ import {
   CalendarClock,
   CheckCircle,
   XCircle,
-  DollarSign,
 } from "lucide-react";
 
 const AdminEvents = () => {
   const [eventos, setEventos] = useState([]);
-  const navigate = useNavigate();
-  const { logout } = useAuth();
 
   const cargarEventos = useCallback(async () => {
     try {
@@ -31,11 +26,6 @@ const AdminEvents = () => {
       toast.error("No se pudieron cargar los eventos");
     }
   }, []);
-
-  const cerrarSesion = () => {
-    logout(); // Limpiar token y usuario
-    navigate("/login"); // Redirigir al login
-  };
 
   useEffect(() => {
     cargarEventos();
@@ -144,12 +134,6 @@ const AdminEvents = () => {
           })}
         </div>
       )}
-      <button
-        onClick={cerrarSesion}
-        className="mb-4 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-      >
-        Cerrar sesión
-      </button>
     </div>
   );
 };

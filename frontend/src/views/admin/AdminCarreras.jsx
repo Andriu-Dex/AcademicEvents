@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { useAuth } from "../../hooks/useAuth";
-import { useNavigate } from "react-router-dom";
 import { Dialog } from "@headlessui/react";
 
 const AdminCarreras = () => {
@@ -15,9 +13,6 @@ const AdminCarreras = () => {
     id: null,
   });
 
-  const { logout } = useAuth();
-  const navigate = useNavigate();
-
   const cargarCarreras = async () => {
     try {
       const res = await axios.get("http://localhost:3000/api/carreras");
@@ -25,11 +20,6 @@ const AdminCarreras = () => {
     } catch (error) {
       toast.error("Error al cargar las carreras");
     }
-  };
-
-  const cerrarSesion = () => {
-    logout();
-    navigate("/login");
   };
 
   const crearCarrera = async () => {
@@ -170,13 +160,6 @@ const AdminCarreras = () => {
           </li>
         ))}
       </ul>
-
-      <button
-        onClick={cerrarSesion}
-        className="mt-6 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-      >
-        Cerrar sesión
-      </button>
 
       {/* Modal de confirmación */}
       <Dialog
