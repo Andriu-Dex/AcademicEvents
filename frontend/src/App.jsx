@@ -55,7 +55,7 @@ function App() {
             path="/admin/eventos/:id/inscripciones"
             element={
               <PrivateRouteAdmin>
-                <AdminEvents />
+                <AdminEventInscription />
               </PrivateRouteAdmin>
             }
           />

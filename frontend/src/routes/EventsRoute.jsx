@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useAuth } from "../hooks/useAuth";
-//import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { CalendarDays, Search, CheckCircle } from "lucide-react";
@@ -18,6 +17,12 @@ const EventsRoute = () => {
   const [inscripciones, setInscripciones] = useState([]);
   const [subiendo, setSubiendo] = useState(false);
   const [exitoVisible, setExitoVisible] = useState(false);
+  const { logout } = useAuth();
+
+  const cerrarSesion = () => {
+    logout(); // Limpiar token y usuario
+    navigate("/login"); // Redirigir al login
+  };
 
   useEffect(() => {
     if (loading) return;
@@ -40,15 +45,24 @@ const EventsRoute = () => {
   useEffect(() => {
     const obtenerInscripciones = async () => {
       try {
-        const res = await axios.get(
-          `http://localhost:3000/api/inscripciones/${usuario.id}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
+        const res = await Promise.all(
+          eventos.map((ev) =>
+            axios
+              .get(`http://localhost:3000/api/inscripciones/${ev.id_eve}`, {
+                headers: { Authorization: `Bearer ${token}` },
+              })
+              .then((r) => ({ eventoId: ev.id_eve, inscrito: true }))
+              .catch((err) =>
+                err.response?.status === 404
+                  ? { eventoId: ev.id_eve, inscrito: false }
+                  : null
+              )
+          )
         );
-        setInscripciones(res.data);
+        const inscritos = res.filter(Boolean).map((r) => r.eventoId);
+        setInscripciones(inscritos);
       } catch (error) {
-        console.error("Error al obtener inscripciones:", error.message);
+        console.error("Error al verificar inscripciones:", error.message);
       }
     };
 
@@ -108,7 +122,7 @@ const EventsRoute = () => {
   };
 
   const eventosDisponibles = eventos.filter(
-    (evento) => !inscripciones.some((ins) => ins.id_eve === evento.id_eve)
+    (evento) => !inscripciones.includes(evento.id_eve)
   );
 
   if (loading) return <p className="p-6">Cargando sesión...</p>;
@@ -119,14 +133,6 @@ const EventsRoute = () => {
         <CalendarDays size={24} />
         Eventos disponibles
       </h1>
-
-      {/* <input
-        type="text"
-        placeholder="Buscar por nombre..."
-        value={filtro}
-        onChange={(e) => setFiltro(e.target.value)}
-        className="eventos-buscador"
-      /> */}
 
       <div className="buscador-contenedor">
         <Search className="buscador-icono" size={18} />
@@ -166,6 +172,12 @@ const EventsRoute = () => {
                 </button>
               </div>
             ))}
+          <button
+            onClick={cerrarSesion}
+            className="mb-4 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+          >
+            Cerrar sesión
+          </button>
         </div>
       )}
 

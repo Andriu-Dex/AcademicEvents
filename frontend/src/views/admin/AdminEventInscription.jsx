@@ -180,7 +180,7 @@ const AdminEventInscription = () => {
                 {inscripcion.comprobante && (
                   <div className="mt-2">
                     <a
-                      href={`/uploads/${inscripcion.comprobante}`}
+                      href={`http://localhost:3000/uploads/${inscripcion.comprobante}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-blue-600 flex items-center gap-1 text-sm hover:underline"

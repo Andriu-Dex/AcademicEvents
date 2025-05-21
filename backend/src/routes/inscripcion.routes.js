@@ -12,6 +12,7 @@ const {
   puedeGenerarCertificado,
   reenviarComprobante,
   obtenerInscripcionesPorEvento,
+  obtenerInscripcionUsuarioEnEvento,
 } = require("../controllers/inscripcion.controller");
 
 // =====================================
@@ -19,15 +20,34 @@ const {
 // =====================================
 
 // Crear nueva inscripción a un evento
+// router.post(
+//   "/inscripciones",
+//   upload.single("archivo"),
+//   manejarErroresDeMulter,
+//   crearInscripcion,
+//   verificarToken
+// );
+
 router.post(
-  "/inscripciones",
+  "/",
+  verificarToken,
   upload.single("archivo"),
   manejarErroresDeMulter,
   crearInscripcion
 );
 
+// Obtener inscripciones del usuario
+router.get(
+  "/evento/:id",
+  verificarToken,
+  onlyAdmin,
+  obtenerInscripcionesPorEvento
+);
+
+// Ruta del admin: lista todas las inscripciones a un evento
+router.get("/:idEvento", verificarToken, obtenerInscripcionUsuarioEnEvento);
+
 // Obtener inscripciones por usuario (admin)
-// Esta ruta es para que un administrador pueda ver las inscripciones de un usuario específico
 router.get(
   "/inscripciones/usuario/:id",
   verificarToken,
@@ -36,7 +56,7 @@ router.get(
 
 // Obtener todas las inscripciones de un evento (admin)
 router.get(
-  "/inscripciones/evento/:id",
+  "/admin/inscripciones/evento/:id",
   verificarToken,
   onlyAdmin,
   obtenerInscripcionesPorEvento
@@ -44,7 +64,7 @@ router.get(
 
 // Validar una inscripción (admin)
 router.put(
-  "/inscripciones/validar/:id",
+  "/admin/inscripciones/validar/:id",
   verificarToken,
   onlyAdmin,
   validarInscripcion
@@ -58,6 +78,7 @@ router.put(
   "/inscripciones/reenviar/:id",
   verificarToken,
   upload.single("archivo"),
+  manejarErroresDeMulter,
   reenviarComprobante
 );
 

@@ -1,4 +1,4 @@
-const { PrismaClient } = require("@prisma/client");
+const { PrismaClient } = require("../src/generated/prisma");
 const prisma = new PrismaClient();
 
 async function main() {
@@ -10,22 +10,25 @@ async function main() {
     { nom_car: "Automatización y Robótica" },
   ];
 
-  for (const carrera of carreras) {
-    await prisma.carrera.upsert({
-      where: { nom_car: carrera.nom_car },
-      update: {},
-      create: carrera,
-    });
-  }
+  try {
+    // Utilizamos Promise.all() para insertar todas las carreras en paralelo
+    await Promise.all(
+      carreras.map((carrera) =>
+        prisma.carrera.upsert({
+          where: { nom_car: carrera.nom_car }, // Verifica si la carrera existe
+          update: { est_car: true }, // Si existe, actualiza su estado
+          create: { ...carrera, est_car: true }, // Si no existe, la crea con estado activo
+        })
+      )
+    );
 
-  console.log("Carreras insertadas correctamente");
+    console.log("Carreras insertadas correctamente");
+  } catch (error) {
+    console.error("Error al insertar carreras:", error); // Mensaje más específico en caso de error
+    process.exit(1); // Finaliza el proceso con un código de error
+  }
 }
 
-main()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(() => {
-    prisma.$disconnect();
-  });
+main().finally(() => {
+  prisma.$disconnect(); // Asegura que la conexión a la base de datos se cierre correctamente
+});

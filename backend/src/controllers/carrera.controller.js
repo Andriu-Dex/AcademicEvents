@@ -61,8 +61,15 @@ const obtenerCarreras = async (req, res) => {
 // =======================
 const actualizarCarrera = async (req, res) => {
   try {
-    const id = parseInt(req.params.id);
+    const id = req.params.id; // ✅ no parseInt
+
     const { nom_car } = req.body;
+
+    if (!nom_car || nom_car.trim() === "") {
+      return res
+        .status(400)
+        .json({ msg: "El nombre de la carrera no puede estar vacío" });
+    }
 
     const carreraExistente = await prisma.carrera.findUnique({
       where: { id_car: id },

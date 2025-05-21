@@ -24,8 +24,16 @@ const manejarErroresDeMulter = (err, req, res, next) => {
 // Crear inscripción a un evento académico
 // ==========================================
 const crearInscripcion = async (req, res) => {
+  // Logs para depuración
+  console.log("→ BODY", req.body);
+  console.log("→ FILE", req.file);
+  console.log("→ USUARIO", req.usuario);
+
   try {
-    const { id_usu, id_eve } = req.body;
+    // const { id_usu, id_eve } = req.body;
+    const { id_eve } = req.body;
+    const id_usu = req.usuario.id; // ← extraído del token
+
     const archivo = req.file;
 
     if (!id_usu || !id_eve) {
@@ -53,13 +61,6 @@ const crearInscripcion = async (req, res) => {
       return res.status(400).json({
         msg: "Tipo de archivo no permitido. Solo se aceptan PDF o imágenes (JPG, PNG, WEBP)",
       });
-    }
-
-    // Validar que el usuario que hace la inscripción sea el mismo que el id_usu
-    if (req.usuario?.id !== Number(id_usu)) {
-      return res
-        .status(403)
-        .json({ msg: "No tienes permiso para esta operación" });
     }
 
     // Validar tamaño del archivo (máximo 5 MB)
@@ -243,7 +244,7 @@ const obtenerInscripcionesPorUsuario = async (req, res) => {
       select: {
         id_ins: true,
         estado: true,
-        comprobante: true, // ✅ importante para mostrar el archivo
+        comprobante: true,
         nota_final: true,
         asistencia: true,
         usuario: true,
@@ -387,6 +388,33 @@ const obtenerInscripcionesPorEvento = async (req, res) => {
   }
 };
 
+const obtenerInscripcionUsuarioEnEvento = async (req, res) => {
+  try {
+    const { idEvento } = req.params;
+    const id_usu = req.usuario.id;
+
+    const inscripcion = await prisma.inscripcion.findUnique({
+      where: {
+        id_usu_id_eve: {
+          id_usu,
+          id_eve: idEvento,
+        },
+      },
+    });
+
+    if (!inscripcion) {
+      return res.status(404).json({ msg: "No estás inscrito en este evento" });
+    }
+
+    res.status(200).json(inscripcion);
+  } catch (error) {
+    res.status(500).json({
+      msg: "Error al obtener tu inscripción",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   crearInscripcion,
   validarInscripcion,
@@ -394,4 +422,6 @@ module.exports = {
   puedeGenerarCertificado,
   reenviarComprobante,
   obtenerInscripcionesPorEvento,
+  obtenerInscripcionUsuarioEnEvento,
+  manejarErroresDeMulter,
 };

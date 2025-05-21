@@ -230,11 +230,12 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
         "fromEnvVar": "DATABASE_URL",
-        "value": "postgresql://postgres:Andriu3Dex@localhost:5432/academicevents"
+        "value": null
       }
     }
   },

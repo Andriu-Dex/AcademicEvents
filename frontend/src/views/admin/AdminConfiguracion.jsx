@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useAuth } from "../../hooks/useAuth"; // Importar logout
+import { useNavigate } from "react-router-dom";
 
 const AdminConfiguracion = () => {
   const [form, setForm] = useState({ mision: "", vision: "", autoridades: "" });
@@ -21,6 +23,14 @@ const AdminConfiguracion = () => {
     } catch {
       toast.error("Error al guardar configuración");
     }
+  };
+
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const cerrarSesion = () => {
+    logout(); // Limpiar token y usuario
+    navigate("/login"); // Redirigir al login
   };
 
   useEffect(() => {
@@ -60,6 +70,13 @@ const AdminConfiguracion = () => {
         className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
       >
         Guardar
+      </button>
+
+      <button
+        onClick={cerrarSesion}
+        className="mb-4 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+      >
+        Cerrar sesión
       </button>
     </div>
   );
