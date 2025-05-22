@@ -129,7 +129,9 @@ exports.Prisma.UsuarioScalarFieldEnum = {
   con_usu: 'con_usu',
   cel_usu: 'cel_usu',
   rol_usu: 'rol_usu',
-  fec_cre_usu: 'fec_cre_usu'
+  fec_cre_usu: 'fec_cre_usu',
+  comprobante: 'comprobante',
+  carrera: 'carrera'
 };
 
 exports.Prisma.CarreraScalarFieldEnum = {
@@ -165,6 +167,13 @@ exports.Prisma.InscripcionScalarFieldEnum = {
   estado: 'estado',
   fec_ins: 'fec_ins',
   cert_enviado: 'cert_enviado'
+};
+
+exports.Prisma.ConfiguracionScalarFieldEnum = {
+  id_conf: 'id_conf',
+  mision: 'mision',
+  vision: 'vision',
+  autoridades: 'autoridades'
 };
 
 exports.Prisma.SortOrder = {
@@ -206,7 +215,8 @@ exports.Prisma.ModelName = {
   usuario: 'usuario',
   carrera: 'carrera',
   evento: 'evento',
-  inscripcion: 'inscripcion'
+  inscripcion: 'inscripcion',
+  configuracion: 'configuracion'
 };
 
 /**

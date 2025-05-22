@@ -23,6 +23,11 @@ const crearEvento = async (req, res) => {
       return res.status(400).json({ msg: "Faltan campos obligatorios" });
     }
 
+    // Verificar que las fechas son válidas
+    if (isNaN(new Date(fec_ini_eve)) || isNaN(new Date(fec_fin_eve))) {
+      return res.status(400).json({ msg: "Fechas inválidas" });
+    }
+
     // Creación del evento
     const nuevoEvento = await prisma.evento.create({
       data: {
@@ -73,7 +78,22 @@ const obtenerEventos = async (req, res) => {
 const actualizarEvento = async (req, res) => {
   try {
     const { id } = req.params;
-    const data = req.body;
+    const camposPermitidos = [
+      "nom_eve",
+      "des_eve",
+      "tip_eve",
+      "fec_ini_eve",
+      "fec_fin_eve",
+      "dur_hrs_eve",
+      "pagado_eve",
+      "nota_min_eve",
+      "por_asist_eve",
+      "carreraId",
+    ];
+
+    const data = Object.fromEntries(
+      Object.entries(req.body).filter(([key]) => camposPermitidos.includes(key))
+    );
 
     const eventoActualizado = await prisma.evento.update({
       where: { id_eve: id },
@@ -96,9 +116,12 @@ const eliminarEvento = async (req, res) => {
   try {
     const { id } = req.params;
 
-    await prisma.evento.delete({
-      where: { id_eve: id },
-    });
+    const evento = await prisma.evento.findUnique({ where: { id_eve: id } });
+    if (!evento) {
+      return res.status(404).json({ msg: "Evento no encontrado" });
+    }
+
+    await prisma.evento.delete({ where: { id_eve: id } });
 
     res.status(200).json({ msg: "Evento eliminado correctamente" });
   } catch (error) {
@@ -109,9 +132,35 @@ const eliminarEvento = async (req, res) => {
   }
 };
 
+// Obtener un solo evento por su ID
+const obtenerEventoPorId = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const evento = await prisma.evento.findUnique({
+      where: { id_eve: id },
+      select: {
+        nom_eve: true,
+      },
+    });
+
+    if (!evento) {
+      return res.status(404).json({ msg: "Evento no encontrado" });
+    }
+
+    res.status(200).json(evento);
+  } catch (error) {
+    res.status(500).json({
+      msg: "Error al obtener el evento",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   crearEvento,
   obtenerEventos,
   actualizarEvento,
   eliminarEvento,
+  obtenerEventoPorId,
 };

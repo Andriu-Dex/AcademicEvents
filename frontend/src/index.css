@@ -34,12 +34,19 @@ a:hover {
 }
 
 /* Estilo global del body, centrado en pantalla */
-body {
+/* body {
   margin: 0;
   display: flex;
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+} */
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  @apply bg-white text-gray-900;
 }
 
 /* Encabezado principal */
