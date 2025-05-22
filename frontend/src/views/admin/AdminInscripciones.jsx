@@ -19,7 +19,9 @@ const AdminInscripciones = () => {
 
   const cargarEventos = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/api/eventos");
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/eventos`
+      );
       setEventos(res.data);
     } catch {
       toast.error("Error al cargar eventos");
@@ -34,8 +36,10 @@ const AdminInscripciones = () => {
 
     try {
       const res = await axios.get(
-        `http://localhost:3000/api/admin/inscripciones/evento/${eventoFiltrado}`,
-
+        // `http://localhost:3000/api/admin/inscripciones/evento/${eventoFiltrado}`,
+        `${
+          import.meta.env.VITE_API_URL
+        }/api/admin/inscripciones/evento/${eventoFiltrado}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -51,7 +55,7 @@ const AdminInscripciones = () => {
   const cambiarEstado = async (id, nuevoEstado) => {
     try {
       await axios.put(
-        `http://localhost:3000/api/admin/inscripciones/evento/${eventoFiltrado}`,
+        `${import.meta.env.VITE_API_URL}/api/admin/inscripciones/validar/${id}`,
 
         {
           estado: nuevoEstado,
@@ -62,8 +66,10 @@ const AdminInscripciones = () => {
       );
       toast.success(`Inscripción ${nuevoEstado.toLowerCase()}`);
       cargarInscripciones();
-    } catch {
-      toast.error("Error al actualizar estado");
+    } catch (error) {
+      console.error(error.response?.data || error.message);
+      // toast.error("Error al actualizar estado");
+      toast.error(error.response?.data?.msg || "Error al actualizar estado");
     }
   };
 
@@ -119,7 +125,9 @@ const AdminInscripciones = () => {
               <td className="border p-2 text-center">
                 {i.comprobante ? (
                   <a
-                    href={`http://localhost:3000/uploads/${i.comprobante}`}
+                    href={`${import.meta.env.VITE_API_URL}/uploads/${
+                      i.comprobante
+                    }`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-blue-600 hover:text-blue-800"
@@ -171,6 +179,8 @@ const AdminInscripciones = () => {
                     const nota = parseFloat(e.target.nota.value);
                     const asistencia = parseFloat(e.target.asistencia.value);
 
+                    console.log({ nota, asistencia });
+
                     if (isNaN(nota) || nota < 0 || nota > 10) {
                       toast.error("Nota inválida (0–10)");
                       return;
@@ -187,11 +197,16 @@ const AdminInscripciones = () => {
 
                     try {
                       await axios.put(
-                        `http://localhost:3000/api/inscripciones/${i.id_ins}`,
+                        `${
+                          import.meta.env.VITE_API_URL
+                        }/api/admin/inscripciones/validar/${i.id_ins}`,
+
                         {
                           estado: "FINALIZADA",
-                          nota_final: nota,
-                          asistencia: asistencia,
+                          // nota_final: nota,
+                          // asistencia: asistencia,
+                          nota_final: Number(nota), // Asegura que es número
+                          asistencia: Number(asistencia), // Asegura que es número
                         },
                         {
                           headers: { Authorization: `Bearer ${token}` },
@@ -208,6 +223,7 @@ const AdminInscripciones = () => {
                 >
                   <div className="flex items-center gap-1 justify-center">
                     <label>Nota</label>
+
                     <input
                       type="number"
                       name="nota"
@@ -215,11 +231,16 @@ const AdminInscripciones = () => {
                       max="10"
                       step="0.1"
                       defaultValue={i.nota_final || ""}
+                      onInput={(e) => {
+                        if (e.target.value > 10) e.target.value = 10;
+                        if (e.target.value < 0) e.target.value = 0;
+                      }}
                       className="border px-1 py-0.5 w-14 text-center"
                     />
                   </div>
                   <div className="flex items-center gap-1 justify-center">
                     <label>Asist.</label>
+
                     <input
                       type="number"
                       name="asistencia"
@@ -227,6 +248,10 @@ const AdminInscripciones = () => {
                       max="100"
                       step="1"
                       defaultValue={i.asistencia || ""}
+                      onInput={(e) => {
+                        if (e.target.value > 100) e.target.value = 100;
+                        if (e.target.value < 0) e.target.value = 0;
+                      }}
                       className="border px-1 py-0.5 w-14 text-center"
                     />
                   </div>

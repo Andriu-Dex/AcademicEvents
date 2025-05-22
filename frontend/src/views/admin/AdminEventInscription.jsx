@@ -27,7 +27,7 @@ const AdminEventInscription = () => {
 
   const obtenerInscripciones = useCallback(async () => {
     try {
-      const token = localStorage.getItem("token"); // o como lo estés guardando
+      const token = localStorage.getItem("token");
 
       const res = await axios.get(
         `${import.meta.env.VITE_API_URL}/api/admin/inscripciones/evento/${id}`,
@@ -180,7 +180,9 @@ const AdminEventInscription = () => {
                 {inscripcion.comprobante && (
                   <div className="mt-2">
                     <a
-                      href={`http://localhost:3000/uploads/${inscripcion.comprobante}`}
+                      href={`${import.meta.env.VITE_API_URL}/uploads/${
+                        inscripcion.comprobante
+                      }`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-blue-600 flex items-center gap-1 text-sm hover:underline"

@@ -40,7 +40,7 @@ const Register = () => {
   // Cargar carreras desde la API
   useEffect(() => {
     axios
-      .get("http://localhost:3000/api/carreras")
+      .get(`${import.meta.env.VITE_API_URL}/api/carreras`)
       .then((res) => setCarreras(res.data))
       .catch((err) => toast.error("Error al cargar carreras"));
   }, []);

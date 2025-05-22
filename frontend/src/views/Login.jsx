@@ -83,10 +83,13 @@ const Login = () => {
     saveEmailIfNew(email);
 
     try {
-      const res = await axios.post("http://localhost:3000/api/login", {
-        correo: email,
-        contrasena: password,
-      });
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/login`,
+        {
+          correo: email,
+          contrasena: password,
+        }
+      );
 
       const { usuario: usu, token } = res.data;
       const usuarioFinal = usu ?? res.data;

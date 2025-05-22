@@ -67,7 +67,10 @@ const CertificatesRoute = () => {
 
   // Función para abrir el certificado PDF en una nueva pestaña
   const descargar = (id_ins) => {
-    window.open(`http://localhost:3000/api/certificados/${id_ins}`, "_blank");
+    window.open(
+      `${import.meta.env.VITE_API_URL}/api/certificados/${id_ins}`,
+      "_blank"
+    );
   };
 
   // Función para reenviar certificado por correo
@@ -76,7 +79,8 @@ const CertificatesRoute = () => {
     try {
       // Solicitud para reenviar el certificado
       await axios.get(
-        `http://localhost:3000/api/certificados/enviar/${id_ins}`,
+        `${import.meta.env.VITE_API_URL}/api/certificados/enviar/${id_ins}`,
+
         { headers: { Authorization: `Bearer ${token}` } }
       );
       // Muestra notificación de éxito

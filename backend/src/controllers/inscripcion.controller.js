@@ -24,11 +24,6 @@ const manejarErroresDeMulter = (err, req, res, next) => {
 // Crear inscripción a un evento académico
 // ==========================================
 const crearInscripcion = async (req, res) => {
-  // Logs para depuración
-  console.log("→ BODY", req.body);
-  console.log("→ FILE", req.file);
-  console.log("→ USUARIO", req.usuario);
-
   try {
     // const { id_usu, id_eve } = req.body;
     const { id_eve } = req.body;
@@ -149,55 +144,32 @@ const validarInscripcion = async (req, res) => {
       return res.status(404).json({ msg: "Inscripción no encontrada" });
     }
 
+    const asistenciaNum = Number(asistencia);
+    const notaFinalNum = Number(nota_final);
+
     // Si el evento es un CURSO, validar nota y asistencia
-    if (inscripcion.evento.tip_eve === "CURSO") {
-      if (
-        typeof asistencia !== "number" ||
-        asistencia < 0 ||
-        asistencia > 100
-      ) {
+    if (inscripcion.evento.tip_eve === "CURSO" && estado === "FINALIZADA") {
+      if (asistencia === undefined || nota_final === undefined) {
+        return res.status(400).json({
+          msg: "Para finalizar el curso debes ingresar asistencia y nota final",
+        });
+      }
+
+      if (isNaN(asistenciaNum) || asistenciaNum < 0 || asistenciaNum > 100) {
         return res.status(400).json({ msg: "Asistencia inválida (0–100)" });
       }
 
-      if (typeof nota_final !== "number" || nota_final < 0 || nota_final > 10) {
+      if (isNaN(notaFinalNum) || notaFinalNum < 0 || notaFinalNum > 10) {
         return res.status(400).json({ msg: "Nota inválida (0–10)" });
       }
 
-      // Si se intenta finalizar, validar requisitos académicos
-      if (estado === "FINALIZADA" && inscripcion.evento.tip_eve === "CURSO") {
-        // Verificar que se manden ambos campos
-        if (asistencia === undefined || nota_final === undefined) {
-          return res.status(400).json({
-            msg: "Para finalizar el curso debes ingresar asistencia y nota final",
-          });
-        }
+      const notaMinima = inscripcion.evento.nota_min_eve ?? 8;
+      const asistenciaMinima = inscripcion.evento.por_asist_eve ?? 80;
 
-        // Validar rangos
-        if (
-          typeof asistencia !== "number" ||
-          asistencia < 0 ||
-          asistencia > 100
-        ) {
-          return res.status(400).json({ msg: "Asistencia inválida (0–100)" });
-        }
-
-        if (
-          typeof nota_final !== "number" ||
-          nota_final < 0 ||
-          nota_final > 10
-        ) {
-          return res.status(400).json({ msg: "Nota inválida (0–10)" });
-        }
-
-        // Validar si cumple requisitos para FINALIZAR
-        const notaMinima = inscripcion.evento.nota_min_eve ?? 8;
-        const asistenciaMinima = inscripcion.evento.por_asist_eve ?? 80;
-
-        if (nota_final < notaMinima || asistencia < asistenciaMinima) {
-          return res.status(400).json({
-            msg: `No cumple requisitos para finalizar: nota mínima ${notaMinima}, asistencia mínima ${asistenciaMinima}%`,
-          });
-        }
+      if (notaFinalNum < notaMinima || asistenciaNum < asistenciaMinima) {
+        return res.status(400).json({
+          msg: `No cumple requisitos para finalizar: nota mínima ${notaMinima}, asistencia mínima ${asistenciaMinima}%`,
+        });
       }
     }
 
@@ -206,8 +178,10 @@ const validarInscripcion = async (req, res) => {
       where: { id_ins: id },
       data: {
         estado,
-        asistencia,
-        nota_final,
+        // asistencia,
+        // nota_final,
+        asistencia: asistenciaNum,
+        nota_final: notaFinalNum,
       },
     });
 
@@ -361,7 +335,6 @@ const reenviarComprobante = async (req, res) => {
 
 // Obtener inscripciones por evento para el administrador
 const obtenerInscripcionesPorEvento = async (req, res) => {
-  console.log("Se llamó a obtenerInscripcionesPorEvento");
   try {
     const { id } = req.params;
 
@@ -373,6 +346,11 @@ const obtenerInscripcionesPorEvento = async (req, res) => {
             nom_usu: true,
             ape_usu: true,
             cor_usu: true,
+          },
+        },
+        evento: {
+          select: {
+            nom_eve: true,
           },
         },
       },

@@ -24,9 +24,12 @@ const EventsRoute = () => {
 
     const obtenerEventos = async () => {
       try {
-        const res = await axios.get("http://localhost:3000/api/eventos", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/eventos`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         setEventos(res.data);
       } catch {
         toast.error("Error al obtener eventos");
@@ -42,9 +45,14 @@ const EventsRoute = () => {
         const res = await Promise.all(
           eventos.map((ev) =>
             axios
-              .get(`http://localhost:3000/api/inscripciones/${ev.id_eve}`, {
-                headers: { Authorization: `Bearer ${token}` },
-              })
+              .get(
+                `${import.meta.env.VITE_API_URL}/api/inscripciones/${
+                  ev.id_eve
+                }`,
+                {
+                  headers: { Authorization: `Bearer ${token}` },
+                }
+              )
               .then((r) => ({ eventoId: ev.id_eve, inscrito: true }))
               .catch((err) =>
                 err.response?.status === 404
@@ -90,12 +98,16 @@ const EventsRoute = () => {
     formData.append("archivo", archivo);
 
     try {
-      await axios.post("http://localhost:3000/api/inscripciones", formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/inscripciones`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
       toast.success("Inscripción enviada con éxito");
       setEventoSeleccionado(null);

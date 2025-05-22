@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import "./styles/AdminConfiguracion.css";
 
 const AdminConfiguracion = () => {
   const [form, setForm] = useState({ mision: "", vision: "", autoridades: "" });
 
   const cargar = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/api/configuracion");
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/configuracion`
+      );
       if (res.data) setForm(res.data);
     } catch {
       toast.error("Error al cargar configuración");
@@ -16,7 +19,10 @@ const AdminConfiguracion = () => {
 
   const guardar = async () => {
     try {
-      await axios.put("http://localhost:3000/api/configuracion", form);
+      await axios.put(
+        `${import.meta.env.VITE_API_URL}/api/configuracion`,
+        form
+      );
       toast.success("Configuración actualizada");
     } catch {
       toast.error("Error al guardar configuración");
@@ -28,37 +34,34 @@ const AdminConfiguracion = () => {
   }, []);
 
   return (
-    <div className="p-6 max-w-3xl mx-auto">
+    <div className="adminconfig-container">
       <h2 className="text-xl font-bold mb-4">Misión, Visión y Autoridades</h2>
 
-      <label className="block mb-2 font-semibold">Misión</label>
+      <label className="adminconfig-label">Misión</label>
       <textarea
         rows={4}
-        className="w-full border p-2 mb-4"
+        className="adminconfig-textarea"
         value={form.mision}
         onChange={(e) => setForm({ ...form, mision: e.target.value })}
       />
 
-      <label className="block mb-2 font-semibold">Visión</label>
+      <label className="adminconfig-label">Visión</label>
       <textarea
         rows={4}
-        className="w-full border p-2 mb-4"
+        className="adminconfig-textarea"
         value={form.vision}
         onChange={(e) => setForm({ ...form, vision: e.target.value })}
       />
 
-      <label className="block mb-2 font-semibold">Autoridades</label>
+      <label className="adminconfig-label">Autoridades</label>
       <textarea
         rows={4}
-        className="w-full border p-2 mb-4"
+        className="adminconfig-textarea"
         value={form.autoridades}
         onChange={(e) => setForm({ ...form, autoridades: e.target.value })}
       />
 
-      <button
-        onClick={guardar}
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-      >
+      <button onClick={guardar} className="adminconfig-btn">
         Guardar
       </button>
     </div>

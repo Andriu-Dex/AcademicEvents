@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 import {
   Pencil,
@@ -13,6 +14,7 @@ import {
 
 const AdminEvents = () => {
   const [eventos, setEventos] = useState([]);
+  const navigate = useNavigate();
 
   const cargarEventos = useCallback(async () => {
     try {

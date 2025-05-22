@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { Dialog } from "@headlessui/react";
+import "./styles/AdminCarreras.css";
 
 const AdminCarreras = () => {
   const [carreras, setCarreras] = useState([]);
@@ -15,7 +16,9 @@ const AdminCarreras = () => {
 
   const cargarCarreras = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/api/carreras");
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/carreras`
+      );
       setCarreras(res.data);
     } catch (error) {
       toast.error("Error al cargar las carreras");
@@ -25,7 +28,7 @@ const AdminCarreras = () => {
   const crearCarrera = async () => {
     if (!nuevaCarrera.trim()) return toast.warning("Nombre vacío");
     try {
-      await axios.post("http://localhost:3000/api/carreras", {
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/carreras`, {
         nom_car: nuevaCarrera.trim(),
       });
       toast.success("Carrera creada");
@@ -43,7 +46,7 @@ const AdminCarreras = () => {
   const eliminarCarrera = async () => {
     const id = modalEliminar.id;
     try {
-      await axios.delete(`http://localhost:3000/api/carreras/${id}`);
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/carreras/${id}`);
       toast.success("Carrera eliminada");
       cargarCarreras();
     } catch (error) {
@@ -59,7 +62,7 @@ const AdminCarreras = () => {
       return toast.warning("El nombre no puede estar vacío");
     }
     try {
-      await axios.put(`http://localhost:3000/api/carreras/${id}`, {
+      await axios.put(`${import.meta.env.VITE_API_URL}/api/carreras/${id}`, {
         nom_car: nuevoNombre.trim(),
       });
       toast.success("Carrera actualizada");
@@ -165,14 +168,11 @@ const AdminCarreras = () => {
       <Dialog
         open={modalEliminar.abierto}
         onClose={() => setModalEliminar({ abierto: false, id: null })}
-        className="fixed inset-0 z-50 flex items-center justify-center"
+        className="admincarreras-modal-container"
       >
-        <div
-          className="fixed inset-0 bg-black bg-opacity-30"
-          aria-hidden="true"
-        />
+        <div className="admincarreras-modal-overlay" aria-hidden="true" />
 
-        <div className="relative bg-white rounded-lg shadow p-6 z-50 w-full max-w-sm mx-auto">
+        <div className="admincarreras-modal-content">
           <Dialog.Title className="text-lg font-bold text-gray-800 mb-4">
             Confirmar eliminación
           </Dialog.Title>
