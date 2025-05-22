@@ -1,38 +1,51 @@
-// Importa el componente Link de React Router
 import { Link } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
+import { LogOut } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import "./styles/Navbar.css";
 
-const MiComponente = ({ usuario }) => {
-  // Verifica si el usuario tiene rol de estudiante
-  const esEstudiante = usuario?.rol_usu === "ESTUDIANTE";
+const Navbar = () => {
+  const { usuario, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const cerrarSesion = () => {
+    logout(); // Limpiar token y usuario
+    navigate("/login"); // Redirigir al login
+  };
+
+  if (!usuario) return null;
 
   return (
-    <nav>
-      <ul className="space-y-2">
-        {/* Renderiza enlace a certificados solo si es estudiante */}
-        {esEstudiante && (
-          <>
-            <li>
-              <Link
-                to="/certificados"
-                className="hover:underline text-sm text-blue-600 font-medium"
-              >
-                Certificados
-              </Link>
-            </li>
+    <nav className="navbar">
+      <div className="navbar-left">
+        <Link to="/" className="navbar-logo">
+          AcademicEvents
+        </Link>
 
-            <li>
-              <Link
-                to="/eventos"
-                className="hover:underline text-sm text-blue-600 font-medium"
-              >
-                Eventos
-              </Link>
-            </li>
-          </>
-        )}
-      </ul>
+        <div className="navbar-links">
+          {usuario.rol_usu === "ESTUDIANTE" && (
+            <>
+              <Link to="/eventos">Eventos</Link>
+              <Link to="/inscripciones">Mis inscripciones</Link>
+              <Link to="/certificados">Certificados</Link>
+            </>
+          )}
+          {usuario.rol_usu === "ADMIN" && (
+            <>
+              <Link to="/admin/eventos">Gestionar eventos</Link>
+              <Link to="/admin/carreras">Gestionar carreras</Link>
+            </>
+          )}
+        </div>
+      </div>
+
+      <button className="navbar-logout" onClick={cerrarSesion}>
+        <LogOut size={16} />
+        <span>Cerrar sesión</span>
+      </button>
     </nav>
   );
 };
 
-export default MiComponente;
+export default Navbar;
+//Andriu Dex

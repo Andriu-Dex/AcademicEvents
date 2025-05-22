@@ -1,28 +1,67 @@
 // Importación de módulos necesarios
-import React, { useState, useEffect } from "react"; // React y hooks
-import axios from "axios"; // Cliente HTTP
-import { useNavigate } from "react-router-dom"; // Navegación programática
-import { toast } from "react-toastify"; // Notificaciones tipo toast
-import { useAuth } from "../hooks/useAuth"; // Hook personalizado de autenticación
-import { Eye, EyeOff, Lock, AtSign } from "lucide-react"; // Íconos para mostrar/ocultar contraseña
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { useNavigate, useLocation, Link } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useAuth } from "../hooks/useAuth";
+import { Eye, EyeOff, Lock, AtSign } from "lucide-react";
 
 // Componente principal de Login
 const Login = () => {
-  const { login } = useAuth(); // Función de login desde el hook de autenticación
+  const { login, usuario } = useAuth();
+  const location = useLocation();
   const navigate = useNavigate(); // Hook para redireccionar
 
-  // Estados para manejar formulario, animaciones y carga
+  // Estados locales
   const [email, setEmail] = useState(""); // Correo electrónico
   const [password, setPassword] = useState(""); // Contraseña
   const [showPassword, setShowPassword] = useState(false); // Mostrar/ocultar contraseña
   const [fadeIn, setFadeIn] = useState(false); // Animación de aparición
   const [isLoading, setIsLoading] = useState(false); // Estado de carga del botón
+  const [sugerencias, setSugerencias] = useState([]);
+  const [mostrarSugerencias, setMostrarSugerencias] = useState(false);
 
-  // Ejecuta efecto de animación cuando se monta el componente
+  // Animación al montar el componente
   useEffect(() => {
     setFadeIn(true);
   }, []);
+
+  // Redirecciona al usuario según su rol almacenado en localStorage
+  useEffect(() => {
+    // Solo redirige si estás en /login
+    if (location.pathname === "/login" && usuario) {
+      if (usuario.rol_usu === "ADMIN") {
+        navigate("/admin"); // ✅ Redirige al panel principal
+      } else if (usuario.rol_usu === "ESTUDIANTE") {
+        navigate("/eventos");
+      }
+    }
+  }, [usuario, location.pathname]);
+
+  // Guarda email si es nuevo
+  const saveEmailIfNew = (nuevoEmail) => {
+    const guardados = JSON.parse(localStorage.getItem("emailsUsados")) || [];
+    if (!guardados.includes(nuevoEmail)) {
+      guardados.push(nuevoEmail);
+      localStorage.setItem("emailsUsados", JSON.stringify(guardados));
+    }
+  };
+
+  // Validación de correo simple
+  const isEmailValido = (correo) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo);
+
+  // Autocompletado
+  const handleEmailChange = (e) => {
+    const valor = e.target.value;
+    setEmail(valor);
+
+    const correos = JSON.parse(localStorage.getItem("emailsUsados")) || [];
+    const coincidencias = correos.filter((c) =>
+      c.toLowerCase().includes(valor.toLowerCase())
+    );
+    setSugerencias(coincidencias);
+    setMostrarSugerencias(coincidencias.length > 0);
+  };
 
   // Manejo del formulario al enviar
   const handleSubmit = async (e) => {
@@ -35,38 +74,38 @@ const Login = () => {
       setIsLoading(false);
       return;
     }
-
-    // Validación de dominio institucional
-    if (!email.endsWith("@uta.edu.ec")) {
-      toast.error("Debes usar tu correo institucional (@uta.edu.ec)");
+    // Validación de formato de correo
+    if (!isEmailValido(email)) {
+      toast.error("El correo no tiene un formato válido.");
       setIsLoading(false);
       return;
     }
+    saveEmailIfNew(email);
 
     try {
-      // Enviar credenciales al backend
-      const response = await axios.post("http://localhost:3000/api/login", {
-        correo: email,
-        contrasena: password,
-      });
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/login`,
+        {
+          correo: email,
+          contrasena: password,
+        }
+      );
 
-      // Extrae token y usuario de la respuesta
-      const { token, usuario } = response.data;
+      const { usuario: usu, token } = res.data;
+      const usuarioFinal = usu ?? res.data;
 
-      // Guarda usuario y token en el contexto de autenticación
-      login(usuario, token);
-
-      // Muestra mensaje de bienvenida
+      login(usuarioFinal, token);
       toast.success("¡Bienvenido!");
 
-      // Redirige según el rol del usuario
-      if (usuario.rol === "ESTUDIANTE") {
-        navigate("/certificados");
-      } else {
-        navigate("/"); // Redirección por defecto o para futuros roles
-      }
+      // Redirecciona luego de que todo esté estable
+      setTimeout(() => {
+        if (usuarioFinal.rol_usu === "ADMIN") {
+          navigate("/admin");
+        } else if (usuarioFinal.rol_usu === "ESTUDIANTE") {
+          navigate("/eventos");
+        }
+      }, 500); // pequeña pausa opcional
     } catch (err) {
-      // Muestra mensaje de error si la petición falla
       toast.error(err.response?.data?.msg || "Error al iniciar sesión");
     } finally {
       // Finaliza la carga
@@ -181,6 +220,13 @@ const Login = () => {
         .wave-divider .shape-fill {
           fill: rgba(255, 255, 255, 0.4);
         }
+          /* Mejora la transición y diseño de sugerencias */
+        .suggestion-item:hover {
+          background-color: #f8d7da !important;
+          color: #8A1538;
+        }
+          
+
       `}</style>
 
       {/* Fondo animado con imagen */}
@@ -263,7 +309,7 @@ const Login = () => {
           {/* Formulario de inicio de sesión */}
           <form onSubmit={handleSubmit} className="text-start">
             {/* Campo de correo electrónico */}
-            <div className="mb-4">
+            <div className="mb-4 position-relative" style={{ zIndex: 5 }}>
               <label htmlFor="email" className="form-label fw-semibold">
                 Correo electrónico
               </label>
@@ -277,9 +323,54 @@ const Login = () => {
                   id="email"
                   placeholder="usuario@uta.edu.ec"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={handleEmailChange}
+                  onBlur={() =>
+                    setTimeout(() => setMostrarSugerencias(false), 150)
+                  }
+                  onFocus={() => setMostrarSugerencias(sugerencias.length > 0)}
+                  autoComplete="off"
+                  name="email"
                 />
               </div>
+
+              {/* Autocompletado de correos guardados */}
+              {mostrarSugerencias && (
+                <div
+                  className="position-absolute bg-white border rounded-3 shadow-sm"
+                  style={{
+                    width: "100%",
+                    zIndex: 20,
+                    maxHeight: "150px",
+                    overflowY: "auto",
+                    borderColor: "#8A1538",
+                    marginTop: "2px", // Ajuste menor de margen
+                    top: "100%", // Asegura que se coloque justo debajo del input
+                  }}
+                >
+                  {sugerencias.map((correo, index) => (
+                    <div
+                      key={index}
+                      onMouseDown={() => {
+                        setEmail(correo);
+                        setMostrarSugerencias(false);
+                      }}
+                      className="px-3 py-2 suggestion-item"
+                      style={{
+                        cursor: "pointer",
+                        transition: "background 0.2s ease",
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.backgroundColor = "#f8d7da")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.backgroundColor = "transparent")
+                      }
+                    >
+                      {correo}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Campo de contraseña */}

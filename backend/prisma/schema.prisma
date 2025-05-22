@@ -76,6 +76,14 @@ model inscripcion {
 
 }
 
+model configuracion {
+  id_conf   Int    @id @default(1)
+  mision    String
+  vision    String
+  autoridades String
+}
+
+
 // ============================
 // ENUMS
 // ============================

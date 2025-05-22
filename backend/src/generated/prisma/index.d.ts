@@ -33,6 +33,11 @@ export type evento = $Result.DefaultSelection<Prisma.$eventoPayload>
  * 
  */
 export type inscripcion = $Result.DefaultSelection<Prisma.$inscripcionPayload>
+/**
+ * Model configuracion
+ * 
+ */
+export type configuracion = $Result.DefaultSelection<Prisma.$configuracionPayload>
 
 /**
  * Enums
@@ -245,6 +250,16 @@ export class PrismaClient<
     * ```
     */
   get inscripcion(): Prisma.inscripcionDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.configuracion`: Exposes CRUD operations for the **configuracion** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Configuracions
+    * const configuracions = await prisma.configuracion.findMany()
+    * ```
+    */
+  get configuracion(): Prisma.configuracionDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -688,7 +703,8 @@ export namespace Prisma {
     usuario: 'usuario',
     carrera: 'carrera',
     evento: 'evento',
-    inscripcion: 'inscripcion'
+    inscripcion: 'inscripcion',
+    configuracion: 'configuracion'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -707,7 +723,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "usuario" | "carrera" | "evento" | "inscripcion"
+      modelProps: "usuario" | "carrera" | "evento" | "inscripcion" | "configuracion"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1007,6 +1023,80 @@ export namespace Prisma {
           }
         }
       }
+      configuracion: {
+        payload: Prisma.$configuracionPayload<ExtArgs>
+        fields: Prisma.configuracionFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.configuracionFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$configuracionPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.configuracionFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$configuracionPayload>
+          }
+          findFirst: {
+            args: Prisma.configuracionFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$configuracionPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.configuracionFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$configuracionPayload>
+          }
+          findMany: {
+            args: Prisma.configuracionFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$configuracionPayload>[]
+          }
+          create: {
+            args: Prisma.configuracionCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$configuracionPayload>
+          }
+          createMany: {
+            args: Prisma.configuracionCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.configuracionCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$configuracionPayload>[]
+          }
+          delete: {
+            args: Prisma.configuracionDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$configuracionPayload>
+          }
+          update: {
+            args: Prisma.configuracionUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$configuracionPayload>
+          }
+          deleteMany: {
+            args: Prisma.configuracionDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.configuracionUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.configuracionUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$configuracionPayload>[]
+          }
+          upsert: {
+            args: Prisma.configuracionUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$configuracionPayload>
+          }
+          aggregate: {
+            args: Prisma.ConfiguracionAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateConfiguracion>
+          }
+          groupBy: {
+            args: Prisma.configuracionGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ConfiguracionGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.configuracionCountArgs<ExtArgs>
+            result: $Utils.Optional<ConfiguracionCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1095,6 +1185,7 @@ export namespace Prisma {
     carrera?: carreraOmit
     evento?: eventoOmit
     inscripcion?: inscripcionOmit
+    configuracion?: configuracionOmit
   }
 
   /* Types for Logging */
@@ -5896,6 +5987,1022 @@ export namespace Prisma {
 
 
   /**
+   * Model configuracion
+   */
+
+  export type AggregateConfiguracion = {
+    _count: ConfiguracionCountAggregateOutputType | null
+    _avg: ConfiguracionAvgAggregateOutputType | null
+    _sum: ConfiguracionSumAggregateOutputType | null
+    _min: ConfiguracionMinAggregateOutputType | null
+    _max: ConfiguracionMaxAggregateOutputType | null
+  }
+
+  export type ConfiguracionAvgAggregateOutputType = {
+    id_conf: number | null
+  }
+
+  export type ConfiguracionSumAggregateOutputType = {
+    id_conf: number | null
+  }
+
+  export type ConfiguracionMinAggregateOutputType = {
+    id_conf: number | null
+    mision: string | null
+    vision: string | null
+    autoridades: string | null
+  }
+
+  export type ConfiguracionMaxAggregateOutputType = {
+    id_conf: number | null
+    mision: string | null
+    vision: string | null
+    autoridades: string | null
+  }
+
+  export type ConfiguracionCountAggregateOutputType = {
+    id_conf: number
+    mision: number
+    vision: number
+    autoridades: number
+    _all: number
+  }
+
+
+  export type ConfiguracionAvgAggregateInputType = {
+    id_conf?: true
+  }
+
+  export type ConfiguracionSumAggregateInputType = {
+    id_conf?: true
+  }
+
+  export type ConfiguracionMinAggregateInputType = {
+    id_conf?: true
+    mision?: true
+    vision?: true
+    autoridades?: true
+  }
+
+  export type ConfiguracionMaxAggregateInputType = {
+    id_conf?: true
+    mision?: true
+    vision?: true
+    autoridades?: true
+  }
+
+  export type ConfiguracionCountAggregateInputType = {
+    id_conf?: true
+    mision?: true
+    vision?: true
+    autoridades?: true
+    _all?: true
+  }
+
+  export type ConfiguracionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which configuracion to aggregate.
+     */
+    where?: configuracionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of configuracions to fetch.
+     */
+    orderBy?: configuracionOrderByWithRelationInput | configuracionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: configuracionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` configuracions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` configuracions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned configuracions
+    **/
+    _count?: true | ConfiguracionCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ConfiguracionAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ConfiguracionSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ConfiguracionMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ConfiguracionMaxAggregateInputType
+  }
+
+  export type GetConfiguracionAggregateType<T extends ConfiguracionAggregateArgs> = {
+        [P in keyof T & keyof AggregateConfiguracion]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateConfiguracion[P]>
+      : GetScalarType<T[P], AggregateConfiguracion[P]>
+  }
+
+
+
+
+  export type configuracionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: configuracionWhereInput
+    orderBy?: configuracionOrderByWithAggregationInput | configuracionOrderByWithAggregationInput[]
+    by: ConfiguracionScalarFieldEnum[] | ConfiguracionScalarFieldEnum
+    having?: configuracionScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ConfiguracionCountAggregateInputType | true
+    _avg?: ConfiguracionAvgAggregateInputType
+    _sum?: ConfiguracionSumAggregateInputType
+    _min?: ConfiguracionMinAggregateInputType
+    _max?: ConfiguracionMaxAggregateInputType
+  }
+
+  export type ConfiguracionGroupByOutputType = {
+    id_conf: number
+    mision: string
+    vision: string
+    autoridades: string
+    _count: ConfiguracionCountAggregateOutputType | null
+    _avg: ConfiguracionAvgAggregateOutputType | null
+    _sum: ConfiguracionSumAggregateOutputType | null
+    _min: ConfiguracionMinAggregateOutputType | null
+    _max: ConfiguracionMaxAggregateOutputType | null
+  }
+
+  type GetConfiguracionGroupByPayload<T extends configuracionGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ConfiguracionGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ConfiguracionGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ConfiguracionGroupByOutputType[P]>
+            : GetScalarType<T[P], ConfiguracionGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type configuracionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_conf?: boolean
+    mision?: boolean
+    vision?: boolean
+    autoridades?: boolean
+  }, ExtArgs["result"]["configuracion"]>
+
+  export type configuracionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_conf?: boolean
+    mision?: boolean
+    vision?: boolean
+    autoridades?: boolean
+  }, ExtArgs["result"]["configuracion"]>
+
+  export type configuracionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_conf?: boolean
+    mision?: boolean
+    vision?: boolean
+    autoridades?: boolean
+  }, ExtArgs["result"]["configuracion"]>
+
+  export type configuracionSelectScalar = {
+    id_conf?: boolean
+    mision?: boolean
+    vision?: boolean
+    autoridades?: boolean
+  }
+
+  export type configuracionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_conf" | "mision" | "vision" | "autoridades", ExtArgs["result"]["configuracion"]>
+
+  export type $configuracionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "configuracion"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id_conf: number
+      mision: string
+      vision: string
+      autoridades: string
+    }, ExtArgs["result"]["configuracion"]>
+    composites: {}
+  }
+
+  type configuracionGetPayload<S extends boolean | null | undefined | configuracionDefaultArgs> = $Result.GetResult<Prisma.$configuracionPayload, S>
+
+  type configuracionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<configuracionFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ConfiguracionCountAggregateInputType | true
+    }
+
+  export interface configuracionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['configuracion'], meta: { name: 'configuracion' } }
+    /**
+     * Find zero or one Configuracion that matches the filter.
+     * @param {configuracionFindUniqueArgs} args - Arguments to find a Configuracion
+     * @example
+     * // Get one Configuracion
+     * const configuracion = await prisma.configuracion.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends configuracionFindUniqueArgs>(args: SelectSubset<T, configuracionFindUniqueArgs<ExtArgs>>): Prisma__configuracionClient<$Result.GetResult<Prisma.$configuracionPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Configuracion that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {configuracionFindUniqueOrThrowArgs} args - Arguments to find a Configuracion
+     * @example
+     * // Get one Configuracion
+     * const configuracion = await prisma.configuracion.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends configuracionFindUniqueOrThrowArgs>(args: SelectSubset<T, configuracionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__configuracionClient<$Result.GetResult<Prisma.$configuracionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Configuracion that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {configuracionFindFirstArgs} args - Arguments to find a Configuracion
+     * @example
+     * // Get one Configuracion
+     * const configuracion = await prisma.configuracion.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends configuracionFindFirstArgs>(args?: SelectSubset<T, configuracionFindFirstArgs<ExtArgs>>): Prisma__configuracionClient<$Result.GetResult<Prisma.$configuracionPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Configuracion that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {configuracionFindFirstOrThrowArgs} args - Arguments to find a Configuracion
+     * @example
+     * // Get one Configuracion
+     * const configuracion = await prisma.configuracion.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends configuracionFindFirstOrThrowArgs>(args?: SelectSubset<T, configuracionFindFirstOrThrowArgs<ExtArgs>>): Prisma__configuracionClient<$Result.GetResult<Prisma.$configuracionPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Configuracions that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {configuracionFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Configuracions
+     * const configuracions = await prisma.configuracion.findMany()
+     * 
+     * // Get first 10 Configuracions
+     * const configuracions = await prisma.configuracion.findMany({ take: 10 })
+     * 
+     * // Only select the `id_conf`
+     * const configuracionWithId_confOnly = await prisma.configuracion.findMany({ select: { id_conf: true } })
+     * 
+     */
+    findMany<T extends configuracionFindManyArgs>(args?: SelectSubset<T, configuracionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$configuracionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Configuracion.
+     * @param {configuracionCreateArgs} args - Arguments to create a Configuracion.
+     * @example
+     * // Create one Configuracion
+     * const Configuracion = await prisma.configuracion.create({
+     *   data: {
+     *     // ... data to create a Configuracion
+     *   }
+     * })
+     * 
+     */
+    create<T extends configuracionCreateArgs>(args: SelectSubset<T, configuracionCreateArgs<ExtArgs>>): Prisma__configuracionClient<$Result.GetResult<Prisma.$configuracionPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Configuracions.
+     * @param {configuracionCreateManyArgs} args - Arguments to create many Configuracions.
+     * @example
+     * // Create many Configuracions
+     * const configuracion = await prisma.configuracion.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends configuracionCreateManyArgs>(args?: SelectSubset<T, configuracionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Configuracions and returns the data saved in the database.
+     * @param {configuracionCreateManyAndReturnArgs} args - Arguments to create many Configuracions.
+     * @example
+     * // Create many Configuracions
+     * const configuracion = await prisma.configuracion.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Configuracions and only return the `id_conf`
+     * const configuracionWithId_confOnly = await prisma.configuracion.createManyAndReturn({
+     *   select: { id_conf: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends configuracionCreateManyAndReturnArgs>(args?: SelectSubset<T, configuracionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$configuracionPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Configuracion.
+     * @param {configuracionDeleteArgs} args - Arguments to delete one Configuracion.
+     * @example
+     * // Delete one Configuracion
+     * const Configuracion = await prisma.configuracion.delete({
+     *   where: {
+     *     // ... filter to delete one Configuracion
+     *   }
+     * })
+     * 
+     */
+    delete<T extends configuracionDeleteArgs>(args: SelectSubset<T, configuracionDeleteArgs<ExtArgs>>): Prisma__configuracionClient<$Result.GetResult<Prisma.$configuracionPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Configuracion.
+     * @param {configuracionUpdateArgs} args - Arguments to update one Configuracion.
+     * @example
+     * // Update one Configuracion
+     * const configuracion = await prisma.configuracion.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends configuracionUpdateArgs>(args: SelectSubset<T, configuracionUpdateArgs<ExtArgs>>): Prisma__configuracionClient<$Result.GetResult<Prisma.$configuracionPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Configuracions.
+     * @param {configuracionDeleteManyArgs} args - Arguments to filter Configuracions to delete.
+     * @example
+     * // Delete a few Configuracions
+     * const { count } = await prisma.configuracion.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends configuracionDeleteManyArgs>(args?: SelectSubset<T, configuracionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Configuracions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {configuracionUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Configuracions
+     * const configuracion = await prisma.configuracion.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends configuracionUpdateManyArgs>(args: SelectSubset<T, configuracionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Configuracions and returns the data updated in the database.
+     * @param {configuracionUpdateManyAndReturnArgs} args - Arguments to update many Configuracions.
+     * @example
+     * // Update many Configuracions
+     * const configuracion = await prisma.configuracion.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Configuracions and only return the `id_conf`
+     * const configuracionWithId_confOnly = await prisma.configuracion.updateManyAndReturn({
+     *   select: { id_conf: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends configuracionUpdateManyAndReturnArgs>(args: SelectSubset<T, configuracionUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$configuracionPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Configuracion.
+     * @param {configuracionUpsertArgs} args - Arguments to update or create a Configuracion.
+     * @example
+     * // Update or create a Configuracion
+     * const configuracion = await prisma.configuracion.upsert({
+     *   create: {
+     *     // ... data to create a Configuracion
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Configuracion we want to update
+     *   }
+     * })
+     */
+    upsert<T extends configuracionUpsertArgs>(args: SelectSubset<T, configuracionUpsertArgs<ExtArgs>>): Prisma__configuracionClient<$Result.GetResult<Prisma.$configuracionPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Configuracions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {configuracionCountArgs} args - Arguments to filter Configuracions to count.
+     * @example
+     * // Count the number of Configuracions
+     * const count = await prisma.configuracion.count({
+     *   where: {
+     *     // ... the filter for the Configuracions we want to count
+     *   }
+     * })
+    **/
+    count<T extends configuracionCountArgs>(
+      args?: Subset<T, configuracionCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ConfiguracionCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Configuracion.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ConfiguracionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ConfiguracionAggregateArgs>(args: Subset<T, ConfiguracionAggregateArgs>): Prisma.PrismaPromise<GetConfiguracionAggregateType<T>>
+
+    /**
+     * Group by Configuracion.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {configuracionGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends configuracionGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: configuracionGroupByArgs['orderBy'] }
+        : { orderBy?: configuracionGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, configuracionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetConfiguracionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the configuracion model
+   */
+  readonly fields: configuracionFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for configuracion.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__configuracionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the configuracion model
+   */
+  interface configuracionFieldRefs {
+    readonly id_conf: FieldRef<"configuracion", 'Int'>
+    readonly mision: FieldRef<"configuracion", 'String'>
+    readonly vision: FieldRef<"configuracion", 'String'>
+    readonly autoridades: FieldRef<"configuracion", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * configuracion findUnique
+   */
+  export type configuracionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the configuracion
+     */
+    select?: configuracionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the configuracion
+     */
+    omit?: configuracionOmit<ExtArgs> | null
+    /**
+     * Filter, which configuracion to fetch.
+     */
+    where: configuracionWhereUniqueInput
+  }
+
+  /**
+   * configuracion findUniqueOrThrow
+   */
+  export type configuracionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the configuracion
+     */
+    select?: configuracionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the configuracion
+     */
+    omit?: configuracionOmit<ExtArgs> | null
+    /**
+     * Filter, which configuracion to fetch.
+     */
+    where: configuracionWhereUniqueInput
+  }
+
+  /**
+   * configuracion findFirst
+   */
+  export type configuracionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the configuracion
+     */
+    select?: configuracionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the configuracion
+     */
+    omit?: configuracionOmit<ExtArgs> | null
+    /**
+     * Filter, which configuracion to fetch.
+     */
+    where?: configuracionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of configuracions to fetch.
+     */
+    orderBy?: configuracionOrderByWithRelationInput | configuracionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for configuracions.
+     */
+    cursor?: configuracionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` configuracions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` configuracions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of configuracions.
+     */
+    distinct?: ConfiguracionScalarFieldEnum | ConfiguracionScalarFieldEnum[]
+  }
+
+  /**
+   * configuracion findFirstOrThrow
+   */
+  export type configuracionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the configuracion
+     */
+    select?: configuracionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the configuracion
+     */
+    omit?: configuracionOmit<ExtArgs> | null
+    /**
+     * Filter, which configuracion to fetch.
+     */
+    where?: configuracionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of configuracions to fetch.
+     */
+    orderBy?: configuracionOrderByWithRelationInput | configuracionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for configuracions.
+     */
+    cursor?: configuracionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` configuracions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` configuracions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of configuracions.
+     */
+    distinct?: ConfiguracionScalarFieldEnum | ConfiguracionScalarFieldEnum[]
+  }
+
+  /**
+   * configuracion findMany
+   */
+  export type configuracionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the configuracion
+     */
+    select?: configuracionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the configuracion
+     */
+    omit?: configuracionOmit<ExtArgs> | null
+    /**
+     * Filter, which configuracions to fetch.
+     */
+    where?: configuracionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of configuracions to fetch.
+     */
+    orderBy?: configuracionOrderByWithRelationInput | configuracionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing configuracions.
+     */
+    cursor?: configuracionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` configuracions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` configuracions.
+     */
+    skip?: number
+    distinct?: ConfiguracionScalarFieldEnum | ConfiguracionScalarFieldEnum[]
+  }
+
+  /**
+   * configuracion create
+   */
+  export type configuracionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the configuracion
+     */
+    select?: configuracionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the configuracion
+     */
+    omit?: configuracionOmit<ExtArgs> | null
+    /**
+     * The data needed to create a configuracion.
+     */
+    data: XOR<configuracionCreateInput, configuracionUncheckedCreateInput>
+  }
+
+  /**
+   * configuracion createMany
+   */
+  export type configuracionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many configuracions.
+     */
+    data: configuracionCreateManyInput | configuracionCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * configuracion createManyAndReturn
+   */
+  export type configuracionCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the configuracion
+     */
+    select?: configuracionSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the configuracion
+     */
+    omit?: configuracionOmit<ExtArgs> | null
+    /**
+     * The data used to create many configuracions.
+     */
+    data: configuracionCreateManyInput | configuracionCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * configuracion update
+   */
+  export type configuracionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the configuracion
+     */
+    select?: configuracionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the configuracion
+     */
+    omit?: configuracionOmit<ExtArgs> | null
+    /**
+     * The data needed to update a configuracion.
+     */
+    data: XOR<configuracionUpdateInput, configuracionUncheckedUpdateInput>
+    /**
+     * Choose, which configuracion to update.
+     */
+    where: configuracionWhereUniqueInput
+  }
+
+  /**
+   * configuracion updateMany
+   */
+  export type configuracionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update configuracions.
+     */
+    data: XOR<configuracionUpdateManyMutationInput, configuracionUncheckedUpdateManyInput>
+    /**
+     * Filter which configuracions to update
+     */
+    where?: configuracionWhereInput
+    /**
+     * Limit how many configuracions to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * configuracion updateManyAndReturn
+   */
+  export type configuracionUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the configuracion
+     */
+    select?: configuracionSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the configuracion
+     */
+    omit?: configuracionOmit<ExtArgs> | null
+    /**
+     * The data used to update configuracions.
+     */
+    data: XOR<configuracionUpdateManyMutationInput, configuracionUncheckedUpdateManyInput>
+    /**
+     * Filter which configuracions to update
+     */
+    where?: configuracionWhereInput
+    /**
+     * Limit how many configuracions to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * configuracion upsert
+   */
+  export type configuracionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the configuracion
+     */
+    select?: configuracionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the configuracion
+     */
+    omit?: configuracionOmit<ExtArgs> | null
+    /**
+     * The filter to search for the configuracion to update in case it exists.
+     */
+    where: configuracionWhereUniqueInput
+    /**
+     * In case the configuracion found by the `where` argument doesn't exist, create a new configuracion with this data.
+     */
+    create: XOR<configuracionCreateInput, configuracionUncheckedCreateInput>
+    /**
+     * In case the configuracion was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<configuracionUpdateInput, configuracionUncheckedUpdateInput>
+  }
+
+  /**
+   * configuracion delete
+   */
+  export type configuracionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the configuracion
+     */
+    select?: configuracionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the configuracion
+     */
+    omit?: configuracionOmit<ExtArgs> | null
+    /**
+     * Filter which configuracion to delete.
+     */
+    where: configuracionWhereUniqueInput
+  }
+
+  /**
+   * configuracion deleteMany
+   */
+  export type configuracionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which configuracions to delete
+     */
+    where?: configuracionWhereInput
+    /**
+     * Limit how many configuracions to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * configuracion without action
+   */
+  export type configuracionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the configuracion
+     */
+    select?: configuracionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the configuracion
+     */
+    omit?: configuracionOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -5968,6 +7075,16 @@ export namespace Prisma {
   };
 
   export type InscripcionScalarFieldEnum = (typeof InscripcionScalarFieldEnum)[keyof typeof InscripcionScalarFieldEnum]
+
+
+  export const ConfiguracionScalarFieldEnum: {
+    id_conf: 'id_conf',
+    mision: 'mision',
+    vision: 'vision',
+    autoridades: 'autoridades'
+  };
+
+  export type ConfiguracionScalarFieldEnum = (typeof ConfiguracionScalarFieldEnum)[keyof typeof ConfiguracionScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -6423,6 +7540,55 @@ export namespace Prisma {
     cert_enviado?: BoolWithAggregatesFilter<"inscripcion"> | boolean
   }
 
+  export type configuracionWhereInput = {
+    AND?: configuracionWhereInput | configuracionWhereInput[]
+    OR?: configuracionWhereInput[]
+    NOT?: configuracionWhereInput | configuracionWhereInput[]
+    id_conf?: IntFilter<"configuracion"> | number
+    mision?: StringFilter<"configuracion"> | string
+    vision?: StringFilter<"configuracion"> | string
+    autoridades?: StringFilter<"configuracion"> | string
+  }
+
+  export type configuracionOrderByWithRelationInput = {
+    id_conf?: SortOrder
+    mision?: SortOrder
+    vision?: SortOrder
+    autoridades?: SortOrder
+  }
+
+  export type configuracionWhereUniqueInput = Prisma.AtLeast<{
+    id_conf?: number
+    AND?: configuracionWhereInput | configuracionWhereInput[]
+    OR?: configuracionWhereInput[]
+    NOT?: configuracionWhereInput | configuracionWhereInput[]
+    mision?: StringFilter<"configuracion"> | string
+    vision?: StringFilter<"configuracion"> | string
+    autoridades?: StringFilter<"configuracion"> | string
+  }, "id_conf">
+
+  export type configuracionOrderByWithAggregationInput = {
+    id_conf?: SortOrder
+    mision?: SortOrder
+    vision?: SortOrder
+    autoridades?: SortOrder
+    _count?: configuracionCountOrderByAggregateInput
+    _avg?: configuracionAvgOrderByAggregateInput
+    _max?: configuracionMaxOrderByAggregateInput
+    _min?: configuracionMinOrderByAggregateInput
+    _sum?: configuracionSumOrderByAggregateInput
+  }
+
+  export type configuracionScalarWhereWithAggregatesInput = {
+    AND?: configuracionScalarWhereWithAggregatesInput | configuracionScalarWhereWithAggregatesInput[]
+    OR?: configuracionScalarWhereWithAggregatesInput[]
+    NOT?: configuracionScalarWhereWithAggregatesInput | configuracionScalarWhereWithAggregatesInput[]
+    id_conf?: IntWithAggregatesFilter<"configuracion"> | number
+    mision?: StringWithAggregatesFilter<"configuracion"> | string
+    vision?: StringWithAggregatesFilter<"configuracion"> | string
+    autoridades?: StringWithAggregatesFilter<"configuracion"> | string
+  }
+
   export type usuarioCreateInput = {
     id_usu?: string
     ced_usu: string
@@ -6773,6 +7939,55 @@ export namespace Prisma {
     estado?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
     cert_enviado?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type configuracionCreateInput = {
+    id_conf?: number
+    mision: string
+    vision: string
+    autoridades: string
+  }
+
+  export type configuracionUncheckedCreateInput = {
+    id_conf?: number
+    mision: string
+    vision: string
+    autoridades: string
+  }
+
+  export type configuracionUpdateInput = {
+    id_conf?: IntFieldUpdateOperationsInput | number
+    mision?: StringFieldUpdateOperationsInput | string
+    vision?: StringFieldUpdateOperationsInput | string
+    autoridades?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type configuracionUncheckedUpdateInput = {
+    id_conf?: IntFieldUpdateOperationsInput | number
+    mision?: StringFieldUpdateOperationsInput | string
+    vision?: StringFieldUpdateOperationsInput | string
+    autoridades?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type configuracionCreateManyInput = {
+    id_conf?: number
+    mision: string
+    vision: string
+    autoridades: string
+  }
+
+  export type configuracionUpdateManyMutationInput = {
+    id_conf?: IntFieldUpdateOperationsInput | number
+    mision?: StringFieldUpdateOperationsInput | string
+    vision?: StringFieldUpdateOperationsInput | string
+    autoridades?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type configuracionUncheckedUpdateManyInput = {
+    id_conf?: IntFieldUpdateOperationsInput | number
+    mision?: StringFieldUpdateOperationsInput | string
+    vision?: StringFieldUpdateOperationsInput | string
+    autoridades?: StringFieldUpdateOperationsInput | string
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -7196,6 +8411,35 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumestado_inscripcionFilter<$PrismaModel>
     _max?: NestedEnumestado_inscripcionFilter<$PrismaModel>
+  }
+
+  export type configuracionCountOrderByAggregateInput = {
+    id_conf?: SortOrder
+    mision?: SortOrder
+    vision?: SortOrder
+    autoridades?: SortOrder
+  }
+
+  export type configuracionAvgOrderByAggregateInput = {
+    id_conf?: SortOrder
+  }
+
+  export type configuracionMaxOrderByAggregateInput = {
+    id_conf?: SortOrder
+    mision?: SortOrder
+    vision?: SortOrder
+    autoridades?: SortOrder
+  }
+
+  export type configuracionMinOrderByAggregateInput = {
+    id_conf?: SortOrder
+    mision?: SortOrder
+    vision?: SortOrder
+    autoridades?: SortOrder
+  }
+
+  export type configuracionSumOrderByAggregateInput = {
+    id_conf?: SortOrder
   }
 
   export type inscripcionCreateNestedManyWithoutUsuarioInput = {

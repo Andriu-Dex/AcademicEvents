@@ -13,7 +13,7 @@ const login = async (req, res) => {
       where: { cor_usu: correo },
     });
 
-    if (!user || user.rol_usu !== "ESTUDIANTE") {
+    if (!user || !["ESTUDIANTE", "ADMIN"].includes(user.rol_usu)) {
       return res.status(401).json({ msg: "Credenciales inválidas" });
     }
 
@@ -24,7 +24,8 @@ const login = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user.id_usu, rol: user.rol_usu },
+      // { id: user.id_usu, rol: user.rol_usu },
+      { id: user.id_usu, rol_usu: user.rol_usu },
       process.env.JWT_SECRET,
       { expiresIn: "2h" }
     );
@@ -34,7 +35,7 @@ const login = async (req, res) => {
       usuario: {
         id: user.id_usu,
         correo: user.cor_usu,
-        rol: user.rol_usu,
+        rol_usu: user.rol_usu,
       },
     });
   } catch (error) {

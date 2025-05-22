@@ -1,7 +1,8 @@
 // Importa hooks y librerías necesarias
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useAuth } from "../hooks/useAuth"; // Hook personalizado para autenticación
+import { useAuth } from "../hooks/useAuth";
+//import { useAuth } from "../context/AuthContext"; // Contexto de autenticación
 import { useNavigate } from "react-router-dom"; // Hook para redirección
 import { toast } from "react-toastify"; // Notificaciones tipo toast
 
@@ -19,27 +20,42 @@ const CertificatesRoute = () => {
 
   // useEffect para ejecutar lógica al cargar el componente
   useEffect(() => {
+    // Verifica si el usuario está autenticado
+    console.log("Usuario autenticado:", usuario);
+
     // Si no hay usuario, redirige al login
     if (!usuario) return navigate("/login");
 
-    // Función asíncrona para obtener inscripciones finalizadas
+    // Si no hay token, redirige al login
+    if (!usuario.id) {
+      console.warn("El usuario no tiene ID, evitando llamada a la API");
+      return;
+    }
+
+    // Función asíncrona para obtener inscripciones del usuario
     const obtenerInscripciones = async () => {
       try {
         // Llamada al backend para obtener inscripciones del usuario
         const res = await axios.get(
-          `http://localhost:3000/api/inscripciones/${usuario.id_usu}`,
+          `${import.meta.env.VITE_API_URL}/api/inscripciones/propias`,
           {
             headers: {
-              Authorization: `Bearer ${token}`, // Envía token en cabecera
+              Authorization: `Bearer ${token}`,
             },
           }
         );
+
         // Filtra solo las inscripciones que están finalizadas
         const finalizadas = res.data.filter((i) => i.estado === "FINALIZADA");
         setCertificados(finalizadas); // Guarda en estado
       } catch (error) {
         // Muestra error en consola si falla la solicitud
         console.error("Error al obtener certificados:", error);
+        toast.error(
+          <span className="inline-flex items-center gap-2 text-red-600">
+            <XCircle size={18} /> Error al obtener certificados
+          </span>
+        );
       } finally {
         setLoading(false); // Desactiva la carga independientemente del resultado
       }
@@ -51,7 +67,10 @@ const CertificatesRoute = () => {
 
   // Función para abrir el certificado PDF en una nueva pestaña
   const descargar = (id_ins) => {
-    window.open(`http://localhost:3000/api/certificados/${id_ins}`, "_blank");
+    window.open(
+      `${import.meta.env.VITE_API_URL}/api/certificados/${id_ins}`,
+      "_blank"
+    );
   };
 
   // Función para reenviar certificado por correo
@@ -60,7 +79,8 @@ const CertificatesRoute = () => {
     try {
       // Solicitud para reenviar el certificado
       await axios.get(
-        `http://localhost:3000/api/certificados/enviar/${id_ins}`,
+        `${import.meta.env.VITE_API_URL}/api/certificados/enviar/${id_ins}`,
+
         { headers: { Authorization: `Bearer ${token}` } }
       );
       // Muestra notificación de éxito
