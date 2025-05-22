@@ -47,13 +47,14 @@ const MyInscriptions = () => {
   const obtenerInscripciones = async () => {
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/inscripciones/${usuario.id}`,
+        `${import.meta.env.VITE_API_URL}/api/inscripciones/propias`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
       );
+
       setInscripciones(res.data);
     } catch (error) {
       console.error("Error al obtener inscripciones:", error);

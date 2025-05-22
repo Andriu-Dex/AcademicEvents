@@ -37,13 +37,14 @@ const CertificatesRoute = () => {
       try {
         // Llamada al backend para obtener inscripciones del usuario
         const res = await axios.get(
-          `http://localhost:3000/api/inscripciones/usuario/${usuario.id}`,
+          `${import.meta.env.VITE_API_URL}/api/inscripciones/propias`,
           {
             headers: {
-              Authorization: `Bearer ${token}`, // Envía token en cabecera
+              Authorization: `Bearer ${token}`,
             },
           }
         );
+
         // Filtra solo las inscripciones que están finalizadas
         const finalizadas = res.data.filter((i) => i.estado === "FINALIZADA");
         setCertificados(finalizadas); // Guarda en estado

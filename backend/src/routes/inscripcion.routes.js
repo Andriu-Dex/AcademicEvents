@@ -13,21 +13,14 @@ const {
   reenviarComprobante,
   obtenerInscripcionesPorEvento,
   obtenerInscripcionUsuarioEnEvento,
+  obtenerInscripcionesDelUsuarioActual,
 } = require("../controllers/inscripcion.controller");
 
 // =====================================
 // Rutas para gestión de inscripciones
 // =====================================
 
-// Crear nueva inscripción a un evento
-// router.post(
-//   "/inscripciones",
-//   upload.single("archivo"),
-//   manejarErroresDeMulter,
-//   crearInscripcion,
-//   verificarToken
-// );
-
+// Crear inscripción
 router.post(
   "/",
   verificarToken,
@@ -36,42 +29,8 @@ router.post(
   crearInscripcion
 );
 
-// Obtener inscripciones del usuario
-router.get(
-  "/evento/:id",
-  verificarToken,
-  onlyAdmin,
-  obtenerInscripcionesPorEvento
-);
-
-// Ruta del admin: lista todas las inscripciones a un evento
-router.get("/:idEvento", verificarToken, obtenerInscripcionUsuarioEnEvento);
-
-// Obtener inscripciones por usuario (admin)
-router.get(
-  "/inscripciones/usuario/:id",
-  verificarToken,
-  obtenerInscripcionesPorUsuario
-);
-
-// Obtener todas las inscripciones de un evento (admin)
-router.get(
-  "/admin/inscripciones/evento/:id",
-  verificarToken,
-  onlyAdmin,
-  obtenerInscripcionesPorEvento
-);
-
-// Validar una inscripción (admin)
-router.put(
-  "/admin/inscripciones/validar/:id",
-  verificarToken,
-  onlyAdmin,
-  validarInscripcion
-);
-
-// Verificar si puede generar certificado
-router.get("/inscripciones/certificado/:id", puedeGenerarCertificado);
+// Obtener inscripciones propias del usuario autenticado
+router.get("/propias", verificarToken, obtenerInscripcionesDelUsuarioActual);
 
 // Reenviar comprobante
 router.put(
@@ -81,5 +40,43 @@ router.put(
   manejarErroresDeMulter,
   reenviarComprobante
 );
+
+// Verificar si puede generar certificado
+router.get("/inscripciones/certificado/:id", puedeGenerarCertificado);
+
+// ADMIN: Obtener inscripciones por usuario
+router.get(
+  "/inscripciones/usuario/:id",
+  verificarToken,
+  onlyAdmin,
+  obtenerInscripcionesPorUsuario
+);
+
+// ADMIN: Obtener inscripciones por evento (duplicado → puedes revisar)
+router.get(
+  "/admin/inscripciones/evento/:id",
+  verificarToken,
+  onlyAdmin,
+  obtenerInscripcionesPorEvento
+);
+
+// ADMIN: Validar inscripción
+router.put(
+  "/admin/inscripciones/validar/:id",
+  verificarToken,
+  onlyAdmin,
+  validarInscripcion
+);
+
+// ADMIN: Obtener inscripciones por evento (para validación)
+router.get(
+  "/evento/:id",
+  verificarToken,
+  onlyAdmin,
+  obtenerInscripcionesPorEvento
+);
+
+// Verificar si el usuario ya está inscrito en un evento
+router.get("/:idEvento", verificarToken, obtenerInscripcionUsuarioEnEvento);
 
 module.exports = router;

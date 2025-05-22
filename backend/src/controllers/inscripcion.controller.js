@@ -415,6 +415,30 @@ const obtenerInscripcionUsuarioEnEvento = async (req, res) => {
   }
 };
 
+// ==============================
+// Inscripciones propias (usuario autenticado)
+// ==============================
+const obtenerInscripcionesDelUsuarioActual = async (req, res) => {
+  try {
+    const id_usu = req.usuario.id;
+
+    const inscripciones = await prisma.inscripcion.findMany({
+      where: { id_usu },
+      include: {
+        evento: true,
+      },
+      orderBy: { fec_ins: "desc" },
+    });
+
+    res.status(200).json(inscripciones);
+  } catch (error) {
+    res.status(500).json({
+      msg: "Error al obtener inscripciones",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   crearInscripcion,
   validarInscripcion,
@@ -424,4 +448,5 @@ module.exports = {
   obtenerInscripcionesPorEvento,
   obtenerInscripcionUsuarioEnEvento,
   manejarErroresDeMulter,
+  obtenerInscripcionesDelUsuarioActual,
 };
