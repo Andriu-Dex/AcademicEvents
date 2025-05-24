@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { Dialog } from "@headlessui/react";
-import "./styles/AdminCarreras.css";
+import "../styles/AdminCarreras.css"; 
 
 const AdminCarreras = () => {
   const [carreras, setCarreras] = useState([]);
@@ -16,11 +16,10 @@ const AdminCarreras = () => {
 
   const cargarCarreras = async () => {
     try {
-      const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/carreras`
-      );
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/carreras`);
       setCarreras(res.data);
     } catch (error) {
+      console.error(error);
       toast.error("Error al cargar las carreras");
     }
   };
@@ -35,6 +34,7 @@ const AdminCarreras = () => {
       setNuevaCarrera("");
       cargarCarreras();
     } catch (error) {
+      console.error(error);
       toast.error("Error al crear carrera");
     }
   };
@@ -50,6 +50,7 @@ const AdminCarreras = () => {
       toast.success("Carrera eliminada");
       cargarCarreras();
     } catch (error) {
+      console.error(error);
       toast.error("Error al eliminar carrera");
     } finally {
       setModalEliminar({ abierto: false, id: null });
@@ -74,6 +75,7 @@ const AdminCarreras = () => {
       });
       cargarCarreras();
     } catch (error) {
+      console.error(error);
       toast.error("Error al actualizar carrera");
     }
   };
@@ -83,31 +85,23 @@ const AdminCarreras = () => {
   }, []);
 
   return (
-    <div className="p-6 max-w-2xl mx-auto">
-      <h2 className="text-xl font-bold mb-4">Gestión de Carreras</h2>
+    <div className="admincarreras-container">
+      <h2 className="admincarreras-title">Gestión de Carreras</h2>
 
-      <div className="flex gap-2 mb-4">
+      <div className="admincarreras-input-group">
         <input
           type="text"
           placeholder="Nueva carrera"
-          className="border p-2 flex-1"
+          className="admincarreras-input"
           value={nuevaCarrera}
           onChange={(e) => setNuevaCarrera(e.target.value)}
         />
-        <button
-          onClick={crearCarrera}
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-        >
-          Crear
-        </button>
+        <button onClick={crearCarrera} className="btn-crear">Crear</button>
       </div>
 
-      <ul className="space-y-2">
+      <ul className="admincarreras-lista">
         {carreras.map((carrera) => (
-          <li
-            key={carrera.id_car}
-            className="border p-2 flex justify-between items-center gap-2"
-          >
+          <li key={carrera.id_car} className="admincarreras-item">
             {editandoId === carrera.id_car ? (
               <input
                 type="text"
@@ -118,26 +112,16 @@ const AdminCarreras = () => {
                     [carrera.id_car]: e.target.value,
                   }))
                 }
-                className="border p-1 flex-1"
+                className="admincarreras-input"
               />
             ) : (
-              <span className="flex-1">{carrera.nom_car}</span>
+              <span className="admincarreras-nombre">{carrera.nom_car}</span>
             )}
 
             {editandoId === carrera.id_car ? (
               <>
-                <button
-                  onClick={() => actualizarCarrera(carrera.id_car)}
-                  className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
-                >
-                  Guardar
-                </button>
-                <button
-                  onClick={() => setEditandoId(null)}
-                  className="bg-gray-400 text-white px-3 py-1 rounded hover:bg-gray-500"
-                >
-                  Cancelar
-                </button>
+                <button onClick={() => actualizarCarrera(carrera.id_car)} className="btn-guardar">Guardar</button>
+                <button onClick={() => setEditandoId(null)} className="btn-cancelar">Cancelar</button>
               </>
             ) : (
               <button
@@ -148,50 +132,35 @@ const AdminCarreras = () => {
                     [carrera.id_car]: carrera.nom_car,
                   }));
                 }}
-                className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
+                className="btn-editar"
               >
                 Editar
               </button>
             )}
 
-            <button
-              onClick={() => confirmarEliminar(carrera.id_car)}
-              className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
-            >
+            <button onClick={() => confirmarEliminar(carrera.id_car)} className="btn-eliminar">
               Eliminar
             </button>
           </li>
         ))}
       </ul>
 
-      {/* Modal de confirmación */}
       <Dialog
         open={modalEliminar.abierto}
         onClose={() => setModalEliminar({ abierto: false, id: null })}
         className="admincarreras-modal-container"
       >
         <div className="admincarreras-modal-overlay" aria-hidden="true" />
-
         <div className="admincarreras-modal-content">
-          <Dialog.Title className="text-lg font-bold text-gray-800 mb-4">
-            Confirmar eliminación
-          </Dialog.Title>
-          <p className="text-sm text-gray-600 mb-6">
-            ¿Estás seguro de que deseas eliminar esta carrera? Esta acción no se
-            puede deshacer.
+          <Dialog.Title className="admincarreras-modal-title">Confirmar eliminación</Dialog.Title>
+          <p className="admincarreras-modal-text">
+            ¿Estás seguro de que deseas eliminar esta carrera? Esta acción no se puede deshacer.
           </p>
-
-          <div className="flex justify-end gap-3">
-            <button
-              onClick={() => setModalEliminar({ abierto: false, id: null })}
-              className="px-4 py-2 rounded bg-gray-300 text-gray-800 hover:bg-gray-400"
-            >
+          <div className="admincarreras-modal-buttons">
+            <button onClick={() => setModalEliminar({ abierto: false, id: null })} className="btn-cancelar">
               Cancelar
             </button>
-            <button
-              onClick={eliminarCarrera}
-              className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700"
-            >
+            <button onClick={eliminarCarrera} className="btn-eliminar">
               Eliminar
             </button>
           </div>
@@ -202,4 +171,3 @@ const AdminCarreras = () => {
 };
 
 export default AdminCarreras;
-//Andriu Dex
