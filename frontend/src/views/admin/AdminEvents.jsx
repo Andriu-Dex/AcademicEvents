@@ -10,7 +10,7 @@ import {
   CheckCircle,
   XCircle,
 } from "lucide-react";
-import "../styles/AdminEvents.css"; // ✅ Importa CSS corregido
+import "../styles/AdminEvents.css"; 
 
 const AdminEvents = () => {
   const [eventos, setEventos] = useState([]);
