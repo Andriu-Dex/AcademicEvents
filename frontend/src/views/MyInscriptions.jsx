@@ -12,7 +12,7 @@ import {
   Upload,
 } from "lucide-react";
 
-import "../styles/MyInscriptions.css"; // ✅ Importa tu CSS
+import "../styles/MyInscriptions.css"; 
 
 const estadoLabel = {
   PENDIENTE: {
