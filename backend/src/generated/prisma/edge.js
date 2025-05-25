@@ -201,7 +201,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\Users\\andri\\Documents\\D-Proyectos\\Git\\AcademicEvents\\backend\\src\\generated\\prisma",
+      "value": "C:\\Users\\nixon\\OneDrive\\Escritorio\\AcademicEvents\\backend\\src\\generated\\prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -215,7 +215,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "C:\\Users\\andri\\Documents\\D-Proyectos\\Git\\AcademicEvents\\backend\\prisma\\schema.prisma",
+    "sourceFilePath": "C:\\Users\\nixon\\OneDrive\\Escritorio\\AcademicEvents\\backend\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
@@ -229,12 +229,11 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
-  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
         "fromEnvVar": "DATABASE_URL",
-        "value": null
+        "value": "postgresql://postgres:12345@localhost:5432/academicevents"
       }
     }
   },
