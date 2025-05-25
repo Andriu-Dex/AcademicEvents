@@ -1,6 +1,6 @@
 // Importación de módulos necesarios
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axiosInstance from "../api/axiosConfig";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "../hooks/useAuth";
@@ -80,16 +80,11 @@ const Login = () => {
       setIsLoading(false);
       return;
     }
-    saveEmailIfNew(email);
-
-    try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/login`,
-        {
-          correo: email,
-          contrasena: password,
-        }
-      );
+    saveEmailIfNew(email);    try {
+      const res = await axiosInstance.post(`/login`, {
+        correo: email,
+        contrasena: password,
+      });
 
       const { usuario: usu, token } = res.data;
       const usuarioFinal = usu ?? res.data;

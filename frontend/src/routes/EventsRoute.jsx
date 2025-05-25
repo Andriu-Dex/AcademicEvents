@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axiosInstance from "../api/axiosConfig";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -23,13 +23,7 @@ const EventsRoute = () => {
     if (!usuario) return navigate("/login");
 
     const obtenerEventos = async () => {
-      try {
-        const res = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/eventos`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+      try {        const res = await axiosInstance.get("/eventos");
         setEventos(res.data);
       } catch {
         toast.error("Error al obtener eventos");
@@ -41,18 +35,10 @@ const EventsRoute = () => {
 
   useEffect(() => {
     const obtenerInscripciones = async () => {
-      try {
-        const res = await Promise.all(
+      try {        const res = await Promise.all(
           eventos.map((ev) =>
-            axios
-              .get(
-                `${import.meta.env.VITE_API_URL}/api/inscripciones/${
-                  ev.id_eve
-                }`,
-                {
-                  headers: { Authorization: `Bearer ${token}` },
-                }
-              )
+            axiosInstance
+              .get(`/inscripciones/${ev.id_eve}`)
               .then((r) => ({ eventoId: ev.id_eve, inscrito: true }))
               .catch((err) =>
                 err.response?.status === 404
@@ -95,15 +81,12 @@ const EventsRoute = () => {
     const formData = new FormData();
     formData.append("id_usu", usuario.id);
     formData.append("id_eve", eventoSeleccionado.id_eve);
-    formData.append("archivo", archivo);
-
-    try {
-      await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/inscripciones`,
+    formData.append("archivo", archivo);    try {
+      await axiosInstance.post(
+        "/inscripciones",
         formData,
         {
           headers: {
-            Authorization: `Bearer ${token}`,
             "Content-Type": "multipart/form-data",
           },
         }

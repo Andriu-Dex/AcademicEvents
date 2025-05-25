@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axiosInstance from "../api/axiosConfig";
 import { useAuth } from "../hooks/useAuth";
 import { toast } from "react-toastify";
 
@@ -43,17 +43,9 @@ const MyInscriptions = () => {
   const [inscripcionSeleccionada, setInscripcionSeleccionada] = useState(null);
   const [nuevoArchivo, setNuevoArchivo] = useState(null);
   const [reenviando, setReenviando] = useState(false);
-
   const obtenerInscripciones = async () => {
     try {
-      const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/inscripciones/propias`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const res = await axiosInstance.get("/inscripciones/propias");
 
       setInscripciones(res.data);
     } catch (error) {
@@ -93,19 +85,14 @@ const MyInscriptions = () => {
     }
 
     const formData = new FormData();
-    formData.append("archivo", nuevoArchivo);
-
-    try {
+    formData.append("archivo", nuevoArchivo);    try {
       setReenviando(true);
-      await axios.put(
-        `${import.meta.env.VITE_API_URL}/api/inscripciones/reenviar/${
-          inscripcionSeleccionada.id_ins
-        }`,
+      await axiosInstance.put(
+        `/inscripciones/reenviar/${inscripcionSeleccionada.id_ins}`,
         formData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
           },
         }
       );

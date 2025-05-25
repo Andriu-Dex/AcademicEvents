@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState, useCallback } from "react";
-import axios from "axios";
+import axiosInstance from "../../api/axiosConfig";
 import { BadgeCheck, Clock, Ban, Eye, Download, Loader } from "lucide-react";
 import { toast } from "react-toastify";
 
@@ -24,19 +24,9 @@ const AdminEventInscription = () => {
   const [asistencia, setAsistencia] = useState("");
   const [notaFinal, setNotaFinal] = useState("");
   const [enviandoFinalizacion, setEnviandoFinalizacion] = useState(false);
-
   const obtenerInscripciones = useCallback(async () => {
     try {
-      const token = localStorage.getItem("token");
-
-      const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/admin/inscripciones/evento/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const res = await axiosInstance.get(`/admin/inscripciones/evento/${id}`);
 
       setInscripciones(res.data);
     } catch (err) {
@@ -46,18 +36,9 @@ const AdminEventInscription = () => {
       setLoading(false);
     }
   }, [id]);
-
   const obtenerNombreEvento = useCallback(async () => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/eventos/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const res = await axiosInstance.get(`/eventos/${id}`);
       setNombreEvento(res.data.nom_eve);
     } catch (err) {
       console.error("Error al obtener nombre del evento", err);
@@ -68,20 +49,10 @@ const AdminEventInscription = () => {
     obtenerInscripciones();
     obtenerNombreEvento();
   }, [obtenerInscripciones, obtenerNombreEvento]);
-
   const cambiarEstado = async (id_ins, estado) => {
-    const token = localStorage.getItem("token");
     setActualizandoId(id_ins);
     try {
-      await axios.put(
-        `${import.meta.env.VITE_API_URL}/api/inscripciones/validar/${id_ins}`,
-        { estado },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await axiosInstance.put(`/inscripciones/validar/${id_ins}`, { estado });
       await obtenerInscripciones();
     } catch (err) {
       console.error("Error al actualizar estado", err);
@@ -303,20 +274,11 @@ const AdminEventInscription = () => {
                       toast.error("Debe ingresar asistencia y nota válidas");
                       setEnviandoFinalizacion(false);
                       return;
-                    }
-
-                    await axios.put(
-                      `${
-                        import.meta.env.VITE_API_URL
-                      }/api/inscripciones/validar/${
-                        inscripcionFinalizar.id_ins
-                      }`,
-                      {
+                    }                    await axiosInstance.put(`/inscripciones/validar/${inscripcionFinalizar.id_ins}`, {
                         estado: "FINALIZADA",
                         asistencia: Number(asistencia),
                         nota_final: Number(notaFinal),
-                      }
-                    );
+                      });
                     toast.success("Inscripción finalizada correctamente");
                     setMostrarFinalizarModal(false);
                     await obtenerInscripciones();

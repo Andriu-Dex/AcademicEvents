@@ -1,6 +1,6 @@
 // Importa hooks y librerías necesarias
 import { useState, useEffect } from "react";
-import axios from "axios";
+import axiosInstance from "../api/axiosConfig";
 import { toast } from "react-toastify";
 import { useNavigate, Link } from "react-router-dom";
 import { User, Mail, Lock, Phone, FileText, BookText } from "lucide-react";
@@ -36,11 +36,10 @@ const Register = () => {
   const soloLetras = (texto) => {
     return /^[A-Za-zÁÉÍÓÚÑáéíóúñ\s]+$/.test(texto);
   };
-
   // Cargar carreras desde la API
   useEffect(() => {
-    axios
-      .get(`${import.meta.env.VITE_API_URL}/api/carreras`)
+    axiosInstance
+      .get("/carreras")
       .then((res) => setCarreras(res.data))
       .catch((err) => toast.error("Error al cargar carreras"));
   }, []);
@@ -72,14 +71,9 @@ const Register = () => {
 
     const formData = new FormData();
     Object.entries(datos).forEach(([key, val]) => formData.append(key, val));
-    if (archivo) formData.append("archivo", archivo);
-
-    try {
+    if (archivo) formData.append("archivo", archivo);    try {
       setLoading(true);
-      await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/registro`,
-        formData
-      );
+      await axiosInstance.post("/registro", formData);
       toast.success("Registro exitoso");
       navigate("/login");
     } catch (error) {

@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import axios from "axios";
+import axiosInstance from "../../api/axiosConfig";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
@@ -15,12 +15,9 @@ import {
 const AdminEvents = () => {
   const [eventos, setEventos] = useState([]);
   const navigate = useNavigate();
-
   const cargarEventos = useCallback(async () => {
     try {
-      const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/eventos`
-      );
+      const res = await axiosInstance.get("/eventos");
       console.log("Respuesta de eventos:", res.data);
       setEventos(res.data);
     } catch (error) {

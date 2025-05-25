@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axiosInstance from "../../api/axiosConfig";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/AuthContext";
 import { FileText, XCircle } from "lucide-react";
@@ -16,12 +16,9 @@ const AdminInscripciones = () => {
   const [inscripciones, setInscripciones] = useState([]);
   const [eventos, setEventos] = useState([]);
   const [eventoFiltrado, setEventoFiltrado] = useState("");
-
   const cargarEventos = async () => {
     try {
-      const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/eventos`
-      );
+      const res = await axiosInstance.get("/eventos");
       setEventos(res.data);
     } catch {
       toast.error("Error al cargar eventos");
@@ -32,17 +29,9 @@ const AdminInscripciones = () => {
     if (!eventoFiltrado) {
       setInscripciones([]);
       return;
-    }
-
-    try {
-      const res = await axios.get(
-        // `http://localhost:3000/api/admin/inscripciones/evento/${eventoFiltrado}`,
-        `${
-          import.meta.env.VITE_API_URL
-        }/api/admin/inscripciones/evento/${eventoFiltrado}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+    }    try {
+      const res = await axiosInstance.get(
+        `/admin/inscripciones/evento/${eventoFiltrado}`
       );
       setInscripciones(res.data);
     } catch (error) {
@@ -51,19 +40,11 @@ const AdminInscripciones = () => {
       setInscripciones([]);
     }
   };
-
   const cambiarEstado = async (id, nuevoEstado) => {
     try {
-      await axios.put(
-        `${import.meta.env.VITE_API_URL}/api/admin/inscripciones/validar/${id}`,
-
-        {
-          estado: nuevoEstado,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      await axiosInstance.put(`/admin/inscripciones/validar/${id}`, {
+        estado: nuevoEstado,
+      });
       toast.success(`Inscripción ${nuevoEstado.toLowerCase()}`);
       cargarInscripciones();
     } catch (error) {
@@ -193,23 +174,13 @@ const AdminInscripciones = () => {
                     ) {
                       toast.error("Asistencia inválida (0–100)");
                       return;
-                    }
-
-                    try {
-                      await axios.put(
-                        `${
-                          import.meta.env.VITE_API_URL
-                        }/api/admin/inscripciones/validar/${i.id_ins}`,
-
+                    }                    try {
+                      await axiosInstance.put(
+                        `/admin/inscripciones/validar/${i.id_ins}`,
                         {
                           estado: "FINALIZADA",
-                          // nota_final: nota,
-                          // asistencia: asistencia,
                           nota_final: Number(nota), // Asegura que es número
                           asistencia: Number(asistencia), // Asegura que es número
-                        },
-                        {
-                          headers: { Authorization: `Bearer ${token}` },
                         }
                       );
                       toast.success("Inscripción finalizada");
