@@ -3612,6 +3612,7 @@ export namespace Prisma {
     pagado_eve: boolean | null
     nota_min_eve: number | null
     por_asist_eve: number | null
+    imagen_portada: string | null
     est_eve: boolean | null
     fec_cre_eve: Date | null
     carreraId: string | null
@@ -3628,6 +3629,7 @@ export namespace Prisma {
     pagado_eve: boolean | null
     nota_min_eve: number | null
     por_asist_eve: number | null
+    imagen_portada: string | null
     est_eve: boolean | null
     fec_cre_eve: Date | null
     carreraId: string | null
@@ -3644,6 +3646,7 @@ export namespace Prisma {
     pagado_eve: number
     nota_min_eve: number
     por_asist_eve: number
+    imagen_portada: number
     est_eve: number
     fec_cre_eve: number
     carreraId: number
@@ -3674,6 +3677,7 @@ export namespace Prisma {
     pagado_eve?: true
     nota_min_eve?: true
     por_asist_eve?: true
+    imagen_portada?: true
     est_eve?: true
     fec_cre_eve?: true
     carreraId?: true
@@ -3690,6 +3694,7 @@ export namespace Prisma {
     pagado_eve?: true
     nota_min_eve?: true
     por_asist_eve?: true
+    imagen_portada?: true
     est_eve?: true
     fec_cre_eve?: true
     carreraId?: true
@@ -3706,6 +3711,7 @@ export namespace Prisma {
     pagado_eve?: true
     nota_min_eve?: true
     por_asist_eve?: true
+    imagen_portada?: true
     est_eve?: true
     fec_cre_eve?: true
     carreraId?: true
@@ -3809,6 +3815,7 @@ export namespace Prisma {
     pagado_eve: boolean
     nota_min_eve: number | null
     por_asist_eve: number | null
+    imagen_portada: string | null
     est_eve: boolean
     fec_cre_eve: Date
     carreraId: string | null
@@ -3844,6 +3851,7 @@ export namespace Prisma {
     pagado_eve?: boolean
     nota_min_eve?: boolean
     por_asist_eve?: boolean
+    imagen_portada?: boolean
     est_eve?: boolean
     fec_cre_eve?: boolean
     carreraId?: boolean
@@ -3863,6 +3871,7 @@ export namespace Prisma {
     pagado_eve?: boolean
     nota_min_eve?: boolean
     por_asist_eve?: boolean
+    imagen_portada?: boolean
     est_eve?: boolean
     fec_cre_eve?: boolean
     carreraId?: boolean
@@ -3880,6 +3889,7 @@ export namespace Prisma {
     pagado_eve?: boolean
     nota_min_eve?: boolean
     por_asist_eve?: boolean
+    imagen_portada?: boolean
     est_eve?: boolean
     fec_cre_eve?: boolean
     carreraId?: boolean
@@ -3897,12 +3907,13 @@ export namespace Prisma {
     pagado_eve?: boolean
     nota_min_eve?: boolean
     por_asist_eve?: boolean
+    imagen_portada?: boolean
     est_eve?: boolean
     fec_cre_eve?: boolean
     carreraId?: boolean
   }
 
-  export type eventoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_eve" | "nom_eve" | "des_eve" | "tip_eve" | "fec_ini_eve" | "fec_fin_eve" | "dur_hrs_eve" | "pagado_eve" | "nota_min_eve" | "por_asist_eve" | "est_eve" | "fec_cre_eve" | "carreraId", ExtArgs["result"]["evento"]>
+  export type eventoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_eve" | "nom_eve" | "des_eve" | "tip_eve" | "fec_ini_eve" | "fec_fin_eve" | "dur_hrs_eve" | "pagado_eve" | "nota_min_eve" | "por_asist_eve" | "imagen_portada" | "est_eve" | "fec_cre_eve" | "carreraId", ExtArgs["result"]["evento"]>
   export type eventoInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     carrera?: boolean | evento$carreraArgs<ExtArgs>
     inscripciones?: boolean | evento$inscripcionesArgs<ExtArgs>
@@ -3932,6 +3943,7 @@ export namespace Prisma {
       pagado_eve: boolean
       nota_min_eve: number | null
       por_asist_eve: number | null
+      imagen_portada: string | null
       est_eve: boolean
       fec_cre_eve: Date
       carreraId: string | null
@@ -4370,6 +4382,7 @@ export namespace Prisma {
     readonly pagado_eve: FieldRef<"evento", 'Boolean'>
     readonly nota_min_eve: FieldRef<"evento", 'Float'>
     readonly por_asist_eve: FieldRef<"evento", 'Float'>
+    readonly imagen_portada: FieldRef<"evento", 'String'>
     readonly est_eve: FieldRef<"evento", 'Boolean'>
     readonly fec_cre_eve: FieldRef<"evento", 'DateTime'>
     readonly carreraId: FieldRef<"evento", 'String'>
@@ -7054,6 +7067,7 @@ export namespace Prisma {
     pagado_eve: 'pagado_eve',
     nota_min_eve: 'nota_min_eve',
     por_asist_eve: 'por_asist_eve',
+    imagen_portada: 'imagen_portada',
     est_eve: 'est_eve',
     fec_cre_eve: 'fec_cre_eve',
     carreraId: 'carreraId'
@@ -7373,6 +7387,7 @@ export namespace Prisma {
     pagado_eve?: BoolFilter<"evento"> | boolean
     nota_min_eve?: FloatNullableFilter<"evento"> | number | null
     por_asist_eve?: FloatNullableFilter<"evento"> | number | null
+    imagen_portada?: StringNullableFilter<"evento"> | string | null
     est_eve?: BoolFilter<"evento"> | boolean
     fec_cre_eve?: DateTimeFilter<"evento"> | Date | string
     carreraId?: StringNullableFilter<"evento"> | string | null
@@ -7391,6 +7406,7 @@ export namespace Prisma {
     pagado_eve?: SortOrder
     nota_min_eve?: SortOrderInput | SortOrder
     por_asist_eve?: SortOrderInput | SortOrder
+    imagen_portada?: SortOrderInput | SortOrder
     est_eve?: SortOrder
     fec_cre_eve?: SortOrder
     carreraId?: SortOrderInput | SortOrder
@@ -7412,6 +7428,7 @@ export namespace Prisma {
     pagado_eve?: BoolFilter<"evento"> | boolean
     nota_min_eve?: FloatNullableFilter<"evento"> | number | null
     por_asist_eve?: FloatNullableFilter<"evento"> | number | null
+    imagen_portada?: StringNullableFilter<"evento"> | string | null
     est_eve?: BoolFilter<"evento"> | boolean
     fec_cre_eve?: DateTimeFilter<"evento"> | Date | string
     carreraId?: StringNullableFilter<"evento"> | string | null
@@ -7430,6 +7447,7 @@ export namespace Prisma {
     pagado_eve?: SortOrder
     nota_min_eve?: SortOrderInput | SortOrder
     por_asist_eve?: SortOrderInput | SortOrder
+    imagen_portada?: SortOrderInput | SortOrder
     est_eve?: SortOrder
     fec_cre_eve?: SortOrder
     carreraId?: SortOrderInput | SortOrder
@@ -7454,6 +7472,7 @@ export namespace Prisma {
     pagado_eve?: BoolWithAggregatesFilter<"evento"> | boolean
     nota_min_eve?: FloatNullableWithAggregatesFilter<"evento"> | number | null
     por_asist_eve?: FloatNullableWithAggregatesFilter<"evento"> | number | null
+    imagen_portada?: StringNullableWithAggregatesFilter<"evento"> | string | null
     est_eve?: BoolWithAggregatesFilter<"evento"> | boolean
     fec_cre_eve?: DateTimeWithAggregatesFilter<"evento"> | Date | string
     carreraId?: StringNullableWithAggregatesFilter<"evento"> | string | null
@@ -7755,6 +7774,7 @@ export namespace Prisma {
     pagado_eve?: boolean
     nota_min_eve?: number | null
     por_asist_eve?: number | null
+    imagen_portada?: string | null
     est_eve?: boolean
     fec_cre_eve?: Date | string
     carrera?: carreraCreateNestedOneWithoutEventosInput
@@ -7772,6 +7792,7 @@ export namespace Prisma {
     pagado_eve?: boolean
     nota_min_eve?: number | null
     por_asist_eve?: number | null
+    imagen_portada?: string | null
     est_eve?: boolean
     fec_cre_eve?: Date | string
     carreraId?: string | null
@@ -7789,6 +7810,7 @@ export namespace Prisma {
     pagado_eve?: BoolFieldUpdateOperationsInput | boolean
     nota_min_eve?: NullableFloatFieldUpdateOperationsInput | number | null
     por_asist_eve?: NullableFloatFieldUpdateOperationsInput | number | null
+    imagen_portada?: NullableStringFieldUpdateOperationsInput | string | null
     est_eve?: BoolFieldUpdateOperationsInput | boolean
     fec_cre_eve?: DateTimeFieldUpdateOperationsInput | Date | string
     carrera?: carreraUpdateOneWithoutEventosNestedInput
@@ -7806,6 +7828,7 @@ export namespace Prisma {
     pagado_eve?: BoolFieldUpdateOperationsInput | boolean
     nota_min_eve?: NullableFloatFieldUpdateOperationsInput | number | null
     por_asist_eve?: NullableFloatFieldUpdateOperationsInput | number | null
+    imagen_portada?: NullableStringFieldUpdateOperationsInput | string | null
     est_eve?: BoolFieldUpdateOperationsInput | boolean
     fec_cre_eve?: DateTimeFieldUpdateOperationsInput | Date | string
     carreraId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -7823,6 +7846,7 @@ export namespace Prisma {
     pagado_eve?: boolean
     nota_min_eve?: number | null
     por_asist_eve?: number | null
+    imagen_portada?: string | null
     est_eve?: boolean
     fec_cre_eve?: Date | string
     carreraId?: string | null
@@ -7839,6 +7863,7 @@ export namespace Prisma {
     pagado_eve?: BoolFieldUpdateOperationsInput | boolean
     nota_min_eve?: NullableFloatFieldUpdateOperationsInput | number | null
     por_asist_eve?: NullableFloatFieldUpdateOperationsInput | number | null
+    imagen_portada?: NullableStringFieldUpdateOperationsInput | string | null
     est_eve?: BoolFieldUpdateOperationsInput | boolean
     fec_cre_eve?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -7854,6 +7879,7 @@ export namespace Prisma {
     pagado_eve?: BoolFieldUpdateOperationsInput | boolean
     nota_min_eve?: NullableFloatFieldUpdateOperationsInput | number | null
     por_asist_eve?: NullableFloatFieldUpdateOperationsInput | number | null
+    imagen_portada?: NullableStringFieldUpdateOperationsInput | string | null
     est_eve?: BoolFieldUpdateOperationsInput | boolean
     fec_cre_eve?: DateTimeFieldUpdateOperationsInput | Date | string
     carreraId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -8244,6 +8270,7 @@ export namespace Prisma {
     pagado_eve?: SortOrder
     nota_min_eve?: SortOrder
     por_asist_eve?: SortOrder
+    imagen_portada?: SortOrder
     est_eve?: SortOrder
     fec_cre_eve?: SortOrder
     carreraId?: SortOrder
@@ -8266,6 +8293,7 @@ export namespace Prisma {
     pagado_eve?: SortOrder
     nota_min_eve?: SortOrder
     por_asist_eve?: SortOrder
+    imagen_portada?: SortOrder
     est_eve?: SortOrder
     fec_cre_eve?: SortOrder
     carreraId?: SortOrder
@@ -8282,6 +8310,7 @@ export namespace Prisma {
     pagado_eve?: SortOrder
     nota_min_eve?: SortOrder
     por_asist_eve?: SortOrder
+    imagen_portada?: SortOrder
     est_eve?: SortOrder
     fec_cre_eve?: SortOrder
     carreraId?: SortOrder
@@ -8957,6 +8986,7 @@ export namespace Prisma {
     pagado_eve?: boolean
     nota_min_eve?: number | null
     por_asist_eve?: number | null
+    imagen_portada?: string | null
     est_eve?: boolean
     fec_cre_eve?: Date | string
     inscripciones?: inscripcionCreateNestedManyWithoutEventoInput
@@ -8973,6 +9003,7 @@ export namespace Prisma {
     pagado_eve?: boolean
     nota_min_eve?: number | null
     por_asist_eve?: number | null
+    imagen_portada?: string | null
     est_eve?: boolean
     fec_cre_eve?: Date | string
     inscripciones?: inscripcionUncheckedCreateNestedManyWithoutEventoInput
@@ -9018,6 +9049,7 @@ export namespace Prisma {
     pagado_eve?: BoolFilter<"evento"> | boolean
     nota_min_eve?: FloatNullableFilter<"evento"> | number | null
     por_asist_eve?: FloatNullableFilter<"evento"> | number | null
+    imagen_portada?: StringNullableFilter<"evento"> | string | null
     est_eve?: BoolFilter<"evento"> | boolean
     fec_cre_eve?: DateTimeFilter<"evento"> | Date | string
     carreraId?: StringNullableFilter<"evento"> | string | null
@@ -9159,6 +9191,7 @@ export namespace Prisma {
     pagado_eve?: boolean
     nota_min_eve?: number | null
     por_asist_eve?: number | null
+    imagen_portada?: string | null
     est_eve?: boolean
     fec_cre_eve?: Date | string
     carrera?: carreraCreateNestedOneWithoutEventosInput
@@ -9175,6 +9208,7 @@ export namespace Prisma {
     pagado_eve?: boolean
     nota_min_eve?: number | null
     por_asist_eve?: number | null
+    imagen_portada?: string | null
     est_eve?: boolean
     fec_cre_eve?: Date | string
     carreraId?: string | null
@@ -9246,6 +9280,7 @@ export namespace Prisma {
     pagado_eve?: BoolFieldUpdateOperationsInput | boolean
     nota_min_eve?: NullableFloatFieldUpdateOperationsInput | number | null
     por_asist_eve?: NullableFloatFieldUpdateOperationsInput | number | null
+    imagen_portada?: NullableStringFieldUpdateOperationsInput | string | null
     est_eve?: BoolFieldUpdateOperationsInput | boolean
     fec_cre_eve?: DateTimeFieldUpdateOperationsInput | Date | string
     carrera?: carreraUpdateOneWithoutEventosNestedInput
@@ -9262,6 +9297,7 @@ export namespace Prisma {
     pagado_eve?: BoolFieldUpdateOperationsInput | boolean
     nota_min_eve?: NullableFloatFieldUpdateOperationsInput | number | null
     por_asist_eve?: NullableFloatFieldUpdateOperationsInput | number | null
+    imagen_portada?: NullableStringFieldUpdateOperationsInput | string | null
     est_eve?: BoolFieldUpdateOperationsInput | boolean
     fec_cre_eve?: DateTimeFieldUpdateOperationsInput | Date | string
     carreraId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -9322,6 +9358,7 @@ export namespace Prisma {
     pagado_eve?: boolean
     nota_min_eve?: number | null
     por_asist_eve?: number | null
+    imagen_portada?: string | null
     est_eve?: boolean
     fec_cre_eve?: Date | string
   }
@@ -9337,6 +9374,7 @@ export namespace Prisma {
     pagado_eve?: BoolFieldUpdateOperationsInput | boolean
     nota_min_eve?: NullableFloatFieldUpdateOperationsInput | number | null
     por_asist_eve?: NullableFloatFieldUpdateOperationsInput | number | null
+    imagen_portada?: NullableStringFieldUpdateOperationsInput | string | null
     est_eve?: BoolFieldUpdateOperationsInput | boolean
     fec_cre_eve?: DateTimeFieldUpdateOperationsInput | Date | string
     inscripciones?: inscripcionUpdateManyWithoutEventoNestedInput
@@ -9353,6 +9391,7 @@ export namespace Prisma {
     pagado_eve?: BoolFieldUpdateOperationsInput | boolean
     nota_min_eve?: NullableFloatFieldUpdateOperationsInput | number | null
     por_asist_eve?: NullableFloatFieldUpdateOperationsInput | number | null
+    imagen_portada?: NullableStringFieldUpdateOperationsInput | string | null
     est_eve?: BoolFieldUpdateOperationsInput | boolean
     fec_cre_eve?: DateTimeFieldUpdateOperationsInput | Date | string
     inscripciones?: inscripcionUncheckedUpdateManyWithoutEventoNestedInput
@@ -9369,6 +9408,7 @@ export namespace Prisma {
     pagado_eve?: BoolFieldUpdateOperationsInput | boolean
     nota_min_eve?: NullableFloatFieldUpdateOperationsInput | number | null
     por_asist_eve?: NullableFloatFieldUpdateOperationsInput | number | null
+    imagen_portada?: NullableStringFieldUpdateOperationsInput | string | null
     est_eve?: BoolFieldUpdateOperationsInput | boolean
     fec_cre_eve?: DateTimeFieldUpdateOperationsInput | Date | string
   }

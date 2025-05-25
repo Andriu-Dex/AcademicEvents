@@ -4,9 +4,7 @@ const AdminDashboard = () => {
   //====================================================
   return (
     <div className="p-6">
-      <h2 className="text-xl font-bold mb-4">Panel de Administración</h2>
-
-      <ul className="space-y-2">
+      <h2 className="text-xl font-bold mb-4">Panel de Administración</h2>      <ul className="space-y-2">
         <li>
           <Link to="/admin/inscripciones" className="text-blue-600 underline">
             Validar Inscripciones
@@ -14,7 +12,12 @@ const AdminDashboard = () => {
         </li>
         <li>
           <Link to="/admin/eventos" className="text-blue-600 underline">
-            Crear/Editar Eventos
+            Gestionar Eventos
+          </Link>
+        </li>
+        <li>
+          <Link to="/admin/eventos/crear" className="text-blue-600 underline">
+            Crear Nuevo Evento
           </Link>
         </li>
         <li>

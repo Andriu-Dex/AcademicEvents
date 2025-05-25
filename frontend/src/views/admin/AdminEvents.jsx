@@ -43,13 +43,25 @@ const AdminEvents = () => {
       ) : (
         <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {eventos.map((eve) => {
-            const esFinalizado = new Date(eve.fec_fin_eve) < fechaActual;
-
-            return (
+            const esFinalizado = new Date(eve.fec_fin_eve) < fechaActual;            return (
               <div
                 key={eve.id_eve}
                 className="bg-white rounded-xl border p-4 shadow hover:shadow-lg transition"
               >
+                {/* Imagen de portada si existe */}
+                {eve.imagen_portada && (
+                  <div className="mb-3">
+                    <img
+                      src={`${import.meta.env.VITE_API_URL}/uploads/${eve.imagen_portada}`}
+                      alt={`Portada de ${eve.nom_eve}`}
+                      className="w-full h-32 object-cover rounded-lg"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                      }}
+                    />
+                  </div>
+                )}
+
                 <div className="flex justify-between items-center">
                   <h3 className="text-lg font-semibold text-gray-800">
                     {eve.nom_eve}
@@ -96,11 +108,10 @@ const AdminEvents = () => {
                   </p>
                 </div>
 
-                <div className="mt-4 flex gap-3">
-                  <button
+                <div className="mt-4 flex gap-3">                  <button
                     title="Editar evento"
                     className="text-sm text-blue-600 hover:underline flex items-center gap-1"
-                    onClick={() => console.log("Editar", eve.id_eve)}
+                    onClick={() => handleEditEvent(eve.id_eve)}
                   >
                     <Pencil size={14} />
                     Editar

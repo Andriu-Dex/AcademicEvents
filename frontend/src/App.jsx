@@ -15,6 +15,8 @@ import AdminDashboard from "./views/admin/AdminDashboard.jsx";
 import AdminCarreras from "./views/admin/AdminCarreras.jsx";
 import AdminConfiguracion from "./views/admin/AdminConfiguracion";
 import AdminInscripciones from "./views/admin/AdminInscripciones";
+import CreateEvent from "./views/admin/CreateEvent.jsx";
+import EditEvent from "./views/admin/EditEvent.jsx";
 
 // Componentes para proteger rutas
 import PrivateRouteAdmin from "./components/PrivateRouteAdmin"; // Protege rutas para administradores
@@ -82,6 +84,25 @@ function App() {
                 </PrivateLayout>
               </PrivateRouteAdmin>
             }
+          />          <Route
+            path="/admin/eventos/crear"
+            element={
+              <PrivateRouteAdmin>
+                <PrivateLayout>
+                  <CreateEvent />
+                </PrivateLayout>
+              </PrivateRouteAdmin>
+            }
+          />
+          <Route
+            path="/admin/eventos/editar/:id"
+            element={
+              <PrivateRouteAdmin>
+                <PrivateLayout>
+                  <EditEvent />
+                </PrivateLayout>
+              </PrivateRouteAdmin>
+            }
           />
           <Route
             path="/admin/eventos/:id/inscripciones"
@@ -119,6 +140,26 @@ function App() {
               <PrivateRouteAdmin>
                 <PrivateLayout>
                   <AdminInscripciones />
+                </PrivateLayout>
+              </PrivateRouteAdmin>
+            }
+          />
+          <Route
+            path="/admin/eventos/crear"
+            element={
+              <PrivateRouteAdmin>
+                <PrivateLayout>
+                  <CreateEvent />
+                </PrivateLayout>
+              </PrivateRouteAdmin>
+            }
+          />
+          <Route
+            path="/admin/eventos/editar/:id"
+            element={
+              <PrivateRouteAdmin>
+                <PrivateLayout>
+                  <EditEvent />
                 </PrivateLayout>
               </PrivateRouteAdmin>
             }

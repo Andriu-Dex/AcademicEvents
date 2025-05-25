@@ -152,6 +152,7 @@ exports.Prisma.EventoScalarFieldEnum = {
   pagado_eve: 'pagado_eve',
   nota_min_eve: 'nota_min_eve',
   por_asist_eve: 'por_asist_eve',
+  imagen_portada: 'imagen_portada',
   est_eve: 'est_eve',
   fec_cre_eve: 'fec_cre_eve',
   carreraId: 'carreraId'

@@ -38,18 +38,19 @@ model carrera {
 }
 
 model evento {
-  id_eve        String      @id @default(uuid())
-  nom_eve       String
-  des_eve       String?
-  tip_eve       tipo_evento
-  fec_ini_eve   DateTime
-  fec_fin_eve   DateTime
-  dur_hrs_eve   Int
-  pagado_eve    Boolean     @default(false)
-  nota_min_eve  Float? // Solo si es curso
-  por_asist_eve Float? // Solo si es curso, asistencia requerida (0–100)
-  est_eve       Boolean     @default(true)
-  fec_cre_eve   DateTime    @default(now())
+  id_eve         String      @id @default(uuid())
+  nom_eve        String
+  des_eve        String?
+  tip_eve        tipo_evento
+  fec_ini_eve    DateTime
+  fec_fin_eve    DateTime
+  dur_hrs_eve    Int
+  pagado_eve     Boolean     @default(false)
+  nota_min_eve   Float? // Solo si es curso
+  por_asist_eve  Float? // Solo si es curso, asistencia requerida (0–100)
+  imagen_portada String? // Nombre del archivo de imagen en uploads
+  est_eve        Boolean     @default(true)
+  fec_cre_eve    DateTime    @default(now())
 
   carreraId String?
   carrera   carrera? @relation(fields: [carreraId], references: [id_car])
