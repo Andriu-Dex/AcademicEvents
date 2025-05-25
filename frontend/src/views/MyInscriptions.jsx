@@ -159,6 +159,13 @@ const MyInscriptions = () => {
                 {new Date(ins.evento.fec_fin_eve).toLocaleDateString("es-EC")}
               </p>
 
+                {ins.evento.tip_eve === "CURSO" && (
+                <p className="text-sm mt-1">
+                  Asistencia: {ins.asistencia ?? "-"}% | Nota:{" "}
+                  {ins.nota_final ?? "-"}
+                </p>
+              )}
+
               {ins.estado === "FINALIZADA" && (
                 <div className="flex items-center gap-3 mt-2">
                   <button

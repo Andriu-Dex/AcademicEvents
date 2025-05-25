@@ -4,6 +4,7 @@ import axios from "axios";
 import { BadgeCheck, Clock, Ban, Eye, Download, Loader } from "lucide-react";
 import { toast } from "react-toastify";
 
+
 const colores = {
   PENDIENTE: "text-yellow-700 bg-yellow-100",
   ACEPTADA: "text-green-700 bg-green-100",
@@ -258,30 +259,40 @@ const AdminEventInscription = () => {
               {inscripcionFinalizar?.usuario?.ape_usu}
             </h2>
 
-            <label className="block mb-2 text-sm font-medium">
-              Asistencia (%)
-            </label>
-            <input
-              type="number"
-              value={asistencia}
-              onChange={(e) => setAsistencia(e.target.value)}
-              min={0}
-              max={100}
-              className="w-full border rounded px-3 py-1 mb-4"
-            />
+           
+            {inscripcionFinalizar?.evento?.tip_eve === "CURSO" ? (
+              <>
+                <label className="block mb-2 text-sm font-medium">
+                  Asistencia (%)
+                </label>
+                <input
+                  type="number"
+                  value={asistencia}
+                  onChange={(e) => setAsistencia(e.target.value)}
+                  min={0}
+                  max={100}
+                  className="w-full border rounded px-3 py-1 mb-4"
+                />
 
-            <label className="block mb-2 text-sm font-medium">
-              Nota final (0–10)
-            </label>
-            <input
-              type="number"
-              value={notaFinal}
-              onChange={(e) => setNotaFinal(e.target.value)}
-              min={0}
-              max={10}
-              step="0.1"
-              className="w-full border rounded px-3 py-1 mb-4"
-            />
+                <label className="block mb-2 text-sm font-medium">
+                  Nota final (0–10)
+                </label>
+                <input
+                  type="number"
+                  value={notaFinal}
+                  onChange={(e) => setNotaFinal(e.target.value)}
+                  min={0}
+                  max={10}
+                  step="0.1"
+                  className="w-full border rounded px-3 py-1 mb-4"
+                />
+              </>
+            ) : (
+              <p className="text-gray-600 text-sm mb-4">
+                Este evento no requiere nota ni asistencia. Solo se marcará como
+                finalizado.
+              </p>
+            )}
 
             <div className="flex justify-end gap-3">
               <button
@@ -295,28 +306,35 @@ const AdminEventInscription = () => {
                   setEnviandoFinalizacion(true);
                   try {
                     if (
-                      isNaN(Number(asistencia)) ||
-                      isNaN(Number(notaFinal)) ||
-                      asistencia === "" ||
-                      notaFinal === ""
+                      inscripcionFinalizar?.evento?.tip_eve === "CURSO" &&
+                      (isNaN(Number(asistencia)) ||
+                        isNaN(Number(notaFinal)) ||
+                        asistencia === "" ||
+                        notaFinal === "")
                     ) {
                       toast.error("Debe ingresar asistencia y nota válidas");
                       setEnviandoFinalizacion(false);
                       return;
                     }
 
+                    const body = {
+                      estado: "FINALIZADA",
+                    };
+
+                    if (
+                      inscripcionFinalizar?.evento?.tip_eve === "CURSO"
+                    ) {
+                      body.asistencia = Number(asistencia);
+                      body.nota_final = Number(notaFinal);
+                    }
+
                     await axios.put(
-                      `${
-                        import.meta.env.VITE_API_URL
-                      }/api/inscripciones/validar/${
+                      `${import.meta.env.VITE_API_URL}/api/inscripciones/validar/${
                         inscripcionFinalizar.id_ins
                       }`,
-                      {
-                        estado: "FINALIZADA",
-                        asistencia: Number(asistencia),
-                        nota_final: Number(notaFinal),
-                      }
+                      body
                     );
+
                     toast.success("Inscripción finalizada correctamente");
                     setMostrarFinalizarModal(false);
                     await obtenerInscripciones();
