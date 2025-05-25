@@ -145,10 +145,10 @@ const EventsRoute = () => {
               <div key={evento.id_eve} className="evento-card">
                 {/* Imagen de portada si existe */}
                 {evento.imagen_portada && (
-                  <div className="evento-imagen">
-                    <img
+                  <div className="evento-imagen">                    <img
                       src={`${import.meta.env.VITE_API_URL}/uploads/${evento.imagen_portada}`}
                       alt={`Portada de ${evento.nom_eve}`}
+                      style={{ maxHeight: '60px', height: '60px', width: '100%', objectFit: 'cover' }}
                       onError={(e) => {
                         e.target.style.display = 'none';
                       }}

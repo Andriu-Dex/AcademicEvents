@@ -88,12 +88,10 @@ const Register = () => {
       <div className="fixed-image" />
       <div className="form-scroll">
         <div className="form-content">
-          <div className="text-center mb-4">
-            <div>
-              <img
+          <div className="text-center mb-4">            <div>              <img
                 src="https://i.imgur.com/ZDlLQ2T.png"
                 alt="Logo"
-                style={{ width: "180px", marginBottom: "10px" }}
+                style={{ width: "320px", marginBottom: "10px" }}
               />
             </div>
             <h2 className="registro-titulo">Registro de Usuario</h2>

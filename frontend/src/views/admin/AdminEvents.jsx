@@ -15,6 +15,7 @@ import {
 const AdminEvents = () => {
   const [eventos, setEventos] = useState([]);
   const navigate = useNavigate();
+
   const cargarEventos = useCallback(async () => {
     try {
       const res = await axiosInstance.get("/eventos");
@@ -25,6 +26,10 @@ const AdminEvents = () => {
       toast.error("No se pudieron cargar los eventos");
     }
   }, []);
+
+  const handleEditEvent = (eventoId) => {
+    navigate(`/admin/eventos/editar/${eventoId}`);
+  };
 
   useEffect(() => {
     cargarEventos();
@@ -47,14 +52,12 @@ const AdminEvents = () => {
               <div
                 key={eve.id_eve}
                 className="bg-white rounded-xl border p-4 shadow hover:shadow-lg transition"
-              >
-                {/* Imagen de portada si existe */}
+              >                {/* Imagen de portada si existe */}
                 {eve.imagen_portada && (
-                  <div className="mb-3">
-                    <img
+                  <div className="mb-3">                    <img
                       src={`${import.meta.env.VITE_API_URL}/uploads/${eve.imagen_portada}`}
-                      alt={`Portada de ${eve.nom_eve}`}
-                      className="w-full h-32 object-cover rounded-lg"
+                      alt={`Portada de ${eve.nom_eve}`}                      className="w-full h-48 object-cover rounded-lg"
+                      style={{ maxHeight: '192px', height: '192px' }}
                       onError={(e) => {
                         e.target.style.display = 'none';
                       }}

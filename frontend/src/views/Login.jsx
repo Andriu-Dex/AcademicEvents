@@ -276,11 +276,10 @@ const Login = () => {
           }}
         >
           {/* Logo con animación flotante */}
-          <div className="floating-icon mb-4">
-            <img
+          <div className="floating-icon mb-4">            <img
               src="https://i.imgur.com/KrUzH8J.png"
               alt="Logo FISEI"
-              style={{ width: "280px", height: "auto" }}
+              style={{ width: "320px", height: "auto" }}
               className="img-fluid"
             />
           </div>
