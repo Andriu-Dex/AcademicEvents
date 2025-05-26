@@ -1,0 +1,130 @@
+.adminconfig-container {
+  padding: 2.5rem 1.5rem;
+  max-width: 48rem;
+  margin: 0.3rem auto 0 auto;
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: 1.2rem;
+  box-shadow: 0 8px 32px rgba(37, 99, 235, 0.09),
+    0 1.5px 8px rgba(0, 0, 0, 0.04);
+  animation: fadeInConfig 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes fadeInConfig {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.adminconfig-title {
+  font-size: 1.7rem;
+  font-weight: 800;
+  margin-bottom: 2rem;
+  color: #2563eb;
+  text-align: center;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 8px rgba(37, 99, 235, 0.08);
+  border-bottom: 3px solid #2563eb;
+  padding-bottom: 1rem;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 0.7rem;
+  display: inline-block;
+  width: 100%;
+}
+
+.adminconfig-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  font-size: 1.08rem;
+  letter-spacing: 0.2px;
+  transition: color 0.2s;
+}
+
+.adminconfig-textarea {
+  width: 100%;
+  border: 1.5px solid #2563eb;
+  padding: 0.7rem 1rem;
+  border-radius: 0.6rem;
+  margin-bottom: 1.5rem;
+  font-size: 1.08rem;
+  resize: vertical;
+  background: #f8fafc;
+  color: #334155;
+  transition: border 0.2s, box-shadow 0.2s, background 0.2s;
+  box-shadow: 0 1px 4px rgba(37, 99, 235, 0.04);
+  min-height: 90px;
+  animation: fadeInConfig 0.7s 0.1s backwards;
+}
+.adminconfig-textarea:focus {
+  outline: none;
+  border-color: #8a1538;
+  background: #fff;
+  box-shadow: 0 0 0 2px #8a153833;
+}
+
+.adminconfig-btn {
+  background: linear-gradient(90deg, #2563eb 70%, #4793f1 100%);
+  color: #fff;
+  padding: 0.7rem 2.2rem;
+  border-radius: 0.6rem;
+  font-weight: 700;
+  font-size: 1.08rem;
+  transition: background 1s, color 0.18s, box-shadow 0.18s, transform 0.13s;
+  border: blue 1.5px solid;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.07);
+  margin-top: 1.2rem;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  animation: fadeInConfig 0.7s 0.2s backwards;
+}
+.adminconfig-btn:hover {
+  background: #1d4ed8;
+  color: #fff;
+  transform: scale(1.06);
+  box-shadow: 0 0px 8px #00000033;
+  border: rgb(0, 0, 98) 1.5px solid;
+}
+
+/* ===========================
+   RESPONSIVE DESIGN
+   =========================== */
+@media (max-width: 900px) {
+  .adminconfig-container {
+    padding: 1.2rem 0.5rem;
+    max-width: 100vw;
+  }
+  .adminconfig-title {
+    font-size: 1.2rem;
+    padding-bottom: 0.7rem;
+  }
+}
+
+@media (max-width: 700px) {
+  .adminconfig-container {
+    padding: 0.5rem 0.2rem;
+    margin: 0.5rem auto 0 auto;
+  }
+  .adminconfig-title {
+    font-size: 1rem;
+    padding-bottom: 0.5rem;
+  }
+  .adminconfig-label {
+    font-size: 0.98rem;
+  }
+  .adminconfig-textarea {
+    font-size: 0.98rem;
+    padding: 0.5rem 0.7rem;
+  }
+  .adminconfig-btn {
+    font-size: 0.98rem;
+    padding: 0.5rem 1.2rem;
+  }
+}

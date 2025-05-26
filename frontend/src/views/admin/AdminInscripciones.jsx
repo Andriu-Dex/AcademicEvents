@@ -3,7 +3,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/AuthContext";
 import { FileText, XCircle } from "lucide-react";
-import "../styles/AdminInscripciones.css"; // ✅ Importa CSS
+import "./styles/AdminInscripciones.css";
 
 const estados = {
   PENDIENTE: "estado-pendiente",
@@ -19,7 +19,9 @@ const AdminInscripciones = () => {
 
   const cargarEventos = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/eventos`);
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/eventos`
+      );
       setEventos(res.data);
     } catch {
       toast.error("Error al cargar eventos");
@@ -30,7 +32,9 @@ const AdminInscripciones = () => {
     if (!eventoFiltrado) return setInscripciones([]);
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/admin/inscripciones/evento/${eventoFiltrado}`,
+        `${
+          import.meta.env.VITE_API_URL
+        }/api/admin/inscripciones/evento/${eventoFiltrado}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setInscripciones(res.data);
@@ -97,13 +101,17 @@ const AdminInscripciones = () => {
         <tbody>
           {inscripciones.map((i) => (
             <tr key={i.id_ins}>
-              <td>{i.usuario?.nom_usu} {i.usuario?.ape_usu}</td>
+              <td>
+                {i.usuario?.nom_usu} {i.usuario?.ape_usu}
+              </td>
               <td>{i.usuario?.cor_usu}</td>
               <td>{i.evento?.nom_eve}</td>
               <td className="adminins-comprobante">
                 {i.comprobante ? (
                   <a
-                    href={`${import.meta.env.VITE_API_URL}/uploads/${i.comprobante}`}
+                    href={`${import.meta.env.VITE_API_URL}/uploads/${
+                      i.comprobante
+                    }`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="comprobante-link"
@@ -112,18 +120,34 @@ const AdminInscripciones = () => {
                     <FileText size={18} />
                   </a>
                 ) : (
-                  <XCircle size={18} className="comprobante-none" title="No enviado" />
+                  <XCircle
+                    size={18}
+                    className="comprobante-none"
+                    title="No enviado"
+                  />
                 )}
               </td>
-              <td className="text-center">{i.asistencia !== null ? `${i.asistencia}%` : "—"}</td>
-              <td className="text-center">{i.nota_final !== null ? i.nota_final.toFixed(1) : "—"}</td>
-              <td className={`estado-col ${estados[i.estado] || ""}`}>{i.estado}</td>
+              <td className="text-center">
+                {i.asistencia !== null ? `${i.asistencia}%` : "—"}
+              </td>
+              <td className="text-center">
+                {i.nota_final !== null ? i.nota_final.toFixed(1) : "—"}
+              </td>
+              <td className={`estado-col ${estados[i.estado] || ""}`}>
+                {i.estado}
+              </td>
               <td>
                 <div className="acciones-validacion">
-                  <button onClick={() => cambiarEstado(i.id_ins, "ACEPTADA")} className="btn btn-aceptar">
+                  <button
+                    onClick={() => cambiarEstado(i.id_ins, "ACEPTADA")}
+                    className="btn btn-aceptar"
+                  >
                     Aceptar
                   </button>
-                  <button onClick={() => cambiarEstado(i.id_ins, "RECHAZADA")} className="btn btn-rechazar">
+                  <button
+                    onClick={() => cambiarEstado(i.id_ins, "RECHAZADA")}
+                    className="btn btn-rechazar"
+                  >
                     Rechazar
                   </button>
                 </div>
@@ -134,20 +158,25 @@ const AdminInscripciones = () => {
                     e.preventDefault();
                     const nota = parseFloat(e.target.nota.value);
                     const asistencia = parseFloat(e.target.asistencia.value);
-                    if (isNaN(nota) || nota < 0 || nota > 10) return toast.error("Nota inválida (0–10)");
+                    if (isNaN(nota) || nota < 0 || nota > 10)
+                      return toast.error("Nota inválida (0–10)");
                     if (isNaN(asistencia) || asistencia < 0 || asistencia > 100)
                       return toast.error("Asistencia inválida (0–100)");
 
                     try {
                       await axios.put(
-                        `${import.meta.env.VITE_API_URL}/api/admin/inscripciones/validar/${i.id_ins}`,
+                        `${
+                          import.meta.env.VITE_API_URL
+                        }/api/admin/inscripciones/validar/${i.id_ins}`,
                         { estado: "FINALIZADA", nota_final: nota, asistencia },
                         { headers: { Authorization: `Bearer ${token}` } }
                       );
                       toast.success("Inscripción finalizada");
                       cargarInscripciones();
                     } catch (error) {
-                      toast.error(error.response?.data?.msg || "Error al finalizar");
+                      toast.error(
+                        error.response?.data?.msg || "Error al finalizar"
+                      );
                     }
                   }}
                 >

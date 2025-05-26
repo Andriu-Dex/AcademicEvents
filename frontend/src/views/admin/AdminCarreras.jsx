@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { Dialog } from "@headlessui/react";
-import "../styles/AdminCarreras.css"; 
+import "./styles/AdminCarreras.css";
 
 const AdminCarreras = () => {
   const [carreras, setCarreras] = useState([]);
@@ -16,7 +16,9 @@ const AdminCarreras = () => {
 
   const cargarCarreras = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/carreras`);
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/carreras`
+      );
       setCarreras(res.data);
     } catch (error) {
       console.error(error);
@@ -96,7 +98,9 @@ const AdminCarreras = () => {
           value={nuevaCarrera}
           onChange={(e) => setNuevaCarrera(e.target.value)}
         />
-        <button onClick={crearCarrera} className="btn-crear">Crear</button>
+        <button onClick={crearCarrera} className="btn-crear">
+          Crear
+        </button>
       </div>
 
       <ul className="admincarreras-lista">
@@ -120,8 +124,18 @@ const AdminCarreras = () => {
 
             {editandoId === carrera.id_car ? (
               <>
-                <button onClick={() => actualizarCarrera(carrera.id_car)} className="btn-guardar">Guardar</button>
-                <button onClick={() => setEditandoId(null)} className="btn-cancelar">Cancelar</button>
+                <button
+                  onClick={() => actualizarCarrera(carrera.id_car)}
+                  className="btn-guardar"
+                >
+                  Guardar
+                </button>
+                <button
+                  onClick={() => setEditandoId(null)}
+                  className="btn-cancelar-ac"
+                >
+                  Cancelar
+                </button>
               </>
             ) : (
               <button
@@ -138,7 +152,10 @@ const AdminCarreras = () => {
               </button>
             )}
 
-            <button onClick={() => confirmarEliminar(carrera.id_car)} className="btn-eliminar">
+            <button
+              onClick={() => confirmarEliminar(carrera.id_car)}
+              className="btn-eliminar"
+            >
               Eliminar
             </button>
           </li>
@@ -152,12 +169,18 @@ const AdminCarreras = () => {
       >
         <div className="admincarreras-modal-overlay" aria-hidden="true" />
         <div className="admincarreras-modal-content">
-          <Dialog.Title className="admincarreras-modal-title">Confirmar eliminación</Dialog.Title>
+          <Dialog.Title className="admincarreras-modal-title">
+            Confirmar eliminación
+          </Dialog.Title>
           <p className="admincarreras-modal-text">
-            ¿Estás seguro de que deseas eliminar esta carrera? Esta acción no se puede deshacer.
+            ¿Estás seguro de que deseas eliminar esta carrera? Esta acción no se
+            puede deshacer.
           </p>
           <div className="admincarreras-modal-buttons">
-            <button onClick={() => setModalEliminar({ abierto: false, id: null })} className="btn-cancelar">
+            <button
+              onClick={() => setModalEliminar({ abierto: false, id: null })}
+              className="btn-cancelar-ac"
+            >
               Cancelar
             </button>
             <button onClick={eliminarCarrera} className="btn-eliminar">

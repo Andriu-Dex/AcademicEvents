@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useAuth } from "../hooks/useAuth";
 import { toast } from "react-toastify";
+import { lanzarConfetti } from "../utils/confetti";
+import "./styles/MyInscriptions.css";
 
 import {
   BadgeCheck,
@@ -10,9 +12,8 @@ import {
   FileText,
   Download,
   Upload,
+  FileUp,
 } from "lucide-react";
-
-import "../styles/MyInscriptions.css"; 
 
 const estadoLabel = {
   PENDIENTE: {
@@ -45,6 +46,9 @@ const MyInscriptions = () => {
   const [inscripcionSeleccionada, setInscripcionSeleccionada] = useState(null);
   const [nuevoArchivo, setNuevoArchivo] = useState(null);
   const [reenviando, setReenviando] = useState(false);
+  const [nombreArchivo, setNombreArchivo] = useState(
+    "Ningún archivo seleccionado"
+  );
 
   const obtenerInscripciones = async () => {
     try {
@@ -56,8 +60,10 @@ const MyInscriptions = () => {
           },
         }
       );
+
       setInscripciones(res.data);
-    } catch {
+    } catch (error) {
+      console.error("Error al obtener inscripciones:", error);
       toast.error("Error al cargar inscripciones");
     }
   };
@@ -67,9 +73,16 @@ const MyInscriptions = () => {
   }, [usuario]);
 
   const reenviarComprobante = async () => {
-    if (!nuevoArchivo) return toast.error("Debes seleccionar un archivo.");
-    if (nuevoArchivo.size > 5 * 1024 * 1024)
-      return toast.error("El archivo no debe superar los 5MB.");
+    if (!nuevoArchivo) {
+      toast.error("Debes seleccionar un archivo para reenviar.");
+      return;
+    }
+
+    if (nuevoArchivo.size > 5 * 1024 * 1024) {
+      toast.error("El archivo no debe superar los 5MB.");
+      return;
+    }
+
     const tiposPermitidos = [
       "application/pdf",
       "image/jpeg",
@@ -86,7 +99,9 @@ const MyInscriptions = () => {
     try {
       setReenviando(true);
       await axios.put(
-        `${import.meta.env.VITE_API_URL}/api/inscripciones/reenviar/${inscripcionSeleccionada.id_ins}`,
+        `${import.meta.env.VITE_API_URL}/api/inscripciones/reenviar/${
+          inscripcionSeleccionada.id_ins
+        }`,
         formData,
         {
           headers: {
@@ -123,15 +138,20 @@ const MyInscriptions = () => {
             <div key={ins.id_ins} className="myins-card">
               <div className="myins-header">
                 <h3 className="myins-event-name">{ins.evento.nom_eve}</h3>
-                <span className={`myins-estado ${estadoLabel[ins.estado].color}`}>
+                <span
+                  className={`myins-estado ${estadoLabel[ins.estado].color}`}
+                >
                   {estadoLabel[ins.estado].icon}
                   {estadoLabel[ins.estado].text}
                 </span>
               </div>
 
               <p className="myins-datos">
-                Tipo: {ins.evento.tip_eve} | Fecha:{" "}
-                {new Date(ins.evento.fec_ini_eve).toLocaleDateString("es-EC")} –{" "}
+                Tipo: {ins.evento.tip_eve} <br />
+                Fecha:{" "}
+                {new Date(ins.evento.fec_ini_eve).toLocaleDateString(
+                  "es-EC"
+                )} –{" "}
                 {new Date(ins.evento.fec_fin_eve).toLocaleDateString("es-EC")}
               </p>
 
@@ -159,6 +179,15 @@ const MyInscriptions = () => {
                 </div>
               )}
 
+              {ins.estado === "ACEPTADA" && (
+                <button
+                  className="btn-felicitaciones"
+                  onClick={() => lanzarConfetti()}
+                >
+                  ¡Felicitaciones!
+                </button>
+              )}
+
               {(ins.estado === "RECHAZADA" || ins.estado === "PENDIENTE") && (
                 <button
                   className="btn-reenviar"
@@ -179,23 +208,41 @@ const MyInscriptions = () => {
       {mostrarModal && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <h2 className="modal-title">
-              Reenviar comprobante para:{" "}
+            <h2 className="modal-title-mi">
+              Reenviar comprobante para: <br />
               {inscripcionSeleccionada.evento.nom_eve}
             </h2>
 
-            <input
-              type="file"
-              accept=".pdf,.jpg,.jpeg,.png,.webp"
-              onChange={(e) => setNuevoArchivo(e.target.files[0])}
-              className="modal-input"
-            />
+            <div className="archivo-container">
+              <input
+                type="file"
+                id="archivo"
+                className="input-archivo"
+                accept=".pdf,.jpg,.jpeg,.png,.webp"
+                onChange={(e) => setNuevoArchivo(e.target.files[0])}
+              />
 
-            {nuevoArchivo && (
-              <p className="modal-archivo">
-                Archivo: <strong>{nuevoArchivo.name}</strong>
-              </p>
-            )}
+              <div className="archivo-subida">
+                <label htmlFor="archivo" className="btn-subir">
+                  <FileUp size={16} style={{ marginRight: 6 }} /> Seleccionar
+                  archivo
+                </label>
+
+                {!nuevoArchivo && (
+                  <span className="placeholder-archivo">
+                    Ningún archivo seleccionado
+                  </span>
+                )}
+              </div>
+
+              {nuevoArchivo && (
+                <div className="archivo-info">
+                  <span className="archivo-nombre">
+                    <strong>Archivo:</strong> {nuevoArchivo.name}
+                  </span>
+                </div>
+              )}
+            </div>
 
             <div className="modal-botones">
               <button
@@ -206,7 +253,7 @@ const MyInscriptions = () => {
                 {reenviando ? "Enviando..." : "Enviar"}
               </button>
               <button
-                className="btn-cancelar"
+                className="btn-cancelar-mi"
                 onClick={() => {
                   setMostrarModal(false);
                   setNuevoArchivo(null);
@@ -224,3 +271,4 @@ const MyInscriptions = () => {
 };
 
 export default MyInscriptions;
+// Andriu 3 Dex

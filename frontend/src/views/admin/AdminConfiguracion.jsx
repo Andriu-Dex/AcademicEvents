@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import "../styles/AdminConfiguracion.css";
+import "./styles/AdminConfiguracion.css";
 
 const AdminConfiguracion = () => {
   const [form, setForm] = useState({ mision: "", vision: "", autoridades: "" });
 
   const cargar = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/configuracion`);
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/configuracion`
+      );
       if (res.data) setForm(res.data);
     } catch {
       toast.error("Error al cargar configuración");
@@ -17,7 +19,10 @@ const AdminConfiguracion = () => {
 
   const guardar = async () => {
     try {
-      await axios.put(`${import.meta.env.VITE_API_URL}/api/configuracion`, form);
+      await axios.put(
+        `${import.meta.env.VITE_API_URL}/api/configuracion`,
+        form
+      );
       toast.success("Configuración actualizada");
     } catch {
       toast.error("Error al guardar configuración");

@@ -3,7 +3,7 @@ import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { BadgeCheck, Clock, Ban, Eye, Download, Loader } from "lucide-react";
 import { toast } from "react-toastify";
-import "../styles/AdminEventInscription.css";
+import "./styles/AdminEventInscription.css";
 
 const colores = {
   PENDIENTE: "estado-pendiente",
@@ -90,15 +90,19 @@ const AdminEventInscription = () => {
       </h2>
 
       <div className="filtros">
-        {["TODOS", "PENDIENTE", "ACEPTADA", "RECHAZADA", "FINALIZADA"].map((estado) => (
-          <button
-            key={estado}
-            className={`filtro-btn ${filtro === estado ? "filtro-activo" : ""}`}
-            onClick={() => setFiltro(estado)}
-          >
-            {estado}
-          </button>
-        ))}
+        {["TODOS", "PENDIENTE", "ACEPTADA", "RECHAZADA", "FINALIZADA"].map(
+          (estado) => (
+            <button
+              key={estado}
+              className={`filtro-btn ${
+                filtro === estado ? "filtro-activo" : ""
+              }`}
+              onClick={() => setFiltro(estado)}
+            >
+              {estado}
+            </button>
+          )
+        )}
       </div>
 
       {loading ? (
@@ -108,27 +112,38 @@ const AdminEventInscription = () => {
       ) : (
         <div className="grid-inscripciones">
           {listaFiltrada.length === 0 ? (
-            <p className="mensaje-vacio">No hay inscripciones con este filtro.</p>
+            <p className="mensaje-vacio">
+              No hay inscripciones con este filtro.
+            </p>
           ) : (
             listaFiltrada.map((inscripcion) => (
               <div key={inscripcion.id_ins} className="card-inscripcion">
                 <div className="flex-header">
                   <div>
                     <p className="nombre-usuario">
-                      {inscripcion.usuario?.nom_usu} {inscripcion.usuario?.ape_usu}
+                      {inscripcion.usuario?.nom_usu}{" "}
+                      {inscripcion.usuario?.ape_usu}
                     </p>
-                    <p className="card-correo">{inscripcion.usuario?.cor_usu}</p>
+                    <p className="card-correo">
+                      {inscripcion.usuario?.cor_usu}
+                    </p>
                     <p className="card-asistencia">
                       Asistencia: {inscripcion.asistencia ?? "-"}% | Nota:{" "}
                       {inscripcion.nota_final ?? "-"}
                     </p>
                   </div>
 
-                  <span className={`estado-badge ${colores[inscripcion.estado]}`}>
+                  <span
+                    className={`estado-badge ${colores[inscripcion.estado]}`}
+                  >
                     {inscripcion.estado === "PENDIENTE" && <Clock size={14} />}
-                    {inscripcion.estado === "ACEPTADA" && <BadgeCheck size={14} />}
+                    {inscripcion.estado === "ACEPTADA" && (
+                      <BadgeCheck size={14} />
+                    )}
                     {inscripcion.estado === "RECHAZADA" && <Ban size={14} />}
-                    {inscripcion.estado === "FINALIZADA" && <Download size={14} />}
+                    {inscripcion.estado === "FINALIZADA" && (
+                      <Download size={14} />
+                    )}
                     {inscripcion.estado}
                   </span>
                 </div>
@@ -136,7 +151,9 @@ const AdminEventInscription = () => {
                 {inscripcion.comprobante && (
                   <div className="mt-2">
                     <a
-                      href={`${import.meta.env.VITE_API_URL}/uploads/${inscripcion.comprobante}`}
+                      href={`${import.meta.env.VITE_API_URL}/uploads/${
+                        inscripcion.comprobante
+                      }`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="link-comprobante"
@@ -151,7 +168,9 @@ const AdminEventInscription = () => {
                   {inscripcion.estado === "PENDIENTE" && (
                     <>
                       <button
-                        onClick={() => cambiarEstado(inscripcion.id_ins, "ACEPTADA")}
+                        onClick={() =>
+                          cambiarEstado(inscripcion.id_ins, "ACEPTADA")
+                        }
                         disabled={actualizandoId === inscripcion.id_ins}
                         className="btn-accion btn-aceptar"
                       >
@@ -161,7 +180,9 @@ const AdminEventInscription = () => {
                       </button>
 
                       <button
-                        onClick={() => cambiarEstado(inscripcion.id_ins, "RECHAZADA")}
+                        onClick={() =>
+                          cambiarEstado(inscripcion.id_ins, "RECHAZADA")
+                        }
                         disabled={actualizandoId === inscripcion.id_ins}
                         className="btn-accion btn-rechazar"
                       >
@@ -195,7 +216,7 @@ const AdminEventInscription = () => {
       {mostrarFinalizarModal && (
         <div className="finalizar-modal-overlay">
           <div className="finalizar-modal-content">
-            <h2 className="modal-title">
+            <h2 className="modal-title-aei">
               Finalizar inscripción de {inscripcionFinalizar?.usuario?.nom_usu}{" "}
               {inscripcionFinalizar?.usuario?.ape_usu}
             </h2>
@@ -205,7 +226,7 @@ const AdminEventInscription = () => {
               type="number"
               value={asistencia}
               onChange={(e) => setAsistencia(e.target.value)}
-              className="modal-input"
+              className="modal-input-ae"
               min={0}
               max={100}
             />
@@ -215,7 +236,7 @@ const AdminEventInscription = () => {
               type="number"
               value={notaFinal}
               onChange={(e) => setNotaFinal(e.target.value)}
-              className="modal-input"
+              className="modal-input-ae"
               min={0}
               max={10}
               step="0.1"
@@ -224,7 +245,7 @@ const AdminEventInscription = () => {
             <div className="modal-actions">
               <button
                 onClick={() => setMostrarFinalizarModal(false)}
-                className="btn-accion btn-cancelar"
+                className="btn-accion btn-cancelar-aei"
               >
                 Cancelar
               </button>
@@ -244,7 +265,11 @@ const AdminEventInscription = () => {
                     }
 
                     await axios.put(
-                      `${import.meta.env.VITE_API_URL}/api/inscripciones/validar/${inscripcionFinalizar.id_ins}`,
+                      `${
+                        import.meta.env.VITE_API_URL
+                      }/api/inscripciones/validar/${
+                        inscripcionFinalizar.id_ins
+                      }`,
                       {
                         estado: "FINALIZADA",
                         asistencia: Number(asistencia),

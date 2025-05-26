@@ -1,12 +1,16 @@
 .navbar {
   background-color: white;
   border-bottom: 1px solid #e2e8f0;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 0px 4px rgba(0, 0, 0, 0.5);
   padding: 12px 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-family: "Poppins", sans-serif;
+  /* La barra de navegacion sea estatica */
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 .navbar-left {

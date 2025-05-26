@@ -10,7 +10,7 @@ import {
   CheckCircle,
   XCircle,
 } from "lucide-react";
-import "../styles/AdminEvents.css"; 
+import "./styles/AdminEvents.css";
 
 const AdminEvents = () => {
   const [eventos, setEventos] = useState([]);
@@ -18,7 +18,9 @@ const AdminEvents = () => {
 
   const cargarEventos = useCallback(async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/eventos`);
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/eventos`
+      );
       setEventos(res.data);
     } catch (error) {
       console.error(error);
@@ -61,14 +63,16 @@ const AdminEvents = () => {
                 <div className="admin-event-details">
                   <p>
                     <CalendarClock size={14} className="icon-inline" />
-                    {new Date(eve.fec_ini_eve).toLocaleDateString("es-EC")} –{" "}
-                    {new Date(eve.fec_fin_eve).toLocaleDateString("es-EC")}
+                    {new Date(eve.fec_ini_eve).toLocaleDateString(
+                      "es-EC"
+                    )} – {new Date(eve.fec_fin_eve).toLocaleDateString("es-EC")}
                   </p>
                   <p>
                     <strong>Duración:</strong> {eve.dur_hrs_eve} horas
                   </p>
                   <p>
-                    <strong>Carrera:</strong> {eve.carrera?.nom_car || "General"}
+                    <strong>Carrera:</strong>{" "}
+                    {eve.carrera?.nom_car || "General"}
                   </p>
                   <p className="admin-event-status">
                     {esFinalizado ? (
