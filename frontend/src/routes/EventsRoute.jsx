@@ -161,14 +161,29 @@ const EventsRoute = () => {
             )
             .map((evento) => (
               <div key={evento.id_eve} className="evento-card">
-                <h2>{evento.nom_eve}</h2>
+                {/* Imagen de portada (placeholder por ahora) */}
+                <img
+                  src={evento.portada || "https://i.imgur.com/c6Ry30Z.jpeg"}
+                  alt={`Portada de ${evento.nom_eve}`}
+                  className="evento-portada"
+                  style={{
+                    width: "100%",
+                    height: "180px",
+                    objectFit: "cover",
+                    borderRadius: "8px 8px 0 0",
+                    marginBottom: "0.5rem",
+                  }}
+                />
+                <h2 className="nombre-evento-er">{evento.nom_eve}</h2>
                 <p className="tipo">{evento.tip_eve}</p>
-                <p>
+                <p className="fecha-evento-er">
                   Fecha:{" "}
                   {new Date(evento.fec_ini_eve).toLocaleDateString("es-EC")} a{" "}
                   {new Date(evento.fec_fin_eve).toLocaleDateString("es-EC")}
                 </p>
-                <p>Duración: {evento.dur_hrs_eve} horas</p>
+                <p className="duracion-evento-er">
+                  Duración: {evento.dur_hrs_eve} horas
+                </p>
                 {evento.pagado_eve && <p className="pago">Pagado</p>}
                 <button
                   onClick={() => setEventoSeleccionado(evento)}
@@ -190,7 +205,7 @@ const EventsRoute = () => {
               type="file"
               accept=".pdf,.jpg,.jpeg,.png"
               onChange={(e) => setArchivo(e.target.files[0])}
-              className="modal-input"
+              className="modal-input-er"
             />
 
             {archivo && (
@@ -222,7 +237,7 @@ const EventsRoute = () => {
                   setEventoSeleccionado(null);
                   setArchivo(null);
                 }}
-                className="btn-cancelar"
+                className="btn-cancelar-er"
               >
                 Cancelar
               </button>

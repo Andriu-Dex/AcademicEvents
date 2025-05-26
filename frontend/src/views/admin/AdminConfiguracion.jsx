@@ -35,7 +35,7 @@ const AdminConfiguracion = () => {
 
   return (
     <div className="adminconfig-container">
-      <h2 className="text-xl font-bold mb-4">Misión, Visión y Autoridades</h2>
+      <h2 className="adminconfig-title">Misión, Visión y Autoridades</h2>
 
       <label className="adminconfig-label">Misión</label>
       <textarea

@@ -2,6 +2,10 @@
   padding: 1.5rem;
   background-color: #f9f9f9;
   min-height: 100vh;
+  border-radius: 15px;
+  border: black 1px solid;
+  box-shadow: 0 0px 12px rgb(255, 255, 255, 0.8),
+    0 0px 24px rgb(151, 151, 151, 0.8);
 }
 
 .eventos-titulo {
@@ -59,13 +63,29 @@
   font-size: 0.875rem;
   color: #6b7280;
   font-weight: 500;
+  margin-top: 2%;
+  margin-bottom: 0.2rem;
 }
 
+.fecha-evento-er {
+  margin-bottom: 0.5rem;
+}
+
+.duracion-evento-er {
+  margin-bottom: 0.5rem;
+}
+
+.nombre-evento-er {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1f2937;
+}
 .evento-card .pago {
   color: #dc2626;
   font-weight: 600;
   font-size: 0.9rem;
   margin-top: 0.25rem;
+  margin-bottom: -0.2rem;
 }
 
 .btn-inscribirme {
@@ -117,7 +137,7 @@
   margin-bottom: 1rem;
 }
 
-.modal-input {
+.modal-input-er {
   width: 100%;
   border: 1px solid #ddd;
   padding: 0.5rem 0.75rem;
@@ -126,7 +146,7 @@
   transition: box-shadow 0.3s ease;
 }
 
-.modal-input:focus {
+.modal-input-er:focus {
   outline: none;
   border-color: #8a1538;
   box-shadow: 0 0 0 2px rgba(138, 21, 56, 0.2);
@@ -138,7 +158,7 @@
   gap: 1rem;
 }
 
-.btn-cancelar {
+.btn-cancelar-er {
   background: none;
   border: 1px solid #ddd;
   color: #6b7280;
@@ -149,7 +169,7 @@
   margin-top: 15px;
 }
 
-.btn-cancelar:hover {
+.btn-cancelar-er:hover {
   color: #111827;
 }
 
@@ -167,7 +187,6 @@
 .buscador-contenedor {
   position: relative;
   width: 100%;
-  margin-bottom: 1.8rem;
 }
 
 .buscador-icono {

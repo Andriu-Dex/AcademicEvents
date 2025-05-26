@@ -2,12 +2,10 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useAuth } from "../hooks/useAuth";
-//import { useAuth } from "../context/AuthContext"; // Contexto de autenticación
 import { useNavigate } from "react-router-dom"; // Hook para redirección
 import { toast } from "react-toastify"; // Notificaciones tipo toast
-
-// Íconos para representar el estado del certificado
 import { CheckCircle, XCircle, MailCheck, MailWarning } from "lucide-react";
+import "./styles/CertificatesRoute.css";
 
 // Componente principal para la ruta de certificados
 const CertificatesRoute = () => {
@@ -106,54 +104,47 @@ const CertificatesRoute = () => {
 
   // Retorna la interfaz de usuario
   return (
-    <div className="p-6">
-      <h1 className="text-xl font-bold mb-4">Certificados disponibles</h1>
-
-      {/* Si no hay certificados, muestra mensaje */}
+    <div className="cert-container">
+      <h1 className="cert-title">Certificados Disponibles</h1>
       {certificados.length === 0 ? (
-        <p>No tienes certificados aún.</p>
+        <p className="no-cert-msg">No tienes certificados aún.</p>
       ) : (
-        // Si hay certificados, muestra tabla con datos
-        <table className="w-full border">
-          <thead className="bg-gray-100 text-left">
+        <table className="cert-table">
+          <thead>
             <tr>
-              <th className="p-2">Evento</th>
-              <th className="p-2">Tipo</th>
-              <th className="p-2">Estado</th>
-              <th className="p-2">Acciones</th>
+              <th>Evento</th>
+              <th>Tipo</th>
+              <th>Estado</th>
+              <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
-            {/* Itera sobre los certificados */}
             {certificados.map((insc) => (
-              <tr key={insc.id_ins} className="border-t">
-                <td className="p-2">{insc.evento.nom_eve}</td>
-                <td className="p-2">{insc.evento.tip_eve}</td>
-                <td className="p-2">
-                  {/* Muestra si fue enviado o no con ícono y color */}
+              <tr key={insc.id_ins}>
+                <td data-label="Evento">{insc.evento.nom_eve}</td>
+                <td data-label="Tipo">{insc.evento.tip_eve}</td>
+                <td data-label="Estado">
                   {insc.cert_enviado ? (
-                    <span className="text-green-600 inline-flex items-center gap-1">
+                    <span className="estado enviado">
                       <CheckCircle size={18} /> Enviado
                     </span>
                   ) : (
-                    <span className="text-red-600 inline-flex items-center gap-1">
+                    <span className="estado no-enviado">
                       <XCircle size={18} /> No enviado
                     </span>
                   )}
                 </td>
-                <td className="p-2 space-x-2">
-                  {/* Botón para descargar el certificado */}
+                <td className="acciones" data-label="Acciones">
                   <button
                     onClick={() => descargar(insc.id_ins)}
-                    className="px-3 py-1 bg-blue-600 text-white rounded"
+                    className="btn-descargar-cr"
                   >
                     Descargar
                   </button>
-                  {/* Botón para reenviar el certificado */}
                   <button
-                    disabled={reenviando === insc.id_ins} // Desactiva si se está reenviando ese mismo certificado
+                    disabled={reenviando === insc.id_ins}
                     onClick={() => reenviar(insc.id_ins)}
-                    className="px-3 py-1 bg-green-600 text-white rounded disabled:opacity-50"
+                    className="btn-reenviar-cr"
                   >
                     {reenviando === insc.id_ins ? "Reenviando..." : "Reenviar"}
                   </button>
@@ -166,6 +157,5 @@ const CertificatesRoute = () => {
     </div>
   );
 };
-
 // Exporta el componente como default
 export default CertificatesRoute;
