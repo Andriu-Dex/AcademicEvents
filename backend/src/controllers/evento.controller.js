@@ -1,7 +1,7 @@
 const prisma = require("../config/db");
 const DEFAULT_IMAGE_URL = "https://gllerena-academicevents.s3.us-east-2.amazonaws.com/event_images/Screenshot+2025-05-26+005008.png";
-const AWS = require("aws-sdk");
-const s3 = new AWS.S3();
+const axios = require("axios");
+require("dotenv").config();
 
 /**
  * Valida los campos obligatorios y restricciones de un CURSO
@@ -45,6 +45,26 @@ function validarEventoGeneral({ nom_eve, tip_eve, fec_ini_eve, val_eve }) {
     throw new Error("Fecha inválida");
 }
 
+// Función para subir imagen a Imgur
+async function subirImagenAImgur(buffer) {
+  const imagenBase64 = buffer.toString("base64"); // Convierte buffer a base64
+
+  const res = await axios.post(
+    "https://api.imgur.com/3/image",
+    {
+      image: imagenBase64,
+      type: "base64",
+    },
+    {
+      headers: {
+        Authorization: `Client-ID ${process.env.IMGUR_CLIENT_ID}`,
+      },
+    }
+  );
+
+  return res.data.data.link;
+}
+
 //Crea un nuevo evento académico, y si es curso, lo vincula a evento_curso
 const crearEvento = async (req, res) => {
   try {
@@ -71,8 +91,8 @@ const crearEvento = async (req, res) => {
 
     // Si no hay archivo subido, usar la imagen por defecto
     let imgUrl = DEFAULT_IMAGE_URL;
-    if (req.file && req.file.location) {
-      imgUrl = req.file.location;
+    if (req.file) {
+      imgUrl = await subirImagenAImgur(req.file.buffer);
     }
 
     const valorNum = Number(val_eve);
@@ -174,22 +194,8 @@ const actualizarEvento = async (req, res) => {
     // --- GESTIÓN DE IMAGENES --- //
     let imgUrl = eventoExistente.img_por_eve; // Por defecto, se queda la actual
 
-    if (req.file && req.file.location) {
-      // 1. Si la imagen anterior **no** es la default, la borras de S3
-      if (eventoExistente.img_por_eve && eventoExistente.img_por_eve !== DEFAULT_IMAGE_URL) {
-        // Extraer el key de S3
-        const key = eventoExistente.img_por_eve.split(".com/")[1]; // lo de después del dominio
-        try {
-          await s3.deleteObject({
-            Bucket: process.env.AWS_S3_BUCKET,
-            Key: key,
-          }).promise();
-        } catch (err) {
-          console.error("Error al eliminar la imagen anterior de S3:", err);
-        }
-      }
-      // 2. Ahora asigna la nueva imagen subida
-      imgUrl = req.file.location;
+    if (req.file) {
+      imgUrl = await subirImagenAImgur(req.file.buffer);
     }
 
     console.log("-> DATA EVENTO:", dataEvento);

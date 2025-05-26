@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const verificarToken = require("../middlewares/auth");
 const onlyAdmin = require("../middlewares/autorizacion/onlyAdmin");
-const upload = require("../middlewares/uploadS3");
+const upload = require("../config/multer");
 
 const {
   crearEvento,

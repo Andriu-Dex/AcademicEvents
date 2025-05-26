@@ -141,13 +141,14 @@ const EventsRoute = () => {
           {eventosDisponibles
             .filter((ev) =>
               ev.nom_eve.toLowerCase().includes(filtro.toLowerCase())
-            )            .map((evento) => (
-              <div key={evento.id_eve} className="evento-card">
+            )            .map((eve) => (
+              <div key={eve.id_eve} 
+              className="evento-card">
                 {/* Imagen de portada si existe */}
-                {evento.imagen_portada && (
+                {eve.img_por_eve && (
                   <div className="evento-imagen">                    <img
-                      src={`${import.meta.env.VITE_API_URL}/uploads/${evento.imagen_portada}`}
-                      alt={`Portada de ${evento.nom_eve}`}
+                      src={eve.img_por_eve}
+                      alt={`Portada de ${eve.nom_eve}`}
                       style={{ maxHeight: '60px', height: '60px', width: '100%', objectFit: 'cover' }}
                       onError={(e) => {
                         e.target.style.display = 'none';
@@ -156,34 +157,34 @@ const EventsRoute = () => {
                   </div>
                 )}
                 
-                <h2>{evento.nom_eve}</h2>
-                <p className="tipo">{evento.tip_eve}</p>
+                <h2>{eve.nom_eve}</h2>
+                <p className="tipo">{eve.tip_eve}</p>
                 
                 {/* Descripción si existe */}
-                {evento.des_eve && (
-                  <p className="descripcion">{evento.des_eve}</p>
+                {eve.des_eve && (
+                  <p className="descripcion">{eve.des_eve}</p>
                 )}
                 
                 <p>
                   Fecha:{" "}
-                  {new Date(evento.fec_ini_eve).toLocaleDateString("es-EC")} a{" "}
-                  {new Date(evento.fec_fin_eve).toLocaleDateString("es-EC")}
+                  {new Date(eve.fec_ini_eve).toLocaleDateString("es-EC")} a{" "}
+                  {new Date(eve.fec_fin_eve).toLocaleDateString("es-EC")}
                 </p>
-                <p>Duración: {evento.dur_hrs_eve} horas</p>
+                <p>Duración: {eve.dur_hrs_eve} horas</p>
                 
                 {/* Modalidad si existe */}
-                {evento.modalidad && (
-                  <p className="modalidad">Modalidad: {evento.modalidad}</p>
+                {eve.modalidad && (
+                  <p className="modalidad">Modalidad: {eve.modalidad}</p>
                 )}
                 
                 {/* Público objetivo si existe */}
-                {evento.publico_objetivo && (
-                  <p className="publico">Dirigido a: {evento.publico_objetivo}</p>
+                {eve.publico_objetivo && (
+                  <p className="publico">Dirigido a: {eve.publico_objetivo}</p>
                 )}
                 
-                {evento.pagado_eve && <p className="pago">Pagado</p>}
+                {eve.pagado_eve && <p className="pago">Pagado</p>}
                 <button
-                  onClick={() => setEventoSeleccionado(evento)}
+                  onClick={() => setEventoSeleccionado(eve)}
                   className="btn-inscribirme"
                 >
                   Inscribirme
