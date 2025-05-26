@@ -15,7 +15,7 @@ const Register = () => {
     cor_usu: "",
     con_usu: "",
     cel_usu: "",
-    carrera: "",
+    id_car_est: "",
   });
 
   const [archivo, setArchivo] = useState(null);
@@ -47,7 +47,7 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const { ced_usu, nom_usu, ape_usu, carrera } = datos;
+    const { ced_usu, nom_usu, ape_usu, id_car_est: carrera } = datos;
 
     // Validar campos
     if (!validarCedula(ced_usu)) {
@@ -71,7 +71,7 @@ const Register = () => {
 
     const formData = new FormData();
     Object.entries(datos).forEach(([key, val]) => formData.append(key, val));
-    if (archivo) formData.append("archivo", archivo);    try {
+    if (archivo) formData.append("archivo", archivo); try {
       setLoading(true);
       await axiosInstance.post("/registro", formData);
       toast.success("Registro exitoso");
@@ -89,11 +89,11 @@ const Register = () => {
       <div className="form-scroll">
         <div className="form-content">
           <div className="text-center mb-4">            <div>              <img
-                src="https://i.imgur.com/ZDlLQ2T.png"
-                alt="Logo"
-                style={{ width: "320px", marginBottom: "10px" }}
-              />
-            </div>
+            src="https://i.imgur.com/ZDlLQ2T.png"
+            alt="Logo"
+            style={{ width: "320px", marginBottom: "10px" }}
+          />
+          </div>
             <h2 className="registro-titulo">Registro de Usuario</h2>
           </div>
 
@@ -126,8 +126,8 @@ const Register = () => {
                 name === "con_usu"
                   ? "password"
                   : name === "cor_usu"
-                  ? "email"
-                  : "text";
+                    ? "email"
+                    : "text";
               return (
                 <div key={name} className="mb-3">
                   <label className="form-label fw-semibold">
@@ -160,14 +160,14 @@ const Register = () => {
                     </span>
                     <select
                       className="form-select"
-                      name="carrera"
-                      value={datos.carrera}
+                      name="id_car_est"
+                      value={datos.id_car_est}
                       onChange={handleChange}
                       required
                     >
                       <option value="">Seleccione una carrera</option>
                       {carreras.map((c) => (
-                        <option key={c.id_car} value={c.nom_car}>
+                        <option key={c.id_car} value={c.id_car}>
                           {c.nom_car}
                         </option>
                       ))}

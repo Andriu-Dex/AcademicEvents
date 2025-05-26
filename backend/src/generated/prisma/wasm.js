@@ -130,15 +130,16 @@ exports.Prisma.UsuarioScalarFieldEnum = {
   cel_usu: 'cel_usu',
   rol_usu: 'rol_usu',
   fec_cre_usu: 'fec_cre_usu',
-  comprobante: 'comprobante',
-  carrera: 'carrera'
+  com_usu: 'com_usu',
+  id_car_est: 'id_car_est'
 };
 
 exports.Prisma.CarreraScalarFieldEnum = {
   id_car: 'id_car',
   nom_car: 'nom_car',
   est_car: 'est_car',
-  fec_cre_car: 'fec_cre_car'
+  fec_cre_car: 'fec_cre_car',
+  id_fac_per: 'id_fac_per'
 };
 
 exports.Prisma.EventoScalarFieldEnum = {
@@ -147,34 +148,50 @@ exports.Prisma.EventoScalarFieldEnum = {
   des_eve: 'des_eve',
   tip_eve: 'tip_eve',
   fec_ini_eve: 'fec_ini_eve',
-  fec_fin_eve: 'fec_fin_eve',
-  dur_hrs_eve: 'dur_hrs_eve',
-  pagado_eve: 'pagado_eve',
-  nota_min_eve: 'nota_min_eve',
-  por_asist_eve: 'por_asist_eve',
-  imagen_portada: 'imagen_portada',
+  val_eve: 'val_eve',
   est_eve: 'est_eve',
   fec_cre_eve: 'fec_cre_eve',
-  carreraId: 'carreraId'
+  img_por_eve: 'img_por_eve'
+};
+
+exports.Prisma.Evento_cursoScalarFieldEnum = {
+  id_eve_cur: 'id_eve_cur',
+  dur_hor_cur: 'dur_hor_cur',
+  not_min_cur: 'not_min_cur',
+  por_min_asi_cur: 'por_min_asi_cur',
+  fec_fin_cur: 'fec_fin_cur'
+};
+
+exports.Prisma.Evento_carreraScalarFieldEnum = {
+  id_eve_car: 'id_eve_car',
+  id_car_aso: 'id_car_aso',
+  id_eve_aso: 'id_eve_aso',
+  fec_aso: 'fec_aso'
 };
 
 exports.Prisma.InscripcionScalarFieldEnum = {
   id_ins: 'id_ins',
-  id_usu: 'id_usu',
-  id_eve: 'id_eve',
-  comprobante: 'comprobante',
-  nota_final: 'nota_final',
-  asistencia: 'asistencia',
-  estado: 'estado',
+  id_usu_ins: 'id_usu_ins',
+  id_eve_ins: 'id_eve_ins',
+  est_ins: 'est_ins',
   fec_ins: 'fec_ins',
-  cert_enviado: 'cert_enviado'
+  fec_pag_ins: 'fec_pag_ins',
+  cer_eve_env: 'cer_eve_env',
+  car_mot_usu: 'car_mot_usu'
 };
 
-exports.Prisma.ConfiguracionScalarFieldEnum = {
-  id_conf: 'id_conf',
-  mision: 'mision',
-  vision: 'vision',
-  autoridades: 'autoridades'
+exports.Prisma.Inscripcion_cursoScalarFieldEnum = {
+  id_ins_cur: 'id_ins_cur',
+  not_fin_usu: 'not_fin_usu',
+  por_asi_fin_usu: 'por_asi_fin_usu'
+};
+
+exports.Prisma.FacultadScalarFieldEnum = {
+  id_fac: 'id_fac',
+  nom_fac: 'nom_fac',
+  des_fac: 'des_fac',
+  mis_fac: 'mis_fac',
+  vis_fac: 'vis_fac'
 };
 
 exports.Prisma.SortOrder = {
@@ -193,7 +210,8 @@ exports.Prisma.NullsOrder = {
 };
 exports.rol_usuario = exports.$Enums.rol_usuario = {
   ADMIN: 'ADMIN',
-  ESTUDIANTE: 'ESTUDIANTE'
+  ESTUDIANTE: 'ESTUDIANTE',
+  GENERAL: 'GENERAL'
 };
 
 exports.tipo_evento = exports.$Enums.tipo_evento = {
@@ -203,6 +221,14 @@ exports.tipo_evento = exports.$Enums.tipo_evento = {
   CHARLA: 'CHARLA',
   SOCIALIZACION: 'SOCIALIZACION',
   PUBLICO: 'PUBLICO'
+};
+
+exports.estado_evento = exports.$Enums.estado_evento = {
+  ACTIVO: 'ACTIVO',
+  INACTIVO: 'INACTIVO',
+  FINALIZADO: 'FINALIZADO',
+  CANCELADO: 'CANCELADO',
+  SUSPENDIDO: 'SUSPENDIDO'
 };
 
 exports.estado_inscripcion = exports.$Enums.estado_inscripcion = {
@@ -216,8 +242,11 @@ exports.Prisma.ModelName = {
   usuario: 'usuario',
   carrera: 'carrera',
   evento: 'evento',
+  evento_curso: 'evento_curso',
+  evento_carrera: 'evento_carrera',
   inscripcion: 'inscripcion',
-  configuracion: 'configuracion'
+  inscripcion_curso: 'inscripcion_curso',
+  facultad: 'facultad'
 };
 
 /**
