@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 import axiosInstance from "../api/axiosConfig";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import DatePicker, { registerLocale } from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import es from "date-fns/locale/es";
 import {
   Calendar,
   Clock,
@@ -18,15 +21,21 @@ import {
 } from "lucide-react";
 import "./styles/EventForm.css";
 
+// Registrar el idioma español
+registerLocale("es", es);
+
 const EventForm = ({ eventId = null, mode = "create" }) => {
-  const navigate = useNavigate(); const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const [carreras, setCarreras] = useState([]);
   const [imagenPreview, setImagenPreview] = useState(null);
   const [formData, setFormData] = useState({
     nom_eve: "",
     des_eve: "",
-    tip_eve: "WEBINAR",
+    tip_eve: "",
     fec_ini_eve: "",
+    fec_fin_eve: "", // Campo para fecha fin de evento general
+    dur_hrs_eve: "", // Campo para duración de evento general
     fec_fin_cur: "",
     dur_hor_cur: "",
     val_eve: "",
@@ -43,7 +52,8 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
     { value: "WEBINAR", label: "Webinar", icon: BookOpen },
     { value: "CHARLA", label: "Charla", icon: FileText },
     { value: "SOCIALIZACION", label: "Socialización", icon: Users },
-    { value: "PUBLICO", label: "Evento Público", icon: Target },];
+    { value: "PUBLICO", label: "Evento Público", icon: Target },
+  ];
 
   useEffect(() => {
     cargarCarreras();
@@ -60,7 +70,6 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
       toast.error("Error al cargar carreras");
     }
   };
-
   const cargarEventoParaEditar = async () => {
     try {
       setLoading(true);
@@ -75,27 +84,39 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
         const fechaLocal = new Date(date.getTime() - offset);
         return fechaLocal.toISOString().slice(0, 10); // Para input type="date"
       };
+
+      console.log("Evento cargado:", evento);
+
       setFormData({
         nom_eve: evento.nom_eve || "",
         des_eve: evento.des_eve || "",
-        tip_eve: evento.tip_eve || "WEBINAR",
+        tip_eve: evento.tip_eve || "",
         fec_ini_eve: formatearFecha(evento.fec_ini_eve),
-        val_eve: evento.val_eve !== undefined && evento.val_eve !== null ? evento.val_eve : "",
+        fec_fin_eve: formatearFecha(evento.fec_fin_eve), // Fecha fin para eventos
+        dur_hrs_eve: evento.dur_hrs_eve?.toString() || "", // Duración para eventos
+        val_eve:
+          evento.val_eve !== undefined && evento.val_eve !== null
+            ? evento.val_eve
+            : "",
         img_por_eve: null,
         est_eve: evento.est_eve || "ACTIVO",
         // Solo cursos tienen estos campos
-        fec_fin_cur: evento.tip_eve === "CURSO" && evento.eventos_curso
-          ? formatearFecha(evento.eventos_curso.fec_fin_cur)
-          : "",
-        dur_hor_cur: evento.tip_eve === "CURSO" && evento.eventos_curso
-          ? evento.eventos_curso.dur_hor_cur?.toString() || ""
-          : "",
-        not_min_cur: evento.tip_eve === "CURSO" && evento.eventos_curso
-          ? evento.eventos_curso.not_min_cur?.toString() || ""
-          : "",
-        por_min_asi_cur: evento.tip_eve === "CURSO" && evento.eventos_curso
-          ? evento.eventos_curso.por_min_asi_cur?.toString() || ""
-          : "",
+        fec_fin_cur:
+          evento.tip_eve === "CURSO" && evento.eventos_curso
+            ? formatearFecha(evento.eventos_curso.fec_fin_cur)
+            : "",
+        dur_hor_cur:
+          evento.tip_eve === "CURSO" && evento.eventos_curso
+            ? evento.eventos_curso.dur_hor_cur?.toString() || ""
+            : "",
+        not_min_cur:
+          evento.tip_eve === "CURSO" && evento.eventos_curso
+            ? evento.eventos_curso.not_min_cur?.toString() || ""
+            : "",
+        por_min_asi_cur:
+          evento.tip_eve === "CURSO" && evento.eventos_curso
+            ? evento.eventos_curso.por_min_asi_cur?.toString() || ""
+            : "",
         carreraId: evento.carreraId || "",
       });
 
@@ -109,11 +130,12 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
     } finally {
       setLoading(false);
     }
-  }; const handleInputChange = (e) => {
+  };
+  const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
@@ -121,7 +143,12 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
     const file = e.target.files[0];
     if (file) {
       // Validar tipo y tamaño
-      const tiposPermitidos = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+      const tiposPermitidos = [
+        "image/jpeg",
+        "image/jpg",
+        "image/png",
+        "image/webp",
+      ];
       if (!tiposPermitidos.includes(file.type)) {
         toast.error("Solo se permiten imágenes JPG, PNG o WEBP");
         return;
@@ -132,7 +159,7 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
         return;
       }
 
-      setFormData(prev => ({ ...prev, img_por_eve: file }));
+      setFormData((prev) => ({ ...prev, img_por_eve: file }));
 
       // Crear preview
       const reader = new FileReader();
@@ -140,29 +167,59 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
       reader.readAsDataURL(file);
     }
   };
-
   const validarFormulario = () => {
     const errores = [];
 
-    if (!formData.nom_eve.trim()) errores.push("El nombre del evento es obligatorio");
+    if (!formData.nom_eve.trim())
+      errores.push("El nombre del evento es obligatorio");
     if (!formData.tip_eve) errores.push("El tipo de evento es obligatorio");
-    if (!formData.fec_ini_eve) errores.push("La fecha de inicio es obligatoria");
-    if (!formData.val_eve || formData.val_eve < 0) errores.push("El valor del evento debe ser un número positivo");
+    if (!formData.fec_ini_eve)
+      errores.push("La fecha de inicio es obligatoria");
+    if (!formData.val_eve || formData.val_eve < 0)
+      errores.push("El valor del evento debe ser un número positivo");
+
+    // Validar fecha fin y duración para eventos generales
+    if (formData.tip_eve !== "CURSO") {
+      if (!formData.fec_fin_eve) errores.push("La fecha de fin es obligatoria");
+      if (!formData.dur_hor_eve || formData.dur_hor_eve <= 0)
+        errores.push("La duración debe ser mayor a 0 horas");
+      // Validar fechas
+      if (formData.fec_ini_eve && formData.fec_fin_eve) {
+        if (new Date(formData.fec_ini_eve) > new Date(formData.fec_fin_eve)) {
+          errores.push(
+            "La fecha de inicio no puede ser posterior a la fecha de fin"
+          );
+        }
+      }
+    }
 
     // Validaciones específicas para cursos
     if (formData.tip_eve === "CURSO") {
-      if (!formData.dur_hor_cur || formData.dur_hor_cur <= 0) errores.push("La duración debe ser mayor a 0 horas");
-      if (!formData.not_min_cur || formData.not_min_cur < 8 || formData.not_min_cur > 10) {
+      if (!formData.dur_hor_cur || formData.dur_hor_cur <= 0)
+        errores.push("La duración debe ser mayor a 0 horas");
+      if (
+        !formData.not_min_cur ||
+        formData.not_min_cur < 8 ||
+        formData.not_min_cur > 10
+      ) {
         errores.push("Para cursos, la nota mínima debe estar entre 8 y 10");
       }
-      if (!formData.por_min_asi_cur || formData.por_min_asi_cur < 80 || formData.por_min_asi_cur > 100) {
-        errores.push("Para cursos, el porcentaje de asistencia debe estar entre 80 y 100");
+      if (
+        !formData.por_min_asi_cur ||
+        formData.por_min_asi_cur < 80 ||
+        formData.por_min_asi_cur > 100
+      ) {
+        errores.push(
+          "Para cursos, el porcentaje de asistencia debe estar entre 80 y 100"
+        );
       }
       if (!formData.fec_fin_cur) errores.push("La fecha de fin es obligatoria");
       // Validar fechas
       if (formData.fec_ini_eve && formData.fec_fin_cur) {
         if (new Date(formData.fec_ini_eve) > new Date(formData.fec_fin_cur)) {
-          errores.push("La fecha de inicio no puede ser posterior a la fecha de fin");
+          errores.push(
+            "La fecha de inicio no puede ser posterior a la fecha de fin"
+          );
         }
       }
     }
@@ -175,11 +232,12 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
 
     const errores = validarFormulario();
     if (errores.length > 0) {
-      errores.forEach(error => toast.error(error));
+      errores.forEach((error) => toast.error(error));
       return;
     }
 
-    setLoading(true); try {
+    setLoading(true);
+    try {
       // Preparar FormData para envío (para manejar la imagen)
       const formDataToSend = new FormData();
 
@@ -191,6 +249,12 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
       formDataToSend.append("val_eve", formData.val_eve);
       formDataToSend.append("img_por_eve", formData.img_por_eve);
       formDataToSend.append("est_eve", formData.est_eve);
+
+      // Para eventos que no son cursos
+      if (formData.tip_eve !== "CURSO") {
+        formDataToSend.append("fec_fin_eve", formData.fec_fin_eve);
+        formDataToSend.append("dur_hor_eve", formData.dur_hor_eve);
+      }
 
       // Campos específicos para cursos
       if (formData.tip_eve === "CURSO") {
@@ -208,13 +272,17 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
       let response;
       if (mode === "create") {
         response = await axiosInstance.post("/eventos", formDataToSend, {
-          headers: { "Content-Type": "multipart/form-data" }
+          headers: { "Content-Type": "multipart/form-data" },
         });
         toast.success("Evento creado exitosamente");
       } else {
-        response = await axiosInstance.put(`/eventos/${eventId}`, formDataToSend, {
-          headers: { "Content-Type": "multipart/form-data" }
-        });
+        response = await axiosInstance.put(
+          `/eventos/${eventId}`,
+          formDataToSend,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+          }
+        );
         toast.success("Evento actualizado exitosamente");
       }
 
@@ -243,8 +311,9 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
   return (
     <div className="event-form-container">
       <div className="event-form-header">
-        <h1 className={`event-form-title ${esCurso ? 'curso' : 'evento'}`}>
-          {mode === "create" ? "Crear Nuevo" : "Editar"} {esCurso ? "Curso" : "Evento"}
+        <h1 className={`event-form-title ${esCurso ? "curso" : "evento"}`}>
+          {mode === "create" ? "Crear Nuevo" : "Editar"}{" "}
+          {esCurso ? "Curso" : "Evento"}
         </h1>
         <button
           type="button"
@@ -271,7 +340,9 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
                 name="nom_eve"
                 value={formData.nom_eve}
                 onChange={handleInputChange}
-                placeholder={`Ingrese el nombre del ${esCurso ? "curso" : "evento"}`}
+                placeholder={`Ingrese el nombre del ${
+                  esCurso ? "curso" : "evento"
+                }`}
                 required
               />
             </div>
@@ -284,7 +355,8 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
                 onChange={handleInputChange}
                 required
               >
-                {tiposEvento.map(tipo => (
+                <option value="">Seleccione un tipo</option>
+                {tiposEvento.map((tipo) => (
                   <option key={tipo.value} value={tipo.value}>
                     {tipo.label}
                   </option>
@@ -309,7 +381,6 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
                 </select>
               </div>
             )}
-
           </div>
 
           <div className="form-group">
@@ -318,40 +389,98 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
               name="des_eve"
               value={formData.des_eve}
               onChange={handleInputChange}
-              placeholder={`Describe el contenido y objetivos del ${esCurso ? "curso" : "evento"}`}
+              placeholder={`Describe el contenido y objetivos del ${
+                esCurso ? "curso" : "evento"
+              }`}
               rows={4}
             />
           </div>
         </div>
-
         {/* Fecha */}
         <div className="event-form-section">
           <h2 className="section-title">
             <Calendar size={20} />
             Fechas y Duración
-          </h2>
+          </h2>{" "}
           <div className="form-grid">
             <div className="form-group">
               <label>Fecha de Inicio *</label>
-              <div className="input-with-icon">
+              <div className="input-with-icon date-picker-container">
                 <Calendar size={18} />
-                <input
-                  type="date"
-                  name="fec_ini_eve"
-                  value={formData.fec_ini_eve}
-                  onChange={handleInputChange}
+                <DatePicker
+                  selected={
+                    formData.fec_ini_eve ? new Date(formData.fec_ini_eve) : null
+                  }
+                  onChange={(date) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      fec_ini_eve: date ? date.toISOString().split("T")[0] : "",
+                    }));
+                  }}
+                  dateFormat="dd/MM/yyyy"
+                  locale="es"
+                  placeholderText="Seleccionar fecha"
+                  className="date-picker-input"
                   required
                 />
               </div>
             </div>
 
+            {!esCurso && (
+              <div className="form-group">
+                <label>Fecha de Fin *</label>
+                <div className="input-with-icon date-picker-container">
+                  <Calendar size={18} />
+                  <DatePicker
+                    selected={
+                      formData.fec_fin_eve
+                        ? new Date(formData.fec_fin_eve)
+                        : null
+                    }
+                    onChange={(date) => {
+                      setFormData((prev) => ({
+                        ...prev,
+                        fec_fin_eve: date
+                          ? date.toISOString().split("T")[0]
+                          : "",
+                      }));
+                    }}
+                    dateFormat="dd/MM/yyyy"
+                    locale="es"
+                    placeholderText="Seleccionar fecha"
+                    className="date-picker-input"
+                    minDate={
+                      formData.fec_ini_eve
+                        ? new Date(formData.fec_ini_eve)
+                        : null
+                    }
+                    required
+                  />
+                </div>
+              </div>
+            )}
 
+            {!esCurso && (
+              <div className="form-group">
+                <label>Duración (horas) *</label>
+                <div className="input-with-icon">
+                  <Clock size={18} />
+                  <input
+                    type="number"
+                    name="dur_hor_eve"
+                    value={formData.dur_hor_eve}
+                    onChange={handleInputChange}
+                    min="1"
+                    step="1"
+                    placeholder="Ej: 2, 4, 8"
+                    required
+                  />
+                </div>
+              </div>
+            )}
           </div>
-
-          <div className="form-grid">
-          </div>
-        </div>
-
+          <div className="form-grid"></div>
+        </div>{" "}
         {/* Configuración Específica de Curso */}
         {esCurso && (
           <div className="event-form-section curso-section">
@@ -361,6 +490,55 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
             </h2>
 
             <div className="form-grid">
+              <div className="form-group">
+                <label>Fecha de Finalización del Curso *</label>
+                <div className="input-with-icon date-picker-container">
+                  <Calendar size={18} />
+                  <DatePicker
+                    selected={
+                      formData.fec_fin_cur
+                        ? new Date(formData.fec_fin_cur)
+                        : null
+                    }
+                    onChange={(date) => {
+                      setFormData((prev) => ({
+                        ...prev,
+                        fec_fin_cur: date
+                          ? date.toISOString().split("T")[0]
+                          : "",
+                      }));
+                    }}
+                    dateFormat="dd/MM/yyyy"
+                    locale="es"
+                    placeholderText="Seleccionar fecha"
+                    className="date-picker-input"
+                    minDate={
+                      formData.fec_ini_eve
+                        ? new Date(formData.fec_ini_eve)
+                        : null
+                    }
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Duración Total (horas) *</label>
+                <div className="input-with-icon">
+                  <Clock size={18} />
+                  <input
+                    type="number"
+                    name="dur_hor_cur"
+                    value={formData.dur_hor_cur}
+                    onChange={handleInputChange}
+                    min="1"
+                    step="1"
+                    placeholder="Ej: 40"
+                    required={esCurso}
+                  />
+                </div>
+              </div>
+
               <div className="form-group">
                 <label>Nota Mínima para Aprobar *</label>
                 <div className="input-with-icon">
@@ -396,47 +574,15 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
                   />
                 </div>
               </div>
-
-              <div className="form-group">
-                <label>Fecha de Finalización *</label>
-                <div className="input-with-icon">
-                  <Calendar size={18} />
-                  <input
-                    type="date"
-                    name="fec_fin_cur"
-                    value={formData.fec_fin_cur}
-                    onChange={handleInputChange}
-                    required={esCurso}
-                  />
-                </div>
-              </div>
-
-              <div className="form-group">
-                <label>Duración Total (horas) *</label>
-                <div className="input-with-icon">
-                  <Clock size={18} />
-                  <input
-                    type="number"
-                    name="dur_hor_cur"
-                    value={formData.dur_hor_cur}
-                    onChange={handleInputChange}
-                    min="1"
-                    step="1"
-                    placeholder="Ej: 8, 16, 40"
-                    required={esCurso}
-                  />
-                </div>
-              </div>
-
             </div>
           </div>
-        )}        {/* Información Adicional */}
+        )}{" "}
+        {/* Información Adicional */}
         <div className="event-form-section">
           <h2 className="section-title">
             <Users size={20} />
             Información Adicional
           </h2>
-
           <div className="form-group">
             <label>Carrera Asociada</label>
             <select
@@ -445,16 +591,15 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
               onChange={handleInputChange}
             >
               <option value="">Todas las carreras / Evento general</option>
-              {carreras.map(carrera => (
+              {carreras.map((carrera) => (
                 <option key={carrera.id_car} value={carrera.id_car}>
                   {carrera.nom_car}
                 </option>
               ))}
             </select>
           </div>
-
           <div className="form-group">
-            <label>Valor del Evento ($) *</label>
+            <label className="valor-eve-ef">Valor del Evento ($) *</label>
             <input
               type="number"
               name="val_eve"
@@ -465,9 +610,8 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
               placeholder="Ej: 10.00"
               required
             />
-
-          </div>        </div>
-
+          </div>{" "}
+        </div>
         {/* Imagen de Portada */}
         <div className="event-form-section">
           <h2 className="section-title">
@@ -504,7 +648,6 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
             </div>
           </div>
         </div>
-
         {/* Botones de Acción */}
         <div className="event-form-actions">
           <button
@@ -517,7 +660,7 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
           </button>
           <button
             type="submit"
-            className={`btn-primary ${esCurso ? 'curso' : 'evento'}`}
+            className={`btn-primary ${esCurso ? "curso" : "evento"}`}
             disabled={loading}
           >
             {loading ? (
@@ -528,7 +671,8 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
             ) : (
               <>
                 <Save size={18} />
-                {mode === "create" ? "Crear" : "Actualizar"} {esCurso ? "Curso" : "Evento"}
+                {mode === "create" ? "Crear" : "Actualizar"}{" "}
+                {esCurso ? "Curso" : "Evento"}
               </>
             )}
           </button>

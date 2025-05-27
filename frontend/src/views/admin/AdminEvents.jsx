@@ -2,7 +2,6 @@ import { useEffect, useState, useCallback } from "react";
 import axiosInstance from "../../api/axiosConfig";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-
 import {
   Pencil,
   Eye,
@@ -10,187 +9,358 @@ import {
   CalendarClock,
   CheckCircle,
   XCircle,
+  Clock,
+  DollarSign,
+  BookOpen,
+  GraduationCap,
+  Target,
+  Users,
+  FileText,
+  Tag,
+  Plus,
+  Star,
 } from "lucide-react";
+import "./styles/AdminEvents.css";
 
 const getEstadoEventoUI = (estado) => {
   switch (estado) {
     case "ACTIVO":
-      return { icon: <CheckCircle size={14} className="text-green-500" />, text: "Activo", color: "text-green-600" };
+      return {
+        icon: <CheckCircle size={16} />,
+        text: "Activo",
+        color: "text-green-600",
+        bgColor: "#e6f7ed",
+        textColor: "#10b981",
+      };
     case "INACTIVO":
-      return { icon: <XCircle size={14} className="text-gray-400" />, text: "Inactivo", color: "text-gray-400" };
+      return {
+        icon: <XCircle size={16} />,
+        text: "Inactivo",
+        color: "text-gray-400",
+        bgColor: "#f1f5f9",
+        textColor: "#64748b",
+      };
     case "FINALIZADO":
-      return { icon: <XCircle size={14} className="text-red-500" />, text: "Finalizado", color: "text-red-600" };
+      return {
+        icon: <XCircle size={16} />,
+        text: "Finalizado",
+        color: "text-red-600",
+        bgColor: "#fee2e2",
+        textColor: "#ef4444",
+      };
     case "CANCELADO":
-      return { icon: <XCircle size={14} className="text-red-700" />, text: "Cancelado", color: "text-red-700" };
+      return {
+        icon: <XCircle size={16} />,
+        text: "Cancelado",
+        color: "text-red-700",
+        bgColor: "#fecaca",
+        textColor: "#b91c1c",
+      };
     case "SUSPENDIDO":
-      return { icon: <XCircle size={14} className="text-yellow-500" />, text: "Suspendido", color: "text-yellow-500" };
+      return {
+        icon: <XCircle size={16} />,
+        text: "Suspendido",
+        color: "text-yellow-500",
+        bgColor: "#fef3c7",
+        textColor: "#f59e0b",
+      };
     default:
-      return { icon: <XCircle size={14} />, text: "Desconocido", color: "text-gray-400" };
+      return {
+        icon: <XCircle size={16} />,
+        text: "Desconocido",
+        color: "text-gray-400",
+        bgColor: "#f1f5f9",
+        textColor: "#64748b",
+      };
+  }
+};
+
+// Función para obtener icono según tipo de evento
+const getTipoEventoIcon = (tipo) => {
+  switch (tipo) {
+    case "CURSO":
+      return <GraduationCap size={18} />;
+    case "CONGRESO":
+      return <Users size={18} />;
+    case "WEBINAR":
+      return <BookOpen size={18} />;
+    case "CHARLA":
+      return <FileText size={18} />;
+    case "SOCIALIZACION":
+      return <Users size={18} />;
+    case "PUBLICO":
+      return <Target size={18} />;
+    default:
+      return <Tag size={18} />;
   }
 };
 
 const AdminEvents = () => {
   const [eventos, setEventos] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  // Fecha actual para calcular estados de eventos
+  const fechaActual = new Date();
 
+  // Usar axiosInstance para la API con interceptores de token
   const cargarEventos = useCallback(async () => {
     try {
+      setLoading(true);
       const res = await axiosInstance.get("/eventos");
-      console.log("Respuesta de eventos:", res.data);
+      console.log("Eventos cargados:", res.data);
       setEventos(res.data);
     } catch (error) {
-      console.error("Error al cargar eventos", error);
+      console.error("Error al cargar eventos:", error);
       toast.error("No se pudieron cargar los eventos");
+    } finally {
+      setLoading(false);
     }
   }, []);
-
-  const handleEditEvent = (eventoId) => {
-    navigate(`/admin/eventos/editar/${eventoId}`);
-  };
 
   useEffect(() => {
     cargarEventos();
   }, [cargarEventos]);
 
-  const fechaActual = new Date();
+  // Eliminar evento con confirmación y alertas
+  const eliminarEvento = async (eventoId) => {
+    if (!window.confirm("¿Estás seguro de que deseas eliminar este evento?"))
+      return;
+    try {
+      await axiosInstance.delete(`/eventos/${eventoId}`);
+      toast.success("Evento eliminado correctamente");
+      cargarEventos();
+    } catch (error) {
+      console.error("Error al eliminar evento:", error);
+      toast.error(error.response?.data?.msg || "No se pudo eliminar el evento");
+    }
+  };
+  // Formato de fecha personalizado
+  const formatearFecha = (fechaStr) => {
+    if (!fechaStr) return "-";
+    try {
+      const fecha = new Date(fechaStr);
+      if (isNaN(fecha.getTime())) return "-"; // Verifica si la fecha es válida
+      return fecha.toLocaleDateString("es-EC", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      });
+    } catch (error) {
+      return "-";
+    }
+  };
+
+  // Función para obtener la fecha de fin apropiada según el tipo de evento
+  const obtenerFechaFin = (evento) => {
+    const esCurso = evento.tip_eve === "CURSO";
+
+    // Para cursos, usar fecha específica de fin de curso
+    if (esCurso && evento.eventos_curso?.fec_fin_cur) {
+      return formatearFecha(evento.eventos_curso.fec_fin_cur);
+    }
+
+    // Para eventos no-curso, verificar si hay fecha de fin explícita
+    if (evento.fec_fin_eve) {
+      return formatearFecha(evento.fec_fin_eve);
+    }
+
+    // Si no hay fecha de fin, pero hay fecha de inicio y duración
+    if (evento.fec_ini_eve && evento.dur_hrs_eve) {
+      const fechaInicio = new Date(evento.fec_ini_eve);
+      if (!isNaN(fechaInicio.getTime())) {
+        // Eventos cortos (menos de 24h) terminan el mismo día
+        if (evento.dur_hrs_eve <= 24) {
+          return formatearFecha(fechaInicio);
+        }
+
+        // Eventos largos, calcular días (asumiendo 8h por día)
+        const diasAdicionales = Math.ceil(evento.dur_hrs_eve / 8);
+        const fechaFin = new Date(fechaInicio);
+        fechaFin.setDate(fechaFin.getDate() + diasAdicionales - 1);
+        return formatearFecha(fechaFin);
+      }
+    }
+
+    // Si todo falla, mostrar la misma fecha de inicio
+    return formatearFecha(evento.fec_ini_eve);
+  };
+
+  // Determinar si un evento está finalizado basado en su fecha de fin
+  const esEventoFinalizado = (evento) => {
+    const esCurso = evento.tip_eve === "CURSO";
+
+    if (esCurso && evento.eventos_curso?.fec_fin_cur) {
+      return new Date(evento.eventos_curso.fec_fin_cur) < fechaActual;
+    } else if (evento.fec_fin_eve) {
+      return new Date(evento.fec_fin_eve) < fechaActual;
+    }
+
+    return evento.est_eve === "FINALIZADO" || evento.est_eve === "CANCELADO";
+  };
+
+  const handleCrearEvento = () => {
+    navigate("/admin/eventos/crear");
+  };
+
+  const handleEditEvent = (eventoId) => {
+    navigate(`/admin/eventos/editar/${eventoId}`);
+  };
 
   return (
-    <div className="max-w-6xl mx-auto mt-8 px-4">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800">
-        Gestión de Eventos
-      </h2>
+    <div className="admin-events-container">
+      <div className="admin-events-header">
+        <h2 className="admin-events-title">Gestión de Eventos</h2>
+        <button className="admin-events-create-btn" onClick={handleCrearEvento}>
+          <Plus size={16} />
+          Crear nuevo evento
+        </button>
+      </div>
 
-      {eventos.length === 0 ? (
-        <p className="text-gray-600">No hay eventos creados aún.</p>
+      {loading ? (
+        <div className="admin-events-loading">
+          <div className="spinner"></div>
+          <p>Cargando eventos...</p>
+        </div>
+      ) : eventos.length === 0 ? (
+        <div className="admin-events-empty">
+          <CalendarClock size={48} className="text-muted" />
+          <p>No hay eventos creados aún.</p>
+          <button
+            className="admin-events-create-btn"
+            onClick={handleCrearEvento}
+          >
+            <Plus size={16} />
+            Crear mi primer evento
+          </button>
+        </div>
       ) : (
-        <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="admin-events-grid">
           {eventos.map((eve) => {
             const esCurso = eve.tip_eve === "CURSO";
-            const esFinalizado = esCurso && eve.eventos_curso?.fec_fin_cur
-              ? new Date(eve.eventos_curso.fec_fin_cur) < fechaActual
-              : false;
-            return (
-              <div
-                key={eve.id_eve}
-                className="bg-white rounded-xl border p-4 shadow hover:shadow-lg transition"
-              >                {/* Imagen de portada si existe */}
-                {eve.img_por_eve && (
-                  <div className="mb-3">
-                    <img
-                      src={eve.img_por_eve}
-                      alt={`Portada de ${eve.nom_eve}`}
-                      className="w-full h-48 object-cover rounded-lg"
-                      style={{ maxHeight: '192px', height: '192px' }}
-                      onError={(e) => {
-                        e.target.style.display = 'none';
-                      }}
-                    />
-                  </div>
-                )}
+            const estadoEvento = esEventoFinalizado(eve)
+              ? "FINALIZADO"
+              : eve.est_eve;
+            const estadoUI = getEstadoEventoUI(estadoEvento);
 
-                <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-semibold text-gray-800">
-                    {eve.nom_eve}
-                  </h3>
-                  <p className="text-sm text-gray-500 mt-1">
-                    {eve.des_eve}
-                  </p>
+            return (
+              <div key={eve.id_eve} className="admin-event-card">
+                <div className="admin-event-header">
+                  <h3 className="admin-event-name">{eve.nom_eve}</h3>
                   <span
-                    className={`text-xs px-2 py-1 rounded-full ${eve.pagado_eve
-                      ? "bg-red-100 text-red-600"
-                      : "bg-green-100 text-green-600"
-                      }`}
+                    className="admin-event-label"
+                    style={{
+                      backgroundColor:
+                        eve.val_eve === 0 ? "#e6f7ed" : "#fff7e6",
+                      color: eve.val_eve === 0 ? "#10b981" : "#f59e0b",
+                    }}
                   >
-                    {eve.val_eve == 0 ? "Gratuito" : "Valor: $" + eve.val_eve}
+                    {eve.val_eve === 0
+                      ? "Gratuito"
+                      : `$${eve.val_eve.toFixed(2)}`}
                   </span>
                 </div>
 
-                <p className="text-sm text-gray-600 mt-1">{eve.tip_eve}</p>
-
-                <div className="text-sm text-gray-700 mt-2 space-y-1">
-                  <p>
-                    <CalendarClock size={14} className="inline mr-1" />
-                    {new Date(eve.fec_ini_eve).toLocaleDateString(
-                      "es-EC"
-                    )}
-                    {esCurso && eve.eventos_curso?.fec_fin_cur
-                      ? ` – ${new Date(eve.eventos_curso.fec_fin_cur).toLocaleDateString("es-EC")}`
-                      : ""}
-                  </p>
-                  {esCurso && (
-                    <p>
-                      <strong>Duración:</strong>{" "}
-                      {eve.eventos_curso?.dur_hor_cur
-                        ? `${eve.eventos_curso.dur_hor_cur} horas`
-                        : "-"}
-                    </p>
-                  )}
-
-                  {/* Nota mínima (solo cursos) */}
-                  {esCurso && (
-                    <p>
-                      <strong>Nota mínima:</strong>{" "}
-                      {eve.eventos_curso?.not_min_cur ?? "-"}
-                    </p>
-                  )}
-
-                  {/* Porcentaje de asistencia (solo cursos) */}
-                  {esCurso && (
-                    <p>
-                      <strong>Asistencia mínima:</strong>{" "}
-                      {eve.eventos_curso?.por_min_asi_cur
-                        ? `${eve.eventos_curso.por_min_asi_cur}%`
-                        : "-"}
-                    </p>
-                  )}
-                  <p>
-                    <strong>Carrera/s:</strong>{" "}
-                    {eve.eventos_carrera && eve.eventos_carrera.length > 0
-                      ? eve.eventos_carrera.map((ec) => ec.carrera.nom_car).join(", ")
-                      : "Aun no asignado"}
-                  </p>
-                  {(() => {
-                    const estadoUI = getEstadoEventoUI(eve.est_eve);
-                    return (
-                      <p className={`flex items-center gap-1 text-xs ${estadoUI.color}`}>
-                        {estadoUI.icon}
-                        {estadoUI.text}
-                      </p>
-                    );
-                  })()}
+                <div className="admin-event-type-badge">
+                  {getTipoEventoIcon(eve.tip_eve)}
+                  {eve.tip_eve}
                 </div>
 
-                <div className="mt-4 flex gap-3">                  <button
-                  title="Editar evento"
-                  className="text-sm text-blue-600 hover:underline flex items-center gap-1"
-                  onClick={() => handleEditEvent(eve.id_eve)}
-                >
-                  <Pencil size={14} />
-                  Editar
-                </button>
+                <div className="admin-event-details">
+                  {" "}
+                  <div className="detail-item">
+                    <CalendarClock size={16} className="icon-inline" />
+                    <span>
+                      {formatearFecha(eve.fec_ini_eve)}
+                      {" – "}
+                      {obtenerFechaFin(eve)}
+                    </span>
+                  </div>
+                  <div className="detail-item">
+                    <Clock size={16} className="icon-inline" />
+                    <span>
+                      <strong>Duración:</strong>{" "}
+                      {esCurso && eve.eventos_curso?.dur_hor_cur
+                        ? `${eve.eventos_curso.dur_hor_cur} horas`
+                        : `${eve.dur_hrs_eve} horas`}
+                    </span>
+                  </div>
+                  {/* Información exclusiva de cursos */}
+                  {esCurso && (
+                    <>
+                      <div className="detail-item">
+                        <Star size={16} className="icon-inline" />
+                        <span>
+                          <strong>Nota mínima:</strong>{" "}
+                          {eve.eventos_curso?.not_min_cur ?? "-"}
+                        </span>
+                      </div>
 
-                  <button
-                    title="Ver inscripciones"
-                    className="text-sm text-gray-700 hover:underline flex items-center gap-1"
-                    onClick={() =>
-                      navigate(`/admin/eventos/${eve.id_eve}/inscripciones`)
-                    }
+                      <div className="detail-item">
+                        <Users size={16} className="icon-inline" />
+                        <span>
+                          <strong>Asistencia mínima:</strong>{" "}
+                          {eve.eventos_curso?.por_min_asi_cur
+                            ? `${eve.eventos_curso.por_min_asi_cur}%`
+                            : "-"}
+                        </span>
+                      </div>
+                    </>
+                  )}
+                  {/* Carreras asociadas */}
+                  <div className="detail-item">
+                    <GraduationCap size={16} className="icon-inline" />
+                    <span>
+                      <strong>
+                        Carrera{eve.eventos_carrera?.length !== 1 ? "s" : ""}:
+                      </strong>{" "}
+                      {eve.eventos_carrera && eve.eventos_carrera.length > 0
+                        ? eve.eventos_carrera
+                            .map((ec) => ec.carrera.nom_car)
+                            .join(", ")
+                        : "General"}
+                    </span>
+                  </div>
+                  {/* Estado del evento */}
+                  <div
+                    className="admin-event-status"
+                    style={{
+                      backgroundColor: estadoUI.bgColor,
+                      color: estadoUI.textColor,
+                    }}
                   >
-                    <Eye size={14} />
-                    Ver inscritos
-                  </button>
+                    {estadoUI.icon}
+                    <span>{estadoUI.text}</span>
+                  </div>
+                </div>
 
+                <div className="admin-event-actions">
+                  <button
+                    title="Editar evento"
+                    className="admin-event-btn edit"
+                    onClick={() => handleEditEvent(eve.id_eve)}
+                  >
+                    <Pencil size={14} />
+                    Editar
+                  </button>
                   <button
                     title="Eliminar evento"
-                    className="text-sm text-red-600 hover:underline flex items-center gap-1"
-                    onClick={() =>
-                      console.log("Eliminar o desactivar", eve.id_eve)
-                    }
+                    className="admin-event-btn delete"
+                    onClick={() => eliminarEvento(eve.id_eve)}
                   >
                     <Trash2 size={14} />
                     Eliminar
                   </button>
                 </div>
+                <button
+                  title="Ver inscripciones"
+                  className="admin-event-btn view"
+                  onClick={() =>
+                    navigate(`/admin/eventos/${eve.id_eve}/inscripciones`)
+                  }
+                >
+                  <Eye size={14} />
+                  Ver inscritos
+                </button>
               </div>
             );
           })}

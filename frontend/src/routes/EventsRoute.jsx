@@ -23,7 +23,8 @@ const EventsRoute = () => {
     if (!usuario) return navigate("/login");
 
     const obtenerEventos = async () => {
-      try {        const res = await axiosInstance.get("/eventos");
+      try {
+        const res = await axiosInstance.get("/eventos");
         setEventos(res.data);
       } catch {
         toast.error("Error al obtener eventos");
@@ -35,7 +36,8 @@ const EventsRoute = () => {
 
   useEffect(() => {
     const obtenerInscripciones = async () => {
-      try {        const res = await Promise.all(
+      try {
+        const res = await Promise.all(
           eventos.map((ev) =>
             axiosInstance
               .get(`/inscripciones/${ev.id_eve}`)
@@ -81,16 +83,13 @@ const EventsRoute = () => {
     const formData = new FormData();
     formData.append("id_usu", usuario.id);
     formData.append("id_eve", eventoSeleccionado.id_eve);
-    formData.append("archivo", archivo);    try {
-      await axiosInstance.post(
-        "/inscripciones",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+    formData.append("archivo", archivo);
+    try {
+      await axiosInstance.post("/inscripciones", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       toast.success("Inscripción enviada con éxito");
       setEventoSeleccionado(null);
@@ -141,50 +140,45 @@ const EventsRoute = () => {
           {eventosDisponibles
             .filter((ev) =>
               ev.nom_eve.toLowerCase().includes(filtro.toLowerCase())
-            )            .map((eve) => (
-              <div key={eve.id_eve} 
-              className="evento-card">
-                {/* Imagen de portada si existe */}
-                {eve.img_por_eve && (
-                  <div className="evento-imagen">                    <img
-                      src={eve.img_por_eve}
-                      alt={`Portada de ${eve.nom_eve}`}
-                      style={{ maxHeight: '60px', height: '60px', width: '100%', objectFit: 'cover' }}
-                      onError={(e) => {
-                        e.target.style.display = 'none';
-                      }}
-                    />
-                  </div>
-                )}
-                
-                <h2>{eve.nom_eve}</h2>
-                <p className="tipo">{eve.tip_eve}</p>
-                
-                {/* Descripción si existe */}
-                {eve.des_eve && (
-                  <p className="descripcion">{eve.des_eve}</p>
-                )}
-                
-                <p>
+            )
+            .map((evento) => (
+              <div key={evento.id_eve} className="evento-card">
+                {/* Imagen de portada (real o placeholder) */}
+                <img
+                  src={evento.img_por_eve || "https://i.imgur.com/c6Ry30Z.jpeg"}
+                  alt={`Portada de ${evento.nom_eve}`}
+                  className="evento-portada"
+                  style={{
+                    width: "100%",
+                    height: "180px",
+                    objectFit: "cover",
+                    borderRadius: "8px 8px 0 0",
+                    marginBottom: "0.5rem",
+                  }}
+                />
+                <h2 className="nombre-evento-er">{evento.nom_eve}</h2>
+                <p className="tipo">{evento.tip_eve}</p>
+                <p className="fecha-evento-er">
                   Fecha:{" "}
-                  {new Date(eve.fec_ini_eve).toLocaleDateString("es-EC")} a{" "}
-                  {new Date(eve.fec_fin_eve).toLocaleDateString("es-EC")}
+                  {new Date(evento.fec_ini_eve).toLocaleDateString("es-EC")} a{" "}
+                  {new Date(evento.fec_fin_eve).toLocaleDateString("es-EC")}
                 </p>
-                <p>Duración: {eve.dur_hrs_eve} horas</p>
-                
+                <p className="duracion-evento-er">
+                  Duración: {evento.dur_hrs_eve} horas
+                </p>
                 {/* Modalidad si existe */}
-                {eve.modalidad && (
-                  <p className="modalidad">Modalidad: {eve.modalidad}</p>
+                {evento.modalidad && (
+                  <p className="modalidad">Modalidad: {evento.modalidad}</p>
                 )}
-                
                 {/* Público objetivo si existe */}
-                {eve.publico_objetivo && (
-                  <p className="publico">Dirigido a: {eve.publico_objetivo}</p>
+                {evento.publico_objetivo && (
+                  <p className="publico">
+                    Dirigido a: {evento.publico_objetivo}
+                  </p>
                 )}
-                
-                {eve.pagado_eve && <p className="pago">Pagado</p>}
+                {evento.pagado_eve && <p className="pago">Pagado</p>}
                 <button
-                  onClick={() => setEventoSeleccionado(eve)}
+                  onClick={() => setEventoSeleccionado(evento)}
                   className="btn-inscribirme"
                 >
                   Inscribirme
@@ -203,7 +197,7 @@ const EventsRoute = () => {
               type="file"
               accept=".pdf,.jpg,.jpeg,.png"
               onChange={(e) => setArchivo(e.target.files[0])}
-              className="modal-input"
+              className="modal-input-er"
             />
 
             {archivo && (
@@ -235,7 +229,7 @@ const EventsRoute = () => {
                   setEventoSeleccionado(null);
                   setArchivo(null);
                 }}
-                className="btn-cancelar"
+                className="btn-cancelar-er"
               >
                 Cancelar
               </button>

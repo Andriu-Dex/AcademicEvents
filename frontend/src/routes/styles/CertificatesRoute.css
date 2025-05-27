@@ -1,0 +1,240 @@
+.cert-container {
+  padding: 2rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  background-color: rgba(255, 255, 255, 0.85);
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.cert-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+/* ==========================
+   Estilo visual atractivo para la tabla de certificados
+   ========================== */
+.cert-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
+}
+
+.cert-table th,
+.cert-table td {
+  padding: 1rem;
+  border-bottom: 1.5px solid #e0e7ef; /* Línea de separación más visible */
+  text-align: center;
+  vertical-align: middle;
+}
+
+.cert-table th {
+  background-color: #f3f4f6;
+  color: #374151;
+  font-weight: 600;
+  font-size: 1rem;
+  text-align: center;
+  border-bottom: 2.5px solid #8a1538;
+  letter-spacing: 0.5px;
+}
+
+.cert-table tr {
+  transition: box-shadow 0.2s;
+}
+
+.cert-table tbody tr {
+  background-color: #fff;
+  animation: rowFade 0.4s ease;
+}
+
+@keyframes rowFade {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.cert-table tbody tr:hover {
+  background-color: #f9f5fa;
+  box-shadow: 0 2px 12px rgba(138, 21, 56, 0.07);
+}
+
+.cert-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Opcional: bordes redondeados en las esquinas de la tabla */
+.cert-table thead tr:first-child th:first-child {
+  border-top-left-radius: 10px;
+}
+.cert-table thead tr:first-child th:last-child {
+  border-top-right-radius: 10px;
+}
+.cert-table tbody tr:last-child td:first-child {
+  border-bottom-left-radius: 10px;
+}
+.cert-table tbody tr:last-child td:last-child {
+  border-bottom-right-radius: 10px;
+}
+
+.estado {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: transform 0.2s ease;
+}
+
+.estado svg {
+  transform: scale(1);
+  transition: transform 0.3s ease;
+}
+
+.estado:hover svg {
+  transform: scale(1.2);
+}
+
+.estado.enviado {
+  color: #16a34a;
+}
+
+.estado.no-enviado {
+  color: #dc2626;
+}
+
+.acciones {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.btn-descargar-cr,
+.btn-reenviar-cr {
+  font-size: 14px;
+  color: white;
+  padding: 5px 20px;
+}
+
+.btn-descargar-cr {
+  background: linear-gradient(135deg, #2563eb, #5393f9);
+  border: rgba(0, 0, 0, 0) 1px solid;
+}
+
+.btn-reenviar-cr {
+  background: linear-gradient(135deg, #059669, rgb(24, 202, 143));
+  border: rgba(0, 0, 0, 0) 1px solid;
+}
+
+.btn-descargar-cr:hover {
+  background: linear-gradient(135deg, #1c5eeb, #032d70);
+  background-color: #00a20b;
+}
+
+.btn-reenviar-cr:hover {
+  background: linear-gradient(135deg, #1bb886, rgb(1, 107, 25));
+
+  border: rgb(38, 255, 0) 1px solid;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.no-cert-msg,
+.loading-msg {
+  font-style: italic;
+  text-align: center;
+  color: #6b7280;
+  font-size: 1rem;
+}
+
+.toast-error,
+.toast-success {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 500;
+}
+
+.toast-error {
+  color: #dc2626;
+}
+
+.toast-success {
+  color: #16a34a;
+}
+
+/* Responsivo en móviles */
+@media (max-width: 640px) {
+  .cert-table,
+  .cert-table thead,
+  .cert-table tbody,
+  .cert-table th,
+  .cert-table td,
+  .cert-table tr {
+    display: block;
+  }
+
+  .cert-table thead {
+    display: none;
+  }
+
+  .cert-table tr {
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  }
+
+  .cert-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border: none;
+    border-bottom: 1px solid #e5e7eb;
+    background-color: #fff;
+    text-align: left;
+  }
+
+  .cert-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #6b7280;
+  }
+
+  .acciones {
+    justify-content: flex-end;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    align-items: flex-end;
+  }
+}
