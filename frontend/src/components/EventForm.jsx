@@ -409,7 +409,9 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
                 <Calendar size={18} />
                 <DatePicker
                   selected={
-                    formData.fec_ini_eve ? new Date(formData.fec_ini_eve) : null
+                    formData.fec_ini_eve
+                      ? new Date(formData.fec_ini_eve + "T12:00:00")
+                      : null
                   }
                   onChange={(date) => {
                     setFormData((prev) => ({
@@ -434,7 +436,7 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
                   <DatePicker
                     selected={
                       formData.fec_fin_eve
-                        ? new Date(formData.fec_fin_eve)
+                        ? new Date(formData.fec_fin_eve + "T12:00:00")
                         : null
                     }
                     onChange={(date) => {
@@ -451,7 +453,7 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
                     className="date-picker-input"
                     minDate={
                       formData.fec_ini_eve
-                        ? new Date(formData.fec_ini_eve)
+                        ? new Date(formData.fec_ini_eve + "T12:00:00")
                         : null
                     }
                     required
@@ -497,7 +499,7 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
                   <DatePicker
                     selected={
                       formData.fec_fin_cur
-                        ? new Date(formData.fec_fin_cur)
+                        ? new Date(formData.fec_fin_cur + "T12:00:00")
                         : null
                     }
                     onChange={(date) => {
@@ -514,7 +516,7 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
                     className="date-picker-input"
                     minDate={
                       formData.fec_ini_eve
-                        ? new Date(formData.fec_ini_eve)
+                        ? new Date(formData.fec_ini_eve + "T12:00:00")
                         : null
                     }
                     required
