@@ -55,7 +55,23 @@ async function main() {
       },
     });
     console.log("Usuario admin creado");
-    
+
+    await prisma.usuario.upsert({
+      where: { ced_usu: "1234567890" }, // cédula única para tu admin
+      update: {},
+      create: {
+        ced_usu: "1234567890",
+        nom_usu: "Gabriel",
+        ape_usu: "Llerena",
+        cor_usu: "gllerena1469@uta.edu.ec",
+        con_usu: "$2b$10$9rzmh2NncdUMRaZDpRDcpOiv59fwxuafQOvmeYxa4sGwqHhx6KvnW", // Contraseña encriptada (Admin12345)
+        cel_usu: "0987654321",
+        rol_usu: "ESTUDIANTE",
+        fec_cre_usu: new Date(),
+        id_car_est: "ec4731a9-7e22-42af-96d7-9a12c14b4338",
+      },
+    });
+    console.log("Usuario estudiante creado");
   } catch (error) {
     console.error("Error al insertar carreras:", error); // Mensaje más específico en caso de error
     process.exit(1); // Finaliza el proceso con un código de error

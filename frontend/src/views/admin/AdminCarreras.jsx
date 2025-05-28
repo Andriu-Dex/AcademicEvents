@@ -23,19 +23,19 @@ const AdminCarreras = () => {
     }
   };
 
-  // const crearCarrera = async () => {
-  //   if (!nuevaCarrera.trim()) return toast.warning("Nombre vacío");    try {
-  //     await axiosInstance.post("/carreras", {
-  //       nom_car: nuevaCarrera.trim(),
-  //     });
-  //     toast.success("Carrera creada");
-  //     setNuevaCarrera("");
-  //     cargarCarreras();
-  //   } catch (error) {
-  //     console.error(error);
-  //     toast.error("Error al crear carrera");
-  //   }
-  // };
+  const crearCarrera = async () => {
+    if (!nuevaCarrera.trim()) return toast.warning("Nombre vacío"); try {
+      await axiosInstance.post("/carreras", {
+        nom_car: nuevaCarrera.trim(),
+      });
+      toast.success("Carrera creada");
+      setNuevaCarrera("");
+      cargarCarreras();
+    } catch (error) {
+      console.error(error);
+      toast.error("Error al crear carrera");
+    }
+  };
 
   const confirmarEliminar = (id) => {
     setModalEliminar({ abierto: true, id });

@@ -1,5 +1,5 @@
 const prisma = require("../config/db");
-const DEFAULT_IMAGE_URL = "https://gllerena-academicevents.s3.us-east-2.amazonaws.com/event_images/Screenshot+2025-05-26+005008.png";
+const DEFAULT_IMAGE_URL = "https://i.imgur.com/f8adUbZ.png";
 const axios = require("axios");
 require("dotenv").config();
 
@@ -7,42 +7,42 @@ require("dotenv").config();
  * Valida los campos obligatorios y restricciones de un CURSO
  * Lanza un error si hay algún problema, de lo contrario no hace nada.
  */
-function validarCurso(dur_hor_cur, not_min_cur, por_min_asi_cur, fec_ini_eve, fec_fin_cur) {
-  if (dur_hor_cur === undefined)
-    throw new Error("La duración del curso es obligatoria");
-  if (not_min_cur === undefined)
-    throw new Error("La nota mínima es obligatoria");
-  if (por_min_asi_cur === undefined)
-    throw new Error("El porcentaje mínimo de asistencia es obligatorio");
-  if (dur_hor_cur <= 0)
-    throw new Error("La duración del curso debe ser mayor a 0");
-  if (not_min_cur < 8 || not_min_cur > 10)
-    throw new Error("La nota mínima debe estar entre 8 y 10");
-  if (por_min_asi_cur < 80 || por_min_asi_cur > 100)
-    throw new Error("El porcentaje mínimo de asistencia debe estar entre 80% y 100%");
-  if (!fec_fin_cur) throw new Error("La fecha de fin es obligatoria");
-  if (!fec_ini_eve) throw new Error("La fecha de inicio es obligatoria");
-  // Validar que la fecha de inicio sea mañana o posterior
-  const hoy = new Date();
-  hoy.setHours(0, 0, 0, 0); // Ignora hora, solo compara fechas
-  const fechaInicio = new Date(fec_ini_eve);
-  fechaInicio.setHours(0, 0, 0, 0);
-  if (fechaInicio <= hoy) {
-    throw new Error("La fecha de inicio debe ser a partir de mañana");
-  }
+function validarCurso(not_min_cur) {
+  if (not_min_cur === undefined) throw new Error("La nota mínima es obligatoria");
+  if (not_min_cur < 8 || not_min_cur > 10) throw new Error("La nota mínima debe estar entre 8 y 10");
 }
 /**
  * Valida los campos obligatorios y restricciones de un evento en general
  * Lanza un error si hay algún problema, de lo contrario no hace nada.
  */
-function validarEventoGeneral({ nom_eve, tip_eve, fec_ini_eve, val_eve }) {
+function validarEventoGeneral({ nom_eve, tip_eve, fec_ini_eve, val_eve, dur_hor_eve, por_min_asi_eve, fec_fin_eve }) {
+  // Validar que el nombre del evento esté presente
   if (!nom_eve) throw new Error("El nombre del evento es obligatorio");
+  // Validar que el tipo de evento esté presente
   if (!tip_eve) throw new Error("El tipo de evento es obligatorio");
+  // Validar que la fecha de inicio esté presente y sea válida
   if (!fec_ini_eve) throw new Error("La fecha de inicio es obligatoria");
+  // Validar que el valor del evento sea un número válido
   const valorNum = Number(val_eve);
   if (isNaN(valorNum)) throw new Error("El valor del evento no es un número válido");
-  if (isNaN(new Date(fec_ini_eve)))
-    throw new Error("Fecha inválida");
+  // Validar que la fecha de inicio sea una fecha válida
+  if (isNaN(new Date(fec_ini_eve))) throw new Error("Fecha inválida");
+  // Validar que la duración del evento esté definida y sea mayor a 0
+  if (dur_hor_eve === undefined || dur_hor_eve <= 0) throw new Error("La duración del evento es obligatoria y debe ser mayor a 0");
+  // Validar que el porcentaje mínimo de asistencia esté dentro del rango 80-100
+  if (por_min_asi_eve === undefined) throw new Error("El porcentaje mínimo de asistencia es obligatorio");
+  if (por_min_asi_eve < 80 || por_min_asi_eve > 100) throw new Error("El porcentaje mínimo de asistencia debe estar entre 80% y 100%");
+  // Validar que la fecha de fin esté presente
+  if (!fec_fin_eve) throw new Error("La fecha de fin es obligatoria");
+  // Validar que la fecha de inicio no sea posterior a la fecha de fin
+  const fechaInicio = new Date(fec_ini_eve);
+  const fechaFin = new Date(fec_fin_eve);
+  if (fechaInicio > fechaFin) throw new Error("La fecha de inicio no puede ser posterior a la fecha de fin");
+  // Validar que la fecha de inicio sea al menos mañana
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0); // Ignorar la hora y comparar solo fechas
+  if (fechaInicio <= hoy) throw new Error("La fecha de inicio debe ser a partir de mañana");
+  
 }
 
 // Función para subir imagen a Imgur
@@ -68,73 +68,96 @@ async function subirImagenAImgur(buffer) {
 //Crea un nuevo evento académico, y si es curso, lo vincula a evento_curso
 const crearEvento = async (req, res) => {
   try {
-    const { nom_eve, des_eve, tip_eve, fec_ini_eve, val_eve,
-      // Específicos para CURSO:
-      dur_hor_cur, not_min_cur, por_min_asi_cur, fec_fin_cur,
+    const {
+      nom_eve,
+      des_eve,
+      tip_eve,
+      fec_ini_eve,
+      val_eve,
+      dur_hor_eve,
+      por_min_asi_eve,
+      fec_fin_eve,
+      not_min_cur,
     } = req.body;
 
-    // Validaciones generales
+    // Convertir valores numéricos y fechas antes de validar
+    const durHor = Number(dur_hor_eve);
+    const porcMinAsi = Number(por_min_asi_eve);
+    const valNum = Number(val_eve);
+    const fechaIni = new Date(fec_ini_eve);
+    const fechaFin = new Date(fec_fin_eve);
+    const notaMin = not_min_cur !== undefined ? Number(not_min_cur) : undefined;
+
+    // Validaciones generales (debería validar los campos nuevos)
     try {
-      validarEventoGeneral({ nom_eve, tip_eve, fec_ini_eve, val_eve });
+      validarEventoGeneral({
+        nom_eve,
+        tip_eve,
+        fec_ini_eve: fechaIni,
+        val_eve: valNum,
+        dur_hor_eve: durHor,
+        por_min_asi_eve: porcMinAsi,
+        fec_fin_eve: fechaFin,
+      });
     } catch (e) {
       return res.status(400).json({ msg: e.message });
     }
 
-    // Validaciones específicas para curso
+    // Validación específica para CURSO (solo nota mínima)
     if (tip_eve === "CURSO") {
       try {
-        validarCurso(dur_hor_cur, not_min_cur, por_min_asi_cur, fec_ini_eve, fec_fin_cur);
+        validarCurso(notaMin);
       } catch (e) {
         return res.status(400).json({ msg: e.message });
       }
     }
 
-    // Si no hay archivo subido, usar la imagen por defecto
+    // Subir imagen a Imgur o usar la imagen por defecto
     let imgUrl = DEFAULT_IMAGE_URL;
     if (req.file) {
       imgUrl = await subirImagenAImgur(req.file.buffer);
     }
 
-    const valorNum = Number(val_eve);
-    // Creación del evento
+    // Crear evento en la base de datos
     const nuevoEvento = await prisma.evento.create({
       data: {
         nom_eve,
         des_eve,
         tip_eve,
-        fec_ini_eve: new Date(fec_ini_eve),
-        val_eve: valorNum,
-        img_por_eve: imgUrl, // URL de la imagen subida a S3 
+        fec_ini_eve: fechaIni,
+        val_eve: valNum,
+        dur_hor_eve: durHor,
+        por_min_asi_eve: porcMinAsi,
+        fec_fin_eve: fechaFin,
+        img_por_eve: imgUrl,
       },
     });
 
-    // Si es CURSO, crea evento_curso
+    // Si es CURSO, crear registro en evento_curso con la nota mínima
     let datosCurso = null;
-    if (tip_eve === "CURSO") {
-      datosCurso = await crearEventoCurso(
-        nuevoEvento.id_eve, dur_hor_cur, not_min_cur, por_min_asi_cur, fec_fin_cur);
+    if (tip_eve === "CURSO" && notaMin !== undefined) {
+      datosCurso = await crearEventoCurso(nuevoEvento.id_eve, notaMin);
     }
 
     res.status(201).json({
-      ...nuevoEvento, eventos_curso: datosCurso,
+      ...nuevoEvento,
+      eventos_curso: datosCurso,
     });
   } catch (error) {
-    res.status(500).json({
-      msg: "Error al crear evento", error: error.message,
-    });
     console.error("Error al crear evento:", error);
+    res.status(500).json({
+      msg: "Error al crear evento",
+      error: error.message,
+    });
   }
 };
 
 //Crea un registro en evento_curso vinculado a un evento
-const crearEventoCurso = async (eventoId, dur_hor_cur, not_min_cur, por_min_asi_cur, fec_fin_cur) => {
+const crearEventoCurso = async (eventoId, not_min_cur) => {
   return prisma.evento_curso.create({
     data: {
       id_eve_cur: eventoId,
-      dur_hor_cur: Number(dur_hor_cur),
       not_min_cur: Number(not_min_cur),
-      por_min_asi_cur: Number(por_min_asi_cur),
-      fec_fin_cur: new Date(fec_fin_cur)
     },
   });
 };
@@ -165,10 +188,10 @@ const obtenerEventos = async (req, res) => {
 
 // 1. Campos permitidos para cada tabla (evento y curso)
 const camposEvento = [
-  "nom_eve", "des_eve", "tip_eve", "fec_ini_eve", "val_eve", "est_eve"
+  "nom_eve", "des_eve", "tip_eve", "fec_ini_eve", "val_eve", "est_eve", "dur_hor_eve", "por_min_asi_eve", "fec_fin_eve"
 ];
 const camposCurso = [
-  "dur_hor_cur", "not_min_cur", "por_min_asi_cur", "fec_fin_cur"
+  "not_min_cur"
 ];
 // 2. Función principal para actualizar un evento
 const actualizarEvento = async (req, res) => {
@@ -198,18 +221,15 @@ const actualizarEvento = async (req, res) => {
       imgUrl = await subirImagenAImgur(req.file.buffer);
     }
 
-    console.log("-> DATA EVENTO:", dataEvento);
-    console.log("-> DATA CURSO:", dataCurso);
-    console.log("-> Imagen final:", imgUrl);
-    console.log("-> Evento encontrado:", eventoExistente);
-
-    // 5.1. Valida los campos generales usando los nuevos valores o los existentes
     try {
       validarEventoGeneral({
         nom_eve: dataEvento.nom_eve ?? eventoExistente.nom_eve,
         tip_eve: dataEvento.tip_eve ?? eventoExistente.tip_eve,
         fec_ini_eve: dataEvento.fec_ini_eve ?? eventoExistente.fec_ini_eve,
         val_eve: dataEvento.val_eve ?? eventoExistente.val_eve,
+        dur_hor_eve: dataEvento.dur_hor_eve ?? eventoExistente.dur_hor_eve,
+        por_min_asi_eve: dataEvento.por_min_asi_eve ?? eventoExistente.por_min_asi_eve,
+        fec_fin_eve: dataEvento.fec_fin_eve ?? eventoExistente.fec_fin_eve,
       });
     } catch (e) {
       return res.status(400).json({ msg: e.message });
@@ -220,8 +240,14 @@ const actualizarEvento = async (req, res) => {
       where: { id_eve: id },
       data: {
         ...dataEvento,
+        nom_eve: dataEvento.nom_eve || eventoExistente.nom_eve,
+        des_eve: dataEvento.des_eve || eventoExistente.des_eve,
+        tip_eve: dataEvento.tip_eve || eventoExistente.tip_eve,
         val_eve: dataEvento.val_eve !== undefined ? Number(dataEvento.val_eve) : eventoExistente.val_eve,
         fec_ini_eve: dataEvento.fec_ini_eve ? new Date(dataEvento.fec_ini_eve) : eventoExistente.fec_ini_eve,
+        fec_fin_eve: dataEvento.fec_fin_eve ? new Date(dataEvento.fec_fin_eve) : eventoExistente.fec_fin_eve,
+        dur_hor_eve: dataEvento.dur_hor_eve !== undefined ? Number(dataEvento.dur_hor_eve) : eventoExistente.dur_hor_eve,
+        por_min_asi_eve: dataEvento.por_min_asi_eve !== undefined ? Number(dataEvento.por_min_asi_eve) : eventoExistente.por_min_asi_eve,
         img_por_eve: imgUrl
       }
     });
@@ -248,13 +274,7 @@ const actualizarEvento = async (req, res) => {
 
       // 7. Valida los datos (los nuevos o los actuales si no vienen en el body)
       try {
-        validarCurso(
-          Number(dataCurso.dur_hor_cur ?? (cursoBD && cursoBD.dur_hor_cur)),
-          Number(dataCurso.not_min_cur ?? (cursoBD && cursoBD.not_min_cur)),
-          Number(dataCurso.por_min_asi_cur ?? (cursoBD && cursoBD.por_min_asi_cur)),
-          dataEvento.fec_ini_eve ?? eventoExistente.fec_ini_eve,
-          dataCurso.fec_fin_cur ?? (cursoBD && cursoBD.fec_fin_cur)
-        );
+        validarCurso(Number(dataCurso.not_min_cur ?? (cursoBD && cursoBD.not_min_cur)));
       } catch (e) {
         // 8. Si no pasa la validación, devuelve un error 400 con el mensaje
         return res.status(400).json({ msg: e.message });
@@ -265,10 +285,7 @@ const actualizarEvento = async (req, res) => {
         cursoActualizado = await prisma.evento_curso.update({
           where: { id_eve_cur: id },
           data: {
-            fec_fin_cur: dataCurso.fec_fin_cur ? new Date(dataCurso.fec_fin_cur) : cursoBD.fec_fin_cur,
-            dur_hor_cur: dataCurso.dur_hor_cur !== undefined ? Number(dataCurso.dur_hor_cur) : cursoBD.dur_hor_cur,
             not_min_cur: dataCurso.not_min_cur !== undefined ? Number(dataCurso.not_min_cur) : cursoBD.not_min_cur,
-            por_min_asi_cur: dataCurso.por_min_asi_cur !== undefined ? Number(dataCurso.por_min_asi_cur) : cursoBD.por_min_asi_cur,
           }
         });
       } else {
@@ -276,10 +293,7 @@ const actualizarEvento = async (req, res) => {
         cursoActualizado = await prisma.evento_curso.create({
           data: {
             id_eve_cur: id,
-            dur_hor_cur: Number(dataCurso.dur_hor_cur),
             not_min_cur: Number(dataCurso.not_min_cur),
-            por_min_asi_cur: Number(dataCurso.por_min_asi_cur),
-            fec_fin_cur: new Date(dataCurso.fec_fin_cur)
           }
         });
       }
@@ -290,17 +304,6 @@ const actualizarEvento = async (req, res) => {
       eventos_curso: cursoActualizado,
     });
   } catch (error) {
-    console.error("Error al actualizar evento:", error.message);
-    if (req.file && req.file.location) {
-      const key = req.file.location.split(".com/")[1];
-      try {
-        await s3.deleteObject({
-          Bucket: process.env.AWS_S3_BUCKET,
-          Key: key,
-        }).promise();
-      } catch (err) {
-      }
-    }
     res.status(500).json({
       // 10. Si hay un error no controlado, devuelve 500 y el mensaje de error
       msg: "Error al actualizar evento",
