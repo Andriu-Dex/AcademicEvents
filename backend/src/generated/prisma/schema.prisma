@@ -42,15 +42,18 @@ model carrera {
 }
 
 model evento {
-  id_eve      String        @id @default(uuid()) // UUID como ID del evento
-  nom_eve     String // Nombre del evento
-  des_eve     String? // Descripción del evento
-  tip_eve     tipo_evento // Tipo de evento (CURSO, CONGRESO, WEBINAR, CHARLA, SOCIALIZACION, PUBLICO)
-  fec_ini_eve DateTime // Fecha de inicio del evento
-  val_eve     Float // Valor del evento
-  est_eve     estado_evento @default(ACTIVO) // Estado del evento (ACTIVO, INACTIVO, FINALIZADO, CANCELADO, SUSPENDIDO)
-  fec_cre_eve DateTime      @default(now()) // Fecha de creación del evento
-  img_por_eve String // URL de la imagen del evento
+  id_eve          String        @id @default(uuid()) // UUID como ID del evento
+  nom_eve         String // Nombre del evento
+  des_eve         String? // Descripción del evento
+  tip_eve         tipo_evento // Tipo de evento (CURSO, CONGRESO, WEBINAR, CHARLA, SOCIALIZACION, PUBLICO)
+  fec_ini_eve     DateTime // Fecha de inicio del evento
+  val_eve         Float // Valor del evento
+  est_eve         estado_evento @default(ACTIVO) // Estado del evento (ACTIVO, INACTIVO, FINALIZADO, CANCELADO, SUSPENDIDO)
+  fec_cre_eve     DateTime      @default(now()) // Fecha de creación del evento
+  img_por_eve     String // URL de la imagen del evento
+  dur_hor_eve     Int // Duración en horas del evento
+  por_min_asi_eve Float // Porcentaje mínimo de asistencia del evento
+  fec_fin_eve     DateTime // Fecha de finalización del evento
 
   inscritos       inscripcion[] // Relación 1:N (evento puede tener muchas inscripciones)
   eventos_carrera evento_carrera[] // Relación 1:N (evento puede tener muchas carreras)
@@ -58,11 +61,8 @@ model evento {
 }
 
 model evento_curso {
-  id_eve_cur      String   @id // Reutiliza el uuid del evento
-  dur_hor_cur     Int // Duración en horas del curso
-  not_min_cur     Float // Nota mínima del curso 
-  por_min_asi_cur Float // Porcentaje mínimo de asistencia del curso
-  fec_fin_cur     DateTime // Fecha de finalización del curso
+  id_eve_cur  String @id // Reutiliza el uuid del evento
+  not_min_cur Float // Nota mínima del curso 
 
   evento evento @relation(fields: [id_eve_cur], references: [id_eve]) // Relación 1:1 (evento puede tener un curso)
 }

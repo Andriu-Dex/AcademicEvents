@@ -151,15 +151,15 @@ exports.Prisma.EventoScalarFieldEnum = {
   val_eve: 'val_eve',
   est_eve: 'est_eve',
   fec_cre_eve: 'fec_cre_eve',
-  img_por_eve: 'img_por_eve'
+  img_por_eve: 'img_por_eve',
+  dur_hor_eve: 'dur_hor_eve',
+  por_min_asi_eve: 'por_min_asi_eve',
+  fec_fin_eve: 'fec_fin_eve'
 };
 
 exports.Prisma.Evento_cursoScalarFieldEnum = {
   id_eve_cur: 'id_eve_cur',
-  dur_hor_cur: 'dur_hor_cur',
-  not_min_cur: 'not_min_cur',
-  por_min_asi_cur: 'por_min_asi_cur',
-  fec_fin_cur: 'fec_fin_cur'
+  not_min_cur: 'not_min_cur'
 };
 
 exports.Prisma.Evento_carreraScalarFieldEnum = {

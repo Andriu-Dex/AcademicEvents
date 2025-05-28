@@ -4025,10 +4025,14 @@ export namespace Prisma {
 
   export type EventoAvgAggregateOutputType = {
     val_eve: number | null
+    dur_hor_eve: number | null
+    por_min_asi_eve: number | null
   }
 
   export type EventoSumAggregateOutputType = {
     val_eve: number | null
+    dur_hor_eve: number | null
+    por_min_asi_eve: number | null
   }
 
   export type EventoMinAggregateOutputType = {
@@ -4041,6 +4045,9 @@ export namespace Prisma {
     est_eve: $Enums.estado_evento | null
     fec_cre_eve: Date | null
     img_por_eve: string | null
+    dur_hor_eve: number | null
+    por_min_asi_eve: number | null
+    fec_fin_eve: Date | null
   }
 
   export type EventoMaxAggregateOutputType = {
@@ -4053,6 +4060,9 @@ export namespace Prisma {
     est_eve: $Enums.estado_evento | null
     fec_cre_eve: Date | null
     img_por_eve: string | null
+    dur_hor_eve: number | null
+    por_min_asi_eve: number | null
+    fec_fin_eve: Date | null
   }
 
   export type EventoCountAggregateOutputType = {
@@ -4065,16 +4075,23 @@ export namespace Prisma {
     est_eve: number
     fec_cre_eve: number
     img_por_eve: number
+    dur_hor_eve: number
+    por_min_asi_eve: number
+    fec_fin_eve: number
     _all: number
   }
 
 
   export type EventoAvgAggregateInputType = {
     val_eve?: true
+    dur_hor_eve?: true
+    por_min_asi_eve?: true
   }
 
   export type EventoSumAggregateInputType = {
     val_eve?: true
+    dur_hor_eve?: true
+    por_min_asi_eve?: true
   }
 
   export type EventoMinAggregateInputType = {
@@ -4087,6 +4104,9 @@ export namespace Prisma {
     est_eve?: true
     fec_cre_eve?: true
     img_por_eve?: true
+    dur_hor_eve?: true
+    por_min_asi_eve?: true
+    fec_fin_eve?: true
   }
 
   export type EventoMaxAggregateInputType = {
@@ -4099,6 +4119,9 @@ export namespace Prisma {
     est_eve?: true
     fec_cre_eve?: true
     img_por_eve?: true
+    dur_hor_eve?: true
+    por_min_asi_eve?: true
+    fec_fin_eve?: true
   }
 
   export type EventoCountAggregateInputType = {
@@ -4111,6 +4134,9 @@ export namespace Prisma {
     est_eve?: true
     fec_cre_eve?: true
     img_por_eve?: true
+    dur_hor_eve?: true
+    por_min_asi_eve?: true
+    fec_fin_eve?: true
     _all?: true
   }
 
@@ -4210,6 +4236,9 @@ export namespace Prisma {
     est_eve: $Enums.estado_evento
     fec_cre_eve: Date
     img_por_eve: string
+    dur_hor_eve: number
+    por_min_asi_eve: number
+    fec_fin_eve: Date
     _count: EventoCountAggregateOutputType | null
     _avg: EventoAvgAggregateOutputType | null
     _sum: EventoSumAggregateOutputType | null
@@ -4241,6 +4270,9 @@ export namespace Prisma {
     est_eve?: boolean
     fec_cre_eve?: boolean
     img_por_eve?: boolean
+    dur_hor_eve?: boolean
+    por_min_asi_eve?: boolean
+    fec_fin_eve?: boolean
     inscritos?: boolean | evento$inscritosArgs<ExtArgs>
     eventos_carrera?: boolean | evento$eventos_carreraArgs<ExtArgs>
     eventos_curso?: boolean | evento$eventos_cursoArgs<ExtArgs>
@@ -4257,6 +4289,9 @@ export namespace Prisma {
     est_eve?: boolean
     fec_cre_eve?: boolean
     img_por_eve?: boolean
+    dur_hor_eve?: boolean
+    por_min_asi_eve?: boolean
+    fec_fin_eve?: boolean
   }, ExtArgs["result"]["evento"]>
 
   export type eventoSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -4269,6 +4304,9 @@ export namespace Prisma {
     est_eve?: boolean
     fec_cre_eve?: boolean
     img_por_eve?: boolean
+    dur_hor_eve?: boolean
+    por_min_asi_eve?: boolean
+    fec_fin_eve?: boolean
   }, ExtArgs["result"]["evento"]>
 
   export type eventoSelectScalar = {
@@ -4281,9 +4319,12 @@ export namespace Prisma {
     est_eve?: boolean
     fec_cre_eve?: boolean
     img_por_eve?: boolean
+    dur_hor_eve?: boolean
+    por_min_asi_eve?: boolean
+    fec_fin_eve?: boolean
   }
 
-  export type eventoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_eve" | "nom_eve" | "des_eve" | "tip_eve" | "fec_ini_eve" | "val_eve" | "est_eve" | "fec_cre_eve" | "img_por_eve", ExtArgs["result"]["evento"]>
+  export type eventoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_eve" | "nom_eve" | "des_eve" | "tip_eve" | "fec_ini_eve" | "val_eve" | "est_eve" | "fec_cre_eve" | "img_por_eve" | "dur_hor_eve" | "por_min_asi_eve" | "fec_fin_eve", ExtArgs["result"]["evento"]>
   export type eventoInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     inscritos?: boolean | evento$inscritosArgs<ExtArgs>
     eventos_carrera?: boolean | evento$eventos_carreraArgs<ExtArgs>
@@ -4310,6 +4351,9 @@ export namespace Prisma {
       est_eve: $Enums.estado_evento
       fec_cre_eve: Date
       img_por_eve: string
+      dur_hor_eve: number
+      por_min_asi_eve: number
+      fec_fin_eve: Date
     }, ExtArgs["result"]["evento"]>
     composites: {}
   }
@@ -4745,6 +4789,9 @@ export namespace Prisma {
     readonly est_eve: FieldRef<"evento", 'estado_evento'>
     readonly fec_cre_eve: FieldRef<"evento", 'DateTime'>
     readonly img_por_eve: FieldRef<"evento", 'String'>
+    readonly dur_hor_eve: FieldRef<"evento", 'Int'>
+    readonly por_min_asi_eve: FieldRef<"evento", 'Float'>
+    readonly fec_fin_eve: FieldRef<"evento", 'DateTime'>
   }
     
 
@@ -5231,77 +5278,51 @@ export namespace Prisma {
   }
 
   export type Evento_cursoAvgAggregateOutputType = {
-    dur_hor_cur: number | null
     not_min_cur: number | null
-    por_min_asi_cur: number | null
   }
 
   export type Evento_cursoSumAggregateOutputType = {
-    dur_hor_cur: number | null
     not_min_cur: number | null
-    por_min_asi_cur: number | null
   }
 
   export type Evento_cursoMinAggregateOutputType = {
     id_eve_cur: string | null
-    dur_hor_cur: number | null
     not_min_cur: number | null
-    por_min_asi_cur: number | null
-    fec_fin_cur: Date | null
   }
 
   export type Evento_cursoMaxAggregateOutputType = {
     id_eve_cur: string | null
-    dur_hor_cur: number | null
     not_min_cur: number | null
-    por_min_asi_cur: number | null
-    fec_fin_cur: Date | null
   }
 
   export type Evento_cursoCountAggregateOutputType = {
     id_eve_cur: number
-    dur_hor_cur: number
     not_min_cur: number
-    por_min_asi_cur: number
-    fec_fin_cur: number
     _all: number
   }
 
 
   export type Evento_cursoAvgAggregateInputType = {
-    dur_hor_cur?: true
     not_min_cur?: true
-    por_min_asi_cur?: true
   }
 
   export type Evento_cursoSumAggregateInputType = {
-    dur_hor_cur?: true
     not_min_cur?: true
-    por_min_asi_cur?: true
   }
 
   export type Evento_cursoMinAggregateInputType = {
     id_eve_cur?: true
-    dur_hor_cur?: true
     not_min_cur?: true
-    por_min_asi_cur?: true
-    fec_fin_cur?: true
   }
 
   export type Evento_cursoMaxAggregateInputType = {
     id_eve_cur?: true
-    dur_hor_cur?: true
     not_min_cur?: true
-    por_min_asi_cur?: true
-    fec_fin_cur?: true
   }
 
   export type Evento_cursoCountAggregateInputType = {
     id_eve_cur?: true
-    dur_hor_cur?: true
     not_min_cur?: true
-    por_min_asi_cur?: true
-    fec_fin_cur?: true
     _all?: true
   }
 
@@ -5393,10 +5414,7 @@ export namespace Prisma {
 
   export type Evento_cursoGroupByOutputType = {
     id_eve_cur: string
-    dur_hor_cur: number
     not_min_cur: number
-    por_min_asi_cur: number
-    fec_fin_cur: Date
     _count: Evento_cursoCountAggregateOutputType | null
     _avg: Evento_cursoAvgAggregateOutputType | null
     _sum: Evento_cursoSumAggregateOutputType | null
@@ -5420,40 +5438,28 @@ export namespace Prisma {
 
   export type evento_cursoSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id_eve_cur?: boolean
-    dur_hor_cur?: boolean
     not_min_cur?: boolean
-    por_min_asi_cur?: boolean
-    fec_fin_cur?: boolean
     evento?: boolean | eventoDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["evento_curso"]>
 
   export type evento_cursoSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id_eve_cur?: boolean
-    dur_hor_cur?: boolean
     not_min_cur?: boolean
-    por_min_asi_cur?: boolean
-    fec_fin_cur?: boolean
     evento?: boolean | eventoDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["evento_curso"]>
 
   export type evento_cursoSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id_eve_cur?: boolean
-    dur_hor_cur?: boolean
     not_min_cur?: boolean
-    por_min_asi_cur?: boolean
-    fec_fin_cur?: boolean
     evento?: boolean | eventoDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["evento_curso"]>
 
   export type evento_cursoSelectScalar = {
     id_eve_cur?: boolean
-    dur_hor_cur?: boolean
     not_min_cur?: boolean
-    por_min_asi_cur?: boolean
-    fec_fin_cur?: boolean
   }
 
-  export type evento_cursoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_eve_cur" | "dur_hor_cur" | "not_min_cur" | "por_min_asi_cur" | "fec_fin_cur", ExtArgs["result"]["evento_curso"]>
+  export type evento_cursoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_eve_cur" | "not_min_cur", ExtArgs["result"]["evento_curso"]>
   export type evento_cursoInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     evento?: boolean | eventoDefaultArgs<ExtArgs>
   }
@@ -5471,10 +5477,7 @@ export namespace Prisma {
     }
     scalars: $Extensions.GetPayloadResult<{
       id_eve_cur: string
-      dur_hor_cur: number
       not_min_cur: number
-      por_min_asi_cur: number
-      fec_fin_cur: Date
     }, ExtArgs["result"]["evento_curso"]>
     composites: {}
   }
@@ -5900,10 +5903,7 @@ export namespace Prisma {
    */
   interface evento_cursoFieldRefs {
     readonly id_eve_cur: FieldRef<"evento_curso", 'String'>
-    readonly dur_hor_cur: FieldRef<"evento_curso", 'Int'>
     readonly not_min_cur: FieldRef<"evento_curso", 'Float'>
-    readonly por_min_asi_cur: FieldRef<"evento_curso", 'Float'>
-    readonly fec_fin_cur: FieldRef<"evento_curso", 'DateTime'>
   }
     
 
@@ -10690,7 +10690,10 @@ export namespace Prisma {
     val_eve: 'val_eve',
     est_eve: 'est_eve',
     fec_cre_eve: 'fec_cre_eve',
-    img_por_eve: 'img_por_eve'
+    img_por_eve: 'img_por_eve',
+    dur_hor_eve: 'dur_hor_eve',
+    por_min_asi_eve: 'por_min_asi_eve',
+    fec_fin_eve: 'fec_fin_eve'
   };
 
   export type EventoScalarFieldEnum = (typeof EventoScalarFieldEnum)[keyof typeof EventoScalarFieldEnum]
@@ -10698,10 +10701,7 @@ export namespace Prisma {
 
   export const Evento_cursoScalarFieldEnum: {
     id_eve_cur: 'id_eve_cur',
-    dur_hor_cur: 'dur_hor_cur',
-    not_min_cur: 'not_min_cur',
-    por_min_asi_cur: 'por_min_asi_cur',
-    fec_fin_cur: 'fec_fin_cur'
+    not_min_cur: 'not_min_cur'
   };
 
   export type Evento_cursoScalarFieldEnum = (typeof Evento_cursoScalarFieldEnum)[keyof typeof Evento_cursoScalarFieldEnum]
@@ -11064,6 +11064,9 @@ export namespace Prisma {
     est_eve?: Enumestado_eventoFilter<"evento"> | $Enums.estado_evento
     fec_cre_eve?: DateTimeFilter<"evento"> | Date | string
     img_por_eve?: StringFilter<"evento"> | string
+    dur_hor_eve?: IntFilter<"evento"> | number
+    por_min_asi_eve?: FloatFilter<"evento"> | number
+    fec_fin_eve?: DateTimeFilter<"evento"> | Date | string
     inscritos?: InscripcionListRelationFilter
     eventos_carrera?: Evento_carreraListRelationFilter
     eventos_curso?: XOR<Evento_cursoNullableScalarRelationFilter, evento_cursoWhereInput> | null
@@ -11079,6 +11082,9 @@ export namespace Prisma {
     est_eve?: SortOrder
     fec_cre_eve?: SortOrder
     img_por_eve?: SortOrder
+    dur_hor_eve?: SortOrder
+    por_min_asi_eve?: SortOrder
+    fec_fin_eve?: SortOrder
     inscritos?: inscripcionOrderByRelationAggregateInput
     eventos_carrera?: evento_carreraOrderByRelationAggregateInput
     eventos_curso?: evento_cursoOrderByWithRelationInput
@@ -11097,6 +11103,9 @@ export namespace Prisma {
     est_eve?: Enumestado_eventoFilter<"evento"> | $Enums.estado_evento
     fec_cre_eve?: DateTimeFilter<"evento"> | Date | string
     img_por_eve?: StringFilter<"evento"> | string
+    dur_hor_eve?: IntFilter<"evento"> | number
+    por_min_asi_eve?: FloatFilter<"evento"> | number
+    fec_fin_eve?: DateTimeFilter<"evento"> | Date | string
     inscritos?: InscripcionListRelationFilter
     eventos_carrera?: Evento_carreraListRelationFilter
     eventos_curso?: XOR<Evento_cursoNullableScalarRelationFilter, evento_cursoWhereInput> | null
@@ -11112,6 +11121,9 @@ export namespace Prisma {
     est_eve?: SortOrder
     fec_cre_eve?: SortOrder
     img_por_eve?: SortOrder
+    dur_hor_eve?: SortOrder
+    por_min_asi_eve?: SortOrder
+    fec_fin_eve?: SortOrder
     _count?: eventoCountOrderByAggregateInput
     _avg?: eventoAvgOrderByAggregateInput
     _max?: eventoMaxOrderByAggregateInput
@@ -11132,6 +11144,9 @@ export namespace Prisma {
     est_eve?: Enumestado_eventoWithAggregatesFilter<"evento"> | $Enums.estado_evento
     fec_cre_eve?: DateTimeWithAggregatesFilter<"evento"> | Date | string
     img_por_eve?: StringWithAggregatesFilter<"evento"> | string
+    dur_hor_eve?: IntWithAggregatesFilter<"evento"> | number
+    por_min_asi_eve?: FloatWithAggregatesFilter<"evento"> | number
+    fec_fin_eve?: DateTimeWithAggregatesFilter<"evento"> | Date | string
   }
 
   export type evento_cursoWhereInput = {
@@ -11139,19 +11154,13 @@ export namespace Prisma {
     OR?: evento_cursoWhereInput[]
     NOT?: evento_cursoWhereInput | evento_cursoWhereInput[]
     id_eve_cur?: StringFilter<"evento_curso"> | string
-    dur_hor_cur?: IntFilter<"evento_curso"> | number
     not_min_cur?: FloatFilter<"evento_curso"> | number
-    por_min_asi_cur?: FloatFilter<"evento_curso"> | number
-    fec_fin_cur?: DateTimeFilter<"evento_curso"> | Date | string
     evento?: XOR<EventoScalarRelationFilter, eventoWhereInput>
   }
 
   export type evento_cursoOrderByWithRelationInput = {
     id_eve_cur?: SortOrder
-    dur_hor_cur?: SortOrder
     not_min_cur?: SortOrder
-    por_min_asi_cur?: SortOrder
-    fec_fin_cur?: SortOrder
     evento?: eventoOrderByWithRelationInput
   }
 
@@ -11160,19 +11169,13 @@ export namespace Prisma {
     AND?: evento_cursoWhereInput | evento_cursoWhereInput[]
     OR?: evento_cursoWhereInput[]
     NOT?: evento_cursoWhereInput | evento_cursoWhereInput[]
-    dur_hor_cur?: IntFilter<"evento_curso"> | number
     not_min_cur?: FloatFilter<"evento_curso"> | number
-    por_min_asi_cur?: FloatFilter<"evento_curso"> | number
-    fec_fin_cur?: DateTimeFilter<"evento_curso"> | Date | string
     evento?: XOR<EventoScalarRelationFilter, eventoWhereInput>
   }, "id_eve_cur">
 
   export type evento_cursoOrderByWithAggregationInput = {
     id_eve_cur?: SortOrder
-    dur_hor_cur?: SortOrder
     not_min_cur?: SortOrder
-    por_min_asi_cur?: SortOrder
-    fec_fin_cur?: SortOrder
     _count?: evento_cursoCountOrderByAggregateInput
     _avg?: evento_cursoAvgOrderByAggregateInput
     _max?: evento_cursoMaxOrderByAggregateInput
@@ -11185,10 +11188,7 @@ export namespace Prisma {
     OR?: evento_cursoScalarWhereWithAggregatesInput[]
     NOT?: evento_cursoScalarWhereWithAggregatesInput | evento_cursoScalarWhereWithAggregatesInput[]
     id_eve_cur?: StringWithAggregatesFilter<"evento_curso"> | string
-    dur_hor_cur?: IntWithAggregatesFilter<"evento_curso"> | number
     not_min_cur?: FloatWithAggregatesFilter<"evento_curso"> | number
-    por_min_asi_cur?: FloatWithAggregatesFilter<"evento_curso"> | number
-    fec_fin_cur?: DateTimeWithAggregatesFilter<"evento_curso"> | Date | string
   }
 
   export type evento_carreraWhereInput = {
@@ -11596,6 +11596,9 @@ export namespace Prisma {
     est_eve?: $Enums.estado_evento
     fec_cre_eve?: Date | string
     img_por_eve: string
+    dur_hor_eve: number
+    por_min_asi_eve: number
+    fec_fin_eve: Date | string
     inscritos?: inscripcionCreateNestedManyWithoutEventoInput
     eventos_carrera?: evento_carreraCreateNestedManyWithoutEventoInput
     eventos_curso?: evento_cursoCreateNestedOneWithoutEventoInput
@@ -11611,6 +11614,9 @@ export namespace Prisma {
     est_eve?: $Enums.estado_evento
     fec_cre_eve?: Date | string
     img_por_eve: string
+    dur_hor_eve: number
+    por_min_asi_eve: number
+    fec_fin_eve: Date | string
     inscritos?: inscripcionUncheckedCreateNestedManyWithoutEventoInput
     eventos_carrera?: evento_carreraUncheckedCreateNestedManyWithoutEventoInput
     eventos_curso?: evento_cursoUncheckedCreateNestedOneWithoutEventoInput
@@ -11626,6 +11632,9 @@ export namespace Prisma {
     est_eve?: Enumestado_eventoFieldUpdateOperationsInput | $Enums.estado_evento
     fec_cre_eve?: DateTimeFieldUpdateOperationsInput | Date | string
     img_por_eve?: StringFieldUpdateOperationsInput | string
+    dur_hor_eve?: IntFieldUpdateOperationsInput | number
+    por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
+    fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
     inscritos?: inscripcionUpdateManyWithoutEventoNestedInput
     eventos_carrera?: evento_carreraUpdateManyWithoutEventoNestedInput
     eventos_curso?: evento_cursoUpdateOneWithoutEventoNestedInput
@@ -11641,6 +11650,9 @@ export namespace Prisma {
     est_eve?: Enumestado_eventoFieldUpdateOperationsInput | $Enums.estado_evento
     fec_cre_eve?: DateTimeFieldUpdateOperationsInput | Date | string
     img_por_eve?: StringFieldUpdateOperationsInput | string
+    dur_hor_eve?: IntFieldUpdateOperationsInput | number
+    por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
+    fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
     inscritos?: inscripcionUncheckedUpdateManyWithoutEventoNestedInput
     eventos_carrera?: evento_carreraUncheckedUpdateManyWithoutEventoNestedInput
     eventos_curso?: evento_cursoUncheckedUpdateOneWithoutEventoNestedInput
@@ -11656,6 +11668,9 @@ export namespace Prisma {
     est_eve?: $Enums.estado_evento
     fec_cre_eve?: Date | string
     img_por_eve: string
+    dur_hor_eve: number
+    por_min_asi_eve: number
+    fec_fin_eve: Date | string
   }
 
   export type eventoUpdateManyMutationInput = {
@@ -11668,6 +11683,9 @@ export namespace Prisma {
     est_eve?: Enumestado_eventoFieldUpdateOperationsInput | $Enums.estado_evento
     fec_cre_eve?: DateTimeFieldUpdateOperationsInput | Date | string
     img_por_eve?: StringFieldUpdateOperationsInput | string
+    dur_hor_eve?: IntFieldUpdateOperationsInput | number
+    por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
+    fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type eventoUncheckedUpdateManyInput = {
@@ -11680,61 +11698,43 @@ export namespace Prisma {
     est_eve?: Enumestado_eventoFieldUpdateOperationsInput | $Enums.estado_evento
     fec_cre_eve?: DateTimeFieldUpdateOperationsInput | Date | string
     img_por_eve?: StringFieldUpdateOperationsInput | string
+    dur_hor_eve?: IntFieldUpdateOperationsInput | number
+    por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
+    fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type evento_cursoCreateInput = {
-    dur_hor_cur: number
     not_min_cur: number
-    por_min_asi_cur: number
-    fec_fin_cur: Date | string
     evento: eventoCreateNestedOneWithoutEventos_cursoInput
   }
 
   export type evento_cursoUncheckedCreateInput = {
     id_eve_cur: string
-    dur_hor_cur: number
     not_min_cur: number
-    por_min_asi_cur: number
-    fec_fin_cur: Date | string
   }
 
   export type evento_cursoUpdateInput = {
-    dur_hor_cur?: IntFieldUpdateOperationsInput | number
     not_min_cur?: FloatFieldUpdateOperationsInput | number
-    por_min_asi_cur?: FloatFieldUpdateOperationsInput | number
-    fec_fin_cur?: DateTimeFieldUpdateOperationsInput | Date | string
     evento?: eventoUpdateOneRequiredWithoutEventos_cursoNestedInput
   }
 
   export type evento_cursoUncheckedUpdateInput = {
     id_eve_cur?: StringFieldUpdateOperationsInput | string
-    dur_hor_cur?: IntFieldUpdateOperationsInput | number
     not_min_cur?: FloatFieldUpdateOperationsInput | number
-    por_min_asi_cur?: FloatFieldUpdateOperationsInput | number
-    fec_fin_cur?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type evento_cursoCreateManyInput = {
     id_eve_cur: string
-    dur_hor_cur: number
     not_min_cur: number
-    por_min_asi_cur: number
-    fec_fin_cur: Date | string
   }
 
   export type evento_cursoUpdateManyMutationInput = {
-    dur_hor_cur?: IntFieldUpdateOperationsInput | number
     not_min_cur?: FloatFieldUpdateOperationsInput | number
-    por_min_asi_cur?: FloatFieldUpdateOperationsInput | number
-    fec_fin_cur?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type evento_cursoUncheckedUpdateManyInput = {
     id_eve_cur?: StringFieldUpdateOperationsInput | string
-    dur_hor_cur?: IntFieldUpdateOperationsInput | number
     not_min_cur?: FloatFieldUpdateOperationsInput | number
-    por_min_asi_cur?: FloatFieldUpdateOperationsInput | number
-    fec_fin_cur?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type evento_carreraCreateInput = {
@@ -12221,6 +12221,17 @@ export namespace Prisma {
     not?: NestedEnumestado_eventoFilter<$PrismaModel> | $Enums.estado_evento
   }
 
+  export type IntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
+  }
+
   export type Evento_cursoNullableScalarRelationFilter = {
     is?: evento_cursoWhereInput | null
     isNot?: evento_cursoWhereInput | null
@@ -12236,10 +12247,15 @@ export namespace Prisma {
     est_eve?: SortOrder
     fec_cre_eve?: SortOrder
     img_por_eve?: SortOrder
+    dur_hor_eve?: SortOrder
+    por_min_asi_eve?: SortOrder
+    fec_fin_eve?: SortOrder
   }
 
   export type eventoAvgOrderByAggregateInput = {
     val_eve?: SortOrder
+    dur_hor_eve?: SortOrder
+    por_min_asi_eve?: SortOrder
   }
 
   export type eventoMaxOrderByAggregateInput = {
@@ -12252,6 +12268,9 @@ export namespace Prisma {
     est_eve?: SortOrder
     fec_cre_eve?: SortOrder
     img_por_eve?: SortOrder
+    dur_hor_eve?: SortOrder
+    por_min_asi_eve?: SortOrder
+    fec_fin_eve?: SortOrder
   }
 
   export type eventoMinOrderByAggregateInput = {
@@ -12264,10 +12283,15 @@ export namespace Prisma {
     est_eve?: SortOrder
     fec_cre_eve?: SortOrder
     img_por_eve?: SortOrder
+    dur_hor_eve?: SortOrder
+    por_min_asi_eve?: SortOrder
+    fec_fin_eve?: SortOrder
   }
 
   export type eventoSumOrderByAggregateInput = {
     val_eve?: SortOrder
+    dur_hor_eve?: SortOrder
+    por_min_asi_eve?: SortOrder
   }
 
   export type Enumtipo_eventoWithAggregatesFilter<$PrismaModel = never> = {
@@ -12306,58 +12330,6 @@ export namespace Prisma {
     _max?: NestedEnumestado_eventoFilter<$PrismaModel>
   }
 
-  export type IntFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntFilter<$PrismaModel> | number
-  }
-
-  export type EventoScalarRelationFilter = {
-    is?: eventoWhereInput
-    isNot?: eventoWhereInput
-  }
-
-  export type evento_cursoCountOrderByAggregateInput = {
-    id_eve_cur?: SortOrder
-    dur_hor_cur?: SortOrder
-    not_min_cur?: SortOrder
-    por_min_asi_cur?: SortOrder
-    fec_fin_cur?: SortOrder
-  }
-
-  export type evento_cursoAvgOrderByAggregateInput = {
-    dur_hor_cur?: SortOrder
-    not_min_cur?: SortOrder
-    por_min_asi_cur?: SortOrder
-  }
-
-  export type evento_cursoMaxOrderByAggregateInput = {
-    id_eve_cur?: SortOrder
-    dur_hor_cur?: SortOrder
-    not_min_cur?: SortOrder
-    por_min_asi_cur?: SortOrder
-    fec_fin_cur?: SortOrder
-  }
-
-  export type evento_cursoMinOrderByAggregateInput = {
-    id_eve_cur?: SortOrder
-    dur_hor_cur?: SortOrder
-    not_min_cur?: SortOrder
-    por_min_asi_cur?: SortOrder
-    fec_fin_cur?: SortOrder
-  }
-
-  export type evento_cursoSumOrderByAggregateInput = {
-    dur_hor_cur?: SortOrder
-    not_min_cur?: SortOrder
-    por_min_asi_cur?: SortOrder
-  }
-
   export type IntWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -12372,6 +12344,34 @@ export namespace Prisma {
     _sum?: NestedIntFilter<$PrismaModel>
     _min?: NestedIntFilter<$PrismaModel>
     _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type EventoScalarRelationFilter = {
+    is?: eventoWhereInput
+    isNot?: eventoWhereInput
+  }
+
+  export type evento_cursoCountOrderByAggregateInput = {
+    id_eve_cur?: SortOrder
+    not_min_cur?: SortOrder
+  }
+
+  export type evento_cursoAvgOrderByAggregateInput = {
+    not_min_cur?: SortOrder
+  }
+
+  export type evento_cursoMaxOrderByAggregateInput = {
+    id_eve_cur?: SortOrder
+    not_min_cur?: SortOrder
+  }
+
+  export type evento_cursoMinOrderByAggregateInput = {
+    id_eve_cur?: SortOrder
+    not_min_cur?: SortOrder
+  }
+
+  export type evento_cursoSumOrderByAggregateInput = {
+    not_min_cur?: SortOrder
   }
 
   export type CarreraScalarRelationFilter = {
@@ -12811,6 +12811,14 @@ export namespace Prisma {
     set?: $Enums.estado_evento
   }
 
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
   export type inscripcionUpdateManyWithoutEventoNestedInput = {
     create?: XOR<inscripcionCreateWithoutEventoInput, inscripcionUncheckedCreateWithoutEventoInput> | inscripcionCreateWithoutEventoInput[] | inscripcionUncheckedCreateWithoutEventoInput[]
     connectOrCreate?: inscripcionCreateOrConnectWithoutEventoInput | inscripcionCreateOrConnectWithoutEventoInput[]
@@ -12891,14 +12899,6 @@ export namespace Prisma {
     create?: XOR<eventoCreateWithoutEventos_cursoInput, eventoUncheckedCreateWithoutEventos_cursoInput>
     connectOrCreate?: eventoCreateOrConnectWithoutEventos_cursoInput
     connect?: eventoWhereUniqueInput
-  }
-
-  export type IntFieldUpdateOperationsInput = {
-    set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
   }
 
   export type eventoUpdateOneRequiredWithoutEventos_cursoNestedInput = {
@@ -13690,17 +13690,11 @@ export namespace Prisma {
   }
 
   export type evento_cursoCreateWithoutEventoInput = {
-    dur_hor_cur: number
     not_min_cur: number
-    por_min_asi_cur: number
-    fec_fin_cur: Date | string
   }
 
   export type evento_cursoUncheckedCreateWithoutEventoInput = {
-    dur_hor_cur: number
     not_min_cur: number
-    por_min_asi_cur: number
-    fec_fin_cur: Date | string
   }
 
   export type evento_cursoCreateOrConnectWithoutEventoInput = {
@@ -13752,17 +13746,11 @@ export namespace Prisma {
   }
 
   export type evento_cursoUpdateWithoutEventoInput = {
-    dur_hor_cur?: IntFieldUpdateOperationsInput | number
     not_min_cur?: FloatFieldUpdateOperationsInput | number
-    por_min_asi_cur?: FloatFieldUpdateOperationsInput | number
-    fec_fin_cur?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type evento_cursoUncheckedUpdateWithoutEventoInput = {
-    dur_hor_cur?: IntFieldUpdateOperationsInput | number
     not_min_cur?: FloatFieldUpdateOperationsInput | number
-    por_min_asi_cur?: FloatFieldUpdateOperationsInput | number
-    fec_fin_cur?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type eventoCreateWithoutEventos_cursoInput = {
@@ -13775,6 +13763,9 @@ export namespace Prisma {
     est_eve?: $Enums.estado_evento
     fec_cre_eve?: Date | string
     img_por_eve: string
+    dur_hor_eve: number
+    por_min_asi_eve: number
+    fec_fin_eve: Date | string
     inscritos?: inscripcionCreateNestedManyWithoutEventoInput
     eventos_carrera?: evento_carreraCreateNestedManyWithoutEventoInput
   }
@@ -13789,6 +13780,9 @@ export namespace Prisma {
     est_eve?: $Enums.estado_evento
     fec_cre_eve?: Date | string
     img_por_eve: string
+    dur_hor_eve: number
+    por_min_asi_eve: number
+    fec_fin_eve: Date | string
     inscritos?: inscripcionUncheckedCreateNestedManyWithoutEventoInput
     eventos_carrera?: evento_carreraUncheckedCreateNestedManyWithoutEventoInput
   }
@@ -13819,6 +13813,9 @@ export namespace Prisma {
     est_eve?: Enumestado_eventoFieldUpdateOperationsInput | $Enums.estado_evento
     fec_cre_eve?: DateTimeFieldUpdateOperationsInput | Date | string
     img_por_eve?: StringFieldUpdateOperationsInput | string
+    dur_hor_eve?: IntFieldUpdateOperationsInput | number
+    por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
+    fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
     inscritos?: inscripcionUpdateManyWithoutEventoNestedInput
     eventos_carrera?: evento_carreraUpdateManyWithoutEventoNestedInput
   }
@@ -13833,6 +13830,9 @@ export namespace Prisma {
     est_eve?: Enumestado_eventoFieldUpdateOperationsInput | $Enums.estado_evento
     fec_cre_eve?: DateTimeFieldUpdateOperationsInput | Date | string
     img_por_eve?: StringFieldUpdateOperationsInput | string
+    dur_hor_eve?: IntFieldUpdateOperationsInput | number
+    por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
+    fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
     inscritos?: inscripcionUncheckedUpdateManyWithoutEventoNestedInput
     eventos_carrera?: evento_carreraUncheckedUpdateManyWithoutEventoNestedInput
   }
@@ -13870,6 +13870,9 @@ export namespace Prisma {
     est_eve?: $Enums.estado_evento
     fec_cre_eve?: Date | string
     img_por_eve: string
+    dur_hor_eve: number
+    por_min_asi_eve: number
+    fec_fin_eve: Date | string
     inscritos?: inscripcionCreateNestedManyWithoutEventoInput
     eventos_curso?: evento_cursoCreateNestedOneWithoutEventoInput
   }
@@ -13884,6 +13887,9 @@ export namespace Prisma {
     est_eve?: $Enums.estado_evento
     fec_cre_eve?: Date | string
     img_por_eve: string
+    dur_hor_eve: number
+    por_min_asi_eve: number
+    fec_fin_eve: Date | string
     inscritos?: inscripcionUncheckedCreateNestedManyWithoutEventoInput
     eventos_curso?: evento_cursoUncheckedCreateNestedOneWithoutEventoInput
   }
@@ -13943,6 +13949,9 @@ export namespace Prisma {
     est_eve?: Enumestado_eventoFieldUpdateOperationsInput | $Enums.estado_evento
     fec_cre_eve?: DateTimeFieldUpdateOperationsInput | Date | string
     img_por_eve?: StringFieldUpdateOperationsInput | string
+    dur_hor_eve?: IntFieldUpdateOperationsInput | number
+    por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
+    fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
     inscritos?: inscripcionUpdateManyWithoutEventoNestedInput
     eventos_curso?: evento_cursoUpdateOneWithoutEventoNestedInput
   }
@@ -13957,6 +13966,9 @@ export namespace Prisma {
     est_eve?: Enumestado_eventoFieldUpdateOperationsInput | $Enums.estado_evento
     fec_cre_eve?: DateTimeFieldUpdateOperationsInput | Date | string
     img_por_eve?: StringFieldUpdateOperationsInput | string
+    dur_hor_eve?: IntFieldUpdateOperationsInput | number
+    por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
+    fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
     inscritos?: inscripcionUncheckedUpdateManyWithoutEventoNestedInput
     eventos_curso?: evento_cursoUncheckedUpdateOneWithoutEventoNestedInput
   }
@@ -14004,6 +14016,9 @@ export namespace Prisma {
     est_eve?: $Enums.estado_evento
     fec_cre_eve?: Date | string
     img_por_eve: string
+    dur_hor_eve: number
+    por_min_asi_eve: number
+    fec_fin_eve: Date | string
     eventos_carrera?: evento_carreraCreateNestedManyWithoutEventoInput
     eventos_curso?: evento_cursoCreateNestedOneWithoutEventoInput
   }
@@ -14018,6 +14033,9 @@ export namespace Prisma {
     est_eve?: $Enums.estado_evento
     fec_cre_eve?: Date | string
     img_por_eve: string
+    dur_hor_eve: number
+    por_min_asi_eve: number
+    fec_fin_eve: Date | string
     eventos_carrera?: evento_carreraUncheckedCreateNestedManyWithoutEventoInput
     eventos_curso?: evento_cursoUncheckedCreateNestedOneWithoutEventoInput
   }
@@ -14102,6 +14120,9 @@ export namespace Prisma {
     est_eve?: Enumestado_eventoFieldUpdateOperationsInput | $Enums.estado_evento
     fec_cre_eve?: DateTimeFieldUpdateOperationsInput | Date | string
     img_por_eve?: StringFieldUpdateOperationsInput | string
+    dur_hor_eve?: IntFieldUpdateOperationsInput | number
+    por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
+    fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
     eventos_carrera?: evento_carreraUpdateManyWithoutEventoNestedInput
     eventos_curso?: evento_cursoUpdateOneWithoutEventoNestedInput
   }
@@ -14116,6 +14137,9 @@ export namespace Prisma {
     est_eve?: Enumestado_eventoFieldUpdateOperationsInput | $Enums.estado_evento
     fec_cre_eve?: DateTimeFieldUpdateOperationsInput | Date | string
     img_por_eve?: StringFieldUpdateOperationsInput | string
+    dur_hor_eve?: IntFieldUpdateOperationsInput | number
+    por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
+    fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
     eventos_carrera?: evento_carreraUncheckedUpdateManyWithoutEventoNestedInput
     eventos_curso?: evento_cursoUncheckedUpdateOneWithoutEventoNestedInput
   }
