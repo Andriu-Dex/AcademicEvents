@@ -156,8 +156,8 @@ const AdminEvents = () => {
 
     // Para cursos, usar fecha específica de fin de curso
     if (esCurso && evento.fec_fin_eve) {
-  return formatearFecha(evento.fec_fin_eve); // Utiliza fec_fin_eve del evento directamente
-  }
+      return formatearFecha(evento.fec_fin_eve); // Utiliza fec_fin_eve del evento directamente
+    }
 
     // Para eventos no-curso, verificar si hay fecha de fin explícita
     if (evento.fec_fin_eve) {
@@ -272,14 +272,13 @@ const AdminEvents = () => {
                     <span>
                       {formatearFecha(eve.fec_ini_eve)}
                       {" – "}
-                      {obtenerFechaFin(eve.fec_fin_eve)}
+                      {obtenerFechaFin(eve)}
                     </span>
                   </div>
                   <div className="detail-item">
                     <Clock size={16} className="icon-inline" />
                     <span>
-                      <strong>Duración:</strong>{" "}
-                      {`${eve.dur_hor_eve} horas`}
+                      <strong>Duración:</strong> {`${eve.dur_hor_eve} horas`}
                     </span>
                   </div>
                   {/* Información exclusiva de cursos */}

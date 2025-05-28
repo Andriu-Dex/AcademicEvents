@@ -113,13 +113,35 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
     } finally {
       setLoading(false);
     }
+  }; // Prevenir cambios en los campos de número cuando se hace scroll
+  const preventScrollChange = (e) => {
+    // Detener el evento por completo
+    e.preventDefault();
+    e.stopPropagation();
+    // Quitar el foco para evitar que el navegador cambie el valor
+    e.target.blur();
+    return false;
   };
+
+  // Función mejorada para manejar cambios en inputs
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
+
+    // Para inputs numéricos, asegurarse de que se conviertan correctamente
+    if (type === "number") {
+      // Si es un campo numérico, convertir a número o dejar vacío si no es válido
+      const numericValue = value === "" ? "" : Number(value);
+      setFormData((prev) => ({
+        ...prev,
+        [name]: numericValue,
+      }));
+    } else {
+      // Para otros tipos de campos, mantener el comportamiento original
+      setFormData((prev) => ({
+        ...prev,
+        [name]: type === "checkbox" ? checked : value,
+      }));
+    }
   };
 
   const handleImageChange = (e) => {
@@ -414,12 +436,22 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
             <div className="form-group">
               <label>Duración (horas) *</label>
               <div className="input-with-icon">
-                <Clock size={18} />
+                <Clock size={18} />{" "}
                 <input
                   type="number"
                   name="dur_hor_eve"
                   value={formData.dur_hor_eve}
                   onChange={handleInputChange}
+                  onWheel={preventScrollChange}
+                  onMouseEnter={(e) => e.target.blur()}
+                  onFocus={(e) =>
+                    e.target.addEventListener("wheel", preventScrollChange, {
+                      passive: false,
+                    })
+                  }
+                  onBlur={(e) =>
+                    e.target.removeEventListener("wheel", preventScrollChange)
+                  }
                   min="1"
                   step="1"
                   placeholder="Ej: 2, 4, 8"
@@ -431,12 +463,22 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
             <div className="form-group">
               <label>Porcentaje Mínimo de Asistencia % *</label>
               <div className="input-with-icon">
-                <Star size={18} />
+                <Star size={18} />{" "}
                 <input
                   type="number"
                   name="por_min_asi_eve"
                   value={formData.por_min_asi_eve}
                   onChange={handleInputChange}
+                  onWheel={preventScrollChange}
+                  onMouseEnter={(e) => e.target.blur()}
+                  onFocus={(e) =>
+                    e.target.addEventListener("wheel", preventScrollChange, {
+                      passive: false,
+                    })
+                  }
+                  onBlur={(e) =>
+                    e.target.removeEventListener("wheel", preventScrollChange)
+                  }
                   min="0"
                   max="100"
                   step="0.1"
@@ -450,12 +492,22 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
               <div className="form-group">
                 <label>Nota Mínima para Aprobar *</label>
                 <div className="input-with-icon">
-                  <Star size={18} />
+                  <Star size={18} />{" "}
                   <input
                     type="number"
                     name="not_min_cur"
                     value={formData.not_min_cur}
                     onChange={handleInputChange}
+                    onWheel={preventScrollChange}
+                    onMouseEnter={(e) => e.target.blur()}
+                    onFocus={(e) =>
+                      e.target.addEventListener("wheel", preventScrollChange, {
+                        passive: false,
+                      })
+                    }
+                    onBlur={(e) =>
+                      e.target.removeEventListener("wheel", preventScrollChange)
+                    }
                     min="0"
                     max="10"
                     step="0.1"
@@ -501,12 +553,22 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
             </select>
           </div>
           <div className="form-group">
-            <label className="valor-eve-ef">Valor del Evento ($) *</label>
+            <label className="valor-eve-ef">Valor del Evento ($) *</label>{" "}
             <input
               type="number"
               name="val_eve"
               value={formData.val_eve}
               onChange={handleInputChange}
+              onWheel={preventScrollChange}
+              onMouseEnter={(e) => e.target.blur()}
+              onFocus={(e) =>
+                e.target.addEventListener("wheel", preventScrollChange, {
+                  passive: false,
+                })
+              }
+              onBlur={(e) =>
+                e.target.removeEventListener("wheel", preventScrollChange)
+              }
               min="0"
               step="0.01"
               placeholder="Ej: 10.00"
