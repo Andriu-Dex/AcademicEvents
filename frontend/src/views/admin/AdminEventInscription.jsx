@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState, useCallback } from "react";
-import axios from "axios";
+import axiosInstance from "../../api/axiosConfig";
 import { BadgeCheck, Clock, Ban, Eye, Download, Loader } from "lucide-react";
 import { toast } from "react-toastify";
 import "./styles/AdminEventInscription.css";
@@ -35,7 +35,7 @@ const AdminEventInscription = () => {
       );
       setInscripciones(res.data);
     } catch (err) {
-      console.err(err);
+      console.error(err);
       toast.error("Error al cargar las inscripciones");
     } finally {
       setLoading(false);
@@ -52,18 +52,14 @@ const AdminEventInscription = () => {
       setNombreEvento(res.data.nom_eve);
     } catch (err) {
       console.error("Error al obtener nombre del evento", err);
+      toast.error("Error al obtener nombre del evento");
     }
   }, [id]);
 
-  useEffect(() => {
-    obtenerInscripciones();
-    obtenerNombreEvento();
-  }, [obtenerInscripciones, obtenerNombreEvento]);
-
   const cambiarEstado = async (id_ins, estado) => {
-    const token = localStorage.getItem("token");
     setActualizandoId(id_ins);
     try {
+      const token = localStorage.getItem("token");
       await axios.put(
         `${import.meta.env.VITE_API_URL}/api/inscripciones/validar/${id_ins}`,
         { estado },
@@ -263,7 +259,7 @@ const AdminEventInscription = () => {
                       setEnviandoFinalizacion(false);
                       return;
                     }
-
+                    const token = localStorage.getItem("token");
                     await axios.put(
                       `${
                         import.meta.env.VITE_API_URL
@@ -274,14 +270,14 @@ const AdminEventInscription = () => {
                         estado: "FINALIZADA",
                         asistencia: Number(asistencia),
                         nota_final: Number(notaFinal),
-                      }
+                      },
+                      { headers: { Authorization: `Bearer ${token}` } }
                     );
-
                     toast.success("Inscripción finalizada correctamente");
                     setMostrarFinalizarModal(false);
                     await obtenerInscripciones();
                   } catch (err) {
-                    console.err(err);
+                    console.error(err);
                     toast.error("Error al finalizar");
                   } finally {
                     setEnviandoFinalizacion(false);

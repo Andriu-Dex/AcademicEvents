@@ -1,26 +1,30 @@
-// Importaciones necesarias desde React Router
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-// Importación de vistas para usuarios
+// Vistas públicas
 import Login from "./views/Login.jsx";
-import CertificatesRoute from "./routes/CertificatesRoute";
+import Register from "./views/Register.jsx";
+import Home from "./views/Home.jsx"; // Ruta temporal de prueba
+
+// Vistas privadas (usuario autenticado)
 import EventsRoute from "./routes/EventsRoute";
-import Register from "./views/Register";
+import CertificatesRoute from "./routes/CertificatesRoute";
 import MyInscriptions from "./views/MyInscriptions";
 
-// Importación de vistas del panel de administración
-import AdminEventInscription from "./views/admin/AdminEventInscription";
-import AdminEvents from "./views/admin/AdminEvents.jsx";
+// Admin (panel de administración)
 import AdminDashboard from "./views/admin/AdminDashboard.jsx";
+import AdminEvents from "./views/admin/AdminEvents.jsx";
 import AdminCarreras from "./views/admin/AdminCarreras.jsx";
 import AdminConfiguracion from "./views/admin/AdminConfiguracion";
 import AdminInscripciones from "./views/admin/AdminInscripciones";
+import CreateEvent from "./views/admin/CreateEvent.jsx";
+import EditEvent from "./views/admin/EditEvent.jsx";
+import AdminEventInscription from "./views/admin/AdminEventInscription";
 
-// Componentes para proteger rutas
-import PrivateRouteAdmin from "./components/PrivateRouteAdmin"; // Protege rutas para administradores
-import PrivateLayout from "./layouts/PrivateLayout"; // Layout común para rutas privadas
+// Rutas protegidas
+import PrivateRouteAdmin from "./components/PrivateRouteAdmin";
+import PrivateLayout from "./layouts/PrivateLayout";
 
-// Importación del sistema de notificaciones (toasts)
+// Toasts
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -29,14 +33,17 @@ function App() {
     <BrowserRouter>
       <>
         <Routes>
-          {/* Ruta raíz: redirecciona automáticamente a la página de login */}
+          {/* Redirección por defecto a login */}
           <Route path="/" element={<Navigate to="/login" />} />
 
-          {/* Rutas públicas accesibles sin autenticación */}
+          {/* Rutas públicas */}
           <Route path="/login" element={<Login />} />
           <Route path="/registro" element={<Register />} />
 
-          {/* Rutas privadas accesibles solo por usuarios autenticados (estudiantes) */}
+          {/* ✅ Ruta temporal para probar Home con diferentes roles */}
+          <Route path="/home" element={<Home />} />
+
+          {/* Rutas privadas (usuario autenticado) */}
           <Route
             path="/eventos"
             element={
@@ -62,7 +69,7 @@ function App() {
             }
           />
 
-          {/* Rutas privadas para administradores, protegidas por PrivateRouteAdmin */}
+          {/* Rutas protegidas para ADMIN */}
           <Route
             path="/admin"
             element={
@@ -79,6 +86,26 @@ function App() {
               <PrivateRouteAdmin>
                 <PrivateLayout>
                   <AdminEvents />
+                </PrivateLayout>
+              </PrivateRouteAdmin>
+            }
+          />
+          <Route
+            path="/admin/eventos/crear"
+            element={
+              <PrivateRouteAdmin>
+                <PrivateLayout>
+                  <CreateEvent />
+                </PrivateLayout>
+              </PrivateRouteAdmin>
+            }
+          />
+          <Route
+            path="/admin/eventos/editar/:id"
+            element={
+              <PrivateRouteAdmin>
+                <PrivateLayout>
+                  <EditEvent />
                 </PrivateLayout>
               </PrivateRouteAdmin>
             }
@@ -125,15 +152,15 @@ function App() {
           />
         </Routes>
 
-        {/* Contenedor global para mostrar notificaciones tipo "toast" en pantalla */}
+        {/* Toast global para notificaciones */}
         <ToastContainer
-          position="top-right" // Posición de la notificación
-          autoClose={3000} // Cierre automático a los 3 segundos
-          hideProgressBar={false} // Mostrar barra de progreso
-          newestOnTop={false} // No ordenar por más reciente
-          closeOnClick // Cierre al hacer clic
-          pauseOnHover // Pausar cierre si se pasa el cursor
-          theme="colored" // Tema de colores vivos
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          pauseOnHover
+          theme="colored"
         />
       </>
     </BrowserRouter>
