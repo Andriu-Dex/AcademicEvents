@@ -41,7 +41,12 @@ const crearCarrera = async (req, res) => {
 const obtenerCarreras = async (req, res) => {
   try {
     // Consultamos todas las carreras en la base de datos
-    const carreras = await prisma.carrera.findMany();
+    // const carreras = await prisma.carrera.findMany();
+
+    const carreras = await prisma.carrera.findMany({
+      where: { est_car: true },
+      orderBy: { nom_car: "asc" },
+    });
 
     // Respondemos con las carreras obtenidas
     res.status(200).json(carreras);
@@ -56,8 +61,15 @@ const obtenerCarreras = async (req, res) => {
 // =======================
 const actualizarCarrera = async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id; // ✅ no parseInt
+
     const { nom_car } = req.body;
+
+    if (!nom_car || nom_car.trim() === "") {
+      return res
+        .status(400)
+        .json({ msg: "El nombre de la carrera no puede estar vacío" });
+    }
 
     const carreraExistente = await prisma.carrera.findUnique({
       where: { id_car: id },
@@ -72,7 +84,7 @@ const actualizarCarrera = async (req, res) => {
       data: { nom_car },
     });
 
-    res.status(200).json(actualizada);
+    res.json(actualizada);
   } catch (error) {
     res.status(500).json({
       msg: "Error al actualizar carrera",

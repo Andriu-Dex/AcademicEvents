@@ -1,0 +1,176 @@
+/* Estilos para Home.jsx */
+
+/* Estilos base */
+.home-container {
+    min-height: 100vh;
+    min-width: 100vw;
+    background: linear-gradient(135deg, #f4f6fb 60%, #e3e8f0 100%);
+}
+
+/* Estilos para el Hero Section */
+.hero-section {
+    background: linear-gradient(rgba(138, 21, 56, 0.85), rgba(138, 21, 56, 0.9)), url('https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover no-repeat;
+    min-height: 400px;
+}
+
+.hero-button-primary {
+    color: #8A1538;
+    border-radius: 8px;
+    font-size: 1rem;
+    padding: 12px 24px;
+}
+
+.hero-button-secondary {
+    border-radius: 8px;
+    font-size: 1rem;
+    padding: 12px 24px;
+}
+
+/* Estilos para tarjetas */
+.hover-card {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.hover-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(138, 21, 56, 0.15) !important;
+    border-bottom: 3px solid #8A1538;
+}
+
+/* Animaciones */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate__animated.animate__fadeInUp {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+/* Estilos para sección de contacto */
+.contact-section {
+    border-radius: 15px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-top: 4px solid #8A1538;
+}
+
+.contact-button {
+    background: #8A1538;
+    color: #fff;
+    border-radius: 8px;
+}
+
+/* Colores principales */
+.primary-color {
+    color: #8A1538;
+}
+
+.primary-bg {
+    background: #8A1538;
+    color: white;
+}
+
+/* Estilos para tarjetas de autoridades */
+.authority-img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+}
+
+/* Estilos de footer */
+.footer-logo {
+    width: 40px;
+    height: 40px;
+}
+
+/* Nuevos estilos extraídos de Home.jsx */
+.stats-number {
+    color: #8A1538;
+}
+
+.section-title {
+    color: #8A1538;
+}
+
+.authority-title {
+    color: #8A1538;
+}
+
+.carrera-title {
+    color: #8A1538;
+}
+
+.info-title {
+    color: #8A1538;
+}
+
+.text-justified {
+    text-align: justify;
+}
+
+.carrera-info-btn {
+    background: #8A1538;
+    color: white;
+}
+
+.contacto-title {
+    color: #8A1538;
+}
+
+.phone-btn {
+    border-radius: 8px;
+}
+
+.footer-divider {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Nuevos estilos extraídos de Home.jsx */
+.stats-number {
+    color: #8A1538;
+}
+
+.section-title {
+    color: #8A1538;
+}
+
+.authority-title {
+    color: #8A1538;
+}
+
+.carrera-title {
+    color: #8A1538;
+}
+
+.info-title {
+    color: #8A1538;
+}
+
+.text-justified {
+    text-align: justify;
+}
+
+.carrera-info-btn {
+    background: #8A1538;
+    color: white;
+}
+
+.contacto-title {
+    color: #8A1538;
+}
+
+.phone-btn {
+    border-radius: 8px;
+}
+
+.footer-divider {
+    background: rgba(255, 255, 255, 0.1);
+}

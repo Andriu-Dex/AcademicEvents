@@ -169,6 +169,13 @@ exports.Prisma.InscripcionScalarFieldEnum = {
   cert_enviado: 'cert_enviado'
 };
 
+exports.Prisma.ConfiguracionScalarFieldEnum = {
+  id_conf: 'id_conf',
+  mision: 'mision',
+  vision: 'vision',
+  autoridades: 'autoridades'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -208,7 +215,8 @@ exports.Prisma.ModelName = {
   usuario: 'usuario',
   carrera: 'carrera',
   evento: 'evento',
-  inscripcion: 'inscripcion'
+  inscripcion: 'inscripcion',
+  configuracion: 'configuracion'
 };
 
 /**

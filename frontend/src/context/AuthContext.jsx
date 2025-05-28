@@ -25,6 +25,9 @@ export const AuthProvider = ({ children }) => {
     setUsuario(usuario);
     setToken(token);
     localStorage.setItem("authData", JSON.stringify({ usuario, token }));
+    localStorage.setItem("token", token);
+    // Comprobar el token se guarda correctamente
+    console.log("TOKEN:", localStorage.getItem("token"));
   };
 
   // Cerrar sesión y limpiar localStorage
