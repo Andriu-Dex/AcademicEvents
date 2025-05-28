@@ -34,13 +34,11 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
     des_eve: "",
     tip_eve: "",
     fec_ini_eve: "",
-    fec_fin_eve: "", // Campo para fecha fin de evento general
-    dur_hrs_eve: "", // Campo para duración de evento general
-    fec_fin_cur: "",
-    dur_hor_cur: "",
+    fec_fin_eve: "",
+    dur_hor_eve: "",
     val_eve: "",
     not_min_cur: "",
-    por_min_asi_cur: "",
+    por_min_asi_eve: "",
     carreraId: "",
     img_por_eve: null,
     est_eve: "ACTIVO",
@@ -70,12 +68,14 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
       toast.error("Error al cargar carreras");
     }
   };
+
   const cargarEventoParaEditar = async () => {
     try {
       setLoading(true);
       const res = await axiosInstance.get(`/eventos/${eventId}`);
       const evento = res.data;
 
+      console.log(evento);
       // Formatear fechas para inputs datetime-local
       const formatearFecha = (fecha) => {
         if (!fecha) return "";
@@ -85,37 +85,20 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
         return fechaLocal.toISOString().slice(0, 10); // Para input type="date"
       };
 
-      console.log("Evento cargado:", evento);
-
       setFormData({
         nom_eve: evento.nom_eve || "",
         des_eve: evento.des_eve || "",
         tip_eve: evento.tip_eve || "",
         fec_ini_eve: formatearFecha(evento.fec_ini_eve),
         fec_fin_eve: formatearFecha(evento.fec_fin_eve), // Fecha fin para eventos
-        dur_hrs_eve: evento.dur_hrs_eve?.toString() || "", // Duración para eventos
-        val_eve:
-          evento.val_eve !== undefined && evento.val_eve !== null
-            ? evento.val_eve
-            : "",
+        dur_hor_eve: evento.dur_hor_eve ? Number(evento.dur_hor_eve) : "", // Duración para eventos
+        val_eve: Number(evento.val_eve),
+        por_min_asi_eve: Number(evento.por_min_asi_eve),
         img_por_eve: null,
         est_eve: evento.est_eve || "ACTIVO",
-        // Solo cursos tienen estos campos
-        fec_fin_cur:
-          evento.tip_eve === "CURSO" && evento.eventos_curso
-            ? formatearFecha(evento.eventos_curso.fec_fin_cur)
-            : "",
-        dur_hor_cur:
-          evento.tip_eve === "CURSO" && evento.eventos_curso
-            ? evento.eventos_curso.dur_hor_cur?.toString() || ""
-            : "",
         not_min_cur:
           evento.tip_eve === "CURSO" && evento.eventos_curso
-            ? evento.eventos_curso.not_min_cur?.toString() || ""
-            : "",
-        por_min_asi_cur:
-          evento.tip_eve === "CURSO" && evento.eventos_curso
-            ? evento.eventos_curso.por_min_asi_cur?.toString() || ""
+            ? Number(evento.eventos_curso.not_min_cur) || ""
             : "",
         carreraId: evento.carreraId || "",
       });
@@ -167,61 +150,35 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
       reader.readAsDataURL(file);
     }
   };
+
   const validarFormulario = () => {
     const errores = [];
 
     if (!formData.nom_eve.trim())
       errores.push("El nombre del evento es obligatorio");
-    if (!formData.tip_eve) errores.push("El tipo de evento es obligatorio");
+    if (!formData.tip_eve)
+      errores.push("El tipo de evento es obligatorio");
     if (!formData.fec_ini_eve)
       errores.push("La fecha de inicio es obligatoria");
     if (!formData.val_eve || formData.val_eve < 0)
       errores.push("El valor del evento debe ser un número positivo");
-
-    // Validar fecha fin y duración para eventos generales
-    if (formData.tip_eve !== "CURSO") {
-      if (!formData.fec_fin_eve) errores.push("La fecha de fin es obligatoria");
-      if (!formData.dur_hor_eve || formData.dur_hor_eve <= 0)
-        errores.push("La duración debe ser mayor a 0 horas");
-      // Validar fechas
-      if (formData.fec_ini_eve && formData.fec_fin_eve) {
-        if (new Date(formData.fec_ini_eve) > new Date(formData.fec_fin_eve)) {
-          errores.push(
-            "La fecha de inicio no puede ser posterior a la fecha de fin"
-          );
-        }
+    if (!formData.fec_fin_eve)
+      errores.push("La fecha de fin es obligatoria");
+    if (!formData.dur_hor_eve || formData.dur_hor_eve <= 0)
+      errores.push("La duración debe ser mayor a 0 horas");
+    // Validar fechas
+    if (formData.fec_ini_eve && formData.fec_fin_eve) {
+      if (new Date(formData.fec_ini_eve) > new Date(formData.fec_fin_eve)) {
+        errores.push(
+          "La fecha de inicio no puede ser posterior a la fecha de fin"
+        );
       }
     }
 
     // Validaciones específicas para cursos
     if (formData.tip_eve === "CURSO") {
-      if (!formData.dur_hor_cur || formData.dur_hor_cur <= 0)
-        errores.push("La duración debe ser mayor a 0 horas");
-      if (
-        !formData.not_min_cur ||
-        formData.not_min_cur < 8 ||
-        formData.not_min_cur > 10
-      ) {
+      if (!formData.not_min_cur || formData.not_min_cur < 8 || formData.not_min_cur > 10)
         errores.push("Para cursos, la nota mínima debe estar entre 8 y 10");
-      }
-      if (
-        !formData.por_min_asi_cur ||
-        formData.por_min_asi_cur < 80 ||
-        formData.por_min_asi_cur > 100
-      ) {
-        errores.push(
-          "Para cursos, el porcentaje de asistencia debe estar entre 80 y 100"
-        );
-      }
-      if (!formData.fec_fin_cur) errores.push("La fecha de fin es obligatoria");
-      // Validar fechas
-      if (formData.fec_ini_eve && formData.fec_fin_cur) {
-        if (new Date(formData.fec_ini_eve) > new Date(formData.fec_fin_cur)) {
-          errores.push(
-            "La fecha de inicio no puede ser posterior a la fecha de fin"
-          );
-        }
-      }
     }
 
     return errores;
@@ -249,19 +206,13 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
       formDataToSend.append("val_eve", formData.val_eve);
       formDataToSend.append("img_por_eve", formData.img_por_eve);
       formDataToSend.append("est_eve", formData.est_eve);
-
-      // Para eventos que no son cursos
-      if (formData.tip_eve !== "CURSO") {
-        formDataToSend.append("fec_fin_eve", formData.fec_fin_eve);
-        formDataToSend.append("dur_hor_eve", formData.dur_hor_eve);
-      }
+      formDataToSend.append("fec_fin_eve", formData.fec_fin_eve);
+      formDataToSend.append("dur_hor_eve", formData.dur_hor_eve);
+      formDataToSend.append("por_min_asi_eve", formData.por_min_asi_eve);
 
       // Campos específicos para cursos
       if (formData.tip_eve === "CURSO") {
-        formDataToSend.append("dur_hor_cur", formData.dur_hor_cur);
         formDataToSend.append("not_min_cur", formData.not_min_cur);
-        formDataToSend.append("por_min_asi_cur", formData.por_min_asi_cur);
-        formDataToSend.append("fec_fin_cur", formData.fec_fin_cur);
       }
 
       /*// Carrera (opcional)
@@ -340,9 +291,8 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
                 name="nom_eve"
                 value={formData.nom_eve}
                 onChange={handleInputChange}
-                placeholder={`Ingrese el nombre del ${
-                  esCurso ? "curso" : "evento"
-                }`}
+                placeholder={`Ingrese el nombre del ${esCurso ? "curso" : "evento"
+                  }`}
                 required
               />
             </div>
@@ -389,9 +339,8 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
               name="des_eve"
               value={formData.des_eve}
               onChange={handleInputChange}
-              placeholder={`Describe el contenido y objetivos del ${
-                esCurso ? "curso" : "evento"
-              }`}
+              placeholder={`Describe el contenido y objetivos del ${esCurso ? "curso" : "evento"
+                }`}
               rows={4}
             />
           </div>
@@ -426,119 +375,72 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
               </div>
             </div>
 
-            {!esCurso && (
-              <div className="form-group">
-                <label>Fecha de Fin *</label>
-                <div className="input-with-icon date-picker-container">
-                  <Calendar size={18} />
-                  <DatePicker
-                    selected={
-                      formData.fec_fin_eve
-                        ? new Date(formData.fec_fin_eve)
-                        : null
-                    }
-                    onChange={(date) => {
-                      setFormData((prev) => ({
-                        ...prev,
-                        fec_fin_eve: date
-                          ? date.toISOString().split("T")[0]
-                          : "",
-                      }));
-                    }}
-                    dateFormat="dd/MM/yyyy"
-                    locale="es"
-                    placeholderText="Seleccionar fecha"
-                    className="date-picker-input"
-                    minDate={
-                      formData.fec_ini_eve
-                        ? new Date(formData.fec_ini_eve)
-                        : null
-                    }
-                    required
-                  />
-                </div>
+            <div className="form-group">
+              <label>Fecha de Fin *</label>
+              <div className="input-with-icon date-picker-container">
+                <Calendar size={18} />
+                <DatePicker
+                  selected={
+                    formData.fec_fin_eve ? new Date(formData.fec_fin_eve) : null
+                  }
+                  onChange={(date) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      fec_fin_eve: date
+                        ? date.toISOString().split("T")[0]
+                        : "",
+                    }));
+                  }}
+                  dateFormat="dd/MM/yyyy"
+                  locale="es"
+                  placeholderText="Seleccionar fecha"
+                  className="date-picker-input"
+                  minDate={
+                    formData.fec_ini_eve
+                      ? new Date(formData.fec_ini_eve)
+                      : null
+                  }
+                  required
+                />
               </div>
-            )}
+            </div>
 
-            {!esCurso && (
-              <div className="form-group">
-                <label>Duración (horas) *</label>
-                <div className="input-with-icon">
-                  <Clock size={18} />
-                  <input
-                    type="number"
-                    name="dur_hor_eve"
-                    value={formData.dur_hor_eve}
-                    onChange={handleInputChange}
-                    min="1"
-                    step="1"
-                    placeholder="Ej: 2, 4, 8"
-                    required
-                  />
-                </div>
+            <div className="form-group">
+              <label>Duración (horas) *</label>
+              <div className="input-with-icon">
+                <Clock size={18} />
+                <input
+                  type="number"
+                  name="dur_hor_eve"
+                  value={formData.dur_hor_eve}
+                  onChange={handleInputChange}
+                  min="1"
+                  step="1"
+                  placeholder="Ej: 2, 4, 8"
+                  required
+                />
               </div>
-            )}
-          </div>
-          <div className="form-grid"></div>
-        </div>{" "}
-        {/* Configuración Específica de Curso */}
-        {esCurso && (
-          <div className="event-form-section curso-section">
-            <h2 className="section-title">
-              <GraduationCap size={20} />
-              Configuración de Curso
-            </h2>
+            </div>
 
-            <div className="form-grid">
-              <div className="form-group">
-                <label>Fecha de Finalización del Curso *</label>
-                <div className="input-with-icon date-picker-container">
-                  <Calendar size={18} />
-                  <DatePicker
-                    selected={
-                      formData.fec_fin_cur
-                        ? new Date(formData.fec_fin_cur)
-                        : null
-                    }
-                    onChange={(date) => {
-                      setFormData((prev) => ({
-                        ...prev,
-                        fec_fin_cur: date
-                          ? date.toISOString().split("T")[0]
-                          : "",
-                      }));
-                    }}
-                    dateFormat="dd/MM/yyyy"
-                    locale="es"
-                    placeholderText="Seleccionar fecha"
-                    className="date-picker-input"
-                    minDate={
-                      formData.fec_ini_eve
-                        ? new Date(formData.fec_ini_eve)
-                        : null
-                    }
-                    required
-                  />
-                </div>
+            <div className="form-group">
+              <label>Porcentaje Minimo de Asistencia % *</label>
+              <div className="input-with-icon">
+                <Star size={18} />
+                <input
+                  type="number"
+                  name="por_min_asi_eve"
+                  value={formData.por_min_asi_eve}
+                  onChange={handleInputChange}
+                  min="0"
+                  max="100"
+                  step="0.1"
+                  placeholder="80"
+                  required
+                />
               </div>
+            </div>
 
-              <div className="form-group">
-                <label>Duración Total (horas) *</label>
-                <div className="input-with-icon">
-                  <Clock size={18} />
-                  <input
-                    type="number"
-                    name="dur_hor_cur"
-                    value={formData.dur_hor_cur}
-                    onChange={handleInputChange}
-                    min="1"
-                    step="1"
-                    placeholder="Ej: 40"
-                    required={esCurso}
-                  />
-                </div>
-              </div>
-
+            {esCurso && (
               <div className="form-group">
                 <label>Nota Mínima para Aprobar *</label>
                 <div className="input-with-icon">
@@ -551,32 +453,28 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
                     min="0"
                     max="10"
                     step="0.1"
-                    placeholder="Ej: 7.0"
+                    placeholder="Ej: 8.0"
                     required={esCurso}
                   />
                 </div>
               </div>
+            )}
+          </div>
+          <div className="form-grid"></div>
+        </div>{" "}
+        {/* Configuración Específica de Curso */}
+        {/*esCurso && (
+          <div className="event-form-section curso-section">
+            <h2 className="section-title">
+              <GraduationCap size={20} />
+              Configuración de Curso
+            </h2>
+            <div className="form-grid">
 
-              <div className="form-group">
-                <label>Asistencia Mínima (%) *</label>
-                <div className="input-with-icon">
-                  <Target size={18} />
-                  <input
-                    type="number"
-                    name="por_min_asi_cur"
-                    value={formData.por_min_asi_cur}
-                    onChange={handleInputChange}
-                    min="0"
-                    max="100"
-                    step="1"
-                    placeholder="Ej: 80"
-                    required={esCurso}
-                  />
-                </div>
-              </div>
             </div>
           </div>
-        )}{" "}
+        )*/}
+        {" "}
         {/* Información Adicional */}
         <div className="event-form-section">
           <h2 className="section-title">
