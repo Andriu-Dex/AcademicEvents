@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axiosInstance from "../../api/axiosConfig";
 import { toast } from "react-toastify";
 import { Dialog } from "@headlessui/react";
 import "./styles/AdminCarreras.css";
@@ -13,12 +13,9 @@ const AdminCarreras = () => {
     abierto: false,
     id: null,
   });
-
   const cargarCarreras = async () => {
     try {
-      const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/carreras`
-      );
+      const res = await axiosInstance.get("/carreras");
       setCarreras(res.data);
     } catch (error) {
       console.error(error);
@@ -27,9 +24,8 @@ const AdminCarreras = () => {
   };
 
   const crearCarrera = async () => {
-    if (!nuevaCarrera.trim()) return toast.warning("Nombre vacío");
-    try {
-      await axios.post(`${import.meta.env.VITE_API_URL}/api/carreras`, {
+    if (!nuevaCarrera.trim()) return toast.warning("Nombre vacío"); try {
+      await axiosInstance.post("/carreras", {
         nom_car: nuevaCarrera.trim(),
       });
       toast.success("Carrera creada");
@@ -48,7 +44,7 @@ const AdminCarreras = () => {
   const eliminarCarrera = async () => {
     const id = modalEliminar.id;
     try {
-      await axios.delete(`${import.meta.env.VITE_API_URL}/api/carreras/${id}`);
+      await axiosInstance.delete(`/carreras/${id}`);
       toast.success("Carrera eliminada");
       cargarCarreras();
     } catch (error) {
@@ -65,7 +61,7 @@ const AdminCarreras = () => {
       return toast.warning("El nombre no puede estar vacío");
     }
     try {
-      await axios.put(`${import.meta.env.VITE_API_URL}/api/carreras/${id}`, {
+      await axiosInstance.put(`/carreras/${id}`, {
         nom_car: nuevoNombre.trim(),
       });
       toast.success("Carrera actualizada");

@@ -29,10 +29,11 @@ const Navbar = () => {
               <Link to="/inscripciones">Mis inscripciones</Link>
               <Link to="/certificados">Certificados</Link>
             </>
-          )}
-          {usuario.rol_usu === "ADMIN" && (
+          )}          {usuario.rol_usu === "ADMIN" && (
             <>
+              <Link to="/admin">Panel Admin</Link>
               <Link to="/admin/eventos">Gestionar eventos</Link>
+              <Link to="/admin/eventos/crear">Crear evento</Link>
               <Link to="/admin/carreras">Gestionar carreras</Link>
             </>
           )}

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axiosInstance from "../../api/axiosConfig";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/AuthContext";
 import { FileText, XCircle } from "lucide-react";
@@ -9,6 +9,7 @@ const estados = {
   PENDIENTE: "estado-pendiente",
   ACEPTADA: "estado-aceptada",
   RECHAZADA: "estado-rechazada",
+  FINALIZADA: "estado-finalizada",
 };
 
 const AdminInscripciones = () => {
@@ -16,26 +17,22 @@ const AdminInscripciones = () => {
   const [inscripciones, setInscripciones] = useState([]);
   const [eventos, setEventos] = useState([]);
   const [eventoFiltrado, setEventoFiltrado] = useState("");
-
   const cargarEventos = async () => {
     try {
-      const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/eventos`
-      );
+      const res = await axiosInstance.get("/eventos");
       setEventos(res.data);
     } catch {
       toast.error("Error al cargar eventos");
     }
   };
-
   const cargarInscripciones = async () => {
-    if (!eventoFiltrado) return setInscripciones([]);
+    if (!eventoFiltrado) {
+      setInscripciones([]);
+      return;
+    }
     try {
-      const res = await axios.get(
-        `${
-          import.meta.env.VITE_API_URL
-        }/api/admin/inscripciones/evento/${eventoFiltrado}`,
-        { headers: { Authorization: `Bearer ${token}` } }
+      const res = await axiosInstance.get(
+        `/admin/inscripciones/evento/${eventoFiltrado}`
       );
       setInscripciones(res.data);
     } catch (error) {
@@ -44,24 +41,19 @@ const AdminInscripciones = () => {
       setInscripciones([]);
     }
   };
-
   const cambiarEstado = async (id, nuevoEstado) => {
     try {
-      await axios.put(
-        `${import.meta.env.VITE_API_URL}/api/admin/inscripciones/validar/${id}`,
-        { estado: nuevoEstado },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await axiosInstance.put(`/admin/inscripciones/validar/${id}`, {
+        estado: nuevoEstado,
+      });
       toast.success(`Inscripción ${nuevoEstado.toLowerCase()}`);
       cargarInscripciones();
     } catch (error) {
       toast.error(error.response?.data?.msg || "Error al actualizar estado");
     }
   };
-
   useEffect(() => {
     cargarEventos();
-    cargarInscripciones();
   }, []);
 
   useEffect(() => {
@@ -138,38 +130,53 @@ const AdminInscripciones = () => {
               </td>
               <td>
                 <div className="acciones-validacion">
+                  {" "}
                   <button
                     onClick={() => cambiarEstado(i.id_ins, "ACEPTADA")}
                     className="btn btn-aceptar"
+                    disabled={
+                      i.estado === "ACEPTADA" || i.estado === "FINALIZADA"
+                    }
                   >
                     Aceptar
                   </button>
                   <button
                     onClick={() => cambiarEstado(i.id_ins, "RECHAZADA")}
                     className="btn btn-rechazar"
+                    disabled={
+                      i.estado === "RECHAZADA" || i.estado === "FINALIZADA"
+                    }
                   >
                     Rechazar
                   </button>
-                </div>
-
+                </div>{" "}
                 <form
                   className="form-finalizar"
                   onSubmit={async (e) => {
                     e.preventDefault();
                     const nota = parseFloat(e.target.nota.value);
                     const asistencia = parseFloat(e.target.asistencia.value);
-                    if (isNaN(nota) || nota < 0 || nota > 10)
-                      return toast.error("Nota inválida (0–10)");
-                    if (isNaN(asistencia) || asistencia < 0 || asistencia > 100)
-                      return toast.error("Asistencia inválida (0–100)");
 
+                    if (isNaN(nota) || nota < 0 || nota > 10) {
+                      toast.error("Nota inválida (0–10)");
+                      return;
+                    }
+                    if (
+                      isNaN(asistencia) ||
+                      asistencia < 0 ||
+                      asistencia > 100
+                    ) {
+                      toast.error("Asistencia inválida (0–100)");
+                      return;
+                    }
                     try {
-                      await axios.put(
-                        `${
-                          import.meta.env.VITE_API_URL
-                        }/api/admin/inscripciones/validar/${i.id_ins}`,
-                        { estado: "FINALIZADA", nota_final: nota, asistencia },
-                        { headers: { Authorization: `Bearer ${token}` } }
+                      await axiosInstance.put(
+                        `/admin/inscripciones/validar/${i.id_ins}`,
+                        {
+                          estado: "FINALIZADA",
+                          nota_final: Number(nota),
+                          asistencia: Number(asistencia),
+                        }
                       );
                       toast.success("Inscripción finalizada");
                       cargarInscripciones();
@@ -216,7 +223,11 @@ const AdminInscripciones = () => {
                     />
                   </div>
 
-                  <button type="submit" className="btn btn-finalizar">
+                  <button
+                    type="submit"
+                    className="btn btn-finalizar"
+                    disabled={i.estado === "FINALIZADA"}
+                  >
                     Finalizar
                   </button>
                 </form>

@@ -1,6 +1,6 @@
 // Importa hooks y librerías necesarias
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axiosInstance from "../api/axiosConfig";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom"; // Hook para redirección
 import { toast } from "react-toastify"; // Notificaciones tipo toast
@@ -28,20 +28,11 @@ const CertificatesRoute = () => {
     if (!usuario.id) {
       console.warn("El usuario no tiene ID, evitando llamada a la API");
       return;
-    }
-
-    // Función asíncrona para obtener inscripciones del usuario
+    }    // Función asíncrona para obtener inscripciones del usuario
     const obtenerInscripciones = async () => {
       try {
         // Llamada al backend para obtener inscripciones del usuario
-        const res = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/inscripciones/propias`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const res = await axiosInstance.get("/inscripciones/propias");
 
         // Filtra solo las inscripciones que están finalizadas
         const finalizadas = res.data.filter((i) => i.estado === "FINALIZADA");
@@ -62,11 +53,10 @@ const CertificatesRoute = () => {
     // Llama a la función de obtención de inscripciones
     obtenerInscripciones();
   }, [usuario]); // Se ejecuta cuando el usuario cambia
-
   // Función para abrir el certificado PDF en una nueva pestaña
   const descargar = (id_ins) => {
     window.open(
-      `${import.meta.env.VITE_API_URL}/api/certificados/${id_ins}`,
+      `http://localhost:3001/api/certificados/${id_ins}`,
       "_blank"
     );
   };
@@ -74,13 +64,8 @@ const CertificatesRoute = () => {
   // Función para reenviar certificado por correo
   const reenviar = async (id_ins) => {
     setReenviando(id_ins); // Marca el certificado que se está reenviando
-    try {
-      // Solicitud para reenviar el certificado
-      await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/certificados/enviar/${id_ins}`,
-
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+    try {      // Solicitud para reenviar el certificado
+      await axiosInstance.get(`/certificados/enviar/${id_ins}`);
       // Muestra notificación de éxito
       toast.success(
         <span className="inline-flex items-center gap-2 text-green-600">
