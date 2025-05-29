@@ -1,36 +1,62 @@
 import { Link } from "react-router-dom";
+import './styles/AdminDashboard.css';
 
-const AdminDashboard = () => {
-  //====================================================
+const AdminDashboard = () => {  //====================================================
   return (
-    <div className="p-6">
-      <h2 className="text-xl font-bold mb-4">Panel de Administración</h2>      <ul className="space-y-2">
-        <li>
-          <Link to="/admin/inscripciones" className="text-blue-600 underline">
-            Validar Inscripciones
-          </Link>
-        </li>
-        <li>
-          <Link to="/admin/eventos" className="text-blue-600 underline">
-            Gestionar Eventos
-          </Link>
-        </li>
-        <li>
-          <Link to="/admin/eventos/crear" className="text-blue-600 underline">
-            Crear Nuevo Evento
-          </Link>
-        </li>
-        <li>
-          <Link to="/admin/carreras" className="text-blue-600 underline">
-            Gestionar Carreras
-          </Link>
-        </li>
-        <li>
-          <Link to="/admin/configuracion" className="text-blue-600 underline">
-            Configuración institucional
-          </Link>
-        </li>
-      </ul>
+    <div className="admin-dashboard">
+      <div className="dashboard-header">
+        <h2>Panel de Administración</h2>
+        <p className="dashboard-subtitle">Sistema de Gestión de Eventos Académicos</p>
+      </div>
+
+      <div className="dashboard-content">
+        <div className="admin-cards">
+          <div className="admin-card">
+            <div className="card-icon inscripciones-icon"></div>
+            <h3>Inscripciones</h3>
+            <p>Administra y valida inscripciones de estudiantes</p>
+            <Link to="/admin/inscripciones" className="admin-btn">
+              Validar Inscripciones
+            </Link>
+          </div>
+
+          <div className="admin-card">
+            <div className="card-icon eventos-icon"></div>
+            <h3>Eventos</h3>
+            <p>Gestiona todos los eventos académicos</p>
+            <Link to="/admin/eventos" className="admin-btn">
+              Gestionar Eventos
+            </Link>
+          </div>
+
+          <div className="admin-card">
+            <div className="card-icon crear-icon"></div>
+            <h3>Nuevo Evento</h3>
+            <p>Crea y programa nuevos eventos</p>
+            <Link to="/admin/eventos/crear" className="admin-btn">
+              Crear Nuevo Evento
+            </Link>
+          </div>
+
+          <div className="admin-card">
+            <div className="card-icon carreras-icon"></div>
+            <h3>Carreras</h3>
+            <p>Administra las carreras disponibles</p>
+            <Link to="/admin/carreras" className="admin-btn">
+              Gestionar Carreras
+            </Link>
+          </div>
+
+          <div className="admin-card">
+            <div className="card-icon config-icon"></div>
+            <h3>Configuración</h3>
+            <p>Ajusta parámetros institucionales</p>
+            <Link to="/admin/configuracion" className="admin-btn">
+              Configuración Institucional
+            </Link>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
