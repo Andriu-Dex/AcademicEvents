@@ -1,166 +1,98 @@
-// Importa las dependencias necesarias
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import { LogOut } from "lucide-react";
+import { LogOut, Home, Calendar, ClipboardList, GraduationCap, Settings, FileText, PlusCircle } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import "./styles/Navbar.css";
 
 const Navbar = () => {
-  // Obtenemos el usuario y función de logout desde el contexto de autenticación
   const { usuario, logout } = useAuth();
   const navigate = useNavigate();
 
-  // Verifica si el usuario tiene rol de estudiante
-  const esEstudiante = usuario?.rol_usu === "ESTUDIANTE";
-  const esAdministrador = usuario?.rol_usu === "ADMIN" || usuario?.rol_usu === "ADMINISTRADOR";
-  const correoUTA = usuario?.email?.endsWith("@uta.edu.ec");
-
-  // Estado para controlar el submenu de inscripciones
-  const [showInscripcionesSubmenu, setShowInscripcionesSubmenu] = useState(false);
-
-  // Autenticación basada en el contexto de autenticación
-  const isAuthenticated = usuario ? true : false;
-
-  // Función para cerrar sesión
   const cerrarSesion = () => {
     logout(); // Limpiar token y usuario
     navigate("/login"); // Redirigir al login
-  };
-
-  // Determinar la carrera del estudiante (simulada para este ejemplo)
-  const obtenerCarreraEstudiante = () => {
-    // Esto sería reemplazado por datos reales del usuario
-    if (esEstudiante) {
-      // Suponiendo que el usuario tiene un campo carrera_id o similar
-      if (usuario?.carrera === "SOFTWARE" || usuario?.carrera_id === 1) {
-        return "Software";
-      } else if (usuario?.carrera === "TI" || usuario?.carrera_id === 2) {
-        return "TI";
-      } else if (usuario?.carrera === "INDUSTRIAL" || usuario?.carrera_id === 3) {
-        return "Industrial";
-      }
-    }
-    return null;
-  };
-
-  // Obtener la carrera del estudiante
-  const carreraEstudiante = obtenerCarreraEstudiante();
-
-  // Facultad actual (dependiendo del tipo de usuario)
-  const facultadActual = {
-    nombre: esEstudiante && carreraEstudiante
-      ? `FISEI - ${carreraEstudiante}`
-      : "FISEI",
-    nombreCompleto: "Facultad de Ingeniería en Sistemas, Electrónica e Industrial",
-    logo: "https://imgur.com/fch1iy6.png",
-  };
-
-  // Enlaces regulares
-  const navLinks = [
-    { to: "/", label: "Inicio", hasSubmenu: false, icon: "🏠" },
-    { to: "/cursos", label: "Cursos en marcha", hasSubmenu: false, icon: "📚" },
-    { to: "/eventos", label: "Eventos", hasSubmenu: false, icon: "📅" },
-  ];
-
-  // Enlaces específicos para estudiantes
-  const estudianteLinks = [
-    {
-      to: "/inscripciones",
-      label: "Inscripciones",
-      hasSubmenu: true,
-      icon: "📝",
-      submenu: [
-        { to: "/eventos", label: "📅 Eventos Académicos", description: "Conferencias, talleres y seminarios" },
-        { to: "/cursos", label: "📚 Cursos Especializados", description: "Capacitaciones técnicas y certificaciones" }
-      ]
-    },
-    { to: "/certificados", label: "Certificados", hasSubmenu: false, icon: "🏆" },
-    { to: "/inscripciones", label: "Mis inscripciones", hasSubmenu: false, icon: "📋" }
-  ];
-
-  // Enlaces específicos para administradores
-  const adminLinks = [
-    { to: "/admin/eventos", label: "Gestionar eventos", hasSubmenu: false, icon: "⚙️" },
-    { to: "/admin/carreras", label: "Gestionar carreras", hasSubmenu: false, icon: "🎓" },
-  ];
-
-  // Si el usuario no está autenticado, mostrar una versión para invitados
-  if (!isAuthenticated) {
+  }; if (!usuario) {
     return (
-      <nav className="navbar navbar-expand-lg navbar-dark shadow-sm sticky-top" style={{ background: "#8A1538" }}>
-        <div className="container">
-          <div className="d-flex align-items-center gap-2">
+      <nav className="navbar">
+        <div className="navbar-left">
+          <Link to="/" className="navbar-logo-container">
             <img
-              src={facultadActual.logo}
-              alt="Logo Facultad"
-              style={{ width: 60, height: 60, objectFit: "contain" }}
-              className="d-inline-block align-text-top"
+              src="https://imgur.com/fch1iy6.png"
+              alt="Logo FISEI"
+              className="navbar-logo-img"
             />
-            <div className="d-flex flex-column">
-              <span className="navbar-brand fw-bold mb-0" style={{ letterSpacing: "0.5px", fontSize: "1.3rem" }}>
-                {facultadActual.nombre}
-              </span>
-              <small className="text-light opacity-75 d-none d-sm-inline-block">
-                {facultadActual.nombreCompleto}
-              </small>
-            </div>
-          </div>
-          <div className="d-flex align-items-center">
-            <Link to="/login" className="btn btn-light fw-bold ms-2" style={{ color: "#8A1538" }}>
-              Iniciar sesión
-            </Link>
-          </div>
+            <span className="navbar-logo-text">FISEI</span>
+          </Link>
+        </div>
+        <div className="navbar-links">
+          <Link to="/login" className="navbar-auth-btn login-btn">
+            Iniciar sesión
+          </Link>
+          <Link to="/registro" className="navbar-auth-btn register-btn">
+            Registrarse
+          </Link>
         </div>
       </nav>
     );
   }
-
   return (
     <nav className="navbar">
       <div className="navbar-left">
-        <Link to="/" className="navbar-logo">
-          AcademicEvents
+        <Link to="/home" className="navbar-logo-container">
+          <img
+            src="https://imgur.com/fch1iy6.png"
+            alt="Logo FISEI"
+            className="navbar-logo-img"
+          />
+          <span className="navbar-logo-text">FISEI</span>
         </Link>
 
         <div className="navbar-links">
           {usuario.rol_usu === "ESTUDIANTE" && (
-            <>
-              <Link to="/eventos">Eventos</Link>
-              <Link to="/inscripciones">Mis inscripciones</Link>
-              <Link to="/certificados">Certificados</Link>
+            <>              <Link to="/home" className="nav-link-item">
+              <span className="nav-link-icon"><Home size={18} /></span>
+              <span>Inicio</span>
+            </Link>
+              <Link to="/eventos" className="nav-link-item">
+                <span className="nav-link-icon"><Calendar size={18} /></span>
+                <span>Eventos</span>
+              </Link>
+              <Link to="/inscripciones" className="nav-link-item">
+                <span className="nav-link-icon"><ClipboardList size={18} /></span>
+                <span>Mis inscripciones</span>
+              </Link>
+              <Link to="/certificados" className="nav-link-item">
+                <span className="nav-link-icon"><GraduationCap size={18} /></span>
+                <span>Certificados</span>
+              </Link>
             </>
-          )}
-          {usuario.rol_usu === "ADMIN" && (
-            <>
-              <Link to="/admin/eventos">Gestionar eventos</Link>
-              <Link to="/admin/carreras">Gestionar carreras</Link>
+          )}{usuario.rol_usu === "ADMIN" && (
+            <>              <Link to="/admin" className="nav-link-item">
+              <span className="nav-link-icon"><Settings size={18} /></span>
+              <span>Panel Admin</span>
+            </Link>
+              <Link to="/admin/eventos" className="nav-link-item">
+                <span className="nav-link-icon"><FileText size={18} /></span>
+                <span>Gestionar eventos</span>
+              </Link>
+              <Link to="/admin/eventos/crear" className="nav-link-item">
+                <span className="nav-link-icon"><PlusCircle size={18} /></span>
+                <span>Crear evento</span>
+              </Link>
+              <Link to="/admin/carreras" className="nav-link-item">
+                <span className="nav-link-icon"><GraduationCap size={18} /></span>
+                <span>Gestionar carreras</span>
+              </Link>
             </>
           )}
         </div>
-      </div>
-
-      {/* Estilos adicionales para efectos hover en el dropdown */}
-      <style jsx>{`
-        .dropdown-menu {
-            margin-top: 0;
-            border: none;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-        .dropdown-item:hover {
-            background: linear-gradient(135deg, #8A1538 0%, #b23a5b 100%) !important;
-            color: white !important;
-        }
-        .dropdown-item:hover h6,
-        .dropdown-item:hover small {
-            color: white !important;
-        }
-        .dropdown-item:hover i {
-            color: white !important;
-        }
-      `}</style>
+      </div>      <button className="navbar-logout" onClick={cerrarSesion}>
+        <LogOut size={18} />
+        <span>Cerrar sesión</span>
+      </button>
     </nav>
   );
 };
 
 export default Navbar;
+//Andriu Dex
