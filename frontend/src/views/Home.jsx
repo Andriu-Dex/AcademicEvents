@@ -1,12 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import { Users, Microscope, TrendingUp, Laptop, Wrench, Zap, Factory, Target, Telescope, MessageSquare, Mail, Phone, Clock, MapPin, Calendar, GraduationCap } from "lucide-react";
+import "./styles/Home.css";
 
 function Home() {    // Simulación de usuario (puede ser null, estudiante o usuario general)
     // Para probar diferentes interfaces, descomentar una de estas opciones y comentar las otras
 
     // OPCIÓN 1: Sin usuario (público general)
-    const [usuario, setUsuario] = useState(null);
+    //const [usuario, setUsuario] = useState(null);
+
+    // OPCIÓN 2: Usuario Estudiante - Software
+    const [usuario, setUsuario] = useState({
+        id: 1,
+        nombre: "Juan Pérez",
+        email: "jperez@uta.edu.ec",
+        rol_usu: "ESTUDIANTE",
+        carrera: "SOFTWARE"
+    });
+
 
     // OPCIÓN 2: Usuario Estudiante - Software
     // const [usuario, setUsuario] = useState({
@@ -17,47 +29,18 @@ function Home() {    // Simulación de usuario (puede ser null, estudiante o usu
     //     carrera: "SOFTWARE"
     // });
 
-    // OPCIÓN 3: Usuario Estudiante - TI
-    // const [usuario, setUsuario] = useState({
-    //     id: 2,
-    //     nombre: "Ana Gómez",
-    //     email: "agomez@uta.edu.ec",
-    //     rol_usu: "ESTUDIANTE", 
-    //     carrera: "TI"
-    // });
-
-    // OPCIÓN 4: Usuario Estudiante - Industrial
-    // const [usuario, setUsuario] = useState({
-    //     id: 3,
-    //     nombre: "Carlos Rodríguez",
-    //     email: "crodriguez@uta.edu.ec",
-    //     rol_usu: "ESTUDIANTE", 
-    //     carrera: "INDUSTRIAL"
-    // });
-
-    // OPCIÓN 5: Usuario Administrador
-    // const [usuario, setUsuario] = useState({
-    //     id: 4,
-    //     nombre: "Admin UTA",
-    //     email: "admin@uta.edu.ec",
-    //     rol_usu: "ADMINISTRADOR"
-    // });
-
-    // Estado para carrusel de noticias
-    const [currentSlide, setCurrentSlide] = useState(0);    // Facultad actual (para contenido de la página)
+    // Facultad actual (para contenido de la página)
     const facultadActual = {
         nombre: "FISEI",
         nombreCompleto: "Facultad de Ingeniería en Sistemas, Electrónica e Industrial",
         logo: "https://imgur.com/fch1iy6.png",
-    };
-
-    // Estadísticas de la facultad
+    };    // Estadísticas de la facultad
     const stats = [
-        { number: "1,200+", label: "Estudiantes", icon: "👨‍🎓" },
-        { number: "45", label: "Docentes", icon: "👨‍🏫" },
-        { number: "8", label: "Laboratorios", icon: "🔬" },
-        { number: "95%", label: "Empleabilidad", icon: "📈" }
-    ];    // Autoridades de la facultad (actualizado a mayo de 2025)
+        { number: "1,200+", label: "Estudiantes", icon: <GraduationCap size={36} /> },
+        { number: "45", label: "Docentes", icon: <Users size={36} /> },
+        { number: "8", label: "Laboratorios", icon: <Microscope size={36} /> },
+        { number: "95%", label: "Empleabilidad", icon: <TrendingUp size={36} /> }
+    ];// Autoridades de la facultad (actualizado a mayo de 2025)
     const autoridades = [
         {
             cargo: "Decano",
@@ -83,121 +66,54 @@ function Home() {    // Simulación de usuario (puede ser null, estudiante o usu
             imagen: "/api/placeholder/200/250",
             email: "r.morales@uta.edu.ec"
         }
-    ];
-
-    // Carreras disponibles
+    ];    // Carreras disponibles
     const carreras = [
         {
             nombre: "Ingeniería en Software",
             descripcion: "Desarrollo de aplicaciones y sistemas informáticos",
             duracion: "9 semestres",
             modalidad: "Presencial",
-            icon: "💻"
+            icon: <Laptop size={36} />
         },
         {
             nombre: "Ingeniería en Sistemas",
             descripcion: "Administración y gestión de sistemas tecnológicos",
             duracion: "9 semestres",
             modalidad: "Presencial",
-            icon: "🔧"
+            icon: <Wrench size={36} />
         },
         {
             nombre: "Ingeniería Electrónica",
             descripcion: "Diseño y desarrollo de dispositivos electrónicos",
             duracion: "9 semestres",
             modalidad: "Presencial",
-            icon: "⚡"
+            icon: <Zap size={36} />
         },
         {
             nombre: "Ingeniería Industrial",
             descripcion: "Optimización de procesos y sistemas productivos",
             duracion: "9 semestres",
             modalidad: "Presencial",
-            icon: "🏭"
+            icon: <Factory size={36} />
         }
-    ];
-
-    // Noticias/Eventos recientes
-    const noticias = [
-        {
-            titulo: "Conferencia Internacional de IA",
-            fecha: "15 de Junio, 2025",
-            imagen: "/api/placeholder/300/200",
-            resumen: "Expertos internacionales compartirán las últimas tendencias en inteligencia artificial."
-        },
-        {
-            titulo: "Hackathon Universitario 2025",
-            fecha: "22 de Mayo, 2025",
-            imagen: "/api/placeholder/300/200",
-            resumen: "Competencia de programación de 48 horas con premios y oportunidades laborales."
-        },
-        {
-            titulo: "Taller de DevOps",
-            fecha: "28 de Mayo, 2025",
-            imagen: "/api/placeholder/300/200",
-            resumen: "Aprende las mejores prácticas de desarrollo y operaciones en la nube."
-        }
-    ];    // Información de misión y visión para cada carrera
-    const infoCardsPorCarrera = {
-        // Información general de la facultad
+    ]; const infoCardsPorCarrera = {
         GENERAL: [
             {
                 title: "Misión",
                 content: "Formar profesionales líderes competentes, con visión humanista y pensamiento crítico, a través de la Docencia, la Investigación y la Vinculación, que apliquen, promuevan y difundan el conocimiento respondiendo a las necesidades del país.",
-                icon: "🎯"
+                icon: <Target size={36} />
             },
             {
                 title: "Visión",
                 content: "La Facultad de Ingeniería en Sistemas, Electrónica e Industrial de la Universidad Técnica de Ambato por sus niveles de excelencia, se constituirá como un centro de formación superior con liderazgo y proyección nacional e internacional.",
-                icon: "🔭"
-            }
-        ],
-        // Información específica para la carrera de Software
-        SOFTWARE: [
-            {
-                title: "Misión",
-                content: "Formar ingenieros en software con sólidos conocimientos técnicos y éticos, capaces de diseñar, implementar y mantener soluciones informáticas innovadoras que resuelvan problemáticas reales en diferentes ámbitos, con enfoque sostenible y responsabilidad social.",
-                icon: "🎯"
-            },
-            {
-                title: "Visión",
-                content: "La carrera de Ingeniería en Software de la UTA se posicionará como referente nacional en la formación de profesionales especializados en el desarrollo de software de alta calidad, con reconocimiento por la excelencia de sus graduados y su impacto en la transformación digital del país.",
-                icon: "🔭"
-            }
-        ],
-        // Información específica para la carrera de TI
-        TI: [
-            {
-                title: "Misión",
-                content: "Formar profesionales en Tecnologías de la Información capaces de gestionar infraestructuras tecnológicas complejas, implementar soluciones de seguridad informática y administrar sistemas de información empresariales con altos estándares de calidad y eficiencia.",
-                icon: "🎯"
-            },
-            {
-                title: "Visión",
-                content: "La carrera de Ingeniería en Tecnologías de la Información será reconocida por la formación integral de profesionales líderes en la implementación y gestión de infraestructuras tecnológicas avanzadas, contribuyendo activamente al desarrollo tecnológico del Ecuador.",
-                icon: "🔭"
-            }
-        ],
-        // Información específica para la carrera de Industrial
-        INDUSTRIAL: [
-            {
-                title: "Misión",
-                content: "Formar ingenieros industriales con capacidades para optimizar sistemas productivos y de servicios, aplicando técnicas modernas de gestión, automatización y mejora continua, con enfoque en la sostenibilidad y adaptación a los cambios del entorno global.",
-                icon: "🎯"
-            },
-            {
-                title: "Visión",
-                content: "La carrera de Ingeniería Industrial será reconocida a nivel nacional por la formación de profesionales competentes en la gestión eficiente de procesos productivos, comprometidos con el desarrollo industrial sostenible y con capacidad para implementar tecnologías de vanguardia en el sector empresarial.",
-                icon: "🔭"
+                icon: <Telescope size={36} />
             }
         ]
     };
 
-    // Seleccionar los infoCards según el tipo de usuario y su carrera
-    const infoCards = usuario?.rol_usu === "ESTUDIANTE" && usuario?.carrera
-        ? infoCardsPorCarrera[usuario.carrera]
-        : infoCardsPorCarrera.GENERAL;
 
+    // Seleccionar los infoCards según el tipo de usuario y su carrera
+    const infoCards = infoCardsPorCarrera.GENERAL;
     // Cargar Bootstrap dinámicamente si no está presente
     useEffect(() => {
         const id = "bootstrap-css";
@@ -208,13 +124,6 @@ function Home() {    // Simulación de usuario (puede ser null, estudiante o usu
             link.href = "https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css";
             document.head.appendChild(link);
         }
-
-        // Auto-slide para noticias
-        const interval = setInterval(() => {
-            setCurrentSlide((prev) => (prev + 1) % noticias.length);
-        }, 5000);
-
-        return () => clearInterval(interval);
     }, []);    // Determina si el usuario está autenticado
     const isAuthenticated = usuario ? true : false;
 
@@ -248,7 +157,7 @@ function Home() {    // Simulación de usuario (puede ser null, estudiante o usu
                             Formando profesionales líderes con visión humanista y pensamiento crítico para
                             responder a las necesidades tecnológicas del país.
                         </p>
-                        <div className="d-flex gap-3 flex-wrap">                                <Link
+                        <div className="d-flex gap-3 flex-wrap">                            <Link
                             to="/eventos"
                             className="btn btn-light fw-bold animate__animated animate__fadeInUp"
                             style={{
@@ -258,7 +167,7 @@ function Home() {    // Simulación de usuario (puede ser null, estudiante o usu
                                 padding: "12px 24px"
                             }}
                         >
-                            📅 Explorar eventos
+                            <Calendar size={18} className="me-2" /> Explorar eventos
                         </Link>
                             <Link
                                 to="/carreras"
@@ -269,7 +178,7 @@ function Home() {    // Simulación de usuario (puede ser null, estudiante o usu
                                     padding: "12px 24px"
                                 }}
                             >
-                                🎓 Ver carreras
+                                <GraduationCap size={18} className="me-2" /> Ver carreras
                             </Link>
                         </div>
                     </div>
@@ -288,31 +197,6 @@ function Home() {    // Simulación de usuario (puede ser null, estudiante o usu
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        {/* Noticias y Eventos Recientes */}
-        <div className="container mb-5">
-            <div className="row justify-content-center mb-4">
-                <div className="col-lg-6 text-center">
-                    <h2 className="fw-bold" style={{ color: "#8A1538" }}>Últimas Noticias y Eventos</h2>
-                    <p className="text-muted">Mantente al día con las actividades de la facultad</p>
-                </div>
-            </div>
-            <div className="row g-4">
-                {noticias.map((noticia, index) => (
-                    <div className="col-md-4" key={index}>
-                        <div className="card h-100 shadow-sm border-0 hover-card">
-                            <img src={noticia.imagen} className="card-img-top" alt={noticia.titulo} style={{ height: "200px", objectFit: "cover" }} />
-                            <div className="card-body">
-                                <span className="badge mb-2" style={{ background: "#8A1538", color: "white" }}>{noticia.fecha}</span>
-                                <h5 className="card-title fw-bold">{noticia.titulo}</h5>
-                                <p className="card-text text-muted">{noticia.resumen}</p>
-                                <Link to="/noticias" className="btn btn-outline-primary btn-sm">Leer más</Link>
-                            </div>
-                        </div>
-                    </div>
-                ))}
             </div>
         </div>
 
@@ -336,9 +220,8 @@ function Home() {    // Simulación de usuario (puede ser null, estudiante o usu
                                     style={{ width: "120px", height: "120px", objectFit: "cover" }}
                                 />
                                 <h5 className="card-title fw-bold" style={{ color: "#8A1538" }}>{autoridad.nombre}</h5>
-                                <p className="text-muted fw-semibold">{autoridad.cargo}</p>
-                                <a href={`mailto:${autoridad.email}`} className="btn btn-outline-primary btn-sm">
-                                    📧 Contactar
+                                <p className="text-muted fw-semibold">{autoridad.cargo}</p>                                <a href={`mailto:${autoridad.email}`} className="btn btn-outline-primary btn-sm">
+                                    <Mail size={14} className="me-1" /> Contactar
                                 </a>
                             </div>
                         </div>
@@ -362,10 +245,9 @@ function Home() {    // Simulación de usuario (puede ser null, estudiante o usu
                             <div className="card-body text-center p-4">
                                 <div className="display-4 mb-3">{carrera.icon}</div>
                                 <h5 className="card-title fw-bold" style={{ color: "#8A1538" }}>{carrera.nombre}</h5>
-                                <p className="card-text small text-muted mb-3">{carrera.descripcion}</p>
-                                <div className="mb-3">
-                                    <span className="badge bg-light text-dark me-2">⏱️ {carrera.duracion}</span>
-                                    <span className="badge bg-light text-dark">📍 {carrera.modalidad}</span>
+                                <p className="card-text small text-muted mb-3">{carrera.descripcion}</p>                                    <div className="mb-3">
+                                    <span className="badge bg-light text-dark me-2"><Clock size={14} className="me-1" /> {carrera.duracion}</span>
+                                    <span className="badge bg-light text-dark"><MapPin size={14} className="me-1" /> {carrera.modalidad}</span>
                                 </div>
                                 <Link to="/carreras" className="btn btn-sm" style={{ background: "#8A1538", color: "white" }}>
                                     Más información
@@ -422,16 +304,15 @@ function Home() {    // Simulación de usuario (puede ser null, estudiante o usu
                 background: "linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)",
                 borderTop: "4px solid #8A1538"
             }}>
-                <div className="row align-items-center">
-                    <div className="col-md-8">
-                        <h3 className="fw-bold mb-3" style={{ color: "#8A1538" }}>
-                            💬 ¿Necesitas información adicional?
-                        </h3>
-                        <p className="mb-md-0">
-                            Nuestro equipo de atención está disponible para resolver todas tus dudas sobre inscripciones,
-                            carreras y procesos académicos.
-                        </p>
-                    </div>
+                <div className="row align-items-center">                    <div className="col-md-8">
+                    <h3 className="fw-bold mb-3" style={{ color: "#8A1538" }}>
+                        <MessageSquare size={24} className="me-2" style={{ verticalAlign: 'middle' }} /> ¿Necesitas información adicional?
+                    </h3>
+                    <p className="mb-md-0">
+                        Nuestro equipo de atención está disponible para resolver todas tus dudas sobre inscripciones,
+                        carreras y procesos académicos.
+                    </p>
+                </div>
                     <div className="col-md-4 text-md-end">
                         <a
                             href="mailto:info@uta.edu.ec"
@@ -442,14 +323,14 @@ function Home() {    // Simulación de usuario (puede ser null, estudiante o usu
                                 borderRadius: "8px",
                             }}
                         >
-                            📧 Contáctanos
+                            <Mail size={18} className="me-2" /> Contáctanos
                         </a>
                         <a
                             href="tel:032521081"
                             className="btn btn-outline-secondary fw-bold btn-lg mb-2"
                             style={{ borderRadius: "8px" }}
                         >
-                            📞 Llamar
+                            <Phone size={18} className="me-2" /> Llamar
                         </a>
                     </div>
                 </div>
@@ -485,16 +366,14 @@ function Home() {    // Simulación de usuario (puede ser null, estudiante o usu
                         <h6 className="mb-3">Información</h6>
                         <ul className="list-unstyled mb-0">
                             <li className="mb-2"><Link to="/autoridades" className="text-white text-decoration-none small">Autoridades</Link></li>
-                            <li className="mb-2"><Link to="/noticias" className="text-white text-decoration-none small">Noticias</Link></li>
                             <li className="mb-2"><Link to="/eventos" className="text-white text-decoration-none small">Eventos</Link></li>
                         </ul>
                     </div>
                     <div className="col-md-3">
                         <h6 className="mb-3">Contacto</h6>
-                        <ul className="list-unstyled mb-0">
-                            <li className="mb-2 small"><i className="bi bi-geo-alt me-2"></i> Av. de los Chasquis, Ambato</li>
-                            <li className="mb-2 small"><i className="bi bi-envelope me-2"></i> info@uta.edu.ec</li>
-                            <li className="mb-2 small"><i className="bi bi-telephone me-2"></i> (03) 252-1081</li>
+                        <ul className="list-unstyled mb-0">                            <li className="mb-2 small"><MapPin size={14} className="me-2" /> Av. de los Chasquis, Ambato</li>
+                            <li className="mb-2 small"><Mail size={14} className="me-2" /> info@uta.edu.ec</li>
+                            <li className="mb-2 small"><Phone size={14} className="me-2" /> (03) 252-1081</li>
                         </ul>
                     </div>
                 </div>
