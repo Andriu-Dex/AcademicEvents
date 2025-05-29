@@ -198,10 +198,8 @@ function Home() {    // Simulación de usuario (puede ser null, estudiante o usu
                     </div>
                 </div>
             </div>
-        </div>
-
-        {/* Autoridades */}
-        <div className="container mb-5">
+        </div>        {/* Autoridades */}
+        <div className="container mb-5" id="autoridades">
             <div className="row justify-content-center mb-4">
                 <div className="col-lg-6 text-center">
                     <h2 className="fw-bold" style={{ color: "#8A1538" }}>Autoridades de la Facultad</h2>
@@ -228,10 +226,8 @@ function Home() {    // Simulación de usuario (puede ser null, estudiante o usu
                     </div>
                 ))}
             </div>
-        </div>
-
-        {/* Carreras Disponibles */}
-        <div className="container mb-5">
+        </div>        {/* Carreras Disponibles */}
+        <div className="container mb-5" id="carreras">
             <div className="row justify-content-center mb-4">
                 <div className="col-lg-6 text-center">
                     <h2 className="fw-bold" style={{ color: "#8A1538" }}>Nuestras Carreras</h2>
@@ -258,7 +254,7 @@ function Home() {    // Simulación de usuario (puede ser null, estudiante o usu
                 ))}
             </div>
         </div>        {/* Misión y Visión */}
-        <div className="container mb-5">
+        <div className="container mb-5" id="mision-vision">
             <div className="row justify-content-center mb-4">
                 <div className="col-lg-6 text-center">
                     <h2 className="fw-bold" style={{ color: "#8A1538" }}>
@@ -361,12 +357,12 @@ function Home() {    // Simulación de usuario (puede ser null, estudiante o usu
                             <li className="mb-2"><Link to="/inscripciones" className="text-white text-decoration-none small">Inscripciones</Link></li>
                             <li className="mb-2"><Link to="/certificados" className="text-white text-decoration-none small">Certificados</Link></li>
                         </ul>
-                    </div>
-                    <div className="col-md-3 mb-3 mb-md-0">
+                    </div>                    <div className="col-md-3 mb-3 mb-md-0">
                         <h6 className="mb-3">Información</h6>
                         <ul className="list-unstyled mb-0">
-                            <li className="mb-2"><Link to="/autoridades" className="text-white text-decoration-none small">Autoridades</Link></li>
-                            <li className="mb-2"><Link to="/eventos" className="text-white text-decoration-none small">Eventos</Link></li>
+                            <li className="mb-2"><a href="#autoridades" className="text-white text-decoration-none small">Autoridades</a></li>
+                            <li className="mb-2"><a href="#carreras" className="text-white text-decoration-none small">Carreras</a></li>
+                            <li className="mb-2"><a href="#mision-vision" className="text-white text-decoration-none small">Misión y Visión</a></li>
                         </ul>
                     </div>
                     <div className="col-md-3">
@@ -392,9 +388,7 @@ function Home() {    // Simulación de usuario (puede ser null, estudiante o usu
                     </div>
                 </div>
             </div>
-        </footer>
-
-        {/* Estilos adicionales para efectos hover */}            <style jsx>{`
+        </footer>        {/* Estilos adicionales para efectos hover */}            <style jsx>{`
                 .hover-card {
                     transition: all 0.3s ease;
                     cursor: pointer;
@@ -416,6 +410,12 @@ function Home() {    // Simulación de usuario (puede ser null, estudiante o usu
                 }
                 .animate__animated.animate__fadeInUp {
                     animation: fadeInUp 0.6s ease-out;
+                }
+                html {
+                    scroll-behavior: smooth;
+                }
+                :target {
+                    scroll-margin-top: 80px;
                 }
             `}</style>
     </div>
