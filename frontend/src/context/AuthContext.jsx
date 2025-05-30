@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import { setLogoutFunction } from "../api/axiosConfig";
 
 // Crea el contexto de autenticación
 export const AuthContext = createContext();
@@ -29,13 +30,18 @@ export const AuthProvider = ({ children }) => {
     // Comprobar el token se guarda correctamente
     console.log("TOKEN:", localStorage.getItem("token"));
   };
-
   // Cerrar sesión y limpiar localStorage
   const logout = () => {
     setUsuario(null);
     setToken(null);
     localStorage.removeItem("authData");
+    localStorage.removeItem("token");
   };
+
+  // Configurar la función de logout en axios al montar el componente
+  useEffect(() => {
+    setLogoutFunction(logout);
+  }, []);
 
   return (
     <AuthContext.Provider value={{ usuario, token, login, logout, loading }}>

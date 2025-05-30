@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axiosInstance from "../api/axiosConfig";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -24,12 +24,7 @@ const EventsRoute = () => {
 
     const obtenerEventos = async () => {
       try {
-        const res = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/eventos`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        const res = await axiosInstance.get("/eventos");
         setEventos(res.data);
       } catch {
         toast.error("Error al obtener eventos");
@@ -44,15 +39,8 @@ const EventsRoute = () => {
       try {
         const res = await Promise.all(
           eventos.map((ev) =>
-            axios
-              .get(
-                `${import.meta.env.VITE_API_URL}/api/inscripciones/${
-                  ev.id_eve
-                }`,
-                {
-                  headers: { Authorization: `Bearer ${token}` },
-                }
-              )
+            axiosInstance
+              .get(`/inscripciones/${ev.id_eve}`)
               .then((r) => ({ eventoId: ev.id_eve, inscrito: true }))
               .catch((err) =>
                 err.response?.status === 404
@@ -96,18 +84,12 @@ const EventsRoute = () => {
     formData.append("id_usu", usuario.id);
     formData.append("id_eve", eventoSeleccionado.id_eve);
     formData.append("archivo", archivo);
-
     try {
-      await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/inscripciones`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      await axiosInstance.post("/inscripciones", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       toast.success("Inscripción enviada con éxito");
       setEventoSeleccionado(null);
@@ -161,14 +143,39 @@ const EventsRoute = () => {
             )
             .map((evento) => (
               <div key={evento.id_eve} className="evento-card">
-                <h2>{evento.nom_eve}</h2>
+                {/* Imagen de portada (real o placeholder) */}
+                <img
+                  src={evento.img_por_eve || "https://i.imgur.com/c6Ry30Z.jpeg"}
+                  alt={`Portada de ${evento.nom_eve}`}
+                  className="evento-portada"
+                  style={{
+                    width: "100%",
+                    height: "180px",
+                    objectFit: "cover",
+                    borderRadius: "8px 8px 0 0",
+                    marginBottom: "0.5rem",
+                  }}
+                />
+                <h2 className="nombre-evento-er">{evento.nom_eve}</h2>
                 <p className="tipo">{evento.tip_eve}</p>
-                <p>
+                <p className="fecha-evento-er">
                   Fecha:{" "}
                   {new Date(evento.fec_ini_eve).toLocaleDateString("es-EC")} a{" "}
                   {new Date(evento.fec_fin_eve).toLocaleDateString("es-EC")}
                 </p>
-                <p>Duración: {evento.dur_hrs_eve} horas</p>
+                <p className="duracion-evento-er">
+                  Duración: {evento.dur_hrs_eve} horas
+                </p>
+                {/* Modalidad si existe */}
+                {evento.modalidad && (
+                  <p className="modalidad">Modalidad: {evento.modalidad}</p>
+                )}
+                {/* Público objetivo si existe */}
+                {evento.publico_objetivo && (
+                  <p className="publico">
+                    Dirigido a: {evento.publico_objetivo}
+                  </p>
+                )}
                 {evento.pagado_eve && <p className="pago">Pagado</p>}
                 <button
                   onClick={() => setEventoSeleccionado(evento)}
@@ -190,7 +197,7 @@ const EventsRoute = () => {
               type="file"
               accept=".pdf,.jpg,.jpeg,.png"
               onChange={(e) => setArchivo(e.target.files[0])}
-              className="modal-input"
+              className="modal-input-er"
             />
 
             {archivo && (
@@ -222,7 +229,7 @@ const EventsRoute = () => {
                   setEventoSeleccionado(null);
                   setArchivo(null);
                 }}
-                className="btn-cancelar"
+                className="btn-cancelar-er"
               >
                 Cancelar
               </button>

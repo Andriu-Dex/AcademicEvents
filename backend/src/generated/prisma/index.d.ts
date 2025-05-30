@@ -29,15 +29,30 @@ export type carrera = $Result.DefaultSelection<Prisma.$carreraPayload>
  */
 export type evento = $Result.DefaultSelection<Prisma.$eventoPayload>
 /**
+ * Model evento_curso
+ * 
+ */
+export type evento_curso = $Result.DefaultSelection<Prisma.$evento_cursoPayload>
+/**
+ * Model evento_carrera
+ * 
+ */
+export type evento_carrera = $Result.DefaultSelection<Prisma.$evento_carreraPayload>
+/**
  * Model inscripcion
  * 
  */
 export type inscripcion = $Result.DefaultSelection<Prisma.$inscripcionPayload>
 /**
- * Model configuracion
+ * Model inscripcion_curso
  * 
  */
-export type configuracion = $Result.DefaultSelection<Prisma.$configuracionPayload>
+export type inscripcion_curso = $Result.DefaultSelection<Prisma.$inscripcion_cursoPayload>
+/**
+ * Model facultad
+ * 
+ */
+export type facultad = $Result.DefaultSelection<Prisma.$facultadPayload>
 
 /**
  * Enums
@@ -45,7 +60,8 @@ export type configuracion = $Result.DefaultSelection<Prisma.$configuracionPayloa
 export namespace $Enums {
   export const rol_usuario: {
   ADMIN: 'ADMIN',
-  ESTUDIANTE: 'ESTUDIANTE'
+  ESTUDIANTE: 'ESTUDIANTE',
+  GENERAL: 'GENERAL'
 };
 
 export type rol_usuario = (typeof rol_usuario)[keyof typeof rol_usuario]
@@ -72,6 +88,17 @@ export const estado_inscripcion: {
 
 export type estado_inscripcion = (typeof estado_inscripcion)[keyof typeof estado_inscripcion]
 
+
+export const estado_evento: {
+  ACTIVO: 'ACTIVO',
+  INACTIVO: 'INACTIVO',
+  FINALIZADO: 'FINALIZADO',
+  CANCELADO: 'CANCELADO',
+  SUSPENDIDO: 'SUSPENDIDO'
+};
+
+export type estado_evento = (typeof estado_evento)[keyof typeof estado_evento]
+
 }
 
 export type rol_usuario = $Enums.rol_usuario
@@ -85,6 +112,10 @@ export const tipo_evento: typeof $Enums.tipo_evento
 export type estado_inscripcion = $Enums.estado_inscripcion
 
 export const estado_inscripcion: typeof $Enums.estado_inscripcion
+
+export type estado_evento = $Enums.estado_evento
+
+export const estado_evento: typeof $Enums.estado_evento
 
 /**
  * ##  Prisma Client ʲˢ
@@ -242,6 +273,26 @@ export class PrismaClient<
   get evento(): Prisma.eventoDelegate<ExtArgs, ClientOptions>;
 
   /**
+   * `prisma.evento_curso`: Exposes CRUD operations for the **evento_curso** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Evento_cursos
+    * const evento_cursos = await prisma.evento_curso.findMany()
+    * ```
+    */
+  get evento_curso(): Prisma.evento_cursoDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.evento_carrera`: Exposes CRUD operations for the **evento_carrera** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Evento_carreras
+    * const evento_carreras = await prisma.evento_carrera.findMany()
+    * ```
+    */
+  get evento_carrera(): Prisma.evento_carreraDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.inscripcion`: Exposes CRUD operations for the **inscripcion** model.
     * Example usage:
     * ```ts
@@ -252,14 +303,24 @@ export class PrismaClient<
   get inscripcion(): Prisma.inscripcionDelegate<ExtArgs, ClientOptions>;
 
   /**
-   * `prisma.configuracion`: Exposes CRUD operations for the **configuracion** model.
+   * `prisma.inscripcion_curso`: Exposes CRUD operations for the **inscripcion_curso** model.
     * Example usage:
     * ```ts
-    * // Fetch zero or more Configuracions
-    * const configuracions = await prisma.configuracion.findMany()
+    * // Fetch zero or more Inscripcion_cursos
+    * const inscripcion_cursos = await prisma.inscripcion_curso.findMany()
     * ```
     */
-  get configuracion(): Prisma.configuracionDelegate<ExtArgs, ClientOptions>;
+  get inscripcion_curso(): Prisma.inscripcion_cursoDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.facultad`: Exposes CRUD operations for the **facultad** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Facultads
+    * const facultads = await prisma.facultad.findMany()
+    * ```
+    */
+  get facultad(): Prisma.facultadDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -703,8 +764,11 @@ export namespace Prisma {
     usuario: 'usuario',
     carrera: 'carrera',
     evento: 'evento',
+    evento_curso: 'evento_curso',
+    evento_carrera: 'evento_carrera',
     inscripcion: 'inscripcion',
-    configuracion: 'configuracion'
+    inscripcion_curso: 'inscripcion_curso',
+    facultad: 'facultad'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -723,7 +787,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "usuario" | "carrera" | "evento" | "inscripcion" | "configuracion"
+      modelProps: "usuario" | "carrera" | "evento" | "evento_curso" | "evento_carrera" | "inscripcion" | "inscripcion_curso" | "facultad"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -949,6 +1013,154 @@ export namespace Prisma {
           }
         }
       }
+      evento_curso: {
+        payload: Prisma.$evento_cursoPayload<ExtArgs>
+        fields: Prisma.evento_cursoFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.evento_cursoFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$evento_cursoPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.evento_cursoFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$evento_cursoPayload>
+          }
+          findFirst: {
+            args: Prisma.evento_cursoFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$evento_cursoPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.evento_cursoFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$evento_cursoPayload>
+          }
+          findMany: {
+            args: Prisma.evento_cursoFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$evento_cursoPayload>[]
+          }
+          create: {
+            args: Prisma.evento_cursoCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$evento_cursoPayload>
+          }
+          createMany: {
+            args: Prisma.evento_cursoCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.evento_cursoCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$evento_cursoPayload>[]
+          }
+          delete: {
+            args: Prisma.evento_cursoDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$evento_cursoPayload>
+          }
+          update: {
+            args: Prisma.evento_cursoUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$evento_cursoPayload>
+          }
+          deleteMany: {
+            args: Prisma.evento_cursoDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.evento_cursoUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.evento_cursoUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$evento_cursoPayload>[]
+          }
+          upsert: {
+            args: Prisma.evento_cursoUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$evento_cursoPayload>
+          }
+          aggregate: {
+            args: Prisma.Evento_cursoAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateEvento_curso>
+          }
+          groupBy: {
+            args: Prisma.evento_cursoGroupByArgs<ExtArgs>
+            result: $Utils.Optional<Evento_cursoGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.evento_cursoCountArgs<ExtArgs>
+            result: $Utils.Optional<Evento_cursoCountAggregateOutputType> | number
+          }
+        }
+      }
+      evento_carrera: {
+        payload: Prisma.$evento_carreraPayload<ExtArgs>
+        fields: Prisma.evento_carreraFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.evento_carreraFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$evento_carreraPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.evento_carreraFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$evento_carreraPayload>
+          }
+          findFirst: {
+            args: Prisma.evento_carreraFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$evento_carreraPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.evento_carreraFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$evento_carreraPayload>
+          }
+          findMany: {
+            args: Prisma.evento_carreraFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$evento_carreraPayload>[]
+          }
+          create: {
+            args: Prisma.evento_carreraCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$evento_carreraPayload>
+          }
+          createMany: {
+            args: Prisma.evento_carreraCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.evento_carreraCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$evento_carreraPayload>[]
+          }
+          delete: {
+            args: Prisma.evento_carreraDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$evento_carreraPayload>
+          }
+          update: {
+            args: Prisma.evento_carreraUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$evento_carreraPayload>
+          }
+          deleteMany: {
+            args: Prisma.evento_carreraDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.evento_carreraUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.evento_carreraUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$evento_carreraPayload>[]
+          }
+          upsert: {
+            args: Prisma.evento_carreraUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$evento_carreraPayload>
+          }
+          aggregate: {
+            args: Prisma.Evento_carreraAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateEvento_carrera>
+          }
+          groupBy: {
+            args: Prisma.evento_carreraGroupByArgs<ExtArgs>
+            result: $Utils.Optional<Evento_carreraGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.evento_carreraCountArgs<ExtArgs>
+            result: $Utils.Optional<Evento_carreraCountAggregateOutputType> | number
+          }
+        }
+      }
       inscripcion: {
         payload: Prisma.$inscripcionPayload<ExtArgs>
         fields: Prisma.inscripcionFieldRefs
@@ -1023,77 +1235,151 @@ export namespace Prisma {
           }
         }
       }
-      configuracion: {
-        payload: Prisma.$configuracionPayload<ExtArgs>
-        fields: Prisma.configuracionFieldRefs
+      inscripcion_curso: {
+        payload: Prisma.$inscripcion_cursoPayload<ExtArgs>
+        fields: Prisma.inscripcion_cursoFieldRefs
         operations: {
           findUnique: {
-            args: Prisma.configuracionFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$configuracionPayload> | null
+            args: Prisma.inscripcion_cursoFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$inscripcion_cursoPayload> | null
           }
           findUniqueOrThrow: {
-            args: Prisma.configuracionFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$configuracionPayload>
+            args: Prisma.inscripcion_cursoFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$inscripcion_cursoPayload>
           }
           findFirst: {
-            args: Prisma.configuracionFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$configuracionPayload> | null
+            args: Prisma.inscripcion_cursoFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$inscripcion_cursoPayload> | null
           }
           findFirstOrThrow: {
-            args: Prisma.configuracionFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$configuracionPayload>
+            args: Prisma.inscripcion_cursoFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$inscripcion_cursoPayload>
           }
           findMany: {
-            args: Prisma.configuracionFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$configuracionPayload>[]
+            args: Prisma.inscripcion_cursoFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$inscripcion_cursoPayload>[]
           }
           create: {
-            args: Prisma.configuracionCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$configuracionPayload>
+            args: Prisma.inscripcion_cursoCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$inscripcion_cursoPayload>
           }
           createMany: {
-            args: Prisma.configuracionCreateManyArgs<ExtArgs>
+            args: Prisma.inscripcion_cursoCreateManyArgs<ExtArgs>
             result: BatchPayload
           }
           createManyAndReturn: {
-            args: Prisma.configuracionCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$configuracionPayload>[]
+            args: Prisma.inscripcion_cursoCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$inscripcion_cursoPayload>[]
           }
           delete: {
-            args: Prisma.configuracionDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$configuracionPayload>
+            args: Prisma.inscripcion_cursoDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$inscripcion_cursoPayload>
           }
           update: {
-            args: Prisma.configuracionUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$configuracionPayload>
+            args: Prisma.inscripcion_cursoUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$inscripcion_cursoPayload>
           }
           deleteMany: {
-            args: Prisma.configuracionDeleteManyArgs<ExtArgs>
+            args: Prisma.inscripcion_cursoDeleteManyArgs<ExtArgs>
             result: BatchPayload
           }
           updateMany: {
-            args: Prisma.configuracionUpdateManyArgs<ExtArgs>
+            args: Prisma.inscripcion_cursoUpdateManyArgs<ExtArgs>
             result: BatchPayload
           }
           updateManyAndReturn: {
-            args: Prisma.configuracionUpdateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$configuracionPayload>[]
+            args: Prisma.inscripcion_cursoUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$inscripcion_cursoPayload>[]
           }
           upsert: {
-            args: Prisma.configuracionUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$configuracionPayload>
+            args: Prisma.inscripcion_cursoUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$inscripcion_cursoPayload>
           }
           aggregate: {
-            args: Prisma.ConfiguracionAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateConfiguracion>
+            args: Prisma.Inscripcion_cursoAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateInscripcion_curso>
           }
           groupBy: {
-            args: Prisma.configuracionGroupByArgs<ExtArgs>
-            result: $Utils.Optional<ConfiguracionGroupByOutputType>[]
+            args: Prisma.inscripcion_cursoGroupByArgs<ExtArgs>
+            result: $Utils.Optional<Inscripcion_cursoGroupByOutputType>[]
           }
           count: {
-            args: Prisma.configuracionCountArgs<ExtArgs>
-            result: $Utils.Optional<ConfiguracionCountAggregateOutputType> | number
+            args: Prisma.inscripcion_cursoCountArgs<ExtArgs>
+            result: $Utils.Optional<Inscripcion_cursoCountAggregateOutputType> | number
+          }
+        }
+      }
+      facultad: {
+        payload: Prisma.$facultadPayload<ExtArgs>
+        fields: Prisma.facultadFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.facultadFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$facultadPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.facultadFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$facultadPayload>
+          }
+          findFirst: {
+            args: Prisma.facultadFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$facultadPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.facultadFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$facultadPayload>
+          }
+          findMany: {
+            args: Prisma.facultadFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$facultadPayload>[]
+          }
+          create: {
+            args: Prisma.facultadCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$facultadPayload>
+          }
+          createMany: {
+            args: Prisma.facultadCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.facultadCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$facultadPayload>[]
+          }
+          delete: {
+            args: Prisma.facultadDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$facultadPayload>
+          }
+          update: {
+            args: Prisma.facultadUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$facultadPayload>
+          }
+          deleteMany: {
+            args: Prisma.facultadDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.facultadUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.facultadUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$facultadPayload>[]
+          }
+          upsert: {
+            args: Prisma.facultadUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$facultadPayload>
+          }
+          aggregate: {
+            args: Prisma.FacultadAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateFacultad>
+          }
+          groupBy: {
+            args: Prisma.facultadGroupByArgs<ExtArgs>
+            result: $Utils.Optional<FacultadGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.facultadCountArgs<ExtArgs>
+            result: $Utils.Optional<FacultadCountAggregateOutputType> | number
           }
         }
       }
@@ -1184,8 +1470,11 @@ export namespace Prisma {
     usuario?: usuarioOmit
     carrera?: carreraOmit
     evento?: eventoOmit
+    evento_curso?: evento_cursoOmit
+    evento_carrera?: evento_carreraOmit
     inscripcion?: inscripcionOmit
-    configuracion?: configuracionOmit
+    inscripcion_curso?: inscripcion_cursoOmit
+    facultad?: facultadOmit
   }
 
   /* Types for Logging */
@@ -1311,10 +1600,12 @@ export namespace Prisma {
    */
 
   export type CarreraCountOutputType = {
+    usuario: number
     eventos: number
   }
 
   export type CarreraCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    usuario?: boolean | CarreraCountOutputTypeCountUsuarioArgs
     eventos?: boolean | CarreraCountOutputTypeCountEventosArgs
   }
 
@@ -1332,8 +1623,15 @@ export namespace Prisma {
   /**
    * CarreraCountOutputType without action
    */
+  export type CarreraCountOutputTypeCountUsuarioArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: usuarioWhereInput
+  }
+
+  /**
+   * CarreraCountOutputType without action
+   */
   export type CarreraCountOutputTypeCountEventosArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: eventoWhereInput
+    where?: evento_carreraWhereInput
   }
 
 
@@ -1342,11 +1640,13 @@ export namespace Prisma {
    */
 
   export type EventoCountOutputType = {
-    inscripciones: number
+    inscritos: number
+    eventos_carrera: number
   }
 
   export type EventoCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    inscripciones?: boolean | EventoCountOutputTypeCountInscripcionesArgs
+    inscritos?: boolean | EventoCountOutputTypeCountInscritosArgs
+    eventos_carrera?: boolean | EventoCountOutputTypeCountEventos_carreraArgs
   }
 
   // Custom InputTypes
@@ -1363,8 +1663,46 @@ export namespace Prisma {
   /**
    * EventoCountOutputType without action
    */
-  export type EventoCountOutputTypeCountInscripcionesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type EventoCountOutputTypeCountInscritosArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: inscripcionWhereInput
+  }
+
+  /**
+   * EventoCountOutputType without action
+   */
+  export type EventoCountOutputTypeCountEventos_carreraArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: evento_carreraWhereInput
+  }
+
+
+  /**
+   * Count Type FacultadCountOutputType
+   */
+
+  export type FacultadCountOutputType = {
+    carreras: number
+  }
+
+  export type FacultadCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    carreras?: boolean | FacultadCountOutputTypeCountCarrerasArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * FacultadCountOutputType without action
+   */
+  export type FacultadCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FacultadCountOutputType
+     */
+    select?: FacultadCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * FacultadCountOutputType without action
+   */
+  export type FacultadCountOutputTypeCountCarrerasArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: carreraWhereInput
   }
 
 
@@ -1392,8 +1730,8 @@ export namespace Prisma {
     cel_usu: string | null
     rol_usu: $Enums.rol_usuario | null
     fec_cre_usu: Date | null
-    comprobante: string | null
-    carrera: string | null
+    com_usu: string | null
+    id_car_est: string | null
   }
 
   export type UsuarioMaxAggregateOutputType = {
@@ -1406,8 +1744,8 @@ export namespace Prisma {
     cel_usu: string | null
     rol_usu: $Enums.rol_usuario | null
     fec_cre_usu: Date | null
-    comprobante: string | null
-    carrera: string | null
+    com_usu: string | null
+    id_car_est: string | null
   }
 
   export type UsuarioCountAggregateOutputType = {
@@ -1420,8 +1758,8 @@ export namespace Prisma {
     cel_usu: number
     rol_usu: number
     fec_cre_usu: number
-    comprobante: number
-    carrera: number
+    com_usu: number
+    id_car_est: number
     _all: number
   }
 
@@ -1436,8 +1774,8 @@ export namespace Prisma {
     cel_usu?: true
     rol_usu?: true
     fec_cre_usu?: true
-    comprobante?: true
-    carrera?: true
+    com_usu?: true
+    id_car_est?: true
   }
 
   export type UsuarioMaxAggregateInputType = {
@@ -1450,8 +1788,8 @@ export namespace Prisma {
     cel_usu?: true
     rol_usu?: true
     fec_cre_usu?: true
-    comprobante?: true
-    carrera?: true
+    com_usu?: true
+    id_car_est?: true
   }
 
   export type UsuarioCountAggregateInputType = {
@@ -1464,8 +1802,8 @@ export namespace Prisma {
     cel_usu?: true
     rol_usu?: true
     fec_cre_usu?: true
-    comprobante?: true
-    carrera?: true
+    com_usu?: true
+    id_car_est?: true
     _all?: true
   }
 
@@ -1551,8 +1889,8 @@ export namespace Prisma {
     cel_usu: string
     rol_usu: $Enums.rol_usuario
     fec_cre_usu: Date
-    comprobante: string | null
-    carrera: string | null
+    com_usu: string | null
+    id_car_est: string | null
     _count: UsuarioCountAggregateOutputType | null
     _min: UsuarioMinAggregateOutputType | null
     _max: UsuarioMaxAggregateOutputType | null
@@ -1582,8 +1920,9 @@ export namespace Prisma {
     cel_usu?: boolean
     rol_usu?: boolean
     fec_cre_usu?: boolean
-    comprobante?: boolean
-    carrera?: boolean
+    com_usu?: boolean
+    id_car_est?: boolean
+    carrera?: boolean | usuario$carreraArgs<ExtArgs>
     inscripciones?: boolean | usuario$inscripcionesArgs<ExtArgs>
     _count?: boolean | UsuarioCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["usuario"]>
@@ -1598,8 +1937,9 @@ export namespace Prisma {
     cel_usu?: boolean
     rol_usu?: boolean
     fec_cre_usu?: boolean
-    comprobante?: boolean
-    carrera?: boolean
+    com_usu?: boolean
+    id_car_est?: boolean
+    carrera?: boolean | usuario$carreraArgs<ExtArgs>
   }, ExtArgs["result"]["usuario"]>
 
   export type usuarioSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -1612,8 +1952,9 @@ export namespace Prisma {
     cel_usu?: boolean
     rol_usu?: boolean
     fec_cre_usu?: boolean
-    comprobante?: boolean
-    carrera?: boolean
+    com_usu?: boolean
+    id_car_est?: boolean
+    carrera?: boolean | usuario$carreraArgs<ExtArgs>
   }, ExtArgs["result"]["usuario"]>
 
   export type usuarioSelectScalar = {
@@ -1626,21 +1967,27 @@ export namespace Prisma {
     cel_usu?: boolean
     rol_usu?: boolean
     fec_cre_usu?: boolean
-    comprobante?: boolean
-    carrera?: boolean
+    com_usu?: boolean
+    id_car_est?: boolean
   }
 
-  export type usuarioOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_usu" | "ced_usu" | "nom_usu" | "ape_usu" | "cor_usu" | "con_usu" | "cel_usu" | "rol_usu" | "fec_cre_usu" | "comprobante" | "carrera", ExtArgs["result"]["usuario"]>
+  export type usuarioOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_usu" | "ced_usu" | "nom_usu" | "ape_usu" | "cor_usu" | "con_usu" | "cel_usu" | "rol_usu" | "fec_cre_usu" | "com_usu" | "id_car_est", ExtArgs["result"]["usuario"]>
   export type usuarioInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    carrera?: boolean | usuario$carreraArgs<ExtArgs>
     inscripciones?: boolean | usuario$inscripcionesArgs<ExtArgs>
     _count?: boolean | UsuarioCountOutputTypeDefaultArgs<ExtArgs>
   }
-  export type usuarioIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
-  export type usuarioIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type usuarioIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    carrera?: boolean | usuario$carreraArgs<ExtArgs>
+  }
+  export type usuarioIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    carrera?: boolean | usuario$carreraArgs<ExtArgs>
+  }
 
   export type $usuarioPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "usuario"
     objects: {
+      carrera: Prisma.$carreraPayload<ExtArgs> | null
       inscripciones: Prisma.$inscripcionPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -1653,8 +2000,8 @@ export namespace Prisma {
       cel_usu: string
       rol_usu: $Enums.rol_usuario
       fec_cre_usu: Date
-      comprobante: string | null
-      carrera: string | null
+      com_usu: string | null
+      id_car_est: string | null
     }, ExtArgs["result"]["usuario"]>
     composites: {}
   }
@@ -2049,6 +2396,7 @@ export namespace Prisma {
    */
   export interface Prisma__usuarioClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    carrera<T extends usuario$carreraArgs<ExtArgs> = {}>(args?: Subset<T, usuario$carreraArgs<ExtArgs>>): Prisma__carreraClient<$Result.GetResult<Prisma.$carreraPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     inscripciones<T extends usuario$inscripcionesArgs<ExtArgs> = {}>(args?: Subset<T, usuario$inscripcionesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$inscripcionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -2088,8 +2436,8 @@ export namespace Prisma {
     readonly cel_usu: FieldRef<"usuario", 'String'>
     readonly rol_usu: FieldRef<"usuario", 'rol_usuario'>
     readonly fec_cre_usu: FieldRef<"usuario", 'DateTime'>
-    readonly comprobante: FieldRef<"usuario", 'String'>
-    readonly carrera: FieldRef<"usuario", 'String'>
+    readonly com_usu: FieldRef<"usuario", 'String'>
+    readonly id_car_est: FieldRef<"usuario", 'String'>
   }
     
 
@@ -2339,6 +2687,10 @@ export namespace Prisma {
      */
     data: usuarioCreateManyInput | usuarioCreateManyInput[]
     skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: usuarioIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -2409,6 +2761,10 @@ export namespace Prisma {
      * Limit how many usuarios to update.
      */
     limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: usuarioIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -2478,6 +2834,25 @@ export namespace Prisma {
   }
 
   /**
+   * usuario.carrera
+   */
+  export type usuario$carreraArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the carrera
+     */
+    select?: carreraSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the carrera
+     */
+    omit?: carreraOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: carreraInclude<ExtArgs> | null
+    where?: carreraWhereInput
+  }
+
+  /**
    * usuario.inscripciones
    */
   export type usuario$inscripcionesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2535,6 +2910,7 @@ export namespace Prisma {
     nom_car: string | null
     est_car: boolean | null
     fec_cre_car: Date | null
+    id_fac_per: string | null
   }
 
   export type CarreraMaxAggregateOutputType = {
@@ -2542,6 +2918,7 @@ export namespace Prisma {
     nom_car: string | null
     est_car: boolean | null
     fec_cre_car: Date | null
+    id_fac_per: string | null
   }
 
   export type CarreraCountAggregateOutputType = {
@@ -2549,6 +2926,7 @@ export namespace Prisma {
     nom_car: number
     est_car: number
     fec_cre_car: number
+    id_fac_per: number
     _all: number
   }
 
@@ -2558,6 +2936,7 @@ export namespace Prisma {
     nom_car?: true
     est_car?: true
     fec_cre_car?: true
+    id_fac_per?: true
   }
 
   export type CarreraMaxAggregateInputType = {
@@ -2565,6 +2944,7 @@ export namespace Prisma {
     nom_car?: true
     est_car?: true
     fec_cre_car?: true
+    id_fac_per?: true
   }
 
   export type CarreraCountAggregateInputType = {
@@ -2572,6 +2952,7 @@ export namespace Prisma {
     nom_car?: true
     est_car?: true
     fec_cre_car?: true
+    id_fac_per?: true
     _all?: true
   }
 
@@ -2652,6 +3033,7 @@ export namespace Prisma {
     nom_car: string
     est_car: boolean
     fec_cre_car: Date
+    id_fac_per: string
     _count: CarreraCountAggregateOutputType | null
     _min: CarreraMinAggregateOutputType | null
     _max: CarreraMaxAggregateOutputType | null
@@ -2676,6 +3058,9 @@ export namespace Prisma {
     nom_car?: boolean
     est_car?: boolean
     fec_cre_car?: boolean
+    id_fac_per?: boolean
+    facultad?: boolean | facultadDefaultArgs<ExtArgs>
+    usuario?: boolean | carrera$usuarioArgs<ExtArgs>
     eventos?: boolean | carrera$eventosArgs<ExtArgs>
     _count?: boolean | CarreraCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["carrera"]>
@@ -2685,6 +3070,8 @@ export namespace Prisma {
     nom_car?: boolean
     est_car?: boolean
     fec_cre_car?: boolean
+    id_fac_per?: boolean
+    facultad?: boolean | facultadDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["carrera"]>
 
   export type carreraSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -2692,6 +3079,8 @@ export namespace Prisma {
     nom_car?: boolean
     est_car?: boolean
     fec_cre_car?: boolean
+    id_fac_per?: boolean
+    facultad?: boolean | facultadDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["carrera"]>
 
   export type carreraSelectScalar = {
@@ -2699,26 +3088,36 @@ export namespace Prisma {
     nom_car?: boolean
     est_car?: boolean
     fec_cre_car?: boolean
+    id_fac_per?: boolean
   }
 
-  export type carreraOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_car" | "nom_car" | "est_car" | "fec_cre_car", ExtArgs["result"]["carrera"]>
+  export type carreraOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_car" | "nom_car" | "est_car" | "fec_cre_car" | "id_fac_per", ExtArgs["result"]["carrera"]>
   export type carreraInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    facultad?: boolean | facultadDefaultArgs<ExtArgs>
+    usuario?: boolean | carrera$usuarioArgs<ExtArgs>
     eventos?: boolean | carrera$eventosArgs<ExtArgs>
     _count?: boolean | CarreraCountOutputTypeDefaultArgs<ExtArgs>
   }
-  export type carreraIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
-  export type carreraIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type carreraIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    facultad?: boolean | facultadDefaultArgs<ExtArgs>
+  }
+  export type carreraIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    facultad?: boolean | facultadDefaultArgs<ExtArgs>
+  }
 
   export type $carreraPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "carrera"
     objects: {
-      eventos: Prisma.$eventoPayload<ExtArgs>[]
+      facultad: Prisma.$facultadPayload<ExtArgs>
+      usuario: Prisma.$usuarioPayload<ExtArgs>[]
+      eventos: Prisma.$evento_carreraPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id_car: string
       nom_car: string
       est_car: boolean
       fec_cre_car: Date
+      id_fac_per: string
     }, ExtArgs["result"]["carrera"]>
     composites: {}
   }
@@ -3113,7 +3512,9 @@ export namespace Prisma {
    */
   export interface Prisma__carreraClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    eventos<T extends carrera$eventosArgs<ExtArgs> = {}>(args?: Subset<T, carrera$eventosArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$eventoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    facultad<T extends facultadDefaultArgs<ExtArgs> = {}>(args?: Subset<T, facultadDefaultArgs<ExtArgs>>): Prisma__facultadClient<$Result.GetResult<Prisma.$facultadPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    usuario<T extends carrera$usuarioArgs<ExtArgs> = {}>(args?: Subset<T, carrera$usuarioArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$usuarioPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    eventos<T extends carrera$eventosArgs<ExtArgs> = {}>(args?: Subset<T, carrera$eventosArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$evento_carreraPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3147,6 +3548,7 @@ export namespace Prisma {
     readonly nom_car: FieldRef<"carrera", 'String'>
     readonly est_car: FieldRef<"carrera", 'Boolean'>
     readonly fec_cre_car: FieldRef<"carrera", 'DateTime'>
+    readonly id_fac_per: FieldRef<"carrera", 'String'>
   }
     
 
@@ -3396,6 +3798,10 @@ export namespace Prisma {
      */
     data: carreraCreateManyInput | carreraCreateManyInput[]
     skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: carreraIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -3466,6 +3872,10 @@ export namespace Prisma {
      * Limit how many carreras to update.
      */
     limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: carreraIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -3535,27 +3945,51 @@ export namespace Prisma {
   }
 
   /**
+   * carrera.usuario
+   */
+  export type carrera$usuarioArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the usuario
+     */
+    select?: usuarioSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the usuario
+     */
+    omit?: usuarioOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: usuarioInclude<ExtArgs> | null
+    where?: usuarioWhereInput
+    orderBy?: usuarioOrderByWithRelationInput | usuarioOrderByWithRelationInput[]
+    cursor?: usuarioWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: UsuarioScalarFieldEnum | UsuarioScalarFieldEnum[]
+  }
+
+  /**
    * carrera.eventos
    */
   export type carrera$eventosArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the evento
+     * Select specific fields to fetch from the evento_carrera
      */
-    select?: eventoSelect<ExtArgs> | null
+    select?: evento_carreraSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the evento
+     * Omit specific fields from the evento_carrera
      */
-    omit?: eventoOmit<ExtArgs> | null
+    omit?: evento_carreraOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: eventoInclude<ExtArgs> | null
-    where?: eventoWhereInput
-    orderBy?: eventoOrderByWithRelationInput | eventoOrderByWithRelationInput[]
-    cursor?: eventoWhereUniqueInput
+    include?: evento_carreraInclude<ExtArgs> | null
+    where?: evento_carreraWhereInput
+    orderBy?: evento_carreraOrderByWithRelationInput | evento_carreraOrderByWithRelationInput[]
+    cursor?: evento_carreraWhereUniqueInput
     take?: number
     skip?: number
-    distinct?: EventoScalarFieldEnum | EventoScalarFieldEnum[]
+    distinct?: Evento_carreraScalarFieldEnum | Evento_carreraScalarFieldEnum[]
   }
 
   /**
@@ -3590,15 +4024,15 @@ export namespace Prisma {
   }
 
   export type EventoAvgAggregateOutputType = {
-    dur_hrs_eve: number | null
-    nota_min_eve: number | null
-    por_asist_eve: number | null
+    val_eve: number | null
+    dur_hor_eve: number | null
+    por_min_asi_eve: number | null
   }
 
   export type EventoSumAggregateOutputType = {
-    dur_hrs_eve: number | null
-    nota_min_eve: number | null
-    por_asist_eve: number | null
+    val_eve: number | null
+    dur_hor_eve: number | null
+    por_min_asi_eve: number | null
   }
 
   export type EventoMinAggregateOutputType = {
@@ -3607,14 +4041,13 @@ export namespace Prisma {
     des_eve: string | null
     tip_eve: $Enums.tipo_evento | null
     fec_ini_eve: Date | null
-    fec_fin_eve: Date | null
-    dur_hrs_eve: number | null
-    pagado_eve: boolean | null
-    nota_min_eve: number | null
-    por_asist_eve: number | null
-    est_eve: boolean | null
+    val_eve: number | null
+    est_eve: $Enums.estado_evento | null
     fec_cre_eve: Date | null
-    carreraId: string | null
+    img_por_eve: string | null
+    dur_hor_eve: number | null
+    por_min_asi_eve: number | null
+    fec_fin_eve: Date | null
   }
 
   export type EventoMaxAggregateOutputType = {
@@ -3623,14 +4056,13 @@ export namespace Prisma {
     des_eve: string | null
     tip_eve: $Enums.tipo_evento | null
     fec_ini_eve: Date | null
-    fec_fin_eve: Date | null
-    dur_hrs_eve: number | null
-    pagado_eve: boolean | null
-    nota_min_eve: number | null
-    por_asist_eve: number | null
-    est_eve: boolean | null
+    val_eve: number | null
+    est_eve: $Enums.estado_evento | null
     fec_cre_eve: Date | null
-    carreraId: string | null
+    img_por_eve: string | null
+    dur_hor_eve: number | null
+    por_min_asi_eve: number | null
+    fec_fin_eve: Date | null
   }
 
   export type EventoCountAggregateOutputType = {
@@ -3639,28 +4071,27 @@ export namespace Prisma {
     des_eve: number
     tip_eve: number
     fec_ini_eve: number
-    fec_fin_eve: number
-    dur_hrs_eve: number
-    pagado_eve: number
-    nota_min_eve: number
-    por_asist_eve: number
+    val_eve: number
     est_eve: number
     fec_cre_eve: number
-    carreraId: number
+    img_por_eve: number
+    dur_hor_eve: number
+    por_min_asi_eve: number
+    fec_fin_eve: number
     _all: number
   }
 
 
   export type EventoAvgAggregateInputType = {
-    dur_hrs_eve?: true
-    nota_min_eve?: true
-    por_asist_eve?: true
+    val_eve?: true
+    dur_hor_eve?: true
+    por_min_asi_eve?: true
   }
 
   export type EventoSumAggregateInputType = {
-    dur_hrs_eve?: true
-    nota_min_eve?: true
-    por_asist_eve?: true
+    val_eve?: true
+    dur_hor_eve?: true
+    por_min_asi_eve?: true
   }
 
   export type EventoMinAggregateInputType = {
@@ -3669,14 +4100,13 @@ export namespace Prisma {
     des_eve?: true
     tip_eve?: true
     fec_ini_eve?: true
-    fec_fin_eve?: true
-    dur_hrs_eve?: true
-    pagado_eve?: true
-    nota_min_eve?: true
-    por_asist_eve?: true
+    val_eve?: true
     est_eve?: true
     fec_cre_eve?: true
-    carreraId?: true
+    img_por_eve?: true
+    dur_hor_eve?: true
+    por_min_asi_eve?: true
+    fec_fin_eve?: true
   }
 
   export type EventoMaxAggregateInputType = {
@@ -3685,14 +4115,13 @@ export namespace Prisma {
     des_eve?: true
     tip_eve?: true
     fec_ini_eve?: true
-    fec_fin_eve?: true
-    dur_hrs_eve?: true
-    pagado_eve?: true
-    nota_min_eve?: true
-    por_asist_eve?: true
+    val_eve?: true
     est_eve?: true
     fec_cre_eve?: true
-    carreraId?: true
+    img_por_eve?: true
+    dur_hor_eve?: true
+    por_min_asi_eve?: true
+    fec_fin_eve?: true
   }
 
   export type EventoCountAggregateInputType = {
@@ -3701,14 +4130,13 @@ export namespace Prisma {
     des_eve?: true
     tip_eve?: true
     fec_ini_eve?: true
-    fec_fin_eve?: true
-    dur_hrs_eve?: true
-    pagado_eve?: true
-    nota_min_eve?: true
-    por_asist_eve?: true
+    val_eve?: true
     est_eve?: true
     fec_cre_eve?: true
-    carreraId?: true
+    img_por_eve?: true
+    dur_hor_eve?: true
+    por_min_asi_eve?: true
+    fec_fin_eve?: true
     _all?: true
   }
 
@@ -3804,14 +4232,13 @@ export namespace Prisma {
     des_eve: string | null
     tip_eve: $Enums.tipo_evento
     fec_ini_eve: Date
-    fec_fin_eve: Date
-    dur_hrs_eve: number
-    pagado_eve: boolean
-    nota_min_eve: number | null
-    por_asist_eve: number | null
-    est_eve: boolean
+    val_eve: number
+    est_eve: $Enums.estado_evento
     fec_cre_eve: Date
-    carreraId: string | null
+    img_por_eve: string
+    dur_hor_eve: number
+    por_min_asi_eve: number
+    fec_fin_eve: Date
     _count: EventoCountAggregateOutputType | null
     _avg: EventoAvgAggregateOutputType | null
     _sum: EventoSumAggregateOutputType | null
@@ -3839,16 +4266,16 @@ export namespace Prisma {
     des_eve?: boolean
     tip_eve?: boolean
     fec_ini_eve?: boolean
-    fec_fin_eve?: boolean
-    dur_hrs_eve?: boolean
-    pagado_eve?: boolean
-    nota_min_eve?: boolean
-    por_asist_eve?: boolean
+    val_eve?: boolean
     est_eve?: boolean
     fec_cre_eve?: boolean
-    carreraId?: boolean
-    carrera?: boolean | evento$carreraArgs<ExtArgs>
-    inscripciones?: boolean | evento$inscripcionesArgs<ExtArgs>
+    img_por_eve?: boolean
+    dur_hor_eve?: boolean
+    por_min_asi_eve?: boolean
+    fec_fin_eve?: boolean
+    inscritos?: boolean | evento$inscritosArgs<ExtArgs>
+    eventos_carrera?: boolean | evento$eventos_carreraArgs<ExtArgs>
+    eventos_curso?: boolean | evento$eventos_cursoArgs<ExtArgs>
     _count?: boolean | EventoCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["evento"]>
 
@@ -3858,15 +4285,13 @@ export namespace Prisma {
     des_eve?: boolean
     tip_eve?: boolean
     fec_ini_eve?: boolean
-    fec_fin_eve?: boolean
-    dur_hrs_eve?: boolean
-    pagado_eve?: boolean
-    nota_min_eve?: boolean
-    por_asist_eve?: boolean
+    val_eve?: boolean
     est_eve?: boolean
     fec_cre_eve?: boolean
-    carreraId?: boolean
-    carrera?: boolean | evento$carreraArgs<ExtArgs>
+    img_por_eve?: boolean
+    dur_hor_eve?: boolean
+    por_min_asi_eve?: boolean
+    fec_fin_eve?: boolean
   }, ExtArgs["result"]["evento"]>
 
   export type eventoSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -3875,15 +4300,13 @@ export namespace Prisma {
     des_eve?: boolean
     tip_eve?: boolean
     fec_ini_eve?: boolean
-    fec_fin_eve?: boolean
-    dur_hrs_eve?: boolean
-    pagado_eve?: boolean
-    nota_min_eve?: boolean
-    por_asist_eve?: boolean
+    val_eve?: boolean
     est_eve?: boolean
     fec_cre_eve?: boolean
-    carreraId?: boolean
-    carrera?: boolean | evento$carreraArgs<ExtArgs>
+    img_por_eve?: boolean
+    dur_hor_eve?: boolean
+    por_min_asi_eve?: boolean
+    fec_fin_eve?: boolean
   }, ExtArgs["result"]["evento"]>
 
   export type eventoSelectScalar = {
@@ -3892,34 +4315,31 @@ export namespace Prisma {
     des_eve?: boolean
     tip_eve?: boolean
     fec_ini_eve?: boolean
-    fec_fin_eve?: boolean
-    dur_hrs_eve?: boolean
-    pagado_eve?: boolean
-    nota_min_eve?: boolean
-    por_asist_eve?: boolean
+    val_eve?: boolean
     est_eve?: boolean
     fec_cre_eve?: boolean
-    carreraId?: boolean
+    img_por_eve?: boolean
+    dur_hor_eve?: boolean
+    por_min_asi_eve?: boolean
+    fec_fin_eve?: boolean
   }
 
-  export type eventoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_eve" | "nom_eve" | "des_eve" | "tip_eve" | "fec_ini_eve" | "fec_fin_eve" | "dur_hrs_eve" | "pagado_eve" | "nota_min_eve" | "por_asist_eve" | "est_eve" | "fec_cre_eve" | "carreraId", ExtArgs["result"]["evento"]>
+  export type eventoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_eve" | "nom_eve" | "des_eve" | "tip_eve" | "fec_ini_eve" | "val_eve" | "est_eve" | "fec_cre_eve" | "img_por_eve" | "dur_hor_eve" | "por_min_asi_eve" | "fec_fin_eve", ExtArgs["result"]["evento"]>
   export type eventoInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    carrera?: boolean | evento$carreraArgs<ExtArgs>
-    inscripciones?: boolean | evento$inscripcionesArgs<ExtArgs>
+    inscritos?: boolean | evento$inscritosArgs<ExtArgs>
+    eventos_carrera?: boolean | evento$eventos_carreraArgs<ExtArgs>
+    eventos_curso?: boolean | evento$eventos_cursoArgs<ExtArgs>
     _count?: boolean | EventoCountOutputTypeDefaultArgs<ExtArgs>
   }
-  export type eventoIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    carrera?: boolean | evento$carreraArgs<ExtArgs>
-  }
-  export type eventoIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    carrera?: boolean | evento$carreraArgs<ExtArgs>
-  }
+  export type eventoIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type eventoIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
 
   export type $eventoPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "evento"
     objects: {
-      carrera: Prisma.$carreraPayload<ExtArgs> | null
-      inscripciones: Prisma.$inscripcionPayload<ExtArgs>[]
+      inscritos: Prisma.$inscripcionPayload<ExtArgs>[]
+      eventos_carrera: Prisma.$evento_carreraPayload<ExtArgs>[]
+      eventos_curso: Prisma.$evento_cursoPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id_eve: string
@@ -3927,14 +4347,13 @@ export namespace Prisma {
       des_eve: string | null
       tip_eve: $Enums.tipo_evento
       fec_ini_eve: Date
-      fec_fin_eve: Date
-      dur_hrs_eve: number
-      pagado_eve: boolean
-      nota_min_eve: number | null
-      por_asist_eve: number | null
-      est_eve: boolean
+      val_eve: number
+      est_eve: $Enums.estado_evento
       fec_cre_eve: Date
-      carreraId: string | null
+      img_por_eve: string
+      dur_hor_eve: number
+      por_min_asi_eve: number
+      fec_fin_eve: Date
     }, ExtArgs["result"]["evento"]>
     composites: {}
   }
@@ -4329,8 +4748,9 @@ export namespace Prisma {
    */
   export interface Prisma__eventoClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    carrera<T extends evento$carreraArgs<ExtArgs> = {}>(args?: Subset<T, evento$carreraArgs<ExtArgs>>): Prisma__carreraClient<$Result.GetResult<Prisma.$carreraPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-    inscripciones<T extends evento$inscripcionesArgs<ExtArgs> = {}>(args?: Subset<T, evento$inscripcionesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$inscripcionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    inscritos<T extends evento$inscritosArgs<ExtArgs> = {}>(args?: Subset<T, evento$inscritosArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$inscripcionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    eventos_carrera<T extends evento$eventos_carreraArgs<ExtArgs> = {}>(args?: Subset<T, evento$eventos_carreraArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$evento_carreraPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    eventos_curso<T extends evento$eventos_cursoArgs<ExtArgs> = {}>(args?: Subset<T, evento$eventos_cursoArgs<ExtArgs>>): Prisma__evento_cursoClient<$Result.GetResult<Prisma.$evento_cursoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4365,14 +4785,13 @@ export namespace Prisma {
     readonly des_eve: FieldRef<"evento", 'String'>
     readonly tip_eve: FieldRef<"evento", 'tipo_evento'>
     readonly fec_ini_eve: FieldRef<"evento", 'DateTime'>
-    readonly fec_fin_eve: FieldRef<"evento", 'DateTime'>
-    readonly dur_hrs_eve: FieldRef<"evento", 'Int'>
-    readonly pagado_eve: FieldRef<"evento", 'Boolean'>
-    readonly nota_min_eve: FieldRef<"evento", 'Float'>
-    readonly por_asist_eve: FieldRef<"evento", 'Float'>
-    readonly est_eve: FieldRef<"evento", 'Boolean'>
+    readonly val_eve: FieldRef<"evento", 'Float'>
+    readonly est_eve: FieldRef<"evento", 'estado_evento'>
     readonly fec_cre_eve: FieldRef<"evento", 'DateTime'>
-    readonly carreraId: FieldRef<"evento", 'String'>
+    readonly img_por_eve: FieldRef<"evento", 'String'>
+    readonly dur_hor_eve: FieldRef<"evento", 'Int'>
+    readonly por_min_asi_eve: FieldRef<"evento", 'Float'>
+    readonly fec_fin_eve: FieldRef<"evento", 'DateTime'>
   }
     
 
@@ -4622,10 +5041,6 @@ export namespace Prisma {
      */
     data: eventoCreateManyInput | eventoCreateManyInput[]
     skipDuplicates?: boolean
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: eventoIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -4696,10 +5111,6 @@ export namespace Prisma {
      * Limit how many eventos to update.
      */
     limit?: number
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: eventoIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -4769,28 +5180,9 @@ export namespace Prisma {
   }
 
   /**
-   * evento.carrera
+   * evento.inscritos
    */
-  export type evento$carreraArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the carrera
-     */
-    select?: carreraSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the carrera
-     */
-    omit?: carreraOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: carreraInclude<ExtArgs> | null
-    where?: carreraWhereInput
-  }
-
-  /**
-   * evento.inscripciones
-   */
-  export type evento$inscripcionesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type evento$inscritosArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the inscripcion
      */
@@ -4809,6 +5201,49 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: InscripcionScalarFieldEnum | InscripcionScalarFieldEnum[]
+  }
+
+  /**
+   * evento.eventos_carrera
+   */
+  export type evento$eventos_carreraArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the evento_carrera
+     */
+    select?: evento_carreraSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the evento_carrera
+     */
+    omit?: evento_carreraOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: evento_carreraInclude<ExtArgs> | null
+    where?: evento_carreraWhereInput
+    orderBy?: evento_carreraOrderByWithRelationInput | evento_carreraOrderByWithRelationInput[]
+    cursor?: evento_carreraWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Evento_carreraScalarFieldEnum | Evento_carreraScalarFieldEnum[]
+  }
+
+  /**
+   * evento.eventos_curso
+   */
+  export type evento$eventos_cursoArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the evento_curso
+     */
+    select?: evento_cursoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the evento_curso
+     */
+    omit?: evento_cursoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: evento_cursoInclude<ExtArgs> | null
+    where?: evento_cursoWhereInput
   }
 
   /**
@@ -4831,109 +5266,2187 @@ export namespace Prisma {
 
 
   /**
+   * Model evento_curso
+   */
+
+  export type AggregateEvento_curso = {
+    _count: Evento_cursoCountAggregateOutputType | null
+    _avg: Evento_cursoAvgAggregateOutputType | null
+    _sum: Evento_cursoSumAggregateOutputType | null
+    _min: Evento_cursoMinAggregateOutputType | null
+    _max: Evento_cursoMaxAggregateOutputType | null
+  }
+
+  export type Evento_cursoAvgAggregateOutputType = {
+    not_min_cur: number | null
+  }
+
+  export type Evento_cursoSumAggregateOutputType = {
+    not_min_cur: number | null
+  }
+
+  export type Evento_cursoMinAggregateOutputType = {
+    id_eve_cur: string | null
+    not_min_cur: number | null
+  }
+
+  export type Evento_cursoMaxAggregateOutputType = {
+    id_eve_cur: string | null
+    not_min_cur: number | null
+  }
+
+  export type Evento_cursoCountAggregateOutputType = {
+    id_eve_cur: number
+    not_min_cur: number
+    _all: number
+  }
+
+
+  export type Evento_cursoAvgAggregateInputType = {
+    not_min_cur?: true
+  }
+
+  export type Evento_cursoSumAggregateInputType = {
+    not_min_cur?: true
+  }
+
+  export type Evento_cursoMinAggregateInputType = {
+    id_eve_cur?: true
+    not_min_cur?: true
+  }
+
+  export type Evento_cursoMaxAggregateInputType = {
+    id_eve_cur?: true
+    not_min_cur?: true
+  }
+
+  export type Evento_cursoCountAggregateInputType = {
+    id_eve_cur?: true
+    not_min_cur?: true
+    _all?: true
+  }
+
+  export type Evento_cursoAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which evento_curso to aggregate.
+     */
+    where?: evento_cursoWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of evento_cursos to fetch.
+     */
+    orderBy?: evento_cursoOrderByWithRelationInput | evento_cursoOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: evento_cursoWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` evento_cursos from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` evento_cursos.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned evento_cursos
+    **/
+    _count?: true | Evento_cursoCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: Evento_cursoAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: Evento_cursoSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: Evento_cursoMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: Evento_cursoMaxAggregateInputType
+  }
+
+  export type GetEvento_cursoAggregateType<T extends Evento_cursoAggregateArgs> = {
+        [P in keyof T & keyof AggregateEvento_curso]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateEvento_curso[P]>
+      : GetScalarType<T[P], AggregateEvento_curso[P]>
+  }
+
+
+
+
+  export type evento_cursoGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: evento_cursoWhereInput
+    orderBy?: evento_cursoOrderByWithAggregationInput | evento_cursoOrderByWithAggregationInput[]
+    by: Evento_cursoScalarFieldEnum[] | Evento_cursoScalarFieldEnum
+    having?: evento_cursoScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: Evento_cursoCountAggregateInputType | true
+    _avg?: Evento_cursoAvgAggregateInputType
+    _sum?: Evento_cursoSumAggregateInputType
+    _min?: Evento_cursoMinAggregateInputType
+    _max?: Evento_cursoMaxAggregateInputType
+  }
+
+  export type Evento_cursoGroupByOutputType = {
+    id_eve_cur: string
+    not_min_cur: number
+    _count: Evento_cursoCountAggregateOutputType | null
+    _avg: Evento_cursoAvgAggregateOutputType | null
+    _sum: Evento_cursoSumAggregateOutputType | null
+    _min: Evento_cursoMinAggregateOutputType | null
+    _max: Evento_cursoMaxAggregateOutputType | null
+  }
+
+  type GetEvento_cursoGroupByPayload<T extends evento_cursoGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<Evento_cursoGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof Evento_cursoGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], Evento_cursoGroupByOutputType[P]>
+            : GetScalarType<T[P], Evento_cursoGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type evento_cursoSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_eve_cur?: boolean
+    not_min_cur?: boolean
+    evento?: boolean | eventoDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["evento_curso"]>
+
+  export type evento_cursoSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_eve_cur?: boolean
+    not_min_cur?: boolean
+    evento?: boolean | eventoDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["evento_curso"]>
+
+  export type evento_cursoSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_eve_cur?: boolean
+    not_min_cur?: boolean
+    evento?: boolean | eventoDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["evento_curso"]>
+
+  export type evento_cursoSelectScalar = {
+    id_eve_cur?: boolean
+    not_min_cur?: boolean
+  }
+
+  export type evento_cursoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_eve_cur" | "not_min_cur", ExtArgs["result"]["evento_curso"]>
+  export type evento_cursoInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    evento?: boolean | eventoDefaultArgs<ExtArgs>
+  }
+  export type evento_cursoIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    evento?: boolean | eventoDefaultArgs<ExtArgs>
+  }
+  export type evento_cursoIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    evento?: boolean | eventoDefaultArgs<ExtArgs>
+  }
+
+  export type $evento_cursoPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "evento_curso"
+    objects: {
+      evento: Prisma.$eventoPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id_eve_cur: string
+      not_min_cur: number
+    }, ExtArgs["result"]["evento_curso"]>
+    composites: {}
+  }
+
+  type evento_cursoGetPayload<S extends boolean | null | undefined | evento_cursoDefaultArgs> = $Result.GetResult<Prisma.$evento_cursoPayload, S>
+
+  type evento_cursoCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<evento_cursoFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: Evento_cursoCountAggregateInputType | true
+    }
+
+  export interface evento_cursoDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['evento_curso'], meta: { name: 'evento_curso' } }
+    /**
+     * Find zero or one Evento_curso that matches the filter.
+     * @param {evento_cursoFindUniqueArgs} args - Arguments to find a Evento_curso
+     * @example
+     * // Get one Evento_curso
+     * const evento_curso = await prisma.evento_curso.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends evento_cursoFindUniqueArgs>(args: SelectSubset<T, evento_cursoFindUniqueArgs<ExtArgs>>): Prisma__evento_cursoClient<$Result.GetResult<Prisma.$evento_cursoPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Evento_curso that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {evento_cursoFindUniqueOrThrowArgs} args - Arguments to find a Evento_curso
+     * @example
+     * // Get one Evento_curso
+     * const evento_curso = await prisma.evento_curso.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends evento_cursoFindUniqueOrThrowArgs>(args: SelectSubset<T, evento_cursoFindUniqueOrThrowArgs<ExtArgs>>): Prisma__evento_cursoClient<$Result.GetResult<Prisma.$evento_cursoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Evento_curso that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {evento_cursoFindFirstArgs} args - Arguments to find a Evento_curso
+     * @example
+     * // Get one Evento_curso
+     * const evento_curso = await prisma.evento_curso.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends evento_cursoFindFirstArgs>(args?: SelectSubset<T, evento_cursoFindFirstArgs<ExtArgs>>): Prisma__evento_cursoClient<$Result.GetResult<Prisma.$evento_cursoPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Evento_curso that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {evento_cursoFindFirstOrThrowArgs} args - Arguments to find a Evento_curso
+     * @example
+     * // Get one Evento_curso
+     * const evento_curso = await prisma.evento_curso.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends evento_cursoFindFirstOrThrowArgs>(args?: SelectSubset<T, evento_cursoFindFirstOrThrowArgs<ExtArgs>>): Prisma__evento_cursoClient<$Result.GetResult<Prisma.$evento_cursoPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Evento_cursos that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {evento_cursoFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Evento_cursos
+     * const evento_cursos = await prisma.evento_curso.findMany()
+     * 
+     * // Get first 10 Evento_cursos
+     * const evento_cursos = await prisma.evento_curso.findMany({ take: 10 })
+     * 
+     * // Only select the `id_eve_cur`
+     * const evento_cursoWithId_eve_curOnly = await prisma.evento_curso.findMany({ select: { id_eve_cur: true } })
+     * 
+     */
+    findMany<T extends evento_cursoFindManyArgs>(args?: SelectSubset<T, evento_cursoFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$evento_cursoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Evento_curso.
+     * @param {evento_cursoCreateArgs} args - Arguments to create a Evento_curso.
+     * @example
+     * // Create one Evento_curso
+     * const Evento_curso = await prisma.evento_curso.create({
+     *   data: {
+     *     // ... data to create a Evento_curso
+     *   }
+     * })
+     * 
+     */
+    create<T extends evento_cursoCreateArgs>(args: SelectSubset<T, evento_cursoCreateArgs<ExtArgs>>): Prisma__evento_cursoClient<$Result.GetResult<Prisma.$evento_cursoPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Evento_cursos.
+     * @param {evento_cursoCreateManyArgs} args - Arguments to create many Evento_cursos.
+     * @example
+     * // Create many Evento_cursos
+     * const evento_curso = await prisma.evento_curso.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends evento_cursoCreateManyArgs>(args?: SelectSubset<T, evento_cursoCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Evento_cursos and returns the data saved in the database.
+     * @param {evento_cursoCreateManyAndReturnArgs} args - Arguments to create many Evento_cursos.
+     * @example
+     * // Create many Evento_cursos
+     * const evento_curso = await prisma.evento_curso.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Evento_cursos and only return the `id_eve_cur`
+     * const evento_cursoWithId_eve_curOnly = await prisma.evento_curso.createManyAndReturn({
+     *   select: { id_eve_cur: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends evento_cursoCreateManyAndReturnArgs>(args?: SelectSubset<T, evento_cursoCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$evento_cursoPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Evento_curso.
+     * @param {evento_cursoDeleteArgs} args - Arguments to delete one Evento_curso.
+     * @example
+     * // Delete one Evento_curso
+     * const Evento_curso = await prisma.evento_curso.delete({
+     *   where: {
+     *     // ... filter to delete one Evento_curso
+     *   }
+     * })
+     * 
+     */
+    delete<T extends evento_cursoDeleteArgs>(args: SelectSubset<T, evento_cursoDeleteArgs<ExtArgs>>): Prisma__evento_cursoClient<$Result.GetResult<Prisma.$evento_cursoPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Evento_curso.
+     * @param {evento_cursoUpdateArgs} args - Arguments to update one Evento_curso.
+     * @example
+     * // Update one Evento_curso
+     * const evento_curso = await prisma.evento_curso.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends evento_cursoUpdateArgs>(args: SelectSubset<T, evento_cursoUpdateArgs<ExtArgs>>): Prisma__evento_cursoClient<$Result.GetResult<Prisma.$evento_cursoPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Evento_cursos.
+     * @param {evento_cursoDeleteManyArgs} args - Arguments to filter Evento_cursos to delete.
+     * @example
+     * // Delete a few Evento_cursos
+     * const { count } = await prisma.evento_curso.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends evento_cursoDeleteManyArgs>(args?: SelectSubset<T, evento_cursoDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Evento_cursos.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {evento_cursoUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Evento_cursos
+     * const evento_curso = await prisma.evento_curso.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends evento_cursoUpdateManyArgs>(args: SelectSubset<T, evento_cursoUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Evento_cursos and returns the data updated in the database.
+     * @param {evento_cursoUpdateManyAndReturnArgs} args - Arguments to update many Evento_cursos.
+     * @example
+     * // Update many Evento_cursos
+     * const evento_curso = await prisma.evento_curso.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Evento_cursos and only return the `id_eve_cur`
+     * const evento_cursoWithId_eve_curOnly = await prisma.evento_curso.updateManyAndReturn({
+     *   select: { id_eve_cur: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends evento_cursoUpdateManyAndReturnArgs>(args: SelectSubset<T, evento_cursoUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$evento_cursoPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Evento_curso.
+     * @param {evento_cursoUpsertArgs} args - Arguments to update or create a Evento_curso.
+     * @example
+     * // Update or create a Evento_curso
+     * const evento_curso = await prisma.evento_curso.upsert({
+     *   create: {
+     *     // ... data to create a Evento_curso
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Evento_curso we want to update
+     *   }
+     * })
+     */
+    upsert<T extends evento_cursoUpsertArgs>(args: SelectSubset<T, evento_cursoUpsertArgs<ExtArgs>>): Prisma__evento_cursoClient<$Result.GetResult<Prisma.$evento_cursoPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Evento_cursos.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {evento_cursoCountArgs} args - Arguments to filter Evento_cursos to count.
+     * @example
+     * // Count the number of Evento_cursos
+     * const count = await prisma.evento_curso.count({
+     *   where: {
+     *     // ... the filter for the Evento_cursos we want to count
+     *   }
+     * })
+    **/
+    count<T extends evento_cursoCountArgs>(
+      args?: Subset<T, evento_cursoCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], Evento_cursoCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Evento_curso.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Evento_cursoAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends Evento_cursoAggregateArgs>(args: Subset<T, Evento_cursoAggregateArgs>): Prisma.PrismaPromise<GetEvento_cursoAggregateType<T>>
+
+    /**
+     * Group by Evento_curso.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {evento_cursoGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends evento_cursoGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: evento_cursoGroupByArgs['orderBy'] }
+        : { orderBy?: evento_cursoGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, evento_cursoGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetEvento_cursoGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the evento_curso model
+   */
+  readonly fields: evento_cursoFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for evento_curso.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__evento_cursoClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    evento<T extends eventoDefaultArgs<ExtArgs> = {}>(args?: Subset<T, eventoDefaultArgs<ExtArgs>>): Prisma__eventoClient<$Result.GetResult<Prisma.$eventoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the evento_curso model
+   */
+  interface evento_cursoFieldRefs {
+    readonly id_eve_cur: FieldRef<"evento_curso", 'String'>
+    readonly not_min_cur: FieldRef<"evento_curso", 'Float'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * evento_curso findUnique
+   */
+  export type evento_cursoFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the evento_curso
+     */
+    select?: evento_cursoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the evento_curso
+     */
+    omit?: evento_cursoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: evento_cursoInclude<ExtArgs> | null
+    /**
+     * Filter, which evento_curso to fetch.
+     */
+    where: evento_cursoWhereUniqueInput
+  }
+
+  /**
+   * evento_curso findUniqueOrThrow
+   */
+  export type evento_cursoFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the evento_curso
+     */
+    select?: evento_cursoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the evento_curso
+     */
+    omit?: evento_cursoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: evento_cursoInclude<ExtArgs> | null
+    /**
+     * Filter, which evento_curso to fetch.
+     */
+    where: evento_cursoWhereUniqueInput
+  }
+
+  /**
+   * evento_curso findFirst
+   */
+  export type evento_cursoFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the evento_curso
+     */
+    select?: evento_cursoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the evento_curso
+     */
+    omit?: evento_cursoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: evento_cursoInclude<ExtArgs> | null
+    /**
+     * Filter, which evento_curso to fetch.
+     */
+    where?: evento_cursoWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of evento_cursos to fetch.
+     */
+    orderBy?: evento_cursoOrderByWithRelationInput | evento_cursoOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for evento_cursos.
+     */
+    cursor?: evento_cursoWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` evento_cursos from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` evento_cursos.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of evento_cursos.
+     */
+    distinct?: Evento_cursoScalarFieldEnum | Evento_cursoScalarFieldEnum[]
+  }
+
+  /**
+   * evento_curso findFirstOrThrow
+   */
+  export type evento_cursoFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the evento_curso
+     */
+    select?: evento_cursoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the evento_curso
+     */
+    omit?: evento_cursoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: evento_cursoInclude<ExtArgs> | null
+    /**
+     * Filter, which evento_curso to fetch.
+     */
+    where?: evento_cursoWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of evento_cursos to fetch.
+     */
+    orderBy?: evento_cursoOrderByWithRelationInput | evento_cursoOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for evento_cursos.
+     */
+    cursor?: evento_cursoWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` evento_cursos from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` evento_cursos.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of evento_cursos.
+     */
+    distinct?: Evento_cursoScalarFieldEnum | Evento_cursoScalarFieldEnum[]
+  }
+
+  /**
+   * evento_curso findMany
+   */
+  export type evento_cursoFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the evento_curso
+     */
+    select?: evento_cursoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the evento_curso
+     */
+    omit?: evento_cursoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: evento_cursoInclude<ExtArgs> | null
+    /**
+     * Filter, which evento_cursos to fetch.
+     */
+    where?: evento_cursoWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of evento_cursos to fetch.
+     */
+    orderBy?: evento_cursoOrderByWithRelationInput | evento_cursoOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing evento_cursos.
+     */
+    cursor?: evento_cursoWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` evento_cursos from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` evento_cursos.
+     */
+    skip?: number
+    distinct?: Evento_cursoScalarFieldEnum | Evento_cursoScalarFieldEnum[]
+  }
+
+  /**
+   * evento_curso create
+   */
+  export type evento_cursoCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the evento_curso
+     */
+    select?: evento_cursoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the evento_curso
+     */
+    omit?: evento_cursoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: evento_cursoInclude<ExtArgs> | null
+    /**
+     * The data needed to create a evento_curso.
+     */
+    data: XOR<evento_cursoCreateInput, evento_cursoUncheckedCreateInput>
+  }
+
+  /**
+   * evento_curso createMany
+   */
+  export type evento_cursoCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many evento_cursos.
+     */
+    data: evento_cursoCreateManyInput | evento_cursoCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * evento_curso createManyAndReturn
+   */
+  export type evento_cursoCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the evento_curso
+     */
+    select?: evento_cursoSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the evento_curso
+     */
+    omit?: evento_cursoOmit<ExtArgs> | null
+    /**
+     * The data used to create many evento_cursos.
+     */
+    data: evento_cursoCreateManyInput | evento_cursoCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: evento_cursoIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * evento_curso update
+   */
+  export type evento_cursoUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the evento_curso
+     */
+    select?: evento_cursoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the evento_curso
+     */
+    omit?: evento_cursoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: evento_cursoInclude<ExtArgs> | null
+    /**
+     * The data needed to update a evento_curso.
+     */
+    data: XOR<evento_cursoUpdateInput, evento_cursoUncheckedUpdateInput>
+    /**
+     * Choose, which evento_curso to update.
+     */
+    where: evento_cursoWhereUniqueInput
+  }
+
+  /**
+   * evento_curso updateMany
+   */
+  export type evento_cursoUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update evento_cursos.
+     */
+    data: XOR<evento_cursoUpdateManyMutationInput, evento_cursoUncheckedUpdateManyInput>
+    /**
+     * Filter which evento_cursos to update
+     */
+    where?: evento_cursoWhereInput
+    /**
+     * Limit how many evento_cursos to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * evento_curso updateManyAndReturn
+   */
+  export type evento_cursoUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the evento_curso
+     */
+    select?: evento_cursoSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the evento_curso
+     */
+    omit?: evento_cursoOmit<ExtArgs> | null
+    /**
+     * The data used to update evento_cursos.
+     */
+    data: XOR<evento_cursoUpdateManyMutationInput, evento_cursoUncheckedUpdateManyInput>
+    /**
+     * Filter which evento_cursos to update
+     */
+    where?: evento_cursoWhereInput
+    /**
+     * Limit how many evento_cursos to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: evento_cursoIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * evento_curso upsert
+   */
+  export type evento_cursoUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the evento_curso
+     */
+    select?: evento_cursoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the evento_curso
+     */
+    omit?: evento_cursoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: evento_cursoInclude<ExtArgs> | null
+    /**
+     * The filter to search for the evento_curso to update in case it exists.
+     */
+    where: evento_cursoWhereUniqueInput
+    /**
+     * In case the evento_curso found by the `where` argument doesn't exist, create a new evento_curso with this data.
+     */
+    create: XOR<evento_cursoCreateInput, evento_cursoUncheckedCreateInput>
+    /**
+     * In case the evento_curso was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<evento_cursoUpdateInput, evento_cursoUncheckedUpdateInput>
+  }
+
+  /**
+   * evento_curso delete
+   */
+  export type evento_cursoDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the evento_curso
+     */
+    select?: evento_cursoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the evento_curso
+     */
+    omit?: evento_cursoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: evento_cursoInclude<ExtArgs> | null
+    /**
+     * Filter which evento_curso to delete.
+     */
+    where: evento_cursoWhereUniqueInput
+  }
+
+  /**
+   * evento_curso deleteMany
+   */
+  export type evento_cursoDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which evento_cursos to delete
+     */
+    where?: evento_cursoWhereInput
+    /**
+     * Limit how many evento_cursos to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * evento_curso without action
+   */
+  export type evento_cursoDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the evento_curso
+     */
+    select?: evento_cursoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the evento_curso
+     */
+    omit?: evento_cursoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: evento_cursoInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model evento_carrera
+   */
+
+  export type AggregateEvento_carrera = {
+    _count: Evento_carreraCountAggregateOutputType | null
+    _min: Evento_carreraMinAggregateOutputType | null
+    _max: Evento_carreraMaxAggregateOutputType | null
+  }
+
+  export type Evento_carreraMinAggregateOutputType = {
+    id_eve_car: string | null
+    id_car_aso: string | null
+    id_eve_aso: string | null
+    fec_aso: Date | null
+  }
+
+  export type Evento_carreraMaxAggregateOutputType = {
+    id_eve_car: string | null
+    id_car_aso: string | null
+    id_eve_aso: string | null
+    fec_aso: Date | null
+  }
+
+  export type Evento_carreraCountAggregateOutputType = {
+    id_eve_car: number
+    id_car_aso: number
+    id_eve_aso: number
+    fec_aso: number
+    _all: number
+  }
+
+
+  export type Evento_carreraMinAggregateInputType = {
+    id_eve_car?: true
+    id_car_aso?: true
+    id_eve_aso?: true
+    fec_aso?: true
+  }
+
+  export type Evento_carreraMaxAggregateInputType = {
+    id_eve_car?: true
+    id_car_aso?: true
+    id_eve_aso?: true
+    fec_aso?: true
+  }
+
+  export type Evento_carreraCountAggregateInputType = {
+    id_eve_car?: true
+    id_car_aso?: true
+    id_eve_aso?: true
+    fec_aso?: true
+    _all?: true
+  }
+
+  export type Evento_carreraAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which evento_carrera to aggregate.
+     */
+    where?: evento_carreraWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of evento_carreras to fetch.
+     */
+    orderBy?: evento_carreraOrderByWithRelationInput | evento_carreraOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: evento_carreraWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` evento_carreras from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` evento_carreras.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned evento_carreras
+    **/
+    _count?: true | Evento_carreraCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: Evento_carreraMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: Evento_carreraMaxAggregateInputType
+  }
+
+  export type GetEvento_carreraAggregateType<T extends Evento_carreraAggregateArgs> = {
+        [P in keyof T & keyof AggregateEvento_carrera]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateEvento_carrera[P]>
+      : GetScalarType<T[P], AggregateEvento_carrera[P]>
+  }
+
+
+
+
+  export type evento_carreraGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: evento_carreraWhereInput
+    orderBy?: evento_carreraOrderByWithAggregationInput | evento_carreraOrderByWithAggregationInput[]
+    by: Evento_carreraScalarFieldEnum[] | Evento_carreraScalarFieldEnum
+    having?: evento_carreraScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: Evento_carreraCountAggregateInputType | true
+    _min?: Evento_carreraMinAggregateInputType
+    _max?: Evento_carreraMaxAggregateInputType
+  }
+
+  export type Evento_carreraGroupByOutputType = {
+    id_eve_car: string
+    id_car_aso: string
+    id_eve_aso: string
+    fec_aso: Date
+    _count: Evento_carreraCountAggregateOutputType | null
+    _min: Evento_carreraMinAggregateOutputType | null
+    _max: Evento_carreraMaxAggregateOutputType | null
+  }
+
+  type GetEvento_carreraGroupByPayload<T extends evento_carreraGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<Evento_carreraGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof Evento_carreraGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], Evento_carreraGroupByOutputType[P]>
+            : GetScalarType<T[P], Evento_carreraGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type evento_carreraSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_eve_car?: boolean
+    id_car_aso?: boolean
+    id_eve_aso?: boolean
+    fec_aso?: boolean
+    carrera?: boolean | carreraDefaultArgs<ExtArgs>
+    evento?: boolean | eventoDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["evento_carrera"]>
+
+  export type evento_carreraSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_eve_car?: boolean
+    id_car_aso?: boolean
+    id_eve_aso?: boolean
+    fec_aso?: boolean
+    carrera?: boolean | carreraDefaultArgs<ExtArgs>
+    evento?: boolean | eventoDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["evento_carrera"]>
+
+  export type evento_carreraSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_eve_car?: boolean
+    id_car_aso?: boolean
+    id_eve_aso?: boolean
+    fec_aso?: boolean
+    carrera?: boolean | carreraDefaultArgs<ExtArgs>
+    evento?: boolean | eventoDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["evento_carrera"]>
+
+  export type evento_carreraSelectScalar = {
+    id_eve_car?: boolean
+    id_car_aso?: boolean
+    id_eve_aso?: boolean
+    fec_aso?: boolean
+  }
+
+  export type evento_carreraOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_eve_car" | "id_car_aso" | "id_eve_aso" | "fec_aso", ExtArgs["result"]["evento_carrera"]>
+  export type evento_carreraInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    carrera?: boolean | carreraDefaultArgs<ExtArgs>
+    evento?: boolean | eventoDefaultArgs<ExtArgs>
+  }
+  export type evento_carreraIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    carrera?: boolean | carreraDefaultArgs<ExtArgs>
+    evento?: boolean | eventoDefaultArgs<ExtArgs>
+  }
+  export type evento_carreraIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    carrera?: boolean | carreraDefaultArgs<ExtArgs>
+    evento?: boolean | eventoDefaultArgs<ExtArgs>
+  }
+
+  export type $evento_carreraPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "evento_carrera"
+    objects: {
+      carrera: Prisma.$carreraPayload<ExtArgs>
+      evento: Prisma.$eventoPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id_eve_car: string
+      id_car_aso: string
+      id_eve_aso: string
+      fec_aso: Date
+    }, ExtArgs["result"]["evento_carrera"]>
+    composites: {}
+  }
+
+  type evento_carreraGetPayload<S extends boolean | null | undefined | evento_carreraDefaultArgs> = $Result.GetResult<Prisma.$evento_carreraPayload, S>
+
+  type evento_carreraCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<evento_carreraFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: Evento_carreraCountAggregateInputType | true
+    }
+
+  export interface evento_carreraDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['evento_carrera'], meta: { name: 'evento_carrera' } }
+    /**
+     * Find zero or one Evento_carrera that matches the filter.
+     * @param {evento_carreraFindUniqueArgs} args - Arguments to find a Evento_carrera
+     * @example
+     * // Get one Evento_carrera
+     * const evento_carrera = await prisma.evento_carrera.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends evento_carreraFindUniqueArgs>(args: SelectSubset<T, evento_carreraFindUniqueArgs<ExtArgs>>): Prisma__evento_carreraClient<$Result.GetResult<Prisma.$evento_carreraPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Evento_carrera that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {evento_carreraFindUniqueOrThrowArgs} args - Arguments to find a Evento_carrera
+     * @example
+     * // Get one Evento_carrera
+     * const evento_carrera = await prisma.evento_carrera.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends evento_carreraFindUniqueOrThrowArgs>(args: SelectSubset<T, evento_carreraFindUniqueOrThrowArgs<ExtArgs>>): Prisma__evento_carreraClient<$Result.GetResult<Prisma.$evento_carreraPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Evento_carrera that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {evento_carreraFindFirstArgs} args - Arguments to find a Evento_carrera
+     * @example
+     * // Get one Evento_carrera
+     * const evento_carrera = await prisma.evento_carrera.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends evento_carreraFindFirstArgs>(args?: SelectSubset<T, evento_carreraFindFirstArgs<ExtArgs>>): Prisma__evento_carreraClient<$Result.GetResult<Prisma.$evento_carreraPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Evento_carrera that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {evento_carreraFindFirstOrThrowArgs} args - Arguments to find a Evento_carrera
+     * @example
+     * // Get one Evento_carrera
+     * const evento_carrera = await prisma.evento_carrera.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends evento_carreraFindFirstOrThrowArgs>(args?: SelectSubset<T, evento_carreraFindFirstOrThrowArgs<ExtArgs>>): Prisma__evento_carreraClient<$Result.GetResult<Prisma.$evento_carreraPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Evento_carreras that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {evento_carreraFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Evento_carreras
+     * const evento_carreras = await prisma.evento_carrera.findMany()
+     * 
+     * // Get first 10 Evento_carreras
+     * const evento_carreras = await prisma.evento_carrera.findMany({ take: 10 })
+     * 
+     * // Only select the `id_eve_car`
+     * const evento_carreraWithId_eve_carOnly = await prisma.evento_carrera.findMany({ select: { id_eve_car: true } })
+     * 
+     */
+    findMany<T extends evento_carreraFindManyArgs>(args?: SelectSubset<T, evento_carreraFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$evento_carreraPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Evento_carrera.
+     * @param {evento_carreraCreateArgs} args - Arguments to create a Evento_carrera.
+     * @example
+     * // Create one Evento_carrera
+     * const Evento_carrera = await prisma.evento_carrera.create({
+     *   data: {
+     *     // ... data to create a Evento_carrera
+     *   }
+     * })
+     * 
+     */
+    create<T extends evento_carreraCreateArgs>(args: SelectSubset<T, evento_carreraCreateArgs<ExtArgs>>): Prisma__evento_carreraClient<$Result.GetResult<Prisma.$evento_carreraPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Evento_carreras.
+     * @param {evento_carreraCreateManyArgs} args - Arguments to create many Evento_carreras.
+     * @example
+     * // Create many Evento_carreras
+     * const evento_carrera = await prisma.evento_carrera.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends evento_carreraCreateManyArgs>(args?: SelectSubset<T, evento_carreraCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Evento_carreras and returns the data saved in the database.
+     * @param {evento_carreraCreateManyAndReturnArgs} args - Arguments to create many Evento_carreras.
+     * @example
+     * // Create many Evento_carreras
+     * const evento_carrera = await prisma.evento_carrera.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Evento_carreras and only return the `id_eve_car`
+     * const evento_carreraWithId_eve_carOnly = await prisma.evento_carrera.createManyAndReturn({
+     *   select: { id_eve_car: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends evento_carreraCreateManyAndReturnArgs>(args?: SelectSubset<T, evento_carreraCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$evento_carreraPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Evento_carrera.
+     * @param {evento_carreraDeleteArgs} args - Arguments to delete one Evento_carrera.
+     * @example
+     * // Delete one Evento_carrera
+     * const Evento_carrera = await prisma.evento_carrera.delete({
+     *   where: {
+     *     // ... filter to delete one Evento_carrera
+     *   }
+     * })
+     * 
+     */
+    delete<T extends evento_carreraDeleteArgs>(args: SelectSubset<T, evento_carreraDeleteArgs<ExtArgs>>): Prisma__evento_carreraClient<$Result.GetResult<Prisma.$evento_carreraPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Evento_carrera.
+     * @param {evento_carreraUpdateArgs} args - Arguments to update one Evento_carrera.
+     * @example
+     * // Update one Evento_carrera
+     * const evento_carrera = await prisma.evento_carrera.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends evento_carreraUpdateArgs>(args: SelectSubset<T, evento_carreraUpdateArgs<ExtArgs>>): Prisma__evento_carreraClient<$Result.GetResult<Prisma.$evento_carreraPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Evento_carreras.
+     * @param {evento_carreraDeleteManyArgs} args - Arguments to filter Evento_carreras to delete.
+     * @example
+     * // Delete a few Evento_carreras
+     * const { count } = await prisma.evento_carrera.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends evento_carreraDeleteManyArgs>(args?: SelectSubset<T, evento_carreraDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Evento_carreras.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {evento_carreraUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Evento_carreras
+     * const evento_carrera = await prisma.evento_carrera.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends evento_carreraUpdateManyArgs>(args: SelectSubset<T, evento_carreraUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Evento_carreras and returns the data updated in the database.
+     * @param {evento_carreraUpdateManyAndReturnArgs} args - Arguments to update many Evento_carreras.
+     * @example
+     * // Update many Evento_carreras
+     * const evento_carrera = await prisma.evento_carrera.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Evento_carreras and only return the `id_eve_car`
+     * const evento_carreraWithId_eve_carOnly = await prisma.evento_carrera.updateManyAndReturn({
+     *   select: { id_eve_car: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends evento_carreraUpdateManyAndReturnArgs>(args: SelectSubset<T, evento_carreraUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$evento_carreraPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Evento_carrera.
+     * @param {evento_carreraUpsertArgs} args - Arguments to update or create a Evento_carrera.
+     * @example
+     * // Update or create a Evento_carrera
+     * const evento_carrera = await prisma.evento_carrera.upsert({
+     *   create: {
+     *     // ... data to create a Evento_carrera
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Evento_carrera we want to update
+     *   }
+     * })
+     */
+    upsert<T extends evento_carreraUpsertArgs>(args: SelectSubset<T, evento_carreraUpsertArgs<ExtArgs>>): Prisma__evento_carreraClient<$Result.GetResult<Prisma.$evento_carreraPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Evento_carreras.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {evento_carreraCountArgs} args - Arguments to filter Evento_carreras to count.
+     * @example
+     * // Count the number of Evento_carreras
+     * const count = await prisma.evento_carrera.count({
+     *   where: {
+     *     // ... the filter for the Evento_carreras we want to count
+     *   }
+     * })
+    **/
+    count<T extends evento_carreraCountArgs>(
+      args?: Subset<T, evento_carreraCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], Evento_carreraCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Evento_carrera.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Evento_carreraAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends Evento_carreraAggregateArgs>(args: Subset<T, Evento_carreraAggregateArgs>): Prisma.PrismaPromise<GetEvento_carreraAggregateType<T>>
+
+    /**
+     * Group by Evento_carrera.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {evento_carreraGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends evento_carreraGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: evento_carreraGroupByArgs['orderBy'] }
+        : { orderBy?: evento_carreraGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, evento_carreraGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetEvento_carreraGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the evento_carrera model
+   */
+  readonly fields: evento_carreraFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for evento_carrera.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__evento_carreraClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    carrera<T extends carreraDefaultArgs<ExtArgs> = {}>(args?: Subset<T, carreraDefaultArgs<ExtArgs>>): Prisma__carreraClient<$Result.GetResult<Prisma.$carreraPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    evento<T extends eventoDefaultArgs<ExtArgs> = {}>(args?: Subset<T, eventoDefaultArgs<ExtArgs>>): Prisma__eventoClient<$Result.GetResult<Prisma.$eventoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the evento_carrera model
+   */
+  interface evento_carreraFieldRefs {
+    readonly id_eve_car: FieldRef<"evento_carrera", 'String'>
+    readonly id_car_aso: FieldRef<"evento_carrera", 'String'>
+    readonly id_eve_aso: FieldRef<"evento_carrera", 'String'>
+    readonly fec_aso: FieldRef<"evento_carrera", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * evento_carrera findUnique
+   */
+  export type evento_carreraFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the evento_carrera
+     */
+    select?: evento_carreraSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the evento_carrera
+     */
+    omit?: evento_carreraOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: evento_carreraInclude<ExtArgs> | null
+    /**
+     * Filter, which evento_carrera to fetch.
+     */
+    where: evento_carreraWhereUniqueInput
+  }
+
+  /**
+   * evento_carrera findUniqueOrThrow
+   */
+  export type evento_carreraFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the evento_carrera
+     */
+    select?: evento_carreraSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the evento_carrera
+     */
+    omit?: evento_carreraOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: evento_carreraInclude<ExtArgs> | null
+    /**
+     * Filter, which evento_carrera to fetch.
+     */
+    where: evento_carreraWhereUniqueInput
+  }
+
+  /**
+   * evento_carrera findFirst
+   */
+  export type evento_carreraFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the evento_carrera
+     */
+    select?: evento_carreraSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the evento_carrera
+     */
+    omit?: evento_carreraOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: evento_carreraInclude<ExtArgs> | null
+    /**
+     * Filter, which evento_carrera to fetch.
+     */
+    where?: evento_carreraWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of evento_carreras to fetch.
+     */
+    orderBy?: evento_carreraOrderByWithRelationInput | evento_carreraOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for evento_carreras.
+     */
+    cursor?: evento_carreraWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` evento_carreras from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` evento_carreras.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of evento_carreras.
+     */
+    distinct?: Evento_carreraScalarFieldEnum | Evento_carreraScalarFieldEnum[]
+  }
+
+  /**
+   * evento_carrera findFirstOrThrow
+   */
+  export type evento_carreraFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the evento_carrera
+     */
+    select?: evento_carreraSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the evento_carrera
+     */
+    omit?: evento_carreraOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: evento_carreraInclude<ExtArgs> | null
+    /**
+     * Filter, which evento_carrera to fetch.
+     */
+    where?: evento_carreraWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of evento_carreras to fetch.
+     */
+    orderBy?: evento_carreraOrderByWithRelationInput | evento_carreraOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for evento_carreras.
+     */
+    cursor?: evento_carreraWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` evento_carreras from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` evento_carreras.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of evento_carreras.
+     */
+    distinct?: Evento_carreraScalarFieldEnum | Evento_carreraScalarFieldEnum[]
+  }
+
+  /**
+   * evento_carrera findMany
+   */
+  export type evento_carreraFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the evento_carrera
+     */
+    select?: evento_carreraSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the evento_carrera
+     */
+    omit?: evento_carreraOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: evento_carreraInclude<ExtArgs> | null
+    /**
+     * Filter, which evento_carreras to fetch.
+     */
+    where?: evento_carreraWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of evento_carreras to fetch.
+     */
+    orderBy?: evento_carreraOrderByWithRelationInput | evento_carreraOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing evento_carreras.
+     */
+    cursor?: evento_carreraWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` evento_carreras from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` evento_carreras.
+     */
+    skip?: number
+    distinct?: Evento_carreraScalarFieldEnum | Evento_carreraScalarFieldEnum[]
+  }
+
+  /**
+   * evento_carrera create
+   */
+  export type evento_carreraCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the evento_carrera
+     */
+    select?: evento_carreraSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the evento_carrera
+     */
+    omit?: evento_carreraOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: evento_carreraInclude<ExtArgs> | null
+    /**
+     * The data needed to create a evento_carrera.
+     */
+    data: XOR<evento_carreraCreateInput, evento_carreraUncheckedCreateInput>
+  }
+
+  /**
+   * evento_carrera createMany
+   */
+  export type evento_carreraCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many evento_carreras.
+     */
+    data: evento_carreraCreateManyInput | evento_carreraCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * evento_carrera createManyAndReturn
+   */
+  export type evento_carreraCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the evento_carrera
+     */
+    select?: evento_carreraSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the evento_carrera
+     */
+    omit?: evento_carreraOmit<ExtArgs> | null
+    /**
+     * The data used to create many evento_carreras.
+     */
+    data: evento_carreraCreateManyInput | evento_carreraCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: evento_carreraIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * evento_carrera update
+   */
+  export type evento_carreraUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the evento_carrera
+     */
+    select?: evento_carreraSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the evento_carrera
+     */
+    omit?: evento_carreraOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: evento_carreraInclude<ExtArgs> | null
+    /**
+     * The data needed to update a evento_carrera.
+     */
+    data: XOR<evento_carreraUpdateInput, evento_carreraUncheckedUpdateInput>
+    /**
+     * Choose, which evento_carrera to update.
+     */
+    where: evento_carreraWhereUniqueInput
+  }
+
+  /**
+   * evento_carrera updateMany
+   */
+  export type evento_carreraUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update evento_carreras.
+     */
+    data: XOR<evento_carreraUpdateManyMutationInput, evento_carreraUncheckedUpdateManyInput>
+    /**
+     * Filter which evento_carreras to update
+     */
+    where?: evento_carreraWhereInput
+    /**
+     * Limit how many evento_carreras to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * evento_carrera updateManyAndReturn
+   */
+  export type evento_carreraUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the evento_carrera
+     */
+    select?: evento_carreraSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the evento_carrera
+     */
+    omit?: evento_carreraOmit<ExtArgs> | null
+    /**
+     * The data used to update evento_carreras.
+     */
+    data: XOR<evento_carreraUpdateManyMutationInput, evento_carreraUncheckedUpdateManyInput>
+    /**
+     * Filter which evento_carreras to update
+     */
+    where?: evento_carreraWhereInput
+    /**
+     * Limit how many evento_carreras to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: evento_carreraIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * evento_carrera upsert
+   */
+  export type evento_carreraUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the evento_carrera
+     */
+    select?: evento_carreraSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the evento_carrera
+     */
+    omit?: evento_carreraOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: evento_carreraInclude<ExtArgs> | null
+    /**
+     * The filter to search for the evento_carrera to update in case it exists.
+     */
+    where: evento_carreraWhereUniqueInput
+    /**
+     * In case the evento_carrera found by the `where` argument doesn't exist, create a new evento_carrera with this data.
+     */
+    create: XOR<evento_carreraCreateInput, evento_carreraUncheckedCreateInput>
+    /**
+     * In case the evento_carrera was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<evento_carreraUpdateInput, evento_carreraUncheckedUpdateInput>
+  }
+
+  /**
+   * evento_carrera delete
+   */
+  export type evento_carreraDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the evento_carrera
+     */
+    select?: evento_carreraSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the evento_carrera
+     */
+    omit?: evento_carreraOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: evento_carreraInclude<ExtArgs> | null
+    /**
+     * Filter which evento_carrera to delete.
+     */
+    where: evento_carreraWhereUniqueInput
+  }
+
+  /**
+   * evento_carrera deleteMany
+   */
+  export type evento_carreraDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which evento_carreras to delete
+     */
+    where?: evento_carreraWhereInput
+    /**
+     * Limit how many evento_carreras to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * evento_carrera without action
+   */
+  export type evento_carreraDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the evento_carrera
+     */
+    select?: evento_carreraSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the evento_carrera
+     */
+    omit?: evento_carreraOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: evento_carreraInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model inscripcion
    */
 
   export type AggregateInscripcion = {
     _count: InscripcionCountAggregateOutputType | null
-    _avg: InscripcionAvgAggregateOutputType | null
-    _sum: InscripcionSumAggregateOutputType | null
     _min: InscripcionMinAggregateOutputType | null
     _max: InscripcionMaxAggregateOutputType | null
   }
 
-  export type InscripcionAvgAggregateOutputType = {
-    nota_final: number | null
-    asistencia: number | null
-  }
-
-  export type InscripcionSumAggregateOutputType = {
-    nota_final: number | null
-    asistencia: number | null
-  }
-
   export type InscripcionMinAggregateOutputType = {
     id_ins: string | null
-    id_usu: string | null
-    id_eve: string | null
-    comprobante: string | null
-    nota_final: number | null
-    asistencia: number | null
-    estado: $Enums.estado_inscripcion | null
+    id_usu_ins: string | null
+    id_eve_ins: string | null
+    est_ins: $Enums.estado_inscripcion | null
     fec_ins: Date | null
-    cert_enviado: boolean | null
+    fec_pag_ins: Date | null
+    cer_eve_env: boolean | null
+    car_mot_usu: string | null
   }
 
   export type InscripcionMaxAggregateOutputType = {
     id_ins: string | null
-    id_usu: string | null
-    id_eve: string | null
-    comprobante: string | null
-    nota_final: number | null
-    asistencia: number | null
-    estado: $Enums.estado_inscripcion | null
+    id_usu_ins: string | null
+    id_eve_ins: string | null
+    est_ins: $Enums.estado_inscripcion | null
     fec_ins: Date | null
-    cert_enviado: boolean | null
+    fec_pag_ins: Date | null
+    cer_eve_env: boolean | null
+    car_mot_usu: string | null
   }
 
   export type InscripcionCountAggregateOutputType = {
     id_ins: number
-    id_usu: number
-    id_eve: number
-    comprobante: number
-    nota_final: number
-    asistencia: number
-    estado: number
+    id_usu_ins: number
+    id_eve_ins: number
+    est_ins: number
     fec_ins: number
-    cert_enviado: number
+    fec_pag_ins: number
+    cer_eve_env: number
+    car_mot_usu: number
     _all: number
   }
 
 
-  export type InscripcionAvgAggregateInputType = {
-    nota_final?: true
-    asistencia?: true
-  }
-
-  export type InscripcionSumAggregateInputType = {
-    nota_final?: true
-    asistencia?: true
-  }
-
   export type InscripcionMinAggregateInputType = {
     id_ins?: true
-    id_usu?: true
-    id_eve?: true
-    comprobante?: true
-    nota_final?: true
-    asistencia?: true
-    estado?: true
+    id_usu_ins?: true
+    id_eve_ins?: true
+    est_ins?: true
     fec_ins?: true
-    cert_enviado?: true
+    fec_pag_ins?: true
+    cer_eve_env?: true
+    car_mot_usu?: true
   }
 
   export type InscripcionMaxAggregateInputType = {
     id_ins?: true
-    id_usu?: true
-    id_eve?: true
-    comprobante?: true
-    nota_final?: true
-    asistencia?: true
-    estado?: true
+    id_usu_ins?: true
+    id_eve_ins?: true
+    est_ins?: true
     fec_ins?: true
-    cert_enviado?: true
+    fec_pag_ins?: true
+    cer_eve_env?: true
+    car_mot_usu?: true
   }
 
   export type InscripcionCountAggregateInputType = {
     id_ins?: true
-    id_usu?: true
-    id_eve?: true
-    comprobante?: true
-    nota_final?: true
-    asistencia?: true
-    estado?: true
+    id_usu_ins?: true
+    id_eve_ins?: true
+    est_ins?: true
     fec_ins?: true
-    cert_enviado?: true
+    fec_pag_ins?: true
+    cer_eve_env?: true
+    car_mot_usu?: true
     _all?: true
   }
 
@@ -4975,18 +7488,6 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
-     * Select which fields to average
-    **/
-    _avg?: InscripcionAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: InscripcionSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
      * Select which fields to find the minimum value
     **/
     _min?: InscripcionMinAggregateInputType
@@ -5017,25 +7518,20 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: InscripcionCountAggregateInputType | true
-    _avg?: InscripcionAvgAggregateInputType
-    _sum?: InscripcionSumAggregateInputType
     _min?: InscripcionMinAggregateInputType
     _max?: InscripcionMaxAggregateInputType
   }
 
   export type InscripcionGroupByOutputType = {
     id_ins: string
-    id_usu: string
-    id_eve: string
-    comprobante: string | null
-    nota_final: number | null
-    asistencia: number | null
-    estado: $Enums.estado_inscripcion
+    id_usu_ins: string
+    id_eve_ins: string
+    est_ins: $Enums.estado_inscripcion
     fec_ins: Date
-    cert_enviado: boolean
+    fec_pag_ins: Date | null
+    cer_eve_env: boolean
+    car_mot_usu: string | null
     _count: InscripcionCountAggregateOutputType | null
-    _avg: InscripcionAvgAggregateOutputType | null
-    _sum: InscripcionSumAggregateOutputType | null
     _min: InscripcionMinAggregateOutputType | null
     _max: InscripcionMaxAggregateOutputType | null
   }
@@ -5056,62 +7552,60 @@ export namespace Prisma {
 
   export type inscripcionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id_ins?: boolean
-    id_usu?: boolean
-    id_eve?: boolean
-    comprobante?: boolean
-    nota_final?: boolean
-    asistencia?: boolean
-    estado?: boolean
+    id_usu_ins?: boolean
+    id_eve_ins?: boolean
+    est_ins?: boolean
     fec_ins?: boolean
-    cert_enviado?: boolean
+    fec_pag_ins?: boolean
+    cer_eve_env?: boolean
+    car_mot_usu?: boolean
     usuario?: boolean | usuarioDefaultArgs<ExtArgs>
     evento?: boolean | eventoDefaultArgs<ExtArgs>
+    inscripcion_curso?: boolean | inscripcion$inscripcion_cursoArgs<ExtArgs>
   }, ExtArgs["result"]["inscripcion"]>
 
   export type inscripcionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id_ins?: boolean
-    id_usu?: boolean
-    id_eve?: boolean
-    comprobante?: boolean
-    nota_final?: boolean
-    asistencia?: boolean
-    estado?: boolean
+    id_usu_ins?: boolean
+    id_eve_ins?: boolean
+    est_ins?: boolean
     fec_ins?: boolean
-    cert_enviado?: boolean
+    fec_pag_ins?: boolean
+    cer_eve_env?: boolean
+    car_mot_usu?: boolean
     usuario?: boolean | usuarioDefaultArgs<ExtArgs>
     evento?: boolean | eventoDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["inscripcion"]>
 
   export type inscripcionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id_ins?: boolean
-    id_usu?: boolean
-    id_eve?: boolean
-    comprobante?: boolean
-    nota_final?: boolean
-    asistencia?: boolean
-    estado?: boolean
+    id_usu_ins?: boolean
+    id_eve_ins?: boolean
+    est_ins?: boolean
     fec_ins?: boolean
-    cert_enviado?: boolean
+    fec_pag_ins?: boolean
+    cer_eve_env?: boolean
+    car_mot_usu?: boolean
     usuario?: boolean | usuarioDefaultArgs<ExtArgs>
     evento?: boolean | eventoDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["inscripcion"]>
 
   export type inscripcionSelectScalar = {
     id_ins?: boolean
-    id_usu?: boolean
-    id_eve?: boolean
-    comprobante?: boolean
-    nota_final?: boolean
-    asistencia?: boolean
-    estado?: boolean
+    id_usu_ins?: boolean
+    id_eve_ins?: boolean
+    est_ins?: boolean
     fec_ins?: boolean
-    cert_enviado?: boolean
+    fec_pag_ins?: boolean
+    cer_eve_env?: boolean
+    car_mot_usu?: boolean
   }
 
-  export type inscripcionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_ins" | "id_usu" | "id_eve" | "comprobante" | "nota_final" | "asistencia" | "estado" | "fec_ins" | "cert_enviado", ExtArgs["result"]["inscripcion"]>
+  export type inscripcionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_ins" | "id_usu_ins" | "id_eve_ins" | "est_ins" | "fec_ins" | "fec_pag_ins" | "cer_eve_env" | "car_mot_usu", ExtArgs["result"]["inscripcion"]>
   export type inscripcionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     usuario?: boolean | usuarioDefaultArgs<ExtArgs>
     evento?: boolean | eventoDefaultArgs<ExtArgs>
+    inscripcion_curso?: boolean | inscripcion$inscripcion_cursoArgs<ExtArgs>
   }
   export type inscripcionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     usuario?: boolean | usuarioDefaultArgs<ExtArgs>
@@ -5127,17 +7621,17 @@ export namespace Prisma {
     objects: {
       usuario: Prisma.$usuarioPayload<ExtArgs>
       evento: Prisma.$eventoPayload<ExtArgs>
+      inscripcion_curso: Prisma.$inscripcion_cursoPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id_ins: string
-      id_usu: string
-      id_eve: string
-      comprobante: string | null
-      nota_final: number | null
-      asistencia: number | null
-      estado: $Enums.estado_inscripcion
+      id_usu_ins: string
+      id_eve_ins: string
+      est_ins: $Enums.estado_inscripcion
       fec_ins: Date
-      cert_enviado: boolean
+      fec_pag_ins: Date | null
+      cer_eve_env: boolean
+      car_mot_usu: string | null
     }, ExtArgs["result"]["inscripcion"]>
     composites: {}
   }
@@ -5534,6 +8028,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     usuario<T extends usuarioDefaultArgs<ExtArgs> = {}>(args?: Subset<T, usuarioDefaultArgs<ExtArgs>>): Prisma__usuarioClient<$Result.GetResult<Prisma.$usuarioPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     evento<T extends eventoDefaultArgs<ExtArgs> = {}>(args?: Subset<T, eventoDefaultArgs<ExtArgs>>): Prisma__eventoClient<$Result.GetResult<Prisma.$eventoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    inscripcion_curso<T extends inscripcion$inscripcion_cursoArgs<ExtArgs> = {}>(args?: Subset<T, inscripcion$inscripcion_cursoArgs<ExtArgs>>): Prisma__inscripcion_cursoClient<$Result.GetResult<Prisma.$inscripcion_cursoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5564,14 +8059,13 @@ export namespace Prisma {
    */
   interface inscripcionFieldRefs {
     readonly id_ins: FieldRef<"inscripcion", 'String'>
-    readonly id_usu: FieldRef<"inscripcion", 'String'>
-    readonly id_eve: FieldRef<"inscripcion", 'String'>
-    readonly comprobante: FieldRef<"inscripcion", 'String'>
-    readonly nota_final: FieldRef<"inscripcion", 'Float'>
-    readonly asistencia: FieldRef<"inscripcion", 'Float'>
-    readonly estado: FieldRef<"inscripcion", 'estado_inscripcion'>
+    readonly id_usu_ins: FieldRef<"inscripcion", 'String'>
+    readonly id_eve_ins: FieldRef<"inscripcion", 'String'>
+    readonly est_ins: FieldRef<"inscripcion", 'estado_inscripcion'>
     readonly fec_ins: FieldRef<"inscripcion", 'DateTime'>
-    readonly cert_enviado: FieldRef<"inscripcion", 'Boolean'>
+    readonly fec_pag_ins: FieldRef<"inscripcion", 'DateTime'>
+    readonly cer_eve_env: FieldRef<"inscripcion", 'Boolean'>
+    readonly car_mot_usu: FieldRef<"inscripcion", 'String'>
   }
     
 
@@ -5968,6 +8462,25 @@ export namespace Prisma {
   }
 
   /**
+   * inscripcion.inscripcion_curso
+   */
+  export type inscripcion$inscripcion_cursoArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the inscripcion_curso
+     */
+    select?: inscripcion_cursoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the inscripcion_curso
+     */
+    omit?: inscripcion_cursoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: inscripcion_cursoInclude<ExtArgs> | null
+    where?: inscripcion_cursoWhereInput
+  }
+
+  /**
    * inscripcion without action
    */
   export type inscripcionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5987,359 +8500,365 @@ export namespace Prisma {
 
 
   /**
-   * Model configuracion
+   * Model inscripcion_curso
    */
 
-  export type AggregateConfiguracion = {
-    _count: ConfiguracionCountAggregateOutputType | null
-    _avg: ConfiguracionAvgAggregateOutputType | null
-    _sum: ConfiguracionSumAggregateOutputType | null
-    _min: ConfiguracionMinAggregateOutputType | null
-    _max: ConfiguracionMaxAggregateOutputType | null
+  export type AggregateInscripcion_curso = {
+    _count: Inscripcion_cursoCountAggregateOutputType | null
+    _avg: Inscripcion_cursoAvgAggregateOutputType | null
+    _sum: Inscripcion_cursoSumAggregateOutputType | null
+    _min: Inscripcion_cursoMinAggregateOutputType | null
+    _max: Inscripcion_cursoMaxAggregateOutputType | null
   }
 
-  export type ConfiguracionAvgAggregateOutputType = {
-    id_conf: number | null
+  export type Inscripcion_cursoAvgAggregateOutputType = {
+    not_fin_usu: number | null
+    por_asi_fin_usu: number | null
   }
 
-  export type ConfiguracionSumAggregateOutputType = {
-    id_conf: number | null
+  export type Inscripcion_cursoSumAggregateOutputType = {
+    not_fin_usu: number | null
+    por_asi_fin_usu: number | null
   }
 
-  export type ConfiguracionMinAggregateOutputType = {
-    id_conf: number | null
-    mision: string | null
-    vision: string | null
-    autoridades: string | null
+  export type Inscripcion_cursoMinAggregateOutputType = {
+    id_ins_cur: string | null
+    not_fin_usu: number | null
+    por_asi_fin_usu: number | null
   }
 
-  export type ConfiguracionMaxAggregateOutputType = {
-    id_conf: number | null
-    mision: string | null
-    vision: string | null
-    autoridades: string | null
+  export type Inscripcion_cursoMaxAggregateOutputType = {
+    id_ins_cur: string | null
+    not_fin_usu: number | null
+    por_asi_fin_usu: number | null
   }
 
-  export type ConfiguracionCountAggregateOutputType = {
-    id_conf: number
-    mision: number
-    vision: number
-    autoridades: number
+  export type Inscripcion_cursoCountAggregateOutputType = {
+    id_ins_cur: number
+    not_fin_usu: number
+    por_asi_fin_usu: number
     _all: number
   }
 
 
-  export type ConfiguracionAvgAggregateInputType = {
-    id_conf?: true
+  export type Inscripcion_cursoAvgAggregateInputType = {
+    not_fin_usu?: true
+    por_asi_fin_usu?: true
   }
 
-  export type ConfiguracionSumAggregateInputType = {
-    id_conf?: true
+  export type Inscripcion_cursoSumAggregateInputType = {
+    not_fin_usu?: true
+    por_asi_fin_usu?: true
   }
 
-  export type ConfiguracionMinAggregateInputType = {
-    id_conf?: true
-    mision?: true
-    vision?: true
-    autoridades?: true
+  export type Inscripcion_cursoMinAggregateInputType = {
+    id_ins_cur?: true
+    not_fin_usu?: true
+    por_asi_fin_usu?: true
   }
 
-  export type ConfiguracionMaxAggregateInputType = {
-    id_conf?: true
-    mision?: true
-    vision?: true
-    autoridades?: true
+  export type Inscripcion_cursoMaxAggregateInputType = {
+    id_ins_cur?: true
+    not_fin_usu?: true
+    por_asi_fin_usu?: true
   }
 
-  export type ConfiguracionCountAggregateInputType = {
-    id_conf?: true
-    mision?: true
-    vision?: true
-    autoridades?: true
+  export type Inscripcion_cursoCountAggregateInputType = {
+    id_ins_cur?: true
+    not_fin_usu?: true
+    por_asi_fin_usu?: true
     _all?: true
   }
 
-  export type ConfiguracionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type Inscripcion_cursoAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Filter which configuracion to aggregate.
+     * Filter which inscripcion_curso to aggregate.
      */
-    where?: configuracionWhereInput
+    where?: inscripcion_cursoWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
-     * Determine the order of configuracions to fetch.
+     * Determine the order of inscripcion_cursos to fetch.
      */
-    orderBy?: configuracionOrderByWithRelationInput | configuracionOrderByWithRelationInput[]
+    orderBy?: inscripcion_cursoOrderByWithRelationInput | inscripcion_cursoOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
      * Sets the start position
      */
-    cursor?: configuracionWhereUniqueInput
+    cursor?: inscripcion_cursoWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Take `±n` configuracions from the position of the cursor.
+     * Take `±n` inscripcion_cursos from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Skip the first `n` configuracions.
+     * Skip the first `n` inscripcion_cursos.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
-     * Count returned configuracions
+     * Count returned inscripcion_cursos
     **/
-    _count?: true | ConfiguracionCountAggregateInputType
+    _count?: true | Inscripcion_cursoCountAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
      * Select which fields to average
     **/
-    _avg?: ConfiguracionAvgAggregateInputType
+    _avg?: Inscripcion_cursoAvgAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
      * Select which fields to sum
     **/
-    _sum?: ConfiguracionSumAggregateInputType
+    _sum?: Inscripcion_cursoSumAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
      * Select which fields to find the minimum value
     **/
-    _min?: ConfiguracionMinAggregateInputType
+    _min?: Inscripcion_cursoMinAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
      * Select which fields to find the maximum value
     **/
-    _max?: ConfiguracionMaxAggregateInputType
+    _max?: Inscripcion_cursoMaxAggregateInputType
   }
 
-  export type GetConfiguracionAggregateType<T extends ConfiguracionAggregateArgs> = {
-        [P in keyof T & keyof AggregateConfiguracion]: P extends '_count' | 'count'
+  export type GetInscripcion_cursoAggregateType<T extends Inscripcion_cursoAggregateArgs> = {
+        [P in keyof T & keyof AggregateInscripcion_curso]: P extends '_count' | 'count'
       ? T[P] extends true
         ? number
-        : GetScalarType<T[P], AggregateConfiguracion[P]>
-      : GetScalarType<T[P], AggregateConfiguracion[P]>
+        : GetScalarType<T[P], AggregateInscripcion_curso[P]>
+      : GetScalarType<T[P], AggregateInscripcion_curso[P]>
   }
 
 
 
 
-  export type configuracionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: configuracionWhereInput
-    orderBy?: configuracionOrderByWithAggregationInput | configuracionOrderByWithAggregationInput[]
-    by: ConfiguracionScalarFieldEnum[] | ConfiguracionScalarFieldEnum
-    having?: configuracionScalarWhereWithAggregatesInput
+  export type inscripcion_cursoGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: inscripcion_cursoWhereInput
+    orderBy?: inscripcion_cursoOrderByWithAggregationInput | inscripcion_cursoOrderByWithAggregationInput[]
+    by: Inscripcion_cursoScalarFieldEnum[] | Inscripcion_cursoScalarFieldEnum
+    having?: inscripcion_cursoScalarWhereWithAggregatesInput
     take?: number
     skip?: number
-    _count?: ConfiguracionCountAggregateInputType | true
-    _avg?: ConfiguracionAvgAggregateInputType
-    _sum?: ConfiguracionSumAggregateInputType
-    _min?: ConfiguracionMinAggregateInputType
-    _max?: ConfiguracionMaxAggregateInputType
+    _count?: Inscripcion_cursoCountAggregateInputType | true
+    _avg?: Inscripcion_cursoAvgAggregateInputType
+    _sum?: Inscripcion_cursoSumAggregateInputType
+    _min?: Inscripcion_cursoMinAggregateInputType
+    _max?: Inscripcion_cursoMaxAggregateInputType
   }
 
-  export type ConfiguracionGroupByOutputType = {
-    id_conf: number
-    mision: string
-    vision: string
-    autoridades: string
-    _count: ConfiguracionCountAggregateOutputType | null
-    _avg: ConfiguracionAvgAggregateOutputType | null
-    _sum: ConfiguracionSumAggregateOutputType | null
-    _min: ConfiguracionMinAggregateOutputType | null
-    _max: ConfiguracionMaxAggregateOutputType | null
+  export type Inscripcion_cursoGroupByOutputType = {
+    id_ins_cur: string
+    not_fin_usu: number | null
+    por_asi_fin_usu: number | null
+    _count: Inscripcion_cursoCountAggregateOutputType | null
+    _avg: Inscripcion_cursoAvgAggregateOutputType | null
+    _sum: Inscripcion_cursoSumAggregateOutputType | null
+    _min: Inscripcion_cursoMinAggregateOutputType | null
+    _max: Inscripcion_cursoMaxAggregateOutputType | null
   }
 
-  type GetConfiguracionGroupByPayload<T extends configuracionGroupByArgs> = Prisma.PrismaPromise<
+  type GetInscripcion_cursoGroupByPayload<T extends inscripcion_cursoGroupByArgs> = Prisma.PrismaPromise<
     Array<
-      PickEnumerable<ConfiguracionGroupByOutputType, T['by']> &
+      PickEnumerable<Inscripcion_cursoGroupByOutputType, T['by']> &
         {
-          [P in ((keyof T) & (keyof ConfiguracionGroupByOutputType))]: P extends '_count'
+          [P in ((keyof T) & (keyof Inscripcion_cursoGroupByOutputType))]: P extends '_count'
             ? T[P] extends boolean
               ? number
-              : GetScalarType<T[P], ConfiguracionGroupByOutputType[P]>
-            : GetScalarType<T[P], ConfiguracionGroupByOutputType[P]>
+              : GetScalarType<T[P], Inscripcion_cursoGroupByOutputType[P]>
+            : GetScalarType<T[P], Inscripcion_cursoGroupByOutputType[P]>
         }
       >
     >
 
 
-  export type configuracionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id_conf?: boolean
-    mision?: boolean
-    vision?: boolean
-    autoridades?: boolean
-  }, ExtArgs["result"]["configuracion"]>
+  export type inscripcion_cursoSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_ins_cur?: boolean
+    not_fin_usu?: boolean
+    por_asi_fin_usu?: boolean
+    inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["inscripcion_curso"]>
 
-  export type configuracionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id_conf?: boolean
-    mision?: boolean
-    vision?: boolean
-    autoridades?: boolean
-  }, ExtArgs["result"]["configuracion"]>
+  export type inscripcion_cursoSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_ins_cur?: boolean
+    not_fin_usu?: boolean
+    por_asi_fin_usu?: boolean
+    inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["inscripcion_curso"]>
 
-  export type configuracionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id_conf?: boolean
-    mision?: boolean
-    vision?: boolean
-    autoridades?: boolean
-  }, ExtArgs["result"]["configuracion"]>
+  export type inscripcion_cursoSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_ins_cur?: boolean
+    not_fin_usu?: boolean
+    por_asi_fin_usu?: boolean
+    inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["inscripcion_curso"]>
 
-  export type configuracionSelectScalar = {
-    id_conf?: boolean
-    mision?: boolean
-    vision?: boolean
-    autoridades?: boolean
+  export type inscripcion_cursoSelectScalar = {
+    id_ins_cur?: boolean
+    not_fin_usu?: boolean
+    por_asi_fin_usu?: boolean
   }
 
-  export type configuracionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_conf" | "mision" | "vision" | "autoridades", ExtArgs["result"]["configuracion"]>
+  export type inscripcion_cursoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_ins_cur" | "not_fin_usu" | "por_asi_fin_usu", ExtArgs["result"]["inscripcion_curso"]>
+  export type inscripcion_cursoInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
+  }
+  export type inscripcion_cursoIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
+  }
+  export type inscripcion_cursoIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
+  }
 
-  export type $configuracionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "configuracion"
-    objects: {}
+  export type $inscripcion_cursoPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "inscripcion_curso"
+    objects: {
+      inscripcion: Prisma.$inscripcionPayload<ExtArgs>
+    }
     scalars: $Extensions.GetPayloadResult<{
-      id_conf: number
-      mision: string
-      vision: string
-      autoridades: string
-    }, ExtArgs["result"]["configuracion"]>
+      id_ins_cur: string
+      not_fin_usu: number | null
+      por_asi_fin_usu: number | null
+    }, ExtArgs["result"]["inscripcion_curso"]>
     composites: {}
   }
 
-  type configuracionGetPayload<S extends boolean | null | undefined | configuracionDefaultArgs> = $Result.GetResult<Prisma.$configuracionPayload, S>
+  type inscripcion_cursoGetPayload<S extends boolean | null | undefined | inscripcion_cursoDefaultArgs> = $Result.GetResult<Prisma.$inscripcion_cursoPayload, S>
 
-  type configuracionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
-    Omit<configuracionFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
-      select?: ConfiguracionCountAggregateInputType | true
+  type inscripcion_cursoCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<inscripcion_cursoFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: Inscripcion_cursoCountAggregateInputType | true
     }
 
-  export interface configuracionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['configuracion'], meta: { name: 'configuracion' } }
+  export interface inscripcion_cursoDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['inscripcion_curso'], meta: { name: 'inscripcion_curso' } }
     /**
-     * Find zero or one Configuracion that matches the filter.
-     * @param {configuracionFindUniqueArgs} args - Arguments to find a Configuracion
+     * Find zero or one Inscripcion_curso that matches the filter.
+     * @param {inscripcion_cursoFindUniqueArgs} args - Arguments to find a Inscripcion_curso
      * @example
-     * // Get one Configuracion
-     * const configuracion = await prisma.configuracion.findUnique({
+     * // Get one Inscripcion_curso
+     * const inscripcion_curso = await prisma.inscripcion_curso.findUnique({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      */
-    findUnique<T extends configuracionFindUniqueArgs>(args: SelectSubset<T, configuracionFindUniqueArgs<ExtArgs>>): Prisma__configuracionClient<$Result.GetResult<Prisma.$configuracionPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    findUnique<T extends inscripcion_cursoFindUniqueArgs>(args: SelectSubset<T, inscripcion_cursoFindUniqueArgs<ExtArgs>>): Prisma__inscripcion_cursoClient<$Result.GetResult<Prisma.$inscripcion_cursoPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find one Configuracion that matches the filter or throw an error with `error.code='P2025'`
+     * Find one Inscripcion_curso that matches the filter or throw an error with `error.code='P2025'`
      * if no matches were found.
-     * @param {configuracionFindUniqueOrThrowArgs} args - Arguments to find a Configuracion
+     * @param {inscripcion_cursoFindUniqueOrThrowArgs} args - Arguments to find a Inscripcion_curso
      * @example
-     * // Get one Configuracion
-     * const configuracion = await prisma.configuracion.findUniqueOrThrow({
+     * // Get one Inscripcion_curso
+     * const inscripcion_curso = await prisma.inscripcion_curso.findUniqueOrThrow({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      */
-    findUniqueOrThrow<T extends configuracionFindUniqueOrThrowArgs>(args: SelectSubset<T, configuracionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__configuracionClient<$Result.GetResult<Prisma.$configuracionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    findUniqueOrThrow<T extends inscripcion_cursoFindUniqueOrThrowArgs>(args: SelectSubset<T, inscripcion_cursoFindUniqueOrThrowArgs<ExtArgs>>): Prisma__inscripcion_cursoClient<$Result.GetResult<Prisma.$inscripcion_cursoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find the first Configuracion that matches the filter.
+     * Find the first Inscripcion_curso that matches the filter.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {configuracionFindFirstArgs} args - Arguments to find a Configuracion
+     * @param {inscripcion_cursoFindFirstArgs} args - Arguments to find a Inscripcion_curso
      * @example
-     * // Get one Configuracion
-     * const configuracion = await prisma.configuracion.findFirst({
+     * // Get one Inscripcion_curso
+     * const inscripcion_curso = await prisma.inscripcion_curso.findFirst({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      */
-    findFirst<T extends configuracionFindFirstArgs>(args?: SelectSubset<T, configuracionFindFirstArgs<ExtArgs>>): Prisma__configuracionClient<$Result.GetResult<Prisma.$configuracionPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    findFirst<T extends inscripcion_cursoFindFirstArgs>(args?: SelectSubset<T, inscripcion_cursoFindFirstArgs<ExtArgs>>): Prisma__inscripcion_cursoClient<$Result.GetResult<Prisma.$inscripcion_cursoPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find the first Configuracion that matches the filter or
+     * Find the first Inscripcion_curso that matches the filter or
      * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {configuracionFindFirstOrThrowArgs} args - Arguments to find a Configuracion
+     * @param {inscripcion_cursoFindFirstOrThrowArgs} args - Arguments to find a Inscripcion_curso
      * @example
-     * // Get one Configuracion
-     * const configuracion = await prisma.configuracion.findFirstOrThrow({
+     * // Get one Inscripcion_curso
+     * const inscripcion_curso = await prisma.inscripcion_curso.findFirstOrThrow({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      */
-    findFirstOrThrow<T extends configuracionFindFirstOrThrowArgs>(args?: SelectSubset<T, configuracionFindFirstOrThrowArgs<ExtArgs>>): Prisma__configuracionClient<$Result.GetResult<Prisma.$configuracionPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    findFirstOrThrow<T extends inscripcion_cursoFindFirstOrThrowArgs>(args?: SelectSubset<T, inscripcion_cursoFindFirstOrThrowArgs<ExtArgs>>): Prisma__inscripcion_cursoClient<$Result.GetResult<Prisma.$inscripcion_cursoPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find zero or more Configuracions that matches the filter.
+     * Find zero or more Inscripcion_cursos that matches the filter.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {configuracionFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @param {inscripcion_cursoFindManyArgs} args - Arguments to filter and select certain fields only.
      * @example
-     * // Get all Configuracions
-     * const configuracions = await prisma.configuracion.findMany()
+     * // Get all Inscripcion_cursos
+     * const inscripcion_cursos = await prisma.inscripcion_curso.findMany()
      * 
-     * // Get first 10 Configuracions
-     * const configuracions = await prisma.configuracion.findMany({ take: 10 })
+     * // Get first 10 Inscripcion_cursos
+     * const inscripcion_cursos = await prisma.inscripcion_curso.findMany({ take: 10 })
      * 
-     * // Only select the `id_conf`
-     * const configuracionWithId_confOnly = await prisma.configuracion.findMany({ select: { id_conf: true } })
+     * // Only select the `id_ins_cur`
+     * const inscripcion_cursoWithId_ins_curOnly = await prisma.inscripcion_curso.findMany({ select: { id_ins_cur: true } })
      * 
      */
-    findMany<T extends configuracionFindManyArgs>(args?: SelectSubset<T, configuracionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$configuracionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+    findMany<T extends inscripcion_cursoFindManyArgs>(args?: SelectSubset<T, inscripcion_cursoFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$inscripcion_cursoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
     /**
-     * Create a Configuracion.
-     * @param {configuracionCreateArgs} args - Arguments to create a Configuracion.
+     * Create a Inscripcion_curso.
+     * @param {inscripcion_cursoCreateArgs} args - Arguments to create a Inscripcion_curso.
      * @example
-     * // Create one Configuracion
-     * const Configuracion = await prisma.configuracion.create({
+     * // Create one Inscripcion_curso
+     * const Inscripcion_curso = await prisma.inscripcion_curso.create({
      *   data: {
-     *     // ... data to create a Configuracion
+     *     // ... data to create a Inscripcion_curso
      *   }
      * })
      * 
      */
-    create<T extends configuracionCreateArgs>(args: SelectSubset<T, configuracionCreateArgs<ExtArgs>>): Prisma__configuracionClient<$Result.GetResult<Prisma.$configuracionPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    create<T extends inscripcion_cursoCreateArgs>(args: SelectSubset<T, inscripcion_cursoCreateArgs<ExtArgs>>): Prisma__inscripcion_cursoClient<$Result.GetResult<Prisma.$inscripcion_cursoPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Create many Configuracions.
-     * @param {configuracionCreateManyArgs} args - Arguments to create many Configuracions.
+     * Create many Inscripcion_cursos.
+     * @param {inscripcion_cursoCreateManyArgs} args - Arguments to create many Inscripcion_cursos.
      * @example
-     * // Create many Configuracions
-     * const configuracion = await prisma.configuracion.createMany({
+     * // Create many Inscripcion_cursos
+     * const inscripcion_curso = await prisma.inscripcion_curso.createMany({
      *   data: [
      *     // ... provide data here
      *   ]
      * })
      *     
      */
-    createMany<T extends configuracionCreateManyArgs>(args?: SelectSubset<T, configuracionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+    createMany<T extends inscripcion_cursoCreateManyArgs>(args?: SelectSubset<T, inscripcion_cursoCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
-     * Create many Configuracions and returns the data saved in the database.
-     * @param {configuracionCreateManyAndReturnArgs} args - Arguments to create many Configuracions.
+     * Create many Inscripcion_cursos and returns the data saved in the database.
+     * @param {inscripcion_cursoCreateManyAndReturnArgs} args - Arguments to create many Inscripcion_cursos.
      * @example
-     * // Create many Configuracions
-     * const configuracion = await prisma.configuracion.createManyAndReturn({
+     * // Create many Inscripcion_cursos
+     * const inscripcion_curso = await prisma.inscripcion_curso.createManyAndReturn({
      *   data: [
      *     // ... provide data here
      *   ]
      * })
      * 
-     * // Create many Configuracions and only return the `id_conf`
-     * const configuracionWithId_confOnly = await prisma.configuracion.createManyAndReturn({
-     *   select: { id_conf: true },
+     * // Create many Inscripcion_cursos and only return the `id_ins_cur`
+     * const inscripcion_cursoWithId_ins_curOnly = await prisma.inscripcion_curso.createManyAndReturn({
+     *   select: { id_ins_cur: true },
      *   data: [
      *     // ... provide data here
      *   ]
@@ -6348,28 +8867,28 @@ export namespace Prisma {
      * Read more here: https://pris.ly/d/null-undefined
      * 
      */
-    createManyAndReturn<T extends configuracionCreateManyAndReturnArgs>(args?: SelectSubset<T, configuracionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$configuracionPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+    createManyAndReturn<T extends inscripcion_cursoCreateManyAndReturnArgs>(args?: SelectSubset<T, inscripcion_cursoCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$inscripcion_cursoPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
     /**
-     * Delete a Configuracion.
-     * @param {configuracionDeleteArgs} args - Arguments to delete one Configuracion.
+     * Delete a Inscripcion_curso.
+     * @param {inscripcion_cursoDeleteArgs} args - Arguments to delete one Inscripcion_curso.
      * @example
-     * // Delete one Configuracion
-     * const Configuracion = await prisma.configuracion.delete({
+     * // Delete one Inscripcion_curso
+     * const Inscripcion_curso = await prisma.inscripcion_curso.delete({
      *   where: {
-     *     // ... filter to delete one Configuracion
+     *     // ... filter to delete one Inscripcion_curso
      *   }
      * })
      * 
      */
-    delete<T extends configuracionDeleteArgs>(args: SelectSubset<T, configuracionDeleteArgs<ExtArgs>>): Prisma__configuracionClient<$Result.GetResult<Prisma.$configuracionPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    delete<T extends inscripcion_cursoDeleteArgs>(args: SelectSubset<T, inscripcion_cursoDeleteArgs<ExtArgs>>): Prisma__inscripcion_cursoClient<$Result.GetResult<Prisma.$inscripcion_cursoPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Update one Configuracion.
-     * @param {configuracionUpdateArgs} args - Arguments to update one Configuracion.
+     * Update one Inscripcion_curso.
+     * @param {inscripcion_cursoUpdateArgs} args - Arguments to update one Inscripcion_curso.
      * @example
-     * // Update one Configuracion
-     * const configuracion = await prisma.configuracion.update({
+     * // Update one Inscripcion_curso
+     * const inscripcion_curso = await prisma.inscripcion_curso.update({
      *   where: {
      *     // ... provide filter here
      *   },
@@ -6379,30 +8898,30 @@ export namespace Prisma {
      * })
      * 
      */
-    update<T extends configuracionUpdateArgs>(args: SelectSubset<T, configuracionUpdateArgs<ExtArgs>>): Prisma__configuracionClient<$Result.GetResult<Prisma.$configuracionPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    update<T extends inscripcion_cursoUpdateArgs>(args: SelectSubset<T, inscripcion_cursoUpdateArgs<ExtArgs>>): Prisma__inscripcion_cursoClient<$Result.GetResult<Prisma.$inscripcion_cursoPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Delete zero or more Configuracions.
-     * @param {configuracionDeleteManyArgs} args - Arguments to filter Configuracions to delete.
+     * Delete zero or more Inscripcion_cursos.
+     * @param {inscripcion_cursoDeleteManyArgs} args - Arguments to filter Inscripcion_cursos to delete.
      * @example
-     * // Delete a few Configuracions
-     * const { count } = await prisma.configuracion.deleteMany({
+     * // Delete a few Inscripcion_cursos
+     * const { count } = await prisma.inscripcion_curso.deleteMany({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      * 
      */
-    deleteMany<T extends configuracionDeleteManyArgs>(args?: SelectSubset<T, configuracionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+    deleteMany<T extends inscripcion_cursoDeleteManyArgs>(args?: SelectSubset<T, inscripcion_cursoDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
-     * Update zero or more Configuracions.
+     * Update zero or more Inscripcion_cursos.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {configuracionUpdateManyArgs} args - Arguments to update one or more rows.
+     * @param {inscripcion_cursoUpdateManyArgs} args - Arguments to update one or more rows.
      * @example
-     * // Update many Configuracions
-     * const configuracion = await prisma.configuracion.updateMany({
+     * // Update many Inscripcion_cursos
+     * const inscripcion_curso = await prisma.inscripcion_curso.updateMany({
      *   where: {
      *     // ... provide filter here
      *   },
@@ -6412,14 +8931,14 @@ export namespace Prisma {
      * })
      * 
      */
-    updateMany<T extends configuracionUpdateManyArgs>(args: SelectSubset<T, configuracionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+    updateMany<T extends inscripcion_cursoUpdateManyArgs>(args: SelectSubset<T, inscripcion_cursoUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
-     * Update zero or more Configuracions and returns the data updated in the database.
-     * @param {configuracionUpdateManyAndReturnArgs} args - Arguments to update many Configuracions.
+     * Update zero or more Inscripcion_cursos and returns the data updated in the database.
+     * @param {inscripcion_cursoUpdateManyAndReturnArgs} args - Arguments to update many Inscripcion_cursos.
      * @example
-     * // Update many Configuracions
-     * const configuracion = await prisma.configuracion.updateManyAndReturn({
+     * // Update many Inscripcion_cursos
+     * const inscripcion_curso = await prisma.inscripcion_curso.updateManyAndReturn({
      *   where: {
      *     // ... provide filter here
      *   },
@@ -6428,9 +8947,9 @@ export namespace Prisma {
      *   ]
      * })
      * 
-     * // Update zero or more Configuracions and only return the `id_conf`
-     * const configuracionWithId_confOnly = await prisma.configuracion.updateManyAndReturn({
-     *   select: { id_conf: true },
+     * // Update zero or more Inscripcion_cursos and only return the `id_ins_cur`
+     * const inscripcion_cursoWithId_ins_curOnly = await prisma.inscripcion_curso.updateManyAndReturn({
+     *   select: { id_ins_cur: true },
      *   where: {
      *     // ... provide filter here
      *   },
@@ -6442,56 +8961,56 @@ export namespace Prisma {
      * Read more here: https://pris.ly/d/null-undefined
      * 
      */
-    updateManyAndReturn<T extends configuracionUpdateManyAndReturnArgs>(args: SelectSubset<T, configuracionUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$configuracionPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+    updateManyAndReturn<T extends inscripcion_cursoUpdateManyAndReturnArgs>(args: SelectSubset<T, inscripcion_cursoUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$inscripcion_cursoPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
     /**
-     * Create or update one Configuracion.
-     * @param {configuracionUpsertArgs} args - Arguments to update or create a Configuracion.
+     * Create or update one Inscripcion_curso.
+     * @param {inscripcion_cursoUpsertArgs} args - Arguments to update or create a Inscripcion_curso.
      * @example
-     * // Update or create a Configuracion
-     * const configuracion = await prisma.configuracion.upsert({
+     * // Update or create a Inscripcion_curso
+     * const inscripcion_curso = await prisma.inscripcion_curso.upsert({
      *   create: {
-     *     // ... data to create a Configuracion
+     *     // ... data to create a Inscripcion_curso
      *   },
      *   update: {
      *     // ... in case it already exists, update
      *   },
      *   where: {
-     *     // ... the filter for the Configuracion we want to update
+     *     // ... the filter for the Inscripcion_curso we want to update
      *   }
      * })
      */
-    upsert<T extends configuracionUpsertArgs>(args: SelectSubset<T, configuracionUpsertArgs<ExtArgs>>): Prisma__configuracionClient<$Result.GetResult<Prisma.$configuracionPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    upsert<T extends inscripcion_cursoUpsertArgs>(args: SelectSubset<T, inscripcion_cursoUpsertArgs<ExtArgs>>): Prisma__inscripcion_cursoClient<$Result.GetResult<Prisma.$inscripcion_cursoPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
 
     /**
-     * Count the number of Configuracions.
+     * Count the number of Inscripcion_cursos.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {configuracionCountArgs} args - Arguments to filter Configuracions to count.
+     * @param {inscripcion_cursoCountArgs} args - Arguments to filter Inscripcion_cursos to count.
      * @example
-     * // Count the number of Configuracions
-     * const count = await prisma.configuracion.count({
+     * // Count the number of Inscripcion_cursos
+     * const count = await prisma.inscripcion_curso.count({
      *   where: {
-     *     // ... the filter for the Configuracions we want to count
+     *     // ... the filter for the Inscripcion_cursos we want to count
      *   }
      * })
     **/
-    count<T extends configuracionCountArgs>(
-      args?: Subset<T, configuracionCountArgs>,
+    count<T extends inscripcion_cursoCountArgs>(
+      args?: Subset<T, inscripcion_cursoCountArgs>,
     ): Prisma.PrismaPromise<
       T extends $Utils.Record<'select', any>
         ? T['select'] extends true
           ? number
-          : GetScalarType<T['select'], ConfiguracionCountAggregateOutputType>
+          : GetScalarType<T['select'], Inscripcion_cursoCountAggregateOutputType>
         : number
     >
 
     /**
-     * Allows you to perform aggregations operations on a Configuracion.
+     * Allows you to perform aggregations operations on a Inscripcion_curso.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {ConfiguracionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @param {Inscripcion_cursoAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
      * @example
      * // Ordered by age ascending
      * // Where email contains prisma.io
@@ -6511,13 +9030,13 @@ export namespace Prisma {
      *   take: 10,
      * })
     **/
-    aggregate<T extends ConfiguracionAggregateArgs>(args: Subset<T, ConfiguracionAggregateArgs>): Prisma.PrismaPromise<GetConfiguracionAggregateType<T>>
+    aggregate<T extends Inscripcion_cursoAggregateArgs>(args: Subset<T, Inscripcion_cursoAggregateArgs>): Prisma.PrismaPromise<GetInscripcion_cursoAggregateType<T>>
 
     /**
-     * Group by Configuracion.
+     * Group by Inscripcion_curso.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {configuracionGroupByArgs} args - Group by arguments.
+     * @param {inscripcion_cursoGroupByArgs} args - Group by arguments.
      * @example
      * // Group by city, order by createdAt, get count
      * const result = await prisma.user.groupBy({
@@ -6532,14 +9051,14 @@ export namespace Prisma {
      * 
     **/
     groupBy<
-      T extends configuracionGroupByArgs,
+      T extends inscripcion_cursoGroupByArgs,
       HasSelectOrTake extends Or<
         Extends<'skip', Keys<T>>,
         Extends<'take', Keys<T>>
       >,
       OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: configuracionGroupByArgs['orderBy'] }
-        : { orderBy?: configuracionGroupByArgs['orderBy'] },
+        ? { orderBy: inscripcion_cursoGroupByArgs['orderBy'] }
+        : { orderBy?: inscripcion_cursoGroupByArgs['orderBy'] },
       OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
       ByFields extends MaybeTupleToUnion<T['by']>,
       ByValid extends Has<ByFields, OrderFields>,
@@ -6588,21 +9107,22 @@ export namespace Prisma {
             ? never
             : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
         }[OrderFields]
-    >(args: SubsetIntersection<T, configuracionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetConfiguracionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+    >(args: SubsetIntersection<T, inscripcion_cursoGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetInscripcion_cursoGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
   /**
-   * Fields of the configuracion model
+   * Fields of the inscripcion_curso model
    */
-  readonly fields: configuracionFieldRefs;
+  readonly fields: inscripcion_cursoFieldRefs;
   }
 
   /**
-   * The delegate class that acts as a "Promise-like" for configuracion.
+   * The delegate class that acts as a "Promise-like" for inscripcion_curso.
    * Why is this prefixed with `Prisma__`?
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__configuracionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+  export interface Prisma__inscripcion_cursoClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    inscripcion<T extends inscripcionDefaultArgs<ExtArgs> = {}>(args?: Subset<T, inscripcionDefaultArgs<ExtArgs>>): Prisma__inscripcionClient<$Result.GetResult<Prisma.$inscripcionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6629,376 +9149,1493 @@ export namespace Prisma {
 
 
   /**
-   * Fields of the configuracion model
+   * Fields of the inscripcion_curso model
    */
-  interface configuracionFieldRefs {
-    readonly id_conf: FieldRef<"configuracion", 'Int'>
-    readonly mision: FieldRef<"configuracion", 'String'>
-    readonly vision: FieldRef<"configuracion", 'String'>
-    readonly autoridades: FieldRef<"configuracion", 'String'>
+  interface inscripcion_cursoFieldRefs {
+    readonly id_ins_cur: FieldRef<"inscripcion_curso", 'String'>
+    readonly not_fin_usu: FieldRef<"inscripcion_curso", 'Float'>
+    readonly por_asi_fin_usu: FieldRef<"inscripcion_curso", 'Float'>
   }
     
 
   // Custom InputTypes
   /**
-   * configuracion findUnique
+   * inscripcion_curso findUnique
    */
-  export type configuracionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type inscripcion_cursoFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the configuracion
+     * Select specific fields to fetch from the inscripcion_curso
      */
-    select?: configuracionSelect<ExtArgs> | null
+    select?: inscripcion_cursoSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the configuracion
+     * Omit specific fields from the inscripcion_curso
      */
-    omit?: configuracionOmit<ExtArgs> | null
+    omit?: inscripcion_cursoOmit<ExtArgs> | null
     /**
-     * Filter, which configuracion to fetch.
+     * Choose, which related nodes to fetch as well
      */
-    where: configuracionWhereUniqueInput
+    include?: inscripcion_cursoInclude<ExtArgs> | null
+    /**
+     * Filter, which inscripcion_curso to fetch.
+     */
+    where: inscripcion_cursoWhereUniqueInput
   }
 
   /**
-   * configuracion findUniqueOrThrow
+   * inscripcion_curso findUniqueOrThrow
    */
-  export type configuracionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type inscripcion_cursoFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the configuracion
+     * Select specific fields to fetch from the inscripcion_curso
      */
-    select?: configuracionSelect<ExtArgs> | null
+    select?: inscripcion_cursoSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the configuracion
+     * Omit specific fields from the inscripcion_curso
      */
-    omit?: configuracionOmit<ExtArgs> | null
+    omit?: inscripcion_cursoOmit<ExtArgs> | null
     /**
-     * Filter, which configuracion to fetch.
+     * Choose, which related nodes to fetch as well
      */
-    where: configuracionWhereUniqueInput
+    include?: inscripcion_cursoInclude<ExtArgs> | null
+    /**
+     * Filter, which inscripcion_curso to fetch.
+     */
+    where: inscripcion_cursoWhereUniqueInput
   }
 
   /**
-   * configuracion findFirst
+   * inscripcion_curso findFirst
    */
-  export type configuracionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type inscripcion_cursoFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the configuracion
+     * Select specific fields to fetch from the inscripcion_curso
      */
-    select?: configuracionSelect<ExtArgs> | null
+    select?: inscripcion_cursoSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the configuracion
+     * Omit specific fields from the inscripcion_curso
      */
-    omit?: configuracionOmit<ExtArgs> | null
+    omit?: inscripcion_cursoOmit<ExtArgs> | null
     /**
-     * Filter, which configuracion to fetch.
+     * Choose, which related nodes to fetch as well
      */
-    where?: configuracionWhereInput
+    include?: inscripcion_cursoInclude<ExtArgs> | null
+    /**
+     * Filter, which inscripcion_curso to fetch.
+     */
+    where?: inscripcion_cursoWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
-     * Determine the order of configuracions to fetch.
+     * Determine the order of inscripcion_cursos to fetch.
      */
-    orderBy?: configuracionOrderByWithRelationInput | configuracionOrderByWithRelationInput[]
+    orderBy?: inscripcion_cursoOrderByWithRelationInput | inscripcion_cursoOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
-     * Sets the position for searching for configuracions.
+     * Sets the position for searching for inscripcion_cursos.
      */
-    cursor?: configuracionWhereUniqueInput
+    cursor?: inscripcion_cursoWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Take `±n` configuracions from the position of the cursor.
+     * Take `±n` inscripcion_cursos from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Skip the first `n` configuracions.
+     * Skip the first `n` inscripcion_cursos.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
      * 
-     * Filter by unique combinations of configuracions.
+     * Filter by unique combinations of inscripcion_cursos.
      */
-    distinct?: ConfiguracionScalarFieldEnum | ConfiguracionScalarFieldEnum[]
+    distinct?: Inscripcion_cursoScalarFieldEnum | Inscripcion_cursoScalarFieldEnum[]
   }
 
   /**
-   * configuracion findFirstOrThrow
+   * inscripcion_curso findFirstOrThrow
    */
-  export type configuracionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type inscripcion_cursoFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the configuracion
+     * Select specific fields to fetch from the inscripcion_curso
      */
-    select?: configuracionSelect<ExtArgs> | null
+    select?: inscripcion_cursoSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the configuracion
+     * Omit specific fields from the inscripcion_curso
      */
-    omit?: configuracionOmit<ExtArgs> | null
+    omit?: inscripcion_cursoOmit<ExtArgs> | null
     /**
-     * Filter, which configuracion to fetch.
+     * Choose, which related nodes to fetch as well
      */
-    where?: configuracionWhereInput
+    include?: inscripcion_cursoInclude<ExtArgs> | null
+    /**
+     * Filter, which inscripcion_curso to fetch.
+     */
+    where?: inscripcion_cursoWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
-     * Determine the order of configuracions to fetch.
+     * Determine the order of inscripcion_cursos to fetch.
      */
-    orderBy?: configuracionOrderByWithRelationInput | configuracionOrderByWithRelationInput[]
+    orderBy?: inscripcion_cursoOrderByWithRelationInput | inscripcion_cursoOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
-     * Sets the position for searching for configuracions.
+     * Sets the position for searching for inscripcion_cursos.
      */
-    cursor?: configuracionWhereUniqueInput
+    cursor?: inscripcion_cursoWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Take `±n` configuracions from the position of the cursor.
+     * Take `±n` inscripcion_cursos from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Skip the first `n` configuracions.
+     * Skip the first `n` inscripcion_cursos.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
      * 
-     * Filter by unique combinations of configuracions.
+     * Filter by unique combinations of inscripcion_cursos.
      */
-    distinct?: ConfiguracionScalarFieldEnum | ConfiguracionScalarFieldEnum[]
+    distinct?: Inscripcion_cursoScalarFieldEnum | Inscripcion_cursoScalarFieldEnum[]
   }
 
   /**
-   * configuracion findMany
+   * inscripcion_curso findMany
    */
-  export type configuracionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type inscripcion_cursoFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the configuracion
+     * Select specific fields to fetch from the inscripcion_curso
      */
-    select?: configuracionSelect<ExtArgs> | null
+    select?: inscripcion_cursoSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the configuracion
+     * Omit specific fields from the inscripcion_curso
      */
-    omit?: configuracionOmit<ExtArgs> | null
+    omit?: inscripcion_cursoOmit<ExtArgs> | null
     /**
-     * Filter, which configuracions to fetch.
+     * Choose, which related nodes to fetch as well
      */
-    where?: configuracionWhereInput
+    include?: inscripcion_cursoInclude<ExtArgs> | null
+    /**
+     * Filter, which inscripcion_cursos to fetch.
+     */
+    where?: inscripcion_cursoWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
-     * Determine the order of configuracions to fetch.
+     * Determine the order of inscripcion_cursos to fetch.
      */
-    orderBy?: configuracionOrderByWithRelationInput | configuracionOrderByWithRelationInput[]
+    orderBy?: inscripcion_cursoOrderByWithRelationInput | inscripcion_cursoOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
-     * Sets the position for listing configuracions.
+     * Sets the position for listing inscripcion_cursos.
      */
-    cursor?: configuracionWhereUniqueInput
+    cursor?: inscripcion_cursoWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Take `±n` configuracions from the position of the cursor.
+     * Take `±n` inscripcion_cursos from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Skip the first `n` configuracions.
+     * Skip the first `n` inscripcion_cursos.
      */
     skip?: number
-    distinct?: ConfiguracionScalarFieldEnum | ConfiguracionScalarFieldEnum[]
+    distinct?: Inscripcion_cursoScalarFieldEnum | Inscripcion_cursoScalarFieldEnum[]
   }
 
   /**
-   * configuracion create
+   * inscripcion_curso create
    */
-  export type configuracionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type inscripcion_cursoCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the configuracion
+     * Select specific fields to fetch from the inscripcion_curso
      */
-    select?: configuracionSelect<ExtArgs> | null
+    select?: inscripcion_cursoSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the configuracion
+     * Omit specific fields from the inscripcion_curso
      */
-    omit?: configuracionOmit<ExtArgs> | null
+    omit?: inscripcion_cursoOmit<ExtArgs> | null
     /**
-     * The data needed to create a configuracion.
+     * Choose, which related nodes to fetch as well
      */
-    data: XOR<configuracionCreateInput, configuracionUncheckedCreateInput>
+    include?: inscripcion_cursoInclude<ExtArgs> | null
+    /**
+     * The data needed to create a inscripcion_curso.
+     */
+    data: XOR<inscripcion_cursoCreateInput, inscripcion_cursoUncheckedCreateInput>
   }
 
   /**
-   * configuracion createMany
+   * inscripcion_curso createMany
    */
-  export type configuracionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type inscripcion_cursoCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * The data used to create many configuracions.
+     * The data used to create many inscripcion_cursos.
      */
-    data: configuracionCreateManyInput | configuracionCreateManyInput[]
+    data: inscripcion_cursoCreateManyInput | inscripcion_cursoCreateManyInput[]
     skipDuplicates?: boolean
   }
 
   /**
-   * configuracion createManyAndReturn
+   * inscripcion_curso createManyAndReturn
    */
-  export type configuracionCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type inscripcion_cursoCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the configuracion
+     * Select specific fields to fetch from the inscripcion_curso
      */
-    select?: configuracionSelectCreateManyAndReturn<ExtArgs> | null
+    select?: inscripcion_cursoSelectCreateManyAndReturn<ExtArgs> | null
     /**
-     * Omit specific fields from the configuracion
+     * Omit specific fields from the inscripcion_curso
      */
-    omit?: configuracionOmit<ExtArgs> | null
+    omit?: inscripcion_cursoOmit<ExtArgs> | null
     /**
-     * The data used to create many configuracions.
+     * The data used to create many inscripcion_cursos.
      */
-    data: configuracionCreateManyInput | configuracionCreateManyInput[]
+    data: inscripcion_cursoCreateManyInput | inscripcion_cursoCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: inscripcion_cursoIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * inscripcion_curso update
+   */
+  export type inscripcion_cursoUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the inscripcion_curso
+     */
+    select?: inscripcion_cursoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the inscripcion_curso
+     */
+    omit?: inscripcion_cursoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: inscripcion_cursoInclude<ExtArgs> | null
+    /**
+     * The data needed to update a inscripcion_curso.
+     */
+    data: XOR<inscripcion_cursoUpdateInput, inscripcion_cursoUncheckedUpdateInput>
+    /**
+     * Choose, which inscripcion_curso to update.
+     */
+    where: inscripcion_cursoWhereUniqueInput
+  }
+
+  /**
+   * inscripcion_curso updateMany
+   */
+  export type inscripcion_cursoUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update inscripcion_cursos.
+     */
+    data: XOR<inscripcion_cursoUpdateManyMutationInput, inscripcion_cursoUncheckedUpdateManyInput>
+    /**
+     * Filter which inscripcion_cursos to update
+     */
+    where?: inscripcion_cursoWhereInput
+    /**
+     * Limit how many inscripcion_cursos to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * inscripcion_curso updateManyAndReturn
+   */
+  export type inscripcion_cursoUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the inscripcion_curso
+     */
+    select?: inscripcion_cursoSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the inscripcion_curso
+     */
+    omit?: inscripcion_cursoOmit<ExtArgs> | null
+    /**
+     * The data used to update inscripcion_cursos.
+     */
+    data: XOR<inscripcion_cursoUpdateManyMutationInput, inscripcion_cursoUncheckedUpdateManyInput>
+    /**
+     * Filter which inscripcion_cursos to update
+     */
+    where?: inscripcion_cursoWhereInput
+    /**
+     * Limit how many inscripcion_cursos to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: inscripcion_cursoIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * inscripcion_curso upsert
+   */
+  export type inscripcion_cursoUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the inscripcion_curso
+     */
+    select?: inscripcion_cursoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the inscripcion_curso
+     */
+    omit?: inscripcion_cursoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: inscripcion_cursoInclude<ExtArgs> | null
+    /**
+     * The filter to search for the inscripcion_curso to update in case it exists.
+     */
+    where: inscripcion_cursoWhereUniqueInput
+    /**
+     * In case the inscripcion_curso found by the `where` argument doesn't exist, create a new inscripcion_curso with this data.
+     */
+    create: XOR<inscripcion_cursoCreateInput, inscripcion_cursoUncheckedCreateInput>
+    /**
+     * In case the inscripcion_curso was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<inscripcion_cursoUpdateInput, inscripcion_cursoUncheckedUpdateInput>
+  }
+
+  /**
+   * inscripcion_curso delete
+   */
+  export type inscripcion_cursoDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the inscripcion_curso
+     */
+    select?: inscripcion_cursoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the inscripcion_curso
+     */
+    omit?: inscripcion_cursoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: inscripcion_cursoInclude<ExtArgs> | null
+    /**
+     * Filter which inscripcion_curso to delete.
+     */
+    where: inscripcion_cursoWhereUniqueInput
+  }
+
+  /**
+   * inscripcion_curso deleteMany
+   */
+  export type inscripcion_cursoDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which inscripcion_cursos to delete
+     */
+    where?: inscripcion_cursoWhereInput
+    /**
+     * Limit how many inscripcion_cursos to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * inscripcion_curso without action
+   */
+  export type inscripcion_cursoDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the inscripcion_curso
+     */
+    select?: inscripcion_cursoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the inscripcion_curso
+     */
+    omit?: inscripcion_cursoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: inscripcion_cursoInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model facultad
+   */
+
+  export type AggregateFacultad = {
+    _count: FacultadCountAggregateOutputType | null
+    _min: FacultadMinAggregateOutputType | null
+    _max: FacultadMaxAggregateOutputType | null
+  }
+
+  export type FacultadMinAggregateOutputType = {
+    id_fac: string | null
+    nom_fac: string | null
+    des_fac: string | null
+    mis_fac: string | null
+    vis_fac: string | null
+  }
+
+  export type FacultadMaxAggregateOutputType = {
+    id_fac: string | null
+    nom_fac: string | null
+    des_fac: string | null
+    mis_fac: string | null
+    vis_fac: string | null
+  }
+
+  export type FacultadCountAggregateOutputType = {
+    id_fac: number
+    nom_fac: number
+    des_fac: number
+    mis_fac: number
+    vis_fac: number
+    _all: number
+  }
+
+
+  export type FacultadMinAggregateInputType = {
+    id_fac?: true
+    nom_fac?: true
+    des_fac?: true
+    mis_fac?: true
+    vis_fac?: true
+  }
+
+  export type FacultadMaxAggregateInputType = {
+    id_fac?: true
+    nom_fac?: true
+    des_fac?: true
+    mis_fac?: true
+    vis_fac?: true
+  }
+
+  export type FacultadCountAggregateInputType = {
+    id_fac?: true
+    nom_fac?: true
+    des_fac?: true
+    mis_fac?: true
+    vis_fac?: true
+    _all?: true
+  }
+
+  export type FacultadAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which facultad to aggregate.
+     */
+    where?: facultadWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of facultads to fetch.
+     */
+    orderBy?: facultadOrderByWithRelationInput | facultadOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: facultadWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` facultads from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` facultads.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned facultads
+    **/
+    _count?: true | FacultadCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: FacultadMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: FacultadMaxAggregateInputType
+  }
+
+  export type GetFacultadAggregateType<T extends FacultadAggregateArgs> = {
+        [P in keyof T & keyof AggregateFacultad]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateFacultad[P]>
+      : GetScalarType<T[P], AggregateFacultad[P]>
+  }
+
+
+
+
+  export type facultadGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: facultadWhereInput
+    orderBy?: facultadOrderByWithAggregationInput | facultadOrderByWithAggregationInput[]
+    by: FacultadScalarFieldEnum[] | FacultadScalarFieldEnum
+    having?: facultadScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: FacultadCountAggregateInputType | true
+    _min?: FacultadMinAggregateInputType
+    _max?: FacultadMaxAggregateInputType
+  }
+
+  export type FacultadGroupByOutputType = {
+    id_fac: string
+    nom_fac: string
+    des_fac: string
+    mis_fac: string
+    vis_fac: string
+    _count: FacultadCountAggregateOutputType | null
+    _min: FacultadMinAggregateOutputType | null
+    _max: FacultadMaxAggregateOutputType | null
+  }
+
+  type GetFacultadGroupByPayload<T extends facultadGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<FacultadGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof FacultadGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], FacultadGroupByOutputType[P]>
+            : GetScalarType<T[P], FacultadGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type facultadSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_fac?: boolean
+    nom_fac?: boolean
+    des_fac?: boolean
+    mis_fac?: boolean
+    vis_fac?: boolean
+    carreras?: boolean | facultad$carrerasArgs<ExtArgs>
+    _count?: boolean | FacultadCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["facultad"]>
+
+  export type facultadSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_fac?: boolean
+    nom_fac?: boolean
+    des_fac?: boolean
+    mis_fac?: boolean
+    vis_fac?: boolean
+  }, ExtArgs["result"]["facultad"]>
+
+  export type facultadSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_fac?: boolean
+    nom_fac?: boolean
+    des_fac?: boolean
+    mis_fac?: boolean
+    vis_fac?: boolean
+  }, ExtArgs["result"]["facultad"]>
+
+  export type facultadSelectScalar = {
+    id_fac?: boolean
+    nom_fac?: boolean
+    des_fac?: boolean
+    mis_fac?: boolean
+    vis_fac?: boolean
+  }
+
+  export type facultadOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_fac" | "nom_fac" | "des_fac" | "mis_fac" | "vis_fac", ExtArgs["result"]["facultad"]>
+  export type facultadInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    carreras?: boolean | facultad$carrerasArgs<ExtArgs>
+    _count?: boolean | FacultadCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type facultadIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type facultadIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+
+  export type $facultadPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "facultad"
+    objects: {
+      carreras: Prisma.$carreraPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id_fac: string
+      nom_fac: string
+      des_fac: string
+      mis_fac: string
+      vis_fac: string
+    }, ExtArgs["result"]["facultad"]>
+    composites: {}
+  }
+
+  type facultadGetPayload<S extends boolean | null | undefined | facultadDefaultArgs> = $Result.GetResult<Prisma.$facultadPayload, S>
+
+  type facultadCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<facultadFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: FacultadCountAggregateInputType | true
+    }
+
+  export interface facultadDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['facultad'], meta: { name: 'facultad' } }
+    /**
+     * Find zero or one Facultad that matches the filter.
+     * @param {facultadFindUniqueArgs} args - Arguments to find a Facultad
+     * @example
+     * // Get one Facultad
+     * const facultad = await prisma.facultad.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends facultadFindUniqueArgs>(args: SelectSubset<T, facultadFindUniqueArgs<ExtArgs>>): Prisma__facultadClient<$Result.GetResult<Prisma.$facultadPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Facultad that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {facultadFindUniqueOrThrowArgs} args - Arguments to find a Facultad
+     * @example
+     * // Get one Facultad
+     * const facultad = await prisma.facultad.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends facultadFindUniqueOrThrowArgs>(args: SelectSubset<T, facultadFindUniqueOrThrowArgs<ExtArgs>>): Prisma__facultadClient<$Result.GetResult<Prisma.$facultadPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Facultad that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {facultadFindFirstArgs} args - Arguments to find a Facultad
+     * @example
+     * // Get one Facultad
+     * const facultad = await prisma.facultad.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends facultadFindFirstArgs>(args?: SelectSubset<T, facultadFindFirstArgs<ExtArgs>>): Prisma__facultadClient<$Result.GetResult<Prisma.$facultadPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Facultad that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {facultadFindFirstOrThrowArgs} args - Arguments to find a Facultad
+     * @example
+     * // Get one Facultad
+     * const facultad = await prisma.facultad.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends facultadFindFirstOrThrowArgs>(args?: SelectSubset<T, facultadFindFirstOrThrowArgs<ExtArgs>>): Prisma__facultadClient<$Result.GetResult<Prisma.$facultadPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Facultads that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {facultadFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Facultads
+     * const facultads = await prisma.facultad.findMany()
+     * 
+     * // Get first 10 Facultads
+     * const facultads = await prisma.facultad.findMany({ take: 10 })
+     * 
+     * // Only select the `id_fac`
+     * const facultadWithId_facOnly = await prisma.facultad.findMany({ select: { id_fac: true } })
+     * 
+     */
+    findMany<T extends facultadFindManyArgs>(args?: SelectSubset<T, facultadFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$facultadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Facultad.
+     * @param {facultadCreateArgs} args - Arguments to create a Facultad.
+     * @example
+     * // Create one Facultad
+     * const Facultad = await prisma.facultad.create({
+     *   data: {
+     *     // ... data to create a Facultad
+     *   }
+     * })
+     * 
+     */
+    create<T extends facultadCreateArgs>(args: SelectSubset<T, facultadCreateArgs<ExtArgs>>): Prisma__facultadClient<$Result.GetResult<Prisma.$facultadPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Facultads.
+     * @param {facultadCreateManyArgs} args - Arguments to create many Facultads.
+     * @example
+     * // Create many Facultads
+     * const facultad = await prisma.facultad.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends facultadCreateManyArgs>(args?: SelectSubset<T, facultadCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Facultads and returns the data saved in the database.
+     * @param {facultadCreateManyAndReturnArgs} args - Arguments to create many Facultads.
+     * @example
+     * // Create many Facultads
+     * const facultad = await prisma.facultad.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Facultads and only return the `id_fac`
+     * const facultadWithId_facOnly = await prisma.facultad.createManyAndReturn({
+     *   select: { id_fac: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends facultadCreateManyAndReturnArgs>(args?: SelectSubset<T, facultadCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$facultadPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Facultad.
+     * @param {facultadDeleteArgs} args - Arguments to delete one Facultad.
+     * @example
+     * // Delete one Facultad
+     * const Facultad = await prisma.facultad.delete({
+     *   where: {
+     *     // ... filter to delete one Facultad
+     *   }
+     * })
+     * 
+     */
+    delete<T extends facultadDeleteArgs>(args: SelectSubset<T, facultadDeleteArgs<ExtArgs>>): Prisma__facultadClient<$Result.GetResult<Prisma.$facultadPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Facultad.
+     * @param {facultadUpdateArgs} args - Arguments to update one Facultad.
+     * @example
+     * // Update one Facultad
+     * const facultad = await prisma.facultad.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends facultadUpdateArgs>(args: SelectSubset<T, facultadUpdateArgs<ExtArgs>>): Prisma__facultadClient<$Result.GetResult<Prisma.$facultadPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Facultads.
+     * @param {facultadDeleteManyArgs} args - Arguments to filter Facultads to delete.
+     * @example
+     * // Delete a few Facultads
+     * const { count } = await prisma.facultad.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends facultadDeleteManyArgs>(args?: SelectSubset<T, facultadDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Facultads.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {facultadUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Facultads
+     * const facultad = await prisma.facultad.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends facultadUpdateManyArgs>(args: SelectSubset<T, facultadUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Facultads and returns the data updated in the database.
+     * @param {facultadUpdateManyAndReturnArgs} args - Arguments to update many Facultads.
+     * @example
+     * // Update many Facultads
+     * const facultad = await prisma.facultad.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Facultads and only return the `id_fac`
+     * const facultadWithId_facOnly = await prisma.facultad.updateManyAndReturn({
+     *   select: { id_fac: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends facultadUpdateManyAndReturnArgs>(args: SelectSubset<T, facultadUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$facultadPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Facultad.
+     * @param {facultadUpsertArgs} args - Arguments to update or create a Facultad.
+     * @example
+     * // Update or create a Facultad
+     * const facultad = await prisma.facultad.upsert({
+     *   create: {
+     *     // ... data to create a Facultad
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Facultad we want to update
+     *   }
+     * })
+     */
+    upsert<T extends facultadUpsertArgs>(args: SelectSubset<T, facultadUpsertArgs<ExtArgs>>): Prisma__facultadClient<$Result.GetResult<Prisma.$facultadPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Facultads.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {facultadCountArgs} args - Arguments to filter Facultads to count.
+     * @example
+     * // Count the number of Facultads
+     * const count = await prisma.facultad.count({
+     *   where: {
+     *     // ... the filter for the Facultads we want to count
+     *   }
+     * })
+    **/
+    count<T extends facultadCountArgs>(
+      args?: Subset<T, facultadCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], FacultadCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Facultad.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FacultadAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends FacultadAggregateArgs>(args: Subset<T, FacultadAggregateArgs>): Prisma.PrismaPromise<GetFacultadAggregateType<T>>
+
+    /**
+     * Group by Facultad.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {facultadGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends facultadGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: facultadGroupByArgs['orderBy'] }
+        : { orderBy?: facultadGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, facultadGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetFacultadGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the facultad model
+   */
+  readonly fields: facultadFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for facultad.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__facultadClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    carreras<T extends facultad$carrerasArgs<ExtArgs> = {}>(args?: Subset<T, facultad$carrerasArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$carreraPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the facultad model
+   */
+  interface facultadFieldRefs {
+    readonly id_fac: FieldRef<"facultad", 'String'>
+    readonly nom_fac: FieldRef<"facultad", 'String'>
+    readonly des_fac: FieldRef<"facultad", 'String'>
+    readonly mis_fac: FieldRef<"facultad", 'String'>
+    readonly vis_fac: FieldRef<"facultad", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * facultad findUnique
+   */
+  export type facultadFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the facultad
+     */
+    select?: facultadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the facultad
+     */
+    omit?: facultadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: facultadInclude<ExtArgs> | null
+    /**
+     * Filter, which facultad to fetch.
+     */
+    where: facultadWhereUniqueInput
+  }
+
+  /**
+   * facultad findUniqueOrThrow
+   */
+  export type facultadFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the facultad
+     */
+    select?: facultadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the facultad
+     */
+    omit?: facultadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: facultadInclude<ExtArgs> | null
+    /**
+     * Filter, which facultad to fetch.
+     */
+    where: facultadWhereUniqueInput
+  }
+
+  /**
+   * facultad findFirst
+   */
+  export type facultadFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the facultad
+     */
+    select?: facultadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the facultad
+     */
+    omit?: facultadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: facultadInclude<ExtArgs> | null
+    /**
+     * Filter, which facultad to fetch.
+     */
+    where?: facultadWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of facultads to fetch.
+     */
+    orderBy?: facultadOrderByWithRelationInput | facultadOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for facultads.
+     */
+    cursor?: facultadWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` facultads from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` facultads.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of facultads.
+     */
+    distinct?: FacultadScalarFieldEnum | FacultadScalarFieldEnum[]
+  }
+
+  /**
+   * facultad findFirstOrThrow
+   */
+  export type facultadFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the facultad
+     */
+    select?: facultadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the facultad
+     */
+    omit?: facultadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: facultadInclude<ExtArgs> | null
+    /**
+     * Filter, which facultad to fetch.
+     */
+    where?: facultadWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of facultads to fetch.
+     */
+    orderBy?: facultadOrderByWithRelationInput | facultadOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for facultads.
+     */
+    cursor?: facultadWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` facultads from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` facultads.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of facultads.
+     */
+    distinct?: FacultadScalarFieldEnum | FacultadScalarFieldEnum[]
+  }
+
+  /**
+   * facultad findMany
+   */
+  export type facultadFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the facultad
+     */
+    select?: facultadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the facultad
+     */
+    omit?: facultadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: facultadInclude<ExtArgs> | null
+    /**
+     * Filter, which facultads to fetch.
+     */
+    where?: facultadWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of facultads to fetch.
+     */
+    orderBy?: facultadOrderByWithRelationInput | facultadOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing facultads.
+     */
+    cursor?: facultadWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` facultads from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` facultads.
+     */
+    skip?: number
+    distinct?: FacultadScalarFieldEnum | FacultadScalarFieldEnum[]
+  }
+
+  /**
+   * facultad create
+   */
+  export type facultadCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the facultad
+     */
+    select?: facultadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the facultad
+     */
+    omit?: facultadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: facultadInclude<ExtArgs> | null
+    /**
+     * The data needed to create a facultad.
+     */
+    data: XOR<facultadCreateInput, facultadUncheckedCreateInput>
+  }
+
+  /**
+   * facultad createMany
+   */
+  export type facultadCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many facultads.
+     */
+    data: facultadCreateManyInput | facultadCreateManyInput[]
     skipDuplicates?: boolean
   }
 
   /**
-   * configuracion update
+   * facultad createManyAndReturn
    */
-  export type configuracionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type facultadCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the configuracion
+     * Select specific fields to fetch from the facultad
      */
-    select?: configuracionSelect<ExtArgs> | null
+    select?: facultadSelectCreateManyAndReturn<ExtArgs> | null
     /**
-     * Omit specific fields from the configuracion
+     * Omit specific fields from the facultad
      */
-    omit?: configuracionOmit<ExtArgs> | null
+    omit?: facultadOmit<ExtArgs> | null
     /**
-     * The data needed to update a configuracion.
+     * The data used to create many facultads.
      */
-    data: XOR<configuracionUpdateInput, configuracionUncheckedUpdateInput>
-    /**
-     * Choose, which configuracion to update.
-     */
-    where: configuracionWhereUniqueInput
+    data: facultadCreateManyInput | facultadCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
-   * configuracion updateMany
+   * facultad update
    */
-  export type configuracionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type facultadUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * The data used to update configuracions.
+     * Select specific fields to fetch from the facultad
      */
-    data: XOR<configuracionUpdateManyMutationInput, configuracionUncheckedUpdateManyInput>
+    select?: facultadSelect<ExtArgs> | null
     /**
-     * Filter which configuracions to update
+     * Omit specific fields from the facultad
      */
-    where?: configuracionWhereInput
+    omit?: facultadOmit<ExtArgs> | null
     /**
-     * Limit how many configuracions to update.
+     * Choose, which related nodes to fetch as well
+     */
+    include?: facultadInclude<ExtArgs> | null
+    /**
+     * The data needed to update a facultad.
+     */
+    data: XOR<facultadUpdateInput, facultadUncheckedUpdateInput>
+    /**
+     * Choose, which facultad to update.
+     */
+    where: facultadWhereUniqueInput
+  }
+
+  /**
+   * facultad updateMany
+   */
+  export type facultadUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update facultads.
+     */
+    data: XOR<facultadUpdateManyMutationInput, facultadUncheckedUpdateManyInput>
+    /**
+     * Filter which facultads to update
+     */
+    where?: facultadWhereInput
+    /**
+     * Limit how many facultads to update.
      */
     limit?: number
   }
 
   /**
-   * configuracion updateManyAndReturn
+   * facultad updateManyAndReturn
    */
-  export type configuracionUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type facultadUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the configuracion
+     * Select specific fields to fetch from the facultad
      */
-    select?: configuracionSelectUpdateManyAndReturn<ExtArgs> | null
+    select?: facultadSelectUpdateManyAndReturn<ExtArgs> | null
     /**
-     * Omit specific fields from the configuracion
+     * Omit specific fields from the facultad
      */
-    omit?: configuracionOmit<ExtArgs> | null
+    omit?: facultadOmit<ExtArgs> | null
     /**
-     * The data used to update configuracions.
+     * The data used to update facultads.
      */
-    data: XOR<configuracionUpdateManyMutationInput, configuracionUncheckedUpdateManyInput>
+    data: XOR<facultadUpdateManyMutationInput, facultadUncheckedUpdateManyInput>
     /**
-     * Filter which configuracions to update
+     * Filter which facultads to update
      */
-    where?: configuracionWhereInput
+    where?: facultadWhereInput
     /**
-     * Limit how many configuracions to update.
+     * Limit how many facultads to update.
      */
     limit?: number
   }
 
   /**
-   * configuracion upsert
+   * facultad upsert
    */
-  export type configuracionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type facultadUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the configuracion
+     * Select specific fields to fetch from the facultad
      */
-    select?: configuracionSelect<ExtArgs> | null
+    select?: facultadSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the configuracion
+     * Omit specific fields from the facultad
      */
-    omit?: configuracionOmit<ExtArgs> | null
+    omit?: facultadOmit<ExtArgs> | null
     /**
-     * The filter to search for the configuracion to update in case it exists.
+     * Choose, which related nodes to fetch as well
      */
-    where: configuracionWhereUniqueInput
+    include?: facultadInclude<ExtArgs> | null
     /**
-     * In case the configuracion found by the `where` argument doesn't exist, create a new configuracion with this data.
+     * The filter to search for the facultad to update in case it exists.
      */
-    create: XOR<configuracionCreateInput, configuracionUncheckedCreateInput>
+    where: facultadWhereUniqueInput
     /**
-     * In case the configuracion was found with the provided `where` argument, update it with this data.
+     * In case the facultad found by the `where` argument doesn't exist, create a new facultad with this data.
      */
-    update: XOR<configuracionUpdateInput, configuracionUncheckedUpdateInput>
+    create: XOR<facultadCreateInput, facultadUncheckedCreateInput>
+    /**
+     * In case the facultad was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<facultadUpdateInput, facultadUncheckedUpdateInput>
   }
 
   /**
-   * configuracion delete
+   * facultad delete
    */
-  export type configuracionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type facultadDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the configuracion
+     * Select specific fields to fetch from the facultad
      */
-    select?: configuracionSelect<ExtArgs> | null
+    select?: facultadSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the configuracion
+     * Omit specific fields from the facultad
      */
-    omit?: configuracionOmit<ExtArgs> | null
+    omit?: facultadOmit<ExtArgs> | null
     /**
-     * Filter which configuracion to delete.
+     * Choose, which related nodes to fetch as well
      */
-    where: configuracionWhereUniqueInput
+    include?: facultadInclude<ExtArgs> | null
+    /**
+     * Filter which facultad to delete.
+     */
+    where: facultadWhereUniqueInput
   }
 
   /**
-   * configuracion deleteMany
+   * facultad deleteMany
    */
-  export type configuracionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type facultadDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Filter which configuracions to delete
+     * Filter which facultads to delete
      */
-    where?: configuracionWhereInput
+    where?: facultadWhereInput
     /**
-     * Limit how many configuracions to delete.
+     * Limit how many facultads to delete.
      */
     limit?: number
   }
 
   /**
-   * configuracion without action
+   * facultad.carreras
    */
-  export type configuracionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type facultad$carrerasArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the configuracion
+     * Select specific fields to fetch from the carrera
      */
-    select?: configuracionSelect<ExtArgs> | null
+    select?: carreraSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the configuracion
+     * Omit specific fields from the carrera
      */
-    omit?: configuracionOmit<ExtArgs> | null
+    omit?: carreraOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: carreraInclude<ExtArgs> | null
+    where?: carreraWhereInput
+    orderBy?: carreraOrderByWithRelationInput | carreraOrderByWithRelationInput[]
+    cursor?: carreraWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CarreraScalarFieldEnum | CarreraScalarFieldEnum[]
+  }
+
+  /**
+   * facultad without action
+   */
+  export type facultadDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the facultad
+     */
+    select?: facultadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the facultad
+     */
+    omit?: facultadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: facultadInclude<ExtArgs> | null
   }
 
 
@@ -7026,8 +10663,8 @@ export namespace Prisma {
     cel_usu: 'cel_usu',
     rol_usu: 'rol_usu',
     fec_cre_usu: 'fec_cre_usu',
-    comprobante: 'comprobante',
-    carrera: 'carrera'
+    com_usu: 'com_usu',
+    id_car_est: 'id_car_est'
   };
 
   export type UsuarioScalarFieldEnum = (typeof UsuarioScalarFieldEnum)[keyof typeof UsuarioScalarFieldEnum]
@@ -7037,7 +10674,8 @@ export namespace Prisma {
     id_car: 'id_car',
     nom_car: 'nom_car',
     est_car: 'est_car',
-    fec_cre_car: 'fec_cre_car'
+    fec_cre_car: 'fec_cre_car',
+    id_fac_per: 'id_fac_per'
   };
 
   export type CarreraScalarFieldEnum = (typeof CarreraScalarFieldEnum)[keyof typeof CarreraScalarFieldEnum]
@@ -7049,42 +10687,68 @@ export namespace Prisma {
     des_eve: 'des_eve',
     tip_eve: 'tip_eve',
     fec_ini_eve: 'fec_ini_eve',
-    fec_fin_eve: 'fec_fin_eve',
-    dur_hrs_eve: 'dur_hrs_eve',
-    pagado_eve: 'pagado_eve',
-    nota_min_eve: 'nota_min_eve',
-    por_asist_eve: 'por_asist_eve',
+    val_eve: 'val_eve',
     est_eve: 'est_eve',
     fec_cre_eve: 'fec_cre_eve',
-    carreraId: 'carreraId'
+    img_por_eve: 'img_por_eve',
+    dur_hor_eve: 'dur_hor_eve',
+    por_min_asi_eve: 'por_min_asi_eve',
+    fec_fin_eve: 'fec_fin_eve'
   };
 
   export type EventoScalarFieldEnum = (typeof EventoScalarFieldEnum)[keyof typeof EventoScalarFieldEnum]
 
 
+  export const Evento_cursoScalarFieldEnum: {
+    id_eve_cur: 'id_eve_cur',
+    not_min_cur: 'not_min_cur'
+  };
+
+  export type Evento_cursoScalarFieldEnum = (typeof Evento_cursoScalarFieldEnum)[keyof typeof Evento_cursoScalarFieldEnum]
+
+
+  export const Evento_carreraScalarFieldEnum: {
+    id_eve_car: 'id_eve_car',
+    id_car_aso: 'id_car_aso',
+    id_eve_aso: 'id_eve_aso',
+    fec_aso: 'fec_aso'
+  };
+
+  export type Evento_carreraScalarFieldEnum = (typeof Evento_carreraScalarFieldEnum)[keyof typeof Evento_carreraScalarFieldEnum]
+
+
   export const InscripcionScalarFieldEnum: {
     id_ins: 'id_ins',
-    id_usu: 'id_usu',
-    id_eve: 'id_eve',
-    comprobante: 'comprobante',
-    nota_final: 'nota_final',
-    asistencia: 'asistencia',
-    estado: 'estado',
+    id_usu_ins: 'id_usu_ins',
+    id_eve_ins: 'id_eve_ins',
+    est_ins: 'est_ins',
     fec_ins: 'fec_ins',
-    cert_enviado: 'cert_enviado'
+    fec_pag_ins: 'fec_pag_ins',
+    cer_eve_env: 'cer_eve_env',
+    car_mot_usu: 'car_mot_usu'
   };
 
   export type InscripcionScalarFieldEnum = (typeof InscripcionScalarFieldEnum)[keyof typeof InscripcionScalarFieldEnum]
 
 
-  export const ConfiguracionScalarFieldEnum: {
-    id_conf: 'id_conf',
-    mision: 'mision',
-    vision: 'vision',
-    autoridades: 'autoridades'
+  export const Inscripcion_cursoScalarFieldEnum: {
+    id_ins_cur: 'id_ins_cur',
+    not_fin_usu: 'not_fin_usu',
+    por_asi_fin_usu: 'por_asi_fin_usu'
   };
 
-  export type ConfiguracionScalarFieldEnum = (typeof ConfiguracionScalarFieldEnum)[keyof typeof ConfiguracionScalarFieldEnum]
+  export type Inscripcion_cursoScalarFieldEnum = (typeof Inscripcion_cursoScalarFieldEnum)[keyof typeof Inscripcion_cursoScalarFieldEnum]
+
+
+  export const FacultadScalarFieldEnum: {
+    id_fac: 'id_fac',
+    nom_fac: 'nom_fac',
+    des_fac: 'des_fac',
+    mis_fac: 'mis_fac',
+    vis_fac: 'vis_fac'
+  };
+
+  export type FacultadScalarFieldEnum = (typeof FacultadScalarFieldEnum)[keyof typeof FacultadScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -7180,20 +10844,6 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'Int'
-   */
-  export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
-    
-
-
-  /**
-   * Reference to a field of type 'Int[]'
-   */
-  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
-    
-
-
-  /**
    * Reference to a field of type 'Float'
    */
   export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -7204,6 +10854,34 @@ export namespace Prisma {
    * Reference to a field of type 'Float[]'
    */
   export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'estado_evento'
+   */
+  export type Enumestado_eventoFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'estado_evento'>
+    
+
+
+  /**
+   * Reference to a field of type 'estado_evento[]'
+   */
+  export type ListEnumestado_eventoFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'estado_evento[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Int'
+   */
+  export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+    
+
+
+  /**
+   * Reference to a field of type 'Int[]'
+   */
+  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
     
 
 
@@ -7237,8 +10915,9 @@ export namespace Prisma {
     cel_usu?: StringFilter<"usuario"> | string
     rol_usu?: Enumrol_usuarioFilter<"usuario"> | $Enums.rol_usuario
     fec_cre_usu?: DateTimeFilter<"usuario"> | Date | string
-    comprobante?: StringNullableFilter<"usuario"> | string | null
-    carrera?: StringNullableFilter<"usuario"> | string | null
+    com_usu?: StringNullableFilter<"usuario"> | string | null
+    id_car_est?: StringNullableFilter<"usuario"> | string | null
+    carrera?: XOR<CarreraNullableScalarRelationFilter, carreraWhereInput> | null
     inscripciones?: InscripcionListRelationFilter
   }
 
@@ -7252,8 +10931,9 @@ export namespace Prisma {
     cel_usu?: SortOrder
     rol_usu?: SortOrder
     fec_cre_usu?: SortOrder
-    comprobante?: SortOrderInput | SortOrder
-    carrera?: SortOrderInput | SortOrder
+    com_usu?: SortOrderInput | SortOrder
+    id_car_est?: SortOrderInput | SortOrder
+    carrera?: carreraOrderByWithRelationInput
     inscripciones?: inscripcionOrderByRelationAggregateInput
   }
 
@@ -7270,8 +10950,9 @@ export namespace Prisma {
     cel_usu?: StringFilter<"usuario"> | string
     rol_usu?: Enumrol_usuarioFilter<"usuario"> | $Enums.rol_usuario
     fec_cre_usu?: DateTimeFilter<"usuario"> | Date | string
-    comprobante?: StringNullableFilter<"usuario"> | string | null
-    carrera?: StringNullableFilter<"usuario"> | string | null
+    com_usu?: StringNullableFilter<"usuario"> | string | null
+    id_car_est?: StringNullableFilter<"usuario"> | string | null
+    carrera?: XOR<CarreraNullableScalarRelationFilter, carreraWhereInput> | null
     inscripciones?: InscripcionListRelationFilter
   }, "id_usu" | "ced_usu" | "cor_usu">
 
@@ -7285,8 +10966,8 @@ export namespace Prisma {
     cel_usu?: SortOrder
     rol_usu?: SortOrder
     fec_cre_usu?: SortOrder
-    comprobante?: SortOrderInput | SortOrder
-    carrera?: SortOrderInput | SortOrder
+    com_usu?: SortOrderInput | SortOrder
+    id_car_est?: SortOrderInput | SortOrder
     _count?: usuarioCountOrderByAggregateInput
     _max?: usuarioMaxOrderByAggregateInput
     _min?: usuarioMinOrderByAggregateInput
@@ -7305,8 +10986,8 @@ export namespace Prisma {
     cel_usu?: StringWithAggregatesFilter<"usuario"> | string
     rol_usu?: Enumrol_usuarioWithAggregatesFilter<"usuario"> | $Enums.rol_usuario
     fec_cre_usu?: DateTimeWithAggregatesFilter<"usuario"> | Date | string
-    comprobante?: StringNullableWithAggregatesFilter<"usuario"> | string | null
-    carrera?: StringNullableWithAggregatesFilter<"usuario"> | string | null
+    com_usu?: StringNullableWithAggregatesFilter<"usuario"> | string | null
+    id_car_est?: StringNullableWithAggregatesFilter<"usuario"> | string | null
   }
 
   export type carreraWhereInput = {
@@ -7317,7 +10998,10 @@ export namespace Prisma {
     nom_car?: StringFilter<"carrera"> | string
     est_car?: BoolFilter<"carrera"> | boolean
     fec_cre_car?: DateTimeFilter<"carrera"> | Date | string
-    eventos?: EventoListRelationFilter
+    id_fac_per?: StringFilter<"carrera"> | string
+    facultad?: XOR<FacultadScalarRelationFilter, facultadWhereInput>
+    usuario?: UsuarioListRelationFilter
+    eventos?: Evento_carreraListRelationFilter
   }
 
   export type carreraOrderByWithRelationInput = {
@@ -7325,7 +11009,10 @@ export namespace Prisma {
     nom_car?: SortOrder
     est_car?: SortOrder
     fec_cre_car?: SortOrder
-    eventos?: eventoOrderByRelationAggregateInput
+    id_fac_per?: SortOrder
+    facultad?: facultadOrderByWithRelationInput
+    usuario?: usuarioOrderByRelationAggregateInput
+    eventos?: evento_carreraOrderByRelationAggregateInput
   }
 
   export type carreraWhereUniqueInput = Prisma.AtLeast<{
@@ -7336,7 +11023,10 @@ export namespace Prisma {
     NOT?: carreraWhereInput | carreraWhereInput[]
     est_car?: BoolFilter<"carrera"> | boolean
     fec_cre_car?: DateTimeFilter<"carrera"> | Date | string
-    eventos?: EventoListRelationFilter
+    id_fac_per?: StringFilter<"carrera"> | string
+    facultad?: XOR<FacultadScalarRelationFilter, facultadWhereInput>
+    usuario?: UsuarioListRelationFilter
+    eventos?: Evento_carreraListRelationFilter
   }, "id_car" | "nom_car">
 
   export type carreraOrderByWithAggregationInput = {
@@ -7344,6 +11034,7 @@ export namespace Prisma {
     nom_car?: SortOrder
     est_car?: SortOrder
     fec_cre_car?: SortOrder
+    id_fac_per?: SortOrder
     _count?: carreraCountOrderByAggregateInput
     _max?: carreraMaxOrderByAggregateInput
     _min?: carreraMinOrderByAggregateInput
@@ -7357,6 +11048,7 @@ export namespace Prisma {
     nom_car?: StringWithAggregatesFilter<"carrera"> | string
     est_car?: BoolWithAggregatesFilter<"carrera"> | boolean
     fec_cre_car?: DateTimeWithAggregatesFilter<"carrera"> | Date | string
+    id_fac_per?: StringWithAggregatesFilter<"carrera"> | string
   }
 
   export type eventoWhereInput = {
@@ -7368,16 +11060,16 @@ export namespace Prisma {
     des_eve?: StringNullableFilter<"evento"> | string | null
     tip_eve?: Enumtipo_eventoFilter<"evento"> | $Enums.tipo_evento
     fec_ini_eve?: DateTimeFilter<"evento"> | Date | string
-    fec_fin_eve?: DateTimeFilter<"evento"> | Date | string
-    dur_hrs_eve?: IntFilter<"evento"> | number
-    pagado_eve?: BoolFilter<"evento"> | boolean
-    nota_min_eve?: FloatNullableFilter<"evento"> | number | null
-    por_asist_eve?: FloatNullableFilter<"evento"> | number | null
-    est_eve?: BoolFilter<"evento"> | boolean
+    val_eve?: FloatFilter<"evento"> | number
+    est_eve?: Enumestado_eventoFilter<"evento"> | $Enums.estado_evento
     fec_cre_eve?: DateTimeFilter<"evento"> | Date | string
-    carreraId?: StringNullableFilter<"evento"> | string | null
-    carrera?: XOR<CarreraNullableScalarRelationFilter, carreraWhereInput> | null
-    inscripciones?: InscripcionListRelationFilter
+    img_por_eve?: StringFilter<"evento"> | string
+    dur_hor_eve?: IntFilter<"evento"> | number
+    por_min_asi_eve?: FloatFilter<"evento"> | number
+    fec_fin_eve?: DateTimeFilter<"evento"> | Date | string
+    inscritos?: InscripcionListRelationFilter
+    eventos_carrera?: Evento_carreraListRelationFilter
+    eventos_curso?: XOR<Evento_cursoNullableScalarRelationFilter, evento_cursoWhereInput> | null
   }
 
   export type eventoOrderByWithRelationInput = {
@@ -7386,16 +11078,16 @@ export namespace Prisma {
     des_eve?: SortOrderInput | SortOrder
     tip_eve?: SortOrder
     fec_ini_eve?: SortOrder
-    fec_fin_eve?: SortOrder
-    dur_hrs_eve?: SortOrder
-    pagado_eve?: SortOrder
-    nota_min_eve?: SortOrderInput | SortOrder
-    por_asist_eve?: SortOrderInput | SortOrder
+    val_eve?: SortOrder
     est_eve?: SortOrder
     fec_cre_eve?: SortOrder
-    carreraId?: SortOrderInput | SortOrder
-    carrera?: carreraOrderByWithRelationInput
-    inscripciones?: inscripcionOrderByRelationAggregateInput
+    img_por_eve?: SortOrder
+    dur_hor_eve?: SortOrder
+    por_min_asi_eve?: SortOrder
+    fec_fin_eve?: SortOrder
+    inscritos?: inscripcionOrderByRelationAggregateInput
+    eventos_carrera?: evento_carreraOrderByRelationAggregateInput
+    eventos_curso?: evento_cursoOrderByWithRelationInput
   }
 
   export type eventoWhereUniqueInput = Prisma.AtLeast<{
@@ -7407,16 +11099,16 @@ export namespace Prisma {
     des_eve?: StringNullableFilter<"evento"> | string | null
     tip_eve?: Enumtipo_eventoFilter<"evento"> | $Enums.tipo_evento
     fec_ini_eve?: DateTimeFilter<"evento"> | Date | string
-    fec_fin_eve?: DateTimeFilter<"evento"> | Date | string
-    dur_hrs_eve?: IntFilter<"evento"> | number
-    pagado_eve?: BoolFilter<"evento"> | boolean
-    nota_min_eve?: FloatNullableFilter<"evento"> | number | null
-    por_asist_eve?: FloatNullableFilter<"evento"> | number | null
-    est_eve?: BoolFilter<"evento"> | boolean
+    val_eve?: FloatFilter<"evento"> | number
+    est_eve?: Enumestado_eventoFilter<"evento"> | $Enums.estado_evento
     fec_cre_eve?: DateTimeFilter<"evento"> | Date | string
-    carreraId?: StringNullableFilter<"evento"> | string | null
-    carrera?: XOR<CarreraNullableScalarRelationFilter, carreraWhereInput> | null
-    inscripciones?: InscripcionListRelationFilter
+    img_por_eve?: StringFilter<"evento"> | string
+    dur_hor_eve?: IntFilter<"evento"> | number
+    por_min_asi_eve?: FloatFilter<"evento"> | number
+    fec_fin_eve?: DateTimeFilter<"evento"> | Date | string
+    inscritos?: InscripcionListRelationFilter
+    eventos_carrera?: Evento_carreraListRelationFilter
+    eventos_curso?: XOR<Evento_cursoNullableScalarRelationFilter, evento_cursoWhereInput> | null
   }, "id_eve">
 
   export type eventoOrderByWithAggregationInput = {
@@ -7425,14 +11117,13 @@ export namespace Prisma {
     des_eve?: SortOrderInput | SortOrder
     tip_eve?: SortOrder
     fec_ini_eve?: SortOrder
-    fec_fin_eve?: SortOrder
-    dur_hrs_eve?: SortOrder
-    pagado_eve?: SortOrder
-    nota_min_eve?: SortOrderInput | SortOrder
-    por_asist_eve?: SortOrderInput | SortOrder
+    val_eve?: SortOrder
     est_eve?: SortOrder
     fec_cre_eve?: SortOrder
-    carreraId?: SortOrderInput | SortOrder
+    img_por_eve?: SortOrder
+    dur_hor_eve?: SortOrder
+    por_min_asi_eve?: SortOrder
+    fec_fin_eve?: SortOrder
     _count?: eventoCountOrderByAggregateInput
     _avg?: eventoAvgOrderByAggregateInput
     _max?: eventoMaxOrderByAggregateInput
@@ -7449,14 +11140,108 @@ export namespace Prisma {
     des_eve?: StringNullableWithAggregatesFilter<"evento"> | string | null
     tip_eve?: Enumtipo_eventoWithAggregatesFilter<"evento"> | $Enums.tipo_evento
     fec_ini_eve?: DateTimeWithAggregatesFilter<"evento"> | Date | string
-    fec_fin_eve?: DateTimeWithAggregatesFilter<"evento"> | Date | string
-    dur_hrs_eve?: IntWithAggregatesFilter<"evento"> | number
-    pagado_eve?: BoolWithAggregatesFilter<"evento"> | boolean
-    nota_min_eve?: FloatNullableWithAggregatesFilter<"evento"> | number | null
-    por_asist_eve?: FloatNullableWithAggregatesFilter<"evento"> | number | null
-    est_eve?: BoolWithAggregatesFilter<"evento"> | boolean
+    val_eve?: FloatWithAggregatesFilter<"evento"> | number
+    est_eve?: Enumestado_eventoWithAggregatesFilter<"evento"> | $Enums.estado_evento
     fec_cre_eve?: DateTimeWithAggregatesFilter<"evento"> | Date | string
-    carreraId?: StringNullableWithAggregatesFilter<"evento"> | string | null
+    img_por_eve?: StringWithAggregatesFilter<"evento"> | string
+    dur_hor_eve?: IntWithAggregatesFilter<"evento"> | number
+    por_min_asi_eve?: FloatWithAggregatesFilter<"evento"> | number
+    fec_fin_eve?: DateTimeWithAggregatesFilter<"evento"> | Date | string
+  }
+
+  export type evento_cursoWhereInput = {
+    AND?: evento_cursoWhereInput | evento_cursoWhereInput[]
+    OR?: evento_cursoWhereInput[]
+    NOT?: evento_cursoWhereInput | evento_cursoWhereInput[]
+    id_eve_cur?: StringFilter<"evento_curso"> | string
+    not_min_cur?: FloatFilter<"evento_curso"> | number
+    evento?: XOR<EventoScalarRelationFilter, eventoWhereInput>
+  }
+
+  export type evento_cursoOrderByWithRelationInput = {
+    id_eve_cur?: SortOrder
+    not_min_cur?: SortOrder
+    evento?: eventoOrderByWithRelationInput
+  }
+
+  export type evento_cursoWhereUniqueInput = Prisma.AtLeast<{
+    id_eve_cur?: string
+    AND?: evento_cursoWhereInput | evento_cursoWhereInput[]
+    OR?: evento_cursoWhereInput[]
+    NOT?: evento_cursoWhereInput | evento_cursoWhereInput[]
+    not_min_cur?: FloatFilter<"evento_curso"> | number
+    evento?: XOR<EventoScalarRelationFilter, eventoWhereInput>
+  }, "id_eve_cur">
+
+  export type evento_cursoOrderByWithAggregationInput = {
+    id_eve_cur?: SortOrder
+    not_min_cur?: SortOrder
+    _count?: evento_cursoCountOrderByAggregateInput
+    _avg?: evento_cursoAvgOrderByAggregateInput
+    _max?: evento_cursoMaxOrderByAggregateInput
+    _min?: evento_cursoMinOrderByAggregateInput
+    _sum?: evento_cursoSumOrderByAggregateInput
+  }
+
+  export type evento_cursoScalarWhereWithAggregatesInput = {
+    AND?: evento_cursoScalarWhereWithAggregatesInput | evento_cursoScalarWhereWithAggregatesInput[]
+    OR?: evento_cursoScalarWhereWithAggregatesInput[]
+    NOT?: evento_cursoScalarWhereWithAggregatesInput | evento_cursoScalarWhereWithAggregatesInput[]
+    id_eve_cur?: StringWithAggregatesFilter<"evento_curso"> | string
+    not_min_cur?: FloatWithAggregatesFilter<"evento_curso"> | number
+  }
+
+  export type evento_carreraWhereInput = {
+    AND?: evento_carreraWhereInput | evento_carreraWhereInput[]
+    OR?: evento_carreraWhereInput[]
+    NOT?: evento_carreraWhereInput | evento_carreraWhereInput[]
+    id_eve_car?: StringFilter<"evento_carrera"> | string
+    id_car_aso?: StringFilter<"evento_carrera"> | string
+    id_eve_aso?: StringFilter<"evento_carrera"> | string
+    fec_aso?: DateTimeFilter<"evento_carrera"> | Date | string
+    carrera?: XOR<CarreraScalarRelationFilter, carreraWhereInput>
+    evento?: XOR<EventoScalarRelationFilter, eventoWhereInput>
+  }
+
+  export type evento_carreraOrderByWithRelationInput = {
+    id_eve_car?: SortOrder
+    id_car_aso?: SortOrder
+    id_eve_aso?: SortOrder
+    fec_aso?: SortOrder
+    carrera?: carreraOrderByWithRelationInput
+    evento?: eventoOrderByWithRelationInput
+  }
+
+  export type evento_carreraWhereUniqueInput = Prisma.AtLeast<{
+    id_eve_car?: string
+    AND?: evento_carreraWhereInput | evento_carreraWhereInput[]
+    OR?: evento_carreraWhereInput[]
+    NOT?: evento_carreraWhereInput | evento_carreraWhereInput[]
+    id_car_aso?: StringFilter<"evento_carrera"> | string
+    id_eve_aso?: StringFilter<"evento_carrera"> | string
+    fec_aso?: DateTimeFilter<"evento_carrera"> | Date | string
+    carrera?: XOR<CarreraScalarRelationFilter, carreraWhereInput>
+    evento?: XOR<EventoScalarRelationFilter, eventoWhereInput>
+  }, "id_eve_car">
+
+  export type evento_carreraOrderByWithAggregationInput = {
+    id_eve_car?: SortOrder
+    id_car_aso?: SortOrder
+    id_eve_aso?: SortOrder
+    fec_aso?: SortOrder
+    _count?: evento_carreraCountOrderByAggregateInput
+    _max?: evento_carreraMaxOrderByAggregateInput
+    _min?: evento_carreraMinOrderByAggregateInput
+  }
+
+  export type evento_carreraScalarWhereWithAggregatesInput = {
+    AND?: evento_carreraScalarWhereWithAggregatesInput | evento_carreraScalarWhereWithAggregatesInput[]
+    OR?: evento_carreraScalarWhereWithAggregatesInput[]
+    NOT?: evento_carreraScalarWhereWithAggregatesInput | evento_carreraScalarWhereWithAggregatesInput[]
+    id_eve_car?: StringWithAggregatesFilter<"evento_carrera"> | string
+    id_car_aso?: StringWithAggregatesFilter<"evento_carrera"> | string
+    id_eve_aso?: StringWithAggregatesFilter<"evento_carrera"> | string
+    fec_aso?: DateTimeWithAggregatesFilter<"evento_carrera"> | Date | string
   }
 
   export type inscripcionWhereInput = {
@@ -7464,65 +11249,61 @@ export namespace Prisma {
     OR?: inscripcionWhereInput[]
     NOT?: inscripcionWhereInput | inscripcionWhereInput[]
     id_ins?: StringFilter<"inscripcion"> | string
-    id_usu?: StringFilter<"inscripcion"> | string
-    id_eve?: StringFilter<"inscripcion"> | string
-    comprobante?: StringNullableFilter<"inscripcion"> | string | null
-    nota_final?: FloatNullableFilter<"inscripcion"> | number | null
-    asistencia?: FloatNullableFilter<"inscripcion"> | number | null
-    estado?: Enumestado_inscripcionFilter<"inscripcion"> | $Enums.estado_inscripcion
+    id_usu_ins?: StringFilter<"inscripcion"> | string
+    id_eve_ins?: StringFilter<"inscripcion"> | string
+    est_ins?: Enumestado_inscripcionFilter<"inscripcion"> | $Enums.estado_inscripcion
     fec_ins?: DateTimeFilter<"inscripcion"> | Date | string
-    cert_enviado?: BoolFilter<"inscripcion"> | boolean
+    fec_pag_ins?: DateTimeNullableFilter<"inscripcion"> | Date | string | null
+    cer_eve_env?: BoolFilter<"inscripcion"> | boolean
+    car_mot_usu?: StringNullableFilter<"inscripcion"> | string | null
     usuario?: XOR<UsuarioScalarRelationFilter, usuarioWhereInput>
     evento?: XOR<EventoScalarRelationFilter, eventoWhereInput>
+    inscripcion_curso?: XOR<Inscripcion_cursoNullableScalarRelationFilter, inscripcion_cursoWhereInput> | null
   }
 
   export type inscripcionOrderByWithRelationInput = {
     id_ins?: SortOrder
-    id_usu?: SortOrder
-    id_eve?: SortOrder
-    comprobante?: SortOrderInput | SortOrder
-    nota_final?: SortOrderInput | SortOrder
-    asistencia?: SortOrderInput | SortOrder
-    estado?: SortOrder
+    id_usu_ins?: SortOrder
+    id_eve_ins?: SortOrder
+    est_ins?: SortOrder
     fec_ins?: SortOrder
-    cert_enviado?: SortOrder
+    fec_pag_ins?: SortOrderInput | SortOrder
+    cer_eve_env?: SortOrder
+    car_mot_usu?: SortOrderInput | SortOrder
     usuario?: usuarioOrderByWithRelationInput
     evento?: eventoOrderByWithRelationInput
+    inscripcion_curso?: inscripcion_cursoOrderByWithRelationInput
   }
 
   export type inscripcionWhereUniqueInput = Prisma.AtLeast<{
     id_ins?: string
-    id_usu_id_eve?: inscripcionId_usuId_eveCompoundUniqueInput
     AND?: inscripcionWhereInput | inscripcionWhereInput[]
     OR?: inscripcionWhereInput[]
     NOT?: inscripcionWhereInput | inscripcionWhereInput[]
-    id_usu?: StringFilter<"inscripcion"> | string
-    id_eve?: StringFilter<"inscripcion"> | string
-    comprobante?: StringNullableFilter<"inscripcion"> | string | null
-    nota_final?: FloatNullableFilter<"inscripcion"> | number | null
-    asistencia?: FloatNullableFilter<"inscripcion"> | number | null
-    estado?: Enumestado_inscripcionFilter<"inscripcion"> | $Enums.estado_inscripcion
+    id_usu_ins?: StringFilter<"inscripcion"> | string
+    id_eve_ins?: StringFilter<"inscripcion"> | string
+    est_ins?: Enumestado_inscripcionFilter<"inscripcion"> | $Enums.estado_inscripcion
     fec_ins?: DateTimeFilter<"inscripcion"> | Date | string
-    cert_enviado?: BoolFilter<"inscripcion"> | boolean
+    fec_pag_ins?: DateTimeNullableFilter<"inscripcion"> | Date | string | null
+    cer_eve_env?: BoolFilter<"inscripcion"> | boolean
+    car_mot_usu?: StringNullableFilter<"inscripcion"> | string | null
     usuario?: XOR<UsuarioScalarRelationFilter, usuarioWhereInput>
     evento?: XOR<EventoScalarRelationFilter, eventoWhereInput>
-  }, "id_ins" | "id_usu_id_eve">
+    inscripcion_curso?: XOR<Inscripcion_cursoNullableScalarRelationFilter, inscripcion_cursoWhereInput> | null
+  }, "id_ins">
 
   export type inscripcionOrderByWithAggregationInput = {
     id_ins?: SortOrder
-    id_usu?: SortOrder
-    id_eve?: SortOrder
-    comprobante?: SortOrderInput | SortOrder
-    nota_final?: SortOrderInput | SortOrder
-    asistencia?: SortOrderInput | SortOrder
-    estado?: SortOrder
+    id_usu_ins?: SortOrder
+    id_eve_ins?: SortOrder
+    est_ins?: SortOrder
     fec_ins?: SortOrder
-    cert_enviado?: SortOrder
+    fec_pag_ins?: SortOrderInput | SortOrder
+    cer_eve_env?: SortOrder
+    car_mot_usu?: SortOrderInput | SortOrder
     _count?: inscripcionCountOrderByAggregateInput
-    _avg?: inscripcionAvgOrderByAggregateInput
     _max?: inscripcionMaxOrderByAggregateInput
     _min?: inscripcionMinOrderByAggregateInput
-    _sum?: inscripcionSumOrderByAggregateInput
   }
 
   export type inscripcionScalarWhereWithAggregatesInput = {
@@ -7530,63 +11311,115 @@ export namespace Prisma {
     OR?: inscripcionScalarWhereWithAggregatesInput[]
     NOT?: inscripcionScalarWhereWithAggregatesInput | inscripcionScalarWhereWithAggregatesInput[]
     id_ins?: StringWithAggregatesFilter<"inscripcion"> | string
-    id_usu?: StringWithAggregatesFilter<"inscripcion"> | string
-    id_eve?: StringWithAggregatesFilter<"inscripcion"> | string
-    comprobante?: StringNullableWithAggregatesFilter<"inscripcion"> | string | null
-    nota_final?: FloatNullableWithAggregatesFilter<"inscripcion"> | number | null
-    asistencia?: FloatNullableWithAggregatesFilter<"inscripcion"> | number | null
-    estado?: Enumestado_inscripcionWithAggregatesFilter<"inscripcion"> | $Enums.estado_inscripcion
+    id_usu_ins?: StringWithAggregatesFilter<"inscripcion"> | string
+    id_eve_ins?: StringWithAggregatesFilter<"inscripcion"> | string
+    est_ins?: Enumestado_inscripcionWithAggregatesFilter<"inscripcion"> | $Enums.estado_inscripcion
     fec_ins?: DateTimeWithAggregatesFilter<"inscripcion"> | Date | string
-    cert_enviado?: BoolWithAggregatesFilter<"inscripcion"> | boolean
+    fec_pag_ins?: DateTimeNullableWithAggregatesFilter<"inscripcion"> | Date | string | null
+    cer_eve_env?: BoolWithAggregatesFilter<"inscripcion"> | boolean
+    car_mot_usu?: StringNullableWithAggregatesFilter<"inscripcion"> | string | null
   }
 
-  export type configuracionWhereInput = {
-    AND?: configuracionWhereInput | configuracionWhereInput[]
-    OR?: configuracionWhereInput[]
-    NOT?: configuracionWhereInput | configuracionWhereInput[]
-    id_conf?: IntFilter<"configuracion"> | number
-    mision?: StringFilter<"configuracion"> | string
-    vision?: StringFilter<"configuracion"> | string
-    autoridades?: StringFilter<"configuracion"> | string
+  export type inscripcion_cursoWhereInput = {
+    AND?: inscripcion_cursoWhereInput | inscripcion_cursoWhereInput[]
+    OR?: inscripcion_cursoWhereInput[]
+    NOT?: inscripcion_cursoWhereInput | inscripcion_cursoWhereInput[]
+    id_ins_cur?: StringFilter<"inscripcion_curso"> | string
+    not_fin_usu?: FloatNullableFilter<"inscripcion_curso"> | number | null
+    por_asi_fin_usu?: FloatNullableFilter<"inscripcion_curso"> | number | null
+    inscripcion?: XOR<InscripcionScalarRelationFilter, inscripcionWhereInput>
   }
 
-  export type configuracionOrderByWithRelationInput = {
-    id_conf?: SortOrder
-    mision?: SortOrder
-    vision?: SortOrder
-    autoridades?: SortOrder
+  export type inscripcion_cursoOrderByWithRelationInput = {
+    id_ins_cur?: SortOrder
+    not_fin_usu?: SortOrderInput | SortOrder
+    por_asi_fin_usu?: SortOrderInput | SortOrder
+    inscripcion?: inscripcionOrderByWithRelationInput
   }
 
-  export type configuracionWhereUniqueInput = Prisma.AtLeast<{
-    id_conf?: number
-    AND?: configuracionWhereInput | configuracionWhereInput[]
-    OR?: configuracionWhereInput[]
-    NOT?: configuracionWhereInput | configuracionWhereInput[]
-    mision?: StringFilter<"configuracion"> | string
-    vision?: StringFilter<"configuracion"> | string
-    autoridades?: StringFilter<"configuracion"> | string
-  }, "id_conf">
+  export type inscripcion_cursoWhereUniqueInput = Prisma.AtLeast<{
+    id_ins_cur?: string
+    AND?: inscripcion_cursoWhereInput | inscripcion_cursoWhereInput[]
+    OR?: inscripcion_cursoWhereInput[]
+    NOT?: inscripcion_cursoWhereInput | inscripcion_cursoWhereInput[]
+    not_fin_usu?: FloatNullableFilter<"inscripcion_curso"> | number | null
+    por_asi_fin_usu?: FloatNullableFilter<"inscripcion_curso"> | number | null
+    inscripcion?: XOR<InscripcionScalarRelationFilter, inscripcionWhereInput>
+  }, "id_ins_cur">
 
-  export type configuracionOrderByWithAggregationInput = {
-    id_conf?: SortOrder
-    mision?: SortOrder
-    vision?: SortOrder
-    autoridades?: SortOrder
-    _count?: configuracionCountOrderByAggregateInput
-    _avg?: configuracionAvgOrderByAggregateInput
-    _max?: configuracionMaxOrderByAggregateInput
-    _min?: configuracionMinOrderByAggregateInput
-    _sum?: configuracionSumOrderByAggregateInput
+  export type inscripcion_cursoOrderByWithAggregationInput = {
+    id_ins_cur?: SortOrder
+    not_fin_usu?: SortOrderInput | SortOrder
+    por_asi_fin_usu?: SortOrderInput | SortOrder
+    _count?: inscripcion_cursoCountOrderByAggregateInput
+    _avg?: inscripcion_cursoAvgOrderByAggregateInput
+    _max?: inscripcion_cursoMaxOrderByAggregateInput
+    _min?: inscripcion_cursoMinOrderByAggregateInput
+    _sum?: inscripcion_cursoSumOrderByAggregateInput
   }
 
-  export type configuracionScalarWhereWithAggregatesInput = {
-    AND?: configuracionScalarWhereWithAggregatesInput | configuracionScalarWhereWithAggregatesInput[]
-    OR?: configuracionScalarWhereWithAggregatesInput[]
-    NOT?: configuracionScalarWhereWithAggregatesInput | configuracionScalarWhereWithAggregatesInput[]
-    id_conf?: IntWithAggregatesFilter<"configuracion"> | number
-    mision?: StringWithAggregatesFilter<"configuracion"> | string
-    vision?: StringWithAggregatesFilter<"configuracion"> | string
-    autoridades?: StringWithAggregatesFilter<"configuracion"> | string
+  export type inscripcion_cursoScalarWhereWithAggregatesInput = {
+    AND?: inscripcion_cursoScalarWhereWithAggregatesInput | inscripcion_cursoScalarWhereWithAggregatesInput[]
+    OR?: inscripcion_cursoScalarWhereWithAggregatesInput[]
+    NOT?: inscripcion_cursoScalarWhereWithAggregatesInput | inscripcion_cursoScalarWhereWithAggregatesInput[]
+    id_ins_cur?: StringWithAggregatesFilter<"inscripcion_curso"> | string
+    not_fin_usu?: FloatNullableWithAggregatesFilter<"inscripcion_curso"> | number | null
+    por_asi_fin_usu?: FloatNullableWithAggregatesFilter<"inscripcion_curso"> | number | null
+  }
+
+  export type facultadWhereInput = {
+    AND?: facultadWhereInput | facultadWhereInput[]
+    OR?: facultadWhereInput[]
+    NOT?: facultadWhereInput | facultadWhereInput[]
+    id_fac?: StringFilter<"facultad"> | string
+    nom_fac?: StringFilter<"facultad"> | string
+    des_fac?: StringFilter<"facultad"> | string
+    mis_fac?: StringFilter<"facultad"> | string
+    vis_fac?: StringFilter<"facultad"> | string
+    carreras?: CarreraListRelationFilter
+  }
+
+  export type facultadOrderByWithRelationInput = {
+    id_fac?: SortOrder
+    nom_fac?: SortOrder
+    des_fac?: SortOrder
+    mis_fac?: SortOrder
+    vis_fac?: SortOrder
+    carreras?: carreraOrderByRelationAggregateInput
+  }
+
+  export type facultadWhereUniqueInput = Prisma.AtLeast<{
+    id_fac?: string
+    nom_fac?: string
+    AND?: facultadWhereInput | facultadWhereInput[]
+    OR?: facultadWhereInput[]
+    NOT?: facultadWhereInput | facultadWhereInput[]
+    des_fac?: StringFilter<"facultad"> | string
+    mis_fac?: StringFilter<"facultad"> | string
+    vis_fac?: StringFilter<"facultad"> | string
+    carreras?: CarreraListRelationFilter
+  }, "id_fac" | "nom_fac">
+
+  export type facultadOrderByWithAggregationInput = {
+    id_fac?: SortOrder
+    nom_fac?: SortOrder
+    des_fac?: SortOrder
+    mis_fac?: SortOrder
+    vis_fac?: SortOrder
+    _count?: facultadCountOrderByAggregateInput
+    _max?: facultadMaxOrderByAggregateInput
+    _min?: facultadMinOrderByAggregateInput
+  }
+
+  export type facultadScalarWhereWithAggregatesInput = {
+    AND?: facultadScalarWhereWithAggregatesInput | facultadScalarWhereWithAggregatesInput[]
+    OR?: facultadScalarWhereWithAggregatesInput[]
+    NOT?: facultadScalarWhereWithAggregatesInput | facultadScalarWhereWithAggregatesInput[]
+    id_fac?: StringWithAggregatesFilter<"facultad"> | string
+    nom_fac?: StringWithAggregatesFilter<"facultad"> | string
+    des_fac?: StringWithAggregatesFilter<"facultad"> | string
+    mis_fac?: StringWithAggregatesFilter<"facultad"> | string
+    vis_fac?: StringWithAggregatesFilter<"facultad"> | string
   }
 
   export type usuarioCreateInput = {
@@ -7599,8 +11432,8 @@ export namespace Prisma {
     cel_usu: string
     rol_usu: $Enums.rol_usuario
     fec_cre_usu?: Date | string
-    comprobante?: string | null
-    carrera?: string | null
+    com_usu?: string | null
+    carrera?: carreraCreateNestedOneWithoutUsuarioInput
     inscripciones?: inscripcionCreateNestedManyWithoutUsuarioInput
   }
 
@@ -7614,8 +11447,8 @@ export namespace Prisma {
     cel_usu: string
     rol_usu: $Enums.rol_usuario
     fec_cre_usu?: Date | string
-    comprobante?: string | null
-    carrera?: string | null
+    com_usu?: string | null
+    id_car_est?: string | null
     inscripciones?: inscripcionUncheckedCreateNestedManyWithoutUsuarioInput
   }
 
@@ -7629,8 +11462,8 @@ export namespace Prisma {
     cel_usu?: StringFieldUpdateOperationsInput | string
     rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
     fec_cre_usu?: DateTimeFieldUpdateOperationsInput | Date | string
-    comprobante?: NullableStringFieldUpdateOperationsInput | string | null
-    carrera?: NullableStringFieldUpdateOperationsInput | string | null
+    com_usu?: NullableStringFieldUpdateOperationsInput | string | null
+    carrera?: carreraUpdateOneWithoutUsuarioNestedInput
     inscripciones?: inscripcionUpdateManyWithoutUsuarioNestedInput
   }
 
@@ -7644,8 +11477,8 @@ export namespace Prisma {
     cel_usu?: StringFieldUpdateOperationsInput | string
     rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
     fec_cre_usu?: DateTimeFieldUpdateOperationsInput | Date | string
-    comprobante?: NullableStringFieldUpdateOperationsInput | string | null
-    carrera?: NullableStringFieldUpdateOperationsInput | string | null
+    com_usu?: NullableStringFieldUpdateOperationsInput | string | null
+    id_car_est?: NullableStringFieldUpdateOperationsInput | string | null
     inscripciones?: inscripcionUncheckedUpdateManyWithoutUsuarioNestedInput
   }
 
@@ -7659,8 +11492,8 @@ export namespace Prisma {
     cel_usu: string
     rol_usu: $Enums.rol_usuario
     fec_cre_usu?: Date | string
-    comprobante?: string | null
-    carrera?: string | null
+    com_usu?: string | null
+    id_car_est?: string | null
   }
 
   export type usuarioUpdateManyMutationInput = {
@@ -7673,8 +11506,7 @@ export namespace Prisma {
     cel_usu?: StringFieldUpdateOperationsInput | string
     rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
     fec_cre_usu?: DateTimeFieldUpdateOperationsInput | Date | string
-    comprobante?: NullableStringFieldUpdateOperationsInput | string | null
-    carrera?: NullableStringFieldUpdateOperationsInput | string | null
+    com_usu?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type usuarioUncheckedUpdateManyInput = {
@@ -7687,8 +11519,8 @@ export namespace Prisma {
     cel_usu?: StringFieldUpdateOperationsInput | string
     rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
     fec_cre_usu?: DateTimeFieldUpdateOperationsInput | Date | string
-    comprobante?: NullableStringFieldUpdateOperationsInput | string | null
-    carrera?: NullableStringFieldUpdateOperationsInput | string | null
+    com_usu?: NullableStringFieldUpdateOperationsInput | string | null
+    id_car_est?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type carreraCreateInput = {
@@ -7696,7 +11528,9 @@ export namespace Prisma {
     nom_car: string
     est_car?: boolean
     fec_cre_car?: Date | string
-    eventos?: eventoCreateNestedManyWithoutCarreraInput
+    facultad: facultadCreateNestedOneWithoutCarrerasInput
+    usuario?: usuarioCreateNestedManyWithoutCarreraInput
+    eventos?: evento_carreraCreateNestedManyWithoutCarreraInput
   }
 
   export type carreraUncheckedCreateInput = {
@@ -7704,7 +11538,9 @@ export namespace Prisma {
     nom_car: string
     est_car?: boolean
     fec_cre_car?: Date | string
-    eventos?: eventoUncheckedCreateNestedManyWithoutCarreraInput
+    id_fac_per: string
+    usuario?: usuarioUncheckedCreateNestedManyWithoutCarreraInput
+    eventos?: evento_carreraUncheckedCreateNestedManyWithoutCarreraInput
   }
 
   export type carreraUpdateInput = {
@@ -7712,7 +11548,9 @@ export namespace Prisma {
     nom_car?: StringFieldUpdateOperationsInput | string
     est_car?: BoolFieldUpdateOperationsInput | boolean
     fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
-    eventos?: eventoUpdateManyWithoutCarreraNestedInput
+    facultad?: facultadUpdateOneRequiredWithoutCarrerasNestedInput
+    usuario?: usuarioUpdateManyWithoutCarreraNestedInput
+    eventos?: evento_carreraUpdateManyWithoutCarreraNestedInput
   }
 
   export type carreraUncheckedUpdateInput = {
@@ -7720,7 +11558,9 @@ export namespace Prisma {
     nom_car?: StringFieldUpdateOperationsInput | string
     est_car?: BoolFieldUpdateOperationsInput | boolean
     fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
-    eventos?: eventoUncheckedUpdateManyWithoutCarreraNestedInput
+    id_fac_per?: StringFieldUpdateOperationsInput | string
+    usuario?: usuarioUncheckedUpdateManyWithoutCarreraNestedInput
+    eventos?: evento_carreraUncheckedUpdateManyWithoutCarreraNestedInput
   }
 
   export type carreraCreateManyInput = {
@@ -7728,6 +11568,7 @@ export namespace Prisma {
     nom_car: string
     est_car?: boolean
     fec_cre_car?: Date | string
+    id_fac_per: string
   }
 
   export type carreraUpdateManyMutationInput = {
@@ -7742,6 +11583,7 @@ export namespace Prisma {
     nom_car?: StringFieldUpdateOperationsInput | string
     est_car?: BoolFieldUpdateOperationsInput | boolean
     fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
+    id_fac_per?: StringFieldUpdateOperationsInput | string
   }
 
   export type eventoCreateInput = {
@@ -7750,15 +11592,16 @@ export namespace Prisma {
     des_eve?: string | null
     tip_eve: $Enums.tipo_evento
     fec_ini_eve: Date | string
-    fec_fin_eve: Date | string
-    dur_hrs_eve: number
-    pagado_eve?: boolean
-    nota_min_eve?: number | null
-    por_asist_eve?: number | null
-    est_eve?: boolean
+    val_eve: number
+    est_eve?: $Enums.estado_evento
     fec_cre_eve?: Date | string
-    carrera?: carreraCreateNestedOneWithoutEventosInput
-    inscripciones?: inscripcionCreateNestedManyWithoutEventoInput
+    img_por_eve: string
+    dur_hor_eve: number
+    por_min_asi_eve: number
+    fec_fin_eve: Date | string
+    inscritos?: inscripcionCreateNestedManyWithoutEventoInput
+    eventos_carrera?: evento_carreraCreateNestedManyWithoutEventoInput
+    eventos_curso?: evento_cursoCreateNestedOneWithoutEventoInput
   }
 
   export type eventoUncheckedCreateInput = {
@@ -7767,15 +11610,16 @@ export namespace Prisma {
     des_eve?: string | null
     tip_eve: $Enums.tipo_evento
     fec_ini_eve: Date | string
-    fec_fin_eve: Date | string
-    dur_hrs_eve: number
-    pagado_eve?: boolean
-    nota_min_eve?: number | null
-    por_asist_eve?: number | null
-    est_eve?: boolean
+    val_eve: number
+    est_eve?: $Enums.estado_evento
     fec_cre_eve?: Date | string
-    carreraId?: string | null
-    inscripciones?: inscripcionUncheckedCreateNestedManyWithoutEventoInput
+    img_por_eve: string
+    dur_hor_eve: number
+    por_min_asi_eve: number
+    fec_fin_eve: Date | string
+    inscritos?: inscripcionUncheckedCreateNestedManyWithoutEventoInput
+    eventos_carrera?: evento_carreraUncheckedCreateNestedManyWithoutEventoInput
+    eventos_curso?: evento_cursoUncheckedCreateNestedOneWithoutEventoInput
   }
 
   export type eventoUpdateInput = {
@@ -7784,15 +11628,16 @@ export namespace Prisma {
     des_eve?: NullableStringFieldUpdateOperationsInput | string | null
     tip_eve?: Enumtipo_eventoFieldUpdateOperationsInput | $Enums.tipo_evento
     fec_ini_eve?: DateTimeFieldUpdateOperationsInput | Date | string
-    fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
-    dur_hrs_eve?: IntFieldUpdateOperationsInput | number
-    pagado_eve?: BoolFieldUpdateOperationsInput | boolean
-    nota_min_eve?: NullableFloatFieldUpdateOperationsInput | number | null
-    por_asist_eve?: NullableFloatFieldUpdateOperationsInput | number | null
-    est_eve?: BoolFieldUpdateOperationsInput | boolean
+    val_eve?: FloatFieldUpdateOperationsInput | number
+    est_eve?: Enumestado_eventoFieldUpdateOperationsInput | $Enums.estado_evento
     fec_cre_eve?: DateTimeFieldUpdateOperationsInput | Date | string
-    carrera?: carreraUpdateOneWithoutEventosNestedInput
-    inscripciones?: inscripcionUpdateManyWithoutEventoNestedInput
+    img_por_eve?: StringFieldUpdateOperationsInput | string
+    dur_hor_eve?: IntFieldUpdateOperationsInput | number
+    por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
+    fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
+    inscritos?: inscripcionUpdateManyWithoutEventoNestedInput
+    eventos_carrera?: evento_carreraUpdateManyWithoutEventoNestedInput
+    eventos_curso?: evento_cursoUpdateOneWithoutEventoNestedInput
   }
 
   export type eventoUncheckedUpdateInput = {
@@ -7801,15 +11646,16 @@ export namespace Prisma {
     des_eve?: NullableStringFieldUpdateOperationsInput | string | null
     tip_eve?: Enumtipo_eventoFieldUpdateOperationsInput | $Enums.tipo_evento
     fec_ini_eve?: DateTimeFieldUpdateOperationsInput | Date | string
-    fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
-    dur_hrs_eve?: IntFieldUpdateOperationsInput | number
-    pagado_eve?: BoolFieldUpdateOperationsInput | boolean
-    nota_min_eve?: NullableFloatFieldUpdateOperationsInput | number | null
-    por_asist_eve?: NullableFloatFieldUpdateOperationsInput | number | null
-    est_eve?: BoolFieldUpdateOperationsInput | boolean
+    val_eve?: FloatFieldUpdateOperationsInput | number
+    est_eve?: Enumestado_eventoFieldUpdateOperationsInput | $Enums.estado_evento
     fec_cre_eve?: DateTimeFieldUpdateOperationsInput | Date | string
-    carreraId?: NullableStringFieldUpdateOperationsInput | string | null
-    inscripciones?: inscripcionUncheckedUpdateManyWithoutEventoNestedInput
+    img_por_eve?: StringFieldUpdateOperationsInput | string
+    dur_hor_eve?: IntFieldUpdateOperationsInput | number
+    por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
+    fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
+    inscritos?: inscripcionUncheckedUpdateManyWithoutEventoNestedInput
+    eventos_carrera?: evento_carreraUncheckedUpdateManyWithoutEventoNestedInput
+    eventos_curso?: evento_cursoUncheckedUpdateOneWithoutEventoNestedInput
   }
 
   export type eventoCreateManyInput = {
@@ -7818,14 +11664,13 @@ export namespace Prisma {
     des_eve?: string | null
     tip_eve: $Enums.tipo_evento
     fec_ini_eve: Date | string
-    fec_fin_eve: Date | string
-    dur_hrs_eve: number
-    pagado_eve?: boolean
-    nota_min_eve?: number | null
-    por_asist_eve?: number | null
-    est_eve?: boolean
+    val_eve: number
+    est_eve?: $Enums.estado_evento
     fec_cre_eve?: Date | string
-    carreraId?: string | null
+    img_por_eve: string
+    dur_hor_eve: number
+    por_min_asi_eve: number
+    fec_fin_eve: Date | string
   }
 
   export type eventoUpdateManyMutationInput = {
@@ -7834,13 +11679,13 @@ export namespace Prisma {
     des_eve?: NullableStringFieldUpdateOperationsInput | string | null
     tip_eve?: Enumtipo_eventoFieldUpdateOperationsInput | $Enums.tipo_evento
     fec_ini_eve?: DateTimeFieldUpdateOperationsInput | Date | string
-    fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
-    dur_hrs_eve?: IntFieldUpdateOperationsInput | number
-    pagado_eve?: BoolFieldUpdateOperationsInput | boolean
-    nota_min_eve?: NullableFloatFieldUpdateOperationsInput | number | null
-    por_asist_eve?: NullableFloatFieldUpdateOperationsInput | number | null
-    est_eve?: BoolFieldUpdateOperationsInput | boolean
+    val_eve?: FloatFieldUpdateOperationsInput | number
+    est_eve?: Enumestado_eventoFieldUpdateOperationsInput | $Enums.estado_evento
     fec_cre_eve?: DateTimeFieldUpdateOperationsInput | Date | string
+    img_por_eve?: StringFieldUpdateOperationsInput | string
+    dur_hor_eve?: IntFieldUpdateOperationsInput | number
+    por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
+    fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type eventoUncheckedUpdateManyInput = {
@@ -7849,145 +11694,274 @@ export namespace Prisma {
     des_eve?: NullableStringFieldUpdateOperationsInput | string | null
     tip_eve?: Enumtipo_eventoFieldUpdateOperationsInput | $Enums.tipo_evento
     fec_ini_eve?: DateTimeFieldUpdateOperationsInput | Date | string
-    fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
-    dur_hrs_eve?: IntFieldUpdateOperationsInput | number
-    pagado_eve?: BoolFieldUpdateOperationsInput | boolean
-    nota_min_eve?: NullableFloatFieldUpdateOperationsInput | number | null
-    por_asist_eve?: NullableFloatFieldUpdateOperationsInput | number | null
-    est_eve?: BoolFieldUpdateOperationsInput | boolean
+    val_eve?: FloatFieldUpdateOperationsInput | number
+    est_eve?: Enumestado_eventoFieldUpdateOperationsInput | $Enums.estado_evento
     fec_cre_eve?: DateTimeFieldUpdateOperationsInput | Date | string
-    carreraId?: NullableStringFieldUpdateOperationsInput | string | null
+    img_por_eve?: StringFieldUpdateOperationsInput | string
+    dur_hor_eve?: IntFieldUpdateOperationsInput | number
+    por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
+    fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type evento_cursoCreateInput = {
+    not_min_cur: number
+    evento: eventoCreateNestedOneWithoutEventos_cursoInput
+  }
+
+  export type evento_cursoUncheckedCreateInput = {
+    id_eve_cur: string
+    not_min_cur: number
+  }
+
+  export type evento_cursoUpdateInput = {
+    not_min_cur?: FloatFieldUpdateOperationsInput | number
+    evento?: eventoUpdateOneRequiredWithoutEventos_cursoNestedInput
+  }
+
+  export type evento_cursoUncheckedUpdateInput = {
+    id_eve_cur?: StringFieldUpdateOperationsInput | string
+    not_min_cur?: FloatFieldUpdateOperationsInput | number
+  }
+
+  export type evento_cursoCreateManyInput = {
+    id_eve_cur: string
+    not_min_cur: number
+  }
+
+  export type evento_cursoUpdateManyMutationInput = {
+    not_min_cur?: FloatFieldUpdateOperationsInput | number
+  }
+
+  export type evento_cursoUncheckedUpdateManyInput = {
+    id_eve_cur?: StringFieldUpdateOperationsInput | string
+    not_min_cur?: FloatFieldUpdateOperationsInput | number
+  }
+
+  export type evento_carreraCreateInput = {
+    id_eve_car?: string
+    fec_aso?: Date | string
+    carrera: carreraCreateNestedOneWithoutEventosInput
+    evento: eventoCreateNestedOneWithoutEventos_carreraInput
+  }
+
+  export type evento_carreraUncheckedCreateInput = {
+    id_eve_car?: string
+    id_car_aso: string
+    id_eve_aso: string
+    fec_aso?: Date | string
+  }
+
+  export type evento_carreraUpdateInput = {
+    id_eve_car?: StringFieldUpdateOperationsInput | string
+    fec_aso?: DateTimeFieldUpdateOperationsInput | Date | string
+    carrera?: carreraUpdateOneRequiredWithoutEventosNestedInput
+    evento?: eventoUpdateOneRequiredWithoutEventos_carreraNestedInput
+  }
+
+  export type evento_carreraUncheckedUpdateInput = {
+    id_eve_car?: StringFieldUpdateOperationsInput | string
+    id_car_aso?: StringFieldUpdateOperationsInput | string
+    id_eve_aso?: StringFieldUpdateOperationsInput | string
+    fec_aso?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type evento_carreraCreateManyInput = {
+    id_eve_car?: string
+    id_car_aso: string
+    id_eve_aso: string
+    fec_aso?: Date | string
+  }
+
+  export type evento_carreraUpdateManyMutationInput = {
+    id_eve_car?: StringFieldUpdateOperationsInput | string
+    fec_aso?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type evento_carreraUncheckedUpdateManyInput = {
+    id_eve_car?: StringFieldUpdateOperationsInput | string
+    id_car_aso?: StringFieldUpdateOperationsInput | string
+    id_eve_aso?: StringFieldUpdateOperationsInput | string
+    fec_aso?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type inscripcionCreateInput = {
     id_ins?: string
-    comprobante?: string | null
-    nota_final?: number | null
-    asistencia?: number | null
-    estado?: $Enums.estado_inscripcion
+    est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
-    cert_enviado?: boolean
+    fec_pag_ins?: Date | string | null
+    cer_eve_env?: boolean
+    car_mot_usu?: string | null
     usuario: usuarioCreateNestedOneWithoutInscripcionesInput
-    evento: eventoCreateNestedOneWithoutInscripcionesInput
+    evento: eventoCreateNestedOneWithoutInscritosInput
+    inscripcion_curso?: inscripcion_cursoCreateNestedOneWithoutInscripcionInput
   }
 
   export type inscripcionUncheckedCreateInput = {
     id_ins?: string
-    id_usu: string
-    id_eve: string
-    comprobante?: string | null
-    nota_final?: number | null
-    asistencia?: number | null
-    estado?: $Enums.estado_inscripcion
+    id_usu_ins: string
+    id_eve_ins: string
+    est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
-    cert_enviado?: boolean
+    fec_pag_ins?: Date | string | null
+    cer_eve_env?: boolean
+    car_mot_usu?: string | null
+    inscripcion_curso?: inscripcion_cursoUncheckedCreateNestedOneWithoutInscripcionInput
   }
 
   export type inscripcionUpdateInput = {
     id_ins?: StringFieldUpdateOperationsInput | string
-    comprobante?: NullableStringFieldUpdateOperationsInput | string | null
-    nota_final?: NullableFloatFieldUpdateOperationsInput | number | null
-    asistencia?: NullableFloatFieldUpdateOperationsInput | number | null
-    estado?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
+    est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
-    cert_enviado?: BoolFieldUpdateOperationsInput | boolean
+    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cer_eve_env?: BoolFieldUpdateOperationsInput | boolean
+    car_mot_usu?: NullableStringFieldUpdateOperationsInput | string | null
     usuario?: usuarioUpdateOneRequiredWithoutInscripcionesNestedInput
-    evento?: eventoUpdateOneRequiredWithoutInscripcionesNestedInput
+    evento?: eventoUpdateOneRequiredWithoutInscritosNestedInput
+    inscripcion_curso?: inscripcion_cursoUpdateOneWithoutInscripcionNestedInput
   }
 
   export type inscripcionUncheckedUpdateInput = {
     id_ins?: StringFieldUpdateOperationsInput | string
-    id_usu?: StringFieldUpdateOperationsInput | string
-    id_eve?: StringFieldUpdateOperationsInput | string
-    comprobante?: NullableStringFieldUpdateOperationsInput | string | null
-    nota_final?: NullableFloatFieldUpdateOperationsInput | number | null
-    asistencia?: NullableFloatFieldUpdateOperationsInput | number | null
-    estado?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
+    id_usu_ins?: StringFieldUpdateOperationsInput | string
+    id_eve_ins?: StringFieldUpdateOperationsInput | string
+    est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
-    cert_enviado?: BoolFieldUpdateOperationsInput | boolean
+    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cer_eve_env?: BoolFieldUpdateOperationsInput | boolean
+    car_mot_usu?: NullableStringFieldUpdateOperationsInput | string | null
+    inscripcion_curso?: inscripcion_cursoUncheckedUpdateOneWithoutInscripcionNestedInput
   }
 
   export type inscripcionCreateManyInput = {
     id_ins?: string
-    id_usu: string
-    id_eve: string
-    comprobante?: string | null
-    nota_final?: number | null
-    asistencia?: number | null
-    estado?: $Enums.estado_inscripcion
+    id_usu_ins: string
+    id_eve_ins: string
+    est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
-    cert_enviado?: boolean
+    fec_pag_ins?: Date | string | null
+    cer_eve_env?: boolean
+    car_mot_usu?: string | null
   }
 
   export type inscripcionUpdateManyMutationInput = {
     id_ins?: StringFieldUpdateOperationsInput | string
-    comprobante?: NullableStringFieldUpdateOperationsInput | string | null
-    nota_final?: NullableFloatFieldUpdateOperationsInput | number | null
-    asistencia?: NullableFloatFieldUpdateOperationsInput | number | null
-    estado?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
+    est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
-    cert_enviado?: BoolFieldUpdateOperationsInput | boolean
+    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cer_eve_env?: BoolFieldUpdateOperationsInput | boolean
+    car_mot_usu?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type inscripcionUncheckedUpdateManyInput = {
     id_ins?: StringFieldUpdateOperationsInput | string
-    id_usu?: StringFieldUpdateOperationsInput | string
-    id_eve?: StringFieldUpdateOperationsInput | string
-    comprobante?: NullableStringFieldUpdateOperationsInput | string | null
-    nota_final?: NullableFloatFieldUpdateOperationsInput | number | null
-    asistencia?: NullableFloatFieldUpdateOperationsInput | number | null
-    estado?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
+    id_usu_ins?: StringFieldUpdateOperationsInput | string
+    id_eve_ins?: StringFieldUpdateOperationsInput | string
+    est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
-    cert_enviado?: BoolFieldUpdateOperationsInput | boolean
+    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cer_eve_env?: BoolFieldUpdateOperationsInput | boolean
+    car_mot_usu?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
-  export type configuracionCreateInput = {
-    id_conf?: number
-    mision: string
-    vision: string
-    autoridades: string
+  export type inscripcion_cursoCreateInput = {
+    not_fin_usu?: number | null
+    por_asi_fin_usu?: number | null
+    inscripcion: inscripcionCreateNestedOneWithoutInscripcion_cursoInput
   }
 
-  export type configuracionUncheckedCreateInput = {
-    id_conf?: number
-    mision: string
-    vision: string
-    autoridades: string
+  export type inscripcion_cursoUncheckedCreateInput = {
+    id_ins_cur: string
+    not_fin_usu?: number | null
+    por_asi_fin_usu?: number | null
   }
 
-  export type configuracionUpdateInput = {
-    id_conf?: IntFieldUpdateOperationsInput | number
-    mision?: StringFieldUpdateOperationsInput | string
-    vision?: StringFieldUpdateOperationsInput | string
-    autoridades?: StringFieldUpdateOperationsInput | string
+  export type inscripcion_cursoUpdateInput = {
+    not_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    inscripcion?: inscripcionUpdateOneRequiredWithoutInscripcion_cursoNestedInput
   }
 
-  export type configuracionUncheckedUpdateInput = {
-    id_conf?: IntFieldUpdateOperationsInput | number
-    mision?: StringFieldUpdateOperationsInput | string
-    vision?: StringFieldUpdateOperationsInput | string
-    autoridades?: StringFieldUpdateOperationsInput | string
+  export type inscripcion_cursoUncheckedUpdateInput = {
+    id_ins_cur?: StringFieldUpdateOperationsInput | string
+    not_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
   }
 
-  export type configuracionCreateManyInput = {
-    id_conf?: number
-    mision: string
-    vision: string
-    autoridades: string
+  export type inscripcion_cursoCreateManyInput = {
+    id_ins_cur: string
+    not_fin_usu?: number | null
+    por_asi_fin_usu?: number | null
   }
 
-  export type configuracionUpdateManyMutationInput = {
-    id_conf?: IntFieldUpdateOperationsInput | number
-    mision?: StringFieldUpdateOperationsInput | string
-    vision?: StringFieldUpdateOperationsInput | string
-    autoridades?: StringFieldUpdateOperationsInput | string
+  export type inscripcion_cursoUpdateManyMutationInput = {
+    not_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
   }
 
-  export type configuracionUncheckedUpdateManyInput = {
-    id_conf?: IntFieldUpdateOperationsInput | number
-    mision?: StringFieldUpdateOperationsInput | string
-    vision?: StringFieldUpdateOperationsInput | string
-    autoridades?: StringFieldUpdateOperationsInput | string
+  export type inscripcion_cursoUncheckedUpdateManyInput = {
+    id_ins_cur?: StringFieldUpdateOperationsInput | string
+    not_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+  }
+
+  export type facultadCreateInput = {
+    id_fac?: string
+    nom_fac: string
+    des_fac: string
+    mis_fac: string
+    vis_fac: string
+    carreras?: carreraCreateNestedManyWithoutFacultadInput
+  }
+
+  export type facultadUncheckedCreateInput = {
+    id_fac?: string
+    nom_fac: string
+    des_fac: string
+    mis_fac: string
+    vis_fac: string
+    carreras?: carreraUncheckedCreateNestedManyWithoutFacultadInput
+  }
+
+  export type facultadUpdateInput = {
+    id_fac?: StringFieldUpdateOperationsInput | string
+    nom_fac?: StringFieldUpdateOperationsInput | string
+    des_fac?: StringFieldUpdateOperationsInput | string
+    mis_fac?: StringFieldUpdateOperationsInput | string
+    vis_fac?: StringFieldUpdateOperationsInput | string
+    carreras?: carreraUpdateManyWithoutFacultadNestedInput
+  }
+
+  export type facultadUncheckedUpdateInput = {
+    id_fac?: StringFieldUpdateOperationsInput | string
+    nom_fac?: StringFieldUpdateOperationsInput | string
+    des_fac?: StringFieldUpdateOperationsInput | string
+    mis_fac?: StringFieldUpdateOperationsInput | string
+    vis_fac?: StringFieldUpdateOperationsInput | string
+    carreras?: carreraUncheckedUpdateManyWithoutFacultadNestedInput
+  }
+
+  export type facultadCreateManyInput = {
+    id_fac?: string
+    nom_fac: string
+    des_fac: string
+    mis_fac: string
+    vis_fac: string
+  }
+
+  export type facultadUpdateManyMutationInput = {
+    id_fac?: StringFieldUpdateOperationsInput | string
+    nom_fac?: StringFieldUpdateOperationsInput | string
+    des_fac?: StringFieldUpdateOperationsInput | string
+    mis_fac?: StringFieldUpdateOperationsInput | string
+    vis_fac?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type facultadUncheckedUpdateManyInput = {
+    id_fac?: StringFieldUpdateOperationsInput | string
+    nom_fac?: StringFieldUpdateOperationsInput | string
+    des_fac?: StringFieldUpdateOperationsInput | string
+    mis_fac?: StringFieldUpdateOperationsInput | string
+    vis_fac?: StringFieldUpdateOperationsInput | string
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -8038,6 +12012,11 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
+  export type CarreraNullableScalarRelationFilter = {
+    is?: carreraWhereInput | null
+    isNot?: carreraWhereInput | null
+  }
+
   export type InscripcionListRelationFilter = {
     every?: inscripcionWhereInput
     some?: inscripcionWhereInput
@@ -8063,8 +12042,8 @@ export namespace Prisma {
     cel_usu?: SortOrder
     rol_usu?: SortOrder
     fec_cre_usu?: SortOrder
-    comprobante?: SortOrder
-    carrera?: SortOrder
+    com_usu?: SortOrder
+    id_car_est?: SortOrder
   }
 
   export type usuarioMaxOrderByAggregateInput = {
@@ -8077,8 +12056,8 @@ export namespace Prisma {
     cel_usu?: SortOrder
     rol_usu?: SortOrder
     fec_cre_usu?: SortOrder
-    comprobante?: SortOrder
-    carrera?: SortOrder
+    com_usu?: SortOrder
+    id_car_est?: SortOrder
   }
 
   export type usuarioMinOrderByAggregateInput = {
@@ -8091,8 +12070,8 @@ export namespace Prisma {
     cel_usu?: SortOrder
     rol_usu?: SortOrder
     fec_cre_usu?: SortOrder
-    comprobante?: SortOrder
-    carrera?: SortOrder
+    com_usu?: SortOrder
+    id_car_est?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -8160,13 +12139,28 @@ export namespace Prisma {
     not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
-  export type EventoListRelationFilter = {
-    every?: eventoWhereInput
-    some?: eventoWhereInput
-    none?: eventoWhereInput
+  export type FacultadScalarRelationFilter = {
+    is?: facultadWhereInput
+    isNot?: facultadWhereInput
   }
 
-  export type eventoOrderByRelationAggregateInput = {
+  export type UsuarioListRelationFilter = {
+    every?: usuarioWhereInput
+    some?: usuarioWhereInput
+    none?: usuarioWhereInput
+  }
+
+  export type Evento_carreraListRelationFilter = {
+    every?: evento_carreraWhereInput
+    some?: evento_carreraWhereInput
+    none?: evento_carreraWhereInput
+  }
+
+  export type usuarioOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type evento_carreraOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -8175,6 +12169,7 @@ export namespace Prisma {
     nom_car?: SortOrder
     est_car?: SortOrder
     fec_cre_car?: SortOrder
+    id_fac_per?: SortOrder
   }
 
   export type carreraMaxOrderByAggregateInput = {
@@ -8182,6 +12177,7 @@ export namespace Prisma {
     nom_car?: SortOrder
     est_car?: SortOrder
     fec_cre_car?: SortOrder
+    id_fac_per?: SortOrder
   }
 
   export type carreraMinOrderByAggregateInput = {
@@ -8189,6 +12185,7 @@ export namespace Prisma {
     nom_car?: SortOrder
     est_car?: SortOrder
     fec_cre_car?: SortOrder
+    id_fac_per?: SortOrder
   }
 
   export type BoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -8206,6 +12203,24 @@ export namespace Prisma {
     not?: NestedEnumtipo_eventoFilter<$PrismaModel> | $Enums.tipo_evento
   }
 
+  export type FloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
+  export type Enumestado_eventoFilter<$PrismaModel = never> = {
+    equals?: $Enums.estado_evento | Enumestado_eventoFieldRefInput<$PrismaModel>
+    in?: $Enums.estado_evento[] | ListEnumestado_eventoFieldRefInput<$PrismaModel>
+    notIn?: $Enums.estado_evento[] | ListEnumestado_eventoFieldRefInput<$PrismaModel>
+    not?: NestedEnumestado_eventoFilter<$PrismaModel> | $Enums.estado_evento
+  }
+
   export type IntFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -8217,20 +12232,9 @@ export namespace Prisma {
     not?: NestedIntFilter<$PrismaModel> | number
   }
 
-  export type FloatNullableFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
-  }
-
-  export type CarreraNullableScalarRelationFilter = {
-    is?: carreraWhereInput | null
-    isNot?: carreraWhereInput | null
+  export type Evento_cursoNullableScalarRelationFilter = {
+    is?: evento_cursoWhereInput | null
+    isNot?: evento_cursoWhereInput | null
   }
 
   export type eventoCountOrderByAggregateInput = {
@@ -8239,20 +12243,19 @@ export namespace Prisma {
     des_eve?: SortOrder
     tip_eve?: SortOrder
     fec_ini_eve?: SortOrder
-    fec_fin_eve?: SortOrder
-    dur_hrs_eve?: SortOrder
-    pagado_eve?: SortOrder
-    nota_min_eve?: SortOrder
-    por_asist_eve?: SortOrder
+    val_eve?: SortOrder
     est_eve?: SortOrder
     fec_cre_eve?: SortOrder
-    carreraId?: SortOrder
+    img_por_eve?: SortOrder
+    dur_hor_eve?: SortOrder
+    por_min_asi_eve?: SortOrder
+    fec_fin_eve?: SortOrder
   }
 
   export type eventoAvgOrderByAggregateInput = {
-    dur_hrs_eve?: SortOrder
-    nota_min_eve?: SortOrder
-    por_asist_eve?: SortOrder
+    val_eve?: SortOrder
+    dur_hor_eve?: SortOrder
+    por_min_asi_eve?: SortOrder
   }
 
   export type eventoMaxOrderByAggregateInput = {
@@ -8261,14 +12264,13 @@ export namespace Prisma {
     des_eve?: SortOrder
     tip_eve?: SortOrder
     fec_ini_eve?: SortOrder
-    fec_fin_eve?: SortOrder
-    dur_hrs_eve?: SortOrder
-    pagado_eve?: SortOrder
-    nota_min_eve?: SortOrder
-    por_asist_eve?: SortOrder
+    val_eve?: SortOrder
     est_eve?: SortOrder
     fec_cre_eve?: SortOrder
-    carreraId?: SortOrder
+    img_por_eve?: SortOrder
+    dur_hor_eve?: SortOrder
+    por_min_asi_eve?: SortOrder
+    fec_fin_eve?: SortOrder
   }
 
   export type eventoMinOrderByAggregateInput = {
@@ -8277,20 +12279,19 @@ export namespace Prisma {
     des_eve?: SortOrder
     tip_eve?: SortOrder
     fec_ini_eve?: SortOrder
-    fec_fin_eve?: SortOrder
-    dur_hrs_eve?: SortOrder
-    pagado_eve?: SortOrder
-    nota_min_eve?: SortOrder
-    por_asist_eve?: SortOrder
+    val_eve?: SortOrder
     est_eve?: SortOrder
     fec_cre_eve?: SortOrder
-    carreraId?: SortOrder
+    img_por_eve?: SortOrder
+    dur_hor_eve?: SortOrder
+    por_min_asi_eve?: SortOrder
+    fec_fin_eve?: SortOrder
   }
 
   export type eventoSumOrderByAggregateInput = {
-    dur_hrs_eve?: SortOrder
-    nota_min_eve?: SortOrder
-    por_asist_eve?: SortOrder
+    val_eve?: SortOrder
+    dur_hor_eve?: SortOrder
+    por_min_asi_eve?: SortOrder
   }
 
   export type Enumtipo_eventoWithAggregatesFilter<$PrismaModel = never> = {
@@ -8301,6 +12302,32 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumtipo_eventoFilter<$PrismaModel>
     _max?: NestedEnumtipo_eventoFilter<$PrismaModel>
+  }
+
+  export type FloatWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedFloatFilter<$PrismaModel>
+    _min?: NestedFloatFilter<$PrismaModel>
+    _max?: NestedFloatFilter<$PrismaModel>
+  }
+
+  export type Enumestado_eventoWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.estado_evento | Enumestado_eventoFieldRefInput<$PrismaModel>
+    in?: $Enums.estado_evento[] | ListEnumestado_eventoFieldRefInput<$PrismaModel>
+    notIn?: $Enums.estado_evento[] | ListEnumestado_eventoFieldRefInput<$PrismaModel>
+    not?: NestedEnumestado_eventoWithAggregatesFilter<$PrismaModel> | $Enums.estado_evento
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumestado_eventoFilter<$PrismaModel>
+    _max?: NestedEnumestado_eventoFilter<$PrismaModel>
   }
 
   export type IntWithAggregatesFilter<$PrismaModel = never> = {
@@ -8319,6 +12346,189 @@ export namespace Prisma {
     _max?: NestedIntFilter<$PrismaModel>
   }
 
+  export type EventoScalarRelationFilter = {
+    is?: eventoWhereInput
+    isNot?: eventoWhereInput
+  }
+
+  export type evento_cursoCountOrderByAggregateInput = {
+    id_eve_cur?: SortOrder
+    not_min_cur?: SortOrder
+  }
+
+  export type evento_cursoAvgOrderByAggregateInput = {
+    not_min_cur?: SortOrder
+  }
+
+  export type evento_cursoMaxOrderByAggregateInput = {
+    id_eve_cur?: SortOrder
+    not_min_cur?: SortOrder
+  }
+
+  export type evento_cursoMinOrderByAggregateInput = {
+    id_eve_cur?: SortOrder
+    not_min_cur?: SortOrder
+  }
+
+  export type evento_cursoSumOrderByAggregateInput = {
+    not_min_cur?: SortOrder
+  }
+
+  export type CarreraScalarRelationFilter = {
+    is?: carreraWhereInput
+    isNot?: carreraWhereInput
+  }
+
+  export type evento_carreraCountOrderByAggregateInput = {
+    id_eve_car?: SortOrder
+    id_car_aso?: SortOrder
+    id_eve_aso?: SortOrder
+    fec_aso?: SortOrder
+  }
+
+  export type evento_carreraMaxOrderByAggregateInput = {
+    id_eve_car?: SortOrder
+    id_car_aso?: SortOrder
+    id_eve_aso?: SortOrder
+    fec_aso?: SortOrder
+  }
+
+  export type evento_carreraMinOrderByAggregateInput = {
+    id_eve_car?: SortOrder
+    id_car_aso?: SortOrder
+    id_eve_aso?: SortOrder
+    fec_aso?: SortOrder
+  }
+
+  export type Enumestado_inscripcionFilter<$PrismaModel = never> = {
+    equals?: $Enums.estado_inscripcion | Enumestado_inscripcionFieldRefInput<$PrismaModel>
+    in?: $Enums.estado_inscripcion[] | ListEnumestado_inscripcionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.estado_inscripcion[] | ListEnumestado_inscripcionFieldRefInput<$PrismaModel>
+    not?: NestedEnumestado_inscripcionFilter<$PrismaModel> | $Enums.estado_inscripcion
+  }
+
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type UsuarioScalarRelationFilter = {
+    is?: usuarioWhereInput
+    isNot?: usuarioWhereInput
+  }
+
+  export type Inscripcion_cursoNullableScalarRelationFilter = {
+    is?: inscripcion_cursoWhereInput | null
+    isNot?: inscripcion_cursoWhereInput | null
+  }
+
+  export type inscripcionCountOrderByAggregateInput = {
+    id_ins?: SortOrder
+    id_usu_ins?: SortOrder
+    id_eve_ins?: SortOrder
+    est_ins?: SortOrder
+    fec_ins?: SortOrder
+    fec_pag_ins?: SortOrder
+    cer_eve_env?: SortOrder
+    car_mot_usu?: SortOrder
+  }
+
+  export type inscripcionMaxOrderByAggregateInput = {
+    id_ins?: SortOrder
+    id_usu_ins?: SortOrder
+    id_eve_ins?: SortOrder
+    est_ins?: SortOrder
+    fec_ins?: SortOrder
+    fec_pag_ins?: SortOrder
+    cer_eve_env?: SortOrder
+    car_mot_usu?: SortOrder
+  }
+
+  export type inscripcionMinOrderByAggregateInput = {
+    id_ins?: SortOrder
+    id_usu_ins?: SortOrder
+    id_eve_ins?: SortOrder
+    est_ins?: SortOrder
+    fec_ins?: SortOrder
+    fec_pag_ins?: SortOrder
+    cer_eve_env?: SortOrder
+    car_mot_usu?: SortOrder
+  }
+
+  export type Enumestado_inscripcionWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.estado_inscripcion | Enumestado_inscripcionFieldRefInput<$PrismaModel>
+    in?: $Enums.estado_inscripcion[] | ListEnumestado_inscripcionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.estado_inscripcion[] | ListEnumestado_inscripcionFieldRefInput<$PrismaModel>
+    not?: NestedEnumestado_inscripcionWithAggregatesFilter<$PrismaModel> | $Enums.estado_inscripcion
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumestado_inscripcionFilter<$PrismaModel>
+    _max?: NestedEnumestado_inscripcionFilter<$PrismaModel>
+  }
+
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type FloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type InscripcionScalarRelationFilter = {
+    is?: inscripcionWhereInput
+    isNot?: inscripcionWhereInput
+  }
+
+  export type inscripcion_cursoCountOrderByAggregateInput = {
+    id_ins_cur?: SortOrder
+    not_fin_usu?: SortOrder
+    por_asi_fin_usu?: SortOrder
+  }
+
+  export type inscripcion_cursoAvgOrderByAggregateInput = {
+    not_fin_usu?: SortOrder
+    por_asi_fin_usu?: SortOrder
+  }
+
+  export type inscripcion_cursoMaxOrderByAggregateInput = {
+    id_ins_cur?: SortOrder
+    not_fin_usu?: SortOrder
+    por_asi_fin_usu?: SortOrder
+  }
+
+  export type inscripcion_cursoMinOrderByAggregateInput = {
+    id_ins_cur?: SortOrder
+    not_fin_usu?: SortOrder
+    por_asi_fin_usu?: SortOrder
+  }
+
+  export type inscripcion_cursoSumOrderByAggregateInput = {
+    not_fin_usu?: SortOrder
+    por_asi_fin_usu?: SortOrder
+  }
+
   export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel> | null
     in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
@@ -8335,111 +12545,44 @@ export namespace Prisma {
     _max?: NestedFloatNullableFilter<$PrismaModel>
   }
 
-  export type Enumestado_inscripcionFilter<$PrismaModel = never> = {
-    equals?: $Enums.estado_inscripcion | Enumestado_inscripcionFieldRefInput<$PrismaModel>
-    in?: $Enums.estado_inscripcion[] | ListEnumestado_inscripcionFieldRefInput<$PrismaModel>
-    notIn?: $Enums.estado_inscripcion[] | ListEnumestado_inscripcionFieldRefInput<$PrismaModel>
-    not?: NestedEnumestado_inscripcionFilter<$PrismaModel> | $Enums.estado_inscripcion
+  export type CarreraListRelationFilter = {
+    every?: carreraWhereInput
+    some?: carreraWhereInput
+    none?: carreraWhereInput
   }
 
-  export type UsuarioScalarRelationFilter = {
-    is?: usuarioWhereInput
-    isNot?: usuarioWhereInput
+  export type carreraOrderByRelationAggregateInput = {
+    _count?: SortOrder
   }
 
-  export type EventoScalarRelationFilter = {
-    is?: eventoWhereInput
-    isNot?: eventoWhereInput
+  export type facultadCountOrderByAggregateInput = {
+    id_fac?: SortOrder
+    nom_fac?: SortOrder
+    des_fac?: SortOrder
+    mis_fac?: SortOrder
+    vis_fac?: SortOrder
   }
 
-  export type inscripcionId_usuId_eveCompoundUniqueInput = {
-    id_usu: string
-    id_eve: string
+  export type facultadMaxOrderByAggregateInput = {
+    id_fac?: SortOrder
+    nom_fac?: SortOrder
+    des_fac?: SortOrder
+    mis_fac?: SortOrder
+    vis_fac?: SortOrder
   }
 
-  export type inscripcionCountOrderByAggregateInput = {
-    id_ins?: SortOrder
-    id_usu?: SortOrder
-    id_eve?: SortOrder
-    comprobante?: SortOrder
-    nota_final?: SortOrder
-    asistencia?: SortOrder
-    estado?: SortOrder
-    fec_ins?: SortOrder
-    cert_enviado?: SortOrder
+  export type facultadMinOrderByAggregateInput = {
+    id_fac?: SortOrder
+    nom_fac?: SortOrder
+    des_fac?: SortOrder
+    mis_fac?: SortOrder
+    vis_fac?: SortOrder
   }
 
-  export type inscripcionAvgOrderByAggregateInput = {
-    nota_final?: SortOrder
-    asistencia?: SortOrder
-  }
-
-  export type inscripcionMaxOrderByAggregateInput = {
-    id_ins?: SortOrder
-    id_usu?: SortOrder
-    id_eve?: SortOrder
-    comprobante?: SortOrder
-    nota_final?: SortOrder
-    asistencia?: SortOrder
-    estado?: SortOrder
-    fec_ins?: SortOrder
-    cert_enviado?: SortOrder
-  }
-
-  export type inscripcionMinOrderByAggregateInput = {
-    id_ins?: SortOrder
-    id_usu?: SortOrder
-    id_eve?: SortOrder
-    comprobante?: SortOrder
-    nota_final?: SortOrder
-    asistencia?: SortOrder
-    estado?: SortOrder
-    fec_ins?: SortOrder
-    cert_enviado?: SortOrder
-  }
-
-  export type inscripcionSumOrderByAggregateInput = {
-    nota_final?: SortOrder
-    asistencia?: SortOrder
-  }
-
-  export type Enumestado_inscripcionWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.estado_inscripcion | Enumestado_inscripcionFieldRefInput<$PrismaModel>
-    in?: $Enums.estado_inscripcion[] | ListEnumestado_inscripcionFieldRefInput<$PrismaModel>
-    notIn?: $Enums.estado_inscripcion[] | ListEnumestado_inscripcionFieldRefInput<$PrismaModel>
-    not?: NestedEnumestado_inscripcionWithAggregatesFilter<$PrismaModel> | $Enums.estado_inscripcion
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumestado_inscripcionFilter<$PrismaModel>
-    _max?: NestedEnumestado_inscripcionFilter<$PrismaModel>
-  }
-
-  export type configuracionCountOrderByAggregateInput = {
-    id_conf?: SortOrder
-    mision?: SortOrder
-    vision?: SortOrder
-    autoridades?: SortOrder
-  }
-
-  export type configuracionAvgOrderByAggregateInput = {
-    id_conf?: SortOrder
-  }
-
-  export type configuracionMaxOrderByAggregateInput = {
-    id_conf?: SortOrder
-    mision?: SortOrder
-    vision?: SortOrder
-    autoridades?: SortOrder
-  }
-
-  export type configuracionMinOrderByAggregateInput = {
-    id_conf?: SortOrder
-    mision?: SortOrder
-    vision?: SortOrder
-    autoridades?: SortOrder
-  }
-
-  export type configuracionSumOrderByAggregateInput = {
-    id_conf?: SortOrder
+  export type carreraCreateNestedOneWithoutUsuarioInput = {
+    create?: XOR<carreraCreateWithoutUsuarioInput, carreraUncheckedCreateWithoutUsuarioInput>
+    connectOrCreate?: carreraCreateOrConnectWithoutUsuarioInput
+    connect?: carreraWhereUniqueInput
   }
 
   export type inscripcionCreateNestedManyWithoutUsuarioInput = {
@@ -8472,6 +12615,16 @@ export namespace Prisma {
     set?: string | null
   }
 
+  export type carreraUpdateOneWithoutUsuarioNestedInput = {
+    create?: XOR<carreraCreateWithoutUsuarioInput, carreraUncheckedCreateWithoutUsuarioInput>
+    connectOrCreate?: carreraCreateOrConnectWithoutUsuarioInput
+    upsert?: carreraUpsertWithoutUsuarioInput
+    disconnect?: carreraWhereInput | boolean
+    delete?: carreraWhereInput | boolean
+    connect?: carreraWhereUniqueInput
+    update?: XOR<XOR<carreraUpdateToOneWithWhereWithoutUsuarioInput, carreraUpdateWithoutUsuarioInput>, carreraUncheckedUpdateWithoutUsuarioInput>
+  }
+
   export type inscripcionUpdateManyWithoutUsuarioNestedInput = {
     create?: XOR<inscripcionCreateWithoutUsuarioInput, inscripcionUncheckedCreateWithoutUsuarioInput> | inscripcionCreateWithoutUsuarioInput[] | inscripcionUncheckedCreateWithoutUsuarioInput[]
     connectOrCreate?: inscripcionCreateOrConnectWithoutUsuarioInput | inscripcionCreateOrConnectWithoutUsuarioInput[]
@@ -8500,56 +12653,106 @@ export namespace Prisma {
     deleteMany?: inscripcionScalarWhereInput | inscripcionScalarWhereInput[]
   }
 
-  export type eventoCreateNestedManyWithoutCarreraInput = {
-    create?: XOR<eventoCreateWithoutCarreraInput, eventoUncheckedCreateWithoutCarreraInput> | eventoCreateWithoutCarreraInput[] | eventoUncheckedCreateWithoutCarreraInput[]
-    connectOrCreate?: eventoCreateOrConnectWithoutCarreraInput | eventoCreateOrConnectWithoutCarreraInput[]
-    createMany?: eventoCreateManyCarreraInputEnvelope
-    connect?: eventoWhereUniqueInput | eventoWhereUniqueInput[]
+  export type facultadCreateNestedOneWithoutCarrerasInput = {
+    create?: XOR<facultadCreateWithoutCarrerasInput, facultadUncheckedCreateWithoutCarrerasInput>
+    connectOrCreate?: facultadCreateOrConnectWithoutCarrerasInput
+    connect?: facultadWhereUniqueInput
   }
 
-  export type eventoUncheckedCreateNestedManyWithoutCarreraInput = {
-    create?: XOR<eventoCreateWithoutCarreraInput, eventoUncheckedCreateWithoutCarreraInput> | eventoCreateWithoutCarreraInput[] | eventoUncheckedCreateWithoutCarreraInput[]
-    connectOrCreate?: eventoCreateOrConnectWithoutCarreraInput | eventoCreateOrConnectWithoutCarreraInput[]
-    createMany?: eventoCreateManyCarreraInputEnvelope
-    connect?: eventoWhereUniqueInput | eventoWhereUniqueInput[]
+  export type usuarioCreateNestedManyWithoutCarreraInput = {
+    create?: XOR<usuarioCreateWithoutCarreraInput, usuarioUncheckedCreateWithoutCarreraInput> | usuarioCreateWithoutCarreraInput[] | usuarioUncheckedCreateWithoutCarreraInput[]
+    connectOrCreate?: usuarioCreateOrConnectWithoutCarreraInput | usuarioCreateOrConnectWithoutCarreraInput[]
+    createMany?: usuarioCreateManyCarreraInputEnvelope
+    connect?: usuarioWhereUniqueInput | usuarioWhereUniqueInput[]
+  }
+
+  export type evento_carreraCreateNestedManyWithoutCarreraInput = {
+    create?: XOR<evento_carreraCreateWithoutCarreraInput, evento_carreraUncheckedCreateWithoutCarreraInput> | evento_carreraCreateWithoutCarreraInput[] | evento_carreraUncheckedCreateWithoutCarreraInput[]
+    connectOrCreate?: evento_carreraCreateOrConnectWithoutCarreraInput | evento_carreraCreateOrConnectWithoutCarreraInput[]
+    createMany?: evento_carreraCreateManyCarreraInputEnvelope
+    connect?: evento_carreraWhereUniqueInput | evento_carreraWhereUniqueInput[]
+  }
+
+  export type usuarioUncheckedCreateNestedManyWithoutCarreraInput = {
+    create?: XOR<usuarioCreateWithoutCarreraInput, usuarioUncheckedCreateWithoutCarreraInput> | usuarioCreateWithoutCarreraInput[] | usuarioUncheckedCreateWithoutCarreraInput[]
+    connectOrCreate?: usuarioCreateOrConnectWithoutCarreraInput | usuarioCreateOrConnectWithoutCarreraInput[]
+    createMany?: usuarioCreateManyCarreraInputEnvelope
+    connect?: usuarioWhereUniqueInput | usuarioWhereUniqueInput[]
+  }
+
+  export type evento_carreraUncheckedCreateNestedManyWithoutCarreraInput = {
+    create?: XOR<evento_carreraCreateWithoutCarreraInput, evento_carreraUncheckedCreateWithoutCarreraInput> | evento_carreraCreateWithoutCarreraInput[] | evento_carreraUncheckedCreateWithoutCarreraInput[]
+    connectOrCreate?: evento_carreraCreateOrConnectWithoutCarreraInput | evento_carreraCreateOrConnectWithoutCarreraInput[]
+    createMany?: evento_carreraCreateManyCarreraInputEnvelope
+    connect?: evento_carreraWhereUniqueInput | evento_carreraWhereUniqueInput[]
   }
 
   export type BoolFieldUpdateOperationsInput = {
     set?: boolean
   }
 
-  export type eventoUpdateManyWithoutCarreraNestedInput = {
-    create?: XOR<eventoCreateWithoutCarreraInput, eventoUncheckedCreateWithoutCarreraInput> | eventoCreateWithoutCarreraInput[] | eventoUncheckedCreateWithoutCarreraInput[]
-    connectOrCreate?: eventoCreateOrConnectWithoutCarreraInput | eventoCreateOrConnectWithoutCarreraInput[]
-    upsert?: eventoUpsertWithWhereUniqueWithoutCarreraInput | eventoUpsertWithWhereUniqueWithoutCarreraInput[]
-    createMany?: eventoCreateManyCarreraInputEnvelope
-    set?: eventoWhereUniqueInput | eventoWhereUniqueInput[]
-    disconnect?: eventoWhereUniqueInput | eventoWhereUniqueInput[]
-    delete?: eventoWhereUniqueInput | eventoWhereUniqueInput[]
-    connect?: eventoWhereUniqueInput | eventoWhereUniqueInput[]
-    update?: eventoUpdateWithWhereUniqueWithoutCarreraInput | eventoUpdateWithWhereUniqueWithoutCarreraInput[]
-    updateMany?: eventoUpdateManyWithWhereWithoutCarreraInput | eventoUpdateManyWithWhereWithoutCarreraInput[]
-    deleteMany?: eventoScalarWhereInput | eventoScalarWhereInput[]
+  export type facultadUpdateOneRequiredWithoutCarrerasNestedInput = {
+    create?: XOR<facultadCreateWithoutCarrerasInput, facultadUncheckedCreateWithoutCarrerasInput>
+    connectOrCreate?: facultadCreateOrConnectWithoutCarrerasInput
+    upsert?: facultadUpsertWithoutCarrerasInput
+    connect?: facultadWhereUniqueInput
+    update?: XOR<XOR<facultadUpdateToOneWithWhereWithoutCarrerasInput, facultadUpdateWithoutCarrerasInput>, facultadUncheckedUpdateWithoutCarrerasInput>
   }
 
-  export type eventoUncheckedUpdateManyWithoutCarreraNestedInput = {
-    create?: XOR<eventoCreateWithoutCarreraInput, eventoUncheckedCreateWithoutCarreraInput> | eventoCreateWithoutCarreraInput[] | eventoUncheckedCreateWithoutCarreraInput[]
-    connectOrCreate?: eventoCreateOrConnectWithoutCarreraInput | eventoCreateOrConnectWithoutCarreraInput[]
-    upsert?: eventoUpsertWithWhereUniqueWithoutCarreraInput | eventoUpsertWithWhereUniqueWithoutCarreraInput[]
-    createMany?: eventoCreateManyCarreraInputEnvelope
-    set?: eventoWhereUniqueInput | eventoWhereUniqueInput[]
-    disconnect?: eventoWhereUniqueInput | eventoWhereUniqueInput[]
-    delete?: eventoWhereUniqueInput | eventoWhereUniqueInput[]
-    connect?: eventoWhereUniqueInput | eventoWhereUniqueInput[]
-    update?: eventoUpdateWithWhereUniqueWithoutCarreraInput | eventoUpdateWithWhereUniqueWithoutCarreraInput[]
-    updateMany?: eventoUpdateManyWithWhereWithoutCarreraInput | eventoUpdateManyWithWhereWithoutCarreraInput[]
-    deleteMany?: eventoScalarWhereInput | eventoScalarWhereInput[]
+  export type usuarioUpdateManyWithoutCarreraNestedInput = {
+    create?: XOR<usuarioCreateWithoutCarreraInput, usuarioUncheckedCreateWithoutCarreraInput> | usuarioCreateWithoutCarreraInput[] | usuarioUncheckedCreateWithoutCarreraInput[]
+    connectOrCreate?: usuarioCreateOrConnectWithoutCarreraInput | usuarioCreateOrConnectWithoutCarreraInput[]
+    upsert?: usuarioUpsertWithWhereUniqueWithoutCarreraInput | usuarioUpsertWithWhereUniqueWithoutCarreraInput[]
+    createMany?: usuarioCreateManyCarreraInputEnvelope
+    set?: usuarioWhereUniqueInput | usuarioWhereUniqueInput[]
+    disconnect?: usuarioWhereUniqueInput | usuarioWhereUniqueInput[]
+    delete?: usuarioWhereUniqueInput | usuarioWhereUniqueInput[]
+    connect?: usuarioWhereUniqueInput | usuarioWhereUniqueInput[]
+    update?: usuarioUpdateWithWhereUniqueWithoutCarreraInput | usuarioUpdateWithWhereUniqueWithoutCarreraInput[]
+    updateMany?: usuarioUpdateManyWithWhereWithoutCarreraInput | usuarioUpdateManyWithWhereWithoutCarreraInput[]
+    deleteMany?: usuarioScalarWhereInput | usuarioScalarWhereInput[]
   }
 
-  export type carreraCreateNestedOneWithoutEventosInput = {
-    create?: XOR<carreraCreateWithoutEventosInput, carreraUncheckedCreateWithoutEventosInput>
-    connectOrCreate?: carreraCreateOrConnectWithoutEventosInput
-    connect?: carreraWhereUniqueInput
+  export type evento_carreraUpdateManyWithoutCarreraNestedInput = {
+    create?: XOR<evento_carreraCreateWithoutCarreraInput, evento_carreraUncheckedCreateWithoutCarreraInput> | evento_carreraCreateWithoutCarreraInput[] | evento_carreraUncheckedCreateWithoutCarreraInput[]
+    connectOrCreate?: evento_carreraCreateOrConnectWithoutCarreraInput | evento_carreraCreateOrConnectWithoutCarreraInput[]
+    upsert?: evento_carreraUpsertWithWhereUniqueWithoutCarreraInput | evento_carreraUpsertWithWhereUniqueWithoutCarreraInput[]
+    createMany?: evento_carreraCreateManyCarreraInputEnvelope
+    set?: evento_carreraWhereUniqueInput | evento_carreraWhereUniqueInput[]
+    disconnect?: evento_carreraWhereUniqueInput | evento_carreraWhereUniqueInput[]
+    delete?: evento_carreraWhereUniqueInput | evento_carreraWhereUniqueInput[]
+    connect?: evento_carreraWhereUniqueInput | evento_carreraWhereUniqueInput[]
+    update?: evento_carreraUpdateWithWhereUniqueWithoutCarreraInput | evento_carreraUpdateWithWhereUniqueWithoutCarreraInput[]
+    updateMany?: evento_carreraUpdateManyWithWhereWithoutCarreraInput | evento_carreraUpdateManyWithWhereWithoutCarreraInput[]
+    deleteMany?: evento_carreraScalarWhereInput | evento_carreraScalarWhereInput[]
+  }
+
+  export type usuarioUncheckedUpdateManyWithoutCarreraNestedInput = {
+    create?: XOR<usuarioCreateWithoutCarreraInput, usuarioUncheckedCreateWithoutCarreraInput> | usuarioCreateWithoutCarreraInput[] | usuarioUncheckedCreateWithoutCarreraInput[]
+    connectOrCreate?: usuarioCreateOrConnectWithoutCarreraInput | usuarioCreateOrConnectWithoutCarreraInput[]
+    upsert?: usuarioUpsertWithWhereUniqueWithoutCarreraInput | usuarioUpsertWithWhereUniqueWithoutCarreraInput[]
+    createMany?: usuarioCreateManyCarreraInputEnvelope
+    set?: usuarioWhereUniqueInput | usuarioWhereUniqueInput[]
+    disconnect?: usuarioWhereUniqueInput | usuarioWhereUniqueInput[]
+    delete?: usuarioWhereUniqueInput | usuarioWhereUniqueInput[]
+    connect?: usuarioWhereUniqueInput | usuarioWhereUniqueInput[]
+    update?: usuarioUpdateWithWhereUniqueWithoutCarreraInput | usuarioUpdateWithWhereUniqueWithoutCarreraInput[]
+    updateMany?: usuarioUpdateManyWithWhereWithoutCarreraInput | usuarioUpdateManyWithWhereWithoutCarreraInput[]
+    deleteMany?: usuarioScalarWhereInput | usuarioScalarWhereInput[]
+  }
+
+  export type evento_carreraUncheckedUpdateManyWithoutCarreraNestedInput = {
+    create?: XOR<evento_carreraCreateWithoutCarreraInput, evento_carreraUncheckedCreateWithoutCarreraInput> | evento_carreraCreateWithoutCarreraInput[] | evento_carreraUncheckedCreateWithoutCarreraInput[]
+    connectOrCreate?: evento_carreraCreateOrConnectWithoutCarreraInput | evento_carreraCreateOrConnectWithoutCarreraInput[]
+    upsert?: evento_carreraUpsertWithWhereUniqueWithoutCarreraInput | evento_carreraUpsertWithWhereUniqueWithoutCarreraInput[]
+    createMany?: evento_carreraCreateManyCarreraInputEnvelope
+    set?: evento_carreraWhereUniqueInput | evento_carreraWhereUniqueInput[]
+    disconnect?: evento_carreraWhereUniqueInput | evento_carreraWhereUniqueInput[]
+    delete?: evento_carreraWhereUniqueInput | evento_carreraWhereUniqueInput[]
+    connect?: evento_carreraWhereUniqueInput | evento_carreraWhereUniqueInput[]
+    update?: evento_carreraUpdateWithWhereUniqueWithoutCarreraInput | evento_carreraUpdateWithWhereUniqueWithoutCarreraInput[]
+    updateMany?: evento_carreraUpdateManyWithWhereWithoutCarreraInput | evento_carreraUpdateManyWithWhereWithoutCarreraInput[]
+    deleteMany?: evento_carreraScalarWhereInput | evento_carreraScalarWhereInput[]
   }
 
   export type inscripcionCreateNestedManyWithoutEventoInput = {
@@ -8559,6 +12762,19 @@ export namespace Prisma {
     connect?: inscripcionWhereUniqueInput | inscripcionWhereUniqueInput[]
   }
 
+  export type evento_carreraCreateNestedManyWithoutEventoInput = {
+    create?: XOR<evento_carreraCreateWithoutEventoInput, evento_carreraUncheckedCreateWithoutEventoInput> | evento_carreraCreateWithoutEventoInput[] | evento_carreraUncheckedCreateWithoutEventoInput[]
+    connectOrCreate?: evento_carreraCreateOrConnectWithoutEventoInput | evento_carreraCreateOrConnectWithoutEventoInput[]
+    createMany?: evento_carreraCreateManyEventoInputEnvelope
+    connect?: evento_carreraWhereUniqueInput | evento_carreraWhereUniqueInput[]
+  }
+
+  export type evento_cursoCreateNestedOneWithoutEventoInput = {
+    create?: XOR<evento_cursoCreateWithoutEventoInput, evento_cursoUncheckedCreateWithoutEventoInput>
+    connectOrCreate?: evento_cursoCreateOrConnectWithoutEventoInput
+    connect?: evento_cursoWhereUniqueInput
+  }
+
   export type inscripcionUncheckedCreateNestedManyWithoutEventoInput = {
     create?: XOR<inscripcionCreateWithoutEventoInput, inscripcionUncheckedCreateWithoutEventoInput> | inscripcionCreateWithoutEventoInput[] | inscripcionUncheckedCreateWithoutEventoInput[]
     connectOrCreate?: inscripcionCreateOrConnectWithoutEventoInput | inscripcionCreateOrConnectWithoutEventoInput[]
@@ -8566,8 +12782,33 @@ export namespace Prisma {
     connect?: inscripcionWhereUniqueInput | inscripcionWhereUniqueInput[]
   }
 
+  export type evento_carreraUncheckedCreateNestedManyWithoutEventoInput = {
+    create?: XOR<evento_carreraCreateWithoutEventoInput, evento_carreraUncheckedCreateWithoutEventoInput> | evento_carreraCreateWithoutEventoInput[] | evento_carreraUncheckedCreateWithoutEventoInput[]
+    connectOrCreate?: evento_carreraCreateOrConnectWithoutEventoInput | evento_carreraCreateOrConnectWithoutEventoInput[]
+    createMany?: evento_carreraCreateManyEventoInputEnvelope
+    connect?: evento_carreraWhereUniqueInput | evento_carreraWhereUniqueInput[]
+  }
+
+  export type evento_cursoUncheckedCreateNestedOneWithoutEventoInput = {
+    create?: XOR<evento_cursoCreateWithoutEventoInput, evento_cursoUncheckedCreateWithoutEventoInput>
+    connectOrCreate?: evento_cursoCreateOrConnectWithoutEventoInput
+    connect?: evento_cursoWhereUniqueInput
+  }
+
   export type Enumtipo_eventoFieldUpdateOperationsInput = {
     set?: $Enums.tipo_evento
+  }
+
+  export type FloatFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type Enumestado_eventoFieldUpdateOperationsInput = {
+    set?: $Enums.estado_evento
   }
 
   export type IntFieldUpdateOperationsInput = {
@@ -8576,24 +12817,6 @@ export namespace Prisma {
     decrement?: number
     multiply?: number
     divide?: number
-  }
-
-  export type NullableFloatFieldUpdateOperationsInput = {
-    set?: number | null
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
-  }
-
-  export type carreraUpdateOneWithoutEventosNestedInput = {
-    create?: XOR<carreraCreateWithoutEventosInput, carreraUncheckedCreateWithoutEventosInput>
-    connectOrCreate?: carreraCreateOrConnectWithoutEventosInput
-    upsert?: carreraUpsertWithoutEventosInput
-    disconnect?: carreraWhereInput | boolean
-    delete?: carreraWhereInput | boolean
-    connect?: carreraWhereUniqueInput
-    update?: XOR<XOR<carreraUpdateToOneWithWhereWithoutEventosInput, carreraUpdateWithoutEventosInput>, carreraUncheckedUpdateWithoutEventosInput>
   }
 
   export type inscripcionUpdateManyWithoutEventoNestedInput = {
@@ -8610,6 +12833,30 @@ export namespace Prisma {
     deleteMany?: inscripcionScalarWhereInput | inscripcionScalarWhereInput[]
   }
 
+  export type evento_carreraUpdateManyWithoutEventoNestedInput = {
+    create?: XOR<evento_carreraCreateWithoutEventoInput, evento_carreraUncheckedCreateWithoutEventoInput> | evento_carreraCreateWithoutEventoInput[] | evento_carreraUncheckedCreateWithoutEventoInput[]
+    connectOrCreate?: evento_carreraCreateOrConnectWithoutEventoInput | evento_carreraCreateOrConnectWithoutEventoInput[]
+    upsert?: evento_carreraUpsertWithWhereUniqueWithoutEventoInput | evento_carreraUpsertWithWhereUniqueWithoutEventoInput[]
+    createMany?: evento_carreraCreateManyEventoInputEnvelope
+    set?: evento_carreraWhereUniqueInput | evento_carreraWhereUniqueInput[]
+    disconnect?: evento_carreraWhereUniqueInput | evento_carreraWhereUniqueInput[]
+    delete?: evento_carreraWhereUniqueInput | evento_carreraWhereUniqueInput[]
+    connect?: evento_carreraWhereUniqueInput | evento_carreraWhereUniqueInput[]
+    update?: evento_carreraUpdateWithWhereUniqueWithoutEventoInput | evento_carreraUpdateWithWhereUniqueWithoutEventoInput[]
+    updateMany?: evento_carreraUpdateManyWithWhereWithoutEventoInput | evento_carreraUpdateManyWithWhereWithoutEventoInput[]
+    deleteMany?: evento_carreraScalarWhereInput | evento_carreraScalarWhereInput[]
+  }
+
+  export type evento_cursoUpdateOneWithoutEventoNestedInput = {
+    create?: XOR<evento_cursoCreateWithoutEventoInput, evento_cursoUncheckedCreateWithoutEventoInput>
+    connectOrCreate?: evento_cursoCreateOrConnectWithoutEventoInput
+    upsert?: evento_cursoUpsertWithoutEventoInput
+    disconnect?: evento_cursoWhereInput | boolean
+    delete?: evento_cursoWhereInput | boolean
+    connect?: evento_cursoWhereUniqueInput
+    update?: XOR<XOR<evento_cursoUpdateToOneWithWhereWithoutEventoInput, evento_cursoUpdateWithoutEventoInput>, evento_cursoUncheckedUpdateWithoutEventoInput>
+  }
+
   export type inscripcionUncheckedUpdateManyWithoutEventoNestedInput = {
     create?: XOR<inscripcionCreateWithoutEventoInput, inscripcionUncheckedCreateWithoutEventoInput> | inscripcionCreateWithoutEventoInput[] | inscripcionUncheckedCreateWithoutEventoInput[]
     connectOrCreate?: inscripcionCreateOrConnectWithoutEventoInput | inscripcionCreateOrConnectWithoutEventoInput[]
@@ -8624,20 +12871,102 @@ export namespace Prisma {
     deleteMany?: inscripcionScalarWhereInput | inscripcionScalarWhereInput[]
   }
 
+  export type evento_carreraUncheckedUpdateManyWithoutEventoNestedInput = {
+    create?: XOR<evento_carreraCreateWithoutEventoInput, evento_carreraUncheckedCreateWithoutEventoInput> | evento_carreraCreateWithoutEventoInput[] | evento_carreraUncheckedCreateWithoutEventoInput[]
+    connectOrCreate?: evento_carreraCreateOrConnectWithoutEventoInput | evento_carreraCreateOrConnectWithoutEventoInput[]
+    upsert?: evento_carreraUpsertWithWhereUniqueWithoutEventoInput | evento_carreraUpsertWithWhereUniqueWithoutEventoInput[]
+    createMany?: evento_carreraCreateManyEventoInputEnvelope
+    set?: evento_carreraWhereUniqueInput | evento_carreraWhereUniqueInput[]
+    disconnect?: evento_carreraWhereUniqueInput | evento_carreraWhereUniqueInput[]
+    delete?: evento_carreraWhereUniqueInput | evento_carreraWhereUniqueInput[]
+    connect?: evento_carreraWhereUniqueInput | evento_carreraWhereUniqueInput[]
+    update?: evento_carreraUpdateWithWhereUniqueWithoutEventoInput | evento_carreraUpdateWithWhereUniqueWithoutEventoInput[]
+    updateMany?: evento_carreraUpdateManyWithWhereWithoutEventoInput | evento_carreraUpdateManyWithWhereWithoutEventoInput[]
+    deleteMany?: evento_carreraScalarWhereInput | evento_carreraScalarWhereInput[]
+  }
+
+  export type evento_cursoUncheckedUpdateOneWithoutEventoNestedInput = {
+    create?: XOR<evento_cursoCreateWithoutEventoInput, evento_cursoUncheckedCreateWithoutEventoInput>
+    connectOrCreate?: evento_cursoCreateOrConnectWithoutEventoInput
+    upsert?: evento_cursoUpsertWithoutEventoInput
+    disconnect?: evento_cursoWhereInput | boolean
+    delete?: evento_cursoWhereInput | boolean
+    connect?: evento_cursoWhereUniqueInput
+    update?: XOR<XOR<evento_cursoUpdateToOneWithWhereWithoutEventoInput, evento_cursoUpdateWithoutEventoInput>, evento_cursoUncheckedUpdateWithoutEventoInput>
+  }
+
+  export type eventoCreateNestedOneWithoutEventos_cursoInput = {
+    create?: XOR<eventoCreateWithoutEventos_cursoInput, eventoUncheckedCreateWithoutEventos_cursoInput>
+    connectOrCreate?: eventoCreateOrConnectWithoutEventos_cursoInput
+    connect?: eventoWhereUniqueInput
+  }
+
+  export type eventoUpdateOneRequiredWithoutEventos_cursoNestedInput = {
+    create?: XOR<eventoCreateWithoutEventos_cursoInput, eventoUncheckedCreateWithoutEventos_cursoInput>
+    connectOrCreate?: eventoCreateOrConnectWithoutEventos_cursoInput
+    upsert?: eventoUpsertWithoutEventos_cursoInput
+    connect?: eventoWhereUniqueInput
+    update?: XOR<XOR<eventoUpdateToOneWithWhereWithoutEventos_cursoInput, eventoUpdateWithoutEventos_cursoInput>, eventoUncheckedUpdateWithoutEventos_cursoInput>
+  }
+
+  export type carreraCreateNestedOneWithoutEventosInput = {
+    create?: XOR<carreraCreateWithoutEventosInput, carreraUncheckedCreateWithoutEventosInput>
+    connectOrCreate?: carreraCreateOrConnectWithoutEventosInput
+    connect?: carreraWhereUniqueInput
+  }
+
+  export type eventoCreateNestedOneWithoutEventos_carreraInput = {
+    create?: XOR<eventoCreateWithoutEventos_carreraInput, eventoUncheckedCreateWithoutEventos_carreraInput>
+    connectOrCreate?: eventoCreateOrConnectWithoutEventos_carreraInput
+    connect?: eventoWhereUniqueInput
+  }
+
+  export type carreraUpdateOneRequiredWithoutEventosNestedInput = {
+    create?: XOR<carreraCreateWithoutEventosInput, carreraUncheckedCreateWithoutEventosInput>
+    connectOrCreate?: carreraCreateOrConnectWithoutEventosInput
+    upsert?: carreraUpsertWithoutEventosInput
+    connect?: carreraWhereUniqueInput
+    update?: XOR<XOR<carreraUpdateToOneWithWhereWithoutEventosInput, carreraUpdateWithoutEventosInput>, carreraUncheckedUpdateWithoutEventosInput>
+  }
+
+  export type eventoUpdateOneRequiredWithoutEventos_carreraNestedInput = {
+    create?: XOR<eventoCreateWithoutEventos_carreraInput, eventoUncheckedCreateWithoutEventos_carreraInput>
+    connectOrCreate?: eventoCreateOrConnectWithoutEventos_carreraInput
+    upsert?: eventoUpsertWithoutEventos_carreraInput
+    connect?: eventoWhereUniqueInput
+    update?: XOR<XOR<eventoUpdateToOneWithWhereWithoutEventos_carreraInput, eventoUpdateWithoutEventos_carreraInput>, eventoUncheckedUpdateWithoutEventos_carreraInput>
+  }
+
   export type usuarioCreateNestedOneWithoutInscripcionesInput = {
     create?: XOR<usuarioCreateWithoutInscripcionesInput, usuarioUncheckedCreateWithoutInscripcionesInput>
     connectOrCreate?: usuarioCreateOrConnectWithoutInscripcionesInput
     connect?: usuarioWhereUniqueInput
   }
 
-  export type eventoCreateNestedOneWithoutInscripcionesInput = {
-    create?: XOR<eventoCreateWithoutInscripcionesInput, eventoUncheckedCreateWithoutInscripcionesInput>
-    connectOrCreate?: eventoCreateOrConnectWithoutInscripcionesInput
+  export type eventoCreateNestedOneWithoutInscritosInput = {
+    create?: XOR<eventoCreateWithoutInscritosInput, eventoUncheckedCreateWithoutInscritosInput>
+    connectOrCreate?: eventoCreateOrConnectWithoutInscritosInput
     connect?: eventoWhereUniqueInput
+  }
+
+  export type inscripcion_cursoCreateNestedOneWithoutInscripcionInput = {
+    create?: XOR<inscripcion_cursoCreateWithoutInscripcionInput, inscripcion_cursoUncheckedCreateWithoutInscripcionInput>
+    connectOrCreate?: inscripcion_cursoCreateOrConnectWithoutInscripcionInput
+    connect?: inscripcion_cursoWhereUniqueInput
+  }
+
+  export type inscripcion_cursoUncheckedCreateNestedOneWithoutInscripcionInput = {
+    create?: XOR<inscripcion_cursoCreateWithoutInscripcionInput, inscripcion_cursoUncheckedCreateWithoutInscripcionInput>
+    connectOrCreate?: inscripcion_cursoCreateOrConnectWithoutInscripcionInput
+    connect?: inscripcion_cursoWhereUniqueInput
   }
 
   export type Enumestado_inscripcionFieldUpdateOperationsInput = {
     set?: $Enums.estado_inscripcion
+  }
+
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
   }
 
   export type usuarioUpdateOneRequiredWithoutInscripcionesNestedInput = {
@@ -8648,12 +12977,96 @@ export namespace Prisma {
     update?: XOR<XOR<usuarioUpdateToOneWithWhereWithoutInscripcionesInput, usuarioUpdateWithoutInscripcionesInput>, usuarioUncheckedUpdateWithoutInscripcionesInput>
   }
 
-  export type eventoUpdateOneRequiredWithoutInscripcionesNestedInput = {
-    create?: XOR<eventoCreateWithoutInscripcionesInput, eventoUncheckedCreateWithoutInscripcionesInput>
-    connectOrCreate?: eventoCreateOrConnectWithoutInscripcionesInput
-    upsert?: eventoUpsertWithoutInscripcionesInput
+  export type eventoUpdateOneRequiredWithoutInscritosNestedInput = {
+    create?: XOR<eventoCreateWithoutInscritosInput, eventoUncheckedCreateWithoutInscritosInput>
+    connectOrCreate?: eventoCreateOrConnectWithoutInscritosInput
+    upsert?: eventoUpsertWithoutInscritosInput
     connect?: eventoWhereUniqueInput
-    update?: XOR<XOR<eventoUpdateToOneWithWhereWithoutInscripcionesInput, eventoUpdateWithoutInscripcionesInput>, eventoUncheckedUpdateWithoutInscripcionesInput>
+    update?: XOR<XOR<eventoUpdateToOneWithWhereWithoutInscritosInput, eventoUpdateWithoutInscritosInput>, eventoUncheckedUpdateWithoutInscritosInput>
+  }
+
+  export type inscripcion_cursoUpdateOneWithoutInscripcionNestedInput = {
+    create?: XOR<inscripcion_cursoCreateWithoutInscripcionInput, inscripcion_cursoUncheckedCreateWithoutInscripcionInput>
+    connectOrCreate?: inscripcion_cursoCreateOrConnectWithoutInscripcionInput
+    upsert?: inscripcion_cursoUpsertWithoutInscripcionInput
+    disconnect?: inscripcion_cursoWhereInput | boolean
+    delete?: inscripcion_cursoWhereInput | boolean
+    connect?: inscripcion_cursoWhereUniqueInput
+    update?: XOR<XOR<inscripcion_cursoUpdateToOneWithWhereWithoutInscripcionInput, inscripcion_cursoUpdateWithoutInscripcionInput>, inscripcion_cursoUncheckedUpdateWithoutInscripcionInput>
+  }
+
+  export type inscripcion_cursoUncheckedUpdateOneWithoutInscripcionNestedInput = {
+    create?: XOR<inscripcion_cursoCreateWithoutInscripcionInput, inscripcion_cursoUncheckedCreateWithoutInscripcionInput>
+    connectOrCreate?: inscripcion_cursoCreateOrConnectWithoutInscripcionInput
+    upsert?: inscripcion_cursoUpsertWithoutInscripcionInput
+    disconnect?: inscripcion_cursoWhereInput | boolean
+    delete?: inscripcion_cursoWhereInput | boolean
+    connect?: inscripcion_cursoWhereUniqueInput
+    update?: XOR<XOR<inscripcion_cursoUpdateToOneWithWhereWithoutInscripcionInput, inscripcion_cursoUpdateWithoutInscripcionInput>, inscripcion_cursoUncheckedUpdateWithoutInscripcionInput>
+  }
+
+  export type inscripcionCreateNestedOneWithoutInscripcion_cursoInput = {
+    create?: XOR<inscripcionCreateWithoutInscripcion_cursoInput, inscripcionUncheckedCreateWithoutInscripcion_cursoInput>
+    connectOrCreate?: inscripcionCreateOrConnectWithoutInscripcion_cursoInput
+    connect?: inscripcionWhereUniqueInput
+  }
+
+  export type NullableFloatFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type inscripcionUpdateOneRequiredWithoutInscripcion_cursoNestedInput = {
+    create?: XOR<inscripcionCreateWithoutInscripcion_cursoInput, inscripcionUncheckedCreateWithoutInscripcion_cursoInput>
+    connectOrCreate?: inscripcionCreateOrConnectWithoutInscripcion_cursoInput
+    upsert?: inscripcionUpsertWithoutInscripcion_cursoInput
+    connect?: inscripcionWhereUniqueInput
+    update?: XOR<XOR<inscripcionUpdateToOneWithWhereWithoutInscripcion_cursoInput, inscripcionUpdateWithoutInscripcion_cursoInput>, inscripcionUncheckedUpdateWithoutInscripcion_cursoInput>
+  }
+
+  export type carreraCreateNestedManyWithoutFacultadInput = {
+    create?: XOR<carreraCreateWithoutFacultadInput, carreraUncheckedCreateWithoutFacultadInput> | carreraCreateWithoutFacultadInput[] | carreraUncheckedCreateWithoutFacultadInput[]
+    connectOrCreate?: carreraCreateOrConnectWithoutFacultadInput | carreraCreateOrConnectWithoutFacultadInput[]
+    createMany?: carreraCreateManyFacultadInputEnvelope
+    connect?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
+  }
+
+  export type carreraUncheckedCreateNestedManyWithoutFacultadInput = {
+    create?: XOR<carreraCreateWithoutFacultadInput, carreraUncheckedCreateWithoutFacultadInput> | carreraCreateWithoutFacultadInput[] | carreraUncheckedCreateWithoutFacultadInput[]
+    connectOrCreate?: carreraCreateOrConnectWithoutFacultadInput | carreraCreateOrConnectWithoutFacultadInput[]
+    createMany?: carreraCreateManyFacultadInputEnvelope
+    connect?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
+  }
+
+  export type carreraUpdateManyWithoutFacultadNestedInput = {
+    create?: XOR<carreraCreateWithoutFacultadInput, carreraUncheckedCreateWithoutFacultadInput> | carreraCreateWithoutFacultadInput[] | carreraUncheckedCreateWithoutFacultadInput[]
+    connectOrCreate?: carreraCreateOrConnectWithoutFacultadInput | carreraCreateOrConnectWithoutFacultadInput[]
+    upsert?: carreraUpsertWithWhereUniqueWithoutFacultadInput | carreraUpsertWithWhereUniqueWithoutFacultadInput[]
+    createMany?: carreraCreateManyFacultadInputEnvelope
+    set?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
+    disconnect?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
+    delete?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
+    connect?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
+    update?: carreraUpdateWithWhereUniqueWithoutFacultadInput | carreraUpdateWithWhereUniqueWithoutFacultadInput[]
+    updateMany?: carreraUpdateManyWithWhereWithoutFacultadInput | carreraUpdateManyWithWhereWithoutFacultadInput[]
+    deleteMany?: carreraScalarWhereInput | carreraScalarWhereInput[]
+  }
+
+  export type carreraUncheckedUpdateManyWithoutFacultadNestedInput = {
+    create?: XOR<carreraCreateWithoutFacultadInput, carreraUncheckedCreateWithoutFacultadInput> | carreraCreateWithoutFacultadInput[] | carreraUncheckedCreateWithoutFacultadInput[]
+    connectOrCreate?: carreraCreateOrConnectWithoutFacultadInput | carreraCreateOrConnectWithoutFacultadInput[]
+    upsert?: carreraUpsertWithWhereUniqueWithoutFacultadInput | carreraUpsertWithWhereUniqueWithoutFacultadInput[]
+    createMany?: carreraCreateManyFacultadInputEnvelope
+    set?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
+    disconnect?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
+    delete?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
+    connect?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
+    update?: carreraUpdateWithWhereUniqueWithoutFacultadInput | carreraUpdateWithWhereUniqueWithoutFacultadInput[]
+    updateMany?: carreraUpdateManyWithWhereWithoutFacultadInput | carreraUpdateManyWithWhereWithoutFacultadInput[]
+    deleteMany?: carreraScalarWhereInput | carreraScalarWhereInput[]
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -8802,15 +13215,22 @@ export namespace Prisma {
     not?: NestedEnumtipo_eventoFilter<$PrismaModel> | $Enums.tipo_evento
   }
 
-  export type NestedFloatNullableFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+  export type NestedFloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
     lt?: number | FloatFieldRefInput<$PrismaModel>
     lte?: number | FloatFieldRefInput<$PrismaModel>
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+    not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
+  export type NestedEnumestado_eventoFilter<$PrismaModel = never> = {
+    equals?: $Enums.estado_evento | Enumestado_eventoFieldRefInput<$PrismaModel>
+    in?: $Enums.estado_evento[] | ListEnumestado_eventoFieldRefInput<$PrismaModel>
+    notIn?: $Enums.estado_evento[] | ListEnumestado_eventoFieldRefInput<$PrismaModel>
+    not?: NestedEnumestado_eventoFilter<$PrismaModel> | $Enums.estado_evento
   }
 
   export type NestedEnumtipo_eventoWithAggregatesFilter<$PrismaModel = never> = {
@@ -8821,6 +13241,32 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumtipo_eventoFilter<$PrismaModel>
     _max?: NestedEnumtipo_eventoFilter<$PrismaModel>
+  }
+
+  export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedFloatFilter<$PrismaModel>
+    _min?: NestedFloatFilter<$PrismaModel>
+    _max?: NestedFloatFilter<$PrismaModel>
+  }
+
+  export type NestedEnumestado_eventoWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.estado_evento | Enumestado_eventoFieldRefInput<$PrismaModel>
+    in?: $Enums.estado_evento[] | ListEnumestado_eventoFieldRefInput<$PrismaModel>
+    notIn?: $Enums.estado_evento[] | ListEnumestado_eventoFieldRefInput<$PrismaModel>
+    not?: NestedEnumestado_eventoWithAggregatesFilter<$PrismaModel> | $Enums.estado_evento
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumestado_eventoFilter<$PrismaModel>
+    _max?: NestedEnumestado_eventoFilter<$PrismaModel>
   }
 
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
@@ -8839,15 +13285,57 @@ export namespace Prisma {
     _max?: NestedIntFilter<$PrismaModel>
   }
 
-  export type NestedFloatFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+  export type NestedEnumestado_inscripcionFilter<$PrismaModel = never> = {
+    equals?: $Enums.estado_inscripcion | Enumestado_inscripcionFieldRefInput<$PrismaModel>
+    in?: $Enums.estado_inscripcion[] | ListEnumestado_inscripcionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.estado_inscripcion[] | ListEnumestado_inscripcionFieldRefInput<$PrismaModel>
+    not?: NestedEnumestado_inscripcionFilter<$PrismaModel> | $Enums.estado_inscripcion
+  }
+
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type NestedEnumestado_inscripcionWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.estado_inscripcion | Enumestado_inscripcionFieldRefInput<$PrismaModel>
+    in?: $Enums.estado_inscripcion[] | ListEnumestado_inscripcionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.estado_inscripcion[] | ListEnumestado_inscripcionFieldRefInput<$PrismaModel>
+    not?: NestedEnumestado_inscripcionWithAggregatesFilter<$PrismaModel> | $Enums.estado_inscripcion
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumestado_inscripcionFilter<$PrismaModel>
+    _max?: NestedEnumestado_inscripcionFilter<$PrismaModel>
+  }
+
+  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type NestedFloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
     lt?: number | FloatFieldRefInput<$PrismaModel>
     lte?: number | FloatFieldRefInput<$PrismaModel>
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatFilter<$PrismaModel> | number
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
 
   export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -8866,43 +13354,49 @@ export namespace Prisma {
     _max?: NestedFloatNullableFilter<$PrismaModel>
   }
 
-  export type NestedEnumestado_inscripcionFilter<$PrismaModel = never> = {
-    equals?: $Enums.estado_inscripcion | Enumestado_inscripcionFieldRefInput<$PrismaModel>
-    in?: $Enums.estado_inscripcion[] | ListEnumestado_inscripcionFieldRefInput<$PrismaModel>
-    notIn?: $Enums.estado_inscripcion[] | ListEnumestado_inscripcionFieldRefInput<$PrismaModel>
-    not?: NestedEnumestado_inscripcionFilter<$PrismaModel> | $Enums.estado_inscripcion
+  export type carreraCreateWithoutUsuarioInput = {
+    id_car?: string
+    nom_car: string
+    est_car?: boolean
+    fec_cre_car?: Date | string
+    facultad: facultadCreateNestedOneWithoutCarrerasInput
+    eventos?: evento_carreraCreateNestedManyWithoutCarreraInput
   }
 
-  export type NestedEnumestado_inscripcionWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.estado_inscripcion | Enumestado_inscripcionFieldRefInput<$PrismaModel>
-    in?: $Enums.estado_inscripcion[] | ListEnumestado_inscripcionFieldRefInput<$PrismaModel>
-    notIn?: $Enums.estado_inscripcion[] | ListEnumestado_inscripcionFieldRefInput<$PrismaModel>
-    not?: NestedEnumestado_inscripcionWithAggregatesFilter<$PrismaModel> | $Enums.estado_inscripcion
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumestado_inscripcionFilter<$PrismaModel>
-    _max?: NestedEnumestado_inscripcionFilter<$PrismaModel>
+  export type carreraUncheckedCreateWithoutUsuarioInput = {
+    id_car?: string
+    nom_car: string
+    est_car?: boolean
+    fec_cre_car?: Date | string
+    id_fac_per: string
+    eventos?: evento_carreraUncheckedCreateNestedManyWithoutCarreraInput
+  }
+
+  export type carreraCreateOrConnectWithoutUsuarioInput = {
+    where: carreraWhereUniqueInput
+    create: XOR<carreraCreateWithoutUsuarioInput, carreraUncheckedCreateWithoutUsuarioInput>
   }
 
   export type inscripcionCreateWithoutUsuarioInput = {
     id_ins?: string
-    comprobante?: string | null
-    nota_final?: number | null
-    asistencia?: number | null
-    estado?: $Enums.estado_inscripcion
+    est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
-    cert_enviado?: boolean
-    evento: eventoCreateNestedOneWithoutInscripcionesInput
+    fec_pag_ins?: Date | string | null
+    cer_eve_env?: boolean
+    car_mot_usu?: string | null
+    evento: eventoCreateNestedOneWithoutInscritosInput
+    inscripcion_curso?: inscripcion_cursoCreateNestedOneWithoutInscripcionInput
   }
 
   export type inscripcionUncheckedCreateWithoutUsuarioInput = {
     id_ins?: string
-    id_eve: string
-    comprobante?: string | null
-    nota_final?: number | null
-    asistencia?: number | null
-    estado?: $Enums.estado_inscripcion
+    id_eve_ins: string
+    est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
-    cert_enviado?: boolean
+    fec_pag_ins?: Date | string | null
+    cer_eve_env?: boolean
+    car_mot_usu?: string | null
+    inscripcion_curso?: inscripcion_cursoUncheckedCreateNestedOneWithoutInscripcionInput
   }
 
   export type inscripcionCreateOrConnectWithoutUsuarioInput = {
@@ -8913,6 +13407,35 @@ export namespace Prisma {
   export type inscripcionCreateManyUsuarioInputEnvelope = {
     data: inscripcionCreateManyUsuarioInput | inscripcionCreateManyUsuarioInput[]
     skipDuplicates?: boolean
+  }
+
+  export type carreraUpsertWithoutUsuarioInput = {
+    update: XOR<carreraUpdateWithoutUsuarioInput, carreraUncheckedUpdateWithoutUsuarioInput>
+    create: XOR<carreraCreateWithoutUsuarioInput, carreraUncheckedCreateWithoutUsuarioInput>
+    where?: carreraWhereInput
+  }
+
+  export type carreraUpdateToOneWithWhereWithoutUsuarioInput = {
+    where?: carreraWhereInput
+    data: XOR<carreraUpdateWithoutUsuarioInput, carreraUncheckedUpdateWithoutUsuarioInput>
+  }
+
+  export type carreraUpdateWithoutUsuarioInput = {
+    id_car?: StringFieldUpdateOperationsInput | string
+    nom_car?: StringFieldUpdateOperationsInput | string
+    est_car?: BoolFieldUpdateOperationsInput | boolean
+    fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
+    facultad?: facultadUpdateOneRequiredWithoutCarrerasNestedInput
+    eventos?: evento_carreraUpdateManyWithoutCarreraNestedInput
+  }
+
+  export type carreraUncheckedUpdateWithoutUsuarioInput = {
+    id_car?: StringFieldUpdateOperationsInput | string
+    nom_car?: StringFieldUpdateOperationsInput | string
+    est_car?: BoolFieldUpdateOperationsInput | boolean
+    fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
+    id_fac_per?: StringFieldUpdateOperationsInput | string
+    eventos?: evento_carreraUncheckedUpdateManyWithoutCarreraNestedInput
   }
 
   export type inscripcionUpsertWithWhereUniqueWithoutUsuarioInput = {
@@ -8936,132 +13459,202 @@ export namespace Prisma {
     OR?: inscripcionScalarWhereInput[]
     NOT?: inscripcionScalarWhereInput | inscripcionScalarWhereInput[]
     id_ins?: StringFilter<"inscripcion"> | string
-    id_usu?: StringFilter<"inscripcion"> | string
-    id_eve?: StringFilter<"inscripcion"> | string
-    comprobante?: StringNullableFilter<"inscripcion"> | string | null
-    nota_final?: FloatNullableFilter<"inscripcion"> | number | null
-    asistencia?: FloatNullableFilter<"inscripcion"> | number | null
-    estado?: Enumestado_inscripcionFilter<"inscripcion"> | $Enums.estado_inscripcion
+    id_usu_ins?: StringFilter<"inscripcion"> | string
+    id_eve_ins?: StringFilter<"inscripcion"> | string
+    est_ins?: Enumestado_inscripcionFilter<"inscripcion"> | $Enums.estado_inscripcion
     fec_ins?: DateTimeFilter<"inscripcion"> | Date | string
-    cert_enviado?: BoolFilter<"inscripcion"> | boolean
+    fec_pag_ins?: DateTimeNullableFilter<"inscripcion"> | Date | string | null
+    cer_eve_env?: BoolFilter<"inscripcion"> | boolean
+    car_mot_usu?: StringNullableFilter<"inscripcion"> | string | null
   }
 
-  export type eventoCreateWithoutCarreraInput = {
-    id_eve?: string
-    nom_eve: string
-    des_eve?: string | null
-    tip_eve: $Enums.tipo_evento
-    fec_ini_eve: Date | string
-    fec_fin_eve: Date | string
-    dur_hrs_eve: number
-    pagado_eve?: boolean
-    nota_min_eve?: number | null
-    por_asist_eve?: number | null
-    est_eve?: boolean
-    fec_cre_eve?: Date | string
-    inscripciones?: inscripcionCreateNestedManyWithoutEventoInput
+  export type facultadCreateWithoutCarrerasInput = {
+    id_fac?: string
+    nom_fac: string
+    des_fac: string
+    mis_fac: string
+    vis_fac: string
   }
 
-  export type eventoUncheckedCreateWithoutCarreraInput = {
-    id_eve?: string
-    nom_eve: string
-    des_eve?: string | null
-    tip_eve: $Enums.tipo_evento
-    fec_ini_eve: Date | string
-    fec_fin_eve: Date | string
-    dur_hrs_eve: number
-    pagado_eve?: boolean
-    nota_min_eve?: number | null
-    por_asist_eve?: number | null
-    est_eve?: boolean
-    fec_cre_eve?: Date | string
-    inscripciones?: inscripcionUncheckedCreateNestedManyWithoutEventoInput
+  export type facultadUncheckedCreateWithoutCarrerasInput = {
+    id_fac?: string
+    nom_fac: string
+    des_fac: string
+    mis_fac: string
+    vis_fac: string
   }
 
-  export type eventoCreateOrConnectWithoutCarreraInput = {
-    where: eventoWhereUniqueInput
-    create: XOR<eventoCreateWithoutCarreraInput, eventoUncheckedCreateWithoutCarreraInput>
+  export type facultadCreateOrConnectWithoutCarrerasInput = {
+    where: facultadWhereUniqueInput
+    create: XOR<facultadCreateWithoutCarrerasInput, facultadUncheckedCreateWithoutCarrerasInput>
   }
 
-  export type eventoCreateManyCarreraInputEnvelope = {
-    data: eventoCreateManyCarreraInput | eventoCreateManyCarreraInput[]
+  export type usuarioCreateWithoutCarreraInput = {
+    id_usu?: string
+    ced_usu: string
+    nom_usu: string
+    ape_usu: string
+    cor_usu: string
+    con_usu: string
+    cel_usu: string
+    rol_usu: $Enums.rol_usuario
+    fec_cre_usu?: Date | string
+    com_usu?: string | null
+    inscripciones?: inscripcionCreateNestedManyWithoutUsuarioInput
+  }
+
+  export type usuarioUncheckedCreateWithoutCarreraInput = {
+    id_usu?: string
+    ced_usu: string
+    nom_usu: string
+    ape_usu: string
+    cor_usu: string
+    con_usu: string
+    cel_usu: string
+    rol_usu: $Enums.rol_usuario
+    fec_cre_usu?: Date | string
+    com_usu?: string | null
+    inscripciones?: inscripcionUncheckedCreateNestedManyWithoutUsuarioInput
+  }
+
+  export type usuarioCreateOrConnectWithoutCarreraInput = {
+    where: usuarioWhereUniqueInput
+    create: XOR<usuarioCreateWithoutCarreraInput, usuarioUncheckedCreateWithoutCarreraInput>
+  }
+
+  export type usuarioCreateManyCarreraInputEnvelope = {
+    data: usuarioCreateManyCarreraInput | usuarioCreateManyCarreraInput[]
     skipDuplicates?: boolean
   }
 
-  export type eventoUpsertWithWhereUniqueWithoutCarreraInput = {
-    where: eventoWhereUniqueInput
-    update: XOR<eventoUpdateWithoutCarreraInput, eventoUncheckedUpdateWithoutCarreraInput>
-    create: XOR<eventoCreateWithoutCarreraInput, eventoUncheckedCreateWithoutCarreraInput>
+  export type evento_carreraCreateWithoutCarreraInput = {
+    id_eve_car?: string
+    fec_aso?: Date | string
+    evento: eventoCreateNestedOneWithoutEventos_carreraInput
   }
 
-  export type eventoUpdateWithWhereUniqueWithoutCarreraInput = {
-    where: eventoWhereUniqueInput
-    data: XOR<eventoUpdateWithoutCarreraInput, eventoUncheckedUpdateWithoutCarreraInput>
+  export type evento_carreraUncheckedCreateWithoutCarreraInput = {
+    id_eve_car?: string
+    id_eve_aso: string
+    fec_aso?: Date | string
   }
 
-  export type eventoUpdateManyWithWhereWithoutCarreraInput = {
-    where: eventoScalarWhereInput
-    data: XOR<eventoUpdateManyMutationInput, eventoUncheckedUpdateManyWithoutCarreraInput>
+  export type evento_carreraCreateOrConnectWithoutCarreraInput = {
+    where: evento_carreraWhereUniqueInput
+    create: XOR<evento_carreraCreateWithoutCarreraInput, evento_carreraUncheckedCreateWithoutCarreraInput>
   }
 
-  export type eventoScalarWhereInput = {
-    AND?: eventoScalarWhereInput | eventoScalarWhereInput[]
-    OR?: eventoScalarWhereInput[]
-    NOT?: eventoScalarWhereInput | eventoScalarWhereInput[]
-    id_eve?: StringFilter<"evento"> | string
-    nom_eve?: StringFilter<"evento"> | string
-    des_eve?: StringNullableFilter<"evento"> | string | null
-    tip_eve?: Enumtipo_eventoFilter<"evento"> | $Enums.tipo_evento
-    fec_ini_eve?: DateTimeFilter<"evento"> | Date | string
-    fec_fin_eve?: DateTimeFilter<"evento"> | Date | string
-    dur_hrs_eve?: IntFilter<"evento"> | number
-    pagado_eve?: BoolFilter<"evento"> | boolean
-    nota_min_eve?: FloatNullableFilter<"evento"> | number | null
-    por_asist_eve?: FloatNullableFilter<"evento"> | number | null
-    est_eve?: BoolFilter<"evento"> | boolean
-    fec_cre_eve?: DateTimeFilter<"evento"> | Date | string
-    carreraId?: StringNullableFilter<"evento"> | string | null
+  export type evento_carreraCreateManyCarreraInputEnvelope = {
+    data: evento_carreraCreateManyCarreraInput | evento_carreraCreateManyCarreraInput[]
+    skipDuplicates?: boolean
   }
 
-  export type carreraCreateWithoutEventosInput = {
-    id_car?: string
-    nom_car: string
-    est_car?: boolean
-    fec_cre_car?: Date | string
+  export type facultadUpsertWithoutCarrerasInput = {
+    update: XOR<facultadUpdateWithoutCarrerasInput, facultadUncheckedUpdateWithoutCarrerasInput>
+    create: XOR<facultadCreateWithoutCarrerasInput, facultadUncheckedCreateWithoutCarrerasInput>
+    where?: facultadWhereInput
   }
 
-  export type carreraUncheckedCreateWithoutEventosInput = {
-    id_car?: string
-    nom_car: string
-    est_car?: boolean
-    fec_cre_car?: Date | string
+  export type facultadUpdateToOneWithWhereWithoutCarrerasInput = {
+    where?: facultadWhereInput
+    data: XOR<facultadUpdateWithoutCarrerasInput, facultadUncheckedUpdateWithoutCarrerasInput>
   }
 
-  export type carreraCreateOrConnectWithoutEventosInput = {
-    where: carreraWhereUniqueInput
-    create: XOR<carreraCreateWithoutEventosInput, carreraUncheckedCreateWithoutEventosInput>
+  export type facultadUpdateWithoutCarrerasInput = {
+    id_fac?: StringFieldUpdateOperationsInput | string
+    nom_fac?: StringFieldUpdateOperationsInput | string
+    des_fac?: StringFieldUpdateOperationsInput | string
+    mis_fac?: StringFieldUpdateOperationsInput | string
+    vis_fac?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type facultadUncheckedUpdateWithoutCarrerasInput = {
+    id_fac?: StringFieldUpdateOperationsInput | string
+    nom_fac?: StringFieldUpdateOperationsInput | string
+    des_fac?: StringFieldUpdateOperationsInput | string
+    mis_fac?: StringFieldUpdateOperationsInput | string
+    vis_fac?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type usuarioUpsertWithWhereUniqueWithoutCarreraInput = {
+    where: usuarioWhereUniqueInput
+    update: XOR<usuarioUpdateWithoutCarreraInput, usuarioUncheckedUpdateWithoutCarreraInput>
+    create: XOR<usuarioCreateWithoutCarreraInput, usuarioUncheckedCreateWithoutCarreraInput>
+  }
+
+  export type usuarioUpdateWithWhereUniqueWithoutCarreraInput = {
+    where: usuarioWhereUniqueInput
+    data: XOR<usuarioUpdateWithoutCarreraInput, usuarioUncheckedUpdateWithoutCarreraInput>
+  }
+
+  export type usuarioUpdateManyWithWhereWithoutCarreraInput = {
+    where: usuarioScalarWhereInput
+    data: XOR<usuarioUpdateManyMutationInput, usuarioUncheckedUpdateManyWithoutCarreraInput>
+  }
+
+  export type usuarioScalarWhereInput = {
+    AND?: usuarioScalarWhereInput | usuarioScalarWhereInput[]
+    OR?: usuarioScalarWhereInput[]
+    NOT?: usuarioScalarWhereInput | usuarioScalarWhereInput[]
+    id_usu?: StringFilter<"usuario"> | string
+    ced_usu?: StringFilter<"usuario"> | string
+    nom_usu?: StringFilter<"usuario"> | string
+    ape_usu?: StringFilter<"usuario"> | string
+    cor_usu?: StringFilter<"usuario"> | string
+    con_usu?: StringFilter<"usuario"> | string
+    cel_usu?: StringFilter<"usuario"> | string
+    rol_usu?: Enumrol_usuarioFilter<"usuario"> | $Enums.rol_usuario
+    fec_cre_usu?: DateTimeFilter<"usuario"> | Date | string
+    com_usu?: StringNullableFilter<"usuario"> | string | null
+    id_car_est?: StringNullableFilter<"usuario"> | string | null
+  }
+
+  export type evento_carreraUpsertWithWhereUniqueWithoutCarreraInput = {
+    where: evento_carreraWhereUniqueInput
+    update: XOR<evento_carreraUpdateWithoutCarreraInput, evento_carreraUncheckedUpdateWithoutCarreraInput>
+    create: XOR<evento_carreraCreateWithoutCarreraInput, evento_carreraUncheckedCreateWithoutCarreraInput>
+  }
+
+  export type evento_carreraUpdateWithWhereUniqueWithoutCarreraInput = {
+    where: evento_carreraWhereUniqueInput
+    data: XOR<evento_carreraUpdateWithoutCarreraInput, evento_carreraUncheckedUpdateWithoutCarreraInput>
+  }
+
+  export type evento_carreraUpdateManyWithWhereWithoutCarreraInput = {
+    where: evento_carreraScalarWhereInput
+    data: XOR<evento_carreraUpdateManyMutationInput, evento_carreraUncheckedUpdateManyWithoutCarreraInput>
+  }
+
+  export type evento_carreraScalarWhereInput = {
+    AND?: evento_carreraScalarWhereInput | evento_carreraScalarWhereInput[]
+    OR?: evento_carreraScalarWhereInput[]
+    NOT?: evento_carreraScalarWhereInput | evento_carreraScalarWhereInput[]
+    id_eve_car?: StringFilter<"evento_carrera"> | string
+    id_car_aso?: StringFilter<"evento_carrera"> | string
+    id_eve_aso?: StringFilter<"evento_carrera"> | string
+    fec_aso?: DateTimeFilter<"evento_carrera"> | Date | string
   }
 
   export type inscripcionCreateWithoutEventoInput = {
     id_ins?: string
-    comprobante?: string | null
-    nota_final?: number | null
-    asistencia?: number | null
-    estado?: $Enums.estado_inscripcion
+    est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
-    cert_enviado?: boolean
+    fec_pag_ins?: Date | string | null
+    cer_eve_env?: boolean
+    car_mot_usu?: string | null
     usuario: usuarioCreateNestedOneWithoutInscripcionesInput
+    inscripcion_curso?: inscripcion_cursoCreateNestedOneWithoutInscripcionInput
   }
 
   export type inscripcionUncheckedCreateWithoutEventoInput = {
     id_ins?: string
-    id_usu: string
-    comprobante?: string | null
-    nota_final?: number | null
-    asistencia?: number | null
-    estado?: $Enums.estado_inscripcion
+    id_usu_ins: string
+    est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
-    cert_enviado?: boolean
+    fec_pag_ins?: Date | string | null
+    cer_eve_env?: boolean
+    car_mot_usu?: string | null
+    inscripcion_curso?: inscripcion_cursoUncheckedCreateNestedOneWithoutInscripcionInput
   }
 
   export type inscripcionCreateOrConnectWithoutEventoInput = {
@@ -9074,29 +13667,39 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type carreraUpsertWithoutEventosInput = {
-    update: XOR<carreraUpdateWithoutEventosInput, carreraUncheckedUpdateWithoutEventosInput>
-    create: XOR<carreraCreateWithoutEventosInput, carreraUncheckedCreateWithoutEventosInput>
-    where?: carreraWhereInput
+  export type evento_carreraCreateWithoutEventoInput = {
+    id_eve_car?: string
+    fec_aso?: Date | string
+    carrera: carreraCreateNestedOneWithoutEventosInput
   }
 
-  export type carreraUpdateToOneWithWhereWithoutEventosInput = {
-    where?: carreraWhereInput
-    data: XOR<carreraUpdateWithoutEventosInput, carreraUncheckedUpdateWithoutEventosInput>
+  export type evento_carreraUncheckedCreateWithoutEventoInput = {
+    id_eve_car?: string
+    id_car_aso: string
+    fec_aso?: Date | string
   }
 
-  export type carreraUpdateWithoutEventosInput = {
-    id_car?: StringFieldUpdateOperationsInput | string
-    nom_car?: StringFieldUpdateOperationsInput | string
-    est_car?: BoolFieldUpdateOperationsInput | boolean
-    fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
+  export type evento_carreraCreateOrConnectWithoutEventoInput = {
+    where: evento_carreraWhereUniqueInput
+    create: XOR<evento_carreraCreateWithoutEventoInput, evento_carreraUncheckedCreateWithoutEventoInput>
   }
 
-  export type carreraUncheckedUpdateWithoutEventosInput = {
-    id_car?: StringFieldUpdateOperationsInput | string
-    nom_car?: StringFieldUpdateOperationsInput | string
-    est_car?: BoolFieldUpdateOperationsInput | boolean
-    fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
+  export type evento_carreraCreateManyEventoInputEnvelope = {
+    data: evento_carreraCreateManyEventoInput | evento_carreraCreateManyEventoInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type evento_cursoCreateWithoutEventoInput = {
+    not_min_cur: number
+  }
+
+  export type evento_cursoUncheckedCreateWithoutEventoInput = {
+    not_min_cur: number
+  }
+
+  export type evento_cursoCreateOrConnectWithoutEventoInput = {
+    where: evento_cursoWhereUniqueInput
+    create: XOR<evento_cursoCreateWithoutEventoInput, evento_cursoUncheckedCreateWithoutEventoInput>
   }
 
   export type inscripcionUpsertWithWhereUniqueWithoutEventoInput = {
@@ -9115,6 +13718,261 @@ export namespace Prisma {
     data: XOR<inscripcionUpdateManyMutationInput, inscripcionUncheckedUpdateManyWithoutEventoInput>
   }
 
+  export type evento_carreraUpsertWithWhereUniqueWithoutEventoInput = {
+    where: evento_carreraWhereUniqueInput
+    update: XOR<evento_carreraUpdateWithoutEventoInput, evento_carreraUncheckedUpdateWithoutEventoInput>
+    create: XOR<evento_carreraCreateWithoutEventoInput, evento_carreraUncheckedCreateWithoutEventoInput>
+  }
+
+  export type evento_carreraUpdateWithWhereUniqueWithoutEventoInput = {
+    where: evento_carreraWhereUniqueInput
+    data: XOR<evento_carreraUpdateWithoutEventoInput, evento_carreraUncheckedUpdateWithoutEventoInput>
+  }
+
+  export type evento_carreraUpdateManyWithWhereWithoutEventoInput = {
+    where: evento_carreraScalarWhereInput
+    data: XOR<evento_carreraUpdateManyMutationInput, evento_carreraUncheckedUpdateManyWithoutEventoInput>
+  }
+
+  export type evento_cursoUpsertWithoutEventoInput = {
+    update: XOR<evento_cursoUpdateWithoutEventoInput, evento_cursoUncheckedUpdateWithoutEventoInput>
+    create: XOR<evento_cursoCreateWithoutEventoInput, evento_cursoUncheckedCreateWithoutEventoInput>
+    where?: evento_cursoWhereInput
+  }
+
+  export type evento_cursoUpdateToOneWithWhereWithoutEventoInput = {
+    where?: evento_cursoWhereInput
+    data: XOR<evento_cursoUpdateWithoutEventoInput, evento_cursoUncheckedUpdateWithoutEventoInput>
+  }
+
+  export type evento_cursoUpdateWithoutEventoInput = {
+    not_min_cur?: FloatFieldUpdateOperationsInput | number
+  }
+
+  export type evento_cursoUncheckedUpdateWithoutEventoInput = {
+    not_min_cur?: FloatFieldUpdateOperationsInput | number
+  }
+
+  export type eventoCreateWithoutEventos_cursoInput = {
+    id_eve?: string
+    nom_eve: string
+    des_eve?: string | null
+    tip_eve: $Enums.tipo_evento
+    fec_ini_eve: Date | string
+    val_eve: number
+    est_eve?: $Enums.estado_evento
+    fec_cre_eve?: Date | string
+    img_por_eve: string
+    dur_hor_eve: number
+    por_min_asi_eve: number
+    fec_fin_eve: Date | string
+    inscritos?: inscripcionCreateNestedManyWithoutEventoInput
+    eventos_carrera?: evento_carreraCreateNestedManyWithoutEventoInput
+  }
+
+  export type eventoUncheckedCreateWithoutEventos_cursoInput = {
+    id_eve?: string
+    nom_eve: string
+    des_eve?: string | null
+    tip_eve: $Enums.tipo_evento
+    fec_ini_eve: Date | string
+    val_eve: number
+    est_eve?: $Enums.estado_evento
+    fec_cre_eve?: Date | string
+    img_por_eve: string
+    dur_hor_eve: number
+    por_min_asi_eve: number
+    fec_fin_eve: Date | string
+    inscritos?: inscripcionUncheckedCreateNestedManyWithoutEventoInput
+    eventos_carrera?: evento_carreraUncheckedCreateNestedManyWithoutEventoInput
+  }
+
+  export type eventoCreateOrConnectWithoutEventos_cursoInput = {
+    where: eventoWhereUniqueInput
+    create: XOR<eventoCreateWithoutEventos_cursoInput, eventoUncheckedCreateWithoutEventos_cursoInput>
+  }
+
+  export type eventoUpsertWithoutEventos_cursoInput = {
+    update: XOR<eventoUpdateWithoutEventos_cursoInput, eventoUncheckedUpdateWithoutEventos_cursoInput>
+    create: XOR<eventoCreateWithoutEventos_cursoInput, eventoUncheckedCreateWithoutEventos_cursoInput>
+    where?: eventoWhereInput
+  }
+
+  export type eventoUpdateToOneWithWhereWithoutEventos_cursoInput = {
+    where?: eventoWhereInput
+    data: XOR<eventoUpdateWithoutEventos_cursoInput, eventoUncheckedUpdateWithoutEventos_cursoInput>
+  }
+
+  export type eventoUpdateWithoutEventos_cursoInput = {
+    id_eve?: StringFieldUpdateOperationsInput | string
+    nom_eve?: StringFieldUpdateOperationsInput | string
+    des_eve?: NullableStringFieldUpdateOperationsInput | string | null
+    tip_eve?: Enumtipo_eventoFieldUpdateOperationsInput | $Enums.tipo_evento
+    fec_ini_eve?: DateTimeFieldUpdateOperationsInput | Date | string
+    val_eve?: FloatFieldUpdateOperationsInput | number
+    est_eve?: Enumestado_eventoFieldUpdateOperationsInput | $Enums.estado_evento
+    fec_cre_eve?: DateTimeFieldUpdateOperationsInput | Date | string
+    img_por_eve?: StringFieldUpdateOperationsInput | string
+    dur_hor_eve?: IntFieldUpdateOperationsInput | number
+    por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
+    fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
+    inscritos?: inscripcionUpdateManyWithoutEventoNestedInput
+    eventos_carrera?: evento_carreraUpdateManyWithoutEventoNestedInput
+  }
+
+  export type eventoUncheckedUpdateWithoutEventos_cursoInput = {
+    id_eve?: StringFieldUpdateOperationsInput | string
+    nom_eve?: StringFieldUpdateOperationsInput | string
+    des_eve?: NullableStringFieldUpdateOperationsInput | string | null
+    tip_eve?: Enumtipo_eventoFieldUpdateOperationsInput | $Enums.tipo_evento
+    fec_ini_eve?: DateTimeFieldUpdateOperationsInput | Date | string
+    val_eve?: FloatFieldUpdateOperationsInput | number
+    est_eve?: Enumestado_eventoFieldUpdateOperationsInput | $Enums.estado_evento
+    fec_cre_eve?: DateTimeFieldUpdateOperationsInput | Date | string
+    img_por_eve?: StringFieldUpdateOperationsInput | string
+    dur_hor_eve?: IntFieldUpdateOperationsInput | number
+    por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
+    fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
+    inscritos?: inscripcionUncheckedUpdateManyWithoutEventoNestedInput
+    eventos_carrera?: evento_carreraUncheckedUpdateManyWithoutEventoNestedInput
+  }
+
+  export type carreraCreateWithoutEventosInput = {
+    id_car?: string
+    nom_car: string
+    est_car?: boolean
+    fec_cre_car?: Date | string
+    facultad: facultadCreateNestedOneWithoutCarrerasInput
+    usuario?: usuarioCreateNestedManyWithoutCarreraInput
+  }
+
+  export type carreraUncheckedCreateWithoutEventosInput = {
+    id_car?: string
+    nom_car: string
+    est_car?: boolean
+    fec_cre_car?: Date | string
+    id_fac_per: string
+    usuario?: usuarioUncheckedCreateNestedManyWithoutCarreraInput
+  }
+
+  export type carreraCreateOrConnectWithoutEventosInput = {
+    where: carreraWhereUniqueInput
+    create: XOR<carreraCreateWithoutEventosInput, carreraUncheckedCreateWithoutEventosInput>
+  }
+
+  export type eventoCreateWithoutEventos_carreraInput = {
+    id_eve?: string
+    nom_eve: string
+    des_eve?: string | null
+    tip_eve: $Enums.tipo_evento
+    fec_ini_eve: Date | string
+    val_eve: number
+    est_eve?: $Enums.estado_evento
+    fec_cre_eve?: Date | string
+    img_por_eve: string
+    dur_hor_eve: number
+    por_min_asi_eve: number
+    fec_fin_eve: Date | string
+    inscritos?: inscripcionCreateNestedManyWithoutEventoInput
+    eventos_curso?: evento_cursoCreateNestedOneWithoutEventoInput
+  }
+
+  export type eventoUncheckedCreateWithoutEventos_carreraInput = {
+    id_eve?: string
+    nom_eve: string
+    des_eve?: string | null
+    tip_eve: $Enums.tipo_evento
+    fec_ini_eve: Date | string
+    val_eve: number
+    est_eve?: $Enums.estado_evento
+    fec_cre_eve?: Date | string
+    img_por_eve: string
+    dur_hor_eve: number
+    por_min_asi_eve: number
+    fec_fin_eve: Date | string
+    inscritos?: inscripcionUncheckedCreateNestedManyWithoutEventoInput
+    eventos_curso?: evento_cursoUncheckedCreateNestedOneWithoutEventoInput
+  }
+
+  export type eventoCreateOrConnectWithoutEventos_carreraInput = {
+    where: eventoWhereUniqueInput
+    create: XOR<eventoCreateWithoutEventos_carreraInput, eventoUncheckedCreateWithoutEventos_carreraInput>
+  }
+
+  export type carreraUpsertWithoutEventosInput = {
+    update: XOR<carreraUpdateWithoutEventosInput, carreraUncheckedUpdateWithoutEventosInput>
+    create: XOR<carreraCreateWithoutEventosInput, carreraUncheckedCreateWithoutEventosInput>
+    where?: carreraWhereInput
+  }
+
+  export type carreraUpdateToOneWithWhereWithoutEventosInput = {
+    where?: carreraWhereInput
+    data: XOR<carreraUpdateWithoutEventosInput, carreraUncheckedUpdateWithoutEventosInput>
+  }
+
+  export type carreraUpdateWithoutEventosInput = {
+    id_car?: StringFieldUpdateOperationsInput | string
+    nom_car?: StringFieldUpdateOperationsInput | string
+    est_car?: BoolFieldUpdateOperationsInput | boolean
+    fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
+    facultad?: facultadUpdateOneRequiredWithoutCarrerasNestedInput
+    usuario?: usuarioUpdateManyWithoutCarreraNestedInput
+  }
+
+  export type carreraUncheckedUpdateWithoutEventosInput = {
+    id_car?: StringFieldUpdateOperationsInput | string
+    nom_car?: StringFieldUpdateOperationsInput | string
+    est_car?: BoolFieldUpdateOperationsInput | boolean
+    fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
+    id_fac_per?: StringFieldUpdateOperationsInput | string
+    usuario?: usuarioUncheckedUpdateManyWithoutCarreraNestedInput
+  }
+
+  export type eventoUpsertWithoutEventos_carreraInput = {
+    update: XOR<eventoUpdateWithoutEventos_carreraInput, eventoUncheckedUpdateWithoutEventos_carreraInput>
+    create: XOR<eventoCreateWithoutEventos_carreraInput, eventoUncheckedCreateWithoutEventos_carreraInput>
+    where?: eventoWhereInput
+  }
+
+  export type eventoUpdateToOneWithWhereWithoutEventos_carreraInput = {
+    where?: eventoWhereInput
+    data: XOR<eventoUpdateWithoutEventos_carreraInput, eventoUncheckedUpdateWithoutEventos_carreraInput>
+  }
+
+  export type eventoUpdateWithoutEventos_carreraInput = {
+    id_eve?: StringFieldUpdateOperationsInput | string
+    nom_eve?: StringFieldUpdateOperationsInput | string
+    des_eve?: NullableStringFieldUpdateOperationsInput | string | null
+    tip_eve?: Enumtipo_eventoFieldUpdateOperationsInput | $Enums.tipo_evento
+    fec_ini_eve?: DateTimeFieldUpdateOperationsInput | Date | string
+    val_eve?: FloatFieldUpdateOperationsInput | number
+    est_eve?: Enumestado_eventoFieldUpdateOperationsInput | $Enums.estado_evento
+    fec_cre_eve?: DateTimeFieldUpdateOperationsInput | Date | string
+    img_por_eve?: StringFieldUpdateOperationsInput | string
+    dur_hor_eve?: IntFieldUpdateOperationsInput | number
+    por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
+    fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
+    inscritos?: inscripcionUpdateManyWithoutEventoNestedInput
+    eventos_curso?: evento_cursoUpdateOneWithoutEventoNestedInput
+  }
+
+  export type eventoUncheckedUpdateWithoutEventos_carreraInput = {
+    id_eve?: StringFieldUpdateOperationsInput | string
+    nom_eve?: StringFieldUpdateOperationsInput | string
+    des_eve?: NullableStringFieldUpdateOperationsInput | string | null
+    tip_eve?: Enumtipo_eventoFieldUpdateOperationsInput | $Enums.tipo_evento
+    fec_ini_eve?: DateTimeFieldUpdateOperationsInput | Date | string
+    val_eve?: FloatFieldUpdateOperationsInput | number
+    est_eve?: Enumestado_eventoFieldUpdateOperationsInput | $Enums.estado_evento
+    fec_cre_eve?: DateTimeFieldUpdateOperationsInput | Date | string
+    img_por_eve?: StringFieldUpdateOperationsInput | string
+    dur_hor_eve?: IntFieldUpdateOperationsInput | number
+    por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
+    fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
+    inscritos?: inscripcionUncheckedUpdateManyWithoutEventoNestedInput
+    eventos_curso?: evento_cursoUncheckedUpdateOneWithoutEventoNestedInput
+  }
+
   export type usuarioCreateWithoutInscripcionesInput = {
     id_usu?: string
     ced_usu: string
@@ -9125,8 +13983,8 @@ export namespace Prisma {
     cel_usu: string
     rol_usu: $Enums.rol_usuario
     fec_cre_usu?: Date | string
-    comprobante?: string | null
-    carrera?: string | null
+    com_usu?: string | null
+    carrera?: carreraCreateNestedOneWithoutUsuarioInput
   }
 
   export type usuarioUncheckedCreateWithoutInscripcionesInput = {
@@ -9139,8 +13997,8 @@ export namespace Prisma {
     cel_usu: string
     rol_usu: $Enums.rol_usuario
     fec_cre_usu?: Date | string
-    comprobante?: string | null
-    carrera?: string | null
+    com_usu?: string | null
+    id_car_est?: string | null
   }
 
   export type usuarioCreateOrConnectWithoutInscripcionesInput = {
@@ -9148,41 +14006,58 @@ export namespace Prisma {
     create: XOR<usuarioCreateWithoutInscripcionesInput, usuarioUncheckedCreateWithoutInscripcionesInput>
   }
 
-  export type eventoCreateWithoutInscripcionesInput = {
+  export type eventoCreateWithoutInscritosInput = {
     id_eve?: string
     nom_eve: string
     des_eve?: string | null
     tip_eve: $Enums.tipo_evento
     fec_ini_eve: Date | string
-    fec_fin_eve: Date | string
-    dur_hrs_eve: number
-    pagado_eve?: boolean
-    nota_min_eve?: number | null
-    por_asist_eve?: number | null
-    est_eve?: boolean
+    val_eve: number
+    est_eve?: $Enums.estado_evento
     fec_cre_eve?: Date | string
-    carrera?: carreraCreateNestedOneWithoutEventosInput
+    img_por_eve: string
+    dur_hor_eve: number
+    por_min_asi_eve: number
+    fec_fin_eve: Date | string
+    eventos_carrera?: evento_carreraCreateNestedManyWithoutEventoInput
+    eventos_curso?: evento_cursoCreateNestedOneWithoutEventoInput
   }
 
-  export type eventoUncheckedCreateWithoutInscripcionesInput = {
+  export type eventoUncheckedCreateWithoutInscritosInput = {
     id_eve?: string
     nom_eve: string
     des_eve?: string | null
     tip_eve: $Enums.tipo_evento
     fec_ini_eve: Date | string
-    fec_fin_eve: Date | string
-    dur_hrs_eve: number
-    pagado_eve?: boolean
-    nota_min_eve?: number | null
-    por_asist_eve?: number | null
-    est_eve?: boolean
+    val_eve: number
+    est_eve?: $Enums.estado_evento
     fec_cre_eve?: Date | string
-    carreraId?: string | null
+    img_por_eve: string
+    dur_hor_eve: number
+    por_min_asi_eve: number
+    fec_fin_eve: Date | string
+    eventos_carrera?: evento_carreraUncheckedCreateNestedManyWithoutEventoInput
+    eventos_curso?: evento_cursoUncheckedCreateNestedOneWithoutEventoInput
   }
 
-  export type eventoCreateOrConnectWithoutInscripcionesInput = {
+  export type eventoCreateOrConnectWithoutInscritosInput = {
     where: eventoWhereUniqueInput
-    create: XOR<eventoCreateWithoutInscripcionesInput, eventoUncheckedCreateWithoutInscripcionesInput>
+    create: XOR<eventoCreateWithoutInscritosInput, eventoUncheckedCreateWithoutInscritosInput>
+  }
+
+  export type inscripcion_cursoCreateWithoutInscripcionInput = {
+    not_fin_usu?: number | null
+    por_asi_fin_usu?: number | null
+  }
+
+  export type inscripcion_cursoUncheckedCreateWithoutInscripcionInput = {
+    not_fin_usu?: number | null
+    por_asi_fin_usu?: number | null
+  }
+
+  export type inscripcion_cursoCreateOrConnectWithoutInscripcionInput = {
+    where: inscripcion_cursoWhereUniqueInput
+    create: XOR<inscripcion_cursoCreateWithoutInscripcionInput, inscripcion_cursoUncheckedCreateWithoutInscripcionInput>
   }
 
   export type usuarioUpsertWithoutInscripcionesInput = {
@@ -9206,8 +14081,8 @@ export namespace Prisma {
     cel_usu?: StringFieldUpdateOperationsInput | string
     rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
     fec_cre_usu?: DateTimeFieldUpdateOperationsInput | Date | string
-    comprobante?: NullableStringFieldUpdateOperationsInput | string | null
-    carrera?: NullableStringFieldUpdateOperationsInput | string | null
+    com_usu?: NullableStringFieldUpdateOperationsInput | string | null
+    carrera?: carreraUpdateOneWithoutUsuarioNestedInput
   }
 
   export type usuarioUncheckedUpdateWithoutInscripcionesInput = {
@@ -9220,201 +14095,407 @@ export namespace Prisma {
     cel_usu?: StringFieldUpdateOperationsInput | string
     rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
     fec_cre_usu?: DateTimeFieldUpdateOperationsInput | Date | string
-    comprobante?: NullableStringFieldUpdateOperationsInput | string | null
-    carrera?: NullableStringFieldUpdateOperationsInput | string | null
+    com_usu?: NullableStringFieldUpdateOperationsInput | string | null
+    id_car_est?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
-  export type eventoUpsertWithoutInscripcionesInput = {
-    update: XOR<eventoUpdateWithoutInscripcionesInput, eventoUncheckedUpdateWithoutInscripcionesInput>
-    create: XOR<eventoCreateWithoutInscripcionesInput, eventoUncheckedCreateWithoutInscripcionesInput>
+  export type eventoUpsertWithoutInscritosInput = {
+    update: XOR<eventoUpdateWithoutInscritosInput, eventoUncheckedUpdateWithoutInscritosInput>
+    create: XOR<eventoCreateWithoutInscritosInput, eventoUncheckedCreateWithoutInscritosInput>
     where?: eventoWhereInput
   }
 
-  export type eventoUpdateToOneWithWhereWithoutInscripcionesInput = {
+  export type eventoUpdateToOneWithWhereWithoutInscritosInput = {
     where?: eventoWhereInput
-    data: XOR<eventoUpdateWithoutInscripcionesInput, eventoUncheckedUpdateWithoutInscripcionesInput>
+    data: XOR<eventoUpdateWithoutInscritosInput, eventoUncheckedUpdateWithoutInscritosInput>
   }
 
-  export type eventoUpdateWithoutInscripcionesInput = {
+  export type eventoUpdateWithoutInscritosInput = {
     id_eve?: StringFieldUpdateOperationsInput | string
     nom_eve?: StringFieldUpdateOperationsInput | string
     des_eve?: NullableStringFieldUpdateOperationsInput | string | null
     tip_eve?: Enumtipo_eventoFieldUpdateOperationsInput | $Enums.tipo_evento
     fec_ini_eve?: DateTimeFieldUpdateOperationsInput | Date | string
-    fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
-    dur_hrs_eve?: IntFieldUpdateOperationsInput | number
-    pagado_eve?: BoolFieldUpdateOperationsInput | boolean
-    nota_min_eve?: NullableFloatFieldUpdateOperationsInput | number | null
-    por_asist_eve?: NullableFloatFieldUpdateOperationsInput | number | null
-    est_eve?: BoolFieldUpdateOperationsInput | boolean
+    val_eve?: FloatFieldUpdateOperationsInput | number
+    est_eve?: Enumestado_eventoFieldUpdateOperationsInput | $Enums.estado_evento
     fec_cre_eve?: DateTimeFieldUpdateOperationsInput | Date | string
-    carrera?: carreraUpdateOneWithoutEventosNestedInput
+    img_por_eve?: StringFieldUpdateOperationsInput | string
+    dur_hor_eve?: IntFieldUpdateOperationsInput | number
+    por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
+    fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
+    eventos_carrera?: evento_carreraUpdateManyWithoutEventoNestedInput
+    eventos_curso?: evento_cursoUpdateOneWithoutEventoNestedInput
   }
 
-  export type eventoUncheckedUpdateWithoutInscripcionesInput = {
+  export type eventoUncheckedUpdateWithoutInscritosInput = {
     id_eve?: StringFieldUpdateOperationsInput | string
     nom_eve?: StringFieldUpdateOperationsInput | string
     des_eve?: NullableStringFieldUpdateOperationsInput | string | null
     tip_eve?: Enumtipo_eventoFieldUpdateOperationsInput | $Enums.tipo_evento
     fec_ini_eve?: DateTimeFieldUpdateOperationsInput | Date | string
-    fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
-    dur_hrs_eve?: IntFieldUpdateOperationsInput | number
-    pagado_eve?: BoolFieldUpdateOperationsInput | boolean
-    nota_min_eve?: NullableFloatFieldUpdateOperationsInput | number | null
-    por_asist_eve?: NullableFloatFieldUpdateOperationsInput | number | null
-    est_eve?: BoolFieldUpdateOperationsInput | boolean
+    val_eve?: FloatFieldUpdateOperationsInput | number
+    est_eve?: Enumestado_eventoFieldUpdateOperationsInput | $Enums.estado_evento
     fec_cre_eve?: DateTimeFieldUpdateOperationsInput | Date | string
-    carreraId?: NullableStringFieldUpdateOperationsInput | string | null
+    img_por_eve?: StringFieldUpdateOperationsInput | string
+    dur_hor_eve?: IntFieldUpdateOperationsInput | number
+    por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
+    fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
+    eventos_carrera?: evento_carreraUncheckedUpdateManyWithoutEventoNestedInput
+    eventos_curso?: evento_cursoUncheckedUpdateOneWithoutEventoNestedInput
+  }
+
+  export type inscripcion_cursoUpsertWithoutInscripcionInput = {
+    update: XOR<inscripcion_cursoUpdateWithoutInscripcionInput, inscripcion_cursoUncheckedUpdateWithoutInscripcionInput>
+    create: XOR<inscripcion_cursoCreateWithoutInscripcionInput, inscripcion_cursoUncheckedCreateWithoutInscripcionInput>
+    where?: inscripcion_cursoWhereInput
+  }
+
+  export type inscripcion_cursoUpdateToOneWithWhereWithoutInscripcionInput = {
+    where?: inscripcion_cursoWhereInput
+    data: XOR<inscripcion_cursoUpdateWithoutInscripcionInput, inscripcion_cursoUncheckedUpdateWithoutInscripcionInput>
+  }
+
+  export type inscripcion_cursoUpdateWithoutInscripcionInput = {
+    not_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+  }
+
+  export type inscripcion_cursoUncheckedUpdateWithoutInscripcionInput = {
+    not_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+  }
+
+  export type inscripcionCreateWithoutInscripcion_cursoInput = {
+    id_ins?: string
+    est_ins?: $Enums.estado_inscripcion
+    fec_ins?: Date | string
+    fec_pag_ins?: Date | string | null
+    cer_eve_env?: boolean
+    car_mot_usu?: string | null
+    usuario: usuarioCreateNestedOneWithoutInscripcionesInput
+    evento: eventoCreateNestedOneWithoutInscritosInput
+  }
+
+  export type inscripcionUncheckedCreateWithoutInscripcion_cursoInput = {
+    id_ins?: string
+    id_usu_ins: string
+    id_eve_ins: string
+    est_ins?: $Enums.estado_inscripcion
+    fec_ins?: Date | string
+    fec_pag_ins?: Date | string | null
+    cer_eve_env?: boolean
+    car_mot_usu?: string | null
+  }
+
+  export type inscripcionCreateOrConnectWithoutInscripcion_cursoInput = {
+    where: inscripcionWhereUniqueInput
+    create: XOR<inscripcionCreateWithoutInscripcion_cursoInput, inscripcionUncheckedCreateWithoutInscripcion_cursoInput>
+  }
+
+  export type inscripcionUpsertWithoutInscripcion_cursoInput = {
+    update: XOR<inscripcionUpdateWithoutInscripcion_cursoInput, inscripcionUncheckedUpdateWithoutInscripcion_cursoInput>
+    create: XOR<inscripcionCreateWithoutInscripcion_cursoInput, inscripcionUncheckedCreateWithoutInscripcion_cursoInput>
+    where?: inscripcionWhereInput
+  }
+
+  export type inscripcionUpdateToOneWithWhereWithoutInscripcion_cursoInput = {
+    where?: inscripcionWhereInput
+    data: XOR<inscripcionUpdateWithoutInscripcion_cursoInput, inscripcionUncheckedUpdateWithoutInscripcion_cursoInput>
+  }
+
+  export type inscripcionUpdateWithoutInscripcion_cursoInput = {
+    id_ins?: StringFieldUpdateOperationsInput | string
+    est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
+    fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
+    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cer_eve_env?: BoolFieldUpdateOperationsInput | boolean
+    car_mot_usu?: NullableStringFieldUpdateOperationsInput | string | null
+    usuario?: usuarioUpdateOneRequiredWithoutInscripcionesNestedInput
+    evento?: eventoUpdateOneRequiredWithoutInscritosNestedInput
+  }
+
+  export type inscripcionUncheckedUpdateWithoutInscripcion_cursoInput = {
+    id_ins?: StringFieldUpdateOperationsInput | string
+    id_usu_ins?: StringFieldUpdateOperationsInput | string
+    id_eve_ins?: StringFieldUpdateOperationsInput | string
+    est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
+    fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
+    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cer_eve_env?: BoolFieldUpdateOperationsInput | boolean
+    car_mot_usu?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type carreraCreateWithoutFacultadInput = {
+    id_car?: string
+    nom_car: string
+    est_car?: boolean
+    fec_cre_car?: Date | string
+    usuario?: usuarioCreateNestedManyWithoutCarreraInput
+    eventos?: evento_carreraCreateNestedManyWithoutCarreraInput
+  }
+
+  export type carreraUncheckedCreateWithoutFacultadInput = {
+    id_car?: string
+    nom_car: string
+    est_car?: boolean
+    fec_cre_car?: Date | string
+    usuario?: usuarioUncheckedCreateNestedManyWithoutCarreraInput
+    eventos?: evento_carreraUncheckedCreateNestedManyWithoutCarreraInput
+  }
+
+  export type carreraCreateOrConnectWithoutFacultadInput = {
+    where: carreraWhereUniqueInput
+    create: XOR<carreraCreateWithoutFacultadInput, carreraUncheckedCreateWithoutFacultadInput>
+  }
+
+  export type carreraCreateManyFacultadInputEnvelope = {
+    data: carreraCreateManyFacultadInput | carreraCreateManyFacultadInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type carreraUpsertWithWhereUniqueWithoutFacultadInput = {
+    where: carreraWhereUniqueInput
+    update: XOR<carreraUpdateWithoutFacultadInput, carreraUncheckedUpdateWithoutFacultadInput>
+    create: XOR<carreraCreateWithoutFacultadInput, carreraUncheckedCreateWithoutFacultadInput>
+  }
+
+  export type carreraUpdateWithWhereUniqueWithoutFacultadInput = {
+    where: carreraWhereUniqueInput
+    data: XOR<carreraUpdateWithoutFacultadInput, carreraUncheckedUpdateWithoutFacultadInput>
+  }
+
+  export type carreraUpdateManyWithWhereWithoutFacultadInput = {
+    where: carreraScalarWhereInput
+    data: XOR<carreraUpdateManyMutationInput, carreraUncheckedUpdateManyWithoutFacultadInput>
+  }
+
+  export type carreraScalarWhereInput = {
+    AND?: carreraScalarWhereInput | carreraScalarWhereInput[]
+    OR?: carreraScalarWhereInput[]
+    NOT?: carreraScalarWhereInput | carreraScalarWhereInput[]
+    id_car?: StringFilter<"carrera"> | string
+    nom_car?: StringFilter<"carrera"> | string
+    est_car?: BoolFilter<"carrera"> | boolean
+    fec_cre_car?: DateTimeFilter<"carrera"> | Date | string
+    id_fac_per?: StringFilter<"carrera"> | string
   }
 
   export type inscripcionCreateManyUsuarioInput = {
     id_ins?: string
-    id_eve: string
-    comprobante?: string | null
-    nota_final?: number | null
-    asistencia?: number | null
-    estado?: $Enums.estado_inscripcion
+    id_eve_ins: string
+    est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
-    cert_enviado?: boolean
+    fec_pag_ins?: Date | string | null
+    cer_eve_env?: boolean
+    car_mot_usu?: string | null
   }
 
   export type inscripcionUpdateWithoutUsuarioInput = {
     id_ins?: StringFieldUpdateOperationsInput | string
-    comprobante?: NullableStringFieldUpdateOperationsInput | string | null
-    nota_final?: NullableFloatFieldUpdateOperationsInput | number | null
-    asistencia?: NullableFloatFieldUpdateOperationsInput | number | null
-    estado?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
+    est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
-    cert_enviado?: BoolFieldUpdateOperationsInput | boolean
-    evento?: eventoUpdateOneRequiredWithoutInscripcionesNestedInput
+    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cer_eve_env?: BoolFieldUpdateOperationsInput | boolean
+    car_mot_usu?: NullableStringFieldUpdateOperationsInput | string | null
+    evento?: eventoUpdateOneRequiredWithoutInscritosNestedInput
+    inscripcion_curso?: inscripcion_cursoUpdateOneWithoutInscripcionNestedInput
   }
 
   export type inscripcionUncheckedUpdateWithoutUsuarioInput = {
     id_ins?: StringFieldUpdateOperationsInput | string
-    id_eve?: StringFieldUpdateOperationsInput | string
-    comprobante?: NullableStringFieldUpdateOperationsInput | string | null
-    nota_final?: NullableFloatFieldUpdateOperationsInput | number | null
-    asistencia?: NullableFloatFieldUpdateOperationsInput | number | null
-    estado?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
+    id_eve_ins?: StringFieldUpdateOperationsInput | string
+    est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
-    cert_enviado?: BoolFieldUpdateOperationsInput | boolean
+    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cer_eve_env?: BoolFieldUpdateOperationsInput | boolean
+    car_mot_usu?: NullableStringFieldUpdateOperationsInput | string | null
+    inscripcion_curso?: inscripcion_cursoUncheckedUpdateOneWithoutInscripcionNestedInput
   }
 
   export type inscripcionUncheckedUpdateManyWithoutUsuarioInput = {
     id_ins?: StringFieldUpdateOperationsInput | string
-    id_eve?: StringFieldUpdateOperationsInput | string
-    comprobante?: NullableStringFieldUpdateOperationsInput | string | null
-    nota_final?: NullableFloatFieldUpdateOperationsInput | number | null
-    asistencia?: NullableFloatFieldUpdateOperationsInput | number | null
-    estado?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
+    id_eve_ins?: StringFieldUpdateOperationsInput | string
+    est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
-    cert_enviado?: BoolFieldUpdateOperationsInput | boolean
+    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cer_eve_env?: BoolFieldUpdateOperationsInput | boolean
+    car_mot_usu?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
-  export type eventoCreateManyCarreraInput = {
-    id_eve?: string
-    nom_eve: string
-    des_eve?: string | null
-    tip_eve: $Enums.tipo_evento
-    fec_ini_eve: Date | string
-    fec_fin_eve: Date | string
-    dur_hrs_eve: number
-    pagado_eve?: boolean
-    nota_min_eve?: number | null
-    por_asist_eve?: number | null
-    est_eve?: boolean
-    fec_cre_eve?: Date | string
+  export type usuarioCreateManyCarreraInput = {
+    id_usu?: string
+    ced_usu: string
+    nom_usu: string
+    ape_usu: string
+    cor_usu: string
+    con_usu: string
+    cel_usu: string
+    rol_usu: $Enums.rol_usuario
+    fec_cre_usu?: Date | string
+    com_usu?: string | null
   }
 
-  export type eventoUpdateWithoutCarreraInput = {
-    id_eve?: StringFieldUpdateOperationsInput | string
-    nom_eve?: StringFieldUpdateOperationsInput | string
-    des_eve?: NullableStringFieldUpdateOperationsInput | string | null
-    tip_eve?: Enumtipo_eventoFieldUpdateOperationsInput | $Enums.tipo_evento
-    fec_ini_eve?: DateTimeFieldUpdateOperationsInput | Date | string
-    fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
-    dur_hrs_eve?: IntFieldUpdateOperationsInput | number
-    pagado_eve?: BoolFieldUpdateOperationsInput | boolean
-    nota_min_eve?: NullableFloatFieldUpdateOperationsInput | number | null
-    por_asist_eve?: NullableFloatFieldUpdateOperationsInput | number | null
-    est_eve?: BoolFieldUpdateOperationsInput | boolean
-    fec_cre_eve?: DateTimeFieldUpdateOperationsInput | Date | string
-    inscripciones?: inscripcionUpdateManyWithoutEventoNestedInput
+  export type evento_carreraCreateManyCarreraInput = {
+    id_eve_car?: string
+    id_eve_aso: string
+    fec_aso?: Date | string
   }
 
-  export type eventoUncheckedUpdateWithoutCarreraInput = {
-    id_eve?: StringFieldUpdateOperationsInput | string
-    nom_eve?: StringFieldUpdateOperationsInput | string
-    des_eve?: NullableStringFieldUpdateOperationsInput | string | null
-    tip_eve?: Enumtipo_eventoFieldUpdateOperationsInput | $Enums.tipo_evento
-    fec_ini_eve?: DateTimeFieldUpdateOperationsInput | Date | string
-    fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
-    dur_hrs_eve?: IntFieldUpdateOperationsInput | number
-    pagado_eve?: BoolFieldUpdateOperationsInput | boolean
-    nota_min_eve?: NullableFloatFieldUpdateOperationsInput | number | null
-    por_asist_eve?: NullableFloatFieldUpdateOperationsInput | number | null
-    est_eve?: BoolFieldUpdateOperationsInput | boolean
-    fec_cre_eve?: DateTimeFieldUpdateOperationsInput | Date | string
-    inscripciones?: inscripcionUncheckedUpdateManyWithoutEventoNestedInput
+  export type usuarioUpdateWithoutCarreraInput = {
+    id_usu?: StringFieldUpdateOperationsInput | string
+    ced_usu?: StringFieldUpdateOperationsInput | string
+    nom_usu?: StringFieldUpdateOperationsInput | string
+    ape_usu?: StringFieldUpdateOperationsInput | string
+    cor_usu?: StringFieldUpdateOperationsInput | string
+    con_usu?: StringFieldUpdateOperationsInput | string
+    cel_usu?: StringFieldUpdateOperationsInput | string
+    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    fec_cre_usu?: DateTimeFieldUpdateOperationsInput | Date | string
+    com_usu?: NullableStringFieldUpdateOperationsInput | string | null
+    inscripciones?: inscripcionUpdateManyWithoutUsuarioNestedInput
   }
 
-  export type eventoUncheckedUpdateManyWithoutCarreraInput = {
-    id_eve?: StringFieldUpdateOperationsInput | string
-    nom_eve?: StringFieldUpdateOperationsInput | string
-    des_eve?: NullableStringFieldUpdateOperationsInput | string | null
-    tip_eve?: Enumtipo_eventoFieldUpdateOperationsInput | $Enums.tipo_evento
-    fec_ini_eve?: DateTimeFieldUpdateOperationsInput | Date | string
-    fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
-    dur_hrs_eve?: IntFieldUpdateOperationsInput | number
-    pagado_eve?: BoolFieldUpdateOperationsInput | boolean
-    nota_min_eve?: NullableFloatFieldUpdateOperationsInput | number | null
-    por_asist_eve?: NullableFloatFieldUpdateOperationsInput | number | null
-    est_eve?: BoolFieldUpdateOperationsInput | boolean
-    fec_cre_eve?: DateTimeFieldUpdateOperationsInput | Date | string
+  export type usuarioUncheckedUpdateWithoutCarreraInput = {
+    id_usu?: StringFieldUpdateOperationsInput | string
+    ced_usu?: StringFieldUpdateOperationsInput | string
+    nom_usu?: StringFieldUpdateOperationsInput | string
+    ape_usu?: StringFieldUpdateOperationsInput | string
+    cor_usu?: StringFieldUpdateOperationsInput | string
+    con_usu?: StringFieldUpdateOperationsInput | string
+    cel_usu?: StringFieldUpdateOperationsInput | string
+    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    fec_cre_usu?: DateTimeFieldUpdateOperationsInput | Date | string
+    com_usu?: NullableStringFieldUpdateOperationsInput | string | null
+    inscripciones?: inscripcionUncheckedUpdateManyWithoutUsuarioNestedInput
+  }
+
+  export type usuarioUncheckedUpdateManyWithoutCarreraInput = {
+    id_usu?: StringFieldUpdateOperationsInput | string
+    ced_usu?: StringFieldUpdateOperationsInput | string
+    nom_usu?: StringFieldUpdateOperationsInput | string
+    ape_usu?: StringFieldUpdateOperationsInput | string
+    cor_usu?: StringFieldUpdateOperationsInput | string
+    con_usu?: StringFieldUpdateOperationsInput | string
+    cel_usu?: StringFieldUpdateOperationsInput | string
+    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    fec_cre_usu?: DateTimeFieldUpdateOperationsInput | Date | string
+    com_usu?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type evento_carreraUpdateWithoutCarreraInput = {
+    id_eve_car?: StringFieldUpdateOperationsInput | string
+    fec_aso?: DateTimeFieldUpdateOperationsInput | Date | string
+    evento?: eventoUpdateOneRequiredWithoutEventos_carreraNestedInput
+  }
+
+  export type evento_carreraUncheckedUpdateWithoutCarreraInput = {
+    id_eve_car?: StringFieldUpdateOperationsInput | string
+    id_eve_aso?: StringFieldUpdateOperationsInput | string
+    fec_aso?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type evento_carreraUncheckedUpdateManyWithoutCarreraInput = {
+    id_eve_car?: StringFieldUpdateOperationsInput | string
+    id_eve_aso?: StringFieldUpdateOperationsInput | string
+    fec_aso?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type inscripcionCreateManyEventoInput = {
     id_ins?: string
-    id_usu: string
-    comprobante?: string | null
-    nota_final?: number | null
-    asistencia?: number | null
-    estado?: $Enums.estado_inscripcion
+    id_usu_ins: string
+    est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
-    cert_enviado?: boolean
+    fec_pag_ins?: Date | string | null
+    cer_eve_env?: boolean
+    car_mot_usu?: string | null
+  }
+
+  export type evento_carreraCreateManyEventoInput = {
+    id_eve_car?: string
+    id_car_aso: string
+    fec_aso?: Date | string
   }
 
   export type inscripcionUpdateWithoutEventoInput = {
     id_ins?: StringFieldUpdateOperationsInput | string
-    comprobante?: NullableStringFieldUpdateOperationsInput | string | null
-    nota_final?: NullableFloatFieldUpdateOperationsInput | number | null
-    asistencia?: NullableFloatFieldUpdateOperationsInput | number | null
-    estado?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
+    est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
-    cert_enviado?: BoolFieldUpdateOperationsInput | boolean
+    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cer_eve_env?: BoolFieldUpdateOperationsInput | boolean
+    car_mot_usu?: NullableStringFieldUpdateOperationsInput | string | null
     usuario?: usuarioUpdateOneRequiredWithoutInscripcionesNestedInput
+    inscripcion_curso?: inscripcion_cursoUpdateOneWithoutInscripcionNestedInput
   }
 
   export type inscripcionUncheckedUpdateWithoutEventoInput = {
     id_ins?: StringFieldUpdateOperationsInput | string
-    id_usu?: StringFieldUpdateOperationsInput | string
-    comprobante?: NullableStringFieldUpdateOperationsInput | string | null
-    nota_final?: NullableFloatFieldUpdateOperationsInput | number | null
-    asistencia?: NullableFloatFieldUpdateOperationsInput | number | null
-    estado?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
+    id_usu_ins?: StringFieldUpdateOperationsInput | string
+    est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
-    cert_enviado?: BoolFieldUpdateOperationsInput | boolean
+    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cer_eve_env?: BoolFieldUpdateOperationsInput | boolean
+    car_mot_usu?: NullableStringFieldUpdateOperationsInput | string | null
+    inscripcion_curso?: inscripcion_cursoUncheckedUpdateOneWithoutInscripcionNestedInput
   }
 
   export type inscripcionUncheckedUpdateManyWithoutEventoInput = {
     id_ins?: StringFieldUpdateOperationsInput | string
-    id_usu?: StringFieldUpdateOperationsInput | string
-    comprobante?: NullableStringFieldUpdateOperationsInput | string | null
-    nota_final?: NullableFloatFieldUpdateOperationsInput | number | null
-    asistencia?: NullableFloatFieldUpdateOperationsInput | number | null
-    estado?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
+    id_usu_ins?: StringFieldUpdateOperationsInput | string
+    est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
-    cert_enviado?: BoolFieldUpdateOperationsInput | boolean
+    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cer_eve_env?: BoolFieldUpdateOperationsInput | boolean
+    car_mot_usu?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type evento_carreraUpdateWithoutEventoInput = {
+    id_eve_car?: StringFieldUpdateOperationsInput | string
+    fec_aso?: DateTimeFieldUpdateOperationsInput | Date | string
+    carrera?: carreraUpdateOneRequiredWithoutEventosNestedInput
+  }
+
+  export type evento_carreraUncheckedUpdateWithoutEventoInput = {
+    id_eve_car?: StringFieldUpdateOperationsInput | string
+    id_car_aso?: StringFieldUpdateOperationsInput | string
+    fec_aso?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type evento_carreraUncheckedUpdateManyWithoutEventoInput = {
+    id_eve_car?: StringFieldUpdateOperationsInput | string
+    id_car_aso?: StringFieldUpdateOperationsInput | string
+    fec_aso?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type carreraCreateManyFacultadInput = {
+    id_car?: string
+    nom_car: string
+    est_car?: boolean
+    fec_cre_car?: Date | string
+  }
+
+  export type carreraUpdateWithoutFacultadInput = {
+    id_car?: StringFieldUpdateOperationsInput | string
+    nom_car?: StringFieldUpdateOperationsInput | string
+    est_car?: BoolFieldUpdateOperationsInput | boolean
+    fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
+    usuario?: usuarioUpdateManyWithoutCarreraNestedInput
+    eventos?: evento_carreraUpdateManyWithoutCarreraNestedInput
+  }
+
+  export type carreraUncheckedUpdateWithoutFacultadInput = {
+    id_car?: StringFieldUpdateOperationsInput | string
+    nom_car?: StringFieldUpdateOperationsInput | string
+    est_car?: BoolFieldUpdateOperationsInput | boolean
+    fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
+    usuario?: usuarioUncheckedUpdateManyWithoutCarreraNestedInput
+    eventos?: evento_carreraUncheckedUpdateManyWithoutCarreraNestedInput
+  }
+
+  export type carreraUncheckedUpdateManyWithoutFacultadInput = {
+    id_car?: StringFieldUpdateOperationsInput | string
+    nom_car?: StringFieldUpdateOperationsInput | string
+    est_car?: BoolFieldUpdateOperationsInput | boolean
+    fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 

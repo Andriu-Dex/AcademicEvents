@@ -1,10 +1,10 @@
 // Importación de módulos necesarios
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axiosInstance from "../api/axiosConfig";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "../hooks/useAuth";
-import { Eye, EyeOff, Lock, AtSign } from "lucide-react";
+import { Eye, EyeOff, Lock, AtSign, X } from "lucide-react";
 
 // Componente principal de Login
 const Login = () => {
@@ -24,16 +24,14 @@ const Login = () => {
   // Animación al montar el componente
   useEffect(() => {
     setFadeIn(true);
-  }, []);
-
-  // Redirecciona al usuario según su rol almacenado en localStorage
+  }, []);  // Redirecciona al usuario según su rol almacenado en localStorage
   useEffect(() => {
     // Solo redirige si estás en /login
     if (location.pathname === "/login" && usuario) {
       if (usuario.rol_usu === "ADMIN") {
         navigate("/admin"); // ✅ Redirige al panel principal
       } else if (usuario.rol_usu === "ESTUDIANTE") {
-        navigate("/eventos");
+        navigate("/home"); // Redirige a Home en lugar de eventos
       }
     }
   }, [usuario, location.pathname]);
@@ -81,17 +79,11 @@ const Login = () => {
       return;
     }
     saveEmailIfNew(email);
-
     try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/login`,
-        {
-          correo: email,
-          contrasena: password,
-        }
-      );
-
-      const { usuario: usu, token } = res.data;
+      const res = await axiosInstance.post(`/login`, {
+        correo: email,
+        contrasena: password,
+      }); const { usuario: usu, token } = res.data;
       const usuarioFinal = usu ?? res.data;
 
       login(usuarioFinal, token);
@@ -102,7 +94,7 @@ const Login = () => {
         if (usuarioFinal.rol_usu === "ADMIN") {
           navigate("/admin");
         } else if (usuarioFinal.rol_usu === "ESTUDIANTE") {
-          navigate("/eventos");
+          navigate("/home"); // Redirige a Home en lugar de eventos
         }
       }, 500); // pequeña pausa opcional
     } catch (err) {
@@ -268,9 +260,8 @@ const Login = () => {
       >
         {/* Tarjeta de inicio de sesión con animación */}
         <div
-          className={`shadow-lg p-4 p-md-5 rounded-4 text-center login-card ${
-            fadeIn ? "animate__animated animate__fadeIn" : ""
-          }`}
+          className={`shadow-lg p-4 p-md-5 rounded-4 text-center login-card ${fadeIn ? "animate__animated animate__fadeIn" : ""
+            }`}
           style={{
             maxWidth: "450px",
             width: "90%",
@@ -282,10 +273,11 @@ const Login = () => {
         >
           {/* Logo con animación flotante */}
           <div className="floating-icon mb-4">
+            {" "}
             <img
               src="https://i.imgur.com/KrUzH8J.png"
               alt="Logo FISEI"
-              style={{ width: "280px", height: "auto" }}
+              style={{ width: "320px", height: "auto" }}
               className="img-fluid"
             />
           </div>
@@ -343,35 +335,56 @@ const Login = () => {
                     maxHeight: "150px",
                     overflowY: "auto",
                     borderColor: "#8A1538",
-                    marginTop: "2px", // Ajuste menor de margen
-                    top: "100%", // Asegura que se coloque justo debajo del input
+                    marginTop: "2px",
+                    top: "100%",
                   }}
                 >
                   {sugerencias.map((correo, index) => (
                     <div
                       key={index}
-                      onMouseDown={() => {
-                        setEmail(correo);
-                        setMostrarSugerencias(false);
-                      }}
-                      className="px-3 py-2 suggestion-item"
-                      style={{
-                        cursor: "pointer",
-                        transition: "background 0.2s ease",
-                      }}
-                      onMouseEnter={(e) =>
-                        (e.currentTarget.style.backgroundColor = "#f8d7da")
-                      }
-                      onMouseLeave={(e) =>
-                        (e.currentTarget.style.backgroundColor = "transparent")
-                      }
+                      className="px-3 py-2 suggestion-item d-flex justify-content-between align-items-center"
+                      style={{ cursor: "pointer" }}
                     >
-                      {correo}
+                      <span
+                        onMouseDown={() => {
+                          setEmail(correo);
+                          setMostrarSugerencias(false);
+                        }}
+                      >
+                        {correo}
+                      </span>
+                      <button
+                        type="button"
+                        className="btn btn-link btn-sm text-danger ms-2"
+                        style={{ textDecoration: "none" }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          // Eliminar correo de localStorage
+                          const guardados =
+                            JSON.parse(localStorage.getItem("emailsUsados")) ||
+                            [];
+                          const nuevos = guardados.filter((c) => c !== correo);
+                          localStorage.setItem(
+                            "emailsUsados",
+                            JSON.stringify(nuevos)
+                          );
+                          setSugerencias(
+                            nuevos.filter((c) =>
+                              c.toLowerCase().includes(email.toLowerCase())
+                            )
+                          );
+                          if (nuevos.length === 0) setMostrarSugerencias(false);
+                        }}
+                        title="Eliminar sugerencia"
+                      >
+                        <X size={16} />
+                      </button>
                     </div>
                   ))}
                 </div>
               )}
             </div>
+            {/* Andriu Dex */}
 
             {/* Campo de contraseña */}
             <div className="mb-4">

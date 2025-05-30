@@ -1,56 +1,190 @@
 .navbar {
   background-color: white;
   border-bottom: 1px solid #e2e8f0;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 3px 15px rgba(138, 21, 56, 0.08);
   padding: 12px 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-family: "Poppins", sans-serif;
+  /* La barra de navegacion sea estatica */
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 .navbar-left {
   display: flex;
   align-items: center;
-  gap: 40px; /* separación entre logo y enlaces */
+  gap: 45px;
+  /* separación entre logo y enlaces */
 }
 
-.navbar-logo {
-  font-size: 1.25rem;
-  font-weight: bold;
-  color: #1d4ed8;
+/* Nuevo contenedor para logo e imagen */
+.navbar-logo-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   text-decoration: none;
+  transition: transform 0.3s ease;
+}
+
+.navbar-logo-container:hover {
+  transform: translateY(-2px);
+}
+
+.navbar-logo-img {
+  height: 40px;
+  width: auto;
+}
+
+.navbar-logo-text {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #8a1538;
+  letter-spacing: 0.5px;
 }
 
 .navbar-links {
   display: flex;
-  gap: 28px; /* separación entre los enlaces */
+  gap: 20px;
+  /* separación entre los enlaces */
 }
 
 .navbar-links a {
   font-size: 0.95rem;
   color: #374151;
   text-decoration: none;
-  transition: color 0.2s ease;
+  transition: all 0.3s ease;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+}
+
+/* Estilo específico para los enlaces con iconos */
+.nav-link-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-link-icon {
+  display: inline-flex;
+  font-size: 1.1rem;
 }
 
 .navbar-links a:hover {
   color: #8a1538;
-  text-decoration: underline;
+  background-color: rgba(138, 21, 56, 0.08);
+  transform: translateY(-2px);
+}
+
+/* Estilo para enlaces activos */
+.nav-link-active {
+  color: #8a1538 !important;
+  background-color: rgba(138, 21, 56, 0.1);
+  font-weight: 600;
+  position: relative;
+}
+
+/* Indicador de enlace activo */
+.nav-link-active::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 6px;
+  right: 6px;
+  height: 3px;
+  background-color: #8a1538;
+  border-radius: 2px;
+  transform: scaleX(1);
+  transition: transform 0.3s ease;
+  width: auto;
+}
+
+/* Botones de autenticación */
+.navbar-auth-btn {
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.login-btn {
+  background-color: #8a1538;
+  color: white !important;
+}
+
+.login-btn:hover {
+  background-color: #6a102c !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(138, 21, 56, 0.2);
+}
+
+.register-btn {
+  border: 1px solid #8a1538;
+  color: #8a1538 !important;
+}
+
+.register-btn:hover {
+  background-color: rgba(138, 21, 56, 0.08) !important;
+  transform: translateY(-2px);
 }
 
 .navbar-logout {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 0.9rem;
+  gap: 8px;
+  font-size: 0.95rem;
   background: none;
-  border: none;
-  color: #dc2626;
+  border: 1px solid #8a1538;
   cursor: pointer;
-  transition: color 0.2s ease;
+  color: #8a1538;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  margin-right: 24px;
 }
 
 .navbar-logout:hover {
-  color: #b91c1c;
+  background-color: #8a1538;
+  color: white;
+}
+
+/* Estilo para el link activo */
+.navbar-links a.active {
+  color: #8a1538;
+  font-weight: 500;
+  background-color: rgba(138, 21, 56, 0.1);
+}
+
+/* Estilos para el menú responsivo */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 16px;
+  }
+
+  .navbar-left {
+    width: 100%;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  .navbar-links {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+    margin-top: 15px;
+  }
+
+  .navbar-logout {
+    margin-top: 15px;
+    width: 100%;
+    justify-content: center;
+  }
 }

@@ -25,9 +25,8 @@ const manejarErroresDeMulter = (err, req, res, next) => {
 // ==========================================
 const crearInscripcion = async (req, res) => {
   try {
-    // const { id_usu, id_eve } = req.body;
     const { id_eve } = req.body;
-    const id_usu = req.usuario.id; // ← extraído del token
+    const id_usu = req.usuario.id;
 
     const archivo = req.file;
 
@@ -75,9 +74,8 @@ const crearInscripcion = async (req, res) => {
     if (!evento) {
       return res.status(404).json({ msg: "Evento no encontrado" });
     }
-
     const yaInscrito = await prisma.inscripcion.findFirst({
-      where: { id_usu, id_eve },
+      where: { id_usu_ins: id_usu, id_eve_ins: id_eve },
     });
 
     if (yaInscrito) {
@@ -87,8 +85,8 @@ const crearInscripcion = async (req, res) => {
     try {
       const nuevaInscripcion = await prisma.inscripcion.create({
         data: {
-          id_usu,
-          id_eve,
+          id_usu_ins: id_usu,
+          id_eve_ins: id_eve,
           comprobante: archivo.filename,
           estado: "PENDIENTE",
         },
@@ -203,9 +201,8 @@ const validarInscripcion = async (req, res) => {
 const obtenerInscripcionesPorUsuario = async (req, res) => {
   try {
     const { id } = req.params;
-
     const inscripciones = await prisma.inscripcion.findMany({
-      where: { id_eve: id },
+      where: { id_eve_ins: id },
       include: {
         usuario: {
           select: {
@@ -305,10 +302,8 @@ const reenviarComprobante = async (req, res) => {
 
     if (!inscripcion) {
       return res.status(404).json({ msg: "Inscripción no encontrada" });
-    }
-
-    // Solo puede reenviar el mismo estudiante
-    if (inscripcion.id_usu !== req.usuario.id) {
+    } // Solo puede reenviar el mismo estudiante
+    if (inscripcion.id_usu_ins !== req.usuario.id) {
       return res
         .status(403)
         .json({ msg: "No tienes permiso para modificar esta inscripción" });
@@ -337,9 +332,8 @@ const reenviarComprobante = async (req, res) => {
 const obtenerInscripcionesPorEvento = async (req, res) => {
   try {
     const { id } = req.params;
-
     const inscripciones = await prisma.inscripcion.findMany({
-      where: { id_eve: id },
+      where: { id_eve_ins: id },
       include: {
         usuario: {
           select: {
@@ -370,13 +364,10 @@ const obtenerInscripcionUsuarioEnEvento = async (req, res) => {
   try {
     const { idEvento } = req.params;
     const id_usu = req.usuario.id;
-
-    const inscripcion = await prisma.inscripcion.findUnique({
+    const inscripcion = await prisma.inscripcion.findFirst({
       where: {
-        id_usu_id_eve: {
-          id_usu,
-          id_eve: idEvento,
-        },
+        id_usu_ins: id_usu,
+        id_eve_ins: idEvento,
       },
     });
 
@@ -397,22 +388,42 @@ const obtenerInscripcionUsuarioEnEvento = async (req, res) => {
 // Inscripciones propias (usuario autenticado)
 // ==============================
 const obtenerInscripcionesDelUsuarioActual = async (req, res) => {
-  try {
-    const id_usu = req.usuario.id;
+  console.log("📋 Obteniendo inscripciones del usuario actual");
 
+  try {
+    // Verificar si req.usuario está definido
+    if (!req.usuario) {
+      console.log("❌ Error: req.usuario no está definido");
+      return res.status(401).json({
+        msg: "Usuario no autenticado",
+        error: "No hay información de usuario en la solicitud",
+      });
+    }
+
+    const id_usu = req.usuario.id;
+    console.log("👤 ID de usuario:", id_usu);
+
+    // Log antes de la consulta a Prisma
+    console.log("🔍 Buscando inscripciones para el usuario:", id_usu);
     const inscripciones = await prisma.inscripcion.findMany({
-      where: { id_usu },
+      where: { id_usu_ins: id_usu },
       include: {
         evento: true,
       },
       orderBy: { fec_ins: "desc" },
     });
 
+    console.log(`✅ Inscripciones encontradas: ${inscripciones.length}`);
+
     res.status(200).json(inscripciones);
   } catch (error) {
+    console.log("❌ Error al obtener inscripciones:", error);
+    console.log("Error stack:", error.stack);
+
     res.status(500).json({
       msg: "Error al obtener inscripciones",
       error: error.message,
+      stack: process.env.NODE_ENV === "development" ? error.stack : undefined,
     });
   }
 };

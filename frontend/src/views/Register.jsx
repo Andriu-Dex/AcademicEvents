@@ -1,6 +1,6 @@
 // Importa hooks y librerías necesarias
 import { useState, useEffect } from "react";
-import axios from "axios";
+import axiosInstance from "../api/axiosConfig";
 import { toast } from "react-toastify";
 import { useNavigate, Link } from "react-router-dom";
 import { User, Mail, Lock, Phone, FileText, BookText } from "lucide-react";
@@ -15,7 +15,7 @@ const Register = () => {
     cor_usu: "",
     con_usu: "",
     cel_usu: "",
-    carrera: "",
+    id_car_est: "",
   });
 
   const [archivo, setArchivo] = useState(null);
@@ -36,11 +36,10 @@ const Register = () => {
   const soloLetras = (texto) => {
     return /^[A-Za-zÁÉÍÓÚÑáéíóúñ\s]+$/.test(texto);
   };
-
   // Cargar carreras desde la API
   useEffect(() => {
-    axios
-      .get(`${import.meta.env.VITE_API_URL}/api/carreras`)
+    axiosInstance
+      .get("/carreras")
       .then((res) => setCarreras(res.data))
       .catch((err) => toast.error("Error al cargar carreras"));
   }, []);
@@ -48,7 +47,7 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const { ced_usu, nom_usu, ape_usu, carrera } = datos;
+    const { ced_usu, nom_usu, ape_usu, id_car_est: carrera } = datos;
 
     // Validar campos
     if (!validarCedula(ced_usu)) {
@@ -72,18 +71,35 @@ const Register = () => {
 
     const formData = new FormData();
     Object.entries(datos).forEach(([key, val]) => formData.append(key, val));
-    if (archivo) formData.append("archivo", archivo);
 
+    if (archivo) {
+      // Validar nuevamente el archivo antes de enviar
+      if (archivo.size > 5 * 1024 * 1024) {
+        return toast.error(
+          "El archivo excede el tamaño máximo permitido (5MB)."
+        );
+      }
+      if (!archivo.type || archivo.type !== "application/pdf") {
+        return toast.error("El archivo debe ser un PDF válido.");
+      }
+      formData.append("archivo", archivo);
+    }
     try {
       setLoading(true);
-      await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/registro`,
-        formData
-      );
-      toast.success("Registro exitoso");
+      const response = await axiosInstance.post("/registro", formData);
+      toast.success("Registro exitoso.");
       navigate("/login");
     } catch (error) {
-      toast.error(error.response?.data?.msg || "Error al registrar usuario");
+      console.error("Error en registro:", error);
+      if (error.response?.status === 413) {
+        toast.error("El archivo es demasiado grande. El límite es de 5MB.");
+      } else if (error.response?.data?.error === "invalid_file") {
+        toast.error("El archivo subido no es válido. Debe ser un PDF.");
+      } else if (error.response?.data?.msg) {
+        toast.error(error.response.data.msg);
+      } else {
+        toast.error("Error al registrar usuario. Intenta nuevamente.");
+      }
     } finally {
       setLoading(false);
     }
@@ -95,11 +111,13 @@ const Register = () => {
       <div className="form-scroll">
         <div className="form-content">
           <div className="text-center mb-4">
+            {" "}
             <div>
+              {" "}
               <img
                 src="https://i.imgur.com/ZDlLQ2T.png"
                 alt="Logo"
-                style={{ width: "180px", marginBottom: "10px" }}
+                style={{ width: "320px", marginBottom: "10px" }}
               />
             </div>
             <h2 className="registro-titulo">Registro de Usuario</h2>
@@ -168,14 +186,14 @@ const Register = () => {
                     </span>
                     <select
                       className="form-select"
-                      name="carrera"
-                      value={datos.carrera}
+                      name="id_car_est"
+                      value={datos.id_car_est}
                       onChange={handleChange}
                       required
                     >
                       <option value="">Seleccione una carrera</option>
                       {carreras.map((c) => (
-                        <option key={c.id_car} value={c.nom_car}>
+                        <option key={c.id_car} value={c.id_car}>
                           {c.nom_car}
                         </option>
                       ))}
@@ -184,6 +202,7 @@ const Register = () => {
                 </div>
 
                 <div className="mb-3">
+                  {" "}
                   <label className="form-label fw-semibold">
                     Documento PDF (matrícula, cédula, votación, motivación)
                   </label>
@@ -195,17 +214,54 @@ const Register = () => {
                       type="file"
                       accept=".pdf"
                       onChange={(e) => {
-                        setArchivo(e.target.files[0]);
-                        setArchivoNombre(e.target.files[0]?.name || "");
+                        const file = e.target.files[0];
+                        if (file) {
+                          // Validar tamaño de archivo (5MB = 5 * 1024 * 1024 bytes)
+                          const maxSize = 5 * 1024 * 1024; // 5MB en bytes
+                          if (file.size > maxSize) {
+                            toast.error(
+                              "El archivo excede el tamaño máximo permitido (5MB). Por favor, comprima el PDF o seleccione un archivo más pequeño.",
+                              {
+                                position: "top-center",
+                                autoClose: 5000,
+                              }
+                            );
+                            e.target.value = ""; // Limpiar el input
+                            setArchivo(null);
+                            setArchivoNombre("");
+                          } else if (
+                            !file.type ||
+                            file.type !== "application/pdf"
+                          ) {
+                            toast.error("El archivo debe ser un PDF válido.", {
+                              position: "top-center",
+                              autoClose: 3000,
+                            });
+                            e.target.value = ""; // Limpiar el input
+                            setArchivo(null);
+                            setArchivoNombre("");
+                          } else {
+                            setArchivo(file);
+                            setArchivoNombre(file.name);
+                          }
+                        }
                       }}
                       className="form-control"
                       required
                     />
                   </div>
                   {archivoNombre && (
-                    <small className="text-muted">
-                      Archivo seleccionado: <strong>{archivoNombre}</strong>
-                    </small>
+                    <div className="mt-2 d-flex justify-content-center">
+                      <small className="text-muted d-flex align-items-center">
+                        {" "}
+                        <strong className="ms-1">{archivoNombre}</strong>
+                        {archivo && (
+                          <span className="ms-2">
+                            ({Math.round(archivo.size / 1024)} KB)
+                          </span>
+                        )}
+                      </small>
+                    </div>
                   )}
                 </div>
               </>
@@ -214,6 +270,7 @@ const Register = () => {
             <button
               type="submit"
               className="btn btn-primary w-100 fw-bold py-2"
+              style={{ textAlign: "center" }}
               disabled={loading}
             >
               {loading ? "Registrando..." : "Registrarse"}

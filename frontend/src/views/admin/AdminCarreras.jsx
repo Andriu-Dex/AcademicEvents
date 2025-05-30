@@ -1,41 +1,67 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axiosInstance from "../../api/axiosConfig";
 import { toast } from "react-toastify";
 import { Dialog } from "@headlessui/react";
 import "./styles/AdminCarreras.css";
 
 const AdminCarreras = () => {
   const [carreras, setCarreras] = useState([]);
+  const [facultades, setFacultades] = useState([]);
   const [nuevaCarrera, setNuevaCarrera] = useState("");
+  const [facultadSeleccionada, setFacultadSeleccionada] = useState("");
   const [editandoId, setEditandoId] = useState(null);
   const [nombresEditables, setNombresEditables] = useState({});
   const [modalEliminar, setModalEliminar] = useState({
     abierto: false,
     id: null,
   });
-
   const cargarCarreras = async () => {
     try {
-      const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/carreras`
-      );
+      const res = await axiosInstance.get("/carreras");
       setCarreras(res.data);
     } catch (error) {
+      console.error(error);
       toast.error("Error al cargar las carreras");
+    }
+  };
+
+  const cargarFacultades = async () => {
+    try {
+      const res = await axiosInstance.get("/facultades");
+      setFacultades(res.data);
+      if (res.data.length > 0) {
+        setFacultadSeleccionada(res.data[0].id_fac);
+      }
+    } catch (error) {
+      console.error("Error al cargar facultades:", error);
+      toast.error("Error al cargar las facultades");
     }
   };
 
   const crearCarrera = async () => {
     if (!nuevaCarrera.trim()) return toast.warning("Nombre vacío");
+    if (!facultadSeleccionada) return toast.warning("Seleccione una facultad");
+
     try {
-      await axios.post(`${import.meta.env.VITE_API_URL}/api/carreras`, {
+      console.log("Enviando datos:", {
         nom_car: nuevaCarrera.trim(),
+        id_fac_per: facultadSeleccionada,
       });
+
+      await axiosInstance.post("/carreras", {
+        nom_car: nuevaCarrera.trim(),
+        id_fac_per: facultadSeleccionada,
+      });
+
       toast.success("Carrera creada");
       setNuevaCarrera("");
       cargarCarreras();
     } catch (error) {
-      toast.error("Error al crear carrera");
+      console.error("Error al crear carrera:", error);
+      toast.error(
+        "Error al crear carrera: " +
+          (error.response?.data?.msg || error.message)
+      );
     }
   };
 
@@ -46,10 +72,11 @@ const AdminCarreras = () => {
   const eliminarCarrera = async () => {
     const id = modalEliminar.id;
     try {
-      await axios.delete(`${import.meta.env.VITE_API_URL}/api/carreras/${id}`);
+      await axiosInstance.delete(`/carreras/${id}`);
       toast.success("Carrera eliminada");
       cargarCarreras();
     } catch (error) {
+      console.error(error);
       toast.error("Error al eliminar carrera");
     } finally {
       setModalEliminar({ abierto: false, id: null });
@@ -62,7 +89,7 @@ const AdminCarreras = () => {
       return toast.warning("El nombre no puede estar vacío");
     }
     try {
-      await axios.put(`${import.meta.env.VITE_API_URL}/api/carreras/${id}`, {
+      await axiosInstance.put(`/carreras/${id}`, {
         nom_car: nuevoNombre.trim(),
       });
       toast.success("Carrera actualizada");
@@ -74,40 +101,48 @@ const AdminCarreras = () => {
       });
       cargarCarreras();
     } catch (error) {
+      console.error(error);
       toast.error("Error al actualizar carrera");
     }
   };
-
   useEffect(() => {
     cargarCarreras();
+    cargarFacultades();
   }, []);
 
   return (
-    <div className="p-6 max-w-2xl mx-auto">
-      <h2 className="text-xl font-bold mb-4">Gestión de Carreras</h2>
+    <div className="admincarreras-container">
+      <h2 className="admincarreras-title">Gestión de Carreras</h2>
 
-      <div className="flex gap-2 mb-4">
+      <div className="admincarreras-input-group">
         <input
           type="text"
           placeholder="Nueva carrera"
-          className="border p-2 flex-1"
+          className="admincarreras-input"
           value={nuevaCarrera}
           onChange={(e) => setNuevaCarrera(e.target.value)}
         />
-        <button
-          onClick={crearCarrera}
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+        <select
+          className="admincarreras-select"
+          value={facultadSeleccionada}
+          onChange={(e) => setFacultadSeleccionada(e.target.value)}
         >
-          Crear
+          <option value="">Seleccione una facultad</option>
+          {facultades.map((facultad) => (
+            <option key={facultad.id_fac} value={facultad.id_fac}>
+              {facultad.nom_fac}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div className="crear-carrera">
+        <button onClick={crearCarrera} className="btn-crear-ad">
+          Crear Carrera
         </button>
       </div>
-
-      <ul className="space-y-2">
+      <ul className="admincarreras-lista">
         {carreras.map((carrera) => (
-          <li
-            key={carrera.id_car}
-            className="border p-2 flex justify-between items-center gap-2"
-          >
+          <li key={carrera.id_car} className="admincarreras-item">
             {editandoId === carrera.id_car ? (
               <input
                 type="text"
@@ -118,23 +153,23 @@ const AdminCarreras = () => {
                     [carrera.id_car]: e.target.value,
                   }))
                 }
-                className="border p-1 flex-1"
+                className="admincarreras-input"
               />
             ) : (
-              <span className="flex-1">{carrera.nom_car}</span>
+              <span className="admincarreras-nombre">{carrera.nom_car}</span>
             )}
 
             {editandoId === carrera.id_car ? (
               <>
                 <button
                   onClick={() => actualizarCarrera(carrera.id_car)}
-                  className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
+                  className="btn-guardar"
                 >
                   Guardar
                 </button>
                 <button
                   onClick={() => setEditandoId(null)}
-                  className="bg-gray-400 text-white px-3 py-1 rounded hover:bg-gray-500"
+                  className="btn-cancelar-ac"
                 >
                   Cancelar
                 </button>
@@ -148,7 +183,7 @@ const AdminCarreras = () => {
                     [carrera.id_car]: carrera.nom_car,
                   }));
                 }}
-                className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
+                className="btn-editar"
               >
                 Editar
               </button>
@@ -156,7 +191,7 @@ const AdminCarreras = () => {
 
             <button
               onClick={() => confirmarEliminar(carrera.id_car)}
-              className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
+              className="btn-eliminar"
             >
               Eliminar
             </button>
@@ -164,34 +199,28 @@ const AdminCarreras = () => {
         ))}
       </ul>
 
-      {/* Modal de confirmación */}
       <Dialog
         open={modalEliminar.abierto}
         onClose={() => setModalEliminar({ abierto: false, id: null })}
         className="admincarreras-modal-container"
       >
         <div className="admincarreras-modal-overlay" aria-hidden="true" />
-
         <div className="admincarreras-modal-content">
-          <Dialog.Title className="text-lg font-bold text-gray-800 mb-4">
+          <Dialog.Title className="admincarreras-modal-title">
             Confirmar eliminación
           </Dialog.Title>
-          <p className="text-sm text-gray-600 mb-6">
+          <p className="admincarreras-modal-text">
             ¿Estás seguro de que deseas eliminar esta carrera? Esta acción no se
             puede deshacer.
           </p>
-
-          <div className="flex justify-end gap-3">
+          <div className="admincarreras-modal-buttons">
             <button
               onClick={() => setModalEliminar({ abierto: false, id: null })}
-              className="px-4 py-2 rounded bg-gray-300 text-gray-800 hover:bg-gray-400"
+              className="btn-cancelar-ac"
             >
               Cancelar
             </button>
-            <button
-              onClick={eliminarCarrera}
-              className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700"
-            >
+            <button onClick={eliminarCarrera} className="btn-eliminar">
               Eliminar
             </button>
           </div>
@@ -202,4 +231,3 @@ const AdminCarreras = () => {
 };
 
 export default AdminCarreras;
-//Andriu Dex

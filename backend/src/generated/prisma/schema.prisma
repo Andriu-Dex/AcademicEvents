@@ -13,73 +13,101 @@ datasource db {
 // ============================
 
 model usuario {
-  id_usu      String      @id @default(uuid())
-  ced_usu     String      @unique
-  nom_usu     String
-  ape_usu     String
-  cor_usu     String      @unique
-  con_usu     String
+  id_usu      String      @id @default(uuid()) // UUID como ID del usuario
+  ced_usu     String      @unique // Cédula única del usuario
+  nom_usu     String // Nombre del usuario
+  ape_usu     String // Apellido del usuario
+  cor_usu     String      @unique // Correo electrónico único del usuario
+  con_usu     String // Contraseña del usuario
   cel_usu     String      @db.Char(10) // Solo 10 caracteres exactos
-  rol_usu     rol_usuario
-  fec_cre_usu DateTime    @default(now())
-  comprobante String? //Nombre del archivo
-  carrera     String?
+  rol_usu     rol_usuario // Rol del usuario (ADMIN, ESTUDIANTE, GENERAL)
+  fec_cre_usu DateTime    @default(now()) // Fecha de creación del usuario
+  com_usu     String? // url de la cedula, papeleta de votacion o matricula
+  id_car_est  String? // FK opcional a carrera
 
-  inscripciones inscripcion[] // Un usuario puede tener muchas inscripciones
+  carrera       carrera?      @relation(fields: [id_car_est], references: [id_car]) // Relación 1:N (usuario puede estar en una o ningua carrera)
+  inscripciones inscripcion[] // Relación 1:N (usuario puede tener muchas inscripciones)
 }
 
 model carrera {
-  id_car      String   @id @default(uuid())
-  nom_car     String   @unique
-  est_car     Boolean  @default(true)
-  fec_cre_car DateTime @default(now())
+  id_car      String   @id @default(uuid()) // UUID como ID de la carrera
+  nom_car     String   @unique // Nombre único de la carrera
+  est_car     Boolean  @default(true) // Estado de la carrera (activa/inactiva)
+  fec_cre_car DateTime @default(now()) // Fecha de creación de la carrera
+  id_fac_per  String // FK a facultad
 
-  eventos evento[] // Una carrera puede tener varios eventos
+  facultad facultad         @relation(fields: [id_fac_per], references: [id_fac]) // Relación 1:N (carrera pertenece a una facultad)
+  usuario  usuario[] // Relación 1:N (carrera puede tener muchos usuarios)
+  eventos  evento_carrera[] // Relación 1:N (carrera puede tener muchos eventos)
 }
 
 model evento {
-  id_eve        String      @id @default(uuid())
-  nom_eve       String
-  des_eve       String?
-  tip_eve       tipo_evento
-  fec_ini_eve   DateTime
-  fec_fin_eve   DateTime
-  dur_hrs_eve   Int
-  pagado_eve    Boolean     @default(false)
-  nota_min_eve  Float? // Solo si es curso
-  por_asist_eve Float? // Solo si es curso, asistencia requerida (0–100)
-  est_eve       Boolean     @default(true)
-  fec_cre_eve   DateTime    @default(now())
+  id_eve          String        @id @default(uuid()) // UUID como ID del evento
+  nom_eve         String // Nombre del evento
+  des_eve         String? // Descripción del evento
+  tip_eve         tipo_evento // Tipo de evento (CURSO, CONGRESO, WEBINAR, CHARLA, SOCIALIZACION, PUBLICO)
+  fec_ini_eve     DateTime // Fecha de inicio del evento
+  val_eve         Float // Valor del evento
+  est_eve         estado_evento @default(ACTIVO) // Estado del evento (ACTIVO, INACTIVO, FINALIZADO, CANCELADO, SUSPENDIDO)
+  fec_cre_eve     DateTime      @default(now()) // Fecha de creación del evento
+  img_por_eve     String // URL de la imagen del evento
+  dur_hor_eve     Int // Duración en horas del evento
+  por_min_asi_eve Float // Porcentaje mínimo de asistencia del evento
+  fec_fin_eve     DateTime // Fecha de finalización del evento
 
-  carreraId String?
-  carrera   carrera? @relation(fields: [carreraId], references: [id_car])
+  inscritos       inscripcion[] // Relación 1:N (evento puede tener muchas inscripciones)
+  eventos_carrera evento_carrera[] // Relación 1:N (evento puede tener muchas carreras)
+  eventos_curso   evento_curso? // Relación 1:1 (evento puede tener un curso)
+}
 
-  inscripciones inscripcion[]
+model evento_curso {
+  id_eve_cur  String @id // Reutiliza el uuid del evento
+  not_min_cur Float // Nota mínima del curso 
+
+  evento evento @relation(fields: [id_eve_cur], references: [id_eve]) // Relación 1:1 (evento puede tener un curso)
+}
+
+model evento_carrera {
+  id_eve_car String   @id @default(uuid()) // UUID como ID del evento carrera (general)
+  id_car_aso String // FK a carrera
+  id_eve_aso String // FK a evento
+  fec_aso    DateTime @default(now()) // Fecha de asociación
+
+  carrera carrera @relation(fields: [id_car_aso], references: [id_car]) // Relación 1:N (carrera puede tener muchos eventos)
+  evento  evento  @relation(fields: [id_eve_aso], references: [id_eve]) // Relación 1:N (evento puede tener muchas carreras)
 }
 
 model inscripcion {
-  id_ins String @id @default(uuid())
-  id_usu String
-  id_eve String
+  id_ins      String             @id @default(uuid()) // UUID como ID de la inscripción
+  id_usu_ins  String // FK a usuario
+  id_eve_ins  String // FK a evento
+  est_ins     estado_inscripcion @default(PENDIENTE) // Estado de la inscripción (PENDIENTE, ACEPTADA, RECHAZADA, FINALIZADA)
+  fec_ins     DateTime           @default(now()) // Fecha de inscripción
+  fec_pag_ins DateTime? // Fecha de pago de la inscripción
+  cer_eve_env Boolean            @default(false) // Certificado del evento enviado (true/false)
+  car_mot_usu String? // URL de la carta por la que quiere estar en el evento
 
-  usuario usuario @relation(fields: [id_usu], references: [id_usu])
-  evento  evento  @relation(fields: [id_eve], references: [id_eve])
-
-  comprobante  String? // Nombre del archivo subido (comprobante de pago o carta)
-  nota_final   Float? // Nota final del curso (si aplica)
-  asistencia   Float? // Asistencia del estudiante (0–100)
-  estado       estado_inscripcion @default(PENDIENTE)
-  fec_ins      DateTime           @default(now())
-  cert_enviado Boolean            @default(false)
-
-  @@unique([id_usu, id_eve])
+  usuario           usuario            @relation(fields: [id_usu_ins], references: [id_usu]) // Relación 1:N (usuario puede tener muchas inscripciones)
+  evento            evento             @relation(fields: [id_eve_ins], references: [id_eve]) // Relación 1:N (evento puede tener muchas inscripciones)
+  inscripcion_curso inscripcion_curso? // Relación 1:1 (inscripción puede tener un curso)
 }
 
-model configuracion {
-  id_conf     Int    @id @default(1)
-  mision      String
-  vision      String
-  autoridades String
+model inscripcion_curso {
+  id_ins_cur      String @id // Reutiliza el uuid de inscripcion
+  not_fin_usu     Float? // Nota final (solo para cursos)
+  por_asi_fin_usu Float? // Procentaje de asistencia (solo para cursos)
+
+  inscripcion inscripcion @relation(fields: [id_ins_cur], references: [id_ins]) // Relación 1:1 (inscripción puede tener un curso)
+}
+
+model facultad {
+  id_fac  String @id @default(uuid()) // UUID como ID de la facultad
+  nom_fac String @unique // Nombre único de la facultad
+  des_fac String // Descripción de la facultad
+  mis_fac String // Misión de la facultad
+  vis_fac String // Visión de la facultad
+
+  carreras carrera[] // Relación 1:N (facultad puede tener muchas carreras)
 }
 
 // ============================
@@ -89,6 +117,7 @@ model configuracion {
 enum rol_usuario {
   ADMIN
   ESTUDIANTE
+  GENERAL
 }
 
 enum tipo_evento {
@@ -105,4 +134,12 @@ enum estado_inscripcion {
   ACEPTADA
   RECHAZADA
   FINALIZADA
+}
+
+enum estado_evento {
+  ACTIVO
+  INACTIVO
+  FINALIZADO
+  CANCELADO
+  SUSPENDIDO
 }

@@ -1,0 +1,619 @@
+/* =======================
+   Variables de color
+   ======================= */
+:root {
+  --color-primario: #8a1538;
+  --color-secundario: #1d4ed8;
+  --color-acento: #2563eb;
+  --color-texto: #1f2937;
+  --color-gris: #6b7280;
+  --color-fondo: #f9fafb;
+}
+
+/* =======================
+   Estilos globales
+   ======================= */
+body {
+  font-family: "Poppins", sans-serif;
+  line-height: 1.6;
+  position: relative;
+  min-height: 100vh;
+  z-index: 1;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* background-image: url("https://i.imgur.com/c6Ry30Z.jpeg"); */
+  background-image: url("https://i.imgur.com/4oKSBsQ.jpeg");
+  filter: saturate(1.5);
+  background-size: 110%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  z-index: -1;
+  animation: bgMove 12s linear infinite alternate;
+}
+
+@keyframes bgMove {
+  0% {
+    background-position: 0px -80px; /* Horizontal , vertical*/
+  }
+  100% {
+    background-position: 100% 0;
+  }
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(0, 0, 0, 0.15) 40%,
+    rgba(0, 0, 0, 0.5) 100%
+  );
+  /* backdrop-filter: blur(2px); */
+  z-index: -1;
+}
+
+/* =======================
+   Contenedor principal
+   ======================= */
+.myins-container {
+  margin: 15px 30px;
+  padding: 0 1rem;
+}
+
+/* =======================
+   Grid de tarjetas
+   ======================= */
+.myins-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+/* =======================
+   Título de la vista
+   ======================= */
+.myins-title {
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
+  font-size: 35px;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  margin-left: 10px;
+  width: 100%;
+  text-align: center;
+  color: black;
+  position: relative;
+  background-color: rgba(255, 255, 255, 0.6);
+  border-radius: 5px;
+}
+
+.myins-title::after {
+  content: "";
+  position: absolute;
+  bottom: -12px;
+  left: 0;
+  width: 60px;
+  height: 5px;
+  background-color: var(--color-primario);
+  border-radius: 2px;
+  transition: background-color 0.2s ease;
+}
+
+/* =======================
+   Mensaje de lista vacía
+   ======================= */
+.myins-empty {
+  color: #6b7280;
+}
+
+/* =======================
+   Contenedor de mensaje de lista vacía mejorado
+   ======================= */
+.myins-empty-container {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 0.75rem;
+  padding: 2.5rem 2rem;
+  margin: 2rem auto;
+  max-width: 550px;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.myins-empty-icon {
+  margin: 0 auto 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100px;
+  height: 100px;
+  background-color: #f0f4ff;
+  border-radius: 50%;
+  color: var(--color-acento);
+  animation: pulseIcon 2.5s ease-in-out infinite;
+}
+
+@keyframes pulseIcon {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.3);
+  }
+  70% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 15px rgba(37, 99, 235, 0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.myins-empty-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-texto);
+  margin-bottom: 1rem;
+}
+
+.myins-empty-text {
+  font-size: 1rem;
+  color: #4b5563;
+  margin-bottom: 1.75rem;
+  line-height: 1.5;
+}
+
+.myins-empty-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: rgb(164, 34, 34);
+  color: white;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 10px rgba(140, 19, 19, 0.9);
+}
+
+.myins-empty-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(140, 19, 19, 0.9);
+}
+
+.myins-empty-button:active {
+  transform: translateY(0);
+}
+
+/* =======================
+   Tarjeta de inscripción
+   ======================= */
+
+.myins-card {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  backdrop-filter: blur(4px);
+  animation: bordeAnimado 8s ease-in-out infinite alternate;
+}
+
+@keyframes bordeAnimado {
+  0% {
+    border: rgb(48, 48, 48) 1px solid;
+    box-shadow: rgb(0, 0, 0) 0px 0px 10px;
+  }
+  35% {
+    border: rgb(255, 0, 0) 1px solid;
+    box-shadow: #b91c1c 0px 0px 10px;
+  }
+  70% {
+    border: rgb(47, 33, 171) 1px solid;
+    box-shadow: #112c76 0px 0px 10px;
+  }
+  100% {
+    border: rgb(22, 193, 59) 1px solid;
+    box-shadow: #0d5327 0px 0px 10px;
+  }
+}
+
+.myins-card:hover {
+  box-shadow: 0 6px 20px rgba(138, 21, 56, 0.15);
+  transform: scale(1.02);
+}
+
+@keyframes slideFadeIn {
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* =======================
+   Encabezado de tarjeta
+   ======================= */
+.myins-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+/* =======================
+   Nombre del evento
+   ======================= */
+.myins-event-name {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+/* =======================
+   Estado de inscripción
+   ======================= */
+.myins-estado {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0.25rem 0.5rem;
+  border-radius: 5px;
+}
+
+.estado-pendiente {
+  color: #b45309;
+}
+
+.estado-aceptada {
+  color: #15803d;
+}
+
+.estado-rechazada {
+  color: #b91c1c;
+}
+
+.estado-finalizada {
+  color: #1d4ed8;
+}
+
+/* =======================
+   Datos adicionales de inscripción
+   ======================= */
+.myins-datos {
+  font-size: 0.875rem;
+  color: #4b5563;
+}
+
+/* =======================
+   Sección de certificado
+   ======================= */
+.myins-certificado {
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+/* =======================
+   Estado del certificado
+   ======================= */
+.cert-enviado {
+  font-size: 0.75rem;
+  color: #16a34a;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.cert-pendiente {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 1rem;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-left: auto;
+  margin-right: 5%;
+}
+
+/* =======================
+   Botónes
+   ======================= */
+.btn {
+  font-size: 0.875rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+/* =======================
+   Botón descargar certificado
+   ======================= */
+.btn-descargar {
+  font-size: 0.875rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: #b6cafc 1px solid;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  transition: background 0.2s ease, color 0.2s ease;
+  color: var(--color-acento);
+  background-color: #f0f4ff;
+  border-radius: 0.375rem;
+}
+
+.btn-descargar:hover {
+  background-color: #dbeafe;
+  color: #1e3a8a;
+  transition: all 0.2s ease-in-out;
+  transform: scale(1.03);
+  border: #0400ff 1px solid;
+}
+
+/* =======================
+   Botón reenviar certificado
+   ======================= */
+.btn-reenviar {
+  font-size: 0.875rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: #ffb6b6 1px solid;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  transition: background 0.2s ease, color 0.2s ease;
+  color: #b91c1c;
+  background-color: #fde4e4;
+  border-radius: 0.375rem;
+}
+
+.btn-reenviar:hover {
+  background-color: #fdd0d0;
+  color: var(--color-primario);
+  transition: all 0.2s ease-in-out;
+  transform: scale(1.03);
+  border: #b91c1c 1px solid;
+}
+
+/* =======================
+   Botón felicitaciones
+   ======================= */
+.btn-felicitaciones {
+  font-size: 0.875rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid #6ee7b7;
+  cursor: pointer;
+  padding: 0.5rem 1.25rem;
+  background-color: #d1fae5;
+  color: #15803d;
+  font-weight: 600;
+  margin-top: 0.5rem;
+  border-radius: 0.375rem;
+  transition: background 0.2s, color 0.2s, transform 0.15s;
+}
+
+.btn-felicitaciones:hover {
+  background-color: #bbf7d0;
+  color: #166534;
+  transform: scale(1.04);
+  border: 1px solid #22d3ee;
+}
+
+/* =======================
+   Modal (ventana emergente)
+   ======================= */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(6px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 50;
+}
+
+.modal-overlay .modal-content {
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 0.75rem;
+  padding: 1.75rem;
+  width: 100%;
+  max-width: 32rem;
+  border: 2px solid rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 3px rgba(255, 255, 255, 0.7), 0 0 6px rgba(255, 255, 255, 0.5),
+    0 0 12px rgba(255, 255, 255, 0.3);
+  position: relative;
+  animation: fadeInModal 0.3s ease-out;
+}
+
+@keyframes fadeInModal {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.modal-content .modal-title-mi {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-texto);
+  margin-bottom: 1rem;
+  text-align: center;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+/* =======================
+   Campo de archivo
+   ======================= */
+.input-archivo {
+  display: none;
+}
+
+.btn-subir {
+  display: inline-block;
+  background-color: #f0f4ff;
+  color: var(--color-acento);
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: 0.375rem;
+  border: 1px solid #b6cafc;
+  cursor: pointer;
+  width: auto;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-subir:hover {
+  background-color: #dbeafe;
+  color: #1e3a8a;
+}
+
+.archivo-info {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 0.85rem;
+  color: #681c1c;
+  margin-top: 0.6rem;
+  /* margin-left: 10px; */
+  text-align: center;
+}
+
+.placeholder-archivo {
+  margin-left: 15px;
+}
+
+/* =======================
+   Botones
+   ======================= */
+.modal-botones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+/* Botón ENVIAR */
+.btn-enviar,
+.btn-cancelar-mi {
+  font-size: 1rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.7rem;
+  width: 35%;
+  gap: 0.4rem;
+  cursor: pointer;
+  padding: 0.45rem 1.2rem;
+  color: white;
+  border-radius: 0.375rem;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(17, 61, 238, 0.08);
+  position: relative;
+  overflow: hidden;
+  will-change: transform, box-shadow;
+  animation: btnFadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes btnFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.btn-enviar::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(17, 61, 238, 0.15);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 0;
+}
+
+.btn-enviar:hover::after {
+  width: 250%;
+  height: 250%;
+}
+
+.btn-enviar:hover {
+  background-color: #1130ab;
+  border: 1px solid #000000;
+  transform: scale(1.05) translateY(-2px);
+  box-shadow: 0 6px 24px rgba(17, 61, 238, 0.18);
+}
+
+/* Botón CANCELAR */
+.btn-cancelar-mi {
+  background-color: #e71919;
+  border: 1px solid #670b0b;
+  margin-right: auto;
+  margin-left: 10px;
+}
+
+.btn-cancelar-mi:hover {
+  background-color: #a91111;
+  border: 1px solid #000000;
+  transform: scale(1.05) translateY(-2px) rotate(-2deg);
+  box-shadow: 0 6px 24px rgba(231, 25, 25, 0.18);
+}
+
+.btn-enviar:active,
+.btn-cancelar-mi:active {
+  transform: scale(0.97);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+}
