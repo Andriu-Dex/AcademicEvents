@@ -6,7 +6,9 @@ import "./styles/AdminCarreras.css";
 
 const AdminCarreras = () => {
   const [carreras, setCarreras] = useState([]);
+  const [facultades, setFacultades] = useState([]);
   const [nuevaCarrera, setNuevaCarrera] = useState("");
+  const [facultadSeleccionada, setFacultadSeleccionada] = useState("");
   const [editandoId, setEditandoId] = useState(null);
   const [nombresEditables, setNombresEditables] = useState({});
   const [modalEliminar, setModalEliminar] = useState({
@@ -23,17 +25,43 @@ const AdminCarreras = () => {
     }
   };
 
+  const cargarFacultades = async () => {
+    try {
+      const res = await axiosInstance.get("/facultades");
+      setFacultades(res.data);
+      if (res.data.length > 0) {
+        setFacultadSeleccionada(res.data[0].id_fac);
+      }
+    } catch (error) {
+      console.error("Error al cargar facultades:", error);
+      toast.error("Error al cargar las facultades");
+    }
+  };
+
   const crearCarrera = async () => {
-    if (!nuevaCarrera.trim()) return toast.warning("Nombre vacío"); try {
+    if (!nuevaCarrera.trim()) return toast.warning("Nombre vacío");
+    if (!facultadSeleccionada) return toast.warning("Seleccione una facultad");
+
+    try {
+      console.log("Enviando datos:", {
+        nom_car: nuevaCarrera.trim(),
+        id_fac_per: facultadSeleccionada,
+      });
+
       await axiosInstance.post("/carreras", {
         nom_car: nuevaCarrera.trim(),
+        id_fac_per: facultadSeleccionada,
       });
+
       toast.success("Carrera creada");
       setNuevaCarrera("");
       cargarCarreras();
     } catch (error) {
-      console.error(error);
-      toast.error("Error al crear carrera");
+      console.error("Error al crear carrera:", error);
+      toast.error(
+        "Error al crear carrera: " +
+          (error.response?.data?.msg || error.message)
+      );
     }
   };
 
@@ -77,9 +105,9 @@ const AdminCarreras = () => {
       toast.error("Error al actualizar carrera");
     }
   };
-
   useEffect(() => {
     cargarCarreras();
+    cargarFacultades();
   }, []);
 
   return (
@@ -94,6 +122,18 @@ const AdminCarreras = () => {
           value={nuevaCarrera}
           onChange={(e) => setNuevaCarrera(e.target.value)}
         />
+        <select
+          className="admincarreras-select"
+          value={facultadSeleccionada}
+          onChange={(e) => setFacultadSeleccionada(e.target.value)}
+        >
+          <option value="">Seleccione una facultad</option>
+          {facultades.map((facultad) => (
+            <option key={facultad.id_fac} value={facultad.id_fac}>
+              {facultad.nom_fac}
+            </option>
+          ))}
+        </select>
         <button onClick={crearCarrera} className="btn-crear">
           Crear
         </button>

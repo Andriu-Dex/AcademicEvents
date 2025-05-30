@@ -6,7 +6,11 @@ const prisma = require("../config/db");
 // =====================
 const crearCarrera = async (req, res) => {
   try {
-    const { nom_car } = req.body;
+    console.log("Body recibido:", req.body);
+    const { nom_car, id_fac_per } = req.body;
+
+    console.log("Nombre de carrera:", nom_car);
+    console.log("ID de facultad:", id_fac_per);
 
     if (!nom_car || nom_car.trim() === "") {
       return res
@@ -14,20 +18,44 @@ const crearCarrera = async (req, res) => {
         .json({ msg: "El nombre de la carrera es obligatorio" });
     }
 
+    if (!id_fac_per) {
+      return res
+        .status(400)
+        .json({ msg: "El ID de la facultad es obligatorio" });
+    }
+
+    console.log("Verificando si la carrera existe...");
     const carreraExistente = await prisma.carrera.findUnique({
       where: { nom_car },
     });
 
     if (carreraExistente) {
+      console.log("Error: La carrera ya existe");
       return res.status(400).json({ msg: "La carrera ya existe" });
     }
 
-    const nuevaCarrera = await prisma.carrera.create({
-      data: { nom_car },
+    console.log("Verificando si la facultad existe...");
+    const facultadExistente = await prisma.facultad.findUnique({
+      where: { id_fac: id_fac_per },
     });
 
+    if (!facultadExistente) {
+      console.log("Error: La facultad no existe");
+      return res.status(400).json({ msg: "La facultad no existe" });
+    }
+
+    console.log("Creando nueva carrera...");
+    const nuevaCarrera = await prisma.carrera.create({
+      data: {
+        nom_car,
+        id_fac_per,
+      },
+    });
+
+    console.log("Carrera creada exitosamente:", nuevaCarrera);
     res.status(201).json(nuevaCarrera);
   } catch (error) {
+    console.error("Error detallado al crear carrera:", error);
     res.status(500).json({
       msg: "Error al crear carrera",
       error: error.message,

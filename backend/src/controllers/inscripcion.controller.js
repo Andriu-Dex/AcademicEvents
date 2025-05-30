@@ -74,9 +74,8 @@ const crearInscripcion = async (req, res) => {
     if (!evento) {
       return res.status(404).json({ msg: "Evento no encontrado" });
     }
-
     const yaInscrito = await prisma.inscripcion.findFirst({
-      where: { id_usu, id_eve },
+      where: { id_usu_ins: id_usu, id_eve_ins: id_eve },
     });
 
     if (yaInscrito) {
@@ -86,8 +85,8 @@ const crearInscripcion = async (req, res) => {
     try {
       const nuevaInscripcion = await prisma.inscripcion.create({
         data: {
-          id_usu,
-          id_eve,
+          id_usu_ins: id_usu,
+          id_eve_ins: id_eve,
           comprobante: archivo.filename,
           estado: "PENDIENTE",
         },
@@ -202,9 +201,8 @@ const validarInscripcion = async (req, res) => {
 const obtenerInscripcionesPorUsuario = async (req, res) => {
   try {
     const { id } = req.params;
-
     const inscripciones = await prisma.inscripcion.findMany({
-      where: { id_eve: id },
+      where: { id_eve_ins: id },
       include: {
         usuario: {
           select: {
@@ -304,10 +302,8 @@ const reenviarComprobante = async (req, res) => {
 
     if (!inscripcion) {
       return res.status(404).json({ msg: "Inscripción no encontrada" });
-    }
-
-    // Solo puede reenviar el mismo estudiante
-    if (inscripcion.id_usu !== req.usuario.id) {
+    } // Solo puede reenviar el mismo estudiante
+    if (inscripcion.id_usu_ins !== req.usuario.id) {
       return res
         .status(403)
         .json({ msg: "No tienes permiso para modificar esta inscripción" });
@@ -336,9 +332,8 @@ const reenviarComprobante = async (req, res) => {
 const obtenerInscripcionesPorEvento = async (req, res) => {
   try {
     const { id } = req.params;
-
     const inscripciones = await prisma.inscripcion.findMany({
-      where: { id_eve: id },
+      where: { id_eve_ins: id },
       include: {
         usuario: {
           select: {
@@ -369,13 +364,10 @@ const obtenerInscripcionUsuarioEnEvento = async (req, res) => {
   try {
     const { idEvento } = req.params;
     const id_usu = req.usuario.id;
-
-    const inscripcion = await prisma.inscripcion.findUnique({
+    const inscripcion = await prisma.inscripcion.findFirst({
       where: {
-        id_usu_id_eve: {
-          id_usu,
-          id_eve: idEvento,
-        },
+        id_usu_ins: id_usu,
+        id_eve_ins: idEvento,
       },
     });
 
