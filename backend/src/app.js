@@ -56,9 +56,7 @@ app.use("/api/admin", adminRoutes);
 
 // Rutas de gestión de inscripciones para eventos (solo admins)
 const inscripcionRoutes = require("./routes/inscripcion.routes");
-// app.use("/api/admin", inscripcionRoutes);
-// app.use("/api", inscripcionRoutes);
-app.use("/api/inscripciones", inscripcionRoutes);
+app.use("/api/inscripciones/propias", inscripcionRoutes);
 
 // Rutas de gestión de carreras
 const carreraRoutes = require("./routes/carrera.routes");

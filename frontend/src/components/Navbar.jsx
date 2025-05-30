@@ -1,17 +1,43 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import { LogOut, Home, Calendar, ClipboardList, GraduationCap, Settings, FileText, PlusCircle } from "lucide-react";
+import {
+  LogOut,
+  Home,
+  Calendar,
+  ClipboardList,
+  GraduationCap,
+  Settings,
+  FileText,
+  PlusCircle,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import "./styles/Navbar.css";
 
 const Navbar = () => {
   const { usuario, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation(); // Hook para obtener la ubicación actual
+  // Función para determinar si un enlace está activo
+  const isActive = (path) => {
+    if (path === "/admin" && location.pathname.startsWith("/admin")) {
+      // Solo considera /admin activo si es exactamente /admin
+      return location.pathname === "/admin" ? "nav-link-active" : "";
+    }
+
+    // Para otras rutas, considera activo si la ruta actual comienza con la ruta del enlace
+    // excepto para /home que debe ser exacto
+    if (path === "/home") {
+      return location.pathname === path ? "nav-link-active" : "";
+    }
+
+    return location.pathname.startsWith(path) ? "nav-link-active" : "";
+  };
 
   const cerrarSesion = () => {
     logout(); // Limpiar token y usuario
     navigate("/login"); // Redirigir al login
-  }; if (!usuario) {
+  };
+  if (!usuario) {
     return (
       <nav className="navbar">
         <div className="navbar-left">
@@ -45,48 +71,90 @@ const Navbar = () => {
             className="navbar-logo-img"
           />
           <span className="navbar-logo-text">FISEI</span>
-        </Link>
-
+        </Link>{" "}
         <div className="navbar-links">
           {usuario.rol_usu === "ESTUDIANTE" && (
-            <>              <Link to="/home" className="nav-link-item">
-              <span className="nav-link-icon"><Home size={18} /></span>
-              <span>Inicio</span>
-            </Link>
-              <Link to="/eventos" className="nav-link-item">
-                <span className="nav-link-icon"><Calendar size={18} /></span>
+            <>
+              {" "}
+              <Link to="/home" className={`nav-link-item ${isActive("/home")}`}>
+                <span className="nav-link-icon">
+                  <Home size={18} />
+                </span>
+                <span>Inicio</span>
+              </Link>
+              <Link
+                to="/eventos"
+                className={`nav-link-item ${isActive("/eventos")}`}
+              >
+                <span className="nav-link-icon">
+                  <Calendar size={18} />
+                </span>
                 <span>Eventos</span>
               </Link>
-              <Link to="/inscripciones" className="nav-link-item">
-                <span className="nav-link-icon"><ClipboardList size={18} /></span>
+              <Link
+                to="/inscripciones"
+                className={`nav-link-item ${isActive("/inscripciones")}`}
+              >
+                <span className="nav-link-icon">
+                  <ClipboardList size={18} />
+                </span>
                 <span>Mis inscripciones</span>
               </Link>
-              <Link to="/certificados" className="nav-link-item">
-                <span className="nav-link-icon"><GraduationCap size={18} /></span>
+              <Link
+                to="/certificados"
+                className={`nav-link-item ${isActive("/certificados")}`}
+              >
+                <span className="nav-link-icon">
+                  <GraduationCap size={18} />
+                </span>
                 <span>Certificados</span>
               </Link>
             </>
-          )}{usuario.rol_usu === "ADMIN" && (
-            <>              <Link to="/admin" className="nav-link-item">
-              <span className="nav-link-icon"><Settings size={18} /></span>
-              <span>Panel Admin</span>
-            </Link>
-              <Link to="/admin/eventos" className="nav-link-item">
-                <span className="nav-link-icon"><FileText size={18} /></span>
+          )}
+          {usuario.rol_usu === "ADMIN" && (
+            <>
+              {" "}
+              <Link
+                to="/admin"
+                className={`nav-link-item ${isActive("/admin")}`}
+              >
+                <span className="nav-link-icon">
+                  <Settings size={18} />
+                </span>
+                <span>Panel Admin</span>
+              </Link>
+              <Link
+                to="/admin/eventos"
+                className={`nav-link-item ${isActive("/admin/eventos")}`}
+              >
+                <span className="nav-link-icon">
+                  <FileText size={18} />
+                </span>
                 <span>Gestionar eventos</span>
               </Link>
-              <Link to="/admin/eventos/crear" className="nav-link-item">
-                <span className="nav-link-icon"><PlusCircle size={18} /></span>
+              <Link
+                to="/admin/eventos/crear"
+                className={`nav-link-item ${isActive("/admin/eventos/crear")}`}
+              >
+                <span className="nav-link-icon">
+                  <PlusCircle size={18} />
+                </span>
                 <span>Crear evento</span>
               </Link>
-              <Link to="/admin/carreras" className="nav-link-item">
-                <span className="nav-link-icon"><GraduationCap size={18} /></span>
+              <Link
+                to="/admin/carreras"
+                className={`nav-link-item ${isActive("/admin/carreras")}`}
+              >
+                <span className="nav-link-icon">
+                  <GraduationCap size={18} />
+                </span>
                 <span>Gestionar carreras</span>
               </Link>
             </>
           )}
         </div>
-      </div>      <button className="navbar-logout" onClick={cerrarSesion}>
+      </div>{" "}
+      <button className="navbar-logout" onClick={cerrarSesion}>
         <LogOut size={18} />
         <span>Cerrar sesión</span>
       </button>

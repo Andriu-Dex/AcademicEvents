@@ -43,31 +43,37 @@ axiosInstance.interceptors.response.use(
       error.response.status === 401 &&
       !tokenExpirationNotified
     ) {
+      // Verificar si estamos en la página de login o registro
+      const isLoginPage =
+        window.location.pathname === "/login" ||
+        window.location.pathname === "/" ||
+        window.location.pathname === "/register";
+
       // Marcar que ya se ha notificado para evitar múltiples notificaciones
       tokenExpirationNotified = true;
 
       console.warn("Token expirado o inválido. Cerrando sesión...");
 
-      // Mostrar notificación al usuario
-      toast.error(
-        "Tu sesión ha expirado. Por favor, inicia sesión nuevamente.",
-        {
-          onClose: () => {
-            // Resetear la bandera después de que se cierre la notificación
-            setTimeout(() => {
-              tokenExpirationNotified = false;
-            }, 1000);
-          },
-        }
-      );
-
-      // Ejecutar logout si está disponible
-      if (logoutFunction) {
+      // Mostrar notificación al usuario solo si NO estamos en la página de login
+      if (!isLoginPage) {
+        toast.error(
+          "Tu sesión ha expirado. Por favor, inicia sesión nuevamente.",
+          {
+            onClose: () => {
+              // Resetear la bandera después de que se cierre la notificación
+              setTimeout(() => {
+                tokenExpirationNotified = false;
+              }, 1000);
+            },
+          }
+        );
+      } // Ejecutar logout si está disponible
+      if (logoutFunction && !isLoginPage) {
         logoutFunction();
       }
 
-      // Redirigir al login
-      if (window.location.pathname !== "/login") {
+      // Redirigir al login solo si no estamos ya en la página de login
+      if (!isLoginPage && window.location.pathname !== "/login") {
         window.location.href = "/login";
       }
     }

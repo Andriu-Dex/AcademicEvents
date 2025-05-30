@@ -41,7 +41,7 @@
 .navbar-logo-text {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #8A1538;
+  color: #8a1538;
   letter-spacing: 0.5px;
 }
 
@@ -76,9 +76,32 @@
 }
 
 .navbar-links a:hover {
-  color: #8A1538;
+  color: #8a1538;
   background-color: rgba(138, 21, 56, 0.08);
   transform: translateY(-2px);
+}
+
+/* Estilo para enlaces activos */
+.nav-link-active {
+  color: #8a1538 !important;
+  background-color: rgba(138, 21, 56, 0.1);
+  font-weight: 600;
+  position: relative;
+}
+
+/* Indicador de enlace activo */
+.nav-link-active::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 6px;
+  right: 6px;
+  height: 3px;
+  background-color: #8a1538;
+  border-radius: 2px;
+  transform: scaleX(1);
+  transition: transform 0.3s ease;
+  width: auto;
 }
 
 /* Botones de autenticación */
@@ -90,7 +113,7 @@
 }
 
 .login-btn {
-  background-color: #8A1538;
+  background-color: #8a1538;
   color: white !important;
 }
 
@@ -101,8 +124,8 @@
 }
 
 .register-btn {
-  border: 1px solid #8A1538;
-  color: #8A1538 !important;
+  border: 1px solid #8a1538;
+  color: #8a1538 !important;
 }
 
 .register-btn:hover {
@@ -116,23 +139,24 @@
   gap: 8px;
   font-size: 0.95rem;
   background: none;
-  border: 1px solid #8A1538;
+  border: 1px solid #8a1538;
   cursor: pointer;
-  color: #8A1538;
+  color: #8a1538;
   padding: 8px 16px;
   border-radius: 8px;
   transition: all 0.3s ease;
   font-weight: 500;
+  margin-right: 24px;
 }
 
 .navbar-logout:hover {
-  background-color: #8A1538;
+  background-color: #8a1538;
   color: white;
 }
 
 /* Estilo para el link activo */
 .navbar-links a.active {
-  color: #8A1538;
+  color: #8a1538;
   font-weight: 500;
   background-color: rgba(138, 21, 56, 0.1);
 }
