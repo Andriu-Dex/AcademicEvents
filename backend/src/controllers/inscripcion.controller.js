@@ -25,9 +25,8 @@ const manejarErroresDeMulter = (err, req, res, next) => {
 // ==========================================
 const crearInscripcion = async (req, res) => {
   try {
-    // const { id_usu, id_eve } = req.body;
     const { id_eve } = req.body;
-    const id_usu = req.usuario.id; // ← extraído del token
+    const id_usu = req.usuario.id;
 
     const archivo = req.file;
 
@@ -397,22 +396,42 @@ const obtenerInscripcionUsuarioEnEvento = async (req, res) => {
 // Inscripciones propias (usuario autenticado)
 // ==============================
 const obtenerInscripcionesDelUsuarioActual = async (req, res) => {
-  try {
-    const id_usu = req.usuario.id;
+  console.log("📋 Obteniendo inscripciones del usuario actual");
 
+  try {
+    // Verificar si req.usuario está definido
+    if (!req.usuario) {
+      console.log("❌ Error: req.usuario no está definido");
+      return res.status(401).json({
+        msg: "Usuario no autenticado",
+        error: "No hay información de usuario en la solicitud",
+      });
+    }
+
+    const id_usu = req.usuario.id;
+    console.log("👤 ID de usuario:", id_usu);
+
+    // Log antes de la consulta a Prisma
+    console.log("🔍 Buscando inscripciones para el usuario:", id_usu);
     const inscripciones = await prisma.inscripcion.findMany({
-      where: { id_usu },
+      where: { id_usu_ins: id_usu },
       include: {
         evento: true,
       },
       orderBy: { fec_ins: "desc" },
     });
 
+    console.log(`✅ Inscripciones encontradas: ${inscripciones.length}`);
+
     res.status(200).json(inscripciones);
   } catch (error) {
+    console.log("❌ Error al obtener inscripciones:", error);
+    console.log("Error stack:", error.stack);
+
     res.status(500).json({
       msg: "Error al obtener inscripciones",
       error: error.message,
+      stack: process.env.NODE_ENV === "development" ? error.stack : undefined,
     });
   }
 };

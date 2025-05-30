@@ -46,14 +46,23 @@ const MyInscriptions = () => {
   const [inscripcionSeleccionada, setInscripcionSeleccionada] = useState(null);
   const [nuevoArchivo, setNuevoArchivo] = useState(null);
   const [reenviando, setReenviando] = useState(false);
-
   const obtenerInscripciones = async () => {
     try {
+      console.log("🔍 Obteniendo inscripciones propias...");
+      const token = localStorage.getItem("token");
+      console.log("🔑 Token disponible:", token ? "Sí" : "No");
+
       const res = await axiosInstance.get("/inscripciones/propias");
+      console.log("✅ Respuesta recibida:", res.data);
 
       setInscripciones(res.data);
     } catch (error) {
       console.error("Error al obtener inscripciones:", error);
+      console.error("Detalles del error:", {
+        message: error.message,
+        status: error.response?.status,
+        data: error.response?.data,
+      });
       toast.error("Error al cargar inscripciones");
     }
   };
