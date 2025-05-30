@@ -176,13 +176,21 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
   const validarFormulario = () => {
     const errores = [];
 
+    // Validaciones generales
     if (!formData.nom_eve.trim())
       errores.push("El nombre del evento es obligatorio");
     if (!formData.tip_eve) errores.push("El tipo de evento es obligatorio");
     if (!formData.fec_ini_eve)
       errores.push("La fecha de inicio es obligatoria");
-    if (!formData.val_eve || formData.val_eve < 0)
-      errores.push("El valor del evento debe ser un número positivo");
+    if (
+      formData.val_eve === "" ||
+      formData.val_eve === null ||
+      formData.val_eve === undefined
+    ) {
+      errores.push("El valor del evento es obligatorio");
+    } else if (formData.val_eve < 0) {
+      errores.push("El valor del evento debe ser 0 o un número positivo");
+    }
     if (!formData.fec_fin_eve) errores.push("La fecha de fin es obligatoria");
     if (!formData.dur_hor_eve || formData.dur_hor_eve <= 0)
       errores.push("La duración debe ser mayor a 0 horas");

@@ -134,11 +134,12 @@ const AdminCarreras = () => {
             </option>
           ))}
         </select>
-        <button onClick={crearCarrera} className="btn-crear">
-          Crear
+      </div>
+      <div className="crear-carrera">
+        <button onClick={crearCarrera} className="btn-crear-ad">
+          Crear Carrera
         </button>
       </div>
-
       <ul className="admincarreras-lista">
         {carreras.map((carrera) => (
           <li key={carrera.id_car} className="admincarreras-item">
