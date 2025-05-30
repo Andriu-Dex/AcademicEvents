@@ -13,6 +13,9 @@ import {
   Download,
   Upload,
   FileUp,
+  CalendarPlus,
+  Search,
+  AlertCircle,
 } from "lucide-react";
 
 const estadoLabel = {
@@ -46,14 +49,23 @@ const MyInscriptions = () => {
   const [inscripcionSeleccionada, setInscripcionSeleccionada] = useState(null);
   const [nuevoArchivo, setNuevoArchivo] = useState(null);
   const [reenviando, setReenviando] = useState(false);
-
   const obtenerInscripciones = async () => {
     try {
+      console.log("🔍 Obteniendo inscripciones propias...");
+      const token = localStorage.getItem("token");
+      console.log("🔑 Token disponible:", token ? "Sí" : "No");
+
       const res = await axiosInstance.get("/inscripciones/propias");
+      console.log("✅ Respuesta recibida:", res.data);
 
       setInscripciones(res.data);
     } catch (error) {
       console.error("Error al obtener inscripciones:", error);
+      console.error("Detalles del error:", {
+        message: error.message,
+        status: error.response?.status,
+        data: error.response?.data,
+      });
       toast.error("Error al cargar inscripciones");
     }
   };
@@ -115,9 +127,24 @@ const MyInscriptions = () => {
   return (
     <div className="myins-container">
       <h2 className="myins-title">Mis inscripciones</h2>
-
       {inscripciones.length === 0 ? (
-        <p className="myins-empty">Aún no estás inscrito en ningún evento.</p>
+        <div className="myins-empty-container">
+          <div className="myins-empty-icon">
+            <CalendarPlus size={60} color="#8a1538" />
+          </div>
+          <h3 className="myins-empty-title">No tienes inscripciones activas</h3>
+          <p className="myins-empty-text">
+            Aún no te has inscrito en ningún evento académico. ¡Descubre los
+            eventos disponibles y empieza a construir tu trayectoria académica!
+          </p>
+          <button
+            className="myins-empty-button"
+            onClick={() => (window.location.href = "/eventos")}
+          >
+            <Search size={16} />
+            Explorar eventos disponibles
+          </button>
+        </div>
       ) : (
         <div className="myins-grid">
           {inscripcionesOrdenadas.map((ins) => (

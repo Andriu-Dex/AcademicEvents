@@ -24,16 +24,14 @@ const Login = () => {
   // Animación al montar el componente
   useEffect(() => {
     setFadeIn(true);
-  }, []);
-
-  // Redirecciona al usuario según su rol almacenado en localStorage
+  }, []);  // Redirecciona al usuario según su rol almacenado en localStorage
   useEffect(() => {
     // Solo redirige si estás en /login
     if (location.pathname === "/login" && usuario) {
       if (usuario.rol_usu === "ADMIN") {
         navigate("/admin"); // ✅ Redirige al panel principal
       } else if (usuario.rol_usu === "ESTUDIANTE") {
-        navigate("/eventos");
+        navigate("/home"); // Redirige a Home en lugar de eventos
       }
     }
   }, [usuario, location.pathname]);
@@ -85,9 +83,7 @@ const Login = () => {
       const res = await axiosInstance.post(`/login`, {
         correo: email,
         contrasena: password,
-      });
-
-      const { usuario: usu, token } = res.data;
+      }); const { usuario: usu, token } = res.data;
       const usuarioFinal = usu ?? res.data;
 
       login(usuarioFinal, token);
@@ -98,7 +94,7 @@ const Login = () => {
         if (usuarioFinal.rol_usu === "ADMIN") {
           navigate("/admin");
         } else if (usuarioFinal.rol_usu === "ESTUDIANTE") {
-          navigate("/eventos");
+          navigate("/home"); // Redirige a Home en lugar de eventos
         }
       }, 500); // pequeña pausa opcional
     } catch (err) {
@@ -264,9 +260,8 @@ const Login = () => {
       >
         {/* Tarjeta de inicio de sesión con animación */}
         <div
-          className={`shadow-lg p-4 p-md-5 rounded-4 text-center login-card ${
-            fadeIn ? "animate__animated animate__fadeIn" : ""
-          }`}
+          className={`shadow-lg p-4 p-md-5 rounded-4 text-center login-card ${fadeIn ? "animate__animated animate__fadeIn" : ""
+            }`}
           style={{
             maxWidth: "450px",
             width: "90%",

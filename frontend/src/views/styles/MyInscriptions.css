@@ -119,6 +119,98 @@ body::after {
 }
 
 /* =======================
+   Contenedor de mensaje de lista vacía mejorado
+   ======================= */
+.myins-empty-container {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 0.75rem;
+  padding: 2.5rem 2rem;
+  margin: 2rem auto;
+  max-width: 550px;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.myins-empty-icon {
+  margin: 0 auto 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100px;
+  height: 100px;
+  background-color: #f0f4ff;
+  border-radius: 50%;
+  color: var(--color-acento);
+  animation: pulseIcon 2.5s ease-in-out infinite;
+}
+
+@keyframes pulseIcon {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.3);
+  }
+  70% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 15px rgba(37, 99, 235, 0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.myins-empty-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-texto);
+  margin-bottom: 1rem;
+}
+
+.myins-empty-text {
+  font-size: 1rem;
+  color: #4b5563;
+  margin-bottom: 1.75rem;
+  line-height: 1.5;
+}
+
+.myins-empty-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: rgb(164, 34, 34);
+  color: white;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 10px rgba(140, 19, 19, 0.9);
+}
+
+.myins-empty-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(140, 19, 19, 0.9);
+}
+
+.myins-empty-button:active {
+  transform: translateY(0);
+}
+
+/* =======================
    Tarjeta de inscripción
    ======================= */
 

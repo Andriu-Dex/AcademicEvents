@@ -2,18 +2,19 @@ const { PrismaClient } = require("../src/generated/prisma");
 const prisma = new PrismaClient();
 
 async function main() {
-
   console.log("URL de conexión:", process.env.DATABASE_URL);
-
   // 1. Crea una facultad
   const facultad = await prisma.facultad.upsert({
-    where: { nom_fac: "Facultad de Ingeniería en Sistemas, Electronica e Industrial" },
+    where: {
+      nom_fac: "Facultad de Ingeniería en Sistemas, Electrónica e Industrial",
+    },
     update: {},
     create: {
-      nom_fac: "Facultad de Ingeniería en Sistemas, Electronica e Industrial",
+      nom_fac: "Facultad de Ingeniería en Sistemas, Electrónica e Industrial",
       des_fac: "Facultad orientada a la tecnología y software.",
       mis_fac: "Formar profesionales líderes e innovadores.",
-      vis_fac: "Ser referente nacional e internacional en formación tecnológica.",
+      vis_fac:
+        "Ser referente nacional e internacional en formación tecnológica.",
     },
   });
 
@@ -61,14 +62,14 @@ async function main() {
       update: {},
       create: {
         ced_usu: "1234567890",
-        nom_usu: "Gabriel",
-        ape_usu: "Llerena",
-        cor_usu: "gllerena1469@uta.edu.ec",
-        con_usu: "$2b$10$9rzmh2NncdUMRaZDpRDcpOiv59fwxuafQOvmeYxa4sGwqHhx6KvnW", // Contraseña encriptada (Admin12345)
+        nom_usu: "Estudiante",
+        ape_usu: "UTA",
+        cor_usu: "estudiante@uta.edu.ec",
+        con_usu: "$2b$10$qMfOVqtsJVsp4FAe3aACIehR1EBZ3lSUaY5j0hu1C9iSQvMw4GWhK", // Contraseña encriptada (123456)
         cel_usu: "0987654321",
-        rol_usu: "GENERAL",
+        rol_usu: "ESTUDIANTE",
         fec_cre_usu: new Date(),
-        id_car_est: null,
+        id_car_est: "2a697418-9d9f-42d5-a64a-99b0c6037dee",
       },
     });
     console.log("Usuario estudiante creado");
@@ -78,12 +79,13 @@ async function main() {
       {
         id_eve: "80ce8ece-c17a-4c82-9d0d-be303eb25e37",
         nom_eve: "Congreso Internacional de Tecnología",
-        des_eve: "Congreso donde se discutirán los avances más recientes en el campo de la tecnología.",
+        des_eve:
+          "Congreso donde se discutirán los avances más recientes en el campo de la tecnología.",
         tip_eve: "CONGRESO",
         fec_ini_eve: new Date("2025-07-10T10:00:00.000Z"),
         fec_fin_eve: new Date("2025-07-12T18:00:00.000Z"),
         dur_hor_eve: 20,
-        val_eve: 200.00,
+        val_eve: 200.0,
         est_eve: "ACTIVO",
         por_min_asi_eve: 70,
         img_por_eve: "https://i.imgur.com/f8adUbZ.png",
@@ -119,7 +121,8 @@ async function main() {
             est_eve: evento.est_eve,
             por_min_asi_eve: evento.por_min_asi_eve,
             img_por_eve: evento.img_por_eve,
-            eventos_curso: evento.tip_eve === "CURSO" ? evento.eventos_curso : undefined, // Solo se incluye eventos_curso si el evento es de tipo CURSO
+            eventos_curso:
+              evento.tip_eve === "CURSO" ? evento.eventos_curso : undefined, // Solo se incluye eventos_curso si el evento es de tipo CURSO
           },
         })
       )
