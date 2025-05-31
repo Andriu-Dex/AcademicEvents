@@ -37,22 +37,15 @@ function Home() {
     carrera: "SOFTWARE",
   });
 
-  // OPCIÓN 2: Usuario Estudiante - Software
-  // const [usuario, setUsuario] = useState({
-  //     id: 1,
-  //     nombre: "Juan Pérez",
-  //     email: "jperez@uta.edu.ec",
-  //     rol_usu: "ESTUDIANTE",
-  //     carrera: "SOFTWARE"
-  // });
-
   // Facultad actual (para contenido de la página)
   const facultadActual = {
     nombre: "FISEI",
     nombreCompleto:
       "Facultad de Ingeniería en Sistemas, Electrónica e Industrial",
     logo: "https://imgur.com/fch1iy6.png",
-  }; // Estadísticas de la facultad
+  };
+
+  // Estadísticas de la facultad
   const stats = [
     {
       number: "1,200+",
@@ -62,33 +55,45 @@ function Home() {
     { number: "45", label: "Docentes", icon: <Users size={36} /> },
     { number: "8", label: "Laboratorios", icon: <Microscope size={36} /> },
     { number: "95%", label: "Empleabilidad", icon: <TrendingUp size={36} /> },
-  ]; // Autoridades de la facultad (actualizado a mayo de 2025)
+  ];
+
+  // Autoridades de la facultad (actualizado con 5 autoridades y fotos reales)
   const autoridades = [
     {
       cargo: "Decano",
       nombre: "Dr. Franklin Mayorga Mogollón",
-      imagen: "/api/placeholder/200/250",
-      email: "f.mayorga@uta.edu.ec",
+      imagen: "https://i.imgur.com/hYBsxIf.png",
+      email: "fmayorga@uta.edu.ec",
     },
     {
       cargo: "Subdecano",
       nombre: "Dr. Javier Sánchez Torres",
-      imagen: "/api/placeholder/200/250",
+      imagen: "https://i.imgur.com/JIQy6Fa.png",
       email: "j.sanchez@uta.edu.ec",
     },
     {
-      cargo: "Directora de Carrera de Software",
-      nombre: "Ing. Carmen Vaca Reyes",
-      imagen: "/api/placeholder/200/250",
-      email: "c.vaca@uta.edu.ec",
+      cargo:
+        "Coordinador de las Carrera de Software y Tecnologías de la Información",
+      nombre: "Ing. Mg. Marco Guachimboza",
+      imagen: "https://i.imgur.com/XDFrTBI.png",
+      email: "marcovguachimboza@uta.edu.ec",
     },
     {
-      cargo: "Director de Carrera de TI",
-      nombre: "Ing. Roberto Morales Villacrés",
-      imagen: "/api/placeholder/200/250",
+      cargo:
+        "Coordinador de las Carrera de Automatización y Robótica y Telecomunicaciones",
+      nombre: "Ing. Mg. Freddy Robalino",
+      imagen: "https://i.imgur.com/daKWf7d.png",
       email: "r.morales@uta.edu.ec",
     },
-  ]; // Carreras disponibles
+    {
+      cargo: "Coordinador de las Carrera Ingeniería Industrial",
+      nombre: "Ing. Mg. César Rosero",
+      imagen: "https://i.imgur.com/d4hRu17.png",
+      email: "cesararosero@uta.edu.ec",
+    },
+  ];
+
+  // Carreras disponibles
   const carreras = [
     {
       nombre: "Ingeniería en Software",
@@ -119,6 +124,8 @@ function Home() {
       icon: <Factory size={36} />,
     },
   ];
+
+  // Info cards para misión y visión
   const infoCardsPorCarrera = {
     GENERAL: [
       {
@@ -138,6 +145,7 @@ function Home() {
 
   // Seleccionar los infoCards según el tipo de usuario y su carrera
   const infoCards = infoCardsPorCarrera.GENERAL;
+
   // Cargar Bootstrap dinámicamente si no está presente
   useEffect(() => {
     const id = "bootstrap-css";
@@ -149,7 +157,9 @@ function Home() {
         "https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css";
       document.head.appendChild(link);
     }
-  }, []); // Determina si el usuario está autenticado
+  }, []);
+
+  // Determina si el usuario está autenticado
   const isAuthenticated = usuario ? true : false;
 
   return (
@@ -175,7 +185,6 @@ function Home() {
         <div className="container">
           <div className="row align-items-center">
             <div className="col-lg-6 text-white py-4">
-              {" "}
               <h1 className="display-4 fw-bold mb-3 animate__animated animate__fadeInUp">
                 {usuario?.rol_usu === "ESTUDIANTE"
                   ? `Facultad de Ingeniería en ${
@@ -195,7 +204,6 @@ function Home() {
                 tecnológicas del país.
               </p>
               <div className="d-flex gap-3 flex-wrap">
-                {" "}
                 <Link
                   to="/eventos"
                   className="btn btn-light fw-bold animate__animated animate__fadeInUp"
@@ -239,7 +247,7 @@ function Home() {
             </div>
           </div>
         </div>
-      </div>{" "}
+      </div>
       {/* Autoridades */}
       <div className="container mb-5" id="autoridades">
         <div className="row justify-content-center mb-4">
@@ -271,7 +279,7 @@ function Home() {
                   >
                     {autoridad.nombre}
                   </h5>
-                  <p className="text-muted fw-semibold">{autoridad.cargo}</p>{" "}
+                  <p className="text-muted fw-semibold">{autoridad.cargo}</p>
                   <a
                     href={`mailto:${autoridad.email}`}
                     className="btn btn-outline-primary btn-sm"
@@ -283,7 +291,7 @@ function Home() {
             </div>
           ))}
         </div>
-      </div>{" "}
+      </div>
       {/* Carreras Disponibles */}
       <div className="container mb-5" id="carreras">
         <div className="row justify-content-center mb-4">
@@ -310,7 +318,7 @@ function Home() {
                   </h5>
                   <p className="card-text small text-muted mb-3">
                     {carrera.descripcion}
-                  </p>{" "}
+                  </p>
                   <div className="mb-3">
                     <span className="badge bg-light text-dark me-2">
                       <Clock size={14} className="me-1" /> {carrera.duracion}
@@ -331,7 +339,7 @@ function Home() {
             </div>
           ))}
         </div>
-      </div>{" "}
+      </div>
       {/* Misión y Visión */}
       <div className="container mb-5" id="mision-vision">
         <div className="row justify-content-center mb-4">
@@ -390,7 +398,6 @@ function Home() {
           }}
         >
           <div className="row align-items-center">
-            {" "}
             <div className="col-md-8">
               <h3 className="fw-bold mb-3" style={{ color: "#8A1538" }}>
                 <MessageSquare
@@ -475,7 +482,7 @@ function Home() {
                   </Link>
                 </li>
               </ul>
-            </div>{" "}
+            </div>
             <div className="col-md-3 mb-3 mb-md-0">
               <h6 className="mb-3">Información</h6>
               <ul className="list-unstyled mb-0">
@@ -508,7 +515,6 @@ function Home() {
             <div className="col-md-3">
               <h6 className="mb-3">Contacto</h6>
               <ul className="list-unstyled mb-0">
-                {" "}
                 <li className="mb-2 small">
                   <MapPin size={14} className="me-2" /> Av. de los Chasquis,
                   Ambato
@@ -551,7 +557,7 @@ function Home() {
             </div>
           </div>
         </div>
-      </footer>{" "}
+      </footer>
       {/* Estilos adicionales para efectos hover */}
       <style>{`
         .hover-card {
