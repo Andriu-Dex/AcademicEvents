@@ -78,7 +78,8 @@ const Navbar = () => {
           <span className="navbar-logo-text">FISEI</span>
         </Link>{" "}
         <div className="navbar-links">
-          {usuario.rol_usu === "ESTUDIANTE" && (
+          {(usuario.rol_usu === "ESTUDIANTE" ||
+            usuario.rol_usu === "GENERAL") && (
             <>
               {" "}
               <Link to="/home" className={`nav-link-item ${isActive("/home")}`}>

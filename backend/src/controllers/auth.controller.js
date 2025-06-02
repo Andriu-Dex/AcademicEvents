@@ -13,7 +13,7 @@ const login = async (req, res) => {
       where: { cor_usu: correo },
     });
 
-    if (!user || !["ESTUDIANTE", "ADMIN"].includes(user.rol_usu)) {
+    if (!user || !["ESTUDIANTE", "ADMIN", "GENERAL"].includes(user.rol_usu)) {
       return res.status(401).json({ msg: "Credenciales inválidas" });
     }
 
@@ -85,10 +85,13 @@ const registrarEstudiante = async (req, res) => {
       return res
         .status(400)
         .json({ msg: "Ya existe un usuario con este correo o cédula" });
-    }
+    } // Encriptar la contraseña
+    const hashedPassword = await bcrypt.hash(con_usu, 10);
 
-    // Encriptar la contraseña
-    const hashedPassword = await bcrypt.hash(con_usu, 10); // Crear el nuevo usuario
+    // Crear el nuevo usuario
+    // Determinar el rol según el tipo de correo
+    const rol = esUTA ? "ESTUDIANTE" : "GENERAL";
+
     const nuevoUsuario = await prisma.usuario.create({
       data: {
         ced_usu,
@@ -97,7 +100,7 @@ const registrarEstudiante = async (req, res) => {
         cor_usu,
         con_usu: hashedPassword,
         cel_usu,
-        rol_usu: "ESTUDIANTE",
+        rol_usu: rol, // Asignar el rol según el tipo de correo
         id_car_est: id_car_est || null, // ← la FK de carrera (puede ser null si no es institucional)
       },
     });

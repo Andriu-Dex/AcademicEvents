@@ -1,7 +1,8 @@
 const prisma = require("../config/db");
 const fs = require("fs");
 const path = require("path");
-const { PDFDocument } = require("pdf-lib");
+const { PDFDocument, rgb } = require("pdf-lib");
+const fontkit = require('@pdf-lib/fontkit');
 const sharp = require("sharp");
 
 // Obtener perfil de usuario autenticado
@@ -133,11 +134,91 @@ const imagenAPDF = async (archivo) => {
   }
 };
 
-// Combinar múltiples PDFs en uno solo
-const combinarPDFs = async (archivos) => {
+// Combinar múltiples PDFs en uno solo y agregar información del usuario
+const combinarPDFs = async (archivos, usuario) => {
   try {
     // Crear un nuevo documento PDF
     const pdfDoc = await PDFDocument.create();
+    
+    // Registrar fontkit para poder usar fuentes
+    pdfDoc.registerFontkit(fontkit);
+
+    // Agregar página de portada con información del usuario
+    const portada = pdfDoc.addPage([595.28, 841.89]); // A4 en puntos
+
+    // Usar las fuentes estándar que vienen con todos los PDFs
+    const helveticaFont = await pdfDoc.embedFont('Helvetica');
+    const helveticaBold = await pdfDoc.embedFont('Helvetica-Bold');    // Título
+    portada.drawText("DOCUMENTACIÓN PERSONAL", {
+      x: 50,
+      y: 750,
+      size: 24,
+      font: helveticaBold,
+      color: rgb(0.53, 0.08, 0.22), // Color UTA (#8A1538)
+    });
+
+    // Línea separadora
+    portada.drawLine({
+      start: { x: 50, y: 730 },
+      end: { x: 545, y: 730 },
+      thickness: 2,
+      color: rgb(0.53, 0.08, 0.22),
+    });
+
+    // Información del usuario
+    const infoUsuario = [
+      { label: "Cédula:", valor: usuario.ced_usu },
+      { label: "Nombres:", valor: usuario.nom_usu },
+      { label: "Apellidos:", valor: usuario.ape_usu },
+      { label: "Correo electrónico:", valor: usuario.cor_usu },
+      { label: "Teléfono:", valor: usuario.cel_usu },
+    ];
+
+    // Si es estudiante, añadir información de carrera
+    if (usuario.rol_usu === "ESTUDIANTE" && usuario.carrera) {
+      infoUsuario.push({ label: "Carrera:", valor: usuario.carrera.nom_car });
+      infoUsuario.push({
+        label: "Facultad:",
+        valor: usuario.carrera.facultad?.nom_fac || "FISEI",
+      });
+    }
+
+    infoUsuario.push({
+      label: "Tipo de usuario:",
+      valor:
+        usuario.rol_usu === "ESTUDIANTE" ? "Estudiante" : "Usuario General",
+    });
+    infoUsuario.push({
+      label: "Fecha de registro:",
+      valor: new Date(usuario.fec_cre_usu).toLocaleDateString("es-EC"),
+    });
+
+    // Dibujar información
+    let y = 680;
+    infoUsuario.forEach((info) => {
+      portada.drawText(info.label, {
+        x: 50,
+        y,
+        size: 12,
+        font: helveticaBold,
+      });
+
+      portada.drawText(info.valor, {
+        x: 180,
+        y,
+        size: 12,
+        font: helveticaFont,
+      });
+
+      y -= 30; // Espaciado entre líneas
+    });    // Nota de verificación
+    portada.drawText("DOCUMENTOS ADJUNTOS", {
+      x: 50,
+      y: y - 50,
+      size: 14,
+      font: helveticaBold,
+      color: rgb(0.53, 0.08, 0.22),
+    });
 
     // Para cada archivo
     for (const archivo of archivos) {
@@ -173,8 +254,8 @@ const combinarPDFs = async (archivos) => {
       }
     }
 
-    // Verificar si se añadieron páginas al documento
-    if (pdfDoc.getPageCount() === 0) {
+    // Verificar si se añadieron páginas al documento (además de la portada)
+    if (pdfDoc.getPageCount() <= 1) {
       throw new Error("No se pudieron procesar documentos válidos");
     }
 
@@ -183,7 +264,7 @@ const combinarPDFs = async (archivos) => {
 
     // Generar un nombre único para el archivo combinado
     const timestamp = Date.now();
-    const nombreArchivoCombinado = `${timestamp}-documentos-combinados.pdf`;
+    const nombreArchivoCombinado = `${timestamp}-documentos-${usuario.ced_usu}.pdf`;
     const rutaArchivoCombinado = path.join(
       __dirname,
       "../../uploads",
@@ -221,7 +302,9 @@ const actualizarDocumentos = async (req, res) => {
 
     if (!archivos || archivos.length === 0) {
       return res.status(400).json({ msg: "Debes subir al menos un documento" });
-    } // Verificar que todos son PDF o imágenes
+    }
+
+    // Verificar que todos son PDF o imágenes
     const tiposPermitidos = [
       "application/pdf",
       "image/jpeg",
@@ -246,8 +329,24 @@ const actualizarDocumentos = async (req, res) => {
       });
     }
 
-    // Combinar PDFs en uno solo
-    const archivoFinal = await combinarPDFs(archivos);
+    // Obtener información completa del usuario para el PDF
+    const usuario = await prisma.usuario.findUnique({
+      where: { id_usu: id },
+      include: {
+        carrera: {
+          include: {
+            facultad: true,
+          },
+        },
+      },
+    });
+
+    if (!usuario) {
+      return res.status(404).json({ msg: "Usuario no encontrado" });
+    }
+
+    // Combinar PDFs en uno solo incluyendo información del usuario
+    const archivoFinal = await combinarPDFs(archivos, usuario);
 
     // Construir la ruta del archivo
     const rutaArchivo = `/uploads/${archivoFinal.filename}`;

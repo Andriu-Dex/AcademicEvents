@@ -117,12 +117,12 @@ const Perfil = () => {
         return <FileText size={18} />;
     }
   };
-
   const getDocumentosRequeridos = () => {
     if (perfilData?.rol_usu === "ESTUDIANTE") {
       return ["cedula", "papeleta", "matricula"];
     } else {
-      return ["cedula"];
+      // Para usuarios generales, no se requiere certificado de matrícula
+      return ["cedula", "papeleta"];
     }
   };
 
@@ -280,6 +280,7 @@ const Perfil = () => {
               <span>Documentos:</span>
             </div>
             <div className="perfil-valor documento-valor">
+              {" "}
               {perfilData.com_usu ? (
                 <div className="documento-info">
                   {" "}
@@ -319,7 +320,12 @@ const Perfil = () => {
                     Subir documentos
                   </button>
                   <div className="documento-status">
-                    <small>No has subido ningún documento aún</small>
+                    <small>
+                      No has subido ningún documento aún.
+                      {perfilData.rol_usu === "ESTUDIANTE"
+                        ? " Debes subir tu cédula, papeleta de votación y certificado de matrícula."
+                        : " Debes subir tu cédula y papeleta de votación."}
+                    </small>
                   </div>
                 </>
               )}
@@ -369,17 +375,17 @@ const Perfil = () => {
       {mostrarModal && (
         <div className="modal-overlay">
           <div className="modal-content modal-documentos">
+            {" "}
             <h2 className="modal-title">
               {perfilData.com_usu
                 ? "Actualizar documentos"
                 : "Subir documentos"}
             </h2>
             <p className="modal-descripcion">
-              {" "}
-              Selecciona y sube cada uno de los siguientes documentos en formato
-              PDF o imagen (JPG, PNG, GIF):
+              {perfilData.rol_usu === "ESTUDIANTE"
+                ? "Como estudiante, debes proporcionar los siguientes documentos en formato PDF o imagen (JPG, PNG, GIF):"
+                : "Por favor, sube los siguientes documentos en formato PDF o imagen (JPG, PNG, GIF):"}
             </p>
-
             <div className="documentos-container">
               {getDocumentosRequeridos().map((tipo) => (
                 <div key={tipo} className="documento-item">
@@ -430,21 +436,23 @@ const Perfil = () => {
                   </div>
                 </div>
               ))}
-            </div>
-
+            </div>{" "}
             <div className="info-documentos">
               <p>
                 <strong>Nota:</strong> Los documentos no deben superar los 5MB
-                cada uno.
+                cada uno.{" "}
+                {perfilData.rol_usu === "ESTUDIANTE"
+                  ? "Como estudiante, debes subir tu cédula, papeleta de votación y certificado de matrícula."
+                  : "Como usuario general, solo necesitas subir tu cédula y papeleta de votación."}
                 {!todosDocumentosRequeridosSeleccionados() && (
                   <span className="documentos-faltantes">
                     {" "}
-                    Debes subir todos los documentos requeridos.
+                    Debes subir todos los documentos requeridos para completar
+                    tu perfil.
                   </span>
                 )}
               </p>
             </div>
-
             <div className="modal-botones">
               <button
                 className="btn-guardar"

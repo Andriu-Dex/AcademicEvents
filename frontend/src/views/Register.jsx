@@ -62,13 +62,15 @@ const Register = () => {
       return toast.error("La contraseña debe tener al menos 6 caracteres");
     if (!/^\d{10}$/.test(datos.cel_usu))
       return toast.error("El celular debe tener exactamente 10 dígitos");
-    if (esUTA && !carrera.trim()) 
+    if (esUTA && !carrera.trim())
       return toast.error("Debes seleccionar una carrera");
 
     try {
       setLoading(true);
       const response = await axiosInstance.post("/registro", datos);
-      toast.success("Registro exitoso. Recuerda subir tus documentos en tu perfil.");
+      toast.success(
+        "Registro exitoso. Recuerda subir tus documentos en tu perfil."
+      );
       navigate("/login");
     } catch (error) {
       console.error("Error en registro:", error);
@@ -87,6 +89,7 @@ const Register = () => {
       <div className="fixed-image" />
       <div className="form-scroll">
         <div className="form-content">
+          {" "}
           <div className="text-center mb-4">
             <div>
               <img
@@ -96,19 +99,30 @@ const Register = () => {
               />
             </div>
             <h2 className="registro-titulo">Registro de Usuario</h2>
+            <p className="text-muted">
+              {esUTA
+                ? "Registro como estudiante con correo institucional"
+                : "Registro como usuario general"}
+            </p>
+            {!esUTA && (
+              <div className="alert alert-warning mt-2">
+                <small>
+                  <strong>Usuario General:</strong> Al registrarte con un correo
+                  diferente a @uta.edu.ec, serás registrado como usuario general
+                  y solo podrás acceder a eventos de tipo público.
+                </small>
+              </div>
+            )}
           </div>
-
           <form onSubmit={handleSubmit}>
-            {(
-              [
-                "ced_usu",
-                "nom_usu",
-                "ape_usu",
-                "cor_usu",
-                "con_usu",
-                "cel_usu",
-              ]
-            ).map((name) => {
+            {[
+              "ced_usu",
+              "nom_usu",
+              "ape_usu",
+              "cor_usu",
+              "con_usu",
+              "cel_usu",
+            ].map((name) => {
               const labels = {
                 ced_usu: "Cédula",
                 nom_usu: "Nombres",
@@ -152,7 +166,6 @@ const Register = () => {
                 </div>
               );
             })}
-
             {esUTA && (
               <div className="mb-3">
                 <label className="form-label fw-semibold">Carrera</label>
@@ -176,15 +189,15 @@ const Register = () => {
                   </select>
                 </div>
               </div>
-            )}
-
+            )}{" "}
             <div className="alert alert-info mb-3">
               <small>
-                <strong>Nota importante:</strong> Después de registrarte, deberás subir tus documentos (cédula, papeleta de votación
-                {esUTA ? " y certificado de matrícula" : ""}) en tu perfil de usuario para poder inscribirte en eventos.
+                <strong>Nota importante:</strong> Después de registrarte,
+                deberás subir tus documentos (cédula, papeleta de votación
+                {esUTA ? " y certificado de matrícula" : ""}) en tu perfil de
+                usuario para poder inscribirte en eventos.
               </small>
             </div>
-
             <div className="d-grid gap-2">
               <button
                 type="submit"

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import { useAuth } from "../hooks/useAuth";
 import {
   Users,
   Microscope,
@@ -22,20 +23,8 @@ import {
 import "./styles/Home.css";
 
 function Home() {
-  // Simulación de usuario (puede ser null, estudiante o usuario general)
-  // Para probar diferentes interfaces, descomentar una de estas opciones y comentar las otras
-
-  // OPCIÓN 1: Sin usuario (público general)
-  //const [usuario, setUsuario] = useState(null);
-
-  // OPCIÓN 2: Usuario Estudiante - Software
-  const [usuario, setUsuario] = useState({
-    id: 1,
-    nombre: "Juan Pérez",
-    email: "jperez@uta.edu.ec",
-    rol_usu: "ESTUDIANTE",
-    carrera: "SOFTWARE",
-  });
+  // Usar el usuario real del contexto de autenticación
+  const { usuario } = useAuth();
 
   // Facultad actual (para contenido de la página)
   const facultadActual = {

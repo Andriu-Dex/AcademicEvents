@@ -46,7 +46,7 @@
    - Sólo pueden estar inscritos en una carrera.
    - Perfil debe contener: cédula, nombres, apellidos, correo institucional, carrera (editable), y documentos PDF (carrera (si es publico general no es necesario), cédula, papeleta de votación, certificado de estar matriculado (si es publico general no es necesario)).
    - Inscripción a cursos requiere aprobación del administrador que revise documentos PDF, aquel que contiene los dicumentos del estudiante y otro pdf con la carta de motivación.
-   - Usuarios externos (no institucionales) sólo deben entregar cédula, sin carrera ni requisitos de matriculación.
+   - Usuarios externos (no institucionales) sólo deben entregar cédula, sin carrera ni certificado de matriculación.
      -Al inscribirse a algún evento el usuario debe redactar una carta de motivacion para ingresar al evento, cuando la redacte esta se transformará en PDF y se enviará a revisión para que el admin la valide junto con el PDF con los datos (cédula, nombres, apellidos, correo institucional, carrera (editable), y documentos PDF (carrera (si es publico general no es necesario), cédula, papeleta de votación, certificado de estar matriculado (si es publico general no es necesario)))
 
 ---
@@ -110,5 +110,32 @@
 
   - Crear archivo README.md con explicación general del proyecto.
   - Crear archivo CONTRIBUTING.md con normas para contribuir al proyecto.
+
+---
+
+## Asegurarse siempre de que la base de datos esté en tercera forma normal (3FN), nunca violar esa regla.
+
+## Regla de Negocio para Inscripción a Eventos Académicos
+
+1. **Restricción por Carrera**
+   Los eventos académicos que estén asignados a una o varias carreras específicas solo podrán ser inscritos por estudiantes que estén matriculados en alguna de esas carreras asociadas al evento.
+
+2. **Exclusividad para Estudiantes**
+   Los usuarios con rol de estudiante deben pertenecer a la(s) carrera(s) vinculada(s) al evento para poder realizar la inscripción. Si un estudiante no está inscrito en alguna de las carreras asignadas al evento, no podrá inscribirse en dicho evento.
+
+3. **Usuarios Generales (Público Externo)**
+   Los usuarios con rol de “general” o público externo **no podrán inscribirse** en eventos asignados a carreras específicas.
+
+4. **Eventos para Público General**
+   Solo los eventos explícitamente marcados como dirigidos al público general estarán abiertos para inscripción tanto a usuarios generales como a estudiantes, sin importar la carrera a la que pertenezcan.
+
+5. **Validación en el Sistema**
+   El sistema debe validar al momento de la inscripción que:
+
+   - El usuario estudiante esté inscrito en una de las carreras asignadas al evento, para eventos de carrera.
+   - Los usuarios generales solo puedan inscribirse en eventos de público general.
+
+6. **Visualización y Acceso**
+   La interfaz de usuario debe mostrar únicamente aquellos eventos para los cuales el usuario tiene permiso para inscribirse según las reglas anteriores, ocultando o deshabilitando la opción para eventos no permitidos.
 
 ---
