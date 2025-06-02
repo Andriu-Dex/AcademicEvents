@@ -2,8 +2,9 @@ const prisma = require("../config/db");
 const fs = require("fs");
 const path = require("path");
 const { PDFDocument, rgb } = require("pdf-lib");
-const fontkit = require('@pdf-lib/fontkit');
+const fontkit = require("@pdf-lib/fontkit");
 const sharp = require("sharp");
+const { limpiarArchivosTemporales } = require("../middlewares/upload");
 
 // Obtener perfil de usuario autenticado
 const obtenerPerfil = async (req, res) => {
@@ -139,7 +140,7 @@ const combinarPDFs = async (archivos, usuario) => {
   try {
     // Crear un nuevo documento PDF
     const pdfDoc = await PDFDocument.create();
-    
+
     // Registrar fontkit para poder usar fuentes
     pdfDoc.registerFontkit(fontkit);
 
@@ -147,8 +148,8 @@ const combinarPDFs = async (archivos, usuario) => {
     const portada = pdfDoc.addPage([595.28, 841.89]); // A4 en puntos
 
     // Usar las fuentes estándar que vienen con todos los PDFs
-    const helveticaFont = await pdfDoc.embedFont('Helvetica');
-    const helveticaBold = await pdfDoc.embedFont('Helvetica-Bold');    // Título
+    const helveticaFont = await pdfDoc.embedFont("Helvetica");
+    const helveticaBold = await pdfDoc.embedFont("Helvetica-Bold"); // Título
     portada.drawText("DOCUMENTACIÓN PERSONAL", {
       x: 50,
       y: 750,
@@ -211,7 +212,7 @@ const combinarPDFs = async (archivos, usuario) => {
       });
 
       y -= 30; // Espaciado entre líneas
-    });    // Nota de verificación
+    }); // Nota de verificación
     portada.drawText("DOCUMENTOS ADJUNTOS", {
       x: 50,
       y: y - 50,
@@ -260,9 +261,7 @@ const combinarPDFs = async (archivos, usuario) => {
     }
 
     // Generar el PDF combinado
-    const pdfBytes = await pdfDoc.save();
-
-    // Generar un nombre único para el archivo combinado
+    const pdfBytes = await pdfDoc.save(); // Generar un nombre único para el archivo combinado
     const timestamp = Date.now();
     const nombreArchivoCombinado = `${timestamp}-documentos-${usuario.ced_usu}.pdf`;
     const rutaArchivoCombinado = path.join(
@@ -273,6 +272,8 @@ const combinarPDFs = async (archivos, usuario) => {
 
     // Guardar el archivo combinado
     fs.writeFileSync(rutaArchivoCombinado, pdfBytes);
+
+    console.log(`📑 Archivo combinado creado: ${nombreArchivoCombinado}`);
 
     return {
       filename: nombreArchivoCombinado,
@@ -362,17 +363,8 @@ const actualizarDocumentos = async (req, res) => {
 
     console.log(`✅ Documentos actualizados con éxito:`, rutaArchivo);
 
-    // Eliminar los archivos temporales individuales
-    archivos.forEach((archivo) => {
-      try {
-        fs.unlinkSync(archivo.path);
-      } catch (err) {
-        console.error(
-          `Error al eliminar archivo temporal ${archivo.path}:`,
-          err
-        );
-      }
-    });
+    // Limpiar archivos temporales
+    limpiarArchivosTemporales();
 
     return res.status(200).json({
       msg: "Documentos actualizados correctamente",
@@ -397,9 +389,7 @@ const actualizarDocumento = async (req, res) => {
 
     if (!archivo) {
       return res.status(400).json({ msg: "Debes subir un archivo válido" });
-    }
-
-    // Construir la ruta del archivo
+    } // Construir la ruta del archivo
     const rutaArchivo = `/uploads/${archivo.filename}`;
     console.log(`🔗 Ruta del archivo guardada: ${rutaArchivo}`);
 
@@ -410,8 +400,10 @@ const actualizarDocumento = async (req, res) => {
         com_usu: rutaArchivo,
       },
     });
-
     console.log(`✅ Documento actualizado con éxito:`, rutaArchivo);
+
+    // Limpiar archivos temporales
+    limpiarArchivosTemporales();
 
     return res.status(200).json({
       msg: "Documento actualizado correctamente",

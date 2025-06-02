@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const verificarToken = require("../middlewares/auth");
-const upload = require("../config/multer");
+const { upload } = require("../middlewares/upload");
 const {
   obtenerPerfil,
   actualizarDocumento,

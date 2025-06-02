@@ -5,17 +5,23 @@ const fs = require("fs");
 
 // Ruta absoluta a la carpeta donde se guardarán los archivos subidos
 const rutaUploads = path.join(__dirname, "../../uploads");
+const rutaTempUploads = path.join(__dirname, "../../uploads/temp");
 
 // Verifica si la carpeta 'uploads' existe, si no, la crea
 if (!fs.existsSync(rutaUploads)) {
   fs.mkdirSync(rutaUploads, { recursive: true }); // Se agrega { recursive: true } para seguridad futura
 }
 
+// Verifica si la carpeta 'uploads/temp' existe, si no, la crea
+if (!fs.existsSync(rutaTempUploads)) {
+  fs.mkdirSync(rutaTempUploads, { recursive: true });
+}
+
 // Configuración del almacenamiento con multer
 const storage = multer.diskStorage({
-  // Define el destino de los archivos
+  // Define el destino de los archivos (ahora en carpeta temporal)
   destination: (req, file, cb) => {
-    cb(null, rutaUploads);
+    cb(null, rutaTempUploads);
   },
 
   // Define cómo se llamarán los archivos guardados
@@ -53,5 +59,35 @@ const upload = multer({
   },
 });
 
+// Función para limpiar archivos temporales
+const limpiarArchivosTemporales = () => {
+  try {
+    // Si existe la carpeta temporal
+    if (fs.existsSync(rutaTempUploads)) {
+      // Leer todos los archivos en la carpeta temporal
+      const archivos = fs.readdirSync(rutaTempUploads);
+
+      // Eliminar cada archivo
+      archivos.forEach((archivo) => {
+        const rutaArchivo = path.join(rutaTempUploads, archivo);
+        try {
+          fs.unlinkSync(rutaArchivo);
+          console.log(`🗑️ Archivo temporal eliminado: ${rutaArchivo}`);
+        } catch (err) {
+          console.error(
+            `Error al eliminar archivo temporal ${rutaArchivo}:`,
+            err
+          );
+        }
+      });
+    }
+  } catch (error) {
+    console.error("Error al limpiar archivos temporales:", error);
+  }
+};
+
 // Exportación del middleware para uso en rutas
-module.exports = upload;
+module.exports = {
+  upload,
+  limpiarArchivosTemporales,
+};

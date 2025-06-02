@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const upload = require("../middlewares/upload"); // Middleware para manejar la carga de archivos
+const { upload } = require("../middlewares/upload"); // Middleware para manejar la carga de archivos
 
 /**
  * Ruta: POST /api/comprobantes/subir

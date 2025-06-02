@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const verificarToken = require("../middlewares/auth");
-const upload = require("../middlewares/upload");
+const { upload } = require("../middlewares/upload");
 const manejarErroresDeMulter = require("../middlewares/errores/manejarErroresDeMulter");
 const onlyAdmin = require("../middlewares/autorizacion/onlyAdmin");
 
