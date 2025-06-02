@@ -13,8 +13,15 @@ async function main() {
       nom_fac: "Facultad de Ingeniería en Sistemas, Electrónica e Industrial",
       des_fac: "Facultad orientada a la tecnología y software.",
       mis_fac: "Formar profesionales líderes e innovadores.",
-      vis_fac:
-        "Ser referente nacional e internacional en formación tecnológica.",
+      vis_fac: "Ser referente nacional e internacional en formación tecnológica.",
+      nom_dec_fac: "Ing. Franklin",
+      ape_dec_fac: "Mayorga Mogollón",
+      cor_dec_fac: "fmayorga@uta.edu.ec",
+      url_img_dec_fac: "https://i.imgur.com/hYBsxIf.png",
+      nom_sub_dec_fac: "Dr. Javier",
+      ape_sub_dec_fac: "Sánchez Torres",
+      cor_sub_dec_fac: "j.sanchez@uta.edu.ec",
+      url_img_sub_dec_fac: "https://i.imgur.com/JIQy6Fa.png",
     },
   });
 
@@ -41,46 +48,73 @@ async function main() {
     console.log("Carreras insertadas correctamente");
 
     await prisma.usuario.upsert({
-      where: { ced_usu: "9999999999" }, // cédula única para tu admin
+      where: { ced_usu: "9999999999" },
       update: {},
       create: {
         ced_usu: "9999999999",
         nom_usu: "Admin",
         ape_usu: "Principal",
-        cor_usu: "admin@uta.edu.ec",
-        con_usu: "$2b$10$9rzmh2NncdUMRaZDpRDcpOiv59fwxuafQOvmeYxa4sGwqHhx6KvnW", // Contraseña encriptada (Admin12345)
         cel_usu: "0999999999",
-        rol_usu: "ADMIN",
         fec_cre_usu: new Date(),
-        // id_car_est: null, no pertenece a ninguna carrera
+        // No se asocia a ninguna carrera
+        cuentas: {
+          create: [{
+            cor_usu: "admin@uta.edu.ec",
+            con_usu: "$2b$10$9rzmh2NncdUMRaZDpRDcpOiv59fwxuafQOvmeYxa4sGwqHhx6KvnW", // Contraseña hash
+            rol_usu: "ADMIN_GLOBAL",
+          }],
+        },
       },
     });
-    console.log("Usuario admin creado");
 
+    // Usuario ESTUDIANTE
     await prisma.usuario.upsert({
-      where: { ced_usu: "1234567890" }, // cédula única para tu admin
+      where: { ced_usu: "1234567890" },
       update: {},
       create: {
         ced_usu: "1234567890",
         nom_usu: "Estudiante",
         ape_usu: "UTA",
-        cor_usu: "estudiante@uta.edu.ec",
-        con_usu: "$2b$10$qMfOVqtsJVsp4FAe3aACIehR1EBZ3lSUaY5j0hu1C9iSQvMw4GWhK", // Contraseña encriptada (123456)
         cel_usu: "0987654321",
-        rol_usu: "ESTUDIANTE",
         fec_cre_usu: new Date(),
-        id_car_est: "2a697418-9d9f-42d5-a64a-99b0c6037dee",
+        // No se asocia a ninguna carrera aquí. Agrega id_car_est si lo necesitas.
+        cuentas: {
+          create: [{
+            cor_usu: "estudiante@uta.edu.ec",
+            con_usu: "$2b$10$9rzmh2NncdUMRaZDpRDcpOiv59fwxuafQOvmeYxa4sGwqHhx6KvnW", // Contraseña hash
+            rol_usu: "ESTUDIANTE",
+          }],
+        },
       },
     });
-    console.log("Usuario estudiante creado");
 
-    // Insertar eventos (incluyendo un evento de tipo CURSO)
-    const eventos = [
-      {
+    console.log("Usuarios de prueba insertados correctamente");
+
+    // Obtener la cuenta admin (por correo)
+    const cuentaAdmin = await prisma.cuenta.findUnique({
+      where: { cor_usu: "admin@uta.edu.ec" },
+    });
+
+    // Crea un evento asociado a la cuenta admin
+    await prisma.evento.upsert({
+      where: { id_eve: "80ce8ece-c17a-4c82-9d0d-be303eb25e37" },
+      update: {
+        nom_eve: "Congreso Internacional de Tecnología",
+        des_eve: "Congreso donde se discutirán los avances más recientes en el campo de la tecnología.",
+        tip_eve: "CONGRESO",
+        fec_ini_eve: new Date("2025-07-10T10:00:00.000Z"),
+        fec_fin_eve: new Date("2025-07-12T18:00:00.000Z"),
+        dur_hor_eve: 20,
+        val_eve: 20.0,
+        est_eve: "ACTIVO",
+        por_min_asi_eve: 80,
+        img_por_eve: "https://i.imgur.com/f8adUbZ.png",
+        id_cue_cre_eve: cuentaAdmin.id_cue, // IMPORTANTE: id de la cuenta creadora
+      },
+      create: {
         id_eve: "80ce8ece-c17a-4c82-9d0d-be303eb25e37",
         nom_eve: "Congreso Internacional de Tecnología",
-        des_eve:
-          "Congreso donde se discutirán los avances más recientes en el campo de la tecnología.",
+        des_eve: "Congreso donde se discutirán los avances más recientes en el campo de la tecnología.",
         tip_eve: "CONGRESO",
         fec_ini_eve: new Date("2025-07-10T10:00:00.000Z"),
         fec_fin_eve: new Date("2025-07-12T18:00:00.000Z"),
@@ -89,45 +123,10 @@ async function main() {
         est_eve: "ACTIVO",
         por_min_asi_eve: 70,
         img_por_eve: "https://i.imgur.com/f8adUbZ.png",
-        eventos_curso: undefined,
+        id_cue_cre_eve: cuentaAdmin.id_cue, // IMPORTANTE: id de la cuenta creadora
       },
-    ];
-
-    // Insertar los eventos
-    await Promise.all(
-      eventos.map((evento) =>
-        prisma.evento.upsert({
-          where: { id_eve: evento.id_eve },
-          update: {
-            nom_eve: evento.nom_eve,
-            des_eve: evento.des_eve,
-            tip_eve: evento.tip_eve,
-            fec_ini_eve: evento.fec_ini_eve,
-            fec_fin_eve: evento.fec_fin_eve,
-            dur_hor_eve: evento.dur_hor_eve,
-            val_eve: evento.val_eve,
-            est_eve: evento.est_eve,
-            por_min_asi_eve: evento.por_min_asi_eve,
-            img_por_eve: evento.img_por_eve,
-          },
-          create: {
-            nom_eve: evento.nom_eve,
-            des_eve: evento.des_eve,
-            tip_eve: evento.tip_eve,
-            fec_ini_eve: evento.fec_ini_eve,
-            fec_fin_eve: evento.fec_fin_eve,
-            dur_hor_eve: evento.dur_hor_eve,
-            val_eve: evento.val_eve,
-            est_eve: evento.est_eve,
-            por_min_asi_eve: evento.por_min_asi_eve,
-            img_por_eve: evento.img_por_eve,
-            eventos_curso:
-              evento.tip_eve === "CURSO" ? evento.eventos_curso : undefined, // Solo se incluye eventos_curso si el evento es de tipo CURSO
-          },
-        })
-      )
-    );
-    console.log("Eventos insertados correctamente");
+    });
+    console.log("Evento insertado correctamente");
   } catch (error) {
     console.error("Error al insertar carreras:", error); // Mensaje más específico en caso de error
     process.exit(1); // Finaliza el proceso con un código de error
