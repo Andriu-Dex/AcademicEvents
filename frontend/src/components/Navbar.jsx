@@ -9,6 +9,7 @@ import {
   Settings,
   FileText,
   PlusCircle,
+  User,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import "./styles/Navbar.css";
@@ -103,7 +104,7 @@ const Navbar = () => {
                   <ClipboardList size={18} />
                 </span>
                 <span>Mis inscripciones</span>
-              </Link>
+              </Link>{" "}
               <Link
                 to="/certificados"
                 className={`nav-link-item ${isActive("/certificados")}`}
@@ -112,6 +113,15 @@ const Navbar = () => {
                   <GraduationCap size={18} />
                 </span>
                 <span>Certificados</span>
+              </Link>
+              <Link
+                to="/perfil"
+                className={`nav-link-item ${isActive("/perfil")}`}
+              >
+                <span className="nav-link-icon">
+                  <User size={18} />
+                </span>
+                <span>Mi Perfil</span>
               </Link>
             </>
           )}
@@ -144,7 +154,7 @@ const Navbar = () => {
                   <PlusCircle size={18} />
                 </span>
                 <span>Crear evento</span>
-              </Link>
+              </Link>{" "}
               <Link
                 to="/admin/carreras"
                 className={`nav-link-item ${isActive("/admin/carreras")}`}
@@ -153,6 +163,15 @@ const Navbar = () => {
                   <GraduationCap size={18} />
                 </span>
                 <span>Gestionar carreras</span>
+              </Link>
+              <Link
+                to="/perfil"
+                className={`nav-link-item ${isActive("/perfil")}`}
+              >
+                <span className="nav-link-icon">
+                  <User size={18} />
+                </span>
+                <span>Mi Perfil</span>
               </Link>
             </>
           )}

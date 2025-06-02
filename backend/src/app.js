@@ -69,6 +69,10 @@ app.use("/api", facultadRoutes);
 // Rutas de gestión de configuraciones
 app.use("/api/configuracion", require("./routes/configuracion.routes"));
 
+// Rutas de perfil de usuario
+const perfilRoutes = require("./routes/perfil.routes");
+app.use("/api", perfilRoutes);
+
 // ============================
 //  Iniciar el servidor
 // ============================

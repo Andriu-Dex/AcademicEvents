@@ -48,14 +48,11 @@ const login = async (req, res) => {
 // ==========================================
 const registrarEstudiante = async (req, res) => {
   try {
-    const { ced_usu, nom_usu, ape_usu, cor_usu, con_usu, cel_usu, id_car_est } = req.body;
-    const archivo = req.file;
+    const { ced_usu, nom_usu, ape_usu, cor_usu, con_usu, cel_usu, id_car_est } =
+      req.body;
 
     // Validación de campos obligatorios
     console.log("id_car_est recibido:", id_car_est);
-    if (!archivo) {
-      return res.status(400).json({ msg: "Debes subir un archivo válido" });
-    }
 
     // Si es correo institucional, carrera es obligatoria
     const esUTA = cor_usu.endsWith("@uta.edu.ec");
@@ -65,12 +62,16 @@ const registrarEstudiante = async (req, res) => {
 
     // Validación de contraseña segura
     if (con_usu.length < 6) {
-      return res.status(400).json({ msg: "La contraseña debe tener al menos 6 caracteres" });
+      return res
+        .status(400)
+        .json({ msg: "La contraseña debe tener al menos 6 caracteres" });
     }
 
     // Validación de celular
     if (!/^\d{10}$/.test(cel_usu)) {
-      return res.status(400).json({ msg: "El número de celular debe tener 10 dígitos" });
+      return res
+        .status(400)
+        .json({ msg: "El número de celular debe tener 10 dígitos" });
     }
 
     // Validar duplicados
@@ -81,13 +82,13 @@ const registrarEstudiante = async (req, res) => {
     });
 
     if (usuarioExistente) {
-      return res.status(400).json({ msg: "Ya existe un usuario con este correo o cédula" });
+      return res
+        .status(400)
+        .json({ msg: "Ya existe un usuario con este correo o cédula" });
     }
 
     // Encriptar la contraseña
-    const hashedPassword = await bcrypt.hash(con_usu, 10);
-
-    // Crear el nuevo usuario
+    const hashedPassword = await bcrypt.hash(con_usu, 10); // Crear el nuevo usuario
     const nuevoUsuario = await prisma.usuario.create({
       data: {
         ced_usu,
@@ -97,7 +98,6 @@ const registrarEstudiante = async (req, res) => {
         con_usu: hashedPassword,
         cel_usu,
         rol_usu: "ESTUDIANTE",
-        com_usu: "", // ← aquí va la ruta/nombre del comprobante PDF
         id_car_est: id_car_est || null, // ← la FK de carrera (puede ser null si no es institucional)
       },
     });
@@ -108,7 +108,9 @@ const registrarEstudiante = async (req, res) => {
     });
   } catch (error) {
     console.error("Error en registrarEstudiante:", error);
-    res.status(500).json({ msg: "Error al registrar usuario", error: error.message });
+    res
+      .status(500)
+      .json({ msg: "Error al registrar usuario", error: error.message });
   }
 };
 
