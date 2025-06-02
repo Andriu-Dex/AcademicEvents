@@ -20,6 +20,7 @@ import {
   X,
 } from "lucide-react";
 import "./styles/EventForm.css";
+import "./styles/CarreraCheckboxes.css";
 
 // Registrar el idioma español
 registerLocale("es", es);
@@ -39,7 +40,8 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
     val_eve: "",
     not_min_cur: "",
     por_min_asi_eve: "",
-    carreraId: "",
+    carrerasSeleccionadas: [],
+    esEventoGeneral: false,
     img_por_eve: null,
     est_eve: "ACTIVO",
   });
@@ -68,7 +70,6 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
       toast.error("Error al cargar carreras");
     }
   };
-
   const cargarEventoParaEditar = async () => {
     try {
       setLoading(true);
@@ -85,6 +86,14 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
         return fechaLocal.toISOString().slice(0, 10); // Para input type="date"
       };
 
+      // Verificar si el evento tiene carreras asociadas o es general
+      const tieneCarreras =
+        evento.eventos_carrera && evento.eventos_carrera.length > 0;
+      const carrerasIds = tieneCarreras
+        ? evento.eventos_carrera.map((ec) => ec.carrera.id_car)
+        : [];
+      const esGeneral = !tieneCarreras;
+
       setFormData({
         nom_eve: evento.nom_eve || "",
         des_eve: evento.des_eve || "",
@@ -100,7 +109,8 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
           evento.tip_eve === "CURSO" && evento.eventos_curso
             ? Number(evento.eventos_curso.not_min_cur) || ""
             : "",
-        carreraId: evento.carreraId || "",
+        carrerasSeleccionadas: carrerasIds,
+        esEventoGeneral: esGeneral,
       });
 
       // Mostrar imagen existente si la hay
@@ -122,10 +132,45 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
     e.target.blur();
     return false;
   };
-
   // Función mejorada para manejar cambios en inputs
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
+
+    // Para el checkbox de evento general
+    if (name === "esEventoGeneral") {
+      setFormData((prev) => ({
+        ...prev,
+        esEventoGeneral: checked,
+        // Si se marca como evento general, limpiar las carreras seleccionadas
+        carrerasSeleccionadas: checked ? [] : prev.carrerasSeleccionadas,
+      }));
+      return;
+    }
+
+    // Para los checkboxes de carreras específicas
+    if (name.startsWith("carrera-")) {
+      const carreraId = name.replace("carrera-", "");
+
+      setFormData((prev) => {
+        let nuevasCarreras = [...prev.carrerasSeleccionadas];
+
+        if (checked) {
+          // Agregar carrera si no está ya en el array
+          if (!nuevasCarreras.includes(carreraId)) {
+            nuevasCarreras.push(carreraId);
+          }
+        } else {
+          // Quitar carrera si está seleccionada
+          nuevasCarreras = nuevasCarreras.filter((id) => id !== carreraId);
+        }
+
+        return {
+          ...prev,
+          carrerasSeleccionadas: nuevasCarreras,
+        };
+      });
+      return;
+    }
 
     // Para inputs numéricos, asegurarse de que se conviertan correctamente
     if (type === "number") {
@@ -215,7 +260,6 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
 
     return errores;
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -247,10 +291,20 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
         formDataToSend.append("not_min_cur", formData.not_min_cur);
       }
 
-      /*// Carrera (opcional)
-      if (formData.carreraId) {
-        formDataToSend.append("carreraId", formData.carreraId);
-      }*/
+      // Agregar información de carreras
+      formDataToSend.append("esEventoGeneral", formData.esEventoGeneral);
+
+      // Si no es evento general, enviar las carreras seleccionadas
+      if (
+        !formData.esEventoGeneral &&
+        formData.carrerasSeleccionadas.length > 0
+      ) {
+        // Convertir el array de IDs a JSON para enviarlo como string
+        formDataToSend.append(
+          "carrerasIds",
+          JSON.stringify(formData.carrerasSeleccionadas)
+        );
+      }
 
       let response;
       if (mode === "create") {
@@ -539,26 +593,48 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
             </div>
           </div>
         )*/}{" "}
-        {/* Información Adicional */}
+        {/* Información Adicional */}{" "}
         <div className="event-form-section">
           <h2 className="section-title">
             <Users size={20} />
             Información Adicional
           </h2>
           <div className="form-group">
-            <label>Carrera Asociada</label>
-            <select
-              name="carreraId"
-              value={formData.carreraId}
-              onChange={handleInputChange}
-            >
-              <option value="">Todas las carreras / Evento general</option>
-              {carreras.map((carrera) => (
-                <option key={carrera.id_car} value={carrera.id_car}>
-                  {carrera.nom_car}
-                </option>
-              ))}
-            </select>
+            <label>Carreras Asociadas</label>
+            <div className="carreras-checkbox-container">
+              <div className="carrera-checkbox-item general">
+                <input
+                  type="checkbox"
+                  name="esEventoGeneral"
+                  id="evento-general"
+                  checked={formData.esEventoGeneral}
+                  onChange={handleInputChange}
+                />
+                <label htmlFor="evento-general">
+                  Todas las carreras / Evento general
+                </label>
+              </div>
+
+              <div className="carreras-checkbox-grid">
+                {carreras.map((carrera) => (
+                  <div key={carrera.id_car} className="carrera-checkbox-item">
+                    <input
+                      type="checkbox"
+                      name={`carrera-${carrera.id_car}`}
+                      id={`carrera-${carrera.id_car}`}
+                      checked={formData.carrerasSeleccionadas.includes(
+                        carrera.id_car
+                      )}
+                      onChange={handleInputChange}
+                      disabled={formData.esEventoGeneral}
+                    />
+                    <label htmlFor={`carrera-${carrera.id_car}`}>
+                      {carrera.nom_car}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
           <div className="form-group">
             <label className="valor-eve-ef">Valor del Evento ($) *</label>{" "}

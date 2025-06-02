@@ -16,20 +16,24 @@ import "./styles/Navbar.css";
 const Navbar = () => {
   const { usuario, logout } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation(); // Hook para obtener la ubicación actual
-  // Función para determinar si un enlace está activo
+  const location = useLocation(); // Hook para obtener la ubicación actual  // Función para determinar si un enlace está activo
   const isActive = (path) => {
-    if (path === "/admin" && location.pathname.startsWith("/admin")) {
-      // Solo considera /admin activo si es exactamente /admin
-      return location.pathname === "/admin" ? "nav-link-active" : "";
-    }
-
-    // Para otras rutas, considera activo si la ruta actual comienza con la ruta del enlace
-    // excepto para /home que debe ser exacto
-    if (path === "/home") {
+    // Para rutas exactas
+    const exactPaths = ["/admin", "/home", "/admin/eventos/crear"];
+    if (exactPaths.includes(path)) {
       return location.pathname === path ? "nav-link-active" : "";
     }
 
+    // Para /admin/eventos, solo activo si estamos en la lista de eventos pero no en crear
+    if (path === "/admin/eventos") {
+      return location.pathname === "/admin/eventos" ||
+        (location.pathname.startsWith("/admin/eventos/") &&
+          !location.pathname.includes("/crear"))
+        ? "nav-link-active"
+        : "";
+    }
+
+    // Para el resto de rutas
     return location.pathname.startsWith(path) ? "nav-link-active" : "";
   };
 
