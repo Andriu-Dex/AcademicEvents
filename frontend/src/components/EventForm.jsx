@@ -76,16 +76,7 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
       const res = await axiosInstance.get(`/eventos/${eventId}`);
       const evento = res.data;
 
-      console.log(evento);
-      // Formatear fechas para inputs datetime-local
-      const formatearFecha = (fecha) => {
-        if (!fecha) return "";
-        const date = new Date(fecha);
-        const offset = date.getTimezoneOffset() * 60000;
-        const fechaLocal = new Date(date.getTime() - offset);
-        return fechaLocal.toISOString().slice(0, 10); // Para input type="date"
-      };
-
+      console.log("Evento cargado para editar:", evento);
       // Verificar si el evento tiene carreras asociadas o es general
       const tieneCarreras =
         evento.eventos_carrera && evento.eventos_carrera.length > 0;
@@ -94,13 +85,17 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
         : [];
       const esGeneral = !tieneCarreras;
 
+      console.log("Carreras asociadas:", carrerasIds);
+      console.log("Es evento general:", esGeneral);
+
+      // Convertir fechas a formato yyyy-MM-dd
       setFormData({
         nom_eve: evento.nom_eve || "",
         des_eve: evento.des_eve || "",
         tip_eve: evento.tip_eve || "",
-        fec_ini_eve: formatearFecha(evento.fec_ini_eve),
-        fec_fin_eve: formatearFecha(evento.fec_fin_eve), // Fecha fin para eventos
-        dur_hor_eve: evento.dur_hor_eve ? Number(evento.dur_hor_eve) : "", // Duración para eventos
+        fec_ini_eve: evento.fec_ini_eve ? evento.fec_ini_eve.split("T")[0] : "",
+        fec_fin_eve: evento.fec_fin_eve ? evento.fec_fin_eve.split("T")[0] : "",
+        dur_hor_eve: evento.dur_hor_eve ? Number(evento.dur_hor_eve) : "",
         val_eve: Number(evento.val_eve),
         por_min_asi_eve: Number(evento.por_min_asi_eve),
         img_por_eve: null,
@@ -443,17 +438,25 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
             <div className="form-group">
               <label>Fecha de Inicio *</label>
               <div className="input-with-icon date-picker-container">
-                <Calendar size={18} />
+                <Calendar size={18} />{" "}
                 <DatePicker
                   selected={
                     formData.fec_ini_eve
-                      ? new Date(formData.fec_ini_eve + "T12:00:00")
+                      ? new Date(formData.fec_ini_eve + "T12:00:00Z")
                       : null
                   }
                   onChange={(date) => {
+                    // Usar UTC para evitar problemas de zona horaria
+                    const year = date.getUTCFullYear();
+                    const month = String(date.getUTCMonth() + 1).padStart(
+                      2,
+                      "0"
+                    );
+                    const day = String(date.getUTCDate()).padStart(2, "0");
+                    const formattedDate = `${year}-${month}-${day}`;
                     setFormData((prev) => ({
                       ...prev,
-                      fec_ini_eve: date ? date.toISOString().split("T")[0] : "",
+                      fec_ini_eve: formattedDate,
                     }));
                   }}
                   dateFormat="dd/MM/yyyy"
@@ -468,17 +471,25 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
             <div className="form-group">
               <label>Fecha de Fin *</label>
               <div className="input-with-icon date-picker-container">
-                <Calendar size={18} />
+                <Calendar size={18} />{" "}
                 <DatePicker
                   selected={
                     formData.fec_fin_eve
-                      ? new Date(formData.fec_fin_eve + "T12:00:00")
+                      ? new Date(formData.fec_fin_eve + "T12:00:00Z")
                       : null
                   }
                   onChange={(date) => {
+                    // Usar UTC para evitar problemas de zona horaria
+                    const year = date.getUTCFullYear();
+                    const month = String(date.getUTCMonth() + 1).padStart(
+                      2,
+                      "0"
+                    );
+                    const day = String(date.getUTCDate()).padStart(2, "0");
+                    const formattedDate = `${year}-${month}-${day}`;
                     setFormData((prev) => ({
                       ...prev,
-                      fec_fin_eve: date ? date.toISOString().split("T")[0] : "",
+                      fec_fin_eve: formattedDate,
                     }));
                   }}
                   dateFormat="dd/MM/yyyy"
@@ -487,7 +498,7 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
                   className="date-picker-input"
                   minDate={
                     formData.fec_ini_eve
-                      ? new Date(formData.fec_ini_eve + "T12:00:00")
+                      ? new Date(formData.fec_ini_eve + "T12:00:00Z")
                       : null
                   }
                   required

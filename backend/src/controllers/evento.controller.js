@@ -66,23 +66,31 @@ function validarEventoGeneral({
 }
 
 // Función para subir imagen a Imgur
-async function subirImagenAImgur(buffer) {
-  const imagenBase64 = buffer.toString("base64"); // Convierte buffer a base64
+async function subirImagenAImgur(archivo) {
+  try {
+    // Leer el archivo del disco en lugar de usar buffer
+    const fs = require("fs");
+    const imagenBuffer = fs.readFileSync(archivo.path);
+    const imagenBase64 = imagenBuffer.toString("base64"); // Convierte buffer a base64
 
-  const res = await axios.post(
-    "https://api.imgur.com/3/image",
-    {
-      image: imagenBase64,
-      type: "base64",
-    },
-    {
-      headers: {
-        Authorization: `Client-ID ${process.env.IMGUR_CLIENT_ID}`,
+    const res = await axios.post(
+      "https://api.imgur.com/3/image",
+      {
+        image: imagenBase64,
+        type: "base64",
       },
-    }
-  );
+      {
+        headers: {
+          Authorization: `Client-ID ${process.env.IMGUR_CLIENT_ID}`,
+        },
+      }
+    );
 
-  return res.data.data.link;
+    return res.data.data.link;
+  } catch (error) {
+    console.error("Error al subir imagen a Imgur:", error);
+    return DEFAULT_IMAGE_URL; // En caso de error, usar imagen por defecto
+  }
 }
 
 //Crea un nuevo evento académico, y si es curso, lo vincula a evento_curso
@@ -98,14 +106,15 @@ const crearEvento = async (req, res) => {
       por_min_asi_eve,
       fec_fin_eve,
       not_min_cur,
-    } = req.body;
-
-    // Convertir valores numéricos y fechas antes de validar
+    } = req.body; // Convertir valores numéricos y fechas antes de validar
     const durHor = Number(dur_hor_eve);
     const porcMinAsi = Number(por_min_asi_eve);
     const valNum = Number(val_eve);
-    const fechaIni = new Date(fec_ini_eve);
-    const fechaFin = new Date(fec_fin_eve);
+
+    // Convertir fechas a objetos Date en UTC para evitar problemas de zona horaria
+    const fechaIni = parseUTCDate(fec_ini_eve);
+    const fechaFin = parseUTCDate(fec_fin_eve);
+
     const notaMin = not_min_cur !== undefined ? Number(not_min_cur) : undefined;
 
     // Validaciones generales (debería validar los campos nuevos)
@@ -135,8 +144,15 @@ const crearEvento = async (req, res) => {
     // Subir imagen a Imgur o usar la imagen por defecto
     let imgUrl = DEFAULT_IMAGE_URL;
     if (req.file) {
-      imgUrl = await subirImagenAImgur(req.file.buffer);
-    } // Crear evento en la base de datos
+      try {
+        imgUrl = await subirImagenAImgur(req.file);
+      } catch (error) {
+        console.error("Error al subir imagen:", error);
+        // Si falla la carga, usamos la imagen por defecto
+      }
+    }
+
+    // Crear evento en la base de datos
     const nuevoEvento = await prisma.evento.create({
       data: {
         nom_eve,
@@ -263,13 +279,16 @@ const actualizarEvento = async (req, res) => {
     });
     if (!eventoExistente) {
       return res.status(404).json({ msg: "Evento no encontrado para editar" });
-    }
-
-    // --- GESTIÓN DE IMAGENES --- //
+    } // --- GESTIÓN DE IMAGENES --- //
     let imgUrl = eventoExistente.img_por_eve; // Por defecto, se queda la actual
 
     if (req.file) {
-      imgUrl = await subirImagenAImgur(req.file.buffer);
+      try {
+        imgUrl = await subirImagenAImgur(req.file);
+      } catch (error) {
+        console.error("Error al subir imagen en actualización:", error);
+        // Si falla la carga, mantenemos la imagen anterior
+      }
     }
 
     try {
@@ -449,6 +468,9 @@ const obtenerEventoPorId = async (req, res) => {
       where: { id_eve: id },
       include: {
         eventos_curso: true,
+        eventos_carrera: {
+          include: { carrera: { select: { nom_car: true, id_car: true } } },
+        },
       },
     });
 
@@ -500,6 +522,36 @@ const obtenerEventosPorTipo = async (req, res) => {
     });
   }
 };
+
+/**
+ * Convierte una fecha en formato YYYY-MM-DD a un objeto Date en UTC
+ * para evitar problemas de zona horaria
+ */
+function parseUTCDate(dateString) {
+  if (!dateString) return null;
+
+  try {
+    // Si la fecha ya tiene formato ISO con T, extraer solo la parte de la fecha
+    if (dateString.includes("T")) {
+      dateString = dateString.split("T")[0];
+    }
+
+    const parts = dateString.split("-");
+    if (parts.length !== 3) return new Date(dateString); // Fallback
+
+    // Crear fecha UTC explícita
+    return new Date(
+      Date.UTC(
+        parseInt(parts[0]), // año
+        parseInt(parts[1]) - 1, // mes (0-11)
+        parseInt(parts[2]) // día
+      )
+    );
+  } catch (error) {
+    console.error("Error parsing date:", error);
+    return new Date(dateString); // Fallback
+  }
+}
 
 module.exports = {
   crearEvento,

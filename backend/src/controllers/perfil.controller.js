@@ -47,11 +47,12 @@ const obtenerPerfil = async (req, res) => {
     if (!usuario) {
       console.log(`❌ Usuario no encontrado para la cuenta: ${id}`);
       return res.status(404).json({ msg: "Usuario no encontrado" });
-    } // Creamos el objeto de respuesta con los datos del usuario y la cuenta
+    }    // Creamos el objeto de respuesta con los datos del usuario y la cuenta
     const perfilData = {
       ...usuario,
       cor_usu: cuenta.cor_usu,
       rol_usu: cuenta.rol_usu,
+      id_cue: cuenta.id_cue, // Incluimos el ID de la cuenta para referencia
       inscripciones: inscripciones,
     };
 
@@ -181,30 +182,38 @@ const combinarPDFs = async (archivos, usuario) => {
       end: { x: 545, y: 730 },
       thickness: 2,
       color: rgb(0.53, 0.08, 0.22),
-    });
-
-    // Información del usuario
+    });    // Información del usuario
     const infoUsuario = [
       { label: "Cédula:", valor: usuario.ced_usu },
       { label: "Nombres:", valor: usuario.nom_usu },
       { label: "Apellidos:", valor: usuario.ape_usu },
-      { label: "Correo electrónico:", valor: usuario.cor_usu },
       { label: "Teléfono:", valor: usuario.cel_usu },
     ];
 
+    // Buscar la cuenta principal para obtener el correo
+    const cuentaPrincipal = await prisma.cuenta.findFirst({
+      where: { id_usu_per: usuario.id_usu },
+      orderBy: { fec_cre_cue: 'asc' }
+    });
+
+    if (cuentaPrincipal) {
+      infoUsuario.push({ label: "Correo electrónico:", valor: cuentaPrincipal.cor_usu });
+    }
+
     // Si es estudiante, añadir información de carrera
-    if (usuario.rol_usu === "ESTUDIANTE" && usuario.carrera) {
+    if (cuentaPrincipal && cuentaPrincipal.rol_usu === "ESTUDIANTE" && usuario.carrera) {
       infoUsuario.push({ label: "Carrera:", valor: usuario.carrera.nom_car });
       infoUsuario.push({
         label: "Facultad:",
         valor: usuario.carrera.facultad?.nom_fac || "FISEI",
       });
-    }
-
-    infoUsuario.push({
+    }    infoUsuario.push({
       label: "Tipo de usuario:",
-      valor:
-        usuario.rol_usu === "ESTUDIANTE" ? "Estudiante" : "Usuario General",
+      valor: cuentaPrincipal && ["ESTUDIANTE", "ADMIN_GLOBAL", "ADMIN_GENERAL"].includes(cuentaPrincipal.rol_usu) 
+        ? cuentaPrincipal.rol_usu === "ESTUDIANTE" 
+          ? "Estudiante" 
+          : "Administrador" 
+        : "Usuario General",
     });
     infoUsuario.push({
       label: "Fecha de registro:",
@@ -355,9 +364,7 @@ const actualizarDocumentos = async (req, res) => {
 
     if (!cuenta || !cuenta.usuario) {
       return res.status(404).json({ msg: "Usuario no encontrado" });
-    }
-
-    // Obtener información completa del usuario para el PDF
+    }    // Obtener información completa del usuario para el PDF
     const usuario = await prisma.usuario.findUnique({
       where: { id_usu: cuenta.usuario.id_usu },
       include: {
@@ -366,6 +373,7 @@ const actualizarDocumentos = async (req, res) => {
             facultad: true,
           },
         },
+        cuentas: true
       },
     });
 

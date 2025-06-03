@@ -6,14 +6,40 @@ import { toast } from "react-toastify";
 import { CalendarDays, Search, CheckCircle } from "lucide-react";
 import "./styles/EventsRoute.css";
 
+// Función para formatear fechas correctamente usando UTC
+const formatearFechaUTC = (fechaStr) => {
+  if (!fechaStr) return "-";
+  try {
+    // Primero aseguramos que la fecha esté en formato UTC para evitar ajustes de zona horaria
+    const fechaParts = fechaStr.split("T")[0].split("-");
+    const year = parseInt(fechaParts[0]);
+    const month = parseInt(fechaParts[1]) - 1; // En JS, los meses van de 0 a 11
+    const day = parseInt(fechaParts[2]);
+
+    const fecha = new Date(Date.UTC(year, month, day));
+
+    if (isNaN(fecha.getTime())) return "-"; // Verifica si la fecha es válida
+
+    return fecha.toLocaleDateString("es-EC", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      timeZone: "UTC", // Importante: usar UTC para evitar desplazamientos
+    });
+  } catch (error) {
+    console.error("Error al formatear fecha:", error);
+    return "-";
+  }
+};
+
 const EventsRoute = () => {
   const { usuario, token, loading } = useAuth();
   const navigate = useNavigate();
-
   const [eventos, setEventos] = useState([]);
   const [filtro, setFiltro] = useState("");
   const [eventoSeleccionado, setEventoSeleccionado] = useState(null);
   const [archivo, setArchivo] = useState(null);
+  const [cartaMotivacion, setCartaMotivacion] = useState("");
   const [inscripciones, setInscripciones] = useState([]);
   const [subiendo, setSubiendo] = useState(false);
   const [exitoVisible, setExitoVisible] = useState(false);
@@ -58,11 +84,12 @@ const EventsRoute = () => {
 
     if (usuario) obtenerInscripciones();
   }, [usuario]);
-
   const inscribirse = async () => {
     if (!archivo) return toast.error("Debes subir un archivo PDF");
     if (archivo.size > 5 * 1024 * 1024)
       return toast.error("El archivo no debe superar los 5MB");
+    if (!cartaMotivacion.trim())
+      return toast.error("Debes escribir una carta de motivación");
 
     const tiposPermitidos = [
       "application/pdf",
@@ -84,16 +111,17 @@ const EventsRoute = () => {
     formData.append("id_usu", usuario.id);
     formData.append("id_eve", eventoSeleccionado.id_eve);
     formData.append("archivo", archivo);
+    formData.append("carta_motivacion", cartaMotivacion);
     try {
       await axiosInstance.post("/inscripciones", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
-
       toast.success("Inscripción enviada con éxito");
       setEventoSeleccionado(null);
       setArchivo(null);
+      setCartaMotivacion("");
       setExitoVisible(true);
       setTimeout(() => setExitoVisible(false), 2000);
       setSubiendo(false);
@@ -155,16 +183,31 @@ const EventsRoute = () => {
                     borderRadius: "8px 8px 0 0",
                     marginBottom: "0.5rem",
                   }}
-                />
+                />{" "}
                 <h2 className="nombre-evento-er">{evento.nom_eve}</h2>
                 <p className="tipo">{evento.tip_eve}</p>
+                {/* Precio del evento */}
+                <p className="precio-evento">
+                  {evento.val_eve === 0
+                    ? "Gratuito"
+                    : `Precio: $${evento.val_eve.toFixed(2)}`}
+                </p>
+                {/* Descripción del evento */}
+                {evento.des_eve && (
+                  <div className="descripcion-evento">
+                    <p>
+                      {evento.des_eve.length > 150
+                        ? `${evento.des_eve.substring(0, 150)}...`
+                        : evento.des_eve}
+                    </p>
+                  </div>
+                )}{" "}
                 <p className="fecha-evento-er">
-                  Fecha:{" "}
-                  {new Date(evento.fec_ini_eve).toLocaleDateString("es-EC")} a{" "}
-                  {new Date(evento.fec_fin_eve).toLocaleDateString("es-EC")}
+                  Fecha: {formatearFechaUTC(evento.fec_ini_eve)} a{" "}
+                  {formatearFechaUTC(evento.fec_fin_eve)}
                 </p>
                 <p className="duracion-evento-er">
-                  Duración: {evento.dur_hrs_eve} horas
+                  Duración: {evento.dur_hor_eve} horas
                 </p>
                 {/* Modalidad si existe */}
                 {evento.modalidad && (
@@ -190,9 +233,26 @@ const EventsRoute = () => {
 
       {eventoSeleccionado && (
         <div className="modal-overlay">
+          {" "}
           <div className="modal-contenido">
             <h2>Inscripción a: {eventoSeleccionado.nom_eve}</h2>
 
+            <div className="mt-4 mb-3">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Carta de motivación:
+              </label>
+              <textarea
+                value={cartaMotivacion}
+                onChange={(e) => setCartaMotivacion(e.target.value)}
+                placeholder="Escribe aquí por qué quieres participar en este evento..."
+                className="w-full p-2 border rounded-md min-h-[120px]"
+                required
+              />
+            </div>
+
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Comprobante de pago o documento de respaldo:
+            </label>
             <input
               type="file"
               accept=".pdf,.jpg,.jpeg,.png"
@@ -216,6 +276,12 @@ const EventsRoute = () => {
                     );
                     return;
                   }
+                  if (!cartaMotivacion.trim()) {
+                    toast.warning(
+                      "Por favor escribe una carta de motivación antes de continuar"
+                    );
+                    return;
+                  }
                   inscribirse();
                 }}
                 className="btn-inscribirme"
@@ -228,6 +294,7 @@ const EventsRoute = () => {
                 onClick={() => {
                   setEventoSeleccionado(null);
                   setArchivo(null);
+                  setCartaMotivacion("");
                 }}
                 className="btn-cancelar-er"
               >

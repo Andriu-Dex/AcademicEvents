@@ -25,7 +25,7 @@ const manejarErroresDeMulter = (err, req, res, next) => {
 // ==========================================
 const crearInscripcion = async (req, res) => {
   try {
-    const { id_eve } = req.body;
+    const { id_eve, carta_motivacion } = req.body;
     const id_cue = req.usuario.id; // Ahora trabajamos con ID de cuenta
 
     const archivo = req.file;
@@ -40,6 +40,12 @@ const crearInscripcion = async (req, res) => {
       return res
         .status(400)
         .json({ msg: "Debe adjuntar un archivo PDF o imagen válida" });
+    }
+
+    if (!carta_motivacion) {
+      return res
+        .status(400)
+        .json({ msg: "Debe incluir una carta de motivación" });
     }
 
     // Validar tipo de archivo
@@ -104,6 +110,15 @@ const crearInscripcion = async (req, res) => {
           id_ins_per: nuevaInscripcion.id_ins,
           url_com_pag: archivo.filename,
           est_com_pag: "PENDIENTE",
+        },
+      });
+
+      // Crear la carta de motivación
+      await prisma.carta_motivacion.create({
+        data: {
+          id_ins_per: nuevaInscripcion.id_ins,
+          con_car_mot: carta_motivacion,
+          est_car_mot: "PENDIENTE",
         },
       });
 
@@ -447,11 +462,13 @@ const obtenerInscripcionesPorEvento = async (req, res) => {
           orderBy: { fec_sub_com_pag: "desc" },
           take: 1,
         },
+        cartas_motivacion: {
+          orderBy: { fec_sub_car_mot: "desc" },
+          take: 1,
+        },
       },
       orderBy: { fec_ins: "desc" },
-    });
-
-    // Mapear los resultados para tener una estructura más limpia
+    }); // Mapear los resultados para tener una estructura más limpia
     const inscripcionesMapeadas = inscripciones.map((inscripcion) => ({
       id_ins: inscripcion.id_ins,
       est_ins: inscripcion.est_ins,
@@ -462,6 +479,7 @@ const obtenerInscripcionesPorEvento = async (req, res) => {
         nom_eve: inscripcion.evento.nom_eve,
       },
       comprobante: inscripcion.comprobantes_pago[0]?.url_com_pag || null,
+      carta_motivacion: inscripcion.cartas_motivacion[0]?.con_car_mot || null,
       usuario: {
         nom_usu: inscripcion.cuenta.usuario.nom_usu,
         ape_usu: inscripcion.cuenta.usuario.ape_usu,

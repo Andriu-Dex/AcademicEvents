@@ -3,6 +3,7 @@ import axiosInstance from "../../api/axiosConfig";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/AuthContext";
 import { FileText, XCircle } from "lucide-react";
+import ModalCartaMotivacion from "../../components/ModalCartaMotivacion";
 import "./styles/AdminInscripciones.css";
 
 const estados = {
@@ -17,6 +18,8 @@ const AdminInscripciones = () => {
   const [inscripciones, setInscripciones] = useState([]);
   const [eventos, setEventos] = useState([]);
   const [eventoFiltrado, setEventoFiltrado] = useState("");
+  const [cartaSeleccionada, setCartaSeleccionada] = useState(null);
+
   const cargarEventos = async () => {
     try {
       const res = await axiosInstance.get("/eventos");
@@ -80,10 +83,12 @@ const AdminInscripciones = () => {
       <table className="adminins-table">
         <thead>
           <tr>
+            {" "}
             <th>Estudiante</th>
             <th>Correo</th>
             <th>Evento</th>
             <th>Comprobante</th>
+            <th>Carta de Motivación</th>
             <th>Asistencia</th>
             <th>Nota</th>
             <th>Estado</th>
@@ -97,7 +102,7 @@ const AdminInscripciones = () => {
                 {i.usuario?.nom_usu} {i.usuario?.ape_usu}
               </td>
               <td>{i.usuario?.cor_usu}</td>
-              <td>{i.evento?.nom_eve}</td>
+              <td>{i.evento?.nom_eve}</td>{" "}
               <td className="adminins-comprobante">
                 {i.comprobante ? (
                   <a
@@ -117,6 +122,19 @@ const AdminInscripciones = () => {
                     className="comprobante-none"
                     title="No enviado"
                   />
+                )}
+              </td>{" "}
+              <td>
+                {i.carta_motivacion ? (
+                  <button
+                    onClick={() => setCartaSeleccionada(i.carta_motivacion)}
+                    className="btn-ver-carta"
+                    title="Ver carta de motivación"
+                  >
+                    Ver carta
+                  </button>
+                ) : (
+                  <span className="no-carta">No enviada</span>
                 )}
               </td>
               <td className="text-center">
@@ -233,9 +251,16 @@ const AdminInscripciones = () => {
                 </form>
               </td>
             </tr>
-          ))}
+          ))}{" "}
         </tbody>
       </table>
+
+      {cartaSeleccionada && (
+        <ModalCartaMotivacion
+          carta={cartaSeleccionada}
+          onClose={() => setCartaSeleccionada(null)}
+        />
+      )}
     </div>
   );
 };

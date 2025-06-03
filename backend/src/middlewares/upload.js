@@ -60,7 +60,7 @@ const upload = multer({
 });
 
 // Importar el servicio de limpieza
-const { cleanup } = require('../services/cleanupService');
+const { cleanup } = require("../services/cleanupService");
 
 // Función para limpiar archivos temporales
 const limpiarArchivosTemporales = () => {
