@@ -9,40 +9,57 @@ const { limpiarArchivosTemporales } = require("../middlewares/upload");
 // Obtener perfil de usuario autenticado
 const obtenerPerfil = async (req, res) => {
   try {
-    const { id } = req.usuario;
-    console.log(`📂 Obteniendo perfil para usuario: ${id}`);
+    const { id } = req.usuario; // Ahora id es el ID de la cuenta (id_cue)
+    console.log(`📂 Obteniendo perfil para cuenta con ID: ${id}`);
 
-    const usuario = await prisma.usuario.findUnique({
-      where: { id_usu: id },
+    // Primero buscamos la cuenta
+    const cuenta = await prisma.cuenta.findUnique({
+      where: { id_cue: id },
       include: {
-        carrera: true,
-        inscripciones: {
+        usuario: {
           include: {
-            evento: true,
-            inscripcion_curso: true,
-          },
-          orderBy: {
-            fec_ins: "desc",
+            carrera: true,
           },
         },
       },
     });
 
-    if (!usuario) {
-      console.log(`❌ Usuario no encontrado: ${id}`);
-      return res.status(404).json({ msg: "Usuario no encontrado" });
+    if (!cuenta) {
+      console.log(`❌ Cuenta no encontrada: ${id}`);
+      return res.status(404).json({ msg: "Cuenta no encontrada" });
     }
 
-    // Eliminamos la contraseña del objeto que se envía al cliente
-    const { con_usu, ...usuarioSinPassword } = usuario;
+    // Ahora obtenemos las inscripciones asociadas a la cuenta
+    const inscripciones = await prisma.inscripcion.findMany({
+      where: { id_cor_ins: cuenta.id_cue },
+      include: {
+        evento: true,
+        inscripcion_curso: true,
+      },
+      orderBy: {
+        fec_ins: "desc",
+      },
+    });
+
+    // Combinamos los datos del usuario y sus inscripciones
+    const usuario = cuenta.usuario;
+
+    if (!usuario) {
+      console.log(`❌ Usuario no encontrado para la cuenta: ${id}`);
+      return res.status(404).json({ msg: "Usuario no encontrado" });
+    } // Creamos el objeto de respuesta con los datos del usuario y la cuenta
+    const perfilData = {
+      ...usuario,
+      cor_usu: cuenta.cor_usu,
+      rol_usu: cuenta.rol_usu,
+      inscripciones: inscripciones,
+    };
 
     console.log(
-      `📄 Documento del usuario: ${
-        usuarioSinPassword.com_usu || "No tiene documento"
-      }`
+      `📄 Documento del usuario: ${perfilData.com_usu || "No tiene documento"}`
     );
 
-    return res.status(200).json(usuarioSinPassword);
+    return res.status(200).json(perfilData);
   } catch (error) {
     console.error("Error al obtener perfil:", error);
     return res
@@ -288,14 +305,14 @@ const combinarPDFs = async (archivos, usuario) => {
 // Actualizar documentos PDF del usuario (múltiples documentos)
 const actualizarDocumentos = async (req, res) => {
   try {
-    const { id } = req.usuario;
+    const { id } = req.usuario; // Ahora id es el ID de la cuenta
     console.log(
       "req.files estructura completa:",
       JSON.stringify(req.files, null, 2)
     );
     const archivos = req.files ? Object.values(req.files).flat() : [];
 
-    console.log(`📤 Actualizando documentos para usuario: ${id}`);
+    console.log(`📤 Actualizando documentos para cuenta con ID: ${id}`);
     console.log(
       `📎 Archivos recibidos:`,
       archivos.map((a) => a?.originalname || "indefinido")
@@ -330,9 +347,19 @@ const actualizarDocumentos = async (req, res) => {
       });
     }
 
+    // Obtener cuenta y usuario asociado
+    const cuenta = await prisma.cuenta.findUnique({
+      where: { id_cue: id },
+      include: { usuario: true },
+    });
+
+    if (!cuenta || !cuenta.usuario) {
+      return res.status(404).json({ msg: "Usuario no encontrado" });
+    }
+
     // Obtener información completa del usuario para el PDF
     const usuario = await prisma.usuario.findUnique({
-      where: { id_usu: id },
+      where: { id_usu: cuenta.usuario.id_usu },
       include: {
         carrera: {
           include: {
@@ -355,7 +382,7 @@ const actualizarDocumentos = async (req, res) => {
 
     // Actualizar el campo com_usu del usuario
     const usuarioActualizado = await prisma.usuario.update({
-      where: { id_usu: id },
+      where: { id_usu: cuenta.usuario.id_usu },
       data: {
         com_usu: rutaArchivo,
       },
@@ -381,21 +408,33 @@ const actualizarDocumentos = async (req, res) => {
 // Mantener la función anterior para compatibilidad
 const actualizarDocumento = async (req, res) => {
   try {
-    const { id } = req.usuario;
+    const { id } = req.usuario; // Ahora id es el ID de la cuenta
     const archivo = req.file;
 
-    console.log(`📤 Actualizando documento para usuario: ${id}`);
+    console.log(`📤 Actualizando documento para cuenta con ID: ${id}`);
     console.log(`📎 Información del archivo:`, archivo);
 
     if (!archivo) {
       return res.status(400).json({ msg: "Debes subir un archivo válido" });
-    } // Construir la ruta del archivo
+    }
+
+    // Obtener cuenta y usuario asociado
+    const cuenta = await prisma.cuenta.findUnique({
+      where: { id_cue: id },
+      include: { usuario: true },
+    });
+
+    if (!cuenta || !cuenta.usuario) {
+      return res.status(404).json({ msg: "Usuario no encontrado" });
+    }
+
+    // Construir la ruta del archivo
     const rutaArchivo = `/uploads/${archivo.filename}`;
     console.log(`🔗 Ruta del archivo guardada: ${rutaArchivo}`);
 
     // Actualizar el campo com_usu del usuario
     const usuarioActualizado = await prisma.usuario.update({
-      where: { id_usu: id },
+      where: { id_usu: cuenta.usuario.id_usu },
       data: {
         com_usu: rutaArchivo,
       },

@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import axiosInstance from "../api/axiosConfig";
 import { toast } from "react-toastify";
 import { useNavigate, Link } from "react-router-dom";
-import { User, Mail, Lock, Phone, BookText } from "lucide-react";
+import { User, Mail, Lock, Phone, BookText, Eye, EyeOff } from "lucide-react";
 import "./styles/Register.css"; // Importa el archivo CSS
 
 const Register = () => {
@@ -18,6 +18,9 @@ const Register = () => {
     id_car_est: "",
   });
 
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const esUTA = datos.cor_usu.endsWith("@uta.edu.ec");
   const [carreras, setCarreras] = useState([]);
@@ -57,20 +60,21 @@ const Register = () => {
       toast.error("Los nombres y apellidos solo deben contener letras.");
       return;
     }
-
     if (datos.con_usu.length < 6)
       return toast.error("La contraseña debe tener al menos 6 caracteres");
+    if (datos.con_usu !== confirmPassword)
+      return toast.error("Las contraseñas no coinciden");
     if (!/^\d{10}$/.test(datos.cel_usu))
       return toast.error("El celular debe tener exactamente 10 dígitos");
     if (esUTA && !carrera.trim())
       return toast.error("Debes seleccionar una carrera");
+    if (datos.con_usu !== confirmPassword)
+      return toast.error("Las contraseñas no coinciden");
 
     try {
       setLoading(true);
       const response = await axiosInstance.post("/registro", datos);
-      toast.success(
-        "Registro exitoso. Recuerda subir tus documentos en tu perfil."
-      );
+      toast.success("Registro exitoso.");
       navigate("/login");
     } catch (error) {
       console.error("Error en registro:", error);
@@ -104,24 +108,16 @@ const Register = () => {
                 ? "Registro como estudiante con correo institucional"
                 : "Registro como usuario general"}
             </p>
-            {!esUTA && (
-              <div className="alert alert-warning mt-2">
-                <small>
-                  <strong>Usuario General:</strong> Al registrarte con un correo
-                  diferente a @uta.edu.ec, serás registrado como usuario general
-                  y solo podrás acceder a eventos de tipo público.
-                </small>
-              </div>
-            )}
           </div>
           <form onSubmit={handleSubmit}>
+            {" "}
             {[
               "ced_usu",
               "nom_usu",
               "ape_usu",
               "cor_usu",
-              "con_usu",
               "cel_usu",
+              "con_usu",
             ].map((name) => {
               const labels = {
                 ced_usu: "Cédula",
@@ -141,7 +137,9 @@ const Register = () => {
               };
               const type =
                 name === "con_usu"
-                  ? "password"
+                  ? showPassword
+                    ? "text"
+                    : "password"
                   : name === "cor_usu"
                   ? "email"
                   : "text";
@@ -162,10 +160,52 @@ const Register = () => {
                       className="form-control"
                       required
                     />
+                    {name === "con_usu" && (
+                      <button
+                        type="button"
+                        className="input-group-text btn btn-outline-secondary"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? (
+                          <EyeOff size={18} />
+                        ) : (
+                          <Eye size={18} />
+                        )}
+                      </button>
+                    )}
                   </div>
                 </div>
               );
             })}
+            <div className="mb-3">
+              <label className="form-label fw-semibold">
+                Confirmar contraseña
+              </label>
+              <div className="input-group">
+                <span className="input-group-text bg-primary text-white">
+                  <Lock size={18} />
+                </span>
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="form-control"
+                  required
+                  placeholder="Confirma tu contraseña"
+                />
+                <button
+                  type="button"
+                  className="input-group-text btn btn-outline-secondary"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                >
+                  {showConfirmPassword ? (
+                    <EyeOff size={18} />
+                  ) : (
+                    <Eye size={18} />
+                  )}
+                </button>
+              </div>
+            </div>
             {esUTA && (
               <div className="mb-3">
                 <label className="form-label fw-semibold">Carrera</label>
@@ -190,6 +230,28 @@ const Register = () => {
                 </div>
               </div>
             )}{" "}
+            {/* <div className="mb-3">
+              <label className="form-label fw-semibold">Confirmar Contraseña</label>
+              <div className="input-group">
+                <span className="input-group-text bg-primary text-white">
+                  <Lock size={18} />
+                </span>
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  name="confirmPassword"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="form-control"
+                  required
+                />
+                <span
+                  className="input-group-text cursor-pointer"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                >
+                  {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </span>
+              </div>
+            </div> */}
             <div className="alert alert-info mb-3">
               <small>
                 <strong>Nota importante:</strong> Después de registrarte,

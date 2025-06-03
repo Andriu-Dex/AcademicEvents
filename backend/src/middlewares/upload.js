@@ -59,28 +59,14 @@ const upload = multer({
   },
 });
 
+// Importar el servicio de limpieza
+const { cleanup } = require('../services/cleanupService');
+
 // Función para limpiar archivos temporales
 const limpiarArchivosTemporales = () => {
   try {
-    // Si existe la carpeta temporal
-    if (fs.existsSync(rutaTempUploads)) {
-      // Leer todos los archivos en la carpeta temporal
-      const archivos = fs.readdirSync(rutaTempUploads);
-
-      // Eliminar cada archivo
-      archivos.forEach((archivo) => {
-        const rutaArchivo = path.join(rutaTempUploads, archivo);
-        try {
-          fs.unlinkSync(rutaArchivo);
-          console.log(`🗑️ Archivo temporal eliminado: ${rutaArchivo}`);
-        } catch (err) {
-          console.error(
-            `Error al eliminar archivo temporal ${rutaArchivo}:`,
-            err
-          );
-        }
-      });
-    }
+    // Llamar al servicio de limpieza
+    cleanup();
   } catch (error) {
     console.error("Error al limpiar archivos temporales:", error);
   }

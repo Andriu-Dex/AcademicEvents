@@ -30,7 +30,8 @@ const Login = () => {
     // Solo redirige si estás en /login
     if (location.pathname === "/login" && usuario) {
       switch (usuario.rol_usu) {
-        case "ADMIN":
+        case "ADMIN_GLOBAL":
+        case "ADMIN_GENERAL":
           navigate("/admin"); // ✅ Redirige al panel principal
           break;
         case "ESTUDIANTE":
@@ -91,12 +92,12 @@ const Login = () => {
       });
       const { usuario: usu, token } = res.data;
       const usuarioFinal = usu ?? res.data;
-
       login(usuarioFinal, token);
       toast.success("¡Bienvenido!"); // Redirecciona luego de que todo esté estable
       setTimeout(() => {
         switch (usuarioFinal.rol_usu) {
-          case "ADMIN":
+          case "ADMIN_GLOBAL":
+          case "ADMIN_GENERAL":
             navigate("/admin");
             break;
           case "ESTUDIANTE":

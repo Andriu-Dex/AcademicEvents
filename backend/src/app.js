@@ -5,6 +5,7 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const path = require("path");
+const { scheduledCleanup } = require("./services/cleanupService");
 
 // ============================
 //  Configuración inicial
@@ -12,6 +13,9 @@ const path = require("path");
 dotenv.config(); // Cargar variables de entorno desde .env
 
 const app = express(); // Crear instancia de la aplicación
+
+// Iniciar el servicio de limpieza programada
+scheduledCleanup();
 
 // ============================
 //  Middlewares globales

@@ -150,15 +150,15 @@ const MyInscriptions = () => {
           {inscripcionesOrdenadas.map((ins) => (
             <div key={ins.id_ins} className="myins-card">
               <div className="myins-header">
+                {" "}
                 <h3 className="myins-event-name">{ins.evento.nom_eve}</h3>
                 <span
-                  className={`myins-estado ${estadoLabel[ins.estado].color}`}
+                  className={`myins-estado ${estadoLabel[ins.est_ins].color}`}
                 >
-                  {estadoLabel[ins.estado].icon}
-                  {estadoLabel[ins.estado].text}
+                  {estadoLabel[ins.est_ins].icon}
+                  {estadoLabel[ins.est_ins].text}
                 </span>
               </div>
-
               <p className="myins-datos">
                 Tipo: {ins.evento.tip_eve} <br />
                 Fecha:{" "}
@@ -166,9 +166,8 @@ const MyInscriptions = () => {
                   "es-EC"
                 )} –{" "}
                 {new Date(ins.evento.fec_fin_eve).toLocaleDateString("es-EC")}
-              </p>
-
-              {ins.estado === "FINALIZADA" && (
+              </p>{" "}
+              {ins.est_ins === "FINALIZADA" && (
                 <div className="myins-certificado">
                   <button
                     onClick={() =>
@@ -191,8 +190,7 @@ const MyInscriptions = () => {
                   )}
                 </div>
               )}
-
-              {ins.estado === "ACEPTADA" && (
+              {ins.est_ins === "ACEPTADA" && (
                 <button
                   className="btn-felicitaciones"
                   onClick={() => lanzarConfetti()}
@@ -200,8 +198,7 @@ const MyInscriptions = () => {
                   ¡Felicitaciones!
                 </button>
               )}
-
-              {(ins.estado === "RECHAZADA" || ins.estado === "PENDIENTE") && (
+              {(ins.est_ins === "RECHAZADA" || ins.est_ins === "PENDIENTE") && (
                 <button
                   className="btn-reenviar"
                   onClick={() => {

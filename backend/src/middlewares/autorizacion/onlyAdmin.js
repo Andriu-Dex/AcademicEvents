@@ -6,9 +6,12 @@ const onlyAdmin = (req, res, next) => {
     return res.status(401).json({ msg: "No autenticado" });
   }
 
-  // Verifica si el rol del usuario no es "ADMIN"
-  if (req.usuario.rol_usu !== "ADMIN") {
-    // Si el rol no es "ADMIN", responde con un error 403 (Prohibido)
+  // Verifica si el rol del usuario no es administrador
+  if (
+    req.usuario.rol_usu !== "ADMIN_GLOBAL" &&
+    req.usuario.rol_usu !== "ADMIN_GENERAL"
+  ) {
+    // Si el rol no es administrador, responde con un error 403 (Prohibido)
     return res
       .status(403)
       .json({ msg: "Acceso denegado: solo administradores" });

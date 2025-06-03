@@ -42,8 +42,7 @@ function validarEventoGeneral({
   if (dur_hor_eve === undefined || dur_hor_eve <= 0)
     throw new Error(
       "La duración del evento es obligatoria y debe ser mayor a 0"
-    );
-  // Validar que el porcentaje mínimo de asistencia esté dentro del rango 80-100
+    ); // Validar que el porcentaje mínimo de asistencia esté dentro del rango 80-100
   if (por_min_asi_eve === undefined)
     throw new Error("El porcentaje mínimo de asistencia es obligatorio");
   if (por_min_asi_eve < 80 || por_min_asi_eve > 100)
@@ -149,6 +148,8 @@ const crearEvento = async (req, res) => {
         por_min_asi_eve: porcMinAsi,
         fec_fin_eve: fechaFin,
         img_por_eve: imgUrl,
+        est_eve: "ACTIVO", // Estado por defecto según nuevo enum
+        id_cue_cre_eve: req.usuario.id, // ID de la cuenta creadora
       },
     });
 
@@ -284,9 +285,7 @@ const actualizarEvento = async (req, res) => {
       });
     } catch (e) {
       return res.status(400).json({ msg: e.message });
-    }
-
-    // 6. Actualiza evento principal
+    } // 6. Actualiza evento principal
     const eventoActualizado = await prisma.evento.update({
       where: { id_eve: id },
       data: {
@@ -312,6 +311,7 @@ const actualizarEvento = async (req, res) => {
           dataEvento.por_min_asi_eve !== undefined
             ? Number(dataEvento.por_min_asi_eve)
             : eventoExistente.por_min_asi_eve,
+        est_eve: dataEvento.est_eve || eventoExistente.est_eve,
         img_por_eve: imgUrl,
       },
     });

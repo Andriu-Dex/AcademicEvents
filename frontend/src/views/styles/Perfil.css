@@ -111,7 +111,8 @@
   color: #1976d2;
 }
 
-.perfil-rol.admin {
+.perfil-rol.admin_global,
+.perfil-rol.admin_general {
   background-color: #fce4ec;
   color: #c2185b;
 }

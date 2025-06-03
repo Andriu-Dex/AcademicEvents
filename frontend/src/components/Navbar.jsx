@@ -125,8 +125,9 @@ const Navbar = () => {
                 <span>Mi Perfil</span>
               </Link>
             </>
-          )}
-          {usuario.rol_usu === "ADMIN" && (
+          )}{" "}
+          {(usuario.rol_usu === "ADMIN_GLOBAL" ||
+            usuario.rol_usu === "ADMIN_GENERAL") && (
             <>
               {" "}
               <Link

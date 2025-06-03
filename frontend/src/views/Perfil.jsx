@@ -223,11 +223,12 @@ const Perfil = () => {
           <div className="perfil-nombre">
             <h2>
               {perfilData.nom_usu} {perfilData.ape_usu}
-            </h2>
+            </h2>{" "}
             <span className={`perfil-rol ${perfilData.rol_usu.toLowerCase()}`}>
               {perfilData.rol_usu === "ESTUDIANTE"
                 ? "Estudiante"
-                : perfilData.rol_usu === "ADMIN"
+                : perfilData.rol_usu === "ADMIN_GLOBAL" ||
+                  perfilData.rol_usu === "ADMIN_GENERAL"
                 ? "Administrador"
                 : "Usuario General"}
             </span>
