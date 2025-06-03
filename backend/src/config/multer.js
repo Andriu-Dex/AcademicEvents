@@ -21,11 +21,11 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = (req, file, cb) => {
-  // Acepta PDFs e imágenes para compatibilidad
-  const mimeTypes = ["application/pdf", "image/jpeg", "image/png", "image/gif"];
+  // Solo acepta imágenes para compatibilidad con Imgur
+  const mimeTypes = ["image/jpeg", "image/jpg", "image/png"];
 
   if (!mimeTypes.includes(file.mimetype)) {
-    return cb(new Error("Solo se permiten archivos PDF o imágenes"));
+    return cb(new Error("Solo se permiten imágenes en formato JPG o PNG"));
   }
   cb(null, true);
 };

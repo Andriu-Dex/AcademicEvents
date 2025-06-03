@@ -1,4 +1,5 @@
 const prisma = require("../config/db");
+const { subirImagenAImgur } = require("../utils/imgur.utils");
 
 // Manejo de errores de multer
 const manejarErroresDeMulter = (err, req, res, next) => {
@@ -36,39 +37,43 @@ const crearInscripcion = async (req, res) => {
         .json({ msg: "Faltan campos obligatorios: id_cue o id_eve" });
     }
 
-    if (!archivo) {
-      return res
-        .status(400)
-        .json({ msg: "Debe adjuntar un archivo PDF o imagen válida" });
-    }
-
     if (!carta_motivacion) {
       return res
         .status(400)
         .json({ msg: "Debe incluir una carta de motivación" });
     }
 
-    // Validar tipo de archivo
-    const tiposPermitidos = [
-      "application/pdf",
-      "image/jpeg",
-      "image/jpg",
-      "image/png",
-      "image/webp",
-    ];
-
-    if (!tiposPermitidos.includes(archivo.mimetype)) {
-      return res.status(400).json({
-        msg: "Tipo de archivo no permitido. Solo se aceptan PDF o imágenes (JPG, PNG, WEBP)",
-      });
+    // Obtenemos el evento para verificar si tiene costo
+    const evento = await prisma.evento.findUnique({ where: { id_eve } });
+    if (!evento) {
+      return res.status(404).json({ msg: "Evento no encontrado" });
     }
 
-    // Validar tamaño del archivo (máximo 5 MB)
-    const tamMaximo = 5 * 1024 * 1024; // 5MB
-    if (archivo.size > tamMaximo) {
-      return res.status(400).json({
-        msg: "El archivo excede el tamaño máximo permitido (5 MB)",
-      });
+    // Solo exigimos comprobante para eventos con costo
+    if (evento.val_eve > 0 && !archivo) {
+      return res
+        .status(400)
+        .json({ msg: "Debe adjuntar un comprobante de pago" });
+    }
+
+    // Si hay archivo, validar tipo y tamaño
+    if (archivo) {
+      // Validar tipo de archivo (solo imágenes para Imgur)
+      const tiposPermitidos = ["image/jpeg", "image/jpg", "image/png"];
+
+      if (!tiposPermitidos.includes(archivo.mimetype)) {
+        return res.status(400).json({
+          msg: "Tipo de archivo no permitido. Solo se aceptan imágenes (JPG, PNG)",
+        });
+      }
+
+      // Validar tamaño del archivo (máximo 5 MB)
+      const tamMaximo = 5 * 1024 * 1024; // 5MB
+      if (archivo.size > tamMaximo) {
+        return res.status(400).json({
+          msg: "El archivo excede el tamaño máximo permitido (5 MB)",
+        });
+      }
     }
 
     // Verificar que la cuenta existe
@@ -78,14 +83,7 @@ const crearInscripcion = async (req, res) => {
     });
     if (!cuenta) {
       return res.status(404).json({ msg: "Cuenta de usuario no encontrada" });
-    }
-
-    const evento = await prisma.evento.findUnique({ where: { id_eve } });
-    if (!evento) {
-      return res.status(404).json({ msg: "Evento no encontrado" });
-    }
-
-    // Verificar si el usuario ya está inscrito
+    } // Verificar si el usuario ya está inscrito
     const yaInscrito = await prisma.inscripcion.findFirst({
       where: { id_cor_ins: id_cue, id_eve_ins: id_eve },
     });
@@ -104,15 +102,6 @@ const crearInscripcion = async (req, res) => {
         },
       });
 
-      // Crear el comprobante de pago
-      await prisma.comprobante_pago.create({
-        data: {
-          id_ins_per: nuevaInscripcion.id_ins,
-          url_com_pag: archivo.filename,
-          est_com_pag: "PENDIENTE",
-        },
-      });
-
       // Crear la carta de motivación
       await prisma.carta_motivacion.create({
         data: {
@@ -121,6 +110,33 @@ const crearInscripcion = async (req, res) => {
           est_car_mot: "PENDIENTE",
         },
       });
+
+      // Si se proporciona un archivo, subirlo a Imgur y guardar la URL
+      if (archivo) {
+        try {
+          // Subir la imagen a Imgur
+          const imgurUrl = await subirImagenAImgur(archivo);
+
+          // Crear el comprobante de pago con la URL de Imgur
+          await prisma.comprobante_pago.create({
+            data: {
+              id_ins_per: nuevaInscripcion.id_ins,
+              url_com_pag: imgurUrl,
+              est_com_pag: "PENDIENTE",
+            },
+          });
+        } catch (imgurError) {
+          console.error("Error al subir imagen a Imgur:", imgurError);
+          // Si falla la subida a Imgur, registramos el error pero continuamos con la inscripción
+          await prisma.comprobante_pago.create({
+            data: {
+              id_ins_per: nuevaInscripcion.id_ins,
+              url_com_pag: "Error al subir imagen",
+              est_com_pag: "ERROR",
+            },
+          });
+        }
+      }
 
       res.status(201).json(nuevaInscripcion);
     } catch (error) {
@@ -265,15 +281,6 @@ const obtenerInscripcionesPorUsuario = async (req, res) => {
       include: {
         cuenta: {
           include: {
-            usuario: {
-              select: {
-                nom_usu: true,
-                ape_usu: true,
-              },
-            },
-          },
-          select: {
-            cor_usu: true,
             usuario: true,
           },
         },
@@ -283,18 +290,8 @@ const obtenerInscripcionesPorUsuario = async (req, res) => {
           take: 1,
         },
       },
-      select: {
-        id_ins: true,
-        est_ins: true,
-        por_asi_fin_usu: true,
-        cuenta: true,
-        inscripcion_curso: true,
-        comprobantes_pago: true,
-      },
       orderBy: { fec_ins: "desc" },
-    });
-
-    // Mapear los resultados para tener una estructura más limpia
+    }); // Mapear los resultados para tener una estructura más limpia
     const inscripcionesMapeadas = inscripciones.map((inscripcion) => ({
       id_ins: inscripcion.id_ins,
       est_ins: inscripcion.est_ins,
@@ -387,43 +384,68 @@ const reenviarComprobante = async (req, res) => {
       return res.status(400).json({ msg: "Debes subir un archivo" });
     }
 
+    // Validar tipo de archivo (solo imágenes para Imgur)
+    const tiposPermitidos = ["image/jpeg", "image/jpg", "image/png"];
+
+    if (!tiposPermitidos.includes(archivo.mimetype)) {
+      return res.status(400).json({
+        msg: "Tipo de archivo no permitido. Solo se aceptan imágenes (JPG, PNG)",
+      });
+    }
+
+    // Validar tamaño del archivo (máximo 5 MB)
+    const tamMaximo = 5 * 1024 * 1024; // 5MB
+    if (archivo.size > tamMaximo) {
+      return res.status(400).json({
+        msg: "El archivo excede el tamaño máximo permitido (5 MB)",
+      });
+    }
+
     const inscripcion = await prisma.inscripcion.findUnique({
       where: { id_ins: id },
-      include: { cuenta: true },
+      include: { cuenta: true, evento: true },
     });
 
     if (!inscripcion) {
       return res.status(404).json({ msg: "Inscripción no encontrada" });
-    }
-
-    // Solo puede reenviar el mismo estudiante
+    } // Solo puede reenviar el mismo estudiante
     if (inscripcion.id_cor_ins !== req.usuario.id) {
       return res
         .status(403)
         .json({ msg: "No tienes permiso para modificar esta inscripción" });
     }
 
-    // Crear un nuevo comprobante de pago
-    await prisma.comprobante_pago.create({
-      data: {
-        id_ins_per: id,
-        url_com_pag: archivo.filename,
-        est_com_pag: "PENDIENTE",
-      },
-    });
+    try {
+      // Subir la imagen a Imgur
+      const imgurUrl = await subirImagenAImgur(archivo);
 
-    // Actualizar estado de la inscripción a pendiente
-    const actualizada = await prisma.inscripcion.update({
-      where: { id_ins: id },
-      data: {
-        est_ins: "PENDIENTE",
-      },
-    });
+      // Crear un nuevo comprobante de pago con la URL de Imgur
+      await prisma.comprobante_pago.create({
+        data: {
+          id_ins_per: id,
+          url_com_pag: imgurUrl,
+          est_com_pag: "PENDIENTE",
+        },
+      });
 
-    res.status(200).json({
-      msg: "Comprobante reenviado correctamente",
-      inscripcion: actualizada,
-    });
+      // Actualizar estado de la inscripción a pendiente
+      const actualizada = await prisma.inscripcion.update({
+        where: { id_ins: id },
+        data: {
+          est_ins: "PENDIENTE",
+        },
+      });
+
+      res.status(200).json({
+        msg: "Comprobante reenviado correctamente",
+        inscripcion: actualizada,
+      });
+    } catch (error) {
+      console.error("Error al reenviar comprobante:", error);
+      res
+        .status(500)
+        .json({ msg: "Error al reenviar comprobante", error: error.message });
+    }
   } catch (error) {
     res
       .status(500)
@@ -435,28 +457,16 @@ const reenviarComprobante = async (req, res) => {
 const obtenerInscripcionesPorEvento = async (req, res) => {
   try {
     const { id } = req.params;
+    console.log("🔍 Obteniendo inscripciones para evento ID:", id);
     const inscripciones = await prisma.inscripcion.findMany({
       where: { id_eve_ins: id },
       include: {
         cuenta: {
           include: {
-            usuario: {
-              select: {
-                nom_usu: true,
-                ape_usu: true,
-              },
-            },
-          },
-          select: {
-            cor_usu: true,
             usuario: true,
           },
         },
-        evento: {
-          select: {
-            nom_eve: true,
-          },
-        },
+        evento: true,
         inscripcion_curso: true,
         comprobantes_pago: {
           orderBy: { fec_sub_com_pag: "desc" },
@@ -468,30 +478,47 @@ const obtenerInscripcionesPorEvento = async (req, res) => {
         },
       },
       orderBy: { fec_ins: "desc" },
-    }); // Mapear los resultados para tener una estructura más limpia
-    const inscripcionesMapeadas = inscripciones.map((inscripcion) => ({
-      id_ins: inscripcion.id_ins,
-      est_ins: inscripcion.est_ins,
-      por_asi_fin_usu: inscripcion.por_asi_fin_usu,
-      nota_final: inscripcion.inscripcion_curso?.not_fin_usu || null,
-      fec_ins: inscripcion.fec_ins,
-      evento: {
-        nom_eve: inscripcion.evento.nom_eve,
-      },
-      comprobante: inscripcion.comprobantes_pago[0]?.url_com_pag || null,
-      carta_motivacion: inscripcion.cartas_motivacion[0]?.con_car_mot || null,
-      usuario: {
-        nom_usu: inscripcion.cuenta.usuario.nom_usu,
-        ape_usu: inscripcion.cuenta.usuario.ape_usu,
-        cor_usu: inscripcion.cuenta.cor_usu,
-      },
-    }));
+    });
 
-    res.status(200).json(inscripcionesMapeadas);
+    console.log(`✅ Inscripciones encontradas: ${inscripciones.length}`);
+
+    try {
+      // Mapear los resultados para tener una estructura más limpia
+      const inscripcionesMapeadas = inscripciones.map((inscripcion) => {
+        console.log("Procesando inscripción:", inscripcion.id_ins);
+        return {
+          id_ins: inscripcion.id_ins,
+          estado: inscripcion.est_ins,
+          asistencia: inscripcion.por_asi_fin_usu,
+          nota_final: inscripcion.inscripcion_curso?.not_fin_usu || null,
+          fec_ins: inscripcion.fec_ins,
+          evento: {
+            nom_eve: inscripcion.evento.nom_eve,
+          },
+          comprobante: inscripcion.comprobantes_pago[0]?.url_com_pag || null,
+          carta_motivacion:
+            inscripcion.cartas_motivacion[0]?.con_car_mot || null,
+          usuario: {
+            nom_usu: inscripcion.cuenta.usuario.nom_usu,
+            ape_usu: inscripcion.cuenta.usuario.ape_usu,
+            cor_usu: inscripcion.cuenta.cor_usu,
+            com_usu: inscripcion.cuenta.usuario.com_usu || null,
+          },
+        };
+      });
+
+      console.log("✅ Mapeo de inscripciones completado");
+      res.status(200).json(inscripcionesMapeadas);
+    } catch (mapError) {
+      console.error("❌ Error durante el mapeo de inscripciones:", mapError);
+      throw mapError;
+    }
   } catch (error) {
+    console.error("❌ Error al obtener inscripciones del evento:", error);
     res.status(500).json({
       msg: "Error al obtener inscripciones del evento",
       error: error.message,
+      stack: process.env.NODE_ENV === "development" ? error.stack : undefined,
     });
   }
 };

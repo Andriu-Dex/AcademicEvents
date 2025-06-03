@@ -1,0 +1,394 @@
+.inscripcion-card {
+  background-color: #fff;
+  border-radius: 0.8rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+  margin-bottom: 1.2rem;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  border-left: 5px solid #d1d5db;
+}
+
+.inscripcion-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* Trasfondos de las cards */
+.inscripcion-card.estado-pendiente {
+  border-left-color: #fbbf24;
+}
+
+.inscripcion-card.estado-aceptada {
+  border-left-color: #10b981;
+}
+
+.inscripcion-card.estado-rechazada {
+  border-left-color: #ef4444;
+}
+
+.inscripcion-card.estado-finalizada {
+  border-left-color: #6366f1;
+}
+
+.inscripcion-card-header {
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border-bottom: 1px solid #f3f4f6;
+  position: relative;
+}
+
+.inscripcion-card-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.inscripcion-card-title h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.inscripcion-estado {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.3rem 0.8rem;
+  border-radius: 0.5rem;
+}
+
+.inscripcion-estado.estado-pendiente {
+  /* background-color: #fef9c3; */
+  background-color: #fee0c3;
+  color: #b45309;
+}
+
+.inscripcion-estado.estado-aceptada {
+  background-color: #bbf7d0;
+  color: #15803d;
+}
+
+.inscripcion-estado.estado-rechazada {
+  background-color: #fecaca;
+  color: #b91c1c;
+}
+
+.inscripcion-estado.estado-finalizada {
+  background-color: #e0e7ff;
+  color: #4338ca;
+}
+
+.inscripcion-card-subtitle {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.inscripcion-info-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: #4b5563;
+}
+
+.inscripcion-card-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.inscripcion-card-body.expanded {
+  max-height: 1000px;
+  transition: max-height 0.5s ease;
+}
+
+.inscripcion-section {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.inscripcion-section:last-child {
+  border-bottom: none;
+}
+
+.inscripcion-section h4 {
+  margin: 0 0 0.8rem 0;
+  font-size: 1rem;
+  color: #8a1538;
+  font-weight: 600;
+}
+
+.inscripcion-docs {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.inscripcion-doc-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0.8rem;
+  background-color: #f9fafb;
+  border-radius: 0.5rem;
+}
+
+.doc-link {
+  display: flex;
+  justify-content: right;
+  gap: 0.5rem;
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.3rem 0.5rem;
+  border-radius: 0.3rem;
+}
+
+.doc-link:hover {
+  color: #1d4ed8;
+  background-color: #f0f5ff;
+}
+
+.doc-missing {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #9ca3af;
+  font-style: italic;
+}
+
+.evento-gratuito {
+  color: #10b981;
+  font-style: italic;
+  font-weight: 600;
+  background-color: rgba(16, 185, 129, 0.1);
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.3rem;
+  display: inline-block;
+}
+
+.doc-preview-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.doc-preview {
+  margin-top: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f9fafb;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.comprobante-imagen {
+  max-width: 100%;
+  max-height: 350px;
+  border-radius: 0.4rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  object-fit: contain;
+  margin-bottom: 0.8rem;
+}
+
+.abrir-nueva-ventana {
+  color: #4f46e5;
+  font-size: 0.8rem;
+  text-decoration: underline;
+  margin-top: 0.5rem;
+}
+
+.inscripcion-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.inscripcion-stat-item {
+  flex: 1;
+  min-width: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.8rem;
+  background-color: #f9fafb;
+  border-radius: 0.5rem;
+  text-align: center;
+}
+
+.inscripcion-stat-item span:first-child {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin-bottom: 0.4rem;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.inscripcion-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.inscripcion-buttons {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: white;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-aceptar {
+  background-color: #10b981;
+  flex: 1;
+}
+
+.btn-aceptar:hover:not(:disabled) {
+  background-color: #059669;
+  transform: translateY(-2px);
+}
+
+.btn-rechazar {
+  background-color: #ef4444;
+  flex: 1;
+}
+
+.btn-rechazar:hover:not(:disabled) {
+  background-color: #dc2626;
+  transform: translateY(-2px);
+}
+
+.btn-finalizar {
+  background-color: #6366f1;
+  width: 100%;
+}
+
+.btn-finalizar:hover:not(:disabled) {
+  background-color: #4f46e5;
+  transform: translateY(-2px);
+}
+
+.inscripcion-finalizar-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: #f9fafb;
+  border-radius: 0.5rem;
+}
+
+.inscripcion-form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.inscripcion-form-group {
+  flex: 1;
+  min-width: 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.inscripcion-form-group label {
+  font-size: 0.85rem;
+  color: #4b5563;
+  font-weight: 500;
+}
+
+.inscripcion-input {
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.4rem;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.inscripcion-input:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+
+.btn-ver-carta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #6366f1;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-ver-carta:hover {
+  background-color: #4f46e5;
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+  .inscripcion-card-title {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .inscripcion-doc-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .inscripcion-doc-item > span:first-child {
+    font-weight: 600;
+  }
+}

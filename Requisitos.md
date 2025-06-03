@@ -45,9 +45,9 @@
    - Deben iniciar sesión con correo institucional (@uta.edu.ec).
    - Sólo pueden estar inscritos en una carrera.
    - Perfil debe contener: cédula, nombres, apellidos, correo institucional, carrera (editable), y documentos PDF (carrera (si es publico general no es necesario), cédula, papeleta de votación, certificado de estar matriculado (si es publico general no es necesario)).
-   - Inscripción a cursos requiere aprobación del administrador que revise documentos PDF, aquel que contiene los dicumentos del estudiante y la carta de motivación.
+   - Inscripción a cursos requiere aprobación del administrador, revisando el PDF que está en el perfil del estudiante, la carta de motivación y el comprobante de pago (en caso de que aplique).
    - Usuarios externos (no institucionales) sólo deben entregar cédula, sin carrera ni certificado de matriculación.
-     -Al inscribirse a algún evento el usuario debe redactar una carta de motivacion para ingresar al evento, cuando la redacte esta se transformará en PDF y se enviará a revisión para que el admin la valide junto con el PDF con los datos (cédula, nombres, apellidos, correo institucional, carrera (editable), y documentos PDF (carrera (si es publico general no es necesario), cédula, papeleta de votación, certificado de estar matriculado (si es publico general no es necesario)))
+     -Al inscribirse a algún evento el usuario debe redactar una carta de motivacion para ingresar al evento, cuando la redacte esta se enviará a revisión para que el admin la valide junto con el PDF con los datos (cédula, nombres, apellidos, correo institucional, carrera (si es publico general no es necesario), cédula (foto), papeleta de votación, certificado de estar matriculado (si es publico general no es necesario)).
 
 ---
 

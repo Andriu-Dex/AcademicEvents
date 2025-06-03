@@ -85,24 +85,30 @@ const EventsRoute = () => {
     if (usuario) obtenerInscripciones();
   }, [usuario]);
   const inscribirse = async () => {
-    if (!archivo) return toast.error("Debes subir un archivo PDF");
-    if (archivo.size > 5 * 1024 * 1024)
-      return toast.error("El archivo no debe superar los 5MB");
-    if (!cartaMotivacion.trim())
+    // Validación de campos
+    if (!cartaMotivacion.trim()) {
       return toast.error("Debes escribir una carta de motivación");
+    }
 
-    const tiposPermitidos = [
-      "application/pdf",
-      "image/jpeg",
-      "image/png",
-      "image/jpg",
-      "image/webp",
-    ];
+    // Solo validar archivo para eventos con costo o si se subió un archivo para eventos gratuitos
+    if (eventoSeleccionado.val_eve > 0 && !archivo) {
+      return toast.error("Debes subir un comprobante de pago");
+    }
 
-    if (!tiposPermitidos.includes(archivo.type)) {
-      return toast.error(
-        "Tipo de archivo no permitido. Solo PDF o imágenes JPG/PNG/WEBP"
-      );
+    if (archivo) {
+      // Validar tamaño del archivo
+      if (archivo.size > 5 * 1024 * 1024) {
+        return toast.error("El archivo no debe superar los 5MB");
+      }
+
+      // Validar tipo de archivo (sólo imágenes para Imgur)
+      const tiposPermitidos = ["image/jpeg", "image/jpg", "image/png"];
+
+      if (!tiposPermitidos.includes(archivo.type)) {
+        return toast.error(
+          "Tipo de archivo no permitido. Solo imágenes JPG o PNG"
+        );
+      }
     }
 
     setSubiendo(true);
@@ -149,7 +155,6 @@ const EventsRoute = () => {
         <CalendarDays size={24} />
         Eventos disponibles
       </h1>
-
       <div className="buscador-contenedor">
         <Search className="buscador-icono" size={18} />
         <input
@@ -160,7 +165,6 @@ const EventsRoute = () => {
           className="eventos-buscador"
         />
       </div>
-
       {eventosDisponibles.length === 0 ? (
         <p className="text-gray-600">No hay eventos disponibles para ti.</p>
       ) : (
@@ -229,50 +233,63 @@ const EventsRoute = () => {
               </div>
             ))}
         </div>
-      )}
-
+      )}{" "}
       {eventoSeleccionado && (
         <div className="modal-overlay">
-          {" "}
           <div className="modal-contenido">
             <h2>Inscripción a: {eventoSeleccionado.nom_eve}</h2>
 
-            <div className="mt-4 mb-3">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Carta de motivación:
-              </label>
+            <div className="form-group">
+              <label className="form-label">Carta de motivación:</label>
               <textarea
                 value={cartaMotivacion}
                 onChange={(e) => setCartaMotivacion(e.target.value)}
                 placeholder="Escribe aquí por qué quieres participar en este evento..."
-                className="w-full p-2 border rounded-md min-h-[120px]"
+                className="form-textarea"
                 required
               />
             </div>
 
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Comprobante de pago o documento de respaldo:
-            </label>
-            <input
-              type="file"
-              accept=".pdf,.jpg,.jpeg,.png"
-              onChange={(e) => setArchivo(e.target.files[0])}
-              className="modal-input-er"
-            />
+            {eventoSeleccionado.val_eve > 0 && (
+              <div className="form-group">
+                <label className="form-label">Comprobante de pago:</label>
+                <input
+                  type="file"
+                  accept=".jpg,.jpeg,.png"
+                  onChange={(e) => setArchivo(e.target.files[0])}
+                  className="form-input-file"
+                />
+                <span className="form-help-text">
+                  Formatos aceptados: JPG, JPEG, PNG (máx. 5MB)
+                </span>
+              </div>
+            )}
 
             {archivo && (
-              <p className="text-sm text-gray-600 mb-2">
-                Archivo seleccionado: <strong>{archivo.name}</strong> (
-                {archivo.type})
-              </p>
+              <div className="file-preview">
+                <span className="file-preview-name">{archivo.name}</span>
+                <span className="file-preview-type">({archivo.type})</span>
+              </div>
             )}
 
             <div className="modal-botones">
               <button
                 onClick={() => {
-                  if (!archivo) {
+                  setEventoSeleccionado(null);
+                  setArchivo(null);
+                  setCartaMotivacion("");
+                }}
+                className="btn-cancelar-modal"
+              >
+                Cancelar
+              </button>
+
+              <button
+                onClick={() => {
+                  // Validación personalizada según costo del evento
+                  if (eventoSeleccionado.val_eve > 0 && !archivo) {
                     toast.warning(
-                      "Por favor selecciona un archivo antes de continuar"
+                      "Por favor selecciona un comprobante de pago antes de continuar"
                     );
                     return;
                   }
@@ -284,21 +301,10 @@ const EventsRoute = () => {
                   }
                   inscribirse();
                 }}
-                className="btn-inscribirme"
+                className="btn-inscribirme-modal"
                 disabled={subiendo}
               >
                 {subiendo ? "Enviando..." : "Enviar inscripción"}
-              </button>
-
-              <button
-                onClick={() => {
-                  setEventoSeleccionado(null);
-                  setArchivo(null);
-                  setCartaMotivacion("");
-                }}
-                className="btn-cancelar-er"
-              >
-                Cancelar
               </button>
             </div>
           </div>

@@ -1,0 +1,348 @@
+import {
+  FileText,
+  XCircle,
+  User,
+  Mail,
+  Calendar,
+  Clock,
+  CheckCircle,
+  XOctagon,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react";
+import { useState } from "react";
+import axiosInstance from "../api/axiosConfig";
+import { toast } from "react-toastify";
+import "./styles/InscripcionCard.css";
+
+const InscripcionCard = ({ inscripcion, onUpdate }) => {
+  const [expanded, setExpanded] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [nota, setNota] = useState(inscripcion.nota_final || "");
+  const [asistencia, setAsistencia] = useState(inscripcion.asistencia || "");
+  const [mostrarComprobante, setMostrarComprobante] = useState(false);
+
+  const handleToggleExpand = () => {
+    setExpanded(!expanded);
+  };
+
+  const handleToggleComprobante = (e) => {
+    e.preventDefault();
+    setMostrarComprobante(!mostrarComprobante);
+  };
+
+  const cambiarEstado = async (nuevoEstado) => {
+    setLoading(true);
+    try {
+      await axiosInstance.put(
+        `/admin/inscripciones/validar/${inscripcion.id_ins}`,
+        {
+          est_ins: nuevoEstado,
+        }
+      );
+      toast.success(`Inscripción ${nuevoEstado.toLowerCase()}`);
+      if (onUpdate) onUpdate();
+    } catch (error) {
+      toast.error(error.response?.data?.msg || "Error al actualizar estado");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleFinalizar = async (e) => {
+    e.preventDefault();
+
+    if (isNaN(nota) || nota < 0 || nota > 10) {
+      toast.error("Nota inválida (0–10)");
+      return;
+    }
+    if (isNaN(asistencia) || asistencia < 0 || asistencia > 100) {
+      toast.error("Asistencia inválida (0–100)");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await axiosInstance.put(
+        `/admin/inscripciones/validar/${inscripcion.id_ins}`,
+        {
+          est_ins: "FINALIZADA",
+          nota_final: Number(nota),
+          asistencia: Number(asistencia),
+        }
+      );
+      toast.success("Inscripción finalizada");
+      if (onUpdate) onUpdate();
+    } catch (error) {
+      toast.error(error.response?.data?.msg || "Error al finalizar");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getEstadoClase = () => {
+    switch (inscripcion.estado) {
+      case "PENDIENTE":
+        return "estado-pendiente";
+      case "ACEPTADA":
+        return "estado-aceptada";
+      case "RECHAZADA":
+        return "estado-rechazada";
+      case "FINALIZADA":
+        return "estado-finalizada";
+      default:
+        return "";
+    }
+  };
+
+  return (
+    <div className={`inscripcion-card ${getEstadoClase()}`}>
+      <div className="inscripcion-card-header" onClick={handleToggleExpand}>
+        <div className="inscripcion-card-title">
+          <h3>
+            {inscripcion.usuario?.nom_usu} {inscripcion.usuario?.ape_usu}
+          </h3>
+          <span className={`inscripcion-estado ${getEstadoClase()}`}>
+            {inscripcion.estado}
+          </span>
+        </div>
+        <div className="inscripcion-card-subtitle">
+          <div className="inscripcion-info-item">
+            <User size={14} />
+            <span>{inscripcion.evento?.nom_eve}</span>
+          </div>
+          <div className="inscripcion-info-item">
+            <Mail size={14} />
+            <span>{inscripcion.usuario?.cor_usu}</span>
+          </div>
+        </div>
+      </div>
+
+      <div className={`inscripcion-card-body ${expanded ? "expanded" : ""}`}>
+        <div className="inscripcion-section">
+          <h4>Documentación</h4>
+          <div className="inscripcion-docs">
+            {" "}
+            <div className="inscripcion-doc-item">
+              <span>Comprobante:</span>
+              {inscripcion.evento?.val_eve > 0 ? (
+                inscripcion.comprobante ? (
+                  <div className="doc-preview-container">
+                    <button
+                      onClick={handleToggleComprobante}
+                      className="doc-link"
+                      title={
+                        mostrarComprobante
+                          ? "Ocultar comprobante"
+                          : "Ver comprobante"
+                      }
+                    >
+                      <FileText size={18} />
+                      Ver comprobante
+                      {mostrarComprobante ? (
+                        <ChevronUp size={14} />
+                      ) : (
+                        <ChevronDown size={14} />
+                      )}
+                    </button>
+
+                    {mostrarComprobante && (
+                      <div className="doc-preview">
+                        {inscripcion.comprobante.startsWith("http") ? (
+                          <img
+                            src={inscripcion.comprobante}
+                            alt="Comprobante de pago"
+                            className="comprobante-imagen"
+                          />
+                        ) : (
+                          <img
+                            src={`${import.meta.env.VITE_API_URL}/uploads/${
+                              inscripcion.comprobante
+                            }`}
+                            alt="Comprobante de pago"
+                            className="comprobante-imagen"
+                          />
+                        )}
+                        <a
+                          href={
+                            inscripcion.comprobante.startsWith("http")
+                              ? inscripcion.comprobante
+                              : `${import.meta.env.VITE_API_URL}/uploads/${
+                                  inscripcion.comprobante
+                                }`
+                          }
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="abrir-nueva-ventana"
+                        >
+                          Abrir en nueva ventana
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <span className="doc-missing">
+                    <XCircle size={18} /> No enviado
+                  </span>
+                )
+              ) : (
+                <span className="evento-gratuito">Gratuito</span>
+              )}
+            </div>{" "}
+            <div className="inscripcion-doc-item">
+              <span>Documentos personales:</span>
+              {inscripcion.usuario?.com_usu ? (
+                <a
+                  href={
+                    inscripcion.usuario.com_usu.startsWith("http")
+                      ? inscripcion.usuario.com_usu
+                      : `${import.meta.env.VITE_API_URL}${
+                          inscripcion.usuario.com_usu
+                        }`
+                  }
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="doc-link"
+                  title="Ver documentos del perfil"
+                >
+                  <FileText size={18} /> Ver documentos
+                </a>
+              ) : (
+                <span className="doc-missing">
+                  <XCircle size={18} /> No enviado
+                </span>
+              )}
+            </div>
+            <div className="inscripcion-doc-item">
+              <span>Carta de motivación:</span>
+              {inscripcion.carta_motivacion ? (
+                <button
+                  onClick={() =>
+                    inscripcion.onVerCarta(inscripcion.carta_motivacion)
+                  }
+                  className="btn-ver-carta"
+                  title="Ver carta de motivación"
+                >
+                  <FileText size={18} /> Ver carta
+                </button>
+              ) : (
+                <span className="doc-missing">
+                  <XCircle size={18} /> No enviada
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="inscripcion-section">
+          <h4>Calificaciones</h4>
+          <div className="inscripcion-stats">
+            <div className="inscripcion-stat-item">
+              <span>Asistencia:</span>
+              <span className="stat-value">
+                {inscripcion.asistencia !== null
+                  ? `${inscripcion.asistencia}%`
+                  : "—"}
+              </span>
+            </div>
+            <div className="inscripcion-stat-item">
+              <span>Nota Final:</span>
+              <span className="stat-value">
+                {inscripcion.nota_final !== null
+                  ? inscripcion.nota_final.toFixed(1)
+                  : "—"}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div className="inscripcion-section">
+          <h4>Acciones</h4>
+          <div className="inscripcion-actions">
+            <div className="inscripcion-buttons">
+              <button
+                onClick={() => cambiarEstado("ACEPTADA")}
+                className="btn btn-aceptar"
+                disabled={
+                  inscripcion.estado === "ACEPTADA" ||
+                  inscripcion.estado === "FINALIZADA" ||
+                  loading
+                }
+              >
+                <CheckCircle size={16} /> Aceptar
+              </button>
+              <button
+                onClick={() => cambiarEstado("RECHAZADA")}
+                className="btn btn-rechazar"
+                disabled={
+                  inscripcion.estado === "RECHAZADA" ||
+                  inscripcion.estado === "FINALIZADA" ||
+                  loading
+                }
+              >
+                <XOctagon size={16} /> Rechazar
+              </button>
+            </div>
+
+            <form
+              className="inscripcion-finalizar-form"
+              onSubmit={handleFinalizar}
+            >
+              <div className="inscripcion-form-row">
+                <div className="inscripcion-form-group">
+                  <label htmlFor={`nota-${inscripcion.id_ins}`}>
+                    Nota (0-10):
+                  </label>
+                  <input
+                    id={`nota-${inscripcion.id_ins}`}
+                    type="number"
+                    min="0"
+                    max="10"
+                    step="0.1"
+                    value={nota}
+                    onChange={(e) => {
+                      let val = parseFloat(e.target.value);
+                      if (val > 10) val = 10;
+                      if (val < 0) val = 0;
+                      setNota(val);
+                    }}
+                    className="inscripcion-input"
+                  />
+                </div>
+                <div className="inscripcion-form-group">
+                  <label htmlFor={`asistencia-${inscripcion.id_ins}`}>
+                    Asistencia (%):
+                  </label>
+                  <input
+                    id={`asistencia-${inscripcion.id_ins}`}
+                    type="number"
+                    min="0"
+                    max="100"
+                    step="1"
+                    value={asistencia}
+                    onChange={(e) => {
+                      let val = parseFloat(e.target.value);
+                      if (val > 100) val = 100;
+                      if (val < 0) val = 0;
+                      setAsistencia(val);
+                    }}
+                    className="inscripcion-input"
+                  />
+                </div>
+              </div>
+              <button
+                type="submit"
+                className="btn btn-finalizar"
+                disabled={inscripcion.estado === "FINALIZADA" || loading}
+              >
+                <Clock size={16} /> Finalizar
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default InscripcionCard;
