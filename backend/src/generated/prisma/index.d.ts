@@ -9118,13 +9118,27 @@ export namespace Prisma {
 
   export type AggregateCarrera = {
     _count: CarreraCountAggregateOutputType | null
+    _avg: CarreraAvgAggregateOutputType | null
+    _sum: CarreraSumAggregateOutputType | null
     _min: CarreraMinAggregateOutputType | null
     _max: CarreraMaxAggregateOutputType | null
+  }
+
+  export type CarreraAvgAggregateOutputType = {
+    dur_sem_car: number | null
+  }
+
+  export type CarreraSumAggregateOutputType = {
+    dur_sem_car: number | null
   }
 
   export type CarreraMinAggregateOutputType = {
     id_car: string | null
     nom_car: string | null
+    des_car: string | null
+    dur_sem_car: number | null
+    mod_car: string | null
+    ico_car: string | null
     est_car: boolean | null
     fec_cre_car: Date | null
     id_fac_per: string | null
@@ -9134,6 +9148,10 @@ export namespace Prisma {
   export type CarreraMaxAggregateOutputType = {
     id_car: string | null
     nom_car: string | null
+    des_car: string | null
+    dur_sem_car: number | null
+    mod_car: string | null
+    ico_car: string | null
     est_car: boolean | null
     fec_cre_car: Date | null
     id_fac_per: string | null
@@ -9143,6 +9161,10 @@ export namespace Prisma {
   export type CarreraCountAggregateOutputType = {
     id_car: number
     nom_car: number
+    des_car: number
+    dur_sem_car: number
+    mod_car: number
+    ico_car: number
     est_car: number
     fec_cre_car: number
     id_fac_per: number
@@ -9151,9 +9173,21 @@ export namespace Prisma {
   }
 
 
+  export type CarreraAvgAggregateInputType = {
+    dur_sem_car?: true
+  }
+
+  export type CarreraSumAggregateInputType = {
+    dur_sem_car?: true
+  }
+
   export type CarreraMinAggregateInputType = {
     id_car?: true
     nom_car?: true
+    des_car?: true
+    dur_sem_car?: true
+    mod_car?: true
+    ico_car?: true
     est_car?: true
     fec_cre_car?: true
     id_fac_per?: true
@@ -9163,6 +9197,10 @@ export namespace Prisma {
   export type CarreraMaxAggregateInputType = {
     id_car?: true
     nom_car?: true
+    des_car?: true
+    dur_sem_car?: true
+    mod_car?: true
+    ico_car?: true
     est_car?: true
     fec_cre_car?: true
     id_fac_per?: true
@@ -9172,6 +9210,10 @@ export namespace Prisma {
   export type CarreraCountAggregateInputType = {
     id_car?: true
     nom_car?: true
+    des_car?: true
+    dur_sem_car?: true
+    mod_car?: true
+    ico_car?: true
     est_car?: true
     fec_cre_car?: true
     id_fac_per?: true
@@ -9217,6 +9259,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: CarreraAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: CarreraSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: CarreraMinAggregateInputType
@@ -9247,6 +9301,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: CarreraCountAggregateInputType | true
+    _avg?: CarreraAvgAggregateInputType
+    _sum?: CarreraSumAggregateInputType
     _min?: CarreraMinAggregateInputType
     _max?: CarreraMaxAggregateInputType
   }
@@ -9254,11 +9310,17 @@ export namespace Prisma {
   export type CarreraGroupByOutputType = {
     id_car: string
     nom_car: string
+    des_car: string
+    dur_sem_car: number
+    mod_car: string
+    ico_car: string
     est_car: boolean
     fec_cre_car: Date
     id_fac_per: string
     id_coo_per: string | null
     _count: CarreraCountAggregateOutputType | null
+    _avg: CarreraAvgAggregateOutputType | null
+    _sum: CarreraSumAggregateOutputType | null
     _min: CarreraMinAggregateOutputType | null
     _max: CarreraMaxAggregateOutputType | null
   }
@@ -9280,6 +9342,10 @@ export namespace Prisma {
   export type carreraSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id_car?: boolean
     nom_car?: boolean
+    des_car?: boolean
+    dur_sem_car?: boolean
+    mod_car?: boolean
+    ico_car?: boolean
     est_car?: boolean
     fec_cre_car?: boolean
     id_fac_per?: boolean
@@ -9294,6 +9360,10 @@ export namespace Prisma {
   export type carreraSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id_car?: boolean
     nom_car?: boolean
+    des_car?: boolean
+    dur_sem_car?: boolean
+    mod_car?: boolean
+    ico_car?: boolean
     est_car?: boolean
     fec_cre_car?: boolean
     id_fac_per?: boolean
@@ -9305,6 +9375,10 @@ export namespace Prisma {
   export type carreraSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id_car?: boolean
     nom_car?: boolean
+    des_car?: boolean
+    dur_sem_car?: boolean
+    mod_car?: boolean
+    ico_car?: boolean
     est_car?: boolean
     fec_cre_car?: boolean
     id_fac_per?: boolean
@@ -9316,13 +9390,17 @@ export namespace Prisma {
   export type carreraSelectScalar = {
     id_car?: boolean
     nom_car?: boolean
+    des_car?: boolean
+    dur_sem_car?: boolean
+    mod_car?: boolean
+    ico_car?: boolean
     est_car?: boolean
     fec_cre_car?: boolean
     id_fac_per?: boolean
     id_coo_per?: boolean
   }
 
-  export type carreraOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_car" | "nom_car" | "est_car" | "fec_cre_car" | "id_fac_per" | "id_coo_per", ExtArgs["result"]["carrera"]>
+  export type carreraOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_car" | "nom_car" | "des_car" | "dur_sem_car" | "mod_car" | "ico_car" | "est_car" | "fec_cre_car" | "id_fac_per" | "id_coo_per", ExtArgs["result"]["carrera"]>
   export type carreraInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     facultad?: boolean | facultadDefaultArgs<ExtArgs>
     coordinador?: boolean | carrera$coordinadorArgs<ExtArgs>
@@ -9350,6 +9428,10 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id_car: string
       nom_car: string
+      des_car: string
+      dur_sem_car: number
+      mod_car: string
+      ico_car: string
       est_car: boolean
       fec_cre_car: Date
       id_fac_per: string
@@ -9783,6 +9865,10 @@ export namespace Prisma {
   interface carreraFieldRefs {
     readonly id_car: FieldRef<"carrera", 'String'>
     readonly nom_car: FieldRef<"carrera", 'String'>
+    readonly des_car: FieldRef<"carrera", 'String'>
+    readonly dur_sem_car: FieldRef<"carrera", 'Int'>
+    readonly mod_car: FieldRef<"carrera", 'String'>
+    readonly ico_car: FieldRef<"carrera", 'String'>
     readonly est_car: FieldRef<"carrera", 'Boolean'>
     readonly fec_cre_car: FieldRef<"carrera", 'DateTime'>
     readonly id_fac_per: FieldRef<"carrera", 'String'>
@@ -18287,6 +18373,10 @@ export namespace Prisma {
   export const CarreraScalarFieldEnum: {
     id_car: 'id_car',
     nom_car: 'nom_car',
+    des_car: 'des_car',
+    dur_sem_car: 'dur_sem_car',
+    mod_car: 'mod_car',
+    ico_car: 'ico_car',
     est_car: 'est_car',
     fec_cre_car: 'fec_cre_car',
     id_fac_per: 'id_fac_per',
@@ -18473,6 +18563,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Int'
+   */
+  export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+    
+
+
+  /**
+   * Reference to a field of type 'Int[]'
+   */
+  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Boolean'
    */
   export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
@@ -18518,20 +18622,6 @@ export namespace Prisma {
    * Reference to a field of type 'estado_evento[]'
    */
   export type ListEnumestado_eventoFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'estado_evento[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'Int'
-   */
-  export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
-    
-
-
-  /**
-   * Reference to a field of type 'Int[]'
-   */
-  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
     
 
 
@@ -18925,6 +19015,10 @@ export namespace Prisma {
     NOT?: carreraWhereInput | carreraWhereInput[]
     id_car?: StringFilter<"carrera"> | string
     nom_car?: StringFilter<"carrera"> | string
+    des_car?: StringFilter<"carrera"> | string
+    dur_sem_car?: IntFilter<"carrera"> | number
+    mod_car?: StringFilter<"carrera"> | string
+    ico_car?: StringFilter<"carrera"> | string
     est_car?: BoolFilter<"carrera"> | boolean
     fec_cre_car?: DateTimeFilter<"carrera"> | Date | string
     id_fac_per?: StringFilter<"carrera"> | string
@@ -18938,6 +19032,10 @@ export namespace Prisma {
   export type carreraOrderByWithRelationInput = {
     id_car?: SortOrder
     nom_car?: SortOrder
+    des_car?: SortOrder
+    dur_sem_car?: SortOrder
+    mod_car?: SortOrder
+    ico_car?: SortOrder
     est_car?: SortOrder
     fec_cre_car?: SortOrder
     id_fac_per?: SortOrder
@@ -18954,6 +19052,10 @@ export namespace Prisma {
     AND?: carreraWhereInput | carreraWhereInput[]
     OR?: carreraWhereInput[]
     NOT?: carreraWhereInput | carreraWhereInput[]
+    des_car?: StringFilter<"carrera"> | string
+    dur_sem_car?: IntFilter<"carrera"> | number
+    mod_car?: StringFilter<"carrera"> | string
+    ico_car?: StringFilter<"carrera"> | string
     est_car?: BoolFilter<"carrera"> | boolean
     fec_cre_car?: DateTimeFilter<"carrera"> | Date | string
     id_fac_per?: StringFilter<"carrera"> | string
@@ -18967,13 +19069,19 @@ export namespace Prisma {
   export type carreraOrderByWithAggregationInput = {
     id_car?: SortOrder
     nom_car?: SortOrder
+    des_car?: SortOrder
+    dur_sem_car?: SortOrder
+    mod_car?: SortOrder
+    ico_car?: SortOrder
     est_car?: SortOrder
     fec_cre_car?: SortOrder
     id_fac_per?: SortOrder
     id_coo_per?: SortOrderInput | SortOrder
     _count?: carreraCountOrderByAggregateInput
+    _avg?: carreraAvgOrderByAggregateInput
     _max?: carreraMaxOrderByAggregateInput
     _min?: carreraMinOrderByAggregateInput
+    _sum?: carreraSumOrderByAggregateInput
   }
 
   export type carreraScalarWhereWithAggregatesInput = {
@@ -18982,6 +19090,10 @@ export namespace Prisma {
     NOT?: carreraScalarWhereWithAggregatesInput | carreraScalarWhereWithAggregatesInput[]
     id_car?: StringWithAggregatesFilter<"carrera"> | string
     nom_car?: StringWithAggregatesFilter<"carrera"> | string
+    des_car?: StringWithAggregatesFilter<"carrera"> | string
+    dur_sem_car?: IntWithAggregatesFilter<"carrera"> | number
+    mod_car?: StringWithAggregatesFilter<"carrera"> | string
+    ico_car?: StringWithAggregatesFilter<"carrera"> | string
     est_car?: BoolWithAggregatesFilter<"carrera"> | boolean
     fec_cre_car?: DateTimeWithAggregatesFilter<"carrera"> | Date | string
     id_fac_per?: StringWithAggregatesFilter<"carrera"> | string
@@ -19848,6 +19960,10 @@ export namespace Prisma {
   export type carreraCreateInput = {
     id_car?: string
     nom_car: string
+    des_car: string
+    dur_sem_car: number
+    mod_car: string
+    ico_car: string
     est_car?: boolean
     fec_cre_car?: Date | string
     facultad: facultadCreateNestedOneWithoutCarrerasInput
@@ -19859,6 +19975,10 @@ export namespace Prisma {
   export type carreraUncheckedCreateInput = {
     id_car?: string
     nom_car: string
+    des_car: string
+    dur_sem_car: number
+    mod_car: string
+    ico_car: string
     est_car?: boolean
     fec_cre_car?: Date | string
     id_fac_per: string
@@ -19870,6 +19990,10 @@ export namespace Prisma {
   export type carreraUpdateInput = {
     id_car?: StringFieldUpdateOperationsInput | string
     nom_car?: StringFieldUpdateOperationsInput | string
+    des_car?: StringFieldUpdateOperationsInput | string
+    dur_sem_car?: IntFieldUpdateOperationsInput | number
+    mod_car?: StringFieldUpdateOperationsInput | string
+    ico_car?: StringFieldUpdateOperationsInput | string
     est_car?: BoolFieldUpdateOperationsInput | boolean
     fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
     facultad?: facultadUpdateOneRequiredWithoutCarrerasNestedInput
@@ -19881,6 +20005,10 @@ export namespace Prisma {
   export type carreraUncheckedUpdateInput = {
     id_car?: StringFieldUpdateOperationsInput | string
     nom_car?: StringFieldUpdateOperationsInput | string
+    des_car?: StringFieldUpdateOperationsInput | string
+    dur_sem_car?: IntFieldUpdateOperationsInput | number
+    mod_car?: StringFieldUpdateOperationsInput | string
+    ico_car?: StringFieldUpdateOperationsInput | string
     est_car?: BoolFieldUpdateOperationsInput | boolean
     fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
     id_fac_per?: StringFieldUpdateOperationsInput | string
@@ -19892,6 +20020,10 @@ export namespace Prisma {
   export type carreraCreateManyInput = {
     id_car?: string
     nom_car: string
+    des_car: string
+    dur_sem_car: number
+    mod_car: string
+    ico_car: string
     est_car?: boolean
     fec_cre_car?: Date | string
     id_fac_per: string
@@ -19901,6 +20033,10 @@ export namespace Prisma {
   export type carreraUpdateManyMutationInput = {
     id_car?: StringFieldUpdateOperationsInput | string
     nom_car?: StringFieldUpdateOperationsInput | string
+    des_car?: StringFieldUpdateOperationsInput | string
+    dur_sem_car?: IntFieldUpdateOperationsInput | number
+    mod_car?: StringFieldUpdateOperationsInput | string
+    ico_car?: StringFieldUpdateOperationsInput | string
     est_car?: BoolFieldUpdateOperationsInput | boolean
     fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -19908,6 +20044,10 @@ export namespace Prisma {
   export type carreraUncheckedUpdateManyInput = {
     id_car?: StringFieldUpdateOperationsInput | string
     nom_car?: StringFieldUpdateOperationsInput | string
+    des_car?: StringFieldUpdateOperationsInput | string
+    dur_sem_car?: IntFieldUpdateOperationsInput | number
+    mod_car?: StringFieldUpdateOperationsInput | string
+    ico_car?: StringFieldUpdateOperationsInput | string
     est_car?: BoolFieldUpdateOperationsInput | boolean
     fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
     id_fac_per?: StringFieldUpdateOperationsInput | string
@@ -20834,6 +20974,17 @@ export namespace Prisma {
     _max?: NestedEnumrol_usuarioFilter<$PrismaModel>
   }
 
+  export type IntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
+  }
+
   export type BoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
@@ -20872,15 +21023,27 @@ export namespace Prisma {
   export type carreraCountOrderByAggregateInput = {
     id_car?: SortOrder
     nom_car?: SortOrder
+    des_car?: SortOrder
+    dur_sem_car?: SortOrder
+    mod_car?: SortOrder
+    ico_car?: SortOrder
     est_car?: SortOrder
     fec_cre_car?: SortOrder
     id_fac_per?: SortOrder
     id_coo_per?: SortOrder
   }
 
+  export type carreraAvgOrderByAggregateInput = {
+    dur_sem_car?: SortOrder
+  }
+
   export type carreraMaxOrderByAggregateInput = {
     id_car?: SortOrder
     nom_car?: SortOrder
+    des_car?: SortOrder
+    dur_sem_car?: SortOrder
+    mod_car?: SortOrder
+    ico_car?: SortOrder
     est_car?: SortOrder
     fec_cre_car?: SortOrder
     id_fac_per?: SortOrder
@@ -20890,10 +21053,34 @@ export namespace Prisma {
   export type carreraMinOrderByAggregateInput = {
     id_car?: SortOrder
     nom_car?: SortOrder
+    des_car?: SortOrder
+    dur_sem_car?: SortOrder
+    mod_car?: SortOrder
+    ico_car?: SortOrder
     est_car?: SortOrder
     fec_cre_car?: SortOrder
     id_fac_per?: SortOrder
     id_coo_per?: SortOrder
+  }
+
+  export type carreraSumOrderByAggregateInput = {
+    dur_sem_car?: SortOrder
+  }
+
+  export type IntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
   }
 
   export type BoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -20964,17 +21151,6 @@ export namespace Prisma {
     in?: $Enums.estado_evento[] | ListEnumestado_eventoFieldRefInput<$PrismaModel>
     notIn?: $Enums.estado_evento[] | ListEnumestado_eventoFieldRefInput<$PrismaModel>
     not?: NestedEnumestado_eventoFilter<$PrismaModel> | $Enums.estado_evento
-  }
-
-  export type IntFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntFilter<$PrismaModel> | number
   }
 
   export type Evento_cursoNullableScalarRelationFilter = {
@@ -21081,22 +21257,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumestado_eventoFilter<$PrismaModel>
     _max?: NestedEnumestado_eventoFilter<$PrismaModel>
-  }
-
-  export type IntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
   }
 
   export type EventoScalarRelationFilter = {
@@ -21793,6 +21953,14 @@ export namespace Prisma {
     connect?: evento_carreraWhereUniqueInput | evento_carreraWhereUniqueInput[]
   }
 
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
   export type BoolFieldUpdateOperationsInput = {
     set?: boolean
   }
@@ -21973,14 +22141,6 @@ export namespace Prisma {
 
   export type Enumestado_eventoFieldUpdateOperationsInput = {
     set?: $Enums.estado_evento
-  }
-
-  export type IntFieldUpdateOperationsInput = {
-    set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
   }
 
   export type inscripcionUpdateManyWithoutEventoNestedInput = {
@@ -22494,6 +22654,33 @@ export namespace Prisma {
     not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
+  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type NestedFloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
   export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
@@ -22507,17 +22694,6 @@ export namespace Prisma {
     in?: $Enums.tipo_evento[] | ListEnumtipo_eventoFieldRefInput<$PrismaModel>
     notIn?: $Enums.tipo_evento[] | ListEnumtipo_eventoFieldRefInput<$PrismaModel>
     not?: NestedEnumtipo_eventoFilter<$PrismaModel> | $Enums.tipo_evento
-  }
-
-  export type NestedFloatFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatFilter<$PrismaModel> | number
   }
 
   export type NestedEnumestado_eventoFilter<$PrismaModel = never> = {
@@ -22561,22 +22737,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumestado_eventoFilter<$PrismaModel>
     _max?: NestedEnumestado_eventoFilter<$PrismaModel>
-  }
-
-  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
   }
 
   export type NestedEnumestado_inscripcionFilter<$PrismaModel = never> = {
@@ -22626,6 +22786,10 @@ export namespace Prisma {
   export type carreraCreateWithoutUsuarioInput = {
     id_car?: string
     nom_car: string
+    des_car: string
+    dur_sem_car: number
+    mod_car: string
+    ico_car: string
     est_car?: boolean
     fec_cre_car?: Date | string
     facultad: facultadCreateNestedOneWithoutCarrerasInput
@@ -22636,6 +22800,10 @@ export namespace Prisma {
   export type carreraUncheckedCreateWithoutUsuarioInput = {
     id_car?: string
     nom_car: string
+    des_car: string
+    dur_sem_car: number
+    mod_car: string
+    ico_car: string
     est_car?: boolean
     fec_cre_car?: Date | string
     id_fac_per: string
@@ -22696,6 +22864,10 @@ export namespace Prisma {
   export type carreraUpdateWithoutUsuarioInput = {
     id_car?: StringFieldUpdateOperationsInput | string
     nom_car?: StringFieldUpdateOperationsInput | string
+    des_car?: StringFieldUpdateOperationsInput | string
+    dur_sem_car?: IntFieldUpdateOperationsInput | number
+    mod_car?: StringFieldUpdateOperationsInput | string
+    ico_car?: StringFieldUpdateOperationsInput | string
     est_car?: BoolFieldUpdateOperationsInput | boolean
     fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
     facultad?: facultadUpdateOneRequiredWithoutCarrerasNestedInput
@@ -22706,6 +22878,10 @@ export namespace Prisma {
   export type carreraUncheckedUpdateWithoutUsuarioInput = {
     id_car?: StringFieldUpdateOperationsInput | string
     nom_car?: StringFieldUpdateOperationsInput | string
+    des_car?: StringFieldUpdateOperationsInput | string
+    dur_sem_car?: IntFieldUpdateOperationsInput | number
+    mod_car?: StringFieldUpdateOperationsInput | string
+    ico_car?: StringFieldUpdateOperationsInput | string
     est_car?: BoolFieldUpdateOperationsInput | boolean
     fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
     id_fac_per?: StringFieldUpdateOperationsInput | string
@@ -23775,6 +23951,10 @@ export namespace Prisma {
   export type carreraCreateWithoutCoordinadorInput = {
     id_car?: string
     nom_car: string
+    des_car: string
+    dur_sem_car: number
+    mod_car: string
+    ico_car: string
     est_car?: boolean
     fec_cre_car?: Date | string
     facultad: facultadCreateNestedOneWithoutCarrerasInput
@@ -23785,6 +23965,10 @@ export namespace Prisma {
   export type carreraUncheckedCreateWithoutCoordinadorInput = {
     id_car?: string
     nom_car: string
+    des_car: string
+    dur_sem_car: number
+    mod_car: string
+    ico_car: string
     est_car?: boolean
     fec_cre_car?: Date | string
     id_fac_per: string
@@ -23824,6 +24008,10 @@ export namespace Prisma {
     NOT?: carreraScalarWhereInput | carreraScalarWhereInput[]
     id_car?: StringFilter<"carrera"> | string
     nom_car?: StringFilter<"carrera"> | string
+    des_car?: StringFilter<"carrera"> | string
+    dur_sem_car?: IntFilter<"carrera"> | number
+    mod_car?: StringFilter<"carrera"> | string
+    ico_car?: StringFilter<"carrera"> | string
     est_car?: BoolFilter<"carrera"> | boolean
     fec_cre_car?: DateTimeFilter<"carrera"> | Date | string
     id_fac_per?: StringFilter<"carrera"> | string
@@ -24107,6 +24295,10 @@ export namespace Prisma {
   export type carreraCreateWithoutEventosInput = {
     id_car?: string
     nom_car: string
+    des_car: string
+    dur_sem_car: number
+    mod_car: string
+    ico_car: string
     est_car?: boolean
     fec_cre_car?: Date | string
     facultad: facultadCreateNestedOneWithoutCarrerasInput
@@ -24117,6 +24309,10 @@ export namespace Prisma {
   export type carreraUncheckedCreateWithoutEventosInput = {
     id_car?: string
     nom_car: string
+    des_car: string
+    dur_sem_car: number
+    mod_car: string
+    ico_car: string
     est_car?: boolean
     fec_cre_car?: Date | string
     id_fac_per: string
@@ -24184,6 +24380,10 @@ export namespace Prisma {
   export type carreraUpdateWithoutEventosInput = {
     id_car?: StringFieldUpdateOperationsInput | string
     nom_car?: StringFieldUpdateOperationsInput | string
+    des_car?: StringFieldUpdateOperationsInput | string
+    dur_sem_car?: IntFieldUpdateOperationsInput | number
+    mod_car?: StringFieldUpdateOperationsInput | string
+    ico_car?: StringFieldUpdateOperationsInput | string
     est_car?: BoolFieldUpdateOperationsInput | boolean
     fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
     facultad?: facultadUpdateOneRequiredWithoutCarrerasNestedInput
@@ -24194,6 +24394,10 @@ export namespace Prisma {
   export type carreraUncheckedUpdateWithoutEventosInput = {
     id_car?: StringFieldUpdateOperationsInput | string
     nom_car?: StringFieldUpdateOperationsInput | string
+    des_car?: StringFieldUpdateOperationsInput | string
+    dur_sem_car?: IntFieldUpdateOperationsInput | number
+    mod_car?: StringFieldUpdateOperationsInput | string
+    ico_car?: StringFieldUpdateOperationsInput | string
     est_car?: BoolFieldUpdateOperationsInput | boolean
     fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
     id_fac_per?: StringFieldUpdateOperationsInput | string
@@ -24595,6 +24799,10 @@ export namespace Prisma {
   export type carreraCreateWithoutFacultadInput = {
     id_car?: string
     nom_car: string
+    des_car: string
+    dur_sem_car: number
+    mod_car: string
+    ico_car: string
     est_car?: boolean
     fec_cre_car?: Date | string
     coordinador?: coordinadorCreateNestedOneWithoutCarrerasInput
@@ -24605,6 +24813,10 @@ export namespace Prisma {
   export type carreraUncheckedCreateWithoutFacultadInput = {
     id_car?: string
     nom_car: string
+    des_car: string
+    dur_sem_car: number
+    mod_car: string
+    ico_car: string
     est_car?: boolean
     fec_cre_car?: Date | string
     id_coo_per?: string | null
@@ -24967,6 +25179,10 @@ export namespace Prisma {
   export type carreraCreateManyCoordinadorInput = {
     id_car?: string
     nom_car: string
+    des_car: string
+    dur_sem_car: number
+    mod_car: string
+    ico_car: string
     est_car?: boolean
     fec_cre_car?: Date | string
     id_fac_per: string
@@ -24975,6 +25191,10 @@ export namespace Prisma {
   export type carreraUpdateWithoutCoordinadorInput = {
     id_car?: StringFieldUpdateOperationsInput | string
     nom_car?: StringFieldUpdateOperationsInput | string
+    des_car?: StringFieldUpdateOperationsInput | string
+    dur_sem_car?: IntFieldUpdateOperationsInput | number
+    mod_car?: StringFieldUpdateOperationsInput | string
+    ico_car?: StringFieldUpdateOperationsInput | string
     est_car?: BoolFieldUpdateOperationsInput | boolean
     fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
     facultad?: facultadUpdateOneRequiredWithoutCarrerasNestedInput
@@ -24985,6 +25205,10 @@ export namespace Prisma {
   export type carreraUncheckedUpdateWithoutCoordinadorInput = {
     id_car?: StringFieldUpdateOperationsInput | string
     nom_car?: StringFieldUpdateOperationsInput | string
+    des_car?: StringFieldUpdateOperationsInput | string
+    dur_sem_car?: IntFieldUpdateOperationsInput | number
+    mod_car?: StringFieldUpdateOperationsInput | string
+    ico_car?: StringFieldUpdateOperationsInput | string
     est_car?: BoolFieldUpdateOperationsInput | boolean
     fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
     id_fac_per?: StringFieldUpdateOperationsInput | string
@@ -24995,6 +25219,10 @@ export namespace Prisma {
   export type carreraUncheckedUpdateManyWithoutCoordinadorInput = {
     id_car?: StringFieldUpdateOperationsInput | string
     nom_car?: StringFieldUpdateOperationsInput | string
+    des_car?: StringFieldUpdateOperationsInput | string
+    dur_sem_car?: IntFieldUpdateOperationsInput | number
+    mod_car?: StringFieldUpdateOperationsInput | string
+    ico_car?: StringFieldUpdateOperationsInput | string
     est_car?: BoolFieldUpdateOperationsInput | boolean
     fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
     id_fac_per?: StringFieldUpdateOperationsInput | string
@@ -25149,6 +25377,10 @@ export namespace Prisma {
   export type carreraCreateManyFacultadInput = {
     id_car?: string
     nom_car: string
+    des_car: string
+    dur_sem_car: number
+    mod_car: string
+    ico_car: string
     est_car?: boolean
     fec_cre_car?: Date | string
     id_coo_per?: string | null
@@ -25157,6 +25389,10 @@ export namespace Prisma {
   export type carreraUpdateWithoutFacultadInput = {
     id_car?: StringFieldUpdateOperationsInput | string
     nom_car?: StringFieldUpdateOperationsInput | string
+    des_car?: StringFieldUpdateOperationsInput | string
+    dur_sem_car?: IntFieldUpdateOperationsInput | number
+    mod_car?: StringFieldUpdateOperationsInput | string
+    ico_car?: StringFieldUpdateOperationsInput | string
     est_car?: BoolFieldUpdateOperationsInput | boolean
     fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
     coordinador?: coordinadorUpdateOneWithoutCarrerasNestedInput
@@ -25167,6 +25403,10 @@ export namespace Prisma {
   export type carreraUncheckedUpdateWithoutFacultadInput = {
     id_car?: StringFieldUpdateOperationsInput | string
     nom_car?: StringFieldUpdateOperationsInput | string
+    des_car?: StringFieldUpdateOperationsInput | string
+    dur_sem_car?: IntFieldUpdateOperationsInput | number
+    mod_car?: StringFieldUpdateOperationsInput | string
+    ico_car?: StringFieldUpdateOperationsInput | string
     est_car?: BoolFieldUpdateOperationsInput | boolean
     fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
     id_coo_per?: NullableStringFieldUpdateOperationsInput | string | null
@@ -25177,6 +25417,10 @@ export namespace Prisma {
   export type carreraUncheckedUpdateManyWithoutFacultadInput = {
     id_car?: StringFieldUpdateOperationsInput | string
     nom_car?: StringFieldUpdateOperationsInput | string
+    des_car?: StringFieldUpdateOperationsInput | string
+    dur_sem_car?: IntFieldUpdateOperationsInput | number
+    mod_car?: StringFieldUpdateOperationsInput | string
+    ico_car?: StringFieldUpdateOperationsInput | string
     est_car?: BoolFieldUpdateOperationsInput | boolean
     fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
     id_coo_per?: NullableStringFieldUpdateOperationsInput | string | null

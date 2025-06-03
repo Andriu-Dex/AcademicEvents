@@ -173,6 +173,10 @@ exports.Prisma.CuentaScalarFieldEnum = {
 exports.Prisma.CarreraScalarFieldEnum = {
   id_car: 'id_car',
   nom_car: 'nom_car',
+  des_car: 'des_car',
+  dur_sem_car: 'dur_sem_car',
+  mod_car: 'mod_car',
+  ico_car: 'ico_car',
   est_car: 'est_car',
   fec_cre_car: 'fec_cre_car',
   id_fac_per: 'id_fac_per',

@@ -70,6 +70,10 @@ app.use("/api", carreraRoutes);
 const facultadRoutes = require("./routes/facultad.routes");
 app.use("/api", facultadRoutes);
 
+// Rutas de gestión de coordinadores
+const coordinadorRoutes = require("./routes/coordinador.routes");
+app.use("/api", coordinadorRoutes);
+
 // Rutas de gestión de configuraciones
 app.use("/api/configuracion", require("./routes/configuracion.routes"));
 

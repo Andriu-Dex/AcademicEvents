@@ -86,6 +86,10 @@ model cuenta {
 model carrera {
   id_car      String   @id @default(uuid()) // UUID como ID de la carrera
   nom_car     String   @unique // Nombre único de la carrera
+  des_car     String // Descripción de la carrera
+  dur_sem_car Int // Duración de la carrera en semestres
+  mod_car     String // Modalidad de la carrera (PRESENCIAL, VIRTUAL, SEMIPRESENCIAL)
+  ico_car     String // URL del icono de la carrera
   est_car     Boolean  @default(true) // Estado de la carrera (activa/inactiva)
   fec_cre_car DateTime @default(now()) // Fecha de creación de la carrera
   id_fac_per  String // FK a facultad
