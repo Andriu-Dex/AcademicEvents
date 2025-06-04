@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "dotenv -- vite --host $VITE_HOST --port $VITE_PORT",
+    "dev": "vite --host 10.79.14.73 --port 5173",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"

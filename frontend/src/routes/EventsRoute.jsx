@@ -41,6 +41,7 @@ const EventsRoute = () => {
   const [archivo, setArchivo] = useState(null);
   const [cartaMotivacion, setCartaMotivacion] = useState("");
   const [inscripciones, setInscripciones] = useState([]);
+  const [inscripcionesRechazadas, setInscripcionesRechazadas] = useState([]);
   const [subiendo, setSubiendo] = useState(false);
   const [exitoVisible, setExitoVisible] = useState(false);
   const [usuarioConCarrera, setUsuarioConCarrera] = useState(null);
@@ -86,9 +87,9 @@ const EventsRoute = () => {
         const insRes = await axiosInstance.get("/inscripciones/propias");
         console.log("Inscripciones del usuario:", insRes.data);
 
-        // Filtramos sólo las inscripciones activas (no rechazadas)
+        // Filtramos sólo las inscripciones activas (PENDIENTES o ACEPTADAS)
         const inscripcionesActivas = insRes.data.filter(
-          (ins) => ins.est_ins !== "RECHAZADA"
+          (ins) => ins.est_ins === "PENDIENTE" || ins.est_ins === "ACEPTADA"
         );
 
         // Extraemos los ids de los eventos en los que el usuario está inscrito activamente
@@ -100,6 +101,14 @@ const EventsRoute = () => {
         // Identificamos las inscripciones rechazadas para mostrar un mensaje especial
         const rechazadas = insRes.data.filter(
           (ins) => ins.est_ins === "RECHAZADA"
+        );
+
+        // Almacenar los IDs de eventos con inscripciones rechazadas
+        const eventosRechazados = rechazadas.map((ins) => ins.evento.id_eve);
+        setInscripcionesRechazadas(eventosRechazados);
+        console.log(
+          "IDs de eventos con inscripción rechazada:",
+          eventosRechazados
         );
 
         if (rechazadas.length > 0) {
@@ -158,26 +167,37 @@ const EventsRoute = () => {
     formData.append("id_eve", eventoSeleccionado.id_eve);
     formData.append("archivo", archivo);
     formData.append("carta_motivacion", cartaMotivacion);
+
     try {
-      await axiosInstance.post("/inscripciones", formData, {
+      const response = await axiosInstance.post("/inscripciones", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
-      toast.success("Inscripción enviada con éxito");
 
-      // Actualizar inmediatamente la lista de inscripciones para deshabilitar el botón
-      setInscripciones((prevInscripciones) => [
-        ...prevInscripciones,
-        eventoSeleccionado.id_eve,
-      ]);
+      // Verificar que la respuesta fue exitosa
+      if (response.status === 200 || response.status === 201) {
+        toast.success("Inscripción enviada con éxito");
 
-      setEventoSeleccionado(null);
-      setArchivo(null);
-      setCartaMotivacion("");
-      setExitoVisible(true);
-      setTimeout(() => setExitoVisible(false), 2000);
-      setSubiendo(false);
+        // Actualizar inmediatamente la lista de inscripciones para deshabilitar el botón
+        setInscripciones((prevInscripciones) => [
+          ...prevInscripciones,
+          eventoSeleccionado.id_eve,
+        ]);
+
+        // Si era una reinscripción, eliminarla de las rechazadas
+        if (eventoSeleccionado.reinscripcion) {
+          setInscripcionesRechazadas((prev) =>
+            prev.filter((id) => id !== eventoSeleccionado.id_eve)
+          );
+        }
+
+        setEventoSeleccionado(null);
+        setArchivo(null);
+        setCartaMotivacion("");
+        setExitoVisible(true);
+        setTimeout(() => setExitoVisible(false), 2000);
+      }
     } catch (error) {
       // Mostrar mensaje detallado del backend si existe
       if (error.response?.data?.msg) {
@@ -320,7 +340,18 @@ const EventsRoute = () => {
                 )}{" "}
                 {evento.pagado_eve && <p className="pago">Pagado</p>}{" "}
                 <button
-                  onClick={() => setEventoSeleccionado(evento)}
+                  onClick={() => {
+                    // Para reinscripción, marcamos como tal
+                    if (
+                      inscripcionesRechazadas &&
+                      inscripcionesRechazadas.includes(evento.id_eve)
+                    ) {
+                      const eventoConMarca = { ...evento, reinscripcion: true };
+                      setEventoSeleccionado(eventoConMarca);
+                    } else {
+                      setEventoSeleccionado(evento);
+                    }
+                  }}
                   className="btn-inscribirme"
                   disabled={inscripciones.includes(evento.id_eve)}
                 >

@@ -91,9 +91,7 @@ const crearInscripcion = async (req, res) => {
     // Permitir reinscripción si la inscripción anterior fue rechazada
     if (yaInscrito && yaInscrito.est_ins !== "RECHAZADA") {
       return res.status(400).json({ msg: "Ya estás inscrito en este evento" });
-    }
-
-    // Si la inscripción estaba RECHAZADA, la actualizamos en lugar de crear una nueva
+    } // Si la inscripción estaba RECHAZADA, la actualizamos en lugar de crear una nueva
     if (yaInscrito && yaInscrito.est_ins === "RECHAZADA") {
       try {
         // Actualizar la inscripción existente
@@ -105,35 +103,47 @@ const crearInscripcion = async (req, res) => {
           },
         });
 
-        // Si hay un comprobante, lo guardamos
-        if (urlComprobante) {
-          await prisma.comprobante_pago.create({
-            data: {
-              id_ins_com_pag: yaInscrito.id_ins,
-              url_com_pag: urlComprobante,
-            },
-          });
-        }
+        // Si hay un archivo, lo procesamos
+        let urlComprobante = null;
+        if (archivo) {
+          try {
+            // Subir la imagen a Imgur
+            urlComprobante = await subirImagenAImgur(archivo);
 
-        // Si hay carta de motivación, la actualizamos
-        if (cartaMotivacion) {
+            // Guardar el comprobante
+            await prisma.comprobante_pago.create({
+              data: {
+                id_ins_com_pag: yaInscrito.id_ins,
+                url_com_pag: urlComprobante,
+              },
+            });
+          } catch (imgurError) {
+            console.error(
+              "Error al subir imagen a Imgur para reinscripción:",
+              imgurError
+            );
+            return res
+              .status(500)
+              .json({ msg: "Error al procesar el comprobante" });
+          }
+        } // Si hay carta de motivación, la actualizamos
+        if (carta_motivacion) {
           // Verificar si ya existe una carta
           const cartaExistente = await prisma.carta_motivacion.findFirst({
-            where: { id_ins_car_mot: yaInscrito.id_ins },
+            where: { id_ins_per: yaInscrito.id_ins },
           });
-
           if (cartaExistente) {
             // Actualizar carta existente
             await prisma.carta_motivacion.update({
               where: { id_car_mot: cartaExistente.id_car_mot },
-              data: { con_car_mot: cartaMotivacion },
+              data: { con_car_mot: carta_motivacion },
             });
           } else {
             // Crear nueva carta
             await prisma.carta_motivacion.create({
               data: {
-                id_ins_car_mot: yaInscrito.id_ins,
-                con_car_mot: cartaMotivacion,
+                id_ins_per: yaInscrito.id_ins,
+                con_car_mot: carta_motivacion,
               },
             });
           }
