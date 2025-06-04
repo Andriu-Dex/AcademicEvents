@@ -97,6 +97,24 @@ const EventsRoute = () => {
         );
         console.log("IDs de eventos con inscripción activa:", eventosInscritos);
 
+        // Identificamos las inscripciones rechazadas para mostrar un mensaje especial
+        const rechazadas = insRes.data.filter(
+          (ins) => ins.est_ins === "RECHAZADA"
+        );
+
+        if (rechazadas.length > 0) {
+          // Informar al usuario que puede volver a inscribirse
+          rechazadas.forEach((ins) => {
+            toast.info(
+              `Tu inscripción a "${ins.evento.nom_eve}" fue rechazada. Puedes volver a inscribirte.`,
+              {
+                autoClose: 8000,
+                toastId: `rechazada-${ins.id_ins}`, // Evita duplicados
+              }
+            );
+          });
+        }
+
         setInscripciones(eventosInscritos);
       } catch (error) {
         console.error("Error al obtener inscripciones:", error);
@@ -318,6 +336,17 @@ const EventsRoute = () => {
         <div className="modal-overlay">
           <div className="modal-contenido">
             <h2>Inscripción a: {eventoSeleccionado.nom_eve}</h2>
+
+            {/* Mensaje adicional para reinscripciones */}
+            {eventoSeleccionado.reinscripcion && (
+              <div className="reinscripcion-info">
+                <p>
+                  Tu inscripción anterior fue rechazada. Puedes volver a enviar
+                  tu información.
+                </p>
+                <p>Asegúrate de revisar las observaciones del administrador.</p>
+              </div>
+            )}
 
             <div className="form-group">
               <label className="form-label">Carta de motivación:</label>

@@ -405,7 +405,8 @@ function Home() {
             </div>
             <div className="col-md-4 text-md-end">
               <a
-                href="mailto:info@uta.edu.ec"
+                href="https://andriu-dex.github.io/Andriu-Dex/"
+                target="_blank"
                 className="btn fw-bold btn-lg me-2 mb-2"
                 style={{
                   background: "#8A1538",
@@ -416,7 +417,8 @@ function Home() {
                 <Mail size={18} className="me-2" /> Contáctanos
               </a>
               <a
-                href="tel:032521081"
+                href="https://andriu-dex.github.io/Andriu-Dex/"
+                Target="_blank"
                 className="btn btn-outline-secondary fw-bold btn-lg mb-2"
                 style={{ borderRadius: "8px" }}
               >

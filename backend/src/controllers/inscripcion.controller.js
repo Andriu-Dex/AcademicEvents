@@ -88,8 +88,65 @@ const crearInscripcion = async (req, res) => {
       where: { id_cor_ins: id_cue, id_eve_ins: id_eve },
     });
 
-    if (yaInscrito) {
+    // Permitir reinscripción si la inscripción anterior fue rechazada
+    if (yaInscrito && yaInscrito.est_ins !== "RECHAZADA") {
       return res.status(400).json({ msg: "Ya estás inscrito en este evento" });
+    }
+
+    // Si la inscripción estaba RECHAZADA, la actualizamos en lugar de crear una nueva
+    if (yaInscrito && yaInscrito.est_ins === "RECHAZADA") {
+      try {
+        // Actualizar la inscripción existente
+        await prisma.inscripcion.update({
+          where: { id_ins: yaInscrito.id_ins },
+          data: {
+            est_ins: "PENDIENTE", // Cambiar estado a PENDIENTE
+            fec_ins: new Date(), // Actualizar fecha de inscripción
+          },
+        });
+
+        // Si hay un comprobante, lo guardamos
+        if (urlComprobante) {
+          await prisma.comprobante_pago.create({
+            data: {
+              id_ins_com_pag: yaInscrito.id_ins,
+              url_com_pag: urlComprobante,
+            },
+          });
+        }
+
+        // Si hay carta de motivación, la actualizamos
+        if (cartaMotivacion) {
+          // Verificar si ya existe una carta
+          const cartaExistente = await prisma.carta_motivacion.findFirst({
+            where: { id_ins_car_mot: yaInscrito.id_ins },
+          });
+
+          if (cartaExistente) {
+            // Actualizar carta existente
+            await prisma.carta_motivacion.update({
+              where: { id_car_mot: cartaExistente.id_car_mot },
+              data: { con_car_mot: cartaMotivacion },
+            });
+          } else {
+            // Crear nueva carta
+            await prisma.carta_motivacion.create({
+              data: {
+                id_ins_car_mot: yaInscrito.id_ins,
+                con_car_mot: cartaMotivacion,
+              },
+            });
+          }
+        }
+
+        return res.status(200).json({
+          msg: "Inscripción actualizada correctamente",
+          id_ins: yaInscrito.id_ins,
+        });
+      } catch (error) {
+        console.error("Error al actualizar inscripción rechazada:", error);
+        throw error;
+      }
     }
 
     try {

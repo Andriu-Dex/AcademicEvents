@@ -414,3 +414,37 @@
     font-weight: 600;
   }
 }
+
+/* Estilos para los mensajes de estado de calificaciones */
+.inscripcion-mensaje-info {
+  background-color: #e0f2fe;
+  color: #0369a1;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.inscripcion-mensaje-rechazado {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.inscripcion-mensaje-pendiente {
+  background-color: #fef3c7;
+  color: #b45309;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}

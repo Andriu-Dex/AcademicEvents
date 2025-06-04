@@ -238,26 +238,42 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
               )}
             </div>
           </div>
-        </div>
+        </div>{" "}
         <div className="inscripcion-section">
           <h4>Calificaciones</h4>
           <div className="inscripcion-stats">
-            <div className="inscripcion-stat-item">
-              <span>Asistencia:</span>
-              <span className="stat-value">
-                {inscripcion.asistencia !== null
-                  ? `${inscripcion.asistencia}%`
-                  : "—"}
-              </span>
-            </div>
-            <div className="inscripcion-stat-item">
-              <span>Nota Final:</span>
-              <span className="stat-value">
-                {inscripcion.nota_final !== null
-                  ? inscripcion.nota_final.toFixed(1)
-                  : "—"}
-              </span>
-            </div>
+            {inscripcion.estado === "FINALIZADA" ? (
+              <>
+                <div className="inscripcion-stat-item">
+                  <span>Asistencia:</span>
+                  <span className="stat-value">
+                    {inscripcion.asistencia !== null
+                      ? `${inscripcion.asistencia}%`
+                      : "—"}
+                  </span>
+                </div>
+                <div className="inscripcion-stat-item">
+                  <span>Nota Final:</span>
+                  <span className="stat-value">
+                    {inscripcion.nota_final !== null
+                      ? inscripcion.nota_final.toFixed(1)
+                      : "—"}
+                  </span>
+                </div>
+              </>
+            ) : inscripcion.estado === "ACEPTADA" ? (
+              <div className="inscripcion-mensaje-info">
+                Ingrese las notas y asistencia para finalizar esta inscripción.
+              </div>
+            ) : inscripcion.estado === "RECHAZADA" ? (
+              <div className="inscripcion-mensaje-rechazado">
+                Inscripción rechazada. No se pueden ingresar calificaciones.
+              </div>
+            ) : (
+              <div className="inscripcion-mensaje-pendiente">
+                Valide primero la inscripción para ingresar calificaciones.
+              </div>
+            )}
           </div>
         </div>{" "}
         <div className="inscripcion-section">
@@ -276,7 +292,6 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
                 rows="2"
               />
             </div>
-
             <div className="inscripcion-buttons">
               <button
                 onClick={() => cambiarEstado("ACEPTADA")}
@@ -300,60 +315,64 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
               >
                 <XOctagon size={16} /> Rechazar
               </button>
-            </div>
-
+            </div>{" "}
             <form
               className="inscripcion-finalizar-form"
               onSubmit={handleFinalizar}
             >
-              <div className="inscripcion-form-row">
-                {inscripcion.evento?.tip_eve === "CURSO" && (
+              {inscripcion.estado === "ACEPTADA" && (
+                <div className="inscripcion-form-row">
+                  {inscripcion.evento?.tip_eve === "CURSO" && (
+                    <div className="inscripcion-form-group">
+                      <label htmlFor={`nota-${inscripcion.id_ins}`}>
+                        Nota (0-10):
+                      </label>
+                      <input
+                        id={`nota-${inscripcion.id_ins}`}
+                        type="number"
+                        min="0"
+                        max="10"
+                        step="0.1"
+                        value={nota}
+                        onChange={(e) => {
+                          let val = parseFloat(e.target.value);
+                          if (val > 10) val = 10;
+                          if (val < 0) val = 0;
+                          setNota(val);
+                        }}
+                        className="inscripcion-input"
+                      />
+                    </div>
+                  )}
                   <div className="inscripcion-form-group">
-                    <label htmlFor={`nota-${inscripcion.id_ins}`}>
-                      Nota (0-10):
+                    <label htmlFor={`asistencia-${inscripcion.id_ins}`}>
+                      Asistencia (%):
                     </label>
                     <input
-                      id={`nota-${inscripcion.id_ins}`}
+                      id={`asistencia-${inscripcion.id_ins}`}
                       type="number"
                       min="0"
-                      max="10"
-                      step="0.1"
-                      value={nota}
+                      max="100"
+                      step="1"
+                      value={asistencia}
                       onChange={(e) => {
                         let val = parseFloat(e.target.value);
-                        if (val > 10) val = 10;
+                        if (val > 100) val = 100;
                         if (val < 0) val = 0;
-                        setNota(val);
+                        setAsistencia(val);
                       }}
                       className="inscripcion-input"
                     />
                   </div>
-                )}
-                <div className="inscripcion-form-group">
-                  <label htmlFor={`asistencia-${inscripcion.id_ins}`}>
-                    Asistencia (%):
-                  </label>
-                  <input
-                    id={`asistencia-${inscripcion.id_ins}`}
-                    type="number"
-                    min="0"
-                    max="100"
-                    step="1"
-                    value={asistencia}
-                    onChange={(e) => {
-                      let val = parseFloat(e.target.value);
-                      if (val > 100) val = 100;
-                      if (val < 0) val = 0;
-                      setAsistencia(val);
-                    }}
-                    className="inscripcion-input"
-                  />
                 </div>
-              </div>
+              )}{" "}
               <button
                 type="submit"
                 className="btn btn-finalizar"
-                disabled={inscripcion.estado === "FINALIZADA" || loading}
+                disabled={inscripcion.estado !== "ACEPTADA" || loading}
+                style={{
+                  display: inscripcion.estado === "ACEPTADA" ? "flex" : "none",
+                }}
               >
                 <Clock size={16} /> Finalizar
               </button>

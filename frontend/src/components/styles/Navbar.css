@@ -17,8 +17,8 @@
 .navbar-left {
   display: flex;
   align-items: center;
-  gap: 24px;
-  margin-left: 32px;
+  gap: 2px;
+  margin-left: 1%;
   /* separación entre logo y enlaces */
 }
 
@@ -175,7 +175,7 @@
 
 .navbar-profile {
   position: relative;
-  margin-right: 32px;
+  margin-right: 12px;
   display: flex;
   align-items: center;
 }

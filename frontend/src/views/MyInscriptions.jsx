@@ -262,10 +262,18 @@ const MyInscriptions = () => {
                 <div>
                   <button
                     className="btn-reenviar"
-                    onClick={() => (window.location.href = "/eventos")}
+                    onClick={() => {
+                      toast.info(
+                        "Redirigiendo a eventos disponibles donde podrás volver a inscribirte",
+                        {
+                          autoClose: 3000,
+                        }
+                      );
+                      window.location.href = "/eventos";
+                    }}
                   >
                     <Upload size={16} />
-                    Renviar documentos
+                    Volver a inscribirme
                   </button>
                 </div>
               )}
