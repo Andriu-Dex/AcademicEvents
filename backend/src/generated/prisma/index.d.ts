@@ -2480,6 +2480,7 @@ export namespace Prisma {
     fec_cre_usu: Date | null
     com_usu: string | null
     id_car_est: string | null
+    img_per_usu: string | null
   }
 
   export type UsuarioMaxAggregateOutputType = {
@@ -2491,6 +2492,7 @@ export namespace Prisma {
     fec_cre_usu: Date | null
     com_usu: string | null
     id_car_est: string | null
+    img_per_usu: string | null
   }
 
   export type UsuarioCountAggregateOutputType = {
@@ -2502,6 +2504,7 @@ export namespace Prisma {
     fec_cre_usu: number
     com_usu: number
     id_car_est: number
+    img_per_usu: number
     _all: number
   }
 
@@ -2515,6 +2518,7 @@ export namespace Prisma {
     fec_cre_usu?: true
     com_usu?: true
     id_car_est?: true
+    img_per_usu?: true
   }
 
   export type UsuarioMaxAggregateInputType = {
@@ -2526,6 +2530,7 @@ export namespace Prisma {
     fec_cre_usu?: true
     com_usu?: true
     id_car_est?: true
+    img_per_usu?: true
   }
 
   export type UsuarioCountAggregateInputType = {
@@ -2537,6 +2542,7 @@ export namespace Prisma {
     fec_cre_usu?: true
     com_usu?: true
     id_car_est?: true
+    img_per_usu?: true
     _all?: true
   }
 
@@ -2621,6 +2627,7 @@ export namespace Prisma {
     fec_cre_usu: Date
     com_usu: string | null
     id_car_est: string | null
+    img_per_usu: string | null
     _count: UsuarioCountAggregateOutputType | null
     _min: UsuarioMinAggregateOutputType | null
     _max: UsuarioMaxAggregateOutputType | null
@@ -2649,6 +2656,7 @@ export namespace Prisma {
     fec_cre_usu?: boolean
     com_usu?: boolean
     id_car_est?: boolean
+    img_per_usu?: boolean
     carrera?: boolean | usuario$carreraArgs<ExtArgs>
     cuentas?: boolean | usuario$cuentasArgs<ExtArgs>
     _count?: boolean | UsuarioCountOutputTypeDefaultArgs<ExtArgs>
@@ -2663,6 +2671,7 @@ export namespace Prisma {
     fec_cre_usu?: boolean
     com_usu?: boolean
     id_car_est?: boolean
+    img_per_usu?: boolean
     carrera?: boolean | usuario$carreraArgs<ExtArgs>
   }, ExtArgs["result"]["usuario"]>
 
@@ -2675,6 +2684,7 @@ export namespace Prisma {
     fec_cre_usu?: boolean
     com_usu?: boolean
     id_car_est?: boolean
+    img_per_usu?: boolean
     carrera?: boolean | usuario$carreraArgs<ExtArgs>
   }, ExtArgs["result"]["usuario"]>
 
@@ -2687,9 +2697,10 @@ export namespace Prisma {
     fec_cre_usu?: boolean
     com_usu?: boolean
     id_car_est?: boolean
+    img_per_usu?: boolean
   }
 
-  export type usuarioOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_usu" | "ced_usu" | "nom_usu" | "ape_usu" | "cel_usu" | "fec_cre_usu" | "com_usu" | "id_car_est", ExtArgs["result"]["usuario"]>
+  export type usuarioOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_usu" | "ced_usu" | "nom_usu" | "ape_usu" | "cel_usu" | "fec_cre_usu" | "com_usu" | "id_car_est" | "img_per_usu", ExtArgs["result"]["usuario"]>
   export type usuarioInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     carrera?: boolean | usuario$carreraArgs<ExtArgs>
     cuentas?: boolean | usuario$cuentasArgs<ExtArgs>
@@ -2717,6 +2728,7 @@ export namespace Prisma {
       fec_cre_usu: Date
       com_usu: string | null
       id_car_est: string | null
+      img_per_usu: string | null
     }, ExtArgs["result"]["usuario"]>
     composites: {}
   }
@@ -3150,6 +3162,7 @@ export namespace Prisma {
     readonly fec_cre_usu: FieldRef<"usuario", 'DateTime'>
     readonly com_usu: FieldRef<"usuario", 'String'>
     readonly id_car_est: FieldRef<"usuario", 'String'>
+    readonly img_per_usu: FieldRef<"usuario", 'String'>
   }
     
 
@@ -18310,7 +18323,8 @@ export namespace Prisma {
     cel_usu: 'cel_usu',
     fec_cre_usu: 'fec_cre_usu',
     com_usu: 'com_usu',
-    id_car_est: 'id_car_est'
+    id_car_est: 'id_car_est',
+    img_per_usu: 'img_per_usu'
   };
 
   export type UsuarioScalarFieldEnum = (typeof UsuarioScalarFieldEnum)[keyof typeof UsuarioScalarFieldEnum]
@@ -18654,6 +18668,7 @@ export namespace Prisma {
     fec_cre_usu?: DateTimeFilter<"usuario"> | Date | string
     com_usu?: StringNullableFilter<"usuario"> | string | null
     id_car_est?: StringNullableFilter<"usuario"> | string | null
+    img_per_usu?: StringNullableFilter<"usuario"> | string | null
     carrera?: XOR<CarreraNullableScalarRelationFilter, carreraWhereInput> | null
     cuentas?: CuentaListRelationFilter
   }
@@ -18667,6 +18682,7 @@ export namespace Prisma {
     fec_cre_usu?: SortOrder
     com_usu?: SortOrderInput | SortOrder
     id_car_est?: SortOrderInput | SortOrder
+    img_per_usu?: SortOrderInput | SortOrder
     carrera?: carreraOrderByWithRelationInput
     cuentas?: cuentaOrderByRelationAggregateInput
   }
@@ -18683,6 +18699,7 @@ export namespace Prisma {
     fec_cre_usu?: DateTimeFilter<"usuario"> | Date | string
     com_usu?: StringNullableFilter<"usuario"> | string | null
     id_car_est?: StringNullableFilter<"usuario"> | string | null
+    img_per_usu?: StringNullableFilter<"usuario"> | string | null
     carrera?: XOR<CarreraNullableScalarRelationFilter, carreraWhereInput> | null
     cuentas?: CuentaListRelationFilter
   }, "id_usu" | "ced_usu">
@@ -18696,6 +18713,7 @@ export namespace Prisma {
     fec_cre_usu?: SortOrder
     com_usu?: SortOrderInput | SortOrder
     id_car_est?: SortOrderInput | SortOrder
+    img_per_usu?: SortOrderInput | SortOrder
     _count?: usuarioCountOrderByAggregateInput
     _max?: usuarioMaxOrderByAggregateInput
     _min?: usuarioMinOrderByAggregateInput
@@ -18713,6 +18731,7 @@ export namespace Prisma {
     fec_cre_usu?: DateTimeWithAggregatesFilter<"usuario"> | Date | string
     com_usu?: StringNullableWithAggregatesFilter<"usuario"> | string | null
     id_car_est?: StringNullableWithAggregatesFilter<"usuario"> | string | null
+    img_per_usu?: StringNullableWithAggregatesFilter<"usuario"> | string | null
   }
 
   export type comprobante_pagoWhereInput = {
@@ -19595,6 +19614,7 @@ export namespace Prisma {
     cel_usu: string
     fec_cre_usu?: Date | string
     com_usu?: string | null
+    img_per_usu?: string | null
     carrera?: carreraCreateNestedOneWithoutUsuarioInput
     cuentas?: cuentaCreateNestedManyWithoutUsuarioInput
   }
@@ -19608,6 +19628,7 @@ export namespace Prisma {
     fec_cre_usu?: Date | string
     com_usu?: string | null
     id_car_est?: string | null
+    img_per_usu?: string | null
     cuentas?: cuentaUncheckedCreateNestedManyWithoutUsuarioInput
   }
 
@@ -19619,6 +19640,7 @@ export namespace Prisma {
     cel_usu?: StringFieldUpdateOperationsInput | string
     fec_cre_usu?: DateTimeFieldUpdateOperationsInput | Date | string
     com_usu?: NullableStringFieldUpdateOperationsInput | string | null
+    img_per_usu?: NullableStringFieldUpdateOperationsInput | string | null
     carrera?: carreraUpdateOneWithoutUsuarioNestedInput
     cuentas?: cuentaUpdateManyWithoutUsuarioNestedInput
   }
@@ -19632,6 +19654,7 @@ export namespace Prisma {
     fec_cre_usu?: DateTimeFieldUpdateOperationsInput | Date | string
     com_usu?: NullableStringFieldUpdateOperationsInput | string | null
     id_car_est?: NullableStringFieldUpdateOperationsInput | string | null
+    img_per_usu?: NullableStringFieldUpdateOperationsInput | string | null
     cuentas?: cuentaUncheckedUpdateManyWithoutUsuarioNestedInput
   }
 
@@ -19644,6 +19667,7 @@ export namespace Prisma {
     fec_cre_usu?: Date | string
     com_usu?: string | null
     id_car_est?: string | null
+    img_per_usu?: string | null
   }
 
   export type usuarioUpdateManyMutationInput = {
@@ -19654,6 +19678,7 @@ export namespace Prisma {
     cel_usu?: StringFieldUpdateOperationsInput | string
     fec_cre_usu?: DateTimeFieldUpdateOperationsInput | Date | string
     com_usu?: NullableStringFieldUpdateOperationsInput | string | null
+    img_per_usu?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type usuarioUncheckedUpdateManyInput = {
@@ -19665,6 +19690,7 @@ export namespace Prisma {
     fec_cre_usu?: DateTimeFieldUpdateOperationsInput | Date | string
     com_usu?: NullableStringFieldUpdateOperationsInput | string | null
     id_car_est?: NullableStringFieldUpdateOperationsInput | string | null
+    img_per_usu?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type comprobante_pagoCreateInput = {
@@ -20639,6 +20665,7 @@ export namespace Prisma {
     fec_cre_usu?: SortOrder
     com_usu?: SortOrder
     id_car_est?: SortOrder
+    img_per_usu?: SortOrder
   }
 
   export type usuarioMaxOrderByAggregateInput = {
@@ -20650,6 +20677,7 @@ export namespace Prisma {
     fec_cre_usu?: SortOrder
     com_usu?: SortOrder
     id_car_est?: SortOrder
+    img_per_usu?: SortOrder
   }
 
   export type usuarioMinOrderByAggregateInput = {
@@ -20661,6 +20689,7 @@ export namespace Prisma {
     fec_cre_usu?: SortOrder
     com_usu?: SortOrder
     id_car_est?: SortOrder
+    img_per_usu?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -23385,6 +23414,7 @@ export namespace Prisma {
     cel_usu: string
     fec_cre_usu?: Date | string
     com_usu?: string | null
+    img_per_usu?: string | null
     carrera?: carreraCreateNestedOneWithoutUsuarioInput
   }
 
@@ -23397,6 +23427,7 @@ export namespace Prisma {
     fec_cre_usu?: Date | string
     com_usu?: string | null
     id_car_est?: string | null
+    img_per_usu?: string | null
   }
 
   export type usuarioCreateOrConnectWithoutCuentasInput = {
@@ -23565,6 +23596,7 @@ export namespace Prisma {
     cel_usu?: StringFieldUpdateOperationsInput | string
     fec_cre_usu?: DateTimeFieldUpdateOperationsInput | Date | string
     com_usu?: NullableStringFieldUpdateOperationsInput | string | null
+    img_per_usu?: NullableStringFieldUpdateOperationsInput | string | null
     carrera?: carreraUpdateOneWithoutUsuarioNestedInput
   }
 
@@ -23577,6 +23609,7 @@ export namespace Prisma {
     fec_cre_usu?: DateTimeFieldUpdateOperationsInput | Date | string
     com_usu?: NullableStringFieldUpdateOperationsInput | string | null
     id_car_est?: NullableStringFieldUpdateOperationsInput | string | null
+    img_per_usu?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type inscripcionUpsertWithWhereUniqueWithoutCuentaInput = {
@@ -23772,6 +23805,7 @@ export namespace Prisma {
     cel_usu: string
     fec_cre_usu?: Date | string
     com_usu?: string | null
+    img_per_usu?: string | null
     cuentas?: cuentaCreateNestedManyWithoutUsuarioInput
   }
 
@@ -23783,6 +23817,7 @@ export namespace Prisma {
     cel_usu: string
     fec_cre_usu?: Date | string
     com_usu?: string | null
+    img_per_usu?: string | null
     cuentas?: cuentaUncheckedCreateNestedManyWithoutUsuarioInput
   }
 
@@ -23920,6 +23955,7 @@ export namespace Prisma {
     fec_cre_usu?: DateTimeFilter<"usuario"> | Date | string
     com_usu?: StringNullableFilter<"usuario"> | string | null
     id_car_est?: StringNullableFilter<"usuario"> | string | null
+    img_per_usu?: StringNullableFilter<"usuario"> | string | null
   }
 
   export type evento_carreraUpsertWithWhereUniqueWithoutCarreraInput = {
@@ -25118,6 +25154,7 @@ export namespace Prisma {
     cel_usu: string
     fec_cre_usu?: Date | string
     com_usu?: string | null
+    img_per_usu?: string | null
   }
 
   export type evento_carreraCreateManyCarreraInput = {
@@ -25134,6 +25171,7 @@ export namespace Prisma {
     cel_usu?: StringFieldUpdateOperationsInput | string
     fec_cre_usu?: DateTimeFieldUpdateOperationsInput | Date | string
     com_usu?: NullableStringFieldUpdateOperationsInput | string | null
+    img_per_usu?: NullableStringFieldUpdateOperationsInput | string | null
     cuentas?: cuentaUpdateManyWithoutUsuarioNestedInput
   }
 
@@ -25145,6 +25183,7 @@ export namespace Prisma {
     cel_usu?: StringFieldUpdateOperationsInput | string
     fec_cre_usu?: DateTimeFieldUpdateOperationsInput | Date | string
     com_usu?: NullableStringFieldUpdateOperationsInput | string | null
+    img_per_usu?: NullableStringFieldUpdateOperationsInput | string | null
     cuentas?: cuentaUncheckedUpdateManyWithoutUsuarioNestedInput
   }
 
@@ -25156,6 +25195,7 @@ export namespace Prisma {
     cel_usu?: StringFieldUpdateOperationsInput | string
     fec_cre_usu?: DateTimeFieldUpdateOperationsInput | Date | string
     com_usu?: NullableStringFieldUpdateOperationsInput | string | null
+    img_per_usu?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type evento_carreraUpdateWithoutCarreraInput = {

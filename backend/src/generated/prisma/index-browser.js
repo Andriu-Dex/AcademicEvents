@@ -128,7 +128,8 @@ exports.Prisma.UsuarioScalarFieldEnum = {
   cel_usu: 'cel_usu',
   fec_cre_usu: 'fec_cre_usu',
   com_usu: 'com_usu',
-  id_car_est: 'id_car_est'
+  id_car_est: 'id_car_est',
+  img_per_usu: 'img_per_usu'
 };
 
 exports.Prisma.Comprobante_pagoScalarFieldEnum = {

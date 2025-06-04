@@ -7,6 +7,9 @@ const {
   actualizarDocumento,
   actualizarDocumentos,
 } = require("../controllers/perfil.controller");
+const {
+  actualizarImagenPerfil,
+} = require("../controllers/imagen-perfil.controller");
 
 // Obtener perfil del usuario autenticado
 router.get("/perfil", verificarToken, obtenerPerfil);
@@ -29,6 +32,14 @@ router.put(
     { name: "matricula", maxCount: 1 },
   ]),
   actualizarDocumentos
+);
+
+// Actualizar imagen de perfil del usuario
+router.put(
+  "/perfil/imagen",
+  verificarToken,
+  upload.single("imagen"),
+  actualizarImagenPerfil
 );
 
 module.exports = router;

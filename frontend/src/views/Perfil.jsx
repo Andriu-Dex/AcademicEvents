@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../hooks/useAuth";
 import axiosInstance from "../api/axiosConfig";
 import { toast } from "react-toastify";
+import AvatarEditor from "react-avatar-editor";
 import {
   User,
   Mail,
@@ -20,6 +21,11 @@ import {
   Ticket,
   GraduationCap as Certificate,
   Eye,
+  Camera,
+  Image,
+  ZoomIn,
+  ZoomOut,
+  RotateCw,
 } from "lucide-react";
 import "./styles/Perfil.css";
 
@@ -36,6 +42,14 @@ const Perfil = () => {
   });
   const [previewDoc, setPreviewDoc] = useState(null);
   const [mostrarPreview, setMostrarPreview] = useState(false);
+
+  // Estado para el editor de imagen de perfil
+  const [mostrarModalImagen, setMostrarModalImagen] = useState(false);
+  const [imagenPerfil, setImagenPerfil] = useState(null);
+  const [escalaImagen, setEscalaImagen] = useState(1);
+  const [rotacionImagen, setRotacionImagen] = useState(0);
+  const [subiendoImagen, setSubiendoImagen] = useState(false);
+  const editorRef = useRef(null);
 
   useEffect(() => {
     if (usuario) {
@@ -180,6 +194,86 @@ const Perfil = () => {
     }
   };
 
+  // Manejo de la imagen de perfil
+  const handleImagenPerfilChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      const archivo = e.target.files[0];
+
+      // Validar tamaño (máximo 5MB)
+      if (archivo.size > 5 * 1024 * 1024) {
+        toast.error(`La imagen excede el tamaño máximo (5MB)`);
+        return;
+      }
+
+      // Validar tipo (solo imágenes)
+      const tiposPermitidos = [
+        "image/jpeg",
+        "image/jpg",
+        "image/png",
+        "image/gif",
+      ];
+
+      if (!tiposPermitidos.includes(archivo.type)) {
+        toast.error(`Solo se aceptan imágenes (JPG, PNG, GIF)`);
+        return;
+      }
+
+      setImagenPerfil(archivo);
+      setMostrarModalImagen(true);
+    }
+  };
+
+  const guardarImagenPerfil = async () => {
+    if (!editorRef.current || !imagenPerfil) {
+      toast.error("No se ha seleccionado ninguna imagen");
+      return;
+    }
+
+    try {
+      setSubiendoImagen(true);
+
+      // Obtener el canvas con la imagen recortada
+      const canvas = editorRef.current.getImageScaledToCanvas();
+
+      // Convertir a blob
+      canvas.toBlob(async (blob) => {
+        // Crear un objeto File a partir del Blob
+        const file = new File([blob], imagenPerfil.name, {
+          type: imagenPerfil.type,
+        });
+
+        // Crear FormData para enviar al servidor
+        const formData = new FormData();
+        formData.append("imagen", file);
+
+        // Enviar al servidor
+        const response = await axiosInstance.put("/perfil/imagen", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+
+        toast.success("Imagen de perfil actualizada correctamente");
+        setMostrarModalImagen(false);
+        setImagenPerfil(null);
+
+        // Actualizar los datos del perfil para mostrar la nueva imagen
+        await cargarPerfil();
+      }, imagenPerfil.type);
+    } catch (error) {
+      toast.error(
+        error.response?.data?.msg || "Error al actualizar la imagen de perfil"
+      );
+    } finally {
+      setSubiendoImagen(false);
+    }
+  };
+
+  const aumentarZoom = () => setEscalaImagen((prev) => Math.min(prev + 0.1, 3));
+  const disminuirZoom = () =>
+    setEscalaImagen((prev) => Math.max(prev - 0.1, 1));
+  const rotarImagen = () => setRotacionImagen((prev) => prev + 90);
+
   if (cargando) {
     return (
       <div className="perfil-loading">
@@ -213,12 +307,35 @@ const Perfil = () => {
 
   return (
     <div className="perfil-container">
-      <h1 className="perfil-titulo">Mi Perfil</h1>
-
+      <h1 className="perfil-titulo">Mi Perfil</h1>{" "}
       <div className="perfil-card">
         <div className="perfil-header">
-          <div className="perfil-avatar">
-            <User size={48} />
+          <div
+            className="perfil-avatar"
+            onClick={() =>
+              document.getElementById("subir-imagen-perfil").click()
+            }
+            title="Haz clic para cambiar tu foto de perfil"
+          >
+            {perfilData.img_per_usu ? (
+              <img
+                src={perfilData.img_per_usu}
+                alt="Foto de perfil"
+                className="perfil-imagen"
+              />
+            ) : (
+              <User size={48} />
+            )}
+            <div className="perfil-avatar-overlay">
+              <Camera size={16} />
+            </div>
+            <input
+              type="file"
+              id="subir-imagen-perfil"
+              accept="image/jpeg,image/png,image/gif"
+              style={{ display: "none" }}
+              onChange={handleImagenPerfilChange}
+            />
           </div>
           <div className="perfil-nombre">
             <h2>
@@ -334,7 +451,6 @@ const Perfil = () => {
           </div>
         </div>
       </div>
-
       <div className="perfil-inscripciones">
         <h2 className="inscripciones-titulo">Mis Inscripciones Recientes</h2>
         {perfilData.inscripciones.length === 0 ? (
@@ -372,7 +488,6 @@ const Perfil = () => {
           </div>
         )}
       </div>
-
       {mostrarModal && (
         <div className="modal-overlay">
           <div className="modal-content modal-documentos">
@@ -483,7 +598,6 @@ const Perfil = () => {
           </div>
         </div>
       )}
-
       {mostrarPreview && previewDoc && (
         <div className="modal-overlay" onClick={() => setMostrarPreview(false)}>
           <div className="modal-preview" onClick={(e) => e.stopPropagation()}>
@@ -503,6 +617,82 @@ const Perfil = () => {
                 height="100%"
                 title="Vista previa del documento"
               />
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Modal de edición de imagen de perfil */}
+      {mostrarModalImagen && imagenPerfil && (
+        <div className="modal-overlay">
+          <div className="modal-content modal-imagen-perfil">
+            <h2 className="modal-title">Editar imagen de perfil</h2>
+            <p className="modal-descripcion">
+              Ajusta, recorta y rota tu imagen de perfil
+            </p>
+
+            <div className="editor-container">
+              <AvatarEditor
+                ref={editorRef}
+                image={imagenPerfil}
+                width={250}
+                height={250}
+                border={50}
+                borderRadius={125}
+                color={[0, 0, 0, 0.6]} // Color del área fuera del círculo
+                scale={escalaImagen}
+                rotate={rotacionImagen}
+              />
+
+              <div className="editor-controles">
+                <button
+                  className="btn-control"
+                  onClick={disminuirZoom}
+                  title="Disminuir zoom"
+                >
+                  <ZoomOut size={20} />
+                </button>
+                <button
+                  className="btn-control"
+                  onClick={aumentarZoom}
+                  title="Aumentar zoom"
+                >
+                  <ZoomIn size={20} />
+                </button>
+                <button
+                  className="btn-control"
+                  onClick={rotarImagen}
+                  title="Rotar imagen"
+                >
+                  <RotateCw size={20} />
+                </button>
+              </div>
+            </div>
+
+            <div className="modal-botones">
+              <button
+                className="btn-guardar"
+                onClick={guardarImagenPerfil}
+                disabled={subiendoImagen}
+              >
+                {subiendoImagen ? (
+                  <>
+                    <div className="spinner-small"></div> Guardando...
+                  </>
+                ) : (
+                  <>
+                    <Save size={16} /> Guardar
+                  </>
+                )}
+              </button>
+              <button
+                className="btn-cancelar"
+                onClick={() => {
+                  setMostrarModalImagen(false);
+                  setImagenPerfil(null);
+                }}
+              >
+                Cancelar
+              </button>
             </div>
           </div>
         </div>

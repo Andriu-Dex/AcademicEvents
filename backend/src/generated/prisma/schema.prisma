@@ -21,6 +21,7 @@ model usuario {
   fec_cre_usu DateTime @default(now()) // Fecha de creación del usuario
   com_usu     String? // url de la cedula, papeleta de votacion o matricula
   id_car_est  String? // FK opcional a carrera
+  img_per_usu String? // URL de la imagen de perfil del usuario en imgur
 
   carrera carrera? @relation(fields: [id_car_est], references: [id_car]) // Relación 1:N (usuario puede estar en una o ningua carrera)
   cuentas cuenta[] // Relación 1:N (usuario puede tener muchas cuentas)
