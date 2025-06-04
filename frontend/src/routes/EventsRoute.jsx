@@ -43,17 +43,37 @@ const EventsRoute = () => {
   const [inscripciones, setInscripciones] = useState([]);
   const [subiendo, setSubiendo] = useState(false);
   const [exitoVisible, setExitoVisible] = useState(false);
-
+  const [usuarioConCarrera, setUsuarioConCarrera] = useState(null);
   useEffect(() => {
     if (loading) return;
     if (!usuario) return navigate("/login");
 
     const obtenerEventos = async () => {
       try {
-        const res = await axiosInstance.get("/eventos");
-        setEventos(res.data);
-      } catch {
-        toast.error("Error al obtener eventos");
+        // Primero obtenemos el perfil completo con información de carrera
+        const perfilRes = await axiosInstance.get("/perfil");
+        const perfilCompleto = perfilRes.data;
+        console.log("Perfil completo:", perfilCompleto);
+
+        // Luego obtenemos los eventos
+        const eventosRes = await axiosInstance.get("/eventos");
+        console.log("Eventos recibidos:", eventosRes.data);
+        console.log("Usuario actual:", usuario);
+        setEventos(eventosRes.data);
+
+        // Actualizamos el contexto de usuario con la información completa
+        if (perfilCompleto && perfilCompleto.carrera) {
+          console.log(
+            "Actualizando usuario con carrera:",
+            perfilCompleto.carrera
+          );
+          // Aquí deberíamos actualizar el contexto global, pero como no podemos,
+          // usaremos el estado local para el filtrado
+          setUsuarioConCarrera(perfilCompleto);
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        toast.error("Error al obtener datos");
       }
     };
 
@@ -142,10 +162,57 @@ const EventsRoute = () => {
       setSubiendo(false);
     }
   };
+  const eventosDisponibles = eventos.filter((evento) => {
+    // Debug logs
+    console.log("Filtrando evento:", evento.nom_eve);
+    console.log("Tipo de evento:", evento.tip_eve);
+    console.log("Carreras del evento:", evento.eventos_carrera); // Primero verificamos si el usuario ya está inscrito
+    if (inscripciones.includes(evento.id_eve)) {
+      console.log("Usuario ya inscrito, excluir evento");
+      return false;
+    } // Si el evento es de tipo PUBLICO, está disponible para todos
+    if (evento.tip_eve === "PUBLICO") {
+      console.log("Evento tipo PUBLICO, incluir para todos");
+      return true;
+    }
 
-  const eventosDisponibles = eventos.filter(
-    (evento) => !inscripciones.includes(evento.id_eve)
-  );
+    // Si el evento no tiene carreras asociadas, significa que es un evento general
+    if (evento.eventos_carrera.length === 0) {
+      console.log(
+        "Evento general (sin carreras específicas), incluir para todos"
+      );
+      return true;
+    }
+
+    // Para estudiantes, filtrar por su carrera
+    const usuarioFinal = usuarioConCarrera || usuario;
+    if (usuarioFinal?.rol_usu === "ESTUDIANTE") {
+      console.log("Usuario es ESTUDIANTE");
+      // Si el usuario tiene una carrera asignada
+      if (usuarioFinal.carrera) {
+        console.log("Carrera del usuario:", usuarioFinal.carrera.id_car);
+        // Verificar si el evento está asociado a la carrera del usuario
+        const tieneCarrera = evento.eventos_carrera.some(
+          (ec) => ec.id_car_aso === usuarioFinal.carrera.id_car
+        );
+        console.log("¿Evento asociado a carrera del usuario?", tieneCarrera);
+        return tieneCarrera;
+      } else {
+        console.log("Usuario no tiene carrera asignada");
+        return false;
+      }
+    }
+
+    // Para administradores, docentes y coordinadores, mostrar todos los eventos
+    const tieneRolPermitido = ["ADMIN", "DOCENTE", "COORDINADOR"].includes(
+      usuarioFinal?.rol_usu
+    );
+    console.log(
+      "¿Usuario tiene rol con todos los permisos?",
+      tieneRolPermitido
+    );
+    return tieneRolPermitido;
+  });
 
   if (loading) return <p className="p-6">Cargando sesión...</p>;
 

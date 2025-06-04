@@ -29,15 +29,10 @@ export type comprobante_pago = $Result.DefaultSelection<Prisma.$comprobante_pago
  */
 export type carta_motivacion = $Result.DefaultSelection<Prisma.$carta_motivacionPayload>
 /**
- * Model observacion_motivacion
+ * Model observacion_inscripcion
  * 
  */
-export type observacion_motivacion = $Result.DefaultSelection<Prisma.$observacion_motivacionPayload>
-/**
- * Model observacion_comprobante
- * 
- */
-export type observacion_comprobante = $Result.DefaultSelection<Prisma.$observacion_comprobantePayload>
+export type observacion_inscripcion = $Result.DefaultSelection<Prisma.$observacion_inscripcionPayload>
 /**
  * Model cuenta
  * 
@@ -317,24 +312,14 @@ export class PrismaClient<
   get carta_motivacion(): Prisma.carta_motivacionDelegate<ExtArgs, ClientOptions>;
 
   /**
-   * `prisma.observacion_motivacion`: Exposes CRUD operations for the **observacion_motivacion** model.
+   * `prisma.observacion_inscripcion`: Exposes CRUD operations for the **observacion_inscripcion** model.
     * Example usage:
     * ```ts
-    * // Fetch zero or more Observacion_motivacions
-    * const observacion_motivacions = await prisma.observacion_motivacion.findMany()
+    * // Fetch zero or more Observacion_inscripcions
+    * const observacion_inscripcions = await prisma.observacion_inscripcion.findMany()
     * ```
     */
-  get observacion_motivacion(): Prisma.observacion_motivacionDelegate<ExtArgs, ClientOptions>;
-
-  /**
-   * `prisma.observacion_comprobante`: Exposes CRUD operations for the **observacion_comprobante** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more Observacion_comprobantes
-    * const observacion_comprobantes = await prisma.observacion_comprobante.findMany()
-    * ```
-    */
-  get observacion_comprobante(): Prisma.observacion_comprobanteDelegate<ExtArgs, ClientOptions>;
+  get observacion_inscripcion(): Prisma.observacion_inscripcionDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.cuenta`: Exposes CRUD operations for the **cuenta** model.
@@ -868,8 +853,7 @@ export namespace Prisma {
     usuario: 'usuario',
     comprobante_pago: 'comprobante_pago',
     carta_motivacion: 'carta_motivacion',
-    observacion_motivacion: 'observacion_motivacion',
-    observacion_comprobante: 'observacion_comprobante',
+    observacion_inscripcion: 'observacion_inscripcion',
     cuenta: 'cuenta',
     carrera: 'carrera',
     coordinador: 'coordinador',
@@ -897,7 +881,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "usuario" | "comprobante_pago" | "carta_motivacion" | "observacion_motivacion" | "observacion_comprobante" | "cuenta" | "carrera" | "coordinador" | "evento" | "evento_curso" | "evento_carrera" | "inscripcion" | "inscripcion_curso" | "facultad"
+      modelProps: "usuario" | "comprobante_pago" | "carta_motivacion" | "observacion_inscripcion" | "cuenta" | "carrera" | "coordinador" | "evento" | "evento_curso" | "evento_carrera" | "inscripcion" | "inscripcion_curso" | "facultad"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1123,151 +1107,77 @@ export namespace Prisma {
           }
         }
       }
-      observacion_motivacion: {
-        payload: Prisma.$observacion_motivacionPayload<ExtArgs>
-        fields: Prisma.observacion_motivacionFieldRefs
+      observacion_inscripcion: {
+        payload: Prisma.$observacion_inscripcionPayload<ExtArgs>
+        fields: Prisma.observacion_inscripcionFieldRefs
         operations: {
           findUnique: {
-            args: Prisma.observacion_motivacionFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$observacion_motivacionPayload> | null
+            args: Prisma.observacion_inscripcionFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$observacion_inscripcionPayload> | null
           }
           findUniqueOrThrow: {
-            args: Prisma.observacion_motivacionFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$observacion_motivacionPayload>
+            args: Prisma.observacion_inscripcionFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$observacion_inscripcionPayload>
           }
           findFirst: {
-            args: Prisma.observacion_motivacionFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$observacion_motivacionPayload> | null
+            args: Prisma.observacion_inscripcionFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$observacion_inscripcionPayload> | null
           }
           findFirstOrThrow: {
-            args: Prisma.observacion_motivacionFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$observacion_motivacionPayload>
+            args: Prisma.observacion_inscripcionFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$observacion_inscripcionPayload>
           }
           findMany: {
-            args: Prisma.observacion_motivacionFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$observacion_motivacionPayload>[]
+            args: Prisma.observacion_inscripcionFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$observacion_inscripcionPayload>[]
           }
           create: {
-            args: Prisma.observacion_motivacionCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$observacion_motivacionPayload>
+            args: Prisma.observacion_inscripcionCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$observacion_inscripcionPayload>
           }
           createMany: {
-            args: Prisma.observacion_motivacionCreateManyArgs<ExtArgs>
+            args: Prisma.observacion_inscripcionCreateManyArgs<ExtArgs>
             result: BatchPayload
           }
           createManyAndReturn: {
-            args: Prisma.observacion_motivacionCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$observacion_motivacionPayload>[]
+            args: Prisma.observacion_inscripcionCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$observacion_inscripcionPayload>[]
           }
           delete: {
-            args: Prisma.observacion_motivacionDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$observacion_motivacionPayload>
+            args: Prisma.observacion_inscripcionDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$observacion_inscripcionPayload>
           }
           update: {
-            args: Prisma.observacion_motivacionUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$observacion_motivacionPayload>
+            args: Prisma.observacion_inscripcionUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$observacion_inscripcionPayload>
           }
           deleteMany: {
-            args: Prisma.observacion_motivacionDeleteManyArgs<ExtArgs>
+            args: Prisma.observacion_inscripcionDeleteManyArgs<ExtArgs>
             result: BatchPayload
           }
           updateMany: {
-            args: Prisma.observacion_motivacionUpdateManyArgs<ExtArgs>
+            args: Prisma.observacion_inscripcionUpdateManyArgs<ExtArgs>
             result: BatchPayload
           }
           updateManyAndReturn: {
-            args: Prisma.observacion_motivacionUpdateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$observacion_motivacionPayload>[]
+            args: Prisma.observacion_inscripcionUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$observacion_inscripcionPayload>[]
           }
           upsert: {
-            args: Prisma.observacion_motivacionUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$observacion_motivacionPayload>
+            args: Prisma.observacion_inscripcionUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$observacion_inscripcionPayload>
           }
           aggregate: {
-            args: Prisma.Observacion_motivacionAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateObservacion_motivacion>
+            args: Prisma.Observacion_inscripcionAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateObservacion_inscripcion>
           }
           groupBy: {
-            args: Prisma.observacion_motivacionGroupByArgs<ExtArgs>
-            result: $Utils.Optional<Observacion_motivacionGroupByOutputType>[]
+            args: Prisma.observacion_inscripcionGroupByArgs<ExtArgs>
+            result: $Utils.Optional<Observacion_inscripcionGroupByOutputType>[]
           }
           count: {
-            args: Prisma.observacion_motivacionCountArgs<ExtArgs>
-            result: $Utils.Optional<Observacion_motivacionCountAggregateOutputType> | number
-          }
-        }
-      }
-      observacion_comprobante: {
-        payload: Prisma.$observacion_comprobantePayload<ExtArgs>
-        fields: Prisma.observacion_comprobanteFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.observacion_comprobanteFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$observacion_comprobantePayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.observacion_comprobanteFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$observacion_comprobantePayload>
-          }
-          findFirst: {
-            args: Prisma.observacion_comprobanteFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$observacion_comprobantePayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.observacion_comprobanteFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$observacion_comprobantePayload>
-          }
-          findMany: {
-            args: Prisma.observacion_comprobanteFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$observacion_comprobantePayload>[]
-          }
-          create: {
-            args: Prisma.observacion_comprobanteCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$observacion_comprobantePayload>
-          }
-          createMany: {
-            args: Prisma.observacion_comprobanteCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.observacion_comprobanteCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$observacion_comprobantePayload>[]
-          }
-          delete: {
-            args: Prisma.observacion_comprobanteDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$observacion_comprobantePayload>
-          }
-          update: {
-            args: Prisma.observacion_comprobanteUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$observacion_comprobantePayload>
-          }
-          deleteMany: {
-            args: Prisma.observacion_comprobanteDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.observacion_comprobanteUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateManyAndReturn: {
-            args: Prisma.observacion_comprobanteUpdateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$observacion_comprobantePayload>[]
-          }
-          upsert: {
-            args: Prisma.observacion_comprobanteUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$observacion_comprobantePayload>
-          }
-          aggregate: {
-            args: Prisma.Observacion_comprobanteAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateObservacion_comprobante>
-          }
-          groupBy: {
-            args: Prisma.observacion_comprobanteGroupByArgs<ExtArgs>
-            result: $Utils.Optional<Observacion_comprobanteGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.observacion_comprobanteCountArgs<ExtArgs>
-            result: $Utils.Optional<Observacion_comprobanteCountAggregateOutputType> | number
+            args: Prisma.observacion_inscripcionCountArgs<ExtArgs>
+            result: $Utils.Optional<Observacion_inscripcionCountAggregateOutputType> | number
           }
         }
       }
@@ -2024,8 +1934,7 @@ export namespace Prisma {
     usuario?: usuarioOmit
     comprobante_pago?: comprobante_pagoOmit
     carta_motivacion?: carta_motivacionOmit
-    observacion_motivacion?: observacion_motivacionOmit
-    observacion_comprobante?: observacion_comprobanteOmit
+    observacion_inscripcion?: observacion_inscripcionOmit
     cuenta?: cuentaOmit
     carrera?: carreraOmit
     coordinador?: coordinadorOmit
@@ -2156,68 +2065,6 @@ export namespace Prisma {
 
 
   /**
-   * Count Type Comprobante_pagoCountOutputType
-   */
-
-  export type Comprobante_pagoCountOutputType = {
-    observaciones: number
-  }
-
-  export type Comprobante_pagoCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    observaciones?: boolean | Comprobante_pagoCountOutputTypeCountObservacionesArgs
-  }
-
-  // Custom InputTypes
-  /**
-   * Comprobante_pagoCountOutputType without action
-   */
-  export type Comprobante_pagoCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Comprobante_pagoCountOutputType
-     */
-    select?: Comprobante_pagoCountOutputTypeSelect<ExtArgs> | null
-  }
-
-  /**
-   * Comprobante_pagoCountOutputType without action
-   */
-  export type Comprobante_pagoCountOutputTypeCountObservacionesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: observacion_comprobanteWhereInput
-  }
-
-
-  /**
-   * Count Type Carta_motivacionCountOutputType
-   */
-
-  export type Carta_motivacionCountOutputType = {
-    observaciones: number
-  }
-
-  export type Carta_motivacionCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    observaciones?: boolean | Carta_motivacionCountOutputTypeCountObservacionesArgs
-  }
-
-  // Custom InputTypes
-  /**
-   * Carta_motivacionCountOutputType without action
-   */
-  export type Carta_motivacionCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Carta_motivacionCountOutputType
-     */
-    select?: Carta_motivacionCountOutputTypeSelect<ExtArgs> | null
-  }
-
-  /**
-   * Carta_motivacionCountOutputType without action
-   */
-  export type Carta_motivacionCountOutputTypeCountObservacionesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: observacion_motivacionWhereInput
-  }
-
-
-  /**
    * Count Type CuentaCountOutputType
    */
 
@@ -2226,6 +2073,7 @@ export namespace Prisma {
     cartas_motivacion: number
     comprobantes_pago: number
     eventos: number
+    observaciones_creadas: number
   }
 
   export type CuentaCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2233,6 +2081,7 @@ export namespace Prisma {
     cartas_motivacion?: boolean | CuentaCountOutputTypeCountCartas_motivacionArgs
     comprobantes_pago?: boolean | CuentaCountOutputTypeCountComprobantes_pagoArgs
     eventos?: boolean | CuentaCountOutputTypeCountEventosArgs
+    observaciones_creadas?: boolean | CuentaCountOutputTypeCountObservaciones_creadasArgs
   }
 
   // Custom InputTypes
@@ -2272,6 +2121,13 @@ export namespace Prisma {
    */
   export type CuentaCountOutputTypeCountEventosArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: eventoWhereInput
+  }
+
+  /**
+   * CuentaCountOutputType without action
+   */
+  export type CuentaCountOutputTypeCountObservaciones_creadasArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: observacion_inscripcionWhereInput
   }
 
 
@@ -3638,6 +3494,7 @@ export namespace Prisma {
     fec_sub_com_pag: Date | null
     fec_val_com_pag: Date | null
     id_adm_val_com_pag: string | null
+    fec_pag_ins: Date | null
   }
 
   export type Comprobante_pagoMaxAggregateOutputType = {
@@ -3648,6 +3505,7 @@ export namespace Prisma {
     fec_sub_com_pag: Date | null
     fec_val_com_pag: Date | null
     id_adm_val_com_pag: string | null
+    fec_pag_ins: Date | null
   }
 
   export type Comprobante_pagoCountAggregateOutputType = {
@@ -3658,6 +3516,7 @@ export namespace Prisma {
     fec_sub_com_pag: number
     fec_val_com_pag: number
     id_adm_val_com_pag: number
+    fec_pag_ins: number
     _all: number
   }
 
@@ -3670,6 +3529,7 @@ export namespace Prisma {
     fec_sub_com_pag?: true
     fec_val_com_pag?: true
     id_adm_val_com_pag?: true
+    fec_pag_ins?: true
   }
 
   export type Comprobante_pagoMaxAggregateInputType = {
@@ -3680,6 +3540,7 @@ export namespace Prisma {
     fec_sub_com_pag?: true
     fec_val_com_pag?: true
     id_adm_val_com_pag?: true
+    fec_pag_ins?: true
   }
 
   export type Comprobante_pagoCountAggregateInputType = {
@@ -3690,6 +3551,7 @@ export namespace Prisma {
     fec_sub_com_pag?: true
     fec_val_com_pag?: true
     id_adm_val_com_pag?: true
+    fec_pag_ins?: true
     _all?: true
   }
 
@@ -3773,6 +3635,7 @@ export namespace Prisma {
     fec_sub_com_pag: Date
     fec_val_com_pag: Date | null
     id_adm_val_com_pag: string | null
+    fec_pag_ins: Date | null
     _count: Comprobante_pagoCountAggregateOutputType | null
     _min: Comprobante_pagoMinAggregateOutputType | null
     _max: Comprobante_pagoMaxAggregateOutputType | null
@@ -3800,10 +3663,9 @@ export namespace Prisma {
     fec_sub_com_pag?: boolean
     fec_val_com_pag?: boolean
     id_adm_val_com_pag?: boolean
+    fec_pag_ins?: boolean
     admin?: boolean | comprobante_pago$adminArgs<ExtArgs>
     inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
-    observaciones?: boolean | comprobante_pago$observacionesArgs<ExtArgs>
-    _count?: boolean | Comprobante_pagoCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["comprobante_pago"]>
 
   export type comprobante_pagoSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -3814,6 +3676,7 @@ export namespace Prisma {
     fec_sub_com_pag?: boolean
     fec_val_com_pag?: boolean
     id_adm_val_com_pag?: boolean
+    fec_pag_ins?: boolean
     admin?: boolean | comprobante_pago$adminArgs<ExtArgs>
     inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["comprobante_pago"]>
@@ -3826,6 +3689,7 @@ export namespace Prisma {
     fec_sub_com_pag?: boolean
     fec_val_com_pag?: boolean
     id_adm_val_com_pag?: boolean
+    fec_pag_ins?: boolean
     admin?: boolean | comprobante_pago$adminArgs<ExtArgs>
     inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["comprobante_pago"]>
@@ -3838,14 +3702,13 @@ export namespace Prisma {
     fec_sub_com_pag?: boolean
     fec_val_com_pag?: boolean
     id_adm_val_com_pag?: boolean
+    fec_pag_ins?: boolean
   }
 
-  export type comprobante_pagoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_com_pag" | "id_ins_per" | "url_com_pag" | "est_com_pag" | "fec_sub_com_pag" | "fec_val_com_pag" | "id_adm_val_com_pag", ExtArgs["result"]["comprobante_pago"]>
+  export type comprobante_pagoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_com_pag" | "id_ins_per" | "url_com_pag" | "est_com_pag" | "fec_sub_com_pag" | "fec_val_com_pag" | "id_adm_val_com_pag" | "fec_pag_ins", ExtArgs["result"]["comprobante_pago"]>
   export type comprobante_pagoInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     admin?: boolean | comprobante_pago$adminArgs<ExtArgs>
     inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
-    observaciones?: boolean | comprobante_pago$observacionesArgs<ExtArgs>
-    _count?: boolean | Comprobante_pagoCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type comprobante_pagoIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     admin?: boolean | comprobante_pago$adminArgs<ExtArgs>
@@ -3861,7 +3724,6 @@ export namespace Prisma {
     objects: {
       admin: Prisma.$cuentaPayload<ExtArgs> | null
       inscripcion: Prisma.$inscripcionPayload<ExtArgs>
-      observaciones: Prisma.$observacion_comprobantePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id_com_pag: string
@@ -3871,6 +3733,7 @@ export namespace Prisma {
       fec_sub_com_pag: Date
       fec_val_com_pag: Date | null
       id_adm_val_com_pag: string | null
+      fec_pag_ins: Date | null
     }, ExtArgs["result"]["comprobante_pago"]>
     composites: {}
   }
@@ -4267,7 +4130,6 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     admin<T extends comprobante_pago$adminArgs<ExtArgs> = {}>(args?: Subset<T, comprobante_pago$adminArgs<ExtArgs>>): Prisma__cuentaClient<$Result.GetResult<Prisma.$cuentaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     inscripcion<T extends inscripcionDefaultArgs<ExtArgs> = {}>(args?: Subset<T, inscripcionDefaultArgs<ExtArgs>>): Prisma__inscripcionClient<$Result.GetResult<Prisma.$inscripcionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    observaciones<T extends comprobante_pago$observacionesArgs<ExtArgs> = {}>(args?: Subset<T, comprobante_pago$observacionesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$observacion_comprobantePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4304,6 +4166,7 @@ export namespace Prisma {
     readonly fec_sub_com_pag: FieldRef<"comprobante_pago", 'DateTime'>
     readonly fec_val_com_pag: FieldRef<"comprobante_pago", 'DateTime'>
     readonly id_adm_val_com_pag: FieldRef<"comprobante_pago", 'String'>
+    readonly fec_pag_ins: FieldRef<"comprobante_pago", 'DateTime'>
   }
     
 
@@ -4719,30 +4582,6 @@ export namespace Prisma {
   }
 
   /**
-   * comprobante_pago.observaciones
-   */
-  export type comprobante_pago$observacionesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the observacion_comprobante
-     */
-    select?: observacion_comprobanteSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the observacion_comprobante
-     */
-    omit?: observacion_comprobanteOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: observacion_comprobanteInclude<ExtArgs> | null
-    where?: observacion_comprobanteWhereInput
-    orderBy?: observacion_comprobanteOrderByWithRelationInput | observacion_comprobanteOrderByWithRelationInput[]
-    cursor?: observacion_comprobanteWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: Observacion_comprobanteScalarFieldEnum | Observacion_comprobanteScalarFieldEnum[]
-  }
-
-  /**
    * comprobante_pago without action
    */
   export type comprobante_pagoDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4943,8 +4782,6 @@ export namespace Prisma {
     id_adm_val_car_mot?: boolean
     admin?: boolean | carta_motivacion$adminArgs<ExtArgs>
     inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
-    observaciones?: boolean | carta_motivacion$observacionesArgs<ExtArgs>
-    _count?: boolean | Carta_motivacionCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["carta_motivacion"]>
 
   export type carta_motivacionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -4985,8 +4822,6 @@ export namespace Prisma {
   export type carta_motivacionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     admin?: boolean | carta_motivacion$adminArgs<ExtArgs>
     inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
-    observaciones?: boolean | carta_motivacion$observacionesArgs<ExtArgs>
-    _count?: boolean | Carta_motivacionCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type carta_motivacionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     admin?: boolean | carta_motivacion$adminArgs<ExtArgs>
@@ -5002,7 +4837,6 @@ export namespace Prisma {
     objects: {
       admin: Prisma.$cuentaPayload<ExtArgs> | null
       inscripcion: Prisma.$inscripcionPayload<ExtArgs>
-      observaciones: Prisma.$observacion_motivacionPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id_car_mot: string
@@ -5408,7 +5242,6 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     admin<T extends carta_motivacion$adminArgs<ExtArgs> = {}>(args?: Subset<T, carta_motivacion$adminArgs<ExtArgs>>): Prisma__cuentaClient<$Result.GetResult<Prisma.$cuentaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     inscripcion<T extends inscripcionDefaultArgs<ExtArgs> = {}>(args?: Subset<T, inscripcionDefaultArgs<ExtArgs>>): Prisma__inscripcionClient<$Result.GetResult<Prisma.$inscripcionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    observaciones<T extends carta_motivacion$observacionesArgs<ExtArgs> = {}>(args?: Subset<T, carta_motivacion$observacionesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$observacion_motivacionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5860,30 +5693,6 @@ export namespace Prisma {
   }
 
   /**
-   * carta_motivacion.observaciones
-   */
-  export type carta_motivacion$observacionesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the observacion_motivacion
-     */
-    select?: observacion_motivacionSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the observacion_motivacion
-     */
-    omit?: observacion_motivacionOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: observacion_motivacionInclude<ExtArgs> | null
-    where?: observacion_motivacionWhereInput
-    orderBy?: observacion_motivacionOrderByWithRelationInput | observacion_motivacionOrderByWithRelationInput[]
-    cursor?: observacion_motivacionWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: Observacion_motivacionScalarFieldEnum | Observacion_motivacionScalarFieldEnum[]
-  }
-
-  /**
    * carta_motivacion without action
    */
   export type carta_motivacionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5903,315 +5712,358 @@ export namespace Prisma {
 
 
   /**
-   * Model observacion_motivacion
+   * Model observacion_inscripcion
    */
 
-  export type AggregateObservacion_motivacion = {
-    _count: Observacion_motivacionCountAggregateOutputType | null
-    _min: Observacion_motivacionMinAggregateOutputType | null
-    _max: Observacion_motivacionMaxAggregateOutputType | null
+  export type AggregateObservacion_inscripcion = {
+    _count: Observacion_inscripcionCountAggregateOutputType | null
+    _min: Observacion_inscripcionMinAggregateOutputType | null
+    _max: Observacion_inscripcionMaxAggregateOutputType | null
   }
 
-  export type Observacion_motivacionMinAggregateOutputType = {
-    id_car_mot: string | null
-    obs_car_mot: string | null
+  export type Observacion_inscripcionMinAggregateOutputType = {
+    id_obs_ins: string | null
+    id_ins_per: string | null
+    obs_ins: string | null
+    fec_cre_obs: Date | null
+    id_adm_cre_obs: string | null
   }
 
-  export type Observacion_motivacionMaxAggregateOutputType = {
-    id_car_mot: string | null
-    obs_car_mot: string | null
+  export type Observacion_inscripcionMaxAggregateOutputType = {
+    id_obs_ins: string | null
+    id_ins_per: string | null
+    obs_ins: string | null
+    fec_cre_obs: Date | null
+    id_adm_cre_obs: string | null
   }
 
-  export type Observacion_motivacionCountAggregateOutputType = {
-    id_car_mot: number
-    obs_car_mot: number
+  export type Observacion_inscripcionCountAggregateOutputType = {
+    id_obs_ins: number
+    id_ins_per: number
+    obs_ins: number
+    fec_cre_obs: number
+    id_adm_cre_obs: number
     _all: number
   }
 
 
-  export type Observacion_motivacionMinAggregateInputType = {
-    id_car_mot?: true
-    obs_car_mot?: true
+  export type Observacion_inscripcionMinAggregateInputType = {
+    id_obs_ins?: true
+    id_ins_per?: true
+    obs_ins?: true
+    fec_cre_obs?: true
+    id_adm_cre_obs?: true
   }
 
-  export type Observacion_motivacionMaxAggregateInputType = {
-    id_car_mot?: true
-    obs_car_mot?: true
+  export type Observacion_inscripcionMaxAggregateInputType = {
+    id_obs_ins?: true
+    id_ins_per?: true
+    obs_ins?: true
+    fec_cre_obs?: true
+    id_adm_cre_obs?: true
   }
 
-  export type Observacion_motivacionCountAggregateInputType = {
-    id_car_mot?: true
-    obs_car_mot?: true
+  export type Observacion_inscripcionCountAggregateInputType = {
+    id_obs_ins?: true
+    id_ins_per?: true
+    obs_ins?: true
+    fec_cre_obs?: true
+    id_adm_cre_obs?: true
     _all?: true
   }
 
-  export type Observacion_motivacionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type Observacion_inscripcionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Filter which observacion_motivacion to aggregate.
+     * Filter which observacion_inscripcion to aggregate.
      */
-    where?: observacion_motivacionWhereInput
+    where?: observacion_inscripcionWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
-     * Determine the order of observacion_motivacions to fetch.
+     * Determine the order of observacion_inscripcions to fetch.
      */
-    orderBy?: observacion_motivacionOrderByWithRelationInput | observacion_motivacionOrderByWithRelationInput[]
+    orderBy?: observacion_inscripcionOrderByWithRelationInput | observacion_inscripcionOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
      * Sets the start position
      */
-    cursor?: observacion_motivacionWhereUniqueInput
+    cursor?: observacion_inscripcionWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Take `±n` observacion_motivacions from the position of the cursor.
+     * Take `±n` observacion_inscripcions from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Skip the first `n` observacion_motivacions.
+     * Skip the first `n` observacion_inscripcions.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
-     * Count returned observacion_motivacions
+     * Count returned observacion_inscripcions
     **/
-    _count?: true | Observacion_motivacionCountAggregateInputType
+    _count?: true | Observacion_inscripcionCountAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
      * Select which fields to find the minimum value
     **/
-    _min?: Observacion_motivacionMinAggregateInputType
+    _min?: Observacion_inscripcionMinAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
      * Select which fields to find the maximum value
     **/
-    _max?: Observacion_motivacionMaxAggregateInputType
+    _max?: Observacion_inscripcionMaxAggregateInputType
   }
 
-  export type GetObservacion_motivacionAggregateType<T extends Observacion_motivacionAggregateArgs> = {
-        [P in keyof T & keyof AggregateObservacion_motivacion]: P extends '_count' | 'count'
+  export type GetObservacion_inscripcionAggregateType<T extends Observacion_inscripcionAggregateArgs> = {
+        [P in keyof T & keyof AggregateObservacion_inscripcion]: P extends '_count' | 'count'
       ? T[P] extends true
         ? number
-        : GetScalarType<T[P], AggregateObservacion_motivacion[P]>
-      : GetScalarType<T[P], AggregateObservacion_motivacion[P]>
+        : GetScalarType<T[P], AggregateObservacion_inscripcion[P]>
+      : GetScalarType<T[P], AggregateObservacion_inscripcion[P]>
   }
 
 
 
 
-  export type observacion_motivacionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: observacion_motivacionWhereInput
-    orderBy?: observacion_motivacionOrderByWithAggregationInput | observacion_motivacionOrderByWithAggregationInput[]
-    by: Observacion_motivacionScalarFieldEnum[] | Observacion_motivacionScalarFieldEnum
-    having?: observacion_motivacionScalarWhereWithAggregatesInput
+  export type observacion_inscripcionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: observacion_inscripcionWhereInput
+    orderBy?: observacion_inscripcionOrderByWithAggregationInput | observacion_inscripcionOrderByWithAggregationInput[]
+    by: Observacion_inscripcionScalarFieldEnum[] | Observacion_inscripcionScalarFieldEnum
+    having?: observacion_inscripcionScalarWhereWithAggregatesInput
     take?: number
     skip?: number
-    _count?: Observacion_motivacionCountAggregateInputType | true
-    _min?: Observacion_motivacionMinAggregateInputType
-    _max?: Observacion_motivacionMaxAggregateInputType
+    _count?: Observacion_inscripcionCountAggregateInputType | true
+    _min?: Observacion_inscripcionMinAggregateInputType
+    _max?: Observacion_inscripcionMaxAggregateInputType
   }
 
-  export type Observacion_motivacionGroupByOutputType = {
-    id_car_mot: string
-    obs_car_mot: string
-    _count: Observacion_motivacionCountAggregateOutputType | null
-    _min: Observacion_motivacionMinAggregateOutputType | null
-    _max: Observacion_motivacionMaxAggregateOutputType | null
+  export type Observacion_inscripcionGroupByOutputType = {
+    id_obs_ins: string
+    id_ins_per: string
+    obs_ins: string
+    fec_cre_obs: Date
+    id_adm_cre_obs: string | null
+    _count: Observacion_inscripcionCountAggregateOutputType | null
+    _min: Observacion_inscripcionMinAggregateOutputType | null
+    _max: Observacion_inscripcionMaxAggregateOutputType | null
   }
 
-  type GetObservacion_motivacionGroupByPayload<T extends observacion_motivacionGroupByArgs> = Prisma.PrismaPromise<
+  type GetObservacion_inscripcionGroupByPayload<T extends observacion_inscripcionGroupByArgs> = Prisma.PrismaPromise<
     Array<
-      PickEnumerable<Observacion_motivacionGroupByOutputType, T['by']> &
+      PickEnumerable<Observacion_inscripcionGroupByOutputType, T['by']> &
         {
-          [P in ((keyof T) & (keyof Observacion_motivacionGroupByOutputType))]: P extends '_count'
+          [P in ((keyof T) & (keyof Observacion_inscripcionGroupByOutputType))]: P extends '_count'
             ? T[P] extends boolean
               ? number
-              : GetScalarType<T[P], Observacion_motivacionGroupByOutputType[P]>
-            : GetScalarType<T[P], Observacion_motivacionGroupByOutputType[P]>
+              : GetScalarType<T[P], Observacion_inscripcionGroupByOutputType[P]>
+            : GetScalarType<T[P], Observacion_inscripcionGroupByOutputType[P]>
         }
       >
     >
 
 
-  export type observacion_motivacionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id_car_mot?: boolean
-    obs_car_mot?: boolean
-    carta_motivacion?: boolean | carta_motivacionDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["observacion_motivacion"]>
+  export type observacion_inscripcionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_obs_ins?: boolean
+    id_ins_per?: boolean
+    obs_ins?: boolean
+    fec_cre_obs?: boolean
+    id_adm_cre_obs?: boolean
+    inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
+    admin_creador?: boolean | observacion_inscripcion$admin_creadorArgs<ExtArgs>
+  }, ExtArgs["result"]["observacion_inscripcion"]>
 
-  export type observacion_motivacionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id_car_mot?: boolean
-    obs_car_mot?: boolean
-    carta_motivacion?: boolean | carta_motivacionDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["observacion_motivacion"]>
+  export type observacion_inscripcionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_obs_ins?: boolean
+    id_ins_per?: boolean
+    obs_ins?: boolean
+    fec_cre_obs?: boolean
+    id_adm_cre_obs?: boolean
+    inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
+    admin_creador?: boolean | observacion_inscripcion$admin_creadorArgs<ExtArgs>
+  }, ExtArgs["result"]["observacion_inscripcion"]>
 
-  export type observacion_motivacionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id_car_mot?: boolean
-    obs_car_mot?: boolean
-    carta_motivacion?: boolean | carta_motivacionDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["observacion_motivacion"]>
+  export type observacion_inscripcionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_obs_ins?: boolean
+    id_ins_per?: boolean
+    obs_ins?: boolean
+    fec_cre_obs?: boolean
+    id_adm_cre_obs?: boolean
+    inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
+    admin_creador?: boolean | observacion_inscripcion$admin_creadorArgs<ExtArgs>
+  }, ExtArgs["result"]["observacion_inscripcion"]>
 
-  export type observacion_motivacionSelectScalar = {
-    id_car_mot?: boolean
-    obs_car_mot?: boolean
+  export type observacion_inscripcionSelectScalar = {
+    id_obs_ins?: boolean
+    id_ins_per?: boolean
+    obs_ins?: boolean
+    fec_cre_obs?: boolean
+    id_adm_cre_obs?: boolean
   }
 
-  export type observacion_motivacionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_car_mot" | "obs_car_mot", ExtArgs["result"]["observacion_motivacion"]>
-  export type observacion_motivacionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    carta_motivacion?: boolean | carta_motivacionDefaultArgs<ExtArgs>
+  export type observacion_inscripcionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_obs_ins" | "id_ins_per" | "obs_ins" | "fec_cre_obs" | "id_adm_cre_obs", ExtArgs["result"]["observacion_inscripcion"]>
+  export type observacion_inscripcionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
+    admin_creador?: boolean | observacion_inscripcion$admin_creadorArgs<ExtArgs>
   }
-  export type observacion_motivacionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    carta_motivacion?: boolean | carta_motivacionDefaultArgs<ExtArgs>
+  export type observacion_inscripcionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
+    admin_creador?: boolean | observacion_inscripcion$admin_creadorArgs<ExtArgs>
   }
-  export type observacion_motivacionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    carta_motivacion?: boolean | carta_motivacionDefaultArgs<ExtArgs>
+  export type observacion_inscripcionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
+    admin_creador?: boolean | observacion_inscripcion$admin_creadorArgs<ExtArgs>
   }
 
-  export type $observacion_motivacionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "observacion_motivacion"
+  export type $observacion_inscripcionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "observacion_inscripcion"
     objects: {
-      carta_motivacion: Prisma.$carta_motivacionPayload<ExtArgs>
+      inscripcion: Prisma.$inscripcionPayload<ExtArgs>
+      admin_creador: Prisma.$cuentaPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
-      id_car_mot: string
-      obs_car_mot: string
-    }, ExtArgs["result"]["observacion_motivacion"]>
+      id_obs_ins: string
+      id_ins_per: string
+      obs_ins: string
+      fec_cre_obs: Date
+      id_adm_cre_obs: string | null
+    }, ExtArgs["result"]["observacion_inscripcion"]>
     composites: {}
   }
 
-  type observacion_motivacionGetPayload<S extends boolean | null | undefined | observacion_motivacionDefaultArgs> = $Result.GetResult<Prisma.$observacion_motivacionPayload, S>
+  type observacion_inscripcionGetPayload<S extends boolean | null | undefined | observacion_inscripcionDefaultArgs> = $Result.GetResult<Prisma.$observacion_inscripcionPayload, S>
 
-  type observacion_motivacionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
-    Omit<observacion_motivacionFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
-      select?: Observacion_motivacionCountAggregateInputType | true
+  type observacion_inscripcionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<observacion_inscripcionFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: Observacion_inscripcionCountAggregateInputType | true
     }
 
-  export interface observacion_motivacionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['observacion_motivacion'], meta: { name: 'observacion_motivacion' } }
+  export interface observacion_inscripcionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['observacion_inscripcion'], meta: { name: 'observacion_inscripcion' } }
     /**
-     * Find zero or one Observacion_motivacion that matches the filter.
-     * @param {observacion_motivacionFindUniqueArgs} args - Arguments to find a Observacion_motivacion
+     * Find zero or one Observacion_inscripcion that matches the filter.
+     * @param {observacion_inscripcionFindUniqueArgs} args - Arguments to find a Observacion_inscripcion
      * @example
-     * // Get one Observacion_motivacion
-     * const observacion_motivacion = await prisma.observacion_motivacion.findUnique({
+     * // Get one Observacion_inscripcion
+     * const observacion_inscripcion = await prisma.observacion_inscripcion.findUnique({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      */
-    findUnique<T extends observacion_motivacionFindUniqueArgs>(args: SelectSubset<T, observacion_motivacionFindUniqueArgs<ExtArgs>>): Prisma__observacion_motivacionClient<$Result.GetResult<Prisma.$observacion_motivacionPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    findUnique<T extends observacion_inscripcionFindUniqueArgs>(args: SelectSubset<T, observacion_inscripcionFindUniqueArgs<ExtArgs>>): Prisma__observacion_inscripcionClient<$Result.GetResult<Prisma.$observacion_inscripcionPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find one Observacion_motivacion that matches the filter or throw an error with `error.code='P2025'`
+     * Find one Observacion_inscripcion that matches the filter or throw an error with `error.code='P2025'`
      * if no matches were found.
-     * @param {observacion_motivacionFindUniqueOrThrowArgs} args - Arguments to find a Observacion_motivacion
+     * @param {observacion_inscripcionFindUniqueOrThrowArgs} args - Arguments to find a Observacion_inscripcion
      * @example
-     * // Get one Observacion_motivacion
-     * const observacion_motivacion = await prisma.observacion_motivacion.findUniqueOrThrow({
+     * // Get one Observacion_inscripcion
+     * const observacion_inscripcion = await prisma.observacion_inscripcion.findUniqueOrThrow({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      */
-    findUniqueOrThrow<T extends observacion_motivacionFindUniqueOrThrowArgs>(args: SelectSubset<T, observacion_motivacionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__observacion_motivacionClient<$Result.GetResult<Prisma.$observacion_motivacionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    findUniqueOrThrow<T extends observacion_inscripcionFindUniqueOrThrowArgs>(args: SelectSubset<T, observacion_inscripcionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__observacion_inscripcionClient<$Result.GetResult<Prisma.$observacion_inscripcionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find the first Observacion_motivacion that matches the filter.
+     * Find the first Observacion_inscripcion that matches the filter.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {observacion_motivacionFindFirstArgs} args - Arguments to find a Observacion_motivacion
+     * @param {observacion_inscripcionFindFirstArgs} args - Arguments to find a Observacion_inscripcion
      * @example
-     * // Get one Observacion_motivacion
-     * const observacion_motivacion = await prisma.observacion_motivacion.findFirst({
+     * // Get one Observacion_inscripcion
+     * const observacion_inscripcion = await prisma.observacion_inscripcion.findFirst({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      */
-    findFirst<T extends observacion_motivacionFindFirstArgs>(args?: SelectSubset<T, observacion_motivacionFindFirstArgs<ExtArgs>>): Prisma__observacion_motivacionClient<$Result.GetResult<Prisma.$observacion_motivacionPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    findFirst<T extends observacion_inscripcionFindFirstArgs>(args?: SelectSubset<T, observacion_inscripcionFindFirstArgs<ExtArgs>>): Prisma__observacion_inscripcionClient<$Result.GetResult<Prisma.$observacion_inscripcionPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find the first Observacion_motivacion that matches the filter or
+     * Find the first Observacion_inscripcion that matches the filter or
      * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {observacion_motivacionFindFirstOrThrowArgs} args - Arguments to find a Observacion_motivacion
+     * @param {observacion_inscripcionFindFirstOrThrowArgs} args - Arguments to find a Observacion_inscripcion
      * @example
-     * // Get one Observacion_motivacion
-     * const observacion_motivacion = await prisma.observacion_motivacion.findFirstOrThrow({
+     * // Get one Observacion_inscripcion
+     * const observacion_inscripcion = await prisma.observacion_inscripcion.findFirstOrThrow({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      */
-    findFirstOrThrow<T extends observacion_motivacionFindFirstOrThrowArgs>(args?: SelectSubset<T, observacion_motivacionFindFirstOrThrowArgs<ExtArgs>>): Prisma__observacion_motivacionClient<$Result.GetResult<Prisma.$observacion_motivacionPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    findFirstOrThrow<T extends observacion_inscripcionFindFirstOrThrowArgs>(args?: SelectSubset<T, observacion_inscripcionFindFirstOrThrowArgs<ExtArgs>>): Prisma__observacion_inscripcionClient<$Result.GetResult<Prisma.$observacion_inscripcionPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find zero or more Observacion_motivacions that matches the filter.
+     * Find zero or more Observacion_inscripcions that matches the filter.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {observacion_motivacionFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @param {observacion_inscripcionFindManyArgs} args - Arguments to filter and select certain fields only.
      * @example
-     * // Get all Observacion_motivacions
-     * const observacion_motivacions = await prisma.observacion_motivacion.findMany()
+     * // Get all Observacion_inscripcions
+     * const observacion_inscripcions = await prisma.observacion_inscripcion.findMany()
      * 
-     * // Get first 10 Observacion_motivacions
-     * const observacion_motivacions = await prisma.observacion_motivacion.findMany({ take: 10 })
+     * // Get first 10 Observacion_inscripcions
+     * const observacion_inscripcions = await prisma.observacion_inscripcion.findMany({ take: 10 })
      * 
-     * // Only select the `id_car_mot`
-     * const observacion_motivacionWithId_car_motOnly = await prisma.observacion_motivacion.findMany({ select: { id_car_mot: true } })
+     * // Only select the `id_obs_ins`
+     * const observacion_inscripcionWithId_obs_insOnly = await prisma.observacion_inscripcion.findMany({ select: { id_obs_ins: true } })
      * 
      */
-    findMany<T extends observacion_motivacionFindManyArgs>(args?: SelectSubset<T, observacion_motivacionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$observacion_motivacionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+    findMany<T extends observacion_inscripcionFindManyArgs>(args?: SelectSubset<T, observacion_inscripcionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$observacion_inscripcionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
     /**
-     * Create a Observacion_motivacion.
-     * @param {observacion_motivacionCreateArgs} args - Arguments to create a Observacion_motivacion.
+     * Create a Observacion_inscripcion.
+     * @param {observacion_inscripcionCreateArgs} args - Arguments to create a Observacion_inscripcion.
      * @example
-     * // Create one Observacion_motivacion
-     * const Observacion_motivacion = await prisma.observacion_motivacion.create({
+     * // Create one Observacion_inscripcion
+     * const Observacion_inscripcion = await prisma.observacion_inscripcion.create({
      *   data: {
-     *     // ... data to create a Observacion_motivacion
+     *     // ... data to create a Observacion_inscripcion
      *   }
      * })
      * 
      */
-    create<T extends observacion_motivacionCreateArgs>(args: SelectSubset<T, observacion_motivacionCreateArgs<ExtArgs>>): Prisma__observacion_motivacionClient<$Result.GetResult<Prisma.$observacion_motivacionPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    create<T extends observacion_inscripcionCreateArgs>(args: SelectSubset<T, observacion_inscripcionCreateArgs<ExtArgs>>): Prisma__observacion_inscripcionClient<$Result.GetResult<Prisma.$observacion_inscripcionPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Create many Observacion_motivacions.
-     * @param {observacion_motivacionCreateManyArgs} args - Arguments to create many Observacion_motivacions.
+     * Create many Observacion_inscripcions.
+     * @param {observacion_inscripcionCreateManyArgs} args - Arguments to create many Observacion_inscripcions.
      * @example
-     * // Create many Observacion_motivacions
-     * const observacion_motivacion = await prisma.observacion_motivacion.createMany({
+     * // Create many Observacion_inscripcions
+     * const observacion_inscripcion = await prisma.observacion_inscripcion.createMany({
      *   data: [
      *     // ... provide data here
      *   ]
      * })
      *     
      */
-    createMany<T extends observacion_motivacionCreateManyArgs>(args?: SelectSubset<T, observacion_motivacionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+    createMany<T extends observacion_inscripcionCreateManyArgs>(args?: SelectSubset<T, observacion_inscripcionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
-     * Create many Observacion_motivacions and returns the data saved in the database.
-     * @param {observacion_motivacionCreateManyAndReturnArgs} args - Arguments to create many Observacion_motivacions.
+     * Create many Observacion_inscripcions and returns the data saved in the database.
+     * @param {observacion_inscripcionCreateManyAndReturnArgs} args - Arguments to create many Observacion_inscripcions.
      * @example
-     * // Create many Observacion_motivacions
-     * const observacion_motivacion = await prisma.observacion_motivacion.createManyAndReturn({
+     * // Create many Observacion_inscripcions
+     * const observacion_inscripcion = await prisma.observacion_inscripcion.createManyAndReturn({
      *   data: [
      *     // ... provide data here
      *   ]
      * })
      * 
-     * // Create many Observacion_motivacions and only return the `id_car_mot`
-     * const observacion_motivacionWithId_car_motOnly = await prisma.observacion_motivacion.createManyAndReturn({
-     *   select: { id_car_mot: true },
+     * // Create many Observacion_inscripcions and only return the `id_obs_ins`
+     * const observacion_inscripcionWithId_obs_insOnly = await prisma.observacion_inscripcion.createManyAndReturn({
+     *   select: { id_obs_ins: true },
      *   data: [
      *     // ... provide data here
      *   ]
@@ -6220,28 +6072,28 @@ export namespace Prisma {
      * Read more here: https://pris.ly/d/null-undefined
      * 
      */
-    createManyAndReturn<T extends observacion_motivacionCreateManyAndReturnArgs>(args?: SelectSubset<T, observacion_motivacionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$observacion_motivacionPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+    createManyAndReturn<T extends observacion_inscripcionCreateManyAndReturnArgs>(args?: SelectSubset<T, observacion_inscripcionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$observacion_inscripcionPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
     /**
-     * Delete a Observacion_motivacion.
-     * @param {observacion_motivacionDeleteArgs} args - Arguments to delete one Observacion_motivacion.
+     * Delete a Observacion_inscripcion.
+     * @param {observacion_inscripcionDeleteArgs} args - Arguments to delete one Observacion_inscripcion.
      * @example
-     * // Delete one Observacion_motivacion
-     * const Observacion_motivacion = await prisma.observacion_motivacion.delete({
+     * // Delete one Observacion_inscripcion
+     * const Observacion_inscripcion = await prisma.observacion_inscripcion.delete({
      *   where: {
-     *     // ... filter to delete one Observacion_motivacion
+     *     // ... filter to delete one Observacion_inscripcion
      *   }
      * })
      * 
      */
-    delete<T extends observacion_motivacionDeleteArgs>(args: SelectSubset<T, observacion_motivacionDeleteArgs<ExtArgs>>): Prisma__observacion_motivacionClient<$Result.GetResult<Prisma.$observacion_motivacionPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    delete<T extends observacion_inscripcionDeleteArgs>(args: SelectSubset<T, observacion_inscripcionDeleteArgs<ExtArgs>>): Prisma__observacion_inscripcionClient<$Result.GetResult<Prisma.$observacion_inscripcionPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Update one Observacion_motivacion.
-     * @param {observacion_motivacionUpdateArgs} args - Arguments to update one Observacion_motivacion.
+     * Update one Observacion_inscripcion.
+     * @param {observacion_inscripcionUpdateArgs} args - Arguments to update one Observacion_inscripcion.
      * @example
-     * // Update one Observacion_motivacion
-     * const observacion_motivacion = await prisma.observacion_motivacion.update({
+     * // Update one Observacion_inscripcion
+     * const observacion_inscripcion = await prisma.observacion_inscripcion.update({
      *   where: {
      *     // ... provide filter here
      *   },
@@ -6251,30 +6103,30 @@ export namespace Prisma {
      * })
      * 
      */
-    update<T extends observacion_motivacionUpdateArgs>(args: SelectSubset<T, observacion_motivacionUpdateArgs<ExtArgs>>): Prisma__observacion_motivacionClient<$Result.GetResult<Prisma.$observacion_motivacionPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    update<T extends observacion_inscripcionUpdateArgs>(args: SelectSubset<T, observacion_inscripcionUpdateArgs<ExtArgs>>): Prisma__observacion_inscripcionClient<$Result.GetResult<Prisma.$observacion_inscripcionPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Delete zero or more Observacion_motivacions.
-     * @param {observacion_motivacionDeleteManyArgs} args - Arguments to filter Observacion_motivacions to delete.
+     * Delete zero or more Observacion_inscripcions.
+     * @param {observacion_inscripcionDeleteManyArgs} args - Arguments to filter Observacion_inscripcions to delete.
      * @example
-     * // Delete a few Observacion_motivacions
-     * const { count } = await prisma.observacion_motivacion.deleteMany({
+     * // Delete a few Observacion_inscripcions
+     * const { count } = await prisma.observacion_inscripcion.deleteMany({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      * 
      */
-    deleteMany<T extends observacion_motivacionDeleteManyArgs>(args?: SelectSubset<T, observacion_motivacionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+    deleteMany<T extends observacion_inscripcionDeleteManyArgs>(args?: SelectSubset<T, observacion_inscripcionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
-     * Update zero or more Observacion_motivacions.
+     * Update zero or more Observacion_inscripcions.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {observacion_motivacionUpdateManyArgs} args - Arguments to update one or more rows.
+     * @param {observacion_inscripcionUpdateManyArgs} args - Arguments to update one or more rows.
      * @example
-     * // Update many Observacion_motivacions
-     * const observacion_motivacion = await prisma.observacion_motivacion.updateMany({
+     * // Update many Observacion_inscripcions
+     * const observacion_inscripcion = await prisma.observacion_inscripcion.updateMany({
      *   where: {
      *     // ... provide filter here
      *   },
@@ -6284,14 +6136,14 @@ export namespace Prisma {
      * })
      * 
      */
-    updateMany<T extends observacion_motivacionUpdateManyArgs>(args: SelectSubset<T, observacion_motivacionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+    updateMany<T extends observacion_inscripcionUpdateManyArgs>(args: SelectSubset<T, observacion_inscripcionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
-     * Update zero or more Observacion_motivacions and returns the data updated in the database.
-     * @param {observacion_motivacionUpdateManyAndReturnArgs} args - Arguments to update many Observacion_motivacions.
+     * Update zero or more Observacion_inscripcions and returns the data updated in the database.
+     * @param {observacion_inscripcionUpdateManyAndReturnArgs} args - Arguments to update many Observacion_inscripcions.
      * @example
-     * // Update many Observacion_motivacions
-     * const observacion_motivacion = await prisma.observacion_motivacion.updateManyAndReturn({
+     * // Update many Observacion_inscripcions
+     * const observacion_inscripcion = await prisma.observacion_inscripcion.updateManyAndReturn({
      *   where: {
      *     // ... provide filter here
      *   },
@@ -6300,9 +6152,9 @@ export namespace Prisma {
      *   ]
      * })
      * 
-     * // Update zero or more Observacion_motivacions and only return the `id_car_mot`
-     * const observacion_motivacionWithId_car_motOnly = await prisma.observacion_motivacion.updateManyAndReturn({
-     *   select: { id_car_mot: true },
+     * // Update zero or more Observacion_inscripcions and only return the `id_obs_ins`
+     * const observacion_inscripcionWithId_obs_insOnly = await prisma.observacion_inscripcion.updateManyAndReturn({
+     *   select: { id_obs_ins: true },
      *   where: {
      *     // ... provide filter here
      *   },
@@ -6314,56 +6166,56 @@ export namespace Prisma {
      * Read more here: https://pris.ly/d/null-undefined
      * 
      */
-    updateManyAndReturn<T extends observacion_motivacionUpdateManyAndReturnArgs>(args: SelectSubset<T, observacion_motivacionUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$observacion_motivacionPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+    updateManyAndReturn<T extends observacion_inscripcionUpdateManyAndReturnArgs>(args: SelectSubset<T, observacion_inscripcionUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$observacion_inscripcionPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
     /**
-     * Create or update one Observacion_motivacion.
-     * @param {observacion_motivacionUpsertArgs} args - Arguments to update or create a Observacion_motivacion.
+     * Create or update one Observacion_inscripcion.
+     * @param {observacion_inscripcionUpsertArgs} args - Arguments to update or create a Observacion_inscripcion.
      * @example
-     * // Update or create a Observacion_motivacion
-     * const observacion_motivacion = await prisma.observacion_motivacion.upsert({
+     * // Update or create a Observacion_inscripcion
+     * const observacion_inscripcion = await prisma.observacion_inscripcion.upsert({
      *   create: {
-     *     // ... data to create a Observacion_motivacion
+     *     // ... data to create a Observacion_inscripcion
      *   },
      *   update: {
      *     // ... in case it already exists, update
      *   },
      *   where: {
-     *     // ... the filter for the Observacion_motivacion we want to update
+     *     // ... the filter for the Observacion_inscripcion we want to update
      *   }
      * })
      */
-    upsert<T extends observacion_motivacionUpsertArgs>(args: SelectSubset<T, observacion_motivacionUpsertArgs<ExtArgs>>): Prisma__observacion_motivacionClient<$Result.GetResult<Prisma.$observacion_motivacionPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    upsert<T extends observacion_inscripcionUpsertArgs>(args: SelectSubset<T, observacion_inscripcionUpsertArgs<ExtArgs>>): Prisma__observacion_inscripcionClient<$Result.GetResult<Prisma.$observacion_inscripcionPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
 
     /**
-     * Count the number of Observacion_motivacions.
+     * Count the number of Observacion_inscripcions.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {observacion_motivacionCountArgs} args - Arguments to filter Observacion_motivacions to count.
+     * @param {observacion_inscripcionCountArgs} args - Arguments to filter Observacion_inscripcions to count.
      * @example
-     * // Count the number of Observacion_motivacions
-     * const count = await prisma.observacion_motivacion.count({
+     * // Count the number of Observacion_inscripcions
+     * const count = await prisma.observacion_inscripcion.count({
      *   where: {
-     *     // ... the filter for the Observacion_motivacions we want to count
+     *     // ... the filter for the Observacion_inscripcions we want to count
      *   }
      * })
     **/
-    count<T extends observacion_motivacionCountArgs>(
-      args?: Subset<T, observacion_motivacionCountArgs>,
+    count<T extends observacion_inscripcionCountArgs>(
+      args?: Subset<T, observacion_inscripcionCountArgs>,
     ): Prisma.PrismaPromise<
       T extends $Utils.Record<'select', any>
         ? T['select'] extends true
           ? number
-          : GetScalarType<T['select'], Observacion_motivacionCountAggregateOutputType>
+          : GetScalarType<T['select'], Observacion_inscripcionCountAggregateOutputType>
         : number
     >
 
     /**
-     * Allows you to perform aggregations operations on a Observacion_motivacion.
+     * Allows you to perform aggregations operations on a Observacion_inscripcion.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {Observacion_motivacionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @param {Observacion_inscripcionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
      * @example
      * // Ordered by age ascending
      * // Where email contains prisma.io
@@ -6383,13 +6235,13 @@ export namespace Prisma {
      *   take: 10,
      * })
     **/
-    aggregate<T extends Observacion_motivacionAggregateArgs>(args: Subset<T, Observacion_motivacionAggregateArgs>): Prisma.PrismaPromise<GetObservacion_motivacionAggregateType<T>>
+    aggregate<T extends Observacion_inscripcionAggregateArgs>(args: Subset<T, Observacion_inscripcionAggregateArgs>): Prisma.PrismaPromise<GetObservacion_inscripcionAggregateType<T>>
 
     /**
-     * Group by Observacion_motivacion.
+     * Group by Observacion_inscripcion.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {observacion_motivacionGroupByArgs} args - Group by arguments.
+     * @param {observacion_inscripcionGroupByArgs} args - Group by arguments.
      * @example
      * // Group by city, order by createdAt, get count
      * const result = await prisma.user.groupBy({
@@ -6404,14 +6256,14 @@ export namespace Prisma {
      * 
     **/
     groupBy<
-      T extends observacion_motivacionGroupByArgs,
+      T extends observacion_inscripcionGroupByArgs,
       HasSelectOrTake extends Or<
         Extends<'skip', Keys<T>>,
         Extends<'take', Keys<T>>
       >,
       OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: observacion_motivacionGroupByArgs['orderBy'] }
-        : { orderBy?: observacion_motivacionGroupByArgs['orderBy'] },
+        ? { orderBy: observacion_inscripcionGroupByArgs['orderBy'] }
+        : { orderBy?: observacion_inscripcionGroupByArgs['orderBy'] },
       OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
       ByFields extends MaybeTupleToUnion<T['by']>,
       ByValid extends Has<ByFields, OrderFields>,
@@ -6460,22 +6312,23 @@ export namespace Prisma {
             ? never
             : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
         }[OrderFields]
-    >(args: SubsetIntersection<T, observacion_motivacionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetObservacion_motivacionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+    >(args: SubsetIntersection<T, observacion_inscripcionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetObservacion_inscripcionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
   /**
-   * Fields of the observacion_motivacion model
+   * Fields of the observacion_inscripcion model
    */
-  readonly fields: observacion_motivacionFieldRefs;
+  readonly fields: observacion_inscripcionFieldRefs;
   }
 
   /**
-   * The delegate class that acts as a "Promise-like" for observacion_motivacion.
+   * The delegate class that acts as a "Promise-like" for observacion_inscripcion.
    * Why is this prefixed with `Prisma__`?
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__observacion_motivacionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+  export interface Prisma__observacion_inscripcionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    carta_motivacion<T extends carta_motivacionDefaultArgs<ExtArgs> = {}>(args?: Subset<T, carta_motivacionDefaultArgs<ExtArgs>>): Prisma__carta_motivacionClient<$Result.GetResult<Prisma.$carta_motivacionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    inscripcion<T extends inscripcionDefaultArgs<ExtArgs> = {}>(args?: Subset<T, inscripcionDefaultArgs<ExtArgs>>): Prisma__inscripcionClient<$Result.GetResult<Prisma.$inscripcionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    admin_creador<T extends observacion_inscripcion$admin_creadorArgs<ExtArgs> = {}>(args?: Subset<T, observacion_inscripcion$admin_creadorArgs<ExtArgs>>): Prisma__cuentaClient<$Result.GetResult<Prisma.$cuentaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6502,1441 +6355,444 @@ export namespace Prisma {
 
 
   /**
-   * Fields of the observacion_motivacion model
+   * Fields of the observacion_inscripcion model
    */
-  interface observacion_motivacionFieldRefs {
-    readonly id_car_mot: FieldRef<"observacion_motivacion", 'String'>
-    readonly obs_car_mot: FieldRef<"observacion_motivacion", 'String'>
+  interface observacion_inscripcionFieldRefs {
+    readonly id_obs_ins: FieldRef<"observacion_inscripcion", 'String'>
+    readonly id_ins_per: FieldRef<"observacion_inscripcion", 'String'>
+    readonly obs_ins: FieldRef<"observacion_inscripcion", 'String'>
+    readonly fec_cre_obs: FieldRef<"observacion_inscripcion", 'DateTime'>
+    readonly id_adm_cre_obs: FieldRef<"observacion_inscripcion", 'String'>
   }
     
 
   // Custom InputTypes
   /**
-   * observacion_motivacion findUnique
+   * observacion_inscripcion findUnique
    */
-  export type observacion_motivacionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type observacion_inscripcionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the observacion_motivacion
+     * Select specific fields to fetch from the observacion_inscripcion
      */
-    select?: observacion_motivacionSelect<ExtArgs> | null
+    select?: observacion_inscripcionSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the observacion_motivacion
+     * Omit specific fields from the observacion_inscripcion
      */
-    omit?: observacion_motivacionOmit<ExtArgs> | null
+    omit?: observacion_inscripcionOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: observacion_motivacionInclude<ExtArgs> | null
+    include?: observacion_inscripcionInclude<ExtArgs> | null
     /**
-     * Filter, which observacion_motivacion to fetch.
+     * Filter, which observacion_inscripcion to fetch.
      */
-    where: observacion_motivacionWhereUniqueInput
+    where: observacion_inscripcionWhereUniqueInput
   }
 
   /**
-   * observacion_motivacion findUniqueOrThrow
+   * observacion_inscripcion findUniqueOrThrow
    */
-  export type observacion_motivacionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type observacion_inscripcionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the observacion_motivacion
+     * Select specific fields to fetch from the observacion_inscripcion
      */
-    select?: observacion_motivacionSelect<ExtArgs> | null
+    select?: observacion_inscripcionSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the observacion_motivacion
+     * Omit specific fields from the observacion_inscripcion
      */
-    omit?: observacion_motivacionOmit<ExtArgs> | null
+    omit?: observacion_inscripcionOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: observacion_motivacionInclude<ExtArgs> | null
+    include?: observacion_inscripcionInclude<ExtArgs> | null
     /**
-     * Filter, which observacion_motivacion to fetch.
+     * Filter, which observacion_inscripcion to fetch.
      */
-    where: observacion_motivacionWhereUniqueInput
+    where: observacion_inscripcionWhereUniqueInput
   }
 
   /**
-   * observacion_motivacion findFirst
+   * observacion_inscripcion findFirst
    */
-  export type observacion_motivacionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type observacion_inscripcionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the observacion_motivacion
+     * Select specific fields to fetch from the observacion_inscripcion
      */
-    select?: observacion_motivacionSelect<ExtArgs> | null
+    select?: observacion_inscripcionSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the observacion_motivacion
+     * Omit specific fields from the observacion_inscripcion
      */
-    omit?: observacion_motivacionOmit<ExtArgs> | null
+    omit?: observacion_inscripcionOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: observacion_motivacionInclude<ExtArgs> | null
+    include?: observacion_inscripcionInclude<ExtArgs> | null
     /**
-     * Filter, which observacion_motivacion to fetch.
+     * Filter, which observacion_inscripcion to fetch.
      */
-    where?: observacion_motivacionWhereInput
+    where?: observacion_inscripcionWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
-     * Determine the order of observacion_motivacions to fetch.
+     * Determine the order of observacion_inscripcions to fetch.
      */
-    orderBy?: observacion_motivacionOrderByWithRelationInput | observacion_motivacionOrderByWithRelationInput[]
+    orderBy?: observacion_inscripcionOrderByWithRelationInput | observacion_inscripcionOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
-     * Sets the position for searching for observacion_motivacions.
+     * Sets the position for searching for observacion_inscripcions.
      */
-    cursor?: observacion_motivacionWhereUniqueInput
+    cursor?: observacion_inscripcionWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Take `±n` observacion_motivacions from the position of the cursor.
+     * Take `±n` observacion_inscripcions from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Skip the first `n` observacion_motivacions.
+     * Skip the first `n` observacion_inscripcions.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
      * 
-     * Filter by unique combinations of observacion_motivacions.
+     * Filter by unique combinations of observacion_inscripcions.
      */
-    distinct?: Observacion_motivacionScalarFieldEnum | Observacion_motivacionScalarFieldEnum[]
+    distinct?: Observacion_inscripcionScalarFieldEnum | Observacion_inscripcionScalarFieldEnum[]
   }
 
   /**
-   * observacion_motivacion findFirstOrThrow
+   * observacion_inscripcion findFirstOrThrow
    */
-  export type observacion_motivacionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type observacion_inscripcionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the observacion_motivacion
+     * Select specific fields to fetch from the observacion_inscripcion
      */
-    select?: observacion_motivacionSelect<ExtArgs> | null
+    select?: observacion_inscripcionSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the observacion_motivacion
+     * Omit specific fields from the observacion_inscripcion
      */
-    omit?: observacion_motivacionOmit<ExtArgs> | null
+    omit?: observacion_inscripcionOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: observacion_motivacionInclude<ExtArgs> | null
+    include?: observacion_inscripcionInclude<ExtArgs> | null
     /**
-     * Filter, which observacion_motivacion to fetch.
+     * Filter, which observacion_inscripcion to fetch.
      */
-    where?: observacion_motivacionWhereInput
+    where?: observacion_inscripcionWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
-     * Determine the order of observacion_motivacions to fetch.
+     * Determine the order of observacion_inscripcions to fetch.
      */
-    orderBy?: observacion_motivacionOrderByWithRelationInput | observacion_motivacionOrderByWithRelationInput[]
+    orderBy?: observacion_inscripcionOrderByWithRelationInput | observacion_inscripcionOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
-     * Sets the position for searching for observacion_motivacions.
+     * Sets the position for searching for observacion_inscripcions.
      */
-    cursor?: observacion_motivacionWhereUniqueInput
+    cursor?: observacion_inscripcionWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Take `±n` observacion_motivacions from the position of the cursor.
+     * Take `±n` observacion_inscripcions from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Skip the first `n` observacion_motivacions.
+     * Skip the first `n` observacion_inscripcions.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
      * 
-     * Filter by unique combinations of observacion_motivacions.
+     * Filter by unique combinations of observacion_inscripcions.
      */
-    distinct?: Observacion_motivacionScalarFieldEnum | Observacion_motivacionScalarFieldEnum[]
+    distinct?: Observacion_inscripcionScalarFieldEnum | Observacion_inscripcionScalarFieldEnum[]
   }
 
   /**
-   * observacion_motivacion findMany
+   * observacion_inscripcion findMany
    */
-  export type observacion_motivacionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type observacion_inscripcionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the observacion_motivacion
+     * Select specific fields to fetch from the observacion_inscripcion
      */
-    select?: observacion_motivacionSelect<ExtArgs> | null
+    select?: observacion_inscripcionSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the observacion_motivacion
+     * Omit specific fields from the observacion_inscripcion
      */
-    omit?: observacion_motivacionOmit<ExtArgs> | null
+    omit?: observacion_inscripcionOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: observacion_motivacionInclude<ExtArgs> | null
+    include?: observacion_inscripcionInclude<ExtArgs> | null
     /**
-     * Filter, which observacion_motivacions to fetch.
+     * Filter, which observacion_inscripcions to fetch.
      */
-    where?: observacion_motivacionWhereInput
+    where?: observacion_inscripcionWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
-     * Determine the order of observacion_motivacions to fetch.
+     * Determine the order of observacion_inscripcions to fetch.
      */
-    orderBy?: observacion_motivacionOrderByWithRelationInput | observacion_motivacionOrderByWithRelationInput[]
+    orderBy?: observacion_inscripcionOrderByWithRelationInput | observacion_inscripcionOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
-     * Sets the position for listing observacion_motivacions.
+     * Sets the position for listing observacion_inscripcions.
      */
-    cursor?: observacion_motivacionWhereUniqueInput
+    cursor?: observacion_inscripcionWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Take `±n` observacion_motivacions from the position of the cursor.
+     * Take `±n` observacion_inscripcions from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Skip the first `n` observacion_motivacions.
+     * Skip the first `n` observacion_inscripcions.
      */
     skip?: number
-    distinct?: Observacion_motivacionScalarFieldEnum | Observacion_motivacionScalarFieldEnum[]
+    distinct?: Observacion_inscripcionScalarFieldEnum | Observacion_inscripcionScalarFieldEnum[]
   }
 
   /**
-   * observacion_motivacion create
+   * observacion_inscripcion create
    */
-  export type observacion_motivacionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type observacion_inscripcionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the observacion_motivacion
+     * Select specific fields to fetch from the observacion_inscripcion
      */
-    select?: observacion_motivacionSelect<ExtArgs> | null
+    select?: observacion_inscripcionSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the observacion_motivacion
+     * Omit specific fields from the observacion_inscripcion
      */
-    omit?: observacion_motivacionOmit<ExtArgs> | null
+    omit?: observacion_inscripcionOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: observacion_motivacionInclude<ExtArgs> | null
+    include?: observacion_inscripcionInclude<ExtArgs> | null
     /**
-     * The data needed to create a observacion_motivacion.
+     * The data needed to create a observacion_inscripcion.
      */
-    data: XOR<observacion_motivacionCreateInput, observacion_motivacionUncheckedCreateInput>
+    data: XOR<observacion_inscripcionCreateInput, observacion_inscripcionUncheckedCreateInput>
   }
 
   /**
-   * observacion_motivacion createMany
+   * observacion_inscripcion createMany
    */
-  export type observacion_motivacionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type observacion_inscripcionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * The data used to create many observacion_motivacions.
+     * The data used to create many observacion_inscripcions.
      */
-    data: observacion_motivacionCreateManyInput | observacion_motivacionCreateManyInput[]
+    data: observacion_inscripcionCreateManyInput | observacion_inscripcionCreateManyInput[]
     skipDuplicates?: boolean
   }
 
   /**
-   * observacion_motivacion createManyAndReturn
+   * observacion_inscripcion createManyAndReturn
    */
-  export type observacion_motivacionCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type observacion_inscripcionCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the observacion_motivacion
+     * Select specific fields to fetch from the observacion_inscripcion
      */
-    select?: observacion_motivacionSelectCreateManyAndReturn<ExtArgs> | null
+    select?: observacion_inscripcionSelectCreateManyAndReturn<ExtArgs> | null
     /**
-     * Omit specific fields from the observacion_motivacion
+     * Omit specific fields from the observacion_inscripcion
      */
-    omit?: observacion_motivacionOmit<ExtArgs> | null
+    omit?: observacion_inscripcionOmit<ExtArgs> | null
     /**
-     * The data used to create many observacion_motivacions.
+     * The data used to create many observacion_inscripcions.
      */
-    data: observacion_motivacionCreateManyInput | observacion_motivacionCreateManyInput[]
+    data: observacion_inscripcionCreateManyInput | observacion_inscripcionCreateManyInput[]
     skipDuplicates?: boolean
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: observacion_motivacionIncludeCreateManyAndReturn<ExtArgs> | null
+    include?: observacion_inscripcionIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
-   * observacion_motivacion update
+   * observacion_inscripcion update
    */
-  export type observacion_motivacionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type observacion_inscripcionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the observacion_motivacion
+     * Select specific fields to fetch from the observacion_inscripcion
      */
-    select?: observacion_motivacionSelect<ExtArgs> | null
+    select?: observacion_inscripcionSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the observacion_motivacion
+     * Omit specific fields from the observacion_inscripcion
      */
-    omit?: observacion_motivacionOmit<ExtArgs> | null
+    omit?: observacion_inscripcionOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: observacion_motivacionInclude<ExtArgs> | null
+    include?: observacion_inscripcionInclude<ExtArgs> | null
     /**
-     * The data needed to update a observacion_motivacion.
+     * The data needed to update a observacion_inscripcion.
      */
-    data: XOR<observacion_motivacionUpdateInput, observacion_motivacionUncheckedUpdateInput>
+    data: XOR<observacion_inscripcionUpdateInput, observacion_inscripcionUncheckedUpdateInput>
     /**
-     * Choose, which observacion_motivacion to update.
+     * Choose, which observacion_inscripcion to update.
      */
-    where: observacion_motivacionWhereUniqueInput
+    where: observacion_inscripcionWhereUniqueInput
   }
 
   /**
-   * observacion_motivacion updateMany
+   * observacion_inscripcion updateMany
    */
-  export type observacion_motivacionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type observacion_inscripcionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * The data used to update observacion_motivacions.
+     * The data used to update observacion_inscripcions.
      */
-    data: XOR<observacion_motivacionUpdateManyMutationInput, observacion_motivacionUncheckedUpdateManyInput>
+    data: XOR<observacion_inscripcionUpdateManyMutationInput, observacion_inscripcionUncheckedUpdateManyInput>
     /**
-     * Filter which observacion_motivacions to update
+     * Filter which observacion_inscripcions to update
      */
-    where?: observacion_motivacionWhereInput
+    where?: observacion_inscripcionWhereInput
     /**
-     * Limit how many observacion_motivacions to update.
+     * Limit how many observacion_inscripcions to update.
      */
     limit?: number
   }
 
   /**
-   * observacion_motivacion updateManyAndReturn
+   * observacion_inscripcion updateManyAndReturn
    */
-  export type observacion_motivacionUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type observacion_inscripcionUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the observacion_motivacion
+     * Select specific fields to fetch from the observacion_inscripcion
      */
-    select?: observacion_motivacionSelectUpdateManyAndReturn<ExtArgs> | null
+    select?: observacion_inscripcionSelectUpdateManyAndReturn<ExtArgs> | null
     /**
-     * Omit specific fields from the observacion_motivacion
+     * Omit specific fields from the observacion_inscripcion
      */
-    omit?: observacion_motivacionOmit<ExtArgs> | null
+    omit?: observacion_inscripcionOmit<ExtArgs> | null
     /**
-     * The data used to update observacion_motivacions.
+     * The data used to update observacion_inscripcions.
      */
-    data: XOR<observacion_motivacionUpdateManyMutationInput, observacion_motivacionUncheckedUpdateManyInput>
+    data: XOR<observacion_inscripcionUpdateManyMutationInput, observacion_inscripcionUncheckedUpdateManyInput>
     /**
-     * Filter which observacion_motivacions to update
+     * Filter which observacion_inscripcions to update
      */
-    where?: observacion_motivacionWhereInput
+    where?: observacion_inscripcionWhereInput
     /**
-     * Limit how many observacion_motivacions to update.
+     * Limit how many observacion_inscripcions to update.
      */
     limit?: number
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: observacion_motivacionIncludeUpdateManyAndReturn<ExtArgs> | null
+    include?: observacion_inscripcionIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
-   * observacion_motivacion upsert
+   * observacion_inscripcion upsert
    */
-  export type observacion_motivacionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type observacion_inscripcionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the observacion_motivacion
+     * Select specific fields to fetch from the observacion_inscripcion
      */
-    select?: observacion_motivacionSelect<ExtArgs> | null
+    select?: observacion_inscripcionSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the observacion_motivacion
+     * Omit specific fields from the observacion_inscripcion
      */
-    omit?: observacion_motivacionOmit<ExtArgs> | null
+    omit?: observacion_inscripcionOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: observacion_motivacionInclude<ExtArgs> | null
+    include?: observacion_inscripcionInclude<ExtArgs> | null
     /**
-     * The filter to search for the observacion_motivacion to update in case it exists.
+     * The filter to search for the observacion_inscripcion to update in case it exists.
      */
-    where: observacion_motivacionWhereUniqueInput
+    where: observacion_inscripcionWhereUniqueInput
     /**
-     * In case the observacion_motivacion found by the `where` argument doesn't exist, create a new observacion_motivacion with this data.
+     * In case the observacion_inscripcion found by the `where` argument doesn't exist, create a new observacion_inscripcion with this data.
      */
-    create: XOR<observacion_motivacionCreateInput, observacion_motivacionUncheckedCreateInput>
+    create: XOR<observacion_inscripcionCreateInput, observacion_inscripcionUncheckedCreateInput>
     /**
-     * In case the observacion_motivacion was found with the provided `where` argument, update it with this data.
+     * In case the observacion_inscripcion was found with the provided `where` argument, update it with this data.
      */
-    update: XOR<observacion_motivacionUpdateInput, observacion_motivacionUncheckedUpdateInput>
+    update: XOR<observacion_inscripcionUpdateInput, observacion_inscripcionUncheckedUpdateInput>
   }
 
   /**
-   * observacion_motivacion delete
+   * observacion_inscripcion delete
    */
-  export type observacion_motivacionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type observacion_inscripcionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the observacion_motivacion
+     * Select specific fields to fetch from the observacion_inscripcion
      */
-    select?: observacion_motivacionSelect<ExtArgs> | null
+    select?: observacion_inscripcionSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the observacion_motivacion
+     * Omit specific fields from the observacion_inscripcion
      */
-    omit?: observacion_motivacionOmit<ExtArgs> | null
+    omit?: observacion_inscripcionOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: observacion_motivacionInclude<ExtArgs> | null
+    include?: observacion_inscripcionInclude<ExtArgs> | null
     /**
-     * Filter which observacion_motivacion to delete.
+     * Filter which observacion_inscripcion to delete.
      */
-    where: observacion_motivacionWhereUniqueInput
+    where: observacion_inscripcionWhereUniqueInput
   }
 
   /**
-   * observacion_motivacion deleteMany
+   * observacion_inscripcion deleteMany
    */
-  export type observacion_motivacionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type observacion_inscripcionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Filter which observacion_motivacions to delete
+     * Filter which observacion_inscripcions to delete
      */
-    where?: observacion_motivacionWhereInput
+    where?: observacion_inscripcionWhereInput
     /**
-     * Limit how many observacion_motivacions to delete.
+     * Limit how many observacion_inscripcions to delete.
      */
     limit?: number
   }
 
   /**
-   * observacion_motivacion without action
+   * observacion_inscripcion.admin_creador
    */
-  export type observacion_motivacionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type observacion_inscripcion$admin_creadorArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the observacion_motivacion
+     * Select specific fields to fetch from the cuenta
      */
-    select?: observacion_motivacionSelect<ExtArgs> | null
+    select?: cuentaSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the observacion_motivacion
+     * Omit specific fields from the cuenta
      */
-    omit?: observacion_motivacionOmit<ExtArgs> | null
+    omit?: cuentaOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: observacion_motivacionInclude<ExtArgs> | null
-  }
-
-
-  /**
-   * Model observacion_comprobante
-   */
-
-  export type AggregateObservacion_comprobante = {
-    _count: Observacion_comprobanteCountAggregateOutputType | null
-    _min: Observacion_comprobanteMinAggregateOutputType | null
-    _max: Observacion_comprobanteMaxAggregateOutputType | null
-  }
-
-  export type Observacion_comprobanteMinAggregateOutputType = {
-    id_com_pag: string | null
-    obs_com_pag: string | null
-  }
-
-  export type Observacion_comprobanteMaxAggregateOutputType = {
-    id_com_pag: string | null
-    obs_com_pag: string | null
-  }
-
-  export type Observacion_comprobanteCountAggregateOutputType = {
-    id_com_pag: number
-    obs_com_pag: number
-    _all: number
-  }
-
-
-  export type Observacion_comprobanteMinAggregateInputType = {
-    id_com_pag?: true
-    obs_com_pag?: true
-  }
-
-  export type Observacion_comprobanteMaxAggregateInputType = {
-    id_com_pag?: true
-    obs_com_pag?: true
-  }
-
-  export type Observacion_comprobanteCountAggregateInputType = {
-    id_com_pag?: true
-    obs_com_pag?: true
-    _all?: true
-  }
-
-  export type Observacion_comprobanteAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which observacion_comprobante to aggregate.
-     */
-    where?: observacion_comprobanteWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of observacion_comprobantes to fetch.
-     */
-    orderBy?: observacion_comprobanteOrderByWithRelationInput | observacion_comprobanteOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: observacion_comprobanteWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` observacion_comprobantes from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` observacion_comprobantes.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned observacion_comprobantes
-    **/
-    _count?: true | Observacion_comprobanteCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: Observacion_comprobanteMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: Observacion_comprobanteMaxAggregateInputType
-  }
-
-  export type GetObservacion_comprobanteAggregateType<T extends Observacion_comprobanteAggregateArgs> = {
-        [P in keyof T & keyof AggregateObservacion_comprobante]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateObservacion_comprobante[P]>
-      : GetScalarType<T[P], AggregateObservacion_comprobante[P]>
-  }
-
-
-
-
-  export type observacion_comprobanteGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: observacion_comprobanteWhereInput
-    orderBy?: observacion_comprobanteOrderByWithAggregationInput | observacion_comprobanteOrderByWithAggregationInput[]
-    by: Observacion_comprobanteScalarFieldEnum[] | Observacion_comprobanteScalarFieldEnum
-    having?: observacion_comprobanteScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: Observacion_comprobanteCountAggregateInputType | true
-    _min?: Observacion_comprobanteMinAggregateInputType
-    _max?: Observacion_comprobanteMaxAggregateInputType
-  }
-
-  export type Observacion_comprobanteGroupByOutputType = {
-    id_com_pag: string
-    obs_com_pag: string
-    _count: Observacion_comprobanteCountAggregateOutputType | null
-    _min: Observacion_comprobanteMinAggregateOutputType | null
-    _max: Observacion_comprobanteMaxAggregateOutputType | null
-  }
-
-  type GetObservacion_comprobanteGroupByPayload<T extends observacion_comprobanteGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<Observacion_comprobanteGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof Observacion_comprobanteGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], Observacion_comprobanteGroupByOutputType[P]>
-            : GetScalarType<T[P], Observacion_comprobanteGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type observacion_comprobanteSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id_com_pag?: boolean
-    obs_com_pag?: boolean
-    comprobante_pago?: boolean | comprobante_pagoDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["observacion_comprobante"]>
-
-  export type observacion_comprobanteSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id_com_pag?: boolean
-    obs_com_pag?: boolean
-    comprobante_pago?: boolean | comprobante_pagoDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["observacion_comprobante"]>
-
-  export type observacion_comprobanteSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id_com_pag?: boolean
-    obs_com_pag?: boolean
-    comprobante_pago?: boolean | comprobante_pagoDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["observacion_comprobante"]>
-
-  export type observacion_comprobanteSelectScalar = {
-    id_com_pag?: boolean
-    obs_com_pag?: boolean
-  }
-
-  export type observacion_comprobanteOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_com_pag" | "obs_com_pag", ExtArgs["result"]["observacion_comprobante"]>
-  export type observacion_comprobanteInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    comprobante_pago?: boolean | comprobante_pagoDefaultArgs<ExtArgs>
-  }
-  export type observacion_comprobanteIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    comprobante_pago?: boolean | comprobante_pagoDefaultArgs<ExtArgs>
-  }
-  export type observacion_comprobanteIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    comprobante_pago?: boolean | comprobante_pagoDefaultArgs<ExtArgs>
-  }
-
-  export type $observacion_comprobantePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "observacion_comprobante"
-    objects: {
-      comprobante_pago: Prisma.$comprobante_pagoPayload<ExtArgs>
-    }
-    scalars: $Extensions.GetPayloadResult<{
-      id_com_pag: string
-      obs_com_pag: string
-    }, ExtArgs["result"]["observacion_comprobante"]>
-    composites: {}
-  }
-
-  type observacion_comprobanteGetPayload<S extends boolean | null | undefined | observacion_comprobanteDefaultArgs> = $Result.GetResult<Prisma.$observacion_comprobantePayload, S>
-
-  type observacion_comprobanteCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
-    Omit<observacion_comprobanteFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
-      select?: Observacion_comprobanteCountAggregateInputType | true
-    }
-
-  export interface observacion_comprobanteDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['observacion_comprobante'], meta: { name: 'observacion_comprobante' } }
-    /**
-     * Find zero or one Observacion_comprobante that matches the filter.
-     * @param {observacion_comprobanteFindUniqueArgs} args - Arguments to find a Observacion_comprobante
-     * @example
-     * // Get one Observacion_comprobante
-     * const observacion_comprobante = await prisma.observacion_comprobante.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends observacion_comprobanteFindUniqueArgs>(args: SelectSubset<T, observacion_comprobanteFindUniqueArgs<ExtArgs>>): Prisma__observacion_comprobanteClient<$Result.GetResult<Prisma.$observacion_comprobantePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find one Observacion_comprobante that matches the filter or throw an error with `error.code='P2025'`
-     * if no matches were found.
-     * @param {observacion_comprobanteFindUniqueOrThrowArgs} args - Arguments to find a Observacion_comprobante
-     * @example
-     * // Get one Observacion_comprobante
-     * const observacion_comprobante = await prisma.observacion_comprobante.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends observacion_comprobanteFindUniqueOrThrowArgs>(args: SelectSubset<T, observacion_comprobanteFindUniqueOrThrowArgs<ExtArgs>>): Prisma__observacion_comprobanteClient<$Result.GetResult<Prisma.$observacion_comprobantePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first Observacion_comprobante that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {observacion_comprobanteFindFirstArgs} args - Arguments to find a Observacion_comprobante
-     * @example
-     * // Get one Observacion_comprobante
-     * const observacion_comprobante = await prisma.observacion_comprobante.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends observacion_comprobanteFindFirstArgs>(args?: SelectSubset<T, observacion_comprobanteFindFirstArgs<ExtArgs>>): Prisma__observacion_comprobanteClient<$Result.GetResult<Prisma.$observacion_comprobantePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first Observacion_comprobante that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {observacion_comprobanteFindFirstOrThrowArgs} args - Arguments to find a Observacion_comprobante
-     * @example
-     * // Get one Observacion_comprobante
-     * const observacion_comprobante = await prisma.observacion_comprobante.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends observacion_comprobanteFindFirstOrThrowArgs>(args?: SelectSubset<T, observacion_comprobanteFindFirstOrThrowArgs<ExtArgs>>): Prisma__observacion_comprobanteClient<$Result.GetResult<Prisma.$observacion_comprobantePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find zero or more Observacion_comprobantes that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {observacion_comprobanteFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all Observacion_comprobantes
-     * const observacion_comprobantes = await prisma.observacion_comprobante.findMany()
-     * 
-     * // Get first 10 Observacion_comprobantes
-     * const observacion_comprobantes = await prisma.observacion_comprobante.findMany({ take: 10 })
-     * 
-     * // Only select the `id_com_pag`
-     * const observacion_comprobanteWithId_com_pagOnly = await prisma.observacion_comprobante.findMany({ select: { id_com_pag: true } })
-     * 
-     */
-    findMany<T extends observacion_comprobanteFindManyArgs>(args?: SelectSubset<T, observacion_comprobanteFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$observacion_comprobantePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
-
-    /**
-     * Create a Observacion_comprobante.
-     * @param {observacion_comprobanteCreateArgs} args - Arguments to create a Observacion_comprobante.
-     * @example
-     * // Create one Observacion_comprobante
-     * const Observacion_comprobante = await prisma.observacion_comprobante.create({
-     *   data: {
-     *     // ... data to create a Observacion_comprobante
-     *   }
-     * })
-     * 
-     */
-    create<T extends observacion_comprobanteCreateArgs>(args: SelectSubset<T, observacion_comprobanteCreateArgs<ExtArgs>>): Prisma__observacion_comprobanteClient<$Result.GetResult<Prisma.$observacion_comprobantePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Create many Observacion_comprobantes.
-     * @param {observacion_comprobanteCreateManyArgs} args - Arguments to create many Observacion_comprobantes.
-     * @example
-     * // Create many Observacion_comprobantes
-     * const observacion_comprobante = await prisma.observacion_comprobante.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends observacion_comprobanteCreateManyArgs>(args?: SelectSubset<T, observacion_comprobanteCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many Observacion_comprobantes and returns the data saved in the database.
-     * @param {observacion_comprobanteCreateManyAndReturnArgs} args - Arguments to create many Observacion_comprobantes.
-     * @example
-     * // Create many Observacion_comprobantes
-     * const observacion_comprobante = await prisma.observacion_comprobante.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many Observacion_comprobantes and only return the `id_com_pag`
-     * const observacion_comprobanteWithId_com_pagOnly = await prisma.observacion_comprobante.createManyAndReturn({
-     *   select: { id_com_pag: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends observacion_comprobanteCreateManyAndReturnArgs>(args?: SelectSubset<T, observacion_comprobanteCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$observacion_comprobantePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Delete a Observacion_comprobante.
-     * @param {observacion_comprobanteDeleteArgs} args - Arguments to delete one Observacion_comprobante.
-     * @example
-     * // Delete one Observacion_comprobante
-     * const Observacion_comprobante = await prisma.observacion_comprobante.delete({
-     *   where: {
-     *     // ... filter to delete one Observacion_comprobante
-     *   }
-     * })
-     * 
-     */
-    delete<T extends observacion_comprobanteDeleteArgs>(args: SelectSubset<T, observacion_comprobanteDeleteArgs<ExtArgs>>): Prisma__observacion_comprobanteClient<$Result.GetResult<Prisma.$observacion_comprobantePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Update one Observacion_comprobante.
-     * @param {observacion_comprobanteUpdateArgs} args - Arguments to update one Observacion_comprobante.
-     * @example
-     * // Update one Observacion_comprobante
-     * const observacion_comprobante = await prisma.observacion_comprobante.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends observacion_comprobanteUpdateArgs>(args: SelectSubset<T, observacion_comprobanteUpdateArgs<ExtArgs>>): Prisma__observacion_comprobanteClient<$Result.GetResult<Prisma.$observacion_comprobantePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Delete zero or more Observacion_comprobantes.
-     * @param {observacion_comprobanteDeleteManyArgs} args - Arguments to filter Observacion_comprobantes to delete.
-     * @example
-     * // Delete a few Observacion_comprobantes
-     * const { count } = await prisma.observacion_comprobante.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends observacion_comprobanteDeleteManyArgs>(args?: SelectSubset<T, observacion_comprobanteDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more Observacion_comprobantes.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {observacion_comprobanteUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many Observacion_comprobantes
-     * const observacion_comprobante = await prisma.observacion_comprobante.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends observacion_comprobanteUpdateManyArgs>(args: SelectSubset<T, observacion_comprobanteUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more Observacion_comprobantes and returns the data updated in the database.
-     * @param {observacion_comprobanteUpdateManyAndReturnArgs} args - Arguments to update many Observacion_comprobantes.
-     * @example
-     * // Update many Observacion_comprobantes
-     * const observacion_comprobante = await prisma.observacion_comprobante.updateManyAndReturn({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Update zero or more Observacion_comprobantes and only return the `id_com_pag`
-     * const observacion_comprobanteWithId_com_pagOnly = await prisma.observacion_comprobante.updateManyAndReturn({
-     *   select: { id_com_pag: true },
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    updateManyAndReturn<T extends observacion_comprobanteUpdateManyAndReturnArgs>(args: SelectSubset<T, observacion_comprobanteUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$observacion_comprobantePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Create or update one Observacion_comprobante.
-     * @param {observacion_comprobanteUpsertArgs} args - Arguments to update or create a Observacion_comprobante.
-     * @example
-     * // Update or create a Observacion_comprobante
-     * const observacion_comprobante = await prisma.observacion_comprobante.upsert({
-     *   create: {
-     *     // ... data to create a Observacion_comprobante
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the Observacion_comprobante we want to update
-     *   }
-     * })
-     */
-    upsert<T extends observacion_comprobanteUpsertArgs>(args: SelectSubset<T, observacion_comprobanteUpsertArgs<ExtArgs>>): Prisma__observacion_comprobanteClient<$Result.GetResult<Prisma.$observacion_comprobantePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-
-    /**
-     * Count the number of Observacion_comprobantes.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {observacion_comprobanteCountArgs} args - Arguments to filter Observacion_comprobantes to count.
-     * @example
-     * // Count the number of Observacion_comprobantes
-     * const count = await prisma.observacion_comprobante.count({
-     *   where: {
-     *     // ... the filter for the Observacion_comprobantes we want to count
-     *   }
-     * })
-    **/
-    count<T extends observacion_comprobanteCountArgs>(
-      args?: Subset<T, observacion_comprobanteCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], Observacion_comprobanteCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a Observacion_comprobante.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {Observacion_comprobanteAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends Observacion_comprobanteAggregateArgs>(args: Subset<T, Observacion_comprobanteAggregateArgs>): Prisma.PrismaPromise<GetObservacion_comprobanteAggregateType<T>>
-
-    /**
-     * Group by Observacion_comprobante.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {observacion_comprobanteGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends observacion_comprobanteGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: observacion_comprobanteGroupByArgs['orderBy'] }
-        : { orderBy?: observacion_comprobanteGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, observacion_comprobanteGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetObservacion_comprobanteGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the observacion_comprobante model
-   */
-  readonly fields: observacion_comprobanteFieldRefs;
+    include?: cuentaInclude<ExtArgs> | null
+    where?: cuentaWhereInput
   }
 
   /**
-   * The delegate class that acts as a "Promise-like" for observacion_comprobante.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
+   * observacion_inscripcion without action
    */
-  export interface Prisma__observacion_comprobanteClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    comprobante_pago<T extends comprobante_pagoDefaultArgs<ExtArgs> = {}>(args?: Subset<T, comprobante_pagoDefaultArgs<ExtArgs>>): Prisma__comprobante_pagoClient<$Result.GetResult<Prisma.$comprobante_pagoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  export type observacion_inscripcionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
+     * Select specific fields to fetch from the observacion_inscripcion
      */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    select?: observacion_inscripcionSelect<ExtArgs> | null
     /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
+     * Omit specific fields from the observacion_inscripcion
      */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the observacion_comprobante model
-   */
-  interface observacion_comprobanteFieldRefs {
-    readonly id_com_pag: FieldRef<"observacion_comprobante", 'String'>
-    readonly obs_com_pag: FieldRef<"observacion_comprobante", 'String'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * observacion_comprobante findUnique
-   */
-  export type observacion_comprobanteFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the observacion_comprobante
-     */
-    select?: observacion_comprobanteSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the observacion_comprobante
-     */
-    omit?: observacion_comprobanteOmit<ExtArgs> | null
+    omit?: observacion_inscripcionOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: observacion_comprobanteInclude<ExtArgs> | null
-    /**
-     * Filter, which observacion_comprobante to fetch.
-     */
-    where: observacion_comprobanteWhereUniqueInput
-  }
-
-  /**
-   * observacion_comprobante findUniqueOrThrow
-   */
-  export type observacion_comprobanteFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the observacion_comprobante
-     */
-    select?: observacion_comprobanteSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the observacion_comprobante
-     */
-    omit?: observacion_comprobanteOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: observacion_comprobanteInclude<ExtArgs> | null
-    /**
-     * Filter, which observacion_comprobante to fetch.
-     */
-    where: observacion_comprobanteWhereUniqueInput
-  }
-
-  /**
-   * observacion_comprobante findFirst
-   */
-  export type observacion_comprobanteFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the observacion_comprobante
-     */
-    select?: observacion_comprobanteSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the observacion_comprobante
-     */
-    omit?: observacion_comprobanteOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: observacion_comprobanteInclude<ExtArgs> | null
-    /**
-     * Filter, which observacion_comprobante to fetch.
-     */
-    where?: observacion_comprobanteWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of observacion_comprobantes to fetch.
-     */
-    orderBy?: observacion_comprobanteOrderByWithRelationInput | observacion_comprobanteOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for observacion_comprobantes.
-     */
-    cursor?: observacion_comprobanteWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` observacion_comprobantes from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` observacion_comprobantes.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of observacion_comprobantes.
-     */
-    distinct?: Observacion_comprobanteScalarFieldEnum | Observacion_comprobanteScalarFieldEnum[]
-  }
-
-  /**
-   * observacion_comprobante findFirstOrThrow
-   */
-  export type observacion_comprobanteFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the observacion_comprobante
-     */
-    select?: observacion_comprobanteSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the observacion_comprobante
-     */
-    omit?: observacion_comprobanteOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: observacion_comprobanteInclude<ExtArgs> | null
-    /**
-     * Filter, which observacion_comprobante to fetch.
-     */
-    where?: observacion_comprobanteWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of observacion_comprobantes to fetch.
-     */
-    orderBy?: observacion_comprobanteOrderByWithRelationInput | observacion_comprobanteOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for observacion_comprobantes.
-     */
-    cursor?: observacion_comprobanteWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` observacion_comprobantes from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` observacion_comprobantes.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of observacion_comprobantes.
-     */
-    distinct?: Observacion_comprobanteScalarFieldEnum | Observacion_comprobanteScalarFieldEnum[]
-  }
-
-  /**
-   * observacion_comprobante findMany
-   */
-  export type observacion_comprobanteFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the observacion_comprobante
-     */
-    select?: observacion_comprobanteSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the observacion_comprobante
-     */
-    omit?: observacion_comprobanteOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: observacion_comprobanteInclude<ExtArgs> | null
-    /**
-     * Filter, which observacion_comprobantes to fetch.
-     */
-    where?: observacion_comprobanteWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of observacion_comprobantes to fetch.
-     */
-    orderBy?: observacion_comprobanteOrderByWithRelationInput | observacion_comprobanteOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing observacion_comprobantes.
-     */
-    cursor?: observacion_comprobanteWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` observacion_comprobantes from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` observacion_comprobantes.
-     */
-    skip?: number
-    distinct?: Observacion_comprobanteScalarFieldEnum | Observacion_comprobanteScalarFieldEnum[]
-  }
-
-  /**
-   * observacion_comprobante create
-   */
-  export type observacion_comprobanteCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the observacion_comprobante
-     */
-    select?: observacion_comprobanteSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the observacion_comprobante
-     */
-    omit?: observacion_comprobanteOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: observacion_comprobanteInclude<ExtArgs> | null
-    /**
-     * The data needed to create a observacion_comprobante.
-     */
-    data: XOR<observacion_comprobanteCreateInput, observacion_comprobanteUncheckedCreateInput>
-  }
-
-  /**
-   * observacion_comprobante createMany
-   */
-  export type observacion_comprobanteCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many observacion_comprobantes.
-     */
-    data: observacion_comprobanteCreateManyInput | observacion_comprobanteCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * observacion_comprobante createManyAndReturn
-   */
-  export type observacion_comprobanteCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the observacion_comprobante
-     */
-    select?: observacion_comprobanteSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the observacion_comprobante
-     */
-    omit?: observacion_comprobanteOmit<ExtArgs> | null
-    /**
-     * The data used to create many observacion_comprobantes.
-     */
-    data: observacion_comprobanteCreateManyInput | observacion_comprobanteCreateManyInput[]
-    skipDuplicates?: boolean
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: observacion_comprobanteIncludeCreateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * observacion_comprobante update
-   */
-  export type observacion_comprobanteUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the observacion_comprobante
-     */
-    select?: observacion_comprobanteSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the observacion_comprobante
-     */
-    omit?: observacion_comprobanteOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: observacion_comprobanteInclude<ExtArgs> | null
-    /**
-     * The data needed to update a observacion_comprobante.
-     */
-    data: XOR<observacion_comprobanteUpdateInput, observacion_comprobanteUncheckedUpdateInput>
-    /**
-     * Choose, which observacion_comprobante to update.
-     */
-    where: observacion_comprobanteWhereUniqueInput
-  }
-
-  /**
-   * observacion_comprobante updateMany
-   */
-  export type observacion_comprobanteUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update observacion_comprobantes.
-     */
-    data: XOR<observacion_comprobanteUpdateManyMutationInput, observacion_comprobanteUncheckedUpdateManyInput>
-    /**
-     * Filter which observacion_comprobantes to update
-     */
-    where?: observacion_comprobanteWhereInput
-    /**
-     * Limit how many observacion_comprobantes to update.
-     */
-    limit?: number
-  }
-
-  /**
-   * observacion_comprobante updateManyAndReturn
-   */
-  export type observacion_comprobanteUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the observacion_comprobante
-     */
-    select?: observacion_comprobanteSelectUpdateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the observacion_comprobante
-     */
-    omit?: observacion_comprobanteOmit<ExtArgs> | null
-    /**
-     * The data used to update observacion_comprobantes.
-     */
-    data: XOR<observacion_comprobanteUpdateManyMutationInput, observacion_comprobanteUncheckedUpdateManyInput>
-    /**
-     * Filter which observacion_comprobantes to update
-     */
-    where?: observacion_comprobanteWhereInput
-    /**
-     * Limit how many observacion_comprobantes to update.
-     */
-    limit?: number
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: observacion_comprobanteIncludeUpdateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * observacion_comprobante upsert
-   */
-  export type observacion_comprobanteUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the observacion_comprobante
-     */
-    select?: observacion_comprobanteSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the observacion_comprobante
-     */
-    omit?: observacion_comprobanteOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: observacion_comprobanteInclude<ExtArgs> | null
-    /**
-     * The filter to search for the observacion_comprobante to update in case it exists.
-     */
-    where: observacion_comprobanteWhereUniqueInput
-    /**
-     * In case the observacion_comprobante found by the `where` argument doesn't exist, create a new observacion_comprobante with this data.
-     */
-    create: XOR<observacion_comprobanteCreateInput, observacion_comprobanteUncheckedCreateInput>
-    /**
-     * In case the observacion_comprobante was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<observacion_comprobanteUpdateInput, observacion_comprobanteUncheckedUpdateInput>
-  }
-
-  /**
-   * observacion_comprobante delete
-   */
-  export type observacion_comprobanteDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the observacion_comprobante
-     */
-    select?: observacion_comprobanteSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the observacion_comprobante
-     */
-    omit?: observacion_comprobanteOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: observacion_comprobanteInclude<ExtArgs> | null
-    /**
-     * Filter which observacion_comprobante to delete.
-     */
-    where: observacion_comprobanteWhereUniqueInput
-  }
-
-  /**
-   * observacion_comprobante deleteMany
-   */
-  export type observacion_comprobanteDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which observacion_comprobantes to delete
-     */
-    where?: observacion_comprobanteWhereInput
-    /**
-     * Limit how many observacion_comprobantes to delete.
-     */
-    limit?: number
-  }
-
-  /**
-   * observacion_comprobante without action
-   */
-  export type observacion_comprobanteDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the observacion_comprobante
-     */
-    select?: observacion_comprobanteSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the observacion_comprobante
-     */
-    omit?: observacion_comprobanteOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: observacion_comprobanteInclude<ExtArgs> | null
+    include?: observacion_inscripcionInclude<ExtArgs> | null
   }
 
 
@@ -8117,6 +6973,7 @@ export namespace Prisma {
     cartas_motivacion?: boolean | cuenta$cartas_motivacionArgs<ExtArgs>
     comprobantes_pago?: boolean | cuenta$comprobantes_pagoArgs<ExtArgs>
     eventos?: boolean | cuenta$eventosArgs<ExtArgs>
+    observaciones_creadas?: boolean | cuenta$observaciones_creadasArgs<ExtArgs>
     _count?: boolean | CuentaCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["cuenta"]>
 
@@ -8156,6 +7013,7 @@ export namespace Prisma {
     cartas_motivacion?: boolean | cuenta$cartas_motivacionArgs<ExtArgs>
     comprobantes_pago?: boolean | cuenta$comprobantes_pagoArgs<ExtArgs>
     eventos?: boolean | cuenta$eventosArgs<ExtArgs>
+    observaciones_creadas?: boolean | cuenta$observaciones_creadasArgs<ExtArgs>
     _count?: boolean | CuentaCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type cuentaIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -8173,6 +7031,7 @@ export namespace Prisma {
       cartas_motivacion: Prisma.$carta_motivacionPayload<ExtArgs>[]
       comprobantes_pago: Prisma.$comprobante_pagoPayload<ExtArgs>[]
       eventos: Prisma.$eventoPayload<ExtArgs>[]
+      observaciones_creadas: Prisma.$observacion_inscripcionPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id_cue: string
@@ -8580,6 +7439,7 @@ export namespace Prisma {
     cartas_motivacion<T extends cuenta$cartas_motivacionArgs<ExtArgs> = {}>(args?: Subset<T, cuenta$cartas_motivacionArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$carta_motivacionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     comprobantes_pago<T extends cuenta$comprobantes_pagoArgs<ExtArgs> = {}>(args?: Subset<T, cuenta$comprobantes_pagoArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$comprobante_pagoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     eventos<T extends cuenta$eventosArgs<ExtArgs> = {}>(args?: Subset<T, cuenta$eventosArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$eventoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    observaciones_creadas<T extends cuenta$observaciones_creadasArgs<ExtArgs> = {}>(args?: Subset<T, cuenta$observaciones_creadasArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$observacion_inscripcionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -9104,6 +7964,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: EventoScalarFieldEnum | EventoScalarFieldEnum[]
+  }
+
+  /**
+   * cuenta.observaciones_creadas
+   */
+  export type cuenta$observaciones_creadasArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the observacion_inscripcion
+     */
+    select?: observacion_inscripcionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the observacion_inscripcion
+     */
+    omit?: observacion_inscripcionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: observacion_inscripcionInclude<ExtArgs> | null
+    where?: observacion_inscripcionWhereInput
+    orderBy?: observacion_inscripcionOrderByWithRelationInput | observacion_inscripcionOrderByWithRelationInput[]
+    cursor?: observacion_inscripcionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Observacion_inscripcionScalarFieldEnum | Observacion_inscripcionScalarFieldEnum[]
   }
 
   /**
@@ -14867,7 +13751,6 @@ export namespace Prisma {
     id_eve_ins: string | null
     est_ins: $Enums.estado_inscripcion | null
     fec_ins: Date | null
-    fec_pag_ins: Date | null
     usu_apr_cer: boolean | null
     por_asi_fin_usu: number | null
   }
@@ -14878,7 +13761,6 @@ export namespace Prisma {
     id_eve_ins: string | null
     est_ins: $Enums.estado_inscripcion | null
     fec_ins: Date | null
-    fec_pag_ins: Date | null
     usu_apr_cer: boolean | null
     por_asi_fin_usu: number | null
   }
@@ -14889,7 +13771,6 @@ export namespace Prisma {
     id_eve_ins: number
     est_ins: number
     fec_ins: number
-    fec_pag_ins: number
     usu_apr_cer: number
     por_asi_fin_usu: number
     _all: number
@@ -14910,7 +13791,6 @@ export namespace Prisma {
     id_eve_ins?: true
     est_ins?: true
     fec_ins?: true
-    fec_pag_ins?: true
     usu_apr_cer?: true
     por_asi_fin_usu?: true
   }
@@ -14921,7 +13801,6 @@ export namespace Prisma {
     id_eve_ins?: true
     est_ins?: true
     fec_ins?: true
-    fec_pag_ins?: true
     usu_apr_cer?: true
     por_asi_fin_usu?: true
   }
@@ -14932,7 +13811,6 @@ export namespace Prisma {
     id_eve_ins?: true
     est_ins?: true
     fec_ins?: true
-    fec_pag_ins?: true
     usu_apr_cer?: true
     por_asi_fin_usu?: true
     _all?: true
@@ -15030,7 +13908,6 @@ export namespace Prisma {
     id_eve_ins: string
     est_ins: $Enums.estado_inscripcion
     fec_ins: Date
-    fec_pag_ins: Date | null
     usu_apr_cer: boolean
     por_asi_fin_usu: number | null
     _count: InscripcionCountAggregateOutputType | null
@@ -15060,7 +13937,6 @@ export namespace Prisma {
     id_eve_ins?: boolean
     est_ins?: boolean
     fec_ins?: boolean
-    fec_pag_ins?: boolean
     usu_apr_cer?: boolean
     por_asi_fin_usu?: boolean
     cuenta?: boolean | cuentaDefaultArgs<ExtArgs>
@@ -15068,6 +13944,7 @@ export namespace Prisma {
     inscripcion_curso?: boolean | inscripcion$inscripcion_cursoArgs<ExtArgs>
     comprobantes_pago?: boolean | inscripcion$comprobantes_pagoArgs<ExtArgs>
     cartas_motivacion?: boolean | inscripcion$cartas_motivacionArgs<ExtArgs>
+    observacion?: boolean | inscripcion$observacionArgs<ExtArgs>
     _count?: boolean | InscripcionCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["inscripcion"]>
 
@@ -15077,7 +13954,6 @@ export namespace Prisma {
     id_eve_ins?: boolean
     est_ins?: boolean
     fec_ins?: boolean
-    fec_pag_ins?: boolean
     usu_apr_cer?: boolean
     por_asi_fin_usu?: boolean
     cuenta?: boolean | cuentaDefaultArgs<ExtArgs>
@@ -15090,7 +13966,6 @@ export namespace Prisma {
     id_eve_ins?: boolean
     est_ins?: boolean
     fec_ins?: boolean
-    fec_pag_ins?: boolean
     usu_apr_cer?: boolean
     por_asi_fin_usu?: boolean
     cuenta?: boolean | cuentaDefaultArgs<ExtArgs>
@@ -15103,18 +13978,18 @@ export namespace Prisma {
     id_eve_ins?: boolean
     est_ins?: boolean
     fec_ins?: boolean
-    fec_pag_ins?: boolean
     usu_apr_cer?: boolean
     por_asi_fin_usu?: boolean
   }
 
-  export type inscripcionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_ins" | "id_cor_ins" | "id_eve_ins" | "est_ins" | "fec_ins" | "fec_pag_ins" | "usu_apr_cer" | "por_asi_fin_usu", ExtArgs["result"]["inscripcion"]>
+  export type inscripcionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_ins" | "id_cor_ins" | "id_eve_ins" | "est_ins" | "fec_ins" | "usu_apr_cer" | "por_asi_fin_usu", ExtArgs["result"]["inscripcion"]>
   export type inscripcionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     cuenta?: boolean | cuentaDefaultArgs<ExtArgs>
     evento?: boolean | eventoDefaultArgs<ExtArgs>
     inscripcion_curso?: boolean | inscripcion$inscripcion_cursoArgs<ExtArgs>
     comprobantes_pago?: boolean | inscripcion$comprobantes_pagoArgs<ExtArgs>
     cartas_motivacion?: boolean | inscripcion$cartas_motivacionArgs<ExtArgs>
+    observacion?: boolean | inscripcion$observacionArgs<ExtArgs>
     _count?: boolean | InscripcionCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type inscripcionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -15134,6 +14009,7 @@ export namespace Prisma {
       inscripcion_curso: Prisma.$inscripcion_cursoPayload<ExtArgs> | null
       comprobantes_pago: Prisma.$comprobante_pagoPayload<ExtArgs>[]
       cartas_motivacion: Prisma.$carta_motivacionPayload<ExtArgs>[]
+      observacion: Prisma.$observacion_inscripcionPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id_ins: string
@@ -15141,7 +14017,6 @@ export namespace Prisma {
       id_eve_ins: string
       est_ins: $Enums.estado_inscripcion
       fec_ins: Date
-      fec_pag_ins: Date | null
       usu_apr_cer: boolean
       por_asi_fin_usu: number | null
     }, ExtArgs["result"]["inscripcion"]>
@@ -15543,6 +14418,7 @@ export namespace Prisma {
     inscripcion_curso<T extends inscripcion$inscripcion_cursoArgs<ExtArgs> = {}>(args?: Subset<T, inscripcion$inscripcion_cursoArgs<ExtArgs>>): Prisma__inscripcion_cursoClient<$Result.GetResult<Prisma.$inscripcion_cursoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     comprobantes_pago<T extends inscripcion$comprobantes_pagoArgs<ExtArgs> = {}>(args?: Subset<T, inscripcion$comprobantes_pagoArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$comprobante_pagoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     cartas_motivacion<T extends inscripcion$cartas_motivacionArgs<ExtArgs> = {}>(args?: Subset<T, inscripcion$cartas_motivacionArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$carta_motivacionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    observacion<T extends inscripcion$observacionArgs<ExtArgs> = {}>(args?: Subset<T, inscripcion$observacionArgs<ExtArgs>>): Prisma__observacion_inscripcionClient<$Result.GetResult<Prisma.$observacion_inscripcionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -15577,7 +14453,6 @@ export namespace Prisma {
     readonly id_eve_ins: FieldRef<"inscripcion", 'String'>
     readonly est_ins: FieldRef<"inscripcion", 'estado_inscripcion'>
     readonly fec_ins: FieldRef<"inscripcion", 'DateTime'>
-    readonly fec_pag_ins: FieldRef<"inscripcion", 'DateTime'>
     readonly usu_apr_cer: FieldRef<"inscripcion", 'Boolean'>
     readonly por_asi_fin_usu: FieldRef<"inscripcion", 'Float'>
   }
@@ -16040,6 +14915,25 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: Carta_motivacionScalarFieldEnum | Carta_motivacionScalarFieldEnum[]
+  }
+
+  /**
+   * inscripcion.observacion
+   */
+  export type inscripcion$observacionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the observacion_inscripcion
+     */
+    select?: observacion_inscripcionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the observacion_inscripcion
+     */
+    omit?: observacion_inscripcionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: observacion_inscripcionInclude<ExtArgs> | null
+    where?: observacion_inscripcionWhereInput
   }
 
   /**
@@ -18337,7 +17231,8 @@ export namespace Prisma {
     est_com_pag: 'est_com_pag',
     fec_sub_com_pag: 'fec_sub_com_pag',
     fec_val_com_pag: 'fec_val_com_pag',
-    id_adm_val_com_pag: 'id_adm_val_com_pag'
+    id_adm_val_com_pag: 'id_adm_val_com_pag',
+    fec_pag_ins: 'fec_pag_ins'
   };
 
   export type Comprobante_pagoScalarFieldEnum = (typeof Comprobante_pagoScalarFieldEnum)[keyof typeof Comprobante_pagoScalarFieldEnum]
@@ -18356,20 +17251,15 @@ export namespace Prisma {
   export type Carta_motivacionScalarFieldEnum = (typeof Carta_motivacionScalarFieldEnum)[keyof typeof Carta_motivacionScalarFieldEnum]
 
 
-  export const Observacion_motivacionScalarFieldEnum: {
-    id_car_mot: 'id_car_mot',
-    obs_car_mot: 'obs_car_mot'
+  export const Observacion_inscripcionScalarFieldEnum: {
+    id_obs_ins: 'id_obs_ins',
+    id_ins_per: 'id_ins_per',
+    obs_ins: 'obs_ins',
+    fec_cre_obs: 'fec_cre_obs',
+    id_adm_cre_obs: 'id_adm_cre_obs'
   };
 
-  export type Observacion_motivacionScalarFieldEnum = (typeof Observacion_motivacionScalarFieldEnum)[keyof typeof Observacion_motivacionScalarFieldEnum]
-
-
-  export const Observacion_comprobanteScalarFieldEnum: {
-    id_com_pag: 'id_com_pag',
-    obs_com_pag: 'obs_com_pag'
-  };
-
-  export type Observacion_comprobanteScalarFieldEnum = (typeof Observacion_comprobanteScalarFieldEnum)[keyof typeof Observacion_comprobanteScalarFieldEnum]
+  export type Observacion_inscripcionScalarFieldEnum = (typeof Observacion_inscripcionScalarFieldEnum)[keyof typeof Observacion_inscripcionScalarFieldEnum]
 
 
   export const CuentaScalarFieldEnum: {
@@ -18455,7 +17345,6 @@ export namespace Prisma {
     id_eve_ins: 'id_eve_ins',
     est_ins: 'est_ins',
     fec_ins: 'fec_ins',
-    fec_pag_ins: 'fec_pag_ins',
     usu_apr_cer: 'usu_apr_cer',
     por_asi_fin_usu: 'por_asi_fin_usu'
   };
@@ -18745,9 +17634,9 @@ export namespace Prisma {
     fec_sub_com_pag?: DateTimeFilter<"comprobante_pago"> | Date | string
     fec_val_com_pag?: DateTimeNullableFilter<"comprobante_pago"> | Date | string | null
     id_adm_val_com_pag?: StringNullableFilter<"comprobante_pago"> | string | null
+    fec_pag_ins?: DateTimeNullableFilter<"comprobante_pago"> | Date | string | null
     admin?: XOR<CuentaNullableScalarRelationFilter, cuentaWhereInput> | null
     inscripcion?: XOR<InscripcionScalarRelationFilter, inscripcionWhereInput>
-    observaciones?: Observacion_comprobanteListRelationFilter
   }
 
   export type comprobante_pagoOrderByWithRelationInput = {
@@ -18758,9 +17647,9 @@ export namespace Prisma {
     fec_sub_com_pag?: SortOrder
     fec_val_com_pag?: SortOrderInput | SortOrder
     id_adm_val_com_pag?: SortOrderInput | SortOrder
+    fec_pag_ins?: SortOrderInput | SortOrder
     admin?: cuentaOrderByWithRelationInput
     inscripcion?: inscripcionOrderByWithRelationInput
-    observaciones?: observacion_comprobanteOrderByRelationAggregateInput
   }
 
   export type comprobante_pagoWhereUniqueInput = Prisma.AtLeast<{
@@ -18774,9 +17663,9 @@ export namespace Prisma {
     fec_sub_com_pag?: DateTimeFilter<"comprobante_pago"> | Date | string
     fec_val_com_pag?: DateTimeNullableFilter<"comprobante_pago"> | Date | string | null
     id_adm_val_com_pag?: StringNullableFilter<"comprobante_pago"> | string | null
+    fec_pag_ins?: DateTimeNullableFilter<"comprobante_pago"> | Date | string | null
     admin?: XOR<CuentaNullableScalarRelationFilter, cuentaWhereInput> | null
     inscripcion?: XOR<InscripcionScalarRelationFilter, inscripcionWhereInput>
-    observaciones?: Observacion_comprobanteListRelationFilter
   }, "id_com_pag">
 
   export type comprobante_pagoOrderByWithAggregationInput = {
@@ -18787,6 +17676,7 @@ export namespace Prisma {
     fec_sub_com_pag?: SortOrder
     fec_val_com_pag?: SortOrderInput | SortOrder
     id_adm_val_com_pag?: SortOrderInput | SortOrder
+    fec_pag_ins?: SortOrderInput | SortOrder
     _count?: comprobante_pagoCountOrderByAggregateInput
     _max?: comprobante_pagoMaxOrderByAggregateInput
     _min?: comprobante_pagoMinOrderByAggregateInput
@@ -18803,6 +17693,7 @@ export namespace Prisma {
     fec_sub_com_pag?: DateTimeWithAggregatesFilter<"comprobante_pago"> | Date | string
     fec_val_com_pag?: DateTimeNullableWithAggregatesFilter<"comprobante_pago"> | Date | string | null
     id_adm_val_com_pag?: StringNullableWithAggregatesFilter<"comprobante_pago"> | string | null
+    fec_pag_ins?: DateTimeNullableWithAggregatesFilter<"comprobante_pago"> | Date | string | null
   }
 
   export type carta_motivacionWhereInput = {
@@ -18818,7 +17709,6 @@ export namespace Prisma {
     id_adm_val_car_mot?: StringNullableFilter<"carta_motivacion"> | string | null
     admin?: XOR<CuentaNullableScalarRelationFilter, cuentaWhereInput> | null
     inscripcion?: XOR<InscripcionScalarRelationFilter, inscripcionWhereInput>
-    observaciones?: Observacion_motivacionListRelationFilter
   }
 
   export type carta_motivacionOrderByWithRelationInput = {
@@ -18831,7 +17721,6 @@ export namespace Prisma {
     id_adm_val_car_mot?: SortOrderInput | SortOrder
     admin?: cuentaOrderByWithRelationInput
     inscripcion?: inscripcionOrderByWithRelationInput
-    observaciones?: observacion_motivacionOrderByRelationAggregateInput
   }
 
   export type carta_motivacionWhereUniqueInput = Prisma.AtLeast<{
@@ -18847,7 +17736,6 @@ export namespace Prisma {
     id_adm_val_car_mot?: StringNullableFilter<"carta_motivacion"> | string | null
     admin?: XOR<CuentaNullableScalarRelationFilter, cuentaWhereInput> | null
     inscripcion?: XOR<InscripcionScalarRelationFilter, inscripcionWhereInput>
-    observaciones?: Observacion_motivacionListRelationFilter
   }, "id_car_mot">
 
   export type carta_motivacionOrderByWithAggregationInput = {
@@ -18876,84 +17764,62 @@ export namespace Prisma {
     id_adm_val_car_mot?: StringNullableWithAggregatesFilter<"carta_motivacion"> | string | null
   }
 
-  export type observacion_motivacionWhereInput = {
-    AND?: observacion_motivacionWhereInput | observacion_motivacionWhereInput[]
-    OR?: observacion_motivacionWhereInput[]
-    NOT?: observacion_motivacionWhereInput | observacion_motivacionWhereInput[]
-    id_car_mot?: StringFilter<"observacion_motivacion"> | string
-    obs_car_mot?: StringFilter<"observacion_motivacion"> | string
-    carta_motivacion?: XOR<Carta_motivacionScalarRelationFilter, carta_motivacionWhereInput>
+  export type observacion_inscripcionWhereInput = {
+    AND?: observacion_inscripcionWhereInput | observacion_inscripcionWhereInput[]
+    OR?: observacion_inscripcionWhereInput[]
+    NOT?: observacion_inscripcionWhereInput | observacion_inscripcionWhereInput[]
+    id_obs_ins?: StringFilter<"observacion_inscripcion"> | string
+    id_ins_per?: StringFilter<"observacion_inscripcion"> | string
+    obs_ins?: StringFilter<"observacion_inscripcion"> | string
+    fec_cre_obs?: DateTimeFilter<"observacion_inscripcion"> | Date | string
+    id_adm_cre_obs?: StringNullableFilter<"observacion_inscripcion"> | string | null
+    inscripcion?: XOR<InscripcionScalarRelationFilter, inscripcionWhereInput>
+    admin_creador?: XOR<CuentaNullableScalarRelationFilter, cuentaWhereInput> | null
   }
 
-  export type observacion_motivacionOrderByWithRelationInput = {
-    id_car_mot?: SortOrder
-    obs_car_mot?: SortOrder
-    carta_motivacion?: carta_motivacionOrderByWithRelationInput
+  export type observacion_inscripcionOrderByWithRelationInput = {
+    id_obs_ins?: SortOrder
+    id_ins_per?: SortOrder
+    obs_ins?: SortOrder
+    fec_cre_obs?: SortOrder
+    id_adm_cre_obs?: SortOrderInput | SortOrder
+    inscripcion?: inscripcionOrderByWithRelationInput
+    admin_creador?: cuentaOrderByWithRelationInput
   }
 
-  export type observacion_motivacionWhereUniqueInput = Prisma.AtLeast<{
-    id_car_mot?: string
-    AND?: observacion_motivacionWhereInput | observacion_motivacionWhereInput[]
-    OR?: observacion_motivacionWhereInput[]
-    NOT?: observacion_motivacionWhereInput | observacion_motivacionWhereInput[]
-    obs_car_mot?: StringFilter<"observacion_motivacion"> | string
-    carta_motivacion?: XOR<Carta_motivacionScalarRelationFilter, carta_motivacionWhereInput>
-  }, "id_car_mot">
+  export type observacion_inscripcionWhereUniqueInput = Prisma.AtLeast<{
+    id_obs_ins?: string
+    id_ins_per?: string
+    AND?: observacion_inscripcionWhereInput | observacion_inscripcionWhereInput[]
+    OR?: observacion_inscripcionWhereInput[]
+    NOT?: observacion_inscripcionWhereInput | observacion_inscripcionWhereInput[]
+    obs_ins?: StringFilter<"observacion_inscripcion"> | string
+    fec_cre_obs?: DateTimeFilter<"observacion_inscripcion"> | Date | string
+    id_adm_cre_obs?: StringNullableFilter<"observacion_inscripcion"> | string | null
+    inscripcion?: XOR<InscripcionScalarRelationFilter, inscripcionWhereInput>
+    admin_creador?: XOR<CuentaNullableScalarRelationFilter, cuentaWhereInput> | null
+  }, "id_obs_ins" | "id_ins_per">
 
-  export type observacion_motivacionOrderByWithAggregationInput = {
-    id_car_mot?: SortOrder
-    obs_car_mot?: SortOrder
-    _count?: observacion_motivacionCountOrderByAggregateInput
-    _max?: observacion_motivacionMaxOrderByAggregateInput
-    _min?: observacion_motivacionMinOrderByAggregateInput
+  export type observacion_inscripcionOrderByWithAggregationInput = {
+    id_obs_ins?: SortOrder
+    id_ins_per?: SortOrder
+    obs_ins?: SortOrder
+    fec_cre_obs?: SortOrder
+    id_adm_cre_obs?: SortOrderInput | SortOrder
+    _count?: observacion_inscripcionCountOrderByAggregateInput
+    _max?: observacion_inscripcionMaxOrderByAggregateInput
+    _min?: observacion_inscripcionMinOrderByAggregateInput
   }
 
-  export type observacion_motivacionScalarWhereWithAggregatesInput = {
-    AND?: observacion_motivacionScalarWhereWithAggregatesInput | observacion_motivacionScalarWhereWithAggregatesInput[]
-    OR?: observacion_motivacionScalarWhereWithAggregatesInput[]
-    NOT?: observacion_motivacionScalarWhereWithAggregatesInput | observacion_motivacionScalarWhereWithAggregatesInput[]
-    id_car_mot?: StringWithAggregatesFilter<"observacion_motivacion"> | string
-    obs_car_mot?: StringWithAggregatesFilter<"observacion_motivacion"> | string
-  }
-
-  export type observacion_comprobanteWhereInput = {
-    AND?: observacion_comprobanteWhereInput | observacion_comprobanteWhereInput[]
-    OR?: observacion_comprobanteWhereInput[]
-    NOT?: observacion_comprobanteWhereInput | observacion_comprobanteWhereInput[]
-    id_com_pag?: StringFilter<"observacion_comprobante"> | string
-    obs_com_pag?: StringFilter<"observacion_comprobante"> | string
-    comprobante_pago?: XOR<Comprobante_pagoScalarRelationFilter, comprobante_pagoWhereInput>
-  }
-
-  export type observacion_comprobanteOrderByWithRelationInput = {
-    id_com_pag?: SortOrder
-    obs_com_pag?: SortOrder
-    comprobante_pago?: comprobante_pagoOrderByWithRelationInput
-  }
-
-  export type observacion_comprobanteWhereUniqueInput = Prisma.AtLeast<{
-    id_com_pag?: string
-    AND?: observacion_comprobanteWhereInput | observacion_comprobanteWhereInput[]
-    OR?: observacion_comprobanteWhereInput[]
-    NOT?: observacion_comprobanteWhereInput | observacion_comprobanteWhereInput[]
-    obs_com_pag?: StringFilter<"observacion_comprobante"> | string
-    comprobante_pago?: XOR<Comprobante_pagoScalarRelationFilter, comprobante_pagoWhereInput>
-  }, "id_com_pag">
-
-  export type observacion_comprobanteOrderByWithAggregationInput = {
-    id_com_pag?: SortOrder
-    obs_com_pag?: SortOrder
-    _count?: observacion_comprobanteCountOrderByAggregateInput
-    _max?: observacion_comprobanteMaxOrderByAggregateInput
-    _min?: observacion_comprobanteMinOrderByAggregateInput
-  }
-
-  export type observacion_comprobanteScalarWhereWithAggregatesInput = {
-    AND?: observacion_comprobanteScalarWhereWithAggregatesInput | observacion_comprobanteScalarWhereWithAggregatesInput[]
-    OR?: observacion_comprobanteScalarWhereWithAggregatesInput[]
-    NOT?: observacion_comprobanteScalarWhereWithAggregatesInput | observacion_comprobanteScalarWhereWithAggregatesInput[]
-    id_com_pag?: StringWithAggregatesFilter<"observacion_comprobante"> | string
-    obs_com_pag?: StringWithAggregatesFilter<"observacion_comprobante"> | string
+  export type observacion_inscripcionScalarWhereWithAggregatesInput = {
+    AND?: observacion_inscripcionScalarWhereWithAggregatesInput | observacion_inscripcionScalarWhereWithAggregatesInput[]
+    OR?: observacion_inscripcionScalarWhereWithAggregatesInput[]
+    NOT?: observacion_inscripcionScalarWhereWithAggregatesInput | observacion_inscripcionScalarWhereWithAggregatesInput[]
+    id_obs_ins?: StringWithAggregatesFilter<"observacion_inscripcion"> | string
+    id_ins_per?: StringWithAggregatesFilter<"observacion_inscripcion"> | string
+    obs_ins?: StringWithAggregatesFilter<"observacion_inscripcion"> | string
+    fec_cre_obs?: DateTimeWithAggregatesFilter<"observacion_inscripcion"> | Date | string
+    id_adm_cre_obs?: StringNullableWithAggregatesFilter<"observacion_inscripcion"> | string | null
   }
 
   export type cuentaWhereInput = {
@@ -18971,6 +17837,7 @@ export namespace Prisma {
     cartas_motivacion?: Carta_motivacionListRelationFilter
     comprobantes_pago?: Comprobante_pagoListRelationFilter
     eventos?: EventoListRelationFilter
+    observaciones_creadas?: Observacion_inscripcionListRelationFilter
   }
 
   export type cuentaOrderByWithRelationInput = {
@@ -18985,6 +17852,7 @@ export namespace Prisma {
     cartas_motivacion?: carta_motivacionOrderByRelationAggregateInput
     comprobantes_pago?: comprobante_pagoOrderByRelationAggregateInput
     eventos?: eventoOrderByRelationAggregateInput
+    observaciones_creadas?: observacion_inscripcionOrderByRelationAggregateInput
   }
 
   export type cuentaWhereUniqueInput = Prisma.AtLeast<{
@@ -19002,6 +17870,7 @@ export namespace Prisma {
     cartas_motivacion?: Carta_motivacionListRelationFilter
     comprobantes_pago?: Comprobante_pagoListRelationFilter
     eventos?: EventoListRelationFilter
+    observaciones_creadas?: Observacion_inscripcionListRelationFilter
   }, "id_cue" | "cor_usu">
 
   export type cuentaOrderByWithAggregationInput = {
@@ -19389,7 +18258,6 @@ export namespace Prisma {
     id_eve_ins?: StringFilter<"inscripcion"> | string
     est_ins?: Enumestado_inscripcionFilter<"inscripcion"> | $Enums.estado_inscripcion
     fec_ins?: DateTimeFilter<"inscripcion"> | Date | string
-    fec_pag_ins?: DateTimeNullableFilter<"inscripcion"> | Date | string | null
     usu_apr_cer?: BoolFilter<"inscripcion"> | boolean
     por_asi_fin_usu?: FloatNullableFilter<"inscripcion"> | number | null
     cuenta?: XOR<CuentaScalarRelationFilter, cuentaWhereInput>
@@ -19397,6 +18265,7 @@ export namespace Prisma {
     inscripcion_curso?: XOR<Inscripcion_cursoNullableScalarRelationFilter, inscripcion_cursoWhereInput> | null
     comprobantes_pago?: Comprobante_pagoListRelationFilter
     cartas_motivacion?: Carta_motivacionListRelationFilter
+    observacion?: XOR<Observacion_inscripcionNullableScalarRelationFilter, observacion_inscripcionWhereInput> | null
   }
 
   export type inscripcionOrderByWithRelationInput = {
@@ -19405,7 +18274,6 @@ export namespace Prisma {
     id_eve_ins?: SortOrder
     est_ins?: SortOrder
     fec_ins?: SortOrder
-    fec_pag_ins?: SortOrderInput | SortOrder
     usu_apr_cer?: SortOrder
     por_asi_fin_usu?: SortOrderInput | SortOrder
     cuenta?: cuentaOrderByWithRelationInput
@@ -19413,6 +18281,7 @@ export namespace Prisma {
     inscripcion_curso?: inscripcion_cursoOrderByWithRelationInput
     comprobantes_pago?: comprobante_pagoOrderByRelationAggregateInput
     cartas_motivacion?: carta_motivacionOrderByRelationAggregateInput
+    observacion?: observacion_inscripcionOrderByWithRelationInput
   }
 
   export type inscripcionWhereUniqueInput = Prisma.AtLeast<{
@@ -19424,7 +18293,6 @@ export namespace Prisma {
     id_eve_ins?: StringFilter<"inscripcion"> | string
     est_ins?: Enumestado_inscripcionFilter<"inscripcion"> | $Enums.estado_inscripcion
     fec_ins?: DateTimeFilter<"inscripcion"> | Date | string
-    fec_pag_ins?: DateTimeNullableFilter<"inscripcion"> | Date | string | null
     usu_apr_cer?: BoolFilter<"inscripcion"> | boolean
     por_asi_fin_usu?: FloatNullableFilter<"inscripcion"> | number | null
     cuenta?: XOR<CuentaScalarRelationFilter, cuentaWhereInput>
@@ -19432,6 +18300,7 @@ export namespace Prisma {
     inscripcion_curso?: XOR<Inscripcion_cursoNullableScalarRelationFilter, inscripcion_cursoWhereInput> | null
     comprobantes_pago?: Comprobante_pagoListRelationFilter
     cartas_motivacion?: Carta_motivacionListRelationFilter
+    observacion?: XOR<Observacion_inscripcionNullableScalarRelationFilter, observacion_inscripcionWhereInput> | null
   }, "id_ins">
 
   export type inscripcionOrderByWithAggregationInput = {
@@ -19440,7 +18309,6 @@ export namespace Prisma {
     id_eve_ins?: SortOrder
     est_ins?: SortOrder
     fec_ins?: SortOrder
-    fec_pag_ins?: SortOrderInput | SortOrder
     usu_apr_cer?: SortOrder
     por_asi_fin_usu?: SortOrderInput | SortOrder
     _count?: inscripcionCountOrderByAggregateInput
@@ -19459,7 +18327,6 @@ export namespace Prisma {
     id_eve_ins?: StringWithAggregatesFilter<"inscripcion"> | string
     est_ins?: Enumestado_inscripcionWithAggregatesFilter<"inscripcion"> | $Enums.estado_inscripcion
     fec_ins?: DateTimeWithAggregatesFilter<"inscripcion"> | Date | string
-    fec_pag_ins?: DateTimeNullableWithAggregatesFilter<"inscripcion"> | Date | string | null
     usu_apr_cer?: BoolWithAggregatesFilter<"inscripcion"> | boolean
     por_asi_fin_usu?: FloatNullableWithAggregatesFilter<"inscripcion"> | number | null
   }
@@ -19699,9 +18566,9 @@ export namespace Prisma {
     est_com_pag?: $Enums.estado_validacion
     fec_sub_com_pag?: Date | string
     fec_val_com_pag?: Date | string | null
+    fec_pag_ins?: Date | string | null
     admin?: cuentaCreateNestedOneWithoutComprobantes_pagoInput
     inscripcion: inscripcionCreateNestedOneWithoutComprobantes_pagoInput
-    observaciones?: observacion_comprobanteCreateNestedManyWithoutComprobante_pagoInput
   }
 
   export type comprobante_pagoUncheckedCreateInput = {
@@ -19712,7 +18579,7 @@ export namespace Prisma {
     fec_sub_com_pag?: Date | string
     fec_val_com_pag?: Date | string | null
     id_adm_val_com_pag?: string | null
-    observaciones?: observacion_comprobanteUncheckedCreateNestedManyWithoutComprobante_pagoInput
+    fec_pag_ins?: Date | string | null
   }
 
   export type comprobante_pagoUpdateInput = {
@@ -19721,9 +18588,9 @@ export namespace Prisma {
     est_com_pag?: Enumestado_validacionFieldUpdateOperationsInput | $Enums.estado_validacion
     fec_sub_com_pag?: DateTimeFieldUpdateOperationsInput | Date | string
     fec_val_com_pag?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     admin?: cuentaUpdateOneWithoutComprobantes_pagoNestedInput
     inscripcion?: inscripcionUpdateOneRequiredWithoutComprobantes_pagoNestedInput
-    observaciones?: observacion_comprobanteUpdateManyWithoutComprobante_pagoNestedInput
   }
 
   export type comprobante_pagoUncheckedUpdateInput = {
@@ -19734,7 +18601,7 @@ export namespace Prisma {
     fec_sub_com_pag?: DateTimeFieldUpdateOperationsInput | Date | string
     fec_val_com_pag?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     id_adm_val_com_pag?: NullableStringFieldUpdateOperationsInput | string | null
-    observaciones?: observacion_comprobanteUncheckedUpdateManyWithoutComprobante_pagoNestedInput
+    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type comprobante_pagoCreateManyInput = {
@@ -19745,6 +18612,7 @@ export namespace Prisma {
     fec_sub_com_pag?: Date | string
     fec_val_com_pag?: Date | string | null
     id_adm_val_com_pag?: string | null
+    fec_pag_ins?: Date | string | null
   }
 
   export type comprobante_pagoUpdateManyMutationInput = {
@@ -19753,6 +18621,7 @@ export namespace Prisma {
     est_com_pag?: Enumestado_validacionFieldUpdateOperationsInput | $Enums.estado_validacion
     fec_sub_com_pag?: DateTimeFieldUpdateOperationsInput | Date | string
     fec_val_com_pag?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type comprobante_pagoUncheckedUpdateManyInput = {
@@ -19763,6 +18632,7 @@ export namespace Prisma {
     fec_sub_com_pag?: DateTimeFieldUpdateOperationsInput | Date | string
     fec_val_com_pag?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     id_adm_val_com_pag?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type carta_motivacionCreateInput = {
@@ -19773,7 +18643,6 @@ export namespace Prisma {
     fec_val_car_mot?: Date | string | null
     admin?: cuentaCreateNestedOneWithoutCartas_motivacionInput
     inscripcion: inscripcionCreateNestedOneWithoutCartas_motivacionInput
-    observaciones?: observacion_motivacionCreateNestedManyWithoutCarta_motivacionInput
   }
 
   export type carta_motivacionUncheckedCreateInput = {
@@ -19784,7 +18653,6 @@ export namespace Prisma {
     fec_sub_car_mot?: Date | string
     fec_val_car_mot?: Date | string | null
     id_adm_val_car_mot?: string | null
-    observaciones?: observacion_motivacionUncheckedCreateNestedManyWithoutCarta_motivacionInput
   }
 
   export type carta_motivacionUpdateInput = {
@@ -19795,7 +18663,6 @@ export namespace Prisma {
     fec_val_car_mot?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     admin?: cuentaUpdateOneWithoutCartas_motivacionNestedInput
     inscripcion?: inscripcionUpdateOneRequiredWithoutCartas_motivacionNestedInput
-    observaciones?: observacion_motivacionUpdateManyWithoutCarta_motivacionNestedInput
   }
 
   export type carta_motivacionUncheckedUpdateInput = {
@@ -19806,7 +18673,6 @@ export namespace Prisma {
     fec_sub_car_mot?: DateTimeFieldUpdateOperationsInput | Date | string
     fec_val_car_mot?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     id_adm_val_car_mot?: NullableStringFieldUpdateOperationsInput | string | null
-    observaciones?: observacion_motivacionUncheckedUpdateManyWithoutCarta_motivacionNestedInput
   }
 
   export type carta_motivacionCreateManyInput = {
@@ -19837,72 +18703,58 @@ export namespace Prisma {
     id_adm_val_car_mot?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
-  export type observacion_motivacionCreateInput = {
-    obs_car_mot: string
-    carta_motivacion: carta_motivacionCreateNestedOneWithoutObservacionesInput
+  export type observacion_inscripcionCreateInput = {
+    id_obs_ins?: string
+    obs_ins: string
+    fec_cre_obs?: Date | string
+    inscripcion: inscripcionCreateNestedOneWithoutObservacionInput
+    admin_creador?: cuentaCreateNestedOneWithoutObservaciones_creadasInput
   }
 
-  export type observacion_motivacionUncheckedCreateInput = {
-    id_car_mot: string
-    obs_car_mot: string
+  export type observacion_inscripcionUncheckedCreateInput = {
+    id_obs_ins?: string
+    id_ins_per: string
+    obs_ins: string
+    fec_cre_obs?: Date | string
+    id_adm_cre_obs?: string | null
   }
 
-  export type observacion_motivacionUpdateInput = {
-    obs_car_mot?: StringFieldUpdateOperationsInput | string
-    carta_motivacion?: carta_motivacionUpdateOneRequiredWithoutObservacionesNestedInput
+  export type observacion_inscripcionUpdateInput = {
+    id_obs_ins?: StringFieldUpdateOperationsInput | string
+    obs_ins?: StringFieldUpdateOperationsInput | string
+    fec_cre_obs?: DateTimeFieldUpdateOperationsInput | Date | string
+    inscripcion?: inscripcionUpdateOneRequiredWithoutObservacionNestedInput
+    admin_creador?: cuentaUpdateOneWithoutObservaciones_creadasNestedInput
   }
 
-  export type observacion_motivacionUncheckedUpdateInput = {
-    id_car_mot?: StringFieldUpdateOperationsInput | string
-    obs_car_mot?: StringFieldUpdateOperationsInput | string
+  export type observacion_inscripcionUncheckedUpdateInput = {
+    id_obs_ins?: StringFieldUpdateOperationsInput | string
+    id_ins_per?: StringFieldUpdateOperationsInput | string
+    obs_ins?: StringFieldUpdateOperationsInput | string
+    fec_cre_obs?: DateTimeFieldUpdateOperationsInput | Date | string
+    id_adm_cre_obs?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
-  export type observacion_motivacionCreateManyInput = {
-    id_car_mot: string
-    obs_car_mot: string
+  export type observacion_inscripcionCreateManyInput = {
+    id_obs_ins?: string
+    id_ins_per: string
+    obs_ins: string
+    fec_cre_obs?: Date | string
+    id_adm_cre_obs?: string | null
   }
 
-  export type observacion_motivacionUpdateManyMutationInput = {
-    obs_car_mot?: StringFieldUpdateOperationsInput | string
+  export type observacion_inscripcionUpdateManyMutationInput = {
+    id_obs_ins?: StringFieldUpdateOperationsInput | string
+    obs_ins?: StringFieldUpdateOperationsInput | string
+    fec_cre_obs?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type observacion_motivacionUncheckedUpdateManyInput = {
-    id_car_mot?: StringFieldUpdateOperationsInput | string
-    obs_car_mot?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type observacion_comprobanteCreateInput = {
-    obs_com_pag: string
-    comprobante_pago: comprobante_pagoCreateNestedOneWithoutObservacionesInput
-  }
-
-  export type observacion_comprobanteUncheckedCreateInput = {
-    id_com_pag: string
-    obs_com_pag: string
-  }
-
-  export type observacion_comprobanteUpdateInput = {
-    obs_com_pag?: StringFieldUpdateOperationsInput | string
-    comprobante_pago?: comprobante_pagoUpdateOneRequiredWithoutObservacionesNestedInput
-  }
-
-  export type observacion_comprobanteUncheckedUpdateInput = {
-    id_com_pag?: StringFieldUpdateOperationsInput | string
-    obs_com_pag?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type observacion_comprobanteCreateManyInput = {
-    id_com_pag: string
-    obs_com_pag: string
-  }
-
-  export type observacion_comprobanteUpdateManyMutationInput = {
-    obs_com_pag?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type observacion_comprobanteUncheckedUpdateManyInput = {
-    id_com_pag?: StringFieldUpdateOperationsInput | string
-    obs_com_pag?: StringFieldUpdateOperationsInput | string
+  export type observacion_inscripcionUncheckedUpdateManyInput = {
+    id_obs_ins?: StringFieldUpdateOperationsInput | string
+    id_ins_per?: StringFieldUpdateOperationsInput | string
+    obs_ins?: StringFieldUpdateOperationsInput | string
+    fec_cre_obs?: DateTimeFieldUpdateOperationsInput | Date | string
+    id_adm_cre_obs?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type cuentaCreateInput = {
@@ -19916,6 +18768,7 @@ export namespace Prisma {
     cartas_motivacion?: carta_motivacionCreateNestedManyWithoutAdminInput
     comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutAdminInput
     eventos?: eventoCreateNestedManyWithoutCuentaInput
+    observaciones_creadas?: observacion_inscripcionCreateNestedManyWithoutAdmin_creadorInput
   }
 
   export type cuentaUncheckedCreateInput = {
@@ -19929,6 +18782,7 @@ export namespace Prisma {
     cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutAdminInput
     comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutAdminInput
     eventos?: eventoUncheckedCreateNestedManyWithoutCuentaInput
+    observaciones_creadas?: observacion_inscripcionUncheckedCreateNestedManyWithoutAdmin_creadorInput
   }
 
   export type cuentaUpdateInput = {
@@ -19942,6 +18796,7 @@ export namespace Prisma {
     cartas_motivacion?: carta_motivacionUpdateManyWithoutAdminNestedInput
     comprobantes_pago?: comprobante_pagoUpdateManyWithoutAdminNestedInput
     eventos?: eventoUpdateManyWithoutCuentaNestedInput
+    observaciones_creadas?: observacion_inscripcionUpdateManyWithoutAdmin_creadorNestedInput
   }
 
   export type cuentaUncheckedUpdateInput = {
@@ -19955,6 +18810,7 @@ export namespace Prisma {
     cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutAdminNestedInput
     comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutAdminNestedInput
     eventos?: eventoUncheckedUpdateManyWithoutCuentaNestedInput
+    observaciones_creadas?: observacion_inscripcionUncheckedUpdateManyWithoutAdmin_creadorNestedInput
   }
 
   export type cuentaCreateManyInput = {
@@ -20355,7 +19211,6 @@ export namespace Prisma {
     id_ins?: string
     est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
-    fec_pag_ins?: Date | string | null
     usu_apr_cer?: boolean
     por_asi_fin_usu?: number | null
     cuenta: cuentaCreateNestedOneWithoutInscripcionesInput
@@ -20363,6 +19218,7 @@ export namespace Prisma {
     inscripcion_curso?: inscripcion_cursoCreateNestedOneWithoutInscripcionInput
     comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutInscripcionInput
     cartas_motivacion?: carta_motivacionCreateNestedManyWithoutInscripcionInput
+    observacion?: observacion_inscripcionCreateNestedOneWithoutInscripcionInput
   }
 
   export type inscripcionUncheckedCreateInput = {
@@ -20371,19 +19227,18 @@ export namespace Prisma {
     id_eve_ins: string
     est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
-    fec_pag_ins?: Date | string | null
     usu_apr_cer?: boolean
     por_asi_fin_usu?: number | null
     inscripcion_curso?: inscripcion_cursoUncheckedCreateNestedOneWithoutInscripcionInput
     comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutInscripcionInput
     cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutInscripcionInput
+    observacion?: observacion_inscripcionUncheckedCreateNestedOneWithoutInscripcionInput
   }
 
   export type inscripcionUpdateInput = {
     id_ins?: StringFieldUpdateOperationsInput | string
     est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
-    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
     cuenta?: cuentaUpdateOneRequiredWithoutInscripcionesNestedInput
@@ -20391,6 +19246,7 @@ export namespace Prisma {
     inscripcion_curso?: inscripcion_cursoUpdateOneWithoutInscripcionNestedInput
     comprobantes_pago?: comprobante_pagoUpdateManyWithoutInscripcionNestedInput
     cartas_motivacion?: carta_motivacionUpdateManyWithoutInscripcionNestedInput
+    observacion?: observacion_inscripcionUpdateOneWithoutInscripcionNestedInput
   }
 
   export type inscripcionUncheckedUpdateInput = {
@@ -20399,12 +19255,12 @@ export namespace Prisma {
     id_eve_ins?: StringFieldUpdateOperationsInput | string
     est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
-    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
     inscripcion_curso?: inscripcion_cursoUncheckedUpdateOneWithoutInscripcionNestedInput
     comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutInscripcionNestedInput
     cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutInscripcionNestedInput
+    observacion?: observacion_inscripcionUncheckedUpdateOneWithoutInscripcionNestedInput
   }
 
   export type inscripcionCreateManyInput = {
@@ -20413,7 +19269,6 @@ export namespace Prisma {
     id_eve_ins: string
     est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
-    fec_pag_ins?: Date | string | null
     usu_apr_cer?: boolean
     por_asi_fin_usu?: number | null
   }
@@ -20422,7 +19277,6 @@ export namespace Prisma {
     id_ins?: StringFieldUpdateOperationsInput | string
     est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
-    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
   }
@@ -20433,7 +19287,6 @@ export namespace Prisma {
     id_eve_ins?: StringFieldUpdateOperationsInput | string
     est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
-    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
   }
@@ -20770,16 +19623,6 @@ export namespace Prisma {
     isNot?: inscripcionWhereInput
   }
 
-  export type Observacion_comprobanteListRelationFilter = {
-    every?: observacion_comprobanteWhereInput
-    some?: observacion_comprobanteWhereInput
-    none?: observacion_comprobanteWhereInput
-  }
-
-  export type observacion_comprobanteOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
   export type comprobante_pagoCountOrderByAggregateInput = {
     id_com_pag?: SortOrder
     id_ins_per?: SortOrder
@@ -20788,6 +19631,7 @@ export namespace Prisma {
     fec_sub_com_pag?: SortOrder
     fec_val_com_pag?: SortOrder
     id_adm_val_com_pag?: SortOrder
+    fec_pag_ins?: SortOrder
   }
 
   export type comprobante_pagoMaxOrderByAggregateInput = {
@@ -20798,6 +19642,7 @@ export namespace Prisma {
     fec_sub_com_pag?: SortOrder
     fec_val_com_pag?: SortOrder
     id_adm_val_com_pag?: SortOrder
+    fec_pag_ins?: SortOrder
   }
 
   export type comprobante_pagoMinOrderByAggregateInput = {
@@ -20808,6 +19653,7 @@ export namespace Prisma {
     fec_sub_com_pag?: SortOrder
     fec_val_com_pag?: SortOrder
     id_adm_val_com_pag?: SortOrder
+    fec_pag_ins?: SortOrder
   }
 
   export type Enumestado_validacionWithAggregatesFilter<$PrismaModel = never> = {
@@ -20832,16 +19678,6 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedDateTimeNullableFilter<$PrismaModel>
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
-  }
-
-  export type Observacion_motivacionListRelationFilter = {
-    every?: observacion_motivacionWhereInput
-    some?: observacion_motivacionWhereInput
-    none?: observacion_motivacionWhereInput
-  }
-
-  export type observacion_motivacionOrderByRelationAggregateInput = {
-    _count?: SortOrder
   }
 
   export type carta_motivacionCountOrderByAggregateInput = {
@@ -20874,44 +19710,28 @@ export namespace Prisma {
     id_adm_val_car_mot?: SortOrder
   }
 
-  export type Carta_motivacionScalarRelationFilter = {
-    is?: carta_motivacionWhereInput
-    isNot?: carta_motivacionWhereInput
+  export type observacion_inscripcionCountOrderByAggregateInput = {
+    id_obs_ins?: SortOrder
+    id_ins_per?: SortOrder
+    obs_ins?: SortOrder
+    fec_cre_obs?: SortOrder
+    id_adm_cre_obs?: SortOrder
   }
 
-  export type observacion_motivacionCountOrderByAggregateInput = {
-    id_car_mot?: SortOrder
-    obs_car_mot?: SortOrder
+  export type observacion_inscripcionMaxOrderByAggregateInput = {
+    id_obs_ins?: SortOrder
+    id_ins_per?: SortOrder
+    obs_ins?: SortOrder
+    fec_cre_obs?: SortOrder
+    id_adm_cre_obs?: SortOrder
   }
 
-  export type observacion_motivacionMaxOrderByAggregateInput = {
-    id_car_mot?: SortOrder
-    obs_car_mot?: SortOrder
-  }
-
-  export type observacion_motivacionMinOrderByAggregateInput = {
-    id_car_mot?: SortOrder
-    obs_car_mot?: SortOrder
-  }
-
-  export type Comprobante_pagoScalarRelationFilter = {
-    is?: comprobante_pagoWhereInput
-    isNot?: comprobante_pagoWhereInput
-  }
-
-  export type observacion_comprobanteCountOrderByAggregateInput = {
-    id_com_pag?: SortOrder
-    obs_com_pag?: SortOrder
-  }
-
-  export type observacion_comprobanteMaxOrderByAggregateInput = {
-    id_com_pag?: SortOrder
-    obs_com_pag?: SortOrder
-  }
-
-  export type observacion_comprobanteMinOrderByAggregateInput = {
-    id_com_pag?: SortOrder
-    obs_com_pag?: SortOrder
+  export type observacion_inscripcionMinOrderByAggregateInput = {
+    id_obs_ins?: SortOrder
+    id_ins_per?: SortOrder
+    obs_ins?: SortOrder
+    fec_cre_obs?: SortOrder
+    id_adm_cre_obs?: SortOrder
   }
 
   export type Enumrol_usuarioFilter<$PrismaModel = never> = {
@@ -20950,6 +19770,12 @@ export namespace Prisma {
     none?: eventoWhereInput
   }
 
+  export type Observacion_inscripcionListRelationFilter = {
+    every?: observacion_inscripcionWhereInput
+    some?: observacion_inscripcionWhereInput
+    none?: observacion_inscripcionWhereInput
+  }
+
   export type inscripcionOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -20963,6 +19789,10 @@ export namespace Prisma {
   }
 
   export type eventoOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type observacion_inscripcionOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -21365,13 +20195,17 @@ export namespace Prisma {
     isNot?: inscripcion_cursoWhereInput | null
   }
 
+  export type Observacion_inscripcionNullableScalarRelationFilter = {
+    is?: observacion_inscripcionWhereInput | null
+    isNot?: observacion_inscripcionWhereInput | null
+  }
+
   export type inscripcionCountOrderByAggregateInput = {
     id_ins?: SortOrder
     id_cor_ins?: SortOrder
     id_eve_ins?: SortOrder
     est_ins?: SortOrder
     fec_ins?: SortOrder
-    fec_pag_ins?: SortOrder
     usu_apr_cer?: SortOrder
     por_asi_fin_usu?: SortOrder
   }
@@ -21386,7 +20220,6 @@ export namespace Prisma {
     id_eve_ins?: SortOrder
     est_ins?: SortOrder
     fec_ins?: SortOrder
-    fec_pag_ins?: SortOrder
     usu_apr_cer?: SortOrder
     por_asi_fin_usu?: SortOrder
   }
@@ -21397,7 +20230,6 @@ export namespace Prisma {
     id_eve_ins?: SortOrder
     est_ins?: SortOrder
     fec_ins?: SortOrder
-    fec_pag_ins?: SortOrder
     usu_apr_cer?: SortOrder
     por_asi_fin_usu?: SortOrder
   }
@@ -21588,20 +20420,6 @@ export namespace Prisma {
     connect?: inscripcionWhereUniqueInput
   }
 
-  export type observacion_comprobanteCreateNestedManyWithoutComprobante_pagoInput = {
-    create?: XOR<observacion_comprobanteCreateWithoutComprobante_pagoInput, observacion_comprobanteUncheckedCreateWithoutComprobante_pagoInput> | observacion_comprobanteCreateWithoutComprobante_pagoInput[] | observacion_comprobanteUncheckedCreateWithoutComprobante_pagoInput[]
-    connectOrCreate?: observacion_comprobanteCreateOrConnectWithoutComprobante_pagoInput | observacion_comprobanteCreateOrConnectWithoutComprobante_pagoInput[]
-    createMany?: observacion_comprobanteCreateManyComprobante_pagoInputEnvelope
-    connect?: observacion_comprobanteWhereUniqueInput | observacion_comprobanteWhereUniqueInput[]
-  }
-
-  export type observacion_comprobanteUncheckedCreateNestedManyWithoutComprobante_pagoInput = {
-    create?: XOR<observacion_comprobanteCreateWithoutComprobante_pagoInput, observacion_comprobanteUncheckedCreateWithoutComprobante_pagoInput> | observacion_comprobanteCreateWithoutComprobante_pagoInput[] | observacion_comprobanteUncheckedCreateWithoutComprobante_pagoInput[]
-    connectOrCreate?: observacion_comprobanteCreateOrConnectWithoutComprobante_pagoInput | observacion_comprobanteCreateOrConnectWithoutComprobante_pagoInput[]
-    createMany?: observacion_comprobanteCreateManyComprobante_pagoInputEnvelope
-    connect?: observacion_comprobanteWhereUniqueInput | observacion_comprobanteWhereUniqueInput[]
-  }
-
   export type Enumestado_validacionFieldUpdateOperationsInput = {
     set?: $Enums.estado_validacion
   }
@@ -21628,34 +20446,6 @@ export namespace Prisma {
     update?: XOR<XOR<inscripcionUpdateToOneWithWhereWithoutComprobantes_pagoInput, inscripcionUpdateWithoutComprobantes_pagoInput>, inscripcionUncheckedUpdateWithoutComprobantes_pagoInput>
   }
 
-  export type observacion_comprobanteUpdateManyWithoutComprobante_pagoNestedInput = {
-    create?: XOR<observacion_comprobanteCreateWithoutComprobante_pagoInput, observacion_comprobanteUncheckedCreateWithoutComprobante_pagoInput> | observacion_comprobanteCreateWithoutComprobante_pagoInput[] | observacion_comprobanteUncheckedCreateWithoutComprobante_pagoInput[]
-    connectOrCreate?: observacion_comprobanteCreateOrConnectWithoutComprobante_pagoInput | observacion_comprobanteCreateOrConnectWithoutComprobante_pagoInput[]
-    upsert?: observacion_comprobanteUpsertWithWhereUniqueWithoutComprobante_pagoInput | observacion_comprobanteUpsertWithWhereUniqueWithoutComprobante_pagoInput[]
-    createMany?: observacion_comprobanteCreateManyComprobante_pagoInputEnvelope
-    set?: observacion_comprobanteWhereUniqueInput | observacion_comprobanteWhereUniqueInput[]
-    disconnect?: observacion_comprobanteWhereUniqueInput | observacion_comprobanteWhereUniqueInput[]
-    delete?: observacion_comprobanteWhereUniqueInput | observacion_comprobanteWhereUniqueInput[]
-    connect?: observacion_comprobanteWhereUniqueInput | observacion_comprobanteWhereUniqueInput[]
-    update?: observacion_comprobanteUpdateWithWhereUniqueWithoutComprobante_pagoInput | observacion_comprobanteUpdateWithWhereUniqueWithoutComprobante_pagoInput[]
-    updateMany?: observacion_comprobanteUpdateManyWithWhereWithoutComprobante_pagoInput | observacion_comprobanteUpdateManyWithWhereWithoutComprobante_pagoInput[]
-    deleteMany?: observacion_comprobanteScalarWhereInput | observacion_comprobanteScalarWhereInput[]
-  }
-
-  export type observacion_comprobanteUncheckedUpdateManyWithoutComprobante_pagoNestedInput = {
-    create?: XOR<observacion_comprobanteCreateWithoutComprobante_pagoInput, observacion_comprobanteUncheckedCreateWithoutComprobante_pagoInput> | observacion_comprobanteCreateWithoutComprobante_pagoInput[] | observacion_comprobanteUncheckedCreateWithoutComprobante_pagoInput[]
-    connectOrCreate?: observacion_comprobanteCreateOrConnectWithoutComprobante_pagoInput | observacion_comprobanteCreateOrConnectWithoutComprobante_pagoInput[]
-    upsert?: observacion_comprobanteUpsertWithWhereUniqueWithoutComprobante_pagoInput | observacion_comprobanteUpsertWithWhereUniqueWithoutComprobante_pagoInput[]
-    createMany?: observacion_comprobanteCreateManyComprobante_pagoInputEnvelope
-    set?: observacion_comprobanteWhereUniqueInput | observacion_comprobanteWhereUniqueInput[]
-    disconnect?: observacion_comprobanteWhereUniqueInput | observacion_comprobanteWhereUniqueInput[]
-    delete?: observacion_comprobanteWhereUniqueInput | observacion_comprobanteWhereUniqueInput[]
-    connect?: observacion_comprobanteWhereUniqueInput | observacion_comprobanteWhereUniqueInput[]
-    update?: observacion_comprobanteUpdateWithWhereUniqueWithoutComprobante_pagoInput | observacion_comprobanteUpdateWithWhereUniqueWithoutComprobante_pagoInput[]
-    updateMany?: observacion_comprobanteUpdateManyWithWhereWithoutComprobante_pagoInput | observacion_comprobanteUpdateManyWithWhereWithoutComprobante_pagoInput[]
-    deleteMany?: observacion_comprobanteScalarWhereInput | observacion_comprobanteScalarWhereInput[]
-  }
-
   export type cuentaCreateNestedOneWithoutCartas_motivacionInput = {
     create?: XOR<cuentaCreateWithoutCartas_motivacionInput, cuentaUncheckedCreateWithoutCartas_motivacionInput>
     connectOrCreate?: cuentaCreateOrConnectWithoutCartas_motivacionInput
@@ -21666,20 +20456,6 @@ export namespace Prisma {
     create?: XOR<inscripcionCreateWithoutCartas_motivacionInput, inscripcionUncheckedCreateWithoutCartas_motivacionInput>
     connectOrCreate?: inscripcionCreateOrConnectWithoutCartas_motivacionInput
     connect?: inscripcionWhereUniqueInput
-  }
-
-  export type observacion_motivacionCreateNestedManyWithoutCarta_motivacionInput = {
-    create?: XOR<observacion_motivacionCreateWithoutCarta_motivacionInput, observacion_motivacionUncheckedCreateWithoutCarta_motivacionInput> | observacion_motivacionCreateWithoutCarta_motivacionInput[] | observacion_motivacionUncheckedCreateWithoutCarta_motivacionInput[]
-    connectOrCreate?: observacion_motivacionCreateOrConnectWithoutCarta_motivacionInput | observacion_motivacionCreateOrConnectWithoutCarta_motivacionInput[]
-    createMany?: observacion_motivacionCreateManyCarta_motivacionInputEnvelope
-    connect?: observacion_motivacionWhereUniqueInput | observacion_motivacionWhereUniqueInput[]
-  }
-
-  export type observacion_motivacionUncheckedCreateNestedManyWithoutCarta_motivacionInput = {
-    create?: XOR<observacion_motivacionCreateWithoutCarta_motivacionInput, observacion_motivacionUncheckedCreateWithoutCarta_motivacionInput> | observacion_motivacionCreateWithoutCarta_motivacionInput[] | observacion_motivacionUncheckedCreateWithoutCarta_motivacionInput[]
-    connectOrCreate?: observacion_motivacionCreateOrConnectWithoutCarta_motivacionInput | observacion_motivacionCreateOrConnectWithoutCarta_motivacionInput[]
-    createMany?: observacion_motivacionCreateManyCarta_motivacionInputEnvelope
-    connect?: observacion_motivacionWhereUniqueInput | observacion_motivacionWhereUniqueInput[]
   }
 
   export type cuentaUpdateOneWithoutCartas_motivacionNestedInput = {
@@ -21700,60 +20476,34 @@ export namespace Prisma {
     update?: XOR<XOR<inscripcionUpdateToOneWithWhereWithoutCartas_motivacionInput, inscripcionUpdateWithoutCartas_motivacionInput>, inscripcionUncheckedUpdateWithoutCartas_motivacionInput>
   }
 
-  export type observacion_motivacionUpdateManyWithoutCarta_motivacionNestedInput = {
-    create?: XOR<observacion_motivacionCreateWithoutCarta_motivacionInput, observacion_motivacionUncheckedCreateWithoutCarta_motivacionInput> | observacion_motivacionCreateWithoutCarta_motivacionInput[] | observacion_motivacionUncheckedCreateWithoutCarta_motivacionInput[]
-    connectOrCreate?: observacion_motivacionCreateOrConnectWithoutCarta_motivacionInput | observacion_motivacionCreateOrConnectWithoutCarta_motivacionInput[]
-    upsert?: observacion_motivacionUpsertWithWhereUniqueWithoutCarta_motivacionInput | observacion_motivacionUpsertWithWhereUniqueWithoutCarta_motivacionInput[]
-    createMany?: observacion_motivacionCreateManyCarta_motivacionInputEnvelope
-    set?: observacion_motivacionWhereUniqueInput | observacion_motivacionWhereUniqueInput[]
-    disconnect?: observacion_motivacionWhereUniqueInput | observacion_motivacionWhereUniqueInput[]
-    delete?: observacion_motivacionWhereUniqueInput | observacion_motivacionWhereUniqueInput[]
-    connect?: observacion_motivacionWhereUniqueInput | observacion_motivacionWhereUniqueInput[]
-    update?: observacion_motivacionUpdateWithWhereUniqueWithoutCarta_motivacionInput | observacion_motivacionUpdateWithWhereUniqueWithoutCarta_motivacionInput[]
-    updateMany?: observacion_motivacionUpdateManyWithWhereWithoutCarta_motivacionInput | observacion_motivacionUpdateManyWithWhereWithoutCarta_motivacionInput[]
-    deleteMany?: observacion_motivacionScalarWhereInput | observacion_motivacionScalarWhereInput[]
+  export type inscripcionCreateNestedOneWithoutObservacionInput = {
+    create?: XOR<inscripcionCreateWithoutObservacionInput, inscripcionUncheckedCreateWithoutObservacionInput>
+    connectOrCreate?: inscripcionCreateOrConnectWithoutObservacionInput
+    connect?: inscripcionWhereUniqueInput
   }
 
-  export type observacion_motivacionUncheckedUpdateManyWithoutCarta_motivacionNestedInput = {
-    create?: XOR<observacion_motivacionCreateWithoutCarta_motivacionInput, observacion_motivacionUncheckedCreateWithoutCarta_motivacionInput> | observacion_motivacionCreateWithoutCarta_motivacionInput[] | observacion_motivacionUncheckedCreateWithoutCarta_motivacionInput[]
-    connectOrCreate?: observacion_motivacionCreateOrConnectWithoutCarta_motivacionInput | observacion_motivacionCreateOrConnectWithoutCarta_motivacionInput[]
-    upsert?: observacion_motivacionUpsertWithWhereUniqueWithoutCarta_motivacionInput | observacion_motivacionUpsertWithWhereUniqueWithoutCarta_motivacionInput[]
-    createMany?: observacion_motivacionCreateManyCarta_motivacionInputEnvelope
-    set?: observacion_motivacionWhereUniqueInput | observacion_motivacionWhereUniqueInput[]
-    disconnect?: observacion_motivacionWhereUniqueInput | observacion_motivacionWhereUniqueInput[]
-    delete?: observacion_motivacionWhereUniqueInput | observacion_motivacionWhereUniqueInput[]
-    connect?: observacion_motivacionWhereUniqueInput | observacion_motivacionWhereUniqueInput[]
-    update?: observacion_motivacionUpdateWithWhereUniqueWithoutCarta_motivacionInput | observacion_motivacionUpdateWithWhereUniqueWithoutCarta_motivacionInput[]
-    updateMany?: observacion_motivacionUpdateManyWithWhereWithoutCarta_motivacionInput | observacion_motivacionUpdateManyWithWhereWithoutCarta_motivacionInput[]
-    deleteMany?: observacion_motivacionScalarWhereInput | observacion_motivacionScalarWhereInput[]
+  export type cuentaCreateNestedOneWithoutObservaciones_creadasInput = {
+    create?: XOR<cuentaCreateWithoutObservaciones_creadasInput, cuentaUncheckedCreateWithoutObservaciones_creadasInput>
+    connectOrCreate?: cuentaCreateOrConnectWithoutObservaciones_creadasInput
+    connect?: cuentaWhereUniqueInput
   }
 
-  export type carta_motivacionCreateNestedOneWithoutObservacionesInput = {
-    create?: XOR<carta_motivacionCreateWithoutObservacionesInput, carta_motivacionUncheckedCreateWithoutObservacionesInput>
-    connectOrCreate?: carta_motivacionCreateOrConnectWithoutObservacionesInput
-    connect?: carta_motivacionWhereUniqueInput
+  export type inscripcionUpdateOneRequiredWithoutObservacionNestedInput = {
+    create?: XOR<inscripcionCreateWithoutObservacionInput, inscripcionUncheckedCreateWithoutObservacionInput>
+    connectOrCreate?: inscripcionCreateOrConnectWithoutObservacionInput
+    upsert?: inscripcionUpsertWithoutObservacionInput
+    connect?: inscripcionWhereUniqueInput
+    update?: XOR<XOR<inscripcionUpdateToOneWithWhereWithoutObservacionInput, inscripcionUpdateWithoutObservacionInput>, inscripcionUncheckedUpdateWithoutObservacionInput>
   }
 
-  export type carta_motivacionUpdateOneRequiredWithoutObservacionesNestedInput = {
-    create?: XOR<carta_motivacionCreateWithoutObservacionesInput, carta_motivacionUncheckedCreateWithoutObservacionesInput>
-    connectOrCreate?: carta_motivacionCreateOrConnectWithoutObservacionesInput
-    upsert?: carta_motivacionUpsertWithoutObservacionesInput
-    connect?: carta_motivacionWhereUniqueInput
-    update?: XOR<XOR<carta_motivacionUpdateToOneWithWhereWithoutObservacionesInput, carta_motivacionUpdateWithoutObservacionesInput>, carta_motivacionUncheckedUpdateWithoutObservacionesInput>
-  }
-
-  export type comprobante_pagoCreateNestedOneWithoutObservacionesInput = {
-    create?: XOR<comprobante_pagoCreateWithoutObservacionesInput, comprobante_pagoUncheckedCreateWithoutObservacionesInput>
-    connectOrCreate?: comprobante_pagoCreateOrConnectWithoutObservacionesInput
-    connect?: comprobante_pagoWhereUniqueInput
-  }
-
-  export type comprobante_pagoUpdateOneRequiredWithoutObservacionesNestedInput = {
-    create?: XOR<comprobante_pagoCreateWithoutObservacionesInput, comprobante_pagoUncheckedCreateWithoutObservacionesInput>
-    connectOrCreate?: comprobante_pagoCreateOrConnectWithoutObservacionesInput
-    upsert?: comprobante_pagoUpsertWithoutObservacionesInput
-    connect?: comprobante_pagoWhereUniqueInput
-    update?: XOR<XOR<comprobante_pagoUpdateToOneWithWhereWithoutObservacionesInput, comprobante_pagoUpdateWithoutObservacionesInput>, comprobante_pagoUncheckedUpdateWithoutObservacionesInput>
+  export type cuentaUpdateOneWithoutObservaciones_creadasNestedInput = {
+    create?: XOR<cuentaCreateWithoutObservaciones_creadasInput, cuentaUncheckedCreateWithoutObservaciones_creadasInput>
+    connectOrCreate?: cuentaCreateOrConnectWithoutObservaciones_creadasInput
+    upsert?: cuentaUpsertWithoutObservaciones_creadasInput
+    disconnect?: cuentaWhereInput | boolean
+    delete?: cuentaWhereInput | boolean
+    connect?: cuentaWhereUniqueInput
+    update?: XOR<XOR<cuentaUpdateToOneWithWhereWithoutObservaciones_creadasInput, cuentaUpdateWithoutObservaciones_creadasInput>, cuentaUncheckedUpdateWithoutObservaciones_creadasInput>
   }
 
   export type usuarioCreateNestedOneWithoutCuentasInput = {
@@ -21790,6 +20540,13 @@ export namespace Prisma {
     connect?: eventoWhereUniqueInput | eventoWhereUniqueInput[]
   }
 
+  export type observacion_inscripcionCreateNestedManyWithoutAdmin_creadorInput = {
+    create?: XOR<observacion_inscripcionCreateWithoutAdmin_creadorInput, observacion_inscripcionUncheckedCreateWithoutAdmin_creadorInput> | observacion_inscripcionCreateWithoutAdmin_creadorInput[] | observacion_inscripcionUncheckedCreateWithoutAdmin_creadorInput[]
+    connectOrCreate?: observacion_inscripcionCreateOrConnectWithoutAdmin_creadorInput | observacion_inscripcionCreateOrConnectWithoutAdmin_creadorInput[]
+    createMany?: observacion_inscripcionCreateManyAdmin_creadorInputEnvelope
+    connect?: observacion_inscripcionWhereUniqueInput | observacion_inscripcionWhereUniqueInput[]
+  }
+
   export type inscripcionUncheckedCreateNestedManyWithoutCuentaInput = {
     create?: XOR<inscripcionCreateWithoutCuentaInput, inscripcionUncheckedCreateWithoutCuentaInput> | inscripcionCreateWithoutCuentaInput[] | inscripcionUncheckedCreateWithoutCuentaInput[]
     connectOrCreate?: inscripcionCreateOrConnectWithoutCuentaInput | inscripcionCreateOrConnectWithoutCuentaInput[]
@@ -21816,6 +20573,13 @@ export namespace Prisma {
     connectOrCreate?: eventoCreateOrConnectWithoutCuentaInput | eventoCreateOrConnectWithoutCuentaInput[]
     createMany?: eventoCreateManyCuentaInputEnvelope
     connect?: eventoWhereUniqueInput | eventoWhereUniqueInput[]
+  }
+
+  export type observacion_inscripcionUncheckedCreateNestedManyWithoutAdmin_creadorInput = {
+    create?: XOR<observacion_inscripcionCreateWithoutAdmin_creadorInput, observacion_inscripcionUncheckedCreateWithoutAdmin_creadorInput> | observacion_inscripcionCreateWithoutAdmin_creadorInput[] | observacion_inscripcionUncheckedCreateWithoutAdmin_creadorInput[]
+    connectOrCreate?: observacion_inscripcionCreateOrConnectWithoutAdmin_creadorInput | observacion_inscripcionCreateOrConnectWithoutAdmin_creadorInput[]
+    createMany?: observacion_inscripcionCreateManyAdmin_creadorInputEnvelope
+    connect?: observacion_inscripcionWhereUniqueInput | observacion_inscripcionWhereUniqueInput[]
   }
 
   export type Enumrol_usuarioFieldUpdateOperationsInput = {
@@ -21886,6 +20650,20 @@ export namespace Prisma {
     deleteMany?: eventoScalarWhereInput | eventoScalarWhereInput[]
   }
 
+  export type observacion_inscripcionUpdateManyWithoutAdmin_creadorNestedInput = {
+    create?: XOR<observacion_inscripcionCreateWithoutAdmin_creadorInput, observacion_inscripcionUncheckedCreateWithoutAdmin_creadorInput> | observacion_inscripcionCreateWithoutAdmin_creadorInput[] | observacion_inscripcionUncheckedCreateWithoutAdmin_creadorInput[]
+    connectOrCreate?: observacion_inscripcionCreateOrConnectWithoutAdmin_creadorInput | observacion_inscripcionCreateOrConnectWithoutAdmin_creadorInput[]
+    upsert?: observacion_inscripcionUpsertWithWhereUniqueWithoutAdmin_creadorInput | observacion_inscripcionUpsertWithWhereUniqueWithoutAdmin_creadorInput[]
+    createMany?: observacion_inscripcionCreateManyAdmin_creadorInputEnvelope
+    set?: observacion_inscripcionWhereUniqueInput | observacion_inscripcionWhereUniqueInput[]
+    disconnect?: observacion_inscripcionWhereUniqueInput | observacion_inscripcionWhereUniqueInput[]
+    delete?: observacion_inscripcionWhereUniqueInput | observacion_inscripcionWhereUniqueInput[]
+    connect?: observacion_inscripcionWhereUniqueInput | observacion_inscripcionWhereUniqueInput[]
+    update?: observacion_inscripcionUpdateWithWhereUniqueWithoutAdmin_creadorInput | observacion_inscripcionUpdateWithWhereUniqueWithoutAdmin_creadorInput[]
+    updateMany?: observacion_inscripcionUpdateManyWithWhereWithoutAdmin_creadorInput | observacion_inscripcionUpdateManyWithWhereWithoutAdmin_creadorInput[]
+    deleteMany?: observacion_inscripcionScalarWhereInput | observacion_inscripcionScalarWhereInput[]
+  }
+
   export type inscripcionUncheckedUpdateManyWithoutCuentaNestedInput = {
     create?: XOR<inscripcionCreateWithoutCuentaInput, inscripcionUncheckedCreateWithoutCuentaInput> | inscripcionCreateWithoutCuentaInput[] | inscripcionUncheckedCreateWithoutCuentaInput[]
     connectOrCreate?: inscripcionCreateOrConnectWithoutCuentaInput | inscripcionCreateOrConnectWithoutCuentaInput[]
@@ -21940,6 +20718,20 @@ export namespace Prisma {
     update?: eventoUpdateWithWhereUniqueWithoutCuentaInput | eventoUpdateWithWhereUniqueWithoutCuentaInput[]
     updateMany?: eventoUpdateManyWithWhereWithoutCuentaInput | eventoUpdateManyWithWhereWithoutCuentaInput[]
     deleteMany?: eventoScalarWhereInput | eventoScalarWhereInput[]
+  }
+
+  export type observacion_inscripcionUncheckedUpdateManyWithoutAdmin_creadorNestedInput = {
+    create?: XOR<observacion_inscripcionCreateWithoutAdmin_creadorInput, observacion_inscripcionUncheckedCreateWithoutAdmin_creadorInput> | observacion_inscripcionCreateWithoutAdmin_creadorInput[] | observacion_inscripcionUncheckedCreateWithoutAdmin_creadorInput[]
+    connectOrCreate?: observacion_inscripcionCreateOrConnectWithoutAdmin_creadorInput | observacion_inscripcionCreateOrConnectWithoutAdmin_creadorInput[]
+    upsert?: observacion_inscripcionUpsertWithWhereUniqueWithoutAdmin_creadorInput | observacion_inscripcionUpsertWithWhereUniqueWithoutAdmin_creadorInput[]
+    createMany?: observacion_inscripcionCreateManyAdmin_creadorInputEnvelope
+    set?: observacion_inscripcionWhereUniqueInput | observacion_inscripcionWhereUniqueInput[]
+    disconnect?: observacion_inscripcionWhereUniqueInput | observacion_inscripcionWhereUniqueInput[]
+    delete?: observacion_inscripcionWhereUniqueInput | observacion_inscripcionWhereUniqueInput[]
+    connect?: observacion_inscripcionWhereUniqueInput | observacion_inscripcionWhereUniqueInput[]
+    update?: observacion_inscripcionUpdateWithWhereUniqueWithoutAdmin_creadorInput | observacion_inscripcionUpdateWithWhereUniqueWithoutAdmin_creadorInput[]
+    updateMany?: observacion_inscripcionUpdateManyWithWhereWithoutAdmin_creadorInput | observacion_inscripcionUpdateManyWithWhereWithoutAdmin_creadorInput[]
+    deleteMany?: observacion_inscripcionScalarWhereInput | observacion_inscripcionScalarWhereInput[]
   }
 
   export type facultadCreateNestedOneWithoutCarrerasInput = {
@@ -22330,6 +21122,12 @@ export namespace Prisma {
     connect?: carta_motivacionWhereUniqueInput | carta_motivacionWhereUniqueInput[]
   }
 
+  export type observacion_inscripcionCreateNestedOneWithoutInscripcionInput = {
+    create?: XOR<observacion_inscripcionCreateWithoutInscripcionInput, observacion_inscripcionUncheckedCreateWithoutInscripcionInput>
+    connectOrCreate?: observacion_inscripcionCreateOrConnectWithoutInscripcionInput
+    connect?: observacion_inscripcionWhereUniqueInput
+  }
+
   export type inscripcion_cursoUncheckedCreateNestedOneWithoutInscripcionInput = {
     create?: XOR<inscripcion_cursoCreateWithoutInscripcionInput, inscripcion_cursoUncheckedCreateWithoutInscripcionInput>
     connectOrCreate?: inscripcion_cursoCreateOrConnectWithoutInscripcionInput
@@ -22348,6 +21146,12 @@ export namespace Prisma {
     connectOrCreate?: carta_motivacionCreateOrConnectWithoutInscripcionInput | carta_motivacionCreateOrConnectWithoutInscripcionInput[]
     createMany?: carta_motivacionCreateManyInscripcionInputEnvelope
     connect?: carta_motivacionWhereUniqueInput | carta_motivacionWhereUniqueInput[]
+  }
+
+  export type observacion_inscripcionUncheckedCreateNestedOneWithoutInscripcionInput = {
+    create?: XOR<observacion_inscripcionCreateWithoutInscripcionInput, observacion_inscripcionUncheckedCreateWithoutInscripcionInput>
+    connectOrCreate?: observacion_inscripcionCreateOrConnectWithoutInscripcionInput
+    connect?: observacion_inscripcionWhereUniqueInput
   }
 
   export type Enumestado_inscripcionFieldUpdateOperationsInput = {
@@ -22416,6 +21220,16 @@ export namespace Prisma {
     deleteMany?: carta_motivacionScalarWhereInput | carta_motivacionScalarWhereInput[]
   }
 
+  export type observacion_inscripcionUpdateOneWithoutInscripcionNestedInput = {
+    create?: XOR<observacion_inscripcionCreateWithoutInscripcionInput, observacion_inscripcionUncheckedCreateWithoutInscripcionInput>
+    connectOrCreate?: observacion_inscripcionCreateOrConnectWithoutInscripcionInput
+    upsert?: observacion_inscripcionUpsertWithoutInscripcionInput
+    disconnect?: observacion_inscripcionWhereInput | boolean
+    delete?: observacion_inscripcionWhereInput | boolean
+    connect?: observacion_inscripcionWhereUniqueInput
+    update?: XOR<XOR<observacion_inscripcionUpdateToOneWithWhereWithoutInscripcionInput, observacion_inscripcionUpdateWithoutInscripcionInput>, observacion_inscripcionUncheckedUpdateWithoutInscripcionInput>
+  }
+
   export type inscripcion_cursoUncheckedUpdateOneWithoutInscripcionNestedInput = {
     create?: XOR<inscripcion_cursoCreateWithoutInscripcionInput, inscripcion_cursoUncheckedCreateWithoutInscripcionInput>
     connectOrCreate?: inscripcion_cursoCreateOrConnectWithoutInscripcionInput
@@ -22452,6 +21266,16 @@ export namespace Prisma {
     update?: carta_motivacionUpdateWithWhereUniqueWithoutInscripcionInput | carta_motivacionUpdateWithWhereUniqueWithoutInscripcionInput[]
     updateMany?: carta_motivacionUpdateManyWithWhereWithoutInscripcionInput | carta_motivacionUpdateManyWithWhereWithoutInscripcionInput[]
     deleteMany?: carta_motivacionScalarWhereInput | carta_motivacionScalarWhereInput[]
+  }
+
+  export type observacion_inscripcionUncheckedUpdateOneWithoutInscripcionNestedInput = {
+    create?: XOR<observacion_inscripcionCreateWithoutInscripcionInput, observacion_inscripcionUncheckedCreateWithoutInscripcionInput>
+    connectOrCreate?: observacion_inscripcionCreateOrConnectWithoutInscripcionInput
+    upsert?: observacion_inscripcionUpsertWithoutInscripcionInput
+    disconnect?: observacion_inscripcionWhereInput | boolean
+    delete?: observacion_inscripcionWhereInput | boolean
+    connect?: observacion_inscripcionWhereUniqueInput
+    update?: XOR<XOR<observacion_inscripcionUpdateToOneWithWhereWithoutInscripcionInput, observacion_inscripcionUpdateWithoutInscripcionInput>, observacion_inscripcionUncheckedUpdateWithoutInscripcionInput>
   }
 
   export type inscripcionCreateNestedOneWithoutInscripcion_cursoInput = {
@@ -22855,6 +21679,7 @@ export namespace Prisma {
     cartas_motivacion?: carta_motivacionCreateNestedManyWithoutAdminInput
     comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutAdminInput
     eventos?: eventoCreateNestedManyWithoutCuentaInput
+    observaciones_creadas?: observacion_inscripcionCreateNestedManyWithoutAdmin_creadorInput
   }
 
   export type cuentaUncheckedCreateWithoutUsuarioInput = {
@@ -22867,6 +21692,7 @@ export namespace Prisma {
     cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutAdminInput
     comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutAdminInput
     eventos?: eventoUncheckedCreateNestedManyWithoutCuentaInput
+    observaciones_creadas?: observacion_inscripcionUncheckedCreateNestedManyWithoutAdmin_creadorInput
   }
 
   export type cuentaCreateOrConnectWithoutUsuarioInput = {
@@ -22956,6 +21782,7 @@ export namespace Prisma {
     inscripciones?: inscripcionCreateNestedManyWithoutCuentaInput
     cartas_motivacion?: carta_motivacionCreateNestedManyWithoutAdminInput
     eventos?: eventoCreateNestedManyWithoutCuentaInput
+    observaciones_creadas?: observacion_inscripcionCreateNestedManyWithoutAdmin_creadorInput
   }
 
   export type cuentaUncheckedCreateWithoutComprobantes_pagoInput = {
@@ -22968,6 +21795,7 @@ export namespace Prisma {
     inscripciones?: inscripcionUncheckedCreateNestedManyWithoutCuentaInput
     cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutAdminInput
     eventos?: eventoUncheckedCreateNestedManyWithoutCuentaInput
+    observaciones_creadas?: observacion_inscripcionUncheckedCreateNestedManyWithoutAdmin_creadorInput
   }
 
   export type cuentaCreateOrConnectWithoutComprobantes_pagoInput = {
@@ -22979,13 +21807,13 @@ export namespace Prisma {
     id_ins?: string
     est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
-    fec_pag_ins?: Date | string | null
     usu_apr_cer?: boolean
     por_asi_fin_usu?: number | null
     cuenta: cuentaCreateNestedOneWithoutInscripcionesInput
     evento: eventoCreateNestedOneWithoutInscritosInput
     inscripcion_curso?: inscripcion_cursoCreateNestedOneWithoutInscripcionInput
     cartas_motivacion?: carta_motivacionCreateNestedManyWithoutInscripcionInput
+    observacion?: observacion_inscripcionCreateNestedOneWithoutInscripcionInput
   }
 
   export type inscripcionUncheckedCreateWithoutComprobantes_pagoInput = {
@@ -22994,34 +21822,16 @@ export namespace Prisma {
     id_eve_ins: string
     est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
-    fec_pag_ins?: Date | string | null
     usu_apr_cer?: boolean
     por_asi_fin_usu?: number | null
     inscripcion_curso?: inscripcion_cursoUncheckedCreateNestedOneWithoutInscripcionInput
     cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutInscripcionInput
+    observacion?: observacion_inscripcionUncheckedCreateNestedOneWithoutInscripcionInput
   }
 
   export type inscripcionCreateOrConnectWithoutComprobantes_pagoInput = {
     where: inscripcionWhereUniqueInput
     create: XOR<inscripcionCreateWithoutComprobantes_pagoInput, inscripcionUncheckedCreateWithoutComprobantes_pagoInput>
-  }
-
-  export type observacion_comprobanteCreateWithoutComprobante_pagoInput = {
-    obs_com_pag: string
-  }
-
-  export type observacion_comprobanteUncheckedCreateWithoutComprobante_pagoInput = {
-    obs_com_pag: string
-  }
-
-  export type observacion_comprobanteCreateOrConnectWithoutComprobante_pagoInput = {
-    where: observacion_comprobanteWhereUniqueInput
-    create: XOR<observacion_comprobanteCreateWithoutComprobante_pagoInput, observacion_comprobanteUncheckedCreateWithoutComprobante_pagoInput>
-  }
-
-  export type observacion_comprobanteCreateManyComprobante_pagoInputEnvelope = {
-    data: observacion_comprobanteCreateManyComprobante_pagoInput | observacion_comprobanteCreateManyComprobante_pagoInput[]
-    skipDuplicates?: boolean
   }
 
   export type cuentaUpsertWithoutComprobantes_pagoInput = {
@@ -23045,6 +21855,7 @@ export namespace Prisma {
     inscripciones?: inscripcionUpdateManyWithoutCuentaNestedInput
     cartas_motivacion?: carta_motivacionUpdateManyWithoutAdminNestedInput
     eventos?: eventoUpdateManyWithoutCuentaNestedInput
+    observaciones_creadas?: observacion_inscripcionUpdateManyWithoutAdmin_creadorNestedInput
   }
 
   export type cuentaUncheckedUpdateWithoutComprobantes_pagoInput = {
@@ -23057,6 +21868,7 @@ export namespace Prisma {
     inscripciones?: inscripcionUncheckedUpdateManyWithoutCuentaNestedInput
     cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutAdminNestedInput
     eventos?: eventoUncheckedUpdateManyWithoutCuentaNestedInput
+    observaciones_creadas?: observacion_inscripcionUncheckedUpdateManyWithoutAdmin_creadorNestedInput
   }
 
   export type inscripcionUpsertWithoutComprobantes_pagoInput = {
@@ -23074,13 +21886,13 @@ export namespace Prisma {
     id_ins?: StringFieldUpdateOperationsInput | string
     est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
-    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
     cuenta?: cuentaUpdateOneRequiredWithoutInscripcionesNestedInput
     evento?: eventoUpdateOneRequiredWithoutInscritosNestedInput
     inscripcion_curso?: inscripcion_cursoUpdateOneWithoutInscripcionNestedInput
     cartas_motivacion?: carta_motivacionUpdateManyWithoutInscripcionNestedInput
+    observacion?: observacion_inscripcionUpdateOneWithoutInscripcionNestedInput
   }
 
   export type inscripcionUncheckedUpdateWithoutComprobantes_pagoInput = {
@@ -23089,35 +21901,11 @@ export namespace Prisma {
     id_eve_ins?: StringFieldUpdateOperationsInput | string
     est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
-    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
     inscripcion_curso?: inscripcion_cursoUncheckedUpdateOneWithoutInscripcionNestedInput
     cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutInscripcionNestedInput
-  }
-
-  export type observacion_comprobanteUpsertWithWhereUniqueWithoutComprobante_pagoInput = {
-    where: observacion_comprobanteWhereUniqueInput
-    update: XOR<observacion_comprobanteUpdateWithoutComprobante_pagoInput, observacion_comprobanteUncheckedUpdateWithoutComprobante_pagoInput>
-    create: XOR<observacion_comprobanteCreateWithoutComprobante_pagoInput, observacion_comprobanteUncheckedCreateWithoutComprobante_pagoInput>
-  }
-
-  export type observacion_comprobanteUpdateWithWhereUniqueWithoutComprobante_pagoInput = {
-    where: observacion_comprobanteWhereUniqueInput
-    data: XOR<observacion_comprobanteUpdateWithoutComprobante_pagoInput, observacion_comprobanteUncheckedUpdateWithoutComprobante_pagoInput>
-  }
-
-  export type observacion_comprobanteUpdateManyWithWhereWithoutComprobante_pagoInput = {
-    where: observacion_comprobanteScalarWhereInput
-    data: XOR<observacion_comprobanteUpdateManyMutationInput, observacion_comprobanteUncheckedUpdateManyWithoutComprobante_pagoInput>
-  }
-
-  export type observacion_comprobanteScalarWhereInput = {
-    AND?: observacion_comprobanteScalarWhereInput | observacion_comprobanteScalarWhereInput[]
-    OR?: observacion_comprobanteScalarWhereInput[]
-    NOT?: observacion_comprobanteScalarWhereInput | observacion_comprobanteScalarWhereInput[]
-    id_com_pag?: StringFilter<"observacion_comprobante"> | string
-    obs_com_pag?: StringFilter<"observacion_comprobante"> | string
+    observacion?: observacion_inscripcionUncheckedUpdateOneWithoutInscripcionNestedInput
   }
 
   export type cuentaCreateWithoutCartas_motivacionInput = {
@@ -23130,6 +21918,7 @@ export namespace Prisma {
     inscripciones?: inscripcionCreateNestedManyWithoutCuentaInput
     comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutAdminInput
     eventos?: eventoCreateNestedManyWithoutCuentaInput
+    observaciones_creadas?: observacion_inscripcionCreateNestedManyWithoutAdmin_creadorInput
   }
 
   export type cuentaUncheckedCreateWithoutCartas_motivacionInput = {
@@ -23142,6 +21931,7 @@ export namespace Prisma {
     inscripciones?: inscripcionUncheckedCreateNestedManyWithoutCuentaInput
     comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutAdminInput
     eventos?: eventoUncheckedCreateNestedManyWithoutCuentaInput
+    observaciones_creadas?: observacion_inscripcionUncheckedCreateNestedManyWithoutAdmin_creadorInput
   }
 
   export type cuentaCreateOrConnectWithoutCartas_motivacionInput = {
@@ -23153,13 +21943,13 @@ export namespace Prisma {
     id_ins?: string
     est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
-    fec_pag_ins?: Date | string | null
     usu_apr_cer?: boolean
     por_asi_fin_usu?: number | null
     cuenta: cuentaCreateNestedOneWithoutInscripcionesInput
     evento: eventoCreateNestedOneWithoutInscritosInput
     inscripcion_curso?: inscripcion_cursoCreateNestedOneWithoutInscripcionInput
     comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutInscripcionInput
+    observacion?: observacion_inscripcionCreateNestedOneWithoutInscripcionInput
   }
 
   export type inscripcionUncheckedCreateWithoutCartas_motivacionInput = {
@@ -23168,34 +21958,16 @@ export namespace Prisma {
     id_eve_ins: string
     est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
-    fec_pag_ins?: Date | string | null
     usu_apr_cer?: boolean
     por_asi_fin_usu?: number | null
     inscripcion_curso?: inscripcion_cursoUncheckedCreateNestedOneWithoutInscripcionInput
     comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutInscripcionInput
+    observacion?: observacion_inscripcionUncheckedCreateNestedOneWithoutInscripcionInput
   }
 
   export type inscripcionCreateOrConnectWithoutCartas_motivacionInput = {
     where: inscripcionWhereUniqueInput
     create: XOR<inscripcionCreateWithoutCartas_motivacionInput, inscripcionUncheckedCreateWithoutCartas_motivacionInput>
-  }
-
-  export type observacion_motivacionCreateWithoutCarta_motivacionInput = {
-    obs_car_mot: string
-  }
-
-  export type observacion_motivacionUncheckedCreateWithoutCarta_motivacionInput = {
-    obs_car_mot: string
-  }
-
-  export type observacion_motivacionCreateOrConnectWithoutCarta_motivacionInput = {
-    where: observacion_motivacionWhereUniqueInput
-    create: XOR<observacion_motivacionCreateWithoutCarta_motivacionInput, observacion_motivacionUncheckedCreateWithoutCarta_motivacionInput>
-  }
-
-  export type observacion_motivacionCreateManyCarta_motivacionInputEnvelope = {
-    data: observacion_motivacionCreateManyCarta_motivacionInput | observacion_motivacionCreateManyCarta_motivacionInput[]
-    skipDuplicates?: boolean
   }
 
   export type cuentaUpsertWithoutCartas_motivacionInput = {
@@ -23219,6 +21991,7 @@ export namespace Prisma {
     inscripciones?: inscripcionUpdateManyWithoutCuentaNestedInput
     comprobantes_pago?: comprobante_pagoUpdateManyWithoutAdminNestedInput
     eventos?: eventoUpdateManyWithoutCuentaNestedInput
+    observaciones_creadas?: observacion_inscripcionUpdateManyWithoutAdmin_creadorNestedInput
   }
 
   export type cuentaUncheckedUpdateWithoutCartas_motivacionInput = {
@@ -23231,6 +22004,7 @@ export namespace Prisma {
     inscripciones?: inscripcionUncheckedUpdateManyWithoutCuentaNestedInput
     comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutAdminNestedInput
     eventos?: eventoUncheckedUpdateManyWithoutCuentaNestedInput
+    observaciones_creadas?: observacion_inscripcionUncheckedUpdateManyWithoutAdmin_creadorNestedInput
   }
 
   export type inscripcionUpsertWithoutCartas_motivacionInput = {
@@ -23248,13 +22022,13 @@ export namespace Prisma {
     id_ins?: StringFieldUpdateOperationsInput | string
     est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
-    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
     cuenta?: cuentaUpdateOneRequiredWithoutInscripcionesNestedInput
     evento?: eventoUpdateOneRequiredWithoutInscritosNestedInput
     inscripcion_curso?: inscripcion_cursoUpdateOneWithoutInscripcionNestedInput
     comprobantes_pago?: comprobante_pagoUpdateManyWithoutInscripcionNestedInput
+    observacion?: observacion_inscripcionUpdateOneWithoutInscripcionNestedInput
   }
 
   export type inscripcionUncheckedUpdateWithoutCartas_motivacionInput = {
@@ -23263,147 +22037,147 @@ export namespace Prisma {
     id_eve_ins?: StringFieldUpdateOperationsInput | string
     est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
-    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
     inscripcion_curso?: inscripcion_cursoUncheckedUpdateOneWithoutInscripcionNestedInput
     comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutInscripcionNestedInput
+    observacion?: observacion_inscripcionUncheckedUpdateOneWithoutInscripcionNestedInput
   }
 
-  export type observacion_motivacionUpsertWithWhereUniqueWithoutCarta_motivacionInput = {
-    where: observacion_motivacionWhereUniqueInput
-    update: XOR<observacion_motivacionUpdateWithoutCarta_motivacionInput, observacion_motivacionUncheckedUpdateWithoutCarta_motivacionInput>
-    create: XOR<observacion_motivacionCreateWithoutCarta_motivacionInput, observacion_motivacionUncheckedCreateWithoutCarta_motivacionInput>
+  export type inscripcionCreateWithoutObservacionInput = {
+    id_ins?: string
+    est_ins?: $Enums.estado_inscripcion
+    fec_ins?: Date | string
+    usu_apr_cer?: boolean
+    por_asi_fin_usu?: number | null
+    cuenta: cuentaCreateNestedOneWithoutInscripcionesInput
+    evento: eventoCreateNestedOneWithoutInscritosInput
+    inscripcion_curso?: inscripcion_cursoCreateNestedOneWithoutInscripcionInput
+    comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutInscripcionInput
+    cartas_motivacion?: carta_motivacionCreateNestedManyWithoutInscripcionInput
   }
 
-  export type observacion_motivacionUpdateWithWhereUniqueWithoutCarta_motivacionInput = {
-    where: observacion_motivacionWhereUniqueInput
-    data: XOR<observacion_motivacionUpdateWithoutCarta_motivacionInput, observacion_motivacionUncheckedUpdateWithoutCarta_motivacionInput>
+  export type inscripcionUncheckedCreateWithoutObservacionInput = {
+    id_ins?: string
+    id_cor_ins: string
+    id_eve_ins: string
+    est_ins?: $Enums.estado_inscripcion
+    fec_ins?: Date | string
+    usu_apr_cer?: boolean
+    por_asi_fin_usu?: number | null
+    inscripcion_curso?: inscripcion_cursoUncheckedCreateNestedOneWithoutInscripcionInput
+    comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutInscripcionInput
+    cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutInscripcionInput
   }
 
-  export type observacion_motivacionUpdateManyWithWhereWithoutCarta_motivacionInput = {
-    where: observacion_motivacionScalarWhereInput
-    data: XOR<observacion_motivacionUpdateManyMutationInput, observacion_motivacionUncheckedUpdateManyWithoutCarta_motivacionInput>
+  export type inscripcionCreateOrConnectWithoutObservacionInput = {
+    where: inscripcionWhereUniqueInput
+    create: XOR<inscripcionCreateWithoutObservacionInput, inscripcionUncheckedCreateWithoutObservacionInput>
   }
 
-  export type observacion_motivacionScalarWhereInput = {
-    AND?: observacion_motivacionScalarWhereInput | observacion_motivacionScalarWhereInput[]
-    OR?: observacion_motivacionScalarWhereInput[]
-    NOT?: observacion_motivacionScalarWhereInput | observacion_motivacionScalarWhereInput[]
-    id_car_mot?: StringFilter<"observacion_motivacion"> | string
-    obs_car_mot?: StringFilter<"observacion_motivacion"> | string
+  export type cuentaCreateWithoutObservaciones_creadasInput = {
+    id_cue?: string
+    cor_usu: string
+    con_usu: string
+    fec_cre_cue?: Date | string
+    rol_usu: $Enums.rol_usuario
+    usuario: usuarioCreateNestedOneWithoutCuentasInput
+    inscripciones?: inscripcionCreateNestedManyWithoutCuentaInput
+    cartas_motivacion?: carta_motivacionCreateNestedManyWithoutAdminInput
+    comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutAdminInput
+    eventos?: eventoCreateNestedManyWithoutCuentaInput
   }
 
-  export type carta_motivacionCreateWithoutObservacionesInput = {
-    id_car_mot?: string
-    con_car_mot: string
-    est_car_mot?: $Enums.estado_validacion
-    fec_sub_car_mot?: Date | string
-    fec_val_car_mot?: Date | string | null
-    admin?: cuentaCreateNestedOneWithoutCartas_motivacionInput
-    inscripcion: inscripcionCreateNestedOneWithoutCartas_motivacionInput
+  export type cuentaUncheckedCreateWithoutObservaciones_creadasInput = {
+    id_cue?: string
+    id_usu_per: string
+    cor_usu: string
+    con_usu: string
+    fec_cre_cue?: Date | string
+    rol_usu: $Enums.rol_usuario
+    inscripciones?: inscripcionUncheckedCreateNestedManyWithoutCuentaInput
+    cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutAdminInput
+    comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutAdminInput
+    eventos?: eventoUncheckedCreateNestedManyWithoutCuentaInput
   }
 
-  export type carta_motivacionUncheckedCreateWithoutObservacionesInput = {
-    id_car_mot?: string
-    id_ins_per: string
-    con_car_mot: string
-    est_car_mot?: $Enums.estado_validacion
-    fec_sub_car_mot?: Date | string
-    fec_val_car_mot?: Date | string | null
-    id_adm_val_car_mot?: string | null
+  export type cuentaCreateOrConnectWithoutObservaciones_creadasInput = {
+    where: cuentaWhereUniqueInput
+    create: XOR<cuentaCreateWithoutObservaciones_creadasInput, cuentaUncheckedCreateWithoutObservaciones_creadasInput>
   }
 
-  export type carta_motivacionCreateOrConnectWithoutObservacionesInput = {
-    where: carta_motivacionWhereUniqueInput
-    create: XOR<carta_motivacionCreateWithoutObservacionesInput, carta_motivacionUncheckedCreateWithoutObservacionesInput>
+  export type inscripcionUpsertWithoutObservacionInput = {
+    update: XOR<inscripcionUpdateWithoutObservacionInput, inscripcionUncheckedUpdateWithoutObservacionInput>
+    create: XOR<inscripcionCreateWithoutObservacionInput, inscripcionUncheckedCreateWithoutObservacionInput>
+    where?: inscripcionWhereInput
   }
 
-  export type carta_motivacionUpsertWithoutObservacionesInput = {
-    update: XOR<carta_motivacionUpdateWithoutObservacionesInput, carta_motivacionUncheckedUpdateWithoutObservacionesInput>
-    create: XOR<carta_motivacionCreateWithoutObservacionesInput, carta_motivacionUncheckedCreateWithoutObservacionesInput>
-    where?: carta_motivacionWhereInput
+  export type inscripcionUpdateToOneWithWhereWithoutObservacionInput = {
+    where?: inscripcionWhereInput
+    data: XOR<inscripcionUpdateWithoutObservacionInput, inscripcionUncheckedUpdateWithoutObservacionInput>
   }
 
-  export type carta_motivacionUpdateToOneWithWhereWithoutObservacionesInput = {
-    where?: carta_motivacionWhereInput
-    data: XOR<carta_motivacionUpdateWithoutObservacionesInput, carta_motivacionUncheckedUpdateWithoutObservacionesInput>
+  export type inscripcionUpdateWithoutObservacionInput = {
+    id_ins?: StringFieldUpdateOperationsInput | string
+    est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
+    fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
+    usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    cuenta?: cuentaUpdateOneRequiredWithoutInscripcionesNestedInput
+    evento?: eventoUpdateOneRequiredWithoutInscritosNestedInput
+    inscripcion_curso?: inscripcion_cursoUpdateOneWithoutInscripcionNestedInput
+    comprobantes_pago?: comprobante_pagoUpdateManyWithoutInscripcionNestedInput
+    cartas_motivacion?: carta_motivacionUpdateManyWithoutInscripcionNestedInput
   }
 
-  export type carta_motivacionUpdateWithoutObservacionesInput = {
-    id_car_mot?: StringFieldUpdateOperationsInput | string
-    con_car_mot?: StringFieldUpdateOperationsInput | string
-    est_car_mot?: Enumestado_validacionFieldUpdateOperationsInput | $Enums.estado_validacion
-    fec_sub_car_mot?: DateTimeFieldUpdateOperationsInput | Date | string
-    fec_val_car_mot?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    admin?: cuentaUpdateOneWithoutCartas_motivacionNestedInput
-    inscripcion?: inscripcionUpdateOneRequiredWithoutCartas_motivacionNestedInput
+  export type inscripcionUncheckedUpdateWithoutObservacionInput = {
+    id_ins?: StringFieldUpdateOperationsInput | string
+    id_cor_ins?: StringFieldUpdateOperationsInput | string
+    id_eve_ins?: StringFieldUpdateOperationsInput | string
+    est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
+    fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
+    usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    inscripcion_curso?: inscripcion_cursoUncheckedUpdateOneWithoutInscripcionNestedInput
+    comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutInscripcionNestedInput
+    cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutInscripcionNestedInput
   }
 
-  export type carta_motivacionUncheckedUpdateWithoutObservacionesInput = {
-    id_car_mot?: StringFieldUpdateOperationsInput | string
-    id_ins_per?: StringFieldUpdateOperationsInput | string
-    con_car_mot?: StringFieldUpdateOperationsInput | string
-    est_car_mot?: Enumestado_validacionFieldUpdateOperationsInput | $Enums.estado_validacion
-    fec_sub_car_mot?: DateTimeFieldUpdateOperationsInput | Date | string
-    fec_val_car_mot?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    id_adm_val_car_mot?: NullableStringFieldUpdateOperationsInput | string | null
+  export type cuentaUpsertWithoutObservaciones_creadasInput = {
+    update: XOR<cuentaUpdateWithoutObservaciones_creadasInput, cuentaUncheckedUpdateWithoutObservaciones_creadasInput>
+    create: XOR<cuentaCreateWithoutObservaciones_creadasInput, cuentaUncheckedCreateWithoutObservaciones_creadasInput>
+    where?: cuentaWhereInput
   }
 
-  export type comprobante_pagoCreateWithoutObservacionesInput = {
-    id_com_pag?: string
-    url_com_pag: string
-    est_com_pag?: $Enums.estado_validacion
-    fec_sub_com_pag?: Date | string
-    fec_val_com_pag?: Date | string | null
-    admin?: cuentaCreateNestedOneWithoutComprobantes_pagoInput
-    inscripcion: inscripcionCreateNestedOneWithoutComprobantes_pagoInput
+  export type cuentaUpdateToOneWithWhereWithoutObservaciones_creadasInput = {
+    where?: cuentaWhereInput
+    data: XOR<cuentaUpdateWithoutObservaciones_creadasInput, cuentaUncheckedUpdateWithoutObservaciones_creadasInput>
   }
 
-  export type comprobante_pagoUncheckedCreateWithoutObservacionesInput = {
-    id_com_pag?: string
-    id_ins_per: string
-    url_com_pag: string
-    est_com_pag?: $Enums.estado_validacion
-    fec_sub_com_pag?: Date | string
-    fec_val_com_pag?: Date | string | null
-    id_adm_val_com_pag?: string | null
+  export type cuentaUpdateWithoutObservaciones_creadasInput = {
+    id_cue?: StringFieldUpdateOperationsInput | string
+    cor_usu?: StringFieldUpdateOperationsInput | string
+    con_usu?: StringFieldUpdateOperationsInput | string
+    fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
+    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    usuario?: usuarioUpdateOneRequiredWithoutCuentasNestedInput
+    inscripciones?: inscripcionUpdateManyWithoutCuentaNestedInput
+    cartas_motivacion?: carta_motivacionUpdateManyWithoutAdminNestedInput
+    comprobantes_pago?: comprobante_pagoUpdateManyWithoutAdminNestedInput
+    eventos?: eventoUpdateManyWithoutCuentaNestedInput
   }
 
-  export type comprobante_pagoCreateOrConnectWithoutObservacionesInput = {
-    where: comprobante_pagoWhereUniqueInput
-    create: XOR<comprobante_pagoCreateWithoutObservacionesInput, comprobante_pagoUncheckedCreateWithoutObservacionesInput>
-  }
-
-  export type comprobante_pagoUpsertWithoutObservacionesInput = {
-    update: XOR<comprobante_pagoUpdateWithoutObservacionesInput, comprobante_pagoUncheckedUpdateWithoutObservacionesInput>
-    create: XOR<comprobante_pagoCreateWithoutObservacionesInput, comprobante_pagoUncheckedCreateWithoutObservacionesInput>
-    where?: comprobante_pagoWhereInput
-  }
-
-  export type comprobante_pagoUpdateToOneWithWhereWithoutObservacionesInput = {
-    where?: comprobante_pagoWhereInput
-    data: XOR<comprobante_pagoUpdateWithoutObservacionesInput, comprobante_pagoUncheckedUpdateWithoutObservacionesInput>
-  }
-
-  export type comprobante_pagoUpdateWithoutObservacionesInput = {
-    id_com_pag?: StringFieldUpdateOperationsInput | string
-    url_com_pag?: StringFieldUpdateOperationsInput | string
-    est_com_pag?: Enumestado_validacionFieldUpdateOperationsInput | $Enums.estado_validacion
-    fec_sub_com_pag?: DateTimeFieldUpdateOperationsInput | Date | string
-    fec_val_com_pag?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    admin?: cuentaUpdateOneWithoutComprobantes_pagoNestedInput
-    inscripcion?: inscripcionUpdateOneRequiredWithoutComprobantes_pagoNestedInput
-  }
-
-  export type comprobante_pagoUncheckedUpdateWithoutObservacionesInput = {
-    id_com_pag?: StringFieldUpdateOperationsInput | string
-    id_ins_per?: StringFieldUpdateOperationsInput | string
-    url_com_pag?: StringFieldUpdateOperationsInput | string
-    est_com_pag?: Enumestado_validacionFieldUpdateOperationsInput | $Enums.estado_validacion
-    fec_sub_com_pag?: DateTimeFieldUpdateOperationsInput | Date | string
-    fec_val_com_pag?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    id_adm_val_com_pag?: NullableStringFieldUpdateOperationsInput | string | null
+  export type cuentaUncheckedUpdateWithoutObservaciones_creadasInput = {
+    id_cue?: StringFieldUpdateOperationsInput | string
+    id_usu_per?: StringFieldUpdateOperationsInput | string
+    cor_usu?: StringFieldUpdateOperationsInput | string
+    con_usu?: StringFieldUpdateOperationsInput | string
+    fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
+    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    inscripciones?: inscripcionUncheckedUpdateManyWithoutCuentaNestedInput
+    cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutAdminNestedInput
+    comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutAdminNestedInput
+    eventos?: eventoUncheckedUpdateManyWithoutCuentaNestedInput
   }
 
   export type usuarioCreateWithoutCuentasInput = {
@@ -23439,13 +22213,13 @@ export namespace Prisma {
     id_ins?: string
     est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
-    fec_pag_ins?: Date | string | null
     usu_apr_cer?: boolean
     por_asi_fin_usu?: number | null
     evento: eventoCreateNestedOneWithoutInscritosInput
     inscripcion_curso?: inscripcion_cursoCreateNestedOneWithoutInscripcionInput
     comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutInscripcionInput
     cartas_motivacion?: carta_motivacionCreateNestedManyWithoutInscripcionInput
+    observacion?: observacion_inscripcionCreateNestedOneWithoutInscripcionInput
   }
 
   export type inscripcionUncheckedCreateWithoutCuentaInput = {
@@ -23453,12 +22227,12 @@ export namespace Prisma {
     id_eve_ins: string
     est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
-    fec_pag_ins?: Date | string | null
     usu_apr_cer?: boolean
     por_asi_fin_usu?: number | null
     inscripcion_curso?: inscripcion_cursoUncheckedCreateNestedOneWithoutInscripcionInput
     comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutInscripcionInput
     cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutInscripcionInput
+    observacion?: observacion_inscripcionUncheckedCreateNestedOneWithoutInscripcionInput
   }
 
   export type inscripcionCreateOrConnectWithoutCuentaInput = {
@@ -23478,7 +22252,6 @@ export namespace Prisma {
     fec_sub_car_mot?: Date | string
     fec_val_car_mot?: Date | string | null
     inscripcion: inscripcionCreateNestedOneWithoutCartas_motivacionInput
-    observaciones?: observacion_motivacionCreateNestedManyWithoutCarta_motivacionInput
   }
 
   export type carta_motivacionUncheckedCreateWithoutAdminInput = {
@@ -23488,7 +22261,6 @@ export namespace Prisma {
     est_car_mot?: $Enums.estado_validacion
     fec_sub_car_mot?: Date | string
     fec_val_car_mot?: Date | string | null
-    observaciones?: observacion_motivacionUncheckedCreateNestedManyWithoutCarta_motivacionInput
   }
 
   export type carta_motivacionCreateOrConnectWithoutAdminInput = {
@@ -23507,8 +22279,8 @@ export namespace Prisma {
     est_com_pag?: $Enums.estado_validacion
     fec_sub_com_pag?: Date | string
     fec_val_com_pag?: Date | string | null
+    fec_pag_ins?: Date | string | null
     inscripcion: inscripcionCreateNestedOneWithoutComprobantes_pagoInput
-    observaciones?: observacion_comprobanteCreateNestedManyWithoutComprobante_pagoInput
   }
 
   export type comprobante_pagoUncheckedCreateWithoutAdminInput = {
@@ -23518,7 +22290,7 @@ export namespace Prisma {
     est_com_pag?: $Enums.estado_validacion
     fec_sub_com_pag?: Date | string
     fec_val_com_pag?: Date | string | null
-    observaciones?: observacion_comprobanteUncheckedCreateNestedManyWithoutComprobante_pagoInput
+    fec_pag_ins?: Date | string | null
   }
 
   export type comprobante_pagoCreateOrConnectWithoutAdminInput = {
@@ -23574,6 +22346,30 @@ export namespace Prisma {
 
   export type eventoCreateManyCuentaInputEnvelope = {
     data: eventoCreateManyCuentaInput | eventoCreateManyCuentaInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type observacion_inscripcionCreateWithoutAdmin_creadorInput = {
+    id_obs_ins?: string
+    obs_ins: string
+    fec_cre_obs?: Date | string
+    inscripcion: inscripcionCreateNestedOneWithoutObservacionInput
+  }
+
+  export type observacion_inscripcionUncheckedCreateWithoutAdmin_creadorInput = {
+    id_obs_ins?: string
+    id_ins_per: string
+    obs_ins: string
+    fec_cre_obs?: Date | string
+  }
+
+  export type observacion_inscripcionCreateOrConnectWithoutAdmin_creadorInput = {
+    where: observacion_inscripcionWhereUniqueInput
+    create: XOR<observacion_inscripcionCreateWithoutAdmin_creadorInput, observacion_inscripcionUncheckedCreateWithoutAdmin_creadorInput>
+  }
+
+  export type observacion_inscripcionCreateManyAdmin_creadorInputEnvelope = {
+    data: observacion_inscripcionCreateManyAdmin_creadorInput | observacion_inscripcionCreateManyAdmin_creadorInput[]
     skipDuplicates?: boolean
   }
 
@@ -23637,7 +22433,6 @@ export namespace Prisma {
     id_eve_ins?: StringFilter<"inscripcion"> | string
     est_ins?: Enumestado_inscripcionFilter<"inscripcion"> | $Enums.estado_inscripcion
     fec_ins?: DateTimeFilter<"inscripcion"> | Date | string
-    fec_pag_ins?: DateTimeNullableFilter<"inscripcion"> | Date | string | null
     usu_apr_cer?: BoolFilter<"inscripcion"> | boolean
     por_asi_fin_usu?: FloatNullableFilter<"inscripcion"> | number | null
   }
@@ -23698,6 +22493,7 @@ export namespace Prisma {
     fec_sub_com_pag?: DateTimeFilter<"comprobante_pago"> | Date | string
     fec_val_com_pag?: DateTimeNullableFilter<"comprobante_pago"> | Date | string | null
     id_adm_val_com_pag?: StringNullableFilter<"comprobante_pago"> | string | null
+    fec_pag_ins?: DateTimeNullableFilter<"comprobante_pago"> | Date | string | null
   }
 
   export type eventoUpsertWithWhereUniqueWithoutCuentaInput = {
@@ -23733,6 +22529,33 @@ export namespace Prisma {
     por_min_asi_eve?: FloatFilter<"evento"> | number
     fec_fin_eve?: DateTimeFilter<"evento"> | Date | string
     id_cue_cre_eve?: StringFilter<"evento"> | string
+  }
+
+  export type observacion_inscripcionUpsertWithWhereUniqueWithoutAdmin_creadorInput = {
+    where: observacion_inscripcionWhereUniqueInput
+    update: XOR<observacion_inscripcionUpdateWithoutAdmin_creadorInput, observacion_inscripcionUncheckedUpdateWithoutAdmin_creadorInput>
+    create: XOR<observacion_inscripcionCreateWithoutAdmin_creadorInput, observacion_inscripcionUncheckedCreateWithoutAdmin_creadorInput>
+  }
+
+  export type observacion_inscripcionUpdateWithWhereUniqueWithoutAdmin_creadorInput = {
+    where: observacion_inscripcionWhereUniqueInput
+    data: XOR<observacion_inscripcionUpdateWithoutAdmin_creadorInput, observacion_inscripcionUncheckedUpdateWithoutAdmin_creadorInput>
+  }
+
+  export type observacion_inscripcionUpdateManyWithWhereWithoutAdmin_creadorInput = {
+    where: observacion_inscripcionScalarWhereInput
+    data: XOR<observacion_inscripcionUpdateManyMutationInput, observacion_inscripcionUncheckedUpdateManyWithoutAdmin_creadorInput>
+  }
+
+  export type observacion_inscripcionScalarWhereInput = {
+    AND?: observacion_inscripcionScalarWhereInput | observacion_inscripcionScalarWhereInput[]
+    OR?: observacion_inscripcionScalarWhereInput[]
+    NOT?: observacion_inscripcionScalarWhereInput | observacion_inscripcionScalarWhereInput[]
+    id_obs_ins?: StringFilter<"observacion_inscripcion"> | string
+    id_ins_per?: StringFilter<"observacion_inscripcion"> | string
+    obs_ins?: StringFilter<"observacion_inscripcion"> | string
+    fec_cre_obs?: DateTimeFilter<"observacion_inscripcion"> | Date | string
+    id_adm_cre_obs?: StringNullableFilter<"observacion_inscripcion"> | string | null
   }
 
   export type facultadCreateWithoutCarrerasInput = {
@@ -24058,13 +22881,13 @@ export namespace Prisma {
     id_ins?: string
     est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
-    fec_pag_ins?: Date | string | null
     usu_apr_cer?: boolean
     por_asi_fin_usu?: number | null
     cuenta: cuentaCreateNestedOneWithoutInscripcionesInput
     inscripcion_curso?: inscripcion_cursoCreateNestedOneWithoutInscripcionInput
     comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutInscripcionInput
     cartas_motivacion?: carta_motivacionCreateNestedManyWithoutInscripcionInput
+    observacion?: observacion_inscripcionCreateNestedOneWithoutInscripcionInput
   }
 
   export type inscripcionUncheckedCreateWithoutEventoInput = {
@@ -24072,12 +22895,12 @@ export namespace Prisma {
     id_cor_ins: string
     est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
-    fec_pag_ins?: Date | string | null
     usu_apr_cer?: boolean
     por_asi_fin_usu?: number | null
     inscripcion_curso?: inscripcion_cursoUncheckedCreateNestedOneWithoutInscripcionInput
     comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutInscripcionInput
     cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutInscripcionInput
+    observacion?: observacion_inscripcionUncheckedCreateNestedOneWithoutInscripcionInput
   }
 
   export type inscripcionCreateOrConnectWithoutEventoInput = {
@@ -24135,6 +22958,7 @@ export namespace Prisma {
     inscripciones?: inscripcionCreateNestedManyWithoutCuentaInput
     cartas_motivacion?: carta_motivacionCreateNestedManyWithoutAdminInput
     comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutAdminInput
+    observaciones_creadas?: observacion_inscripcionCreateNestedManyWithoutAdmin_creadorInput
   }
 
   export type cuentaUncheckedCreateWithoutEventosInput = {
@@ -24147,6 +22971,7 @@ export namespace Prisma {
     inscripciones?: inscripcionUncheckedCreateNestedManyWithoutCuentaInput
     cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutAdminInput
     comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutAdminInput
+    observaciones_creadas?: observacion_inscripcionUncheckedCreateNestedManyWithoutAdmin_creadorInput
   }
 
   export type cuentaCreateOrConnectWithoutEventosInput = {
@@ -24226,6 +23051,7 @@ export namespace Prisma {
     inscripciones?: inscripcionUpdateManyWithoutCuentaNestedInput
     cartas_motivacion?: carta_motivacionUpdateManyWithoutAdminNestedInput
     comprobantes_pago?: comprobante_pagoUpdateManyWithoutAdminNestedInput
+    observaciones_creadas?: observacion_inscripcionUpdateManyWithoutAdmin_creadorNestedInput
   }
 
   export type cuentaUncheckedUpdateWithoutEventosInput = {
@@ -24238,6 +23064,7 @@ export namespace Prisma {
     inscripciones?: inscripcionUncheckedUpdateManyWithoutCuentaNestedInput
     cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutAdminNestedInput
     comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutAdminNestedInput
+    observaciones_creadas?: observacion_inscripcionUncheckedUpdateManyWithoutAdmin_creadorNestedInput
   }
 
   export type eventoCreateWithoutEventos_cursoInput = {
@@ -24498,6 +23325,7 @@ export namespace Prisma {
     cartas_motivacion?: carta_motivacionCreateNestedManyWithoutAdminInput
     comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutAdminInput
     eventos?: eventoCreateNestedManyWithoutCuentaInput
+    observaciones_creadas?: observacion_inscripcionCreateNestedManyWithoutAdmin_creadorInput
   }
 
   export type cuentaUncheckedCreateWithoutInscripcionesInput = {
@@ -24510,6 +23338,7 @@ export namespace Prisma {
     cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutAdminInput
     comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutAdminInput
     eventos?: eventoUncheckedCreateNestedManyWithoutCuentaInput
+    observaciones_creadas?: observacion_inscripcionUncheckedCreateNestedManyWithoutAdmin_creadorInput
   }
 
   export type cuentaCreateOrConnectWithoutInscripcionesInput = {
@@ -24577,8 +23406,8 @@ export namespace Prisma {
     est_com_pag?: $Enums.estado_validacion
     fec_sub_com_pag?: Date | string
     fec_val_com_pag?: Date | string | null
+    fec_pag_ins?: Date | string | null
     admin?: cuentaCreateNestedOneWithoutComprobantes_pagoInput
-    observaciones?: observacion_comprobanteCreateNestedManyWithoutComprobante_pagoInput
   }
 
   export type comprobante_pagoUncheckedCreateWithoutInscripcionInput = {
@@ -24588,7 +23417,7 @@ export namespace Prisma {
     fec_sub_com_pag?: Date | string
     fec_val_com_pag?: Date | string | null
     id_adm_val_com_pag?: string | null
-    observaciones?: observacion_comprobanteUncheckedCreateNestedManyWithoutComprobante_pagoInput
+    fec_pag_ins?: Date | string | null
   }
 
   export type comprobante_pagoCreateOrConnectWithoutInscripcionInput = {
@@ -24608,7 +23437,6 @@ export namespace Prisma {
     fec_sub_car_mot?: Date | string
     fec_val_car_mot?: Date | string | null
     admin?: cuentaCreateNestedOneWithoutCartas_motivacionInput
-    observaciones?: observacion_motivacionCreateNestedManyWithoutCarta_motivacionInput
   }
 
   export type carta_motivacionUncheckedCreateWithoutInscripcionInput = {
@@ -24618,7 +23446,6 @@ export namespace Prisma {
     fec_sub_car_mot?: Date | string
     fec_val_car_mot?: Date | string | null
     id_adm_val_car_mot?: string | null
-    observaciones?: observacion_motivacionUncheckedCreateNestedManyWithoutCarta_motivacionInput
   }
 
   export type carta_motivacionCreateOrConnectWithoutInscripcionInput = {
@@ -24629,6 +23456,25 @@ export namespace Prisma {
   export type carta_motivacionCreateManyInscripcionInputEnvelope = {
     data: carta_motivacionCreateManyInscripcionInput | carta_motivacionCreateManyInscripcionInput[]
     skipDuplicates?: boolean
+  }
+
+  export type observacion_inscripcionCreateWithoutInscripcionInput = {
+    id_obs_ins?: string
+    obs_ins: string
+    fec_cre_obs?: Date | string
+    admin_creador?: cuentaCreateNestedOneWithoutObservaciones_creadasInput
+  }
+
+  export type observacion_inscripcionUncheckedCreateWithoutInscripcionInput = {
+    id_obs_ins?: string
+    obs_ins: string
+    fec_cre_obs?: Date | string
+    id_adm_cre_obs?: string | null
+  }
+
+  export type observacion_inscripcionCreateOrConnectWithoutInscripcionInput = {
+    where: observacion_inscripcionWhereUniqueInput
+    create: XOR<observacion_inscripcionCreateWithoutInscripcionInput, observacion_inscripcionUncheckedCreateWithoutInscripcionInput>
   }
 
   export type cuentaUpsertWithoutInscripcionesInput = {
@@ -24652,6 +23498,7 @@ export namespace Prisma {
     cartas_motivacion?: carta_motivacionUpdateManyWithoutAdminNestedInput
     comprobantes_pago?: comprobante_pagoUpdateManyWithoutAdminNestedInput
     eventos?: eventoUpdateManyWithoutCuentaNestedInput
+    observaciones_creadas?: observacion_inscripcionUpdateManyWithoutAdmin_creadorNestedInput
   }
 
   export type cuentaUncheckedUpdateWithoutInscripcionesInput = {
@@ -24664,6 +23511,7 @@ export namespace Prisma {
     cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutAdminNestedInput
     comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutAdminNestedInput
     eventos?: eventoUncheckedUpdateManyWithoutCuentaNestedInput
+    observaciones_creadas?: observacion_inscripcionUncheckedUpdateManyWithoutAdmin_creadorNestedInput
   }
 
   export type eventoUpsertWithoutInscritosInput = {
@@ -24764,17 +23612,42 @@ export namespace Prisma {
     data: XOR<carta_motivacionUpdateManyMutationInput, carta_motivacionUncheckedUpdateManyWithoutInscripcionInput>
   }
 
+  export type observacion_inscripcionUpsertWithoutInscripcionInput = {
+    update: XOR<observacion_inscripcionUpdateWithoutInscripcionInput, observacion_inscripcionUncheckedUpdateWithoutInscripcionInput>
+    create: XOR<observacion_inscripcionCreateWithoutInscripcionInput, observacion_inscripcionUncheckedCreateWithoutInscripcionInput>
+    where?: observacion_inscripcionWhereInput
+  }
+
+  export type observacion_inscripcionUpdateToOneWithWhereWithoutInscripcionInput = {
+    where?: observacion_inscripcionWhereInput
+    data: XOR<observacion_inscripcionUpdateWithoutInscripcionInput, observacion_inscripcionUncheckedUpdateWithoutInscripcionInput>
+  }
+
+  export type observacion_inscripcionUpdateWithoutInscripcionInput = {
+    id_obs_ins?: StringFieldUpdateOperationsInput | string
+    obs_ins?: StringFieldUpdateOperationsInput | string
+    fec_cre_obs?: DateTimeFieldUpdateOperationsInput | Date | string
+    admin_creador?: cuentaUpdateOneWithoutObservaciones_creadasNestedInput
+  }
+
+  export type observacion_inscripcionUncheckedUpdateWithoutInscripcionInput = {
+    id_obs_ins?: StringFieldUpdateOperationsInput | string
+    obs_ins?: StringFieldUpdateOperationsInput | string
+    fec_cre_obs?: DateTimeFieldUpdateOperationsInput | Date | string
+    id_adm_cre_obs?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
   export type inscripcionCreateWithoutInscripcion_cursoInput = {
     id_ins?: string
     est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
-    fec_pag_ins?: Date | string | null
     usu_apr_cer?: boolean
     por_asi_fin_usu?: number | null
     cuenta: cuentaCreateNestedOneWithoutInscripcionesInput
     evento: eventoCreateNestedOneWithoutInscritosInput
     comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutInscripcionInput
     cartas_motivacion?: carta_motivacionCreateNestedManyWithoutInscripcionInput
+    observacion?: observacion_inscripcionCreateNestedOneWithoutInscripcionInput
   }
 
   export type inscripcionUncheckedCreateWithoutInscripcion_cursoInput = {
@@ -24783,11 +23656,11 @@ export namespace Prisma {
     id_eve_ins: string
     est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
-    fec_pag_ins?: Date | string | null
     usu_apr_cer?: boolean
     por_asi_fin_usu?: number | null
     comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutInscripcionInput
     cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutInscripcionInput
+    observacion?: observacion_inscripcionUncheckedCreateNestedOneWithoutInscripcionInput
   }
 
   export type inscripcionCreateOrConnectWithoutInscripcion_cursoInput = {
@@ -24810,13 +23683,13 @@ export namespace Prisma {
     id_ins?: StringFieldUpdateOperationsInput | string
     est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
-    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
     cuenta?: cuentaUpdateOneRequiredWithoutInscripcionesNestedInput
     evento?: eventoUpdateOneRequiredWithoutInscritosNestedInput
     comprobantes_pago?: comprobante_pagoUpdateManyWithoutInscripcionNestedInput
     cartas_motivacion?: carta_motivacionUpdateManyWithoutInscripcionNestedInput
+    observacion?: observacion_inscripcionUpdateOneWithoutInscripcionNestedInput
   }
 
   export type inscripcionUncheckedUpdateWithoutInscripcion_cursoInput = {
@@ -24825,11 +23698,11 @@ export namespace Prisma {
     id_eve_ins?: StringFieldUpdateOperationsInput | string
     est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
-    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
     comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutInscripcionNestedInput
     cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutInscripcionNestedInput
+    observacion?: observacion_inscripcionUncheckedUpdateOneWithoutInscripcionNestedInput
   }
 
   export type carreraCreateWithoutFacultadInput = {
@@ -24904,6 +23777,7 @@ export namespace Prisma {
     cartas_motivacion?: carta_motivacionUpdateManyWithoutAdminNestedInput
     comprobantes_pago?: comprobante_pagoUpdateManyWithoutAdminNestedInput
     eventos?: eventoUpdateManyWithoutCuentaNestedInput
+    observaciones_creadas?: observacion_inscripcionUpdateManyWithoutAdmin_creadorNestedInput
   }
 
   export type cuentaUncheckedUpdateWithoutUsuarioInput = {
@@ -24916,6 +23790,7 @@ export namespace Prisma {
     cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutAdminNestedInput
     comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutAdminNestedInput
     eventos?: eventoUncheckedUpdateManyWithoutCuentaNestedInput
+    observaciones_creadas?: observacion_inscripcionUncheckedUpdateManyWithoutAdmin_creadorNestedInput
   }
 
   export type cuentaUncheckedUpdateManyWithoutUsuarioInput = {
@@ -24926,44 +23801,11 @@ export namespace Prisma {
     rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
   }
 
-  export type observacion_comprobanteCreateManyComprobante_pagoInput = {
-    obs_com_pag: string
-  }
-
-  export type observacion_comprobanteUpdateWithoutComprobante_pagoInput = {
-    obs_com_pag?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type observacion_comprobanteUncheckedUpdateWithoutComprobante_pagoInput = {
-    obs_com_pag?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type observacion_comprobanteUncheckedUpdateManyWithoutComprobante_pagoInput = {
-    obs_com_pag?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type observacion_motivacionCreateManyCarta_motivacionInput = {
-    obs_car_mot: string
-  }
-
-  export type observacion_motivacionUpdateWithoutCarta_motivacionInput = {
-    obs_car_mot?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type observacion_motivacionUncheckedUpdateWithoutCarta_motivacionInput = {
-    obs_car_mot?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type observacion_motivacionUncheckedUpdateManyWithoutCarta_motivacionInput = {
-    obs_car_mot?: StringFieldUpdateOperationsInput | string
-  }
-
   export type inscripcionCreateManyCuentaInput = {
     id_ins?: string
     id_eve_ins: string
     est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
-    fec_pag_ins?: Date | string | null
     usu_apr_cer?: boolean
     por_asi_fin_usu?: number | null
   }
@@ -24984,6 +23826,7 @@ export namespace Prisma {
     est_com_pag?: $Enums.estado_validacion
     fec_sub_com_pag?: Date | string
     fec_val_com_pag?: Date | string | null
+    fec_pag_ins?: Date | string | null
   }
 
   export type eventoCreateManyCuentaInput = {
@@ -25001,17 +23844,24 @@ export namespace Prisma {
     fec_fin_eve: Date | string
   }
 
+  export type observacion_inscripcionCreateManyAdmin_creadorInput = {
+    id_obs_ins?: string
+    id_ins_per: string
+    obs_ins: string
+    fec_cre_obs?: Date | string
+  }
+
   export type inscripcionUpdateWithoutCuentaInput = {
     id_ins?: StringFieldUpdateOperationsInput | string
     est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
-    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
     evento?: eventoUpdateOneRequiredWithoutInscritosNestedInput
     inscripcion_curso?: inscripcion_cursoUpdateOneWithoutInscripcionNestedInput
     comprobantes_pago?: comprobante_pagoUpdateManyWithoutInscripcionNestedInput
     cartas_motivacion?: carta_motivacionUpdateManyWithoutInscripcionNestedInput
+    observacion?: observacion_inscripcionUpdateOneWithoutInscripcionNestedInput
   }
 
   export type inscripcionUncheckedUpdateWithoutCuentaInput = {
@@ -25019,12 +23869,12 @@ export namespace Prisma {
     id_eve_ins?: StringFieldUpdateOperationsInput | string
     est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
-    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
     inscripcion_curso?: inscripcion_cursoUncheckedUpdateOneWithoutInscripcionNestedInput
     comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutInscripcionNestedInput
     cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutInscripcionNestedInput
+    observacion?: observacion_inscripcionUncheckedUpdateOneWithoutInscripcionNestedInput
   }
 
   export type inscripcionUncheckedUpdateManyWithoutCuentaInput = {
@@ -25032,7 +23882,6 @@ export namespace Prisma {
     id_eve_ins?: StringFieldUpdateOperationsInput | string
     est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
-    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
   }
@@ -25044,7 +23893,6 @@ export namespace Prisma {
     fec_sub_car_mot?: DateTimeFieldUpdateOperationsInput | Date | string
     fec_val_car_mot?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     inscripcion?: inscripcionUpdateOneRequiredWithoutCartas_motivacionNestedInput
-    observaciones?: observacion_motivacionUpdateManyWithoutCarta_motivacionNestedInput
   }
 
   export type carta_motivacionUncheckedUpdateWithoutAdminInput = {
@@ -25054,7 +23902,6 @@ export namespace Prisma {
     est_car_mot?: Enumestado_validacionFieldUpdateOperationsInput | $Enums.estado_validacion
     fec_sub_car_mot?: DateTimeFieldUpdateOperationsInput | Date | string
     fec_val_car_mot?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    observaciones?: observacion_motivacionUncheckedUpdateManyWithoutCarta_motivacionNestedInput
   }
 
   export type carta_motivacionUncheckedUpdateManyWithoutAdminInput = {
@@ -25072,8 +23919,8 @@ export namespace Prisma {
     est_com_pag?: Enumestado_validacionFieldUpdateOperationsInput | $Enums.estado_validacion
     fec_sub_com_pag?: DateTimeFieldUpdateOperationsInput | Date | string
     fec_val_com_pag?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     inscripcion?: inscripcionUpdateOneRequiredWithoutComprobantes_pagoNestedInput
-    observaciones?: observacion_comprobanteUpdateManyWithoutComprobante_pagoNestedInput
   }
 
   export type comprobante_pagoUncheckedUpdateWithoutAdminInput = {
@@ -25083,7 +23930,7 @@ export namespace Prisma {
     est_com_pag?: Enumestado_validacionFieldUpdateOperationsInput | $Enums.estado_validacion
     fec_sub_com_pag?: DateTimeFieldUpdateOperationsInput | Date | string
     fec_val_com_pag?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    observaciones?: observacion_comprobanteUncheckedUpdateManyWithoutComprobante_pagoNestedInput
+    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type comprobante_pagoUncheckedUpdateManyWithoutAdminInput = {
@@ -25093,6 +23940,7 @@ export namespace Prisma {
     est_com_pag?: Enumestado_validacionFieldUpdateOperationsInput | $Enums.estado_validacion
     fec_sub_com_pag?: DateTimeFieldUpdateOperationsInput | Date | string
     fec_val_com_pag?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type eventoUpdateWithoutCuentaInput = {
@@ -25144,6 +23992,27 @@ export namespace Prisma {
     img_por_eve?: StringFieldUpdateOperationsInput | string
     por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
     fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type observacion_inscripcionUpdateWithoutAdmin_creadorInput = {
+    id_obs_ins?: StringFieldUpdateOperationsInput | string
+    obs_ins?: StringFieldUpdateOperationsInput | string
+    fec_cre_obs?: DateTimeFieldUpdateOperationsInput | Date | string
+    inscripcion?: inscripcionUpdateOneRequiredWithoutObservacionNestedInput
+  }
+
+  export type observacion_inscripcionUncheckedUpdateWithoutAdmin_creadorInput = {
+    id_obs_ins?: StringFieldUpdateOperationsInput | string
+    id_ins_per?: StringFieldUpdateOperationsInput | string
+    obs_ins?: StringFieldUpdateOperationsInput | string
+    fec_cre_obs?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type observacion_inscripcionUncheckedUpdateManyWithoutAdmin_creadorInput = {
+    id_obs_ins?: StringFieldUpdateOperationsInput | string
+    id_ins_per?: StringFieldUpdateOperationsInput | string
+    obs_ins?: StringFieldUpdateOperationsInput | string
+    fec_cre_obs?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type usuarioCreateManyCarreraInput = {
@@ -25273,7 +24142,6 @@ export namespace Prisma {
     id_cor_ins: string
     est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
-    fec_pag_ins?: Date | string | null
     usu_apr_cer?: boolean
     por_asi_fin_usu?: number | null
   }
@@ -25288,13 +24156,13 @@ export namespace Prisma {
     id_ins?: StringFieldUpdateOperationsInput | string
     est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
-    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
     cuenta?: cuentaUpdateOneRequiredWithoutInscripcionesNestedInput
     inscripcion_curso?: inscripcion_cursoUpdateOneWithoutInscripcionNestedInput
     comprobantes_pago?: comprobante_pagoUpdateManyWithoutInscripcionNestedInput
     cartas_motivacion?: carta_motivacionUpdateManyWithoutInscripcionNestedInput
+    observacion?: observacion_inscripcionUpdateOneWithoutInscripcionNestedInput
   }
 
   export type inscripcionUncheckedUpdateWithoutEventoInput = {
@@ -25302,12 +24170,12 @@ export namespace Prisma {
     id_cor_ins?: StringFieldUpdateOperationsInput | string
     est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
-    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
     inscripcion_curso?: inscripcion_cursoUncheckedUpdateOneWithoutInscripcionNestedInput
     comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutInscripcionNestedInput
     cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutInscripcionNestedInput
+    observacion?: observacion_inscripcionUncheckedUpdateOneWithoutInscripcionNestedInput
   }
 
   export type inscripcionUncheckedUpdateManyWithoutEventoInput = {
@@ -25315,7 +24183,6 @@ export namespace Prisma {
     id_cor_ins?: StringFieldUpdateOperationsInput | string
     est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
-    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
   }
@@ -25345,6 +24212,7 @@ export namespace Prisma {
     fec_sub_com_pag?: Date | string
     fec_val_com_pag?: Date | string | null
     id_adm_val_com_pag?: string | null
+    fec_pag_ins?: Date | string | null
   }
 
   export type carta_motivacionCreateManyInscripcionInput = {
@@ -25362,8 +24230,8 @@ export namespace Prisma {
     est_com_pag?: Enumestado_validacionFieldUpdateOperationsInput | $Enums.estado_validacion
     fec_sub_com_pag?: DateTimeFieldUpdateOperationsInput | Date | string
     fec_val_com_pag?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     admin?: cuentaUpdateOneWithoutComprobantes_pagoNestedInput
-    observaciones?: observacion_comprobanteUpdateManyWithoutComprobante_pagoNestedInput
   }
 
   export type comprobante_pagoUncheckedUpdateWithoutInscripcionInput = {
@@ -25373,7 +24241,7 @@ export namespace Prisma {
     fec_sub_com_pag?: DateTimeFieldUpdateOperationsInput | Date | string
     fec_val_com_pag?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     id_adm_val_com_pag?: NullableStringFieldUpdateOperationsInput | string | null
-    observaciones?: observacion_comprobanteUncheckedUpdateManyWithoutComprobante_pagoNestedInput
+    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type comprobante_pagoUncheckedUpdateManyWithoutInscripcionInput = {
@@ -25383,6 +24251,7 @@ export namespace Prisma {
     fec_sub_com_pag?: DateTimeFieldUpdateOperationsInput | Date | string
     fec_val_com_pag?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     id_adm_val_com_pag?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type carta_motivacionUpdateWithoutInscripcionInput = {
@@ -25392,7 +24261,6 @@ export namespace Prisma {
     fec_sub_car_mot?: DateTimeFieldUpdateOperationsInput | Date | string
     fec_val_car_mot?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     admin?: cuentaUpdateOneWithoutCartas_motivacionNestedInput
-    observaciones?: observacion_motivacionUpdateManyWithoutCarta_motivacionNestedInput
   }
 
   export type carta_motivacionUncheckedUpdateWithoutInscripcionInput = {
@@ -25402,7 +24270,6 @@ export namespace Prisma {
     fec_sub_car_mot?: DateTimeFieldUpdateOperationsInput | Date | string
     fec_val_car_mot?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     id_adm_val_car_mot?: NullableStringFieldUpdateOperationsInput | string | null
-    observaciones?: observacion_motivacionUncheckedUpdateManyWithoutCarta_motivacionNestedInput
   }
 
   export type carta_motivacionUncheckedUpdateManyWithoutInscripcionInput = {

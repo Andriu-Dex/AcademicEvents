@@ -35,10 +35,11 @@ model comprobante_pago {
   fec_sub_com_pag    DateTime          @default(now()) // Fecha de subida del documento
   fec_val_com_pag    DateTime? // Fecha de validación del documento
   id_adm_val_com_pag String? // FK opcional a administrador que valida el documento
+  fec_pag_ins        DateTime? // Fecha de pago de la inscripción
 
-  admin         cuenta?                   @relation(fields: [id_adm_val_com_pag], references: [id_cue]) // Relación 1:1 (documento puede ser validado por un administrador)
-  inscripcion   inscripcion               @relation(fields: [id_ins_per], references: [id_ins]) // Relación 1:N (documento pertenece a una inscripción)
-  observaciones observacion_comprobante[] // Relación 1:N (documento puede tener muchas observaciones)
+  admin       cuenta?     @relation(fields: [id_adm_val_com_pag], references: [id_cue]) // Relación 1:1 (documento puede ser validado por un administrador)
+  inscripcion inscripcion @relation(fields: [id_ins_per], references: [id_ins]) // Relación 1:N (documento pertenece a una inscripción)
+  // observaciones  observacion_comprobante[]   // Relación 1:N (documento puede tener muchas observaciones)
 }
 
 model carta_motivacion {
@@ -50,23 +51,34 @@ model carta_motivacion {
   fec_val_car_mot    DateTime? // Fecha de validación del documento
   id_adm_val_car_mot String? // FK opcional a administrador que valida el documento
 
-  admin         cuenta?                  @relation(fields: [id_adm_val_car_mot], references: [id_cue]) // Relación 1:1 (documento puede ser validado por un administrador)
-  inscripcion   inscripcion              @relation(fields: [id_ins_per], references: [id_ins]) // Relación 1:N (documento pertenece a una inscripción)
-  observaciones observacion_motivacion[] // Relación 1:N (documento puede tener muchas observaciones)
+  admin       cuenta?     @relation(fields: [id_adm_val_car_mot], references: [id_cue]) // Relación 1:1 (documento puede ser validado por un administrador)
+  inscripcion inscripcion @relation(fields: [id_ins_per], references: [id_ins]) // Relación 1:N (documento pertenece a una inscripción)
+  // observaciones  observacion_motivacion[]   // Relación 1:N (documento puede tener muchas observaciones)
 }
 
-model observacion_motivacion {
-  id_car_mot  String @id // Reutiliza el uuid del documento
-  obs_car_mot String // Observación del documento
+// model observacion_motivacion {
+//   id_car_mot       String    @id // Reutiliza el uuid del documento
+//   obs_car_mot      String    // Observación del documento
 
-  carta_motivacion carta_motivacion @relation(fields: [id_car_mot], references: [id_car_mot]) // Relación 1:1 (observación pertenece a un documento)
-}
+//   carta_motivacion carta_motivacion @relation(fields: [id_car_mot], references: [id_car_mot]) // Relación 1:1 (observación pertenece a un documento)
+// }
 
-model observacion_comprobante {
-  id_com_pag  String @id // Reutiliza el uuid del documento
-  obs_com_pag String // Observación del documento
+// model observacion_comprobante {
+//   id_com_pag       String    @id // Reutiliza el uuid del documento
+//   obs_com_pag      String    // Observación del documento
 
-  comprobante_pago comprobante_pago @relation(fields: [id_com_pag], references: [id_com_pag]) // Relación 1:1 (observación pertenece a un documento)
+//   comprobante_pago comprobante_pago @relation(fields: [id_com_pag], references: [id_com_pag]) // Relación 1:1 (observación pertenece a un documento)
+// }
+
+model observacion_inscripcion {
+  id_obs_ins     String   @id @default(uuid()) // UUID como ID de la observación
+  id_ins_per     String   @unique // FK única a inscripción
+  obs_ins        String // Observación general de la inscripción
+  fec_cre_obs    DateTime @default(now()) // Fecha de creación de la observación
+  id_adm_cre_obs String? // FK opcional a administrador que crea la observación
+
+  inscripcion   inscripcion @relation(fields: [id_ins_per], references: [id_ins]) // Relación 1:1 (observación pertenece a una inscripción)
+  admin_creador cuenta?     @relation(fields: [id_adm_cre_obs], references: [id_cue]) // Relación 1:N (administrador puede crear muchas observaciones)
 }
 
 model cuenta {
@@ -77,11 +89,12 @@ model cuenta {
   fec_cre_cue DateTime    @default(now()) // Fecha de creación de la cuenta
   rol_usu     rol_usuario // Rol del usuario (ADMIN_GLOBAL, ADMIN_GENERAL, ESTUDIANTE, GENERAL)
 
-  usuario           usuario            @relation(fields: [id_usu_per], references: [id_usu]) // Relación 1:1 (cuenta pertenece a un usuario)
-  inscripciones     inscripcion[] // Relación 1:N (usuario puede tener muchas inscripciones)
-  cartas_motivacion carta_motivacion[] // Relación 1:N (usuario puede validar muchas cartas de motivación)
-  comprobantes_pago comprobante_pago[] // Relación 1:N (usuario puede validar muchos comprobantes de pago)
-  eventos           evento[] // Relación 1:N (usuario puede crear muchos eventos)
+  usuario               usuario                   @relation(fields: [id_usu_per], references: [id_usu]) // Relación 1:1 (cuenta pertenece a un usuario)
+  inscripciones         inscripcion[] // Relación 1:N (usuario puede tener muchas inscripciones)
+  cartas_motivacion     carta_motivacion[] // Relación 1:N (usuario puede validar muchas cartas de motivación)
+  comprobantes_pago     comprobante_pago[] // Relación 1:N (usuario puede validar muchos comprobantes de pago)
+  eventos               evento[] // Relación 1:N (usuario puede crear muchos eventos)
+  observaciones_creadas observacion_inscripcion[] // Relación 1:N
 }
 
 model carrera {
@@ -157,15 +170,15 @@ model inscripcion {
   id_eve_ins      String // FK a evento
   est_ins         estado_inscripcion @default(PENDIENTE) // Estado de la inscripción (PENDIENTE, ACEPTADA, RECHAZADA, FINALIZADA)
   fec_ins         DateTime           @default(now()) // Fecha de inscripción
-  fec_pag_ins     DateTime? // Fecha de pago de la inscripción
   usu_apr_cer     Boolean            @default(false) // Usuario aprueba el evento y el envio del certificado
   por_asi_fin_usu Float? // Porcentaje de asistencia del usuario al evento
 
-  cuenta            cuenta             @relation(fields: [id_cor_ins], references: [id_cue]) // Relación 1:N (usuario puede tener muchas inscripciones)
-  evento            evento             @relation(fields: [id_eve_ins], references: [id_eve]) // Relación 1:N (evento puede tener muchas inscripciones)
+  cuenta            cuenta                   @relation(fields: [id_cor_ins], references: [id_cue]) // Relación 1:N (usuario puede tener muchas inscripciones)
+  evento            evento                   @relation(fields: [id_eve_ins], references: [id_eve]) // Relación 1:N (evento puede tener muchas inscripciones)
   inscripcion_curso inscripcion_curso? // Relación 1:1 (inscripción puede tener un curso)
   comprobantes_pago comprobante_pago[] // Relación 1:N (inscripción puede tener muchos comprobantes de pago)
   cartas_motivacion carta_motivacion[] // Relación 1:N (inscripción puede tener muchas cartas de motivación)
+  observacion       observacion_inscripcion? // Relación 1:1
 }
 
 model inscripcion_curso {

@@ -139,7 +139,8 @@ exports.Prisma.Comprobante_pagoScalarFieldEnum = {
   est_com_pag: 'est_com_pag',
   fec_sub_com_pag: 'fec_sub_com_pag',
   fec_val_com_pag: 'fec_val_com_pag',
-  id_adm_val_com_pag: 'id_adm_val_com_pag'
+  id_adm_val_com_pag: 'id_adm_val_com_pag',
+  fec_pag_ins: 'fec_pag_ins'
 };
 
 exports.Prisma.Carta_motivacionScalarFieldEnum = {
@@ -152,14 +153,12 @@ exports.Prisma.Carta_motivacionScalarFieldEnum = {
   id_adm_val_car_mot: 'id_adm_val_car_mot'
 };
 
-exports.Prisma.Observacion_motivacionScalarFieldEnum = {
-  id_car_mot: 'id_car_mot',
-  obs_car_mot: 'obs_car_mot'
-};
-
-exports.Prisma.Observacion_comprobanteScalarFieldEnum = {
-  id_com_pag: 'id_com_pag',
-  obs_com_pag: 'obs_com_pag'
+exports.Prisma.Observacion_inscripcionScalarFieldEnum = {
+  id_obs_ins: 'id_obs_ins',
+  id_ins_per: 'id_ins_per',
+  obs_ins: 'obs_ins',
+  fec_cre_obs: 'fec_cre_obs',
+  id_adm_cre_obs: 'id_adm_cre_obs'
 };
 
 exports.Prisma.CuentaScalarFieldEnum = {
@@ -227,7 +226,6 @@ exports.Prisma.InscripcionScalarFieldEnum = {
   id_eve_ins: 'id_eve_ins',
   est_ins: 'est_ins',
   fec_ins: 'fec_ins',
-  fec_pag_ins: 'fec_pag_ins',
   usu_apr_cer: 'usu_apr_cer',
   por_asi_fin_usu: 'por_asi_fin_usu'
 };
@@ -309,8 +307,7 @@ exports.Prisma.ModelName = {
   usuario: 'usuario',
   comprobante_pago: 'comprobante_pago',
   carta_motivacion: 'carta_motivacion',
-  observacion_motivacion: 'observacion_motivacion',
-  observacion_comprobante: 'observacion_comprobante',
+  observacion_inscripcion: 'observacion_inscripcion',
   cuenta: 'cuenta',
   carrera: 'carrera',
   coordinador: 'coordinador',
