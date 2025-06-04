@@ -35,6 +35,7 @@ model comprobante_pago {
   fec_sub_com_pag    DateTime         @default(now()) // Fecha de subida del documento
   fec_val_com_pag    DateTime?        // Fecha de validación del documento
   id_adm_val_com_pag String?          // FK opcional a administrador que valida el documento
+  fec_pag_ins       DateTime?          // Fecha de pago de la inscripción
 
   admin          cuenta?         @relation(fields: [id_adm_val_com_pag], references: [id_cue]) // Relación 1:1 (documento puede ser validado por un administrador)
   inscripcion    inscripcion     @relation(fields: [id_ins_per], references: [id_ins]) // Relación 1:N (documento pertenece a una inscripción)
@@ -157,7 +158,6 @@ model inscripcion {
   id_eve_ins        String             // FK a evento
   est_ins           estado_inscripcion @default(PENDIENTE) // Estado de la inscripción (PENDIENTE, ACEPTADA, RECHAZADA, FINALIZADA)
   fec_ins           DateTime           @default(now()) // Fecha de inscripción
-  fec_pag_ins       DateTime?          // Fecha de pago de la inscripción
   usu_apr_cer       Boolean            @default(false) // Usuario aprueba el evento y el envio del certificado
   por_asi_fin_usu   Float?            // Porcentaje de asistencia del usuario al evento
 
