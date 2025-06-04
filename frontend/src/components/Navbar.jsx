@@ -23,20 +23,17 @@ const Navbar = () => {
   const location = useLocation(); // Hook para obtener la ubicación actual
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const profileMenuRef = useRef(null);
-
   // Función para determinar si un enlace está activo
   const isActive = (path) => {
     // Para rutas exactas
-    const exactPaths = ["/admin", "/home", "/admin/eventos/crear"];
+    const exactPaths = ["/admin", "/home"];
     if (exactPaths.includes(path)) {
       return location.pathname === path ? "nav-link-active" : "";
     }
 
-    // Para /admin/eventos, solo activo si estamos en la lista de eventos pero no en crear
+    // Para /admin/eventos, activo para todas las rutas que empiecen con esto
     if (path === "/admin/eventos") {
-      return location.pathname === "/admin/eventos" ||
-        (location.pathname.startsWith("/admin/eventos/") &&
-          !location.pathname.includes("/crear"))
+      return location.pathname.startsWith("/admin/eventos")
         ? "nav-link-active"
         : "";
     }
@@ -157,20 +154,12 @@ const Navbar = () => {
                 to="/admin/eventos"
                 className={`nav-link-item ${isActive("/admin/eventos")}`}
               >
+                {" "}
                 <span className="nav-link-icon">
                   <FileText size={18} />
                 </span>
                 <span>Gestionar eventos</span>
               </Link>
-              <Link
-                to="/admin/eventos/crear"
-                className={`nav-link-item ${isActive("/admin/eventos/crear")}`}
-              >
-                <span className="nav-link-icon">
-                  <PlusCircle size={18} />
-                </span>
-                <span>Crear evento</span>
-              </Link>{" "}
               <Link
                 to="/admin/carreras"
                 className={`nav-link-item ${isActive("/admin/carreras")}`}
@@ -201,16 +190,6 @@ const Navbar = () => {
             </>
           )}
         </div>
-        {/* <div className="navbar-profile" ref={profileMenuRef}>
-          <div
-            className="profile-button"
-            onClick={() => setShowProfileMenu(!showProfileMenu)}
-          >
-            <User size={18} className="profile-icon" />
-            <span className="profile-name">
-              {usuario?.nom_usu || "Usuario"}
-            </span>
-          </div> */}
       </div>{" "}
       <div className="navbar-profile" ref={profileMenuRef}>
         <div
