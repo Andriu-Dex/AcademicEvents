@@ -157,6 +157,18 @@
   transform: scale(0.98);
 }
 
+.btn-inscribirme:disabled {
+  background-color: #cccccc;
+  color: #666666;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-inscribirme:disabled:hover {
+  background-color: #cccccc;
+}
+
 .modal-overlay {
   position: fixed;
   inset: 0;

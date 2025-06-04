@@ -79,31 +79,26 @@ const EventsRoute = () => {
 
     obtenerEventos();
   }, [usuario, token, loading, navigate]);
-
   useEffect(() => {
     const obtenerInscripciones = async () => {
       try {
-        const res = await Promise.all(
-          eventos.map((ev) =>
-            axiosInstance
-              .get(`/inscripciones/${ev.id_eve}`)
-              .then((r) => ({ eventoId: ev.id_eve, inscrito: true }))
-              .catch((err) =>
-                err.response?.status === 404
-                  ? { eventoId: ev.id_eve, inscrito: false }
-                  : null
-              )
-          )
-        );
-        const inscritos = res.filter(Boolean).map((r) => r.eventoId);
-        setInscripciones(inscritos);
+        // Primero obtenemos las inscripciones propias del usuario
+        const insRes = await axiosInstance.get("/inscripciones/propias");
+        console.log("Inscripciones del usuario:", insRes.data);
+
+        // Extraemos los ids de los eventos en los que el usuario está inscrito
+        const eventosInscritos = insRes.data.map((ins) => ins.evento.id_eve);
+        console.log("IDs de eventos inscritos:", eventosInscritos);
+
+        setInscripciones(eventosInscritos);
       } catch (error) {
-        console.error("Error al verificar inscripciones:", error.message);
+        console.error("Error al obtener inscripciones:", error);
+        toast.error("Error al verificar tus inscripciones");
       }
     };
 
     if (usuario) obtenerInscripciones();
-  }, [usuario]);
+  }, [usuario, eventos.length]);
   const inscribirse = async () => {
     // Validación de campos
     if (!cartaMotivacion.trim()) {
@@ -166,11 +161,12 @@ const EventsRoute = () => {
     // Debug logs
     console.log("Filtrando evento:", evento.nom_eve);
     console.log("Tipo de evento:", evento.tip_eve);
-    console.log("Carreras del evento:", evento.eventos_carrera); // Primero verificamos si el usuario ya está inscrito
-    if (inscripciones.includes(evento.id_eve)) {
-      console.log("Usuario ya inscrito, excluir evento");
-      return false;
-    } // Si el evento es de tipo PUBLICO, está disponible para todos
+    console.log("Carreras del evento:", evento.eventos_carrera);
+
+    // Ya no filtramos eventos en los que el usuario está inscrito
+    // porque queremos mostrarlos pero con el botón deshabilitado
+
+    // Si el evento es de tipo PUBLICO, está disponible para todos
     if (evento.tip_eve === "PUBLICO") {
       console.log("Evento tipo PUBLICO, incluir para todos");
       return true;
@@ -289,13 +285,16 @@ const EventsRoute = () => {
                   <p className="publico">
                     Dirigido a: {evento.publico_objetivo}
                   </p>
-                )}
+                )}{" "}
                 {evento.pagado_eve && <p className="pago">Pagado</p>}
                 <button
                   onClick={() => setEventoSeleccionado(evento)}
                   className="btn-inscribirme"
+                  disabled={inscripciones.includes(evento.id_eve)}
                 >
-                  Inscribirme
+                  {inscripciones.includes(evento.id_eve)
+                    ? "Ya inscrito"
+                    : "Inscribirme"}
                 </button>
               </div>
             ))}

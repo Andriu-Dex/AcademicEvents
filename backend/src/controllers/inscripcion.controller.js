@@ -654,6 +654,82 @@ const obtenerInscripcionesDelUsuarioActual = async (req, res) => {
   }
 };
 
+// ==============================
+// Obtener todas las inscripciones (admin)
+// ==============================
+const obtenerTodasLasInscripciones = async (req, res) => {
+  try {
+    console.log("🔍 Obteniendo todas las inscripciones");
+    const inscripciones = await prisma.inscripcion.findMany({
+      include: {
+        cuenta: {
+          include: {
+            usuario: true,
+          },
+        },
+        evento: true,
+        inscripcion_curso: true,
+        comprobantes_pago: {
+          orderBy: { fec_sub_com_pag: "desc" },
+          take: 1,
+        },
+        cartas_motivacion: {
+          orderBy: { fec_sub_car_mot: "desc" },
+          take: 1,
+        },
+        observacion: true,
+      },
+      orderBy: { fec_ins: "desc" },
+    });
+
+    console.log(
+      `✅ Total de inscripciones encontradas: ${inscripciones.length}`
+    );
+
+    try {
+      // Mapear los resultados para tener una estructura más limpia
+      const inscripcionesMapeadas = inscripciones.map((inscripcion) => {
+        return {
+          id_ins: inscripcion.id_ins,
+          estado: inscripcion.est_ins,
+          asistencia: inscripcion.por_asi_fin_usu,
+          nota_final: inscripcion.inscripcion_curso?.not_fin_usu || null,
+          fec_ins: inscripcion.fec_ins,
+          evento: {
+            nom_eve: inscripcion.evento.nom_eve,
+            tip_eve: inscripcion.evento.tip_eve,
+            val_eve: inscripcion.evento.val_eve,
+            id_eve: inscripcion.evento.id_eve,
+          },
+          comprobante: inscripcion.comprobantes_pago[0]?.url_com_pag || null,
+          carta_motivacion:
+            inscripcion.cartas_motivacion[0]?.con_car_mot || null,
+          observacion: inscripcion.observacion?.obs_ins || null,
+          usuario: {
+            nom_usu: inscripcion.cuenta.usuario.nom_usu,
+            ape_usu: inscripcion.cuenta.usuario.ape_usu,
+            cor_usu: inscripcion.cuenta.cor_usu,
+            com_usu: inscripcion.cuenta.usuario.com_usu || null,
+          },
+        };
+      });
+
+      console.log("✅ Mapeo de inscripciones completado");
+      res.status(200).json(inscripcionesMapeadas);
+    } catch (mapError) {
+      console.error("❌ Error durante el mapeo de inscripciones:", mapError);
+      throw mapError;
+    }
+  } catch (error) {
+    console.error("❌ Error al obtener todas las inscripciones:", error);
+    res.status(500).json({
+      msg: "Error al obtener todas las inscripciones",
+      error: error.message,
+      stack: process.env.NODE_ENV === "development" ? error.stack : undefined,
+    });
+  }
+};
+
 module.exports = {
   crearInscripcion,
   validarInscripcion,
@@ -664,4 +740,5 @@ module.exports = {
   obtenerInscripcionUsuarioEnEvento,
   manejarErroresDeMulter,
   obtenerInscripcionesDelUsuarioActual,
+  obtenerTodasLasInscripciones,
 };
