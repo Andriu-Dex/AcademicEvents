@@ -19,7 +19,10 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
   const [expanded, setExpanded] = useState(false);
   const [loading, setLoading] = useState(false);
   const [nota, setNota] = useState(inscripcion.nota_final || "");
-  const [asistencia, setAsistencia] = useState(inscripcion.asistencia || "");
+  const [asistencia, setAsistencia] = useState(
+    inscripcion.por_asi_fin_usu || ""
+  );
+  const [observacion, setObservacion] = useState(inscripcion.observacion || "");
   const [mostrarComprobante, setMostrarComprobante] = useState(false);
 
   const handleToggleExpand = () => {
@@ -30,7 +33,6 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
     e.preventDefault();
     setMostrarComprobante(!mostrarComprobante);
   };
-
   const cambiarEstado = async (nuevoEstado) => {
     setLoading(true);
     try {
@@ -38,6 +40,7 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
         `/admin/inscripciones/validar/${inscripcion.id_ins}`,
         {
           est_ins: nuevoEstado,
+          observacion: observacion,
         }
       );
       toast.success(`Inscripción ${nuevoEstado.toLowerCase()}`);
@@ -48,16 +51,18 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
       setLoading(false);
     }
   };
-
   const handleFinalizar = async (e) => {
     e.preventDefault();
 
-    if (isNaN(nota) || nota < 0 || nota > 10) {
-      toast.error("Nota inválida (0–10)");
-      return;
-    }
     if (isNaN(asistencia) || asistencia < 0 || asistencia > 100) {
       toast.error("Asistencia inválida (0–100)");
+      return;
+    }
+
+    // Solo validar la nota si es un curso
+    const esCurso = inscripcion.evento?.tip_eve === "CURSO";
+    if (esCurso && (isNaN(nota) || nota < 0 || nota > 10)) {
+      toast.error("Nota inválida (0–10)");
       return;
     }
 
@@ -67,8 +72,9 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
         `/admin/inscripciones/validar/${inscripcion.id_ins}`,
         {
           est_ins: "FINALIZADA",
-          nota_final: Number(nota),
+          nota_final: esCurso ? Number(nota) : null,
           asistencia: Number(asistencia),
+          observacion: observacion,
         }
       );
       toast.success("Inscripción finalizada");
@@ -233,7 +239,6 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
             </div>
           </div>
         </div>
-
         <div className="inscripcion-section">
           <h4>Calificaciones</h4>
           <div className="inscripcion-stats">
@@ -254,11 +259,24 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
               </span>
             </div>
           </div>
-        </div>
-
+        </div>{" "}
         <div className="inscripcion-section">
           <h4>Acciones</h4>
           <div className="inscripcion-actions">
+            <div className="inscripcion-form-group full-width">
+              <label htmlFor={`observacion-${inscripcion.id_ins}`}>
+                Observación:
+              </label>
+              <textarea
+                id={`observacion-${inscripcion.id_ins}`}
+                value={observacion}
+                onChange={(e) => setObservacion(e.target.value)}
+                placeholder="Escriba una observación sobre esta inscripción..."
+                className="inscripcion-textarea"
+                rows="2"
+              />
+            </div>
+
             <div className="inscripcion-buttons">
               <button
                 onClick={() => cambiarEstado("ACEPTADA")}
@@ -289,26 +307,28 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
               onSubmit={handleFinalizar}
             >
               <div className="inscripcion-form-row">
-                <div className="inscripcion-form-group">
-                  <label htmlFor={`nota-${inscripcion.id_ins}`}>
-                    Nota (0-10):
-                  </label>
-                  <input
-                    id={`nota-${inscripcion.id_ins}`}
-                    type="number"
-                    min="0"
-                    max="10"
-                    step="0.1"
-                    value={nota}
-                    onChange={(e) => {
-                      let val = parseFloat(e.target.value);
-                      if (val > 10) val = 10;
-                      if (val < 0) val = 0;
-                      setNota(val);
-                    }}
-                    className="inscripcion-input"
-                  />
-                </div>
+                {inscripcion.evento?.tip_eve === "CURSO" && (
+                  <div className="inscripcion-form-group">
+                    <label htmlFor={`nota-${inscripcion.id_ins}`}>
+                      Nota (0-10):
+                    </label>
+                    <input
+                      id={`nota-${inscripcion.id_ins}`}
+                      type="number"
+                      min="0"
+                      max="10"
+                      step="0.1"
+                      value={nota}
+                      onChange={(e) => {
+                        let val = parseFloat(e.target.value);
+                        if (val > 10) val = 10;
+                        if (val < 0) val = 0;
+                        setNota(val);
+                      }}
+                      className="inscripcion-input"
+                    />
+                  </div>
+                )}
                 <div className="inscripcion-form-group">
                   <label htmlFor={`asistencia-${inscripcion.id_ins}`}>
                     Asistencia (%):

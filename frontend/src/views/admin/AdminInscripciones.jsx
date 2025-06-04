@@ -24,37 +24,45 @@ const AdminInscripciones = () => {
       toast.error("Error al cargar eventos");
     }
   };
-
   const cargarInscripciones = async () => {
-    if (!eventoFiltrado) {
-      setInscripciones([]);
-      return;
-    }
-
     setCargando(true);
     try {
-      // Obtener primero la información completa del evento seleccionado
-      const eventoRes = await axiosInstance.get(`/eventos/${eventoFiltrado}`);
-      const eventoInfo = eventoRes.data;
+      // Si no hay evento seleccionado, cargamos todas las inscripciones
+      if (!eventoFiltrado) {
+        const inscripcionesRes = await axiosInstance.get(
+          "/admin/inscripciones"
+        );
+        const inscripcionesEnriquecidas = inscripcionesRes.data.map(
+          (inscripcion) => ({
+            ...inscripcion,
+            onVerCarta: (carta) => setCartaSeleccionada(carta),
+          })
+        );
+        setInscripciones(inscripcionesEnriquecidas);
+      } else {
+        // Obtener primero la información completa del evento seleccionado
+        const eventoRes = await axiosInstance.get(`/eventos/${eventoFiltrado}`);
+        const eventoInfo = eventoRes.data;
 
-      // Ahora obtener las inscripciones
-      const inscripcionesRes = await axiosInstance.get(
-        `/admin/inscripciones/evento/${eventoFiltrado}`
-      );
+        // Ahora obtener las inscripciones
+        const inscripcionesRes = await axiosInstance.get(
+          `/admin/inscripciones/evento/${eventoFiltrado}`
+        );
 
-      // Enriquecer las inscripciones con la información completa del evento
-      const inscripcionesEnriquecidas = inscripcionesRes.data.map(
-        (inscripcion) => ({
-          ...inscripcion,
-          evento: {
-            ...inscripcion.evento,
-            val_eve: eventoInfo.val_eve, // Agregar el valor/costo del evento
-          },
-          onVerCarta: (carta) => setCartaSeleccionada(carta),
-        })
-      );
+        // Enriquecer las inscripciones con la información completa del evento
+        const inscripcionesEnriquecidas = inscripcionesRes.data.map(
+          (inscripcion) => ({
+            ...inscripcion,
+            evento: {
+              ...inscripcion.evento,
+              val_eve: eventoInfo.val_eve, // Agregar el valor/costo del evento
+            },
+            onVerCarta: (carta) => setCartaSeleccionada(carta),
+          })
+        );
 
-      setInscripciones(inscripcionesEnriquecidas);
+        setInscripciones(inscripcionesEnriquecidas);
+      }
     } catch (error) {
       console.error(error);
       toast.error("Error al cargar inscripciones");

@@ -356,6 +356,28 @@
   box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
 }
 
+.inscripcion-textarea {
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.4rem;
+  font-size: 0.9rem;
+  width: 100%;
+  min-height: 80px;
+  resize: vertical;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.inscripcion-textarea:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+
+.full-width {
+  width: 100%;
+}
+
 .btn-ver-carta {
   display: flex;
   align-items: center;

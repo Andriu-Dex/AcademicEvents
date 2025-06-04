@@ -167,7 +167,7 @@ const crearInscripcion = async (req, res) => {
 const validarInscripcion = async (req, res) => {
   try {
     const { id } = req.params;
-    const { est_ins, asistencia, nota_final } = req.body;
+    const { est_ins, asistencia, nota_final, observacion } = req.body;
 
     // Verificar estados permitidos con el nuevo enum
     const estadosPermitidos = [
@@ -221,9 +221,7 @@ const validarInscripcion = async (req, res) => {
           msg: `No cumple requisitos para finalizar: nota mínima ${notaMinima}, asistencia mínima ${asistenciaMinima}%`,
         });
       }
-    }
-
-    // Actualizar inscripción con los datos
+    } // Actualizar inscripción con los datos
     const actualizada = await prisma.inscripcion.update({
       where: { id_ins: id },
       data: {
@@ -231,6 +229,35 @@ const validarInscripcion = async (req, res) => {
         por_asi_fin_usu: asistenciaNum, // Actualizado a usar por_asi_fin_usu
       },
     });
+
+    // Guardar observación si se proporciona
+    if (observacion) {
+      // Verificar si ya existe una observación para esta inscripción
+      const observacionExistente =
+        await prisma.observacion_inscripcion.findUnique({
+          where: { id_ins_per: id },
+        });
+
+      if (observacionExistente) {
+        // Actualizar observación existente
+        await prisma.observacion_inscripcion.update({
+          where: { id_ins_per: id },
+          data: {
+            obs_ins: observacion,
+            id_adm_cre_obs: req.usuario.id,
+          },
+        });
+      } else {
+        // Crear nueva observación
+        await prisma.observacion_inscripcion.create({
+          data: {
+            id_ins_per: id,
+            obs_ins: observacion,
+            id_adm_cre_obs: req.usuario.id,
+          },
+        });
+      }
+    }
 
     // Si es un curso, actualizar la nota final en inscripcion_curso
     if (inscripcion.evento.tip_eve === "CURSO") {
@@ -476,6 +503,7 @@ const obtenerInscripcionesPorEvento = async (req, res) => {
           orderBy: { fec_sub_car_mot: "desc" },
           take: 1,
         },
+        observacion: true,
       },
       orderBy: { fec_ins: "desc" },
     });
@@ -498,6 +526,7 @@ const obtenerInscripcionesPorEvento = async (req, res) => {
           comprobante: inscripcion.comprobantes_pago[0]?.url_com_pag || null,
           carta_motivacion:
             inscripcion.cartas_motivacion[0]?.con_car_mot || null,
+          observacion: inscripcion.observacion?.obs_ins || null,
           usuario: {
             nom_usu: inscripcion.cuenta.usuario.nom_usu,
             ape_usu: inscripcion.cuenta.usuario.ape_usu,
