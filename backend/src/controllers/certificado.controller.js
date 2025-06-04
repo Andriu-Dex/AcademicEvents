@@ -23,19 +23,28 @@ const generarCertificado = async (req, res) => {
     // Verificar si ya existe un certificado para esta inscripción
     let certificadoExistente = await prisma.certificado.findUnique({
       where: { id_ins_per: id },
-    });
-
-    // Si ya existe un certificado, devolvemos la URL
+    }); // Si ya existe un certificado, devolvemos la URL
     if (certificadoExistente) {
       // Enviamos el archivo al cliente
       const filePath = certificadoExistente.url_cer;
       if (fs.existsSync(filePath)) {
+        // Obtenemos el nombre del archivo de la ruta
+        const fileName = path.basename(filePath);
+
+        // Configurar las cabeceras adecuadas para un archivo PDF
         res.setHeader("Content-Type", "application/pdf");
         res.setHeader(
           "Content-Disposition",
-          `inline; filename=certificado-${id}.pdf`
+          `attachment; filename=certificado-${id}.pdf`
         );
+
+        // Transmitir el archivo al cliente
         return fs.createReadStream(filePath).pipe(res);
+      } else {
+        console.error(`Archivo no encontrado: ${filePath}`);
+        return res
+          .status(404)
+          .json({ msg: "Archivo de certificado no encontrado" });
       }
     }
 
@@ -99,11 +108,12 @@ const generarCertificado = async (req, res) => {
       notaFinal: inscripcion.inscripcion_curso?.not_fin_usu || null,
       tipoCertificado: tipoCertificado,
       codigoValidacion: codigoValidacion,
-    };
-
-    // Generar el nombre del archivo
+    }; // Generar el nombre del archivo
     const nombreArchivo = `certificado_${inscripcion.id_ins}_${Date.now()}.pdf`;
+    // Guardar en la carpeta uploads/certificados que está expuesta públicamente
     const rutaArchivo = path.join(certificadosDir, nombreArchivo);
+    // URL para acceso público al certificado
+    const urlPublica = `/uploads/certificados/${nombreArchivo}`;
 
     // Generar el PDF
     const doc = generarCertificadoPDF(datosCertificado);
@@ -118,17 +128,15 @@ const generarCertificado = async (req, res) => {
         certificadoExistente = await prisma.certificado.create({
           data: {
             id_ins_per: id,
-            url_cer: rutaArchivo,
+            url_cer: rutaArchivo, // Ruta del archivo en el sistema
             tip_cer: tipoCertificado,
             cod_val_cer: codigoValidacion,
           },
-        });
-
-        // Si todo ha ido bien, enviamos el archivo al cliente
+        }); // Si todo ha ido bien, enviamos el archivo al cliente
         res.setHeader("Content-Type", "application/pdf");
         res.setHeader(
           "Content-Disposition",
-          `inline; filename=${nombreArchivo}`
+          `attachment; filename=${nombreArchivo}`
         );
         fs.createReadStream(rutaArchivo).pipe(res);
       } catch (error) {
@@ -184,32 +192,39 @@ const enviarCertificadoPorCorreo = async (req, res) => {
     }
 
     // Leer el archivo PDF
-    const pdfBuffer = fs.readFileSync(certificado.url_cer);
-
-    // Enviar por correo
-    const enviado = await enviarCorreoConCertificado(
-      inscripcion.cuenta.cor_usu,
-      pdfBuffer,
-      inscripcion.evento.nom_eve,
-      `${inscripcion.cuenta.usuario.nom_usu} ${inscripcion.cuenta.usuario.ape_usu}`
-    );
-
-    if (enviado) {
-      // Actualizar estado en la base de datos
-      await prisma.inscripcion.update({
-        where: { id_ins: id },
-        data: { usu_apr_cer: true },
-      });
-
-      res
-        .status(200)
-        .json({ msg: "Certificado enviado correctamente por correo" });
-    } else {
-      console.error(
-        "Falló el envío de certificado a:",
-        inscripcion.cuenta.cor_usu
+    const pdfBuffer = fs.readFileSync(certificado.url_cer); // Enviar por correo
+    try {
+      const enviado = await enviarCorreoConCertificado(
+        inscripcion.cuenta.cor_usu,
+        pdfBuffer,
+        inscripcion.evento.nom_eve,
+        `${inscripcion.cuenta.usuario.nom_usu} ${inscripcion.cuenta.usuario.ape_usu}`
       );
-      res.status(500).json({ msg: "Error al enviar correo con certificado" });
+
+      if (enviado) {
+        // Actualizar estado en la base de datos
+        await prisma.inscripcion.update({
+          where: { id_ins: id },
+          data: { usu_apr_cer: true },
+        });
+
+        res
+          .status(200)
+          .json({ msg: "Certificado enviado correctamente por correo" });
+      } else {
+        console.error(
+          "Falló el envío de certificado a:",
+          inscripcion.cuenta.cor_usu
+        );
+        res.status(500).json({ msg: "Error al enviar correo con certificado" });
+      }
+    } catch (emailError) {
+      console.error("Error detallado al enviar email:", emailError);
+      res.status(500).json({
+        msg: "Error al enviar correo con certificado",
+        error: emailError.message,
+        detalles: "Verifica la configuración SMTP en el archivo .env",
+      });
     }
   } catch (error) {
     console.error("Error al enviar certificado:", error);

@@ -16,6 +16,7 @@ import {
   CalendarPlus,
   Search,
   AlertCircle,
+  Mail,
 } from "lucide-react";
 
 const estadoLabel = {
@@ -176,35 +177,75 @@ const MyInscriptions = () => {
               )}{" "}
               {ins.est_ins === "FINALIZADA" && (
                 <div className="myins-certificado">
+                  {" "}
                   <button
-                    onClick={() =>
-                      window.open(`/api/certificados/${ins.id_ins}`, "_blank")
-                    }
+                    onClick={async () => {
+                      try {
+                        toast.info("Preparando certificado...");
+                        // Hacer la petición a través de axios para que incluya el token
+                        const response = await axiosInstance.get(
+                          `/certificados/${ins.id_ins}`,
+                          {
+                            responseType: "blob", // Importante para manejar PDF
+                          }
+                        );
+
+                        // Crear un blob URL para el PDF
+                        const blob = new Blob([response.data], {
+                          type: "application/pdf",
+                        });
+                        const url = window.URL.createObjectURL(blob);
+
+                        // Abrir en una nueva pestaña
+                        window.open(url, "_blank");
+                      } catch (error) {
+                        console.error("Error al descargar certificado:", error);
+                        if (error.response?.status === 401) {
+                          toast.error(
+                            "Error de autenticación. Por favor vuelva a iniciar sesión"
+                          );
+                        } else {
+                          toast.error(
+                            "Error al descargar el certificado: " +
+                              (error.response?.data?.msg || error.message)
+                          );
+                        }
+                      }
+                    }}
                     className="btn-descargar"
                   >
                     <Download size={16} />
                     Descargar certificado
-                  </button>
-
+                  </button>{" "}
                   <button
                     onClick={async () => {
                       try {
                         toast.info("Enviando certificado a tu correo...");
-                        await axiosInstance.post(
+                        const response = await axiosInstance.post(
                           `/certificados/enviar/${ins.id_ins}`
+                        );
+                        console.log(
+                          "Respuesta de envío por correo:",
+                          response.data
                         );
                         toast.success(
                           "Certificado enviado a tu correo electrónico"
                         );
                       } catch (error) {
+                        console.error(
+                          "Error detallado:",
+                          error.response?.data || error
+                        );
                         toast.error(
-                          "Error al enviar el certificado por correo"
+                          `Error al enviar el certificado: ${
+                            error.response?.data?.msg || error.message
+                          }`
                         );
                       }
                     }}
                     className="btn-enviar-email"
                   >
-                    <FileUp size={16} />
+                    <Mail size={16} />
                     Recibir por email
                   </button>
                 </div>

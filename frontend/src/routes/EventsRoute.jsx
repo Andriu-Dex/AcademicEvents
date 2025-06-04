@@ -147,6 +147,13 @@ const EventsRoute = () => {
         },
       });
       toast.success("Inscripción enviada con éxito");
+
+      // Actualizar inmediatamente la lista de inscripciones para deshabilitar el botón
+      setInscripciones((prevInscripciones) => [
+        ...prevInscripciones,
+        eventoSeleccionado.id_eve,
+      ]);
+
       setEventoSeleccionado(null);
       setArchivo(null);
       setCartaMotivacion("");

@@ -1,18 +1,28 @@
 const nodemailer = require("nodemailer");
 
+// Crear el transporter con la configuración SMTP
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
   port: process.env.SMTP_PORT,
-  //service: "gmail",
-  secure: false,
+  secure: false, // true para 465, false para otros puertos
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
   },
   tls: {
-    // Acepta certificados autofirmados confiables sin desactivar toda la seguridad
+    // Acepta certificados autofirmados sin desactivar toda la seguridad
     rejectUnauthorized: false,
   },
+  debug: true, // Activar debug para ver más información de errores
+});
+
+// Verificar la conexión al iniciar
+transporter.verify(function (error, success) {
+  if (error) {
+    console.error("Error de configuración SMTP:", error);
+  } else {
+    console.log("Servidor SMTP listo para enviar emails");
+  }
 });
 
 const enviarCorreoConCertificado = async (
@@ -22,6 +32,12 @@ const enviarCorreoConCertificado = async (
   nombreEstudiante
 ) => {
   try {
+    console.log(`Intentando enviar certificado por correo a: ${correoDestino}`);
+    console.log(
+      `Configuración SMTP: ${process.env.SMTP_HOST}:${process.env.SMTP_PORT}`
+    );
+    console.log(`Usuario SMTP: ${process.env.SMTP_USER}`);
+
     // Preparar un HTML amigable para el correo
     const html = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;">
