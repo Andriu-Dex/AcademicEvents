@@ -36,14 +36,14 @@ const login = async (req, res) => {
       { id: cuenta.id_cue, rol_usu: cuenta.rol_usu },
       process.env.JWT_SECRET,
       { expiresIn: "2h" }
-    );
-
-    return res.status(200).json({
+    );    return res.status(200).json({
       token,
       usuario: {
         id: cuenta.id_cue,
         correo: cuenta.cor_usu,
         rol_usu: cuenta.rol_usu,
+        nom_usu: cuenta.usuario.nom_usu,
+        ape_usu: cuenta.usuario.ape_usu,
       },
     });
   } catch (error) {

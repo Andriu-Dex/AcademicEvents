@@ -161,6 +161,102 @@
   background-color: rgba(138, 21, 56, 0.1);
 }
 
+/* Estilos para el perfil de usuario */
+.navbar-profile {
+  position: relative;
+}
+
+.profile-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: rgba(138, 21, 56, 0.05);
+  border: 1px solid rgba(138, 21, 56, 0.15);
+  margin-right: 26px;
+}
+
+.profile-button:hover {
+  background-color: rgba(138, 21, 56, 0.1);
+  transform: translateY(-2px);
+}
+
+.profile-icon {
+  color: #8a1538;
+}
+
+.profile-name {
+  font-weight: 500;
+  color: #333;
+}
+
+.profile-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 200px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 8px 0;
+  z-index: 110;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.profile-dropdown::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  right: 20px;
+  width: 12px;
+  height: 12px;
+  background-color: white;
+  transform: rotate(45deg);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  border-left: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.profile-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  color: #333;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.profile-menu-item:hover {
+  background-color: rgba(138, 21, 56, 0.08);
+  color: #8a1538;
+}
+
+.profile-menu-item.logout {
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  margin-top: 5px;
+  padding-top: 10px;
+  cursor: pointer;
+  color: #e53e3e;
+}
+
+.profile-menu-item.logout:hover {
+  background-color: rgba(229, 62, 62, 0.08);
+}
+
 /* Estilos para el menú responsivo */
 @media (max-width: 768px) {
   .navbar {
@@ -182,9 +278,19 @@
     margin-top: 15px;
   }
 
-  .navbar-logout {
+  .navbar-profile {
+    width: 100%;
     margin-top: 15px;
+  }
+
+  .profile-button {
     width: 100%;
     justify-content: center;
+  }
+
+  .profile-dropdown {
+    width: 100%;
+    left: 0;
+    right: 0;
   }
 }

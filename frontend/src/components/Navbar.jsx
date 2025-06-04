@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import { useState, useRef, useEffect } from "react";
 import {
   LogOut,
   Home,
@@ -10,6 +11,8 @@ import {
   FileText,
   PlusCircle,
   User,
+  CheckSquare,
+  Sliders,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import "./styles/Navbar.css";
@@ -17,7 +20,11 @@ import "./styles/Navbar.css";
 const Navbar = () => {
   const { usuario, logout } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation(); // Hook para obtener la ubicación actual  // Función para determinar si un enlace está activo
+  const location = useLocation(); // Hook para obtener la ubicación actual
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const profileMenuRef = useRef(null);
+
+  // Función para determinar si un enlace está activo
   const isActive = (path) => {
     // Para rutas exactas
     const exactPaths = ["/admin", "/home", "/admin/eventos/crear"];
@@ -37,11 +44,27 @@ const Navbar = () => {
     // Para el resto de rutas
     return location.pathname.startsWith(path) ? "nav-link-active" : "";
   };
-
   const cerrarSesion = () => {
     logout(); // Limpiar token y usuario
     navigate("/login"); // Redirigir al login
   };
+
+  // Cerrar el menú de perfil cuando se hace clic fuera de él
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        profileMenuRef.current &&
+        !profileMenuRef.current.contains(event.target)
+      ) {
+        setShowProfileMenu(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
   if (!usuario) {
     return (
       <nav className="navbar">
@@ -115,15 +138,6 @@ const Navbar = () => {
                 </span>
                 <span>Certificados</span>
               </Link>
-              <Link
-                to="/perfil"
-                className={`nav-link-item ${isActive("/perfil")}`}
-              >
-                <span className="nav-link-icon">
-                  <User size={18} />
-                </span>
-                <span>Mi Perfil</span>
-              </Link>
             </>
           )}{" "}
           {(usuario.rol_usu === "ADMIN_GLOBAL" ||
@@ -167,22 +181,49 @@ const Navbar = () => {
                 <span>Gestionar carreras</span>
               </Link>
               <Link
-                to="/perfil"
-                className={`nav-link-item ${isActive("/perfil")}`}
+                to="/admin/inscripciones"
+                className={`nav-link-item ${isActive("/admin/inscripciones")}`}
               >
                 <span className="nav-link-icon">
-                  <User size={18} />
+                  <CheckSquare size={18} />
                 </span>
-                <span>Mi Perfil</span>
+                <span>Validar inscripciones</span>
+              </Link>
+              <Link
+                to="/admin/configuracion"
+                className={`nav-link-item ${isActive("/admin/configuracion")}`}
+              >
+                <span className="nav-link-icon">
+                  <Sliders size={18} />
+                </span>
+                <span>Configuración</span>
               </Link>
             </>
           )}
         </div>
       </div>{" "}
-      <button className="navbar-logout" onClick={cerrarSesion}>
-        <LogOut size={18} />
-        <span>Cerrar sesión</span>
-      </button>
+      <div className="navbar-profile" ref={profileMenuRef}>
+        <div
+          className="profile-button"
+          onClick={() => setShowProfileMenu(!showProfileMenu)}
+        >
+          <User size={18} className="profile-icon" />
+          <span className="profile-name">{usuario?.nom_usu || "Usuario"}</span>
+        </div>
+
+        {showProfileMenu && (
+          <div className="profile-dropdown">
+            <Link to="/perfil" className="profile-menu-item">
+              <User size={16} />
+              <span>Mi Perfil</span>
+            </Link>
+            <div className="profile-menu-item logout" onClick={cerrarSesion}>
+              <LogOut size={16} />
+              <span>Cerrar sesión</span>
+            </div>
+          </div>
+        )}
+      </div>
     </nav>
   );
 };
