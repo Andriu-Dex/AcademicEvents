@@ -624,13 +624,12 @@ const obtenerInscripcionesDelUsuarioActual = async (req, res) => {
           orderBy: { fec_sub_com_pag: "desc" },
           take: 1,
         },
+        observacion: true, // Incluimos la observación
       },
       orderBy: { fec_ins: "desc" },
     });
 
-    console.log(`✅ Inscripciones encontradas: ${inscripciones.length}`);
-
-    // Mapear los resultados para tener una estructura más limpia
+    console.log(`✅ Inscripciones encontradas: ${inscripciones.length}`); // Mapear los resultados para tener una estructura más limpia
     const inscripcionesMapeadas = inscripciones.map((inscripcion) => ({
       id_ins: inscripcion.id_ins,
       est_ins: inscripcion.est_ins,
@@ -638,6 +637,7 @@ const obtenerInscripcionesDelUsuarioActual = async (req, res) => {
       por_asi_fin_usu: inscripcion.por_asi_fin_usu,
       nota_final: inscripcion.inscripcion_curso?.not_fin_usu || null,
       comprobante: inscripcion.comprobantes_pago[0]?.url_com_pag || null,
+      observacion: inscripcion.observacion?.obs_ins || null, // Incluimos la observación en la respuesta
       evento: inscripcion.evento,
     }));
 

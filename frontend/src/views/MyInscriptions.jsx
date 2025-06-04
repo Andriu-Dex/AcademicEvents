@@ -160,13 +160,20 @@ const MyInscriptions = () => {
                 </span>
               </div>
               <p className="myins-datos">
-                Tipo: {ins.evento.tip_eve} <br />
-                Fecha:{" "}
-                {new Date(ins.evento.fec_ini_eve).toLocaleDateString(
-                  "es-EC"
-                )} –{" "}
+                Tipo: {ins.evento.tip_eve} <br /> Fecha:{" "}
+                {new Date(ins.evento.fec_ini_eve).toLocaleDateString("es-EC")} –{" "}
                 {new Date(ins.evento.fec_fin_eve).toLocaleDateString("es-EC")}
               </p>{" "}
+              {/* Mostrar observación del administrador si existe */}
+              {ins.observacion && (
+                <div className="myins-observacion">
+                  <div className="observacion-header">
+                    <AlertCircle size={16} />
+                    <span>Observación del administrador:</span>
+                  </div>
+                  <p className="observacion-texto">{ins.observacion}</p>
+                </div>
+              )}
               {ins.est_ins === "FINALIZADA" && (
                 <div className="myins-certificado">
                   <button
