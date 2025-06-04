@@ -177,6 +177,7 @@
   transition: all 0.3s ease;
   background-color: rgba(138, 21, 56, 0.05);
   border: 1px solid rgba(138, 21, 56, 0.15);
+  margin-right: 20px;
 }
 
 .profile-button:hover {

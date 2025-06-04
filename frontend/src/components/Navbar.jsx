@@ -201,7 +201,7 @@ const Navbar = () => {
             </>
           )}
         </div>
-        <div className="navbar-profile" ref={profileMenuRef}>
+        {/* <div className="navbar-profile" ref={profileMenuRef}>
           <div
             className="profile-button"
             onClick={() => setShowProfileMenu(!showProfileMenu)}
@@ -210,16 +210,16 @@ const Navbar = () => {
             <span className="profile-name">
               {usuario?.nom_usu || "Usuario"}
             </span>
-          </div>
-        </div>{" "}
-        {/* <div className="navbar-profile" ref={profileMenuRef}>
+          </div> */}
+      </div>{" "}
+      <div className="navbar-profile" ref={profileMenuRef}>
         <div
           className="profile-button"
           onClick={() => setShowProfileMenu(!showProfileMenu)}
         >
           <User size={18} className="profile-icon" />
           <span className="profile-name">{usuario?.nom_usu || "Usuario"}</span>
-        </div> */}
+        </div>
         {showProfileMenu && (
           <div className="profile-dropdown">
             <Link to="/perfil" className="profile-menu-item">
