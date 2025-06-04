@@ -2,7 +2,7 @@
   background-color: white;
   border-bottom: 1px solid #e2e8f0;
   box-shadow: 0 3px 15px rgba(138, 21, 56, 0.08);
-  padding: 12px 24px;
+  padding: 12px 0px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -16,7 +16,8 @@
 .navbar-left {
   display: flex;
   align-items: center;
-  gap: 45px;
+  gap: 15px;
+  margin-left: 20px;
   /* separación entre logo y enlaces */
 }
 
@@ -176,7 +177,6 @@
   transition: all 0.3s ease;
   background-color: rgba(138, 21, 56, 0.05);
   border: 1px solid rgba(138, 21, 56, 0.15);
-  margin-right: 26px;
 }
 
 .profile-button:hover {
