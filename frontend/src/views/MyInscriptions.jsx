@@ -173,7 +173,7 @@ const MyInscriptions = () => {
                   </div>
                   <p className="observacion-texto">{ins.observacion}</p>
                 </div>
-              )}
+              )}{" "}
               {ins.est_ins === "FINALIZADA" && (
                 <div className="myins-certificado">
                   <button
@@ -186,17 +186,29 @@ const MyInscriptions = () => {
                     Descargar certificado
                   </button>
 
-                  {ins.cert_enviado ? (
-                    <span className="cert-enviado">
-                      <BadgeCheck size={14} /> Enviado
-                    </span>
-                  ) : (
-                    <span className="cert-pendiente">
-                      <Clock size={14} /> No enviado
-                    </span>
-                  )}
+                  <button
+                    onClick={async () => {
+                      try {
+                        toast.info("Enviando certificado a tu correo...");
+                        await axiosInstance.post(
+                          `/certificados/enviar/${ins.id_ins}`
+                        );
+                        toast.success(
+                          "Certificado enviado a tu correo electrónico"
+                        );
+                      } catch (error) {
+                        toast.error(
+                          "Error al enviar el certificado por correo"
+                        );
+                      }
+                    }}
+                    className="btn-enviar-email"
+                  >
+                    <FileUp size={16} />
+                    Recibir por email
+                  </button>
                 </div>
-              )}
+              )}{" "}
               {ins.est_ins === "ACEPTADA" && (
                 <button
                   className="btn-felicitaciones"
@@ -204,18 +216,25 @@ const MyInscriptions = () => {
                 >
                   ¡Felicitaciones!
                 </button>
+              )}{" "}
+              {ins.est_ins === "RECHAZADA" && (
+                <div>
+                  <button
+                    className="btn-reenviar"
+                    onClick={() => (window.location.href = "/eventos")}
+                  >
+                    <Upload size={16} />
+                    Renviar documentos
+                  </button>
+                </div>
               )}
-              {(ins.est_ins === "RECHAZADA" || ins.est_ins === "PENDIENTE") && (
-                <button
-                  className="btn-reenviar"
-                  onClick={() => {
-                    setInscripcionSeleccionada(ins);
-                    setMostrarModal(true);
-                  }}
-                >
-                  <Upload size={16} />
-                  Reenviar comprobante
-                </button>
+              {ins.est_ins === "PENDIENTE" && (
+                <div className="myins-pendiente">
+                  <Clock size={18} />
+                  <p>
+                    Tu inscripción está siendo revisada por el administrador
+                  </p>
+                </div>
               )}
             </div>
           ))}

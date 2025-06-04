@@ -16,15 +16,22 @@ const verificarPropietarioCertificado = async (req, res, next) => {
     }
 
     // Validar que el ID del usuario autenticado coincida con el de la inscripción
-    if (req.usuario.id !== inscripcion.id_usu) {
-      return res
-        .status(403)
-        .json({ msg: "No tienes permiso para acceder a este certificado" });
+    if (req.usuario.id !== inscripcion.id_cor_ins) {
+      // También permitir acceso a administradores
+      if (
+        req.usuario.rol_usu !== "ADMIN_GLOBAL" &&
+        req.usuario.rol_usu !== "ADMIN_GENERAL"
+      ) {
+        return res
+          .status(403)
+          .json({ msg: "No tienes permiso para acceder a este certificado" });
+      }
     }
 
     // Si pasa la verificación, continuar con la siguiente función
     next();
   } catch (error) {
+    console.error("Error al verificar propiedad del certificado:", error);
     res.status(500).json({
       msg: "Error al verificar propiedad del certificado",
       error: error.message,

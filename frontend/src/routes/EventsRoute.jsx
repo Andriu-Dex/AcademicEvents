@@ -86,9 +86,16 @@ const EventsRoute = () => {
         const insRes = await axiosInstance.get("/inscripciones/propias");
         console.log("Inscripciones del usuario:", insRes.data);
 
-        // Extraemos los ids de los eventos en los que el usuario está inscrito
-        const eventosInscritos = insRes.data.map((ins) => ins.evento.id_eve);
-        console.log("IDs de eventos inscritos:", eventosInscritos);
+        // Filtramos sólo las inscripciones activas (no rechazadas)
+        const inscripcionesActivas = insRes.data.filter(
+          (ins) => ins.est_ins !== "RECHAZADA"
+        );
+
+        // Extraemos los ids de los eventos en los que el usuario está inscrito activamente
+        const eventosInscritos = inscripcionesActivas.map(
+          (ins) => ins.evento.id_eve
+        );
+        console.log("IDs de eventos con inscripción activa:", eventosInscritos);
 
         setInscripciones(eventosInscritos);
       } catch (error) {
@@ -286,7 +293,7 @@ const EventsRoute = () => {
                     Dirigido a: {evento.publico_objetivo}
                   </p>
                 )}{" "}
-                {evento.pagado_eve && <p className="pago">Pagado</p>}
+                {evento.pagado_eve && <p className="pago">Pagado</p>}{" "}
                 <button
                   onClick={() => setEventoSeleccionado(evento)}
                   className="btn-inscribirme"

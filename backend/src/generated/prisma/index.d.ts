@@ -74,6 +74,11 @@ export type inscripcion = $Result.DefaultSelection<Prisma.$inscripcionPayload>
  */
 export type inscripcion_curso = $Result.DefaultSelection<Prisma.$inscripcion_cursoPayload>
 /**
+ * Model certificado
+ * 
+ */
+export type certificado = $Result.DefaultSelection<Prisma.$certificadoPayload>
+/**
  * Model facultad
  * 
  */
@@ -134,6 +139,14 @@ export const estado_evento: {
 
 export type estado_evento = (typeof estado_evento)[keyof typeof estado_evento]
 
+
+export const tipo_certificado: {
+  PARTICIPACION: 'PARTICIPACION',
+  APROBACION: 'APROBACION'
+};
+
+export type tipo_certificado = (typeof tipo_certificado)[keyof typeof tipo_certificado]
+
 }
 
 export type rol_usuario = $Enums.rol_usuario
@@ -155,6 +168,10 @@ export const estado_inscripcion: typeof $Enums.estado_inscripcion
 export type estado_evento = $Enums.estado_evento
 
 export const estado_evento: typeof $Enums.estado_evento
+
+export type tipo_certificado = $Enums.tipo_certificado
+
+export const tipo_certificado: typeof $Enums.tipo_certificado
 
 /**
  * ##  Prisma Client ʲˢ
@@ -400,6 +417,16 @@ export class PrismaClient<
     * ```
     */
   get inscripcion_curso(): Prisma.inscripcion_cursoDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.certificado`: Exposes CRUD operations for the **certificado** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Certificados
+    * const certificados = await prisma.certificado.findMany()
+    * ```
+    */
+  get certificado(): Prisma.certificadoDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.facultad`: Exposes CRUD operations for the **facultad** model.
@@ -862,6 +889,7 @@ export namespace Prisma {
     evento_carrera: 'evento_carrera',
     inscripcion: 'inscripcion',
     inscripcion_curso: 'inscripcion_curso',
+    certificado: 'certificado',
     facultad: 'facultad'
   };
 
@@ -881,7 +909,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "usuario" | "comprobante_pago" | "carta_motivacion" | "observacion_inscripcion" | "cuenta" | "carrera" | "coordinador" | "evento" | "evento_curso" | "evento_carrera" | "inscripcion" | "inscripcion_curso" | "facultad"
+      modelProps: "usuario" | "comprobante_pago" | "carta_motivacion" | "observacion_inscripcion" | "cuenta" | "carrera" | "coordinador" | "evento" | "evento_curso" | "evento_carrera" | "inscripcion" | "inscripcion_curso" | "certificado" | "facultad"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1773,6 +1801,80 @@ export namespace Prisma {
           }
         }
       }
+      certificado: {
+        payload: Prisma.$certificadoPayload<ExtArgs>
+        fields: Prisma.certificadoFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.certificadoFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$certificadoPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.certificadoFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$certificadoPayload>
+          }
+          findFirst: {
+            args: Prisma.certificadoFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$certificadoPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.certificadoFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$certificadoPayload>
+          }
+          findMany: {
+            args: Prisma.certificadoFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$certificadoPayload>[]
+          }
+          create: {
+            args: Prisma.certificadoCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$certificadoPayload>
+          }
+          createMany: {
+            args: Prisma.certificadoCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.certificadoCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$certificadoPayload>[]
+          }
+          delete: {
+            args: Prisma.certificadoDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$certificadoPayload>
+          }
+          update: {
+            args: Prisma.certificadoUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$certificadoPayload>
+          }
+          deleteMany: {
+            args: Prisma.certificadoDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.certificadoUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.certificadoUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$certificadoPayload>[]
+          }
+          upsert: {
+            args: Prisma.certificadoUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$certificadoPayload>
+          }
+          aggregate: {
+            args: Prisma.CertificadoAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCertificado>
+          }
+          groupBy: {
+            args: Prisma.certificadoGroupByArgs<ExtArgs>
+            result: $Utils.Optional<CertificadoGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.certificadoCountArgs<ExtArgs>
+            result: $Utils.Optional<CertificadoCountAggregateOutputType> | number
+          }
+        }
+      }
       facultad: {
         payload: Prisma.$facultadPayload<ExtArgs>
         fields: Prisma.facultadFieldRefs
@@ -1943,6 +2045,7 @@ export namespace Prisma {
     evento_carrera?: evento_carreraOmit
     inscripcion?: inscripcionOmit
     inscripcion_curso?: inscripcion_cursoOmit
+    certificado?: certificadoOmit
     facultad?: facultadOmit
   }
 
@@ -13945,6 +14048,7 @@ export namespace Prisma {
     comprobantes_pago?: boolean | inscripcion$comprobantes_pagoArgs<ExtArgs>
     cartas_motivacion?: boolean | inscripcion$cartas_motivacionArgs<ExtArgs>
     observacion?: boolean | inscripcion$observacionArgs<ExtArgs>
+    certificado?: boolean | inscripcion$certificadoArgs<ExtArgs>
     _count?: boolean | InscripcionCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["inscripcion"]>
 
@@ -13990,6 +14094,7 @@ export namespace Prisma {
     comprobantes_pago?: boolean | inscripcion$comprobantes_pagoArgs<ExtArgs>
     cartas_motivacion?: boolean | inscripcion$cartas_motivacionArgs<ExtArgs>
     observacion?: boolean | inscripcion$observacionArgs<ExtArgs>
+    certificado?: boolean | inscripcion$certificadoArgs<ExtArgs>
     _count?: boolean | InscripcionCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type inscripcionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -14010,6 +14115,7 @@ export namespace Prisma {
       comprobantes_pago: Prisma.$comprobante_pagoPayload<ExtArgs>[]
       cartas_motivacion: Prisma.$carta_motivacionPayload<ExtArgs>[]
       observacion: Prisma.$observacion_inscripcionPayload<ExtArgs> | null
+      certificado: Prisma.$certificadoPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id_ins: string
@@ -14419,6 +14525,7 @@ export namespace Prisma {
     comprobantes_pago<T extends inscripcion$comprobantes_pagoArgs<ExtArgs> = {}>(args?: Subset<T, inscripcion$comprobantes_pagoArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$comprobante_pagoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     cartas_motivacion<T extends inscripcion$cartas_motivacionArgs<ExtArgs> = {}>(args?: Subset<T, inscripcion$cartas_motivacionArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$carta_motivacionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     observacion<T extends inscripcion$observacionArgs<ExtArgs> = {}>(args?: Subset<T, inscripcion$observacionArgs<ExtArgs>>): Prisma__observacion_inscripcionClient<$Result.GetResult<Prisma.$observacion_inscripcionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    certificado<T extends inscripcion$certificadoArgs<ExtArgs> = {}>(args?: Subset<T, inscripcion$certificadoArgs<ExtArgs>>): Prisma__certificadoClient<$Result.GetResult<Prisma.$certificadoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -14934,6 +15041,25 @@ export namespace Prisma {
      */
     include?: observacion_inscripcionInclude<ExtArgs> | null
     where?: observacion_inscripcionWhereInput
+  }
+
+  /**
+   * inscripcion.certificado
+   */
+  export type inscripcion$certificadoArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the certificado
+     */
+    select?: certificadoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the certificado
+     */
+    omit?: certificadoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: certificadoInclude<ExtArgs> | null
+    where?: certificadoWhereInput
   }
 
   /**
@@ -16005,6 +16131,1077 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: inscripcion_cursoInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model certificado
+   */
+
+  export type AggregateCertificado = {
+    _count: CertificadoCountAggregateOutputType | null
+    _min: CertificadoMinAggregateOutputType | null
+    _max: CertificadoMaxAggregateOutputType | null
+  }
+
+  export type CertificadoMinAggregateOutputType = {
+    id_cer: string | null
+    id_ins_per: string | null
+    url_cer: string | null
+    tip_cer: $Enums.tipo_certificado | null
+    fec_gen_cer: Date | null
+    cod_val_cer: string | null
+  }
+
+  export type CertificadoMaxAggregateOutputType = {
+    id_cer: string | null
+    id_ins_per: string | null
+    url_cer: string | null
+    tip_cer: $Enums.tipo_certificado | null
+    fec_gen_cer: Date | null
+    cod_val_cer: string | null
+  }
+
+  export type CertificadoCountAggregateOutputType = {
+    id_cer: number
+    id_ins_per: number
+    url_cer: number
+    tip_cer: number
+    fec_gen_cer: number
+    cod_val_cer: number
+    _all: number
+  }
+
+
+  export type CertificadoMinAggregateInputType = {
+    id_cer?: true
+    id_ins_per?: true
+    url_cer?: true
+    tip_cer?: true
+    fec_gen_cer?: true
+    cod_val_cer?: true
+  }
+
+  export type CertificadoMaxAggregateInputType = {
+    id_cer?: true
+    id_ins_per?: true
+    url_cer?: true
+    tip_cer?: true
+    fec_gen_cer?: true
+    cod_val_cer?: true
+  }
+
+  export type CertificadoCountAggregateInputType = {
+    id_cer?: true
+    id_ins_per?: true
+    url_cer?: true
+    tip_cer?: true
+    fec_gen_cer?: true
+    cod_val_cer?: true
+    _all?: true
+  }
+
+  export type CertificadoAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which certificado to aggregate.
+     */
+    where?: certificadoWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of certificados to fetch.
+     */
+    orderBy?: certificadoOrderByWithRelationInput | certificadoOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: certificadoWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` certificados from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` certificados.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned certificados
+    **/
+    _count?: true | CertificadoCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: CertificadoMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: CertificadoMaxAggregateInputType
+  }
+
+  export type GetCertificadoAggregateType<T extends CertificadoAggregateArgs> = {
+        [P in keyof T & keyof AggregateCertificado]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCertificado[P]>
+      : GetScalarType<T[P], AggregateCertificado[P]>
+  }
+
+
+
+
+  export type certificadoGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: certificadoWhereInput
+    orderBy?: certificadoOrderByWithAggregationInput | certificadoOrderByWithAggregationInput[]
+    by: CertificadoScalarFieldEnum[] | CertificadoScalarFieldEnum
+    having?: certificadoScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: CertificadoCountAggregateInputType | true
+    _min?: CertificadoMinAggregateInputType
+    _max?: CertificadoMaxAggregateInputType
+  }
+
+  export type CertificadoGroupByOutputType = {
+    id_cer: string
+    id_ins_per: string
+    url_cer: string
+    tip_cer: $Enums.tipo_certificado
+    fec_gen_cer: Date
+    cod_val_cer: string
+    _count: CertificadoCountAggregateOutputType | null
+    _min: CertificadoMinAggregateOutputType | null
+    _max: CertificadoMaxAggregateOutputType | null
+  }
+
+  type GetCertificadoGroupByPayload<T extends certificadoGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<CertificadoGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof CertificadoGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], CertificadoGroupByOutputType[P]>
+            : GetScalarType<T[P], CertificadoGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type certificadoSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_cer?: boolean
+    id_ins_per?: boolean
+    url_cer?: boolean
+    tip_cer?: boolean
+    fec_gen_cer?: boolean
+    cod_val_cer?: boolean
+    inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["certificado"]>
+
+  export type certificadoSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_cer?: boolean
+    id_ins_per?: boolean
+    url_cer?: boolean
+    tip_cer?: boolean
+    fec_gen_cer?: boolean
+    cod_val_cer?: boolean
+    inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["certificado"]>
+
+  export type certificadoSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_cer?: boolean
+    id_ins_per?: boolean
+    url_cer?: boolean
+    tip_cer?: boolean
+    fec_gen_cer?: boolean
+    cod_val_cer?: boolean
+    inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["certificado"]>
+
+  export type certificadoSelectScalar = {
+    id_cer?: boolean
+    id_ins_per?: boolean
+    url_cer?: boolean
+    tip_cer?: boolean
+    fec_gen_cer?: boolean
+    cod_val_cer?: boolean
+  }
+
+  export type certificadoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_cer" | "id_ins_per" | "url_cer" | "tip_cer" | "fec_gen_cer" | "cod_val_cer", ExtArgs["result"]["certificado"]>
+  export type certificadoInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
+  }
+  export type certificadoIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
+  }
+  export type certificadoIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
+  }
+
+  export type $certificadoPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "certificado"
+    objects: {
+      inscripcion: Prisma.$inscripcionPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id_cer: string
+      id_ins_per: string
+      url_cer: string
+      tip_cer: $Enums.tipo_certificado
+      fec_gen_cer: Date
+      cod_val_cer: string
+    }, ExtArgs["result"]["certificado"]>
+    composites: {}
+  }
+
+  type certificadoGetPayload<S extends boolean | null | undefined | certificadoDefaultArgs> = $Result.GetResult<Prisma.$certificadoPayload, S>
+
+  type certificadoCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<certificadoFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: CertificadoCountAggregateInputType | true
+    }
+
+  export interface certificadoDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['certificado'], meta: { name: 'certificado' } }
+    /**
+     * Find zero or one Certificado that matches the filter.
+     * @param {certificadoFindUniqueArgs} args - Arguments to find a Certificado
+     * @example
+     * // Get one Certificado
+     * const certificado = await prisma.certificado.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends certificadoFindUniqueArgs>(args: SelectSubset<T, certificadoFindUniqueArgs<ExtArgs>>): Prisma__certificadoClient<$Result.GetResult<Prisma.$certificadoPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Certificado that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {certificadoFindUniqueOrThrowArgs} args - Arguments to find a Certificado
+     * @example
+     * // Get one Certificado
+     * const certificado = await prisma.certificado.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends certificadoFindUniqueOrThrowArgs>(args: SelectSubset<T, certificadoFindUniqueOrThrowArgs<ExtArgs>>): Prisma__certificadoClient<$Result.GetResult<Prisma.$certificadoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Certificado that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {certificadoFindFirstArgs} args - Arguments to find a Certificado
+     * @example
+     * // Get one Certificado
+     * const certificado = await prisma.certificado.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends certificadoFindFirstArgs>(args?: SelectSubset<T, certificadoFindFirstArgs<ExtArgs>>): Prisma__certificadoClient<$Result.GetResult<Prisma.$certificadoPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Certificado that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {certificadoFindFirstOrThrowArgs} args - Arguments to find a Certificado
+     * @example
+     * // Get one Certificado
+     * const certificado = await prisma.certificado.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends certificadoFindFirstOrThrowArgs>(args?: SelectSubset<T, certificadoFindFirstOrThrowArgs<ExtArgs>>): Prisma__certificadoClient<$Result.GetResult<Prisma.$certificadoPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Certificados that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {certificadoFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Certificados
+     * const certificados = await prisma.certificado.findMany()
+     * 
+     * // Get first 10 Certificados
+     * const certificados = await prisma.certificado.findMany({ take: 10 })
+     * 
+     * // Only select the `id_cer`
+     * const certificadoWithId_cerOnly = await prisma.certificado.findMany({ select: { id_cer: true } })
+     * 
+     */
+    findMany<T extends certificadoFindManyArgs>(args?: SelectSubset<T, certificadoFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$certificadoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Certificado.
+     * @param {certificadoCreateArgs} args - Arguments to create a Certificado.
+     * @example
+     * // Create one Certificado
+     * const Certificado = await prisma.certificado.create({
+     *   data: {
+     *     // ... data to create a Certificado
+     *   }
+     * })
+     * 
+     */
+    create<T extends certificadoCreateArgs>(args: SelectSubset<T, certificadoCreateArgs<ExtArgs>>): Prisma__certificadoClient<$Result.GetResult<Prisma.$certificadoPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Certificados.
+     * @param {certificadoCreateManyArgs} args - Arguments to create many Certificados.
+     * @example
+     * // Create many Certificados
+     * const certificado = await prisma.certificado.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends certificadoCreateManyArgs>(args?: SelectSubset<T, certificadoCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Certificados and returns the data saved in the database.
+     * @param {certificadoCreateManyAndReturnArgs} args - Arguments to create many Certificados.
+     * @example
+     * // Create many Certificados
+     * const certificado = await prisma.certificado.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Certificados and only return the `id_cer`
+     * const certificadoWithId_cerOnly = await prisma.certificado.createManyAndReturn({
+     *   select: { id_cer: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends certificadoCreateManyAndReturnArgs>(args?: SelectSubset<T, certificadoCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$certificadoPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Certificado.
+     * @param {certificadoDeleteArgs} args - Arguments to delete one Certificado.
+     * @example
+     * // Delete one Certificado
+     * const Certificado = await prisma.certificado.delete({
+     *   where: {
+     *     // ... filter to delete one Certificado
+     *   }
+     * })
+     * 
+     */
+    delete<T extends certificadoDeleteArgs>(args: SelectSubset<T, certificadoDeleteArgs<ExtArgs>>): Prisma__certificadoClient<$Result.GetResult<Prisma.$certificadoPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Certificado.
+     * @param {certificadoUpdateArgs} args - Arguments to update one Certificado.
+     * @example
+     * // Update one Certificado
+     * const certificado = await prisma.certificado.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends certificadoUpdateArgs>(args: SelectSubset<T, certificadoUpdateArgs<ExtArgs>>): Prisma__certificadoClient<$Result.GetResult<Prisma.$certificadoPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Certificados.
+     * @param {certificadoDeleteManyArgs} args - Arguments to filter Certificados to delete.
+     * @example
+     * // Delete a few Certificados
+     * const { count } = await prisma.certificado.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends certificadoDeleteManyArgs>(args?: SelectSubset<T, certificadoDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Certificados.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {certificadoUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Certificados
+     * const certificado = await prisma.certificado.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends certificadoUpdateManyArgs>(args: SelectSubset<T, certificadoUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Certificados and returns the data updated in the database.
+     * @param {certificadoUpdateManyAndReturnArgs} args - Arguments to update many Certificados.
+     * @example
+     * // Update many Certificados
+     * const certificado = await prisma.certificado.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Certificados and only return the `id_cer`
+     * const certificadoWithId_cerOnly = await prisma.certificado.updateManyAndReturn({
+     *   select: { id_cer: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends certificadoUpdateManyAndReturnArgs>(args: SelectSubset<T, certificadoUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$certificadoPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Certificado.
+     * @param {certificadoUpsertArgs} args - Arguments to update or create a Certificado.
+     * @example
+     * // Update or create a Certificado
+     * const certificado = await prisma.certificado.upsert({
+     *   create: {
+     *     // ... data to create a Certificado
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Certificado we want to update
+     *   }
+     * })
+     */
+    upsert<T extends certificadoUpsertArgs>(args: SelectSubset<T, certificadoUpsertArgs<ExtArgs>>): Prisma__certificadoClient<$Result.GetResult<Prisma.$certificadoPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Certificados.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {certificadoCountArgs} args - Arguments to filter Certificados to count.
+     * @example
+     * // Count the number of Certificados
+     * const count = await prisma.certificado.count({
+     *   where: {
+     *     // ... the filter for the Certificados we want to count
+     *   }
+     * })
+    **/
+    count<T extends certificadoCountArgs>(
+      args?: Subset<T, certificadoCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], CertificadoCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Certificado.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CertificadoAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends CertificadoAggregateArgs>(args: Subset<T, CertificadoAggregateArgs>): Prisma.PrismaPromise<GetCertificadoAggregateType<T>>
+
+    /**
+     * Group by Certificado.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {certificadoGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends certificadoGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: certificadoGroupByArgs['orderBy'] }
+        : { orderBy?: certificadoGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, certificadoGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCertificadoGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the certificado model
+   */
+  readonly fields: certificadoFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for certificado.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__certificadoClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    inscripcion<T extends inscripcionDefaultArgs<ExtArgs> = {}>(args?: Subset<T, inscripcionDefaultArgs<ExtArgs>>): Prisma__inscripcionClient<$Result.GetResult<Prisma.$inscripcionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the certificado model
+   */
+  interface certificadoFieldRefs {
+    readonly id_cer: FieldRef<"certificado", 'String'>
+    readonly id_ins_per: FieldRef<"certificado", 'String'>
+    readonly url_cer: FieldRef<"certificado", 'String'>
+    readonly tip_cer: FieldRef<"certificado", 'tipo_certificado'>
+    readonly fec_gen_cer: FieldRef<"certificado", 'DateTime'>
+    readonly cod_val_cer: FieldRef<"certificado", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * certificado findUnique
+   */
+  export type certificadoFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the certificado
+     */
+    select?: certificadoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the certificado
+     */
+    omit?: certificadoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: certificadoInclude<ExtArgs> | null
+    /**
+     * Filter, which certificado to fetch.
+     */
+    where: certificadoWhereUniqueInput
+  }
+
+  /**
+   * certificado findUniqueOrThrow
+   */
+  export type certificadoFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the certificado
+     */
+    select?: certificadoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the certificado
+     */
+    omit?: certificadoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: certificadoInclude<ExtArgs> | null
+    /**
+     * Filter, which certificado to fetch.
+     */
+    where: certificadoWhereUniqueInput
+  }
+
+  /**
+   * certificado findFirst
+   */
+  export type certificadoFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the certificado
+     */
+    select?: certificadoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the certificado
+     */
+    omit?: certificadoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: certificadoInclude<ExtArgs> | null
+    /**
+     * Filter, which certificado to fetch.
+     */
+    where?: certificadoWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of certificados to fetch.
+     */
+    orderBy?: certificadoOrderByWithRelationInput | certificadoOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for certificados.
+     */
+    cursor?: certificadoWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` certificados from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` certificados.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of certificados.
+     */
+    distinct?: CertificadoScalarFieldEnum | CertificadoScalarFieldEnum[]
+  }
+
+  /**
+   * certificado findFirstOrThrow
+   */
+  export type certificadoFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the certificado
+     */
+    select?: certificadoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the certificado
+     */
+    omit?: certificadoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: certificadoInclude<ExtArgs> | null
+    /**
+     * Filter, which certificado to fetch.
+     */
+    where?: certificadoWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of certificados to fetch.
+     */
+    orderBy?: certificadoOrderByWithRelationInput | certificadoOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for certificados.
+     */
+    cursor?: certificadoWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` certificados from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` certificados.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of certificados.
+     */
+    distinct?: CertificadoScalarFieldEnum | CertificadoScalarFieldEnum[]
+  }
+
+  /**
+   * certificado findMany
+   */
+  export type certificadoFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the certificado
+     */
+    select?: certificadoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the certificado
+     */
+    omit?: certificadoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: certificadoInclude<ExtArgs> | null
+    /**
+     * Filter, which certificados to fetch.
+     */
+    where?: certificadoWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of certificados to fetch.
+     */
+    orderBy?: certificadoOrderByWithRelationInput | certificadoOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing certificados.
+     */
+    cursor?: certificadoWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` certificados from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` certificados.
+     */
+    skip?: number
+    distinct?: CertificadoScalarFieldEnum | CertificadoScalarFieldEnum[]
+  }
+
+  /**
+   * certificado create
+   */
+  export type certificadoCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the certificado
+     */
+    select?: certificadoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the certificado
+     */
+    omit?: certificadoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: certificadoInclude<ExtArgs> | null
+    /**
+     * The data needed to create a certificado.
+     */
+    data: XOR<certificadoCreateInput, certificadoUncheckedCreateInput>
+  }
+
+  /**
+   * certificado createMany
+   */
+  export type certificadoCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many certificados.
+     */
+    data: certificadoCreateManyInput | certificadoCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * certificado createManyAndReturn
+   */
+  export type certificadoCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the certificado
+     */
+    select?: certificadoSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the certificado
+     */
+    omit?: certificadoOmit<ExtArgs> | null
+    /**
+     * The data used to create many certificados.
+     */
+    data: certificadoCreateManyInput | certificadoCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: certificadoIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * certificado update
+   */
+  export type certificadoUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the certificado
+     */
+    select?: certificadoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the certificado
+     */
+    omit?: certificadoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: certificadoInclude<ExtArgs> | null
+    /**
+     * The data needed to update a certificado.
+     */
+    data: XOR<certificadoUpdateInput, certificadoUncheckedUpdateInput>
+    /**
+     * Choose, which certificado to update.
+     */
+    where: certificadoWhereUniqueInput
+  }
+
+  /**
+   * certificado updateMany
+   */
+  export type certificadoUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update certificados.
+     */
+    data: XOR<certificadoUpdateManyMutationInput, certificadoUncheckedUpdateManyInput>
+    /**
+     * Filter which certificados to update
+     */
+    where?: certificadoWhereInput
+    /**
+     * Limit how many certificados to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * certificado updateManyAndReturn
+   */
+  export type certificadoUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the certificado
+     */
+    select?: certificadoSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the certificado
+     */
+    omit?: certificadoOmit<ExtArgs> | null
+    /**
+     * The data used to update certificados.
+     */
+    data: XOR<certificadoUpdateManyMutationInput, certificadoUncheckedUpdateManyInput>
+    /**
+     * Filter which certificados to update
+     */
+    where?: certificadoWhereInput
+    /**
+     * Limit how many certificados to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: certificadoIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * certificado upsert
+   */
+  export type certificadoUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the certificado
+     */
+    select?: certificadoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the certificado
+     */
+    omit?: certificadoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: certificadoInclude<ExtArgs> | null
+    /**
+     * The filter to search for the certificado to update in case it exists.
+     */
+    where: certificadoWhereUniqueInput
+    /**
+     * In case the certificado found by the `where` argument doesn't exist, create a new certificado with this data.
+     */
+    create: XOR<certificadoCreateInput, certificadoUncheckedCreateInput>
+    /**
+     * In case the certificado was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<certificadoUpdateInput, certificadoUncheckedUpdateInput>
+  }
+
+  /**
+   * certificado delete
+   */
+  export type certificadoDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the certificado
+     */
+    select?: certificadoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the certificado
+     */
+    omit?: certificadoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: certificadoInclude<ExtArgs> | null
+    /**
+     * Filter which certificado to delete.
+     */
+    where: certificadoWhereUniqueInput
+  }
+
+  /**
+   * certificado deleteMany
+   */
+  export type certificadoDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which certificados to delete
+     */
+    where?: certificadoWhereInput
+    /**
+     * Limit how many certificados to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * certificado without action
+   */
+  export type certificadoDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the certificado
+     */
+    select?: certificadoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the certificado
+     */
+    omit?: certificadoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: certificadoInclude<ExtArgs> | null
   }
 
 
@@ -17360,6 +18557,18 @@ export namespace Prisma {
   export type Inscripcion_cursoScalarFieldEnum = (typeof Inscripcion_cursoScalarFieldEnum)[keyof typeof Inscripcion_cursoScalarFieldEnum]
 
 
+  export const CertificadoScalarFieldEnum: {
+    id_cer: 'id_cer',
+    id_ins_per: 'id_ins_per',
+    url_cer: 'url_cer',
+    tip_cer: 'tip_cer',
+    fec_gen_cer: 'fec_gen_cer',
+    cod_val_cer: 'cod_val_cer'
+  };
+
+  export type CertificadoScalarFieldEnum = (typeof CertificadoScalarFieldEnum)[keyof typeof CertificadoScalarFieldEnum]
+
+
   export const FacultadScalarFieldEnum: {
     id_fac: 'id_fac',
     nom_fac: 'nom_fac',
@@ -17539,6 +18748,20 @@ export namespace Prisma {
    * Reference to a field of type 'estado_inscripcion[]'
    */
   export type ListEnumestado_inscripcionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'estado_inscripcion[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'tipo_certificado'
+   */
+  export type Enumtipo_certificadoFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'tipo_certificado'>
+    
+
+
+  /**
+   * Reference to a field of type 'tipo_certificado[]'
+   */
+  export type ListEnumtipo_certificadoFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'tipo_certificado[]'>
     
   /**
    * Deep Input Types
@@ -18266,6 +19489,7 @@ export namespace Prisma {
     comprobantes_pago?: Comprobante_pagoListRelationFilter
     cartas_motivacion?: Carta_motivacionListRelationFilter
     observacion?: XOR<Observacion_inscripcionNullableScalarRelationFilter, observacion_inscripcionWhereInput> | null
+    certificado?: XOR<CertificadoNullableScalarRelationFilter, certificadoWhereInput> | null
   }
 
   export type inscripcionOrderByWithRelationInput = {
@@ -18282,6 +19506,7 @@ export namespace Prisma {
     comprobantes_pago?: comprobante_pagoOrderByRelationAggregateInput
     cartas_motivacion?: carta_motivacionOrderByRelationAggregateInput
     observacion?: observacion_inscripcionOrderByWithRelationInput
+    certificado?: certificadoOrderByWithRelationInput
   }
 
   export type inscripcionWhereUniqueInput = Prisma.AtLeast<{
@@ -18301,6 +19526,7 @@ export namespace Prisma {
     comprobantes_pago?: Comprobante_pagoListRelationFilter
     cartas_motivacion?: Carta_motivacionListRelationFilter
     observacion?: XOR<Observacion_inscripcionNullableScalarRelationFilter, observacion_inscripcionWhereInput> | null
+    certificado?: XOR<CertificadoNullableScalarRelationFilter, certificadoWhereInput> | null
   }, "id_ins">
 
   export type inscripcionOrderByWithAggregationInput = {
@@ -18371,6 +19597,66 @@ export namespace Prisma {
     NOT?: inscripcion_cursoScalarWhereWithAggregatesInput | inscripcion_cursoScalarWhereWithAggregatesInput[]
     id_ins_cur?: StringWithAggregatesFilter<"inscripcion_curso"> | string
     not_fin_usu?: FloatNullableWithAggregatesFilter<"inscripcion_curso"> | number | null
+  }
+
+  export type certificadoWhereInput = {
+    AND?: certificadoWhereInput | certificadoWhereInput[]
+    OR?: certificadoWhereInput[]
+    NOT?: certificadoWhereInput | certificadoWhereInput[]
+    id_cer?: StringFilter<"certificado"> | string
+    id_ins_per?: StringFilter<"certificado"> | string
+    url_cer?: StringFilter<"certificado"> | string
+    tip_cer?: Enumtipo_certificadoFilter<"certificado"> | $Enums.tipo_certificado
+    fec_gen_cer?: DateTimeFilter<"certificado"> | Date | string
+    cod_val_cer?: StringFilter<"certificado"> | string
+    inscripcion?: XOR<InscripcionScalarRelationFilter, inscripcionWhereInput>
+  }
+
+  export type certificadoOrderByWithRelationInput = {
+    id_cer?: SortOrder
+    id_ins_per?: SortOrder
+    url_cer?: SortOrder
+    tip_cer?: SortOrder
+    fec_gen_cer?: SortOrder
+    cod_val_cer?: SortOrder
+    inscripcion?: inscripcionOrderByWithRelationInput
+  }
+
+  export type certificadoWhereUniqueInput = Prisma.AtLeast<{
+    id_cer?: string
+    id_ins_per?: string
+    cod_val_cer?: string
+    AND?: certificadoWhereInput | certificadoWhereInput[]
+    OR?: certificadoWhereInput[]
+    NOT?: certificadoWhereInput | certificadoWhereInput[]
+    url_cer?: StringFilter<"certificado"> | string
+    tip_cer?: Enumtipo_certificadoFilter<"certificado"> | $Enums.tipo_certificado
+    fec_gen_cer?: DateTimeFilter<"certificado"> | Date | string
+    inscripcion?: XOR<InscripcionScalarRelationFilter, inscripcionWhereInput>
+  }, "id_cer" | "id_ins_per" | "cod_val_cer">
+
+  export type certificadoOrderByWithAggregationInput = {
+    id_cer?: SortOrder
+    id_ins_per?: SortOrder
+    url_cer?: SortOrder
+    tip_cer?: SortOrder
+    fec_gen_cer?: SortOrder
+    cod_val_cer?: SortOrder
+    _count?: certificadoCountOrderByAggregateInput
+    _max?: certificadoMaxOrderByAggregateInput
+    _min?: certificadoMinOrderByAggregateInput
+  }
+
+  export type certificadoScalarWhereWithAggregatesInput = {
+    AND?: certificadoScalarWhereWithAggregatesInput | certificadoScalarWhereWithAggregatesInput[]
+    OR?: certificadoScalarWhereWithAggregatesInput[]
+    NOT?: certificadoScalarWhereWithAggregatesInput | certificadoScalarWhereWithAggregatesInput[]
+    id_cer?: StringWithAggregatesFilter<"certificado"> | string
+    id_ins_per?: StringWithAggregatesFilter<"certificado"> | string
+    url_cer?: StringWithAggregatesFilter<"certificado"> | string
+    tip_cer?: Enumtipo_certificadoWithAggregatesFilter<"certificado"> | $Enums.tipo_certificado
+    fec_gen_cer?: DateTimeWithAggregatesFilter<"certificado"> | Date | string
+    cod_val_cer?: StringWithAggregatesFilter<"certificado"> | string
   }
 
   export type facultadWhereInput = {
@@ -19219,6 +20505,7 @@ export namespace Prisma {
     comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutInscripcionInput
     cartas_motivacion?: carta_motivacionCreateNestedManyWithoutInscripcionInput
     observacion?: observacion_inscripcionCreateNestedOneWithoutInscripcionInput
+    certificado?: certificadoCreateNestedOneWithoutInscripcionInput
   }
 
   export type inscripcionUncheckedCreateInput = {
@@ -19233,6 +20520,7 @@ export namespace Prisma {
     comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutInscripcionInput
     cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutInscripcionInput
     observacion?: observacion_inscripcionUncheckedCreateNestedOneWithoutInscripcionInput
+    certificado?: certificadoUncheckedCreateNestedOneWithoutInscripcionInput
   }
 
   export type inscripcionUpdateInput = {
@@ -19247,6 +20535,7 @@ export namespace Prisma {
     comprobantes_pago?: comprobante_pagoUpdateManyWithoutInscripcionNestedInput
     cartas_motivacion?: carta_motivacionUpdateManyWithoutInscripcionNestedInput
     observacion?: observacion_inscripcionUpdateOneWithoutInscripcionNestedInput
+    certificado?: certificadoUpdateOneWithoutInscripcionNestedInput
   }
 
   export type inscripcionUncheckedUpdateInput = {
@@ -19261,6 +20550,7 @@ export namespace Prisma {
     comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutInscripcionNestedInput
     cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutInscripcionNestedInput
     observacion?: observacion_inscripcionUncheckedUpdateOneWithoutInscripcionNestedInput
+    certificado?: certificadoUncheckedUpdateOneWithoutInscripcionNestedInput
   }
 
   export type inscripcionCreateManyInput = {
@@ -19323,6 +20613,68 @@ export namespace Prisma {
   export type inscripcion_cursoUncheckedUpdateManyInput = {
     id_ins_cur?: StringFieldUpdateOperationsInput | string
     not_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+  }
+
+  export type certificadoCreateInput = {
+    id_cer?: string
+    url_cer: string
+    tip_cer: $Enums.tipo_certificado
+    fec_gen_cer?: Date | string
+    cod_val_cer: string
+    inscripcion: inscripcionCreateNestedOneWithoutCertificadoInput
+  }
+
+  export type certificadoUncheckedCreateInput = {
+    id_cer?: string
+    id_ins_per: string
+    url_cer: string
+    tip_cer: $Enums.tipo_certificado
+    fec_gen_cer?: Date | string
+    cod_val_cer: string
+  }
+
+  export type certificadoUpdateInput = {
+    id_cer?: StringFieldUpdateOperationsInput | string
+    url_cer?: StringFieldUpdateOperationsInput | string
+    tip_cer?: Enumtipo_certificadoFieldUpdateOperationsInput | $Enums.tipo_certificado
+    fec_gen_cer?: DateTimeFieldUpdateOperationsInput | Date | string
+    cod_val_cer?: StringFieldUpdateOperationsInput | string
+    inscripcion?: inscripcionUpdateOneRequiredWithoutCertificadoNestedInput
+  }
+
+  export type certificadoUncheckedUpdateInput = {
+    id_cer?: StringFieldUpdateOperationsInput | string
+    id_ins_per?: StringFieldUpdateOperationsInput | string
+    url_cer?: StringFieldUpdateOperationsInput | string
+    tip_cer?: Enumtipo_certificadoFieldUpdateOperationsInput | $Enums.tipo_certificado
+    fec_gen_cer?: DateTimeFieldUpdateOperationsInput | Date | string
+    cod_val_cer?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type certificadoCreateManyInput = {
+    id_cer?: string
+    id_ins_per: string
+    url_cer: string
+    tip_cer: $Enums.tipo_certificado
+    fec_gen_cer?: Date | string
+    cod_val_cer: string
+  }
+
+  export type certificadoUpdateManyMutationInput = {
+    id_cer?: StringFieldUpdateOperationsInput | string
+    url_cer?: StringFieldUpdateOperationsInput | string
+    tip_cer?: Enumtipo_certificadoFieldUpdateOperationsInput | $Enums.tipo_certificado
+    fec_gen_cer?: DateTimeFieldUpdateOperationsInput | Date | string
+    cod_val_cer?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type certificadoUncheckedUpdateManyInput = {
+    id_cer?: StringFieldUpdateOperationsInput | string
+    id_ins_per?: StringFieldUpdateOperationsInput | string
+    url_cer?: StringFieldUpdateOperationsInput | string
+    tip_cer?: Enumtipo_certificadoFieldUpdateOperationsInput | $Enums.tipo_certificado
+    fec_gen_cer?: DateTimeFieldUpdateOperationsInput | Date | string
+    cod_val_cer?: StringFieldUpdateOperationsInput | string
   }
 
   export type facultadCreateInput = {
@@ -20200,6 +21552,11 @@ export namespace Prisma {
     isNot?: observacion_inscripcionWhereInput | null
   }
 
+  export type CertificadoNullableScalarRelationFilter = {
+    is?: certificadoWhereInput | null
+    isNot?: certificadoWhereInput | null
+  }
+
   export type inscripcionCountOrderByAggregateInput = {
     id_ins?: SortOrder
     id_cor_ins?: SortOrder
@@ -20285,6 +21642,50 @@ export namespace Prisma {
 
   export type inscripcion_cursoSumOrderByAggregateInput = {
     not_fin_usu?: SortOrder
+  }
+
+  export type Enumtipo_certificadoFilter<$PrismaModel = never> = {
+    equals?: $Enums.tipo_certificado | Enumtipo_certificadoFieldRefInput<$PrismaModel>
+    in?: $Enums.tipo_certificado[] | ListEnumtipo_certificadoFieldRefInput<$PrismaModel>
+    notIn?: $Enums.tipo_certificado[] | ListEnumtipo_certificadoFieldRefInput<$PrismaModel>
+    not?: NestedEnumtipo_certificadoFilter<$PrismaModel> | $Enums.tipo_certificado
+  }
+
+  export type certificadoCountOrderByAggregateInput = {
+    id_cer?: SortOrder
+    id_ins_per?: SortOrder
+    url_cer?: SortOrder
+    tip_cer?: SortOrder
+    fec_gen_cer?: SortOrder
+    cod_val_cer?: SortOrder
+  }
+
+  export type certificadoMaxOrderByAggregateInput = {
+    id_cer?: SortOrder
+    id_ins_per?: SortOrder
+    url_cer?: SortOrder
+    tip_cer?: SortOrder
+    fec_gen_cer?: SortOrder
+    cod_val_cer?: SortOrder
+  }
+
+  export type certificadoMinOrderByAggregateInput = {
+    id_cer?: SortOrder
+    id_ins_per?: SortOrder
+    url_cer?: SortOrder
+    tip_cer?: SortOrder
+    fec_gen_cer?: SortOrder
+    cod_val_cer?: SortOrder
+  }
+
+  export type Enumtipo_certificadoWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.tipo_certificado | Enumtipo_certificadoFieldRefInput<$PrismaModel>
+    in?: $Enums.tipo_certificado[] | ListEnumtipo_certificadoFieldRefInput<$PrismaModel>
+    notIn?: $Enums.tipo_certificado[] | ListEnumtipo_certificadoFieldRefInput<$PrismaModel>
+    not?: NestedEnumtipo_certificadoWithAggregatesFilter<$PrismaModel> | $Enums.tipo_certificado
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumtipo_certificadoFilter<$PrismaModel>
+    _max?: NestedEnumtipo_certificadoFilter<$PrismaModel>
   }
 
   export type facultadCountOrderByAggregateInput = {
@@ -21128,6 +22529,12 @@ export namespace Prisma {
     connect?: observacion_inscripcionWhereUniqueInput
   }
 
+  export type certificadoCreateNestedOneWithoutInscripcionInput = {
+    create?: XOR<certificadoCreateWithoutInscripcionInput, certificadoUncheckedCreateWithoutInscripcionInput>
+    connectOrCreate?: certificadoCreateOrConnectWithoutInscripcionInput
+    connect?: certificadoWhereUniqueInput
+  }
+
   export type inscripcion_cursoUncheckedCreateNestedOneWithoutInscripcionInput = {
     create?: XOR<inscripcion_cursoCreateWithoutInscripcionInput, inscripcion_cursoUncheckedCreateWithoutInscripcionInput>
     connectOrCreate?: inscripcion_cursoCreateOrConnectWithoutInscripcionInput
@@ -21152,6 +22559,12 @@ export namespace Prisma {
     create?: XOR<observacion_inscripcionCreateWithoutInscripcionInput, observacion_inscripcionUncheckedCreateWithoutInscripcionInput>
     connectOrCreate?: observacion_inscripcionCreateOrConnectWithoutInscripcionInput
     connect?: observacion_inscripcionWhereUniqueInput
+  }
+
+  export type certificadoUncheckedCreateNestedOneWithoutInscripcionInput = {
+    create?: XOR<certificadoCreateWithoutInscripcionInput, certificadoUncheckedCreateWithoutInscripcionInput>
+    connectOrCreate?: certificadoCreateOrConnectWithoutInscripcionInput
+    connect?: certificadoWhereUniqueInput
   }
 
   export type Enumestado_inscripcionFieldUpdateOperationsInput = {
@@ -21230,6 +22643,16 @@ export namespace Prisma {
     update?: XOR<XOR<observacion_inscripcionUpdateToOneWithWhereWithoutInscripcionInput, observacion_inscripcionUpdateWithoutInscripcionInput>, observacion_inscripcionUncheckedUpdateWithoutInscripcionInput>
   }
 
+  export type certificadoUpdateOneWithoutInscripcionNestedInput = {
+    create?: XOR<certificadoCreateWithoutInscripcionInput, certificadoUncheckedCreateWithoutInscripcionInput>
+    connectOrCreate?: certificadoCreateOrConnectWithoutInscripcionInput
+    upsert?: certificadoUpsertWithoutInscripcionInput
+    disconnect?: certificadoWhereInput | boolean
+    delete?: certificadoWhereInput | boolean
+    connect?: certificadoWhereUniqueInput
+    update?: XOR<XOR<certificadoUpdateToOneWithWhereWithoutInscripcionInput, certificadoUpdateWithoutInscripcionInput>, certificadoUncheckedUpdateWithoutInscripcionInput>
+  }
+
   export type inscripcion_cursoUncheckedUpdateOneWithoutInscripcionNestedInput = {
     create?: XOR<inscripcion_cursoCreateWithoutInscripcionInput, inscripcion_cursoUncheckedCreateWithoutInscripcionInput>
     connectOrCreate?: inscripcion_cursoCreateOrConnectWithoutInscripcionInput
@@ -21278,6 +22701,16 @@ export namespace Prisma {
     update?: XOR<XOR<observacion_inscripcionUpdateToOneWithWhereWithoutInscripcionInput, observacion_inscripcionUpdateWithoutInscripcionInput>, observacion_inscripcionUncheckedUpdateWithoutInscripcionInput>
   }
 
+  export type certificadoUncheckedUpdateOneWithoutInscripcionNestedInput = {
+    create?: XOR<certificadoCreateWithoutInscripcionInput, certificadoUncheckedCreateWithoutInscripcionInput>
+    connectOrCreate?: certificadoCreateOrConnectWithoutInscripcionInput
+    upsert?: certificadoUpsertWithoutInscripcionInput
+    disconnect?: certificadoWhereInput | boolean
+    delete?: certificadoWhereInput | boolean
+    connect?: certificadoWhereUniqueInput
+    update?: XOR<XOR<certificadoUpdateToOneWithWhereWithoutInscripcionInput, certificadoUpdateWithoutInscripcionInput>, certificadoUncheckedUpdateWithoutInscripcionInput>
+  }
+
   export type inscripcionCreateNestedOneWithoutInscripcion_cursoInput = {
     create?: XOR<inscripcionCreateWithoutInscripcion_cursoInput, inscripcionUncheckedCreateWithoutInscripcion_cursoInput>
     connectOrCreate?: inscripcionCreateOrConnectWithoutInscripcion_cursoInput
@@ -21290,6 +22723,24 @@ export namespace Prisma {
     upsert?: inscripcionUpsertWithoutInscripcion_cursoInput
     connect?: inscripcionWhereUniqueInput
     update?: XOR<XOR<inscripcionUpdateToOneWithWhereWithoutInscripcion_cursoInput, inscripcionUpdateWithoutInscripcion_cursoInput>, inscripcionUncheckedUpdateWithoutInscripcion_cursoInput>
+  }
+
+  export type inscripcionCreateNestedOneWithoutCertificadoInput = {
+    create?: XOR<inscripcionCreateWithoutCertificadoInput, inscripcionUncheckedCreateWithoutCertificadoInput>
+    connectOrCreate?: inscripcionCreateOrConnectWithoutCertificadoInput
+    connect?: inscripcionWhereUniqueInput
+  }
+
+  export type Enumtipo_certificadoFieldUpdateOperationsInput = {
+    set?: $Enums.tipo_certificado
+  }
+
+  export type inscripcionUpdateOneRequiredWithoutCertificadoNestedInput = {
+    create?: XOR<inscripcionCreateWithoutCertificadoInput, inscripcionUncheckedCreateWithoutCertificadoInput>
+    connectOrCreate?: inscripcionCreateOrConnectWithoutCertificadoInput
+    upsert?: inscripcionUpsertWithoutCertificadoInput
+    connect?: inscripcionWhereUniqueInput
+    update?: XOR<XOR<inscripcionUpdateToOneWithWhereWithoutCertificadoInput, inscripcionUpdateWithoutCertificadoInput>, inscripcionUncheckedUpdateWithoutCertificadoInput>
   }
 
   export type carreraCreateNestedManyWithoutFacultadInput = {
@@ -21636,6 +23087,23 @@ export namespace Prisma {
     _max?: NestedFloatNullableFilter<$PrismaModel>
   }
 
+  export type NestedEnumtipo_certificadoFilter<$PrismaModel = never> = {
+    equals?: $Enums.tipo_certificado | Enumtipo_certificadoFieldRefInput<$PrismaModel>
+    in?: $Enums.tipo_certificado[] | ListEnumtipo_certificadoFieldRefInput<$PrismaModel>
+    notIn?: $Enums.tipo_certificado[] | ListEnumtipo_certificadoFieldRefInput<$PrismaModel>
+    not?: NestedEnumtipo_certificadoFilter<$PrismaModel> | $Enums.tipo_certificado
+  }
+
+  export type NestedEnumtipo_certificadoWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.tipo_certificado | Enumtipo_certificadoFieldRefInput<$PrismaModel>
+    in?: $Enums.tipo_certificado[] | ListEnumtipo_certificadoFieldRefInput<$PrismaModel>
+    notIn?: $Enums.tipo_certificado[] | ListEnumtipo_certificadoFieldRefInput<$PrismaModel>
+    not?: NestedEnumtipo_certificadoWithAggregatesFilter<$PrismaModel> | $Enums.tipo_certificado
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumtipo_certificadoFilter<$PrismaModel>
+    _max?: NestedEnumtipo_certificadoFilter<$PrismaModel>
+  }
+
   export type carreraCreateWithoutUsuarioInput = {
     id_car?: string
     nom_car: string
@@ -21814,6 +23282,7 @@ export namespace Prisma {
     inscripcion_curso?: inscripcion_cursoCreateNestedOneWithoutInscripcionInput
     cartas_motivacion?: carta_motivacionCreateNestedManyWithoutInscripcionInput
     observacion?: observacion_inscripcionCreateNestedOneWithoutInscripcionInput
+    certificado?: certificadoCreateNestedOneWithoutInscripcionInput
   }
 
   export type inscripcionUncheckedCreateWithoutComprobantes_pagoInput = {
@@ -21827,6 +23296,7 @@ export namespace Prisma {
     inscripcion_curso?: inscripcion_cursoUncheckedCreateNestedOneWithoutInscripcionInput
     cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutInscripcionInput
     observacion?: observacion_inscripcionUncheckedCreateNestedOneWithoutInscripcionInput
+    certificado?: certificadoUncheckedCreateNestedOneWithoutInscripcionInput
   }
 
   export type inscripcionCreateOrConnectWithoutComprobantes_pagoInput = {
@@ -21893,6 +23363,7 @@ export namespace Prisma {
     inscripcion_curso?: inscripcion_cursoUpdateOneWithoutInscripcionNestedInput
     cartas_motivacion?: carta_motivacionUpdateManyWithoutInscripcionNestedInput
     observacion?: observacion_inscripcionUpdateOneWithoutInscripcionNestedInput
+    certificado?: certificadoUpdateOneWithoutInscripcionNestedInput
   }
 
   export type inscripcionUncheckedUpdateWithoutComprobantes_pagoInput = {
@@ -21906,6 +23377,7 @@ export namespace Prisma {
     inscripcion_curso?: inscripcion_cursoUncheckedUpdateOneWithoutInscripcionNestedInput
     cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutInscripcionNestedInput
     observacion?: observacion_inscripcionUncheckedUpdateOneWithoutInscripcionNestedInput
+    certificado?: certificadoUncheckedUpdateOneWithoutInscripcionNestedInput
   }
 
   export type cuentaCreateWithoutCartas_motivacionInput = {
@@ -21950,6 +23422,7 @@ export namespace Prisma {
     inscripcion_curso?: inscripcion_cursoCreateNestedOneWithoutInscripcionInput
     comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutInscripcionInput
     observacion?: observacion_inscripcionCreateNestedOneWithoutInscripcionInput
+    certificado?: certificadoCreateNestedOneWithoutInscripcionInput
   }
 
   export type inscripcionUncheckedCreateWithoutCartas_motivacionInput = {
@@ -21963,6 +23436,7 @@ export namespace Prisma {
     inscripcion_curso?: inscripcion_cursoUncheckedCreateNestedOneWithoutInscripcionInput
     comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutInscripcionInput
     observacion?: observacion_inscripcionUncheckedCreateNestedOneWithoutInscripcionInput
+    certificado?: certificadoUncheckedCreateNestedOneWithoutInscripcionInput
   }
 
   export type inscripcionCreateOrConnectWithoutCartas_motivacionInput = {
@@ -22029,6 +23503,7 @@ export namespace Prisma {
     inscripcion_curso?: inscripcion_cursoUpdateOneWithoutInscripcionNestedInput
     comprobantes_pago?: comprobante_pagoUpdateManyWithoutInscripcionNestedInput
     observacion?: observacion_inscripcionUpdateOneWithoutInscripcionNestedInput
+    certificado?: certificadoUpdateOneWithoutInscripcionNestedInput
   }
 
   export type inscripcionUncheckedUpdateWithoutCartas_motivacionInput = {
@@ -22042,6 +23517,7 @@ export namespace Prisma {
     inscripcion_curso?: inscripcion_cursoUncheckedUpdateOneWithoutInscripcionNestedInput
     comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutInscripcionNestedInput
     observacion?: observacion_inscripcionUncheckedUpdateOneWithoutInscripcionNestedInput
+    certificado?: certificadoUncheckedUpdateOneWithoutInscripcionNestedInput
   }
 
   export type inscripcionCreateWithoutObservacionInput = {
@@ -22055,6 +23531,7 @@ export namespace Prisma {
     inscripcion_curso?: inscripcion_cursoCreateNestedOneWithoutInscripcionInput
     comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutInscripcionInput
     cartas_motivacion?: carta_motivacionCreateNestedManyWithoutInscripcionInput
+    certificado?: certificadoCreateNestedOneWithoutInscripcionInput
   }
 
   export type inscripcionUncheckedCreateWithoutObservacionInput = {
@@ -22068,6 +23545,7 @@ export namespace Prisma {
     inscripcion_curso?: inscripcion_cursoUncheckedCreateNestedOneWithoutInscripcionInput
     comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutInscripcionInput
     cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutInscripcionInput
+    certificado?: certificadoUncheckedCreateNestedOneWithoutInscripcionInput
   }
 
   export type inscripcionCreateOrConnectWithoutObservacionInput = {
@@ -22128,6 +23606,7 @@ export namespace Prisma {
     inscripcion_curso?: inscripcion_cursoUpdateOneWithoutInscripcionNestedInput
     comprobantes_pago?: comprobante_pagoUpdateManyWithoutInscripcionNestedInput
     cartas_motivacion?: carta_motivacionUpdateManyWithoutInscripcionNestedInput
+    certificado?: certificadoUpdateOneWithoutInscripcionNestedInput
   }
 
   export type inscripcionUncheckedUpdateWithoutObservacionInput = {
@@ -22141,6 +23620,7 @@ export namespace Prisma {
     inscripcion_curso?: inscripcion_cursoUncheckedUpdateOneWithoutInscripcionNestedInput
     comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutInscripcionNestedInput
     cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutInscripcionNestedInput
+    certificado?: certificadoUncheckedUpdateOneWithoutInscripcionNestedInput
   }
 
   export type cuentaUpsertWithoutObservaciones_creadasInput = {
@@ -22220,6 +23700,7 @@ export namespace Prisma {
     comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutInscripcionInput
     cartas_motivacion?: carta_motivacionCreateNestedManyWithoutInscripcionInput
     observacion?: observacion_inscripcionCreateNestedOneWithoutInscripcionInput
+    certificado?: certificadoCreateNestedOneWithoutInscripcionInput
   }
 
   export type inscripcionUncheckedCreateWithoutCuentaInput = {
@@ -22233,6 +23714,7 @@ export namespace Prisma {
     comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutInscripcionInput
     cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutInscripcionInput
     observacion?: observacion_inscripcionUncheckedCreateNestedOneWithoutInscripcionInput
+    certificado?: certificadoUncheckedCreateNestedOneWithoutInscripcionInput
   }
 
   export type inscripcionCreateOrConnectWithoutCuentaInput = {
@@ -22888,6 +24370,7 @@ export namespace Prisma {
     comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutInscripcionInput
     cartas_motivacion?: carta_motivacionCreateNestedManyWithoutInscripcionInput
     observacion?: observacion_inscripcionCreateNestedOneWithoutInscripcionInput
+    certificado?: certificadoCreateNestedOneWithoutInscripcionInput
   }
 
   export type inscripcionUncheckedCreateWithoutEventoInput = {
@@ -22901,6 +24384,7 @@ export namespace Prisma {
     comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutInscripcionInput
     cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutInscripcionInput
     observacion?: observacion_inscripcionUncheckedCreateNestedOneWithoutInscripcionInput
+    certificado?: certificadoUncheckedCreateNestedOneWithoutInscripcionInput
   }
 
   export type inscripcionCreateOrConnectWithoutEventoInput = {
@@ -23477,6 +24961,27 @@ export namespace Prisma {
     create: XOR<observacion_inscripcionCreateWithoutInscripcionInput, observacion_inscripcionUncheckedCreateWithoutInscripcionInput>
   }
 
+  export type certificadoCreateWithoutInscripcionInput = {
+    id_cer?: string
+    url_cer: string
+    tip_cer: $Enums.tipo_certificado
+    fec_gen_cer?: Date | string
+    cod_val_cer: string
+  }
+
+  export type certificadoUncheckedCreateWithoutInscripcionInput = {
+    id_cer?: string
+    url_cer: string
+    tip_cer: $Enums.tipo_certificado
+    fec_gen_cer?: Date | string
+    cod_val_cer: string
+  }
+
+  export type certificadoCreateOrConnectWithoutInscripcionInput = {
+    where: certificadoWhereUniqueInput
+    create: XOR<certificadoCreateWithoutInscripcionInput, certificadoUncheckedCreateWithoutInscripcionInput>
+  }
+
   export type cuentaUpsertWithoutInscripcionesInput = {
     update: XOR<cuentaUpdateWithoutInscripcionesInput, cuentaUncheckedUpdateWithoutInscripcionesInput>
     create: XOR<cuentaCreateWithoutInscripcionesInput, cuentaUncheckedCreateWithoutInscripcionesInput>
@@ -23637,6 +25142,33 @@ export namespace Prisma {
     id_adm_cre_obs?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
+  export type certificadoUpsertWithoutInscripcionInput = {
+    update: XOR<certificadoUpdateWithoutInscripcionInput, certificadoUncheckedUpdateWithoutInscripcionInput>
+    create: XOR<certificadoCreateWithoutInscripcionInput, certificadoUncheckedCreateWithoutInscripcionInput>
+    where?: certificadoWhereInput
+  }
+
+  export type certificadoUpdateToOneWithWhereWithoutInscripcionInput = {
+    where?: certificadoWhereInput
+    data: XOR<certificadoUpdateWithoutInscripcionInput, certificadoUncheckedUpdateWithoutInscripcionInput>
+  }
+
+  export type certificadoUpdateWithoutInscripcionInput = {
+    id_cer?: StringFieldUpdateOperationsInput | string
+    url_cer?: StringFieldUpdateOperationsInput | string
+    tip_cer?: Enumtipo_certificadoFieldUpdateOperationsInput | $Enums.tipo_certificado
+    fec_gen_cer?: DateTimeFieldUpdateOperationsInput | Date | string
+    cod_val_cer?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type certificadoUncheckedUpdateWithoutInscripcionInput = {
+    id_cer?: StringFieldUpdateOperationsInput | string
+    url_cer?: StringFieldUpdateOperationsInput | string
+    tip_cer?: Enumtipo_certificadoFieldUpdateOperationsInput | $Enums.tipo_certificado
+    fec_gen_cer?: DateTimeFieldUpdateOperationsInput | Date | string
+    cod_val_cer?: StringFieldUpdateOperationsInput | string
+  }
+
   export type inscripcionCreateWithoutInscripcion_cursoInput = {
     id_ins?: string
     est_ins?: $Enums.estado_inscripcion
@@ -23648,6 +25180,7 @@ export namespace Prisma {
     comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutInscripcionInput
     cartas_motivacion?: carta_motivacionCreateNestedManyWithoutInscripcionInput
     observacion?: observacion_inscripcionCreateNestedOneWithoutInscripcionInput
+    certificado?: certificadoCreateNestedOneWithoutInscripcionInput
   }
 
   export type inscripcionUncheckedCreateWithoutInscripcion_cursoInput = {
@@ -23661,6 +25194,7 @@ export namespace Prisma {
     comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutInscripcionInput
     cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutInscripcionInput
     observacion?: observacion_inscripcionUncheckedCreateNestedOneWithoutInscripcionInput
+    certificado?: certificadoUncheckedCreateNestedOneWithoutInscripcionInput
   }
 
   export type inscripcionCreateOrConnectWithoutInscripcion_cursoInput = {
@@ -23690,6 +25224,7 @@ export namespace Prisma {
     comprobantes_pago?: comprobante_pagoUpdateManyWithoutInscripcionNestedInput
     cartas_motivacion?: carta_motivacionUpdateManyWithoutInscripcionNestedInput
     observacion?: observacion_inscripcionUpdateOneWithoutInscripcionNestedInput
+    certificado?: certificadoUpdateOneWithoutInscripcionNestedInput
   }
 
   export type inscripcionUncheckedUpdateWithoutInscripcion_cursoInput = {
@@ -23700,6 +25235,79 @@ export namespace Prisma {
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutInscripcionNestedInput
+    cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutInscripcionNestedInput
+    observacion?: observacion_inscripcionUncheckedUpdateOneWithoutInscripcionNestedInput
+    certificado?: certificadoUncheckedUpdateOneWithoutInscripcionNestedInput
+  }
+
+  export type inscripcionCreateWithoutCertificadoInput = {
+    id_ins?: string
+    est_ins?: $Enums.estado_inscripcion
+    fec_ins?: Date | string
+    usu_apr_cer?: boolean
+    por_asi_fin_usu?: number | null
+    cuenta: cuentaCreateNestedOneWithoutInscripcionesInput
+    evento: eventoCreateNestedOneWithoutInscritosInput
+    inscripcion_curso?: inscripcion_cursoCreateNestedOneWithoutInscripcionInput
+    comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutInscripcionInput
+    cartas_motivacion?: carta_motivacionCreateNestedManyWithoutInscripcionInput
+    observacion?: observacion_inscripcionCreateNestedOneWithoutInscripcionInput
+  }
+
+  export type inscripcionUncheckedCreateWithoutCertificadoInput = {
+    id_ins?: string
+    id_cor_ins: string
+    id_eve_ins: string
+    est_ins?: $Enums.estado_inscripcion
+    fec_ins?: Date | string
+    usu_apr_cer?: boolean
+    por_asi_fin_usu?: number | null
+    inscripcion_curso?: inscripcion_cursoUncheckedCreateNestedOneWithoutInscripcionInput
+    comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutInscripcionInput
+    cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutInscripcionInput
+    observacion?: observacion_inscripcionUncheckedCreateNestedOneWithoutInscripcionInput
+  }
+
+  export type inscripcionCreateOrConnectWithoutCertificadoInput = {
+    where: inscripcionWhereUniqueInput
+    create: XOR<inscripcionCreateWithoutCertificadoInput, inscripcionUncheckedCreateWithoutCertificadoInput>
+  }
+
+  export type inscripcionUpsertWithoutCertificadoInput = {
+    update: XOR<inscripcionUpdateWithoutCertificadoInput, inscripcionUncheckedUpdateWithoutCertificadoInput>
+    create: XOR<inscripcionCreateWithoutCertificadoInput, inscripcionUncheckedCreateWithoutCertificadoInput>
+    where?: inscripcionWhereInput
+  }
+
+  export type inscripcionUpdateToOneWithWhereWithoutCertificadoInput = {
+    where?: inscripcionWhereInput
+    data: XOR<inscripcionUpdateWithoutCertificadoInput, inscripcionUncheckedUpdateWithoutCertificadoInput>
+  }
+
+  export type inscripcionUpdateWithoutCertificadoInput = {
+    id_ins?: StringFieldUpdateOperationsInput | string
+    est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
+    fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
+    usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    cuenta?: cuentaUpdateOneRequiredWithoutInscripcionesNestedInput
+    evento?: eventoUpdateOneRequiredWithoutInscritosNestedInput
+    inscripcion_curso?: inscripcion_cursoUpdateOneWithoutInscripcionNestedInput
+    comprobantes_pago?: comprobante_pagoUpdateManyWithoutInscripcionNestedInput
+    cartas_motivacion?: carta_motivacionUpdateManyWithoutInscripcionNestedInput
+    observacion?: observacion_inscripcionUpdateOneWithoutInscripcionNestedInput
+  }
+
+  export type inscripcionUncheckedUpdateWithoutCertificadoInput = {
+    id_ins?: StringFieldUpdateOperationsInput | string
+    id_cor_ins?: StringFieldUpdateOperationsInput | string
+    id_eve_ins?: StringFieldUpdateOperationsInput | string
+    est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
+    fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
+    usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    inscripcion_curso?: inscripcion_cursoUncheckedUpdateOneWithoutInscripcionNestedInput
     comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutInscripcionNestedInput
     cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutInscripcionNestedInput
     observacion?: observacion_inscripcionUncheckedUpdateOneWithoutInscripcionNestedInput
@@ -23862,6 +25470,7 @@ export namespace Prisma {
     comprobantes_pago?: comprobante_pagoUpdateManyWithoutInscripcionNestedInput
     cartas_motivacion?: carta_motivacionUpdateManyWithoutInscripcionNestedInput
     observacion?: observacion_inscripcionUpdateOneWithoutInscripcionNestedInput
+    certificado?: certificadoUpdateOneWithoutInscripcionNestedInput
   }
 
   export type inscripcionUncheckedUpdateWithoutCuentaInput = {
@@ -23875,6 +25484,7 @@ export namespace Prisma {
     comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutInscripcionNestedInput
     cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutInscripcionNestedInput
     observacion?: observacion_inscripcionUncheckedUpdateOneWithoutInscripcionNestedInput
+    certificado?: certificadoUncheckedUpdateOneWithoutInscripcionNestedInput
   }
 
   export type inscripcionUncheckedUpdateManyWithoutCuentaInput = {
@@ -24163,6 +25773,7 @@ export namespace Prisma {
     comprobantes_pago?: comprobante_pagoUpdateManyWithoutInscripcionNestedInput
     cartas_motivacion?: carta_motivacionUpdateManyWithoutInscripcionNestedInput
     observacion?: observacion_inscripcionUpdateOneWithoutInscripcionNestedInput
+    certificado?: certificadoUpdateOneWithoutInscripcionNestedInput
   }
 
   export type inscripcionUncheckedUpdateWithoutEventoInput = {
@@ -24176,6 +25787,7 @@ export namespace Prisma {
     comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutInscripcionNestedInput
     cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutInscripcionNestedInput
     observacion?: observacion_inscripcionUncheckedUpdateOneWithoutInscripcionNestedInput
+    certificado?: certificadoUncheckedUpdateOneWithoutInscripcionNestedInput
   }
 
   export type inscripcionUncheckedUpdateManyWithoutEventoInput = {

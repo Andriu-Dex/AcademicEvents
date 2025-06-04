@@ -319,10 +319,10 @@ body::after {
    Sección de certificado
    ======================= */
 .myins-certificado {
-  margin-top: 0.5rem;
+  margin-top: 0.75rem;
   display: flex;
-  gap: 1rem;
-  align-items: center;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 /* =======================
@@ -386,6 +386,32 @@ body::after {
   transition: all 0.2s ease-in-out;
   transform: scale(1.03);
   border: #0400ff 1px solid;
+}
+
+/* =======================
+   Botón enviar certificado por email
+   ======================= */
+.btn-enviar-email {
+  font-size: 0.875rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: #c9b6fc 1px solid;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  transition: background 0.2s ease, color 0.2s ease;
+  color: #5b21b6;
+  background-color: #f3f0ff;
+  border-radius: 0.375rem;
+}
+
+.btn-enviar-email:hover {
+  background-color: #e9d5ff;
+  color: #4c1d95;
+  transition: all 0.2s ease-in-out;
+  transform: scale(1.03);
+  border: #7c3aed 1px solid;
 }
 
 /* =======================
@@ -644,4 +670,24 @@ body::after {
   color: #78350f;
   font-size: 0.875rem;
   line-height: 1.4;
+}
+
+/* =======================
+   Mensaje de inscripción pendiente
+   ======================= */
+.myins-pendiente {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  background-color: #f0f9ff;
+  border-radius: 0.375rem;
+  border-left: 3px solid #0ea5e9;
+}
+
+.myins-pendiente p {
+  margin: 0;
+  color: #0369a1;
+  font-size: 0.875rem;
 }

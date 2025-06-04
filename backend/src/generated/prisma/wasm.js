@@ -235,6 +235,15 @@ exports.Prisma.Inscripcion_cursoScalarFieldEnum = {
   not_fin_usu: 'not_fin_usu'
 };
 
+exports.Prisma.CertificadoScalarFieldEnum = {
+  id_cer: 'id_cer',
+  id_ins_per: 'id_ins_per',
+  url_cer: 'url_cer',
+  tip_cer: 'tip_cer',
+  fec_gen_cer: 'fec_gen_cer',
+  cod_val_cer: 'cod_val_cer'
+};
+
 exports.Prisma.FacultadScalarFieldEnum = {
   id_fac: 'id_fac',
   nom_fac: 'nom_fac',
@@ -303,6 +312,11 @@ exports.estado_inscripcion = exports.$Enums.estado_inscripcion = {
   FINALIZADA: 'FINALIZADA'
 };
 
+exports.tipo_certificado = exports.$Enums.tipo_certificado = {
+  PARTICIPACION: 'PARTICIPACION',
+  APROBACION: 'APROBACION'
+};
+
 exports.Prisma.ModelName = {
   usuario: 'usuario',
   comprobante_pago: 'comprobante_pago',
@@ -316,6 +330,7 @@ exports.Prisma.ModelName = {
   evento_carrera: 'evento_carrera',
   inscripcion: 'inscripcion',
   inscripcion_curso: 'inscripcion_curso',
+  certificado: 'certificado',
   facultad: 'facultad'
 };
 

@@ -179,6 +179,7 @@ model inscripcion {
   comprobantes_pago      comprobante_pago[] // Relación 1:N (inscripción puede tener muchos comprobantes de pago)
   cartas_motivacion carta_motivacion[] // Relación 1:N (inscripción puede tener muchas cartas de motivación)
   observacion           observacion_inscripcion?   // Relación 1:1
+  certificado      certificado?       // Relación 1:1 (inscripción puede tener un certificado)
 }
 
 model inscripcion_curso {
@@ -186,6 +187,17 @@ model inscripcion_curso {
   not_fin_usu     Float?           // Nota final (solo para cursos)
 
   inscripcion     inscripcion @relation(fields: [id_ins_cur], references: [id_ins]) // Relación 1:1 (inscripción puede tener un curso)
+}
+
+model certificado {
+  id_cer           String    @id @default(uuid()) // UUID como ID del certificado
+  id_ins_per       String    @unique // FK única a inscripción
+  url_cer          String    // Ruta o URL donde se almacena el PDF del certificado
+  tip_cer          tipo_certificado // Tipo de certificado (PARTICIPACION o APROBACION)
+  fec_gen_cer      DateTime  @default(now()) // Fecha de generación del certificado
+  cod_val_cer      String    @unique // Código único para validar el certificado
+  
+  inscripcion      inscripcion @relation(fields: [id_ins_per], references: [id_ins]) // Relación 1:1 (certificado pertenece a una inscripción)
 }
 
 model facultad {
@@ -247,4 +259,9 @@ enum estado_evento {
   FINALIZADO
   CANCELADO
   SUSPENDIDO
+}
+
+enum tipo_certificado {
+  PARTICIPACION
+  APROBACION
 }
