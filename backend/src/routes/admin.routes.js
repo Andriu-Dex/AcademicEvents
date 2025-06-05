@@ -6,7 +6,16 @@ const onlyAdmin = require("../middlewares/autorizacion/onlyAdmin");
 const {
   obtenerInscripcionesPorEvento,
   validarInscripcion,
+  obtenerTodasLasInscripciones,
 } = require("../controllers/inscripcion.controller");
+
+// Ruta para obtener todas las inscripciones
+router.get(
+  "/inscripciones",
+  verificarToken,
+  onlyAdmin,
+  obtenerTodasLasInscripciones
+);
 
 router.get(
   "/inscripciones/evento/:id",

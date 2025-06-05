@@ -125,21 +125,71 @@ exports.Prisma.UsuarioScalarFieldEnum = {
   ced_usu: 'ced_usu',
   nom_usu: 'nom_usu',
   ape_usu: 'ape_usu',
-  cor_usu: 'cor_usu',
-  con_usu: 'con_usu',
   cel_usu: 'cel_usu',
-  rol_usu: 'rol_usu',
   fec_cre_usu: 'fec_cre_usu',
   com_usu: 'com_usu',
-  id_car_est: 'id_car_est'
+  id_car_est: 'id_car_est',
+  img_per_usu: 'img_per_usu'
+};
+
+exports.Prisma.Comprobante_pagoScalarFieldEnum = {
+  id_com_pag: 'id_com_pag',
+  id_ins_per: 'id_ins_per',
+  url_com_pag: 'url_com_pag',
+  est_com_pag: 'est_com_pag',
+  fec_sub_com_pag: 'fec_sub_com_pag',
+  fec_val_com_pag: 'fec_val_com_pag',
+  id_adm_val_com_pag: 'id_adm_val_com_pag',
+  fec_pag_ins: 'fec_pag_ins'
+};
+
+exports.Prisma.Carta_motivacionScalarFieldEnum = {
+  id_car_mot: 'id_car_mot',
+  id_ins_per: 'id_ins_per',
+  con_car_mot: 'con_car_mot',
+  est_car_mot: 'est_car_mot',
+  fec_sub_car_mot: 'fec_sub_car_mot',
+  fec_val_car_mot: 'fec_val_car_mot',
+  id_adm_val_car_mot: 'id_adm_val_car_mot'
+};
+
+exports.Prisma.Observacion_inscripcionScalarFieldEnum = {
+  id_obs_ins: 'id_obs_ins',
+  id_ins_per: 'id_ins_per',
+  obs_ins: 'obs_ins',
+  fec_cre_obs: 'fec_cre_obs',
+  id_adm_cre_obs: 'id_adm_cre_obs'
+};
+
+exports.Prisma.CuentaScalarFieldEnum = {
+  id_cue: 'id_cue',
+  id_usu_per: 'id_usu_per',
+  cor_usu: 'cor_usu',
+  con_usu: 'con_usu',
+  fec_cre_cue: 'fec_cre_cue',
+  rol_usu: 'rol_usu'
 };
 
 exports.Prisma.CarreraScalarFieldEnum = {
   id_car: 'id_car',
   nom_car: 'nom_car',
+  des_car: 'des_car',
+  dur_sem_car: 'dur_sem_car',
+  mod_car: 'mod_car',
+  ico_car: 'ico_car',
   est_car: 'est_car',
   fec_cre_car: 'fec_cre_car',
-  id_fac_per: 'id_fac_per'
+  id_fac_per: 'id_fac_per',
+  id_coo_per: 'id_coo_per'
+};
+
+exports.Prisma.CoordinadorScalarFieldEnum = {
+  id_coo: 'id_coo',
+  nom_coo: 'nom_coo',
+  ape_coo: 'ape_coo',
+  cor_coo: 'cor_coo',
+  url_img_coo: 'url_img_coo',
+  tit_coo: 'tit_coo'
 };
 
 exports.Prisma.EventoScalarFieldEnum = {
@@ -151,10 +201,11 @@ exports.Prisma.EventoScalarFieldEnum = {
   val_eve: 'val_eve',
   est_eve: 'est_eve',
   fec_cre_eve: 'fec_cre_eve',
-  img_por_eve: 'img_por_eve',
   dur_hor_eve: 'dur_hor_eve',
+  img_por_eve: 'img_por_eve',
   por_min_asi_eve: 'por_min_asi_eve',
-  fec_fin_eve: 'fec_fin_eve'
+  fec_fin_eve: 'fec_fin_eve',
+  id_cue_cre_eve: 'id_cue_cre_eve'
 };
 
 exports.Prisma.Evento_cursoScalarFieldEnum = {
@@ -171,19 +222,26 @@ exports.Prisma.Evento_carreraScalarFieldEnum = {
 
 exports.Prisma.InscripcionScalarFieldEnum = {
   id_ins: 'id_ins',
-  id_usu_ins: 'id_usu_ins',
+  id_cor_ins: 'id_cor_ins',
   id_eve_ins: 'id_eve_ins',
   est_ins: 'est_ins',
   fec_ins: 'fec_ins',
-  fec_pag_ins: 'fec_pag_ins',
-  cer_eve_env: 'cer_eve_env',
-  car_mot_usu: 'car_mot_usu'
+  usu_apr_cer: 'usu_apr_cer',
+  por_asi_fin_usu: 'por_asi_fin_usu'
 };
 
 exports.Prisma.Inscripcion_cursoScalarFieldEnum = {
   id_ins_cur: 'id_ins_cur',
-  not_fin_usu: 'not_fin_usu',
-  por_asi_fin_usu: 'por_asi_fin_usu'
+  not_fin_usu: 'not_fin_usu'
+};
+
+exports.Prisma.CertificadoScalarFieldEnum = {
+  id_cer: 'id_cer',
+  id_ins_per: 'id_ins_per',
+  url_cer: 'url_cer',
+  tip_cer: 'tip_cer',
+  fec_gen_cer: 'fec_gen_cer',
+  cod_val_cer: 'cod_val_cer'
 };
 
 exports.Prisma.FacultadScalarFieldEnum = {
@@ -191,7 +249,16 @@ exports.Prisma.FacultadScalarFieldEnum = {
   nom_fac: 'nom_fac',
   des_fac: 'des_fac',
   mis_fac: 'mis_fac',
-  vis_fac: 'vis_fac'
+  vis_fac: 'vis_fac',
+  fec_cre_fac: 'fec_cre_fac',
+  nom_dec_fac: 'nom_dec_fac',
+  ape_dec_fac: 'ape_dec_fac',
+  cor_dec_fac: 'cor_dec_fac',
+  url_img_dec_fac: 'url_img_dec_fac',
+  nom_sub_dec_fac: 'nom_sub_dec_fac',
+  ape_sub_dec_fac: 'ape_sub_dec_fac',
+  cor_sub_dec_fac: 'cor_sub_dec_fac',
+  url_img_sub_dec_fac: 'url_img_sub_dec_fac'
 };
 
 exports.Prisma.SortOrder = {
@@ -208,8 +275,15 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
+exports.estado_validacion = exports.$Enums.estado_validacion = {
+  PENDIENTE: 'PENDIENTE',
+  ACEPTADO: 'ACEPTADO',
+  RECHAZADO: 'RECHAZADO'
+};
+
 exports.rol_usuario = exports.$Enums.rol_usuario = {
-  ADMIN: 'ADMIN',
+  ADMIN_GLOBAL: 'ADMIN_GLOBAL',
+  ADMIN_GENERAL: 'ADMIN_GENERAL',
   ESTUDIANTE: 'ESTUDIANTE',
   GENERAL: 'GENERAL'
 };
@@ -238,14 +312,25 @@ exports.estado_inscripcion = exports.$Enums.estado_inscripcion = {
   FINALIZADA: 'FINALIZADA'
 };
 
+exports.tipo_certificado = exports.$Enums.tipo_certificado = {
+  PARTICIPACION: 'PARTICIPACION',
+  APROBACION: 'APROBACION'
+};
+
 exports.Prisma.ModelName = {
   usuario: 'usuario',
+  comprobante_pago: 'comprobante_pago',
+  carta_motivacion: 'carta_motivacion',
+  observacion_inscripcion: 'observacion_inscripcion',
+  cuenta: 'cuenta',
   carrera: 'carrera',
+  coordinador: 'coordinador',
   evento: 'evento',
   evento_curso: 'evento_curso',
   evento_carrera: 'evento_carrera',
   inscripcion: 'inscripcion',
   inscripcion_curso: 'inscripcion_curso',
+  certificado: 'certificado',
   facultad: 'facultad'
 };
 

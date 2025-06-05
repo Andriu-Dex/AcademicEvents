@@ -3,7 +3,7 @@ import { toast } from "react-toastify"; // Importar toast para notificaciones
 
 // Crear una instancia de axios
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:3000/api", // URL base del backend
+  baseURL: import.meta.env.VITE_API_URL + "/api", // URL base del backend desde las variables de entorno
 });
 
 // Variable para almacenar la función de logout

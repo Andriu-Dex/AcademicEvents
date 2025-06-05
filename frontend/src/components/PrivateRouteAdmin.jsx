@@ -4,9 +4,9 @@ import { useAuth } from "../hooks/useAuth";
 
 const PrivateRouteAdmin = ({ children }) => {
   const { usuario } = useAuth();
-
   if (!usuario) return <Navigate to="/login" />;
-  if (usuario.rol_usu !== "ADMIN") return <Navigate to="/eventos" />;
+  if (usuario.rol_usu !== "ADMIN_GLOBAL" && usuario.rol_usu !== "ADMIN_GENERAL")
+    return <Navigate to="/eventos" />;
 
   return children;
 };

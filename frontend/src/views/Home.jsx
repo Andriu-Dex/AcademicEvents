@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import { useAuth } from "../hooks/useAuth";
+import axiosInstance from "../api/axiosConfig";
 import {
   Users,
   Microscope,
@@ -18,33 +20,30 @@ import {
   MapPin,
   Calendar,
   GraduationCap,
+  BookOpen,
+  Monitor,
 } from "lucide-react";
 import "./styles/Home.css";
 
 function Home() {
-  // Simulación de usuario (puede ser null, estudiante o usuario general)
-  // Para probar diferentes interfaces, descomentar una de estas opciones y comentar las otras
+  // Usar el usuario real del contexto de autenticación
+  const { usuario } = useAuth();
+  // Estado para almacenar las carreras
+  const [carreras, setCarreras] = useState([]);
 
-  // OPCIÓN 1: Sin usuario (público general)
-  //const [usuario, setUsuario] = useState(null);
+  // Cargar carreras desde la API
+  useEffect(() => {
+    const cargarCarreras = async () => {
+      try {
+        const res = await axiosInstance.get("/carreras");
+        setCarreras(res.data);
+      } catch (error) {
+        console.error("Error al cargar carreras:", error);
+      }
+    };
 
-  // OPCIÓN 2: Usuario Estudiante - Software
-  const [usuario, setUsuario] = useState({
-    id: 1,
-    nombre: "Juan Pérez",
-    email: "jperez@uta.edu.ec",
-    rol_usu: "ESTUDIANTE",
-    carrera: "SOFTWARE",
-  });
-
-  // OPCIÓN 2: Usuario Estudiante - Software
-  // const [usuario, setUsuario] = useState({
-  //     id: 1,
-  //     nombre: "Juan Pérez",
-  //     email: "jperez@uta.edu.ec",
-  //     rol_usu: "ESTUDIANTE",
-  //     carrera: "SOFTWARE"
-  // });
+    cargarCarreras();
+  }, []);
 
   // Facultad actual (para contenido de la página)
   const facultadActual = {
@@ -52,7 +51,9 @@ function Home() {
     nombreCompleto:
       "Facultad de Ingeniería en Sistemas, Electrónica e Industrial",
     logo: "https://imgur.com/fch1iy6.png",
-  }; // Estadísticas de la facultad
+  };
+
+  // Estadísticas de la facultad
   const stats = [
     {
       number: "1,200+",
@@ -62,63 +63,64 @@ function Home() {
     { number: "45", label: "Docentes", icon: <Users size={36} /> },
     { number: "8", label: "Laboratorios", icon: <Microscope size={36} /> },
     { number: "95%", label: "Empleabilidad", icon: <TrendingUp size={36} /> },
-  ]; // Autoridades de la facultad (actualizado a mayo de 2025)
+  ];
+
+  // Autoridades de la facultad (actualizado con 5 autoridades y fotos reales)
   const autoridades = [
     {
       cargo: "Decano",
       nombre: "Dr. Franklin Mayorga Mogollón",
-      imagen: "/api/placeholder/200/250",
-      email: "f.mayorga@uta.edu.ec",
+      imagen: "https://i.imgur.com/hYBsxIf.png",
+      email: "fmayorga@uta.edu.ec",
     },
     {
       cargo: "Subdecano",
       nombre: "Dr. Javier Sánchez Torres",
-      imagen: "/api/placeholder/200/250",
+      imagen: "https://i.imgur.com/JIQy6Fa.png",
       email: "j.sanchez@uta.edu.ec",
     },
     {
-      cargo: "Directora de Carrera de Software",
-      nombre: "Ing. Carmen Vaca Reyes",
-      imagen: "/api/placeholder/200/250",
-      email: "c.vaca@uta.edu.ec",
+      cargo:
+        "Coordinador de las Carrera de Software y Tecnologías de la Información",
+      nombre: "Ing. Mg. Marco Guachimboza",
+      imagen: "https://i.imgur.com/XDFrTBI.png",
+      email: "marcovguachimboza@uta.edu.ec",
     },
     {
-      cargo: "Director de Carrera de TI",
-      nombre: "Ing. Roberto Morales Villacrés",
-      imagen: "/api/placeholder/200/250",
+      cargo:
+        "Coordinador de las Carrera de Automatización y Robótica y Telecomunicaciones",
+      nombre: "Ing. Mg. Freddy Robalino",
+      imagen: "https://i.imgur.com/daKWf7d.png",
       email: "r.morales@uta.edu.ec",
     },
-  ]; // Carreras disponibles
-  const carreras = [
     {
-      nombre: "Ingeniería en Software",
-      descripcion: "Desarrollo de aplicaciones y sistemas informáticos",
-      duracion: "9 semestres",
-      modalidad: "Presencial",
-      icon: <Laptop size={36} />,
-    },
-    {
-      nombre: "Ingeniería en Sistemas",
-      descripcion: "Administración y gestión de sistemas tecnológicos",
-      duracion: "9 semestres",
-      modalidad: "Presencial",
-      icon: <Wrench size={36} />,
-    },
-    {
-      nombre: "Ingeniería Electrónica",
-      descripcion: "Diseño y desarrollo de dispositivos electrónicos",
-      duracion: "9 semestres",
-      modalidad: "Presencial",
-      icon: <Zap size={36} />,
-    },
-    {
-      nombre: "Ingeniería Industrial",
-      descripcion: "Optimización de procesos y sistemas productivos",
-      duracion: "9 semestres",
-      modalidad: "Presencial",
-      icon: <Factory size={36} />,
+      cargo: "Coordinador de las Carrera Ingeniería Industrial",
+      nombre: "Ing. Mg. César Rosero",
+      imagen: "https://i.imgur.com/d4hRu17.png",
+      email: "cesararosero@uta.edu.ec",
     },
   ];
+  // Función para obtener el icono correspondiente
+  const getIconComponent = (iconName, size = 36) => {
+    switch (iconName) {
+      case "laptop":
+        return <Laptop size={size} />;
+      case "wrench":
+        return <Wrench size={size} />;
+      case "zap":
+        return <Zap size={size} />;
+      case "factory":
+        return <Factory size={size} />;
+      case "book":
+        return <BookOpen size={size} />;
+      case "monitor":
+        return <Monitor size={size} />;
+      default:
+        return <GraduationCap size={size} />;
+    }
+  };
+
+  // Info cards para misión y visión
   const infoCardsPorCarrera = {
     GENERAL: [
       {
@@ -138,6 +140,7 @@ function Home() {
 
   // Seleccionar los infoCards según el tipo de usuario y su carrera
   const infoCards = infoCardsPorCarrera.GENERAL;
+
   // Cargar Bootstrap dinámicamente si no está presente
   useEffect(() => {
     const id = "bootstrap-css";
@@ -149,7 +152,9 @@ function Home() {
         "https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css";
       document.head.appendChild(link);
     }
-  }, []); // Determina si el usuario está autenticado
+  }, []);
+
+  // Determina si el usuario está autenticado
   const isAuthenticated = usuario ? true : false;
 
   return (
@@ -175,7 +180,6 @@ function Home() {
         <div className="container">
           <div className="row align-items-center">
             <div className="col-lg-6 text-white py-4">
-              {" "}
               <h1 className="display-4 fw-bold mb-3 animate__animated animate__fadeInUp">
                 {usuario?.rol_usu === "ESTUDIANTE"
                   ? `Facultad de Ingeniería en ${
@@ -195,7 +199,6 @@ function Home() {
                 tecnológicas del país.
               </p>
               <div className="d-flex gap-3 flex-wrap">
-                {" "}
                 <Link
                   to="/eventos"
                   className="btn btn-light fw-bold animate__animated animate__fadeInUp"
@@ -207,9 +210,9 @@ function Home() {
                   }}
                 >
                   <Calendar size={18} className="me-2" /> Explorar eventos
-                </Link>
-                <Link
-                  to="/carreras"
+                </Link>{" "}
+                <a
+                  href="#carreras"
                   className="btn btn-outline-light fw-bold animate__animated animate__fadeInUp"
                   style={{
                     borderRadius: "8px",
@@ -218,7 +221,7 @@ function Home() {
                   }}
                 >
                   <GraduationCap size={18} className="me-2" /> Ver carreras
-                </Link>
+                </a>
               </div>
             </div>
             <div className="col-lg-6">
@@ -239,7 +242,7 @@ function Home() {
             </div>
           </div>
         </div>
-      </div>{" "}
+      </div>
       {/* Autoridades */}
       <div className="container mb-5" id="autoridades">
         <div className="row justify-content-center mb-4">
@@ -271,7 +274,7 @@ function Home() {
                   >
                     {autoridad.nombre}
                   </h5>
-                  <p className="text-muted fw-semibold">{autoridad.cargo}</p>{" "}
+                  <p className="text-muted fw-semibold">{autoridad.cargo}</p>
                   <a
                     href={`mailto:${autoridad.email}`}
                     className="btn btn-outline-primary btn-sm"
@@ -283,7 +286,7 @@ function Home() {
             </div>
           ))}
         </div>
-      </div>{" "}
+      </div>
       {/* Carreras Disponibles */}
       <div className="container mb-5" id="carreras">
         <div className="row justify-content-center mb-4">
@@ -295,43 +298,39 @@ function Home() {
               Descubre las opciones académicas que tenemos para ti
             </p>
           </div>
-        </div>
+        </div>{" "}
         <div className="row g-4">
           {carreras.map((carrera, index) => (
             <div className="col-md-6 col-lg-3" key={index}>
               <div className="card h-100 shadow-sm border-0 hover-card">
                 <div className="card-body text-center p-4">
-                  <div className="display-4 mb-3">{carrera.icon}</div>
+                  <div className="display-4 mb-3">
+                    {getIconComponent(carrera.ico_car)}
+                  </div>
                   <h5
                     className="card-title fw-bold"
                     style={{ color: "#8A1538" }}
                   >
-                    {carrera.nombre}
+                    {carrera.nom_car}
                   </h5>
                   <p className="card-text small text-muted mb-3">
-                    {carrera.descripcion}
-                  </p>{" "}
+                    {carrera.des_car}
+                  </p>
                   <div className="mb-3">
                     <span className="badge bg-light text-dark me-2">
-                      <Clock size={14} className="me-1" /> {carrera.duracion}
+                      <Clock size={14} className="me-1" /> {carrera.dur_sem_car}{" "}
+                      semestres
                     </span>
                     <span className="badge bg-light text-dark">
-                      <MapPin size={14} className="me-1" /> {carrera.modalidad}
+                      <MapPin size={14} className="me-1" /> {carrera.mod_car}
                     </span>
                   </div>
-                  <Link
-                    to="/carreras"
-                    className="btn btn-sm"
-                    style={{ background: "#8A1538", color: "white" }}
-                  >
-                    Más información
-                  </Link>
                 </div>
               </div>
             </div>
           ))}
         </div>
-      </div>{" "}
+      </div>
       {/* Misión y Visión */}
       <div className="container mb-5" id="mision-vision">
         <div className="row justify-content-center mb-4">
@@ -390,7 +389,6 @@ function Home() {
           }}
         >
           <div className="row align-items-center">
-            {" "}
             <div className="col-md-8">
               <h3 className="fw-bold mb-3" style={{ color: "#8A1538" }}>
                 <MessageSquare
@@ -407,7 +405,8 @@ function Home() {
             </div>
             <div className="col-md-4 text-md-end">
               <a
-                href="mailto:info@uta.edu.ec"
+                href="https://andriu-dex.github.io/Andriu-Dex/"
+                target="_blank"
                 className="btn fw-bold btn-lg me-2 mb-2"
                 style={{
                   background: "#8A1538",
@@ -418,7 +417,8 @@ function Home() {
                 <Mail size={18} className="me-2" /> Contáctanos
               </a>
               <a
-                href="tel:032521081"
+                href="https://andriu-dex.github.io/Andriu-Dex/"
+                Target="_blank"
                 className="btn btn-outline-secondary fw-bold btn-lg mb-2"
                 style={{ borderRadius: "8px" }}
               >
@@ -475,7 +475,7 @@ function Home() {
                   </Link>
                 </li>
               </ul>
-            </div>{" "}
+            </div>
             <div className="col-md-3 mb-3 mb-md-0">
               <h6 className="mb-3">Información</h6>
               <ul className="list-unstyled mb-0">
@@ -508,7 +508,6 @@ function Home() {
             <div className="col-md-3">
               <h6 className="mb-3">Contacto</h6>
               <ul className="list-unstyled mb-0">
-                {" "}
                 <li className="mb-2 small">
                   <MapPin size={14} className="me-2" /> Av. de los Chasquis,
                   Ambato
@@ -551,7 +550,7 @@ function Home() {
             </div>
           </div>
         </div>
-      </footer>{" "}
+      </footer>
       {/* Estilos adicionales para efectos hover */}
       <style>{`
         .hover-card {

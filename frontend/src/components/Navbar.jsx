@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import { useState, useRef, useEffect } from "react";
 import {
   LogOut,
   Home,
@@ -9,6 +10,9 @@ import {
   Settings,
   FileText,
   PlusCircle,
+  User,
+  CheckSquare,
+  Sliders,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import "./styles/Navbar.css";
@@ -17,26 +21,47 @@ const Navbar = () => {
   const { usuario, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation(); // Hook para obtener la ubicación actual
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const profileMenuRef = useRef(null);
   // Función para determinar si un enlace está activo
   const isActive = (path) => {
-    if (path === "/admin" && location.pathname.startsWith("/admin")) {
-      // Solo considera /admin activo si es exactamente /admin
-      return location.pathname === "/admin" ? "nav-link-active" : "";
-    }
-
-    // Para otras rutas, considera activo si la ruta actual comienza con la ruta del enlace
-    // excepto para /home que debe ser exacto
-    if (path === "/home") {
+    // Para rutas exactas
+    const exactPaths = ["/admin", "/home"];
+    if (exactPaths.includes(path)) {
       return location.pathname === path ? "nav-link-active" : "";
     }
 
+    // Para /admin/eventos, activo para todas las rutas que empiecen con esto
+    if (path === "/admin/eventos") {
+      return location.pathname.startsWith("/admin/eventos")
+        ? "nav-link-active"
+        : "";
+    }
+
+    // Para el resto de rutas
     return location.pathname.startsWith(path) ? "nav-link-active" : "";
   };
-
   const cerrarSesion = () => {
     logout(); // Limpiar token y usuario
     navigate("/login"); // Redirigir al login
   };
+
+  // Cerrar el menú de perfil cuando se hace clic fuera de él
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        profileMenuRef.current &&
+        !profileMenuRef.current.contains(event.target)
+      ) {
+        setShowProfileMenu(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
   if (!usuario) {
     return (
       <nav className="navbar">
@@ -73,7 +98,8 @@ const Navbar = () => {
           <span className="navbar-logo-text">FISEI</span>
         </Link>{" "}
         <div className="navbar-links">
-          {usuario.rol_usu === "ESTUDIANTE" && (
+          {(usuario.rol_usu === "ESTUDIANTE" ||
+            usuario.rol_usu === "GENERAL") && (
             <>
               {" "}
               <Link to="/home" className={`nav-link-item ${isActive("/home")}`}>
@@ -99,7 +125,7 @@ const Navbar = () => {
                   <ClipboardList size={18} />
                 </span>
                 <span>Mis inscripciones</span>
-              </Link>
+              </Link>{" "}
               <Link
                 to="/certificados"
                 className={`nav-link-item ${isActive("/certificados")}`}
@@ -110,8 +136,9 @@ const Navbar = () => {
                 <span>Certificados</span>
               </Link>
             </>
-          )}
-          {usuario.rol_usu === "ADMIN" && (
+          )}{" "}
+          {(usuario.rol_usu === "ADMIN_GLOBAL" ||
+            usuario.rol_usu === "ADMIN_GENERAL") && (
             <>
               {" "}
               <Link
@@ -127,19 +154,11 @@ const Navbar = () => {
                 to="/admin/eventos"
                 className={`nav-link-item ${isActive("/admin/eventos")}`}
               >
+                {" "}
                 <span className="nav-link-icon">
                   <FileText size={18} />
                 </span>
                 <span>Gestionar eventos</span>
-              </Link>
-              <Link
-                to="/admin/eventos/crear"
-                className={`nav-link-item ${isActive("/admin/eventos/crear")}`}
-              >
-                <span className="nav-link-icon">
-                  <PlusCircle size={18} />
-                </span>
-                <span>Crear evento</span>
               </Link>
               <Link
                 to="/admin/carreras"
@@ -150,14 +169,49 @@ const Navbar = () => {
                 </span>
                 <span>Gestionar carreras</span>
               </Link>
+              <Link
+                to="/admin/inscripciones"
+                className={`nav-link-item ${isActive("/admin/inscripciones")}`}
+              >
+                <span className="nav-link-icon">
+                  <CheckSquare size={18} />
+                </span>
+                <span>Validar inscripciones</span>
+              </Link>
+              <Link
+                to="/admin/configuracion"
+                className={`nav-link-item ${isActive("/admin/configuracion")}`}
+              >
+                <span className="nav-link-icon">
+                  <Sliders size={18} />
+                </span>
+                <span>Configuración</span>
+              </Link>
             </>
           )}
         </div>
       </div>{" "}
-      <button className="navbar-logout" onClick={cerrarSesion}>
-        <LogOut size={18} />
-        <span>Cerrar sesión</span>
-      </button>
+      <div className="navbar-profile" ref={profileMenuRef}>
+        <div
+          className="profile-button"
+          onClick={() => setShowProfileMenu(!showProfileMenu)}
+        >
+          <User size={18} className="profile-icon" />
+          <span className="profile-name">{usuario?.nom_usu || "Usuario"}</span>
+        </div>
+        {showProfileMenu && (
+          <div className="profile-dropdown">
+            <Link to="/perfil" className="profile-menu-item">
+              <User size={16} />
+              <span>Mi Perfil</span>
+            </Link>
+            <div className="profile-menu-item logout" onClick={cerrarSesion}>
+              <LogOut size={16} />
+              <span>Cerrar sesión</span>
+            </div>
+          </div>
+        )}
+      </div>
     </nav>
   );
 };

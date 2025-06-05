@@ -19,10 +19,35 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
  */
 export type usuario = $Result.DefaultSelection<Prisma.$usuarioPayload>
 /**
+ * Model comprobante_pago
+ * 
+ */
+export type comprobante_pago = $Result.DefaultSelection<Prisma.$comprobante_pagoPayload>
+/**
+ * Model carta_motivacion
+ * 
+ */
+export type carta_motivacion = $Result.DefaultSelection<Prisma.$carta_motivacionPayload>
+/**
+ * Model observacion_inscripcion
+ * 
+ */
+export type observacion_inscripcion = $Result.DefaultSelection<Prisma.$observacion_inscripcionPayload>
+/**
+ * Model cuenta
+ * 
+ */
+export type cuenta = $Result.DefaultSelection<Prisma.$cuentaPayload>
+/**
  * Model carrera
  * 
  */
 export type carrera = $Result.DefaultSelection<Prisma.$carreraPayload>
+/**
+ * Model coordinador
+ * 
+ */
+export type coordinador = $Result.DefaultSelection<Prisma.$coordinadorPayload>
 /**
  * Model evento
  * 
@@ -49,6 +74,11 @@ export type inscripcion = $Result.DefaultSelection<Prisma.$inscripcionPayload>
  */
 export type inscripcion_curso = $Result.DefaultSelection<Prisma.$inscripcion_cursoPayload>
 /**
+ * Model certificado
+ * 
+ */
+export type certificado = $Result.DefaultSelection<Prisma.$certificadoPayload>
+/**
  * Model facultad
  * 
  */
@@ -59,12 +89,22 @@ export type facultad = $Result.DefaultSelection<Prisma.$facultadPayload>
  */
 export namespace $Enums {
   export const rol_usuario: {
-  ADMIN: 'ADMIN',
+  ADMIN_GLOBAL: 'ADMIN_GLOBAL',
+  ADMIN_GENERAL: 'ADMIN_GENERAL',
   ESTUDIANTE: 'ESTUDIANTE',
   GENERAL: 'GENERAL'
 };
 
 export type rol_usuario = (typeof rol_usuario)[keyof typeof rol_usuario]
+
+
+export const estado_validacion: {
+  PENDIENTE: 'PENDIENTE',
+  ACEPTADO: 'ACEPTADO',
+  RECHAZADO: 'RECHAZADO'
+};
+
+export type estado_validacion = (typeof estado_validacion)[keyof typeof estado_validacion]
 
 
 export const tipo_evento: {
@@ -99,11 +139,23 @@ export const estado_evento: {
 
 export type estado_evento = (typeof estado_evento)[keyof typeof estado_evento]
 
+
+export const tipo_certificado: {
+  PARTICIPACION: 'PARTICIPACION',
+  APROBACION: 'APROBACION'
+};
+
+export type tipo_certificado = (typeof tipo_certificado)[keyof typeof tipo_certificado]
+
 }
 
 export type rol_usuario = $Enums.rol_usuario
 
 export const rol_usuario: typeof $Enums.rol_usuario
+
+export type estado_validacion = $Enums.estado_validacion
+
+export const estado_validacion: typeof $Enums.estado_validacion
 
 export type tipo_evento = $Enums.tipo_evento
 
@@ -116,6 +168,10 @@ export const estado_inscripcion: typeof $Enums.estado_inscripcion
 export type estado_evento = $Enums.estado_evento
 
 export const estado_evento: typeof $Enums.estado_evento
+
+export type tipo_certificado = $Enums.tipo_certificado
+
+export const tipo_certificado: typeof $Enums.tipo_certificado
 
 /**
  * ##  Prisma Client ʲˢ
@@ -253,6 +309,46 @@ export class PrismaClient<
   get usuario(): Prisma.usuarioDelegate<ExtArgs, ClientOptions>;
 
   /**
+   * `prisma.comprobante_pago`: Exposes CRUD operations for the **comprobante_pago** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Comprobante_pagos
+    * const comprobante_pagos = await prisma.comprobante_pago.findMany()
+    * ```
+    */
+  get comprobante_pago(): Prisma.comprobante_pagoDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.carta_motivacion`: Exposes CRUD operations for the **carta_motivacion** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Carta_motivacions
+    * const carta_motivacions = await prisma.carta_motivacion.findMany()
+    * ```
+    */
+  get carta_motivacion(): Prisma.carta_motivacionDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.observacion_inscripcion`: Exposes CRUD operations for the **observacion_inscripcion** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Observacion_inscripcions
+    * const observacion_inscripcions = await prisma.observacion_inscripcion.findMany()
+    * ```
+    */
+  get observacion_inscripcion(): Prisma.observacion_inscripcionDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.cuenta`: Exposes CRUD operations for the **cuenta** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Cuentas
+    * const cuentas = await prisma.cuenta.findMany()
+    * ```
+    */
+  get cuenta(): Prisma.cuentaDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.carrera`: Exposes CRUD operations for the **carrera** model.
     * Example usage:
     * ```ts
@@ -261,6 +357,16 @@ export class PrismaClient<
     * ```
     */
   get carrera(): Prisma.carreraDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.coordinador`: Exposes CRUD operations for the **coordinador** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Coordinadors
+    * const coordinadors = await prisma.coordinador.findMany()
+    * ```
+    */
+  get coordinador(): Prisma.coordinadorDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.evento`: Exposes CRUD operations for the **evento** model.
@@ -311,6 +417,16 @@ export class PrismaClient<
     * ```
     */
   get inscripcion_curso(): Prisma.inscripcion_cursoDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.certificado`: Exposes CRUD operations for the **certificado** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Certificados
+    * const certificados = await prisma.certificado.findMany()
+    * ```
+    */
+  get certificado(): Prisma.certificadoDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.facultad`: Exposes CRUD operations for the **facultad** model.
@@ -762,12 +878,18 @@ export namespace Prisma {
 
   export const ModelName: {
     usuario: 'usuario',
+    comprobante_pago: 'comprobante_pago',
+    carta_motivacion: 'carta_motivacion',
+    observacion_inscripcion: 'observacion_inscripcion',
+    cuenta: 'cuenta',
     carrera: 'carrera',
+    coordinador: 'coordinador',
     evento: 'evento',
     evento_curso: 'evento_curso',
     evento_carrera: 'evento_carrera',
     inscripcion: 'inscripcion',
     inscripcion_curso: 'inscripcion_curso',
+    certificado: 'certificado',
     facultad: 'facultad'
   };
 
@@ -787,7 +909,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "usuario" | "carrera" | "evento" | "evento_curso" | "evento_carrera" | "inscripcion" | "inscripcion_curso" | "facultad"
+      modelProps: "usuario" | "comprobante_pago" | "carta_motivacion" | "observacion_inscripcion" | "cuenta" | "carrera" | "coordinador" | "evento" | "evento_curso" | "evento_carrera" | "inscripcion" | "inscripcion_curso" | "certificado" | "facultad"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -865,6 +987,302 @@ export namespace Prisma {
           }
         }
       }
+      comprobante_pago: {
+        payload: Prisma.$comprobante_pagoPayload<ExtArgs>
+        fields: Prisma.comprobante_pagoFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.comprobante_pagoFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$comprobante_pagoPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.comprobante_pagoFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$comprobante_pagoPayload>
+          }
+          findFirst: {
+            args: Prisma.comprobante_pagoFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$comprobante_pagoPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.comprobante_pagoFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$comprobante_pagoPayload>
+          }
+          findMany: {
+            args: Prisma.comprobante_pagoFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$comprobante_pagoPayload>[]
+          }
+          create: {
+            args: Prisma.comprobante_pagoCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$comprobante_pagoPayload>
+          }
+          createMany: {
+            args: Prisma.comprobante_pagoCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.comprobante_pagoCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$comprobante_pagoPayload>[]
+          }
+          delete: {
+            args: Prisma.comprobante_pagoDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$comprobante_pagoPayload>
+          }
+          update: {
+            args: Prisma.comprobante_pagoUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$comprobante_pagoPayload>
+          }
+          deleteMany: {
+            args: Prisma.comprobante_pagoDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.comprobante_pagoUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.comprobante_pagoUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$comprobante_pagoPayload>[]
+          }
+          upsert: {
+            args: Prisma.comprobante_pagoUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$comprobante_pagoPayload>
+          }
+          aggregate: {
+            args: Prisma.Comprobante_pagoAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateComprobante_pago>
+          }
+          groupBy: {
+            args: Prisma.comprobante_pagoGroupByArgs<ExtArgs>
+            result: $Utils.Optional<Comprobante_pagoGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.comprobante_pagoCountArgs<ExtArgs>
+            result: $Utils.Optional<Comprobante_pagoCountAggregateOutputType> | number
+          }
+        }
+      }
+      carta_motivacion: {
+        payload: Prisma.$carta_motivacionPayload<ExtArgs>
+        fields: Prisma.carta_motivacionFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.carta_motivacionFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$carta_motivacionPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.carta_motivacionFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$carta_motivacionPayload>
+          }
+          findFirst: {
+            args: Prisma.carta_motivacionFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$carta_motivacionPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.carta_motivacionFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$carta_motivacionPayload>
+          }
+          findMany: {
+            args: Prisma.carta_motivacionFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$carta_motivacionPayload>[]
+          }
+          create: {
+            args: Prisma.carta_motivacionCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$carta_motivacionPayload>
+          }
+          createMany: {
+            args: Prisma.carta_motivacionCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.carta_motivacionCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$carta_motivacionPayload>[]
+          }
+          delete: {
+            args: Prisma.carta_motivacionDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$carta_motivacionPayload>
+          }
+          update: {
+            args: Prisma.carta_motivacionUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$carta_motivacionPayload>
+          }
+          deleteMany: {
+            args: Prisma.carta_motivacionDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.carta_motivacionUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.carta_motivacionUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$carta_motivacionPayload>[]
+          }
+          upsert: {
+            args: Prisma.carta_motivacionUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$carta_motivacionPayload>
+          }
+          aggregate: {
+            args: Prisma.Carta_motivacionAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCarta_motivacion>
+          }
+          groupBy: {
+            args: Prisma.carta_motivacionGroupByArgs<ExtArgs>
+            result: $Utils.Optional<Carta_motivacionGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.carta_motivacionCountArgs<ExtArgs>
+            result: $Utils.Optional<Carta_motivacionCountAggregateOutputType> | number
+          }
+        }
+      }
+      observacion_inscripcion: {
+        payload: Prisma.$observacion_inscripcionPayload<ExtArgs>
+        fields: Prisma.observacion_inscripcionFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.observacion_inscripcionFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$observacion_inscripcionPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.observacion_inscripcionFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$observacion_inscripcionPayload>
+          }
+          findFirst: {
+            args: Prisma.observacion_inscripcionFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$observacion_inscripcionPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.observacion_inscripcionFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$observacion_inscripcionPayload>
+          }
+          findMany: {
+            args: Prisma.observacion_inscripcionFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$observacion_inscripcionPayload>[]
+          }
+          create: {
+            args: Prisma.observacion_inscripcionCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$observacion_inscripcionPayload>
+          }
+          createMany: {
+            args: Prisma.observacion_inscripcionCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.observacion_inscripcionCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$observacion_inscripcionPayload>[]
+          }
+          delete: {
+            args: Prisma.observacion_inscripcionDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$observacion_inscripcionPayload>
+          }
+          update: {
+            args: Prisma.observacion_inscripcionUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$observacion_inscripcionPayload>
+          }
+          deleteMany: {
+            args: Prisma.observacion_inscripcionDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.observacion_inscripcionUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.observacion_inscripcionUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$observacion_inscripcionPayload>[]
+          }
+          upsert: {
+            args: Prisma.observacion_inscripcionUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$observacion_inscripcionPayload>
+          }
+          aggregate: {
+            args: Prisma.Observacion_inscripcionAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateObservacion_inscripcion>
+          }
+          groupBy: {
+            args: Prisma.observacion_inscripcionGroupByArgs<ExtArgs>
+            result: $Utils.Optional<Observacion_inscripcionGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.observacion_inscripcionCountArgs<ExtArgs>
+            result: $Utils.Optional<Observacion_inscripcionCountAggregateOutputType> | number
+          }
+        }
+      }
+      cuenta: {
+        payload: Prisma.$cuentaPayload<ExtArgs>
+        fields: Prisma.cuentaFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.cuentaFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$cuentaPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.cuentaFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$cuentaPayload>
+          }
+          findFirst: {
+            args: Prisma.cuentaFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$cuentaPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.cuentaFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$cuentaPayload>
+          }
+          findMany: {
+            args: Prisma.cuentaFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$cuentaPayload>[]
+          }
+          create: {
+            args: Prisma.cuentaCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$cuentaPayload>
+          }
+          createMany: {
+            args: Prisma.cuentaCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.cuentaCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$cuentaPayload>[]
+          }
+          delete: {
+            args: Prisma.cuentaDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$cuentaPayload>
+          }
+          update: {
+            args: Prisma.cuentaUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$cuentaPayload>
+          }
+          deleteMany: {
+            args: Prisma.cuentaDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.cuentaUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.cuentaUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$cuentaPayload>[]
+          }
+          upsert: {
+            args: Prisma.cuentaUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$cuentaPayload>
+          }
+          aggregate: {
+            args: Prisma.CuentaAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCuenta>
+          }
+          groupBy: {
+            args: Prisma.cuentaGroupByArgs<ExtArgs>
+            result: $Utils.Optional<CuentaGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.cuentaCountArgs<ExtArgs>
+            result: $Utils.Optional<CuentaCountAggregateOutputType> | number
+          }
+        }
+      }
       carrera: {
         payload: Prisma.$carreraPayload<ExtArgs>
         fields: Prisma.carreraFieldRefs
@@ -936,6 +1354,80 @@ export namespace Prisma {
           count: {
             args: Prisma.carreraCountArgs<ExtArgs>
             result: $Utils.Optional<CarreraCountAggregateOutputType> | number
+          }
+        }
+      }
+      coordinador: {
+        payload: Prisma.$coordinadorPayload<ExtArgs>
+        fields: Prisma.coordinadorFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.coordinadorFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$coordinadorPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.coordinadorFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$coordinadorPayload>
+          }
+          findFirst: {
+            args: Prisma.coordinadorFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$coordinadorPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.coordinadorFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$coordinadorPayload>
+          }
+          findMany: {
+            args: Prisma.coordinadorFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$coordinadorPayload>[]
+          }
+          create: {
+            args: Prisma.coordinadorCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$coordinadorPayload>
+          }
+          createMany: {
+            args: Prisma.coordinadorCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.coordinadorCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$coordinadorPayload>[]
+          }
+          delete: {
+            args: Prisma.coordinadorDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$coordinadorPayload>
+          }
+          update: {
+            args: Prisma.coordinadorUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$coordinadorPayload>
+          }
+          deleteMany: {
+            args: Prisma.coordinadorDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.coordinadorUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.coordinadorUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$coordinadorPayload>[]
+          }
+          upsert: {
+            args: Prisma.coordinadorUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$coordinadorPayload>
+          }
+          aggregate: {
+            args: Prisma.CoordinadorAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCoordinador>
+          }
+          groupBy: {
+            args: Prisma.coordinadorGroupByArgs<ExtArgs>
+            result: $Utils.Optional<CoordinadorGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.coordinadorCountArgs<ExtArgs>
+            result: $Utils.Optional<CoordinadorCountAggregateOutputType> | number
           }
         }
       }
@@ -1309,6 +1801,80 @@ export namespace Prisma {
           }
         }
       }
+      certificado: {
+        payload: Prisma.$certificadoPayload<ExtArgs>
+        fields: Prisma.certificadoFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.certificadoFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$certificadoPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.certificadoFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$certificadoPayload>
+          }
+          findFirst: {
+            args: Prisma.certificadoFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$certificadoPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.certificadoFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$certificadoPayload>
+          }
+          findMany: {
+            args: Prisma.certificadoFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$certificadoPayload>[]
+          }
+          create: {
+            args: Prisma.certificadoCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$certificadoPayload>
+          }
+          createMany: {
+            args: Prisma.certificadoCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.certificadoCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$certificadoPayload>[]
+          }
+          delete: {
+            args: Prisma.certificadoDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$certificadoPayload>
+          }
+          update: {
+            args: Prisma.certificadoUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$certificadoPayload>
+          }
+          deleteMany: {
+            args: Prisma.certificadoDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.certificadoUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.certificadoUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$certificadoPayload>[]
+          }
+          upsert: {
+            args: Prisma.certificadoUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$certificadoPayload>
+          }
+          aggregate: {
+            args: Prisma.CertificadoAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCertificado>
+          }
+          groupBy: {
+            args: Prisma.certificadoGroupByArgs<ExtArgs>
+            result: $Utils.Optional<CertificadoGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.certificadoCountArgs<ExtArgs>
+            result: $Utils.Optional<CertificadoCountAggregateOutputType> | number
+          }
+        }
+      }
       facultad: {
         payload: Prisma.$facultadPayload<ExtArgs>
         fields: Prisma.facultadFieldRefs
@@ -1468,12 +2034,18 @@ export namespace Prisma {
   }
   export type GlobalOmitConfig = {
     usuario?: usuarioOmit
+    comprobante_pago?: comprobante_pagoOmit
+    carta_motivacion?: carta_motivacionOmit
+    observacion_inscripcion?: observacion_inscripcionOmit
+    cuenta?: cuentaOmit
     carrera?: carreraOmit
+    coordinador?: coordinadorOmit
     evento?: eventoOmit
     evento_curso?: evento_cursoOmit
     evento_carrera?: evento_carreraOmit
     inscripcion?: inscripcionOmit
     inscripcion_curso?: inscripcion_cursoOmit
+    certificado?: certificadoOmit
     facultad?: facultadOmit
   }
 
@@ -1569,11 +2141,11 @@ export namespace Prisma {
    */
 
   export type UsuarioCountOutputType = {
-    inscripciones: number
+    cuentas: number
   }
 
   export type UsuarioCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    inscripciones?: boolean | UsuarioCountOutputTypeCountInscripcionesArgs
+    cuentas?: boolean | UsuarioCountOutputTypeCountCuentasArgs
   }
 
   // Custom InputTypes
@@ -1590,8 +2162,75 @@ export namespace Prisma {
   /**
    * UsuarioCountOutputType without action
    */
-  export type UsuarioCountOutputTypeCountInscripcionesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type UsuarioCountOutputTypeCountCuentasArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: cuentaWhereInput
+  }
+
+
+  /**
+   * Count Type CuentaCountOutputType
+   */
+
+  export type CuentaCountOutputType = {
+    inscripciones: number
+    cartas_motivacion: number
+    comprobantes_pago: number
+    eventos: number
+    observaciones_creadas: number
+  }
+
+  export type CuentaCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    inscripciones?: boolean | CuentaCountOutputTypeCountInscripcionesArgs
+    cartas_motivacion?: boolean | CuentaCountOutputTypeCountCartas_motivacionArgs
+    comprobantes_pago?: boolean | CuentaCountOutputTypeCountComprobantes_pagoArgs
+    eventos?: boolean | CuentaCountOutputTypeCountEventosArgs
+    observaciones_creadas?: boolean | CuentaCountOutputTypeCountObservaciones_creadasArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * CuentaCountOutputType without action
+   */
+  export type CuentaCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CuentaCountOutputType
+     */
+    select?: CuentaCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * CuentaCountOutputType without action
+   */
+  export type CuentaCountOutputTypeCountInscripcionesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: inscripcionWhereInput
+  }
+
+  /**
+   * CuentaCountOutputType without action
+   */
+  export type CuentaCountOutputTypeCountCartas_motivacionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: carta_motivacionWhereInput
+  }
+
+  /**
+   * CuentaCountOutputType without action
+   */
+  export type CuentaCountOutputTypeCountComprobantes_pagoArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: comprobante_pagoWhereInput
+  }
+
+  /**
+   * CuentaCountOutputType without action
+   */
+  export type CuentaCountOutputTypeCountEventosArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: eventoWhereInput
+  }
+
+  /**
+   * CuentaCountOutputType without action
+   */
+  export type CuentaCountOutputTypeCountObservaciones_creadasArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: observacion_inscripcionWhereInput
   }
 
 
@@ -1636,6 +2275,37 @@ export namespace Prisma {
 
 
   /**
+   * Count Type CoordinadorCountOutputType
+   */
+
+  export type CoordinadorCountOutputType = {
+    carreras: number
+  }
+
+  export type CoordinadorCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    carreras?: boolean | CoordinadorCountOutputTypeCountCarrerasArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * CoordinadorCountOutputType without action
+   */
+  export type CoordinadorCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CoordinadorCountOutputType
+     */
+    select?: CoordinadorCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * CoordinadorCountOutputType without action
+   */
+  export type CoordinadorCountOutputTypeCountCarrerasArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: carreraWhereInput
+  }
+
+
+  /**
    * Count Type EventoCountOutputType
    */
 
@@ -1672,6 +2342,46 @@ export namespace Prisma {
    */
   export type EventoCountOutputTypeCountEventos_carreraArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: evento_carreraWhereInput
+  }
+
+
+  /**
+   * Count Type InscripcionCountOutputType
+   */
+
+  export type InscripcionCountOutputType = {
+    comprobantes_pago: number
+    cartas_motivacion: number
+  }
+
+  export type InscripcionCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    comprobantes_pago?: boolean | InscripcionCountOutputTypeCountComprobantes_pagoArgs
+    cartas_motivacion?: boolean | InscripcionCountOutputTypeCountCartas_motivacionArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * InscripcionCountOutputType without action
+   */
+  export type InscripcionCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the InscripcionCountOutputType
+     */
+    select?: InscripcionCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * InscripcionCountOutputType without action
+   */
+  export type InscripcionCountOutputTypeCountComprobantes_pagoArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: comprobante_pagoWhereInput
+  }
+
+  /**
+   * InscripcionCountOutputType without action
+   */
+  export type InscripcionCountOutputTypeCountCartas_motivacionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: carta_motivacionWhereInput
   }
 
 
@@ -1725,13 +2435,11 @@ export namespace Prisma {
     ced_usu: string | null
     nom_usu: string | null
     ape_usu: string | null
-    cor_usu: string | null
-    con_usu: string | null
     cel_usu: string | null
-    rol_usu: $Enums.rol_usuario | null
     fec_cre_usu: Date | null
     com_usu: string | null
     id_car_est: string | null
+    img_per_usu: string | null
   }
 
   export type UsuarioMaxAggregateOutputType = {
@@ -1739,13 +2447,11 @@ export namespace Prisma {
     ced_usu: string | null
     nom_usu: string | null
     ape_usu: string | null
-    cor_usu: string | null
-    con_usu: string | null
     cel_usu: string | null
-    rol_usu: $Enums.rol_usuario | null
     fec_cre_usu: Date | null
     com_usu: string | null
     id_car_est: string | null
+    img_per_usu: string | null
   }
 
   export type UsuarioCountAggregateOutputType = {
@@ -1753,13 +2459,11 @@ export namespace Prisma {
     ced_usu: number
     nom_usu: number
     ape_usu: number
-    cor_usu: number
-    con_usu: number
     cel_usu: number
-    rol_usu: number
     fec_cre_usu: number
     com_usu: number
     id_car_est: number
+    img_per_usu: number
     _all: number
   }
 
@@ -1769,13 +2473,11 @@ export namespace Prisma {
     ced_usu?: true
     nom_usu?: true
     ape_usu?: true
-    cor_usu?: true
-    con_usu?: true
     cel_usu?: true
-    rol_usu?: true
     fec_cre_usu?: true
     com_usu?: true
     id_car_est?: true
+    img_per_usu?: true
   }
 
   export type UsuarioMaxAggregateInputType = {
@@ -1783,13 +2485,11 @@ export namespace Prisma {
     ced_usu?: true
     nom_usu?: true
     ape_usu?: true
-    cor_usu?: true
-    con_usu?: true
     cel_usu?: true
-    rol_usu?: true
     fec_cre_usu?: true
     com_usu?: true
     id_car_est?: true
+    img_per_usu?: true
   }
 
   export type UsuarioCountAggregateInputType = {
@@ -1797,13 +2497,11 @@ export namespace Prisma {
     ced_usu?: true
     nom_usu?: true
     ape_usu?: true
-    cor_usu?: true
-    con_usu?: true
     cel_usu?: true
-    rol_usu?: true
     fec_cre_usu?: true
     com_usu?: true
     id_car_est?: true
+    img_per_usu?: true
     _all?: true
   }
 
@@ -1884,13 +2582,11 @@ export namespace Prisma {
     ced_usu: string
     nom_usu: string
     ape_usu: string
-    cor_usu: string
-    con_usu: string
     cel_usu: string
-    rol_usu: $Enums.rol_usuario
     fec_cre_usu: Date
     com_usu: string | null
     id_car_est: string | null
+    img_per_usu: string | null
     _count: UsuarioCountAggregateOutputType | null
     _min: UsuarioMinAggregateOutputType | null
     _max: UsuarioMaxAggregateOutputType | null
@@ -1915,15 +2611,13 @@ export namespace Prisma {
     ced_usu?: boolean
     nom_usu?: boolean
     ape_usu?: boolean
-    cor_usu?: boolean
-    con_usu?: boolean
     cel_usu?: boolean
-    rol_usu?: boolean
     fec_cre_usu?: boolean
     com_usu?: boolean
     id_car_est?: boolean
+    img_per_usu?: boolean
     carrera?: boolean | usuario$carreraArgs<ExtArgs>
-    inscripciones?: boolean | usuario$inscripcionesArgs<ExtArgs>
+    cuentas?: boolean | usuario$cuentasArgs<ExtArgs>
     _count?: boolean | UsuarioCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["usuario"]>
 
@@ -1932,13 +2626,11 @@ export namespace Prisma {
     ced_usu?: boolean
     nom_usu?: boolean
     ape_usu?: boolean
-    cor_usu?: boolean
-    con_usu?: boolean
     cel_usu?: boolean
-    rol_usu?: boolean
     fec_cre_usu?: boolean
     com_usu?: boolean
     id_car_est?: boolean
+    img_per_usu?: boolean
     carrera?: boolean | usuario$carreraArgs<ExtArgs>
   }, ExtArgs["result"]["usuario"]>
 
@@ -1947,13 +2639,11 @@ export namespace Prisma {
     ced_usu?: boolean
     nom_usu?: boolean
     ape_usu?: boolean
-    cor_usu?: boolean
-    con_usu?: boolean
     cel_usu?: boolean
-    rol_usu?: boolean
     fec_cre_usu?: boolean
     com_usu?: boolean
     id_car_est?: boolean
+    img_per_usu?: boolean
     carrera?: boolean | usuario$carreraArgs<ExtArgs>
   }, ExtArgs["result"]["usuario"]>
 
@@ -1962,19 +2652,17 @@ export namespace Prisma {
     ced_usu?: boolean
     nom_usu?: boolean
     ape_usu?: boolean
-    cor_usu?: boolean
-    con_usu?: boolean
     cel_usu?: boolean
-    rol_usu?: boolean
     fec_cre_usu?: boolean
     com_usu?: boolean
     id_car_est?: boolean
+    img_per_usu?: boolean
   }
 
-  export type usuarioOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_usu" | "ced_usu" | "nom_usu" | "ape_usu" | "cor_usu" | "con_usu" | "cel_usu" | "rol_usu" | "fec_cre_usu" | "com_usu" | "id_car_est", ExtArgs["result"]["usuario"]>
+  export type usuarioOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_usu" | "ced_usu" | "nom_usu" | "ape_usu" | "cel_usu" | "fec_cre_usu" | "com_usu" | "id_car_est" | "img_per_usu", ExtArgs["result"]["usuario"]>
   export type usuarioInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     carrera?: boolean | usuario$carreraArgs<ExtArgs>
-    inscripciones?: boolean | usuario$inscripcionesArgs<ExtArgs>
+    cuentas?: boolean | usuario$cuentasArgs<ExtArgs>
     _count?: boolean | UsuarioCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type usuarioIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -1988,20 +2676,18 @@ export namespace Prisma {
     name: "usuario"
     objects: {
       carrera: Prisma.$carreraPayload<ExtArgs> | null
-      inscripciones: Prisma.$inscripcionPayload<ExtArgs>[]
+      cuentas: Prisma.$cuentaPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id_usu: string
       ced_usu: string
       nom_usu: string
       ape_usu: string
-      cor_usu: string
-      con_usu: string
       cel_usu: string
-      rol_usu: $Enums.rol_usuario
       fec_cre_usu: Date
       com_usu: string | null
       id_car_est: string | null
+      img_per_usu: string | null
     }, ExtArgs["result"]["usuario"]>
     composites: {}
   }
@@ -2397,7 +3083,7 @@ export namespace Prisma {
   export interface Prisma__usuarioClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     carrera<T extends usuario$carreraArgs<ExtArgs> = {}>(args?: Subset<T, usuario$carreraArgs<ExtArgs>>): Prisma__carreraClient<$Result.GetResult<Prisma.$carreraPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-    inscripciones<T extends usuario$inscripcionesArgs<ExtArgs> = {}>(args?: Subset<T, usuario$inscripcionesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$inscripcionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    cuentas<T extends usuario$cuentasArgs<ExtArgs> = {}>(args?: Subset<T, usuario$cuentasArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$cuentaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2431,13 +3117,11 @@ export namespace Prisma {
     readonly ced_usu: FieldRef<"usuario", 'String'>
     readonly nom_usu: FieldRef<"usuario", 'String'>
     readonly ape_usu: FieldRef<"usuario", 'String'>
-    readonly cor_usu: FieldRef<"usuario", 'String'>
-    readonly con_usu: FieldRef<"usuario", 'String'>
     readonly cel_usu: FieldRef<"usuario", 'String'>
-    readonly rol_usu: FieldRef<"usuario", 'rol_usuario'>
     readonly fec_cre_usu: FieldRef<"usuario", 'DateTime'>
     readonly com_usu: FieldRef<"usuario", 'String'>
     readonly id_car_est: FieldRef<"usuario", 'String'>
+    readonly img_per_usu: FieldRef<"usuario", 'String'>
   }
     
 
@@ -2853,27 +3537,27 @@ export namespace Prisma {
   }
 
   /**
-   * usuario.inscripciones
+   * usuario.cuentas
    */
-  export type usuario$inscripcionesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type usuario$cuentasArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the inscripcion
+     * Select specific fields to fetch from the cuenta
      */
-    select?: inscripcionSelect<ExtArgs> | null
+    select?: cuentaSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the inscripcion
+     * Omit specific fields from the cuenta
      */
-    omit?: inscripcionOmit<ExtArgs> | null
+    omit?: cuentaOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: inscripcionInclude<ExtArgs> | null
-    where?: inscripcionWhereInput
-    orderBy?: inscripcionOrderByWithRelationInput | inscripcionOrderByWithRelationInput[]
-    cursor?: inscripcionWhereUniqueInput
+    include?: cuentaInclude<ExtArgs> | null
+    where?: cuentaWhereInput
+    orderBy?: cuentaOrderByWithRelationInput | cuentaOrderByWithRelationInput[]
+    cursor?: cuentaWhereUniqueInput
     take?: number
     skip?: number
-    distinct?: InscripcionScalarFieldEnum | InscripcionScalarFieldEnum[]
+    distinct?: CuentaScalarFieldEnum | CuentaScalarFieldEnum[]
   }
 
   /**
@@ -2896,63 +3580,4644 @@ export namespace Prisma {
 
 
   /**
+   * Model comprobante_pago
+   */
+
+  export type AggregateComprobante_pago = {
+    _count: Comprobante_pagoCountAggregateOutputType | null
+    _min: Comprobante_pagoMinAggregateOutputType | null
+    _max: Comprobante_pagoMaxAggregateOutputType | null
+  }
+
+  export type Comprobante_pagoMinAggregateOutputType = {
+    id_com_pag: string | null
+    id_ins_per: string | null
+    url_com_pag: string | null
+    est_com_pag: $Enums.estado_validacion | null
+    fec_sub_com_pag: Date | null
+    fec_val_com_pag: Date | null
+    id_adm_val_com_pag: string | null
+    fec_pag_ins: Date | null
+  }
+
+  export type Comprobante_pagoMaxAggregateOutputType = {
+    id_com_pag: string | null
+    id_ins_per: string | null
+    url_com_pag: string | null
+    est_com_pag: $Enums.estado_validacion | null
+    fec_sub_com_pag: Date | null
+    fec_val_com_pag: Date | null
+    id_adm_val_com_pag: string | null
+    fec_pag_ins: Date | null
+  }
+
+  export type Comprobante_pagoCountAggregateOutputType = {
+    id_com_pag: number
+    id_ins_per: number
+    url_com_pag: number
+    est_com_pag: number
+    fec_sub_com_pag: number
+    fec_val_com_pag: number
+    id_adm_val_com_pag: number
+    fec_pag_ins: number
+    _all: number
+  }
+
+
+  export type Comprobante_pagoMinAggregateInputType = {
+    id_com_pag?: true
+    id_ins_per?: true
+    url_com_pag?: true
+    est_com_pag?: true
+    fec_sub_com_pag?: true
+    fec_val_com_pag?: true
+    id_adm_val_com_pag?: true
+    fec_pag_ins?: true
+  }
+
+  export type Comprobante_pagoMaxAggregateInputType = {
+    id_com_pag?: true
+    id_ins_per?: true
+    url_com_pag?: true
+    est_com_pag?: true
+    fec_sub_com_pag?: true
+    fec_val_com_pag?: true
+    id_adm_val_com_pag?: true
+    fec_pag_ins?: true
+  }
+
+  export type Comprobante_pagoCountAggregateInputType = {
+    id_com_pag?: true
+    id_ins_per?: true
+    url_com_pag?: true
+    est_com_pag?: true
+    fec_sub_com_pag?: true
+    fec_val_com_pag?: true
+    id_adm_val_com_pag?: true
+    fec_pag_ins?: true
+    _all?: true
+  }
+
+  export type Comprobante_pagoAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which comprobante_pago to aggregate.
+     */
+    where?: comprobante_pagoWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of comprobante_pagos to fetch.
+     */
+    orderBy?: comprobante_pagoOrderByWithRelationInput | comprobante_pagoOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: comprobante_pagoWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` comprobante_pagos from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` comprobante_pagos.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned comprobante_pagos
+    **/
+    _count?: true | Comprobante_pagoCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: Comprobante_pagoMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: Comprobante_pagoMaxAggregateInputType
+  }
+
+  export type GetComprobante_pagoAggregateType<T extends Comprobante_pagoAggregateArgs> = {
+        [P in keyof T & keyof AggregateComprobante_pago]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateComprobante_pago[P]>
+      : GetScalarType<T[P], AggregateComprobante_pago[P]>
+  }
+
+
+
+
+  export type comprobante_pagoGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: comprobante_pagoWhereInput
+    orderBy?: comprobante_pagoOrderByWithAggregationInput | comprobante_pagoOrderByWithAggregationInput[]
+    by: Comprobante_pagoScalarFieldEnum[] | Comprobante_pagoScalarFieldEnum
+    having?: comprobante_pagoScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: Comprobante_pagoCountAggregateInputType | true
+    _min?: Comprobante_pagoMinAggregateInputType
+    _max?: Comprobante_pagoMaxAggregateInputType
+  }
+
+  export type Comprobante_pagoGroupByOutputType = {
+    id_com_pag: string
+    id_ins_per: string
+    url_com_pag: string
+    est_com_pag: $Enums.estado_validacion
+    fec_sub_com_pag: Date
+    fec_val_com_pag: Date | null
+    id_adm_val_com_pag: string | null
+    fec_pag_ins: Date | null
+    _count: Comprobante_pagoCountAggregateOutputType | null
+    _min: Comprobante_pagoMinAggregateOutputType | null
+    _max: Comprobante_pagoMaxAggregateOutputType | null
+  }
+
+  type GetComprobante_pagoGroupByPayload<T extends comprobante_pagoGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<Comprobante_pagoGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof Comprobante_pagoGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], Comprobante_pagoGroupByOutputType[P]>
+            : GetScalarType<T[P], Comprobante_pagoGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type comprobante_pagoSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_com_pag?: boolean
+    id_ins_per?: boolean
+    url_com_pag?: boolean
+    est_com_pag?: boolean
+    fec_sub_com_pag?: boolean
+    fec_val_com_pag?: boolean
+    id_adm_val_com_pag?: boolean
+    fec_pag_ins?: boolean
+    admin?: boolean | comprobante_pago$adminArgs<ExtArgs>
+    inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["comprobante_pago"]>
+
+  export type comprobante_pagoSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_com_pag?: boolean
+    id_ins_per?: boolean
+    url_com_pag?: boolean
+    est_com_pag?: boolean
+    fec_sub_com_pag?: boolean
+    fec_val_com_pag?: boolean
+    id_adm_val_com_pag?: boolean
+    fec_pag_ins?: boolean
+    admin?: boolean | comprobante_pago$adminArgs<ExtArgs>
+    inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["comprobante_pago"]>
+
+  export type comprobante_pagoSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_com_pag?: boolean
+    id_ins_per?: boolean
+    url_com_pag?: boolean
+    est_com_pag?: boolean
+    fec_sub_com_pag?: boolean
+    fec_val_com_pag?: boolean
+    id_adm_val_com_pag?: boolean
+    fec_pag_ins?: boolean
+    admin?: boolean | comprobante_pago$adminArgs<ExtArgs>
+    inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["comprobante_pago"]>
+
+  export type comprobante_pagoSelectScalar = {
+    id_com_pag?: boolean
+    id_ins_per?: boolean
+    url_com_pag?: boolean
+    est_com_pag?: boolean
+    fec_sub_com_pag?: boolean
+    fec_val_com_pag?: boolean
+    id_adm_val_com_pag?: boolean
+    fec_pag_ins?: boolean
+  }
+
+  export type comprobante_pagoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_com_pag" | "id_ins_per" | "url_com_pag" | "est_com_pag" | "fec_sub_com_pag" | "fec_val_com_pag" | "id_adm_val_com_pag" | "fec_pag_ins", ExtArgs["result"]["comprobante_pago"]>
+  export type comprobante_pagoInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    admin?: boolean | comprobante_pago$adminArgs<ExtArgs>
+    inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
+  }
+  export type comprobante_pagoIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    admin?: boolean | comprobante_pago$adminArgs<ExtArgs>
+    inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
+  }
+  export type comprobante_pagoIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    admin?: boolean | comprobante_pago$adminArgs<ExtArgs>
+    inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
+  }
+
+  export type $comprobante_pagoPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "comprobante_pago"
+    objects: {
+      admin: Prisma.$cuentaPayload<ExtArgs> | null
+      inscripcion: Prisma.$inscripcionPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id_com_pag: string
+      id_ins_per: string
+      url_com_pag: string
+      est_com_pag: $Enums.estado_validacion
+      fec_sub_com_pag: Date
+      fec_val_com_pag: Date | null
+      id_adm_val_com_pag: string | null
+      fec_pag_ins: Date | null
+    }, ExtArgs["result"]["comprobante_pago"]>
+    composites: {}
+  }
+
+  type comprobante_pagoGetPayload<S extends boolean | null | undefined | comprobante_pagoDefaultArgs> = $Result.GetResult<Prisma.$comprobante_pagoPayload, S>
+
+  type comprobante_pagoCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<comprobante_pagoFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: Comprobante_pagoCountAggregateInputType | true
+    }
+
+  export interface comprobante_pagoDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['comprobante_pago'], meta: { name: 'comprobante_pago' } }
+    /**
+     * Find zero or one Comprobante_pago that matches the filter.
+     * @param {comprobante_pagoFindUniqueArgs} args - Arguments to find a Comprobante_pago
+     * @example
+     * // Get one Comprobante_pago
+     * const comprobante_pago = await prisma.comprobante_pago.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends comprobante_pagoFindUniqueArgs>(args: SelectSubset<T, comprobante_pagoFindUniqueArgs<ExtArgs>>): Prisma__comprobante_pagoClient<$Result.GetResult<Prisma.$comprobante_pagoPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Comprobante_pago that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {comprobante_pagoFindUniqueOrThrowArgs} args - Arguments to find a Comprobante_pago
+     * @example
+     * // Get one Comprobante_pago
+     * const comprobante_pago = await prisma.comprobante_pago.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends comprobante_pagoFindUniqueOrThrowArgs>(args: SelectSubset<T, comprobante_pagoFindUniqueOrThrowArgs<ExtArgs>>): Prisma__comprobante_pagoClient<$Result.GetResult<Prisma.$comprobante_pagoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Comprobante_pago that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {comprobante_pagoFindFirstArgs} args - Arguments to find a Comprobante_pago
+     * @example
+     * // Get one Comprobante_pago
+     * const comprobante_pago = await prisma.comprobante_pago.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends comprobante_pagoFindFirstArgs>(args?: SelectSubset<T, comprobante_pagoFindFirstArgs<ExtArgs>>): Prisma__comprobante_pagoClient<$Result.GetResult<Prisma.$comprobante_pagoPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Comprobante_pago that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {comprobante_pagoFindFirstOrThrowArgs} args - Arguments to find a Comprobante_pago
+     * @example
+     * // Get one Comprobante_pago
+     * const comprobante_pago = await prisma.comprobante_pago.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends comprobante_pagoFindFirstOrThrowArgs>(args?: SelectSubset<T, comprobante_pagoFindFirstOrThrowArgs<ExtArgs>>): Prisma__comprobante_pagoClient<$Result.GetResult<Prisma.$comprobante_pagoPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Comprobante_pagos that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {comprobante_pagoFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Comprobante_pagos
+     * const comprobante_pagos = await prisma.comprobante_pago.findMany()
+     * 
+     * // Get first 10 Comprobante_pagos
+     * const comprobante_pagos = await prisma.comprobante_pago.findMany({ take: 10 })
+     * 
+     * // Only select the `id_com_pag`
+     * const comprobante_pagoWithId_com_pagOnly = await prisma.comprobante_pago.findMany({ select: { id_com_pag: true } })
+     * 
+     */
+    findMany<T extends comprobante_pagoFindManyArgs>(args?: SelectSubset<T, comprobante_pagoFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$comprobante_pagoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Comprobante_pago.
+     * @param {comprobante_pagoCreateArgs} args - Arguments to create a Comprobante_pago.
+     * @example
+     * // Create one Comprobante_pago
+     * const Comprobante_pago = await prisma.comprobante_pago.create({
+     *   data: {
+     *     // ... data to create a Comprobante_pago
+     *   }
+     * })
+     * 
+     */
+    create<T extends comprobante_pagoCreateArgs>(args: SelectSubset<T, comprobante_pagoCreateArgs<ExtArgs>>): Prisma__comprobante_pagoClient<$Result.GetResult<Prisma.$comprobante_pagoPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Comprobante_pagos.
+     * @param {comprobante_pagoCreateManyArgs} args - Arguments to create many Comprobante_pagos.
+     * @example
+     * // Create many Comprobante_pagos
+     * const comprobante_pago = await prisma.comprobante_pago.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends comprobante_pagoCreateManyArgs>(args?: SelectSubset<T, comprobante_pagoCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Comprobante_pagos and returns the data saved in the database.
+     * @param {comprobante_pagoCreateManyAndReturnArgs} args - Arguments to create many Comprobante_pagos.
+     * @example
+     * // Create many Comprobante_pagos
+     * const comprobante_pago = await prisma.comprobante_pago.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Comprobante_pagos and only return the `id_com_pag`
+     * const comprobante_pagoWithId_com_pagOnly = await prisma.comprobante_pago.createManyAndReturn({
+     *   select: { id_com_pag: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends comprobante_pagoCreateManyAndReturnArgs>(args?: SelectSubset<T, comprobante_pagoCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$comprobante_pagoPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Comprobante_pago.
+     * @param {comprobante_pagoDeleteArgs} args - Arguments to delete one Comprobante_pago.
+     * @example
+     * // Delete one Comprobante_pago
+     * const Comprobante_pago = await prisma.comprobante_pago.delete({
+     *   where: {
+     *     // ... filter to delete one Comprobante_pago
+     *   }
+     * })
+     * 
+     */
+    delete<T extends comprobante_pagoDeleteArgs>(args: SelectSubset<T, comprobante_pagoDeleteArgs<ExtArgs>>): Prisma__comprobante_pagoClient<$Result.GetResult<Prisma.$comprobante_pagoPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Comprobante_pago.
+     * @param {comprobante_pagoUpdateArgs} args - Arguments to update one Comprobante_pago.
+     * @example
+     * // Update one Comprobante_pago
+     * const comprobante_pago = await prisma.comprobante_pago.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends comprobante_pagoUpdateArgs>(args: SelectSubset<T, comprobante_pagoUpdateArgs<ExtArgs>>): Prisma__comprobante_pagoClient<$Result.GetResult<Prisma.$comprobante_pagoPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Comprobante_pagos.
+     * @param {comprobante_pagoDeleteManyArgs} args - Arguments to filter Comprobante_pagos to delete.
+     * @example
+     * // Delete a few Comprobante_pagos
+     * const { count } = await prisma.comprobante_pago.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends comprobante_pagoDeleteManyArgs>(args?: SelectSubset<T, comprobante_pagoDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Comprobante_pagos.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {comprobante_pagoUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Comprobante_pagos
+     * const comprobante_pago = await prisma.comprobante_pago.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends comprobante_pagoUpdateManyArgs>(args: SelectSubset<T, comprobante_pagoUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Comprobante_pagos and returns the data updated in the database.
+     * @param {comprobante_pagoUpdateManyAndReturnArgs} args - Arguments to update many Comprobante_pagos.
+     * @example
+     * // Update many Comprobante_pagos
+     * const comprobante_pago = await prisma.comprobante_pago.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Comprobante_pagos and only return the `id_com_pag`
+     * const comprobante_pagoWithId_com_pagOnly = await prisma.comprobante_pago.updateManyAndReturn({
+     *   select: { id_com_pag: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends comprobante_pagoUpdateManyAndReturnArgs>(args: SelectSubset<T, comprobante_pagoUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$comprobante_pagoPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Comprobante_pago.
+     * @param {comprobante_pagoUpsertArgs} args - Arguments to update or create a Comprobante_pago.
+     * @example
+     * // Update or create a Comprobante_pago
+     * const comprobante_pago = await prisma.comprobante_pago.upsert({
+     *   create: {
+     *     // ... data to create a Comprobante_pago
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Comprobante_pago we want to update
+     *   }
+     * })
+     */
+    upsert<T extends comprobante_pagoUpsertArgs>(args: SelectSubset<T, comprobante_pagoUpsertArgs<ExtArgs>>): Prisma__comprobante_pagoClient<$Result.GetResult<Prisma.$comprobante_pagoPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Comprobante_pagos.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {comprobante_pagoCountArgs} args - Arguments to filter Comprobante_pagos to count.
+     * @example
+     * // Count the number of Comprobante_pagos
+     * const count = await prisma.comprobante_pago.count({
+     *   where: {
+     *     // ... the filter for the Comprobante_pagos we want to count
+     *   }
+     * })
+    **/
+    count<T extends comprobante_pagoCountArgs>(
+      args?: Subset<T, comprobante_pagoCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], Comprobante_pagoCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Comprobante_pago.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Comprobante_pagoAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends Comprobante_pagoAggregateArgs>(args: Subset<T, Comprobante_pagoAggregateArgs>): Prisma.PrismaPromise<GetComprobante_pagoAggregateType<T>>
+
+    /**
+     * Group by Comprobante_pago.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {comprobante_pagoGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends comprobante_pagoGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: comprobante_pagoGroupByArgs['orderBy'] }
+        : { orderBy?: comprobante_pagoGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, comprobante_pagoGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetComprobante_pagoGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the comprobante_pago model
+   */
+  readonly fields: comprobante_pagoFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for comprobante_pago.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__comprobante_pagoClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    admin<T extends comprobante_pago$adminArgs<ExtArgs> = {}>(args?: Subset<T, comprobante_pago$adminArgs<ExtArgs>>): Prisma__cuentaClient<$Result.GetResult<Prisma.$cuentaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    inscripcion<T extends inscripcionDefaultArgs<ExtArgs> = {}>(args?: Subset<T, inscripcionDefaultArgs<ExtArgs>>): Prisma__inscripcionClient<$Result.GetResult<Prisma.$inscripcionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the comprobante_pago model
+   */
+  interface comprobante_pagoFieldRefs {
+    readonly id_com_pag: FieldRef<"comprobante_pago", 'String'>
+    readonly id_ins_per: FieldRef<"comprobante_pago", 'String'>
+    readonly url_com_pag: FieldRef<"comprobante_pago", 'String'>
+    readonly est_com_pag: FieldRef<"comprobante_pago", 'estado_validacion'>
+    readonly fec_sub_com_pag: FieldRef<"comprobante_pago", 'DateTime'>
+    readonly fec_val_com_pag: FieldRef<"comprobante_pago", 'DateTime'>
+    readonly id_adm_val_com_pag: FieldRef<"comprobante_pago", 'String'>
+    readonly fec_pag_ins: FieldRef<"comprobante_pago", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * comprobante_pago findUnique
+   */
+  export type comprobante_pagoFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the comprobante_pago
+     */
+    select?: comprobante_pagoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the comprobante_pago
+     */
+    omit?: comprobante_pagoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: comprobante_pagoInclude<ExtArgs> | null
+    /**
+     * Filter, which comprobante_pago to fetch.
+     */
+    where: comprobante_pagoWhereUniqueInput
+  }
+
+  /**
+   * comprobante_pago findUniqueOrThrow
+   */
+  export type comprobante_pagoFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the comprobante_pago
+     */
+    select?: comprobante_pagoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the comprobante_pago
+     */
+    omit?: comprobante_pagoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: comprobante_pagoInclude<ExtArgs> | null
+    /**
+     * Filter, which comprobante_pago to fetch.
+     */
+    where: comprobante_pagoWhereUniqueInput
+  }
+
+  /**
+   * comprobante_pago findFirst
+   */
+  export type comprobante_pagoFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the comprobante_pago
+     */
+    select?: comprobante_pagoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the comprobante_pago
+     */
+    omit?: comprobante_pagoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: comprobante_pagoInclude<ExtArgs> | null
+    /**
+     * Filter, which comprobante_pago to fetch.
+     */
+    where?: comprobante_pagoWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of comprobante_pagos to fetch.
+     */
+    orderBy?: comprobante_pagoOrderByWithRelationInput | comprobante_pagoOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for comprobante_pagos.
+     */
+    cursor?: comprobante_pagoWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` comprobante_pagos from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` comprobante_pagos.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of comprobante_pagos.
+     */
+    distinct?: Comprobante_pagoScalarFieldEnum | Comprobante_pagoScalarFieldEnum[]
+  }
+
+  /**
+   * comprobante_pago findFirstOrThrow
+   */
+  export type comprobante_pagoFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the comprobante_pago
+     */
+    select?: comprobante_pagoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the comprobante_pago
+     */
+    omit?: comprobante_pagoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: comprobante_pagoInclude<ExtArgs> | null
+    /**
+     * Filter, which comprobante_pago to fetch.
+     */
+    where?: comprobante_pagoWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of comprobante_pagos to fetch.
+     */
+    orderBy?: comprobante_pagoOrderByWithRelationInput | comprobante_pagoOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for comprobante_pagos.
+     */
+    cursor?: comprobante_pagoWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` comprobante_pagos from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` comprobante_pagos.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of comprobante_pagos.
+     */
+    distinct?: Comprobante_pagoScalarFieldEnum | Comprobante_pagoScalarFieldEnum[]
+  }
+
+  /**
+   * comprobante_pago findMany
+   */
+  export type comprobante_pagoFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the comprobante_pago
+     */
+    select?: comprobante_pagoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the comprobante_pago
+     */
+    omit?: comprobante_pagoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: comprobante_pagoInclude<ExtArgs> | null
+    /**
+     * Filter, which comprobante_pagos to fetch.
+     */
+    where?: comprobante_pagoWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of comprobante_pagos to fetch.
+     */
+    orderBy?: comprobante_pagoOrderByWithRelationInput | comprobante_pagoOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing comprobante_pagos.
+     */
+    cursor?: comprobante_pagoWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` comprobante_pagos from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` comprobante_pagos.
+     */
+    skip?: number
+    distinct?: Comprobante_pagoScalarFieldEnum | Comprobante_pagoScalarFieldEnum[]
+  }
+
+  /**
+   * comprobante_pago create
+   */
+  export type comprobante_pagoCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the comprobante_pago
+     */
+    select?: comprobante_pagoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the comprobante_pago
+     */
+    omit?: comprobante_pagoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: comprobante_pagoInclude<ExtArgs> | null
+    /**
+     * The data needed to create a comprobante_pago.
+     */
+    data: XOR<comprobante_pagoCreateInput, comprobante_pagoUncheckedCreateInput>
+  }
+
+  /**
+   * comprobante_pago createMany
+   */
+  export type comprobante_pagoCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many comprobante_pagos.
+     */
+    data: comprobante_pagoCreateManyInput | comprobante_pagoCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * comprobante_pago createManyAndReturn
+   */
+  export type comprobante_pagoCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the comprobante_pago
+     */
+    select?: comprobante_pagoSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the comprobante_pago
+     */
+    omit?: comprobante_pagoOmit<ExtArgs> | null
+    /**
+     * The data used to create many comprobante_pagos.
+     */
+    data: comprobante_pagoCreateManyInput | comprobante_pagoCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: comprobante_pagoIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * comprobante_pago update
+   */
+  export type comprobante_pagoUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the comprobante_pago
+     */
+    select?: comprobante_pagoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the comprobante_pago
+     */
+    omit?: comprobante_pagoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: comprobante_pagoInclude<ExtArgs> | null
+    /**
+     * The data needed to update a comprobante_pago.
+     */
+    data: XOR<comprobante_pagoUpdateInput, comprobante_pagoUncheckedUpdateInput>
+    /**
+     * Choose, which comprobante_pago to update.
+     */
+    where: comprobante_pagoWhereUniqueInput
+  }
+
+  /**
+   * comprobante_pago updateMany
+   */
+  export type comprobante_pagoUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update comprobante_pagos.
+     */
+    data: XOR<comprobante_pagoUpdateManyMutationInput, comprobante_pagoUncheckedUpdateManyInput>
+    /**
+     * Filter which comprobante_pagos to update
+     */
+    where?: comprobante_pagoWhereInput
+    /**
+     * Limit how many comprobante_pagos to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * comprobante_pago updateManyAndReturn
+   */
+  export type comprobante_pagoUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the comprobante_pago
+     */
+    select?: comprobante_pagoSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the comprobante_pago
+     */
+    omit?: comprobante_pagoOmit<ExtArgs> | null
+    /**
+     * The data used to update comprobante_pagos.
+     */
+    data: XOR<comprobante_pagoUpdateManyMutationInput, comprobante_pagoUncheckedUpdateManyInput>
+    /**
+     * Filter which comprobante_pagos to update
+     */
+    where?: comprobante_pagoWhereInput
+    /**
+     * Limit how many comprobante_pagos to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: comprobante_pagoIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * comprobante_pago upsert
+   */
+  export type comprobante_pagoUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the comprobante_pago
+     */
+    select?: comprobante_pagoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the comprobante_pago
+     */
+    omit?: comprobante_pagoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: comprobante_pagoInclude<ExtArgs> | null
+    /**
+     * The filter to search for the comprobante_pago to update in case it exists.
+     */
+    where: comprobante_pagoWhereUniqueInput
+    /**
+     * In case the comprobante_pago found by the `where` argument doesn't exist, create a new comprobante_pago with this data.
+     */
+    create: XOR<comprobante_pagoCreateInput, comprobante_pagoUncheckedCreateInput>
+    /**
+     * In case the comprobante_pago was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<comprobante_pagoUpdateInput, comprobante_pagoUncheckedUpdateInput>
+  }
+
+  /**
+   * comprobante_pago delete
+   */
+  export type comprobante_pagoDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the comprobante_pago
+     */
+    select?: comprobante_pagoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the comprobante_pago
+     */
+    omit?: comprobante_pagoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: comprobante_pagoInclude<ExtArgs> | null
+    /**
+     * Filter which comprobante_pago to delete.
+     */
+    where: comprobante_pagoWhereUniqueInput
+  }
+
+  /**
+   * comprobante_pago deleteMany
+   */
+  export type comprobante_pagoDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which comprobante_pagos to delete
+     */
+    where?: comprobante_pagoWhereInput
+    /**
+     * Limit how many comprobante_pagos to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * comprobante_pago.admin
+   */
+  export type comprobante_pago$adminArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cuenta
+     */
+    select?: cuentaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the cuenta
+     */
+    omit?: cuentaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cuentaInclude<ExtArgs> | null
+    where?: cuentaWhereInput
+  }
+
+  /**
+   * comprobante_pago without action
+   */
+  export type comprobante_pagoDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the comprobante_pago
+     */
+    select?: comprobante_pagoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the comprobante_pago
+     */
+    omit?: comprobante_pagoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: comprobante_pagoInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model carta_motivacion
+   */
+
+  export type AggregateCarta_motivacion = {
+    _count: Carta_motivacionCountAggregateOutputType | null
+    _min: Carta_motivacionMinAggregateOutputType | null
+    _max: Carta_motivacionMaxAggregateOutputType | null
+  }
+
+  export type Carta_motivacionMinAggregateOutputType = {
+    id_car_mot: string | null
+    id_ins_per: string | null
+    con_car_mot: string | null
+    est_car_mot: $Enums.estado_validacion | null
+    fec_sub_car_mot: Date | null
+    fec_val_car_mot: Date | null
+    id_adm_val_car_mot: string | null
+  }
+
+  export type Carta_motivacionMaxAggregateOutputType = {
+    id_car_mot: string | null
+    id_ins_per: string | null
+    con_car_mot: string | null
+    est_car_mot: $Enums.estado_validacion | null
+    fec_sub_car_mot: Date | null
+    fec_val_car_mot: Date | null
+    id_adm_val_car_mot: string | null
+  }
+
+  export type Carta_motivacionCountAggregateOutputType = {
+    id_car_mot: number
+    id_ins_per: number
+    con_car_mot: number
+    est_car_mot: number
+    fec_sub_car_mot: number
+    fec_val_car_mot: number
+    id_adm_val_car_mot: number
+    _all: number
+  }
+
+
+  export type Carta_motivacionMinAggregateInputType = {
+    id_car_mot?: true
+    id_ins_per?: true
+    con_car_mot?: true
+    est_car_mot?: true
+    fec_sub_car_mot?: true
+    fec_val_car_mot?: true
+    id_adm_val_car_mot?: true
+  }
+
+  export type Carta_motivacionMaxAggregateInputType = {
+    id_car_mot?: true
+    id_ins_per?: true
+    con_car_mot?: true
+    est_car_mot?: true
+    fec_sub_car_mot?: true
+    fec_val_car_mot?: true
+    id_adm_val_car_mot?: true
+  }
+
+  export type Carta_motivacionCountAggregateInputType = {
+    id_car_mot?: true
+    id_ins_per?: true
+    con_car_mot?: true
+    est_car_mot?: true
+    fec_sub_car_mot?: true
+    fec_val_car_mot?: true
+    id_adm_val_car_mot?: true
+    _all?: true
+  }
+
+  export type Carta_motivacionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which carta_motivacion to aggregate.
+     */
+    where?: carta_motivacionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of carta_motivacions to fetch.
+     */
+    orderBy?: carta_motivacionOrderByWithRelationInput | carta_motivacionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: carta_motivacionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` carta_motivacions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` carta_motivacions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned carta_motivacions
+    **/
+    _count?: true | Carta_motivacionCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: Carta_motivacionMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: Carta_motivacionMaxAggregateInputType
+  }
+
+  export type GetCarta_motivacionAggregateType<T extends Carta_motivacionAggregateArgs> = {
+        [P in keyof T & keyof AggregateCarta_motivacion]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCarta_motivacion[P]>
+      : GetScalarType<T[P], AggregateCarta_motivacion[P]>
+  }
+
+
+
+
+  export type carta_motivacionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: carta_motivacionWhereInput
+    orderBy?: carta_motivacionOrderByWithAggregationInput | carta_motivacionOrderByWithAggregationInput[]
+    by: Carta_motivacionScalarFieldEnum[] | Carta_motivacionScalarFieldEnum
+    having?: carta_motivacionScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: Carta_motivacionCountAggregateInputType | true
+    _min?: Carta_motivacionMinAggregateInputType
+    _max?: Carta_motivacionMaxAggregateInputType
+  }
+
+  export type Carta_motivacionGroupByOutputType = {
+    id_car_mot: string
+    id_ins_per: string
+    con_car_mot: string
+    est_car_mot: $Enums.estado_validacion
+    fec_sub_car_mot: Date
+    fec_val_car_mot: Date | null
+    id_adm_val_car_mot: string | null
+    _count: Carta_motivacionCountAggregateOutputType | null
+    _min: Carta_motivacionMinAggregateOutputType | null
+    _max: Carta_motivacionMaxAggregateOutputType | null
+  }
+
+  type GetCarta_motivacionGroupByPayload<T extends carta_motivacionGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<Carta_motivacionGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof Carta_motivacionGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], Carta_motivacionGroupByOutputType[P]>
+            : GetScalarType<T[P], Carta_motivacionGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type carta_motivacionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_car_mot?: boolean
+    id_ins_per?: boolean
+    con_car_mot?: boolean
+    est_car_mot?: boolean
+    fec_sub_car_mot?: boolean
+    fec_val_car_mot?: boolean
+    id_adm_val_car_mot?: boolean
+    admin?: boolean | carta_motivacion$adminArgs<ExtArgs>
+    inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["carta_motivacion"]>
+
+  export type carta_motivacionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_car_mot?: boolean
+    id_ins_per?: boolean
+    con_car_mot?: boolean
+    est_car_mot?: boolean
+    fec_sub_car_mot?: boolean
+    fec_val_car_mot?: boolean
+    id_adm_val_car_mot?: boolean
+    admin?: boolean | carta_motivacion$adminArgs<ExtArgs>
+    inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["carta_motivacion"]>
+
+  export type carta_motivacionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_car_mot?: boolean
+    id_ins_per?: boolean
+    con_car_mot?: boolean
+    est_car_mot?: boolean
+    fec_sub_car_mot?: boolean
+    fec_val_car_mot?: boolean
+    id_adm_val_car_mot?: boolean
+    admin?: boolean | carta_motivacion$adminArgs<ExtArgs>
+    inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["carta_motivacion"]>
+
+  export type carta_motivacionSelectScalar = {
+    id_car_mot?: boolean
+    id_ins_per?: boolean
+    con_car_mot?: boolean
+    est_car_mot?: boolean
+    fec_sub_car_mot?: boolean
+    fec_val_car_mot?: boolean
+    id_adm_val_car_mot?: boolean
+  }
+
+  export type carta_motivacionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_car_mot" | "id_ins_per" | "con_car_mot" | "est_car_mot" | "fec_sub_car_mot" | "fec_val_car_mot" | "id_adm_val_car_mot", ExtArgs["result"]["carta_motivacion"]>
+  export type carta_motivacionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    admin?: boolean | carta_motivacion$adminArgs<ExtArgs>
+    inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
+  }
+  export type carta_motivacionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    admin?: boolean | carta_motivacion$adminArgs<ExtArgs>
+    inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
+  }
+  export type carta_motivacionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    admin?: boolean | carta_motivacion$adminArgs<ExtArgs>
+    inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
+  }
+
+  export type $carta_motivacionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "carta_motivacion"
+    objects: {
+      admin: Prisma.$cuentaPayload<ExtArgs> | null
+      inscripcion: Prisma.$inscripcionPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id_car_mot: string
+      id_ins_per: string
+      con_car_mot: string
+      est_car_mot: $Enums.estado_validacion
+      fec_sub_car_mot: Date
+      fec_val_car_mot: Date | null
+      id_adm_val_car_mot: string | null
+    }, ExtArgs["result"]["carta_motivacion"]>
+    composites: {}
+  }
+
+  type carta_motivacionGetPayload<S extends boolean | null | undefined | carta_motivacionDefaultArgs> = $Result.GetResult<Prisma.$carta_motivacionPayload, S>
+
+  type carta_motivacionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<carta_motivacionFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: Carta_motivacionCountAggregateInputType | true
+    }
+
+  export interface carta_motivacionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['carta_motivacion'], meta: { name: 'carta_motivacion' } }
+    /**
+     * Find zero or one Carta_motivacion that matches the filter.
+     * @param {carta_motivacionFindUniqueArgs} args - Arguments to find a Carta_motivacion
+     * @example
+     * // Get one Carta_motivacion
+     * const carta_motivacion = await prisma.carta_motivacion.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends carta_motivacionFindUniqueArgs>(args: SelectSubset<T, carta_motivacionFindUniqueArgs<ExtArgs>>): Prisma__carta_motivacionClient<$Result.GetResult<Prisma.$carta_motivacionPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Carta_motivacion that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {carta_motivacionFindUniqueOrThrowArgs} args - Arguments to find a Carta_motivacion
+     * @example
+     * // Get one Carta_motivacion
+     * const carta_motivacion = await prisma.carta_motivacion.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends carta_motivacionFindUniqueOrThrowArgs>(args: SelectSubset<T, carta_motivacionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__carta_motivacionClient<$Result.GetResult<Prisma.$carta_motivacionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Carta_motivacion that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {carta_motivacionFindFirstArgs} args - Arguments to find a Carta_motivacion
+     * @example
+     * // Get one Carta_motivacion
+     * const carta_motivacion = await prisma.carta_motivacion.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends carta_motivacionFindFirstArgs>(args?: SelectSubset<T, carta_motivacionFindFirstArgs<ExtArgs>>): Prisma__carta_motivacionClient<$Result.GetResult<Prisma.$carta_motivacionPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Carta_motivacion that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {carta_motivacionFindFirstOrThrowArgs} args - Arguments to find a Carta_motivacion
+     * @example
+     * // Get one Carta_motivacion
+     * const carta_motivacion = await prisma.carta_motivacion.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends carta_motivacionFindFirstOrThrowArgs>(args?: SelectSubset<T, carta_motivacionFindFirstOrThrowArgs<ExtArgs>>): Prisma__carta_motivacionClient<$Result.GetResult<Prisma.$carta_motivacionPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Carta_motivacions that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {carta_motivacionFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Carta_motivacions
+     * const carta_motivacions = await prisma.carta_motivacion.findMany()
+     * 
+     * // Get first 10 Carta_motivacions
+     * const carta_motivacions = await prisma.carta_motivacion.findMany({ take: 10 })
+     * 
+     * // Only select the `id_car_mot`
+     * const carta_motivacionWithId_car_motOnly = await prisma.carta_motivacion.findMany({ select: { id_car_mot: true } })
+     * 
+     */
+    findMany<T extends carta_motivacionFindManyArgs>(args?: SelectSubset<T, carta_motivacionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$carta_motivacionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Carta_motivacion.
+     * @param {carta_motivacionCreateArgs} args - Arguments to create a Carta_motivacion.
+     * @example
+     * // Create one Carta_motivacion
+     * const Carta_motivacion = await prisma.carta_motivacion.create({
+     *   data: {
+     *     // ... data to create a Carta_motivacion
+     *   }
+     * })
+     * 
+     */
+    create<T extends carta_motivacionCreateArgs>(args: SelectSubset<T, carta_motivacionCreateArgs<ExtArgs>>): Prisma__carta_motivacionClient<$Result.GetResult<Prisma.$carta_motivacionPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Carta_motivacions.
+     * @param {carta_motivacionCreateManyArgs} args - Arguments to create many Carta_motivacions.
+     * @example
+     * // Create many Carta_motivacions
+     * const carta_motivacion = await prisma.carta_motivacion.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends carta_motivacionCreateManyArgs>(args?: SelectSubset<T, carta_motivacionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Carta_motivacions and returns the data saved in the database.
+     * @param {carta_motivacionCreateManyAndReturnArgs} args - Arguments to create many Carta_motivacions.
+     * @example
+     * // Create many Carta_motivacions
+     * const carta_motivacion = await prisma.carta_motivacion.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Carta_motivacions and only return the `id_car_mot`
+     * const carta_motivacionWithId_car_motOnly = await prisma.carta_motivacion.createManyAndReturn({
+     *   select: { id_car_mot: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends carta_motivacionCreateManyAndReturnArgs>(args?: SelectSubset<T, carta_motivacionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$carta_motivacionPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Carta_motivacion.
+     * @param {carta_motivacionDeleteArgs} args - Arguments to delete one Carta_motivacion.
+     * @example
+     * // Delete one Carta_motivacion
+     * const Carta_motivacion = await prisma.carta_motivacion.delete({
+     *   where: {
+     *     // ... filter to delete one Carta_motivacion
+     *   }
+     * })
+     * 
+     */
+    delete<T extends carta_motivacionDeleteArgs>(args: SelectSubset<T, carta_motivacionDeleteArgs<ExtArgs>>): Prisma__carta_motivacionClient<$Result.GetResult<Prisma.$carta_motivacionPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Carta_motivacion.
+     * @param {carta_motivacionUpdateArgs} args - Arguments to update one Carta_motivacion.
+     * @example
+     * // Update one Carta_motivacion
+     * const carta_motivacion = await prisma.carta_motivacion.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends carta_motivacionUpdateArgs>(args: SelectSubset<T, carta_motivacionUpdateArgs<ExtArgs>>): Prisma__carta_motivacionClient<$Result.GetResult<Prisma.$carta_motivacionPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Carta_motivacions.
+     * @param {carta_motivacionDeleteManyArgs} args - Arguments to filter Carta_motivacions to delete.
+     * @example
+     * // Delete a few Carta_motivacions
+     * const { count } = await prisma.carta_motivacion.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends carta_motivacionDeleteManyArgs>(args?: SelectSubset<T, carta_motivacionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Carta_motivacions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {carta_motivacionUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Carta_motivacions
+     * const carta_motivacion = await prisma.carta_motivacion.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends carta_motivacionUpdateManyArgs>(args: SelectSubset<T, carta_motivacionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Carta_motivacions and returns the data updated in the database.
+     * @param {carta_motivacionUpdateManyAndReturnArgs} args - Arguments to update many Carta_motivacions.
+     * @example
+     * // Update many Carta_motivacions
+     * const carta_motivacion = await prisma.carta_motivacion.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Carta_motivacions and only return the `id_car_mot`
+     * const carta_motivacionWithId_car_motOnly = await prisma.carta_motivacion.updateManyAndReturn({
+     *   select: { id_car_mot: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends carta_motivacionUpdateManyAndReturnArgs>(args: SelectSubset<T, carta_motivacionUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$carta_motivacionPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Carta_motivacion.
+     * @param {carta_motivacionUpsertArgs} args - Arguments to update or create a Carta_motivacion.
+     * @example
+     * // Update or create a Carta_motivacion
+     * const carta_motivacion = await prisma.carta_motivacion.upsert({
+     *   create: {
+     *     // ... data to create a Carta_motivacion
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Carta_motivacion we want to update
+     *   }
+     * })
+     */
+    upsert<T extends carta_motivacionUpsertArgs>(args: SelectSubset<T, carta_motivacionUpsertArgs<ExtArgs>>): Prisma__carta_motivacionClient<$Result.GetResult<Prisma.$carta_motivacionPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Carta_motivacions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {carta_motivacionCountArgs} args - Arguments to filter Carta_motivacions to count.
+     * @example
+     * // Count the number of Carta_motivacions
+     * const count = await prisma.carta_motivacion.count({
+     *   where: {
+     *     // ... the filter for the Carta_motivacions we want to count
+     *   }
+     * })
+    **/
+    count<T extends carta_motivacionCountArgs>(
+      args?: Subset<T, carta_motivacionCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], Carta_motivacionCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Carta_motivacion.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Carta_motivacionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends Carta_motivacionAggregateArgs>(args: Subset<T, Carta_motivacionAggregateArgs>): Prisma.PrismaPromise<GetCarta_motivacionAggregateType<T>>
+
+    /**
+     * Group by Carta_motivacion.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {carta_motivacionGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends carta_motivacionGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: carta_motivacionGroupByArgs['orderBy'] }
+        : { orderBy?: carta_motivacionGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, carta_motivacionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCarta_motivacionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the carta_motivacion model
+   */
+  readonly fields: carta_motivacionFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for carta_motivacion.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__carta_motivacionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    admin<T extends carta_motivacion$adminArgs<ExtArgs> = {}>(args?: Subset<T, carta_motivacion$adminArgs<ExtArgs>>): Prisma__cuentaClient<$Result.GetResult<Prisma.$cuentaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    inscripcion<T extends inscripcionDefaultArgs<ExtArgs> = {}>(args?: Subset<T, inscripcionDefaultArgs<ExtArgs>>): Prisma__inscripcionClient<$Result.GetResult<Prisma.$inscripcionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the carta_motivacion model
+   */
+  interface carta_motivacionFieldRefs {
+    readonly id_car_mot: FieldRef<"carta_motivacion", 'String'>
+    readonly id_ins_per: FieldRef<"carta_motivacion", 'String'>
+    readonly con_car_mot: FieldRef<"carta_motivacion", 'String'>
+    readonly est_car_mot: FieldRef<"carta_motivacion", 'estado_validacion'>
+    readonly fec_sub_car_mot: FieldRef<"carta_motivacion", 'DateTime'>
+    readonly fec_val_car_mot: FieldRef<"carta_motivacion", 'DateTime'>
+    readonly id_adm_val_car_mot: FieldRef<"carta_motivacion", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * carta_motivacion findUnique
+   */
+  export type carta_motivacionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the carta_motivacion
+     */
+    select?: carta_motivacionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the carta_motivacion
+     */
+    omit?: carta_motivacionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: carta_motivacionInclude<ExtArgs> | null
+    /**
+     * Filter, which carta_motivacion to fetch.
+     */
+    where: carta_motivacionWhereUniqueInput
+  }
+
+  /**
+   * carta_motivacion findUniqueOrThrow
+   */
+  export type carta_motivacionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the carta_motivacion
+     */
+    select?: carta_motivacionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the carta_motivacion
+     */
+    omit?: carta_motivacionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: carta_motivacionInclude<ExtArgs> | null
+    /**
+     * Filter, which carta_motivacion to fetch.
+     */
+    where: carta_motivacionWhereUniqueInput
+  }
+
+  /**
+   * carta_motivacion findFirst
+   */
+  export type carta_motivacionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the carta_motivacion
+     */
+    select?: carta_motivacionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the carta_motivacion
+     */
+    omit?: carta_motivacionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: carta_motivacionInclude<ExtArgs> | null
+    /**
+     * Filter, which carta_motivacion to fetch.
+     */
+    where?: carta_motivacionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of carta_motivacions to fetch.
+     */
+    orderBy?: carta_motivacionOrderByWithRelationInput | carta_motivacionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for carta_motivacions.
+     */
+    cursor?: carta_motivacionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` carta_motivacions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` carta_motivacions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of carta_motivacions.
+     */
+    distinct?: Carta_motivacionScalarFieldEnum | Carta_motivacionScalarFieldEnum[]
+  }
+
+  /**
+   * carta_motivacion findFirstOrThrow
+   */
+  export type carta_motivacionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the carta_motivacion
+     */
+    select?: carta_motivacionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the carta_motivacion
+     */
+    omit?: carta_motivacionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: carta_motivacionInclude<ExtArgs> | null
+    /**
+     * Filter, which carta_motivacion to fetch.
+     */
+    where?: carta_motivacionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of carta_motivacions to fetch.
+     */
+    orderBy?: carta_motivacionOrderByWithRelationInput | carta_motivacionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for carta_motivacions.
+     */
+    cursor?: carta_motivacionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` carta_motivacions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` carta_motivacions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of carta_motivacions.
+     */
+    distinct?: Carta_motivacionScalarFieldEnum | Carta_motivacionScalarFieldEnum[]
+  }
+
+  /**
+   * carta_motivacion findMany
+   */
+  export type carta_motivacionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the carta_motivacion
+     */
+    select?: carta_motivacionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the carta_motivacion
+     */
+    omit?: carta_motivacionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: carta_motivacionInclude<ExtArgs> | null
+    /**
+     * Filter, which carta_motivacions to fetch.
+     */
+    where?: carta_motivacionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of carta_motivacions to fetch.
+     */
+    orderBy?: carta_motivacionOrderByWithRelationInput | carta_motivacionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing carta_motivacions.
+     */
+    cursor?: carta_motivacionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` carta_motivacions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` carta_motivacions.
+     */
+    skip?: number
+    distinct?: Carta_motivacionScalarFieldEnum | Carta_motivacionScalarFieldEnum[]
+  }
+
+  /**
+   * carta_motivacion create
+   */
+  export type carta_motivacionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the carta_motivacion
+     */
+    select?: carta_motivacionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the carta_motivacion
+     */
+    omit?: carta_motivacionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: carta_motivacionInclude<ExtArgs> | null
+    /**
+     * The data needed to create a carta_motivacion.
+     */
+    data: XOR<carta_motivacionCreateInput, carta_motivacionUncheckedCreateInput>
+  }
+
+  /**
+   * carta_motivacion createMany
+   */
+  export type carta_motivacionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many carta_motivacions.
+     */
+    data: carta_motivacionCreateManyInput | carta_motivacionCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * carta_motivacion createManyAndReturn
+   */
+  export type carta_motivacionCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the carta_motivacion
+     */
+    select?: carta_motivacionSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the carta_motivacion
+     */
+    omit?: carta_motivacionOmit<ExtArgs> | null
+    /**
+     * The data used to create many carta_motivacions.
+     */
+    data: carta_motivacionCreateManyInput | carta_motivacionCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: carta_motivacionIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * carta_motivacion update
+   */
+  export type carta_motivacionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the carta_motivacion
+     */
+    select?: carta_motivacionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the carta_motivacion
+     */
+    omit?: carta_motivacionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: carta_motivacionInclude<ExtArgs> | null
+    /**
+     * The data needed to update a carta_motivacion.
+     */
+    data: XOR<carta_motivacionUpdateInput, carta_motivacionUncheckedUpdateInput>
+    /**
+     * Choose, which carta_motivacion to update.
+     */
+    where: carta_motivacionWhereUniqueInput
+  }
+
+  /**
+   * carta_motivacion updateMany
+   */
+  export type carta_motivacionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update carta_motivacions.
+     */
+    data: XOR<carta_motivacionUpdateManyMutationInput, carta_motivacionUncheckedUpdateManyInput>
+    /**
+     * Filter which carta_motivacions to update
+     */
+    where?: carta_motivacionWhereInput
+    /**
+     * Limit how many carta_motivacions to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * carta_motivacion updateManyAndReturn
+   */
+  export type carta_motivacionUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the carta_motivacion
+     */
+    select?: carta_motivacionSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the carta_motivacion
+     */
+    omit?: carta_motivacionOmit<ExtArgs> | null
+    /**
+     * The data used to update carta_motivacions.
+     */
+    data: XOR<carta_motivacionUpdateManyMutationInput, carta_motivacionUncheckedUpdateManyInput>
+    /**
+     * Filter which carta_motivacions to update
+     */
+    where?: carta_motivacionWhereInput
+    /**
+     * Limit how many carta_motivacions to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: carta_motivacionIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * carta_motivacion upsert
+   */
+  export type carta_motivacionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the carta_motivacion
+     */
+    select?: carta_motivacionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the carta_motivacion
+     */
+    omit?: carta_motivacionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: carta_motivacionInclude<ExtArgs> | null
+    /**
+     * The filter to search for the carta_motivacion to update in case it exists.
+     */
+    where: carta_motivacionWhereUniqueInput
+    /**
+     * In case the carta_motivacion found by the `where` argument doesn't exist, create a new carta_motivacion with this data.
+     */
+    create: XOR<carta_motivacionCreateInput, carta_motivacionUncheckedCreateInput>
+    /**
+     * In case the carta_motivacion was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<carta_motivacionUpdateInput, carta_motivacionUncheckedUpdateInput>
+  }
+
+  /**
+   * carta_motivacion delete
+   */
+  export type carta_motivacionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the carta_motivacion
+     */
+    select?: carta_motivacionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the carta_motivacion
+     */
+    omit?: carta_motivacionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: carta_motivacionInclude<ExtArgs> | null
+    /**
+     * Filter which carta_motivacion to delete.
+     */
+    where: carta_motivacionWhereUniqueInput
+  }
+
+  /**
+   * carta_motivacion deleteMany
+   */
+  export type carta_motivacionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which carta_motivacions to delete
+     */
+    where?: carta_motivacionWhereInput
+    /**
+     * Limit how many carta_motivacions to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * carta_motivacion.admin
+   */
+  export type carta_motivacion$adminArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cuenta
+     */
+    select?: cuentaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the cuenta
+     */
+    omit?: cuentaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cuentaInclude<ExtArgs> | null
+    where?: cuentaWhereInput
+  }
+
+  /**
+   * carta_motivacion without action
+   */
+  export type carta_motivacionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the carta_motivacion
+     */
+    select?: carta_motivacionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the carta_motivacion
+     */
+    omit?: carta_motivacionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: carta_motivacionInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model observacion_inscripcion
+   */
+
+  export type AggregateObservacion_inscripcion = {
+    _count: Observacion_inscripcionCountAggregateOutputType | null
+    _min: Observacion_inscripcionMinAggregateOutputType | null
+    _max: Observacion_inscripcionMaxAggregateOutputType | null
+  }
+
+  export type Observacion_inscripcionMinAggregateOutputType = {
+    id_obs_ins: string | null
+    id_ins_per: string | null
+    obs_ins: string | null
+    fec_cre_obs: Date | null
+    id_adm_cre_obs: string | null
+  }
+
+  export type Observacion_inscripcionMaxAggregateOutputType = {
+    id_obs_ins: string | null
+    id_ins_per: string | null
+    obs_ins: string | null
+    fec_cre_obs: Date | null
+    id_adm_cre_obs: string | null
+  }
+
+  export type Observacion_inscripcionCountAggregateOutputType = {
+    id_obs_ins: number
+    id_ins_per: number
+    obs_ins: number
+    fec_cre_obs: number
+    id_adm_cre_obs: number
+    _all: number
+  }
+
+
+  export type Observacion_inscripcionMinAggregateInputType = {
+    id_obs_ins?: true
+    id_ins_per?: true
+    obs_ins?: true
+    fec_cre_obs?: true
+    id_adm_cre_obs?: true
+  }
+
+  export type Observacion_inscripcionMaxAggregateInputType = {
+    id_obs_ins?: true
+    id_ins_per?: true
+    obs_ins?: true
+    fec_cre_obs?: true
+    id_adm_cre_obs?: true
+  }
+
+  export type Observacion_inscripcionCountAggregateInputType = {
+    id_obs_ins?: true
+    id_ins_per?: true
+    obs_ins?: true
+    fec_cre_obs?: true
+    id_adm_cre_obs?: true
+    _all?: true
+  }
+
+  export type Observacion_inscripcionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which observacion_inscripcion to aggregate.
+     */
+    where?: observacion_inscripcionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of observacion_inscripcions to fetch.
+     */
+    orderBy?: observacion_inscripcionOrderByWithRelationInput | observacion_inscripcionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: observacion_inscripcionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` observacion_inscripcions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` observacion_inscripcions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned observacion_inscripcions
+    **/
+    _count?: true | Observacion_inscripcionCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: Observacion_inscripcionMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: Observacion_inscripcionMaxAggregateInputType
+  }
+
+  export type GetObservacion_inscripcionAggregateType<T extends Observacion_inscripcionAggregateArgs> = {
+        [P in keyof T & keyof AggregateObservacion_inscripcion]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateObservacion_inscripcion[P]>
+      : GetScalarType<T[P], AggregateObservacion_inscripcion[P]>
+  }
+
+
+
+
+  export type observacion_inscripcionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: observacion_inscripcionWhereInput
+    orderBy?: observacion_inscripcionOrderByWithAggregationInput | observacion_inscripcionOrderByWithAggregationInput[]
+    by: Observacion_inscripcionScalarFieldEnum[] | Observacion_inscripcionScalarFieldEnum
+    having?: observacion_inscripcionScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: Observacion_inscripcionCountAggregateInputType | true
+    _min?: Observacion_inscripcionMinAggregateInputType
+    _max?: Observacion_inscripcionMaxAggregateInputType
+  }
+
+  export type Observacion_inscripcionGroupByOutputType = {
+    id_obs_ins: string
+    id_ins_per: string
+    obs_ins: string
+    fec_cre_obs: Date
+    id_adm_cre_obs: string | null
+    _count: Observacion_inscripcionCountAggregateOutputType | null
+    _min: Observacion_inscripcionMinAggregateOutputType | null
+    _max: Observacion_inscripcionMaxAggregateOutputType | null
+  }
+
+  type GetObservacion_inscripcionGroupByPayload<T extends observacion_inscripcionGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<Observacion_inscripcionGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof Observacion_inscripcionGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], Observacion_inscripcionGroupByOutputType[P]>
+            : GetScalarType<T[P], Observacion_inscripcionGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type observacion_inscripcionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_obs_ins?: boolean
+    id_ins_per?: boolean
+    obs_ins?: boolean
+    fec_cre_obs?: boolean
+    id_adm_cre_obs?: boolean
+    inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
+    admin_creador?: boolean | observacion_inscripcion$admin_creadorArgs<ExtArgs>
+  }, ExtArgs["result"]["observacion_inscripcion"]>
+
+  export type observacion_inscripcionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_obs_ins?: boolean
+    id_ins_per?: boolean
+    obs_ins?: boolean
+    fec_cre_obs?: boolean
+    id_adm_cre_obs?: boolean
+    inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
+    admin_creador?: boolean | observacion_inscripcion$admin_creadorArgs<ExtArgs>
+  }, ExtArgs["result"]["observacion_inscripcion"]>
+
+  export type observacion_inscripcionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_obs_ins?: boolean
+    id_ins_per?: boolean
+    obs_ins?: boolean
+    fec_cre_obs?: boolean
+    id_adm_cre_obs?: boolean
+    inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
+    admin_creador?: boolean | observacion_inscripcion$admin_creadorArgs<ExtArgs>
+  }, ExtArgs["result"]["observacion_inscripcion"]>
+
+  export type observacion_inscripcionSelectScalar = {
+    id_obs_ins?: boolean
+    id_ins_per?: boolean
+    obs_ins?: boolean
+    fec_cre_obs?: boolean
+    id_adm_cre_obs?: boolean
+  }
+
+  export type observacion_inscripcionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_obs_ins" | "id_ins_per" | "obs_ins" | "fec_cre_obs" | "id_adm_cre_obs", ExtArgs["result"]["observacion_inscripcion"]>
+  export type observacion_inscripcionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
+    admin_creador?: boolean | observacion_inscripcion$admin_creadorArgs<ExtArgs>
+  }
+  export type observacion_inscripcionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
+    admin_creador?: boolean | observacion_inscripcion$admin_creadorArgs<ExtArgs>
+  }
+  export type observacion_inscripcionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
+    admin_creador?: boolean | observacion_inscripcion$admin_creadorArgs<ExtArgs>
+  }
+
+  export type $observacion_inscripcionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "observacion_inscripcion"
+    objects: {
+      inscripcion: Prisma.$inscripcionPayload<ExtArgs>
+      admin_creador: Prisma.$cuentaPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id_obs_ins: string
+      id_ins_per: string
+      obs_ins: string
+      fec_cre_obs: Date
+      id_adm_cre_obs: string | null
+    }, ExtArgs["result"]["observacion_inscripcion"]>
+    composites: {}
+  }
+
+  type observacion_inscripcionGetPayload<S extends boolean | null | undefined | observacion_inscripcionDefaultArgs> = $Result.GetResult<Prisma.$observacion_inscripcionPayload, S>
+
+  type observacion_inscripcionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<observacion_inscripcionFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: Observacion_inscripcionCountAggregateInputType | true
+    }
+
+  export interface observacion_inscripcionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['observacion_inscripcion'], meta: { name: 'observacion_inscripcion' } }
+    /**
+     * Find zero or one Observacion_inscripcion that matches the filter.
+     * @param {observacion_inscripcionFindUniqueArgs} args - Arguments to find a Observacion_inscripcion
+     * @example
+     * // Get one Observacion_inscripcion
+     * const observacion_inscripcion = await prisma.observacion_inscripcion.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends observacion_inscripcionFindUniqueArgs>(args: SelectSubset<T, observacion_inscripcionFindUniqueArgs<ExtArgs>>): Prisma__observacion_inscripcionClient<$Result.GetResult<Prisma.$observacion_inscripcionPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Observacion_inscripcion that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {observacion_inscripcionFindUniqueOrThrowArgs} args - Arguments to find a Observacion_inscripcion
+     * @example
+     * // Get one Observacion_inscripcion
+     * const observacion_inscripcion = await prisma.observacion_inscripcion.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends observacion_inscripcionFindUniqueOrThrowArgs>(args: SelectSubset<T, observacion_inscripcionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__observacion_inscripcionClient<$Result.GetResult<Prisma.$observacion_inscripcionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Observacion_inscripcion that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {observacion_inscripcionFindFirstArgs} args - Arguments to find a Observacion_inscripcion
+     * @example
+     * // Get one Observacion_inscripcion
+     * const observacion_inscripcion = await prisma.observacion_inscripcion.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends observacion_inscripcionFindFirstArgs>(args?: SelectSubset<T, observacion_inscripcionFindFirstArgs<ExtArgs>>): Prisma__observacion_inscripcionClient<$Result.GetResult<Prisma.$observacion_inscripcionPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Observacion_inscripcion that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {observacion_inscripcionFindFirstOrThrowArgs} args - Arguments to find a Observacion_inscripcion
+     * @example
+     * // Get one Observacion_inscripcion
+     * const observacion_inscripcion = await prisma.observacion_inscripcion.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends observacion_inscripcionFindFirstOrThrowArgs>(args?: SelectSubset<T, observacion_inscripcionFindFirstOrThrowArgs<ExtArgs>>): Prisma__observacion_inscripcionClient<$Result.GetResult<Prisma.$observacion_inscripcionPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Observacion_inscripcions that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {observacion_inscripcionFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Observacion_inscripcions
+     * const observacion_inscripcions = await prisma.observacion_inscripcion.findMany()
+     * 
+     * // Get first 10 Observacion_inscripcions
+     * const observacion_inscripcions = await prisma.observacion_inscripcion.findMany({ take: 10 })
+     * 
+     * // Only select the `id_obs_ins`
+     * const observacion_inscripcionWithId_obs_insOnly = await prisma.observacion_inscripcion.findMany({ select: { id_obs_ins: true } })
+     * 
+     */
+    findMany<T extends observacion_inscripcionFindManyArgs>(args?: SelectSubset<T, observacion_inscripcionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$observacion_inscripcionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Observacion_inscripcion.
+     * @param {observacion_inscripcionCreateArgs} args - Arguments to create a Observacion_inscripcion.
+     * @example
+     * // Create one Observacion_inscripcion
+     * const Observacion_inscripcion = await prisma.observacion_inscripcion.create({
+     *   data: {
+     *     // ... data to create a Observacion_inscripcion
+     *   }
+     * })
+     * 
+     */
+    create<T extends observacion_inscripcionCreateArgs>(args: SelectSubset<T, observacion_inscripcionCreateArgs<ExtArgs>>): Prisma__observacion_inscripcionClient<$Result.GetResult<Prisma.$observacion_inscripcionPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Observacion_inscripcions.
+     * @param {observacion_inscripcionCreateManyArgs} args - Arguments to create many Observacion_inscripcions.
+     * @example
+     * // Create many Observacion_inscripcions
+     * const observacion_inscripcion = await prisma.observacion_inscripcion.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends observacion_inscripcionCreateManyArgs>(args?: SelectSubset<T, observacion_inscripcionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Observacion_inscripcions and returns the data saved in the database.
+     * @param {observacion_inscripcionCreateManyAndReturnArgs} args - Arguments to create many Observacion_inscripcions.
+     * @example
+     * // Create many Observacion_inscripcions
+     * const observacion_inscripcion = await prisma.observacion_inscripcion.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Observacion_inscripcions and only return the `id_obs_ins`
+     * const observacion_inscripcionWithId_obs_insOnly = await prisma.observacion_inscripcion.createManyAndReturn({
+     *   select: { id_obs_ins: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends observacion_inscripcionCreateManyAndReturnArgs>(args?: SelectSubset<T, observacion_inscripcionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$observacion_inscripcionPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Observacion_inscripcion.
+     * @param {observacion_inscripcionDeleteArgs} args - Arguments to delete one Observacion_inscripcion.
+     * @example
+     * // Delete one Observacion_inscripcion
+     * const Observacion_inscripcion = await prisma.observacion_inscripcion.delete({
+     *   where: {
+     *     // ... filter to delete one Observacion_inscripcion
+     *   }
+     * })
+     * 
+     */
+    delete<T extends observacion_inscripcionDeleteArgs>(args: SelectSubset<T, observacion_inscripcionDeleteArgs<ExtArgs>>): Prisma__observacion_inscripcionClient<$Result.GetResult<Prisma.$observacion_inscripcionPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Observacion_inscripcion.
+     * @param {observacion_inscripcionUpdateArgs} args - Arguments to update one Observacion_inscripcion.
+     * @example
+     * // Update one Observacion_inscripcion
+     * const observacion_inscripcion = await prisma.observacion_inscripcion.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends observacion_inscripcionUpdateArgs>(args: SelectSubset<T, observacion_inscripcionUpdateArgs<ExtArgs>>): Prisma__observacion_inscripcionClient<$Result.GetResult<Prisma.$observacion_inscripcionPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Observacion_inscripcions.
+     * @param {observacion_inscripcionDeleteManyArgs} args - Arguments to filter Observacion_inscripcions to delete.
+     * @example
+     * // Delete a few Observacion_inscripcions
+     * const { count } = await prisma.observacion_inscripcion.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends observacion_inscripcionDeleteManyArgs>(args?: SelectSubset<T, observacion_inscripcionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Observacion_inscripcions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {observacion_inscripcionUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Observacion_inscripcions
+     * const observacion_inscripcion = await prisma.observacion_inscripcion.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends observacion_inscripcionUpdateManyArgs>(args: SelectSubset<T, observacion_inscripcionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Observacion_inscripcions and returns the data updated in the database.
+     * @param {observacion_inscripcionUpdateManyAndReturnArgs} args - Arguments to update many Observacion_inscripcions.
+     * @example
+     * // Update many Observacion_inscripcions
+     * const observacion_inscripcion = await prisma.observacion_inscripcion.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Observacion_inscripcions and only return the `id_obs_ins`
+     * const observacion_inscripcionWithId_obs_insOnly = await prisma.observacion_inscripcion.updateManyAndReturn({
+     *   select: { id_obs_ins: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends observacion_inscripcionUpdateManyAndReturnArgs>(args: SelectSubset<T, observacion_inscripcionUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$observacion_inscripcionPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Observacion_inscripcion.
+     * @param {observacion_inscripcionUpsertArgs} args - Arguments to update or create a Observacion_inscripcion.
+     * @example
+     * // Update or create a Observacion_inscripcion
+     * const observacion_inscripcion = await prisma.observacion_inscripcion.upsert({
+     *   create: {
+     *     // ... data to create a Observacion_inscripcion
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Observacion_inscripcion we want to update
+     *   }
+     * })
+     */
+    upsert<T extends observacion_inscripcionUpsertArgs>(args: SelectSubset<T, observacion_inscripcionUpsertArgs<ExtArgs>>): Prisma__observacion_inscripcionClient<$Result.GetResult<Prisma.$observacion_inscripcionPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Observacion_inscripcions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {observacion_inscripcionCountArgs} args - Arguments to filter Observacion_inscripcions to count.
+     * @example
+     * // Count the number of Observacion_inscripcions
+     * const count = await prisma.observacion_inscripcion.count({
+     *   where: {
+     *     // ... the filter for the Observacion_inscripcions we want to count
+     *   }
+     * })
+    **/
+    count<T extends observacion_inscripcionCountArgs>(
+      args?: Subset<T, observacion_inscripcionCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], Observacion_inscripcionCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Observacion_inscripcion.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Observacion_inscripcionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends Observacion_inscripcionAggregateArgs>(args: Subset<T, Observacion_inscripcionAggregateArgs>): Prisma.PrismaPromise<GetObservacion_inscripcionAggregateType<T>>
+
+    /**
+     * Group by Observacion_inscripcion.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {observacion_inscripcionGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends observacion_inscripcionGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: observacion_inscripcionGroupByArgs['orderBy'] }
+        : { orderBy?: observacion_inscripcionGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, observacion_inscripcionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetObservacion_inscripcionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the observacion_inscripcion model
+   */
+  readonly fields: observacion_inscripcionFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for observacion_inscripcion.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__observacion_inscripcionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    inscripcion<T extends inscripcionDefaultArgs<ExtArgs> = {}>(args?: Subset<T, inscripcionDefaultArgs<ExtArgs>>): Prisma__inscripcionClient<$Result.GetResult<Prisma.$inscripcionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    admin_creador<T extends observacion_inscripcion$admin_creadorArgs<ExtArgs> = {}>(args?: Subset<T, observacion_inscripcion$admin_creadorArgs<ExtArgs>>): Prisma__cuentaClient<$Result.GetResult<Prisma.$cuentaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the observacion_inscripcion model
+   */
+  interface observacion_inscripcionFieldRefs {
+    readonly id_obs_ins: FieldRef<"observacion_inscripcion", 'String'>
+    readonly id_ins_per: FieldRef<"observacion_inscripcion", 'String'>
+    readonly obs_ins: FieldRef<"observacion_inscripcion", 'String'>
+    readonly fec_cre_obs: FieldRef<"observacion_inscripcion", 'DateTime'>
+    readonly id_adm_cre_obs: FieldRef<"observacion_inscripcion", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * observacion_inscripcion findUnique
+   */
+  export type observacion_inscripcionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the observacion_inscripcion
+     */
+    select?: observacion_inscripcionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the observacion_inscripcion
+     */
+    omit?: observacion_inscripcionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: observacion_inscripcionInclude<ExtArgs> | null
+    /**
+     * Filter, which observacion_inscripcion to fetch.
+     */
+    where: observacion_inscripcionWhereUniqueInput
+  }
+
+  /**
+   * observacion_inscripcion findUniqueOrThrow
+   */
+  export type observacion_inscripcionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the observacion_inscripcion
+     */
+    select?: observacion_inscripcionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the observacion_inscripcion
+     */
+    omit?: observacion_inscripcionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: observacion_inscripcionInclude<ExtArgs> | null
+    /**
+     * Filter, which observacion_inscripcion to fetch.
+     */
+    where: observacion_inscripcionWhereUniqueInput
+  }
+
+  /**
+   * observacion_inscripcion findFirst
+   */
+  export type observacion_inscripcionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the observacion_inscripcion
+     */
+    select?: observacion_inscripcionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the observacion_inscripcion
+     */
+    omit?: observacion_inscripcionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: observacion_inscripcionInclude<ExtArgs> | null
+    /**
+     * Filter, which observacion_inscripcion to fetch.
+     */
+    where?: observacion_inscripcionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of observacion_inscripcions to fetch.
+     */
+    orderBy?: observacion_inscripcionOrderByWithRelationInput | observacion_inscripcionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for observacion_inscripcions.
+     */
+    cursor?: observacion_inscripcionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` observacion_inscripcions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` observacion_inscripcions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of observacion_inscripcions.
+     */
+    distinct?: Observacion_inscripcionScalarFieldEnum | Observacion_inscripcionScalarFieldEnum[]
+  }
+
+  /**
+   * observacion_inscripcion findFirstOrThrow
+   */
+  export type observacion_inscripcionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the observacion_inscripcion
+     */
+    select?: observacion_inscripcionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the observacion_inscripcion
+     */
+    omit?: observacion_inscripcionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: observacion_inscripcionInclude<ExtArgs> | null
+    /**
+     * Filter, which observacion_inscripcion to fetch.
+     */
+    where?: observacion_inscripcionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of observacion_inscripcions to fetch.
+     */
+    orderBy?: observacion_inscripcionOrderByWithRelationInput | observacion_inscripcionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for observacion_inscripcions.
+     */
+    cursor?: observacion_inscripcionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` observacion_inscripcions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` observacion_inscripcions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of observacion_inscripcions.
+     */
+    distinct?: Observacion_inscripcionScalarFieldEnum | Observacion_inscripcionScalarFieldEnum[]
+  }
+
+  /**
+   * observacion_inscripcion findMany
+   */
+  export type observacion_inscripcionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the observacion_inscripcion
+     */
+    select?: observacion_inscripcionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the observacion_inscripcion
+     */
+    omit?: observacion_inscripcionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: observacion_inscripcionInclude<ExtArgs> | null
+    /**
+     * Filter, which observacion_inscripcions to fetch.
+     */
+    where?: observacion_inscripcionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of observacion_inscripcions to fetch.
+     */
+    orderBy?: observacion_inscripcionOrderByWithRelationInput | observacion_inscripcionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing observacion_inscripcions.
+     */
+    cursor?: observacion_inscripcionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` observacion_inscripcions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` observacion_inscripcions.
+     */
+    skip?: number
+    distinct?: Observacion_inscripcionScalarFieldEnum | Observacion_inscripcionScalarFieldEnum[]
+  }
+
+  /**
+   * observacion_inscripcion create
+   */
+  export type observacion_inscripcionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the observacion_inscripcion
+     */
+    select?: observacion_inscripcionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the observacion_inscripcion
+     */
+    omit?: observacion_inscripcionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: observacion_inscripcionInclude<ExtArgs> | null
+    /**
+     * The data needed to create a observacion_inscripcion.
+     */
+    data: XOR<observacion_inscripcionCreateInput, observacion_inscripcionUncheckedCreateInput>
+  }
+
+  /**
+   * observacion_inscripcion createMany
+   */
+  export type observacion_inscripcionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many observacion_inscripcions.
+     */
+    data: observacion_inscripcionCreateManyInput | observacion_inscripcionCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * observacion_inscripcion createManyAndReturn
+   */
+  export type observacion_inscripcionCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the observacion_inscripcion
+     */
+    select?: observacion_inscripcionSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the observacion_inscripcion
+     */
+    omit?: observacion_inscripcionOmit<ExtArgs> | null
+    /**
+     * The data used to create many observacion_inscripcions.
+     */
+    data: observacion_inscripcionCreateManyInput | observacion_inscripcionCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: observacion_inscripcionIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * observacion_inscripcion update
+   */
+  export type observacion_inscripcionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the observacion_inscripcion
+     */
+    select?: observacion_inscripcionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the observacion_inscripcion
+     */
+    omit?: observacion_inscripcionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: observacion_inscripcionInclude<ExtArgs> | null
+    /**
+     * The data needed to update a observacion_inscripcion.
+     */
+    data: XOR<observacion_inscripcionUpdateInput, observacion_inscripcionUncheckedUpdateInput>
+    /**
+     * Choose, which observacion_inscripcion to update.
+     */
+    where: observacion_inscripcionWhereUniqueInput
+  }
+
+  /**
+   * observacion_inscripcion updateMany
+   */
+  export type observacion_inscripcionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update observacion_inscripcions.
+     */
+    data: XOR<observacion_inscripcionUpdateManyMutationInput, observacion_inscripcionUncheckedUpdateManyInput>
+    /**
+     * Filter which observacion_inscripcions to update
+     */
+    where?: observacion_inscripcionWhereInput
+    /**
+     * Limit how many observacion_inscripcions to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * observacion_inscripcion updateManyAndReturn
+   */
+  export type observacion_inscripcionUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the observacion_inscripcion
+     */
+    select?: observacion_inscripcionSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the observacion_inscripcion
+     */
+    omit?: observacion_inscripcionOmit<ExtArgs> | null
+    /**
+     * The data used to update observacion_inscripcions.
+     */
+    data: XOR<observacion_inscripcionUpdateManyMutationInput, observacion_inscripcionUncheckedUpdateManyInput>
+    /**
+     * Filter which observacion_inscripcions to update
+     */
+    where?: observacion_inscripcionWhereInput
+    /**
+     * Limit how many observacion_inscripcions to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: observacion_inscripcionIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * observacion_inscripcion upsert
+   */
+  export type observacion_inscripcionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the observacion_inscripcion
+     */
+    select?: observacion_inscripcionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the observacion_inscripcion
+     */
+    omit?: observacion_inscripcionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: observacion_inscripcionInclude<ExtArgs> | null
+    /**
+     * The filter to search for the observacion_inscripcion to update in case it exists.
+     */
+    where: observacion_inscripcionWhereUniqueInput
+    /**
+     * In case the observacion_inscripcion found by the `where` argument doesn't exist, create a new observacion_inscripcion with this data.
+     */
+    create: XOR<observacion_inscripcionCreateInput, observacion_inscripcionUncheckedCreateInput>
+    /**
+     * In case the observacion_inscripcion was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<observacion_inscripcionUpdateInput, observacion_inscripcionUncheckedUpdateInput>
+  }
+
+  /**
+   * observacion_inscripcion delete
+   */
+  export type observacion_inscripcionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the observacion_inscripcion
+     */
+    select?: observacion_inscripcionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the observacion_inscripcion
+     */
+    omit?: observacion_inscripcionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: observacion_inscripcionInclude<ExtArgs> | null
+    /**
+     * Filter which observacion_inscripcion to delete.
+     */
+    where: observacion_inscripcionWhereUniqueInput
+  }
+
+  /**
+   * observacion_inscripcion deleteMany
+   */
+  export type observacion_inscripcionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which observacion_inscripcions to delete
+     */
+    where?: observacion_inscripcionWhereInput
+    /**
+     * Limit how many observacion_inscripcions to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * observacion_inscripcion.admin_creador
+   */
+  export type observacion_inscripcion$admin_creadorArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cuenta
+     */
+    select?: cuentaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the cuenta
+     */
+    omit?: cuentaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cuentaInclude<ExtArgs> | null
+    where?: cuentaWhereInput
+  }
+
+  /**
+   * observacion_inscripcion without action
+   */
+  export type observacion_inscripcionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the observacion_inscripcion
+     */
+    select?: observacion_inscripcionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the observacion_inscripcion
+     */
+    omit?: observacion_inscripcionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: observacion_inscripcionInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model cuenta
+   */
+
+  export type AggregateCuenta = {
+    _count: CuentaCountAggregateOutputType | null
+    _min: CuentaMinAggregateOutputType | null
+    _max: CuentaMaxAggregateOutputType | null
+  }
+
+  export type CuentaMinAggregateOutputType = {
+    id_cue: string | null
+    id_usu_per: string | null
+    cor_usu: string | null
+    con_usu: string | null
+    fec_cre_cue: Date | null
+    rol_usu: $Enums.rol_usuario | null
+  }
+
+  export type CuentaMaxAggregateOutputType = {
+    id_cue: string | null
+    id_usu_per: string | null
+    cor_usu: string | null
+    con_usu: string | null
+    fec_cre_cue: Date | null
+    rol_usu: $Enums.rol_usuario | null
+  }
+
+  export type CuentaCountAggregateOutputType = {
+    id_cue: number
+    id_usu_per: number
+    cor_usu: number
+    con_usu: number
+    fec_cre_cue: number
+    rol_usu: number
+    _all: number
+  }
+
+
+  export type CuentaMinAggregateInputType = {
+    id_cue?: true
+    id_usu_per?: true
+    cor_usu?: true
+    con_usu?: true
+    fec_cre_cue?: true
+    rol_usu?: true
+  }
+
+  export type CuentaMaxAggregateInputType = {
+    id_cue?: true
+    id_usu_per?: true
+    cor_usu?: true
+    con_usu?: true
+    fec_cre_cue?: true
+    rol_usu?: true
+  }
+
+  export type CuentaCountAggregateInputType = {
+    id_cue?: true
+    id_usu_per?: true
+    cor_usu?: true
+    con_usu?: true
+    fec_cre_cue?: true
+    rol_usu?: true
+    _all?: true
+  }
+
+  export type CuentaAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which cuenta to aggregate.
+     */
+    where?: cuentaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of cuentas to fetch.
+     */
+    orderBy?: cuentaOrderByWithRelationInput | cuentaOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: cuentaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` cuentas from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` cuentas.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned cuentas
+    **/
+    _count?: true | CuentaCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: CuentaMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: CuentaMaxAggregateInputType
+  }
+
+  export type GetCuentaAggregateType<T extends CuentaAggregateArgs> = {
+        [P in keyof T & keyof AggregateCuenta]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCuenta[P]>
+      : GetScalarType<T[P], AggregateCuenta[P]>
+  }
+
+
+
+
+  export type cuentaGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: cuentaWhereInput
+    orderBy?: cuentaOrderByWithAggregationInput | cuentaOrderByWithAggregationInput[]
+    by: CuentaScalarFieldEnum[] | CuentaScalarFieldEnum
+    having?: cuentaScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: CuentaCountAggregateInputType | true
+    _min?: CuentaMinAggregateInputType
+    _max?: CuentaMaxAggregateInputType
+  }
+
+  export type CuentaGroupByOutputType = {
+    id_cue: string
+    id_usu_per: string
+    cor_usu: string
+    con_usu: string
+    fec_cre_cue: Date
+    rol_usu: $Enums.rol_usuario
+    _count: CuentaCountAggregateOutputType | null
+    _min: CuentaMinAggregateOutputType | null
+    _max: CuentaMaxAggregateOutputType | null
+  }
+
+  type GetCuentaGroupByPayload<T extends cuentaGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<CuentaGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof CuentaGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], CuentaGroupByOutputType[P]>
+            : GetScalarType<T[P], CuentaGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type cuentaSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_cue?: boolean
+    id_usu_per?: boolean
+    cor_usu?: boolean
+    con_usu?: boolean
+    fec_cre_cue?: boolean
+    rol_usu?: boolean
+    usuario?: boolean | usuarioDefaultArgs<ExtArgs>
+    inscripciones?: boolean | cuenta$inscripcionesArgs<ExtArgs>
+    cartas_motivacion?: boolean | cuenta$cartas_motivacionArgs<ExtArgs>
+    comprobantes_pago?: boolean | cuenta$comprobantes_pagoArgs<ExtArgs>
+    eventos?: boolean | cuenta$eventosArgs<ExtArgs>
+    observaciones_creadas?: boolean | cuenta$observaciones_creadasArgs<ExtArgs>
+    _count?: boolean | CuentaCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["cuenta"]>
+
+  export type cuentaSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_cue?: boolean
+    id_usu_per?: boolean
+    cor_usu?: boolean
+    con_usu?: boolean
+    fec_cre_cue?: boolean
+    rol_usu?: boolean
+    usuario?: boolean | usuarioDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["cuenta"]>
+
+  export type cuentaSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_cue?: boolean
+    id_usu_per?: boolean
+    cor_usu?: boolean
+    con_usu?: boolean
+    fec_cre_cue?: boolean
+    rol_usu?: boolean
+    usuario?: boolean | usuarioDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["cuenta"]>
+
+  export type cuentaSelectScalar = {
+    id_cue?: boolean
+    id_usu_per?: boolean
+    cor_usu?: boolean
+    con_usu?: boolean
+    fec_cre_cue?: boolean
+    rol_usu?: boolean
+  }
+
+  export type cuentaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_cue" | "id_usu_per" | "cor_usu" | "con_usu" | "fec_cre_cue" | "rol_usu", ExtArgs["result"]["cuenta"]>
+  export type cuentaInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    usuario?: boolean | usuarioDefaultArgs<ExtArgs>
+    inscripciones?: boolean | cuenta$inscripcionesArgs<ExtArgs>
+    cartas_motivacion?: boolean | cuenta$cartas_motivacionArgs<ExtArgs>
+    comprobantes_pago?: boolean | cuenta$comprobantes_pagoArgs<ExtArgs>
+    eventos?: boolean | cuenta$eventosArgs<ExtArgs>
+    observaciones_creadas?: boolean | cuenta$observaciones_creadasArgs<ExtArgs>
+    _count?: boolean | CuentaCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type cuentaIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    usuario?: boolean | usuarioDefaultArgs<ExtArgs>
+  }
+  export type cuentaIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    usuario?: boolean | usuarioDefaultArgs<ExtArgs>
+  }
+
+  export type $cuentaPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "cuenta"
+    objects: {
+      usuario: Prisma.$usuarioPayload<ExtArgs>
+      inscripciones: Prisma.$inscripcionPayload<ExtArgs>[]
+      cartas_motivacion: Prisma.$carta_motivacionPayload<ExtArgs>[]
+      comprobantes_pago: Prisma.$comprobante_pagoPayload<ExtArgs>[]
+      eventos: Prisma.$eventoPayload<ExtArgs>[]
+      observaciones_creadas: Prisma.$observacion_inscripcionPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id_cue: string
+      id_usu_per: string
+      cor_usu: string
+      con_usu: string
+      fec_cre_cue: Date
+      rol_usu: $Enums.rol_usuario
+    }, ExtArgs["result"]["cuenta"]>
+    composites: {}
+  }
+
+  type cuentaGetPayload<S extends boolean | null | undefined | cuentaDefaultArgs> = $Result.GetResult<Prisma.$cuentaPayload, S>
+
+  type cuentaCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<cuentaFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: CuentaCountAggregateInputType | true
+    }
+
+  export interface cuentaDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['cuenta'], meta: { name: 'cuenta' } }
+    /**
+     * Find zero or one Cuenta that matches the filter.
+     * @param {cuentaFindUniqueArgs} args - Arguments to find a Cuenta
+     * @example
+     * // Get one Cuenta
+     * const cuenta = await prisma.cuenta.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends cuentaFindUniqueArgs>(args: SelectSubset<T, cuentaFindUniqueArgs<ExtArgs>>): Prisma__cuentaClient<$Result.GetResult<Prisma.$cuentaPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Cuenta that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {cuentaFindUniqueOrThrowArgs} args - Arguments to find a Cuenta
+     * @example
+     * // Get one Cuenta
+     * const cuenta = await prisma.cuenta.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends cuentaFindUniqueOrThrowArgs>(args: SelectSubset<T, cuentaFindUniqueOrThrowArgs<ExtArgs>>): Prisma__cuentaClient<$Result.GetResult<Prisma.$cuentaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Cuenta that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {cuentaFindFirstArgs} args - Arguments to find a Cuenta
+     * @example
+     * // Get one Cuenta
+     * const cuenta = await prisma.cuenta.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends cuentaFindFirstArgs>(args?: SelectSubset<T, cuentaFindFirstArgs<ExtArgs>>): Prisma__cuentaClient<$Result.GetResult<Prisma.$cuentaPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Cuenta that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {cuentaFindFirstOrThrowArgs} args - Arguments to find a Cuenta
+     * @example
+     * // Get one Cuenta
+     * const cuenta = await prisma.cuenta.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends cuentaFindFirstOrThrowArgs>(args?: SelectSubset<T, cuentaFindFirstOrThrowArgs<ExtArgs>>): Prisma__cuentaClient<$Result.GetResult<Prisma.$cuentaPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Cuentas that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {cuentaFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Cuentas
+     * const cuentas = await prisma.cuenta.findMany()
+     * 
+     * // Get first 10 Cuentas
+     * const cuentas = await prisma.cuenta.findMany({ take: 10 })
+     * 
+     * // Only select the `id_cue`
+     * const cuentaWithId_cueOnly = await prisma.cuenta.findMany({ select: { id_cue: true } })
+     * 
+     */
+    findMany<T extends cuentaFindManyArgs>(args?: SelectSubset<T, cuentaFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$cuentaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Cuenta.
+     * @param {cuentaCreateArgs} args - Arguments to create a Cuenta.
+     * @example
+     * // Create one Cuenta
+     * const Cuenta = await prisma.cuenta.create({
+     *   data: {
+     *     // ... data to create a Cuenta
+     *   }
+     * })
+     * 
+     */
+    create<T extends cuentaCreateArgs>(args: SelectSubset<T, cuentaCreateArgs<ExtArgs>>): Prisma__cuentaClient<$Result.GetResult<Prisma.$cuentaPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Cuentas.
+     * @param {cuentaCreateManyArgs} args - Arguments to create many Cuentas.
+     * @example
+     * // Create many Cuentas
+     * const cuenta = await prisma.cuenta.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends cuentaCreateManyArgs>(args?: SelectSubset<T, cuentaCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Cuentas and returns the data saved in the database.
+     * @param {cuentaCreateManyAndReturnArgs} args - Arguments to create many Cuentas.
+     * @example
+     * // Create many Cuentas
+     * const cuenta = await prisma.cuenta.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Cuentas and only return the `id_cue`
+     * const cuentaWithId_cueOnly = await prisma.cuenta.createManyAndReturn({
+     *   select: { id_cue: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends cuentaCreateManyAndReturnArgs>(args?: SelectSubset<T, cuentaCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$cuentaPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Cuenta.
+     * @param {cuentaDeleteArgs} args - Arguments to delete one Cuenta.
+     * @example
+     * // Delete one Cuenta
+     * const Cuenta = await prisma.cuenta.delete({
+     *   where: {
+     *     // ... filter to delete one Cuenta
+     *   }
+     * })
+     * 
+     */
+    delete<T extends cuentaDeleteArgs>(args: SelectSubset<T, cuentaDeleteArgs<ExtArgs>>): Prisma__cuentaClient<$Result.GetResult<Prisma.$cuentaPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Cuenta.
+     * @param {cuentaUpdateArgs} args - Arguments to update one Cuenta.
+     * @example
+     * // Update one Cuenta
+     * const cuenta = await prisma.cuenta.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends cuentaUpdateArgs>(args: SelectSubset<T, cuentaUpdateArgs<ExtArgs>>): Prisma__cuentaClient<$Result.GetResult<Prisma.$cuentaPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Cuentas.
+     * @param {cuentaDeleteManyArgs} args - Arguments to filter Cuentas to delete.
+     * @example
+     * // Delete a few Cuentas
+     * const { count } = await prisma.cuenta.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends cuentaDeleteManyArgs>(args?: SelectSubset<T, cuentaDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Cuentas.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {cuentaUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Cuentas
+     * const cuenta = await prisma.cuenta.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends cuentaUpdateManyArgs>(args: SelectSubset<T, cuentaUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Cuentas and returns the data updated in the database.
+     * @param {cuentaUpdateManyAndReturnArgs} args - Arguments to update many Cuentas.
+     * @example
+     * // Update many Cuentas
+     * const cuenta = await prisma.cuenta.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Cuentas and only return the `id_cue`
+     * const cuentaWithId_cueOnly = await prisma.cuenta.updateManyAndReturn({
+     *   select: { id_cue: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends cuentaUpdateManyAndReturnArgs>(args: SelectSubset<T, cuentaUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$cuentaPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Cuenta.
+     * @param {cuentaUpsertArgs} args - Arguments to update or create a Cuenta.
+     * @example
+     * // Update or create a Cuenta
+     * const cuenta = await prisma.cuenta.upsert({
+     *   create: {
+     *     // ... data to create a Cuenta
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Cuenta we want to update
+     *   }
+     * })
+     */
+    upsert<T extends cuentaUpsertArgs>(args: SelectSubset<T, cuentaUpsertArgs<ExtArgs>>): Prisma__cuentaClient<$Result.GetResult<Prisma.$cuentaPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Cuentas.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {cuentaCountArgs} args - Arguments to filter Cuentas to count.
+     * @example
+     * // Count the number of Cuentas
+     * const count = await prisma.cuenta.count({
+     *   where: {
+     *     // ... the filter for the Cuentas we want to count
+     *   }
+     * })
+    **/
+    count<T extends cuentaCountArgs>(
+      args?: Subset<T, cuentaCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], CuentaCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Cuenta.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CuentaAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends CuentaAggregateArgs>(args: Subset<T, CuentaAggregateArgs>): Prisma.PrismaPromise<GetCuentaAggregateType<T>>
+
+    /**
+     * Group by Cuenta.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {cuentaGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends cuentaGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: cuentaGroupByArgs['orderBy'] }
+        : { orderBy?: cuentaGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, cuentaGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCuentaGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the cuenta model
+   */
+  readonly fields: cuentaFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for cuenta.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__cuentaClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    usuario<T extends usuarioDefaultArgs<ExtArgs> = {}>(args?: Subset<T, usuarioDefaultArgs<ExtArgs>>): Prisma__usuarioClient<$Result.GetResult<Prisma.$usuarioPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    inscripciones<T extends cuenta$inscripcionesArgs<ExtArgs> = {}>(args?: Subset<T, cuenta$inscripcionesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$inscripcionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    cartas_motivacion<T extends cuenta$cartas_motivacionArgs<ExtArgs> = {}>(args?: Subset<T, cuenta$cartas_motivacionArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$carta_motivacionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    comprobantes_pago<T extends cuenta$comprobantes_pagoArgs<ExtArgs> = {}>(args?: Subset<T, cuenta$comprobantes_pagoArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$comprobante_pagoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    eventos<T extends cuenta$eventosArgs<ExtArgs> = {}>(args?: Subset<T, cuenta$eventosArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$eventoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    observaciones_creadas<T extends cuenta$observaciones_creadasArgs<ExtArgs> = {}>(args?: Subset<T, cuenta$observaciones_creadasArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$observacion_inscripcionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the cuenta model
+   */
+  interface cuentaFieldRefs {
+    readonly id_cue: FieldRef<"cuenta", 'String'>
+    readonly id_usu_per: FieldRef<"cuenta", 'String'>
+    readonly cor_usu: FieldRef<"cuenta", 'String'>
+    readonly con_usu: FieldRef<"cuenta", 'String'>
+    readonly fec_cre_cue: FieldRef<"cuenta", 'DateTime'>
+    readonly rol_usu: FieldRef<"cuenta", 'rol_usuario'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * cuenta findUnique
+   */
+  export type cuentaFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cuenta
+     */
+    select?: cuentaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the cuenta
+     */
+    omit?: cuentaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cuentaInclude<ExtArgs> | null
+    /**
+     * Filter, which cuenta to fetch.
+     */
+    where: cuentaWhereUniqueInput
+  }
+
+  /**
+   * cuenta findUniqueOrThrow
+   */
+  export type cuentaFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cuenta
+     */
+    select?: cuentaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the cuenta
+     */
+    omit?: cuentaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cuentaInclude<ExtArgs> | null
+    /**
+     * Filter, which cuenta to fetch.
+     */
+    where: cuentaWhereUniqueInput
+  }
+
+  /**
+   * cuenta findFirst
+   */
+  export type cuentaFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cuenta
+     */
+    select?: cuentaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the cuenta
+     */
+    omit?: cuentaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cuentaInclude<ExtArgs> | null
+    /**
+     * Filter, which cuenta to fetch.
+     */
+    where?: cuentaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of cuentas to fetch.
+     */
+    orderBy?: cuentaOrderByWithRelationInput | cuentaOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for cuentas.
+     */
+    cursor?: cuentaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` cuentas from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` cuentas.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of cuentas.
+     */
+    distinct?: CuentaScalarFieldEnum | CuentaScalarFieldEnum[]
+  }
+
+  /**
+   * cuenta findFirstOrThrow
+   */
+  export type cuentaFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cuenta
+     */
+    select?: cuentaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the cuenta
+     */
+    omit?: cuentaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cuentaInclude<ExtArgs> | null
+    /**
+     * Filter, which cuenta to fetch.
+     */
+    where?: cuentaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of cuentas to fetch.
+     */
+    orderBy?: cuentaOrderByWithRelationInput | cuentaOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for cuentas.
+     */
+    cursor?: cuentaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` cuentas from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` cuentas.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of cuentas.
+     */
+    distinct?: CuentaScalarFieldEnum | CuentaScalarFieldEnum[]
+  }
+
+  /**
+   * cuenta findMany
+   */
+  export type cuentaFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cuenta
+     */
+    select?: cuentaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the cuenta
+     */
+    omit?: cuentaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cuentaInclude<ExtArgs> | null
+    /**
+     * Filter, which cuentas to fetch.
+     */
+    where?: cuentaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of cuentas to fetch.
+     */
+    orderBy?: cuentaOrderByWithRelationInput | cuentaOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing cuentas.
+     */
+    cursor?: cuentaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` cuentas from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` cuentas.
+     */
+    skip?: number
+    distinct?: CuentaScalarFieldEnum | CuentaScalarFieldEnum[]
+  }
+
+  /**
+   * cuenta create
+   */
+  export type cuentaCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cuenta
+     */
+    select?: cuentaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the cuenta
+     */
+    omit?: cuentaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cuentaInclude<ExtArgs> | null
+    /**
+     * The data needed to create a cuenta.
+     */
+    data: XOR<cuentaCreateInput, cuentaUncheckedCreateInput>
+  }
+
+  /**
+   * cuenta createMany
+   */
+  export type cuentaCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many cuentas.
+     */
+    data: cuentaCreateManyInput | cuentaCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * cuenta createManyAndReturn
+   */
+  export type cuentaCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cuenta
+     */
+    select?: cuentaSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the cuenta
+     */
+    omit?: cuentaOmit<ExtArgs> | null
+    /**
+     * The data used to create many cuentas.
+     */
+    data: cuentaCreateManyInput | cuentaCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cuentaIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * cuenta update
+   */
+  export type cuentaUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cuenta
+     */
+    select?: cuentaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the cuenta
+     */
+    omit?: cuentaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cuentaInclude<ExtArgs> | null
+    /**
+     * The data needed to update a cuenta.
+     */
+    data: XOR<cuentaUpdateInput, cuentaUncheckedUpdateInput>
+    /**
+     * Choose, which cuenta to update.
+     */
+    where: cuentaWhereUniqueInput
+  }
+
+  /**
+   * cuenta updateMany
+   */
+  export type cuentaUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update cuentas.
+     */
+    data: XOR<cuentaUpdateManyMutationInput, cuentaUncheckedUpdateManyInput>
+    /**
+     * Filter which cuentas to update
+     */
+    where?: cuentaWhereInput
+    /**
+     * Limit how many cuentas to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * cuenta updateManyAndReturn
+   */
+  export type cuentaUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cuenta
+     */
+    select?: cuentaSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the cuenta
+     */
+    omit?: cuentaOmit<ExtArgs> | null
+    /**
+     * The data used to update cuentas.
+     */
+    data: XOR<cuentaUpdateManyMutationInput, cuentaUncheckedUpdateManyInput>
+    /**
+     * Filter which cuentas to update
+     */
+    where?: cuentaWhereInput
+    /**
+     * Limit how many cuentas to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cuentaIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * cuenta upsert
+   */
+  export type cuentaUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cuenta
+     */
+    select?: cuentaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the cuenta
+     */
+    omit?: cuentaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cuentaInclude<ExtArgs> | null
+    /**
+     * The filter to search for the cuenta to update in case it exists.
+     */
+    where: cuentaWhereUniqueInput
+    /**
+     * In case the cuenta found by the `where` argument doesn't exist, create a new cuenta with this data.
+     */
+    create: XOR<cuentaCreateInput, cuentaUncheckedCreateInput>
+    /**
+     * In case the cuenta was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<cuentaUpdateInput, cuentaUncheckedUpdateInput>
+  }
+
+  /**
+   * cuenta delete
+   */
+  export type cuentaDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cuenta
+     */
+    select?: cuentaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the cuenta
+     */
+    omit?: cuentaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cuentaInclude<ExtArgs> | null
+    /**
+     * Filter which cuenta to delete.
+     */
+    where: cuentaWhereUniqueInput
+  }
+
+  /**
+   * cuenta deleteMany
+   */
+  export type cuentaDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which cuentas to delete
+     */
+    where?: cuentaWhereInput
+    /**
+     * Limit how many cuentas to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * cuenta.inscripciones
+   */
+  export type cuenta$inscripcionesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the inscripcion
+     */
+    select?: inscripcionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the inscripcion
+     */
+    omit?: inscripcionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: inscripcionInclude<ExtArgs> | null
+    where?: inscripcionWhereInput
+    orderBy?: inscripcionOrderByWithRelationInput | inscripcionOrderByWithRelationInput[]
+    cursor?: inscripcionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: InscripcionScalarFieldEnum | InscripcionScalarFieldEnum[]
+  }
+
+  /**
+   * cuenta.cartas_motivacion
+   */
+  export type cuenta$cartas_motivacionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the carta_motivacion
+     */
+    select?: carta_motivacionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the carta_motivacion
+     */
+    omit?: carta_motivacionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: carta_motivacionInclude<ExtArgs> | null
+    where?: carta_motivacionWhereInput
+    orderBy?: carta_motivacionOrderByWithRelationInput | carta_motivacionOrderByWithRelationInput[]
+    cursor?: carta_motivacionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Carta_motivacionScalarFieldEnum | Carta_motivacionScalarFieldEnum[]
+  }
+
+  /**
+   * cuenta.comprobantes_pago
+   */
+  export type cuenta$comprobantes_pagoArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the comprobante_pago
+     */
+    select?: comprobante_pagoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the comprobante_pago
+     */
+    omit?: comprobante_pagoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: comprobante_pagoInclude<ExtArgs> | null
+    where?: comprobante_pagoWhereInput
+    orderBy?: comprobante_pagoOrderByWithRelationInput | comprobante_pagoOrderByWithRelationInput[]
+    cursor?: comprobante_pagoWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Comprobante_pagoScalarFieldEnum | Comprobante_pagoScalarFieldEnum[]
+  }
+
+  /**
+   * cuenta.eventos
+   */
+  export type cuenta$eventosArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the evento
+     */
+    select?: eventoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the evento
+     */
+    omit?: eventoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: eventoInclude<ExtArgs> | null
+    where?: eventoWhereInput
+    orderBy?: eventoOrderByWithRelationInput | eventoOrderByWithRelationInput[]
+    cursor?: eventoWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: EventoScalarFieldEnum | EventoScalarFieldEnum[]
+  }
+
+  /**
+   * cuenta.observaciones_creadas
+   */
+  export type cuenta$observaciones_creadasArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the observacion_inscripcion
+     */
+    select?: observacion_inscripcionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the observacion_inscripcion
+     */
+    omit?: observacion_inscripcionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: observacion_inscripcionInclude<ExtArgs> | null
+    where?: observacion_inscripcionWhereInput
+    orderBy?: observacion_inscripcionOrderByWithRelationInput | observacion_inscripcionOrderByWithRelationInput[]
+    cursor?: observacion_inscripcionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Observacion_inscripcionScalarFieldEnum | Observacion_inscripcionScalarFieldEnum[]
+  }
+
+  /**
+   * cuenta without action
+   */
+  export type cuentaDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cuenta
+     */
+    select?: cuentaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the cuenta
+     */
+    omit?: cuentaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cuentaInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model carrera
    */
 
   export type AggregateCarrera = {
     _count: CarreraCountAggregateOutputType | null
+    _avg: CarreraAvgAggregateOutputType | null
+    _sum: CarreraSumAggregateOutputType | null
     _min: CarreraMinAggregateOutputType | null
     _max: CarreraMaxAggregateOutputType | null
+  }
+
+  export type CarreraAvgAggregateOutputType = {
+    dur_sem_car: number | null
+  }
+
+  export type CarreraSumAggregateOutputType = {
+    dur_sem_car: number | null
   }
 
   export type CarreraMinAggregateOutputType = {
     id_car: string | null
     nom_car: string | null
+    des_car: string | null
+    dur_sem_car: number | null
+    mod_car: string | null
+    ico_car: string | null
     est_car: boolean | null
     fec_cre_car: Date | null
     id_fac_per: string | null
+    id_coo_per: string | null
   }
 
   export type CarreraMaxAggregateOutputType = {
     id_car: string | null
     nom_car: string | null
+    des_car: string | null
+    dur_sem_car: number | null
+    mod_car: string | null
+    ico_car: string | null
     est_car: boolean | null
     fec_cre_car: Date | null
     id_fac_per: string | null
+    id_coo_per: string | null
   }
 
   export type CarreraCountAggregateOutputType = {
     id_car: number
     nom_car: number
+    des_car: number
+    dur_sem_car: number
+    mod_car: number
+    ico_car: number
     est_car: number
     fec_cre_car: number
     id_fac_per: number
+    id_coo_per: number
     _all: number
   }
 
 
+  export type CarreraAvgAggregateInputType = {
+    dur_sem_car?: true
+  }
+
+  export type CarreraSumAggregateInputType = {
+    dur_sem_car?: true
+  }
+
   export type CarreraMinAggregateInputType = {
     id_car?: true
     nom_car?: true
+    des_car?: true
+    dur_sem_car?: true
+    mod_car?: true
+    ico_car?: true
     est_car?: true
     fec_cre_car?: true
     id_fac_per?: true
+    id_coo_per?: true
   }
 
   export type CarreraMaxAggregateInputType = {
     id_car?: true
     nom_car?: true
+    des_car?: true
+    dur_sem_car?: true
+    mod_car?: true
+    ico_car?: true
     est_car?: true
     fec_cre_car?: true
     id_fac_per?: true
+    id_coo_per?: true
   }
 
   export type CarreraCountAggregateInputType = {
     id_car?: true
     nom_car?: true
+    des_car?: true
+    dur_sem_car?: true
+    mod_car?: true
+    ico_car?: true
     est_car?: true
     fec_cre_car?: true
     id_fac_per?: true
+    id_coo_per?: true
     _all?: true
   }
 
@@ -2994,6 +8259,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: CarreraAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: CarreraSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: CarreraMinAggregateInputType
@@ -3024,6 +8301,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: CarreraCountAggregateInputType | true
+    _avg?: CarreraAvgAggregateInputType
+    _sum?: CarreraSumAggregateInputType
     _min?: CarreraMinAggregateInputType
     _max?: CarreraMaxAggregateInputType
   }
@@ -3031,10 +8310,17 @@ export namespace Prisma {
   export type CarreraGroupByOutputType = {
     id_car: string
     nom_car: string
+    des_car: string
+    dur_sem_car: number
+    mod_car: string
+    ico_car: string
     est_car: boolean
     fec_cre_car: Date
     id_fac_per: string
+    id_coo_per: string | null
     _count: CarreraCountAggregateOutputType | null
+    _avg: CarreraAvgAggregateOutputType | null
+    _sum: CarreraSumAggregateOutputType | null
     _min: CarreraMinAggregateOutputType | null
     _max: CarreraMaxAggregateOutputType | null
   }
@@ -3056,10 +8342,16 @@ export namespace Prisma {
   export type carreraSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id_car?: boolean
     nom_car?: boolean
+    des_car?: boolean
+    dur_sem_car?: boolean
+    mod_car?: boolean
+    ico_car?: boolean
     est_car?: boolean
     fec_cre_car?: boolean
     id_fac_per?: boolean
+    id_coo_per?: boolean
     facultad?: boolean | facultadDefaultArgs<ExtArgs>
+    coordinador?: boolean | carrera$coordinadorArgs<ExtArgs>
     usuario?: boolean | carrera$usuarioArgs<ExtArgs>
     eventos?: boolean | carrera$eventosArgs<ExtArgs>
     _count?: boolean | CarreraCountOutputTypeDefaultArgs<ExtArgs>
@@ -3068,56 +8360,82 @@ export namespace Prisma {
   export type carreraSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id_car?: boolean
     nom_car?: boolean
+    des_car?: boolean
+    dur_sem_car?: boolean
+    mod_car?: boolean
+    ico_car?: boolean
     est_car?: boolean
     fec_cre_car?: boolean
     id_fac_per?: boolean
+    id_coo_per?: boolean
     facultad?: boolean | facultadDefaultArgs<ExtArgs>
+    coordinador?: boolean | carrera$coordinadorArgs<ExtArgs>
   }, ExtArgs["result"]["carrera"]>
 
   export type carreraSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id_car?: boolean
     nom_car?: boolean
+    des_car?: boolean
+    dur_sem_car?: boolean
+    mod_car?: boolean
+    ico_car?: boolean
     est_car?: boolean
     fec_cre_car?: boolean
     id_fac_per?: boolean
+    id_coo_per?: boolean
     facultad?: boolean | facultadDefaultArgs<ExtArgs>
+    coordinador?: boolean | carrera$coordinadorArgs<ExtArgs>
   }, ExtArgs["result"]["carrera"]>
 
   export type carreraSelectScalar = {
     id_car?: boolean
     nom_car?: boolean
+    des_car?: boolean
+    dur_sem_car?: boolean
+    mod_car?: boolean
+    ico_car?: boolean
     est_car?: boolean
     fec_cre_car?: boolean
     id_fac_per?: boolean
+    id_coo_per?: boolean
   }
 
-  export type carreraOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_car" | "nom_car" | "est_car" | "fec_cre_car" | "id_fac_per", ExtArgs["result"]["carrera"]>
+  export type carreraOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_car" | "nom_car" | "des_car" | "dur_sem_car" | "mod_car" | "ico_car" | "est_car" | "fec_cre_car" | "id_fac_per" | "id_coo_per", ExtArgs["result"]["carrera"]>
   export type carreraInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     facultad?: boolean | facultadDefaultArgs<ExtArgs>
+    coordinador?: boolean | carrera$coordinadorArgs<ExtArgs>
     usuario?: boolean | carrera$usuarioArgs<ExtArgs>
     eventos?: boolean | carrera$eventosArgs<ExtArgs>
     _count?: boolean | CarreraCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type carreraIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     facultad?: boolean | facultadDefaultArgs<ExtArgs>
+    coordinador?: boolean | carrera$coordinadorArgs<ExtArgs>
   }
   export type carreraIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     facultad?: boolean | facultadDefaultArgs<ExtArgs>
+    coordinador?: boolean | carrera$coordinadorArgs<ExtArgs>
   }
 
   export type $carreraPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "carrera"
     objects: {
       facultad: Prisma.$facultadPayload<ExtArgs>
+      coordinador: Prisma.$coordinadorPayload<ExtArgs> | null
       usuario: Prisma.$usuarioPayload<ExtArgs>[]
       eventos: Prisma.$evento_carreraPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id_car: string
       nom_car: string
+      des_car: string
+      dur_sem_car: number
+      mod_car: string
+      ico_car: string
       est_car: boolean
       fec_cre_car: Date
       id_fac_per: string
+      id_coo_per: string | null
     }, ExtArgs["result"]["carrera"]>
     composites: {}
   }
@@ -3513,6 +8831,7 @@ export namespace Prisma {
   export interface Prisma__carreraClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     facultad<T extends facultadDefaultArgs<ExtArgs> = {}>(args?: Subset<T, facultadDefaultArgs<ExtArgs>>): Prisma__facultadClient<$Result.GetResult<Prisma.$facultadPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    coordinador<T extends carrera$coordinadorArgs<ExtArgs> = {}>(args?: Subset<T, carrera$coordinadorArgs<ExtArgs>>): Prisma__coordinadorClient<$Result.GetResult<Prisma.$coordinadorPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     usuario<T extends carrera$usuarioArgs<ExtArgs> = {}>(args?: Subset<T, carrera$usuarioArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$usuarioPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     eventos<T extends carrera$eventosArgs<ExtArgs> = {}>(args?: Subset<T, carrera$eventosArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$evento_carreraPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
@@ -3546,9 +8865,14 @@ export namespace Prisma {
   interface carreraFieldRefs {
     readonly id_car: FieldRef<"carrera", 'String'>
     readonly nom_car: FieldRef<"carrera", 'String'>
+    readonly des_car: FieldRef<"carrera", 'String'>
+    readonly dur_sem_car: FieldRef<"carrera", 'Int'>
+    readonly mod_car: FieldRef<"carrera", 'String'>
+    readonly ico_car: FieldRef<"carrera", 'String'>
     readonly est_car: FieldRef<"carrera", 'Boolean'>
     readonly fec_cre_car: FieldRef<"carrera", 'DateTime'>
     readonly id_fac_per: FieldRef<"carrera", 'String'>
+    readonly id_coo_per: FieldRef<"carrera", 'String'>
   }
     
 
@@ -3945,6 +9269,25 @@ export namespace Prisma {
   }
 
   /**
+   * carrera.coordinador
+   */
+  export type carrera$coordinadorArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the coordinador
+     */
+    select?: coordinadorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the coordinador
+     */
+    omit?: coordinadorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: coordinadorInclude<ExtArgs> | null
+    where?: coordinadorWhereInput
+  }
+
+  /**
    * carrera.usuario
    */
   export type carrera$usuarioArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4012,6 +9355,1089 @@ export namespace Prisma {
 
 
   /**
+   * Model coordinador
+   */
+
+  export type AggregateCoordinador = {
+    _count: CoordinadorCountAggregateOutputType | null
+    _min: CoordinadorMinAggregateOutputType | null
+    _max: CoordinadorMaxAggregateOutputType | null
+  }
+
+  export type CoordinadorMinAggregateOutputType = {
+    id_coo: string | null
+    nom_coo: string | null
+    ape_coo: string | null
+    cor_coo: string | null
+    url_img_coo: string | null
+    tit_coo: string | null
+  }
+
+  export type CoordinadorMaxAggregateOutputType = {
+    id_coo: string | null
+    nom_coo: string | null
+    ape_coo: string | null
+    cor_coo: string | null
+    url_img_coo: string | null
+    tit_coo: string | null
+  }
+
+  export type CoordinadorCountAggregateOutputType = {
+    id_coo: number
+    nom_coo: number
+    ape_coo: number
+    cor_coo: number
+    url_img_coo: number
+    tit_coo: number
+    _all: number
+  }
+
+
+  export type CoordinadorMinAggregateInputType = {
+    id_coo?: true
+    nom_coo?: true
+    ape_coo?: true
+    cor_coo?: true
+    url_img_coo?: true
+    tit_coo?: true
+  }
+
+  export type CoordinadorMaxAggregateInputType = {
+    id_coo?: true
+    nom_coo?: true
+    ape_coo?: true
+    cor_coo?: true
+    url_img_coo?: true
+    tit_coo?: true
+  }
+
+  export type CoordinadorCountAggregateInputType = {
+    id_coo?: true
+    nom_coo?: true
+    ape_coo?: true
+    cor_coo?: true
+    url_img_coo?: true
+    tit_coo?: true
+    _all?: true
+  }
+
+  export type CoordinadorAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which coordinador to aggregate.
+     */
+    where?: coordinadorWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of coordinadors to fetch.
+     */
+    orderBy?: coordinadorOrderByWithRelationInput | coordinadorOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: coordinadorWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` coordinadors from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` coordinadors.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned coordinadors
+    **/
+    _count?: true | CoordinadorCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: CoordinadorMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: CoordinadorMaxAggregateInputType
+  }
+
+  export type GetCoordinadorAggregateType<T extends CoordinadorAggregateArgs> = {
+        [P in keyof T & keyof AggregateCoordinador]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCoordinador[P]>
+      : GetScalarType<T[P], AggregateCoordinador[P]>
+  }
+
+
+
+
+  export type coordinadorGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: coordinadorWhereInput
+    orderBy?: coordinadorOrderByWithAggregationInput | coordinadorOrderByWithAggregationInput[]
+    by: CoordinadorScalarFieldEnum[] | CoordinadorScalarFieldEnum
+    having?: coordinadorScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: CoordinadorCountAggregateInputType | true
+    _min?: CoordinadorMinAggregateInputType
+    _max?: CoordinadorMaxAggregateInputType
+  }
+
+  export type CoordinadorGroupByOutputType = {
+    id_coo: string
+    nom_coo: string
+    ape_coo: string
+    cor_coo: string
+    url_img_coo: string
+    tit_coo: string
+    _count: CoordinadorCountAggregateOutputType | null
+    _min: CoordinadorMinAggregateOutputType | null
+    _max: CoordinadorMaxAggregateOutputType | null
+  }
+
+  type GetCoordinadorGroupByPayload<T extends coordinadorGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<CoordinadorGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof CoordinadorGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], CoordinadorGroupByOutputType[P]>
+            : GetScalarType<T[P], CoordinadorGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type coordinadorSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_coo?: boolean
+    nom_coo?: boolean
+    ape_coo?: boolean
+    cor_coo?: boolean
+    url_img_coo?: boolean
+    tit_coo?: boolean
+    carreras?: boolean | coordinador$carrerasArgs<ExtArgs>
+    _count?: boolean | CoordinadorCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["coordinador"]>
+
+  export type coordinadorSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_coo?: boolean
+    nom_coo?: boolean
+    ape_coo?: boolean
+    cor_coo?: boolean
+    url_img_coo?: boolean
+    tit_coo?: boolean
+  }, ExtArgs["result"]["coordinador"]>
+
+  export type coordinadorSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_coo?: boolean
+    nom_coo?: boolean
+    ape_coo?: boolean
+    cor_coo?: boolean
+    url_img_coo?: boolean
+    tit_coo?: boolean
+  }, ExtArgs["result"]["coordinador"]>
+
+  export type coordinadorSelectScalar = {
+    id_coo?: boolean
+    nom_coo?: boolean
+    ape_coo?: boolean
+    cor_coo?: boolean
+    url_img_coo?: boolean
+    tit_coo?: boolean
+  }
+
+  export type coordinadorOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_coo" | "nom_coo" | "ape_coo" | "cor_coo" | "url_img_coo" | "tit_coo", ExtArgs["result"]["coordinador"]>
+  export type coordinadorInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    carreras?: boolean | coordinador$carrerasArgs<ExtArgs>
+    _count?: boolean | CoordinadorCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type coordinadorIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type coordinadorIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+
+  export type $coordinadorPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "coordinador"
+    objects: {
+      carreras: Prisma.$carreraPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id_coo: string
+      nom_coo: string
+      ape_coo: string
+      cor_coo: string
+      url_img_coo: string
+      tit_coo: string
+    }, ExtArgs["result"]["coordinador"]>
+    composites: {}
+  }
+
+  type coordinadorGetPayload<S extends boolean | null | undefined | coordinadorDefaultArgs> = $Result.GetResult<Prisma.$coordinadorPayload, S>
+
+  type coordinadorCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<coordinadorFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: CoordinadorCountAggregateInputType | true
+    }
+
+  export interface coordinadorDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['coordinador'], meta: { name: 'coordinador' } }
+    /**
+     * Find zero or one Coordinador that matches the filter.
+     * @param {coordinadorFindUniqueArgs} args - Arguments to find a Coordinador
+     * @example
+     * // Get one Coordinador
+     * const coordinador = await prisma.coordinador.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends coordinadorFindUniqueArgs>(args: SelectSubset<T, coordinadorFindUniqueArgs<ExtArgs>>): Prisma__coordinadorClient<$Result.GetResult<Prisma.$coordinadorPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Coordinador that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {coordinadorFindUniqueOrThrowArgs} args - Arguments to find a Coordinador
+     * @example
+     * // Get one Coordinador
+     * const coordinador = await prisma.coordinador.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends coordinadorFindUniqueOrThrowArgs>(args: SelectSubset<T, coordinadorFindUniqueOrThrowArgs<ExtArgs>>): Prisma__coordinadorClient<$Result.GetResult<Prisma.$coordinadorPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Coordinador that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {coordinadorFindFirstArgs} args - Arguments to find a Coordinador
+     * @example
+     * // Get one Coordinador
+     * const coordinador = await prisma.coordinador.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends coordinadorFindFirstArgs>(args?: SelectSubset<T, coordinadorFindFirstArgs<ExtArgs>>): Prisma__coordinadorClient<$Result.GetResult<Prisma.$coordinadorPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Coordinador that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {coordinadorFindFirstOrThrowArgs} args - Arguments to find a Coordinador
+     * @example
+     * // Get one Coordinador
+     * const coordinador = await prisma.coordinador.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends coordinadorFindFirstOrThrowArgs>(args?: SelectSubset<T, coordinadorFindFirstOrThrowArgs<ExtArgs>>): Prisma__coordinadorClient<$Result.GetResult<Prisma.$coordinadorPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Coordinadors that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {coordinadorFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Coordinadors
+     * const coordinadors = await prisma.coordinador.findMany()
+     * 
+     * // Get first 10 Coordinadors
+     * const coordinadors = await prisma.coordinador.findMany({ take: 10 })
+     * 
+     * // Only select the `id_coo`
+     * const coordinadorWithId_cooOnly = await prisma.coordinador.findMany({ select: { id_coo: true } })
+     * 
+     */
+    findMany<T extends coordinadorFindManyArgs>(args?: SelectSubset<T, coordinadorFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$coordinadorPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Coordinador.
+     * @param {coordinadorCreateArgs} args - Arguments to create a Coordinador.
+     * @example
+     * // Create one Coordinador
+     * const Coordinador = await prisma.coordinador.create({
+     *   data: {
+     *     // ... data to create a Coordinador
+     *   }
+     * })
+     * 
+     */
+    create<T extends coordinadorCreateArgs>(args: SelectSubset<T, coordinadorCreateArgs<ExtArgs>>): Prisma__coordinadorClient<$Result.GetResult<Prisma.$coordinadorPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Coordinadors.
+     * @param {coordinadorCreateManyArgs} args - Arguments to create many Coordinadors.
+     * @example
+     * // Create many Coordinadors
+     * const coordinador = await prisma.coordinador.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends coordinadorCreateManyArgs>(args?: SelectSubset<T, coordinadorCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Coordinadors and returns the data saved in the database.
+     * @param {coordinadorCreateManyAndReturnArgs} args - Arguments to create many Coordinadors.
+     * @example
+     * // Create many Coordinadors
+     * const coordinador = await prisma.coordinador.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Coordinadors and only return the `id_coo`
+     * const coordinadorWithId_cooOnly = await prisma.coordinador.createManyAndReturn({
+     *   select: { id_coo: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends coordinadorCreateManyAndReturnArgs>(args?: SelectSubset<T, coordinadorCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$coordinadorPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Coordinador.
+     * @param {coordinadorDeleteArgs} args - Arguments to delete one Coordinador.
+     * @example
+     * // Delete one Coordinador
+     * const Coordinador = await prisma.coordinador.delete({
+     *   where: {
+     *     // ... filter to delete one Coordinador
+     *   }
+     * })
+     * 
+     */
+    delete<T extends coordinadorDeleteArgs>(args: SelectSubset<T, coordinadorDeleteArgs<ExtArgs>>): Prisma__coordinadorClient<$Result.GetResult<Prisma.$coordinadorPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Coordinador.
+     * @param {coordinadorUpdateArgs} args - Arguments to update one Coordinador.
+     * @example
+     * // Update one Coordinador
+     * const coordinador = await prisma.coordinador.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends coordinadorUpdateArgs>(args: SelectSubset<T, coordinadorUpdateArgs<ExtArgs>>): Prisma__coordinadorClient<$Result.GetResult<Prisma.$coordinadorPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Coordinadors.
+     * @param {coordinadorDeleteManyArgs} args - Arguments to filter Coordinadors to delete.
+     * @example
+     * // Delete a few Coordinadors
+     * const { count } = await prisma.coordinador.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends coordinadorDeleteManyArgs>(args?: SelectSubset<T, coordinadorDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Coordinadors.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {coordinadorUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Coordinadors
+     * const coordinador = await prisma.coordinador.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends coordinadorUpdateManyArgs>(args: SelectSubset<T, coordinadorUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Coordinadors and returns the data updated in the database.
+     * @param {coordinadorUpdateManyAndReturnArgs} args - Arguments to update many Coordinadors.
+     * @example
+     * // Update many Coordinadors
+     * const coordinador = await prisma.coordinador.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Coordinadors and only return the `id_coo`
+     * const coordinadorWithId_cooOnly = await prisma.coordinador.updateManyAndReturn({
+     *   select: { id_coo: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends coordinadorUpdateManyAndReturnArgs>(args: SelectSubset<T, coordinadorUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$coordinadorPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Coordinador.
+     * @param {coordinadorUpsertArgs} args - Arguments to update or create a Coordinador.
+     * @example
+     * // Update or create a Coordinador
+     * const coordinador = await prisma.coordinador.upsert({
+     *   create: {
+     *     // ... data to create a Coordinador
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Coordinador we want to update
+     *   }
+     * })
+     */
+    upsert<T extends coordinadorUpsertArgs>(args: SelectSubset<T, coordinadorUpsertArgs<ExtArgs>>): Prisma__coordinadorClient<$Result.GetResult<Prisma.$coordinadorPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Coordinadors.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {coordinadorCountArgs} args - Arguments to filter Coordinadors to count.
+     * @example
+     * // Count the number of Coordinadors
+     * const count = await prisma.coordinador.count({
+     *   where: {
+     *     // ... the filter for the Coordinadors we want to count
+     *   }
+     * })
+    **/
+    count<T extends coordinadorCountArgs>(
+      args?: Subset<T, coordinadorCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], CoordinadorCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Coordinador.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CoordinadorAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends CoordinadorAggregateArgs>(args: Subset<T, CoordinadorAggregateArgs>): Prisma.PrismaPromise<GetCoordinadorAggregateType<T>>
+
+    /**
+     * Group by Coordinador.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {coordinadorGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends coordinadorGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: coordinadorGroupByArgs['orderBy'] }
+        : { orderBy?: coordinadorGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, coordinadorGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCoordinadorGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the coordinador model
+   */
+  readonly fields: coordinadorFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for coordinador.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__coordinadorClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    carreras<T extends coordinador$carrerasArgs<ExtArgs> = {}>(args?: Subset<T, coordinador$carrerasArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$carreraPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the coordinador model
+   */
+  interface coordinadorFieldRefs {
+    readonly id_coo: FieldRef<"coordinador", 'String'>
+    readonly nom_coo: FieldRef<"coordinador", 'String'>
+    readonly ape_coo: FieldRef<"coordinador", 'String'>
+    readonly cor_coo: FieldRef<"coordinador", 'String'>
+    readonly url_img_coo: FieldRef<"coordinador", 'String'>
+    readonly tit_coo: FieldRef<"coordinador", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * coordinador findUnique
+   */
+  export type coordinadorFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the coordinador
+     */
+    select?: coordinadorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the coordinador
+     */
+    omit?: coordinadorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: coordinadorInclude<ExtArgs> | null
+    /**
+     * Filter, which coordinador to fetch.
+     */
+    where: coordinadorWhereUniqueInput
+  }
+
+  /**
+   * coordinador findUniqueOrThrow
+   */
+  export type coordinadorFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the coordinador
+     */
+    select?: coordinadorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the coordinador
+     */
+    omit?: coordinadorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: coordinadorInclude<ExtArgs> | null
+    /**
+     * Filter, which coordinador to fetch.
+     */
+    where: coordinadorWhereUniqueInput
+  }
+
+  /**
+   * coordinador findFirst
+   */
+  export type coordinadorFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the coordinador
+     */
+    select?: coordinadorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the coordinador
+     */
+    omit?: coordinadorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: coordinadorInclude<ExtArgs> | null
+    /**
+     * Filter, which coordinador to fetch.
+     */
+    where?: coordinadorWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of coordinadors to fetch.
+     */
+    orderBy?: coordinadorOrderByWithRelationInput | coordinadorOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for coordinadors.
+     */
+    cursor?: coordinadorWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` coordinadors from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` coordinadors.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of coordinadors.
+     */
+    distinct?: CoordinadorScalarFieldEnum | CoordinadorScalarFieldEnum[]
+  }
+
+  /**
+   * coordinador findFirstOrThrow
+   */
+  export type coordinadorFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the coordinador
+     */
+    select?: coordinadorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the coordinador
+     */
+    omit?: coordinadorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: coordinadorInclude<ExtArgs> | null
+    /**
+     * Filter, which coordinador to fetch.
+     */
+    where?: coordinadorWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of coordinadors to fetch.
+     */
+    orderBy?: coordinadorOrderByWithRelationInput | coordinadorOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for coordinadors.
+     */
+    cursor?: coordinadorWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` coordinadors from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` coordinadors.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of coordinadors.
+     */
+    distinct?: CoordinadorScalarFieldEnum | CoordinadorScalarFieldEnum[]
+  }
+
+  /**
+   * coordinador findMany
+   */
+  export type coordinadorFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the coordinador
+     */
+    select?: coordinadorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the coordinador
+     */
+    omit?: coordinadorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: coordinadorInclude<ExtArgs> | null
+    /**
+     * Filter, which coordinadors to fetch.
+     */
+    where?: coordinadorWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of coordinadors to fetch.
+     */
+    orderBy?: coordinadorOrderByWithRelationInput | coordinadorOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing coordinadors.
+     */
+    cursor?: coordinadorWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` coordinadors from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` coordinadors.
+     */
+    skip?: number
+    distinct?: CoordinadorScalarFieldEnum | CoordinadorScalarFieldEnum[]
+  }
+
+  /**
+   * coordinador create
+   */
+  export type coordinadorCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the coordinador
+     */
+    select?: coordinadorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the coordinador
+     */
+    omit?: coordinadorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: coordinadorInclude<ExtArgs> | null
+    /**
+     * The data needed to create a coordinador.
+     */
+    data: XOR<coordinadorCreateInput, coordinadorUncheckedCreateInput>
+  }
+
+  /**
+   * coordinador createMany
+   */
+  export type coordinadorCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many coordinadors.
+     */
+    data: coordinadorCreateManyInput | coordinadorCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * coordinador createManyAndReturn
+   */
+  export type coordinadorCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the coordinador
+     */
+    select?: coordinadorSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the coordinador
+     */
+    omit?: coordinadorOmit<ExtArgs> | null
+    /**
+     * The data used to create many coordinadors.
+     */
+    data: coordinadorCreateManyInput | coordinadorCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * coordinador update
+   */
+  export type coordinadorUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the coordinador
+     */
+    select?: coordinadorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the coordinador
+     */
+    omit?: coordinadorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: coordinadorInclude<ExtArgs> | null
+    /**
+     * The data needed to update a coordinador.
+     */
+    data: XOR<coordinadorUpdateInput, coordinadorUncheckedUpdateInput>
+    /**
+     * Choose, which coordinador to update.
+     */
+    where: coordinadorWhereUniqueInput
+  }
+
+  /**
+   * coordinador updateMany
+   */
+  export type coordinadorUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update coordinadors.
+     */
+    data: XOR<coordinadorUpdateManyMutationInput, coordinadorUncheckedUpdateManyInput>
+    /**
+     * Filter which coordinadors to update
+     */
+    where?: coordinadorWhereInput
+    /**
+     * Limit how many coordinadors to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * coordinador updateManyAndReturn
+   */
+  export type coordinadorUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the coordinador
+     */
+    select?: coordinadorSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the coordinador
+     */
+    omit?: coordinadorOmit<ExtArgs> | null
+    /**
+     * The data used to update coordinadors.
+     */
+    data: XOR<coordinadorUpdateManyMutationInput, coordinadorUncheckedUpdateManyInput>
+    /**
+     * Filter which coordinadors to update
+     */
+    where?: coordinadorWhereInput
+    /**
+     * Limit how many coordinadors to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * coordinador upsert
+   */
+  export type coordinadorUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the coordinador
+     */
+    select?: coordinadorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the coordinador
+     */
+    omit?: coordinadorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: coordinadorInclude<ExtArgs> | null
+    /**
+     * The filter to search for the coordinador to update in case it exists.
+     */
+    where: coordinadorWhereUniqueInput
+    /**
+     * In case the coordinador found by the `where` argument doesn't exist, create a new coordinador with this data.
+     */
+    create: XOR<coordinadorCreateInput, coordinadorUncheckedCreateInput>
+    /**
+     * In case the coordinador was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<coordinadorUpdateInput, coordinadorUncheckedUpdateInput>
+  }
+
+  /**
+   * coordinador delete
+   */
+  export type coordinadorDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the coordinador
+     */
+    select?: coordinadorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the coordinador
+     */
+    omit?: coordinadorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: coordinadorInclude<ExtArgs> | null
+    /**
+     * Filter which coordinador to delete.
+     */
+    where: coordinadorWhereUniqueInput
+  }
+
+  /**
+   * coordinador deleteMany
+   */
+  export type coordinadorDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which coordinadors to delete
+     */
+    where?: coordinadorWhereInput
+    /**
+     * Limit how many coordinadors to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * coordinador.carreras
+   */
+  export type coordinador$carrerasArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the carrera
+     */
+    select?: carreraSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the carrera
+     */
+    omit?: carreraOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: carreraInclude<ExtArgs> | null
+    where?: carreraWhereInput
+    orderBy?: carreraOrderByWithRelationInput | carreraOrderByWithRelationInput[]
+    cursor?: carreraWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CarreraScalarFieldEnum | CarreraScalarFieldEnum[]
+  }
+
+  /**
+   * coordinador without action
+   */
+  export type coordinadorDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the coordinador
+     */
+    select?: coordinadorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the coordinador
+     */
+    omit?: coordinadorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: coordinadorInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model evento
    */
 
@@ -4044,10 +10470,11 @@ export namespace Prisma {
     val_eve: number | null
     est_eve: $Enums.estado_evento | null
     fec_cre_eve: Date | null
-    img_por_eve: string | null
     dur_hor_eve: number | null
+    img_por_eve: string | null
     por_min_asi_eve: number | null
     fec_fin_eve: Date | null
+    id_cue_cre_eve: string | null
   }
 
   export type EventoMaxAggregateOutputType = {
@@ -4059,10 +10486,11 @@ export namespace Prisma {
     val_eve: number | null
     est_eve: $Enums.estado_evento | null
     fec_cre_eve: Date | null
-    img_por_eve: string | null
     dur_hor_eve: number | null
+    img_por_eve: string | null
     por_min_asi_eve: number | null
     fec_fin_eve: Date | null
+    id_cue_cre_eve: string | null
   }
 
   export type EventoCountAggregateOutputType = {
@@ -4074,10 +10502,11 @@ export namespace Prisma {
     val_eve: number
     est_eve: number
     fec_cre_eve: number
-    img_por_eve: number
     dur_hor_eve: number
+    img_por_eve: number
     por_min_asi_eve: number
     fec_fin_eve: number
+    id_cue_cre_eve: number
     _all: number
   }
 
@@ -4103,10 +10532,11 @@ export namespace Prisma {
     val_eve?: true
     est_eve?: true
     fec_cre_eve?: true
-    img_por_eve?: true
     dur_hor_eve?: true
+    img_por_eve?: true
     por_min_asi_eve?: true
     fec_fin_eve?: true
+    id_cue_cre_eve?: true
   }
 
   export type EventoMaxAggregateInputType = {
@@ -4118,10 +10548,11 @@ export namespace Prisma {
     val_eve?: true
     est_eve?: true
     fec_cre_eve?: true
-    img_por_eve?: true
     dur_hor_eve?: true
+    img_por_eve?: true
     por_min_asi_eve?: true
     fec_fin_eve?: true
+    id_cue_cre_eve?: true
   }
 
   export type EventoCountAggregateInputType = {
@@ -4133,10 +10564,11 @@ export namespace Prisma {
     val_eve?: true
     est_eve?: true
     fec_cre_eve?: true
-    img_por_eve?: true
     dur_hor_eve?: true
+    img_por_eve?: true
     por_min_asi_eve?: true
     fec_fin_eve?: true
+    id_cue_cre_eve?: true
     _all?: true
   }
 
@@ -4235,10 +10667,11 @@ export namespace Prisma {
     val_eve: number
     est_eve: $Enums.estado_evento
     fec_cre_eve: Date
-    img_por_eve: string
     dur_hor_eve: number
+    img_por_eve: string
     por_min_asi_eve: number
     fec_fin_eve: Date
+    id_cue_cre_eve: string
     _count: EventoCountAggregateOutputType | null
     _avg: EventoAvgAggregateOutputType | null
     _sum: EventoSumAggregateOutputType | null
@@ -4269,13 +10702,15 @@ export namespace Prisma {
     val_eve?: boolean
     est_eve?: boolean
     fec_cre_eve?: boolean
-    img_por_eve?: boolean
     dur_hor_eve?: boolean
+    img_por_eve?: boolean
     por_min_asi_eve?: boolean
     fec_fin_eve?: boolean
+    id_cue_cre_eve?: boolean
     inscritos?: boolean | evento$inscritosArgs<ExtArgs>
     eventos_carrera?: boolean | evento$eventos_carreraArgs<ExtArgs>
     eventos_curso?: boolean | evento$eventos_cursoArgs<ExtArgs>
+    cuenta?: boolean | cuentaDefaultArgs<ExtArgs>
     _count?: boolean | EventoCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["evento"]>
 
@@ -4288,10 +10723,12 @@ export namespace Prisma {
     val_eve?: boolean
     est_eve?: boolean
     fec_cre_eve?: boolean
-    img_por_eve?: boolean
     dur_hor_eve?: boolean
+    img_por_eve?: boolean
     por_min_asi_eve?: boolean
     fec_fin_eve?: boolean
+    id_cue_cre_eve?: boolean
+    cuenta?: boolean | cuentaDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["evento"]>
 
   export type eventoSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -4303,10 +10740,12 @@ export namespace Prisma {
     val_eve?: boolean
     est_eve?: boolean
     fec_cre_eve?: boolean
-    img_por_eve?: boolean
     dur_hor_eve?: boolean
+    img_por_eve?: boolean
     por_min_asi_eve?: boolean
     fec_fin_eve?: boolean
+    id_cue_cre_eve?: boolean
+    cuenta?: boolean | cuentaDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["evento"]>
 
   export type eventoSelectScalar = {
@@ -4318,21 +10757,27 @@ export namespace Prisma {
     val_eve?: boolean
     est_eve?: boolean
     fec_cre_eve?: boolean
-    img_por_eve?: boolean
     dur_hor_eve?: boolean
+    img_por_eve?: boolean
     por_min_asi_eve?: boolean
     fec_fin_eve?: boolean
+    id_cue_cre_eve?: boolean
   }
 
-  export type eventoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_eve" | "nom_eve" | "des_eve" | "tip_eve" | "fec_ini_eve" | "val_eve" | "est_eve" | "fec_cre_eve" | "img_por_eve" | "dur_hor_eve" | "por_min_asi_eve" | "fec_fin_eve", ExtArgs["result"]["evento"]>
+  export type eventoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_eve" | "nom_eve" | "des_eve" | "tip_eve" | "fec_ini_eve" | "val_eve" | "est_eve" | "fec_cre_eve" | "dur_hor_eve" | "img_por_eve" | "por_min_asi_eve" | "fec_fin_eve" | "id_cue_cre_eve", ExtArgs["result"]["evento"]>
   export type eventoInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     inscritos?: boolean | evento$inscritosArgs<ExtArgs>
     eventos_carrera?: boolean | evento$eventos_carreraArgs<ExtArgs>
     eventos_curso?: boolean | evento$eventos_cursoArgs<ExtArgs>
+    cuenta?: boolean | cuentaDefaultArgs<ExtArgs>
     _count?: boolean | EventoCountOutputTypeDefaultArgs<ExtArgs>
   }
-  export type eventoIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
-  export type eventoIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type eventoIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    cuenta?: boolean | cuentaDefaultArgs<ExtArgs>
+  }
+  export type eventoIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    cuenta?: boolean | cuentaDefaultArgs<ExtArgs>
+  }
 
   export type $eventoPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "evento"
@@ -4340,6 +10785,7 @@ export namespace Prisma {
       inscritos: Prisma.$inscripcionPayload<ExtArgs>[]
       eventos_carrera: Prisma.$evento_carreraPayload<ExtArgs>[]
       eventos_curso: Prisma.$evento_cursoPayload<ExtArgs> | null
+      cuenta: Prisma.$cuentaPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id_eve: string
@@ -4350,10 +10796,11 @@ export namespace Prisma {
       val_eve: number
       est_eve: $Enums.estado_evento
       fec_cre_eve: Date
-      img_por_eve: string
       dur_hor_eve: number
+      img_por_eve: string
       por_min_asi_eve: number
       fec_fin_eve: Date
+      id_cue_cre_eve: string
     }, ExtArgs["result"]["evento"]>
     composites: {}
   }
@@ -4751,6 +11198,7 @@ export namespace Prisma {
     inscritos<T extends evento$inscritosArgs<ExtArgs> = {}>(args?: Subset<T, evento$inscritosArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$inscripcionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     eventos_carrera<T extends evento$eventos_carreraArgs<ExtArgs> = {}>(args?: Subset<T, evento$eventos_carreraArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$evento_carreraPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     eventos_curso<T extends evento$eventos_cursoArgs<ExtArgs> = {}>(args?: Subset<T, evento$eventos_cursoArgs<ExtArgs>>): Prisma__evento_cursoClient<$Result.GetResult<Prisma.$evento_cursoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    cuenta<T extends cuentaDefaultArgs<ExtArgs> = {}>(args?: Subset<T, cuentaDefaultArgs<ExtArgs>>): Prisma__cuentaClient<$Result.GetResult<Prisma.$cuentaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4788,10 +11236,11 @@ export namespace Prisma {
     readonly val_eve: FieldRef<"evento", 'Float'>
     readonly est_eve: FieldRef<"evento", 'estado_evento'>
     readonly fec_cre_eve: FieldRef<"evento", 'DateTime'>
-    readonly img_por_eve: FieldRef<"evento", 'String'>
     readonly dur_hor_eve: FieldRef<"evento", 'Int'>
+    readonly img_por_eve: FieldRef<"evento", 'String'>
     readonly por_min_asi_eve: FieldRef<"evento", 'Float'>
     readonly fec_fin_eve: FieldRef<"evento", 'DateTime'>
+    readonly id_cue_cre_eve: FieldRef<"evento", 'String'>
   }
     
 
@@ -5041,6 +11490,10 @@ export namespace Prisma {
      */
     data: eventoCreateManyInput | eventoCreateManyInput[]
     skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: eventoIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -5111,6 +11564,10 @@ export namespace Prisma {
      * Limit how many eventos to update.
      */
     limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: eventoIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -7377,76 +13834,88 @@ export namespace Prisma {
 
   export type AggregateInscripcion = {
     _count: InscripcionCountAggregateOutputType | null
+    _avg: InscripcionAvgAggregateOutputType | null
+    _sum: InscripcionSumAggregateOutputType | null
     _min: InscripcionMinAggregateOutputType | null
     _max: InscripcionMaxAggregateOutputType | null
   }
 
+  export type InscripcionAvgAggregateOutputType = {
+    por_asi_fin_usu: number | null
+  }
+
+  export type InscripcionSumAggregateOutputType = {
+    por_asi_fin_usu: number | null
+  }
+
   export type InscripcionMinAggregateOutputType = {
     id_ins: string | null
-    id_usu_ins: string | null
+    id_cor_ins: string | null
     id_eve_ins: string | null
     est_ins: $Enums.estado_inscripcion | null
     fec_ins: Date | null
-    fec_pag_ins: Date | null
-    cer_eve_env: boolean | null
-    car_mot_usu: string | null
+    usu_apr_cer: boolean | null
+    por_asi_fin_usu: number | null
   }
 
   export type InscripcionMaxAggregateOutputType = {
     id_ins: string | null
-    id_usu_ins: string | null
+    id_cor_ins: string | null
     id_eve_ins: string | null
     est_ins: $Enums.estado_inscripcion | null
     fec_ins: Date | null
-    fec_pag_ins: Date | null
-    cer_eve_env: boolean | null
-    car_mot_usu: string | null
+    usu_apr_cer: boolean | null
+    por_asi_fin_usu: number | null
   }
 
   export type InscripcionCountAggregateOutputType = {
     id_ins: number
-    id_usu_ins: number
+    id_cor_ins: number
     id_eve_ins: number
     est_ins: number
     fec_ins: number
-    fec_pag_ins: number
-    cer_eve_env: number
-    car_mot_usu: number
+    usu_apr_cer: number
+    por_asi_fin_usu: number
     _all: number
   }
 
 
+  export type InscripcionAvgAggregateInputType = {
+    por_asi_fin_usu?: true
+  }
+
+  export type InscripcionSumAggregateInputType = {
+    por_asi_fin_usu?: true
+  }
+
   export type InscripcionMinAggregateInputType = {
     id_ins?: true
-    id_usu_ins?: true
+    id_cor_ins?: true
     id_eve_ins?: true
     est_ins?: true
     fec_ins?: true
-    fec_pag_ins?: true
-    cer_eve_env?: true
-    car_mot_usu?: true
+    usu_apr_cer?: true
+    por_asi_fin_usu?: true
   }
 
   export type InscripcionMaxAggregateInputType = {
     id_ins?: true
-    id_usu_ins?: true
+    id_cor_ins?: true
     id_eve_ins?: true
     est_ins?: true
     fec_ins?: true
-    fec_pag_ins?: true
-    cer_eve_env?: true
-    car_mot_usu?: true
+    usu_apr_cer?: true
+    por_asi_fin_usu?: true
   }
 
   export type InscripcionCountAggregateInputType = {
     id_ins?: true
-    id_usu_ins?: true
+    id_cor_ins?: true
     id_eve_ins?: true
     est_ins?: true
     fec_ins?: true
-    fec_pag_ins?: true
-    cer_eve_env?: true
-    car_mot_usu?: true
+    usu_apr_cer?: true
+    por_asi_fin_usu?: true
     _all?: true
   }
 
@@ -7488,6 +13957,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: InscripcionAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: InscripcionSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: InscripcionMinAggregateInputType
@@ -7518,20 +13999,23 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: InscripcionCountAggregateInputType | true
+    _avg?: InscripcionAvgAggregateInputType
+    _sum?: InscripcionSumAggregateInputType
     _min?: InscripcionMinAggregateInputType
     _max?: InscripcionMaxAggregateInputType
   }
 
   export type InscripcionGroupByOutputType = {
     id_ins: string
-    id_usu_ins: string
+    id_cor_ins: string
     id_eve_ins: string
     est_ins: $Enums.estado_inscripcion
     fec_ins: Date
-    fec_pag_ins: Date | null
-    cer_eve_env: boolean
-    car_mot_usu: string | null
+    usu_apr_cer: boolean
+    por_asi_fin_usu: number | null
     _count: InscripcionCountAggregateOutputType | null
+    _avg: InscripcionAvgAggregateOutputType | null
+    _sum: InscripcionSumAggregateOutputType | null
     _min: InscripcionMinAggregateOutputType | null
     _max: InscripcionMaxAggregateOutputType | null
   }
@@ -7552,86 +14036,95 @@ export namespace Prisma {
 
   export type inscripcionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id_ins?: boolean
-    id_usu_ins?: boolean
+    id_cor_ins?: boolean
     id_eve_ins?: boolean
     est_ins?: boolean
     fec_ins?: boolean
-    fec_pag_ins?: boolean
-    cer_eve_env?: boolean
-    car_mot_usu?: boolean
-    usuario?: boolean | usuarioDefaultArgs<ExtArgs>
+    usu_apr_cer?: boolean
+    por_asi_fin_usu?: boolean
+    cuenta?: boolean | cuentaDefaultArgs<ExtArgs>
     evento?: boolean | eventoDefaultArgs<ExtArgs>
     inscripcion_curso?: boolean | inscripcion$inscripcion_cursoArgs<ExtArgs>
+    comprobantes_pago?: boolean | inscripcion$comprobantes_pagoArgs<ExtArgs>
+    cartas_motivacion?: boolean | inscripcion$cartas_motivacionArgs<ExtArgs>
+    observacion?: boolean | inscripcion$observacionArgs<ExtArgs>
+    certificado?: boolean | inscripcion$certificadoArgs<ExtArgs>
+    _count?: boolean | InscripcionCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["inscripcion"]>
 
   export type inscripcionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id_ins?: boolean
-    id_usu_ins?: boolean
+    id_cor_ins?: boolean
     id_eve_ins?: boolean
     est_ins?: boolean
     fec_ins?: boolean
-    fec_pag_ins?: boolean
-    cer_eve_env?: boolean
-    car_mot_usu?: boolean
-    usuario?: boolean | usuarioDefaultArgs<ExtArgs>
+    usu_apr_cer?: boolean
+    por_asi_fin_usu?: boolean
+    cuenta?: boolean | cuentaDefaultArgs<ExtArgs>
     evento?: boolean | eventoDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["inscripcion"]>
 
   export type inscripcionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id_ins?: boolean
-    id_usu_ins?: boolean
+    id_cor_ins?: boolean
     id_eve_ins?: boolean
     est_ins?: boolean
     fec_ins?: boolean
-    fec_pag_ins?: boolean
-    cer_eve_env?: boolean
-    car_mot_usu?: boolean
-    usuario?: boolean | usuarioDefaultArgs<ExtArgs>
+    usu_apr_cer?: boolean
+    por_asi_fin_usu?: boolean
+    cuenta?: boolean | cuentaDefaultArgs<ExtArgs>
     evento?: boolean | eventoDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["inscripcion"]>
 
   export type inscripcionSelectScalar = {
     id_ins?: boolean
-    id_usu_ins?: boolean
+    id_cor_ins?: boolean
     id_eve_ins?: boolean
     est_ins?: boolean
     fec_ins?: boolean
-    fec_pag_ins?: boolean
-    cer_eve_env?: boolean
-    car_mot_usu?: boolean
+    usu_apr_cer?: boolean
+    por_asi_fin_usu?: boolean
   }
 
-  export type inscripcionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_ins" | "id_usu_ins" | "id_eve_ins" | "est_ins" | "fec_ins" | "fec_pag_ins" | "cer_eve_env" | "car_mot_usu", ExtArgs["result"]["inscripcion"]>
+  export type inscripcionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_ins" | "id_cor_ins" | "id_eve_ins" | "est_ins" | "fec_ins" | "usu_apr_cer" | "por_asi_fin_usu", ExtArgs["result"]["inscripcion"]>
   export type inscripcionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    usuario?: boolean | usuarioDefaultArgs<ExtArgs>
+    cuenta?: boolean | cuentaDefaultArgs<ExtArgs>
     evento?: boolean | eventoDefaultArgs<ExtArgs>
     inscripcion_curso?: boolean | inscripcion$inscripcion_cursoArgs<ExtArgs>
+    comprobantes_pago?: boolean | inscripcion$comprobantes_pagoArgs<ExtArgs>
+    cartas_motivacion?: boolean | inscripcion$cartas_motivacionArgs<ExtArgs>
+    observacion?: boolean | inscripcion$observacionArgs<ExtArgs>
+    certificado?: boolean | inscripcion$certificadoArgs<ExtArgs>
+    _count?: boolean | InscripcionCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type inscripcionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    usuario?: boolean | usuarioDefaultArgs<ExtArgs>
+    cuenta?: boolean | cuentaDefaultArgs<ExtArgs>
     evento?: boolean | eventoDefaultArgs<ExtArgs>
   }
   export type inscripcionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    usuario?: boolean | usuarioDefaultArgs<ExtArgs>
+    cuenta?: boolean | cuentaDefaultArgs<ExtArgs>
     evento?: boolean | eventoDefaultArgs<ExtArgs>
   }
 
   export type $inscripcionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "inscripcion"
     objects: {
-      usuario: Prisma.$usuarioPayload<ExtArgs>
+      cuenta: Prisma.$cuentaPayload<ExtArgs>
       evento: Prisma.$eventoPayload<ExtArgs>
       inscripcion_curso: Prisma.$inscripcion_cursoPayload<ExtArgs> | null
+      comprobantes_pago: Prisma.$comprobante_pagoPayload<ExtArgs>[]
+      cartas_motivacion: Prisma.$carta_motivacionPayload<ExtArgs>[]
+      observacion: Prisma.$observacion_inscripcionPayload<ExtArgs> | null
+      certificado: Prisma.$certificadoPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id_ins: string
-      id_usu_ins: string
+      id_cor_ins: string
       id_eve_ins: string
       est_ins: $Enums.estado_inscripcion
       fec_ins: Date
-      fec_pag_ins: Date | null
-      cer_eve_env: boolean
-      car_mot_usu: string | null
+      usu_apr_cer: boolean
+      por_asi_fin_usu: number | null
     }, ExtArgs["result"]["inscripcion"]>
     composites: {}
   }
@@ -8026,9 +14519,13 @@ export namespace Prisma {
    */
   export interface Prisma__inscripcionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    usuario<T extends usuarioDefaultArgs<ExtArgs> = {}>(args?: Subset<T, usuarioDefaultArgs<ExtArgs>>): Prisma__usuarioClient<$Result.GetResult<Prisma.$usuarioPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    cuenta<T extends cuentaDefaultArgs<ExtArgs> = {}>(args?: Subset<T, cuentaDefaultArgs<ExtArgs>>): Prisma__cuentaClient<$Result.GetResult<Prisma.$cuentaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     evento<T extends eventoDefaultArgs<ExtArgs> = {}>(args?: Subset<T, eventoDefaultArgs<ExtArgs>>): Prisma__eventoClient<$Result.GetResult<Prisma.$eventoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     inscripcion_curso<T extends inscripcion$inscripcion_cursoArgs<ExtArgs> = {}>(args?: Subset<T, inscripcion$inscripcion_cursoArgs<ExtArgs>>): Prisma__inscripcion_cursoClient<$Result.GetResult<Prisma.$inscripcion_cursoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    comprobantes_pago<T extends inscripcion$comprobantes_pagoArgs<ExtArgs> = {}>(args?: Subset<T, inscripcion$comprobantes_pagoArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$comprobante_pagoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    cartas_motivacion<T extends inscripcion$cartas_motivacionArgs<ExtArgs> = {}>(args?: Subset<T, inscripcion$cartas_motivacionArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$carta_motivacionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    observacion<T extends inscripcion$observacionArgs<ExtArgs> = {}>(args?: Subset<T, inscripcion$observacionArgs<ExtArgs>>): Prisma__observacion_inscripcionClient<$Result.GetResult<Prisma.$observacion_inscripcionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    certificado<T extends inscripcion$certificadoArgs<ExtArgs> = {}>(args?: Subset<T, inscripcion$certificadoArgs<ExtArgs>>): Prisma__certificadoClient<$Result.GetResult<Prisma.$certificadoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -8059,13 +14556,12 @@ export namespace Prisma {
    */
   interface inscripcionFieldRefs {
     readonly id_ins: FieldRef<"inscripcion", 'String'>
-    readonly id_usu_ins: FieldRef<"inscripcion", 'String'>
+    readonly id_cor_ins: FieldRef<"inscripcion", 'String'>
     readonly id_eve_ins: FieldRef<"inscripcion", 'String'>
     readonly est_ins: FieldRef<"inscripcion", 'estado_inscripcion'>
     readonly fec_ins: FieldRef<"inscripcion", 'DateTime'>
-    readonly fec_pag_ins: FieldRef<"inscripcion", 'DateTime'>
-    readonly cer_eve_env: FieldRef<"inscripcion", 'Boolean'>
-    readonly car_mot_usu: FieldRef<"inscripcion", 'String'>
+    readonly usu_apr_cer: FieldRef<"inscripcion", 'Boolean'>
+    readonly por_asi_fin_usu: FieldRef<"inscripcion", 'Float'>
   }
     
 
@@ -8481,6 +14977,92 @@ export namespace Prisma {
   }
 
   /**
+   * inscripcion.comprobantes_pago
+   */
+  export type inscripcion$comprobantes_pagoArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the comprobante_pago
+     */
+    select?: comprobante_pagoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the comprobante_pago
+     */
+    omit?: comprobante_pagoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: comprobante_pagoInclude<ExtArgs> | null
+    where?: comprobante_pagoWhereInput
+    orderBy?: comprobante_pagoOrderByWithRelationInput | comprobante_pagoOrderByWithRelationInput[]
+    cursor?: comprobante_pagoWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Comprobante_pagoScalarFieldEnum | Comprobante_pagoScalarFieldEnum[]
+  }
+
+  /**
+   * inscripcion.cartas_motivacion
+   */
+  export type inscripcion$cartas_motivacionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the carta_motivacion
+     */
+    select?: carta_motivacionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the carta_motivacion
+     */
+    omit?: carta_motivacionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: carta_motivacionInclude<ExtArgs> | null
+    where?: carta_motivacionWhereInput
+    orderBy?: carta_motivacionOrderByWithRelationInput | carta_motivacionOrderByWithRelationInput[]
+    cursor?: carta_motivacionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Carta_motivacionScalarFieldEnum | Carta_motivacionScalarFieldEnum[]
+  }
+
+  /**
+   * inscripcion.observacion
+   */
+  export type inscripcion$observacionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the observacion_inscripcion
+     */
+    select?: observacion_inscripcionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the observacion_inscripcion
+     */
+    omit?: observacion_inscripcionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: observacion_inscripcionInclude<ExtArgs> | null
+    where?: observacion_inscripcionWhereInput
+  }
+
+  /**
+   * inscripcion.certificado
+   */
+  export type inscripcion$certificadoArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the certificado
+     */
+    select?: certificadoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the certificado
+     */
+    omit?: certificadoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: certificadoInclude<ExtArgs> | null
+    where?: certificadoWhereInput
+  }
+
+  /**
    * inscripcion without action
    */
   export type inscripcionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -8513,60 +15095,50 @@ export namespace Prisma {
 
   export type Inscripcion_cursoAvgAggregateOutputType = {
     not_fin_usu: number | null
-    por_asi_fin_usu: number | null
   }
 
   export type Inscripcion_cursoSumAggregateOutputType = {
     not_fin_usu: number | null
-    por_asi_fin_usu: number | null
   }
 
   export type Inscripcion_cursoMinAggregateOutputType = {
     id_ins_cur: string | null
     not_fin_usu: number | null
-    por_asi_fin_usu: number | null
   }
 
   export type Inscripcion_cursoMaxAggregateOutputType = {
     id_ins_cur: string | null
     not_fin_usu: number | null
-    por_asi_fin_usu: number | null
   }
 
   export type Inscripcion_cursoCountAggregateOutputType = {
     id_ins_cur: number
     not_fin_usu: number
-    por_asi_fin_usu: number
     _all: number
   }
 
 
   export type Inscripcion_cursoAvgAggregateInputType = {
     not_fin_usu?: true
-    por_asi_fin_usu?: true
   }
 
   export type Inscripcion_cursoSumAggregateInputType = {
     not_fin_usu?: true
-    por_asi_fin_usu?: true
   }
 
   export type Inscripcion_cursoMinAggregateInputType = {
     id_ins_cur?: true
     not_fin_usu?: true
-    por_asi_fin_usu?: true
   }
 
   export type Inscripcion_cursoMaxAggregateInputType = {
     id_ins_cur?: true
     not_fin_usu?: true
-    por_asi_fin_usu?: true
   }
 
   export type Inscripcion_cursoCountAggregateInputType = {
     id_ins_cur?: true
     not_fin_usu?: true
-    por_asi_fin_usu?: true
     _all?: true
   }
 
@@ -8659,7 +15231,6 @@ export namespace Prisma {
   export type Inscripcion_cursoGroupByOutputType = {
     id_ins_cur: string
     not_fin_usu: number | null
-    por_asi_fin_usu: number | null
     _count: Inscripcion_cursoCountAggregateOutputType | null
     _avg: Inscripcion_cursoAvgAggregateOutputType | null
     _sum: Inscripcion_cursoSumAggregateOutputType | null
@@ -8684,31 +15255,27 @@ export namespace Prisma {
   export type inscripcion_cursoSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id_ins_cur?: boolean
     not_fin_usu?: boolean
-    por_asi_fin_usu?: boolean
     inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["inscripcion_curso"]>
 
   export type inscripcion_cursoSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id_ins_cur?: boolean
     not_fin_usu?: boolean
-    por_asi_fin_usu?: boolean
     inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["inscripcion_curso"]>
 
   export type inscripcion_cursoSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id_ins_cur?: boolean
     not_fin_usu?: boolean
-    por_asi_fin_usu?: boolean
     inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["inscripcion_curso"]>
 
   export type inscripcion_cursoSelectScalar = {
     id_ins_cur?: boolean
     not_fin_usu?: boolean
-    por_asi_fin_usu?: boolean
   }
 
-  export type inscripcion_cursoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_ins_cur" | "not_fin_usu" | "por_asi_fin_usu", ExtArgs["result"]["inscripcion_curso"]>
+  export type inscripcion_cursoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_ins_cur" | "not_fin_usu", ExtArgs["result"]["inscripcion_curso"]>
   export type inscripcion_cursoInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
   }
@@ -8727,7 +15294,6 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id_ins_cur: string
       not_fin_usu: number | null
-      por_asi_fin_usu: number | null
     }, ExtArgs["result"]["inscripcion_curso"]>
     composites: {}
   }
@@ -9154,7 +15720,6 @@ export namespace Prisma {
   interface inscripcion_cursoFieldRefs {
     readonly id_ins_cur: FieldRef<"inscripcion_curso", 'String'>
     readonly not_fin_usu: FieldRef<"inscripcion_curso", 'Float'>
-    readonly por_asi_fin_usu: FieldRef<"inscripcion_curso", 'Float'>
   }
     
 
@@ -9570,6 +16135,1077 @@ export namespace Prisma {
 
 
   /**
+   * Model certificado
+   */
+
+  export type AggregateCertificado = {
+    _count: CertificadoCountAggregateOutputType | null
+    _min: CertificadoMinAggregateOutputType | null
+    _max: CertificadoMaxAggregateOutputType | null
+  }
+
+  export type CertificadoMinAggregateOutputType = {
+    id_cer: string | null
+    id_ins_per: string | null
+    url_cer: string | null
+    tip_cer: $Enums.tipo_certificado | null
+    fec_gen_cer: Date | null
+    cod_val_cer: string | null
+  }
+
+  export type CertificadoMaxAggregateOutputType = {
+    id_cer: string | null
+    id_ins_per: string | null
+    url_cer: string | null
+    tip_cer: $Enums.tipo_certificado | null
+    fec_gen_cer: Date | null
+    cod_val_cer: string | null
+  }
+
+  export type CertificadoCountAggregateOutputType = {
+    id_cer: number
+    id_ins_per: number
+    url_cer: number
+    tip_cer: number
+    fec_gen_cer: number
+    cod_val_cer: number
+    _all: number
+  }
+
+
+  export type CertificadoMinAggregateInputType = {
+    id_cer?: true
+    id_ins_per?: true
+    url_cer?: true
+    tip_cer?: true
+    fec_gen_cer?: true
+    cod_val_cer?: true
+  }
+
+  export type CertificadoMaxAggregateInputType = {
+    id_cer?: true
+    id_ins_per?: true
+    url_cer?: true
+    tip_cer?: true
+    fec_gen_cer?: true
+    cod_val_cer?: true
+  }
+
+  export type CertificadoCountAggregateInputType = {
+    id_cer?: true
+    id_ins_per?: true
+    url_cer?: true
+    tip_cer?: true
+    fec_gen_cer?: true
+    cod_val_cer?: true
+    _all?: true
+  }
+
+  export type CertificadoAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which certificado to aggregate.
+     */
+    where?: certificadoWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of certificados to fetch.
+     */
+    orderBy?: certificadoOrderByWithRelationInput | certificadoOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: certificadoWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` certificados from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` certificados.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned certificados
+    **/
+    _count?: true | CertificadoCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: CertificadoMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: CertificadoMaxAggregateInputType
+  }
+
+  export type GetCertificadoAggregateType<T extends CertificadoAggregateArgs> = {
+        [P in keyof T & keyof AggregateCertificado]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCertificado[P]>
+      : GetScalarType<T[P], AggregateCertificado[P]>
+  }
+
+
+
+
+  export type certificadoGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: certificadoWhereInput
+    orderBy?: certificadoOrderByWithAggregationInput | certificadoOrderByWithAggregationInput[]
+    by: CertificadoScalarFieldEnum[] | CertificadoScalarFieldEnum
+    having?: certificadoScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: CertificadoCountAggregateInputType | true
+    _min?: CertificadoMinAggregateInputType
+    _max?: CertificadoMaxAggregateInputType
+  }
+
+  export type CertificadoGroupByOutputType = {
+    id_cer: string
+    id_ins_per: string
+    url_cer: string
+    tip_cer: $Enums.tipo_certificado
+    fec_gen_cer: Date
+    cod_val_cer: string
+    _count: CertificadoCountAggregateOutputType | null
+    _min: CertificadoMinAggregateOutputType | null
+    _max: CertificadoMaxAggregateOutputType | null
+  }
+
+  type GetCertificadoGroupByPayload<T extends certificadoGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<CertificadoGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof CertificadoGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], CertificadoGroupByOutputType[P]>
+            : GetScalarType<T[P], CertificadoGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type certificadoSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_cer?: boolean
+    id_ins_per?: boolean
+    url_cer?: boolean
+    tip_cer?: boolean
+    fec_gen_cer?: boolean
+    cod_val_cer?: boolean
+    inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["certificado"]>
+
+  export type certificadoSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_cer?: boolean
+    id_ins_per?: boolean
+    url_cer?: boolean
+    tip_cer?: boolean
+    fec_gen_cer?: boolean
+    cod_val_cer?: boolean
+    inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["certificado"]>
+
+  export type certificadoSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_cer?: boolean
+    id_ins_per?: boolean
+    url_cer?: boolean
+    tip_cer?: boolean
+    fec_gen_cer?: boolean
+    cod_val_cer?: boolean
+    inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["certificado"]>
+
+  export type certificadoSelectScalar = {
+    id_cer?: boolean
+    id_ins_per?: boolean
+    url_cer?: boolean
+    tip_cer?: boolean
+    fec_gen_cer?: boolean
+    cod_val_cer?: boolean
+  }
+
+  export type certificadoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_cer" | "id_ins_per" | "url_cer" | "tip_cer" | "fec_gen_cer" | "cod_val_cer", ExtArgs["result"]["certificado"]>
+  export type certificadoInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
+  }
+  export type certificadoIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
+  }
+  export type certificadoIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    inscripcion?: boolean | inscripcionDefaultArgs<ExtArgs>
+  }
+
+  export type $certificadoPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "certificado"
+    objects: {
+      inscripcion: Prisma.$inscripcionPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id_cer: string
+      id_ins_per: string
+      url_cer: string
+      tip_cer: $Enums.tipo_certificado
+      fec_gen_cer: Date
+      cod_val_cer: string
+    }, ExtArgs["result"]["certificado"]>
+    composites: {}
+  }
+
+  type certificadoGetPayload<S extends boolean | null | undefined | certificadoDefaultArgs> = $Result.GetResult<Prisma.$certificadoPayload, S>
+
+  type certificadoCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<certificadoFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: CertificadoCountAggregateInputType | true
+    }
+
+  export interface certificadoDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['certificado'], meta: { name: 'certificado' } }
+    /**
+     * Find zero or one Certificado that matches the filter.
+     * @param {certificadoFindUniqueArgs} args - Arguments to find a Certificado
+     * @example
+     * // Get one Certificado
+     * const certificado = await prisma.certificado.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends certificadoFindUniqueArgs>(args: SelectSubset<T, certificadoFindUniqueArgs<ExtArgs>>): Prisma__certificadoClient<$Result.GetResult<Prisma.$certificadoPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Certificado that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {certificadoFindUniqueOrThrowArgs} args - Arguments to find a Certificado
+     * @example
+     * // Get one Certificado
+     * const certificado = await prisma.certificado.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends certificadoFindUniqueOrThrowArgs>(args: SelectSubset<T, certificadoFindUniqueOrThrowArgs<ExtArgs>>): Prisma__certificadoClient<$Result.GetResult<Prisma.$certificadoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Certificado that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {certificadoFindFirstArgs} args - Arguments to find a Certificado
+     * @example
+     * // Get one Certificado
+     * const certificado = await prisma.certificado.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends certificadoFindFirstArgs>(args?: SelectSubset<T, certificadoFindFirstArgs<ExtArgs>>): Prisma__certificadoClient<$Result.GetResult<Prisma.$certificadoPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Certificado that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {certificadoFindFirstOrThrowArgs} args - Arguments to find a Certificado
+     * @example
+     * // Get one Certificado
+     * const certificado = await prisma.certificado.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends certificadoFindFirstOrThrowArgs>(args?: SelectSubset<T, certificadoFindFirstOrThrowArgs<ExtArgs>>): Prisma__certificadoClient<$Result.GetResult<Prisma.$certificadoPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Certificados that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {certificadoFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Certificados
+     * const certificados = await prisma.certificado.findMany()
+     * 
+     * // Get first 10 Certificados
+     * const certificados = await prisma.certificado.findMany({ take: 10 })
+     * 
+     * // Only select the `id_cer`
+     * const certificadoWithId_cerOnly = await prisma.certificado.findMany({ select: { id_cer: true } })
+     * 
+     */
+    findMany<T extends certificadoFindManyArgs>(args?: SelectSubset<T, certificadoFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$certificadoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Certificado.
+     * @param {certificadoCreateArgs} args - Arguments to create a Certificado.
+     * @example
+     * // Create one Certificado
+     * const Certificado = await prisma.certificado.create({
+     *   data: {
+     *     // ... data to create a Certificado
+     *   }
+     * })
+     * 
+     */
+    create<T extends certificadoCreateArgs>(args: SelectSubset<T, certificadoCreateArgs<ExtArgs>>): Prisma__certificadoClient<$Result.GetResult<Prisma.$certificadoPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Certificados.
+     * @param {certificadoCreateManyArgs} args - Arguments to create many Certificados.
+     * @example
+     * // Create many Certificados
+     * const certificado = await prisma.certificado.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends certificadoCreateManyArgs>(args?: SelectSubset<T, certificadoCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Certificados and returns the data saved in the database.
+     * @param {certificadoCreateManyAndReturnArgs} args - Arguments to create many Certificados.
+     * @example
+     * // Create many Certificados
+     * const certificado = await prisma.certificado.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Certificados and only return the `id_cer`
+     * const certificadoWithId_cerOnly = await prisma.certificado.createManyAndReturn({
+     *   select: { id_cer: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends certificadoCreateManyAndReturnArgs>(args?: SelectSubset<T, certificadoCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$certificadoPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Certificado.
+     * @param {certificadoDeleteArgs} args - Arguments to delete one Certificado.
+     * @example
+     * // Delete one Certificado
+     * const Certificado = await prisma.certificado.delete({
+     *   where: {
+     *     // ... filter to delete one Certificado
+     *   }
+     * })
+     * 
+     */
+    delete<T extends certificadoDeleteArgs>(args: SelectSubset<T, certificadoDeleteArgs<ExtArgs>>): Prisma__certificadoClient<$Result.GetResult<Prisma.$certificadoPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Certificado.
+     * @param {certificadoUpdateArgs} args - Arguments to update one Certificado.
+     * @example
+     * // Update one Certificado
+     * const certificado = await prisma.certificado.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends certificadoUpdateArgs>(args: SelectSubset<T, certificadoUpdateArgs<ExtArgs>>): Prisma__certificadoClient<$Result.GetResult<Prisma.$certificadoPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Certificados.
+     * @param {certificadoDeleteManyArgs} args - Arguments to filter Certificados to delete.
+     * @example
+     * // Delete a few Certificados
+     * const { count } = await prisma.certificado.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends certificadoDeleteManyArgs>(args?: SelectSubset<T, certificadoDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Certificados.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {certificadoUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Certificados
+     * const certificado = await prisma.certificado.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends certificadoUpdateManyArgs>(args: SelectSubset<T, certificadoUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Certificados and returns the data updated in the database.
+     * @param {certificadoUpdateManyAndReturnArgs} args - Arguments to update many Certificados.
+     * @example
+     * // Update many Certificados
+     * const certificado = await prisma.certificado.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Certificados and only return the `id_cer`
+     * const certificadoWithId_cerOnly = await prisma.certificado.updateManyAndReturn({
+     *   select: { id_cer: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends certificadoUpdateManyAndReturnArgs>(args: SelectSubset<T, certificadoUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$certificadoPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Certificado.
+     * @param {certificadoUpsertArgs} args - Arguments to update or create a Certificado.
+     * @example
+     * // Update or create a Certificado
+     * const certificado = await prisma.certificado.upsert({
+     *   create: {
+     *     // ... data to create a Certificado
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Certificado we want to update
+     *   }
+     * })
+     */
+    upsert<T extends certificadoUpsertArgs>(args: SelectSubset<T, certificadoUpsertArgs<ExtArgs>>): Prisma__certificadoClient<$Result.GetResult<Prisma.$certificadoPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Certificados.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {certificadoCountArgs} args - Arguments to filter Certificados to count.
+     * @example
+     * // Count the number of Certificados
+     * const count = await prisma.certificado.count({
+     *   where: {
+     *     // ... the filter for the Certificados we want to count
+     *   }
+     * })
+    **/
+    count<T extends certificadoCountArgs>(
+      args?: Subset<T, certificadoCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], CertificadoCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Certificado.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CertificadoAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends CertificadoAggregateArgs>(args: Subset<T, CertificadoAggregateArgs>): Prisma.PrismaPromise<GetCertificadoAggregateType<T>>
+
+    /**
+     * Group by Certificado.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {certificadoGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends certificadoGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: certificadoGroupByArgs['orderBy'] }
+        : { orderBy?: certificadoGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, certificadoGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCertificadoGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the certificado model
+   */
+  readonly fields: certificadoFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for certificado.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__certificadoClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    inscripcion<T extends inscripcionDefaultArgs<ExtArgs> = {}>(args?: Subset<T, inscripcionDefaultArgs<ExtArgs>>): Prisma__inscripcionClient<$Result.GetResult<Prisma.$inscripcionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the certificado model
+   */
+  interface certificadoFieldRefs {
+    readonly id_cer: FieldRef<"certificado", 'String'>
+    readonly id_ins_per: FieldRef<"certificado", 'String'>
+    readonly url_cer: FieldRef<"certificado", 'String'>
+    readonly tip_cer: FieldRef<"certificado", 'tipo_certificado'>
+    readonly fec_gen_cer: FieldRef<"certificado", 'DateTime'>
+    readonly cod_val_cer: FieldRef<"certificado", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * certificado findUnique
+   */
+  export type certificadoFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the certificado
+     */
+    select?: certificadoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the certificado
+     */
+    omit?: certificadoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: certificadoInclude<ExtArgs> | null
+    /**
+     * Filter, which certificado to fetch.
+     */
+    where: certificadoWhereUniqueInput
+  }
+
+  /**
+   * certificado findUniqueOrThrow
+   */
+  export type certificadoFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the certificado
+     */
+    select?: certificadoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the certificado
+     */
+    omit?: certificadoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: certificadoInclude<ExtArgs> | null
+    /**
+     * Filter, which certificado to fetch.
+     */
+    where: certificadoWhereUniqueInput
+  }
+
+  /**
+   * certificado findFirst
+   */
+  export type certificadoFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the certificado
+     */
+    select?: certificadoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the certificado
+     */
+    omit?: certificadoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: certificadoInclude<ExtArgs> | null
+    /**
+     * Filter, which certificado to fetch.
+     */
+    where?: certificadoWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of certificados to fetch.
+     */
+    orderBy?: certificadoOrderByWithRelationInput | certificadoOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for certificados.
+     */
+    cursor?: certificadoWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` certificados from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` certificados.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of certificados.
+     */
+    distinct?: CertificadoScalarFieldEnum | CertificadoScalarFieldEnum[]
+  }
+
+  /**
+   * certificado findFirstOrThrow
+   */
+  export type certificadoFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the certificado
+     */
+    select?: certificadoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the certificado
+     */
+    omit?: certificadoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: certificadoInclude<ExtArgs> | null
+    /**
+     * Filter, which certificado to fetch.
+     */
+    where?: certificadoWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of certificados to fetch.
+     */
+    orderBy?: certificadoOrderByWithRelationInput | certificadoOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for certificados.
+     */
+    cursor?: certificadoWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` certificados from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` certificados.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of certificados.
+     */
+    distinct?: CertificadoScalarFieldEnum | CertificadoScalarFieldEnum[]
+  }
+
+  /**
+   * certificado findMany
+   */
+  export type certificadoFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the certificado
+     */
+    select?: certificadoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the certificado
+     */
+    omit?: certificadoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: certificadoInclude<ExtArgs> | null
+    /**
+     * Filter, which certificados to fetch.
+     */
+    where?: certificadoWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of certificados to fetch.
+     */
+    orderBy?: certificadoOrderByWithRelationInput | certificadoOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing certificados.
+     */
+    cursor?: certificadoWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` certificados from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` certificados.
+     */
+    skip?: number
+    distinct?: CertificadoScalarFieldEnum | CertificadoScalarFieldEnum[]
+  }
+
+  /**
+   * certificado create
+   */
+  export type certificadoCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the certificado
+     */
+    select?: certificadoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the certificado
+     */
+    omit?: certificadoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: certificadoInclude<ExtArgs> | null
+    /**
+     * The data needed to create a certificado.
+     */
+    data: XOR<certificadoCreateInput, certificadoUncheckedCreateInput>
+  }
+
+  /**
+   * certificado createMany
+   */
+  export type certificadoCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many certificados.
+     */
+    data: certificadoCreateManyInput | certificadoCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * certificado createManyAndReturn
+   */
+  export type certificadoCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the certificado
+     */
+    select?: certificadoSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the certificado
+     */
+    omit?: certificadoOmit<ExtArgs> | null
+    /**
+     * The data used to create many certificados.
+     */
+    data: certificadoCreateManyInput | certificadoCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: certificadoIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * certificado update
+   */
+  export type certificadoUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the certificado
+     */
+    select?: certificadoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the certificado
+     */
+    omit?: certificadoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: certificadoInclude<ExtArgs> | null
+    /**
+     * The data needed to update a certificado.
+     */
+    data: XOR<certificadoUpdateInput, certificadoUncheckedUpdateInput>
+    /**
+     * Choose, which certificado to update.
+     */
+    where: certificadoWhereUniqueInput
+  }
+
+  /**
+   * certificado updateMany
+   */
+  export type certificadoUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update certificados.
+     */
+    data: XOR<certificadoUpdateManyMutationInput, certificadoUncheckedUpdateManyInput>
+    /**
+     * Filter which certificados to update
+     */
+    where?: certificadoWhereInput
+    /**
+     * Limit how many certificados to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * certificado updateManyAndReturn
+   */
+  export type certificadoUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the certificado
+     */
+    select?: certificadoSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the certificado
+     */
+    omit?: certificadoOmit<ExtArgs> | null
+    /**
+     * The data used to update certificados.
+     */
+    data: XOR<certificadoUpdateManyMutationInput, certificadoUncheckedUpdateManyInput>
+    /**
+     * Filter which certificados to update
+     */
+    where?: certificadoWhereInput
+    /**
+     * Limit how many certificados to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: certificadoIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * certificado upsert
+   */
+  export type certificadoUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the certificado
+     */
+    select?: certificadoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the certificado
+     */
+    omit?: certificadoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: certificadoInclude<ExtArgs> | null
+    /**
+     * The filter to search for the certificado to update in case it exists.
+     */
+    where: certificadoWhereUniqueInput
+    /**
+     * In case the certificado found by the `where` argument doesn't exist, create a new certificado with this data.
+     */
+    create: XOR<certificadoCreateInput, certificadoUncheckedCreateInput>
+    /**
+     * In case the certificado was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<certificadoUpdateInput, certificadoUncheckedUpdateInput>
+  }
+
+  /**
+   * certificado delete
+   */
+  export type certificadoDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the certificado
+     */
+    select?: certificadoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the certificado
+     */
+    omit?: certificadoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: certificadoInclude<ExtArgs> | null
+    /**
+     * Filter which certificado to delete.
+     */
+    where: certificadoWhereUniqueInput
+  }
+
+  /**
+   * certificado deleteMany
+   */
+  export type certificadoDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which certificados to delete
+     */
+    where?: certificadoWhereInput
+    /**
+     * Limit how many certificados to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * certificado without action
+   */
+  export type certificadoDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the certificado
+     */
+    select?: certificadoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the certificado
+     */
+    omit?: certificadoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: certificadoInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model facultad
    */
 
@@ -9585,6 +17221,15 @@ export namespace Prisma {
     des_fac: string | null
     mis_fac: string | null
     vis_fac: string | null
+    fec_cre_fac: Date | null
+    nom_dec_fac: string | null
+    ape_dec_fac: string | null
+    cor_dec_fac: string | null
+    url_img_dec_fac: string | null
+    nom_sub_dec_fac: string | null
+    ape_sub_dec_fac: string | null
+    cor_sub_dec_fac: string | null
+    url_img_sub_dec_fac: string | null
   }
 
   export type FacultadMaxAggregateOutputType = {
@@ -9593,6 +17238,15 @@ export namespace Prisma {
     des_fac: string | null
     mis_fac: string | null
     vis_fac: string | null
+    fec_cre_fac: Date | null
+    nom_dec_fac: string | null
+    ape_dec_fac: string | null
+    cor_dec_fac: string | null
+    url_img_dec_fac: string | null
+    nom_sub_dec_fac: string | null
+    ape_sub_dec_fac: string | null
+    cor_sub_dec_fac: string | null
+    url_img_sub_dec_fac: string | null
   }
 
   export type FacultadCountAggregateOutputType = {
@@ -9601,6 +17255,15 @@ export namespace Prisma {
     des_fac: number
     mis_fac: number
     vis_fac: number
+    fec_cre_fac: number
+    nom_dec_fac: number
+    ape_dec_fac: number
+    cor_dec_fac: number
+    url_img_dec_fac: number
+    nom_sub_dec_fac: number
+    ape_sub_dec_fac: number
+    cor_sub_dec_fac: number
+    url_img_sub_dec_fac: number
     _all: number
   }
 
@@ -9611,6 +17274,15 @@ export namespace Prisma {
     des_fac?: true
     mis_fac?: true
     vis_fac?: true
+    fec_cre_fac?: true
+    nom_dec_fac?: true
+    ape_dec_fac?: true
+    cor_dec_fac?: true
+    url_img_dec_fac?: true
+    nom_sub_dec_fac?: true
+    ape_sub_dec_fac?: true
+    cor_sub_dec_fac?: true
+    url_img_sub_dec_fac?: true
   }
 
   export type FacultadMaxAggregateInputType = {
@@ -9619,6 +17291,15 @@ export namespace Prisma {
     des_fac?: true
     mis_fac?: true
     vis_fac?: true
+    fec_cre_fac?: true
+    nom_dec_fac?: true
+    ape_dec_fac?: true
+    cor_dec_fac?: true
+    url_img_dec_fac?: true
+    nom_sub_dec_fac?: true
+    ape_sub_dec_fac?: true
+    cor_sub_dec_fac?: true
+    url_img_sub_dec_fac?: true
   }
 
   export type FacultadCountAggregateInputType = {
@@ -9627,6 +17308,15 @@ export namespace Prisma {
     des_fac?: true
     mis_fac?: true
     vis_fac?: true
+    fec_cre_fac?: true
+    nom_dec_fac?: true
+    ape_dec_fac?: true
+    cor_dec_fac?: true
+    url_img_dec_fac?: true
+    nom_sub_dec_fac?: true
+    ape_sub_dec_fac?: true
+    cor_sub_dec_fac?: true
+    url_img_sub_dec_fac?: true
     _all?: true
   }
 
@@ -9708,6 +17398,15 @@ export namespace Prisma {
     des_fac: string
     mis_fac: string
     vis_fac: string
+    fec_cre_fac: Date
+    nom_dec_fac: string
+    ape_dec_fac: string
+    cor_dec_fac: string
+    url_img_dec_fac: string
+    nom_sub_dec_fac: string
+    ape_sub_dec_fac: string
+    cor_sub_dec_fac: string
+    url_img_sub_dec_fac: string
     _count: FacultadCountAggregateOutputType | null
     _min: FacultadMinAggregateOutputType | null
     _max: FacultadMaxAggregateOutputType | null
@@ -9733,6 +17432,15 @@ export namespace Prisma {
     des_fac?: boolean
     mis_fac?: boolean
     vis_fac?: boolean
+    fec_cre_fac?: boolean
+    nom_dec_fac?: boolean
+    ape_dec_fac?: boolean
+    cor_dec_fac?: boolean
+    url_img_dec_fac?: boolean
+    nom_sub_dec_fac?: boolean
+    ape_sub_dec_fac?: boolean
+    cor_sub_dec_fac?: boolean
+    url_img_sub_dec_fac?: boolean
     carreras?: boolean | facultad$carrerasArgs<ExtArgs>
     _count?: boolean | FacultadCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["facultad"]>
@@ -9743,6 +17451,15 @@ export namespace Prisma {
     des_fac?: boolean
     mis_fac?: boolean
     vis_fac?: boolean
+    fec_cre_fac?: boolean
+    nom_dec_fac?: boolean
+    ape_dec_fac?: boolean
+    cor_dec_fac?: boolean
+    url_img_dec_fac?: boolean
+    nom_sub_dec_fac?: boolean
+    ape_sub_dec_fac?: boolean
+    cor_sub_dec_fac?: boolean
+    url_img_sub_dec_fac?: boolean
   }, ExtArgs["result"]["facultad"]>
 
   export type facultadSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -9751,6 +17468,15 @@ export namespace Prisma {
     des_fac?: boolean
     mis_fac?: boolean
     vis_fac?: boolean
+    fec_cre_fac?: boolean
+    nom_dec_fac?: boolean
+    ape_dec_fac?: boolean
+    cor_dec_fac?: boolean
+    url_img_dec_fac?: boolean
+    nom_sub_dec_fac?: boolean
+    ape_sub_dec_fac?: boolean
+    cor_sub_dec_fac?: boolean
+    url_img_sub_dec_fac?: boolean
   }, ExtArgs["result"]["facultad"]>
 
   export type facultadSelectScalar = {
@@ -9759,9 +17485,18 @@ export namespace Prisma {
     des_fac?: boolean
     mis_fac?: boolean
     vis_fac?: boolean
+    fec_cre_fac?: boolean
+    nom_dec_fac?: boolean
+    ape_dec_fac?: boolean
+    cor_dec_fac?: boolean
+    url_img_dec_fac?: boolean
+    nom_sub_dec_fac?: boolean
+    ape_sub_dec_fac?: boolean
+    cor_sub_dec_fac?: boolean
+    url_img_sub_dec_fac?: boolean
   }
 
-  export type facultadOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_fac" | "nom_fac" | "des_fac" | "mis_fac" | "vis_fac", ExtArgs["result"]["facultad"]>
+  export type facultadOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_fac" | "nom_fac" | "des_fac" | "mis_fac" | "vis_fac" | "fec_cre_fac" | "nom_dec_fac" | "ape_dec_fac" | "cor_dec_fac" | "url_img_dec_fac" | "nom_sub_dec_fac" | "ape_sub_dec_fac" | "cor_sub_dec_fac" | "url_img_sub_dec_fac", ExtArgs["result"]["facultad"]>
   export type facultadInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     carreras?: boolean | facultad$carrerasArgs<ExtArgs>
     _count?: boolean | FacultadCountOutputTypeDefaultArgs<ExtArgs>
@@ -9780,6 +17515,15 @@ export namespace Prisma {
       des_fac: string
       mis_fac: string
       vis_fac: string
+      fec_cre_fac: Date
+      nom_dec_fac: string
+      ape_dec_fac: string
+      cor_dec_fac: string
+      url_img_dec_fac: string
+      nom_sub_dec_fac: string
+      ape_sub_dec_fac: string
+      cor_sub_dec_fac: string
+      url_img_sub_dec_fac: string
     }, ExtArgs["result"]["facultad"]>
     composites: {}
   }
@@ -10209,6 +17953,15 @@ export namespace Prisma {
     readonly des_fac: FieldRef<"facultad", 'String'>
     readonly mis_fac: FieldRef<"facultad", 'String'>
     readonly vis_fac: FieldRef<"facultad", 'String'>
+    readonly fec_cre_fac: FieldRef<"facultad", 'DateTime'>
+    readonly nom_dec_fac: FieldRef<"facultad", 'String'>
+    readonly ape_dec_fac: FieldRef<"facultad", 'String'>
+    readonly cor_dec_fac: FieldRef<"facultad", 'String'>
+    readonly url_img_dec_fac: FieldRef<"facultad", 'String'>
+    readonly nom_sub_dec_fac: FieldRef<"facultad", 'String'>
+    readonly ape_sub_dec_fac: FieldRef<"facultad", 'String'>
+    readonly cor_sub_dec_fac: FieldRef<"facultad", 'String'>
+    readonly url_img_sub_dec_fac: FieldRef<"facultad", 'String'>
   }
     
 
@@ -10658,27 +18411,92 @@ export namespace Prisma {
     ced_usu: 'ced_usu',
     nom_usu: 'nom_usu',
     ape_usu: 'ape_usu',
-    cor_usu: 'cor_usu',
-    con_usu: 'con_usu',
     cel_usu: 'cel_usu',
-    rol_usu: 'rol_usu',
     fec_cre_usu: 'fec_cre_usu',
     com_usu: 'com_usu',
-    id_car_est: 'id_car_est'
+    id_car_est: 'id_car_est',
+    img_per_usu: 'img_per_usu'
   };
 
   export type UsuarioScalarFieldEnum = (typeof UsuarioScalarFieldEnum)[keyof typeof UsuarioScalarFieldEnum]
 
 
+  export const Comprobante_pagoScalarFieldEnum: {
+    id_com_pag: 'id_com_pag',
+    id_ins_per: 'id_ins_per',
+    url_com_pag: 'url_com_pag',
+    est_com_pag: 'est_com_pag',
+    fec_sub_com_pag: 'fec_sub_com_pag',
+    fec_val_com_pag: 'fec_val_com_pag',
+    id_adm_val_com_pag: 'id_adm_val_com_pag',
+    fec_pag_ins: 'fec_pag_ins'
+  };
+
+  export type Comprobante_pagoScalarFieldEnum = (typeof Comprobante_pagoScalarFieldEnum)[keyof typeof Comprobante_pagoScalarFieldEnum]
+
+
+  export const Carta_motivacionScalarFieldEnum: {
+    id_car_mot: 'id_car_mot',
+    id_ins_per: 'id_ins_per',
+    con_car_mot: 'con_car_mot',
+    est_car_mot: 'est_car_mot',
+    fec_sub_car_mot: 'fec_sub_car_mot',
+    fec_val_car_mot: 'fec_val_car_mot',
+    id_adm_val_car_mot: 'id_adm_val_car_mot'
+  };
+
+  export type Carta_motivacionScalarFieldEnum = (typeof Carta_motivacionScalarFieldEnum)[keyof typeof Carta_motivacionScalarFieldEnum]
+
+
+  export const Observacion_inscripcionScalarFieldEnum: {
+    id_obs_ins: 'id_obs_ins',
+    id_ins_per: 'id_ins_per',
+    obs_ins: 'obs_ins',
+    fec_cre_obs: 'fec_cre_obs',
+    id_adm_cre_obs: 'id_adm_cre_obs'
+  };
+
+  export type Observacion_inscripcionScalarFieldEnum = (typeof Observacion_inscripcionScalarFieldEnum)[keyof typeof Observacion_inscripcionScalarFieldEnum]
+
+
+  export const CuentaScalarFieldEnum: {
+    id_cue: 'id_cue',
+    id_usu_per: 'id_usu_per',
+    cor_usu: 'cor_usu',
+    con_usu: 'con_usu',
+    fec_cre_cue: 'fec_cre_cue',
+    rol_usu: 'rol_usu'
+  };
+
+  export type CuentaScalarFieldEnum = (typeof CuentaScalarFieldEnum)[keyof typeof CuentaScalarFieldEnum]
+
+
   export const CarreraScalarFieldEnum: {
     id_car: 'id_car',
     nom_car: 'nom_car',
+    des_car: 'des_car',
+    dur_sem_car: 'dur_sem_car',
+    mod_car: 'mod_car',
+    ico_car: 'ico_car',
     est_car: 'est_car',
     fec_cre_car: 'fec_cre_car',
-    id_fac_per: 'id_fac_per'
+    id_fac_per: 'id_fac_per',
+    id_coo_per: 'id_coo_per'
   };
 
   export type CarreraScalarFieldEnum = (typeof CarreraScalarFieldEnum)[keyof typeof CarreraScalarFieldEnum]
+
+
+  export const CoordinadorScalarFieldEnum: {
+    id_coo: 'id_coo',
+    nom_coo: 'nom_coo',
+    ape_coo: 'ape_coo',
+    cor_coo: 'cor_coo',
+    url_img_coo: 'url_img_coo',
+    tit_coo: 'tit_coo'
+  };
+
+  export type CoordinadorScalarFieldEnum = (typeof CoordinadorScalarFieldEnum)[keyof typeof CoordinadorScalarFieldEnum]
 
 
   export const EventoScalarFieldEnum: {
@@ -10690,10 +18508,11 @@ export namespace Prisma {
     val_eve: 'val_eve',
     est_eve: 'est_eve',
     fec_cre_eve: 'fec_cre_eve',
-    img_por_eve: 'img_por_eve',
     dur_hor_eve: 'dur_hor_eve',
+    img_por_eve: 'img_por_eve',
     por_min_asi_eve: 'por_min_asi_eve',
-    fec_fin_eve: 'fec_fin_eve'
+    fec_fin_eve: 'fec_fin_eve',
+    id_cue_cre_eve: 'id_cue_cre_eve'
   };
 
   export type EventoScalarFieldEnum = (typeof EventoScalarFieldEnum)[keyof typeof EventoScalarFieldEnum]
@@ -10719,13 +18538,12 @@ export namespace Prisma {
 
   export const InscripcionScalarFieldEnum: {
     id_ins: 'id_ins',
-    id_usu_ins: 'id_usu_ins',
+    id_cor_ins: 'id_cor_ins',
     id_eve_ins: 'id_eve_ins',
     est_ins: 'est_ins',
     fec_ins: 'fec_ins',
-    fec_pag_ins: 'fec_pag_ins',
-    cer_eve_env: 'cer_eve_env',
-    car_mot_usu: 'car_mot_usu'
+    usu_apr_cer: 'usu_apr_cer',
+    por_asi_fin_usu: 'por_asi_fin_usu'
   };
 
   export type InscripcionScalarFieldEnum = (typeof InscripcionScalarFieldEnum)[keyof typeof InscripcionScalarFieldEnum]
@@ -10733,11 +18551,22 @@ export namespace Prisma {
 
   export const Inscripcion_cursoScalarFieldEnum: {
     id_ins_cur: 'id_ins_cur',
-    not_fin_usu: 'not_fin_usu',
-    por_asi_fin_usu: 'por_asi_fin_usu'
+    not_fin_usu: 'not_fin_usu'
   };
 
   export type Inscripcion_cursoScalarFieldEnum = (typeof Inscripcion_cursoScalarFieldEnum)[keyof typeof Inscripcion_cursoScalarFieldEnum]
+
+
+  export const CertificadoScalarFieldEnum: {
+    id_cer: 'id_cer',
+    id_ins_per: 'id_ins_per',
+    url_cer: 'url_cer',
+    tip_cer: 'tip_cer',
+    fec_gen_cer: 'fec_gen_cer',
+    cod_val_cer: 'cod_val_cer'
+  };
+
+  export type CertificadoScalarFieldEnum = (typeof CertificadoScalarFieldEnum)[keyof typeof CertificadoScalarFieldEnum]
 
 
   export const FacultadScalarFieldEnum: {
@@ -10745,7 +18574,16 @@ export namespace Prisma {
     nom_fac: 'nom_fac',
     des_fac: 'des_fac',
     mis_fac: 'mis_fac',
-    vis_fac: 'vis_fac'
+    vis_fac: 'vis_fac',
+    fec_cre_fac: 'fec_cre_fac',
+    nom_dec_fac: 'nom_dec_fac',
+    ape_dec_fac: 'ape_dec_fac',
+    cor_dec_fac: 'cor_dec_fac',
+    url_img_dec_fac: 'url_img_dec_fac',
+    nom_sub_dec_fac: 'nom_sub_dec_fac',
+    ape_sub_dec_fac: 'ape_sub_dec_fac',
+    cor_sub_dec_fac: 'cor_sub_dec_fac',
+    url_img_sub_dec_fac: 'url_img_sub_dec_fac'
   };
 
   export type FacultadScalarFieldEnum = (typeof FacultadScalarFieldEnum)[keyof typeof FacultadScalarFieldEnum]
@@ -10795,6 +18633,34 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'DateTime'
+   */
+  export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
+    
+
+
+  /**
+   * Reference to a field of type 'DateTime[]'
+   */
+  export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'estado_validacion'
+   */
+  export type Enumestado_validacionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'estado_validacion'>
+    
+
+
+  /**
+   * Reference to a field of type 'estado_validacion[]'
+   */
+  export type ListEnumestado_validacionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'estado_validacion[]'>
+    
+
+
+  /**
    * Reference to a field of type 'rol_usuario'
    */
   export type Enumrol_usuarioFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'rol_usuario'>
@@ -10809,16 +18675,16 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'DateTime'
+   * Reference to a field of type 'Int'
    */
-  export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
+  export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
     
 
 
   /**
-   * Reference to a field of type 'DateTime[]'
+   * Reference to a field of type 'Int[]'
    */
-  export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
     
 
 
@@ -10872,20 +18738,6 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'Int'
-   */
-  export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
-    
-
-
-  /**
-   * Reference to a field of type 'Int[]'
-   */
-  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
-    
-
-
-  /**
    * Reference to a field of type 'estado_inscripcion'
    */
   export type Enumestado_inscripcionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'estado_inscripcion'>
@@ -10896,6 +18748,20 @@ export namespace Prisma {
    * Reference to a field of type 'estado_inscripcion[]'
    */
   export type ListEnumestado_inscripcionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'estado_inscripcion[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'tipo_certificado'
+   */
+  export type Enumtipo_certificadoFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'tipo_certificado'>
+    
+
+
+  /**
+   * Reference to a field of type 'tipo_certificado[]'
+   */
+  export type ListEnumtipo_certificadoFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'tipo_certificado[]'>
     
   /**
    * Deep Input Types
@@ -10910,15 +18776,13 @@ export namespace Prisma {
     ced_usu?: StringFilter<"usuario"> | string
     nom_usu?: StringFilter<"usuario"> | string
     ape_usu?: StringFilter<"usuario"> | string
-    cor_usu?: StringFilter<"usuario"> | string
-    con_usu?: StringFilter<"usuario"> | string
     cel_usu?: StringFilter<"usuario"> | string
-    rol_usu?: Enumrol_usuarioFilter<"usuario"> | $Enums.rol_usuario
     fec_cre_usu?: DateTimeFilter<"usuario"> | Date | string
     com_usu?: StringNullableFilter<"usuario"> | string | null
     id_car_est?: StringNullableFilter<"usuario"> | string | null
+    img_per_usu?: StringNullableFilter<"usuario"> | string | null
     carrera?: XOR<CarreraNullableScalarRelationFilter, carreraWhereInput> | null
-    inscripciones?: InscripcionListRelationFilter
+    cuentas?: CuentaListRelationFilter
   }
 
   export type usuarioOrderByWithRelationInput = {
@@ -10926,48 +18790,42 @@ export namespace Prisma {
     ced_usu?: SortOrder
     nom_usu?: SortOrder
     ape_usu?: SortOrder
-    cor_usu?: SortOrder
-    con_usu?: SortOrder
     cel_usu?: SortOrder
-    rol_usu?: SortOrder
     fec_cre_usu?: SortOrder
     com_usu?: SortOrderInput | SortOrder
     id_car_est?: SortOrderInput | SortOrder
+    img_per_usu?: SortOrderInput | SortOrder
     carrera?: carreraOrderByWithRelationInput
-    inscripciones?: inscripcionOrderByRelationAggregateInput
+    cuentas?: cuentaOrderByRelationAggregateInput
   }
 
   export type usuarioWhereUniqueInput = Prisma.AtLeast<{
     id_usu?: string
     ced_usu?: string
-    cor_usu?: string
     AND?: usuarioWhereInput | usuarioWhereInput[]
     OR?: usuarioWhereInput[]
     NOT?: usuarioWhereInput | usuarioWhereInput[]
     nom_usu?: StringFilter<"usuario"> | string
     ape_usu?: StringFilter<"usuario"> | string
-    con_usu?: StringFilter<"usuario"> | string
     cel_usu?: StringFilter<"usuario"> | string
-    rol_usu?: Enumrol_usuarioFilter<"usuario"> | $Enums.rol_usuario
     fec_cre_usu?: DateTimeFilter<"usuario"> | Date | string
     com_usu?: StringNullableFilter<"usuario"> | string | null
     id_car_est?: StringNullableFilter<"usuario"> | string | null
+    img_per_usu?: StringNullableFilter<"usuario"> | string | null
     carrera?: XOR<CarreraNullableScalarRelationFilter, carreraWhereInput> | null
-    inscripciones?: InscripcionListRelationFilter
-  }, "id_usu" | "ced_usu" | "cor_usu">
+    cuentas?: CuentaListRelationFilter
+  }, "id_usu" | "ced_usu">
 
   export type usuarioOrderByWithAggregationInput = {
     id_usu?: SortOrder
     ced_usu?: SortOrder
     nom_usu?: SortOrder
     ape_usu?: SortOrder
-    cor_usu?: SortOrder
-    con_usu?: SortOrder
     cel_usu?: SortOrder
-    rol_usu?: SortOrder
     fec_cre_usu?: SortOrder
     com_usu?: SortOrderInput | SortOrder
     id_car_est?: SortOrderInput | SortOrder
+    img_per_usu?: SortOrderInput | SortOrder
     _count?: usuarioCountOrderByAggregateInput
     _max?: usuarioMaxOrderByAggregateInput
     _min?: usuarioMinOrderByAggregateInput
@@ -10981,13 +18839,285 @@ export namespace Prisma {
     ced_usu?: StringWithAggregatesFilter<"usuario"> | string
     nom_usu?: StringWithAggregatesFilter<"usuario"> | string
     ape_usu?: StringWithAggregatesFilter<"usuario"> | string
-    cor_usu?: StringWithAggregatesFilter<"usuario"> | string
-    con_usu?: StringWithAggregatesFilter<"usuario"> | string
     cel_usu?: StringWithAggregatesFilter<"usuario"> | string
-    rol_usu?: Enumrol_usuarioWithAggregatesFilter<"usuario"> | $Enums.rol_usuario
     fec_cre_usu?: DateTimeWithAggregatesFilter<"usuario"> | Date | string
     com_usu?: StringNullableWithAggregatesFilter<"usuario"> | string | null
     id_car_est?: StringNullableWithAggregatesFilter<"usuario"> | string | null
+    img_per_usu?: StringNullableWithAggregatesFilter<"usuario"> | string | null
+  }
+
+  export type comprobante_pagoWhereInput = {
+    AND?: comprobante_pagoWhereInput | comprobante_pagoWhereInput[]
+    OR?: comprobante_pagoWhereInput[]
+    NOT?: comprobante_pagoWhereInput | comprobante_pagoWhereInput[]
+    id_com_pag?: StringFilter<"comprobante_pago"> | string
+    id_ins_per?: StringFilter<"comprobante_pago"> | string
+    url_com_pag?: StringFilter<"comprobante_pago"> | string
+    est_com_pag?: Enumestado_validacionFilter<"comprobante_pago"> | $Enums.estado_validacion
+    fec_sub_com_pag?: DateTimeFilter<"comprobante_pago"> | Date | string
+    fec_val_com_pag?: DateTimeNullableFilter<"comprobante_pago"> | Date | string | null
+    id_adm_val_com_pag?: StringNullableFilter<"comprobante_pago"> | string | null
+    fec_pag_ins?: DateTimeNullableFilter<"comprobante_pago"> | Date | string | null
+    admin?: XOR<CuentaNullableScalarRelationFilter, cuentaWhereInput> | null
+    inscripcion?: XOR<InscripcionScalarRelationFilter, inscripcionWhereInput>
+  }
+
+  export type comprobante_pagoOrderByWithRelationInput = {
+    id_com_pag?: SortOrder
+    id_ins_per?: SortOrder
+    url_com_pag?: SortOrder
+    est_com_pag?: SortOrder
+    fec_sub_com_pag?: SortOrder
+    fec_val_com_pag?: SortOrderInput | SortOrder
+    id_adm_val_com_pag?: SortOrderInput | SortOrder
+    fec_pag_ins?: SortOrderInput | SortOrder
+    admin?: cuentaOrderByWithRelationInput
+    inscripcion?: inscripcionOrderByWithRelationInput
+  }
+
+  export type comprobante_pagoWhereUniqueInput = Prisma.AtLeast<{
+    id_com_pag?: string
+    AND?: comprobante_pagoWhereInput | comprobante_pagoWhereInput[]
+    OR?: comprobante_pagoWhereInput[]
+    NOT?: comprobante_pagoWhereInput | comprobante_pagoWhereInput[]
+    id_ins_per?: StringFilter<"comprobante_pago"> | string
+    url_com_pag?: StringFilter<"comprobante_pago"> | string
+    est_com_pag?: Enumestado_validacionFilter<"comprobante_pago"> | $Enums.estado_validacion
+    fec_sub_com_pag?: DateTimeFilter<"comprobante_pago"> | Date | string
+    fec_val_com_pag?: DateTimeNullableFilter<"comprobante_pago"> | Date | string | null
+    id_adm_val_com_pag?: StringNullableFilter<"comprobante_pago"> | string | null
+    fec_pag_ins?: DateTimeNullableFilter<"comprobante_pago"> | Date | string | null
+    admin?: XOR<CuentaNullableScalarRelationFilter, cuentaWhereInput> | null
+    inscripcion?: XOR<InscripcionScalarRelationFilter, inscripcionWhereInput>
+  }, "id_com_pag">
+
+  export type comprobante_pagoOrderByWithAggregationInput = {
+    id_com_pag?: SortOrder
+    id_ins_per?: SortOrder
+    url_com_pag?: SortOrder
+    est_com_pag?: SortOrder
+    fec_sub_com_pag?: SortOrder
+    fec_val_com_pag?: SortOrderInput | SortOrder
+    id_adm_val_com_pag?: SortOrderInput | SortOrder
+    fec_pag_ins?: SortOrderInput | SortOrder
+    _count?: comprobante_pagoCountOrderByAggregateInput
+    _max?: comprobante_pagoMaxOrderByAggregateInput
+    _min?: comprobante_pagoMinOrderByAggregateInput
+  }
+
+  export type comprobante_pagoScalarWhereWithAggregatesInput = {
+    AND?: comprobante_pagoScalarWhereWithAggregatesInput | comprobante_pagoScalarWhereWithAggregatesInput[]
+    OR?: comprobante_pagoScalarWhereWithAggregatesInput[]
+    NOT?: comprobante_pagoScalarWhereWithAggregatesInput | comprobante_pagoScalarWhereWithAggregatesInput[]
+    id_com_pag?: StringWithAggregatesFilter<"comprobante_pago"> | string
+    id_ins_per?: StringWithAggregatesFilter<"comprobante_pago"> | string
+    url_com_pag?: StringWithAggregatesFilter<"comprobante_pago"> | string
+    est_com_pag?: Enumestado_validacionWithAggregatesFilter<"comprobante_pago"> | $Enums.estado_validacion
+    fec_sub_com_pag?: DateTimeWithAggregatesFilter<"comprobante_pago"> | Date | string
+    fec_val_com_pag?: DateTimeNullableWithAggregatesFilter<"comprobante_pago"> | Date | string | null
+    id_adm_val_com_pag?: StringNullableWithAggregatesFilter<"comprobante_pago"> | string | null
+    fec_pag_ins?: DateTimeNullableWithAggregatesFilter<"comprobante_pago"> | Date | string | null
+  }
+
+  export type carta_motivacionWhereInput = {
+    AND?: carta_motivacionWhereInput | carta_motivacionWhereInput[]
+    OR?: carta_motivacionWhereInput[]
+    NOT?: carta_motivacionWhereInput | carta_motivacionWhereInput[]
+    id_car_mot?: StringFilter<"carta_motivacion"> | string
+    id_ins_per?: StringFilter<"carta_motivacion"> | string
+    con_car_mot?: StringFilter<"carta_motivacion"> | string
+    est_car_mot?: Enumestado_validacionFilter<"carta_motivacion"> | $Enums.estado_validacion
+    fec_sub_car_mot?: DateTimeFilter<"carta_motivacion"> | Date | string
+    fec_val_car_mot?: DateTimeNullableFilter<"carta_motivacion"> | Date | string | null
+    id_adm_val_car_mot?: StringNullableFilter<"carta_motivacion"> | string | null
+    admin?: XOR<CuentaNullableScalarRelationFilter, cuentaWhereInput> | null
+    inscripcion?: XOR<InscripcionScalarRelationFilter, inscripcionWhereInput>
+  }
+
+  export type carta_motivacionOrderByWithRelationInput = {
+    id_car_mot?: SortOrder
+    id_ins_per?: SortOrder
+    con_car_mot?: SortOrder
+    est_car_mot?: SortOrder
+    fec_sub_car_mot?: SortOrder
+    fec_val_car_mot?: SortOrderInput | SortOrder
+    id_adm_val_car_mot?: SortOrderInput | SortOrder
+    admin?: cuentaOrderByWithRelationInput
+    inscripcion?: inscripcionOrderByWithRelationInput
+  }
+
+  export type carta_motivacionWhereUniqueInput = Prisma.AtLeast<{
+    id_car_mot?: string
+    AND?: carta_motivacionWhereInput | carta_motivacionWhereInput[]
+    OR?: carta_motivacionWhereInput[]
+    NOT?: carta_motivacionWhereInput | carta_motivacionWhereInput[]
+    id_ins_per?: StringFilter<"carta_motivacion"> | string
+    con_car_mot?: StringFilter<"carta_motivacion"> | string
+    est_car_mot?: Enumestado_validacionFilter<"carta_motivacion"> | $Enums.estado_validacion
+    fec_sub_car_mot?: DateTimeFilter<"carta_motivacion"> | Date | string
+    fec_val_car_mot?: DateTimeNullableFilter<"carta_motivacion"> | Date | string | null
+    id_adm_val_car_mot?: StringNullableFilter<"carta_motivacion"> | string | null
+    admin?: XOR<CuentaNullableScalarRelationFilter, cuentaWhereInput> | null
+    inscripcion?: XOR<InscripcionScalarRelationFilter, inscripcionWhereInput>
+  }, "id_car_mot">
+
+  export type carta_motivacionOrderByWithAggregationInput = {
+    id_car_mot?: SortOrder
+    id_ins_per?: SortOrder
+    con_car_mot?: SortOrder
+    est_car_mot?: SortOrder
+    fec_sub_car_mot?: SortOrder
+    fec_val_car_mot?: SortOrderInput | SortOrder
+    id_adm_val_car_mot?: SortOrderInput | SortOrder
+    _count?: carta_motivacionCountOrderByAggregateInput
+    _max?: carta_motivacionMaxOrderByAggregateInput
+    _min?: carta_motivacionMinOrderByAggregateInput
+  }
+
+  export type carta_motivacionScalarWhereWithAggregatesInput = {
+    AND?: carta_motivacionScalarWhereWithAggregatesInput | carta_motivacionScalarWhereWithAggregatesInput[]
+    OR?: carta_motivacionScalarWhereWithAggregatesInput[]
+    NOT?: carta_motivacionScalarWhereWithAggregatesInput | carta_motivacionScalarWhereWithAggregatesInput[]
+    id_car_mot?: StringWithAggregatesFilter<"carta_motivacion"> | string
+    id_ins_per?: StringWithAggregatesFilter<"carta_motivacion"> | string
+    con_car_mot?: StringWithAggregatesFilter<"carta_motivacion"> | string
+    est_car_mot?: Enumestado_validacionWithAggregatesFilter<"carta_motivacion"> | $Enums.estado_validacion
+    fec_sub_car_mot?: DateTimeWithAggregatesFilter<"carta_motivacion"> | Date | string
+    fec_val_car_mot?: DateTimeNullableWithAggregatesFilter<"carta_motivacion"> | Date | string | null
+    id_adm_val_car_mot?: StringNullableWithAggregatesFilter<"carta_motivacion"> | string | null
+  }
+
+  export type observacion_inscripcionWhereInput = {
+    AND?: observacion_inscripcionWhereInput | observacion_inscripcionWhereInput[]
+    OR?: observacion_inscripcionWhereInput[]
+    NOT?: observacion_inscripcionWhereInput | observacion_inscripcionWhereInput[]
+    id_obs_ins?: StringFilter<"observacion_inscripcion"> | string
+    id_ins_per?: StringFilter<"observacion_inscripcion"> | string
+    obs_ins?: StringFilter<"observacion_inscripcion"> | string
+    fec_cre_obs?: DateTimeFilter<"observacion_inscripcion"> | Date | string
+    id_adm_cre_obs?: StringNullableFilter<"observacion_inscripcion"> | string | null
+    inscripcion?: XOR<InscripcionScalarRelationFilter, inscripcionWhereInput>
+    admin_creador?: XOR<CuentaNullableScalarRelationFilter, cuentaWhereInput> | null
+  }
+
+  export type observacion_inscripcionOrderByWithRelationInput = {
+    id_obs_ins?: SortOrder
+    id_ins_per?: SortOrder
+    obs_ins?: SortOrder
+    fec_cre_obs?: SortOrder
+    id_adm_cre_obs?: SortOrderInput | SortOrder
+    inscripcion?: inscripcionOrderByWithRelationInput
+    admin_creador?: cuentaOrderByWithRelationInput
+  }
+
+  export type observacion_inscripcionWhereUniqueInput = Prisma.AtLeast<{
+    id_obs_ins?: string
+    id_ins_per?: string
+    AND?: observacion_inscripcionWhereInput | observacion_inscripcionWhereInput[]
+    OR?: observacion_inscripcionWhereInput[]
+    NOT?: observacion_inscripcionWhereInput | observacion_inscripcionWhereInput[]
+    obs_ins?: StringFilter<"observacion_inscripcion"> | string
+    fec_cre_obs?: DateTimeFilter<"observacion_inscripcion"> | Date | string
+    id_adm_cre_obs?: StringNullableFilter<"observacion_inscripcion"> | string | null
+    inscripcion?: XOR<InscripcionScalarRelationFilter, inscripcionWhereInput>
+    admin_creador?: XOR<CuentaNullableScalarRelationFilter, cuentaWhereInput> | null
+  }, "id_obs_ins" | "id_ins_per">
+
+  export type observacion_inscripcionOrderByWithAggregationInput = {
+    id_obs_ins?: SortOrder
+    id_ins_per?: SortOrder
+    obs_ins?: SortOrder
+    fec_cre_obs?: SortOrder
+    id_adm_cre_obs?: SortOrderInput | SortOrder
+    _count?: observacion_inscripcionCountOrderByAggregateInput
+    _max?: observacion_inscripcionMaxOrderByAggregateInput
+    _min?: observacion_inscripcionMinOrderByAggregateInput
+  }
+
+  export type observacion_inscripcionScalarWhereWithAggregatesInput = {
+    AND?: observacion_inscripcionScalarWhereWithAggregatesInput | observacion_inscripcionScalarWhereWithAggregatesInput[]
+    OR?: observacion_inscripcionScalarWhereWithAggregatesInput[]
+    NOT?: observacion_inscripcionScalarWhereWithAggregatesInput | observacion_inscripcionScalarWhereWithAggregatesInput[]
+    id_obs_ins?: StringWithAggregatesFilter<"observacion_inscripcion"> | string
+    id_ins_per?: StringWithAggregatesFilter<"observacion_inscripcion"> | string
+    obs_ins?: StringWithAggregatesFilter<"observacion_inscripcion"> | string
+    fec_cre_obs?: DateTimeWithAggregatesFilter<"observacion_inscripcion"> | Date | string
+    id_adm_cre_obs?: StringNullableWithAggregatesFilter<"observacion_inscripcion"> | string | null
+  }
+
+  export type cuentaWhereInput = {
+    AND?: cuentaWhereInput | cuentaWhereInput[]
+    OR?: cuentaWhereInput[]
+    NOT?: cuentaWhereInput | cuentaWhereInput[]
+    id_cue?: StringFilter<"cuenta"> | string
+    id_usu_per?: StringFilter<"cuenta"> | string
+    cor_usu?: StringFilter<"cuenta"> | string
+    con_usu?: StringFilter<"cuenta"> | string
+    fec_cre_cue?: DateTimeFilter<"cuenta"> | Date | string
+    rol_usu?: Enumrol_usuarioFilter<"cuenta"> | $Enums.rol_usuario
+    usuario?: XOR<UsuarioScalarRelationFilter, usuarioWhereInput>
+    inscripciones?: InscripcionListRelationFilter
+    cartas_motivacion?: Carta_motivacionListRelationFilter
+    comprobantes_pago?: Comprobante_pagoListRelationFilter
+    eventos?: EventoListRelationFilter
+    observaciones_creadas?: Observacion_inscripcionListRelationFilter
+  }
+
+  export type cuentaOrderByWithRelationInput = {
+    id_cue?: SortOrder
+    id_usu_per?: SortOrder
+    cor_usu?: SortOrder
+    con_usu?: SortOrder
+    fec_cre_cue?: SortOrder
+    rol_usu?: SortOrder
+    usuario?: usuarioOrderByWithRelationInput
+    inscripciones?: inscripcionOrderByRelationAggregateInput
+    cartas_motivacion?: carta_motivacionOrderByRelationAggregateInput
+    comprobantes_pago?: comprobante_pagoOrderByRelationAggregateInput
+    eventos?: eventoOrderByRelationAggregateInput
+    observaciones_creadas?: observacion_inscripcionOrderByRelationAggregateInput
+  }
+
+  export type cuentaWhereUniqueInput = Prisma.AtLeast<{
+    id_cue?: string
+    cor_usu?: string
+    AND?: cuentaWhereInput | cuentaWhereInput[]
+    OR?: cuentaWhereInput[]
+    NOT?: cuentaWhereInput | cuentaWhereInput[]
+    id_usu_per?: StringFilter<"cuenta"> | string
+    con_usu?: StringFilter<"cuenta"> | string
+    fec_cre_cue?: DateTimeFilter<"cuenta"> | Date | string
+    rol_usu?: Enumrol_usuarioFilter<"cuenta"> | $Enums.rol_usuario
+    usuario?: XOR<UsuarioScalarRelationFilter, usuarioWhereInput>
+    inscripciones?: InscripcionListRelationFilter
+    cartas_motivacion?: Carta_motivacionListRelationFilter
+    comprobantes_pago?: Comprobante_pagoListRelationFilter
+    eventos?: EventoListRelationFilter
+    observaciones_creadas?: Observacion_inscripcionListRelationFilter
+  }, "id_cue" | "cor_usu">
+
+  export type cuentaOrderByWithAggregationInput = {
+    id_cue?: SortOrder
+    id_usu_per?: SortOrder
+    cor_usu?: SortOrder
+    con_usu?: SortOrder
+    fec_cre_cue?: SortOrder
+    rol_usu?: SortOrder
+    _count?: cuentaCountOrderByAggregateInput
+    _max?: cuentaMaxOrderByAggregateInput
+    _min?: cuentaMinOrderByAggregateInput
+  }
+
+  export type cuentaScalarWhereWithAggregatesInput = {
+    AND?: cuentaScalarWhereWithAggregatesInput | cuentaScalarWhereWithAggregatesInput[]
+    OR?: cuentaScalarWhereWithAggregatesInput[]
+    NOT?: cuentaScalarWhereWithAggregatesInput | cuentaScalarWhereWithAggregatesInput[]
+    id_cue?: StringWithAggregatesFilter<"cuenta"> | string
+    id_usu_per?: StringWithAggregatesFilter<"cuenta"> | string
+    cor_usu?: StringWithAggregatesFilter<"cuenta"> | string
+    con_usu?: StringWithAggregatesFilter<"cuenta"> | string
+    fec_cre_cue?: DateTimeWithAggregatesFilter<"cuenta"> | Date | string
+    rol_usu?: Enumrol_usuarioWithAggregatesFilter<"cuenta"> | $Enums.rol_usuario
   }
 
   export type carreraWhereInput = {
@@ -10996,10 +19126,16 @@ export namespace Prisma {
     NOT?: carreraWhereInput | carreraWhereInput[]
     id_car?: StringFilter<"carrera"> | string
     nom_car?: StringFilter<"carrera"> | string
+    des_car?: StringFilter<"carrera"> | string
+    dur_sem_car?: IntFilter<"carrera"> | number
+    mod_car?: StringFilter<"carrera"> | string
+    ico_car?: StringFilter<"carrera"> | string
     est_car?: BoolFilter<"carrera"> | boolean
     fec_cre_car?: DateTimeFilter<"carrera"> | Date | string
     id_fac_per?: StringFilter<"carrera"> | string
+    id_coo_per?: StringNullableFilter<"carrera"> | string | null
     facultad?: XOR<FacultadScalarRelationFilter, facultadWhereInput>
+    coordinador?: XOR<CoordinadorNullableScalarRelationFilter, coordinadorWhereInput> | null
     usuario?: UsuarioListRelationFilter
     eventos?: Evento_carreraListRelationFilter
   }
@@ -11007,10 +19143,16 @@ export namespace Prisma {
   export type carreraOrderByWithRelationInput = {
     id_car?: SortOrder
     nom_car?: SortOrder
+    des_car?: SortOrder
+    dur_sem_car?: SortOrder
+    mod_car?: SortOrder
+    ico_car?: SortOrder
     est_car?: SortOrder
     fec_cre_car?: SortOrder
     id_fac_per?: SortOrder
+    id_coo_per?: SortOrderInput | SortOrder
     facultad?: facultadOrderByWithRelationInput
+    coordinador?: coordinadorOrderByWithRelationInput
     usuario?: usuarioOrderByRelationAggregateInput
     eventos?: evento_carreraOrderByRelationAggregateInput
   }
@@ -11021,10 +19163,16 @@ export namespace Prisma {
     AND?: carreraWhereInput | carreraWhereInput[]
     OR?: carreraWhereInput[]
     NOT?: carreraWhereInput | carreraWhereInput[]
+    des_car?: StringFilter<"carrera"> | string
+    dur_sem_car?: IntFilter<"carrera"> | number
+    mod_car?: StringFilter<"carrera"> | string
+    ico_car?: StringFilter<"carrera"> | string
     est_car?: BoolFilter<"carrera"> | boolean
     fec_cre_car?: DateTimeFilter<"carrera"> | Date | string
     id_fac_per?: StringFilter<"carrera"> | string
+    id_coo_per?: StringNullableFilter<"carrera"> | string | null
     facultad?: XOR<FacultadScalarRelationFilter, facultadWhereInput>
+    coordinador?: XOR<CoordinadorNullableScalarRelationFilter, coordinadorWhereInput> | null
     usuario?: UsuarioListRelationFilter
     eventos?: Evento_carreraListRelationFilter
   }, "id_car" | "nom_car">
@@ -11032,12 +19180,19 @@ export namespace Prisma {
   export type carreraOrderByWithAggregationInput = {
     id_car?: SortOrder
     nom_car?: SortOrder
+    des_car?: SortOrder
+    dur_sem_car?: SortOrder
+    mod_car?: SortOrder
+    ico_car?: SortOrder
     est_car?: SortOrder
     fec_cre_car?: SortOrder
     id_fac_per?: SortOrder
+    id_coo_per?: SortOrderInput | SortOrder
     _count?: carreraCountOrderByAggregateInput
+    _avg?: carreraAvgOrderByAggregateInput
     _max?: carreraMaxOrderByAggregateInput
     _min?: carreraMinOrderByAggregateInput
+    _sum?: carreraSumOrderByAggregateInput
   }
 
   export type carreraScalarWhereWithAggregatesInput = {
@@ -11046,9 +19201,74 @@ export namespace Prisma {
     NOT?: carreraScalarWhereWithAggregatesInput | carreraScalarWhereWithAggregatesInput[]
     id_car?: StringWithAggregatesFilter<"carrera"> | string
     nom_car?: StringWithAggregatesFilter<"carrera"> | string
+    des_car?: StringWithAggregatesFilter<"carrera"> | string
+    dur_sem_car?: IntWithAggregatesFilter<"carrera"> | number
+    mod_car?: StringWithAggregatesFilter<"carrera"> | string
+    ico_car?: StringWithAggregatesFilter<"carrera"> | string
     est_car?: BoolWithAggregatesFilter<"carrera"> | boolean
     fec_cre_car?: DateTimeWithAggregatesFilter<"carrera"> | Date | string
     id_fac_per?: StringWithAggregatesFilter<"carrera"> | string
+    id_coo_per?: StringNullableWithAggregatesFilter<"carrera"> | string | null
+  }
+
+  export type coordinadorWhereInput = {
+    AND?: coordinadorWhereInput | coordinadorWhereInput[]
+    OR?: coordinadorWhereInput[]
+    NOT?: coordinadorWhereInput | coordinadorWhereInput[]
+    id_coo?: StringFilter<"coordinador"> | string
+    nom_coo?: StringFilter<"coordinador"> | string
+    ape_coo?: StringFilter<"coordinador"> | string
+    cor_coo?: StringFilter<"coordinador"> | string
+    url_img_coo?: StringFilter<"coordinador"> | string
+    tit_coo?: StringFilter<"coordinador"> | string
+    carreras?: CarreraListRelationFilter
+  }
+
+  export type coordinadorOrderByWithRelationInput = {
+    id_coo?: SortOrder
+    nom_coo?: SortOrder
+    ape_coo?: SortOrder
+    cor_coo?: SortOrder
+    url_img_coo?: SortOrder
+    tit_coo?: SortOrder
+    carreras?: carreraOrderByRelationAggregateInput
+  }
+
+  export type coordinadorWhereUniqueInput = Prisma.AtLeast<{
+    id_coo?: string
+    cor_coo?: string
+    AND?: coordinadorWhereInput | coordinadorWhereInput[]
+    OR?: coordinadorWhereInput[]
+    NOT?: coordinadorWhereInput | coordinadorWhereInput[]
+    nom_coo?: StringFilter<"coordinador"> | string
+    ape_coo?: StringFilter<"coordinador"> | string
+    url_img_coo?: StringFilter<"coordinador"> | string
+    tit_coo?: StringFilter<"coordinador"> | string
+    carreras?: CarreraListRelationFilter
+  }, "id_coo" | "cor_coo">
+
+  export type coordinadorOrderByWithAggregationInput = {
+    id_coo?: SortOrder
+    nom_coo?: SortOrder
+    ape_coo?: SortOrder
+    cor_coo?: SortOrder
+    url_img_coo?: SortOrder
+    tit_coo?: SortOrder
+    _count?: coordinadorCountOrderByAggregateInput
+    _max?: coordinadorMaxOrderByAggregateInput
+    _min?: coordinadorMinOrderByAggregateInput
+  }
+
+  export type coordinadorScalarWhereWithAggregatesInput = {
+    AND?: coordinadorScalarWhereWithAggregatesInput | coordinadorScalarWhereWithAggregatesInput[]
+    OR?: coordinadorScalarWhereWithAggregatesInput[]
+    NOT?: coordinadorScalarWhereWithAggregatesInput | coordinadorScalarWhereWithAggregatesInput[]
+    id_coo?: StringWithAggregatesFilter<"coordinador"> | string
+    nom_coo?: StringWithAggregatesFilter<"coordinador"> | string
+    ape_coo?: StringWithAggregatesFilter<"coordinador"> | string
+    cor_coo?: StringWithAggregatesFilter<"coordinador"> | string
+    url_img_coo?: StringWithAggregatesFilter<"coordinador"> | string
+    tit_coo?: StringWithAggregatesFilter<"coordinador"> | string
   }
 
   export type eventoWhereInput = {
@@ -11063,13 +19283,15 @@ export namespace Prisma {
     val_eve?: FloatFilter<"evento"> | number
     est_eve?: Enumestado_eventoFilter<"evento"> | $Enums.estado_evento
     fec_cre_eve?: DateTimeFilter<"evento"> | Date | string
-    img_por_eve?: StringFilter<"evento"> | string
     dur_hor_eve?: IntFilter<"evento"> | number
+    img_por_eve?: StringFilter<"evento"> | string
     por_min_asi_eve?: FloatFilter<"evento"> | number
     fec_fin_eve?: DateTimeFilter<"evento"> | Date | string
+    id_cue_cre_eve?: StringFilter<"evento"> | string
     inscritos?: InscripcionListRelationFilter
     eventos_carrera?: Evento_carreraListRelationFilter
     eventos_curso?: XOR<Evento_cursoNullableScalarRelationFilter, evento_cursoWhereInput> | null
+    cuenta?: XOR<CuentaScalarRelationFilter, cuentaWhereInput>
   }
 
   export type eventoOrderByWithRelationInput = {
@@ -11081,13 +19303,15 @@ export namespace Prisma {
     val_eve?: SortOrder
     est_eve?: SortOrder
     fec_cre_eve?: SortOrder
-    img_por_eve?: SortOrder
     dur_hor_eve?: SortOrder
+    img_por_eve?: SortOrder
     por_min_asi_eve?: SortOrder
     fec_fin_eve?: SortOrder
+    id_cue_cre_eve?: SortOrder
     inscritos?: inscripcionOrderByRelationAggregateInput
     eventos_carrera?: evento_carreraOrderByRelationAggregateInput
     eventos_curso?: evento_cursoOrderByWithRelationInput
+    cuenta?: cuentaOrderByWithRelationInput
   }
 
   export type eventoWhereUniqueInput = Prisma.AtLeast<{
@@ -11102,13 +19326,15 @@ export namespace Prisma {
     val_eve?: FloatFilter<"evento"> | number
     est_eve?: Enumestado_eventoFilter<"evento"> | $Enums.estado_evento
     fec_cre_eve?: DateTimeFilter<"evento"> | Date | string
-    img_por_eve?: StringFilter<"evento"> | string
     dur_hor_eve?: IntFilter<"evento"> | number
+    img_por_eve?: StringFilter<"evento"> | string
     por_min_asi_eve?: FloatFilter<"evento"> | number
     fec_fin_eve?: DateTimeFilter<"evento"> | Date | string
+    id_cue_cre_eve?: StringFilter<"evento"> | string
     inscritos?: InscripcionListRelationFilter
     eventos_carrera?: Evento_carreraListRelationFilter
     eventos_curso?: XOR<Evento_cursoNullableScalarRelationFilter, evento_cursoWhereInput> | null
+    cuenta?: XOR<CuentaScalarRelationFilter, cuentaWhereInput>
   }, "id_eve">
 
   export type eventoOrderByWithAggregationInput = {
@@ -11120,10 +19346,11 @@ export namespace Prisma {
     val_eve?: SortOrder
     est_eve?: SortOrder
     fec_cre_eve?: SortOrder
-    img_por_eve?: SortOrder
     dur_hor_eve?: SortOrder
+    img_por_eve?: SortOrder
     por_min_asi_eve?: SortOrder
     fec_fin_eve?: SortOrder
+    id_cue_cre_eve?: SortOrder
     _count?: eventoCountOrderByAggregateInput
     _avg?: eventoAvgOrderByAggregateInput
     _max?: eventoMaxOrderByAggregateInput
@@ -11143,10 +19370,11 @@ export namespace Prisma {
     val_eve?: FloatWithAggregatesFilter<"evento"> | number
     est_eve?: Enumestado_eventoWithAggregatesFilter<"evento"> | $Enums.estado_evento
     fec_cre_eve?: DateTimeWithAggregatesFilter<"evento"> | Date | string
-    img_por_eve?: StringWithAggregatesFilter<"evento"> | string
     dur_hor_eve?: IntWithAggregatesFilter<"evento"> | number
+    img_por_eve?: StringWithAggregatesFilter<"evento"> | string
     por_min_asi_eve?: FloatWithAggregatesFilter<"evento"> | number
     fec_fin_eve?: DateTimeWithAggregatesFilter<"evento"> | Date | string
+    id_cue_cre_eve?: StringWithAggregatesFilter<"evento"> | string
   }
 
   export type evento_cursoWhereInput = {
@@ -11249,30 +19477,36 @@ export namespace Prisma {
     OR?: inscripcionWhereInput[]
     NOT?: inscripcionWhereInput | inscripcionWhereInput[]
     id_ins?: StringFilter<"inscripcion"> | string
-    id_usu_ins?: StringFilter<"inscripcion"> | string
+    id_cor_ins?: StringFilter<"inscripcion"> | string
     id_eve_ins?: StringFilter<"inscripcion"> | string
     est_ins?: Enumestado_inscripcionFilter<"inscripcion"> | $Enums.estado_inscripcion
     fec_ins?: DateTimeFilter<"inscripcion"> | Date | string
-    fec_pag_ins?: DateTimeNullableFilter<"inscripcion"> | Date | string | null
-    cer_eve_env?: BoolFilter<"inscripcion"> | boolean
-    car_mot_usu?: StringNullableFilter<"inscripcion"> | string | null
-    usuario?: XOR<UsuarioScalarRelationFilter, usuarioWhereInput>
+    usu_apr_cer?: BoolFilter<"inscripcion"> | boolean
+    por_asi_fin_usu?: FloatNullableFilter<"inscripcion"> | number | null
+    cuenta?: XOR<CuentaScalarRelationFilter, cuentaWhereInput>
     evento?: XOR<EventoScalarRelationFilter, eventoWhereInput>
     inscripcion_curso?: XOR<Inscripcion_cursoNullableScalarRelationFilter, inscripcion_cursoWhereInput> | null
+    comprobantes_pago?: Comprobante_pagoListRelationFilter
+    cartas_motivacion?: Carta_motivacionListRelationFilter
+    observacion?: XOR<Observacion_inscripcionNullableScalarRelationFilter, observacion_inscripcionWhereInput> | null
+    certificado?: XOR<CertificadoNullableScalarRelationFilter, certificadoWhereInput> | null
   }
 
   export type inscripcionOrderByWithRelationInput = {
     id_ins?: SortOrder
-    id_usu_ins?: SortOrder
+    id_cor_ins?: SortOrder
     id_eve_ins?: SortOrder
     est_ins?: SortOrder
     fec_ins?: SortOrder
-    fec_pag_ins?: SortOrderInput | SortOrder
-    cer_eve_env?: SortOrder
-    car_mot_usu?: SortOrderInput | SortOrder
-    usuario?: usuarioOrderByWithRelationInput
+    usu_apr_cer?: SortOrder
+    por_asi_fin_usu?: SortOrderInput | SortOrder
+    cuenta?: cuentaOrderByWithRelationInput
     evento?: eventoOrderByWithRelationInput
     inscripcion_curso?: inscripcion_cursoOrderByWithRelationInput
+    comprobantes_pago?: comprobante_pagoOrderByRelationAggregateInput
+    cartas_motivacion?: carta_motivacionOrderByRelationAggregateInput
+    observacion?: observacion_inscripcionOrderByWithRelationInput
+    certificado?: certificadoOrderByWithRelationInput
   }
 
   export type inscripcionWhereUniqueInput = Prisma.AtLeast<{
@@ -11280,30 +19514,34 @@ export namespace Prisma {
     AND?: inscripcionWhereInput | inscripcionWhereInput[]
     OR?: inscripcionWhereInput[]
     NOT?: inscripcionWhereInput | inscripcionWhereInput[]
-    id_usu_ins?: StringFilter<"inscripcion"> | string
+    id_cor_ins?: StringFilter<"inscripcion"> | string
     id_eve_ins?: StringFilter<"inscripcion"> | string
     est_ins?: Enumestado_inscripcionFilter<"inscripcion"> | $Enums.estado_inscripcion
     fec_ins?: DateTimeFilter<"inscripcion"> | Date | string
-    fec_pag_ins?: DateTimeNullableFilter<"inscripcion"> | Date | string | null
-    cer_eve_env?: BoolFilter<"inscripcion"> | boolean
-    car_mot_usu?: StringNullableFilter<"inscripcion"> | string | null
-    usuario?: XOR<UsuarioScalarRelationFilter, usuarioWhereInput>
+    usu_apr_cer?: BoolFilter<"inscripcion"> | boolean
+    por_asi_fin_usu?: FloatNullableFilter<"inscripcion"> | number | null
+    cuenta?: XOR<CuentaScalarRelationFilter, cuentaWhereInput>
     evento?: XOR<EventoScalarRelationFilter, eventoWhereInput>
     inscripcion_curso?: XOR<Inscripcion_cursoNullableScalarRelationFilter, inscripcion_cursoWhereInput> | null
+    comprobantes_pago?: Comprobante_pagoListRelationFilter
+    cartas_motivacion?: Carta_motivacionListRelationFilter
+    observacion?: XOR<Observacion_inscripcionNullableScalarRelationFilter, observacion_inscripcionWhereInput> | null
+    certificado?: XOR<CertificadoNullableScalarRelationFilter, certificadoWhereInput> | null
   }, "id_ins">
 
   export type inscripcionOrderByWithAggregationInput = {
     id_ins?: SortOrder
-    id_usu_ins?: SortOrder
+    id_cor_ins?: SortOrder
     id_eve_ins?: SortOrder
     est_ins?: SortOrder
     fec_ins?: SortOrder
-    fec_pag_ins?: SortOrderInput | SortOrder
-    cer_eve_env?: SortOrder
-    car_mot_usu?: SortOrderInput | SortOrder
+    usu_apr_cer?: SortOrder
+    por_asi_fin_usu?: SortOrderInput | SortOrder
     _count?: inscripcionCountOrderByAggregateInput
+    _avg?: inscripcionAvgOrderByAggregateInput
     _max?: inscripcionMaxOrderByAggregateInput
     _min?: inscripcionMinOrderByAggregateInput
+    _sum?: inscripcionSumOrderByAggregateInput
   }
 
   export type inscripcionScalarWhereWithAggregatesInput = {
@@ -11311,13 +19549,12 @@ export namespace Prisma {
     OR?: inscripcionScalarWhereWithAggregatesInput[]
     NOT?: inscripcionScalarWhereWithAggregatesInput | inscripcionScalarWhereWithAggregatesInput[]
     id_ins?: StringWithAggregatesFilter<"inscripcion"> | string
-    id_usu_ins?: StringWithAggregatesFilter<"inscripcion"> | string
+    id_cor_ins?: StringWithAggregatesFilter<"inscripcion"> | string
     id_eve_ins?: StringWithAggregatesFilter<"inscripcion"> | string
     est_ins?: Enumestado_inscripcionWithAggregatesFilter<"inscripcion"> | $Enums.estado_inscripcion
     fec_ins?: DateTimeWithAggregatesFilter<"inscripcion"> | Date | string
-    fec_pag_ins?: DateTimeNullableWithAggregatesFilter<"inscripcion"> | Date | string | null
-    cer_eve_env?: BoolWithAggregatesFilter<"inscripcion"> | boolean
-    car_mot_usu?: StringNullableWithAggregatesFilter<"inscripcion"> | string | null
+    usu_apr_cer?: BoolWithAggregatesFilter<"inscripcion"> | boolean
+    por_asi_fin_usu?: FloatNullableWithAggregatesFilter<"inscripcion"> | number | null
   }
 
   export type inscripcion_cursoWhereInput = {
@@ -11326,14 +19563,12 @@ export namespace Prisma {
     NOT?: inscripcion_cursoWhereInput | inscripcion_cursoWhereInput[]
     id_ins_cur?: StringFilter<"inscripcion_curso"> | string
     not_fin_usu?: FloatNullableFilter<"inscripcion_curso"> | number | null
-    por_asi_fin_usu?: FloatNullableFilter<"inscripcion_curso"> | number | null
     inscripcion?: XOR<InscripcionScalarRelationFilter, inscripcionWhereInput>
   }
 
   export type inscripcion_cursoOrderByWithRelationInput = {
     id_ins_cur?: SortOrder
     not_fin_usu?: SortOrderInput | SortOrder
-    por_asi_fin_usu?: SortOrderInput | SortOrder
     inscripcion?: inscripcionOrderByWithRelationInput
   }
 
@@ -11343,14 +19578,12 @@ export namespace Prisma {
     OR?: inscripcion_cursoWhereInput[]
     NOT?: inscripcion_cursoWhereInput | inscripcion_cursoWhereInput[]
     not_fin_usu?: FloatNullableFilter<"inscripcion_curso"> | number | null
-    por_asi_fin_usu?: FloatNullableFilter<"inscripcion_curso"> | number | null
     inscripcion?: XOR<InscripcionScalarRelationFilter, inscripcionWhereInput>
   }, "id_ins_cur">
 
   export type inscripcion_cursoOrderByWithAggregationInput = {
     id_ins_cur?: SortOrder
     not_fin_usu?: SortOrderInput | SortOrder
-    por_asi_fin_usu?: SortOrderInput | SortOrder
     _count?: inscripcion_cursoCountOrderByAggregateInput
     _avg?: inscripcion_cursoAvgOrderByAggregateInput
     _max?: inscripcion_cursoMaxOrderByAggregateInput
@@ -11364,7 +19597,66 @@ export namespace Prisma {
     NOT?: inscripcion_cursoScalarWhereWithAggregatesInput | inscripcion_cursoScalarWhereWithAggregatesInput[]
     id_ins_cur?: StringWithAggregatesFilter<"inscripcion_curso"> | string
     not_fin_usu?: FloatNullableWithAggregatesFilter<"inscripcion_curso"> | number | null
-    por_asi_fin_usu?: FloatNullableWithAggregatesFilter<"inscripcion_curso"> | number | null
+  }
+
+  export type certificadoWhereInput = {
+    AND?: certificadoWhereInput | certificadoWhereInput[]
+    OR?: certificadoWhereInput[]
+    NOT?: certificadoWhereInput | certificadoWhereInput[]
+    id_cer?: StringFilter<"certificado"> | string
+    id_ins_per?: StringFilter<"certificado"> | string
+    url_cer?: StringFilter<"certificado"> | string
+    tip_cer?: Enumtipo_certificadoFilter<"certificado"> | $Enums.tipo_certificado
+    fec_gen_cer?: DateTimeFilter<"certificado"> | Date | string
+    cod_val_cer?: StringFilter<"certificado"> | string
+    inscripcion?: XOR<InscripcionScalarRelationFilter, inscripcionWhereInput>
+  }
+
+  export type certificadoOrderByWithRelationInput = {
+    id_cer?: SortOrder
+    id_ins_per?: SortOrder
+    url_cer?: SortOrder
+    tip_cer?: SortOrder
+    fec_gen_cer?: SortOrder
+    cod_val_cer?: SortOrder
+    inscripcion?: inscripcionOrderByWithRelationInput
+  }
+
+  export type certificadoWhereUniqueInput = Prisma.AtLeast<{
+    id_cer?: string
+    id_ins_per?: string
+    cod_val_cer?: string
+    AND?: certificadoWhereInput | certificadoWhereInput[]
+    OR?: certificadoWhereInput[]
+    NOT?: certificadoWhereInput | certificadoWhereInput[]
+    url_cer?: StringFilter<"certificado"> | string
+    tip_cer?: Enumtipo_certificadoFilter<"certificado"> | $Enums.tipo_certificado
+    fec_gen_cer?: DateTimeFilter<"certificado"> | Date | string
+    inscripcion?: XOR<InscripcionScalarRelationFilter, inscripcionWhereInput>
+  }, "id_cer" | "id_ins_per" | "cod_val_cer">
+
+  export type certificadoOrderByWithAggregationInput = {
+    id_cer?: SortOrder
+    id_ins_per?: SortOrder
+    url_cer?: SortOrder
+    tip_cer?: SortOrder
+    fec_gen_cer?: SortOrder
+    cod_val_cer?: SortOrder
+    _count?: certificadoCountOrderByAggregateInput
+    _max?: certificadoMaxOrderByAggregateInput
+    _min?: certificadoMinOrderByAggregateInput
+  }
+
+  export type certificadoScalarWhereWithAggregatesInput = {
+    AND?: certificadoScalarWhereWithAggregatesInput | certificadoScalarWhereWithAggregatesInput[]
+    OR?: certificadoScalarWhereWithAggregatesInput[]
+    NOT?: certificadoScalarWhereWithAggregatesInput | certificadoScalarWhereWithAggregatesInput[]
+    id_cer?: StringWithAggregatesFilter<"certificado"> | string
+    id_ins_per?: StringWithAggregatesFilter<"certificado"> | string
+    url_cer?: StringWithAggregatesFilter<"certificado"> | string
+    tip_cer?: Enumtipo_certificadoWithAggregatesFilter<"certificado"> | $Enums.tipo_certificado
+    fec_gen_cer?: DateTimeWithAggregatesFilter<"certificado"> | Date | string
+    cod_val_cer?: StringWithAggregatesFilter<"certificado"> | string
   }
 
   export type facultadWhereInput = {
@@ -11376,6 +19668,15 @@ export namespace Prisma {
     des_fac?: StringFilter<"facultad"> | string
     mis_fac?: StringFilter<"facultad"> | string
     vis_fac?: StringFilter<"facultad"> | string
+    fec_cre_fac?: DateTimeFilter<"facultad"> | Date | string
+    nom_dec_fac?: StringFilter<"facultad"> | string
+    ape_dec_fac?: StringFilter<"facultad"> | string
+    cor_dec_fac?: StringFilter<"facultad"> | string
+    url_img_dec_fac?: StringFilter<"facultad"> | string
+    nom_sub_dec_fac?: StringFilter<"facultad"> | string
+    ape_sub_dec_fac?: StringFilter<"facultad"> | string
+    cor_sub_dec_fac?: StringFilter<"facultad"> | string
+    url_img_sub_dec_fac?: StringFilter<"facultad"> | string
     carreras?: CarreraListRelationFilter
   }
 
@@ -11385,6 +19686,15 @@ export namespace Prisma {
     des_fac?: SortOrder
     mis_fac?: SortOrder
     vis_fac?: SortOrder
+    fec_cre_fac?: SortOrder
+    nom_dec_fac?: SortOrder
+    ape_dec_fac?: SortOrder
+    cor_dec_fac?: SortOrder
+    url_img_dec_fac?: SortOrder
+    nom_sub_dec_fac?: SortOrder
+    ape_sub_dec_fac?: SortOrder
+    cor_sub_dec_fac?: SortOrder
+    url_img_sub_dec_fac?: SortOrder
     carreras?: carreraOrderByRelationAggregateInput
   }
 
@@ -11397,6 +19707,15 @@ export namespace Prisma {
     des_fac?: StringFilter<"facultad"> | string
     mis_fac?: StringFilter<"facultad"> | string
     vis_fac?: StringFilter<"facultad"> | string
+    fec_cre_fac?: DateTimeFilter<"facultad"> | Date | string
+    nom_dec_fac?: StringFilter<"facultad"> | string
+    ape_dec_fac?: StringFilter<"facultad"> | string
+    cor_dec_fac?: StringFilter<"facultad"> | string
+    url_img_dec_fac?: StringFilter<"facultad"> | string
+    nom_sub_dec_fac?: StringFilter<"facultad"> | string
+    ape_sub_dec_fac?: StringFilter<"facultad"> | string
+    cor_sub_dec_fac?: StringFilter<"facultad"> | string
+    url_img_sub_dec_fac?: StringFilter<"facultad"> | string
     carreras?: CarreraListRelationFilter
   }, "id_fac" | "nom_fac">
 
@@ -11406,6 +19725,15 @@ export namespace Prisma {
     des_fac?: SortOrder
     mis_fac?: SortOrder
     vis_fac?: SortOrder
+    fec_cre_fac?: SortOrder
+    nom_dec_fac?: SortOrder
+    ape_dec_fac?: SortOrder
+    cor_dec_fac?: SortOrder
+    url_img_dec_fac?: SortOrder
+    nom_sub_dec_fac?: SortOrder
+    ape_sub_dec_fac?: SortOrder
+    cor_sub_dec_fac?: SortOrder
+    url_img_sub_dec_fac?: SortOrder
     _count?: facultadCountOrderByAggregateInput
     _max?: facultadMaxOrderByAggregateInput
     _min?: facultadMinOrderByAggregateInput
@@ -11420,6 +19748,15 @@ export namespace Prisma {
     des_fac?: StringWithAggregatesFilter<"facultad"> | string
     mis_fac?: StringWithAggregatesFilter<"facultad"> | string
     vis_fac?: StringWithAggregatesFilter<"facultad"> | string
+    fec_cre_fac?: DateTimeWithAggregatesFilter<"facultad"> | Date | string
+    nom_dec_fac?: StringWithAggregatesFilter<"facultad"> | string
+    ape_dec_fac?: StringWithAggregatesFilter<"facultad"> | string
+    cor_dec_fac?: StringWithAggregatesFilter<"facultad"> | string
+    url_img_dec_fac?: StringWithAggregatesFilter<"facultad"> | string
+    nom_sub_dec_fac?: StringWithAggregatesFilter<"facultad"> | string
+    ape_sub_dec_fac?: StringWithAggregatesFilter<"facultad"> | string
+    cor_sub_dec_fac?: StringWithAggregatesFilter<"facultad"> | string
+    url_img_sub_dec_fac?: StringWithAggregatesFilter<"facultad"> | string
   }
 
   export type usuarioCreateInput = {
@@ -11427,14 +19764,12 @@ export namespace Prisma {
     ced_usu: string
     nom_usu: string
     ape_usu: string
-    cor_usu: string
-    con_usu: string
     cel_usu: string
-    rol_usu: $Enums.rol_usuario
     fec_cre_usu?: Date | string
     com_usu?: string | null
+    img_per_usu?: string | null
     carrera?: carreraCreateNestedOneWithoutUsuarioInput
-    inscripciones?: inscripcionCreateNestedManyWithoutUsuarioInput
+    cuentas?: cuentaCreateNestedManyWithoutUsuarioInput
   }
 
   export type usuarioUncheckedCreateInput = {
@@ -11442,14 +19777,12 @@ export namespace Prisma {
     ced_usu: string
     nom_usu: string
     ape_usu: string
-    cor_usu: string
-    con_usu: string
     cel_usu: string
-    rol_usu: $Enums.rol_usuario
     fec_cre_usu?: Date | string
     com_usu?: string | null
     id_car_est?: string | null
-    inscripciones?: inscripcionUncheckedCreateNestedManyWithoutUsuarioInput
+    img_per_usu?: string | null
+    cuentas?: cuentaUncheckedCreateNestedManyWithoutUsuarioInput
   }
 
   export type usuarioUpdateInput = {
@@ -11457,14 +19790,12 @@ export namespace Prisma {
     ced_usu?: StringFieldUpdateOperationsInput | string
     nom_usu?: StringFieldUpdateOperationsInput | string
     ape_usu?: StringFieldUpdateOperationsInput | string
-    cor_usu?: StringFieldUpdateOperationsInput | string
-    con_usu?: StringFieldUpdateOperationsInput | string
     cel_usu?: StringFieldUpdateOperationsInput | string
-    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
     fec_cre_usu?: DateTimeFieldUpdateOperationsInput | Date | string
     com_usu?: NullableStringFieldUpdateOperationsInput | string | null
+    img_per_usu?: NullableStringFieldUpdateOperationsInput | string | null
     carrera?: carreraUpdateOneWithoutUsuarioNestedInput
-    inscripciones?: inscripcionUpdateManyWithoutUsuarioNestedInput
+    cuentas?: cuentaUpdateManyWithoutUsuarioNestedInput
   }
 
   export type usuarioUncheckedUpdateInput = {
@@ -11472,14 +19803,12 @@ export namespace Prisma {
     ced_usu?: StringFieldUpdateOperationsInput | string
     nom_usu?: StringFieldUpdateOperationsInput | string
     ape_usu?: StringFieldUpdateOperationsInput | string
-    cor_usu?: StringFieldUpdateOperationsInput | string
-    con_usu?: StringFieldUpdateOperationsInput | string
     cel_usu?: StringFieldUpdateOperationsInput | string
-    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
     fec_cre_usu?: DateTimeFieldUpdateOperationsInput | Date | string
     com_usu?: NullableStringFieldUpdateOperationsInput | string | null
     id_car_est?: NullableStringFieldUpdateOperationsInput | string | null
-    inscripciones?: inscripcionUncheckedUpdateManyWithoutUsuarioNestedInput
+    img_per_usu?: NullableStringFieldUpdateOperationsInput | string | null
+    cuentas?: cuentaUncheckedUpdateManyWithoutUsuarioNestedInput
   }
 
   export type usuarioCreateManyInput = {
@@ -11487,13 +19816,11 @@ export namespace Prisma {
     ced_usu: string
     nom_usu: string
     ape_usu: string
-    cor_usu: string
-    con_usu: string
     cel_usu: string
-    rol_usu: $Enums.rol_usuario
     fec_cre_usu?: Date | string
     com_usu?: string | null
     id_car_est?: string | null
+    img_per_usu?: string | null
   }
 
   export type usuarioUpdateManyMutationInput = {
@@ -11501,12 +19828,10 @@ export namespace Prisma {
     ced_usu?: StringFieldUpdateOperationsInput | string
     nom_usu?: StringFieldUpdateOperationsInput | string
     ape_usu?: StringFieldUpdateOperationsInput | string
-    cor_usu?: StringFieldUpdateOperationsInput | string
-    con_usu?: StringFieldUpdateOperationsInput | string
     cel_usu?: StringFieldUpdateOperationsInput | string
-    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
     fec_cre_usu?: DateTimeFieldUpdateOperationsInput | Date | string
     com_usu?: NullableStringFieldUpdateOperationsInput | string | null
+    img_per_usu?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type usuarioUncheckedUpdateManyInput = {
@@ -11514,21 +19839,303 @@ export namespace Prisma {
     ced_usu?: StringFieldUpdateOperationsInput | string
     nom_usu?: StringFieldUpdateOperationsInput | string
     ape_usu?: StringFieldUpdateOperationsInput | string
-    cor_usu?: StringFieldUpdateOperationsInput | string
-    con_usu?: StringFieldUpdateOperationsInput | string
     cel_usu?: StringFieldUpdateOperationsInput | string
-    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
     fec_cre_usu?: DateTimeFieldUpdateOperationsInput | Date | string
     com_usu?: NullableStringFieldUpdateOperationsInput | string | null
     id_car_est?: NullableStringFieldUpdateOperationsInput | string | null
+    img_per_usu?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type comprobante_pagoCreateInput = {
+    id_com_pag?: string
+    url_com_pag: string
+    est_com_pag?: $Enums.estado_validacion
+    fec_sub_com_pag?: Date | string
+    fec_val_com_pag?: Date | string | null
+    fec_pag_ins?: Date | string | null
+    admin?: cuentaCreateNestedOneWithoutComprobantes_pagoInput
+    inscripcion: inscripcionCreateNestedOneWithoutComprobantes_pagoInput
+  }
+
+  export type comprobante_pagoUncheckedCreateInput = {
+    id_com_pag?: string
+    id_ins_per: string
+    url_com_pag: string
+    est_com_pag?: $Enums.estado_validacion
+    fec_sub_com_pag?: Date | string
+    fec_val_com_pag?: Date | string | null
+    id_adm_val_com_pag?: string | null
+    fec_pag_ins?: Date | string | null
+  }
+
+  export type comprobante_pagoUpdateInput = {
+    id_com_pag?: StringFieldUpdateOperationsInput | string
+    url_com_pag?: StringFieldUpdateOperationsInput | string
+    est_com_pag?: Enumestado_validacionFieldUpdateOperationsInput | $Enums.estado_validacion
+    fec_sub_com_pag?: DateTimeFieldUpdateOperationsInput | Date | string
+    fec_val_com_pag?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    admin?: cuentaUpdateOneWithoutComprobantes_pagoNestedInput
+    inscripcion?: inscripcionUpdateOneRequiredWithoutComprobantes_pagoNestedInput
+  }
+
+  export type comprobante_pagoUncheckedUpdateInput = {
+    id_com_pag?: StringFieldUpdateOperationsInput | string
+    id_ins_per?: StringFieldUpdateOperationsInput | string
+    url_com_pag?: StringFieldUpdateOperationsInput | string
+    est_com_pag?: Enumestado_validacionFieldUpdateOperationsInput | $Enums.estado_validacion
+    fec_sub_com_pag?: DateTimeFieldUpdateOperationsInput | Date | string
+    fec_val_com_pag?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    id_adm_val_com_pag?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type comprobante_pagoCreateManyInput = {
+    id_com_pag?: string
+    id_ins_per: string
+    url_com_pag: string
+    est_com_pag?: $Enums.estado_validacion
+    fec_sub_com_pag?: Date | string
+    fec_val_com_pag?: Date | string | null
+    id_adm_val_com_pag?: string | null
+    fec_pag_ins?: Date | string | null
+  }
+
+  export type comprobante_pagoUpdateManyMutationInput = {
+    id_com_pag?: StringFieldUpdateOperationsInput | string
+    url_com_pag?: StringFieldUpdateOperationsInput | string
+    est_com_pag?: Enumestado_validacionFieldUpdateOperationsInput | $Enums.estado_validacion
+    fec_sub_com_pag?: DateTimeFieldUpdateOperationsInput | Date | string
+    fec_val_com_pag?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type comprobante_pagoUncheckedUpdateManyInput = {
+    id_com_pag?: StringFieldUpdateOperationsInput | string
+    id_ins_per?: StringFieldUpdateOperationsInput | string
+    url_com_pag?: StringFieldUpdateOperationsInput | string
+    est_com_pag?: Enumestado_validacionFieldUpdateOperationsInput | $Enums.estado_validacion
+    fec_sub_com_pag?: DateTimeFieldUpdateOperationsInput | Date | string
+    fec_val_com_pag?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    id_adm_val_com_pag?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type carta_motivacionCreateInput = {
+    id_car_mot?: string
+    con_car_mot: string
+    est_car_mot?: $Enums.estado_validacion
+    fec_sub_car_mot?: Date | string
+    fec_val_car_mot?: Date | string | null
+    admin?: cuentaCreateNestedOneWithoutCartas_motivacionInput
+    inscripcion: inscripcionCreateNestedOneWithoutCartas_motivacionInput
+  }
+
+  export type carta_motivacionUncheckedCreateInput = {
+    id_car_mot?: string
+    id_ins_per: string
+    con_car_mot: string
+    est_car_mot?: $Enums.estado_validacion
+    fec_sub_car_mot?: Date | string
+    fec_val_car_mot?: Date | string | null
+    id_adm_val_car_mot?: string | null
+  }
+
+  export type carta_motivacionUpdateInput = {
+    id_car_mot?: StringFieldUpdateOperationsInput | string
+    con_car_mot?: StringFieldUpdateOperationsInput | string
+    est_car_mot?: Enumestado_validacionFieldUpdateOperationsInput | $Enums.estado_validacion
+    fec_sub_car_mot?: DateTimeFieldUpdateOperationsInput | Date | string
+    fec_val_car_mot?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    admin?: cuentaUpdateOneWithoutCartas_motivacionNestedInput
+    inscripcion?: inscripcionUpdateOneRequiredWithoutCartas_motivacionNestedInput
+  }
+
+  export type carta_motivacionUncheckedUpdateInput = {
+    id_car_mot?: StringFieldUpdateOperationsInput | string
+    id_ins_per?: StringFieldUpdateOperationsInput | string
+    con_car_mot?: StringFieldUpdateOperationsInput | string
+    est_car_mot?: Enumestado_validacionFieldUpdateOperationsInput | $Enums.estado_validacion
+    fec_sub_car_mot?: DateTimeFieldUpdateOperationsInput | Date | string
+    fec_val_car_mot?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    id_adm_val_car_mot?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type carta_motivacionCreateManyInput = {
+    id_car_mot?: string
+    id_ins_per: string
+    con_car_mot: string
+    est_car_mot?: $Enums.estado_validacion
+    fec_sub_car_mot?: Date | string
+    fec_val_car_mot?: Date | string | null
+    id_adm_val_car_mot?: string | null
+  }
+
+  export type carta_motivacionUpdateManyMutationInput = {
+    id_car_mot?: StringFieldUpdateOperationsInput | string
+    con_car_mot?: StringFieldUpdateOperationsInput | string
+    est_car_mot?: Enumestado_validacionFieldUpdateOperationsInput | $Enums.estado_validacion
+    fec_sub_car_mot?: DateTimeFieldUpdateOperationsInput | Date | string
+    fec_val_car_mot?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type carta_motivacionUncheckedUpdateManyInput = {
+    id_car_mot?: StringFieldUpdateOperationsInput | string
+    id_ins_per?: StringFieldUpdateOperationsInput | string
+    con_car_mot?: StringFieldUpdateOperationsInput | string
+    est_car_mot?: Enumestado_validacionFieldUpdateOperationsInput | $Enums.estado_validacion
+    fec_sub_car_mot?: DateTimeFieldUpdateOperationsInput | Date | string
+    fec_val_car_mot?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    id_adm_val_car_mot?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type observacion_inscripcionCreateInput = {
+    id_obs_ins?: string
+    obs_ins: string
+    fec_cre_obs?: Date | string
+    inscripcion: inscripcionCreateNestedOneWithoutObservacionInput
+    admin_creador?: cuentaCreateNestedOneWithoutObservaciones_creadasInput
+  }
+
+  export type observacion_inscripcionUncheckedCreateInput = {
+    id_obs_ins?: string
+    id_ins_per: string
+    obs_ins: string
+    fec_cre_obs?: Date | string
+    id_adm_cre_obs?: string | null
+  }
+
+  export type observacion_inscripcionUpdateInput = {
+    id_obs_ins?: StringFieldUpdateOperationsInput | string
+    obs_ins?: StringFieldUpdateOperationsInput | string
+    fec_cre_obs?: DateTimeFieldUpdateOperationsInput | Date | string
+    inscripcion?: inscripcionUpdateOneRequiredWithoutObservacionNestedInput
+    admin_creador?: cuentaUpdateOneWithoutObservaciones_creadasNestedInput
+  }
+
+  export type observacion_inscripcionUncheckedUpdateInput = {
+    id_obs_ins?: StringFieldUpdateOperationsInput | string
+    id_ins_per?: StringFieldUpdateOperationsInput | string
+    obs_ins?: StringFieldUpdateOperationsInput | string
+    fec_cre_obs?: DateTimeFieldUpdateOperationsInput | Date | string
+    id_adm_cre_obs?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type observacion_inscripcionCreateManyInput = {
+    id_obs_ins?: string
+    id_ins_per: string
+    obs_ins: string
+    fec_cre_obs?: Date | string
+    id_adm_cre_obs?: string | null
+  }
+
+  export type observacion_inscripcionUpdateManyMutationInput = {
+    id_obs_ins?: StringFieldUpdateOperationsInput | string
+    obs_ins?: StringFieldUpdateOperationsInput | string
+    fec_cre_obs?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type observacion_inscripcionUncheckedUpdateManyInput = {
+    id_obs_ins?: StringFieldUpdateOperationsInput | string
+    id_ins_per?: StringFieldUpdateOperationsInput | string
+    obs_ins?: StringFieldUpdateOperationsInput | string
+    fec_cre_obs?: DateTimeFieldUpdateOperationsInput | Date | string
+    id_adm_cre_obs?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type cuentaCreateInput = {
+    id_cue?: string
+    cor_usu: string
+    con_usu: string
+    fec_cre_cue?: Date | string
+    rol_usu: $Enums.rol_usuario
+    usuario: usuarioCreateNestedOneWithoutCuentasInput
+    inscripciones?: inscripcionCreateNestedManyWithoutCuentaInput
+    cartas_motivacion?: carta_motivacionCreateNestedManyWithoutAdminInput
+    comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutAdminInput
+    eventos?: eventoCreateNestedManyWithoutCuentaInput
+    observaciones_creadas?: observacion_inscripcionCreateNestedManyWithoutAdmin_creadorInput
+  }
+
+  export type cuentaUncheckedCreateInput = {
+    id_cue?: string
+    id_usu_per: string
+    cor_usu: string
+    con_usu: string
+    fec_cre_cue?: Date | string
+    rol_usu: $Enums.rol_usuario
+    inscripciones?: inscripcionUncheckedCreateNestedManyWithoutCuentaInput
+    cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutAdminInput
+    comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutAdminInput
+    eventos?: eventoUncheckedCreateNestedManyWithoutCuentaInput
+    observaciones_creadas?: observacion_inscripcionUncheckedCreateNestedManyWithoutAdmin_creadorInput
+  }
+
+  export type cuentaUpdateInput = {
+    id_cue?: StringFieldUpdateOperationsInput | string
+    cor_usu?: StringFieldUpdateOperationsInput | string
+    con_usu?: StringFieldUpdateOperationsInput | string
+    fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
+    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    usuario?: usuarioUpdateOneRequiredWithoutCuentasNestedInput
+    inscripciones?: inscripcionUpdateManyWithoutCuentaNestedInput
+    cartas_motivacion?: carta_motivacionUpdateManyWithoutAdminNestedInput
+    comprobantes_pago?: comprobante_pagoUpdateManyWithoutAdminNestedInput
+    eventos?: eventoUpdateManyWithoutCuentaNestedInput
+    observaciones_creadas?: observacion_inscripcionUpdateManyWithoutAdmin_creadorNestedInput
+  }
+
+  export type cuentaUncheckedUpdateInput = {
+    id_cue?: StringFieldUpdateOperationsInput | string
+    id_usu_per?: StringFieldUpdateOperationsInput | string
+    cor_usu?: StringFieldUpdateOperationsInput | string
+    con_usu?: StringFieldUpdateOperationsInput | string
+    fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
+    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    inscripciones?: inscripcionUncheckedUpdateManyWithoutCuentaNestedInput
+    cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutAdminNestedInput
+    comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutAdminNestedInput
+    eventos?: eventoUncheckedUpdateManyWithoutCuentaNestedInput
+    observaciones_creadas?: observacion_inscripcionUncheckedUpdateManyWithoutAdmin_creadorNestedInput
+  }
+
+  export type cuentaCreateManyInput = {
+    id_cue?: string
+    id_usu_per: string
+    cor_usu: string
+    con_usu: string
+    fec_cre_cue?: Date | string
+    rol_usu: $Enums.rol_usuario
+  }
+
+  export type cuentaUpdateManyMutationInput = {
+    id_cue?: StringFieldUpdateOperationsInput | string
+    cor_usu?: StringFieldUpdateOperationsInput | string
+    con_usu?: StringFieldUpdateOperationsInput | string
+    fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
+    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+  }
+
+  export type cuentaUncheckedUpdateManyInput = {
+    id_cue?: StringFieldUpdateOperationsInput | string
+    id_usu_per?: StringFieldUpdateOperationsInput | string
+    cor_usu?: StringFieldUpdateOperationsInput | string
+    con_usu?: StringFieldUpdateOperationsInput | string
+    fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
+    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
   }
 
   export type carreraCreateInput = {
     id_car?: string
     nom_car: string
+    des_car: string
+    dur_sem_car: number
+    mod_car: string
+    ico_car: string
     est_car?: boolean
     fec_cre_car?: Date | string
     facultad: facultadCreateNestedOneWithoutCarrerasInput
+    coordinador?: coordinadorCreateNestedOneWithoutCarrerasInput
     usuario?: usuarioCreateNestedManyWithoutCarreraInput
     eventos?: evento_carreraCreateNestedManyWithoutCarreraInput
   }
@@ -11536,9 +20143,14 @@ export namespace Prisma {
   export type carreraUncheckedCreateInput = {
     id_car?: string
     nom_car: string
+    des_car: string
+    dur_sem_car: number
+    mod_car: string
+    ico_car: string
     est_car?: boolean
     fec_cre_car?: Date | string
     id_fac_per: string
+    id_coo_per?: string | null
     usuario?: usuarioUncheckedCreateNestedManyWithoutCarreraInput
     eventos?: evento_carreraUncheckedCreateNestedManyWithoutCarreraInput
   }
@@ -11546,9 +20158,14 @@ export namespace Prisma {
   export type carreraUpdateInput = {
     id_car?: StringFieldUpdateOperationsInput | string
     nom_car?: StringFieldUpdateOperationsInput | string
+    des_car?: StringFieldUpdateOperationsInput | string
+    dur_sem_car?: IntFieldUpdateOperationsInput | number
+    mod_car?: StringFieldUpdateOperationsInput | string
+    ico_car?: StringFieldUpdateOperationsInput | string
     est_car?: BoolFieldUpdateOperationsInput | boolean
     fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
     facultad?: facultadUpdateOneRequiredWithoutCarrerasNestedInput
+    coordinador?: coordinadorUpdateOneWithoutCarrerasNestedInput
     usuario?: usuarioUpdateManyWithoutCarreraNestedInput
     eventos?: evento_carreraUpdateManyWithoutCarreraNestedInput
   }
@@ -11556,9 +20173,14 @@ export namespace Prisma {
   export type carreraUncheckedUpdateInput = {
     id_car?: StringFieldUpdateOperationsInput | string
     nom_car?: StringFieldUpdateOperationsInput | string
+    des_car?: StringFieldUpdateOperationsInput | string
+    dur_sem_car?: IntFieldUpdateOperationsInput | number
+    mod_car?: StringFieldUpdateOperationsInput | string
+    ico_car?: StringFieldUpdateOperationsInput | string
     est_car?: BoolFieldUpdateOperationsInput | boolean
     fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
     id_fac_per?: StringFieldUpdateOperationsInput | string
+    id_coo_per?: NullableStringFieldUpdateOperationsInput | string | null
     usuario?: usuarioUncheckedUpdateManyWithoutCarreraNestedInput
     eventos?: evento_carreraUncheckedUpdateManyWithoutCarreraNestedInput
   }
@@ -11566,14 +20188,23 @@ export namespace Prisma {
   export type carreraCreateManyInput = {
     id_car?: string
     nom_car: string
+    des_car: string
+    dur_sem_car: number
+    mod_car: string
+    ico_car: string
     est_car?: boolean
     fec_cre_car?: Date | string
     id_fac_per: string
+    id_coo_per?: string | null
   }
 
   export type carreraUpdateManyMutationInput = {
     id_car?: StringFieldUpdateOperationsInput | string
     nom_car?: StringFieldUpdateOperationsInput | string
+    des_car?: StringFieldUpdateOperationsInput | string
+    dur_sem_car?: IntFieldUpdateOperationsInput | number
+    mod_car?: StringFieldUpdateOperationsInput | string
+    ico_car?: StringFieldUpdateOperationsInput | string
     est_car?: BoolFieldUpdateOperationsInput | boolean
     fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -11581,9 +20212,81 @@ export namespace Prisma {
   export type carreraUncheckedUpdateManyInput = {
     id_car?: StringFieldUpdateOperationsInput | string
     nom_car?: StringFieldUpdateOperationsInput | string
+    des_car?: StringFieldUpdateOperationsInput | string
+    dur_sem_car?: IntFieldUpdateOperationsInput | number
+    mod_car?: StringFieldUpdateOperationsInput | string
+    ico_car?: StringFieldUpdateOperationsInput | string
     est_car?: BoolFieldUpdateOperationsInput | boolean
     fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
     id_fac_per?: StringFieldUpdateOperationsInput | string
+    id_coo_per?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type coordinadorCreateInput = {
+    id_coo?: string
+    nom_coo: string
+    ape_coo: string
+    cor_coo: string
+    url_img_coo: string
+    tit_coo: string
+    carreras?: carreraCreateNestedManyWithoutCoordinadorInput
+  }
+
+  export type coordinadorUncheckedCreateInput = {
+    id_coo?: string
+    nom_coo: string
+    ape_coo: string
+    cor_coo: string
+    url_img_coo: string
+    tit_coo: string
+    carreras?: carreraUncheckedCreateNestedManyWithoutCoordinadorInput
+  }
+
+  export type coordinadorUpdateInput = {
+    id_coo?: StringFieldUpdateOperationsInput | string
+    nom_coo?: StringFieldUpdateOperationsInput | string
+    ape_coo?: StringFieldUpdateOperationsInput | string
+    cor_coo?: StringFieldUpdateOperationsInput | string
+    url_img_coo?: StringFieldUpdateOperationsInput | string
+    tit_coo?: StringFieldUpdateOperationsInput | string
+    carreras?: carreraUpdateManyWithoutCoordinadorNestedInput
+  }
+
+  export type coordinadorUncheckedUpdateInput = {
+    id_coo?: StringFieldUpdateOperationsInput | string
+    nom_coo?: StringFieldUpdateOperationsInput | string
+    ape_coo?: StringFieldUpdateOperationsInput | string
+    cor_coo?: StringFieldUpdateOperationsInput | string
+    url_img_coo?: StringFieldUpdateOperationsInput | string
+    tit_coo?: StringFieldUpdateOperationsInput | string
+    carreras?: carreraUncheckedUpdateManyWithoutCoordinadorNestedInput
+  }
+
+  export type coordinadorCreateManyInput = {
+    id_coo?: string
+    nom_coo: string
+    ape_coo: string
+    cor_coo: string
+    url_img_coo: string
+    tit_coo: string
+  }
+
+  export type coordinadorUpdateManyMutationInput = {
+    id_coo?: StringFieldUpdateOperationsInput | string
+    nom_coo?: StringFieldUpdateOperationsInput | string
+    ape_coo?: StringFieldUpdateOperationsInput | string
+    cor_coo?: StringFieldUpdateOperationsInput | string
+    url_img_coo?: StringFieldUpdateOperationsInput | string
+    tit_coo?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type coordinadorUncheckedUpdateManyInput = {
+    id_coo?: StringFieldUpdateOperationsInput | string
+    nom_coo?: StringFieldUpdateOperationsInput | string
+    ape_coo?: StringFieldUpdateOperationsInput | string
+    cor_coo?: StringFieldUpdateOperationsInput | string
+    url_img_coo?: StringFieldUpdateOperationsInput | string
+    tit_coo?: StringFieldUpdateOperationsInput | string
   }
 
   export type eventoCreateInput = {
@@ -11595,13 +20298,14 @@ export namespace Prisma {
     val_eve: number
     est_eve?: $Enums.estado_evento
     fec_cre_eve?: Date | string
-    img_por_eve: string
     dur_hor_eve: number
+    img_por_eve: string
     por_min_asi_eve: number
     fec_fin_eve: Date | string
     inscritos?: inscripcionCreateNestedManyWithoutEventoInput
     eventos_carrera?: evento_carreraCreateNestedManyWithoutEventoInput
     eventos_curso?: evento_cursoCreateNestedOneWithoutEventoInput
+    cuenta: cuentaCreateNestedOneWithoutEventosInput
   }
 
   export type eventoUncheckedCreateInput = {
@@ -11613,10 +20317,11 @@ export namespace Prisma {
     val_eve: number
     est_eve?: $Enums.estado_evento
     fec_cre_eve?: Date | string
-    img_por_eve: string
     dur_hor_eve: number
+    img_por_eve: string
     por_min_asi_eve: number
     fec_fin_eve: Date | string
+    id_cue_cre_eve: string
     inscritos?: inscripcionUncheckedCreateNestedManyWithoutEventoInput
     eventos_carrera?: evento_carreraUncheckedCreateNestedManyWithoutEventoInput
     eventos_curso?: evento_cursoUncheckedCreateNestedOneWithoutEventoInput
@@ -11631,13 +20336,14 @@ export namespace Prisma {
     val_eve?: FloatFieldUpdateOperationsInput | number
     est_eve?: Enumestado_eventoFieldUpdateOperationsInput | $Enums.estado_evento
     fec_cre_eve?: DateTimeFieldUpdateOperationsInput | Date | string
-    img_por_eve?: StringFieldUpdateOperationsInput | string
     dur_hor_eve?: IntFieldUpdateOperationsInput | number
+    img_por_eve?: StringFieldUpdateOperationsInput | string
     por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
     fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
     inscritos?: inscripcionUpdateManyWithoutEventoNestedInput
     eventos_carrera?: evento_carreraUpdateManyWithoutEventoNestedInput
     eventos_curso?: evento_cursoUpdateOneWithoutEventoNestedInput
+    cuenta?: cuentaUpdateOneRequiredWithoutEventosNestedInput
   }
 
   export type eventoUncheckedUpdateInput = {
@@ -11649,10 +20355,11 @@ export namespace Prisma {
     val_eve?: FloatFieldUpdateOperationsInput | number
     est_eve?: Enumestado_eventoFieldUpdateOperationsInput | $Enums.estado_evento
     fec_cre_eve?: DateTimeFieldUpdateOperationsInput | Date | string
-    img_por_eve?: StringFieldUpdateOperationsInput | string
     dur_hor_eve?: IntFieldUpdateOperationsInput | number
+    img_por_eve?: StringFieldUpdateOperationsInput | string
     por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
     fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
+    id_cue_cre_eve?: StringFieldUpdateOperationsInput | string
     inscritos?: inscripcionUncheckedUpdateManyWithoutEventoNestedInput
     eventos_carrera?: evento_carreraUncheckedUpdateManyWithoutEventoNestedInput
     eventos_curso?: evento_cursoUncheckedUpdateOneWithoutEventoNestedInput
@@ -11667,10 +20374,11 @@ export namespace Prisma {
     val_eve: number
     est_eve?: $Enums.estado_evento
     fec_cre_eve?: Date | string
-    img_por_eve: string
     dur_hor_eve: number
+    img_por_eve: string
     por_min_asi_eve: number
     fec_fin_eve: Date | string
+    id_cue_cre_eve: string
   }
 
   export type eventoUpdateManyMutationInput = {
@@ -11682,8 +20390,8 @@ export namespace Prisma {
     val_eve?: FloatFieldUpdateOperationsInput | number
     est_eve?: Enumestado_eventoFieldUpdateOperationsInput | $Enums.estado_evento
     fec_cre_eve?: DateTimeFieldUpdateOperationsInput | Date | string
-    img_por_eve?: StringFieldUpdateOperationsInput | string
     dur_hor_eve?: IntFieldUpdateOperationsInput | number
+    img_por_eve?: StringFieldUpdateOperationsInput | string
     por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
     fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -11697,10 +20405,11 @@ export namespace Prisma {
     val_eve?: FloatFieldUpdateOperationsInput | number
     est_eve?: Enumestado_eventoFieldUpdateOperationsInput | $Enums.estado_evento
     fec_cre_eve?: DateTimeFieldUpdateOperationsInput | Date | string
-    img_por_eve?: StringFieldUpdateOperationsInput | string
     dur_hor_eve?: IntFieldUpdateOperationsInput | number
+    img_por_eve?: StringFieldUpdateOperationsInput | string
     por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
     fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
+    id_cue_cre_eve?: StringFieldUpdateOperationsInput | string
   }
 
   export type evento_cursoCreateInput = {
@@ -11788,120 +20497,184 @@ export namespace Prisma {
     id_ins?: string
     est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
-    fec_pag_ins?: Date | string | null
-    cer_eve_env?: boolean
-    car_mot_usu?: string | null
-    usuario: usuarioCreateNestedOneWithoutInscripcionesInput
+    usu_apr_cer?: boolean
+    por_asi_fin_usu?: number | null
+    cuenta: cuentaCreateNestedOneWithoutInscripcionesInput
     evento: eventoCreateNestedOneWithoutInscritosInput
     inscripcion_curso?: inscripcion_cursoCreateNestedOneWithoutInscripcionInput
+    comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutInscripcionInput
+    cartas_motivacion?: carta_motivacionCreateNestedManyWithoutInscripcionInput
+    observacion?: observacion_inscripcionCreateNestedOneWithoutInscripcionInput
+    certificado?: certificadoCreateNestedOneWithoutInscripcionInput
   }
 
   export type inscripcionUncheckedCreateInput = {
     id_ins?: string
-    id_usu_ins: string
+    id_cor_ins: string
     id_eve_ins: string
     est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
-    fec_pag_ins?: Date | string | null
-    cer_eve_env?: boolean
-    car_mot_usu?: string | null
+    usu_apr_cer?: boolean
+    por_asi_fin_usu?: number | null
     inscripcion_curso?: inscripcion_cursoUncheckedCreateNestedOneWithoutInscripcionInput
+    comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutInscripcionInput
+    cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutInscripcionInput
+    observacion?: observacion_inscripcionUncheckedCreateNestedOneWithoutInscripcionInput
+    certificado?: certificadoUncheckedCreateNestedOneWithoutInscripcionInput
   }
 
   export type inscripcionUpdateInput = {
     id_ins?: StringFieldUpdateOperationsInput | string
     est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
-    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    cer_eve_env?: BoolFieldUpdateOperationsInput | boolean
-    car_mot_usu?: NullableStringFieldUpdateOperationsInput | string | null
-    usuario?: usuarioUpdateOneRequiredWithoutInscripcionesNestedInput
+    usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    cuenta?: cuentaUpdateOneRequiredWithoutInscripcionesNestedInput
     evento?: eventoUpdateOneRequiredWithoutInscritosNestedInput
     inscripcion_curso?: inscripcion_cursoUpdateOneWithoutInscripcionNestedInput
+    comprobantes_pago?: comprobante_pagoUpdateManyWithoutInscripcionNestedInput
+    cartas_motivacion?: carta_motivacionUpdateManyWithoutInscripcionNestedInput
+    observacion?: observacion_inscripcionUpdateOneWithoutInscripcionNestedInput
+    certificado?: certificadoUpdateOneWithoutInscripcionNestedInput
   }
 
   export type inscripcionUncheckedUpdateInput = {
     id_ins?: StringFieldUpdateOperationsInput | string
-    id_usu_ins?: StringFieldUpdateOperationsInput | string
+    id_cor_ins?: StringFieldUpdateOperationsInput | string
     id_eve_ins?: StringFieldUpdateOperationsInput | string
     est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
-    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    cer_eve_env?: BoolFieldUpdateOperationsInput | boolean
-    car_mot_usu?: NullableStringFieldUpdateOperationsInput | string | null
+    usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
     inscripcion_curso?: inscripcion_cursoUncheckedUpdateOneWithoutInscripcionNestedInput
+    comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutInscripcionNestedInput
+    cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutInscripcionNestedInput
+    observacion?: observacion_inscripcionUncheckedUpdateOneWithoutInscripcionNestedInput
+    certificado?: certificadoUncheckedUpdateOneWithoutInscripcionNestedInput
   }
 
   export type inscripcionCreateManyInput = {
     id_ins?: string
-    id_usu_ins: string
+    id_cor_ins: string
     id_eve_ins: string
     est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
-    fec_pag_ins?: Date | string | null
-    cer_eve_env?: boolean
-    car_mot_usu?: string | null
+    usu_apr_cer?: boolean
+    por_asi_fin_usu?: number | null
   }
 
   export type inscripcionUpdateManyMutationInput = {
     id_ins?: StringFieldUpdateOperationsInput | string
     est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
-    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    cer_eve_env?: BoolFieldUpdateOperationsInput | boolean
-    car_mot_usu?: NullableStringFieldUpdateOperationsInput | string | null
+    usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
   }
 
   export type inscripcionUncheckedUpdateManyInput = {
     id_ins?: StringFieldUpdateOperationsInput | string
-    id_usu_ins?: StringFieldUpdateOperationsInput | string
+    id_cor_ins?: StringFieldUpdateOperationsInput | string
     id_eve_ins?: StringFieldUpdateOperationsInput | string
     est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
-    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    cer_eve_env?: BoolFieldUpdateOperationsInput | boolean
-    car_mot_usu?: NullableStringFieldUpdateOperationsInput | string | null
+    usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
   }
 
   export type inscripcion_cursoCreateInput = {
     not_fin_usu?: number | null
-    por_asi_fin_usu?: number | null
     inscripcion: inscripcionCreateNestedOneWithoutInscripcion_cursoInput
   }
 
   export type inscripcion_cursoUncheckedCreateInput = {
     id_ins_cur: string
     not_fin_usu?: number | null
-    por_asi_fin_usu?: number | null
   }
 
   export type inscripcion_cursoUpdateInput = {
     not_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
-    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
     inscripcion?: inscripcionUpdateOneRequiredWithoutInscripcion_cursoNestedInput
   }
 
   export type inscripcion_cursoUncheckedUpdateInput = {
     id_ins_cur?: StringFieldUpdateOperationsInput | string
     not_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
-    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
   }
 
   export type inscripcion_cursoCreateManyInput = {
     id_ins_cur: string
     not_fin_usu?: number | null
-    por_asi_fin_usu?: number | null
   }
 
   export type inscripcion_cursoUpdateManyMutationInput = {
     not_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
-    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
   }
 
   export type inscripcion_cursoUncheckedUpdateManyInput = {
     id_ins_cur?: StringFieldUpdateOperationsInput | string
     not_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
-    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+  }
+
+  export type certificadoCreateInput = {
+    id_cer?: string
+    url_cer: string
+    tip_cer: $Enums.tipo_certificado
+    fec_gen_cer?: Date | string
+    cod_val_cer: string
+    inscripcion: inscripcionCreateNestedOneWithoutCertificadoInput
+  }
+
+  export type certificadoUncheckedCreateInput = {
+    id_cer?: string
+    id_ins_per: string
+    url_cer: string
+    tip_cer: $Enums.tipo_certificado
+    fec_gen_cer?: Date | string
+    cod_val_cer: string
+  }
+
+  export type certificadoUpdateInput = {
+    id_cer?: StringFieldUpdateOperationsInput | string
+    url_cer?: StringFieldUpdateOperationsInput | string
+    tip_cer?: Enumtipo_certificadoFieldUpdateOperationsInput | $Enums.tipo_certificado
+    fec_gen_cer?: DateTimeFieldUpdateOperationsInput | Date | string
+    cod_val_cer?: StringFieldUpdateOperationsInput | string
+    inscripcion?: inscripcionUpdateOneRequiredWithoutCertificadoNestedInput
+  }
+
+  export type certificadoUncheckedUpdateInput = {
+    id_cer?: StringFieldUpdateOperationsInput | string
+    id_ins_per?: StringFieldUpdateOperationsInput | string
+    url_cer?: StringFieldUpdateOperationsInput | string
+    tip_cer?: Enumtipo_certificadoFieldUpdateOperationsInput | $Enums.tipo_certificado
+    fec_gen_cer?: DateTimeFieldUpdateOperationsInput | Date | string
+    cod_val_cer?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type certificadoCreateManyInput = {
+    id_cer?: string
+    id_ins_per: string
+    url_cer: string
+    tip_cer: $Enums.tipo_certificado
+    fec_gen_cer?: Date | string
+    cod_val_cer: string
+  }
+
+  export type certificadoUpdateManyMutationInput = {
+    id_cer?: StringFieldUpdateOperationsInput | string
+    url_cer?: StringFieldUpdateOperationsInput | string
+    tip_cer?: Enumtipo_certificadoFieldUpdateOperationsInput | $Enums.tipo_certificado
+    fec_gen_cer?: DateTimeFieldUpdateOperationsInput | Date | string
+    cod_val_cer?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type certificadoUncheckedUpdateManyInput = {
+    id_cer?: StringFieldUpdateOperationsInput | string
+    id_ins_per?: StringFieldUpdateOperationsInput | string
+    url_cer?: StringFieldUpdateOperationsInput | string
+    tip_cer?: Enumtipo_certificadoFieldUpdateOperationsInput | $Enums.tipo_certificado
+    fec_gen_cer?: DateTimeFieldUpdateOperationsInput | Date | string
+    cod_val_cer?: StringFieldUpdateOperationsInput | string
   }
 
   export type facultadCreateInput = {
@@ -11910,6 +20683,15 @@ export namespace Prisma {
     des_fac: string
     mis_fac: string
     vis_fac: string
+    fec_cre_fac?: Date | string
+    nom_dec_fac: string
+    ape_dec_fac: string
+    cor_dec_fac: string
+    url_img_dec_fac: string
+    nom_sub_dec_fac: string
+    ape_sub_dec_fac: string
+    cor_sub_dec_fac: string
+    url_img_sub_dec_fac: string
     carreras?: carreraCreateNestedManyWithoutFacultadInput
   }
 
@@ -11919,6 +20701,15 @@ export namespace Prisma {
     des_fac: string
     mis_fac: string
     vis_fac: string
+    fec_cre_fac?: Date | string
+    nom_dec_fac: string
+    ape_dec_fac: string
+    cor_dec_fac: string
+    url_img_dec_fac: string
+    nom_sub_dec_fac: string
+    ape_sub_dec_fac: string
+    cor_sub_dec_fac: string
+    url_img_sub_dec_fac: string
     carreras?: carreraUncheckedCreateNestedManyWithoutFacultadInput
   }
 
@@ -11928,6 +20719,15 @@ export namespace Prisma {
     des_fac?: StringFieldUpdateOperationsInput | string
     mis_fac?: StringFieldUpdateOperationsInput | string
     vis_fac?: StringFieldUpdateOperationsInput | string
+    fec_cre_fac?: DateTimeFieldUpdateOperationsInput | Date | string
+    nom_dec_fac?: StringFieldUpdateOperationsInput | string
+    ape_dec_fac?: StringFieldUpdateOperationsInput | string
+    cor_dec_fac?: StringFieldUpdateOperationsInput | string
+    url_img_dec_fac?: StringFieldUpdateOperationsInput | string
+    nom_sub_dec_fac?: StringFieldUpdateOperationsInput | string
+    ape_sub_dec_fac?: StringFieldUpdateOperationsInput | string
+    cor_sub_dec_fac?: StringFieldUpdateOperationsInput | string
+    url_img_sub_dec_fac?: StringFieldUpdateOperationsInput | string
     carreras?: carreraUpdateManyWithoutFacultadNestedInput
   }
 
@@ -11937,6 +20737,15 @@ export namespace Prisma {
     des_fac?: StringFieldUpdateOperationsInput | string
     mis_fac?: StringFieldUpdateOperationsInput | string
     vis_fac?: StringFieldUpdateOperationsInput | string
+    fec_cre_fac?: DateTimeFieldUpdateOperationsInput | Date | string
+    nom_dec_fac?: StringFieldUpdateOperationsInput | string
+    ape_dec_fac?: StringFieldUpdateOperationsInput | string
+    cor_dec_fac?: StringFieldUpdateOperationsInput | string
+    url_img_dec_fac?: StringFieldUpdateOperationsInput | string
+    nom_sub_dec_fac?: StringFieldUpdateOperationsInput | string
+    ape_sub_dec_fac?: StringFieldUpdateOperationsInput | string
+    cor_sub_dec_fac?: StringFieldUpdateOperationsInput | string
+    url_img_sub_dec_fac?: StringFieldUpdateOperationsInput | string
     carreras?: carreraUncheckedUpdateManyWithoutFacultadNestedInput
   }
 
@@ -11946,6 +20755,15 @@ export namespace Prisma {
     des_fac: string
     mis_fac: string
     vis_fac: string
+    fec_cre_fac?: Date | string
+    nom_dec_fac: string
+    ape_dec_fac: string
+    cor_dec_fac: string
+    url_img_dec_fac: string
+    nom_sub_dec_fac: string
+    ape_sub_dec_fac: string
+    cor_sub_dec_fac: string
+    url_img_sub_dec_fac: string
   }
 
   export type facultadUpdateManyMutationInput = {
@@ -11954,6 +20772,15 @@ export namespace Prisma {
     des_fac?: StringFieldUpdateOperationsInput | string
     mis_fac?: StringFieldUpdateOperationsInput | string
     vis_fac?: StringFieldUpdateOperationsInput | string
+    fec_cre_fac?: DateTimeFieldUpdateOperationsInput | Date | string
+    nom_dec_fac?: StringFieldUpdateOperationsInput | string
+    ape_dec_fac?: StringFieldUpdateOperationsInput | string
+    cor_dec_fac?: StringFieldUpdateOperationsInput | string
+    url_img_dec_fac?: StringFieldUpdateOperationsInput | string
+    nom_sub_dec_fac?: StringFieldUpdateOperationsInput | string
+    ape_sub_dec_fac?: StringFieldUpdateOperationsInput | string
+    cor_sub_dec_fac?: StringFieldUpdateOperationsInput | string
+    url_img_sub_dec_fac?: StringFieldUpdateOperationsInput | string
   }
 
   export type facultadUncheckedUpdateManyInput = {
@@ -11962,6 +20789,15 @@ export namespace Prisma {
     des_fac?: StringFieldUpdateOperationsInput | string
     mis_fac?: StringFieldUpdateOperationsInput | string
     vis_fac?: StringFieldUpdateOperationsInput | string
+    fec_cre_fac?: DateTimeFieldUpdateOperationsInput | Date | string
+    nom_dec_fac?: StringFieldUpdateOperationsInput | string
+    ape_dec_fac?: StringFieldUpdateOperationsInput | string
+    cor_dec_fac?: StringFieldUpdateOperationsInput | string
+    url_img_dec_fac?: StringFieldUpdateOperationsInput | string
+    nom_sub_dec_fac?: StringFieldUpdateOperationsInput | string
+    ape_sub_dec_fac?: StringFieldUpdateOperationsInput | string
+    cor_sub_dec_fac?: StringFieldUpdateOperationsInput | string
+    url_img_sub_dec_fac?: StringFieldUpdateOperationsInput | string
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -11977,13 +20813,6 @@ export namespace Prisma {
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     mode?: QueryMode
     not?: NestedStringFilter<$PrismaModel> | string
-  }
-
-  export type Enumrol_usuarioFilter<$PrismaModel = never> = {
-    equals?: $Enums.rol_usuario | Enumrol_usuarioFieldRefInput<$PrismaModel>
-    in?: $Enums.rol_usuario[] | ListEnumrol_usuarioFieldRefInput<$PrismaModel>
-    notIn?: $Enums.rol_usuario[] | ListEnumrol_usuarioFieldRefInput<$PrismaModel>
-    not?: NestedEnumrol_usuarioFilter<$PrismaModel> | $Enums.rol_usuario
   }
 
   export type DateTimeFilter<$PrismaModel = never> = {
@@ -12017,10 +20846,10 @@ export namespace Prisma {
     isNot?: carreraWhereInput | null
   }
 
-  export type InscripcionListRelationFilter = {
-    every?: inscripcionWhereInput
-    some?: inscripcionWhereInput
-    none?: inscripcionWhereInput
+  export type CuentaListRelationFilter = {
+    every?: cuentaWhereInput
+    some?: cuentaWhereInput
+    none?: cuentaWhereInput
   }
 
   export type SortOrderInput = {
@@ -12028,7 +20857,7 @@ export namespace Prisma {
     nulls?: NullsOrder
   }
 
-  export type inscripcionOrderByRelationAggregateInput = {
+  export type cuentaOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -12037,13 +20866,11 @@ export namespace Prisma {
     ced_usu?: SortOrder
     nom_usu?: SortOrder
     ape_usu?: SortOrder
-    cor_usu?: SortOrder
-    con_usu?: SortOrder
     cel_usu?: SortOrder
-    rol_usu?: SortOrder
     fec_cre_usu?: SortOrder
     com_usu?: SortOrder
     id_car_est?: SortOrder
+    img_per_usu?: SortOrder
   }
 
   export type usuarioMaxOrderByAggregateInput = {
@@ -12051,13 +20878,11 @@ export namespace Prisma {
     ced_usu?: SortOrder
     nom_usu?: SortOrder
     ape_usu?: SortOrder
-    cor_usu?: SortOrder
-    con_usu?: SortOrder
     cel_usu?: SortOrder
-    rol_usu?: SortOrder
     fec_cre_usu?: SortOrder
     com_usu?: SortOrder
     id_car_est?: SortOrder
+    img_per_usu?: SortOrder
   }
 
   export type usuarioMinOrderByAggregateInput = {
@@ -12065,13 +20890,11 @@ export namespace Prisma {
     ced_usu?: SortOrder
     nom_usu?: SortOrder
     ape_usu?: SortOrder
-    cor_usu?: SortOrder
-    con_usu?: SortOrder
     cel_usu?: SortOrder
-    rol_usu?: SortOrder
     fec_cre_usu?: SortOrder
     com_usu?: SortOrder
     id_car_est?: SortOrder
+    img_per_usu?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -12090,16 +20913,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedStringFilter<$PrismaModel>
     _max?: NestedStringFilter<$PrismaModel>
-  }
-
-  export type Enumrol_usuarioWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.rol_usuario | Enumrol_usuarioFieldRefInput<$PrismaModel>
-    in?: $Enums.rol_usuario[] | ListEnumrol_usuarioFieldRefInput<$PrismaModel>
-    notIn?: $Enums.rol_usuario[] | ListEnumrol_usuarioFieldRefInput<$PrismaModel>
-    not?: NestedEnumrol_usuarioWithAggregatesFilter<$PrismaModel> | $Enums.rol_usuario
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumrol_usuarioFilter<$PrismaModel>
-    _max?: NestedEnumrol_usuarioFilter<$PrismaModel>
   }
 
   export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
@@ -12134,6 +20947,255 @@ export namespace Prisma {
     _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
+  export type Enumestado_validacionFilter<$PrismaModel = never> = {
+    equals?: $Enums.estado_validacion | Enumestado_validacionFieldRefInput<$PrismaModel>
+    in?: $Enums.estado_validacion[] | ListEnumestado_validacionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.estado_validacion[] | ListEnumestado_validacionFieldRefInput<$PrismaModel>
+    not?: NestedEnumestado_validacionFilter<$PrismaModel> | $Enums.estado_validacion
+  }
+
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type CuentaNullableScalarRelationFilter = {
+    is?: cuentaWhereInput | null
+    isNot?: cuentaWhereInput | null
+  }
+
+  export type InscripcionScalarRelationFilter = {
+    is?: inscripcionWhereInput
+    isNot?: inscripcionWhereInput
+  }
+
+  export type comprobante_pagoCountOrderByAggregateInput = {
+    id_com_pag?: SortOrder
+    id_ins_per?: SortOrder
+    url_com_pag?: SortOrder
+    est_com_pag?: SortOrder
+    fec_sub_com_pag?: SortOrder
+    fec_val_com_pag?: SortOrder
+    id_adm_val_com_pag?: SortOrder
+    fec_pag_ins?: SortOrder
+  }
+
+  export type comprobante_pagoMaxOrderByAggregateInput = {
+    id_com_pag?: SortOrder
+    id_ins_per?: SortOrder
+    url_com_pag?: SortOrder
+    est_com_pag?: SortOrder
+    fec_sub_com_pag?: SortOrder
+    fec_val_com_pag?: SortOrder
+    id_adm_val_com_pag?: SortOrder
+    fec_pag_ins?: SortOrder
+  }
+
+  export type comprobante_pagoMinOrderByAggregateInput = {
+    id_com_pag?: SortOrder
+    id_ins_per?: SortOrder
+    url_com_pag?: SortOrder
+    est_com_pag?: SortOrder
+    fec_sub_com_pag?: SortOrder
+    fec_val_com_pag?: SortOrder
+    id_adm_val_com_pag?: SortOrder
+    fec_pag_ins?: SortOrder
+  }
+
+  export type Enumestado_validacionWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.estado_validacion | Enumestado_validacionFieldRefInput<$PrismaModel>
+    in?: $Enums.estado_validacion[] | ListEnumestado_validacionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.estado_validacion[] | ListEnumestado_validacionFieldRefInput<$PrismaModel>
+    not?: NestedEnumestado_validacionWithAggregatesFilter<$PrismaModel> | $Enums.estado_validacion
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumestado_validacionFilter<$PrismaModel>
+    _max?: NestedEnumestado_validacionFilter<$PrismaModel>
+  }
+
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type carta_motivacionCountOrderByAggregateInput = {
+    id_car_mot?: SortOrder
+    id_ins_per?: SortOrder
+    con_car_mot?: SortOrder
+    est_car_mot?: SortOrder
+    fec_sub_car_mot?: SortOrder
+    fec_val_car_mot?: SortOrder
+    id_adm_val_car_mot?: SortOrder
+  }
+
+  export type carta_motivacionMaxOrderByAggregateInput = {
+    id_car_mot?: SortOrder
+    id_ins_per?: SortOrder
+    con_car_mot?: SortOrder
+    est_car_mot?: SortOrder
+    fec_sub_car_mot?: SortOrder
+    fec_val_car_mot?: SortOrder
+    id_adm_val_car_mot?: SortOrder
+  }
+
+  export type carta_motivacionMinOrderByAggregateInput = {
+    id_car_mot?: SortOrder
+    id_ins_per?: SortOrder
+    con_car_mot?: SortOrder
+    est_car_mot?: SortOrder
+    fec_sub_car_mot?: SortOrder
+    fec_val_car_mot?: SortOrder
+    id_adm_val_car_mot?: SortOrder
+  }
+
+  export type observacion_inscripcionCountOrderByAggregateInput = {
+    id_obs_ins?: SortOrder
+    id_ins_per?: SortOrder
+    obs_ins?: SortOrder
+    fec_cre_obs?: SortOrder
+    id_adm_cre_obs?: SortOrder
+  }
+
+  export type observacion_inscripcionMaxOrderByAggregateInput = {
+    id_obs_ins?: SortOrder
+    id_ins_per?: SortOrder
+    obs_ins?: SortOrder
+    fec_cre_obs?: SortOrder
+    id_adm_cre_obs?: SortOrder
+  }
+
+  export type observacion_inscripcionMinOrderByAggregateInput = {
+    id_obs_ins?: SortOrder
+    id_ins_per?: SortOrder
+    obs_ins?: SortOrder
+    fec_cre_obs?: SortOrder
+    id_adm_cre_obs?: SortOrder
+  }
+
+  export type Enumrol_usuarioFilter<$PrismaModel = never> = {
+    equals?: $Enums.rol_usuario | Enumrol_usuarioFieldRefInput<$PrismaModel>
+    in?: $Enums.rol_usuario[] | ListEnumrol_usuarioFieldRefInput<$PrismaModel>
+    notIn?: $Enums.rol_usuario[] | ListEnumrol_usuarioFieldRefInput<$PrismaModel>
+    not?: NestedEnumrol_usuarioFilter<$PrismaModel> | $Enums.rol_usuario
+  }
+
+  export type UsuarioScalarRelationFilter = {
+    is?: usuarioWhereInput
+    isNot?: usuarioWhereInput
+  }
+
+  export type InscripcionListRelationFilter = {
+    every?: inscripcionWhereInput
+    some?: inscripcionWhereInput
+    none?: inscripcionWhereInput
+  }
+
+  export type Carta_motivacionListRelationFilter = {
+    every?: carta_motivacionWhereInput
+    some?: carta_motivacionWhereInput
+    none?: carta_motivacionWhereInput
+  }
+
+  export type Comprobante_pagoListRelationFilter = {
+    every?: comprobante_pagoWhereInput
+    some?: comprobante_pagoWhereInput
+    none?: comprobante_pagoWhereInput
+  }
+
+  export type EventoListRelationFilter = {
+    every?: eventoWhereInput
+    some?: eventoWhereInput
+    none?: eventoWhereInput
+  }
+
+  export type Observacion_inscripcionListRelationFilter = {
+    every?: observacion_inscripcionWhereInput
+    some?: observacion_inscripcionWhereInput
+    none?: observacion_inscripcionWhereInput
+  }
+
+  export type inscripcionOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type carta_motivacionOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type comprobante_pagoOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type eventoOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type observacion_inscripcionOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type cuentaCountOrderByAggregateInput = {
+    id_cue?: SortOrder
+    id_usu_per?: SortOrder
+    cor_usu?: SortOrder
+    con_usu?: SortOrder
+    fec_cre_cue?: SortOrder
+    rol_usu?: SortOrder
+  }
+
+  export type cuentaMaxOrderByAggregateInput = {
+    id_cue?: SortOrder
+    id_usu_per?: SortOrder
+    cor_usu?: SortOrder
+    con_usu?: SortOrder
+    fec_cre_cue?: SortOrder
+    rol_usu?: SortOrder
+  }
+
+  export type cuentaMinOrderByAggregateInput = {
+    id_cue?: SortOrder
+    id_usu_per?: SortOrder
+    cor_usu?: SortOrder
+    con_usu?: SortOrder
+    fec_cre_cue?: SortOrder
+    rol_usu?: SortOrder
+  }
+
+  export type Enumrol_usuarioWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.rol_usuario | Enumrol_usuarioFieldRefInput<$PrismaModel>
+    in?: $Enums.rol_usuario[] | ListEnumrol_usuarioFieldRefInput<$PrismaModel>
+    notIn?: $Enums.rol_usuario[] | ListEnumrol_usuarioFieldRefInput<$PrismaModel>
+    not?: NestedEnumrol_usuarioWithAggregatesFilter<$PrismaModel> | $Enums.rol_usuario
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumrol_usuarioFilter<$PrismaModel>
+    _max?: NestedEnumrol_usuarioFilter<$PrismaModel>
+  }
+
+  export type IntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
+  }
+
   export type BoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
@@ -12142,6 +21204,11 @@ export namespace Prisma {
   export type FacultadScalarRelationFilter = {
     is?: facultadWhereInput
     isNot?: facultadWhereInput
+  }
+
+  export type CoordinadorNullableScalarRelationFilter = {
+    is?: coordinadorWhereInput | null
+    isNot?: coordinadorWhereInput | null
   }
 
   export type UsuarioListRelationFilter = {
@@ -12167,25 +21234,64 @@ export namespace Prisma {
   export type carreraCountOrderByAggregateInput = {
     id_car?: SortOrder
     nom_car?: SortOrder
+    des_car?: SortOrder
+    dur_sem_car?: SortOrder
+    mod_car?: SortOrder
+    ico_car?: SortOrder
     est_car?: SortOrder
     fec_cre_car?: SortOrder
     id_fac_per?: SortOrder
+    id_coo_per?: SortOrder
+  }
+
+  export type carreraAvgOrderByAggregateInput = {
+    dur_sem_car?: SortOrder
   }
 
   export type carreraMaxOrderByAggregateInput = {
     id_car?: SortOrder
     nom_car?: SortOrder
+    des_car?: SortOrder
+    dur_sem_car?: SortOrder
+    mod_car?: SortOrder
+    ico_car?: SortOrder
     est_car?: SortOrder
     fec_cre_car?: SortOrder
     id_fac_per?: SortOrder
+    id_coo_per?: SortOrder
   }
 
   export type carreraMinOrderByAggregateInput = {
     id_car?: SortOrder
     nom_car?: SortOrder
+    des_car?: SortOrder
+    dur_sem_car?: SortOrder
+    mod_car?: SortOrder
+    ico_car?: SortOrder
     est_car?: SortOrder
     fec_cre_car?: SortOrder
     id_fac_per?: SortOrder
+    id_coo_per?: SortOrder
+  }
+
+  export type carreraSumOrderByAggregateInput = {
+    dur_sem_car?: SortOrder
+  }
+
+  export type IntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
   }
 
   export type BoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -12194,6 +21300,43 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedBoolFilter<$PrismaModel>
     _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type CarreraListRelationFilter = {
+    every?: carreraWhereInput
+    some?: carreraWhereInput
+    none?: carreraWhereInput
+  }
+
+  export type carreraOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type coordinadorCountOrderByAggregateInput = {
+    id_coo?: SortOrder
+    nom_coo?: SortOrder
+    ape_coo?: SortOrder
+    cor_coo?: SortOrder
+    url_img_coo?: SortOrder
+    tit_coo?: SortOrder
+  }
+
+  export type coordinadorMaxOrderByAggregateInput = {
+    id_coo?: SortOrder
+    nom_coo?: SortOrder
+    ape_coo?: SortOrder
+    cor_coo?: SortOrder
+    url_img_coo?: SortOrder
+    tit_coo?: SortOrder
+  }
+
+  export type coordinadorMinOrderByAggregateInput = {
+    id_coo?: SortOrder
+    nom_coo?: SortOrder
+    ape_coo?: SortOrder
+    cor_coo?: SortOrder
+    url_img_coo?: SortOrder
+    tit_coo?: SortOrder
   }
 
   export type Enumtipo_eventoFilter<$PrismaModel = never> = {
@@ -12221,20 +21364,14 @@ export namespace Prisma {
     not?: NestedEnumestado_eventoFilter<$PrismaModel> | $Enums.estado_evento
   }
 
-  export type IntFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntFilter<$PrismaModel> | number
-  }
-
   export type Evento_cursoNullableScalarRelationFilter = {
     is?: evento_cursoWhereInput | null
     isNot?: evento_cursoWhereInput | null
+  }
+
+  export type CuentaScalarRelationFilter = {
+    is?: cuentaWhereInput
+    isNot?: cuentaWhereInput
   }
 
   export type eventoCountOrderByAggregateInput = {
@@ -12246,10 +21383,11 @@ export namespace Prisma {
     val_eve?: SortOrder
     est_eve?: SortOrder
     fec_cre_eve?: SortOrder
-    img_por_eve?: SortOrder
     dur_hor_eve?: SortOrder
+    img_por_eve?: SortOrder
     por_min_asi_eve?: SortOrder
     fec_fin_eve?: SortOrder
+    id_cue_cre_eve?: SortOrder
   }
 
   export type eventoAvgOrderByAggregateInput = {
@@ -12267,10 +21405,11 @@ export namespace Prisma {
     val_eve?: SortOrder
     est_eve?: SortOrder
     fec_cre_eve?: SortOrder
-    img_por_eve?: SortOrder
     dur_hor_eve?: SortOrder
+    img_por_eve?: SortOrder
     por_min_asi_eve?: SortOrder
     fec_fin_eve?: SortOrder
+    id_cue_cre_eve?: SortOrder
   }
 
   export type eventoMinOrderByAggregateInput = {
@@ -12282,10 +21421,11 @@ export namespace Prisma {
     val_eve?: SortOrder
     est_eve?: SortOrder
     fec_cre_eve?: SortOrder
-    img_por_eve?: SortOrder
     dur_hor_eve?: SortOrder
+    img_por_eve?: SortOrder
     por_min_asi_eve?: SortOrder
     fec_fin_eve?: SortOrder
+    id_cue_cre_eve?: SortOrder
   }
 
   export type eventoSumOrderByAggregateInput = {
@@ -12328,22 +21468,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumestado_eventoFilter<$PrismaModel>
     _max?: NestedEnumestado_eventoFilter<$PrismaModel>
-  }
-
-  export type IntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
   }
 
   export type EventoScalarRelationFilter = {
@@ -12407,84 +21531,6 @@ export namespace Prisma {
     not?: NestedEnumestado_inscripcionFilter<$PrismaModel> | $Enums.estado_inscripcion
   }
 
-  export type DateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
-  }
-
-  export type UsuarioScalarRelationFilter = {
-    is?: usuarioWhereInput
-    isNot?: usuarioWhereInput
-  }
-
-  export type Inscripcion_cursoNullableScalarRelationFilter = {
-    is?: inscripcion_cursoWhereInput | null
-    isNot?: inscripcion_cursoWhereInput | null
-  }
-
-  export type inscripcionCountOrderByAggregateInput = {
-    id_ins?: SortOrder
-    id_usu_ins?: SortOrder
-    id_eve_ins?: SortOrder
-    est_ins?: SortOrder
-    fec_ins?: SortOrder
-    fec_pag_ins?: SortOrder
-    cer_eve_env?: SortOrder
-    car_mot_usu?: SortOrder
-  }
-
-  export type inscripcionMaxOrderByAggregateInput = {
-    id_ins?: SortOrder
-    id_usu_ins?: SortOrder
-    id_eve_ins?: SortOrder
-    est_ins?: SortOrder
-    fec_ins?: SortOrder
-    fec_pag_ins?: SortOrder
-    cer_eve_env?: SortOrder
-    car_mot_usu?: SortOrder
-  }
-
-  export type inscripcionMinOrderByAggregateInput = {
-    id_ins?: SortOrder
-    id_usu_ins?: SortOrder
-    id_eve_ins?: SortOrder
-    est_ins?: SortOrder
-    fec_ins?: SortOrder
-    fec_pag_ins?: SortOrder
-    cer_eve_env?: SortOrder
-    car_mot_usu?: SortOrder
-  }
-
-  export type Enumestado_inscripcionWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.estado_inscripcion | Enumestado_inscripcionFieldRefInput<$PrismaModel>
-    in?: $Enums.estado_inscripcion[] | ListEnumestado_inscripcionFieldRefInput<$PrismaModel>
-    notIn?: $Enums.estado_inscripcion[] | ListEnumestado_inscripcionFieldRefInput<$PrismaModel>
-    not?: NestedEnumestado_inscripcionWithAggregatesFilter<$PrismaModel> | $Enums.estado_inscripcion
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumestado_inscripcionFilter<$PrismaModel>
-    _max?: NestedEnumestado_inscripcionFilter<$PrismaModel>
-  }
-
-  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
-  }
-
   export type FloatNullableFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel> | null
     in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
@@ -12496,37 +21542,67 @@ export namespace Prisma {
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
 
-  export type InscripcionScalarRelationFilter = {
-    is?: inscripcionWhereInput
-    isNot?: inscripcionWhereInput
+  export type Inscripcion_cursoNullableScalarRelationFilter = {
+    is?: inscripcion_cursoWhereInput | null
+    isNot?: inscripcion_cursoWhereInput | null
   }
 
-  export type inscripcion_cursoCountOrderByAggregateInput = {
-    id_ins_cur?: SortOrder
-    not_fin_usu?: SortOrder
+  export type Observacion_inscripcionNullableScalarRelationFilter = {
+    is?: observacion_inscripcionWhereInput | null
+    isNot?: observacion_inscripcionWhereInput | null
+  }
+
+  export type CertificadoNullableScalarRelationFilter = {
+    is?: certificadoWhereInput | null
+    isNot?: certificadoWhereInput | null
+  }
+
+  export type inscripcionCountOrderByAggregateInput = {
+    id_ins?: SortOrder
+    id_cor_ins?: SortOrder
+    id_eve_ins?: SortOrder
+    est_ins?: SortOrder
+    fec_ins?: SortOrder
+    usu_apr_cer?: SortOrder
     por_asi_fin_usu?: SortOrder
   }
 
-  export type inscripcion_cursoAvgOrderByAggregateInput = {
-    not_fin_usu?: SortOrder
+  export type inscripcionAvgOrderByAggregateInput = {
     por_asi_fin_usu?: SortOrder
   }
 
-  export type inscripcion_cursoMaxOrderByAggregateInput = {
-    id_ins_cur?: SortOrder
-    not_fin_usu?: SortOrder
+  export type inscripcionMaxOrderByAggregateInput = {
+    id_ins?: SortOrder
+    id_cor_ins?: SortOrder
+    id_eve_ins?: SortOrder
+    est_ins?: SortOrder
+    fec_ins?: SortOrder
+    usu_apr_cer?: SortOrder
     por_asi_fin_usu?: SortOrder
   }
 
-  export type inscripcion_cursoMinOrderByAggregateInput = {
-    id_ins_cur?: SortOrder
-    not_fin_usu?: SortOrder
+  export type inscripcionMinOrderByAggregateInput = {
+    id_ins?: SortOrder
+    id_cor_ins?: SortOrder
+    id_eve_ins?: SortOrder
+    est_ins?: SortOrder
+    fec_ins?: SortOrder
+    usu_apr_cer?: SortOrder
     por_asi_fin_usu?: SortOrder
   }
 
-  export type inscripcion_cursoSumOrderByAggregateInput = {
-    not_fin_usu?: SortOrder
+  export type inscripcionSumOrderByAggregateInput = {
     por_asi_fin_usu?: SortOrder
+  }
+
+  export type Enumestado_inscripcionWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.estado_inscripcion | Enumestado_inscripcionFieldRefInput<$PrismaModel>
+    in?: $Enums.estado_inscripcion[] | ListEnumestado_inscripcionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.estado_inscripcion[] | ListEnumestado_inscripcionFieldRefInput<$PrismaModel>
+    not?: NestedEnumestado_inscripcionWithAggregatesFilter<$PrismaModel> | $Enums.estado_inscripcion
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumestado_inscripcionFilter<$PrismaModel>
+    _max?: NestedEnumestado_inscripcionFilter<$PrismaModel>
   }
 
   export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -12545,14 +21621,71 @@ export namespace Prisma {
     _max?: NestedFloatNullableFilter<$PrismaModel>
   }
 
-  export type CarreraListRelationFilter = {
-    every?: carreraWhereInput
-    some?: carreraWhereInput
-    none?: carreraWhereInput
+  export type inscripcion_cursoCountOrderByAggregateInput = {
+    id_ins_cur?: SortOrder
+    not_fin_usu?: SortOrder
   }
 
-  export type carreraOrderByRelationAggregateInput = {
-    _count?: SortOrder
+  export type inscripcion_cursoAvgOrderByAggregateInput = {
+    not_fin_usu?: SortOrder
+  }
+
+  export type inscripcion_cursoMaxOrderByAggregateInput = {
+    id_ins_cur?: SortOrder
+    not_fin_usu?: SortOrder
+  }
+
+  export type inscripcion_cursoMinOrderByAggregateInput = {
+    id_ins_cur?: SortOrder
+    not_fin_usu?: SortOrder
+  }
+
+  export type inscripcion_cursoSumOrderByAggregateInput = {
+    not_fin_usu?: SortOrder
+  }
+
+  export type Enumtipo_certificadoFilter<$PrismaModel = never> = {
+    equals?: $Enums.tipo_certificado | Enumtipo_certificadoFieldRefInput<$PrismaModel>
+    in?: $Enums.tipo_certificado[] | ListEnumtipo_certificadoFieldRefInput<$PrismaModel>
+    notIn?: $Enums.tipo_certificado[] | ListEnumtipo_certificadoFieldRefInput<$PrismaModel>
+    not?: NestedEnumtipo_certificadoFilter<$PrismaModel> | $Enums.tipo_certificado
+  }
+
+  export type certificadoCountOrderByAggregateInput = {
+    id_cer?: SortOrder
+    id_ins_per?: SortOrder
+    url_cer?: SortOrder
+    tip_cer?: SortOrder
+    fec_gen_cer?: SortOrder
+    cod_val_cer?: SortOrder
+  }
+
+  export type certificadoMaxOrderByAggregateInput = {
+    id_cer?: SortOrder
+    id_ins_per?: SortOrder
+    url_cer?: SortOrder
+    tip_cer?: SortOrder
+    fec_gen_cer?: SortOrder
+    cod_val_cer?: SortOrder
+  }
+
+  export type certificadoMinOrderByAggregateInput = {
+    id_cer?: SortOrder
+    id_ins_per?: SortOrder
+    url_cer?: SortOrder
+    tip_cer?: SortOrder
+    fec_gen_cer?: SortOrder
+    cod_val_cer?: SortOrder
+  }
+
+  export type Enumtipo_certificadoWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.tipo_certificado | Enumtipo_certificadoFieldRefInput<$PrismaModel>
+    in?: $Enums.tipo_certificado[] | ListEnumtipo_certificadoFieldRefInput<$PrismaModel>
+    notIn?: $Enums.tipo_certificado[] | ListEnumtipo_certificadoFieldRefInput<$PrismaModel>
+    not?: NestedEnumtipo_certificadoWithAggregatesFilter<$PrismaModel> | $Enums.tipo_certificado
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumtipo_certificadoFilter<$PrismaModel>
+    _max?: NestedEnumtipo_certificadoFilter<$PrismaModel>
   }
 
   export type facultadCountOrderByAggregateInput = {
@@ -12561,6 +21694,15 @@ export namespace Prisma {
     des_fac?: SortOrder
     mis_fac?: SortOrder
     vis_fac?: SortOrder
+    fec_cre_fac?: SortOrder
+    nom_dec_fac?: SortOrder
+    ape_dec_fac?: SortOrder
+    cor_dec_fac?: SortOrder
+    url_img_dec_fac?: SortOrder
+    nom_sub_dec_fac?: SortOrder
+    ape_sub_dec_fac?: SortOrder
+    cor_sub_dec_fac?: SortOrder
+    url_img_sub_dec_fac?: SortOrder
   }
 
   export type facultadMaxOrderByAggregateInput = {
@@ -12569,6 +21711,15 @@ export namespace Prisma {
     des_fac?: SortOrder
     mis_fac?: SortOrder
     vis_fac?: SortOrder
+    fec_cre_fac?: SortOrder
+    nom_dec_fac?: SortOrder
+    ape_dec_fac?: SortOrder
+    cor_dec_fac?: SortOrder
+    url_img_dec_fac?: SortOrder
+    nom_sub_dec_fac?: SortOrder
+    ape_sub_dec_fac?: SortOrder
+    cor_sub_dec_fac?: SortOrder
+    url_img_sub_dec_fac?: SortOrder
   }
 
   export type facultadMinOrderByAggregateInput = {
@@ -12577,6 +21728,15 @@ export namespace Prisma {
     des_fac?: SortOrder
     mis_fac?: SortOrder
     vis_fac?: SortOrder
+    fec_cre_fac?: SortOrder
+    nom_dec_fac?: SortOrder
+    ape_dec_fac?: SortOrder
+    cor_dec_fac?: SortOrder
+    url_img_dec_fac?: SortOrder
+    nom_sub_dec_fac?: SortOrder
+    ape_sub_dec_fac?: SortOrder
+    cor_sub_dec_fac?: SortOrder
+    url_img_sub_dec_fac?: SortOrder
   }
 
   export type carreraCreateNestedOneWithoutUsuarioInput = {
@@ -12585,26 +21745,22 @@ export namespace Prisma {
     connect?: carreraWhereUniqueInput
   }
 
-  export type inscripcionCreateNestedManyWithoutUsuarioInput = {
-    create?: XOR<inscripcionCreateWithoutUsuarioInput, inscripcionUncheckedCreateWithoutUsuarioInput> | inscripcionCreateWithoutUsuarioInput[] | inscripcionUncheckedCreateWithoutUsuarioInput[]
-    connectOrCreate?: inscripcionCreateOrConnectWithoutUsuarioInput | inscripcionCreateOrConnectWithoutUsuarioInput[]
-    createMany?: inscripcionCreateManyUsuarioInputEnvelope
-    connect?: inscripcionWhereUniqueInput | inscripcionWhereUniqueInput[]
+  export type cuentaCreateNestedManyWithoutUsuarioInput = {
+    create?: XOR<cuentaCreateWithoutUsuarioInput, cuentaUncheckedCreateWithoutUsuarioInput> | cuentaCreateWithoutUsuarioInput[] | cuentaUncheckedCreateWithoutUsuarioInput[]
+    connectOrCreate?: cuentaCreateOrConnectWithoutUsuarioInput | cuentaCreateOrConnectWithoutUsuarioInput[]
+    createMany?: cuentaCreateManyUsuarioInputEnvelope
+    connect?: cuentaWhereUniqueInput | cuentaWhereUniqueInput[]
   }
 
-  export type inscripcionUncheckedCreateNestedManyWithoutUsuarioInput = {
-    create?: XOR<inscripcionCreateWithoutUsuarioInput, inscripcionUncheckedCreateWithoutUsuarioInput> | inscripcionCreateWithoutUsuarioInput[] | inscripcionUncheckedCreateWithoutUsuarioInput[]
-    connectOrCreate?: inscripcionCreateOrConnectWithoutUsuarioInput | inscripcionCreateOrConnectWithoutUsuarioInput[]
-    createMany?: inscripcionCreateManyUsuarioInputEnvelope
-    connect?: inscripcionWhereUniqueInput | inscripcionWhereUniqueInput[]
+  export type cuentaUncheckedCreateNestedManyWithoutUsuarioInput = {
+    create?: XOR<cuentaCreateWithoutUsuarioInput, cuentaUncheckedCreateWithoutUsuarioInput> | cuentaCreateWithoutUsuarioInput[] | cuentaUncheckedCreateWithoutUsuarioInput[]
+    connectOrCreate?: cuentaCreateOrConnectWithoutUsuarioInput | cuentaCreateOrConnectWithoutUsuarioInput[]
+    createMany?: cuentaCreateManyUsuarioInputEnvelope
+    connect?: cuentaWhereUniqueInput | cuentaWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
     set?: string
-  }
-
-  export type Enumrol_usuarioFieldUpdateOperationsInput = {
-    set?: $Enums.rol_usuario
   }
 
   export type DateTimeFieldUpdateOperationsInput = {
@@ -12625,38 +21781,370 @@ export namespace Prisma {
     update?: XOR<XOR<carreraUpdateToOneWithWhereWithoutUsuarioInput, carreraUpdateWithoutUsuarioInput>, carreraUncheckedUpdateWithoutUsuarioInput>
   }
 
-  export type inscripcionUpdateManyWithoutUsuarioNestedInput = {
-    create?: XOR<inscripcionCreateWithoutUsuarioInput, inscripcionUncheckedCreateWithoutUsuarioInput> | inscripcionCreateWithoutUsuarioInput[] | inscripcionUncheckedCreateWithoutUsuarioInput[]
-    connectOrCreate?: inscripcionCreateOrConnectWithoutUsuarioInput | inscripcionCreateOrConnectWithoutUsuarioInput[]
-    upsert?: inscripcionUpsertWithWhereUniqueWithoutUsuarioInput | inscripcionUpsertWithWhereUniqueWithoutUsuarioInput[]
-    createMany?: inscripcionCreateManyUsuarioInputEnvelope
+  export type cuentaUpdateManyWithoutUsuarioNestedInput = {
+    create?: XOR<cuentaCreateWithoutUsuarioInput, cuentaUncheckedCreateWithoutUsuarioInput> | cuentaCreateWithoutUsuarioInput[] | cuentaUncheckedCreateWithoutUsuarioInput[]
+    connectOrCreate?: cuentaCreateOrConnectWithoutUsuarioInput | cuentaCreateOrConnectWithoutUsuarioInput[]
+    upsert?: cuentaUpsertWithWhereUniqueWithoutUsuarioInput | cuentaUpsertWithWhereUniqueWithoutUsuarioInput[]
+    createMany?: cuentaCreateManyUsuarioInputEnvelope
+    set?: cuentaWhereUniqueInput | cuentaWhereUniqueInput[]
+    disconnect?: cuentaWhereUniqueInput | cuentaWhereUniqueInput[]
+    delete?: cuentaWhereUniqueInput | cuentaWhereUniqueInput[]
+    connect?: cuentaWhereUniqueInput | cuentaWhereUniqueInput[]
+    update?: cuentaUpdateWithWhereUniqueWithoutUsuarioInput | cuentaUpdateWithWhereUniqueWithoutUsuarioInput[]
+    updateMany?: cuentaUpdateManyWithWhereWithoutUsuarioInput | cuentaUpdateManyWithWhereWithoutUsuarioInput[]
+    deleteMany?: cuentaScalarWhereInput | cuentaScalarWhereInput[]
+  }
+
+  export type cuentaUncheckedUpdateManyWithoutUsuarioNestedInput = {
+    create?: XOR<cuentaCreateWithoutUsuarioInput, cuentaUncheckedCreateWithoutUsuarioInput> | cuentaCreateWithoutUsuarioInput[] | cuentaUncheckedCreateWithoutUsuarioInput[]
+    connectOrCreate?: cuentaCreateOrConnectWithoutUsuarioInput | cuentaCreateOrConnectWithoutUsuarioInput[]
+    upsert?: cuentaUpsertWithWhereUniqueWithoutUsuarioInput | cuentaUpsertWithWhereUniqueWithoutUsuarioInput[]
+    createMany?: cuentaCreateManyUsuarioInputEnvelope
+    set?: cuentaWhereUniqueInput | cuentaWhereUniqueInput[]
+    disconnect?: cuentaWhereUniqueInput | cuentaWhereUniqueInput[]
+    delete?: cuentaWhereUniqueInput | cuentaWhereUniqueInput[]
+    connect?: cuentaWhereUniqueInput | cuentaWhereUniqueInput[]
+    update?: cuentaUpdateWithWhereUniqueWithoutUsuarioInput | cuentaUpdateWithWhereUniqueWithoutUsuarioInput[]
+    updateMany?: cuentaUpdateManyWithWhereWithoutUsuarioInput | cuentaUpdateManyWithWhereWithoutUsuarioInput[]
+    deleteMany?: cuentaScalarWhereInput | cuentaScalarWhereInput[]
+  }
+
+  export type cuentaCreateNestedOneWithoutComprobantes_pagoInput = {
+    create?: XOR<cuentaCreateWithoutComprobantes_pagoInput, cuentaUncheckedCreateWithoutComprobantes_pagoInput>
+    connectOrCreate?: cuentaCreateOrConnectWithoutComprobantes_pagoInput
+    connect?: cuentaWhereUniqueInput
+  }
+
+  export type inscripcionCreateNestedOneWithoutComprobantes_pagoInput = {
+    create?: XOR<inscripcionCreateWithoutComprobantes_pagoInput, inscripcionUncheckedCreateWithoutComprobantes_pagoInput>
+    connectOrCreate?: inscripcionCreateOrConnectWithoutComprobantes_pagoInput
+    connect?: inscripcionWhereUniqueInput
+  }
+
+  export type Enumestado_validacionFieldUpdateOperationsInput = {
+    set?: $Enums.estado_validacion
+  }
+
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
+  }
+
+  export type cuentaUpdateOneWithoutComprobantes_pagoNestedInput = {
+    create?: XOR<cuentaCreateWithoutComprobantes_pagoInput, cuentaUncheckedCreateWithoutComprobantes_pagoInput>
+    connectOrCreate?: cuentaCreateOrConnectWithoutComprobantes_pagoInput
+    upsert?: cuentaUpsertWithoutComprobantes_pagoInput
+    disconnect?: cuentaWhereInput | boolean
+    delete?: cuentaWhereInput | boolean
+    connect?: cuentaWhereUniqueInput
+    update?: XOR<XOR<cuentaUpdateToOneWithWhereWithoutComprobantes_pagoInput, cuentaUpdateWithoutComprobantes_pagoInput>, cuentaUncheckedUpdateWithoutComprobantes_pagoInput>
+  }
+
+  export type inscripcionUpdateOneRequiredWithoutComprobantes_pagoNestedInput = {
+    create?: XOR<inscripcionCreateWithoutComprobantes_pagoInput, inscripcionUncheckedCreateWithoutComprobantes_pagoInput>
+    connectOrCreate?: inscripcionCreateOrConnectWithoutComprobantes_pagoInput
+    upsert?: inscripcionUpsertWithoutComprobantes_pagoInput
+    connect?: inscripcionWhereUniqueInput
+    update?: XOR<XOR<inscripcionUpdateToOneWithWhereWithoutComprobantes_pagoInput, inscripcionUpdateWithoutComprobantes_pagoInput>, inscripcionUncheckedUpdateWithoutComprobantes_pagoInput>
+  }
+
+  export type cuentaCreateNestedOneWithoutCartas_motivacionInput = {
+    create?: XOR<cuentaCreateWithoutCartas_motivacionInput, cuentaUncheckedCreateWithoutCartas_motivacionInput>
+    connectOrCreate?: cuentaCreateOrConnectWithoutCartas_motivacionInput
+    connect?: cuentaWhereUniqueInput
+  }
+
+  export type inscripcionCreateNestedOneWithoutCartas_motivacionInput = {
+    create?: XOR<inscripcionCreateWithoutCartas_motivacionInput, inscripcionUncheckedCreateWithoutCartas_motivacionInput>
+    connectOrCreate?: inscripcionCreateOrConnectWithoutCartas_motivacionInput
+    connect?: inscripcionWhereUniqueInput
+  }
+
+  export type cuentaUpdateOneWithoutCartas_motivacionNestedInput = {
+    create?: XOR<cuentaCreateWithoutCartas_motivacionInput, cuentaUncheckedCreateWithoutCartas_motivacionInput>
+    connectOrCreate?: cuentaCreateOrConnectWithoutCartas_motivacionInput
+    upsert?: cuentaUpsertWithoutCartas_motivacionInput
+    disconnect?: cuentaWhereInput | boolean
+    delete?: cuentaWhereInput | boolean
+    connect?: cuentaWhereUniqueInput
+    update?: XOR<XOR<cuentaUpdateToOneWithWhereWithoutCartas_motivacionInput, cuentaUpdateWithoutCartas_motivacionInput>, cuentaUncheckedUpdateWithoutCartas_motivacionInput>
+  }
+
+  export type inscripcionUpdateOneRequiredWithoutCartas_motivacionNestedInput = {
+    create?: XOR<inscripcionCreateWithoutCartas_motivacionInput, inscripcionUncheckedCreateWithoutCartas_motivacionInput>
+    connectOrCreate?: inscripcionCreateOrConnectWithoutCartas_motivacionInput
+    upsert?: inscripcionUpsertWithoutCartas_motivacionInput
+    connect?: inscripcionWhereUniqueInput
+    update?: XOR<XOR<inscripcionUpdateToOneWithWhereWithoutCartas_motivacionInput, inscripcionUpdateWithoutCartas_motivacionInput>, inscripcionUncheckedUpdateWithoutCartas_motivacionInput>
+  }
+
+  export type inscripcionCreateNestedOneWithoutObservacionInput = {
+    create?: XOR<inscripcionCreateWithoutObservacionInput, inscripcionUncheckedCreateWithoutObservacionInput>
+    connectOrCreate?: inscripcionCreateOrConnectWithoutObservacionInput
+    connect?: inscripcionWhereUniqueInput
+  }
+
+  export type cuentaCreateNestedOneWithoutObservaciones_creadasInput = {
+    create?: XOR<cuentaCreateWithoutObservaciones_creadasInput, cuentaUncheckedCreateWithoutObservaciones_creadasInput>
+    connectOrCreate?: cuentaCreateOrConnectWithoutObservaciones_creadasInput
+    connect?: cuentaWhereUniqueInput
+  }
+
+  export type inscripcionUpdateOneRequiredWithoutObservacionNestedInput = {
+    create?: XOR<inscripcionCreateWithoutObservacionInput, inscripcionUncheckedCreateWithoutObservacionInput>
+    connectOrCreate?: inscripcionCreateOrConnectWithoutObservacionInput
+    upsert?: inscripcionUpsertWithoutObservacionInput
+    connect?: inscripcionWhereUniqueInput
+    update?: XOR<XOR<inscripcionUpdateToOneWithWhereWithoutObservacionInput, inscripcionUpdateWithoutObservacionInput>, inscripcionUncheckedUpdateWithoutObservacionInput>
+  }
+
+  export type cuentaUpdateOneWithoutObservaciones_creadasNestedInput = {
+    create?: XOR<cuentaCreateWithoutObservaciones_creadasInput, cuentaUncheckedCreateWithoutObservaciones_creadasInput>
+    connectOrCreate?: cuentaCreateOrConnectWithoutObservaciones_creadasInput
+    upsert?: cuentaUpsertWithoutObservaciones_creadasInput
+    disconnect?: cuentaWhereInput | boolean
+    delete?: cuentaWhereInput | boolean
+    connect?: cuentaWhereUniqueInput
+    update?: XOR<XOR<cuentaUpdateToOneWithWhereWithoutObservaciones_creadasInput, cuentaUpdateWithoutObservaciones_creadasInput>, cuentaUncheckedUpdateWithoutObservaciones_creadasInput>
+  }
+
+  export type usuarioCreateNestedOneWithoutCuentasInput = {
+    create?: XOR<usuarioCreateWithoutCuentasInput, usuarioUncheckedCreateWithoutCuentasInput>
+    connectOrCreate?: usuarioCreateOrConnectWithoutCuentasInput
+    connect?: usuarioWhereUniqueInput
+  }
+
+  export type inscripcionCreateNestedManyWithoutCuentaInput = {
+    create?: XOR<inscripcionCreateWithoutCuentaInput, inscripcionUncheckedCreateWithoutCuentaInput> | inscripcionCreateWithoutCuentaInput[] | inscripcionUncheckedCreateWithoutCuentaInput[]
+    connectOrCreate?: inscripcionCreateOrConnectWithoutCuentaInput | inscripcionCreateOrConnectWithoutCuentaInput[]
+    createMany?: inscripcionCreateManyCuentaInputEnvelope
+    connect?: inscripcionWhereUniqueInput | inscripcionWhereUniqueInput[]
+  }
+
+  export type carta_motivacionCreateNestedManyWithoutAdminInput = {
+    create?: XOR<carta_motivacionCreateWithoutAdminInput, carta_motivacionUncheckedCreateWithoutAdminInput> | carta_motivacionCreateWithoutAdminInput[] | carta_motivacionUncheckedCreateWithoutAdminInput[]
+    connectOrCreate?: carta_motivacionCreateOrConnectWithoutAdminInput | carta_motivacionCreateOrConnectWithoutAdminInput[]
+    createMany?: carta_motivacionCreateManyAdminInputEnvelope
+    connect?: carta_motivacionWhereUniqueInput | carta_motivacionWhereUniqueInput[]
+  }
+
+  export type comprobante_pagoCreateNestedManyWithoutAdminInput = {
+    create?: XOR<comprobante_pagoCreateWithoutAdminInput, comprobante_pagoUncheckedCreateWithoutAdminInput> | comprobante_pagoCreateWithoutAdminInput[] | comprobante_pagoUncheckedCreateWithoutAdminInput[]
+    connectOrCreate?: comprobante_pagoCreateOrConnectWithoutAdminInput | comprobante_pagoCreateOrConnectWithoutAdminInput[]
+    createMany?: comprobante_pagoCreateManyAdminInputEnvelope
+    connect?: comprobante_pagoWhereUniqueInput | comprobante_pagoWhereUniqueInput[]
+  }
+
+  export type eventoCreateNestedManyWithoutCuentaInput = {
+    create?: XOR<eventoCreateWithoutCuentaInput, eventoUncheckedCreateWithoutCuentaInput> | eventoCreateWithoutCuentaInput[] | eventoUncheckedCreateWithoutCuentaInput[]
+    connectOrCreate?: eventoCreateOrConnectWithoutCuentaInput | eventoCreateOrConnectWithoutCuentaInput[]
+    createMany?: eventoCreateManyCuentaInputEnvelope
+    connect?: eventoWhereUniqueInput | eventoWhereUniqueInput[]
+  }
+
+  export type observacion_inscripcionCreateNestedManyWithoutAdmin_creadorInput = {
+    create?: XOR<observacion_inscripcionCreateWithoutAdmin_creadorInput, observacion_inscripcionUncheckedCreateWithoutAdmin_creadorInput> | observacion_inscripcionCreateWithoutAdmin_creadorInput[] | observacion_inscripcionUncheckedCreateWithoutAdmin_creadorInput[]
+    connectOrCreate?: observacion_inscripcionCreateOrConnectWithoutAdmin_creadorInput | observacion_inscripcionCreateOrConnectWithoutAdmin_creadorInput[]
+    createMany?: observacion_inscripcionCreateManyAdmin_creadorInputEnvelope
+    connect?: observacion_inscripcionWhereUniqueInput | observacion_inscripcionWhereUniqueInput[]
+  }
+
+  export type inscripcionUncheckedCreateNestedManyWithoutCuentaInput = {
+    create?: XOR<inscripcionCreateWithoutCuentaInput, inscripcionUncheckedCreateWithoutCuentaInput> | inscripcionCreateWithoutCuentaInput[] | inscripcionUncheckedCreateWithoutCuentaInput[]
+    connectOrCreate?: inscripcionCreateOrConnectWithoutCuentaInput | inscripcionCreateOrConnectWithoutCuentaInput[]
+    createMany?: inscripcionCreateManyCuentaInputEnvelope
+    connect?: inscripcionWhereUniqueInput | inscripcionWhereUniqueInput[]
+  }
+
+  export type carta_motivacionUncheckedCreateNestedManyWithoutAdminInput = {
+    create?: XOR<carta_motivacionCreateWithoutAdminInput, carta_motivacionUncheckedCreateWithoutAdminInput> | carta_motivacionCreateWithoutAdminInput[] | carta_motivacionUncheckedCreateWithoutAdminInput[]
+    connectOrCreate?: carta_motivacionCreateOrConnectWithoutAdminInput | carta_motivacionCreateOrConnectWithoutAdminInput[]
+    createMany?: carta_motivacionCreateManyAdminInputEnvelope
+    connect?: carta_motivacionWhereUniqueInput | carta_motivacionWhereUniqueInput[]
+  }
+
+  export type comprobante_pagoUncheckedCreateNestedManyWithoutAdminInput = {
+    create?: XOR<comprobante_pagoCreateWithoutAdminInput, comprobante_pagoUncheckedCreateWithoutAdminInput> | comprobante_pagoCreateWithoutAdminInput[] | comprobante_pagoUncheckedCreateWithoutAdminInput[]
+    connectOrCreate?: comprobante_pagoCreateOrConnectWithoutAdminInput | comprobante_pagoCreateOrConnectWithoutAdminInput[]
+    createMany?: comprobante_pagoCreateManyAdminInputEnvelope
+    connect?: comprobante_pagoWhereUniqueInput | comprobante_pagoWhereUniqueInput[]
+  }
+
+  export type eventoUncheckedCreateNestedManyWithoutCuentaInput = {
+    create?: XOR<eventoCreateWithoutCuentaInput, eventoUncheckedCreateWithoutCuentaInput> | eventoCreateWithoutCuentaInput[] | eventoUncheckedCreateWithoutCuentaInput[]
+    connectOrCreate?: eventoCreateOrConnectWithoutCuentaInput | eventoCreateOrConnectWithoutCuentaInput[]
+    createMany?: eventoCreateManyCuentaInputEnvelope
+    connect?: eventoWhereUniqueInput | eventoWhereUniqueInput[]
+  }
+
+  export type observacion_inscripcionUncheckedCreateNestedManyWithoutAdmin_creadorInput = {
+    create?: XOR<observacion_inscripcionCreateWithoutAdmin_creadorInput, observacion_inscripcionUncheckedCreateWithoutAdmin_creadorInput> | observacion_inscripcionCreateWithoutAdmin_creadorInput[] | observacion_inscripcionUncheckedCreateWithoutAdmin_creadorInput[]
+    connectOrCreate?: observacion_inscripcionCreateOrConnectWithoutAdmin_creadorInput | observacion_inscripcionCreateOrConnectWithoutAdmin_creadorInput[]
+    createMany?: observacion_inscripcionCreateManyAdmin_creadorInputEnvelope
+    connect?: observacion_inscripcionWhereUniqueInput | observacion_inscripcionWhereUniqueInput[]
+  }
+
+  export type Enumrol_usuarioFieldUpdateOperationsInput = {
+    set?: $Enums.rol_usuario
+  }
+
+  export type usuarioUpdateOneRequiredWithoutCuentasNestedInput = {
+    create?: XOR<usuarioCreateWithoutCuentasInput, usuarioUncheckedCreateWithoutCuentasInput>
+    connectOrCreate?: usuarioCreateOrConnectWithoutCuentasInput
+    upsert?: usuarioUpsertWithoutCuentasInput
+    connect?: usuarioWhereUniqueInput
+    update?: XOR<XOR<usuarioUpdateToOneWithWhereWithoutCuentasInput, usuarioUpdateWithoutCuentasInput>, usuarioUncheckedUpdateWithoutCuentasInput>
+  }
+
+  export type inscripcionUpdateManyWithoutCuentaNestedInput = {
+    create?: XOR<inscripcionCreateWithoutCuentaInput, inscripcionUncheckedCreateWithoutCuentaInput> | inscripcionCreateWithoutCuentaInput[] | inscripcionUncheckedCreateWithoutCuentaInput[]
+    connectOrCreate?: inscripcionCreateOrConnectWithoutCuentaInput | inscripcionCreateOrConnectWithoutCuentaInput[]
+    upsert?: inscripcionUpsertWithWhereUniqueWithoutCuentaInput | inscripcionUpsertWithWhereUniqueWithoutCuentaInput[]
+    createMany?: inscripcionCreateManyCuentaInputEnvelope
     set?: inscripcionWhereUniqueInput | inscripcionWhereUniqueInput[]
     disconnect?: inscripcionWhereUniqueInput | inscripcionWhereUniqueInput[]
     delete?: inscripcionWhereUniqueInput | inscripcionWhereUniqueInput[]
     connect?: inscripcionWhereUniqueInput | inscripcionWhereUniqueInput[]
-    update?: inscripcionUpdateWithWhereUniqueWithoutUsuarioInput | inscripcionUpdateWithWhereUniqueWithoutUsuarioInput[]
-    updateMany?: inscripcionUpdateManyWithWhereWithoutUsuarioInput | inscripcionUpdateManyWithWhereWithoutUsuarioInput[]
+    update?: inscripcionUpdateWithWhereUniqueWithoutCuentaInput | inscripcionUpdateWithWhereUniqueWithoutCuentaInput[]
+    updateMany?: inscripcionUpdateManyWithWhereWithoutCuentaInput | inscripcionUpdateManyWithWhereWithoutCuentaInput[]
     deleteMany?: inscripcionScalarWhereInput | inscripcionScalarWhereInput[]
   }
 
-  export type inscripcionUncheckedUpdateManyWithoutUsuarioNestedInput = {
-    create?: XOR<inscripcionCreateWithoutUsuarioInput, inscripcionUncheckedCreateWithoutUsuarioInput> | inscripcionCreateWithoutUsuarioInput[] | inscripcionUncheckedCreateWithoutUsuarioInput[]
-    connectOrCreate?: inscripcionCreateOrConnectWithoutUsuarioInput | inscripcionCreateOrConnectWithoutUsuarioInput[]
-    upsert?: inscripcionUpsertWithWhereUniqueWithoutUsuarioInput | inscripcionUpsertWithWhereUniqueWithoutUsuarioInput[]
-    createMany?: inscripcionCreateManyUsuarioInputEnvelope
+  export type carta_motivacionUpdateManyWithoutAdminNestedInput = {
+    create?: XOR<carta_motivacionCreateWithoutAdminInput, carta_motivacionUncheckedCreateWithoutAdminInput> | carta_motivacionCreateWithoutAdminInput[] | carta_motivacionUncheckedCreateWithoutAdminInput[]
+    connectOrCreate?: carta_motivacionCreateOrConnectWithoutAdminInput | carta_motivacionCreateOrConnectWithoutAdminInput[]
+    upsert?: carta_motivacionUpsertWithWhereUniqueWithoutAdminInput | carta_motivacionUpsertWithWhereUniqueWithoutAdminInput[]
+    createMany?: carta_motivacionCreateManyAdminInputEnvelope
+    set?: carta_motivacionWhereUniqueInput | carta_motivacionWhereUniqueInput[]
+    disconnect?: carta_motivacionWhereUniqueInput | carta_motivacionWhereUniqueInput[]
+    delete?: carta_motivacionWhereUniqueInput | carta_motivacionWhereUniqueInput[]
+    connect?: carta_motivacionWhereUniqueInput | carta_motivacionWhereUniqueInput[]
+    update?: carta_motivacionUpdateWithWhereUniqueWithoutAdminInput | carta_motivacionUpdateWithWhereUniqueWithoutAdminInput[]
+    updateMany?: carta_motivacionUpdateManyWithWhereWithoutAdminInput | carta_motivacionUpdateManyWithWhereWithoutAdminInput[]
+    deleteMany?: carta_motivacionScalarWhereInput | carta_motivacionScalarWhereInput[]
+  }
+
+  export type comprobante_pagoUpdateManyWithoutAdminNestedInput = {
+    create?: XOR<comprobante_pagoCreateWithoutAdminInput, comprobante_pagoUncheckedCreateWithoutAdminInput> | comprobante_pagoCreateWithoutAdminInput[] | comprobante_pagoUncheckedCreateWithoutAdminInput[]
+    connectOrCreate?: comprobante_pagoCreateOrConnectWithoutAdminInput | comprobante_pagoCreateOrConnectWithoutAdminInput[]
+    upsert?: comprobante_pagoUpsertWithWhereUniqueWithoutAdminInput | comprobante_pagoUpsertWithWhereUniqueWithoutAdminInput[]
+    createMany?: comprobante_pagoCreateManyAdminInputEnvelope
+    set?: comprobante_pagoWhereUniqueInput | comprobante_pagoWhereUniqueInput[]
+    disconnect?: comprobante_pagoWhereUniqueInput | comprobante_pagoWhereUniqueInput[]
+    delete?: comprobante_pagoWhereUniqueInput | comprobante_pagoWhereUniqueInput[]
+    connect?: comprobante_pagoWhereUniqueInput | comprobante_pagoWhereUniqueInput[]
+    update?: comprobante_pagoUpdateWithWhereUniqueWithoutAdminInput | comprobante_pagoUpdateWithWhereUniqueWithoutAdminInput[]
+    updateMany?: comprobante_pagoUpdateManyWithWhereWithoutAdminInput | comprobante_pagoUpdateManyWithWhereWithoutAdminInput[]
+    deleteMany?: comprobante_pagoScalarWhereInput | comprobante_pagoScalarWhereInput[]
+  }
+
+  export type eventoUpdateManyWithoutCuentaNestedInput = {
+    create?: XOR<eventoCreateWithoutCuentaInput, eventoUncheckedCreateWithoutCuentaInput> | eventoCreateWithoutCuentaInput[] | eventoUncheckedCreateWithoutCuentaInput[]
+    connectOrCreate?: eventoCreateOrConnectWithoutCuentaInput | eventoCreateOrConnectWithoutCuentaInput[]
+    upsert?: eventoUpsertWithWhereUniqueWithoutCuentaInput | eventoUpsertWithWhereUniqueWithoutCuentaInput[]
+    createMany?: eventoCreateManyCuentaInputEnvelope
+    set?: eventoWhereUniqueInput | eventoWhereUniqueInput[]
+    disconnect?: eventoWhereUniqueInput | eventoWhereUniqueInput[]
+    delete?: eventoWhereUniqueInput | eventoWhereUniqueInput[]
+    connect?: eventoWhereUniqueInput | eventoWhereUniqueInput[]
+    update?: eventoUpdateWithWhereUniqueWithoutCuentaInput | eventoUpdateWithWhereUniqueWithoutCuentaInput[]
+    updateMany?: eventoUpdateManyWithWhereWithoutCuentaInput | eventoUpdateManyWithWhereWithoutCuentaInput[]
+    deleteMany?: eventoScalarWhereInput | eventoScalarWhereInput[]
+  }
+
+  export type observacion_inscripcionUpdateManyWithoutAdmin_creadorNestedInput = {
+    create?: XOR<observacion_inscripcionCreateWithoutAdmin_creadorInput, observacion_inscripcionUncheckedCreateWithoutAdmin_creadorInput> | observacion_inscripcionCreateWithoutAdmin_creadorInput[] | observacion_inscripcionUncheckedCreateWithoutAdmin_creadorInput[]
+    connectOrCreate?: observacion_inscripcionCreateOrConnectWithoutAdmin_creadorInput | observacion_inscripcionCreateOrConnectWithoutAdmin_creadorInput[]
+    upsert?: observacion_inscripcionUpsertWithWhereUniqueWithoutAdmin_creadorInput | observacion_inscripcionUpsertWithWhereUniqueWithoutAdmin_creadorInput[]
+    createMany?: observacion_inscripcionCreateManyAdmin_creadorInputEnvelope
+    set?: observacion_inscripcionWhereUniqueInput | observacion_inscripcionWhereUniqueInput[]
+    disconnect?: observacion_inscripcionWhereUniqueInput | observacion_inscripcionWhereUniqueInput[]
+    delete?: observacion_inscripcionWhereUniqueInput | observacion_inscripcionWhereUniqueInput[]
+    connect?: observacion_inscripcionWhereUniqueInput | observacion_inscripcionWhereUniqueInput[]
+    update?: observacion_inscripcionUpdateWithWhereUniqueWithoutAdmin_creadorInput | observacion_inscripcionUpdateWithWhereUniqueWithoutAdmin_creadorInput[]
+    updateMany?: observacion_inscripcionUpdateManyWithWhereWithoutAdmin_creadorInput | observacion_inscripcionUpdateManyWithWhereWithoutAdmin_creadorInput[]
+    deleteMany?: observacion_inscripcionScalarWhereInput | observacion_inscripcionScalarWhereInput[]
+  }
+
+  export type inscripcionUncheckedUpdateManyWithoutCuentaNestedInput = {
+    create?: XOR<inscripcionCreateWithoutCuentaInput, inscripcionUncheckedCreateWithoutCuentaInput> | inscripcionCreateWithoutCuentaInput[] | inscripcionUncheckedCreateWithoutCuentaInput[]
+    connectOrCreate?: inscripcionCreateOrConnectWithoutCuentaInput | inscripcionCreateOrConnectWithoutCuentaInput[]
+    upsert?: inscripcionUpsertWithWhereUniqueWithoutCuentaInput | inscripcionUpsertWithWhereUniqueWithoutCuentaInput[]
+    createMany?: inscripcionCreateManyCuentaInputEnvelope
     set?: inscripcionWhereUniqueInput | inscripcionWhereUniqueInput[]
     disconnect?: inscripcionWhereUniqueInput | inscripcionWhereUniqueInput[]
     delete?: inscripcionWhereUniqueInput | inscripcionWhereUniqueInput[]
     connect?: inscripcionWhereUniqueInput | inscripcionWhereUniqueInput[]
-    update?: inscripcionUpdateWithWhereUniqueWithoutUsuarioInput | inscripcionUpdateWithWhereUniqueWithoutUsuarioInput[]
-    updateMany?: inscripcionUpdateManyWithWhereWithoutUsuarioInput | inscripcionUpdateManyWithWhereWithoutUsuarioInput[]
+    update?: inscripcionUpdateWithWhereUniqueWithoutCuentaInput | inscripcionUpdateWithWhereUniqueWithoutCuentaInput[]
+    updateMany?: inscripcionUpdateManyWithWhereWithoutCuentaInput | inscripcionUpdateManyWithWhereWithoutCuentaInput[]
     deleteMany?: inscripcionScalarWhereInput | inscripcionScalarWhereInput[]
+  }
+
+  export type carta_motivacionUncheckedUpdateManyWithoutAdminNestedInput = {
+    create?: XOR<carta_motivacionCreateWithoutAdminInput, carta_motivacionUncheckedCreateWithoutAdminInput> | carta_motivacionCreateWithoutAdminInput[] | carta_motivacionUncheckedCreateWithoutAdminInput[]
+    connectOrCreate?: carta_motivacionCreateOrConnectWithoutAdminInput | carta_motivacionCreateOrConnectWithoutAdminInput[]
+    upsert?: carta_motivacionUpsertWithWhereUniqueWithoutAdminInput | carta_motivacionUpsertWithWhereUniqueWithoutAdminInput[]
+    createMany?: carta_motivacionCreateManyAdminInputEnvelope
+    set?: carta_motivacionWhereUniqueInput | carta_motivacionWhereUniqueInput[]
+    disconnect?: carta_motivacionWhereUniqueInput | carta_motivacionWhereUniqueInput[]
+    delete?: carta_motivacionWhereUniqueInput | carta_motivacionWhereUniqueInput[]
+    connect?: carta_motivacionWhereUniqueInput | carta_motivacionWhereUniqueInput[]
+    update?: carta_motivacionUpdateWithWhereUniqueWithoutAdminInput | carta_motivacionUpdateWithWhereUniqueWithoutAdminInput[]
+    updateMany?: carta_motivacionUpdateManyWithWhereWithoutAdminInput | carta_motivacionUpdateManyWithWhereWithoutAdminInput[]
+    deleteMany?: carta_motivacionScalarWhereInput | carta_motivacionScalarWhereInput[]
+  }
+
+  export type comprobante_pagoUncheckedUpdateManyWithoutAdminNestedInput = {
+    create?: XOR<comprobante_pagoCreateWithoutAdminInput, comprobante_pagoUncheckedCreateWithoutAdminInput> | comprobante_pagoCreateWithoutAdminInput[] | comprobante_pagoUncheckedCreateWithoutAdminInput[]
+    connectOrCreate?: comprobante_pagoCreateOrConnectWithoutAdminInput | comprobante_pagoCreateOrConnectWithoutAdminInput[]
+    upsert?: comprobante_pagoUpsertWithWhereUniqueWithoutAdminInput | comprobante_pagoUpsertWithWhereUniqueWithoutAdminInput[]
+    createMany?: comprobante_pagoCreateManyAdminInputEnvelope
+    set?: comprobante_pagoWhereUniqueInput | comprobante_pagoWhereUniqueInput[]
+    disconnect?: comprobante_pagoWhereUniqueInput | comprobante_pagoWhereUniqueInput[]
+    delete?: comprobante_pagoWhereUniqueInput | comprobante_pagoWhereUniqueInput[]
+    connect?: comprobante_pagoWhereUniqueInput | comprobante_pagoWhereUniqueInput[]
+    update?: comprobante_pagoUpdateWithWhereUniqueWithoutAdminInput | comprobante_pagoUpdateWithWhereUniqueWithoutAdminInput[]
+    updateMany?: comprobante_pagoUpdateManyWithWhereWithoutAdminInput | comprobante_pagoUpdateManyWithWhereWithoutAdminInput[]
+    deleteMany?: comprobante_pagoScalarWhereInput | comprobante_pagoScalarWhereInput[]
+  }
+
+  export type eventoUncheckedUpdateManyWithoutCuentaNestedInput = {
+    create?: XOR<eventoCreateWithoutCuentaInput, eventoUncheckedCreateWithoutCuentaInput> | eventoCreateWithoutCuentaInput[] | eventoUncheckedCreateWithoutCuentaInput[]
+    connectOrCreate?: eventoCreateOrConnectWithoutCuentaInput | eventoCreateOrConnectWithoutCuentaInput[]
+    upsert?: eventoUpsertWithWhereUniqueWithoutCuentaInput | eventoUpsertWithWhereUniqueWithoutCuentaInput[]
+    createMany?: eventoCreateManyCuentaInputEnvelope
+    set?: eventoWhereUniqueInput | eventoWhereUniqueInput[]
+    disconnect?: eventoWhereUniqueInput | eventoWhereUniqueInput[]
+    delete?: eventoWhereUniqueInput | eventoWhereUniqueInput[]
+    connect?: eventoWhereUniqueInput | eventoWhereUniqueInput[]
+    update?: eventoUpdateWithWhereUniqueWithoutCuentaInput | eventoUpdateWithWhereUniqueWithoutCuentaInput[]
+    updateMany?: eventoUpdateManyWithWhereWithoutCuentaInput | eventoUpdateManyWithWhereWithoutCuentaInput[]
+    deleteMany?: eventoScalarWhereInput | eventoScalarWhereInput[]
+  }
+
+  export type observacion_inscripcionUncheckedUpdateManyWithoutAdmin_creadorNestedInput = {
+    create?: XOR<observacion_inscripcionCreateWithoutAdmin_creadorInput, observacion_inscripcionUncheckedCreateWithoutAdmin_creadorInput> | observacion_inscripcionCreateWithoutAdmin_creadorInput[] | observacion_inscripcionUncheckedCreateWithoutAdmin_creadorInput[]
+    connectOrCreate?: observacion_inscripcionCreateOrConnectWithoutAdmin_creadorInput | observacion_inscripcionCreateOrConnectWithoutAdmin_creadorInput[]
+    upsert?: observacion_inscripcionUpsertWithWhereUniqueWithoutAdmin_creadorInput | observacion_inscripcionUpsertWithWhereUniqueWithoutAdmin_creadorInput[]
+    createMany?: observacion_inscripcionCreateManyAdmin_creadorInputEnvelope
+    set?: observacion_inscripcionWhereUniqueInput | observacion_inscripcionWhereUniqueInput[]
+    disconnect?: observacion_inscripcionWhereUniqueInput | observacion_inscripcionWhereUniqueInput[]
+    delete?: observacion_inscripcionWhereUniqueInput | observacion_inscripcionWhereUniqueInput[]
+    connect?: observacion_inscripcionWhereUniqueInput | observacion_inscripcionWhereUniqueInput[]
+    update?: observacion_inscripcionUpdateWithWhereUniqueWithoutAdmin_creadorInput | observacion_inscripcionUpdateWithWhereUniqueWithoutAdmin_creadorInput[]
+    updateMany?: observacion_inscripcionUpdateManyWithWhereWithoutAdmin_creadorInput | observacion_inscripcionUpdateManyWithWhereWithoutAdmin_creadorInput[]
+    deleteMany?: observacion_inscripcionScalarWhereInput | observacion_inscripcionScalarWhereInput[]
   }
 
   export type facultadCreateNestedOneWithoutCarrerasInput = {
     create?: XOR<facultadCreateWithoutCarrerasInput, facultadUncheckedCreateWithoutCarrerasInput>
     connectOrCreate?: facultadCreateOrConnectWithoutCarrerasInput
     connect?: facultadWhereUniqueInput
+  }
+
+  export type coordinadorCreateNestedOneWithoutCarrerasInput = {
+    create?: XOR<coordinadorCreateWithoutCarrerasInput, coordinadorUncheckedCreateWithoutCarrerasInput>
+    connectOrCreate?: coordinadorCreateOrConnectWithoutCarrerasInput
+    connect?: coordinadorWhereUniqueInput
   }
 
   export type usuarioCreateNestedManyWithoutCarreraInput = {
@@ -12687,6 +22175,14 @@ export namespace Prisma {
     connect?: evento_carreraWhereUniqueInput | evento_carreraWhereUniqueInput[]
   }
 
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
   export type BoolFieldUpdateOperationsInput = {
     set?: boolean
   }
@@ -12697,6 +22193,16 @@ export namespace Prisma {
     upsert?: facultadUpsertWithoutCarrerasInput
     connect?: facultadWhereUniqueInput
     update?: XOR<XOR<facultadUpdateToOneWithWhereWithoutCarrerasInput, facultadUpdateWithoutCarrerasInput>, facultadUncheckedUpdateWithoutCarrerasInput>
+  }
+
+  export type coordinadorUpdateOneWithoutCarrerasNestedInput = {
+    create?: XOR<coordinadorCreateWithoutCarrerasInput, coordinadorUncheckedCreateWithoutCarrerasInput>
+    connectOrCreate?: coordinadorCreateOrConnectWithoutCarrerasInput
+    upsert?: coordinadorUpsertWithoutCarrerasInput
+    disconnect?: coordinadorWhereInput | boolean
+    delete?: coordinadorWhereInput | boolean
+    connect?: coordinadorWhereUniqueInput
+    update?: XOR<XOR<coordinadorUpdateToOneWithWhereWithoutCarrerasInput, coordinadorUpdateWithoutCarrerasInput>, coordinadorUncheckedUpdateWithoutCarrerasInput>
   }
 
   export type usuarioUpdateManyWithoutCarreraNestedInput = {
@@ -12755,6 +22261,48 @@ export namespace Prisma {
     deleteMany?: evento_carreraScalarWhereInput | evento_carreraScalarWhereInput[]
   }
 
+  export type carreraCreateNestedManyWithoutCoordinadorInput = {
+    create?: XOR<carreraCreateWithoutCoordinadorInput, carreraUncheckedCreateWithoutCoordinadorInput> | carreraCreateWithoutCoordinadorInput[] | carreraUncheckedCreateWithoutCoordinadorInput[]
+    connectOrCreate?: carreraCreateOrConnectWithoutCoordinadorInput | carreraCreateOrConnectWithoutCoordinadorInput[]
+    createMany?: carreraCreateManyCoordinadorInputEnvelope
+    connect?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
+  }
+
+  export type carreraUncheckedCreateNestedManyWithoutCoordinadorInput = {
+    create?: XOR<carreraCreateWithoutCoordinadorInput, carreraUncheckedCreateWithoutCoordinadorInput> | carreraCreateWithoutCoordinadorInput[] | carreraUncheckedCreateWithoutCoordinadorInput[]
+    connectOrCreate?: carreraCreateOrConnectWithoutCoordinadorInput | carreraCreateOrConnectWithoutCoordinadorInput[]
+    createMany?: carreraCreateManyCoordinadorInputEnvelope
+    connect?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
+  }
+
+  export type carreraUpdateManyWithoutCoordinadorNestedInput = {
+    create?: XOR<carreraCreateWithoutCoordinadorInput, carreraUncheckedCreateWithoutCoordinadorInput> | carreraCreateWithoutCoordinadorInput[] | carreraUncheckedCreateWithoutCoordinadorInput[]
+    connectOrCreate?: carreraCreateOrConnectWithoutCoordinadorInput | carreraCreateOrConnectWithoutCoordinadorInput[]
+    upsert?: carreraUpsertWithWhereUniqueWithoutCoordinadorInput | carreraUpsertWithWhereUniqueWithoutCoordinadorInput[]
+    createMany?: carreraCreateManyCoordinadorInputEnvelope
+    set?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
+    disconnect?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
+    delete?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
+    connect?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
+    update?: carreraUpdateWithWhereUniqueWithoutCoordinadorInput | carreraUpdateWithWhereUniqueWithoutCoordinadorInput[]
+    updateMany?: carreraUpdateManyWithWhereWithoutCoordinadorInput | carreraUpdateManyWithWhereWithoutCoordinadorInput[]
+    deleteMany?: carreraScalarWhereInput | carreraScalarWhereInput[]
+  }
+
+  export type carreraUncheckedUpdateManyWithoutCoordinadorNestedInput = {
+    create?: XOR<carreraCreateWithoutCoordinadorInput, carreraUncheckedCreateWithoutCoordinadorInput> | carreraCreateWithoutCoordinadorInput[] | carreraUncheckedCreateWithoutCoordinadorInput[]
+    connectOrCreate?: carreraCreateOrConnectWithoutCoordinadorInput | carreraCreateOrConnectWithoutCoordinadorInput[]
+    upsert?: carreraUpsertWithWhereUniqueWithoutCoordinadorInput | carreraUpsertWithWhereUniqueWithoutCoordinadorInput[]
+    createMany?: carreraCreateManyCoordinadorInputEnvelope
+    set?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
+    disconnect?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
+    delete?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
+    connect?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
+    update?: carreraUpdateWithWhereUniqueWithoutCoordinadorInput | carreraUpdateWithWhereUniqueWithoutCoordinadorInput[]
+    updateMany?: carreraUpdateManyWithWhereWithoutCoordinadorInput | carreraUpdateManyWithWhereWithoutCoordinadorInput[]
+    deleteMany?: carreraScalarWhereInput | carreraScalarWhereInput[]
+  }
+
   export type inscripcionCreateNestedManyWithoutEventoInput = {
     create?: XOR<inscripcionCreateWithoutEventoInput, inscripcionUncheckedCreateWithoutEventoInput> | inscripcionCreateWithoutEventoInput[] | inscripcionUncheckedCreateWithoutEventoInput[]
     connectOrCreate?: inscripcionCreateOrConnectWithoutEventoInput | inscripcionCreateOrConnectWithoutEventoInput[]
@@ -12773,6 +22321,12 @@ export namespace Prisma {
     create?: XOR<evento_cursoCreateWithoutEventoInput, evento_cursoUncheckedCreateWithoutEventoInput>
     connectOrCreate?: evento_cursoCreateOrConnectWithoutEventoInput
     connect?: evento_cursoWhereUniqueInput
+  }
+
+  export type cuentaCreateNestedOneWithoutEventosInput = {
+    create?: XOR<cuentaCreateWithoutEventosInput, cuentaUncheckedCreateWithoutEventosInput>
+    connectOrCreate?: cuentaCreateOrConnectWithoutEventosInput
+    connect?: cuentaWhereUniqueInput
   }
 
   export type inscripcionUncheckedCreateNestedManyWithoutEventoInput = {
@@ -12811,14 +22365,6 @@ export namespace Prisma {
     set?: $Enums.estado_evento
   }
 
-  export type IntFieldUpdateOperationsInput = {
-    set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
-  }
-
   export type inscripcionUpdateManyWithoutEventoNestedInput = {
     create?: XOR<inscripcionCreateWithoutEventoInput, inscripcionUncheckedCreateWithoutEventoInput> | inscripcionCreateWithoutEventoInput[] | inscripcionUncheckedCreateWithoutEventoInput[]
     connectOrCreate?: inscripcionCreateOrConnectWithoutEventoInput | inscripcionCreateOrConnectWithoutEventoInput[]
@@ -12855,6 +22401,14 @@ export namespace Prisma {
     delete?: evento_cursoWhereInput | boolean
     connect?: evento_cursoWhereUniqueInput
     update?: XOR<XOR<evento_cursoUpdateToOneWithWhereWithoutEventoInput, evento_cursoUpdateWithoutEventoInput>, evento_cursoUncheckedUpdateWithoutEventoInput>
+  }
+
+  export type cuentaUpdateOneRequiredWithoutEventosNestedInput = {
+    create?: XOR<cuentaCreateWithoutEventosInput, cuentaUncheckedCreateWithoutEventosInput>
+    connectOrCreate?: cuentaCreateOrConnectWithoutEventosInput
+    upsert?: cuentaUpsertWithoutEventosInput
+    connect?: cuentaWhereUniqueInput
+    update?: XOR<XOR<cuentaUpdateToOneWithWhereWithoutEventosInput, cuentaUpdateWithoutEventosInput>, cuentaUncheckedUpdateWithoutEventosInput>
   }
 
   export type inscripcionUncheckedUpdateManyWithoutEventoNestedInput = {
@@ -12937,10 +22491,10 @@ export namespace Prisma {
     update?: XOR<XOR<eventoUpdateToOneWithWhereWithoutEventos_carreraInput, eventoUpdateWithoutEventos_carreraInput>, eventoUncheckedUpdateWithoutEventos_carreraInput>
   }
 
-  export type usuarioCreateNestedOneWithoutInscripcionesInput = {
-    create?: XOR<usuarioCreateWithoutInscripcionesInput, usuarioUncheckedCreateWithoutInscripcionesInput>
-    connectOrCreate?: usuarioCreateOrConnectWithoutInscripcionesInput
-    connect?: usuarioWhereUniqueInput
+  export type cuentaCreateNestedOneWithoutInscripcionesInput = {
+    create?: XOR<cuentaCreateWithoutInscripcionesInput, cuentaUncheckedCreateWithoutInscripcionesInput>
+    connectOrCreate?: cuentaCreateOrConnectWithoutInscripcionesInput
+    connect?: cuentaWhereUniqueInput
   }
 
   export type eventoCreateNestedOneWithoutInscritosInput = {
@@ -12955,26 +22509,82 @@ export namespace Prisma {
     connect?: inscripcion_cursoWhereUniqueInput
   }
 
+  export type comprobante_pagoCreateNestedManyWithoutInscripcionInput = {
+    create?: XOR<comprobante_pagoCreateWithoutInscripcionInput, comprobante_pagoUncheckedCreateWithoutInscripcionInput> | comprobante_pagoCreateWithoutInscripcionInput[] | comprobante_pagoUncheckedCreateWithoutInscripcionInput[]
+    connectOrCreate?: comprobante_pagoCreateOrConnectWithoutInscripcionInput | comprobante_pagoCreateOrConnectWithoutInscripcionInput[]
+    createMany?: comprobante_pagoCreateManyInscripcionInputEnvelope
+    connect?: comprobante_pagoWhereUniqueInput | comprobante_pagoWhereUniqueInput[]
+  }
+
+  export type carta_motivacionCreateNestedManyWithoutInscripcionInput = {
+    create?: XOR<carta_motivacionCreateWithoutInscripcionInput, carta_motivacionUncheckedCreateWithoutInscripcionInput> | carta_motivacionCreateWithoutInscripcionInput[] | carta_motivacionUncheckedCreateWithoutInscripcionInput[]
+    connectOrCreate?: carta_motivacionCreateOrConnectWithoutInscripcionInput | carta_motivacionCreateOrConnectWithoutInscripcionInput[]
+    createMany?: carta_motivacionCreateManyInscripcionInputEnvelope
+    connect?: carta_motivacionWhereUniqueInput | carta_motivacionWhereUniqueInput[]
+  }
+
+  export type observacion_inscripcionCreateNestedOneWithoutInscripcionInput = {
+    create?: XOR<observacion_inscripcionCreateWithoutInscripcionInput, observacion_inscripcionUncheckedCreateWithoutInscripcionInput>
+    connectOrCreate?: observacion_inscripcionCreateOrConnectWithoutInscripcionInput
+    connect?: observacion_inscripcionWhereUniqueInput
+  }
+
+  export type certificadoCreateNestedOneWithoutInscripcionInput = {
+    create?: XOR<certificadoCreateWithoutInscripcionInput, certificadoUncheckedCreateWithoutInscripcionInput>
+    connectOrCreate?: certificadoCreateOrConnectWithoutInscripcionInput
+    connect?: certificadoWhereUniqueInput
+  }
+
   export type inscripcion_cursoUncheckedCreateNestedOneWithoutInscripcionInput = {
     create?: XOR<inscripcion_cursoCreateWithoutInscripcionInput, inscripcion_cursoUncheckedCreateWithoutInscripcionInput>
     connectOrCreate?: inscripcion_cursoCreateOrConnectWithoutInscripcionInput
     connect?: inscripcion_cursoWhereUniqueInput
   }
 
+  export type comprobante_pagoUncheckedCreateNestedManyWithoutInscripcionInput = {
+    create?: XOR<comprobante_pagoCreateWithoutInscripcionInput, comprobante_pagoUncheckedCreateWithoutInscripcionInput> | comprobante_pagoCreateWithoutInscripcionInput[] | comprobante_pagoUncheckedCreateWithoutInscripcionInput[]
+    connectOrCreate?: comprobante_pagoCreateOrConnectWithoutInscripcionInput | comprobante_pagoCreateOrConnectWithoutInscripcionInput[]
+    createMany?: comprobante_pagoCreateManyInscripcionInputEnvelope
+    connect?: comprobante_pagoWhereUniqueInput | comprobante_pagoWhereUniqueInput[]
+  }
+
+  export type carta_motivacionUncheckedCreateNestedManyWithoutInscripcionInput = {
+    create?: XOR<carta_motivacionCreateWithoutInscripcionInput, carta_motivacionUncheckedCreateWithoutInscripcionInput> | carta_motivacionCreateWithoutInscripcionInput[] | carta_motivacionUncheckedCreateWithoutInscripcionInput[]
+    connectOrCreate?: carta_motivacionCreateOrConnectWithoutInscripcionInput | carta_motivacionCreateOrConnectWithoutInscripcionInput[]
+    createMany?: carta_motivacionCreateManyInscripcionInputEnvelope
+    connect?: carta_motivacionWhereUniqueInput | carta_motivacionWhereUniqueInput[]
+  }
+
+  export type observacion_inscripcionUncheckedCreateNestedOneWithoutInscripcionInput = {
+    create?: XOR<observacion_inscripcionCreateWithoutInscripcionInput, observacion_inscripcionUncheckedCreateWithoutInscripcionInput>
+    connectOrCreate?: observacion_inscripcionCreateOrConnectWithoutInscripcionInput
+    connect?: observacion_inscripcionWhereUniqueInput
+  }
+
+  export type certificadoUncheckedCreateNestedOneWithoutInscripcionInput = {
+    create?: XOR<certificadoCreateWithoutInscripcionInput, certificadoUncheckedCreateWithoutInscripcionInput>
+    connectOrCreate?: certificadoCreateOrConnectWithoutInscripcionInput
+    connect?: certificadoWhereUniqueInput
+  }
+
   export type Enumestado_inscripcionFieldUpdateOperationsInput = {
     set?: $Enums.estado_inscripcion
   }
 
-  export type NullableDateTimeFieldUpdateOperationsInput = {
-    set?: Date | string | null
+  export type NullableFloatFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
   }
 
-  export type usuarioUpdateOneRequiredWithoutInscripcionesNestedInput = {
-    create?: XOR<usuarioCreateWithoutInscripcionesInput, usuarioUncheckedCreateWithoutInscripcionesInput>
-    connectOrCreate?: usuarioCreateOrConnectWithoutInscripcionesInput
-    upsert?: usuarioUpsertWithoutInscripcionesInput
-    connect?: usuarioWhereUniqueInput
-    update?: XOR<XOR<usuarioUpdateToOneWithWhereWithoutInscripcionesInput, usuarioUpdateWithoutInscripcionesInput>, usuarioUncheckedUpdateWithoutInscripcionesInput>
+  export type cuentaUpdateOneRequiredWithoutInscripcionesNestedInput = {
+    create?: XOR<cuentaCreateWithoutInscripcionesInput, cuentaUncheckedCreateWithoutInscripcionesInput>
+    connectOrCreate?: cuentaCreateOrConnectWithoutInscripcionesInput
+    upsert?: cuentaUpsertWithoutInscripcionesInput
+    connect?: cuentaWhereUniqueInput
+    update?: XOR<XOR<cuentaUpdateToOneWithWhereWithoutInscripcionesInput, cuentaUpdateWithoutInscripcionesInput>, cuentaUncheckedUpdateWithoutInscripcionesInput>
   }
 
   export type eventoUpdateOneRequiredWithoutInscritosNestedInput = {
@@ -12995,6 +22605,54 @@ export namespace Prisma {
     update?: XOR<XOR<inscripcion_cursoUpdateToOneWithWhereWithoutInscripcionInput, inscripcion_cursoUpdateWithoutInscripcionInput>, inscripcion_cursoUncheckedUpdateWithoutInscripcionInput>
   }
 
+  export type comprobante_pagoUpdateManyWithoutInscripcionNestedInput = {
+    create?: XOR<comprobante_pagoCreateWithoutInscripcionInput, comprobante_pagoUncheckedCreateWithoutInscripcionInput> | comprobante_pagoCreateWithoutInscripcionInput[] | comprobante_pagoUncheckedCreateWithoutInscripcionInput[]
+    connectOrCreate?: comprobante_pagoCreateOrConnectWithoutInscripcionInput | comprobante_pagoCreateOrConnectWithoutInscripcionInput[]
+    upsert?: comprobante_pagoUpsertWithWhereUniqueWithoutInscripcionInput | comprobante_pagoUpsertWithWhereUniqueWithoutInscripcionInput[]
+    createMany?: comprobante_pagoCreateManyInscripcionInputEnvelope
+    set?: comprobante_pagoWhereUniqueInput | comprobante_pagoWhereUniqueInput[]
+    disconnect?: comprobante_pagoWhereUniqueInput | comprobante_pagoWhereUniqueInput[]
+    delete?: comprobante_pagoWhereUniqueInput | comprobante_pagoWhereUniqueInput[]
+    connect?: comprobante_pagoWhereUniqueInput | comprobante_pagoWhereUniqueInput[]
+    update?: comprobante_pagoUpdateWithWhereUniqueWithoutInscripcionInput | comprobante_pagoUpdateWithWhereUniqueWithoutInscripcionInput[]
+    updateMany?: comprobante_pagoUpdateManyWithWhereWithoutInscripcionInput | comprobante_pagoUpdateManyWithWhereWithoutInscripcionInput[]
+    deleteMany?: comprobante_pagoScalarWhereInput | comprobante_pagoScalarWhereInput[]
+  }
+
+  export type carta_motivacionUpdateManyWithoutInscripcionNestedInput = {
+    create?: XOR<carta_motivacionCreateWithoutInscripcionInput, carta_motivacionUncheckedCreateWithoutInscripcionInput> | carta_motivacionCreateWithoutInscripcionInput[] | carta_motivacionUncheckedCreateWithoutInscripcionInput[]
+    connectOrCreate?: carta_motivacionCreateOrConnectWithoutInscripcionInput | carta_motivacionCreateOrConnectWithoutInscripcionInput[]
+    upsert?: carta_motivacionUpsertWithWhereUniqueWithoutInscripcionInput | carta_motivacionUpsertWithWhereUniqueWithoutInscripcionInput[]
+    createMany?: carta_motivacionCreateManyInscripcionInputEnvelope
+    set?: carta_motivacionWhereUniqueInput | carta_motivacionWhereUniqueInput[]
+    disconnect?: carta_motivacionWhereUniqueInput | carta_motivacionWhereUniqueInput[]
+    delete?: carta_motivacionWhereUniqueInput | carta_motivacionWhereUniqueInput[]
+    connect?: carta_motivacionWhereUniqueInput | carta_motivacionWhereUniqueInput[]
+    update?: carta_motivacionUpdateWithWhereUniqueWithoutInscripcionInput | carta_motivacionUpdateWithWhereUniqueWithoutInscripcionInput[]
+    updateMany?: carta_motivacionUpdateManyWithWhereWithoutInscripcionInput | carta_motivacionUpdateManyWithWhereWithoutInscripcionInput[]
+    deleteMany?: carta_motivacionScalarWhereInput | carta_motivacionScalarWhereInput[]
+  }
+
+  export type observacion_inscripcionUpdateOneWithoutInscripcionNestedInput = {
+    create?: XOR<observacion_inscripcionCreateWithoutInscripcionInput, observacion_inscripcionUncheckedCreateWithoutInscripcionInput>
+    connectOrCreate?: observacion_inscripcionCreateOrConnectWithoutInscripcionInput
+    upsert?: observacion_inscripcionUpsertWithoutInscripcionInput
+    disconnect?: observacion_inscripcionWhereInput | boolean
+    delete?: observacion_inscripcionWhereInput | boolean
+    connect?: observacion_inscripcionWhereUniqueInput
+    update?: XOR<XOR<observacion_inscripcionUpdateToOneWithWhereWithoutInscripcionInput, observacion_inscripcionUpdateWithoutInscripcionInput>, observacion_inscripcionUncheckedUpdateWithoutInscripcionInput>
+  }
+
+  export type certificadoUpdateOneWithoutInscripcionNestedInput = {
+    create?: XOR<certificadoCreateWithoutInscripcionInput, certificadoUncheckedCreateWithoutInscripcionInput>
+    connectOrCreate?: certificadoCreateOrConnectWithoutInscripcionInput
+    upsert?: certificadoUpsertWithoutInscripcionInput
+    disconnect?: certificadoWhereInput | boolean
+    delete?: certificadoWhereInput | boolean
+    connect?: certificadoWhereUniqueInput
+    update?: XOR<XOR<certificadoUpdateToOneWithWhereWithoutInscripcionInput, certificadoUpdateWithoutInscripcionInput>, certificadoUncheckedUpdateWithoutInscripcionInput>
+  }
+
   export type inscripcion_cursoUncheckedUpdateOneWithoutInscripcionNestedInput = {
     create?: XOR<inscripcion_cursoCreateWithoutInscripcionInput, inscripcion_cursoUncheckedCreateWithoutInscripcionInput>
     connectOrCreate?: inscripcion_cursoCreateOrConnectWithoutInscripcionInput
@@ -13005,18 +22663,58 @@ export namespace Prisma {
     update?: XOR<XOR<inscripcion_cursoUpdateToOneWithWhereWithoutInscripcionInput, inscripcion_cursoUpdateWithoutInscripcionInput>, inscripcion_cursoUncheckedUpdateWithoutInscripcionInput>
   }
 
+  export type comprobante_pagoUncheckedUpdateManyWithoutInscripcionNestedInput = {
+    create?: XOR<comprobante_pagoCreateWithoutInscripcionInput, comprobante_pagoUncheckedCreateWithoutInscripcionInput> | comprobante_pagoCreateWithoutInscripcionInput[] | comprobante_pagoUncheckedCreateWithoutInscripcionInput[]
+    connectOrCreate?: comprobante_pagoCreateOrConnectWithoutInscripcionInput | comprobante_pagoCreateOrConnectWithoutInscripcionInput[]
+    upsert?: comprobante_pagoUpsertWithWhereUniqueWithoutInscripcionInput | comprobante_pagoUpsertWithWhereUniqueWithoutInscripcionInput[]
+    createMany?: comprobante_pagoCreateManyInscripcionInputEnvelope
+    set?: comprobante_pagoWhereUniqueInput | comprobante_pagoWhereUniqueInput[]
+    disconnect?: comprobante_pagoWhereUniqueInput | comprobante_pagoWhereUniqueInput[]
+    delete?: comprobante_pagoWhereUniqueInput | comprobante_pagoWhereUniqueInput[]
+    connect?: comprobante_pagoWhereUniqueInput | comprobante_pagoWhereUniqueInput[]
+    update?: comprobante_pagoUpdateWithWhereUniqueWithoutInscripcionInput | comprobante_pagoUpdateWithWhereUniqueWithoutInscripcionInput[]
+    updateMany?: comprobante_pagoUpdateManyWithWhereWithoutInscripcionInput | comprobante_pagoUpdateManyWithWhereWithoutInscripcionInput[]
+    deleteMany?: comprobante_pagoScalarWhereInput | comprobante_pagoScalarWhereInput[]
+  }
+
+  export type carta_motivacionUncheckedUpdateManyWithoutInscripcionNestedInput = {
+    create?: XOR<carta_motivacionCreateWithoutInscripcionInput, carta_motivacionUncheckedCreateWithoutInscripcionInput> | carta_motivacionCreateWithoutInscripcionInput[] | carta_motivacionUncheckedCreateWithoutInscripcionInput[]
+    connectOrCreate?: carta_motivacionCreateOrConnectWithoutInscripcionInput | carta_motivacionCreateOrConnectWithoutInscripcionInput[]
+    upsert?: carta_motivacionUpsertWithWhereUniqueWithoutInscripcionInput | carta_motivacionUpsertWithWhereUniqueWithoutInscripcionInput[]
+    createMany?: carta_motivacionCreateManyInscripcionInputEnvelope
+    set?: carta_motivacionWhereUniqueInput | carta_motivacionWhereUniqueInput[]
+    disconnect?: carta_motivacionWhereUniqueInput | carta_motivacionWhereUniqueInput[]
+    delete?: carta_motivacionWhereUniqueInput | carta_motivacionWhereUniqueInput[]
+    connect?: carta_motivacionWhereUniqueInput | carta_motivacionWhereUniqueInput[]
+    update?: carta_motivacionUpdateWithWhereUniqueWithoutInscripcionInput | carta_motivacionUpdateWithWhereUniqueWithoutInscripcionInput[]
+    updateMany?: carta_motivacionUpdateManyWithWhereWithoutInscripcionInput | carta_motivacionUpdateManyWithWhereWithoutInscripcionInput[]
+    deleteMany?: carta_motivacionScalarWhereInput | carta_motivacionScalarWhereInput[]
+  }
+
+  export type observacion_inscripcionUncheckedUpdateOneWithoutInscripcionNestedInput = {
+    create?: XOR<observacion_inscripcionCreateWithoutInscripcionInput, observacion_inscripcionUncheckedCreateWithoutInscripcionInput>
+    connectOrCreate?: observacion_inscripcionCreateOrConnectWithoutInscripcionInput
+    upsert?: observacion_inscripcionUpsertWithoutInscripcionInput
+    disconnect?: observacion_inscripcionWhereInput | boolean
+    delete?: observacion_inscripcionWhereInput | boolean
+    connect?: observacion_inscripcionWhereUniqueInput
+    update?: XOR<XOR<observacion_inscripcionUpdateToOneWithWhereWithoutInscripcionInput, observacion_inscripcionUpdateWithoutInscripcionInput>, observacion_inscripcionUncheckedUpdateWithoutInscripcionInput>
+  }
+
+  export type certificadoUncheckedUpdateOneWithoutInscripcionNestedInput = {
+    create?: XOR<certificadoCreateWithoutInscripcionInput, certificadoUncheckedCreateWithoutInscripcionInput>
+    connectOrCreate?: certificadoCreateOrConnectWithoutInscripcionInput
+    upsert?: certificadoUpsertWithoutInscripcionInput
+    disconnect?: certificadoWhereInput | boolean
+    delete?: certificadoWhereInput | boolean
+    connect?: certificadoWhereUniqueInput
+    update?: XOR<XOR<certificadoUpdateToOneWithWhereWithoutInscripcionInput, certificadoUpdateWithoutInscripcionInput>, certificadoUncheckedUpdateWithoutInscripcionInput>
+  }
+
   export type inscripcionCreateNestedOneWithoutInscripcion_cursoInput = {
     create?: XOR<inscripcionCreateWithoutInscripcion_cursoInput, inscripcionUncheckedCreateWithoutInscripcion_cursoInput>
     connectOrCreate?: inscripcionCreateOrConnectWithoutInscripcion_cursoInput
     connect?: inscripcionWhereUniqueInput
-  }
-
-  export type NullableFloatFieldUpdateOperationsInput = {
-    set?: number | null
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
   }
 
   export type inscripcionUpdateOneRequiredWithoutInscripcion_cursoNestedInput = {
@@ -13025,6 +22723,24 @@ export namespace Prisma {
     upsert?: inscripcionUpsertWithoutInscripcion_cursoInput
     connect?: inscripcionWhereUniqueInput
     update?: XOR<XOR<inscripcionUpdateToOneWithWhereWithoutInscripcion_cursoInput, inscripcionUpdateWithoutInscripcion_cursoInput>, inscripcionUncheckedUpdateWithoutInscripcion_cursoInput>
+  }
+
+  export type inscripcionCreateNestedOneWithoutCertificadoInput = {
+    create?: XOR<inscripcionCreateWithoutCertificadoInput, inscripcionUncheckedCreateWithoutCertificadoInput>
+    connectOrCreate?: inscripcionCreateOrConnectWithoutCertificadoInput
+    connect?: inscripcionWhereUniqueInput
+  }
+
+  export type Enumtipo_certificadoFieldUpdateOperationsInput = {
+    set?: $Enums.tipo_certificado
+  }
+
+  export type inscripcionUpdateOneRequiredWithoutCertificadoNestedInput = {
+    create?: XOR<inscripcionCreateWithoutCertificadoInput, inscripcionUncheckedCreateWithoutCertificadoInput>
+    connectOrCreate?: inscripcionCreateOrConnectWithoutCertificadoInput
+    upsert?: inscripcionUpsertWithoutCertificadoInput
+    connect?: inscripcionWhereUniqueInput
+    update?: XOR<XOR<inscripcionUpdateToOneWithWhereWithoutCertificadoInput, inscripcionUpdateWithoutCertificadoInput>, inscripcionUncheckedUpdateWithoutCertificadoInput>
   }
 
   export type carreraCreateNestedManyWithoutFacultadInput = {
@@ -13083,13 +22799,6 @@ export namespace Prisma {
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
-  export type NestedEnumrol_usuarioFilter<$PrismaModel = never> = {
-    equals?: $Enums.rol_usuario | Enumrol_usuarioFieldRefInput<$PrismaModel>
-    in?: $Enums.rol_usuario[] | ListEnumrol_usuarioFieldRefInput<$PrismaModel>
-    notIn?: $Enums.rol_usuario[] | ListEnumrol_usuarioFieldRefInput<$PrismaModel>
-    not?: NestedEnumrol_usuarioFilter<$PrismaModel> | $Enums.rol_usuario
-  }
-
   export type NestedDateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -13143,16 +22852,6 @@ export namespace Prisma {
     not?: NestedIntFilter<$PrismaModel> | number
   }
 
-  export type NestedEnumrol_usuarioWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.rol_usuario | Enumrol_usuarioFieldRefInput<$PrismaModel>
-    in?: $Enums.rol_usuario[] | ListEnumrol_usuarioFieldRefInput<$PrismaModel>
-    notIn?: $Enums.rol_usuario[] | ListEnumrol_usuarioFieldRefInput<$PrismaModel>
-    not?: NestedEnumrol_usuarioWithAggregatesFilter<$PrismaModel> | $Enums.rol_usuario
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumrol_usuarioFilter<$PrismaModel>
-    _max?: NestedEnumrol_usuarioFilter<$PrismaModel>
-  }
-
   export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -13195,9 +22894,95 @@ export namespace Prisma {
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
+  export type NestedEnumestado_validacionFilter<$PrismaModel = never> = {
+    equals?: $Enums.estado_validacion | Enumestado_validacionFieldRefInput<$PrismaModel>
+    in?: $Enums.estado_validacion[] | ListEnumestado_validacionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.estado_validacion[] | ListEnumestado_validacionFieldRefInput<$PrismaModel>
+    not?: NestedEnumestado_validacionFilter<$PrismaModel> | $Enums.estado_validacion
+  }
+
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type NestedEnumestado_validacionWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.estado_validacion | Enumestado_validacionFieldRefInput<$PrismaModel>
+    in?: $Enums.estado_validacion[] | ListEnumestado_validacionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.estado_validacion[] | ListEnumestado_validacionFieldRefInput<$PrismaModel>
+    not?: NestedEnumestado_validacionWithAggregatesFilter<$PrismaModel> | $Enums.estado_validacion
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumestado_validacionFilter<$PrismaModel>
+    _max?: NestedEnumestado_validacionFilter<$PrismaModel>
+  }
+
+  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type NestedEnumrol_usuarioFilter<$PrismaModel = never> = {
+    equals?: $Enums.rol_usuario | Enumrol_usuarioFieldRefInput<$PrismaModel>
+    in?: $Enums.rol_usuario[] | ListEnumrol_usuarioFieldRefInput<$PrismaModel>
+    notIn?: $Enums.rol_usuario[] | ListEnumrol_usuarioFieldRefInput<$PrismaModel>
+    not?: NestedEnumrol_usuarioFilter<$PrismaModel> | $Enums.rol_usuario
+  }
+
+  export type NestedEnumrol_usuarioWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.rol_usuario | Enumrol_usuarioFieldRefInput<$PrismaModel>
+    in?: $Enums.rol_usuario[] | ListEnumrol_usuarioFieldRefInput<$PrismaModel>
+    notIn?: $Enums.rol_usuario[] | ListEnumrol_usuarioFieldRefInput<$PrismaModel>
+    not?: NestedEnumrol_usuarioWithAggregatesFilter<$PrismaModel> | $Enums.rol_usuario
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumrol_usuarioFilter<$PrismaModel>
+    _max?: NestedEnumrol_usuarioFilter<$PrismaModel>
+  }
+
   export type NestedBoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type NestedFloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
   }
 
   export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -13213,17 +22998,6 @@ export namespace Prisma {
     in?: $Enums.tipo_evento[] | ListEnumtipo_eventoFieldRefInput<$PrismaModel>
     notIn?: $Enums.tipo_evento[] | ListEnumtipo_eventoFieldRefInput<$PrismaModel>
     not?: NestedEnumtipo_eventoFilter<$PrismaModel> | $Enums.tipo_evento
-  }
-
-  export type NestedFloatFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatFilter<$PrismaModel> | number
   }
 
   export type NestedEnumestado_eventoFilter<$PrismaModel = never> = {
@@ -13269,62 +23043,11 @@ export namespace Prisma {
     _max?: NestedEnumestado_eventoFilter<$PrismaModel>
   }
 
-  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
-  }
-
   export type NestedEnumestado_inscripcionFilter<$PrismaModel = never> = {
     equals?: $Enums.estado_inscripcion | Enumestado_inscripcionFieldRefInput<$PrismaModel>
     in?: $Enums.estado_inscripcion[] | ListEnumestado_inscripcionFieldRefInput<$PrismaModel>
     notIn?: $Enums.estado_inscripcion[] | ListEnumestado_inscripcionFieldRefInput<$PrismaModel>
     not?: NestedEnumestado_inscripcionFilter<$PrismaModel> | $Enums.estado_inscripcion
-  }
-
-  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
-  }
-
-  export type NestedEnumestado_inscripcionWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.estado_inscripcion | Enumestado_inscripcionFieldRefInput<$PrismaModel>
-    in?: $Enums.estado_inscripcion[] | ListEnumestado_inscripcionFieldRefInput<$PrismaModel>
-    notIn?: $Enums.estado_inscripcion[] | ListEnumestado_inscripcionFieldRefInput<$PrismaModel>
-    not?: NestedEnumestado_inscripcionWithAggregatesFilter<$PrismaModel> | $Enums.estado_inscripcion
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumestado_inscripcionFilter<$PrismaModel>
-    _max?: NestedEnumestado_inscripcionFilter<$PrismaModel>
-  }
-
-  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type NestedFloatNullableFilter<$PrismaModel = never> = {
@@ -13336,6 +23059,16 @@ export namespace Prisma {
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type NestedEnumestado_inscripcionWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.estado_inscripcion | Enumestado_inscripcionFieldRefInput<$PrismaModel>
+    in?: $Enums.estado_inscripcion[] | ListEnumestado_inscripcionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.estado_inscripcion[] | ListEnumestado_inscripcionFieldRefInput<$PrismaModel>
+    not?: NestedEnumestado_inscripcionWithAggregatesFilter<$PrismaModel> | $Enums.estado_inscripcion
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumestado_inscripcionFilter<$PrismaModel>
+    _max?: NestedEnumestado_inscripcionFilter<$PrismaModel>
   }
 
   export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -13354,21 +23087,48 @@ export namespace Prisma {
     _max?: NestedFloatNullableFilter<$PrismaModel>
   }
 
+  export type NestedEnumtipo_certificadoFilter<$PrismaModel = never> = {
+    equals?: $Enums.tipo_certificado | Enumtipo_certificadoFieldRefInput<$PrismaModel>
+    in?: $Enums.tipo_certificado[] | ListEnumtipo_certificadoFieldRefInput<$PrismaModel>
+    notIn?: $Enums.tipo_certificado[] | ListEnumtipo_certificadoFieldRefInput<$PrismaModel>
+    not?: NestedEnumtipo_certificadoFilter<$PrismaModel> | $Enums.tipo_certificado
+  }
+
+  export type NestedEnumtipo_certificadoWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.tipo_certificado | Enumtipo_certificadoFieldRefInput<$PrismaModel>
+    in?: $Enums.tipo_certificado[] | ListEnumtipo_certificadoFieldRefInput<$PrismaModel>
+    notIn?: $Enums.tipo_certificado[] | ListEnumtipo_certificadoFieldRefInput<$PrismaModel>
+    not?: NestedEnumtipo_certificadoWithAggregatesFilter<$PrismaModel> | $Enums.tipo_certificado
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumtipo_certificadoFilter<$PrismaModel>
+    _max?: NestedEnumtipo_certificadoFilter<$PrismaModel>
+  }
+
   export type carreraCreateWithoutUsuarioInput = {
     id_car?: string
     nom_car: string
+    des_car: string
+    dur_sem_car: number
+    mod_car: string
+    ico_car: string
     est_car?: boolean
     fec_cre_car?: Date | string
     facultad: facultadCreateNestedOneWithoutCarrerasInput
+    coordinador?: coordinadorCreateNestedOneWithoutCarrerasInput
     eventos?: evento_carreraCreateNestedManyWithoutCarreraInput
   }
 
   export type carreraUncheckedCreateWithoutUsuarioInput = {
     id_car?: string
     nom_car: string
+    des_car: string
+    dur_sem_car: number
+    mod_car: string
+    ico_car: string
     est_car?: boolean
     fec_cre_car?: Date | string
     id_fac_per: string
+    id_coo_per?: string | null
     eventos?: evento_carreraUncheckedCreateNestedManyWithoutCarreraInput
   }
 
@@ -13377,35 +23137,39 @@ export namespace Prisma {
     create: XOR<carreraCreateWithoutUsuarioInput, carreraUncheckedCreateWithoutUsuarioInput>
   }
 
-  export type inscripcionCreateWithoutUsuarioInput = {
-    id_ins?: string
-    est_ins?: $Enums.estado_inscripcion
-    fec_ins?: Date | string
-    fec_pag_ins?: Date | string | null
-    cer_eve_env?: boolean
-    car_mot_usu?: string | null
-    evento: eventoCreateNestedOneWithoutInscritosInput
-    inscripcion_curso?: inscripcion_cursoCreateNestedOneWithoutInscripcionInput
+  export type cuentaCreateWithoutUsuarioInput = {
+    id_cue?: string
+    cor_usu: string
+    con_usu: string
+    fec_cre_cue?: Date | string
+    rol_usu: $Enums.rol_usuario
+    inscripciones?: inscripcionCreateNestedManyWithoutCuentaInput
+    cartas_motivacion?: carta_motivacionCreateNestedManyWithoutAdminInput
+    comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutAdminInput
+    eventos?: eventoCreateNestedManyWithoutCuentaInput
+    observaciones_creadas?: observacion_inscripcionCreateNestedManyWithoutAdmin_creadorInput
   }
 
-  export type inscripcionUncheckedCreateWithoutUsuarioInput = {
-    id_ins?: string
-    id_eve_ins: string
-    est_ins?: $Enums.estado_inscripcion
-    fec_ins?: Date | string
-    fec_pag_ins?: Date | string | null
-    cer_eve_env?: boolean
-    car_mot_usu?: string | null
-    inscripcion_curso?: inscripcion_cursoUncheckedCreateNestedOneWithoutInscripcionInput
+  export type cuentaUncheckedCreateWithoutUsuarioInput = {
+    id_cue?: string
+    cor_usu: string
+    con_usu: string
+    fec_cre_cue?: Date | string
+    rol_usu: $Enums.rol_usuario
+    inscripciones?: inscripcionUncheckedCreateNestedManyWithoutCuentaInput
+    cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutAdminInput
+    comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutAdminInput
+    eventos?: eventoUncheckedCreateNestedManyWithoutCuentaInput
+    observaciones_creadas?: observacion_inscripcionUncheckedCreateNestedManyWithoutAdmin_creadorInput
   }
 
-  export type inscripcionCreateOrConnectWithoutUsuarioInput = {
-    where: inscripcionWhereUniqueInput
-    create: XOR<inscripcionCreateWithoutUsuarioInput, inscripcionUncheckedCreateWithoutUsuarioInput>
+  export type cuentaCreateOrConnectWithoutUsuarioInput = {
+    where: cuentaWhereUniqueInput
+    create: XOR<cuentaCreateWithoutUsuarioInput, cuentaUncheckedCreateWithoutUsuarioInput>
   }
 
-  export type inscripcionCreateManyUsuarioInputEnvelope = {
-    data: inscripcionCreateManyUsuarioInput | inscripcionCreateManyUsuarioInput[]
+  export type cuentaCreateManyUsuarioInputEnvelope = {
+    data: cuentaCreateManyUsuarioInput | cuentaCreateManyUsuarioInput[]
     skipDuplicates?: boolean
   }
 
@@ -13423,35 +23187,723 @@ export namespace Prisma {
   export type carreraUpdateWithoutUsuarioInput = {
     id_car?: StringFieldUpdateOperationsInput | string
     nom_car?: StringFieldUpdateOperationsInput | string
+    des_car?: StringFieldUpdateOperationsInput | string
+    dur_sem_car?: IntFieldUpdateOperationsInput | number
+    mod_car?: StringFieldUpdateOperationsInput | string
+    ico_car?: StringFieldUpdateOperationsInput | string
     est_car?: BoolFieldUpdateOperationsInput | boolean
     fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
     facultad?: facultadUpdateOneRequiredWithoutCarrerasNestedInput
+    coordinador?: coordinadorUpdateOneWithoutCarrerasNestedInput
     eventos?: evento_carreraUpdateManyWithoutCarreraNestedInput
   }
 
   export type carreraUncheckedUpdateWithoutUsuarioInput = {
     id_car?: StringFieldUpdateOperationsInput | string
     nom_car?: StringFieldUpdateOperationsInput | string
+    des_car?: StringFieldUpdateOperationsInput | string
+    dur_sem_car?: IntFieldUpdateOperationsInput | number
+    mod_car?: StringFieldUpdateOperationsInput | string
+    ico_car?: StringFieldUpdateOperationsInput | string
     est_car?: BoolFieldUpdateOperationsInput | boolean
     fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
     id_fac_per?: StringFieldUpdateOperationsInput | string
+    id_coo_per?: NullableStringFieldUpdateOperationsInput | string | null
     eventos?: evento_carreraUncheckedUpdateManyWithoutCarreraNestedInput
   }
 
-  export type inscripcionUpsertWithWhereUniqueWithoutUsuarioInput = {
-    where: inscripcionWhereUniqueInput
-    update: XOR<inscripcionUpdateWithoutUsuarioInput, inscripcionUncheckedUpdateWithoutUsuarioInput>
-    create: XOR<inscripcionCreateWithoutUsuarioInput, inscripcionUncheckedCreateWithoutUsuarioInput>
+  export type cuentaUpsertWithWhereUniqueWithoutUsuarioInput = {
+    where: cuentaWhereUniqueInput
+    update: XOR<cuentaUpdateWithoutUsuarioInput, cuentaUncheckedUpdateWithoutUsuarioInput>
+    create: XOR<cuentaCreateWithoutUsuarioInput, cuentaUncheckedCreateWithoutUsuarioInput>
   }
 
-  export type inscripcionUpdateWithWhereUniqueWithoutUsuarioInput = {
-    where: inscripcionWhereUniqueInput
-    data: XOR<inscripcionUpdateWithoutUsuarioInput, inscripcionUncheckedUpdateWithoutUsuarioInput>
+  export type cuentaUpdateWithWhereUniqueWithoutUsuarioInput = {
+    where: cuentaWhereUniqueInput
+    data: XOR<cuentaUpdateWithoutUsuarioInput, cuentaUncheckedUpdateWithoutUsuarioInput>
   }
 
-  export type inscripcionUpdateManyWithWhereWithoutUsuarioInput = {
+  export type cuentaUpdateManyWithWhereWithoutUsuarioInput = {
+    where: cuentaScalarWhereInput
+    data: XOR<cuentaUpdateManyMutationInput, cuentaUncheckedUpdateManyWithoutUsuarioInput>
+  }
+
+  export type cuentaScalarWhereInput = {
+    AND?: cuentaScalarWhereInput | cuentaScalarWhereInput[]
+    OR?: cuentaScalarWhereInput[]
+    NOT?: cuentaScalarWhereInput | cuentaScalarWhereInput[]
+    id_cue?: StringFilter<"cuenta"> | string
+    id_usu_per?: StringFilter<"cuenta"> | string
+    cor_usu?: StringFilter<"cuenta"> | string
+    con_usu?: StringFilter<"cuenta"> | string
+    fec_cre_cue?: DateTimeFilter<"cuenta"> | Date | string
+    rol_usu?: Enumrol_usuarioFilter<"cuenta"> | $Enums.rol_usuario
+  }
+
+  export type cuentaCreateWithoutComprobantes_pagoInput = {
+    id_cue?: string
+    cor_usu: string
+    con_usu: string
+    fec_cre_cue?: Date | string
+    rol_usu: $Enums.rol_usuario
+    usuario: usuarioCreateNestedOneWithoutCuentasInput
+    inscripciones?: inscripcionCreateNestedManyWithoutCuentaInput
+    cartas_motivacion?: carta_motivacionCreateNestedManyWithoutAdminInput
+    eventos?: eventoCreateNestedManyWithoutCuentaInput
+    observaciones_creadas?: observacion_inscripcionCreateNestedManyWithoutAdmin_creadorInput
+  }
+
+  export type cuentaUncheckedCreateWithoutComprobantes_pagoInput = {
+    id_cue?: string
+    id_usu_per: string
+    cor_usu: string
+    con_usu: string
+    fec_cre_cue?: Date | string
+    rol_usu: $Enums.rol_usuario
+    inscripciones?: inscripcionUncheckedCreateNestedManyWithoutCuentaInput
+    cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutAdminInput
+    eventos?: eventoUncheckedCreateNestedManyWithoutCuentaInput
+    observaciones_creadas?: observacion_inscripcionUncheckedCreateNestedManyWithoutAdmin_creadorInput
+  }
+
+  export type cuentaCreateOrConnectWithoutComprobantes_pagoInput = {
+    where: cuentaWhereUniqueInput
+    create: XOR<cuentaCreateWithoutComprobantes_pagoInput, cuentaUncheckedCreateWithoutComprobantes_pagoInput>
+  }
+
+  export type inscripcionCreateWithoutComprobantes_pagoInput = {
+    id_ins?: string
+    est_ins?: $Enums.estado_inscripcion
+    fec_ins?: Date | string
+    usu_apr_cer?: boolean
+    por_asi_fin_usu?: number | null
+    cuenta: cuentaCreateNestedOneWithoutInscripcionesInput
+    evento: eventoCreateNestedOneWithoutInscritosInput
+    inscripcion_curso?: inscripcion_cursoCreateNestedOneWithoutInscripcionInput
+    cartas_motivacion?: carta_motivacionCreateNestedManyWithoutInscripcionInput
+    observacion?: observacion_inscripcionCreateNestedOneWithoutInscripcionInput
+    certificado?: certificadoCreateNestedOneWithoutInscripcionInput
+  }
+
+  export type inscripcionUncheckedCreateWithoutComprobantes_pagoInput = {
+    id_ins?: string
+    id_cor_ins: string
+    id_eve_ins: string
+    est_ins?: $Enums.estado_inscripcion
+    fec_ins?: Date | string
+    usu_apr_cer?: boolean
+    por_asi_fin_usu?: number | null
+    inscripcion_curso?: inscripcion_cursoUncheckedCreateNestedOneWithoutInscripcionInput
+    cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutInscripcionInput
+    observacion?: observacion_inscripcionUncheckedCreateNestedOneWithoutInscripcionInput
+    certificado?: certificadoUncheckedCreateNestedOneWithoutInscripcionInput
+  }
+
+  export type inscripcionCreateOrConnectWithoutComprobantes_pagoInput = {
+    where: inscripcionWhereUniqueInput
+    create: XOR<inscripcionCreateWithoutComprobantes_pagoInput, inscripcionUncheckedCreateWithoutComprobantes_pagoInput>
+  }
+
+  export type cuentaUpsertWithoutComprobantes_pagoInput = {
+    update: XOR<cuentaUpdateWithoutComprobantes_pagoInput, cuentaUncheckedUpdateWithoutComprobantes_pagoInput>
+    create: XOR<cuentaCreateWithoutComprobantes_pagoInput, cuentaUncheckedCreateWithoutComprobantes_pagoInput>
+    where?: cuentaWhereInput
+  }
+
+  export type cuentaUpdateToOneWithWhereWithoutComprobantes_pagoInput = {
+    where?: cuentaWhereInput
+    data: XOR<cuentaUpdateWithoutComprobantes_pagoInput, cuentaUncheckedUpdateWithoutComprobantes_pagoInput>
+  }
+
+  export type cuentaUpdateWithoutComprobantes_pagoInput = {
+    id_cue?: StringFieldUpdateOperationsInput | string
+    cor_usu?: StringFieldUpdateOperationsInput | string
+    con_usu?: StringFieldUpdateOperationsInput | string
+    fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
+    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    usuario?: usuarioUpdateOneRequiredWithoutCuentasNestedInput
+    inscripciones?: inscripcionUpdateManyWithoutCuentaNestedInput
+    cartas_motivacion?: carta_motivacionUpdateManyWithoutAdminNestedInput
+    eventos?: eventoUpdateManyWithoutCuentaNestedInput
+    observaciones_creadas?: observacion_inscripcionUpdateManyWithoutAdmin_creadorNestedInput
+  }
+
+  export type cuentaUncheckedUpdateWithoutComprobantes_pagoInput = {
+    id_cue?: StringFieldUpdateOperationsInput | string
+    id_usu_per?: StringFieldUpdateOperationsInput | string
+    cor_usu?: StringFieldUpdateOperationsInput | string
+    con_usu?: StringFieldUpdateOperationsInput | string
+    fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
+    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    inscripciones?: inscripcionUncheckedUpdateManyWithoutCuentaNestedInput
+    cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutAdminNestedInput
+    eventos?: eventoUncheckedUpdateManyWithoutCuentaNestedInput
+    observaciones_creadas?: observacion_inscripcionUncheckedUpdateManyWithoutAdmin_creadorNestedInput
+  }
+
+  export type inscripcionUpsertWithoutComprobantes_pagoInput = {
+    update: XOR<inscripcionUpdateWithoutComprobantes_pagoInput, inscripcionUncheckedUpdateWithoutComprobantes_pagoInput>
+    create: XOR<inscripcionCreateWithoutComprobantes_pagoInput, inscripcionUncheckedCreateWithoutComprobantes_pagoInput>
+    where?: inscripcionWhereInput
+  }
+
+  export type inscripcionUpdateToOneWithWhereWithoutComprobantes_pagoInput = {
+    where?: inscripcionWhereInput
+    data: XOR<inscripcionUpdateWithoutComprobantes_pagoInput, inscripcionUncheckedUpdateWithoutComprobantes_pagoInput>
+  }
+
+  export type inscripcionUpdateWithoutComprobantes_pagoInput = {
+    id_ins?: StringFieldUpdateOperationsInput | string
+    est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
+    fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
+    usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    cuenta?: cuentaUpdateOneRequiredWithoutInscripcionesNestedInput
+    evento?: eventoUpdateOneRequiredWithoutInscritosNestedInput
+    inscripcion_curso?: inscripcion_cursoUpdateOneWithoutInscripcionNestedInput
+    cartas_motivacion?: carta_motivacionUpdateManyWithoutInscripcionNestedInput
+    observacion?: observacion_inscripcionUpdateOneWithoutInscripcionNestedInput
+    certificado?: certificadoUpdateOneWithoutInscripcionNestedInput
+  }
+
+  export type inscripcionUncheckedUpdateWithoutComprobantes_pagoInput = {
+    id_ins?: StringFieldUpdateOperationsInput | string
+    id_cor_ins?: StringFieldUpdateOperationsInput | string
+    id_eve_ins?: StringFieldUpdateOperationsInput | string
+    est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
+    fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
+    usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    inscripcion_curso?: inscripcion_cursoUncheckedUpdateOneWithoutInscripcionNestedInput
+    cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutInscripcionNestedInput
+    observacion?: observacion_inscripcionUncheckedUpdateOneWithoutInscripcionNestedInput
+    certificado?: certificadoUncheckedUpdateOneWithoutInscripcionNestedInput
+  }
+
+  export type cuentaCreateWithoutCartas_motivacionInput = {
+    id_cue?: string
+    cor_usu: string
+    con_usu: string
+    fec_cre_cue?: Date | string
+    rol_usu: $Enums.rol_usuario
+    usuario: usuarioCreateNestedOneWithoutCuentasInput
+    inscripciones?: inscripcionCreateNestedManyWithoutCuentaInput
+    comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutAdminInput
+    eventos?: eventoCreateNestedManyWithoutCuentaInput
+    observaciones_creadas?: observacion_inscripcionCreateNestedManyWithoutAdmin_creadorInput
+  }
+
+  export type cuentaUncheckedCreateWithoutCartas_motivacionInput = {
+    id_cue?: string
+    id_usu_per: string
+    cor_usu: string
+    con_usu: string
+    fec_cre_cue?: Date | string
+    rol_usu: $Enums.rol_usuario
+    inscripciones?: inscripcionUncheckedCreateNestedManyWithoutCuentaInput
+    comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutAdminInput
+    eventos?: eventoUncheckedCreateNestedManyWithoutCuentaInput
+    observaciones_creadas?: observacion_inscripcionUncheckedCreateNestedManyWithoutAdmin_creadorInput
+  }
+
+  export type cuentaCreateOrConnectWithoutCartas_motivacionInput = {
+    where: cuentaWhereUniqueInput
+    create: XOR<cuentaCreateWithoutCartas_motivacionInput, cuentaUncheckedCreateWithoutCartas_motivacionInput>
+  }
+
+  export type inscripcionCreateWithoutCartas_motivacionInput = {
+    id_ins?: string
+    est_ins?: $Enums.estado_inscripcion
+    fec_ins?: Date | string
+    usu_apr_cer?: boolean
+    por_asi_fin_usu?: number | null
+    cuenta: cuentaCreateNestedOneWithoutInscripcionesInput
+    evento: eventoCreateNestedOneWithoutInscritosInput
+    inscripcion_curso?: inscripcion_cursoCreateNestedOneWithoutInscripcionInput
+    comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutInscripcionInput
+    observacion?: observacion_inscripcionCreateNestedOneWithoutInscripcionInput
+    certificado?: certificadoCreateNestedOneWithoutInscripcionInput
+  }
+
+  export type inscripcionUncheckedCreateWithoutCartas_motivacionInput = {
+    id_ins?: string
+    id_cor_ins: string
+    id_eve_ins: string
+    est_ins?: $Enums.estado_inscripcion
+    fec_ins?: Date | string
+    usu_apr_cer?: boolean
+    por_asi_fin_usu?: number | null
+    inscripcion_curso?: inscripcion_cursoUncheckedCreateNestedOneWithoutInscripcionInput
+    comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutInscripcionInput
+    observacion?: observacion_inscripcionUncheckedCreateNestedOneWithoutInscripcionInput
+    certificado?: certificadoUncheckedCreateNestedOneWithoutInscripcionInput
+  }
+
+  export type inscripcionCreateOrConnectWithoutCartas_motivacionInput = {
+    where: inscripcionWhereUniqueInput
+    create: XOR<inscripcionCreateWithoutCartas_motivacionInput, inscripcionUncheckedCreateWithoutCartas_motivacionInput>
+  }
+
+  export type cuentaUpsertWithoutCartas_motivacionInput = {
+    update: XOR<cuentaUpdateWithoutCartas_motivacionInput, cuentaUncheckedUpdateWithoutCartas_motivacionInput>
+    create: XOR<cuentaCreateWithoutCartas_motivacionInput, cuentaUncheckedCreateWithoutCartas_motivacionInput>
+    where?: cuentaWhereInput
+  }
+
+  export type cuentaUpdateToOneWithWhereWithoutCartas_motivacionInput = {
+    where?: cuentaWhereInput
+    data: XOR<cuentaUpdateWithoutCartas_motivacionInput, cuentaUncheckedUpdateWithoutCartas_motivacionInput>
+  }
+
+  export type cuentaUpdateWithoutCartas_motivacionInput = {
+    id_cue?: StringFieldUpdateOperationsInput | string
+    cor_usu?: StringFieldUpdateOperationsInput | string
+    con_usu?: StringFieldUpdateOperationsInput | string
+    fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
+    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    usuario?: usuarioUpdateOneRequiredWithoutCuentasNestedInput
+    inscripciones?: inscripcionUpdateManyWithoutCuentaNestedInput
+    comprobantes_pago?: comprobante_pagoUpdateManyWithoutAdminNestedInput
+    eventos?: eventoUpdateManyWithoutCuentaNestedInput
+    observaciones_creadas?: observacion_inscripcionUpdateManyWithoutAdmin_creadorNestedInput
+  }
+
+  export type cuentaUncheckedUpdateWithoutCartas_motivacionInput = {
+    id_cue?: StringFieldUpdateOperationsInput | string
+    id_usu_per?: StringFieldUpdateOperationsInput | string
+    cor_usu?: StringFieldUpdateOperationsInput | string
+    con_usu?: StringFieldUpdateOperationsInput | string
+    fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
+    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    inscripciones?: inscripcionUncheckedUpdateManyWithoutCuentaNestedInput
+    comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutAdminNestedInput
+    eventos?: eventoUncheckedUpdateManyWithoutCuentaNestedInput
+    observaciones_creadas?: observacion_inscripcionUncheckedUpdateManyWithoutAdmin_creadorNestedInput
+  }
+
+  export type inscripcionUpsertWithoutCartas_motivacionInput = {
+    update: XOR<inscripcionUpdateWithoutCartas_motivacionInput, inscripcionUncheckedUpdateWithoutCartas_motivacionInput>
+    create: XOR<inscripcionCreateWithoutCartas_motivacionInput, inscripcionUncheckedCreateWithoutCartas_motivacionInput>
+    where?: inscripcionWhereInput
+  }
+
+  export type inscripcionUpdateToOneWithWhereWithoutCartas_motivacionInput = {
+    where?: inscripcionWhereInput
+    data: XOR<inscripcionUpdateWithoutCartas_motivacionInput, inscripcionUncheckedUpdateWithoutCartas_motivacionInput>
+  }
+
+  export type inscripcionUpdateWithoutCartas_motivacionInput = {
+    id_ins?: StringFieldUpdateOperationsInput | string
+    est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
+    fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
+    usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    cuenta?: cuentaUpdateOneRequiredWithoutInscripcionesNestedInput
+    evento?: eventoUpdateOneRequiredWithoutInscritosNestedInput
+    inscripcion_curso?: inscripcion_cursoUpdateOneWithoutInscripcionNestedInput
+    comprobantes_pago?: comprobante_pagoUpdateManyWithoutInscripcionNestedInput
+    observacion?: observacion_inscripcionUpdateOneWithoutInscripcionNestedInput
+    certificado?: certificadoUpdateOneWithoutInscripcionNestedInput
+  }
+
+  export type inscripcionUncheckedUpdateWithoutCartas_motivacionInput = {
+    id_ins?: StringFieldUpdateOperationsInput | string
+    id_cor_ins?: StringFieldUpdateOperationsInput | string
+    id_eve_ins?: StringFieldUpdateOperationsInput | string
+    est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
+    fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
+    usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    inscripcion_curso?: inscripcion_cursoUncheckedUpdateOneWithoutInscripcionNestedInput
+    comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutInscripcionNestedInput
+    observacion?: observacion_inscripcionUncheckedUpdateOneWithoutInscripcionNestedInput
+    certificado?: certificadoUncheckedUpdateOneWithoutInscripcionNestedInput
+  }
+
+  export type inscripcionCreateWithoutObservacionInput = {
+    id_ins?: string
+    est_ins?: $Enums.estado_inscripcion
+    fec_ins?: Date | string
+    usu_apr_cer?: boolean
+    por_asi_fin_usu?: number | null
+    cuenta: cuentaCreateNestedOneWithoutInscripcionesInput
+    evento: eventoCreateNestedOneWithoutInscritosInput
+    inscripcion_curso?: inscripcion_cursoCreateNestedOneWithoutInscripcionInput
+    comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutInscripcionInput
+    cartas_motivacion?: carta_motivacionCreateNestedManyWithoutInscripcionInput
+    certificado?: certificadoCreateNestedOneWithoutInscripcionInput
+  }
+
+  export type inscripcionUncheckedCreateWithoutObservacionInput = {
+    id_ins?: string
+    id_cor_ins: string
+    id_eve_ins: string
+    est_ins?: $Enums.estado_inscripcion
+    fec_ins?: Date | string
+    usu_apr_cer?: boolean
+    por_asi_fin_usu?: number | null
+    inscripcion_curso?: inscripcion_cursoUncheckedCreateNestedOneWithoutInscripcionInput
+    comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutInscripcionInput
+    cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutInscripcionInput
+    certificado?: certificadoUncheckedCreateNestedOneWithoutInscripcionInput
+  }
+
+  export type inscripcionCreateOrConnectWithoutObservacionInput = {
+    where: inscripcionWhereUniqueInput
+    create: XOR<inscripcionCreateWithoutObservacionInput, inscripcionUncheckedCreateWithoutObservacionInput>
+  }
+
+  export type cuentaCreateWithoutObservaciones_creadasInput = {
+    id_cue?: string
+    cor_usu: string
+    con_usu: string
+    fec_cre_cue?: Date | string
+    rol_usu: $Enums.rol_usuario
+    usuario: usuarioCreateNestedOneWithoutCuentasInput
+    inscripciones?: inscripcionCreateNestedManyWithoutCuentaInput
+    cartas_motivacion?: carta_motivacionCreateNestedManyWithoutAdminInput
+    comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutAdminInput
+    eventos?: eventoCreateNestedManyWithoutCuentaInput
+  }
+
+  export type cuentaUncheckedCreateWithoutObservaciones_creadasInput = {
+    id_cue?: string
+    id_usu_per: string
+    cor_usu: string
+    con_usu: string
+    fec_cre_cue?: Date | string
+    rol_usu: $Enums.rol_usuario
+    inscripciones?: inscripcionUncheckedCreateNestedManyWithoutCuentaInput
+    cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutAdminInput
+    comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutAdminInput
+    eventos?: eventoUncheckedCreateNestedManyWithoutCuentaInput
+  }
+
+  export type cuentaCreateOrConnectWithoutObservaciones_creadasInput = {
+    where: cuentaWhereUniqueInput
+    create: XOR<cuentaCreateWithoutObservaciones_creadasInput, cuentaUncheckedCreateWithoutObservaciones_creadasInput>
+  }
+
+  export type inscripcionUpsertWithoutObservacionInput = {
+    update: XOR<inscripcionUpdateWithoutObservacionInput, inscripcionUncheckedUpdateWithoutObservacionInput>
+    create: XOR<inscripcionCreateWithoutObservacionInput, inscripcionUncheckedCreateWithoutObservacionInput>
+    where?: inscripcionWhereInput
+  }
+
+  export type inscripcionUpdateToOneWithWhereWithoutObservacionInput = {
+    where?: inscripcionWhereInput
+    data: XOR<inscripcionUpdateWithoutObservacionInput, inscripcionUncheckedUpdateWithoutObservacionInput>
+  }
+
+  export type inscripcionUpdateWithoutObservacionInput = {
+    id_ins?: StringFieldUpdateOperationsInput | string
+    est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
+    fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
+    usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    cuenta?: cuentaUpdateOneRequiredWithoutInscripcionesNestedInput
+    evento?: eventoUpdateOneRequiredWithoutInscritosNestedInput
+    inscripcion_curso?: inscripcion_cursoUpdateOneWithoutInscripcionNestedInput
+    comprobantes_pago?: comprobante_pagoUpdateManyWithoutInscripcionNestedInput
+    cartas_motivacion?: carta_motivacionUpdateManyWithoutInscripcionNestedInput
+    certificado?: certificadoUpdateOneWithoutInscripcionNestedInput
+  }
+
+  export type inscripcionUncheckedUpdateWithoutObservacionInput = {
+    id_ins?: StringFieldUpdateOperationsInput | string
+    id_cor_ins?: StringFieldUpdateOperationsInput | string
+    id_eve_ins?: StringFieldUpdateOperationsInput | string
+    est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
+    fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
+    usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    inscripcion_curso?: inscripcion_cursoUncheckedUpdateOneWithoutInscripcionNestedInput
+    comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutInscripcionNestedInput
+    cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutInscripcionNestedInput
+    certificado?: certificadoUncheckedUpdateOneWithoutInscripcionNestedInput
+  }
+
+  export type cuentaUpsertWithoutObservaciones_creadasInput = {
+    update: XOR<cuentaUpdateWithoutObservaciones_creadasInput, cuentaUncheckedUpdateWithoutObservaciones_creadasInput>
+    create: XOR<cuentaCreateWithoutObservaciones_creadasInput, cuentaUncheckedCreateWithoutObservaciones_creadasInput>
+    where?: cuentaWhereInput
+  }
+
+  export type cuentaUpdateToOneWithWhereWithoutObservaciones_creadasInput = {
+    where?: cuentaWhereInput
+    data: XOR<cuentaUpdateWithoutObservaciones_creadasInput, cuentaUncheckedUpdateWithoutObservaciones_creadasInput>
+  }
+
+  export type cuentaUpdateWithoutObservaciones_creadasInput = {
+    id_cue?: StringFieldUpdateOperationsInput | string
+    cor_usu?: StringFieldUpdateOperationsInput | string
+    con_usu?: StringFieldUpdateOperationsInput | string
+    fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
+    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    usuario?: usuarioUpdateOneRequiredWithoutCuentasNestedInput
+    inscripciones?: inscripcionUpdateManyWithoutCuentaNestedInput
+    cartas_motivacion?: carta_motivacionUpdateManyWithoutAdminNestedInput
+    comprobantes_pago?: comprobante_pagoUpdateManyWithoutAdminNestedInput
+    eventos?: eventoUpdateManyWithoutCuentaNestedInput
+  }
+
+  export type cuentaUncheckedUpdateWithoutObservaciones_creadasInput = {
+    id_cue?: StringFieldUpdateOperationsInput | string
+    id_usu_per?: StringFieldUpdateOperationsInput | string
+    cor_usu?: StringFieldUpdateOperationsInput | string
+    con_usu?: StringFieldUpdateOperationsInput | string
+    fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
+    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    inscripciones?: inscripcionUncheckedUpdateManyWithoutCuentaNestedInput
+    cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutAdminNestedInput
+    comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutAdminNestedInput
+    eventos?: eventoUncheckedUpdateManyWithoutCuentaNestedInput
+  }
+
+  export type usuarioCreateWithoutCuentasInput = {
+    id_usu?: string
+    ced_usu: string
+    nom_usu: string
+    ape_usu: string
+    cel_usu: string
+    fec_cre_usu?: Date | string
+    com_usu?: string | null
+    img_per_usu?: string | null
+    carrera?: carreraCreateNestedOneWithoutUsuarioInput
+  }
+
+  export type usuarioUncheckedCreateWithoutCuentasInput = {
+    id_usu?: string
+    ced_usu: string
+    nom_usu: string
+    ape_usu: string
+    cel_usu: string
+    fec_cre_usu?: Date | string
+    com_usu?: string | null
+    id_car_est?: string | null
+    img_per_usu?: string | null
+  }
+
+  export type usuarioCreateOrConnectWithoutCuentasInput = {
+    where: usuarioWhereUniqueInput
+    create: XOR<usuarioCreateWithoutCuentasInput, usuarioUncheckedCreateWithoutCuentasInput>
+  }
+
+  export type inscripcionCreateWithoutCuentaInput = {
+    id_ins?: string
+    est_ins?: $Enums.estado_inscripcion
+    fec_ins?: Date | string
+    usu_apr_cer?: boolean
+    por_asi_fin_usu?: number | null
+    evento: eventoCreateNestedOneWithoutInscritosInput
+    inscripcion_curso?: inscripcion_cursoCreateNestedOneWithoutInscripcionInput
+    comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutInscripcionInput
+    cartas_motivacion?: carta_motivacionCreateNestedManyWithoutInscripcionInput
+    observacion?: observacion_inscripcionCreateNestedOneWithoutInscripcionInput
+    certificado?: certificadoCreateNestedOneWithoutInscripcionInput
+  }
+
+  export type inscripcionUncheckedCreateWithoutCuentaInput = {
+    id_ins?: string
+    id_eve_ins: string
+    est_ins?: $Enums.estado_inscripcion
+    fec_ins?: Date | string
+    usu_apr_cer?: boolean
+    por_asi_fin_usu?: number | null
+    inscripcion_curso?: inscripcion_cursoUncheckedCreateNestedOneWithoutInscripcionInput
+    comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutInscripcionInput
+    cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutInscripcionInput
+    observacion?: observacion_inscripcionUncheckedCreateNestedOneWithoutInscripcionInput
+    certificado?: certificadoUncheckedCreateNestedOneWithoutInscripcionInput
+  }
+
+  export type inscripcionCreateOrConnectWithoutCuentaInput = {
+    where: inscripcionWhereUniqueInput
+    create: XOR<inscripcionCreateWithoutCuentaInput, inscripcionUncheckedCreateWithoutCuentaInput>
+  }
+
+  export type inscripcionCreateManyCuentaInputEnvelope = {
+    data: inscripcionCreateManyCuentaInput | inscripcionCreateManyCuentaInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type carta_motivacionCreateWithoutAdminInput = {
+    id_car_mot?: string
+    con_car_mot: string
+    est_car_mot?: $Enums.estado_validacion
+    fec_sub_car_mot?: Date | string
+    fec_val_car_mot?: Date | string | null
+    inscripcion: inscripcionCreateNestedOneWithoutCartas_motivacionInput
+  }
+
+  export type carta_motivacionUncheckedCreateWithoutAdminInput = {
+    id_car_mot?: string
+    id_ins_per: string
+    con_car_mot: string
+    est_car_mot?: $Enums.estado_validacion
+    fec_sub_car_mot?: Date | string
+    fec_val_car_mot?: Date | string | null
+  }
+
+  export type carta_motivacionCreateOrConnectWithoutAdminInput = {
+    where: carta_motivacionWhereUniqueInput
+    create: XOR<carta_motivacionCreateWithoutAdminInput, carta_motivacionUncheckedCreateWithoutAdminInput>
+  }
+
+  export type carta_motivacionCreateManyAdminInputEnvelope = {
+    data: carta_motivacionCreateManyAdminInput | carta_motivacionCreateManyAdminInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type comprobante_pagoCreateWithoutAdminInput = {
+    id_com_pag?: string
+    url_com_pag: string
+    est_com_pag?: $Enums.estado_validacion
+    fec_sub_com_pag?: Date | string
+    fec_val_com_pag?: Date | string | null
+    fec_pag_ins?: Date | string | null
+    inscripcion: inscripcionCreateNestedOneWithoutComprobantes_pagoInput
+  }
+
+  export type comprobante_pagoUncheckedCreateWithoutAdminInput = {
+    id_com_pag?: string
+    id_ins_per: string
+    url_com_pag: string
+    est_com_pag?: $Enums.estado_validacion
+    fec_sub_com_pag?: Date | string
+    fec_val_com_pag?: Date | string | null
+    fec_pag_ins?: Date | string | null
+  }
+
+  export type comprobante_pagoCreateOrConnectWithoutAdminInput = {
+    where: comprobante_pagoWhereUniqueInput
+    create: XOR<comprobante_pagoCreateWithoutAdminInput, comprobante_pagoUncheckedCreateWithoutAdminInput>
+  }
+
+  export type comprobante_pagoCreateManyAdminInputEnvelope = {
+    data: comprobante_pagoCreateManyAdminInput | comprobante_pagoCreateManyAdminInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type eventoCreateWithoutCuentaInput = {
+    id_eve?: string
+    nom_eve: string
+    des_eve?: string | null
+    tip_eve: $Enums.tipo_evento
+    fec_ini_eve: Date | string
+    val_eve: number
+    est_eve?: $Enums.estado_evento
+    fec_cre_eve?: Date | string
+    dur_hor_eve: number
+    img_por_eve: string
+    por_min_asi_eve: number
+    fec_fin_eve: Date | string
+    inscritos?: inscripcionCreateNestedManyWithoutEventoInput
+    eventos_carrera?: evento_carreraCreateNestedManyWithoutEventoInput
+    eventos_curso?: evento_cursoCreateNestedOneWithoutEventoInput
+  }
+
+  export type eventoUncheckedCreateWithoutCuentaInput = {
+    id_eve?: string
+    nom_eve: string
+    des_eve?: string | null
+    tip_eve: $Enums.tipo_evento
+    fec_ini_eve: Date | string
+    val_eve: number
+    est_eve?: $Enums.estado_evento
+    fec_cre_eve?: Date | string
+    dur_hor_eve: number
+    img_por_eve: string
+    por_min_asi_eve: number
+    fec_fin_eve: Date | string
+    inscritos?: inscripcionUncheckedCreateNestedManyWithoutEventoInput
+    eventos_carrera?: evento_carreraUncheckedCreateNestedManyWithoutEventoInput
+    eventos_curso?: evento_cursoUncheckedCreateNestedOneWithoutEventoInput
+  }
+
+  export type eventoCreateOrConnectWithoutCuentaInput = {
+    where: eventoWhereUniqueInput
+    create: XOR<eventoCreateWithoutCuentaInput, eventoUncheckedCreateWithoutCuentaInput>
+  }
+
+  export type eventoCreateManyCuentaInputEnvelope = {
+    data: eventoCreateManyCuentaInput | eventoCreateManyCuentaInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type observacion_inscripcionCreateWithoutAdmin_creadorInput = {
+    id_obs_ins?: string
+    obs_ins: string
+    fec_cre_obs?: Date | string
+    inscripcion: inscripcionCreateNestedOneWithoutObservacionInput
+  }
+
+  export type observacion_inscripcionUncheckedCreateWithoutAdmin_creadorInput = {
+    id_obs_ins?: string
+    id_ins_per: string
+    obs_ins: string
+    fec_cre_obs?: Date | string
+  }
+
+  export type observacion_inscripcionCreateOrConnectWithoutAdmin_creadorInput = {
+    where: observacion_inscripcionWhereUniqueInput
+    create: XOR<observacion_inscripcionCreateWithoutAdmin_creadorInput, observacion_inscripcionUncheckedCreateWithoutAdmin_creadorInput>
+  }
+
+  export type observacion_inscripcionCreateManyAdmin_creadorInputEnvelope = {
+    data: observacion_inscripcionCreateManyAdmin_creadorInput | observacion_inscripcionCreateManyAdmin_creadorInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type usuarioUpsertWithoutCuentasInput = {
+    update: XOR<usuarioUpdateWithoutCuentasInput, usuarioUncheckedUpdateWithoutCuentasInput>
+    create: XOR<usuarioCreateWithoutCuentasInput, usuarioUncheckedCreateWithoutCuentasInput>
+    where?: usuarioWhereInput
+  }
+
+  export type usuarioUpdateToOneWithWhereWithoutCuentasInput = {
+    where?: usuarioWhereInput
+    data: XOR<usuarioUpdateWithoutCuentasInput, usuarioUncheckedUpdateWithoutCuentasInput>
+  }
+
+  export type usuarioUpdateWithoutCuentasInput = {
+    id_usu?: StringFieldUpdateOperationsInput | string
+    ced_usu?: StringFieldUpdateOperationsInput | string
+    nom_usu?: StringFieldUpdateOperationsInput | string
+    ape_usu?: StringFieldUpdateOperationsInput | string
+    cel_usu?: StringFieldUpdateOperationsInput | string
+    fec_cre_usu?: DateTimeFieldUpdateOperationsInput | Date | string
+    com_usu?: NullableStringFieldUpdateOperationsInput | string | null
+    img_per_usu?: NullableStringFieldUpdateOperationsInput | string | null
+    carrera?: carreraUpdateOneWithoutUsuarioNestedInput
+  }
+
+  export type usuarioUncheckedUpdateWithoutCuentasInput = {
+    id_usu?: StringFieldUpdateOperationsInput | string
+    ced_usu?: StringFieldUpdateOperationsInput | string
+    nom_usu?: StringFieldUpdateOperationsInput | string
+    ape_usu?: StringFieldUpdateOperationsInput | string
+    cel_usu?: StringFieldUpdateOperationsInput | string
+    fec_cre_usu?: DateTimeFieldUpdateOperationsInput | Date | string
+    com_usu?: NullableStringFieldUpdateOperationsInput | string | null
+    id_car_est?: NullableStringFieldUpdateOperationsInput | string | null
+    img_per_usu?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type inscripcionUpsertWithWhereUniqueWithoutCuentaInput = {
+    where: inscripcionWhereUniqueInput
+    update: XOR<inscripcionUpdateWithoutCuentaInput, inscripcionUncheckedUpdateWithoutCuentaInput>
+    create: XOR<inscripcionCreateWithoutCuentaInput, inscripcionUncheckedCreateWithoutCuentaInput>
+  }
+
+  export type inscripcionUpdateWithWhereUniqueWithoutCuentaInput = {
+    where: inscripcionWhereUniqueInput
+    data: XOR<inscripcionUpdateWithoutCuentaInput, inscripcionUncheckedUpdateWithoutCuentaInput>
+  }
+
+  export type inscripcionUpdateManyWithWhereWithoutCuentaInput = {
     where: inscripcionScalarWhereInput
-    data: XOR<inscripcionUpdateManyMutationInput, inscripcionUncheckedUpdateManyWithoutUsuarioInput>
+    data: XOR<inscripcionUpdateManyMutationInput, inscripcionUncheckedUpdateManyWithoutCuentaInput>
   }
 
   export type inscripcionScalarWhereInput = {
@@ -13459,13 +23911,133 @@ export namespace Prisma {
     OR?: inscripcionScalarWhereInput[]
     NOT?: inscripcionScalarWhereInput | inscripcionScalarWhereInput[]
     id_ins?: StringFilter<"inscripcion"> | string
-    id_usu_ins?: StringFilter<"inscripcion"> | string
+    id_cor_ins?: StringFilter<"inscripcion"> | string
     id_eve_ins?: StringFilter<"inscripcion"> | string
     est_ins?: Enumestado_inscripcionFilter<"inscripcion"> | $Enums.estado_inscripcion
     fec_ins?: DateTimeFilter<"inscripcion"> | Date | string
-    fec_pag_ins?: DateTimeNullableFilter<"inscripcion"> | Date | string | null
-    cer_eve_env?: BoolFilter<"inscripcion"> | boolean
-    car_mot_usu?: StringNullableFilter<"inscripcion"> | string | null
+    usu_apr_cer?: BoolFilter<"inscripcion"> | boolean
+    por_asi_fin_usu?: FloatNullableFilter<"inscripcion"> | number | null
+  }
+
+  export type carta_motivacionUpsertWithWhereUniqueWithoutAdminInput = {
+    where: carta_motivacionWhereUniqueInput
+    update: XOR<carta_motivacionUpdateWithoutAdminInput, carta_motivacionUncheckedUpdateWithoutAdminInput>
+    create: XOR<carta_motivacionCreateWithoutAdminInput, carta_motivacionUncheckedCreateWithoutAdminInput>
+  }
+
+  export type carta_motivacionUpdateWithWhereUniqueWithoutAdminInput = {
+    where: carta_motivacionWhereUniqueInput
+    data: XOR<carta_motivacionUpdateWithoutAdminInput, carta_motivacionUncheckedUpdateWithoutAdminInput>
+  }
+
+  export type carta_motivacionUpdateManyWithWhereWithoutAdminInput = {
+    where: carta_motivacionScalarWhereInput
+    data: XOR<carta_motivacionUpdateManyMutationInput, carta_motivacionUncheckedUpdateManyWithoutAdminInput>
+  }
+
+  export type carta_motivacionScalarWhereInput = {
+    AND?: carta_motivacionScalarWhereInput | carta_motivacionScalarWhereInput[]
+    OR?: carta_motivacionScalarWhereInput[]
+    NOT?: carta_motivacionScalarWhereInput | carta_motivacionScalarWhereInput[]
+    id_car_mot?: StringFilter<"carta_motivacion"> | string
+    id_ins_per?: StringFilter<"carta_motivacion"> | string
+    con_car_mot?: StringFilter<"carta_motivacion"> | string
+    est_car_mot?: Enumestado_validacionFilter<"carta_motivacion"> | $Enums.estado_validacion
+    fec_sub_car_mot?: DateTimeFilter<"carta_motivacion"> | Date | string
+    fec_val_car_mot?: DateTimeNullableFilter<"carta_motivacion"> | Date | string | null
+    id_adm_val_car_mot?: StringNullableFilter<"carta_motivacion"> | string | null
+  }
+
+  export type comprobante_pagoUpsertWithWhereUniqueWithoutAdminInput = {
+    where: comprobante_pagoWhereUniqueInput
+    update: XOR<comprobante_pagoUpdateWithoutAdminInput, comprobante_pagoUncheckedUpdateWithoutAdminInput>
+    create: XOR<comprobante_pagoCreateWithoutAdminInput, comprobante_pagoUncheckedCreateWithoutAdminInput>
+  }
+
+  export type comprobante_pagoUpdateWithWhereUniqueWithoutAdminInput = {
+    where: comprobante_pagoWhereUniqueInput
+    data: XOR<comprobante_pagoUpdateWithoutAdminInput, comprobante_pagoUncheckedUpdateWithoutAdminInput>
+  }
+
+  export type comprobante_pagoUpdateManyWithWhereWithoutAdminInput = {
+    where: comprobante_pagoScalarWhereInput
+    data: XOR<comprobante_pagoUpdateManyMutationInput, comprobante_pagoUncheckedUpdateManyWithoutAdminInput>
+  }
+
+  export type comprobante_pagoScalarWhereInput = {
+    AND?: comprobante_pagoScalarWhereInput | comprobante_pagoScalarWhereInput[]
+    OR?: comprobante_pagoScalarWhereInput[]
+    NOT?: comprobante_pagoScalarWhereInput | comprobante_pagoScalarWhereInput[]
+    id_com_pag?: StringFilter<"comprobante_pago"> | string
+    id_ins_per?: StringFilter<"comprobante_pago"> | string
+    url_com_pag?: StringFilter<"comprobante_pago"> | string
+    est_com_pag?: Enumestado_validacionFilter<"comprobante_pago"> | $Enums.estado_validacion
+    fec_sub_com_pag?: DateTimeFilter<"comprobante_pago"> | Date | string
+    fec_val_com_pag?: DateTimeNullableFilter<"comprobante_pago"> | Date | string | null
+    id_adm_val_com_pag?: StringNullableFilter<"comprobante_pago"> | string | null
+    fec_pag_ins?: DateTimeNullableFilter<"comprobante_pago"> | Date | string | null
+  }
+
+  export type eventoUpsertWithWhereUniqueWithoutCuentaInput = {
+    where: eventoWhereUniqueInput
+    update: XOR<eventoUpdateWithoutCuentaInput, eventoUncheckedUpdateWithoutCuentaInput>
+    create: XOR<eventoCreateWithoutCuentaInput, eventoUncheckedCreateWithoutCuentaInput>
+  }
+
+  export type eventoUpdateWithWhereUniqueWithoutCuentaInput = {
+    where: eventoWhereUniqueInput
+    data: XOR<eventoUpdateWithoutCuentaInput, eventoUncheckedUpdateWithoutCuentaInput>
+  }
+
+  export type eventoUpdateManyWithWhereWithoutCuentaInput = {
+    where: eventoScalarWhereInput
+    data: XOR<eventoUpdateManyMutationInput, eventoUncheckedUpdateManyWithoutCuentaInput>
+  }
+
+  export type eventoScalarWhereInput = {
+    AND?: eventoScalarWhereInput | eventoScalarWhereInput[]
+    OR?: eventoScalarWhereInput[]
+    NOT?: eventoScalarWhereInput | eventoScalarWhereInput[]
+    id_eve?: StringFilter<"evento"> | string
+    nom_eve?: StringFilter<"evento"> | string
+    des_eve?: StringNullableFilter<"evento"> | string | null
+    tip_eve?: Enumtipo_eventoFilter<"evento"> | $Enums.tipo_evento
+    fec_ini_eve?: DateTimeFilter<"evento"> | Date | string
+    val_eve?: FloatFilter<"evento"> | number
+    est_eve?: Enumestado_eventoFilter<"evento"> | $Enums.estado_evento
+    fec_cre_eve?: DateTimeFilter<"evento"> | Date | string
+    dur_hor_eve?: IntFilter<"evento"> | number
+    img_por_eve?: StringFilter<"evento"> | string
+    por_min_asi_eve?: FloatFilter<"evento"> | number
+    fec_fin_eve?: DateTimeFilter<"evento"> | Date | string
+    id_cue_cre_eve?: StringFilter<"evento"> | string
+  }
+
+  export type observacion_inscripcionUpsertWithWhereUniqueWithoutAdmin_creadorInput = {
+    where: observacion_inscripcionWhereUniqueInput
+    update: XOR<observacion_inscripcionUpdateWithoutAdmin_creadorInput, observacion_inscripcionUncheckedUpdateWithoutAdmin_creadorInput>
+    create: XOR<observacion_inscripcionCreateWithoutAdmin_creadorInput, observacion_inscripcionUncheckedCreateWithoutAdmin_creadorInput>
+  }
+
+  export type observacion_inscripcionUpdateWithWhereUniqueWithoutAdmin_creadorInput = {
+    where: observacion_inscripcionWhereUniqueInput
+    data: XOR<observacion_inscripcionUpdateWithoutAdmin_creadorInput, observacion_inscripcionUncheckedUpdateWithoutAdmin_creadorInput>
+  }
+
+  export type observacion_inscripcionUpdateManyWithWhereWithoutAdmin_creadorInput = {
+    where: observacion_inscripcionScalarWhereInput
+    data: XOR<observacion_inscripcionUpdateManyMutationInput, observacion_inscripcionUncheckedUpdateManyWithoutAdmin_creadorInput>
+  }
+
+  export type observacion_inscripcionScalarWhereInput = {
+    AND?: observacion_inscripcionScalarWhereInput | observacion_inscripcionScalarWhereInput[]
+    OR?: observacion_inscripcionScalarWhereInput[]
+    NOT?: observacion_inscripcionScalarWhereInput | observacion_inscripcionScalarWhereInput[]
+    id_obs_ins?: StringFilter<"observacion_inscripcion"> | string
+    id_ins_per?: StringFilter<"observacion_inscripcion"> | string
+    obs_ins?: StringFilter<"observacion_inscripcion"> | string
+    fec_cre_obs?: DateTimeFilter<"observacion_inscripcion"> | Date | string
+    id_adm_cre_obs?: StringNullableFilter<"observacion_inscripcion"> | string | null
   }
 
   export type facultadCreateWithoutCarrerasInput = {
@@ -13474,6 +24046,15 @@ export namespace Prisma {
     des_fac: string
     mis_fac: string
     vis_fac: string
+    fec_cre_fac?: Date | string
+    nom_dec_fac: string
+    ape_dec_fac: string
+    cor_dec_fac: string
+    url_img_dec_fac: string
+    nom_sub_dec_fac: string
+    ape_sub_dec_fac: string
+    cor_sub_dec_fac: string
+    url_img_sub_dec_fac: string
   }
 
   export type facultadUncheckedCreateWithoutCarrerasInput = {
@@ -13482,6 +24063,15 @@ export namespace Prisma {
     des_fac: string
     mis_fac: string
     vis_fac: string
+    fec_cre_fac?: Date | string
+    nom_dec_fac: string
+    ape_dec_fac: string
+    cor_dec_fac: string
+    url_img_dec_fac: string
+    nom_sub_dec_fac: string
+    ape_sub_dec_fac: string
+    cor_sub_dec_fac: string
+    url_img_sub_dec_fac: string
   }
 
   export type facultadCreateOrConnectWithoutCarrerasInput = {
@@ -13489,18 +24079,39 @@ export namespace Prisma {
     create: XOR<facultadCreateWithoutCarrerasInput, facultadUncheckedCreateWithoutCarrerasInput>
   }
 
+  export type coordinadorCreateWithoutCarrerasInput = {
+    id_coo?: string
+    nom_coo: string
+    ape_coo: string
+    cor_coo: string
+    url_img_coo: string
+    tit_coo: string
+  }
+
+  export type coordinadorUncheckedCreateWithoutCarrerasInput = {
+    id_coo?: string
+    nom_coo: string
+    ape_coo: string
+    cor_coo: string
+    url_img_coo: string
+    tit_coo: string
+  }
+
+  export type coordinadorCreateOrConnectWithoutCarrerasInput = {
+    where: coordinadorWhereUniqueInput
+    create: XOR<coordinadorCreateWithoutCarrerasInput, coordinadorUncheckedCreateWithoutCarrerasInput>
+  }
+
   export type usuarioCreateWithoutCarreraInput = {
     id_usu?: string
     ced_usu: string
     nom_usu: string
     ape_usu: string
-    cor_usu: string
-    con_usu: string
     cel_usu: string
-    rol_usu: $Enums.rol_usuario
     fec_cre_usu?: Date | string
     com_usu?: string | null
-    inscripciones?: inscripcionCreateNestedManyWithoutUsuarioInput
+    img_per_usu?: string | null
+    cuentas?: cuentaCreateNestedManyWithoutUsuarioInput
   }
 
   export type usuarioUncheckedCreateWithoutCarreraInput = {
@@ -13508,13 +24119,11 @@ export namespace Prisma {
     ced_usu: string
     nom_usu: string
     ape_usu: string
-    cor_usu: string
-    con_usu: string
     cel_usu: string
-    rol_usu: $Enums.rol_usuario
     fec_cre_usu?: Date | string
     com_usu?: string | null
-    inscripciones?: inscripcionUncheckedCreateNestedManyWithoutUsuarioInput
+    img_per_usu?: string | null
+    cuentas?: cuentaUncheckedCreateNestedManyWithoutUsuarioInput
   }
 
   export type usuarioCreateOrConnectWithoutCarreraInput = {
@@ -13566,6 +24175,15 @@ export namespace Prisma {
     des_fac?: StringFieldUpdateOperationsInput | string
     mis_fac?: StringFieldUpdateOperationsInput | string
     vis_fac?: StringFieldUpdateOperationsInput | string
+    fec_cre_fac?: DateTimeFieldUpdateOperationsInput | Date | string
+    nom_dec_fac?: StringFieldUpdateOperationsInput | string
+    ape_dec_fac?: StringFieldUpdateOperationsInput | string
+    cor_dec_fac?: StringFieldUpdateOperationsInput | string
+    url_img_dec_fac?: StringFieldUpdateOperationsInput | string
+    nom_sub_dec_fac?: StringFieldUpdateOperationsInput | string
+    ape_sub_dec_fac?: StringFieldUpdateOperationsInput | string
+    cor_sub_dec_fac?: StringFieldUpdateOperationsInput | string
+    url_img_sub_dec_fac?: StringFieldUpdateOperationsInput | string
   }
 
   export type facultadUncheckedUpdateWithoutCarrerasInput = {
@@ -13574,6 +24192,44 @@ export namespace Prisma {
     des_fac?: StringFieldUpdateOperationsInput | string
     mis_fac?: StringFieldUpdateOperationsInput | string
     vis_fac?: StringFieldUpdateOperationsInput | string
+    fec_cre_fac?: DateTimeFieldUpdateOperationsInput | Date | string
+    nom_dec_fac?: StringFieldUpdateOperationsInput | string
+    ape_dec_fac?: StringFieldUpdateOperationsInput | string
+    cor_dec_fac?: StringFieldUpdateOperationsInput | string
+    url_img_dec_fac?: StringFieldUpdateOperationsInput | string
+    nom_sub_dec_fac?: StringFieldUpdateOperationsInput | string
+    ape_sub_dec_fac?: StringFieldUpdateOperationsInput | string
+    cor_sub_dec_fac?: StringFieldUpdateOperationsInput | string
+    url_img_sub_dec_fac?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type coordinadorUpsertWithoutCarrerasInput = {
+    update: XOR<coordinadorUpdateWithoutCarrerasInput, coordinadorUncheckedUpdateWithoutCarrerasInput>
+    create: XOR<coordinadorCreateWithoutCarrerasInput, coordinadorUncheckedCreateWithoutCarrerasInput>
+    where?: coordinadorWhereInput
+  }
+
+  export type coordinadorUpdateToOneWithWhereWithoutCarrerasInput = {
+    where?: coordinadorWhereInput
+    data: XOR<coordinadorUpdateWithoutCarrerasInput, coordinadorUncheckedUpdateWithoutCarrerasInput>
+  }
+
+  export type coordinadorUpdateWithoutCarrerasInput = {
+    id_coo?: StringFieldUpdateOperationsInput | string
+    nom_coo?: StringFieldUpdateOperationsInput | string
+    ape_coo?: StringFieldUpdateOperationsInput | string
+    cor_coo?: StringFieldUpdateOperationsInput | string
+    url_img_coo?: StringFieldUpdateOperationsInput | string
+    tit_coo?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type coordinadorUncheckedUpdateWithoutCarrerasInput = {
+    id_coo?: StringFieldUpdateOperationsInput | string
+    nom_coo?: StringFieldUpdateOperationsInput | string
+    ape_coo?: StringFieldUpdateOperationsInput | string
+    cor_coo?: StringFieldUpdateOperationsInput | string
+    url_img_coo?: StringFieldUpdateOperationsInput | string
+    tit_coo?: StringFieldUpdateOperationsInput | string
   }
 
   export type usuarioUpsertWithWhereUniqueWithoutCarreraInput = {
@@ -13600,13 +24256,11 @@ export namespace Prisma {
     ced_usu?: StringFilter<"usuario"> | string
     nom_usu?: StringFilter<"usuario"> | string
     ape_usu?: StringFilter<"usuario"> | string
-    cor_usu?: StringFilter<"usuario"> | string
-    con_usu?: StringFilter<"usuario"> | string
     cel_usu?: StringFilter<"usuario"> | string
-    rol_usu?: Enumrol_usuarioFilter<"usuario"> | $Enums.rol_usuario
     fec_cre_usu?: DateTimeFilter<"usuario"> | Date | string
     com_usu?: StringNullableFilter<"usuario"> | string | null
     id_car_est?: StringNullableFilter<"usuario"> | string | null
+    img_per_usu?: StringNullableFilter<"usuario"> | string | null
   }
 
   export type evento_carreraUpsertWithWhereUniqueWithoutCarreraInput = {
@@ -13635,26 +24289,102 @@ export namespace Prisma {
     fec_aso?: DateTimeFilter<"evento_carrera"> | Date | string
   }
 
+  export type carreraCreateWithoutCoordinadorInput = {
+    id_car?: string
+    nom_car: string
+    des_car: string
+    dur_sem_car: number
+    mod_car: string
+    ico_car: string
+    est_car?: boolean
+    fec_cre_car?: Date | string
+    facultad: facultadCreateNestedOneWithoutCarrerasInput
+    usuario?: usuarioCreateNestedManyWithoutCarreraInput
+    eventos?: evento_carreraCreateNestedManyWithoutCarreraInput
+  }
+
+  export type carreraUncheckedCreateWithoutCoordinadorInput = {
+    id_car?: string
+    nom_car: string
+    des_car: string
+    dur_sem_car: number
+    mod_car: string
+    ico_car: string
+    est_car?: boolean
+    fec_cre_car?: Date | string
+    id_fac_per: string
+    usuario?: usuarioUncheckedCreateNestedManyWithoutCarreraInput
+    eventos?: evento_carreraUncheckedCreateNestedManyWithoutCarreraInput
+  }
+
+  export type carreraCreateOrConnectWithoutCoordinadorInput = {
+    where: carreraWhereUniqueInput
+    create: XOR<carreraCreateWithoutCoordinadorInput, carreraUncheckedCreateWithoutCoordinadorInput>
+  }
+
+  export type carreraCreateManyCoordinadorInputEnvelope = {
+    data: carreraCreateManyCoordinadorInput | carreraCreateManyCoordinadorInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type carreraUpsertWithWhereUniqueWithoutCoordinadorInput = {
+    where: carreraWhereUniqueInput
+    update: XOR<carreraUpdateWithoutCoordinadorInput, carreraUncheckedUpdateWithoutCoordinadorInput>
+    create: XOR<carreraCreateWithoutCoordinadorInput, carreraUncheckedCreateWithoutCoordinadorInput>
+  }
+
+  export type carreraUpdateWithWhereUniqueWithoutCoordinadorInput = {
+    where: carreraWhereUniqueInput
+    data: XOR<carreraUpdateWithoutCoordinadorInput, carreraUncheckedUpdateWithoutCoordinadorInput>
+  }
+
+  export type carreraUpdateManyWithWhereWithoutCoordinadorInput = {
+    where: carreraScalarWhereInput
+    data: XOR<carreraUpdateManyMutationInput, carreraUncheckedUpdateManyWithoutCoordinadorInput>
+  }
+
+  export type carreraScalarWhereInput = {
+    AND?: carreraScalarWhereInput | carreraScalarWhereInput[]
+    OR?: carreraScalarWhereInput[]
+    NOT?: carreraScalarWhereInput | carreraScalarWhereInput[]
+    id_car?: StringFilter<"carrera"> | string
+    nom_car?: StringFilter<"carrera"> | string
+    des_car?: StringFilter<"carrera"> | string
+    dur_sem_car?: IntFilter<"carrera"> | number
+    mod_car?: StringFilter<"carrera"> | string
+    ico_car?: StringFilter<"carrera"> | string
+    est_car?: BoolFilter<"carrera"> | boolean
+    fec_cre_car?: DateTimeFilter<"carrera"> | Date | string
+    id_fac_per?: StringFilter<"carrera"> | string
+    id_coo_per?: StringNullableFilter<"carrera"> | string | null
+  }
+
   export type inscripcionCreateWithoutEventoInput = {
     id_ins?: string
     est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
-    fec_pag_ins?: Date | string | null
-    cer_eve_env?: boolean
-    car_mot_usu?: string | null
-    usuario: usuarioCreateNestedOneWithoutInscripcionesInput
+    usu_apr_cer?: boolean
+    por_asi_fin_usu?: number | null
+    cuenta: cuentaCreateNestedOneWithoutInscripcionesInput
     inscripcion_curso?: inscripcion_cursoCreateNestedOneWithoutInscripcionInput
+    comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutInscripcionInput
+    cartas_motivacion?: carta_motivacionCreateNestedManyWithoutInscripcionInput
+    observacion?: observacion_inscripcionCreateNestedOneWithoutInscripcionInput
+    certificado?: certificadoCreateNestedOneWithoutInscripcionInput
   }
 
   export type inscripcionUncheckedCreateWithoutEventoInput = {
     id_ins?: string
-    id_usu_ins: string
+    id_cor_ins: string
     est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
-    fec_pag_ins?: Date | string | null
-    cer_eve_env?: boolean
-    car_mot_usu?: string | null
+    usu_apr_cer?: boolean
+    por_asi_fin_usu?: number | null
     inscripcion_curso?: inscripcion_cursoUncheckedCreateNestedOneWithoutInscripcionInput
+    comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutInscripcionInput
+    cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutInscripcionInput
+    observacion?: observacion_inscripcionUncheckedCreateNestedOneWithoutInscripcionInput
+    certificado?: certificadoUncheckedCreateNestedOneWithoutInscripcionInput
   }
 
   export type inscripcionCreateOrConnectWithoutEventoInput = {
@@ -13700,6 +24430,37 @@ export namespace Prisma {
   export type evento_cursoCreateOrConnectWithoutEventoInput = {
     where: evento_cursoWhereUniqueInput
     create: XOR<evento_cursoCreateWithoutEventoInput, evento_cursoUncheckedCreateWithoutEventoInput>
+  }
+
+  export type cuentaCreateWithoutEventosInput = {
+    id_cue?: string
+    cor_usu: string
+    con_usu: string
+    fec_cre_cue?: Date | string
+    rol_usu: $Enums.rol_usuario
+    usuario: usuarioCreateNestedOneWithoutCuentasInput
+    inscripciones?: inscripcionCreateNestedManyWithoutCuentaInput
+    cartas_motivacion?: carta_motivacionCreateNestedManyWithoutAdminInput
+    comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutAdminInput
+    observaciones_creadas?: observacion_inscripcionCreateNestedManyWithoutAdmin_creadorInput
+  }
+
+  export type cuentaUncheckedCreateWithoutEventosInput = {
+    id_cue?: string
+    id_usu_per: string
+    cor_usu: string
+    con_usu: string
+    fec_cre_cue?: Date | string
+    rol_usu: $Enums.rol_usuario
+    inscripciones?: inscripcionUncheckedCreateNestedManyWithoutCuentaInput
+    cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutAdminInput
+    comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutAdminInput
+    observaciones_creadas?: observacion_inscripcionUncheckedCreateNestedManyWithoutAdmin_creadorInput
+  }
+
+  export type cuentaCreateOrConnectWithoutEventosInput = {
+    where: cuentaWhereUniqueInput
+    create: XOR<cuentaCreateWithoutEventosInput, cuentaUncheckedCreateWithoutEventosInput>
   }
 
   export type inscripcionUpsertWithWhereUniqueWithoutEventoInput = {
@@ -13753,6 +24514,43 @@ export namespace Prisma {
     not_min_cur?: FloatFieldUpdateOperationsInput | number
   }
 
+  export type cuentaUpsertWithoutEventosInput = {
+    update: XOR<cuentaUpdateWithoutEventosInput, cuentaUncheckedUpdateWithoutEventosInput>
+    create: XOR<cuentaCreateWithoutEventosInput, cuentaUncheckedCreateWithoutEventosInput>
+    where?: cuentaWhereInput
+  }
+
+  export type cuentaUpdateToOneWithWhereWithoutEventosInput = {
+    where?: cuentaWhereInput
+    data: XOR<cuentaUpdateWithoutEventosInput, cuentaUncheckedUpdateWithoutEventosInput>
+  }
+
+  export type cuentaUpdateWithoutEventosInput = {
+    id_cue?: StringFieldUpdateOperationsInput | string
+    cor_usu?: StringFieldUpdateOperationsInput | string
+    con_usu?: StringFieldUpdateOperationsInput | string
+    fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
+    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    usuario?: usuarioUpdateOneRequiredWithoutCuentasNestedInput
+    inscripciones?: inscripcionUpdateManyWithoutCuentaNestedInput
+    cartas_motivacion?: carta_motivacionUpdateManyWithoutAdminNestedInput
+    comprobantes_pago?: comprobante_pagoUpdateManyWithoutAdminNestedInput
+    observaciones_creadas?: observacion_inscripcionUpdateManyWithoutAdmin_creadorNestedInput
+  }
+
+  export type cuentaUncheckedUpdateWithoutEventosInput = {
+    id_cue?: StringFieldUpdateOperationsInput | string
+    id_usu_per?: StringFieldUpdateOperationsInput | string
+    cor_usu?: StringFieldUpdateOperationsInput | string
+    con_usu?: StringFieldUpdateOperationsInput | string
+    fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
+    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    inscripciones?: inscripcionUncheckedUpdateManyWithoutCuentaNestedInput
+    cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutAdminNestedInput
+    comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutAdminNestedInput
+    observaciones_creadas?: observacion_inscripcionUncheckedUpdateManyWithoutAdmin_creadorNestedInput
+  }
+
   export type eventoCreateWithoutEventos_cursoInput = {
     id_eve?: string
     nom_eve: string
@@ -13762,12 +24560,13 @@ export namespace Prisma {
     val_eve: number
     est_eve?: $Enums.estado_evento
     fec_cre_eve?: Date | string
-    img_por_eve: string
     dur_hor_eve: number
+    img_por_eve: string
     por_min_asi_eve: number
     fec_fin_eve: Date | string
     inscritos?: inscripcionCreateNestedManyWithoutEventoInput
     eventos_carrera?: evento_carreraCreateNestedManyWithoutEventoInput
+    cuenta: cuentaCreateNestedOneWithoutEventosInput
   }
 
   export type eventoUncheckedCreateWithoutEventos_cursoInput = {
@@ -13779,10 +24578,11 @@ export namespace Prisma {
     val_eve: number
     est_eve?: $Enums.estado_evento
     fec_cre_eve?: Date | string
-    img_por_eve: string
     dur_hor_eve: number
+    img_por_eve: string
     por_min_asi_eve: number
     fec_fin_eve: Date | string
+    id_cue_cre_eve: string
     inscritos?: inscripcionUncheckedCreateNestedManyWithoutEventoInput
     eventos_carrera?: evento_carreraUncheckedCreateNestedManyWithoutEventoInput
   }
@@ -13812,12 +24612,13 @@ export namespace Prisma {
     val_eve?: FloatFieldUpdateOperationsInput | number
     est_eve?: Enumestado_eventoFieldUpdateOperationsInput | $Enums.estado_evento
     fec_cre_eve?: DateTimeFieldUpdateOperationsInput | Date | string
-    img_por_eve?: StringFieldUpdateOperationsInput | string
     dur_hor_eve?: IntFieldUpdateOperationsInput | number
+    img_por_eve?: StringFieldUpdateOperationsInput | string
     por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
     fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
     inscritos?: inscripcionUpdateManyWithoutEventoNestedInput
     eventos_carrera?: evento_carreraUpdateManyWithoutEventoNestedInput
+    cuenta?: cuentaUpdateOneRequiredWithoutEventosNestedInput
   }
 
   export type eventoUncheckedUpdateWithoutEventos_cursoInput = {
@@ -13829,10 +24630,11 @@ export namespace Prisma {
     val_eve?: FloatFieldUpdateOperationsInput | number
     est_eve?: Enumestado_eventoFieldUpdateOperationsInput | $Enums.estado_evento
     fec_cre_eve?: DateTimeFieldUpdateOperationsInput | Date | string
-    img_por_eve?: StringFieldUpdateOperationsInput | string
     dur_hor_eve?: IntFieldUpdateOperationsInput | number
+    img_por_eve?: StringFieldUpdateOperationsInput | string
     por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
     fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
+    id_cue_cre_eve?: StringFieldUpdateOperationsInput | string
     inscritos?: inscripcionUncheckedUpdateManyWithoutEventoNestedInput
     eventos_carrera?: evento_carreraUncheckedUpdateManyWithoutEventoNestedInput
   }
@@ -13840,18 +24642,28 @@ export namespace Prisma {
   export type carreraCreateWithoutEventosInput = {
     id_car?: string
     nom_car: string
+    des_car: string
+    dur_sem_car: number
+    mod_car: string
+    ico_car: string
     est_car?: boolean
     fec_cre_car?: Date | string
     facultad: facultadCreateNestedOneWithoutCarrerasInput
+    coordinador?: coordinadorCreateNestedOneWithoutCarrerasInput
     usuario?: usuarioCreateNestedManyWithoutCarreraInput
   }
 
   export type carreraUncheckedCreateWithoutEventosInput = {
     id_car?: string
     nom_car: string
+    des_car: string
+    dur_sem_car: number
+    mod_car: string
+    ico_car: string
     est_car?: boolean
     fec_cre_car?: Date | string
     id_fac_per: string
+    id_coo_per?: string | null
     usuario?: usuarioUncheckedCreateNestedManyWithoutCarreraInput
   }
 
@@ -13869,12 +24681,13 @@ export namespace Prisma {
     val_eve: number
     est_eve?: $Enums.estado_evento
     fec_cre_eve?: Date | string
-    img_por_eve: string
     dur_hor_eve: number
+    img_por_eve: string
     por_min_asi_eve: number
     fec_fin_eve: Date | string
     inscritos?: inscripcionCreateNestedManyWithoutEventoInput
     eventos_curso?: evento_cursoCreateNestedOneWithoutEventoInput
+    cuenta: cuentaCreateNestedOneWithoutEventosInput
   }
 
   export type eventoUncheckedCreateWithoutEventos_carreraInput = {
@@ -13886,10 +24699,11 @@ export namespace Prisma {
     val_eve: number
     est_eve?: $Enums.estado_evento
     fec_cre_eve?: Date | string
-    img_por_eve: string
     dur_hor_eve: number
+    img_por_eve: string
     por_min_asi_eve: number
     fec_fin_eve: Date | string
+    id_cue_cre_eve: string
     inscritos?: inscripcionUncheckedCreateNestedManyWithoutEventoInput
     eventos_curso?: evento_cursoUncheckedCreateNestedOneWithoutEventoInput
   }
@@ -13913,18 +24727,28 @@ export namespace Prisma {
   export type carreraUpdateWithoutEventosInput = {
     id_car?: StringFieldUpdateOperationsInput | string
     nom_car?: StringFieldUpdateOperationsInput | string
+    des_car?: StringFieldUpdateOperationsInput | string
+    dur_sem_car?: IntFieldUpdateOperationsInput | number
+    mod_car?: StringFieldUpdateOperationsInput | string
+    ico_car?: StringFieldUpdateOperationsInput | string
     est_car?: BoolFieldUpdateOperationsInput | boolean
     fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
     facultad?: facultadUpdateOneRequiredWithoutCarrerasNestedInput
+    coordinador?: coordinadorUpdateOneWithoutCarrerasNestedInput
     usuario?: usuarioUpdateManyWithoutCarreraNestedInput
   }
 
   export type carreraUncheckedUpdateWithoutEventosInput = {
     id_car?: StringFieldUpdateOperationsInput | string
     nom_car?: StringFieldUpdateOperationsInput | string
+    des_car?: StringFieldUpdateOperationsInput | string
+    dur_sem_car?: IntFieldUpdateOperationsInput | number
+    mod_car?: StringFieldUpdateOperationsInput | string
+    ico_car?: StringFieldUpdateOperationsInput | string
     est_car?: BoolFieldUpdateOperationsInput | boolean
     fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
     id_fac_per?: StringFieldUpdateOperationsInput | string
+    id_coo_per?: NullableStringFieldUpdateOperationsInput | string | null
     usuario?: usuarioUncheckedUpdateManyWithoutCarreraNestedInput
   }
 
@@ -13948,12 +24772,13 @@ export namespace Prisma {
     val_eve?: FloatFieldUpdateOperationsInput | number
     est_eve?: Enumestado_eventoFieldUpdateOperationsInput | $Enums.estado_evento
     fec_cre_eve?: DateTimeFieldUpdateOperationsInput | Date | string
-    img_por_eve?: StringFieldUpdateOperationsInput | string
     dur_hor_eve?: IntFieldUpdateOperationsInput | number
+    img_por_eve?: StringFieldUpdateOperationsInput | string
     por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
     fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
     inscritos?: inscripcionUpdateManyWithoutEventoNestedInput
     eventos_curso?: evento_cursoUpdateOneWithoutEventoNestedInput
+    cuenta?: cuentaUpdateOneRequiredWithoutEventosNestedInput
   }
 
   export type eventoUncheckedUpdateWithoutEventos_carreraInput = {
@@ -13965,45 +24790,44 @@ export namespace Prisma {
     val_eve?: FloatFieldUpdateOperationsInput | number
     est_eve?: Enumestado_eventoFieldUpdateOperationsInput | $Enums.estado_evento
     fec_cre_eve?: DateTimeFieldUpdateOperationsInput | Date | string
-    img_por_eve?: StringFieldUpdateOperationsInput | string
     dur_hor_eve?: IntFieldUpdateOperationsInput | number
+    img_por_eve?: StringFieldUpdateOperationsInput | string
     por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
     fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
+    id_cue_cre_eve?: StringFieldUpdateOperationsInput | string
     inscritos?: inscripcionUncheckedUpdateManyWithoutEventoNestedInput
     eventos_curso?: evento_cursoUncheckedUpdateOneWithoutEventoNestedInput
   }
 
-  export type usuarioCreateWithoutInscripcionesInput = {
-    id_usu?: string
-    ced_usu: string
-    nom_usu: string
-    ape_usu: string
+  export type cuentaCreateWithoutInscripcionesInput = {
+    id_cue?: string
     cor_usu: string
     con_usu: string
-    cel_usu: string
+    fec_cre_cue?: Date | string
     rol_usu: $Enums.rol_usuario
-    fec_cre_usu?: Date | string
-    com_usu?: string | null
-    carrera?: carreraCreateNestedOneWithoutUsuarioInput
+    usuario: usuarioCreateNestedOneWithoutCuentasInput
+    cartas_motivacion?: carta_motivacionCreateNestedManyWithoutAdminInput
+    comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutAdminInput
+    eventos?: eventoCreateNestedManyWithoutCuentaInput
+    observaciones_creadas?: observacion_inscripcionCreateNestedManyWithoutAdmin_creadorInput
   }
 
-  export type usuarioUncheckedCreateWithoutInscripcionesInput = {
-    id_usu?: string
-    ced_usu: string
-    nom_usu: string
-    ape_usu: string
+  export type cuentaUncheckedCreateWithoutInscripcionesInput = {
+    id_cue?: string
+    id_usu_per: string
     cor_usu: string
     con_usu: string
-    cel_usu: string
+    fec_cre_cue?: Date | string
     rol_usu: $Enums.rol_usuario
-    fec_cre_usu?: Date | string
-    com_usu?: string | null
-    id_car_est?: string | null
+    cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutAdminInput
+    comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutAdminInput
+    eventos?: eventoUncheckedCreateNestedManyWithoutCuentaInput
+    observaciones_creadas?: observacion_inscripcionUncheckedCreateNestedManyWithoutAdmin_creadorInput
   }
 
-  export type usuarioCreateOrConnectWithoutInscripcionesInput = {
-    where: usuarioWhereUniqueInput
-    create: XOR<usuarioCreateWithoutInscripcionesInput, usuarioUncheckedCreateWithoutInscripcionesInput>
+  export type cuentaCreateOrConnectWithoutInscripcionesInput = {
+    where: cuentaWhereUniqueInput
+    create: XOR<cuentaCreateWithoutInscripcionesInput, cuentaUncheckedCreateWithoutInscripcionesInput>
   }
 
   export type eventoCreateWithoutInscritosInput = {
@@ -14015,12 +24839,13 @@ export namespace Prisma {
     val_eve: number
     est_eve?: $Enums.estado_evento
     fec_cre_eve?: Date | string
-    img_por_eve: string
     dur_hor_eve: number
+    img_por_eve: string
     por_min_asi_eve: number
     fec_fin_eve: Date | string
     eventos_carrera?: evento_carreraCreateNestedManyWithoutEventoInput
     eventos_curso?: evento_cursoCreateNestedOneWithoutEventoInput
+    cuenta: cuentaCreateNestedOneWithoutEventosInput
   }
 
   export type eventoUncheckedCreateWithoutInscritosInput = {
@@ -14032,10 +24857,11 @@ export namespace Prisma {
     val_eve: number
     est_eve?: $Enums.estado_evento
     fec_cre_eve?: Date | string
-    img_por_eve: string
     dur_hor_eve: number
+    img_por_eve: string
     por_min_asi_eve: number
     fec_fin_eve: Date | string
+    id_cue_cre_eve: string
     eventos_carrera?: evento_carreraUncheckedCreateNestedManyWithoutEventoInput
     eventos_curso?: evento_cursoUncheckedCreateNestedOneWithoutEventoInput
   }
@@ -14047,12 +24873,10 @@ export namespace Prisma {
 
   export type inscripcion_cursoCreateWithoutInscripcionInput = {
     not_fin_usu?: number | null
-    por_asi_fin_usu?: number | null
   }
 
   export type inscripcion_cursoUncheckedCreateWithoutInscripcionInput = {
     not_fin_usu?: number | null
-    por_asi_fin_usu?: number | null
   }
 
   export type inscripcion_cursoCreateOrConnectWithoutInscripcionInput = {
@@ -14060,43 +24884,139 @@ export namespace Prisma {
     create: XOR<inscripcion_cursoCreateWithoutInscripcionInput, inscripcion_cursoUncheckedCreateWithoutInscripcionInput>
   }
 
-  export type usuarioUpsertWithoutInscripcionesInput = {
-    update: XOR<usuarioUpdateWithoutInscripcionesInput, usuarioUncheckedUpdateWithoutInscripcionesInput>
-    create: XOR<usuarioCreateWithoutInscripcionesInput, usuarioUncheckedCreateWithoutInscripcionesInput>
-    where?: usuarioWhereInput
+  export type comprobante_pagoCreateWithoutInscripcionInput = {
+    id_com_pag?: string
+    url_com_pag: string
+    est_com_pag?: $Enums.estado_validacion
+    fec_sub_com_pag?: Date | string
+    fec_val_com_pag?: Date | string | null
+    fec_pag_ins?: Date | string | null
+    admin?: cuentaCreateNestedOneWithoutComprobantes_pagoInput
   }
 
-  export type usuarioUpdateToOneWithWhereWithoutInscripcionesInput = {
-    where?: usuarioWhereInput
-    data: XOR<usuarioUpdateWithoutInscripcionesInput, usuarioUncheckedUpdateWithoutInscripcionesInput>
+  export type comprobante_pagoUncheckedCreateWithoutInscripcionInput = {
+    id_com_pag?: string
+    url_com_pag: string
+    est_com_pag?: $Enums.estado_validacion
+    fec_sub_com_pag?: Date | string
+    fec_val_com_pag?: Date | string | null
+    id_adm_val_com_pag?: string | null
+    fec_pag_ins?: Date | string | null
   }
 
-  export type usuarioUpdateWithoutInscripcionesInput = {
-    id_usu?: StringFieldUpdateOperationsInput | string
-    ced_usu?: StringFieldUpdateOperationsInput | string
-    nom_usu?: StringFieldUpdateOperationsInput | string
-    ape_usu?: StringFieldUpdateOperationsInput | string
+  export type comprobante_pagoCreateOrConnectWithoutInscripcionInput = {
+    where: comprobante_pagoWhereUniqueInput
+    create: XOR<comprobante_pagoCreateWithoutInscripcionInput, comprobante_pagoUncheckedCreateWithoutInscripcionInput>
+  }
+
+  export type comprobante_pagoCreateManyInscripcionInputEnvelope = {
+    data: comprobante_pagoCreateManyInscripcionInput | comprobante_pagoCreateManyInscripcionInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type carta_motivacionCreateWithoutInscripcionInput = {
+    id_car_mot?: string
+    con_car_mot: string
+    est_car_mot?: $Enums.estado_validacion
+    fec_sub_car_mot?: Date | string
+    fec_val_car_mot?: Date | string | null
+    admin?: cuentaCreateNestedOneWithoutCartas_motivacionInput
+  }
+
+  export type carta_motivacionUncheckedCreateWithoutInscripcionInput = {
+    id_car_mot?: string
+    con_car_mot: string
+    est_car_mot?: $Enums.estado_validacion
+    fec_sub_car_mot?: Date | string
+    fec_val_car_mot?: Date | string | null
+    id_adm_val_car_mot?: string | null
+  }
+
+  export type carta_motivacionCreateOrConnectWithoutInscripcionInput = {
+    where: carta_motivacionWhereUniqueInput
+    create: XOR<carta_motivacionCreateWithoutInscripcionInput, carta_motivacionUncheckedCreateWithoutInscripcionInput>
+  }
+
+  export type carta_motivacionCreateManyInscripcionInputEnvelope = {
+    data: carta_motivacionCreateManyInscripcionInput | carta_motivacionCreateManyInscripcionInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type observacion_inscripcionCreateWithoutInscripcionInput = {
+    id_obs_ins?: string
+    obs_ins: string
+    fec_cre_obs?: Date | string
+    admin_creador?: cuentaCreateNestedOneWithoutObservaciones_creadasInput
+  }
+
+  export type observacion_inscripcionUncheckedCreateWithoutInscripcionInput = {
+    id_obs_ins?: string
+    obs_ins: string
+    fec_cre_obs?: Date | string
+    id_adm_cre_obs?: string | null
+  }
+
+  export type observacion_inscripcionCreateOrConnectWithoutInscripcionInput = {
+    where: observacion_inscripcionWhereUniqueInput
+    create: XOR<observacion_inscripcionCreateWithoutInscripcionInput, observacion_inscripcionUncheckedCreateWithoutInscripcionInput>
+  }
+
+  export type certificadoCreateWithoutInscripcionInput = {
+    id_cer?: string
+    url_cer: string
+    tip_cer: $Enums.tipo_certificado
+    fec_gen_cer?: Date | string
+    cod_val_cer: string
+  }
+
+  export type certificadoUncheckedCreateWithoutInscripcionInput = {
+    id_cer?: string
+    url_cer: string
+    tip_cer: $Enums.tipo_certificado
+    fec_gen_cer?: Date | string
+    cod_val_cer: string
+  }
+
+  export type certificadoCreateOrConnectWithoutInscripcionInput = {
+    where: certificadoWhereUniqueInput
+    create: XOR<certificadoCreateWithoutInscripcionInput, certificadoUncheckedCreateWithoutInscripcionInput>
+  }
+
+  export type cuentaUpsertWithoutInscripcionesInput = {
+    update: XOR<cuentaUpdateWithoutInscripcionesInput, cuentaUncheckedUpdateWithoutInscripcionesInput>
+    create: XOR<cuentaCreateWithoutInscripcionesInput, cuentaUncheckedCreateWithoutInscripcionesInput>
+    where?: cuentaWhereInput
+  }
+
+  export type cuentaUpdateToOneWithWhereWithoutInscripcionesInput = {
+    where?: cuentaWhereInput
+    data: XOR<cuentaUpdateWithoutInscripcionesInput, cuentaUncheckedUpdateWithoutInscripcionesInput>
+  }
+
+  export type cuentaUpdateWithoutInscripcionesInput = {
+    id_cue?: StringFieldUpdateOperationsInput | string
     cor_usu?: StringFieldUpdateOperationsInput | string
     con_usu?: StringFieldUpdateOperationsInput | string
-    cel_usu?: StringFieldUpdateOperationsInput | string
+    fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
     rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
-    fec_cre_usu?: DateTimeFieldUpdateOperationsInput | Date | string
-    com_usu?: NullableStringFieldUpdateOperationsInput | string | null
-    carrera?: carreraUpdateOneWithoutUsuarioNestedInput
+    usuario?: usuarioUpdateOneRequiredWithoutCuentasNestedInput
+    cartas_motivacion?: carta_motivacionUpdateManyWithoutAdminNestedInput
+    comprobantes_pago?: comprobante_pagoUpdateManyWithoutAdminNestedInput
+    eventos?: eventoUpdateManyWithoutCuentaNestedInput
+    observaciones_creadas?: observacion_inscripcionUpdateManyWithoutAdmin_creadorNestedInput
   }
 
-  export type usuarioUncheckedUpdateWithoutInscripcionesInput = {
-    id_usu?: StringFieldUpdateOperationsInput | string
-    ced_usu?: StringFieldUpdateOperationsInput | string
-    nom_usu?: StringFieldUpdateOperationsInput | string
-    ape_usu?: StringFieldUpdateOperationsInput | string
+  export type cuentaUncheckedUpdateWithoutInscripcionesInput = {
+    id_cue?: StringFieldUpdateOperationsInput | string
+    id_usu_per?: StringFieldUpdateOperationsInput | string
     cor_usu?: StringFieldUpdateOperationsInput | string
     con_usu?: StringFieldUpdateOperationsInput | string
-    cel_usu?: StringFieldUpdateOperationsInput | string
+    fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
     rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
-    fec_cre_usu?: DateTimeFieldUpdateOperationsInput | Date | string
-    com_usu?: NullableStringFieldUpdateOperationsInput | string | null
-    id_car_est?: NullableStringFieldUpdateOperationsInput | string | null
+    cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutAdminNestedInput
+    comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutAdminNestedInput
+    eventos?: eventoUncheckedUpdateManyWithoutCuentaNestedInput
+    observaciones_creadas?: observacion_inscripcionUncheckedUpdateManyWithoutAdmin_creadorNestedInput
   }
 
   export type eventoUpsertWithoutInscritosInput = {
@@ -14119,12 +25039,13 @@ export namespace Prisma {
     val_eve?: FloatFieldUpdateOperationsInput | number
     est_eve?: Enumestado_eventoFieldUpdateOperationsInput | $Enums.estado_evento
     fec_cre_eve?: DateTimeFieldUpdateOperationsInput | Date | string
-    img_por_eve?: StringFieldUpdateOperationsInput | string
     dur_hor_eve?: IntFieldUpdateOperationsInput | number
+    img_por_eve?: StringFieldUpdateOperationsInput | string
     por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
     fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
     eventos_carrera?: evento_carreraUpdateManyWithoutEventoNestedInput
     eventos_curso?: evento_cursoUpdateOneWithoutEventoNestedInput
+    cuenta?: cuentaUpdateOneRequiredWithoutEventosNestedInput
   }
 
   export type eventoUncheckedUpdateWithoutInscritosInput = {
@@ -14136,10 +25057,11 @@ export namespace Prisma {
     val_eve?: FloatFieldUpdateOperationsInput | number
     est_eve?: Enumestado_eventoFieldUpdateOperationsInput | $Enums.estado_evento
     fec_cre_eve?: DateTimeFieldUpdateOperationsInput | Date | string
-    img_por_eve?: StringFieldUpdateOperationsInput | string
     dur_hor_eve?: IntFieldUpdateOperationsInput | number
+    img_por_eve?: StringFieldUpdateOperationsInput | string
     por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
     fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
+    id_cue_cre_eve?: StringFieldUpdateOperationsInput | string
     eventos_carrera?: evento_carreraUncheckedUpdateManyWithoutEventoNestedInput
     eventos_curso?: evento_cursoUncheckedUpdateOneWithoutEventoNestedInput
   }
@@ -14157,34 +25079,122 @@ export namespace Prisma {
 
   export type inscripcion_cursoUpdateWithoutInscripcionInput = {
     not_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
-    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
   }
 
   export type inscripcion_cursoUncheckedUpdateWithoutInscripcionInput = {
     not_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
-    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+  }
+
+  export type comprobante_pagoUpsertWithWhereUniqueWithoutInscripcionInput = {
+    where: comprobante_pagoWhereUniqueInput
+    update: XOR<comprobante_pagoUpdateWithoutInscripcionInput, comprobante_pagoUncheckedUpdateWithoutInscripcionInput>
+    create: XOR<comprobante_pagoCreateWithoutInscripcionInput, comprobante_pagoUncheckedCreateWithoutInscripcionInput>
+  }
+
+  export type comprobante_pagoUpdateWithWhereUniqueWithoutInscripcionInput = {
+    where: comprobante_pagoWhereUniqueInput
+    data: XOR<comprobante_pagoUpdateWithoutInscripcionInput, comprobante_pagoUncheckedUpdateWithoutInscripcionInput>
+  }
+
+  export type comprobante_pagoUpdateManyWithWhereWithoutInscripcionInput = {
+    where: comprobante_pagoScalarWhereInput
+    data: XOR<comprobante_pagoUpdateManyMutationInput, comprobante_pagoUncheckedUpdateManyWithoutInscripcionInput>
+  }
+
+  export type carta_motivacionUpsertWithWhereUniqueWithoutInscripcionInput = {
+    where: carta_motivacionWhereUniqueInput
+    update: XOR<carta_motivacionUpdateWithoutInscripcionInput, carta_motivacionUncheckedUpdateWithoutInscripcionInput>
+    create: XOR<carta_motivacionCreateWithoutInscripcionInput, carta_motivacionUncheckedCreateWithoutInscripcionInput>
+  }
+
+  export type carta_motivacionUpdateWithWhereUniqueWithoutInscripcionInput = {
+    where: carta_motivacionWhereUniqueInput
+    data: XOR<carta_motivacionUpdateWithoutInscripcionInput, carta_motivacionUncheckedUpdateWithoutInscripcionInput>
+  }
+
+  export type carta_motivacionUpdateManyWithWhereWithoutInscripcionInput = {
+    where: carta_motivacionScalarWhereInput
+    data: XOR<carta_motivacionUpdateManyMutationInput, carta_motivacionUncheckedUpdateManyWithoutInscripcionInput>
+  }
+
+  export type observacion_inscripcionUpsertWithoutInscripcionInput = {
+    update: XOR<observacion_inscripcionUpdateWithoutInscripcionInput, observacion_inscripcionUncheckedUpdateWithoutInscripcionInput>
+    create: XOR<observacion_inscripcionCreateWithoutInscripcionInput, observacion_inscripcionUncheckedCreateWithoutInscripcionInput>
+    where?: observacion_inscripcionWhereInput
+  }
+
+  export type observacion_inscripcionUpdateToOneWithWhereWithoutInscripcionInput = {
+    where?: observacion_inscripcionWhereInput
+    data: XOR<observacion_inscripcionUpdateWithoutInscripcionInput, observacion_inscripcionUncheckedUpdateWithoutInscripcionInput>
+  }
+
+  export type observacion_inscripcionUpdateWithoutInscripcionInput = {
+    id_obs_ins?: StringFieldUpdateOperationsInput | string
+    obs_ins?: StringFieldUpdateOperationsInput | string
+    fec_cre_obs?: DateTimeFieldUpdateOperationsInput | Date | string
+    admin_creador?: cuentaUpdateOneWithoutObservaciones_creadasNestedInput
+  }
+
+  export type observacion_inscripcionUncheckedUpdateWithoutInscripcionInput = {
+    id_obs_ins?: StringFieldUpdateOperationsInput | string
+    obs_ins?: StringFieldUpdateOperationsInput | string
+    fec_cre_obs?: DateTimeFieldUpdateOperationsInput | Date | string
+    id_adm_cre_obs?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type certificadoUpsertWithoutInscripcionInput = {
+    update: XOR<certificadoUpdateWithoutInscripcionInput, certificadoUncheckedUpdateWithoutInscripcionInput>
+    create: XOR<certificadoCreateWithoutInscripcionInput, certificadoUncheckedCreateWithoutInscripcionInput>
+    where?: certificadoWhereInput
+  }
+
+  export type certificadoUpdateToOneWithWhereWithoutInscripcionInput = {
+    where?: certificadoWhereInput
+    data: XOR<certificadoUpdateWithoutInscripcionInput, certificadoUncheckedUpdateWithoutInscripcionInput>
+  }
+
+  export type certificadoUpdateWithoutInscripcionInput = {
+    id_cer?: StringFieldUpdateOperationsInput | string
+    url_cer?: StringFieldUpdateOperationsInput | string
+    tip_cer?: Enumtipo_certificadoFieldUpdateOperationsInput | $Enums.tipo_certificado
+    fec_gen_cer?: DateTimeFieldUpdateOperationsInput | Date | string
+    cod_val_cer?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type certificadoUncheckedUpdateWithoutInscripcionInput = {
+    id_cer?: StringFieldUpdateOperationsInput | string
+    url_cer?: StringFieldUpdateOperationsInput | string
+    tip_cer?: Enumtipo_certificadoFieldUpdateOperationsInput | $Enums.tipo_certificado
+    fec_gen_cer?: DateTimeFieldUpdateOperationsInput | Date | string
+    cod_val_cer?: StringFieldUpdateOperationsInput | string
   }
 
   export type inscripcionCreateWithoutInscripcion_cursoInput = {
     id_ins?: string
     est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
-    fec_pag_ins?: Date | string | null
-    cer_eve_env?: boolean
-    car_mot_usu?: string | null
-    usuario: usuarioCreateNestedOneWithoutInscripcionesInput
+    usu_apr_cer?: boolean
+    por_asi_fin_usu?: number | null
+    cuenta: cuentaCreateNestedOneWithoutInscripcionesInput
     evento: eventoCreateNestedOneWithoutInscritosInput
+    comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutInscripcionInput
+    cartas_motivacion?: carta_motivacionCreateNestedManyWithoutInscripcionInput
+    observacion?: observacion_inscripcionCreateNestedOneWithoutInscripcionInput
+    certificado?: certificadoCreateNestedOneWithoutInscripcionInput
   }
 
   export type inscripcionUncheckedCreateWithoutInscripcion_cursoInput = {
     id_ins?: string
-    id_usu_ins: string
+    id_cor_ins: string
     id_eve_ins: string
     est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
-    fec_pag_ins?: Date | string | null
-    cer_eve_env?: boolean
-    car_mot_usu?: string | null
+    usu_apr_cer?: boolean
+    por_asi_fin_usu?: number | null
+    comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutInscripcionInput
+    cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutInscripcionInput
+    observacion?: observacion_inscripcionUncheckedCreateNestedOneWithoutInscripcionInput
+    certificado?: certificadoUncheckedCreateNestedOneWithoutInscripcionInput
   }
 
   export type inscripcionCreateOrConnectWithoutInscripcion_cursoInput = {
@@ -14207,29 +25217,112 @@ export namespace Prisma {
     id_ins?: StringFieldUpdateOperationsInput | string
     est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
-    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    cer_eve_env?: BoolFieldUpdateOperationsInput | boolean
-    car_mot_usu?: NullableStringFieldUpdateOperationsInput | string | null
-    usuario?: usuarioUpdateOneRequiredWithoutInscripcionesNestedInput
+    usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    cuenta?: cuentaUpdateOneRequiredWithoutInscripcionesNestedInput
     evento?: eventoUpdateOneRequiredWithoutInscritosNestedInput
+    comprobantes_pago?: comprobante_pagoUpdateManyWithoutInscripcionNestedInput
+    cartas_motivacion?: carta_motivacionUpdateManyWithoutInscripcionNestedInput
+    observacion?: observacion_inscripcionUpdateOneWithoutInscripcionNestedInput
+    certificado?: certificadoUpdateOneWithoutInscripcionNestedInput
   }
 
   export type inscripcionUncheckedUpdateWithoutInscripcion_cursoInput = {
     id_ins?: StringFieldUpdateOperationsInput | string
-    id_usu_ins?: StringFieldUpdateOperationsInput | string
+    id_cor_ins?: StringFieldUpdateOperationsInput | string
     id_eve_ins?: StringFieldUpdateOperationsInput | string
     est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
-    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    cer_eve_env?: BoolFieldUpdateOperationsInput | boolean
-    car_mot_usu?: NullableStringFieldUpdateOperationsInput | string | null
+    usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutInscripcionNestedInput
+    cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutInscripcionNestedInput
+    observacion?: observacion_inscripcionUncheckedUpdateOneWithoutInscripcionNestedInput
+    certificado?: certificadoUncheckedUpdateOneWithoutInscripcionNestedInput
+  }
+
+  export type inscripcionCreateWithoutCertificadoInput = {
+    id_ins?: string
+    est_ins?: $Enums.estado_inscripcion
+    fec_ins?: Date | string
+    usu_apr_cer?: boolean
+    por_asi_fin_usu?: number | null
+    cuenta: cuentaCreateNestedOneWithoutInscripcionesInput
+    evento: eventoCreateNestedOneWithoutInscritosInput
+    inscripcion_curso?: inscripcion_cursoCreateNestedOneWithoutInscripcionInput
+    comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutInscripcionInput
+    cartas_motivacion?: carta_motivacionCreateNestedManyWithoutInscripcionInput
+    observacion?: observacion_inscripcionCreateNestedOneWithoutInscripcionInput
+  }
+
+  export type inscripcionUncheckedCreateWithoutCertificadoInput = {
+    id_ins?: string
+    id_cor_ins: string
+    id_eve_ins: string
+    est_ins?: $Enums.estado_inscripcion
+    fec_ins?: Date | string
+    usu_apr_cer?: boolean
+    por_asi_fin_usu?: number | null
+    inscripcion_curso?: inscripcion_cursoUncheckedCreateNestedOneWithoutInscripcionInput
+    comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutInscripcionInput
+    cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutInscripcionInput
+    observacion?: observacion_inscripcionUncheckedCreateNestedOneWithoutInscripcionInput
+  }
+
+  export type inscripcionCreateOrConnectWithoutCertificadoInput = {
+    where: inscripcionWhereUniqueInput
+    create: XOR<inscripcionCreateWithoutCertificadoInput, inscripcionUncheckedCreateWithoutCertificadoInput>
+  }
+
+  export type inscripcionUpsertWithoutCertificadoInput = {
+    update: XOR<inscripcionUpdateWithoutCertificadoInput, inscripcionUncheckedUpdateWithoutCertificadoInput>
+    create: XOR<inscripcionCreateWithoutCertificadoInput, inscripcionUncheckedCreateWithoutCertificadoInput>
+    where?: inscripcionWhereInput
+  }
+
+  export type inscripcionUpdateToOneWithWhereWithoutCertificadoInput = {
+    where?: inscripcionWhereInput
+    data: XOR<inscripcionUpdateWithoutCertificadoInput, inscripcionUncheckedUpdateWithoutCertificadoInput>
+  }
+
+  export type inscripcionUpdateWithoutCertificadoInput = {
+    id_ins?: StringFieldUpdateOperationsInput | string
+    est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
+    fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
+    usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    cuenta?: cuentaUpdateOneRequiredWithoutInscripcionesNestedInput
+    evento?: eventoUpdateOneRequiredWithoutInscritosNestedInput
+    inscripcion_curso?: inscripcion_cursoUpdateOneWithoutInscripcionNestedInput
+    comprobantes_pago?: comprobante_pagoUpdateManyWithoutInscripcionNestedInput
+    cartas_motivacion?: carta_motivacionUpdateManyWithoutInscripcionNestedInput
+    observacion?: observacion_inscripcionUpdateOneWithoutInscripcionNestedInput
+  }
+
+  export type inscripcionUncheckedUpdateWithoutCertificadoInput = {
+    id_ins?: StringFieldUpdateOperationsInput | string
+    id_cor_ins?: StringFieldUpdateOperationsInput | string
+    id_eve_ins?: StringFieldUpdateOperationsInput | string
+    est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
+    fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
+    usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    inscripcion_curso?: inscripcion_cursoUncheckedUpdateOneWithoutInscripcionNestedInput
+    comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutInscripcionNestedInput
+    cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutInscripcionNestedInput
+    observacion?: observacion_inscripcionUncheckedUpdateOneWithoutInscripcionNestedInput
   }
 
   export type carreraCreateWithoutFacultadInput = {
     id_car?: string
     nom_car: string
+    des_car: string
+    dur_sem_car: number
+    mod_car: string
+    ico_car: string
     est_car?: boolean
     fec_cre_car?: Date | string
+    coordinador?: coordinadorCreateNestedOneWithoutCarrerasInput
     usuario?: usuarioCreateNestedManyWithoutCarreraInput
     eventos?: evento_carreraCreateNestedManyWithoutCarreraInput
   }
@@ -14237,8 +25330,13 @@ export namespace Prisma {
   export type carreraUncheckedCreateWithoutFacultadInput = {
     id_car?: string
     nom_car: string
+    des_car: string
+    dur_sem_car: number
+    mod_car: string
+    ico_car: string
     est_car?: boolean
     fec_cre_car?: Date | string
+    id_coo_per?: string | null
     usuario?: usuarioUncheckedCreateNestedManyWithoutCarreraInput
     eventos?: evento_carreraUncheckedCreateNestedManyWithoutCarreraInput
   }
@@ -14269,57 +25367,262 @@ export namespace Prisma {
     data: XOR<carreraUpdateManyMutationInput, carreraUncheckedUpdateManyWithoutFacultadInput>
   }
 
-  export type carreraScalarWhereInput = {
-    AND?: carreraScalarWhereInput | carreraScalarWhereInput[]
-    OR?: carreraScalarWhereInput[]
-    NOT?: carreraScalarWhereInput | carreraScalarWhereInput[]
-    id_car?: StringFilter<"carrera"> | string
-    nom_car?: StringFilter<"carrera"> | string
-    est_car?: BoolFilter<"carrera"> | boolean
-    fec_cre_car?: DateTimeFilter<"carrera"> | Date | string
-    id_fac_per?: StringFilter<"carrera"> | string
+  export type cuentaCreateManyUsuarioInput = {
+    id_cue?: string
+    cor_usu: string
+    con_usu: string
+    fec_cre_cue?: Date | string
+    rol_usu: $Enums.rol_usuario
   }
 
-  export type inscripcionCreateManyUsuarioInput = {
+  export type cuentaUpdateWithoutUsuarioInput = {
+    id_cue?: StringFieldUpdateOperationsInput | string
+    cor_usu?: StringFieldUpdateOperationsInput | string
+    con_usu?: StringFieldUpdateOperationsInput | string
+    fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
+    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    inscripciones?: inscripcionUpdateManyWithoutCuentaNestedInput
+    cartas_motivacion?: carta_motivacionUpdateManyWithoutAdminNestedInput
+    comprobantes_pago?: comprobante_pagoUpdateManyWithoutAdminNestedInput
+    eventos?: eventoUpdateManyWithoutCuentaNestedInput
+    observaciones_creadas?: observacion_inscripcionUpdateManyWithoutAdmin_creadorNestedInput
+  }
+
+  export type cuentaUncheckedUpdateWithoutUsuarioInput = {
+    id_cue?: StringFieldUpdateOperationsInput | string
+    cor_usu?: StringFieldUpdateOperationsInput | string
+    con_usu?: StringFieldUpdateOperationsInput | string
+    fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
+    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    inscripciones?: inscripcionUncheckedUpdateManyWithoutCuentaNestedInput
+    cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutAdminNestedInput
+    comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutAdminNestedInput
+    eventos?: eventoUncheckedUpdateManyWithoutCuentaNestedInput
+    observaciones_creadas?: observacion_inscripcionUncheckedUpdateManyWithoutAdmin_creadorNestedInput
+  }
+
+  export type cuentaUncheckedUpdateManyWithoutUsuarioInput = {
+    id_cue?: StringFieldUpdateOperationsInput | string
+    cor_usu?: StringFieldUpdateOperationsInput | string
+    con_usu?: StringFieldUpdateOperationsInput | string
+    fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
+    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+  }
+
+  export type inscripcionCreateManyCuentaInput = {
     id_ins?: string
     id_eve_ins: string
     est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
-    fec_pag_ins?: Date | string | null
-    cer_eve_env?: boolean
-    car_mot_usu?: string | null
+    usu_apr_cer?: boolean
+    por_asi_fin_usu?: number | null
   }
 
-  export type inscripcionUpdateWithoutUsuarioInput = {
+  export type carta_motivacionCreateManyAdminInput = {
+    id_car_mot?: string
+    id_ins_per: string
+    con_car_mot: string
+    est_car_mot?: $Enums.estado_validacion
+    fec_sub_car_mot?: Date | string
+    fec_val_car_mot?: Date | string | null
+  }
+
+  export type comprobante_pagoCreateManyAdminInput = {
+    id_com_pag?: string
+    id_ins_per: string
+    url_com_pag: string
+    est_com_pag?: $Enums.estado_validacion
+    fec_sub_com_pag?: Date | string
+    fec_val_com_pag?: Date | string | null
+    fec_pag_ins?: Date | string | null
+  }
+
+  export type eventoCreateManyCuentaInput = {
+    id_eve?: string
+    nom_eve: string
+    des_eve?: string | null
+    tip_eve: $Enums.tipo_evento
+    fec_ini_eve: Date | string
+    val_eve: number
+    est_eve?: $Enums.estado_evento
+    fec_cre_eve?: Date | string
+    dur_hor_eve: number
+    img_por_eve: string
+    por_min_asi_eve: number
+    fec_fin_eve: Date | string
+  }
+
+  export type observacion_inscripcionCreateManyAdmin_creadorInput = {
+    id_obs_ins?: string
+    id_ins_per: string
+    obs_ins: string
+    fec_cre_obs?: Date | string
+  }
+
+  export type inscripcionUpdateWithoutCuentaInput = {
     id_ins?: StringFieldUpdateOperationsInput | string
     est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
-    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    cer_eve_env?: BoolFieldUpdateOperationsInput | boolean
-    car_mot_usu?: NullableStringFieldUpdateOperationsInput | string | null
+    usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
     evento?: eventoUpdateOneRequiredWithoutInscritosNestedInput
     inscripcion_curso?: inscripcion_cursoUpdateOneWithoutInscripcionNestedInput
+    comprobantes_pago?: comprobante_pagoUpdateManyWithoutInscripcionNestedInput
+    cartas_motivacion?: carta_motivacionUpdateManyWithoutInscripcionNestedInput
+    observacion?: observacion_inscripcionUpdateOneWithoutInscripcionNestedInput
+    certificado?: certificadoUpdateOneWithoutInscripcionNestedInput
   }
 
-  export type inscripcionUncheckedUpdateWithoutUsuarioInput = {
+  export type inscripcionUncheckedUpdateWithoutCuentaInput = {
     id_ins?: StringFieldUpdateOperationsInput | string
     id_eve_ins?: StringFieldUpdateOperationsInput | string
     est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
-    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    cer_eve_env?: BoolFieldUpdateOperationsInput | boolean
-    car_mot_usu?: NullableStringFieldUpdateOperationsInput | string | null
+    usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
     inscripcion_curso?: inscripcion_cursoUncheckedUpdateOneWithoutInscripcionNestedInput
+    comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutInscripcionNestedInput
+    cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutInscripcionNestedInput
+    observacion?: observacion_inscripcionUncheckedUpdateOneWithoutInscripcionNestedInput
+    certificado?: certificadoUncheckedUpdateOneWithoutInscripcionNestedInput
   }
 
-  export type inscripcionUncheckedUpdateManyWithoutUsuarioInput = {
+  export type inscripcionUncheckedUpdateManyWithoutCuentaInput = {
     id_ins?: StringFieldUpdateOperationsInput | string
     id_eve_ins?: StringFieldUpdateOperationsInput | string
     est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
+    usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+  }
+
+  export type carta_motivacionUpdateWithoutAdminInput = {
+    id_car_mot?: StringFieldUpdateOperationsInput | string
+    con_car_mot?: StringFieldUpdateOperationsInput | string
+    est_car_mot?: Enumestado_validacionFieldUpdateOperationsInput | $Enums.estado_validacion
+    fec_sub_car_mot?: DateTimeFieldUpdateOperationsInput | Date | string
+    fec_val_car_mot?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    inscripcion?: inscripcionUpdateOneRequiredWithoutCartas_motivacionNestedInput
+  }
+
+  export type carta_motivacionUncheckedUpdateWithoutAdminInput = {
+    id_car_mot?: StringFieldUpdateOperationsInput | string
+    id_ins_per?: StringFieldUpdateOperationsInput | string
+    con_car_mot?: StringFieldUpdateOperationsInput | string
+    est_car_mot?: Enumestado_validacionFieldUpdateOperationsInput | $Enums.estado_validacion
+    fec_sub_car_mot?: DateTimeFieldUpdateOperationsInput | Date | string
+    fec_val_car_mot?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type carta_motivacionUncheckedUpdateManyWithoutAdminInput = {
+    id_car_mot?: StringFieldUpdateOperationsInput | string
+    id_ins_per?: StringFieldUpdateOperationsInput | string
+    con_car_mot?: StringFieldUpdateOperationsInput | string
+    est_car_mot?: Enumestado_validacionFieldUpdateOperationsInput | $Enums.estado_validacion
+    fec_sub_car_mot?: DateTimeFieldUpdateOperationsInput | Date | string
+    fec_val_car_mot?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type comprobante_pagoUpdateWithoutAdminInput = {
+    id_com_pag?: StringFieldUpdateOperationsInput | string
+    url_com_pag?: StringFieldUpdateOperationsInput | string
+    est_com_pag?: Enumestado_validacionFieldUpdateOperationsInput | $Enums.estado_validacion
+    fec_sub_com_pag?: DateTimeFieldUpdateOperationsInput | Date | string
+    fec_val_com_pag?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    cer_eve_env?: BoolFieldUpdateOperationsInput | boolean
-    car_mot_usu?: NullableStringFieldUpdateOperationsInput | string | null
+    inscripcion?: inscripcionUpdateOneRequiredWithoutComprobantes_pagoNestedInput
+  }
+
+  export type comprobante_pagoUncheckedUpdateWithoutAdminInput = {
+    id_com_pag?: StringFieldUpdateOperationsInput | string
+    id_ins_per?: StringFieldUpdateOperationsInput | string
+    url_com_pag?: StringFieldUpdateOperationsInput | string
+    est_com_pag?: Enumestado_validacionFieldUpdateOperationsInput | $Enums.estado_validacion
+    fec_sub_com_pag?: DateTimeFieldUpdateOperationsInput | Date | string
+    fec_val_com_pag?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type comprobante_pagoUncheckedUpdateManyWithoutAdminInput = {
+    id_com_pag?: StringFieldUpdateOperationsInput | string
+    id_ins_per?: StringFieldUpdateOperationsInput | string
+    url_com_pag?: StringFieldUpdateOperationsInput | string
+    est_com_pag?: Enumestado_validacionFieldUpdateOperationsInput | $Enums.estado_validacion
+    fec_sub_com_pag?: DateTimeFieldUpdateOperationsInput | Date | string
+    fec_val_com_pag?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type eventoUpdateWithoutCuentaInput = {
+    id_eve?: StringFieldUpdateOperationsInput | string
+    nom_eve?: StringFieldUpdateOperationsInput | string
+    des_eve?: NullableStringFieldUpdateOperationsInput | string | null
+    tip_eve?: Enumtipo_eventoFieldUpdateOperationsInput | $Enums.tipo_evento
+    fec_ini_eve?: DateTimeFieldUpdateOperationsInput | Date | string
+    val_eve?: FloatFieldUpdateOperationsInput | number
+    est_eve?: Enumestado_eventoFieldUpdateOperationsInput | $Enums.estado_evento
+    fec_cre_eve?: DateTimeFieldUpdateOperationsInput | Date | string
+    dur_hor_eve?: IntFieldUpdateOperationsInput | number
+    img_por_eve?: StringFieldUpdateOperationsInput | string
+    por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
+    fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
+    inscritos?: inscripcionUpdateManyWithoutEventoNestedInput
+    eventos_carrera?: evento_carreraUpdateManyWithoutEventoNestedInput
+    eventos_curso?: evento_cursoUpdateOneWithoutEventoNestedInput
+  }
+
+  export type eventoUncheckedUpdateWithoutCuentaInput = {
+    id_eve?: StringFieldUpdateOperationsInput | string
+    nom_eve?: StringFieldUpdateOperationsInput | string
+    des_eve?: NullableStringFieldUpdateOperationsInput | string | null
+    tip_eve?: Enumtipo_eventoFieldUpdateOperationsInput | $Enums.tipo_evento
+    fec_ini_eve?: DateTimeFieldUpdateOperationsInput | Date | string
+    val_eve?: FloatFieldUpdateOperationsInput | number
+    est_eve?: Enumestado_eventoFieldUpdateOperationsInput | $Enums.estado_evento
+    fec_cre_eve?: DateTimeFieldUpdateOperationsInput | Date | string
+    dur_hor_eve?: IntFieldUpdateOperationsInput | number
+    img_por_eve?: StringFieldUpdateOperationsInput | string
+    por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
+    fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
+    inscritos?: inscripcionUncheckedUpdateManyWithoutEventoNestedInput
+    eventos_carrera?: evento_carreraUncheckedUpdateManyWithoutEventoNestedInput
+    eventos_curso?: evento_cursoUncheckedUpdateOneWithoutEventoNestedInput
+  }
+
+  export type eventoUncheckedUpdateManyWithoutCuentaInput = {
+    id_eve?: StringFieldUpdateOperationsInput | string
+    nom_eve?: StringFieldUpdateOperationsInput | string
+    des_eve?: NullableStringFieldUpdateOperationsInput | string | null
+    tip_eve?: Enumtipo_eventoFieldUpdateOperationsInput | $Enums.tipo_evento
+    fec_ini_eve?: DateTimeFieldUpdateOperationsInput | Date | string
+    val_eve?: FloatFieldUpdateOperationsInput | number
+    est_eve?: Enumestado_eventoFieldUpdateOperationsInput | $Enums.estado_evento
+    fec_cre_eve?: DateTimeFieldUpdateOperationsInput | Date | string
+    dur_hor_eve?: IntFieldUpdateOperationsInput | number
+    img_por_eve?: StringFieldUpdateOperationsInput | string
+    por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
+    fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type observacion_inscripcionUpdateWithoutAdmin_creadorInput = {
+    id_obs_ins?: StringFieldUpdateOperationsInput | string
+    obs_ins?: StringFieldUpdateOperationsInput | string
+    fec_cre_obs?: DateTimeFieldUpdateOperationsInput | Date | string
+    inscripcion?: inscripcionUpdateOneRequiredWithoutObservacionNestedInput
+  }
+
+  export type observacion_inscripcionUncheckedUpdateWithoutAdmin_creadorInput = {
+    id_obs_ins?: StringFieldUpdateOperationsInput | string
+    id_ins_per?: StringFieldUpdateOperationsInput | string
+    obs_ins?: StringFieldUpdateOperationsInput | string
+    fec_cre_obs?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type observacion_inscripcionUncheckedUpdateManyWithoutAdmin_creadorInput = {
+    id_obs_ins?: StringFieldUpdateOperationsInput | string
+    id_ins_per?: StringFieldUpdateOperationsInput | string
+    obs_ins?: StringFieldUpdateOperationsInput | string
+    fec_cre_obs?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type usuarioCreateManyCarreraInput = {
@@ -14327,12 +25630,10 @@ export namespace Prisma {
     ced_usu: string
     nom_usu: string
     ape_usu: string
-    cor_usu: string
-    con_usu: string
     cel_usu: string
-    rol_usu: $Enums.rol_usuario
     fec_cre_usu?: Date | string
     com_usu?: string | null
+    img_per_usu?: string | null
   }
 
   export type evento_carreraCreateManyCarreraInput = {
@@ -14346,13 +25647,11 @@ export namespace Prisma {
     ced_usu?: StringFieldUpdateOperationsInput | string
     nom_usu?: StringFieldUpdateOperationsInput | string
     ape_usu?: StringFieldUpdateOperationsInput | string
-    cor_usu?: StringFieldUpdateOperationsInput | string
-    con_usu?: StringFieldUpdateOperationsInput | string
     cel_usu?: StringFieldUpdateOperationsInput | string
-    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
     fec_cre_usu?: DateTimeFieldUpdateOperationsInput | Date | string
     com_usu?: NullableStringFieldUpdateOperationsInput | string | null
-    inscripciones?: inscripcionUpdateManyWithoutUsuarioNestedInput
+    img_per_usu?: NullableStringFieldUpdateOperationsInput | string | null
+    cuentas?: cuentaUpdateManyWithoutUsuarioNestedInput
   }
 
   export type usuarioUncheckedUpdateWithoutCarreraInput = {
@@ -14360,13 +25659,11 @@ export namespace Prisma {
     ced_usu?: StringFieldUpdateOperationsInput | string
     nom_usu?: StringFieldUpdateOperationsInput | string
     ape_usu?: StringFieldUpdateOperationsInput | string
-    cor_usu?: StringFieldUpdateOperationsInput | string
-    con_usu?: StringFieldUpdateOperationsInput | string
     cel_usu?: StringFieldUpdateOperationsInput | string
-    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
     fec_cre_usu?: DateTimeFieldUpdateOperationsInput | Date | string
     com_usu?: NullableStringFieldUpdateOperationsInput | string | null
-    inscripciones?: inscripcionUncheckedUpdateManyWithoutUsuarioNestedInput
+    img_per_usu?: NullableStringFieldUpdateOperationsInput | string | null
+    cuentas?: cuentaUncheckedUpdateManyWithoutUsuarioNestedInput
   }
 
   export type usuarioUncheckedUpdateManyWithoutCarreraInput = {
@@ -14374,12 +25671,10 @@ export namespace Prisma {
     ced_usu?: StringFieldUpdateOperationsInput | string
     nom_usu?: StringFieldUpdateOperationsInput | string
     ape_usu?: StringFieldUpdateOperationsInput | string
-    cor_usu?: StringFieldUpdateOperationsInput | string
-    con_usu?: StringFieldUpdateOperationsInput | string
     cel_usu?: StringFieldUpdateOperationsInput | string
-    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
     fec_cre_usu?: DateTimeFieldUpdateOperationsInput | Date | string
     com_usu?: NullableStringFieldUpdateOperationsInput | string | null
+    img_per_usu?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type evento_carreraUpdateWithoutCarreraInput = {
@@ -14400,14 +25695,65 @@ export namespace Prisma {
     fec_aso?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type carreraCreateManyCoordinadorInput = {
+    id_car?: string
+    nom_car: string
+    des_car: string
+    dur_sem_car: number
+    mod_car: string
+    ico_car: string
+    est_car?: boolean
+    fec_cre_car?: Date | string
+    id_fac_per: string
+  }
+
+  export type carreraUpdateWithoutCoordinadorInput = {
+    id_car?: StringFieldUpdateOperationsInput | string
+    nom_car?: StringFieldUpdateOperationsInput | string
+    des_car?: StringFieldUpdateOperationsInput | string
+    dur_sem_car?: IntFieldUpdateOperationsInput | number
+    mod_car?: StringFieldUpdateOperationsInput | string
+    ico_car?: StringFieldUpdateOperationsInput | string
+    est_car?: BoolFieldUpdateOperationsInput | boolean
+    fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
+    facultad?: facultadUpdateOneRequiredWithoutCarrerasNestedInput
+    usuario?: usuarioUpdateManyWithoutCarreraNestedInput
+    eventos?: evento_carreraUpdateManyWithoutCarreraNestedInput
+  }
+
+  export type carreraUncheckedUpdateWithoutCoordinadorInput = {
+    id_car?: StringFieldUpdateOperationsInput | string
+    nom_car?: StringFieldUpdateOperationsInput | string
+    des_car?: StringFieldUpdateOperationsInput | string
+    dur_sem_car?: IntFieldUpdateOperationsInput | number
+    mod_car?: StringFieldUpdateOperationsInput | string
+    ico_car?: StringFieldUpdateOperationsInput | string
+    est_car?: BoolFieldUpdateOperationsInput | boolean
+    fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
+    id_fac_per?: StringFieldUpdateOperationsInput | string
+    usuario?: usuarioUncheckedUpdateManyWithoutCarreraNestedInput
+    eventos?: evento_carreraUncheckedUpdateManyWithoutCarreraNestedInput
+  }
+
+  export type carreraUncheckedUpdateManyWithoutCoordinadorInput = {
+    id_car?: StringFieldUpdateOperationsInput | string
+    nom_car?: StringFieldUpdateOperationsInput | string
+    des_car?: StringFieldUpdateOperationsInput | string
+    dur_sem_car?: IntFieldUpdateOperationsInput | number
+    mod_car?: StringFieldUpdateOperationsInput | string
+    ico_car?: StringFieldUpdateOperationsInput | string
+    est_car?: BoolFieldUpdateOperationsInput | boolean
+    fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
+    id_fac_per?: StringFieldUpdateOperationsInput | string
+  }
+
   export type inscripcionCreateManyEventoInput = {
     id_ins?: string
-    id_usu_ins: string
+    id_cor_ins: string
     est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
-    fec_pag_ins?: Date | string | null
-    cer_eve_env?: boolean
-    car_mot_usu?: string | null
+    usu_apr_cer?: boolean
+    por_asi_fin_usu?: number | null
   }
 
   export type evento_carreraCreateManyEventoInput = {
@@ -14420,32 +25766,37 @@ export namespace Prisma {
     id_ins?: StringFieldUpdateOperationsInput | string
     est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
-    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    cer_eve_env?: BoolFieldUpdateOperationsInput | boolean
-    car_mot_usu?: NullableStringFieldUpdateOperationsInput | string | null
-    usuario?: usuarioUpdateOneRequiredWithoutInscripcionesNestedInput
+    usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    cuenta?: cuentaUpdateOneRequiredWithoutInscripcionesNestedInput
     inscripcion_curso?: inscripcion_cursoUpdateOneWithoutInscripcionNestedInput
+    comprobantes_pago?: comprobante_pagoUpdateManyWithoutInscripcionNestedInput
+    cartas_motivacion?: carta_motivacionUpdateManyWithoutInscripcionNestedInput
+    observacion?: observacion_inscripcionUpdateOneWithoutInscripcionNestedInput
+    certificado?: certificadoUpdateOneWithoutInscripcionNestedInput
   }
 
   export type inscripcionUncheckedUpdateWithoutEventoInput = {
     id_ins?: StringFieldUpdateOperationsInput | string
-    id_usu_ins?: StringFieldUpdateOperationsInput | string
+    id_cor_ins?: StringFieldUpdateOperationsInput | string
     est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
-    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    cer_eve_env?: BoolFieldUpdateOperationsInput | boolean
-    car_mot_usu?: NullableStringFieldUpdateOperationsInput | string | null
+    usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
     inscripcion_curso?: inscripcion_cursoUncheckedUpdateOneWithoutInscripcionNestedInput
+    comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutInscripcionNestedInput
+    cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutInscripcionNestedInput
+    observacion?: observacion_inscripcionUncheckedUpdateOneWithoutInscripcionNestedInput
+    certificado?: certificadoUncheckedUpdateOneWithoutInscripcionNestedInput
   }
 
   export type inscripcionUncheckedUpdateManyWithoutEventoInput = {
     id_ins?: StringFieldUpdateOperationsInput | string
-    id_usu_ins?: StringFieldUpdateOperationsInput | string
+    id_cor_ins?: StringFieldUpdateOperationsInput | string
     est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
-    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    cer_eve_env?: BoolFieldUpdateOperationsInput | boolean
-    car_mot_usu?: NullableStringFieldUpdateOperationsInput | string | null
+    usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
   }
 
   export type evento_carreraUpdateWithoutEventoInput = {
@@ -14466,18 +25817,104 @@ export namespace Prisma {
     fec_aso?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type comprobante_pagoCreateManyInscripcionInput = {
+    id_com_pag?: string
+    url_com_pag: string
+    est_com_pag?: $Enums.estado_validacion
+    fec_sub_com_pag?: Date | string
+    fec_val_com_pag?: Date | string | null
+    id_adm_val_com_pag?: string | null
+    fec_pag_ins?: Date | string | null
+  }
+
+  export type carta_motivacionCreateManyInscripcionInput = {
+    id_car_mot?: string
+    con_car_mot: string
+    est_car_mot?: $Enums.estado_validacion
+    fec_sub_car_mot?: Date | string
+    fec_val_car_mot?: Date | string | null
+    id_adm_val_car_mot?: string | null
+  }
+
+  export type comprobante_pagoUpdateWithoutInscripcionInput = {
+    id_com_pag?: StringFieldUpdateOperationsInput | string
+    url_com_pag?: StringFieldUpdateOperationsInput | string
+    est_com_pag?: Enumestado_validacionFieldUpdateOperationsInput | $Enums.estado_validacion
+    fec_sub_com_pag?: DateTimeFieldUpdateOperationsInput | Date | string
+    fec_val_com_pag?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    admin?: cuentaUpdateOneWithoutComprobantes_pagoNestedInput
+  }
+
+  export type comprobante_pagoUncheckedUpdateWithoutInscripcionInput = {
+    id_com_pag?: StringFieldUpdateOperationsInput | string
+    url_com_pag?: StringFieldUpdateOperationsInput | string
+    est_com_pag?: Enumestado_validacionFieldUpdateOperationsInput | $Enums.estado_validacion
+    fec_sub_com_pag?: DateTimeFieldUpdateOperationsInput | Date | string
+    fec_val_com_pag?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    id_adm_val_com_pag?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type comprobante_pagoUncheckedUpdateManyWithoutInscripcionInput = {
+    id_com_pag?: StringFieldUpdateOperationsInput | string
+    url_com_pag?: StringFieldUpdateOperationsInput | string
+    est_com_pag?: Enumestado_validacionFieldUpdateOperationsInput | $Enums.estado_validacion
+    fec_sub_com_pag?: DateTimeFieldUpdateOperationsInput | Date | string
+    fec_val_com_pag?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    id_adm_val_com_pag?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_pag_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type carta_motivacionUpdateWithoutInscripcionInput = {
+    id_car_mot?: StringFieldUpdateOperationsInput | string
+    con_car_mot?: StringFieldUpdateOperationsInput | string
+    est_car_mot?: Enumestado_validacionFieldUpdateOperationsInput | $Enums.estado_validacion
+    fec_sub_car_mot?: DateTimeFieldUpdateOperationsInput | Date | string
+    fec_val_car_mot?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    admin?: cuentaUpdateOneWithoutCartas_motivacionNestedInput
+  }
+
+  export type carta_motivacionUncheckedUpdateWithoutInscripcionInput = {
+    id_car_mot?: StringFieldUpdateOperationsInput | string
+    con_car_mot?: StringFieldUpdateOperationsInput | string
+    est_car_mot?: Enumestado_validacionFieldUpdateOperationsInput | $Enums.estado_validacion
+    fec_sub_car_mot?: DateTimeFieldUpdateOperationsInput | Date | string
+    fec_val_car_mot?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    id_adm_val_car_mot?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type carta_motivacionUncheckedUpdateManyWithoutInscripcionInput = {
+    id_car_mot?: StringFieldUpdateOperationsInput | string
+    con_car_mot?: StringFieldUpdateOperationsInput | string
+    est_car_mot?: Enumestado_validacionFieldUpdateOperationsInput | $Enums.estado_validacion
+    fec_sub_car_mot?: DateTimeFieldUpdateOperationsInput | Date | string
+    fec_val_car_mot?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    id_adm_val_car_mot?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
   export type carreraCreateManyFacultadInput = {
     id_car?: string
     nom_car: string
+    des_car: string
+    dur_sem_car: number
+    mod_car: string
+    ico_car: string
     est_car?: boolean
     fec_cre_car?: Date | string
+    id_coo_per?: string | null
   }
 
   export type carreraUpdateWithoutFacultadInput = {
     id_car?: StringFieldUpdateOperationsInput | string
     nom_car?: StringFieldUpdateOperationsInput | string
+    des_car?: StringFieldUpdateOperationsInput | string
+    dur_sem_car?: IntFieldUpdateOperationsInput | number
+    mod_car?: StringFieldUpdateOperationsInput | string
+    ico_car?: StringFieldUpdateOperationsInput | string
     est_car?: BoolFieldUpdateOperationsInput | boolean
     fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
+    coordinador?: coordinadorUpdateOneWithoutCarrerasNestedInput
     usuario?: usuarioUpdateManyWithoutCarreraNestedInput
     eventos?: evento_carreraUpdateManyWithoutCarreraNestedInput
   }
@@ -14485,8 +25922,13 @@ export namespace Prisma {
   export type carreraUncheckedUpdateWithoutFacultadInput = {
     id_car?: StringFieldUpdateOperationsInput | string
     nom_car?: StringFieldUpdateOperationsInput | string
+    des_car?: StringFieldUpdateOperationsInput | string
+    dur_sem_car?: IntFieldUpdateOperationsInput | number
+    mod_car?: StringFieldUpdateOperationsInput | string
+    ico_car?: StringFieldUpdateOperationsInput | string
     est_car?: BoolFieldUpdateOperationsInput | boolean
     fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
+    id_coo_per?: NullableStringFieldUpdateOperationsInput | string | null
     usuario?: usuarioUncheckedUpdateManyWithoutCarreraNestedInput
     eventos?: evento_carreraUncheckedUpdateManyWithoutCarreraNestedInput
   }
@@ -14494,8 +25936,13 @@ export namespace Prisma {
   export type carreraUncheckedUpdateManyWithoutFacultadInput = {
     id_car?: StringFieldUpdateOperationsInput | string
     nom_car?: StringFieldUpdateOperationsInput | string
+    des_car?: StringFieldUpdateOperationsInput | string
+    dur_sem_car?: IntFieldUpdateOperationsInput | number
+    mod_car?: StringFieldUpdateOperationsInput | string
+    ico_car?: StringFieldUpdateOperationsInput | string
     est_car?: BoolFieldUpdateOperationsInput | boolean
     fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
+    id_coo_per?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
 

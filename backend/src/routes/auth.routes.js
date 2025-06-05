@@ -8,7 +8,7 @@ const {
 } = require("../controllers/auth.controller");
 
 // Middleware para manejo de archivos
-const upload = require("../middlewares/upload");
+const { upload } = require("../middlewares/upload");
 
 // ==============================
 // Rutas de autenticación

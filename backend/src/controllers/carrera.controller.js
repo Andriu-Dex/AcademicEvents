@@ -7,15 +7,46 @@ const prisma = require("../config/db");
 const crearCarrera = async (req, res) => {
   try {
     console.log("Body recibido:", req.body);
-    const { nom_car, id_fac_per } = req.body;
+    const {
+      nom_car,
+      des_car,
+      dur_sem_car,
+      mod_car,
+      ico_car,
+      id_fac_per,
+      id_coo_per,
+    } = req.body;
 
     console.log("Nombre de carrera:", nom_car);
+    console.log("Descripción:", des_car);
+    console.log("Duración en semestres:", dur_sem_car);
+    console.log("Modalidad:", mod_car);
+    console.log("Icono:", ico_car);
     console.log("ID de facultad:", id_fac_per);
+    console.log("ID de coordinador:", id_coo_per);
 
     if (!nom_car || nom_car.trim() === "") {
       return res
         .status(400)
         .json({ msg: "El nombre de la carrera es obligatorio" });
+    }
+
+    if (!des_car || des_car.trim() === "") {
+      return res
+        .status(400)
+        .json({ msg: "La descripción de la carrera es obligatoria" });
+    }
+
+    if (!dur_sem_car || isNaN(parseInt(dur_sem_car))) {
+      return res
+        .status(400)
+        .json({ msg: "La duración en semestres debe ser un número válido" });
+    }
+
+    if (!mod_car || mod_car.trim() === "") {
+      return res
+        .status(400)
+        .json({ msg: "La modalidad de la carrera es obligatoria" });
     }
 
     if (!id_fac_per) {
@@ -44,11 +75,27 @@ const crearCarrera = async (req, res) => {
       return res.status(400).json({ msg: "La facultad no existe" });
     }
 
+    // Verificar si existe el coordinador, si se proporcionó ID
+    if (id_coo_per) {
+      const coordinadorExistente = await prisma.coordinador.findUnique({
+        where: { id_coo: id_coo_per },
+      });
+
+      if (!coordinadorExistente) {
+        return res.status(400).json({ msg: "El coordinador no existe" });
+      }
+    }
+
     console.log("Creando nueva carrera...");
     const nuevaCarrera = await prisma.carrera.create({
       data: {
         nom_car,
+        des_car,
+        dur_sem_car: parseInt(dur_sem_car),
+        mod_car,
+        ico_car: ico_car || null,
         id_fac_per,
+        id_coo_per: id_coo_per || null,
       },
     });
 
@@ -68,19 +115,41 @@ const crearCarrera = async (req, res) => {
 // ==============================
 const obtenerCarreras = async (req, res) => {
   try {
-    // Consultamos todas las carreras en la base de datos
-    // const carreras = await prisma.carrera.findMany();
-
+    // Consultamos todas las carreras en la base de datos con relaciones
     const carreras = await prisma.carrera.findMany({
       where: { est_car: true },
       orderBy: { nom_car: "asc" },
+      include: {
+        coordinador: true,
+        facultad: true,
+      },
     });
 
-    // Respondemos con las carreras obtenidas
-    res.status(200).json(carreras);
+    // Formatear respuesta para el frontend
+    const carrerasFormateadas = carreras.map((carrera) => ({
+      id: carrera.id_car,
+      nombre: carrera.nom_car,
+      descripcion: carrera.des_car,
+      duracion: `${carrera.dur_sem_car} semestres`,
+      modalidad: carrera.mod_car,
+      icon: carrera.ico_car,
+      facultad: carrera.facultad?.nom_fac || null,
+      coordinador: carrera.coordinador
+        ? `${carrera.coordinador.nom_coo} ${carrera.coordinador.ape_coo}`
+        : null,
+      // Incluimos los campos originales también para compatibilidad
+      ...carrera,
+    }));
+
+    // Respondemos con las carreras formateadas
+    res.status(200).json(carrerasFormateadas);
   } catch (error) {
+    console.error("Error al obtener carreras:", error);
     // En caso de error, enviamos respuesta con estado 500
-    res.status(500).json({ msg: "Error al obtener carreras", error });
+    res.status(500).json({
+      msg: "Error al obtener carreras",
+      error: error.message || error,
+    });
   }
 };
 
@@ -89,56 +158,170 @@ const obtenerCarreras = async (req, res) => {
 // =======================
 const actualizarCarrera = async (req, res) => {
   try {
-    const id = req.params.id; // ✅ no parseInt
+    const id = req.params.id;
+    const {
+      nom_car,
+      des_car,
+      dur_sem_car,
+      mod_car,
+      ico_car,
+      id_fac_per,
+      id_coo_per,
+    } = req.body;
 
-    const { nom_car } = req.body;
+    console.log("Datos recibidos para actualización:", req.body);
+    console.log("ID de carrera a actualizar:", id);
 
+    // Validaciones
     if (!nom_car || nom_car.trim() === "") {
       return res
         .status(400)
         .json({ msg: "El nombre de la carrera no puede estar vacío" });
     }
 
+    if (!des_car || des_car.trim() === "") {
+      return res
+        .status(400)
+        .json({ msg: "La descripción de la carrera no puede estar vacía" });
+    }
+
+    if (!dur_sem_car || isNaN(parseInt(dur_sem_car))) {
+      return res
+        .status(400)
+        .json({ msg: "La duración en semestres debe ser un número válido" });
+    }
+
+    if (!mod_car || mod_car.trim() === "") {
+      return res
+        .status(400)
+        .json({ msg: "La modalidad de la carrera no puede estar vacía" });
+    }
+
+    // Verificar que la carrera existe
     const carreraExistente = await prisma.carrera.findUnique({
       where: { id_car: id },
     });
 
     if (!carreraExistente) {
+      console.log("Error: Carrera no encontrada con ID:", id);
       return res.status(404).json({ msg: "Carrera no encontrada" });
     }
 
+    console.log("Carrera existente encontrada:", carreraExistente);
+
+    // Verificar si el nombre actualizado ya existe en otra carrera
+    if (nom_car !== carreraExistente.nom_car) {
+      const carreraConMismoNombre = await prisma.carrera.findFirst({
+        where: {
+          nom_car,
+          id_car: { not: id }, // Excluir la carrera actual de la búsqueda
+        },
+      });
+
+      if (carreraConMismoNombre) {
+        console.log("Error: Ya existe otra carrera con ese nombre");
+        return res.status(400).json({
+          msg: "Ya existe otra carrera con ese nombre",
+          detalles: { carreraExistente: carreraConMismoNombre.nom_car },
+        });
+      }
+    }
+
+    // Verificar facultad si se proporcionó
+    if (id_fac_per) {
+      const facultadExistente = await prisma.facultad.findUnique({
+        where: { id_fac: id_fac_per },
+      });
+
+      if (!facultadExistente) {
+        console.log("Error: Facultad no encontrada con ID:", id_fac_per);
+        return res.status(400).json({ msg: "La facultad no existe" });
+      }
+    }
+
+    // Verificar coordinador si se proporcionó
+    if (id_coo_per) {
+      const coordinadorExistente = await prisma.coordinador.findUnique({
+        where: { id_coo: id_coo_per },
+      });
+
+      if (!coordinadorExistente) {
+        console.log("Error: Coordinador no encontrado con ID:", id_coo_per);
+        return res.status(400).json({ msg: "El coordinador no existe" });
+      }
+    }
+
+    // Preparar datos para actualización
+    const datosActualizacion = {
+      nom_car,
+      des_car,
+      dur_sem_car: parseInt(dur_sem_car),
+      mod_car,
+      ico_car: ico_car || carreraExistente.ico_car,
+      id_fac_per: id_fac_per || carreraExistente.id_fac_per,
+    };
+
+    // Solo actualizar id_coo_per si viene un valor o es explícitamente null
+    if (id_coo_per !== undefined) {
+      datosActualizacion.id_coo_per = id_coo_per === "" ? null : id_coo_per;
+    }
+
+    console.log("Datos de actualización preparados:", datosActualizacion);
+
+    // Actualizar la carrera
     const actualizada = await prisma.carrera.update({
       where: { id_car: id },
-      data: { nom_car },
+      data: datosActualizacion,
     });
 
+    console.log("Carrera actualizada exitosamente:", actualizada);
     res.json(actualizada);
   } catch (error) {
+    console.error("Error detallado al actualizar carrera:", error);
     res.status(500).json({
       msg: "Error al actualizar carrera",
-      error: error.message || error,
+      error: error.message || String(error),
+      stack: error.stack,
     });
   }
 };
 
 // ======================
-// Eliminar una carrera
+// Eliminar una carrera (marcar como inactiva)
 // ======================
 const eliminarCarrera = async (req, res) => {
   try {
-    // Obtenemos el ID de la carrera a eliminar desde los parámetros
+    // Obtenemos el ID de la carrera a desactivar desde los parámetros
     const { id } = req.params;
 
-    // Eliminamos la carrera de la base de datos
-    await prisma.carrera.delete({
+    // Verificamos que la carrera exista y esté activa
+    const carrera = await prisma.carrera.findUnique({
       where: { id_car: id },
     });
 
+    if (!carrera) {
+      return res.status(404).json({ msg: "Carrera no encontrada" });
+    }
+
+    if (!carrera.est_car) {
+      return res.status(400).json({ msg: "La carrera ya está inactiva" });
+    }
+
+    // Marcamos la carrera como inactiva en lugar de eliminarla
+    await prisma.carrera.update({
+      where: { id_car: id },
+      data: { est_car: false },
+    });
+
     // Respondemos con un mensaje de éxito
-    res.status(200).json({ msg: "Carrera eliminada correctamente" });
+    res.status(200).json({ msg: "Carrera desactivada correctamente" });
   } catch (error) {
+    console.error("Error al desactivar carrera:", error);
     // Si ocurre un error, respondemos con estado 500
-    res.status(500).json({ msg: "Error al eliminar carrera", error });
+    res.status(500).json({
+      msg: "Error al desactivar carrera",
+      error: error.message || error,
+    });
   }
 };
 
