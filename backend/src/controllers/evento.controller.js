@@ -658,16 +658,21 @@ const reducirCupoEvento = async (id_eve) => {
     throw new Error("Evento no encontrado");
   }
 
+  console.log(`Reduciendo cupo para evento ${id_eve}: actual=${evento.cupo_dis_eve}, máximo=${evento.cupo_max_eve}`);
+
   if (evento.cupo_dis_eve <= 0) {
     throw new Error("No hay cupos disponibles para este evento");
   }
 
-  return await prisma.evento.update({
+  const resultado = await prisma.evento.update({
     where: { id_eve },
     data: {
       cupo_dis_eve: evento.cupo_dis_eve - 1
     }
   });
+
+  console.log(`Cupo reducido exitosamente: nuevo cupo disponible = ${resultado.cupo_dis_eve}`);
+  return resultado;
 };
 
 /**
@@ -683,17 +688,25 @@ const aumentarCupoEvento = async (id_eve) => {
     throw new Error("Evento no encontrado");
   }
 
-  // No permitir que supere el cupo máximo
+  console.log(`Aumentando cupo para evento ${id_eve}: actual=${evento.cupo_dis_eve}, máximo=${evento.cupo_max_eve}`);
+
+  // Permitir el aumento solo si no supera el cupo máximo
+  // Esto debería permitir restaurar cupos previamente ocupados
   if (evento.cupo_dis_eve >= evento.cupo_max_eve) {
-    throw new Error("No se puede aumentar el cupo por encima del máximo");
+    console.log(`Advertencia: cupo disponible (${evento.cupo_dis_eve}) ya está en el máximo (${evento.cupo_max_eve})`);
+    // En lugar de fallar, mantenemos el estado actual
+    return evento;
   }
 
-  return await prisma.evento.update({
+  const resultado = await prisma.evento.update({
     where: { id_eve },
     data: {
       cupo_dis_eve: evento.cupo_dis_eve + 1
     }
   });
+
+  console.log(`Cupo aumentado exitosamente: nuevo cupo disponible = ${resultado.cupo_dis_eve}`);
+  return resultado;
 };
 
 module.exports = {
