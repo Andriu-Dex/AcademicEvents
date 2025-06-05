@@ -50,11 +50,19 @@ const crearInscripcion = async (req, res) => {
         val_eve: true,
         cupo_dis_eve: true,
         cupo_max_eve: true,
-        nom_eve: true
+        nom_eve: true,
+        est_eve: true
       }
     });
     if (!evento) {
       return res.status(404).json({ msg: "Evento no encontrado" });
+    }
+
+    // Verificar si el evento está finalizado
+    if (evento.est_eve === "FINALIZADO") {
+      return res.status(400).json({ 
+        msg: "No se puede inscribir a un evento que ya ha finalizado" 
+      });
     }
 
     // Verificar si hay cupos disponibles

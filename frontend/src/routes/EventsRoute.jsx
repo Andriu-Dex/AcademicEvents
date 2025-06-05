@@ -287,9 +287,8 @@ const EventsRoute = () => {
           {eventosDisponibles
             .filter((ev) =>
               ev.nom_eve.toLowerCase().includes(filtro.toLowerCase())
-            )
-            .map((evento) => (
-              <div key={evento.id_eve} className="evento-card">
+            )            .map((evento) => (
+              <div key={evento.id_eve} className={`evento-card ${evento.est_eve === "FINALIZADO" ? "evento-finalizado" : ""}`}>
                 {/* Imagen de portada (real o placeholder) */}
                 <img
                   src={evento.img_por_eve || "https://i.imgur.com/c6Ry30Z.jpeg"}
@@ -360,11 +359,13 @@ const EventsRoute = () => {
                       setEventoSeleccionado(evento);
                     }
                   }}
-                  className={`btn-inscribirme ${evento.cupo_dis_eve === 0 ? 'btn-agotado' : ''}`}
-                  disabled={inscripciones.includes(evento.id_eve) || evento.cupo_dis_eve === 0}
+                  className={`btn-inscribirme ${evento.cupo_dis_eve === 0 || evento.est_eve === "FINALIZADO" ? 'btn-agotado' : ''}`}
+                  disabled={inscripciones.includes(evento.id_eve) || evento.cupo_dis_eve === 0 || evento.est_eve === "FINALIZADO"}
                 >
                   {inscripciones.includes(evento.id_eve)
                     ? "Ya inscrito"
+                    : evento.est_eve === "FINALIZADO"
+                    ? "Evento finalizado"
                     : evento.cupo_dis_eve === 0
                     ? "Cupos agotados"
                     : "Inscribirme"}

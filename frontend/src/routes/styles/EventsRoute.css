@@ -158,15 +158,17 @@
 }
 
 .btn-inscribirme:disabled {
-  background-color: #cccccc;
-  color: #666666;
+  background-color: #6b7280;
+  color: white;
   cursor: not-allowed;
+  opacity: 0.7;
   transform: none;
   box-shadow: none;
 }
 
 .btn-inscribirme:disabled:hover {
-  background-color: #cccccc;
+  background-color: #6b7280;
+  transform: none;
 }
 
 .modal-overlay {
@@ -584,4 +586,46 @@
   font-weight: bold;
   transform: rotate(45deg);
   z-index: 2;
+}
+
+/* Estilos para eventos finalizados */
+.evento-card:has(.btn-inscribirme:disabled) {
+  opacity: 0.8;
+  filter: grayscale(0.3);
+}
+
+.btn-inscribirme:disabled {
+  background-color: #6b7280;
+  color: white;
+  cursor: not-allowed;
+  opacity: 0.7;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-inscribirme:disabled:hover {
+  background-color: #6b7280;
+  transform: none;
+}
+
+/* Estilo especial para eventos finalizados */
+.evento-finalizado {
+  position: relative;
+  border-color: #d1d5db;
+  background-color: #f9fafb;
+}
+
+.evento-finalizado::after {
+  content: 'FINALIZADO';
+  position: absolute;
+  top: 10px;
+  right: -25px;
+  background-color: #6b7280;
+  color: white;
+  padding: 4px 30px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  transform: rotate(45deg);
+  z-index: 2;
+  text-align: center;
 }
