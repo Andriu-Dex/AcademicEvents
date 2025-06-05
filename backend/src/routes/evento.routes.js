@@ -11,6 +11,7 @@ const {
   eliminarEvento,
   obtenerEventoPorId,
   obtenerEventosPorTipo,
+  recalcularCupoEvento,
 } = require("../controllers/evento.controller");
 
 // ============================
@@ -134,6 +135,29 @@ router.get("/test-cupos", async (req, res) => {
     res.status(500).json({
       msg: "Error al verificar cupos",
       error: error.message,
+    });
+  }
+});
+
+// Ruta para recalcular cupos de un evento específico (solo admin)
+router.post("/eventos/:id/recalcular-cupos", verificarToken, onlyAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const resultado = await recalcularCupoEvento(id);
+    
+    res.json({
+      msg: "Cupos recalculados correctamente",
+      evento: {
+        id,
+        cupo_maximo: resultado.cupo_max_eve,
+        cupo_disponible: resultado.cupo_dis_eve,
+        inscripciones_activas: resultado.inscripciones_activas
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      msg: "Error al recalcular cupos",
+      error: error.message
     });
   }
 });

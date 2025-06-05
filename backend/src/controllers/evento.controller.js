@@ -607,6 +607,49 @@ function parseUTCDate(dateString) {
 }
 
 /**
+ * Función para recalcular el cupo disponible de un evento basado en inscripciones activas
+ */
+const recalcularCupoEvento = async (id_eve) => {
+  const evento = await prisma.evento.findUnique({
+    where: { id_eve },
+    select: { cupo_max_eve: true, cupo_dis_eve: true }
+  });
+
+  if (!evento) {
+    throw new Error("Evento no encontrado");
+  }
+
+  // Contar inscripciones activas
+  const inscripcionesActivas = await prisma.inscripcion.count({
+    where: {
+      id_eve_ins: id_eve,
+      est_ins: {
+        in: ["PENDIENTE", "ACEPTADA", "FINALIZADA"]
+      }
+    }
+  });
+
+  // Calcular cupo disponible correcto
+  const cupoDisponibleCorreto = evento.cupo_max_eve - inscripcionesActivas;
+
+  // Actualizar solo si hay diferencia
+  if (cupoDisponibleCorreto !== evento.cupo_dis_eve) {
+    await prisma.evento.update({
+      where: { id_eve },
+      data: {
+        cupo_dis_eve: Math.max(0, cupoDisponibleCorreto)
+      }
+    });
+  }
+
+  return {
+    cupo_max_eve: evento.cupo_max_eve,
+    cupo_dis_eve: Math.max(0, cupoDisponibleCorreto),
+    inscripciones_activas: inscripcionesActivas
+  };
+};
+
+/**
  * Función para reducir el cupo disponible de un evento
  */
 const reducirCupoEvento = async (id_eve) => {
@@ -666,4 +709,5 @@ module.exports = {
   obtenerEventosPorTipo,
   reducirCupoEvento,
   aumentarCupoEvento,
+  recalcularCupoEvento,
 };
