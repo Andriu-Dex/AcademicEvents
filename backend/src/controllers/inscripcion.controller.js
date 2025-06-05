@@ -271,9 +271,7 @@ const validarInscripcion = async (req, res) => {
     ];
     if (!estadosPermitidos.includes(est_ins)) {
       return res.status(400).json({ msg: "Estado inválido" });
-    }
-
-    const inscripcion = await prisma.inscripcion.findUnique({
+    }    const inscripcion = await prisma.inscripcion.findUnique({
       where: { id_ins: id },
       include: { evento: true },
     });
@@ -281,6 +279,9 @@ const validarInscripcion = async (req, res) => {
     if (!inscripcion) {
       return res.status(404).json({ msg: "Inscripción no encontrada" });
     }
+
+    // Guardar el estado anterior para gestionar cupos
+    const estadoAnterior = inscripcion.est_ins;
 
     const asistenciaNum = Number(asistencia);
     const notaFinalNum = Number(nota_final);
@@ -374,8 +375,31 @@ const validarInscripcion = async (req, res) => {
             id_ins_cur: id,
             not_fin_usu: notaFinalNum,
           },
-        });
+        });      }
+    }
+
+    // Gestionar cupos según el cambio de estado
+    try {
+      // Si cambió de PENDIENTE a RECHAZADA, aumentar cupo disponible
+      if (estadoAnterior === "PENDIENTE" && est_ins === "RECHAZADA") {
+        await aumentarCupoEvento(inscripcion.id_eve_ins);
       }
+      // Si cambió de RECHAZADA a PENDIENTE, reducir cupo disponible
+      else if (estadoAnterior === "RECHAZADA" && est_ins === "PENDIENTE") {
+        await reducirCupoEvento(inscripcion.id_eve_ins);
+      }
+      // Si cambió de PENDIENTE a ACEPTADA, el cupo ya se redujo cuando se creó la inscripción
+      // Si cambió de ACEPTADA a RECHAZADA, aumentar cupo disponible
+      else if (estadoAnterior === "ACEPTADA" && est_ins === "RECHAZADA") {
+        await aumentarCupoEvento(inscripcion.id_eve_ins);
+      }
+      // Si cambió de ACEPTADA/FINALIZADA a PENDIENTE, verificar cupos disponibles
+      else if ((estadoAnterior === "ACEPTADA" || estadoAnterior === "FINALIZADA") && est_ins === "PENDIENTE") {
+        // En este caso mantenemos el cupo como está, ya que la inscripción sigue ocupando un lugar
+      }
+    } catch (cupoError) {
+      console.error("Error al gestionar cupos:", cupoError);
+      // No fallar la operación por errores de cupo, solo registrar
     }
 
     res.status(200).json({
