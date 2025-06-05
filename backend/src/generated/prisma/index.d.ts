@@ -10453,12 +10453,16 @@ export namespace Prisma {
     val_eve: number | null
     dur_hor_eve: number | null
     por_min_asi_eve: number | null
+    cupo_max_eve: number | null
+    cupo_dis_eve: number | null
   }
 
   export type EventoSumAggregateOutputType = {
     val_eve: number | null
     dur_hor_eve: number | null
     por_min_asi_eve: number | null
+    cupo_max_eve: number | null
+    cupo_dis_eve: number | null
   }
 
   export type EventoMinAggregateOutputType = {
@@ -10474,6 +10478,8 @@ export namespace Prisma {
     img_por_eve: string | null
     por_min_asi_eve: number | null
     fec_fin_eve: Date | null
+    cupo_max_eve: number | null
+    cupo_dis_eve: number | null
     id_cue_cre_eve: string | null
   }
 
@@ -10490,6 +10496,8 @@ export namespace Prisma {
     img_por_eve: string | null
     por_min_asi_eve: number | null
     fec_fin_eve: Date | null
+    cupo_max_eve: number | null
+    cupo_dis_eve: number | null
     id_cue_cre_eve: string | null
   }
 
@@ -10506,6 +10514,8 @@ export namespace Prisma {
     img_por_eve: number
     por_min_asi_eve: number
     fec_fin_eve: number
+    cupo_max_eve: number
+    cupo_dis_eve: number
     id_cue_cre_eve: number
     _all: number
   }
@@ -10515,12 +10525,16 @@ export namespace Prisma {
     val_eve?: true
     dur_hor_eve?: true
     por_min_asi_eve?: true
+    cupo_max_eve?: true
+    cupo_dis_eve?: true
   }
 
   export type EventoSumAggregateInputType = {
     val_eve?: true
     dur_hor_eve?: true
     por_min_asi_eve?: true
+    cupo_max_eve?: true
+    cupo_dis_eve?: true
   }
 
   export type EventoMinAggregateInputType = {
@@ -10536,6 +10550,8 @@ export namespace Prisma {
     img_por_eve?: true
     por_min_asi_eve?: true
     fec_fin_eve?: true
+    cupo_max_eve?: true
+    cupo_dis_eve?: true
     id_cue_cre_eve?: true
   }
 
@@ -10552,6 +10568,8 @@ export namespace Prisma {
     img_por_eve?: true
     por_min_asi_eve?: true
     fec_fin_eve?: true
+    cupo_max_eve?: true
+    cupo_dis_eve?: true
     id_cue_cre_eve?: true
   }
 
@@ -10568,6 +10586,8 @@ export namespace Prisma {
     img_por_eve?: true
     por_min_asi_eve?: true
     fec_fin_eve?: true
+    cupo_max_eve?: true
+    cupo_dis_eve?: true
     id_cue_cre_eve?: true
     _all?: true
   }
@@ -10671,6 +10691,8 @@ export namespace Prisma {
     img_por_eve: string
     por_min_asi_eve: number
     fec_fin_eve: Date
+    cupo_max_eve: number
+    cupo_dis_eve: number
     id_cue_cre_eve: string
     _count: EventoCountAggregateOutputType | null
     _avg: EventoAvgAggregateOutputType | null
@@ -10706,6 +10728,8 @@ export namespace Prisma {
     img_por_eve?: boolean
     por_min_asi_eve?: boolean
     fec_fin_eve?: boolean
+    cupo_max_eve?: boolean
+    cupo_dis_eve?: boolean
     id_cue_cre_eve?: boolean
     inscritos?: boolean | evento$inscritosArgs<ExtArgs>
     eventos_carrera?: boolean | evento$eventos_carreraArgs<ExtArgs>
@@ -10727,6 +10751,8 @@ export namespace Prisma {
     img_por_eve?: boolean
     por_min_asi_eve?: boolean
     fec_fin_eve?: boolean
+    cupo_max_eve?: boolean
+    cupo_dis_eve?: boolean
     id_cue_cre_eve?: boolean
     cuenta?: boolean | cuentaDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["evento"]>
@@ -10744,6 +10770,8 @@ export namespace Prisma {
     img_por_eve?: boolean
     por_min_asi_eve?: boolean
     fec_fin_eve?: boolean
+    cupo_max_eve?: boolean
+    cupo_dis_eve?: boolean
     id_cue_cre_eve?: boolean
     cuenta?: boolean | cuentaDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["evento"]>
@@ -10761,10 +10789,12 @@ export namespace Prisma {
     img_por_eve?: boolean
     por_min_asi_eve?: boolean
     fec_fin_eve?: boolean
+    cupo_max_eve?: boolean
+    cupo_dis_eve?: boolean
     id_cue_cre_eve?: boolean
   }
 
-  export type eventoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_eve" | "nom_eve" | "des_eve" | "tip_eve" | "fec_ini_eve" | "val_eve" | "est_eve" | "fec_cre_eve" | "dur_hor_eve" | "img_por_eve" | "por_min_asi_eve" | "fec_fin_eve" | "id_cue_cre_eve", ExtArgs["result"]["evento"]>
+  export type eventoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_eve" | "nom_eve" | "des_eve" | "tip_eve" | "fec_ini_eve" | "val_eve" | "est_eve" | "fec_cre_eve" | "dur_hor_eve" | "img_por_eve" | "por_min_asi_eve" | "fec_fin_eve" | "cupo_max_eve" | "cupo_dis_eve" | "id_cue_cre_eve", ExtArgs["result"]["evento"]>
   export type eventoInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     inscritos?: boolean | evento$inscritosArgs<ExtArgs>
     eventos_carrera?: boolean | evento$eventos_carreraArgs<ExtArgs>
@@ -10800,6 +10830,8 @@ export namespace Prisma {
       img_por_eve: string
       por_min_asi_eve: number
       fec_fin_eve: Date
+      cupo_max_eve: number
+      cupo_dis_eve: number
       id_cue_cre_eve: string
     }, ExtArgs["result"]["evento"]>
     composites: {}
@@ -11240,6 +11272,8 @@ export namespace Prisma {
     readonly img_por_eve: FieldRef<"evento", 'String'>
     readonly por_min_asi_eve: FieldRef<"evento", 'Float'>
     readonly fec_fin_eve: FieldRef<"evento", 'DateTime'>
+    readonly cupo_max_eve: FieldRef<"evento", 'Int'>
+    readonly cupo_dis_eve: FieldRef<"evento", 'Int'>
     readonly id_cue_cre_eve: FieldRef<"evento", 'String'>
   }
     
@@ -18512,6 +18546,8 @@ export namespace Prisma {
     img_por_eve: 'img_por_eve',
     por_min_asi_eve: 'por_min_asi_eve',
     fec_fin_eve: 'fec_fin_eve',
+    cupo_max_eve: 'cupo_max_eve',
+    cupo_dis_eve: 'cupo_dis_eve',
     id_cue_cre_eve: 'id_cue_cre_eve'
   };
 
@@ -19287,6 +19323,8 @@ export namespace Prisma {
     img_por_eve?: StringFilter<"evento"> | string
     por_min_asi_eve?: FloatFilter<"evento"> | number
     fec_fin_eve?: DateTimeFilter<"evento"> | Date | string
+    cupo_max_eve?: IntFilter<"evento"> | number
+    cupo_dis_eve?: IntFilter<"evento"> | number
     id_cue_cre_eve?: StringFilter<"evento"> | string
     inscritos?: InscripcionListRelationFilter
     eventos_carrera?: Evento_carreraListRelationFilter
@@ -19307,6 +19345,8 @@ export namespace Prisma {
     img_por_eve?: SortOrder
     por_min_asi_eve?: SortOrder
     fec_fin_eve?: SortOrder
+    cupo_max_eve?: SortOrder
+    cupo_dis_eve?: SortOrder
     id_cue_cre_eve?: SortOrder
     inscritos?: inscripcionOrderByRelationAggregateInput
     eventos_carrera?: evento_carreraOrderByRelationAggregateInput
@@ -19330,6 +19370,8 @@ export namespace Prisma {
     img_por_eve?: StringFilter<"evento"> | string
     por_min_asi_eve?: FloatFilter<"evento"> | number
     fec_fin_eve?: DateTimeFilter<"evento"> | Date | string
+    cupo_max_eve?: IntFilter<"evento"> | number
+    cupo_dis_eve?: IntFilter<"evento"> | number
     id_cue_cre_eve?: StringFilter<"evento"> | string
     inscritos?: InscripcionListRelationFilter
     eventos_carrera?: Evento_carreraListRelationFilter
@@ -19350,6 +19392,8 @@ export namespace Prisma {
     img_por_eve?: SortOrder
     por_min_asi_eve?: SortOrder
     fec_fin_eve?: SortOrder
+    cupo_max_eve?: SortOrder
+    cupo_dis_eve?: SortOrder
     id_cue_cre_eve?: SortOrder
     _count?: eventoCountOrderByAggregateInput
     _avg?: eventoAvgOrderByAggregateInput
@@ -19374,6 +19418,8 @@ export namespace Prisma {
     img_por_eve?: StringWithAggregatesFilter<"evento"> | string
     por_min_asi_eve?: FloatWithAggregatesFilter<"evento"> | number
     fec_fin_eve?: DateTimeWithAggregatesFilter<"evento"> | Date | string
+    cupo_max_eve?: IntWithAggregatesFilter<"evento"> | number
+    cupo_dis_eve?: IntWithAggregatesFilter<"evento"> | number
     id_cue_cre_eve?: StringWithAggregatesFilter<"evento"> | string
   }
 
@@ -20302,6 +20348,8 @@ export namespace Prisma {
     img_por_eve: string
     por_min_asi_eve: number
     fec_fin_eve: Date | string
+    cupo_max_eve: number
+    cupo_dis_eve: number
     inscritos?: inscripcionCreateNestedManyWithoutEventoInput
     eventos_carrera?: evento_carreraCreateNestedManyWithoutEventoInput
     eventos_curso?: evento_cursoCreateNestedOneWithoutEventoInput
@@ -20321,6 +20369,8 @@ export namespace Prisma {
     img_por_eve: string
     por_min_asi_eve: number
     fec_fin_eve: Date | string
+    cupo_max_eve: number
+    cupo_dis_eve: number
     id_cue_cre_eve: string
     inscritos?: inscripcionUncheckedCreateNestedManyWithoutEventoInput
     eventos_carrera?: evento_carreraUncheckedCreateNestedManyWithoutEventoInput
@@ -20340,6 +20390,8 @@ export namespace Prisma {
     img_por_eve?: StringFieldUpdateOperationsInput | string
     por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
     fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
+    cupo_max_eve?: IntFieldUpdateOperationsInput | number
+    cupo_dis_eve?: IntFieldUpdateOperationsInput | number
     inscritos?: inscripcionUpdateManyWithoutEventoNestedInput
     eventos_carrera?: evento_carreraUpdateManyWithoutEventoNestedInput
     eventos_curso?: evento_cursoUpdateOneWithoutEventoNestedInput
@@ -20359,6 +20411,8 @@ export namespace Prisma {
     img_por_eve?: StringFieldUpdateOperationsInput | string
     por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
     fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
+    cupo_max_eve?: IntFieldUpdateOperationsInput | number
+    cupo_dis_eve?: IntFieldUpdateOperationsInput | number
     id_cue_cre_eve?: StringFieldUpdateOperationsInput | string
     inscritos?: inscripcionUncheckedUpdateManyWithoutEventoNestedInput
     eventos_carrera?: evento_carreraUncheckedUpdateManyWithoutEventoNestedInput
@@ -20378,6 +20432,8 @@ export namespace Prisma {
     img_por_eve: string
     por_min_asi_eve: number
     fec_fin_eve: Date | string
+    cupo_max_eve: number
+    cupo_dis_eve: number
     id_cue_cre_eve: string
   }
 
@@ -20394,6 +20450,8 @@ export namespace Prisma {
     img_por_eve?: StringFieldUpdateOperationsInput | string
     por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
     fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
+    cupo_max_eve?: IntFieldUpdateOperationsInput | number
+    cupo_dis_eve?: IntFieldUpdateOperationsInput | number
   }
 
   export type eventoUncheckedUpdateManyInput = {
@@ -20409,6 +20467,8 @@ export namespace Prisma {
     img_por_eve?: StringFieldUpdateOperationsInput | string
     por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
     fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
+    cupo_max_eve?: IntFieldUpdateOperationsInput | number
+    cupo_dis_eve?: IntFieldUpdateOperationsInput | number
     id_cue_cre_eve?: StringFieldUpdateOperationsInput | string
   }
 
@@ -21387,6 +21447,8 @@ export namespace Prisma {
     img_por_eve?: SortOrder
     por_min_asi_eve?: SortOrder
     fec_fin_eve?: SortOrder
+    cupo_max_eve?: SortOrder
+    cupo_dis_eve?: SortOrder
     id_cue_cre_eve?: SortOrder
   }
 
@@ -21394,6 +21456,8 @@ export namespace Prisma {
     val_eve?: SortOrder
     dur_hor_eve?: SortOrder
     por_min_asi_eve?: SortOrder
+    cupo_max_eve?: SortOrder
+    cupo_dis_eve?: SortOrder
   }
 
   export type eventoMaxOrderByAggregateInput = {
@@ -21409,6 +21473,8 @@ export namespace Prisma {
     img_por_eve?: SortOrder
     por_min_asi_eve?: SortOrder
     fec_fin_eve?: SortOrder
+    cupo_max_eve?: SortOrder
+    cupo_dis_eve?: SortOrder
     id_cue_cre_eve?: SortOrder
   }
 
@@ -21425,6 +21491,8 @@ export namespace Prisma {
     img_por_eve?: SortOrder
     por_min_asi_eve?: SortOrder
     fec_fin_eve?: SortOrder
+    cupo_max_eve?: SortOrder
+    cupo_dis_eve?: SortOrder
     id_cue_cre_eve?: SortOrder
   }
 
@@ -21432,6 +21500,8 @@ export namespace Prisma {
     val_eve?: SortOrder
     dur_hor_eve?: SortOrder
     por_min_asi_eve?: SortOrder
+    cupo_max_eve?: SortOrder
+    cupo_dis_eve?: SortOrder
   }
 
   export type Enumtipo_eventoWithAggregatesFilter<$PrismaModel = never> = {
@@ -23798,6 +23868,8 @@ export namespace Prisma {
     img_por_eve: string
     por_min_asi_eve: number
     fec_fin_eve: Date | string
+    cupo_max_eve: number
+    cupo_dis_eve: number
     inscritos?: inscripcionCreateNestedManyWithoutEventoInput
     eventos_carrera?: evento_carreraCreateNestedManyWithoutEventoInput
     eventos_curso?: evento_cursoCreateNestedOneWithoutEventoInput
@@ -23816,6 +23888,8 @@ export namespace Prisma {
     img_por_eve: string
     por_min_asi_eve: number
     fec_fin_eve: Date | string
+    cupo_max_eve: number
+    cupo_dis_eve: number
     inscritos?: inscripcionUncheckedCreateNestedManyWithoutEventoInput
     eventos_carrera?: evento_carreraUncheckedCreateNestedManyWithoutEventoInput
     eventos_curso?: evento_cursoUncheckedCreateNestedOneWithoutEventoInput
@@ -24010,6 +24084,8 @@ export namespace Prisma {
     img_por_eve?: StringFilter<"evento"> | string
     por_min_asi_eve?: FloatFilter<"evento"> | number
     fec_fin_eve?: DateTimeFilter<"evento"> | Date | string
+    cupo_max_eve?: IntFilter<"evento"> | number
+    cupo_dis_eve?: IntFilter<"evento"> | number
     id_cue_cre_eve?: StringFilter<"evento"> | string
   }
 
@@ -24564,6 +24640,8 @@ export namespace Prisma {
     img_por_eve: string
     por_min_asi_eve: number
     fec_fin_eve: Date | string
+    cupo_max_eve: number
+    cupo_dis_eve: number
     inscritos?: inscripcionCreateNestedManyWithoutEventoInput
     eventos_carrera?: evento_carreraCreateNestedManyWithoutEventoInput
     cuenta: cuentaCreateNestedOneWithoutEventosInput
@@ -24582,6 +24660,8 @@ export namespace Prisma {
     img_por_eve: string
     por_min_asi_eve: number
     fec_fin_eve: Date | string
+    cupo_max_eve: number
+    cupo_dis_eve: number
     id_cue_cre_eve: string
     inscritos?: inscripcionUncheckedCreateNestedManyWithoutEventoInput
     eventos_carrera?: evento_carreraUncheckedCreateNestedManyWithoutEventoInput
@@ -24616,6 +24696,8 @@ export namespace Prisma {
     img_por_eve?: StringFieldUpdateOperationsInput | string
     por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
     fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
+    cupo_max_eve?: IntFieldUpdateOperationsInput | number
+    cupo_dis_eve?: IntFieldUpdateOperationsInput | number
     inscritos?: inscripcionUpdateManyWithoutEventoNestedInput
     eventos_carrera?: evento_carreraUpdateManyWithoutEventoNestedInput
     cuenta?: cuentaUpdateOneRequiredWithoutEventosNestedInput
@@ -24634,6 +24716,8 @@ export namespace Prisma {
     img_por_eve?: StringFieldUpdateOperationsInput | string
     por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
     fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
+    cupo_max_eve?: IntFieldUpdateOperationsInput | number
+    cupo_dis_eve?: IntFieldUpdateOperationsInput | number
     id_cue_cre_eve?: StringFieldUpdateOperationsInput | string
     inscritos?: inscripcionUncheckedUpdateManyWithoutEventoNestedInput
     eventos_carrera?: evento_carreraUncheckedUpdateManyWithoutEventoNestedInput
@@ -24685,6 +24769,8 @@ export namespace Prisma {
     img_por_eve: string
     por_min_asi_eve: number
     fec_fin_eve: Date | string
+    cupo_max_eve: number
+    cupo_dis_eve: number
     inscritos?: inscripcionCreateNestedManyWithoutEventoInput
     eventos_curso?: evento_cursoCreateNestedOneWithoutEventoInput
     cuenta: cuentaCreateNestedOneWithoutEventosInput
@@ -24703,6 +24789,8 @@ export namespace Prisma {
     img_por_eve: string
     por_min_asi_eve: number
     fec_fin_eve: Date | string
+    cupo_max_eve: number
+    cupo_dis_eve: number
     id_cue_cre_eve: string
     inscritos?: inscripcionUncheckedCreateNestedManyWithoutEventoInput
     eventos_curso?: evento_cursoUncheckedCreateNestedOneWithoutEventoInput
@@ -24776,6 +24864,8 @@ export namespace Prisma {
     img_por_eve?: StringFieldUpdateOperationsInput | string
     por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
     fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
+    cupo_max_eve?: IntFieldUpdateOperationsInput | number
+    cupo_dis_eve?: IntFieldUpdateOperationsInput | number
     inscritos?: inscripcionUpdateManyWithoutEventoNestedInput
     eventos_curso?: evento_cursoUpdateOneWithoutEventoNestedInput
     cuenta?: cuentaUpdateOneRequiredWithoutEventosNestedInput
@@ -24794,6 +24884,8 @@ export namespace Prisma {
     img_por_eve?: StringFieldUpdateOperationsInput | string
     por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
     fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
+    cupo_max_eve?: IntFieldUpdateOperationsInput | number
+    cupo_dis_eve?: IntFieldUpdateOperationsInput | number
     id_cue_cre_eve?: StringFieldUpdateOperationsInput | string
     inscritos?: inscripcionUncheckedUpdateManyWithoutEventoNestedInput
     eventos_curso?: evento_cursoUncheckedUpdateOneWithoutEventoNestedInput
@@ -24843,6 +24935,8 @@ export namespace Prisma {
     img_por_eve: string
     por_min_asi_eve: number
     fec_fin_eve: Date | string
+    cupo_max_eve: number
+    cupo_dis_eve: number
     eventos_carrera?: evento_carreraCreateNestedManyWithoutEventoInput
     eventos_curso?: evento_cursoCreateNestedOneWithoutEventoInput
     cuenta: cuentaCreateNestedOneWithoutEventosInput
@@ -24861,6 +24955,8 @@ export namespace Prisma {
     img_por_eve: string
     por_min_asi_eve: number
     fec_fin_eve: Date | string
+    cupo_max_eve: number
+    cupo_dis_eve: number
     id_cue_cre_eve: string
     eventos_carrera?: evento_carreraUncheckedCreateNestedManyWithoutEventoInput
     eventos_curso?: evento_cursoUncheckedCreateNestedOneWithoutEventoInput
@@ -25043,6 +25139,8 @@ export namespace Prisma {
     img_por_eve?: StringFieldUpdateOperationsInput | string
     por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
     fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
+    cupo_max_eve?: IntFieldUpdateOperationsInput | number
+    cupo_dis_eve?: IntFieldUpdateOperationsInput | number
     eventos_carrera?: evento_carreraUpdateManyWithoutEventoNestedInput
     eventos_curso?: evento_cursoUpdateOneWithoutEventoNestedInput
     cuenta?: cuentaUpdateOneRequiredWithoutEventosNestedInput
@@ -25061,6 +25159,8 @@ export namespace Prisma {
     img_por_eve?: StringFieldUpdateOperationsInput | string
     por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
     fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
+    cupo_max_eve?: IntFieldUpdateOperationsInput | number
+    cupo_dis_eve?: IntFieldUpdateOperationsInput | number
     id_cue_cre_eve?: StringFieldUpdateOperationsInput | string
     eventos_carrera?: evento_carreraUncheckedUpdateManyWithoutEventoNestedInput
     eventos_curso?: evento_cursoUncheckedUpdateOneWithoutEventoNestedInput
@@ -25450,6 +25550,8 @@ export namespace Prisma {
     img_por_eve: string
     por_min_asi_eve: number
     fec_fin_eve: Date | string
+    cupo_max_eve: number
+    cupo_dis_eve: number
   }
 
   export type observacion_inscripcionCreateManyAdmin_creadorInput = {
@@ -25566,6 +25668,8 @@ export namespace Prisma {
     img_por_eve?: StringFieldUpdateOperationsInput | string
     por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
     fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
+    cupo_max_eve?: IntFieldUpdateOperationsInput | number
+    cupo_dis_eve?: IntFieldUpdateOperationsInput | number
     inscritos?: inscripcionUpdateManyWithoutEventoNestedInput
     eventos_carrera?: evento_carreraUpdateManyWithoutEventoNestedInput
     eventos_curso?: evento_cursoUpdateOneWithoutEventoNestedInput
@@ -25584,6 +25688,8 @@ export namespace Prisma {
     img_por_eve?: StringFieldUpdateOperationsInput | string
     por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
     fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
+    cupo_max_eve?: IntFieldUpdateOperationsInput | number
+    cupo_dis_eve?: IntFieldUpdateOperationsInput | number
     inscritos?: inscripcionUncheckedUpdateManyWithoutEventoNestedInput
     eventos_carrera?: evento_carreraUncheckedUpdateManyWithoutEventoNestedInput
     eventos_curso?: evento_cursoUncheckedUpdateOneWithoutEventoNestedInput
@@ -25602,6 +25708,8 @@ export namespace Prisma {
     img_por_eve?: StringFieldUpdateOperationsInput | string
     por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
     fec_fin_eve?: DateTimeFieldUpdateOperationsInput | Date | string
+    cupo_max_eve?: IntFieldUpdateOperationsInput | number
+    cupo_dis_eve?: IntFieldUpdateOperationsInput | number
   }
 
   export type observacion_inscripcionUpdateWithoutAdmin_creadorInput = {

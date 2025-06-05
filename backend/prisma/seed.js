@@ -146,9 +146,7 @@ async function main() {
     // Obtener la cuenta admin (por correo)
     const cuentaAdmin = await prisma.cuenta.findUnique({
       where: { cor_usu: "admin@uta.edu.ec" },
-    });
-
-    // Crea un evento asociado a la cuenta admin
+    }); // Crea un evento asociado a la cuenta admin
     await prisma.evento.upsert({
       where: { id_eve: "80ce8ece-c17a-4c82-9d0d-be303eb25e37" },
       update: {
@@ -163,6 +161,8 @@ async function main() {
         est_eve: "ACTIVO",
         por_min_asi_eve: 80,
         img_por_eve: "https://i.imgur.com/f8adUbZ.png",
+        cupo_max_eve: 50, // Número máximo de cupos para el evento
+        cupo_dis_eve: 50, // Cupos disponibles (inicialmente igual al máximo)
         id_cue_cre_eve: cuentaAdmin.id_cue, // IMPORTANTE: id de la cuenta creadora
       },
       create: {
@@ -178,6 +178,8 @@ async function main() {
         est_eve: "ACTIVO",
         por_min_asi_eve: 70,
         img_por_eve: "https://i.imgur.com/f8adUbZ.png",
+        cupo_max_eve: 50, // Número máximo de cupos para el evento
+        cupo_dis_eve: 50, // Cupos disponibles (inicialmente igual al máximo)
         id_cue_cre_eve: cuentaAdmin.id_cue, // IMPORTANTE: id de la cuenta creadora
       },
     });
