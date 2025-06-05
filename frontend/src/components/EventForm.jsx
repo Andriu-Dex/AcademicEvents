@@ -29,8 +29,7 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [carreras, setCarreras] = useState([]);
-  const [imagenPreview, setImagenPreview] = useState(null);
-  const [formData, setFormData] = useState({
+  const [imagenPreview, setImagenPreview] = useState(null);  const [formData, setFormData] = useState({
     nom_eve: "",
     des_eve: "",
     tip_eve: "",
@@ -40,6 +39,7 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
     val_eve: "",
     not_min_cur: "",
     por_min_asi_eve: "",
+    cupo_max_eve: "",
     carrerasSeleccionadas: [],
     esEventoGeneral: false,
     img_por_eve: null,

@@ -25,6 +25,7 @@ function validarEventoGeneral({
   dur_hor_eve,
   por_min_asi_eve,
   fec_fin_eve,
+  cupo_max_eve,
 }) {
   // Validar que el nombre del evento esté presente
   if (!nom_eve) throw new Error("El nombre del evento es obligatorio");
@@ -63,6 +64,13 @@ function validarEventoGeneral({
   hoy.setHours(0, 0, 0, 0); // Ignorar la hora y comparar solo fechas
   if (fechaInicio <= hoy)
     throw new Error("La fecha de inicio debe ser a partir de mañana");
+  
+  // Validar cupo máximo
+  if (cupo_max_eve === undefined || cupo_max_eve === null)
+    throw new Error("El cupo máximo es obligatorio");
+  const cupoNum = Number(cupo_max_eve);
+  if (isNaN(cupoNum) || cupoNum <= 0)
+    throw new Error("El cupo máximo debe ser un número mayor a 0");
 }
 
 // Función para subir imagen a Imgur
@@ -95,8 +103,7 @@ async function subirImagenAImgur(archivo) {
 
 //Crea un nuevo evento académico, y si es curso, lo vincula a evento_curso
 const crearEvento = async (req, res) => {
-  try {
-    const {
+  try {    const {
       nom_eve,
       des_eve,
       tip_eve,
@@ -106,18 +113,18 @@ const crearEvento = async (req, res) => {
       por_min_asi_eve,
       fec_fin_eve,
       not_min_cur,
+      cupo_max_eve,
     } = req.body; // Convertir valores numéricos y fechas antes de validar
     const durHor = Number(dur_hor_eve);
     const porcMinAsi = Number(por_min_asi_eve);
     const valNum = Number(val_eve);
+    const cupoMax = Number(cupo_max_eve);
 
     // Convertir fechas a objetos Date en UTC para evitar problemas de zona horaria
     const fechaIni = parseUTCDate(fec_ini_eve);
     const fechaFin = parseUTCDate(fec_fin_eve);
 
-    const notaMin = not_min_cur !== undefined ? Number(not_min_cur) : undefined;
-
-    // Validaciones generales (debería validar los campos nuevos)
+    const notaMin = not_min_cur !== undefined ? Number(not_min_cur) : undefined;    // Validaciones generales (debería validar los campos nuevos)
     try {
       validarEventoGeneral({
         nom_eve,
@@ -127,6 +134,7 @@ const crearEvento = async (req, res) => {
         dur_hor_eve: durHor,
         por_min_asi_eve: porcMinAsi,
         fec_fin_eve: fechaFin,
+        cupo_max_eve: cupoMax,
       });
     } catch (e) {
       return res.status(400).json({ msg: e.message });
@@ -150,9 +158,7 @@ const crearEvento = async (req, res) => {
         console.error("Error al subir imagen:", error);
         // Si falla la carga, usamos la imagen por defecto
       }
-    }
-
-    // Crear evento en la base de datos
+    }    // Crear evento en la base de datos
     const nuevoEvento = await prisma.evento.create({
       data: {
         nom_eve,
@@ -166,6 +172,8 @@ const crearEvento = async (req, res) => {
         img_por_eve: imgUrl,
         est_eve: "ACTIVO", // Estado por defecto según nuevo enum
         id_cue_cre_eve: req.usuario.id, // ID de la cuenta creadora
+        cupo_max_eve: cupoMax,
+        cupo_dis_eve: cupoMax, // Inicializar cupo disponible igual al máximo
       },
     });
 
@@ -221,7 +229,20 @@ const crearEventoCurso = async (eventoId, not_min_cur) => {
 // Obtener todos los eventos
 const obtenerEventos = async (req, res) => {
   try {
+    // Parámetro para incluir eventos llenos
+    const incluirEventosLlenos = req.query.incluirLlenos === 'true';
+
+    const whereClause = {};
+    
+    // Si no se quieren incluir eventos llenos, filtrar aquellos con cupo disponible > 0
+    if (!incluirEventosLlenos) {
+      whereClause.cupo_dis_eve = {
+        gt: 0
+      };
+    }
+
     const eventos = await prisma.evento.findMany({
+      where: whereClause,
       include: {
         eventos_carrera: {
           include: { carrera: { select: { nom_car: true, id_car: true } } },
@@ -231,7 +252,6 @@ const obtenerEventos = async (req, res) => {
       orderBy: { fec_ini_eve: "asc" },
     });
 
-    // ¡NO transformes nada, solo devuelve!
     res.status(200).json(eventos);
   } catch (error) {
     res.status(500).json({
@@ -254,6 +274,8 @@ const camposEvento = [
   "dur_hor_eve",
   "por_min_asi_eve",
   "fec_fin_eve",
+  "cupo_max_eve",
+  "cupo_dis_eve",
 ];
 const camposCurso = ["not_min_cur"];
 // 2. Función principal para actualizar un evento
@@ -289,9 +311,7 @@ const actualizarEvento = async (req, res) => {
         console.error("Error al subir imagen en actualización:", error);
         // Si falla la carga, mantenemos la imagen anterior
       }
-    }
-
-    try {
+    }    try {
       validarEventoGeneral({
         nom_eve: dataEvento.nom_eve ?? eventoExistente.nom_eve,
         tip_eve: dataEvento.tip_eve ?? eventoExistente.tip_eve,
@@ -301,10 +321,11 @@ const actualizarEvento = async (req, res) => {
         por_min_asi_eve:
           dataEvento.por_min_asi_eve ?? eventoExistente.por_min_asi_eve,
         fec_fin_eve: dataEvento.fec_fin_eve ?? eventoExistente.fec_fin_eve,
+        cupo_max_eve: dataEvento.cupo_max_eve ?? eventoExistente.cupo_max_eve,
       });
     } catch (e) {
       return res.status(400).json({ msg: e.message });
-    } // 6. Actualiza evento principal
+    }    // 6. Actualiza evento principal
     const eventoActualizado = await prisma.evento.update({
       where: { id_eve: id },
       data: {
@@ -332,6 +353,14 @@ const actualizarEvento = async (req, res) => {
             : eventoExistente.por_min_asi_eve,
         est_eve: dataEvento.est_eve || eventoExistente.est_eve,
         img_por_eve: imgUrl,
+        cupo_max_eve:
+          dataEvento.cupo_max_eve !== undefined
+            ? Number(dataEvento.cupo_max_eve)
+            : eventoExistente.cupo_max_eve,
+        cupo_dis_eve:
+          dataEvento.cupo_dis_eve !== undefined
+            ? Number(dataEvento.cupo_dis_eve)
+            : eventoExistente.cupo_dis_eve,
       },
     });
 
@@ -553,6 +582,57 @@ function parseUTCDate(dateString) {
   }
 }
 
+/**
+ * Función para reducir el cupo disponible de un evento
+ */
+const reducirCupoEvento = async (id_eve) => {
+  const evento = await prisma.evento.findUnique({
+    where: { id_eve },
+    select: { cupo_dis_eve: true, cupo_max_eve: true }
+  });
+
+  if (!evento) {
+    throw new Error("Evento no encontrado");
+  }
+
+  if (evento.cupo_dis_eve <= 0) {
+    throw new Error("No hay cupos disponibles para este evento");
+  }
+
+  return await prisma.evento.update({
+    where: { id_eve },
+    data: {
+      cupo_dis_eve: evento.cupo_dis_eve - 1
+    }
+  });
+};
+
+/**
+ * Función para aumentar el cupo disponible de un evento
+ */
+const aumentarCupoEvento = async (id_eve) => {
+  const evento = await prisma.evento.findUnique({
+    where: { id_eve },
+    select: { cupo_dis_eve: true, cupo_max_eve: true }
+  });
+
+  if (!evento) {
+    throw new Error("Evento no encontrado");
+  }
+
+  // No permitir que supere el cupo máximo
+  if (evento.cupo_dis_eve >= evento.cupo_max_eve) {
+    throw new Error("No se puede aumentar el cupo por encima del máximo");
+  }
+
+  return await prisma.evento.update({
+    where: { id_eve },
+    data: {
+      cupo_dis_eve: evento.cupo_dis_eve + 1
+    }
+  });
+};
+
 module.exports = {
   crearEvento,
   obtenerEventos,
@@ -560,4 +640,6 @@ module.exports = {
   eliminarEvento,
   obtenerEventoPorId,
   obtenerEventosPorTipo,
+  reducirCupoEvento,
+  aumentarCupoEvento,
 };

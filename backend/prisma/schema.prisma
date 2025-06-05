@@ -140,6 +140,8 @@ model evento {
   por_min_asi_eve Float         // Porcentaje mínimo de asistencia del evento
   fec_fin_eve     DateTime      // Fecha de finalización del evento
   id_cue_cre_eve  String        // FK a cuenta creadora del evento
+  cupo_max_eve    Int           // Cupo máximo del evento
+  cupo_dis_eve    Int           // Cupo disponible del evento
 
   inscritos       inscripcion[]    // Relación 1:N (evento puede tener muchas inscripciones)
   eventos_carrera evento_carrera[] // Relación 1:N (evento puede tener muchas carreras)
