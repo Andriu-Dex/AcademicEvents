@@ -3,7 +3,7 @@ import axiosInstance from "../api/axiosConfig";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { CalendarDays, Search, CheckCircle } from "lucide-react";
+import { CalendarDays, Search, CheckCircle, Users } from "lucide-react";
 import "./styles/EventsRoute.css";
 
 // Función para formatear fechas correctamente usando UTC
@@ -324,10 +324,19 @@ const EventsRoute = () => {
                 <p className="fecha-evento-er">
                   Fecha: {formatearFechaUTC(evento.fec_ini_eve)} a{" "}
                   {formatearFechaUTC(evento.fec_fin_eve)}
-                </p>
-                <p className="duracion-evento-er">
+                </p>                <p className="duracion-evento-er">
                   Duración: {evento.dur_hor_eve} horas
                 </p>
+                
+                {/* Cupos disponibles */}
+                <div className={`cupos-disponibles ${evento.cupo_dis_eve === 0 ? 'sin-cupos' : ''}`}>
+                  <Users size={16} />
+                  <span>
+                    Cupos disponibles: {evento.cupo_dis_eve || 0} / {evento.cupo_max_eve || 0}
+                  </span>
+                  {evento.cupo_dis_eve === 0 && <span className="agotado-badge">AGOTADO</span>}
+                </div>
+                
                 {/* Modalidad si existe */}
                 {evento.modalidad && (
                   <p className="modalidad">Modalidad: {evento.modalidad}</p>
@@ -338,8 +347,7 @@ const EventsRoute = () => {
                     Dirigido a: {evento.publico_objetivo}
                   </p>
                 )}{" "}
-                {evento.pagado_eve && <p className="pago">Pagado</p>}{" "}
-                <button
+                {evento.pagado_eve && <p className="pago">Pagado</p>}{" "}                <button
                   onClick={() => {
                     // Para reinscripción, marcamos como tal
                     if (
@@ -352,11 +360,13 @@ const EventsRoute = () => {
                       setEventoSeleccionado(evento);
                     }
                   }}
-                  className="btn-inscribirme"
-                  disabled={inscripciones.includes(evento.id_eve)}
+                  className={`btn-inscribirme ${evento.cupo_dis_eve === 0 ? 'btn-agotado' : ''}`}
+                  disabled={inscripciones.includes(evento.id_eve) || evento.cupo_dis_eve === 0}
                 >
                   {inscripciones.includes(evento.id_eve)
                     ? "Ya inscrito"
+                    : evento.cupo_dis_eve === 0
+                    ? "Cupos agotados"
                     : "Inscribirme"}
                 </button>
               </div>
