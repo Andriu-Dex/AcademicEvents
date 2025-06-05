@@ -106,15 +106,22 @@ const crearInscripcion = async (req, res) => {
     });
     if (!cuenta) {
       return res.status(404).json({ msg: "Cuenta de usuario no encontrada" });
-    } // Verificar si el usuario ya está inscrito
+    }    // Verificar si el usuario ya está inscrito
     const yaInscrito = await prisma.inscripcion.findFirst({
       where: { id_cor_ins: id_cue, id_eve_ins: id_eve },
     });
 
+    // Verificar si hay una inscripción finalizada (no permitir reinscripción)
+    if (yaInscrito && yaInscrito.est_ins === "FINALIZADA") {
+      return res.status(400).json({ 
+        msg: "Ya participaste en este evento. No puedes inscribirte nuevamente." 
+      });
+    }
+
     // Permitir reinscripción si la inscripción anterior fue rechazada
     if (yaInscrito && yaInscrito.est_ins !== "RECHAZADA") {
       return res.status(400).json({ msg: "Ya estás inscrito en este evento" });
-    } // Si la inscripción estaba RECHAZADA, la actualizamos en lugar de crear una nueva
+    }// Si la inscripción estaba RECHAZADA, la actualizamos en lugar de crear una nueva
     if (yaInscrito && yaInscrito.est_ins === "RECHAZADA") {
       try {
         // Actualizar la inscripción existente

@@ -39,9 +39,9 @@ const EventsRoute = () => {
   const [filtro, setFiltro] = useState("");
   const [eventoSeleccionado, setEventoSeleccionado] = useState(null);
   const [archivo, setArchivo] = useState(null);
-  const [cartaMotivacion, setCartaMotivacion] = useState("");
-  const [inscripciones, setInscripciones] = useState([]);
+  const [cartaMotivacion, setCartaMotivacion] = useState("");  const [inscripciones, setInscripciones] = useState([]);
   const [inscripcionesRechazadas, setInscripcionesRechazadas] = useState([]);
+  const [inscripcionesFinalizadas, setInscripcionesFinalizadas] = useState([]);
   const [subiendo, setSubiendo] = useState(false);
   const [exitoVisible, setExitoVisible] = useState(false);
   const [usuarioConCarrera, setUsuarioConCarrera] = useState(null);
@@ -85,9 +85,7 @@ const EventsRoute = () => {
       try {
         // Primero obtenemos las inscripciones propias del usuario
         const insRes = await axiosInstance.get("/inscripciones/propias");
-        console.log("Inscripciones del usuario:", insRes.data);
-
-        // Filtramos sólo las inscripciones activas (PENDIENTES o ACEPTADAS)
+        console.log("Inscripciones del usuario:", insRes.data);        // Filtramos sólo las inscripciones activas (PENDIENTES o ACEPTADAS)
         const inscripcionesActivas = insRes.data.filter(
           (ins) => ins.est_ins === "PENDIENTE" || ins.est_ins === "ACEPTADA"
         );
@@ -103,12 +101,25 @@ const EventsRoute = () => {
           (ins) => ins.est_ins === "RECHAZADA"
         );
 
+        // Identificamos las inscripciones finalizadas para evitar reinscripciones
+        const finalizadas = insRes.data.filter(
+          (ins) => ins.est_ins === "FINALIZADA"
+        );
+
         // Almacenar los IDs de eventos con inscripciones rechazadas
         const eventosRechazados = rechazadas.map((ins) => ins.evento.id_eve);
         setInscripcionesRechazadas(eventosRechazados);
         console.log(
           "IDs de eventos con inscripción rechazada:",
           eventosRechazados
+        );
+
+        // Almacenar los IDs de eventos con inscripciones finalizadas
+        const eventosFinalizados = finalizadas.map((ins) => ins.evento.id_eve);
+        setInscripcionesFinalizadas(eventosFinalizados);
+        console.log(
+          "IDs de eventos con inscripción finalizada:",
+          eventosFinalizados
         );
 
         if (rechazadas.length > 0) {
@@ -358,12 +369,13 @@ const EventsRoute = () => {
                     } else {
                       setEventoSeleccionado(evento);
                     }
-                  }}
-                  className={`btn-inscribirme ${evento.cupo_dis_eve === 0 || evento.est_eve === "FINALIZADO" ? 'btn-agotado' : ''}`}
-                  disabled={inscripciones.includes(evento.id_eve) || evento.cupo_dis_eve === 0 || evento.est_eve === "FINALIZADO"}
+                  }}                  className={`btn-inscribirme ${evento.cupo_dis_eve === 0 || evento.est_eve === "FINALIZADO" || inscripcionesFinalizadas.includes(evento.id_eve) ? 'btn-agotado' : ''}`}
+                  disabled={inscripciones.includes(evento.id_eve) || evento.cupo_dis_eve === 0 || evento.est_eve === "FINALIZADO" || inscripcionesFinalizadas.includes(evento.id_eve)}
                 >
                   {inscripciones.includes(evento.id_eve)
                     ? "Ya inscrito"
+                    : inscripcionesFinalizadas.includes(evento.id_eve)
+                    ? "Inscripción finalizada"
                     : evento.est_eve === "FINALIZADO"
                     ? "Evento finalizado"
                     : evento.cupo_dis_eve === 0
