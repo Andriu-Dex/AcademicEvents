@@ -330,27 +330,25 @@ const actualizarEvento = async (req, res) => {
       ? Number(dataEvento.cupo_max_eve)
       : eventoExistente.cupo_max_eve;
 
-    let nuevoCupoDis = eventoExistente.cupo_dis_eve;
-
-    // Si se está modificando el cupo máximo, recalcular cupo disponible
+    let nuevoCupoDis = eventoExistente.cupo_dis_eve;    // Si se está modificando el cupo máximo, recalcular cupo disponible
     if (dataEvento.cupo_max_eve !== undefined && Number(dataEvento.cupo_max_eve) !== eventoExistente.cupo_max_eve) {
-      // Contar inscripciones activas (PENDIENTE, ACEPTADA, FINALIZADA)
-      const inscripcionesActivas = await prisma.inscripcion.count({
+      // Contar solo inscripciones que ocupan cupos (ACEPTADA, FINALIZADA)
+      const inscripcionesQueOcupanCupos = await prisma.inscripcion.count({
         where: {
           id_eve_ins: id,
           est_ins: {
-            in: ["PENDIENTE", "ACEPTADA", "FINALIZADA"]
+            in: ["ACEPTADA", "FINALIZADA"]
           }
         }
       });
 
       // Calcular nuevo cupo disponible
-      nuevoCupoDis = nuevoCupoMax - inscripcionesActivas;
+      nuevoCupoDis = nuevoCupoMax - inscripcionesQueOcupanCupos;
       
       // Asegurar que no sea negativo
       if (nuevoCupoDis < 0) {
         return res.status(400).json({ 
-          msg: `No se puede establecer un cupo máximo de ${nuevoCupoMax} porque ya hay ${inscripcionesActivas} inscripciones activas.` 
+          msg: `No se puede establecer un cupo máximo de ${nuevoCupoMax} porque ya hay ${inscripcionesQueOcupanCupos} inscripciones aceptadas/finalizadas.` 
         });
       }
     }

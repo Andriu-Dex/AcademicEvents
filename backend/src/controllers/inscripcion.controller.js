@@ -392,28 +392,46 @@ const validarInscripcion = async (req, res) => {
         });      }
     }    // Gestionar cupos según el cambio de estado
     try {
+      console.log(`Transición de estado: ${estadoAnterior} → ${est_ins} para evento ${inscripcion.id_eve_ins}`);
+      
       // Transición PENDIENTE → ACEPTADA: reducir cupo (primera vez que se ocupa el cupo)
       if (estadoAnterior === "PENDIENTE" && est_ins === "ACEPTADA") {
+        console.log("Reduciendo cupo: PENDIENTE → ACEPTADA");
         await reducirCupoEvento(inscripcion.id_eve_ins);
       }
       // Transición ACEPTADA → RECHAZADA: aumentar cupo (liberar cupo ocupado)
       else if (estadoAnterior === "ACEPTADA" && est_ins === "RECHAZADA") {
+        console.log("Aumentando cupo: ACEPTADA → RECHAZADA");
+        await aumentarCupoEvento(inscripcion.id_eve_ins);
+      }
+      // Transición FINALIZADA → RECHAZADA: aumentar cupo (liberar cupo que estaba ocupado)
+      else if (estadoAnterior === "FINALIZADA" && est_ins === "RECHAZADA") {
+        console.log("Aumentando cupo: FINALIZADA → RECHAZADA");
         await aumentarCupoEvento(inscripcion.id_eve_ins);
       }
       // Transición PENDIENTE → RECHAZADA: no afecta cupos (nunca se ocupó)
       else if (estadoAnterior === "PENDIENTE" && est_ins === "RECHAZADA") {
+        console.log("Sin cambio de cupo: PENDIENTE → RECHAZADA (nunca ocupó cupo)");
         // No hacer nada con los cupos
       }
       // Transición RECHAZADA → PENDIENTE: no afecta cupos (volverá a estar pendiente)
       else if (estadoAnterior === "RECHAZADA" && est_ins === "PENDIENTE") {
+        console.log("Sin cambio de cupo: RECHAZADA → PENDIENTE (esperando aceptación)");
         // No hacer nada con los cupos hasta que se acepte
+      }
+      // Transición RECHAZADA → ACEPTADA: reducir cupo (ahora sí ocupa cupo)
+      else if (estadoAnterior === "RECHAZADA" && est_ins === "ACEPTADA") {
+        console.log("Reduciendo cupo: RECHAZADA → ACEPTADA");
+        await reducirCupoEvento(inscripcion.id_eve_ins);
       }
       // Transición ACEPTADA → PENDIENTE: mantener cupo ocupado (regresa a revisión)
       else if (estadoAnterior === "ACEPTADA" && est_ins === "PENDIENTE") {
+        console.log("Sin cambio de cupo: ACEPTADA → PENDIENTE (mantiene cupo ocupado)");
         // No hacer nada, mantener el cupo ocupado
       }
-      // Transición cualquier_estado → FINALIZADA: mantener estado actual de cupos
+      // Transición a FINALIZADA: mantener estado actual de cupos
       else if (est_ins === "FINALIZADA") {
+        console.log("Sin cambio de cupo: transición a FINALIZADA (mantiene estado actual)");
         // No hacer nada con los cupos
       }
     } catch (cupoError) {
