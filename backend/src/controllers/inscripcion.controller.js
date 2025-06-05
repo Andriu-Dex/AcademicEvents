@@ -188,27 +188,14 @@ const crearInscripcion = async (req, res) => {
         throw error;
       }
     }    try {
-      // Crear la inscripción
+      // Crear la inscripción en estado PENDIENTE (NO reducimos cupos aún)
       const nuevaInscripcion = await prisma.inscripcion.create({
         data: {
           id_cor_ins: id_cue, // Ahora usamos id_cor_ins en lugar de id_usu_ins
           id_eve_ins: id_eve,
-          est_ins: "PENDIENTE", // Usando el nuevo campo est_ins
+          est_ins: "PENDIENTE", // Los cupos se reducirán solo cuando se ACEPTE
         },
       });
-
-      // Reducir el cupo disponible del evento
-      try {
-        await reducirCupoEvento(id_eve);
-      } catch (cupoError) {
-        // Si hay error al reducir cupo, revertir la inscripción
-        await prisma.inscripcion.delete({
-          where: { id_ins: nuevaInscripcion.id_ins }
-        });
-        return res.status(400).json({ 
-          msg: cupoError.message || "Error al gestionar cupos del evento" 
-        });
-      }
 
       // Crear la carta de motivación
       await prisma.carta_motivacion.create({
@@ -391,26 +378,31 @@ const validarInscripcion = async (req, res) => {
             not_fin_usu: notaFinalNum,
           },
         });      }
-    }
-
-    // Gestionar cupos según el cambio de estado
+    }    // Gestionar cupos según el cambio de estado
     try {
-      // Si cambió de PENDIENTE a RECHAZADA, aumentar cupo disponible
-      if (estadoAnterior === "PENDIENTE" && est_ins === "RECHAZADA") {
-        await aumentarCupoEvento(inscripcion.id_eve_ins);
-      }
-      // Si cambió de RECHAZADA a PENDIENTE, reducir cupo disponible
-      else if (estadoAnterior === "RECHAZADA" && est_ins === "PENDIENTE") {
+      // Transición PENDIENTE → ACEPTADA: reducir cupo (primera vez que se ocupa el cupo)
+      if (estadoAnterior === "PENDIENTE" && est_ins === "ACEPTADA") {
         await reducirCupoEvento(inscripcion.id_eve_ins);
       }
-      // Si cambió de PENDIENTE a ACEPTADA, el cupo ya se redujo cuando se creó la inscripción
-      // Si cambió de ACEPTADA a RECHAZADA, aumentar cupo disponible
+      // Transición ACEPTADA → RECHAZADA: aumentar cupo (liberar cupo ocupado)
       else if (estadoAnterior === "ACEPTADA" && est_ins === "RECHAZADA") {
         await aumentarCupoEvento(inscripcion.id_eve_ins);
       }
-      // Si cambió de ACEPTADA/FINALIZADA a PENDIENTE, verificar cupos disponibles
-      else if ((estadoAnterior === "ACEPTADA" || estadoAnterior === "FINALIZADA") && est_ins === "PENDIENTE") {
-        // En este caso mantenemos el cupo como está, ya que la inscripción sigue ocupando un lugar
+      // Transición PENDIENTE → RECHAZADA: no afecta cupos (nunca se ocupó)
+      else if (estadoAnterior === "PENDIENTE" && est_ins === "RECHAZADA") {
+        // No hacer nada con los cupos
+      }
+      // Transición RECHAZADA → PENDIENTE: no afecta cupos (volverá a estar pendiente)
+      else if (estadoAnterior === "RECHAZADA" && est_ins === "PENDIENTE") {
+        // No hacer nada con los cupos hasta que se acepte
+      }
+      // Transición ACEPTADA → PENDIENTE: mantener cupo ocupado (regresa a revisión)
+      else if (estadoAnterior === "ACEPTADA" && est_ins === "PENDIENTE") {
+        // No hacer nada, mantener el cupo ocupado
+      }
+      // Transición cualquier_estado → FINALIZADA: mantener estado actual de cupos
+      else if (est_ins === "FINALIZADA") {
+        // No hacer nada con los cupos
       }
     } catch (cupoError) {
       console.error("Error al gestionar cupos:", cupoError);
