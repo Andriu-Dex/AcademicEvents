@@ -656,31 +656,63 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
                   </div>
                 ))}
               </div>
+            </div>          </div>
+          
+          <div className="form-grid">
+            <div className="form-group">
+              <label className="valor-eve-ef">Valor del Evento ($) *</label>{" "}
+              <div className="input-with-icon">
+                <DollarSign size={18} />{" "}
+                <input
+                  type="number"
+                  name="val_eve"
+                  value={formData.val_eve}
+                  onChange={handleInputChange}
+                  onWheel={preventScrollChange}
+                  onMouseEnter={(e) => e.target.blur()}
+                  onFocus={(e) =>
+                    e.target.addEventListener("wheel", preventScrollChange, {
+                      passive: false,
+                    })
+                  }
+                  onBlur={(e) =>
+                    e.target.removeEventListener("wheel", preventScrollChange)
+                  }
+                  min="0"
+                  step="0.01"
+                  placeholder="Ej: 10.00"
+                  required
+                />
+              </div>
+            </div>
+            
+            <div className="form-group">
+              <label>Cupo Máximo *</label>
+              <div className="input-with-icon">
+                <Users size={18} />{" "}
+                <input
+                  type="number"
+                  name="cupo_max_eve"
+                  value={formData.cupo_max_eve}
+                  onChange={handleInputChange}
+                  onWheel={preventScrollChange}
+                  onMouseEnter={(e) => e.target.blur()}
+                  onFocus={(e) =>
+                    e.target.addEventListener("wheel", preventScrollChange, {
+                      passive: false,
+                    })
+                  }
+                  onBlur={(e) =>
+                    e.target.removeEventListener("wheel", preventScrollChange)
+                  }
+                  min="1"
+                  step="1"
+                  placeholder="Ej: 50"
+                  required
+                />
+              </div>
             </div>
           </div>
-          <div className="form-group">
-            <label className="valor-eve-ef">Valor del Evento ($) *</label>{" "}
-            <input
-              type="number"
-              name="val_eve"
-              value={formData.val_eve}
-              onChange={handleInputChange}
-              onWheel={preventScrollChange}
-              onMouseEnter={(e) => e.target.blur()}
-              onFocus={(e) =>
-                e.target.addEventListener("wheel", preventScrollChange, {
-                  passive: false,
-                })
-              }
-              onBlur={(e) =>
-                e.target.removeEventListener("wheel", preventScrollChange)
-              }
-              min="0"
-              step="0.01"
-              placeholder="Ej: 10.00"
-              required
-            />
-          </div>{" "}
         </div>
         {/* Imagen de Portada */}
         <div className="event-form-section">
