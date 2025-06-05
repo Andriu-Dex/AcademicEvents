@@ -847,6 +847,75 @@ const obtenerTodasLasInscripciones = async (req, res) => {
   }
 };
 
+// ==============================
+// Cancelar inscripción (usuario)
+// ==============================
+const cancelarInscripcion = async (req, res) => {
+  try {
+    const { id } = req.params; // ID de la inscripción
+    const id_cue = req.usuario.id; // ID de la cuenta del usuario
+
+    // Buscar la inscripción
+    const inscripcion = await prisma.inscripcion.findUnique({
+      where: { id_ins: id },
+      include: { evento: true },
+    });
+
+    if (!inscripcion) {
+      return res.status(404).json({ msg: "Inscripción no encontrada" });
+    }
+
+    // Verificar que la inscripción pertenece al usuario
+    if (inscripcion.id_cor_ins !== id_cue) {
+      return res.status(403).json({ 
+        msg: "No tienes permiso para cancelar esta inscripción" 
+      });
+    }
+
+    // Solo se pueden cancelar inscripciones PENDIENTES o ACEPTADAS
+    if (!["PENDIENTE", "ACEPTADA"].includes(inscripcion.est_ins)) {
+      return res.status(400).json({ 
+        msg: "Solo puedes cancelar inscripciones pendientes o aceptadas" 
+      });
+    }
+
+    // Verificar si el evento ya comenzó
+    const ahora = new Date();
+    if (inscripcion.evento.fec_ini_eve <= ahora) {
+      return res.status(400).json({ 
+        msg: "No puedes cancelar la inscripción después de que el evento haya comenzado" 
+      });
+    }
+
+    // Cambiar el estado a RECHAZADA (cancelada por el usuario)
+    await prisma.inscripcion.update({
+      where: { id_ins: id },
+      data: {
+        est_ins: "RECHAZADA",
+      },
+    });
+
+    // Aumentar el cupo disponible del evento
+    try {
+      await aumentarCupoEvento(inscripcion.id_eve_ins);
+    } catch (cupoError) {
+      console.error("Error al aumentar cupo al cancelar:", cupoError);
+      // No fallar la operación si hay error con cupos
+    }
+
+    res.status(200).json({ 
+      msg: "Inscripción cancelada correctamente",
+      evento: inscripcion.evento.nom_eve
+    });
+  } catch (error) {
+    console.error("Error al cancelar inscripción:", error);
+    res.status(500).json({
+      msg: "Error al cancelar inscripción",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   crearInscripcion,
   validarInscripcion,
@@ -858,4 +927,5 @@ module.exports = {
   manejarErroresDeMulter,
   obtenerInscripcionesDelUsuarioActual,
   obtenerTodasLasInscripciones,
+  cancelarInscripcion,
 };

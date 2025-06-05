@@ -14,6 +14,7 @@ const {
   obtenerInscripcionesPorEvento,
   obtenerInscripcionUsuarioEnEvento,
   obtenerInscripcionesDelUsuarioActual,
+  cancelarInscripcion,
 } = require("../controllers/inscripcion.controller");
 
 // =====================================
@@ -31,6 +32,9 @@ router.post(
 
 // Obtener inscripciones propias del usuario autenticado
 router.get("/propias", verificarToken, obtenerInscripcionesDelUsuarioActual);
+
+// Cancelar inscripción
+router.delete("/cancelar/:id", verificarToken, cancelarInscripcion);
 
 // Reenviar comprobante
 router.put(
