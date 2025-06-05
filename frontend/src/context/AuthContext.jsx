@@ -9,26 +9,52 @@ export const AuthProvider = ({ children }) => {
   const [usuario, setUsuario] = useState(null); // Usuario autenticado
   const [token, setToken] = useState(null); // Token JWT
   const [loading, setLoading] = useState(true); // Indicador de carga inicial
-
   // Al montar el componente, intenta recuperar sesión desde localStorage
   useEffect(() => {
-    const datos = localStorage.getItem("authData");
-    if (datos) {
-      const { usuario, token } = JSON.parse(datos);
-      setUsuario(usuario);
-      setToken(token);
+    try {
+      const datos = localStorage.getItem("authData");
+      if (datos) {
+        const { usuario, token } = JSON.parse(datos);
+        
+        // Validación básica del token antes de usarlo
+        if (token && typeof token === 'string' && token.length > 10) {
+          setUsuario(usuario);
+          setToken(token);
+        } else {
+          console.warn("🚫 Token inválido detectado, limpiando storage...");
+          localStorage.removeItem("authData");
+          localStorage.removeItem("token");
+        }
+      }
+    } catch (error) {
+      console.error("❌ Error al recuperar datos de autenticación:", error);
+      // Limpiar datos corruptos
+      localStorage.removeItem("authData");
+      localStorage.removeItem("token");
     }
     setLoading(false);
   }, []);
-
   // Iniciar sesión y persistir en localStorage
   const login = (usuario, token) => {
-    setUsuario(usuario);
-    setToken(token);
-    localStorage.setItem("authData", JSON.stringify({ usuario, token }));
-    localStorage.setItem("token", token);
-    // Comprobar el token se guarda correctamente
-    console.log("TOKEN:", localStorage.getItem("token"));
+    // Validación básica del token antes de guardarlo
+    if (!token || typeof token !== 'string' || token.length < 10) {
+      console.error("❌ Token inválido recibido en login:", token);
+      return false;
+    }
+    
+    try {
+      setUsuario(usuario);
+      setToken(token);
+      localStorage.setItem("authData", JSON.stringify({ usuario, token }));
+      localStorage.setItem("token", token);
+      
+      // Comprobar el token se guarda correctamente
+      console.log("✅ Login exitoso, token guardado:", token.substring(0, 20) + "...");
+      return true;
+    } catch (error) {
+      console.error("❌ Error al guardar datos de login:", error);
+      return false;
+    }
   };
   // Cerrar sesión y limpiar localStorage
   const logout = () => {

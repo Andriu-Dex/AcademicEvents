@@ -31,51 +31,28 @@ axiosInstance.interceptors.request.use(
 // Variable para controlar que solo se muestre una notificación de sesión expirada
 let tokenExpirationNotified = false;
 
-// Interceptor de respuestas - manejar errores de autenticación
+// Interceptor de respuestas - manejar errores de token
 axiosInstance.interceptors.response.use(
   (response) => {
     return response;
   },
   (error) => {
-    // Si el error es 401 (no autorizado), cerrar sesión automáticamente
-    if (
-      error.response &&
-      error.response.status === 401 &&
-      !tokenExpirationNotified
-    ) {
-      // Verificar si estamos en la página de login o registro
-      const isLoginPage =
-        window.location.pathname === "/login" ||
-        window.location.pathname === "/" ||
-        window.location.pathname === "/register";
+    // Si hay error de autenticación (token inválido, expirado, corrupto)
+    if (error.response?.status === 401) {
+      console.log("🚫 Error 401: Token inválido o expirado");
 
-      // Marcar que ya se ha notificado para evitar múltiples notificaciones
-      tokenExpirationNotified = true;
+      // Limpiar token corrupto automáticamente
+      localStorage.removeItem("token");
+      localStorage.removeItem("authData");
 
-      console.warn("Token expirado o inválido. Cerrando sesión...");
-
-      // Mostrar notificación al usuario solo si NO estamos en la página de login
-      if (!isLoginPage) {
-        toast.error(
-          "Tu sesión ha expirado. Por favor, inicia sesión nuevamente.",
-          {
-            onClose: () => {
-              // Resetear la bandera después de que se cierre la notificación
-              setTimeout(() => {
-                tokenExpirationNotified = false;
-              }, 1000);
-            },
-          }
-        );
-      } // Ejecutar logout si está disponible
-      if (logoutFunction && !isLoginPage) {
+      // Si hay función de logout configurada, ejecutarla
+      if (logoutFunction) {
+        console.log("🔄 Cerrando sesión automáticamente por token inválido");
         logoutFunction();
       }
 
-      // Redirigir al login solo si no estamos ya en la página de login
-      if (!isLoginPage && window.location.pathname !== "/login") {
-        window.location.href = "/login";
-      }
+      // Mostrar notificación al usuario
+      toast.error("Sesión expirada. Por favor, inicia sesión nuevamente.");
     }
 
     return Promise.reject(error);
