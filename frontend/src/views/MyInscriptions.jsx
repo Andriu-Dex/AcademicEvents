@@ -16,6 +16,7 @@ import {
   CalendarPlus,
   Search,
   AlertCircle,
+  Mail,
 } from "lucide-react";
 
 const estadoLabel = {
@@ -150,68 +151,139 @@ const MyInscriptions = () => {
           {inscripcionesOrdenadas.map((ins) => (
             <div key={ins.id_ins} className="myins-card">
               <div className="myins-header">
+                {" "}
                 <h3 className="myins-event-name">{ins.evento.nom_eve}</h3>
                 <span
-                  className={`myins-estado ${estadoLabel[ins.estado].color}`}
+                  className={`myins-estado ${estadoLabel[ins.est_ins].color}`}
                 >
-                  {estadoLabel[ins.estado].icon}
-                  {estadoLabel[ins.estado].text}
+                  {estadoLabel[ins.est_ins].icon}
+                  {estadoLabel[ins.est_ins].text}
                 </span>
               </div>
-
               <p className="myins-datos">
-                Tipo: {ins.evento.tip_eve} <br />
-                Fecha:{" "}
-                {new Date(ins.evento.fec_ini_eve).toLocaleDateString(
-                  "es-EC"
-                )} –{" "}
+                Tipo: {ins.evento.tip_eve} <br /> Fecha:{" "}
+                {new Date(ins.evento.fec_ini_eve).toLocaleDateString("es-EC")} –{" "}
                 {new Date(ins.evento.fec_fin_eve).toLocaleDateString("es-EC")}
-              </p>
-
-              {ins.estado === "FINALIZADA" && (
+              </p>{" "}
+              {/* Mostrar observación del administrador si existe */}
+              {ins.observacion && (
+                <div className="myins-observacion">
+                  <div className="observacion-header">
+                    <AlertCircle size={16} />
+                    <span>Observación del administrador:</span>
+                  </div>
+                  <p className="observacion-texto">{ins.observacion}</p>
+                </div>
+              )}{" "}
+              {ins.est_ins === "FINALIZADA" && (
                 <div className="myins-certificado">
+                  {" "}
                   <button
-                    onClick={() =>
-                      window.open(`/api/certificados/${ins.id_ins}`, "_blank")
-                    }
+                    onClick={async () => {
+                      try {
+                        toast.info("Preparando certificado...");
+                        // Hacer la petición a través de axios para que incluya el token
+                        const response = await axiosInstance.get(
+                          `/certificados/${ins.id_ins}`,
+                          {
+                            responseType: "blob", // Importante para manejar PDF
+                          }
+                        );
+
+                        // Crear un blob URL para el PDF
+                        const blob = new Blob([response.data], {
+                          type: "application/pdf",
+                        });
+                        const url = window.URL.createObjectURL(blob);
+
+                        // Abrir en una nueva pestaña
+                        window.open(url, "_blank");
+                      } catch (error) {
+                        console.error("Error al descargar certificado:", error);
+                        if (error.response?.status === 401) {
+                          toast.error(
+                            "Error de autenticación. Por favor vuelva a iniciar sesión"
+                          );
+                        } else {
+                          toast.error(
+                            "Error al descargar el certificado: " +
+                              (error.response?.data?.msg || error.message)
+                          );
+                        }
+                      }
+                    }}
                     className="btn-descargar"
                   >
                     <Download size={16} />
                     Descargar certificado
+                  </button>{" "}
+                  <button
+                    onClick={async () => {
+                      try {
+                        toast.info("Enviando certificado a tu correo...");
+                        const response = await axiosInstance.post(
+                          `/certificados/enviar/${ins.id_ins}`
+                        );
+                        console.log(
+                          "Respuesta de envío por correo:",
+                          response.data
+                        );
+                        toast.success(
+                          "Certificado enviado a tu correo electrónico"
+                        );
+                      } catch (error) {
+                        console.error(
+                          "Error detallado:",
+                          error.response?.data || error
+                        );
+                        toast.error(
+                          `Error al enviar el certificado: ${
+                            error.response?.data?.msg || error.message
+                          }`
+                        );
+                      }
+                    }}
+                    className="btn-enviar-email"
+                  >
+                    <Mail size={16} />
+                    Recibir por email
                   </button>
-
-                  {ins.cert_enviado ? (
-                    <span className="cert-enviado">
-                      <BadgeCheck size={14} /> Enviado
-                    </span>
-                  ) : (
-                    <span className="cert-pendiente">
-                      <Clock size={14} /> No enviado
-                    </span>
-                  )}
                 </div>
-              )}
-
-              {ins.estado === "ACEPTADA" && (
+              )}{" "}
+              {ins.est_ins === "ACEPTADA" && (
                 <button
                   className="btn-felicitaciones"
                   onClick={() => lanzarConfetti()}
                 >
                   ¡Felicitaciones!
                 </button>
+              )}{" "}
+              {ins.est_ins === "RECHAZADA" && (
+                <div>
+                  <button
+                    className="btn-reenviar"
+                    onClick={() => {
+                      toast.info(
+                        "Redirigiendo a eventos disponibles donde podrás volver a inscribirte",
+                        {
+                          autoClose: 3000,
+                        }
+                      );
+                      window.location.href = "/eventos";
+                    }}
+                  >
+                    <Upload size={16} />
+                    Volver a inscribirme
+                  </button>
+                </div>
               )}
-
-              {(ins.estado === "RECHAZADA" || ins.estado === "PENDIENTE") && (
-                <button
-                  className="btn-reenviar"
-                  onClick={() => {
-                    setInscripcionSeleccionada(ins);
-                    setMostrarModal(true);
-                  }}
-                >
-                  <Upload size={16} />
-                  Reenviar comprobante
-                </button>
+              {ins.est_ins === "PENDIENTE" && (
+                <div className="myins-pendiente">
+                  <Clock size={18} />
+                  <p>
+                    Tu inscripción está siendo revisada por el administrador
+                  </p>
+                </div>
               )}
             </div>
           ))}

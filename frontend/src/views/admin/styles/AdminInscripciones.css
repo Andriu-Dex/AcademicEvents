@@ -1,12 +1,13 @@
 .adminins-container {
   padding: 2.5rem 1.5rem;
-  max-width: 74rem;
-  margin: 2.5rem auto 0 auto;
+  max-width: 50%;
+  margin: 0.5rem 10px 10px auto;
   background: rgba(255, 255, 255, 0.92);
   border-radius: 1.2rem;
   box-shadow: 0 8px 32px rgba(138, 21, 56, 0.09),
     0 1.5px 8px rgba(0, 0, 0, 0.04);
   animation: fadeInInscripciones 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-x: hidden;
 }
 
 @keyframes fadeInInscripciones {
@@ -36,220 +37,85 @@
   width: 100%;
 }
 
+.adminins-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
 .adminins-select {
+  flex: 1;
+  min-width: 200px;
   border: 1.5px solid #8a1538;
   padding: 0.6rem 1rem;
   border-radius: 0.5rem;
   font-size: 1rem;
-  margin-bottom: 0.2rem;
   transition: border 0.2s, box-shadow 0.2s;
   box-shadow: 0 1px 4px rgba(138, 21, 56, 0.04);
 }
+
 .adminins-select:focus {
   outline: none;
   border-color: #2563eb;
   box-shadow: 0 0 0 2px #2563eb33;
 }
 
-.adminins-table {
+.adminins-busqueda {
+  flex: 2;
+  min-width: 250px;
+  position: relative;
+}
+
+.adminins-busqueda-input {
   width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  font-size: 0.95rem;
-  border-radius: 1rem;
-  overflow: hidden;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
-  background: #fff;
-  margin-top: 1.2rem;
-  animation: fadeInInscripciones 0.7s 0.1s backwards;
-}
-
-.adminins-table th,
-.adminins-table td {
-  border-bottom: 1.5px solid #e0e7ef;
-  padding: 1rem;
-  text-align: center;
-  vertical-align: middle;
-}
-
-.adminins-table th {
-  background-color: #f3f4f6;
-  color: #374151;
-  font-weight: 700;
-  font-size: 1rem;
-  border-bottom: 2.5px solid #8a1538;
-  letter-spacing: 0.5px;
-}
-
-.adminins-table tr {
-  transition: box-shadow 0.2s;
-}
-
-.adminins-table tbody tr {
-  background-color: #fff;
-  animation: rowFadeIns 0.4s ease;
-}
-
-@keyframes rowFadeIns {
-  0% {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.adminins-table tbody tr:hover {
-  background-color: #f9f5fa;
-  box-shadow: 0 2px 12px rgba(138, 21, 56, 0.07);
-}
-
-.adminins-table tr:last-child td {
-  border-bottom: none;
-}
-
-.adminins-comprobante {
-  text-align: center;
-}
-
-.comprobante-link {
-  color: #2563eb;
-  transition: color 0.18s;
-}
-.comprobante-link:hover {
-  color: #1e3a8a;
-  transform: scale(1.15);
-}
-
-.comprobante-none {
-  color: #9ca3af;
-  display: block;
-  margin: auto;
-  opacity: 0.7;
-}
-
-.estado-col {
-  text-align: center;
-  font-weight: 600;
-  border-radius: 0.5rem;
-  padding: 0.3rem 0.7rem;
-  letter-spacing: 0.2px;
-  transition: background 0.2s;
-}
-
-.estado-pendiente {
-  background-color: #fef9c3;
-  color: #b45309;
-}
-
-.estado-aceptada {
-  background-color: #bbf7d0;
-  color: #15803d;
-}
-
-.estado-rechazada {
-  background-color: #fecaca;
-  color: #b91c1c;
-}
-
-.acciones-validacion {
-  display: flex;
-  justify-content: center;
-  gap: 0.7rem;
-  margin-bottom: 0.5rem;
-}
-
-.btn {
-  padding: 0.45rem 1.1rem;
-  font-size: 0.97rem;
-  border-radius: 0.5rem;
-  color: white;
-  border: none;
-  cursor: pointer;
-  font-weight: 600;
-  transition: background 0.18s, color 0.18s, box-shadow 0.18s, transform 0.13s;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-}
-
-.btn-aceptar {
-  background-color: #16d452;
-}
-.btn-aceptar:hover {
-  background: #15803d;
-  color: #fff;
-  transform: scale(1.06);
-}
-
-.btn-rechazar {
-  background-color: #dc2626;
-}
-.btn-rechazar:hover {
-  background: #b91c1c;
-  color: #fff;
-  transform: scale(1.06);
-}
-
-.btn-finalizar {
-  background-color: #2563eb;
-  width: 100%;
-  margin-top: 0.25rem;
-}
-.btn-finalizar:hover {
-  background: #1d4ed8;
-  color: #fff;
-  transform: scale(1.04);
-}
-
-.form-finalizar {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.25rem;
-  margin-top: 0.5rem;
-  animation: fadeInInscripciones 0.5s;
-}
-
-.form-row {
-  display: flex;
-  gap: 0.25rem;
-  align-items: center;
-  text-align: left;
-}
-
-.form-row label {
-  font-weight: 600;
-  color: #374151;
-  font-size: 0.95rem;
-  margin-right: 0.5rem;
-  min-width: 70px;
-  text-align: right;
-  display: inline-block;
-}
-
-.input-mini {
-  width: 3.2rem;
-  min-width: 3.2rem;
-  text-align: center;
-  padding: 0.25rem 0.4rem;
   border: 1.5px solid #8a1538;
-  border-radius: 0.375rem;
+  padding: 0.6rem 1rem 0.6rem 2.5rem;
+  border-radius: 0.5rem;
   font-size: 1rem;
-  /* margin-left: 0.5rem; */
   transition: border 0.2s, box-shadow 0.2s;
+  box-shadow: 0 1px 4px rgba(138, 21, 56, 0.04);
 }
-.input-mini:focus {
+
+.adminins-busqueda-input:focus {
   outline: none;
   border-color: #2563eb;
   box-shadow: 0 0 0 2px #2563eb33;
 }
 
-.form-row .input-mini:not(:first-child) {
-  margin-left: 0.5rem;
+.adminins-busqueda-icono {
+  position: absolute;
+  left: 0.8rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #8a1538;
+}
+
+.adminins-cards-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.adminins-cargando {
+  text-align: center;
+  padding: 2rem;
+  color: #6b7280;
+  font-style: italic;
+  background-color: #f9fafb;
+  border-radius: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.adminins-sin-datos {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #6b7280;
+  background-color: #f9fafb;
+  border-radius: 0.5rem;
+  margin-top: 1.5rem;
+  font-size: 1.1rem;
 }
 
 /* ===========================
@@ -257,95 +123,45 @@
    =========================== */
 @media (max-width: 900px) {
   .adminins-container {
-    padding: 1.2rem 0.5rem;
-    max-width: 100vw;
+    padding: 1.2rem 0.8rem;
+    max-width: 100%;
+    margin: 1rem auto 0 auto;
   }
+
   .adminins-title {
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     padding-bottom: 0.7rem;
   }
 }
 
 @media (max-width: 700px) {
   .adminins-container {
-    padding: 0.5rem 0.2rem;
+    padding: 1rem 0.5rem;
     margin: 0.5rem auto 0 auto;
+    border-radius: 0.8rem;
   }
+
   .adminins-title {
-    font-size: 1rem;
+    font-size: 1.2rem;
     padding-bottom: 0.5rem;
   }
-  .adminins-select {
-    font-size: 0.95rem;
-    padding: 0.5rem 0.7rem;
+
+  .adminins-filtros {
+    flex-direction: column;
+    gap: 0.8rem;
   }
 }
 
-@media (max-width: 640px) {
-  .adminins-table,
-  .adminins-table thead,
-  .adminins-table tbody,
-  .adminins-table th,
-  .adminins-table td,
-  .adminins-table tr {
-    display: block;
-    width: 100%;
+@media (max-width: 480px) {
+  .adminins-container {
+    padding: 0.8rem 0.3rem;
   }
 
-  .adminins-table thead {
-    display: none;
+  .adminins-title {
+    font-size: 1.1rem;
   }
 
-  .adminins-table tr {
-    margin-bottom: 1.2rem;
-    border-radius: 0.8rem;
-    box-shadow: 0 2px 10px rgba(138, 21, 56, 0.07);
-    background: #fff;
-    padding: 0.5rem 0.2rem;
-  }
-
-  .adminins-table td {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.7rem 1rem;
-    border: none;
-    border-bottom: 1px solid #e5e7eb;
-    background: none;
-    font-size: 0.97rem;
-    position: relative;
-  }
-
-  .adminins-table td::before {
-    content: attr(data-label);
-    font-weight: 700;
-    color: #8a1538;
-    flex: 1;
-    text-align: left;
-    margin-right: 1rem;
-    min-width: 120px;
-    display: block;
-  }
-
-  .adminins-table tr:last-child td {
-    border-bottom: none;
-  }
-
-  .acciones-validacion {
-    flex-direction: column;
-    gap: 0.4rem;
-    margin-bottom: 0.2rem;
-  }
-
-  .btn {
-    width: 100%;
-    justify-content: center;
-    font-size: 0.95rem;
-    padding: 0.5rem 0.7rem;
-  }
-
-  .form-finalizar {
-    width: 100%;
-    padding: 0.2rem 0;
+  .adminins-cards-container {
+    gap: 0.8rem;
   }
 }

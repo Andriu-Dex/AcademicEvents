@@ -5,6 +5,8 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const path = require("path");
+const { scheduledCleanup } = require("./services/cleanupService");
+const { setupDirectories } = require("./utils/directory.utils");
 
 // ============================
 //  Configuración inicial
@@ -12,6 +14,12 @@ const path = require("path");
 dotenv.config(); // Cargar variables de entorno desde .env
 
 const app = express(); // Crear instancia de la aplicación
+
+// Iniciar el servicio de limpieza programada
+scheduledCleanup();
+
+// Configurar directorios necesarios
+setupDirectories();
 
 // ============================
 //  Middlewares globales
@@ -66,14 +74,23 @@ app.use("/api", carreraRoutes);
 const facultadRoutes = require("./routes/facultad.routes");
 app.use("/api", facultadRoutes);
 
+// Rutas de gestión de coordinadores
+const coordinadorRoutes = require("./routes/coordinador.routes");
+app.use("/api", coordinadorRoutes);
+
 // Rutas de gestión de configuraciones
 app.use("/api/configuracion", require("./routes/configuracion.routes"));
+
+// Rutas de perfil de usuario
+const perfilRoutes = require("./routes/perfil.routes");
+app.use("/api", perfilRoutes);
 
 // ============================
 //  Iniciar el servidor
 // ============================
+const HOST = process.env.HOST || "localhost";
 const PORT = process.env.PORT_BACKEND || 3000;
 
-app.listen(PORT, () => {
-  console.log(`✅Servidor corriendo en puerto ${PORT}✅`);
+app.listen(PORT, HOST, () => {
+  console.log(`✅ Servidor corriendo en http://${HOST}:${PORT} ✅`);
 });

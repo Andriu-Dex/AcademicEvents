@@ -133,19 +133,28 @@ const AdminEvents = () => {
       console.error("Error al eliminar evento:", error);
       toast.error(error.response?.data?.msg || "No se pudo eliminar el evento");
     }
-  };
-  // Formato de fecha personalizado
+  }; // Formato de fecha personalizado
   const formatearFecha = (fechaStr) => {
     if (!fechaStr) return "-";
     try {
-      const fecha = new Date(fechaStr);
+      // Primero aseguramos que la fecha esté en formato UTC para evitar ajustes de zona horaria
+      const fechaParts = fechaStr.split("T")[0].split("-");
+      const year = parseInt(fechaParts[0]);
+      const month = parseInt(fechaParts[1]) - 1; // En JS, los meses van de 0 a 11
+      const day = parseInt(fechaParts[2]);
+
+      const fecha = new Date(Date.UTC(year, month, day));
+
       if (isNaN(fecha.getTime())) return "-"; // Verifica si la fecha es válida
+
       return fecha.toLocaleDateString("es-EC", {
         day: "2-digit",
         month: "2-digit",
         year: "numeric",
+        timeZone: "UTC", // Importante: usar UTC para evitar desplazamientos
       });
     } catch (error) {
+      console.error("Error al formatear fecha:", error);
       return "-";
     }
   };
@@ -244,6 +253,13 @@ const AdminEvents = () => {
 
             return (
               <div key={eve.id_eve} className="admin-event-card">
+                {/* Imagen de portada */}
+                {eve.img_por_eve && (
+                  <div className="admin-event-image">
+                    <img src={eve.img_por_eve} alt={eve.nom_eve} />
+                  </div>
+                )}
+
                 <div className="admin-event-header">
                   <h3 className="admin-event-name">{eve.nom_eve}</h3>
                   <span
@@ -264,6 +280,17 @@ const AdminEvents = () => {
                   {getTipoEventoIcon(eve.tip_eve)}
                   {eve.tip_eve}
                 </div>
+
+                {/* Descripción del evento */}
+                {eve.des_eve && (
+                  <div className="admin-event-description">
+                    <p>
+                      {eve.des_eve.length > 100
+                        ? `${eve.des_eve.substring(0, 100)}...`
+                        : eve.des_eve}
+                    </p>
+                  </div>
+                )}
 
                 <div className="admin-event-details">
                   {" "}

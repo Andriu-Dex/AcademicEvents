@@ -9,6 +9,7 @@ import Home from "./views/Home.jsx"; // Ruta temporal de prueba
 import EventsRoute from "./routes/EventsRoute";
 import CertificatesRoute from "./routes/CertificatesRoute";
 import MyInscriptions from "./views/MyInscriptions";
+import Perfil from "./views/Perfil.jsx";
 
 // Admin (panel de administración)
 import AdminDashboard from "./views/admin/AdminDashboard.jsx";
@@ -35,14 +36,11 @@ function App() {
         <Routes>
           {/* Redirección por defecto a login */}
           <Route path="/" element={<Navigate to="/login" />} />
-
           {/* Rutas públicas */}
           <Route path="/login" element={<Login />} />
           <Route path="/registro" element={<Register />} />
-
           {/* ✅ Ruta temporal para probar Home con diferentes roles */}
           <Route path="/home" element={<Home />} />
-
           {/* Rutas privadas (usuario autenticado) */}
           <Route
             path="/eventos"
@@ -59,7 +57,7 @@ function App() {
                 <MyInscriptions />
               </PrivateLayout>
             }
-          />
+          />{" "}
           <Route
             path="/certificados"
             element={
@@ -68,7 +66,14 @@ function App() {
               </PrivateLayout>
             }
           />
-
+          <Route
+            path="/perfil"
+            element={
+              <PrivateLayout>
+                <Perfil />
+              </PrivateLayout>
+            }
+          />
           {/* Rutas protegidas para ADMIN */}
           <Route
             path="/admin"

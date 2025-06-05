@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import { useAuth } from "../hooks/useAuth";
+import axiosInstance from "../api/axiosConfig";
 import {
   Users,
   Microscope,
@@ -18,24 +20,30 @@ import {
   MapPin,
   Calendar,
   GraduationCap,
+  BookOpen,
+  Monitor,
 } from "lucide-react";
 import "./styles/Home.css";
 
 function Home() {
-  // Simulación de usuario (puede ser null, estudiante o usuario general)
-  // Para probar diferentes interfaces, descomentar una de estas opciones y comentar las otras
+  // Usar el usuario real del contexto de autenticación
+  const { usuario } = useAuth();
+  // Estado para almacenar las carreras
+  const [carreras, setCarreras] = useState([]);
 
-  // OPCIÓN 1: Sin usuario (público general)
-  //const [usuario, setUsuario] = useState(null);
+  // Cargar carreras desde la API
+  useEffect(() => {
+    const cargarCarreras = async () => {
+      try {
+        const res = await axiosInstance.get("/carreras");
+        setCarreras(res.data);
+      } catch (error) {
+        console.error("Error al cargar carreras:", error);
+      }
+    };
 
-  // OPCIÓN 2: Usuario Estudiante - Software
-  const [usuario, setUsuario] = useState({
-    id: 1,
-    nombre: "Juan Pérez",
-    email: "jperez@uta.edu.ec",
-    rol_usu: "ESTUDIANTE",
-    carrera: "SOFTWARE",
-  });
+    cargarCarreras();
+  }, []);
 
   // Facultad actual (para contenido de la página)
   const facultadActual = {
@@ -92,38 +100,25 @@ function Home() {
       email: "cesararosero@uta.edu.ec",
     },
   ];
-
-  // Carreras disponibles
-  const carreras = [
-    {
-      nombre: "Ingeniería en Software",
-      descripcion: "Desarrollo de aplicaciones y sistemas informáticos",
-      duracion: "9 semestres",
-      modalidad: "Presencial",
-      icon: <Laptop size={36} />,
-    },
-    {
-      nombre: "Ingeniería en Sistemas",
-      descripcion: "Administración y gestión de sistemas tecnológicos",
-      duracion: "9 semestres",
-      modalidad: "Presencial",
-      icon: <Wrench size={36} />,
-    },
-    {
-      nombre: "Ingeniería Electrónica",
-      descripcion: "Diseño y desarrollo de dispositivos electrónicos",
-      duracion: "9 semestres",
-      modalidad: "Presencial",
-      icon: <Zap size={36} />,
-    },
-    {
-      nombre: "Ingeniería Industrial",
-      descripcion: "Optimización de procesos y sistemas productivos",
-      duracion: "9 semestres",
-      modalidad: "Presencial",
-      icon: <Factory size={36} />,
-    },
-  ];
+  // Función para obtener el icono correspondiente
+  const getIconComponent = (iconName, size = 36) => {
+    switch (iconName) {
+      case "laptop":
+        return <Laptop size={size} />;
+      case "wrench":
+        return <Wrench size={size} />;
+      case "zap":
+        return <Zap size={size} />;
+      case "factory":
+        return <Factory size={size} />;
+      case "book":
+        return <BookOpen size={size} />;
+      case "monitor":
+        return <Monitor size={size} />;
+      default:
+        return <GraduationCap size={size} />;
+    }
+  };
 
   // Info cards para misión y visión
   const infoCardsPorCarrera = {
@@ -215,9 +210,9 @@ function Home() {
                   }}
                 >
                   <Calendar size={18} className="me-2" /> Explorar eventos
-                </Link>
-                <Link
-                  to="/carreras"
+                </Link>{" "}
+                <a
+                  href="#carreras"
                   className="btn btn-outline-light fw-bold animate__animated animate__fadeInUp"
                   style={{
                     borderRadius: "8px",
@@ -226,7 +221,7 @@ function Home() {
                   }}
                 >
                   <GraduationCap size={18} className="me-2" /> Ver carreras
-                </Link>
+                </a>
               </div>
             </div>
             <div className="col-lg-6">
@@ -303,37 +298,33 @@ function Home() {
               Descubre las opciones académicas que tenemos para ti
             </p>
           </div>
-        </div>
+        </div>{" "}
         <div className="row g-4">
           {carreras.map((carrera, index) => (
             <div className="col-md-6 col-lg-3" key={index}>
               <div className="card h-100 shadow-sm border-0 hover-card">
                 <div className="card-body text-center p-4">
-                  <div className="display-4 mb-3">{carrera.icon}</div>
+                  <div className="display-4 mb-3">
+                    {getIconComponent(carrera.ico_car)}
+                  </div>
                   <h5
                     className="card-title fw-bold"
                     style={{ color: "#8A1538" }}
                   >
-                    {carrera.nombre}
+                    {carrera.nom_car}
                   </h5>
                   <p className="card-text small text-muted mb-3">
-                    {carrera.descripcion}
+                    {carrera.des_car}
                   </p>
                   <div className="mb-3">
                     <span className="badge bg-light text-dark me-2">
-                      <Clock size={14} className="me-1" /> {carrera.duracion}
+                      <Clock size={14} className="me-1" /> {carrera.dur_sem_car}{" "}
+                      semestres
                     </span>
                     <span className="badge bg-light text-dark">
-                      <MapPin size={14} className="me-1" /> {carrera.modalidad}
+                      <MapPin size={14} className="me-1" /> {carrera.mod_car}
                     </span>
                   </div>
-                  <Link
-                    to="/carreras"
-                    className="btn btn-sm"
-                    style={{ background: "#8A1538", color: "white" }}
-                  >
-                    Más información
-                  </Link>
                 </div>
               </div>
             </div>
@@ -414,7 +405,8 @@ function Home() {
             </div>
             <div className="col-md-4 text-md-end">
               <a
-                href="mailto:info@uta.edu.ec"
+                href="https://andriu-dex.github.io/Andriu-Dex/"
+                target="_blank"
                 className="btn fw-bold btn-lg me-2 mb-2"
                 style={{
                   background: "#8A1538",
@@ -425,7 +417,8 @@ function Home() {
                 <Mail size={18} className="me-2" /> Contáctanos
               </a>
               <a
-                href="tel:032521081"
+                href="https://andriu-dex.github.io/Andriu-Dex/"
+                Target="_blank"
                 className="btn btn-outline-secondary fw-bold btn-lg mb-2"
                 style={{ borderRadius: "8px" }}
               >

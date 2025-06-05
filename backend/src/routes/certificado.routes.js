@@ -5,6 +5,7 @@ const router = express.Router();
 const {
   generarCertificado,
   enviarCertificadoPorCorreo,
+  validarCertificado,
 } = require("../controllers/certificado.controller");
 
 // Middlewares
@@ -34,5 +35,9 @@ router.post(
   verificarPropietario,
   enviarCertificadoPorCorreo
 );
+
+// Validar certificado por código (público, no requiere autenticación)
+// Endpoint: GET /api/certificados/validar/:codigo
+router.get("/certificados/validar/:codigo", validarCertificado);
 
 module.exports = router;
