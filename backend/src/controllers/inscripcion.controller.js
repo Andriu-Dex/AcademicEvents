@@ -1,5 +1,6 @@
 const prisma = require("../config/db");
 const { subirImagenAImgur } = require("../utils/imgur.utils");
+const { reducirCupoEvento, aumentarCupoEvento } = require("./evento.controller");
 
 // Manejo de errores de multer
 const manejarErroresDeMulter = (err, req, res, next) => {
@@ -41,12 +42,26 @@ const crearInscripcion = async (req, res) => {
       return res
         .status(400)
         .json({ msg: "Debe incluir una carta de motivación" });
-    }
-
-    // Obtenemos el evento para verificar si tiene costo
-    const evento = await prisma.evento.findUnique({ where: { id_eve } });
+    }    // Obtenemos el evento para verificar si tiene costo y cupos disponibles
+    const evento = await prisma.evento.findUnique({ 
+      where: { id_eve },
+      select: {
+        id_eve: true,
+        val_eve: true,
+        cupo_dis_eve: true,
+        cupo_max_eve: true,
+        nom_eve: true
+      }
+    });
     if (!evento) {
       return res.status(404).json({ msg: "Evento no encontrado" });
+    }
+
+    // Verificar si hay cupos disponibles
+    if (evento.cupo_dis_eve <= 0) {
+      return res.status(400).json({ 
+        msg: "No hay cupos disponibles para este evento" 
+      });
     }
 
     // Solo exigimos comprobante para eventos con costo
@@ -157,9 +172,7 @@ const crearInscripcion = async (req, res) => {
         console.error("Error al actualizar inscripción rechazada:", error);
         throw error;
       }
-    }
-
-    try {
+    }    try {
       // Crear la inscripción
       const nuevaInscripcion = await prisma.inscripcion.create({
         data: {
@@ -168,6 +181,19 @@ const crearInscripcion = async (req, res) => {
           est_ins: "PENDIENTE", // Usando el nuevo campo est_ins
         },
       });
+
+      // Reducir el cupo disponible del evento
+      try {
+        await reducirCupoEvento(id_eve);
+      } catch (cupoError) {
+        // Si hay error al reducir cupo, revertir la inscripción
+        await prisma.inscripcion.delete({
+          where: { id_ins: nuevaInscripcion.id_ins }
+        });
+        return res.status(400).json({ 
+          msg: cupoError.message || "Error al gestionar cupos del evento" 
+        });
+      }
 
       // Crear la carta de motivación
       await prisma.carta_motivacion.create({
