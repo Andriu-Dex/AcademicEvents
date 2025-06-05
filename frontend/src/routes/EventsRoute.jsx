@@ -54,10 +54,8 @@ const EventsRoute = () => {
         // Primero obtenemos el perfil completo con información de carrera
         const perfilRes = await axiosInstance.get("/perfil");
         const perfilCompleto = perfilRes.data;
-        console.log("Perfil completo:", perfilCompleto);
-
-        // Luego obtenemos los eventos
-        const eventosRes = await axiosInstance.get("/eventos");
+        console.log("Perfil completo:", perfilCompleto);        // Luego obtenemos los eventos (incluyendo eventos llenos para mostrar estado)
+        const eventosRes = await axiosInstance.get("/eventos?incluirLlenos=true");
         console.log("Eventos recibidos:", eventosRes.data);
         console.log("Usuario actual:", usuario);
         setEventos(eventosRes.data);
@@ -371,15 +369,14 @@ const EventsRoute = () => {
                     }
                   }}                  className={`btn-inscribirme ${evento.cupo_dis_eve === 0 || evento.est_eve === "FINALIZADO" || inscripcionesFinalizadas.includes(evento.id_eve) ? 'btn-agotado' : ''}`}
                   disabled={inscripciones.includes(evento.id_eve) || evento.cupo_dis_eve === 0 || evento.est_eve === "FINALIZADO" || inscripcionesFinalizadas.includes(evento.id_eve)}
-                >
-                  {inscripciones.includes(evento.id_eve)
+                >                  {inscripciones.includes(evento.id_eve)
                     ? "Ya inscrito"
                     : inscripcionesFinalizadas.includes(evento.id_eve)
                     ? "Inscripción finalizada"
                     : evento.est_eve === "FINALIZADO"
                     ? "Evento finalizado"
                     : evento.cupo_dis_eve === 0
-                    ? "Cupos agotados"
+                    ? "Sin cupos disponibles"
                     : "Inscribirme"}
                 </button>
               </div>

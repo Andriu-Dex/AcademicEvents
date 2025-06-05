@@ -101,12 +101,12 @@ const AdminEvents = () => {
   const navigate = useNavigate();
   // Fecha actual para calcular estados de eventos
   const fechaActual = new Date();
-
   // Usar axiosInstance para la API con interceptores de token
   const cargarEventos = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await axiosInstance.get("/eventos");
+      // Para admin, incluir eventos llenos para gestión completa
+      const res = await axiosInstance.get("/eventos?incluirLlenos=true");
       console.log("Eventos cargados:", res.data);
       setEventos(res.data);
     } catch (error) {

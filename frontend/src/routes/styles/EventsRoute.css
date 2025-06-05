@@ -544,15 +544,25 @@
 
 /* Estilos para botón de inscripción agotado */
 .btn-inscribirme.btn-agotado {
-  background-color: #f87171;
+  background-color: #ef4444;
   color: white;
   cursor: not-allowed;
-  opacity: 0.7;
+  opacity: 0.8;
+  border: 2px solid #dc2626;
+  font-weight: 600;
+  position: relative;
 }
 
 .btn-inscribirme.btn-agotado:hover {
-  background-color: #f87171;
+  background-color: #ef4444;
   transform: none;
+  opacity: 0.9;
+}
+
+/* Efecto visual adicional para botón sin cupos */
+.btn-inscribirme.btn-agotado::before {
+  content: '🚫';
+  margin-right: 0.5rem;
 }
 
 /* Eventos con cupos agotados - estilo de tarjeta */
@@ -561,31 +571,22 @@
   background-color: #fef7f7;
   position: relative;
   overflow: hidden;
+  opacity: 0.9;
 }
 
 .evento-card:has(.sin-cupos)::before {
-  content: '';
+  content: 'SIN CUPOS';
   position: absolute;
-  top: 0;
-  right: 0;
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 0 50px 50px 0;
-  border-color: transparent #dc2626 transparent transparent;
-  z-index: 1;
-}
-
-.evento-card:has(.sin-cupos)::after {
-  content: '¡LLENO!';
-  position: absolute;
-  top: 8px;
-  right: -8px;
+  top: 15px;
+  right: -25px;
+  background: linear-gradient(45deg, #ef4444, #dc2626);
   color: white;
-  font-size: 0.65rem;
+  padding: 5px 30px;
+  font-size: 12px;
   font-weight: bold;
   transform: rotate(45deg);
   z-index: 2;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
 /* Estilos para eventos finalizados */
