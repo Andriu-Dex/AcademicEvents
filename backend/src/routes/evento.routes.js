@@ -20,6 +20,53 @@ const {
 // Obtener todos los eventos (público)
 router.get("/eventos", obtenerEventos);
 
+// Ruta de prueba para verificar cupos de eventos
+router.get("/eventos/test-cupos", async (req, res) => {
+  try {
+    const prisma = require('../config/db');
+    
+    const eventos = await prisma.evento.findMany({
+      select: {
+        id_eve: true,
+        nom_eve: true,
+        cupo_max_eve: true,
+        cupo_dis_eve: true,
+        _count: {
+          select: {
+            inscripciones: {
+              where: {
+                est_ins: {
+                  in: ["PENDIENTE", "ACEPTADA", "FINALIZADA"]
+                }
+              }
+            }
+          }
+        }
+      },
+      take: 5 // Solo los primeros 5 eventos para prueba
+    });
+
+    const resumen = eventos.map(evento => ({
+      id: evento.id_eve,
+      nombre: evento.nom_eve,
+      cupo_maximo: evento.cupo_max_eve,
+      cupo_disponible: evento.cupo_dis_eve,
+      inscripciones_activas: evento._count.inscripciones,
+      cupo_calculado: evento.cupo_max_eve - evento._count.inscripciones
+    }));
+
+    res.json({
+      msg: "✅ Sistema de cupos funcionando",
+      eventos: resumen
+    });
+  } catch (error) {
+    res.status(500).json({
+      msg: "Error al verificar cupos",
+      error: error.message
+    });
+  }
+});
+
 // Obtener un evento por ID (público)
 router.get("/eventos/:id", obtenerEventoPorId);
 
