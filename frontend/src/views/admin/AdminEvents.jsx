@@ -301,13 +301,22 @@ const AdminEvents = () => {
                       {" – "}
                       {obtenerFechaFin(eve)}
                     </span>
-                  </div>
-                  <div className="detail-item">
+                  </div>                  <div className="detail-item">
                     <Clock size={16} className="icon-inline" />
                     <span>
                       <strong>Duración:</strong> {`${eve.dur_hor_eve} horas`}
                     </span>
                   </div>
+                  
+                  {/* Información de cupos */}
+                  <div className="detail-item">
+                    <Users size={16} className="icon-inline" />
+                    <span>
+                      <strong>Cupos:</strong> {eve.cupo_dis_eve || 0} disponibles / {eve.cupo_max_eve || 0} máximo
+                      {eve.cupo_dis_eve === 0 && <span className="admin-cupos-agotados"> (AGOTADO)</span>}
+                    </span>
+                  </div>
+                  
                   {/* Información exclusiva de cursos */}
                   {esCurso && (
                     <>
