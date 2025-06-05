@@ -325,7 +325,37 @@ const actualizarEvento = async (req, res) => {
       });
     } catch (e) {
       return res.status(400).json({ msg: e.message });
-    }    // 6. Actualiza evento principal
+    }    // Verificar si se está modificando el cupo máximo
+    const nuevoCupoMax = dataEvento.cupo_max_eve !== undefined
+      ? Number(dataEvento.cupo_max_eve)
+      : eventoExistente.cupo_max_eve;
+
+    let nuevoCupoDis = eventoExistente.cupo_dis_eve;
+
+    // Si se está modificando el cupo máximo, recalcular cupo disponible
+    if (dataEvento.cupo_max_eve !== undefined && Number(dataEvento.cupo_max_eve) !== eventoExistente.cupo_max_eve) {
+      // Contar inscripciones activas (PENDIENTE, ACEPTADA, FINALIZADA)
+      const inscripcionesActivas = await prisma.inscripcion.count({
+        where: {
+          id_eve_ins: id,
+          est_ins: {
+            in: ["PENDIENTE", "ACEPTADA", "FINALIZADA"]
+          }
+        }
+      });
+
+      // Calcular nuevo cupo disponible
+      nuevoCupoDis = nuevoCupoMax - inscripcionesActivas;
+      
+      // Asegurar que no sea negativo
+      if (nuevoCupoDis < 0) {
+        return res.status(400).json({ 
+          msg: `No se puede establecer un cupo máximo de ${nuevoCupoMax} porque ya hay ${inscripcionesActivas} inscripciones activas.` 
+        });
+      }
+    }
+
+    // 6. Actualiza evento principal
     const eventoActualizado = await prisma.evento.update({
       where: { id_eve: id },
       data: {
@@ -353,14 +383,8 @@ const actualizarEvento = async (req, res) => {
             : eventoExistente.por_min_asi_eve,
         est_eve: dataEvento.est_eve || eventoExistente.est_eve,
         img_por_eve: imgUrl,
-        cupo_max_eve:
-          dataEvento.cupo_max_eve !== undefined
-            ? Number(dataEvento.cupo_max_eve)
-            : eventoExistente.cupo_max_eve,
-        cupo_dis_eve:
-          dataEvento.cupo_dis_eve !== undefined
-            ? Number(dataEvento.cupo_dis_eve)
-            : eventoExistente.cupo_dis_eve,
+        cupo_max_eve: nuevoCupoMax,
+        cupo_dis_eve: nuevoCupoDis,
       },
     });
 
