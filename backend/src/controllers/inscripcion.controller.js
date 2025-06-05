@@ -63,13 +63,11 @@ const crearInscripcion = async (req, res) => {
       return res.status(400).json({ 
         msg: "No se puede inscribir a un evento que ya ha finalizado" 
       });
-    }
-
-    // Verificar si hay cupos disponibles
+    }    // Verificar si hay cupos disponibles para ACEPTAR la inscripción
+    // Las inscripciones PENDIENTES no ocupan cupos, solo verificamos para información
     if (evento.cupo_dis_eve <= 0) {
-      return res.status(400).json({ 
-        msg: "No hay cupos disponibles para este evento" 
-      });
+      // Permitir la inscripción en PENDIENTE, pero informar que está en lista de espera
+      console.log(`Inscripción creada en lista de espera para evento ${evento.nom_eve} - Cupos disponibles: ${evento.cupo_dis_eve}`);
     }
 
     // Solo exigimos comprobante para eventos con costo
@@ -317,7 +315,21 @@ const validarInscripcion = async (req, res) => {
           msg: `No cumple requisitos para finalizar: nota mínima ${notaMinima}, asistencia mínima ${asistenciaMinima}%`,
         });
       }
-    } // Actualizar inscripción con los datos
+    }    // Verificar si hay cupos disponibles antes de aceptar una inscripción
+    if (estadoAnterior === "PENDIENTE" && est_ins === "ACEPTADA") {
+      const eventoActual = await prisma.evento.findUnique({
+        where: { id_eve: inscripcion.id_eve_ins },
+        select: { cupo_dis_eve: true, nom_eve: true }
+      });
+      
+      if (eventoActual && eventoActual.cupo_dis_eve <= 0) {
+        return res.status(400).json({ 
+          msg: `No hay cupos disponibles para aceptar esta inscripción en ${eventoActual.nom_eve}` 
+        });
+      }
+    }
+
+    // Actualizar inscripción con los datos
     const actualizada = await prisma.inscripcion.update({
       where: { id_ins: id },
       data: {
