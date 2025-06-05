@@ -618,19 +618,18 @@ const recalcularCupoEvento = async (id_eve) => {
   if (!evento) {
     throw new Error("Evento no encontrado");
   }
-
-  // Contar inscripciones activas
-  const inscripcionesActivas = await prisma.inscripcion.count({
+  // Contar solo inscripciones que realmente ocupan cupos (ACEPTADAS y FINALIZADAS)
+  const inscripcionesQueOcupanCupos = await prisma.inscripcion.count({
     where: {
       id_eve_ins: id_eve,
       est_ins: {
-        in: ["PENDIENTE", "ACEPTADA", "FINALIZADA"]
+        in: ["ACEPTADA", "FINALIZADA"]
       }
     }
   });
 
   // Calcular cupo disponible correcto
-  const cupoDisponibleCorreto = evento.cupo_max_eve - inscripcionesActivas;
+  const cupoDisponibleCorreto = evento.cupo_max_eve - inscripcionesQueOcupanCupos;
 
   // Actualizar solo si hay diferencia
   if (cupoDisponibleCorreto !== evento.cupo_dis_eve) {
@@ -641,11 +640,10 @@ const recalcularCupoEvento = async (id_eve) => {
       }
     });
   }
-
   return {
     cupo_max_eve: evento.cupo_max_eve,
     cupo_dis_eve: Math.max(0, cupoDisponibleCorreto),
-    inscripciones_activas: inscripcionesActivas
+    inscripciones_que_ocupan_cupos: inscripcionesQueOcupanCupos
   };
 };
 
