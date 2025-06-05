@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Limpiar Token - AcademicEvents</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 1px solid #c3e6cb;
+            border-left: 5px solid #28a745;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 1px solid #f5c6cb;
+            border-left: 5px solid #dc3545;
+        }
+        .info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 1px solid #bee5eb;
+            border-left: 5px solid #17a2b8;
+        }
+        .warning {
+            background-color: #fff3cd;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 1px solid #ffeaa7;
+            border-left: 5px solid #ffc107;
+        }
+        button {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 8px 8px 8px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,123,255,0.3);
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,123,255,0.4);
+        }
+        .danger {
+            background: linear-gradient(45deg, #dc3545, #c82333);
+            box-shadow: 0 2px 10px rgba(220,53,69,0.3);
+        }
+        .danger:hover {
+            box-shadow: 0 4px 15px rgba(220,53,69,0.4);
+        }
+        .success-btn {
+            background: linear-gradient(45deg, #28a745, #218838);
+            box-shadow: 0 2px 10px rgba(40,167,69,0.3);
+        }
+        .success-btn:hover {
+            box-shadow: 0 4px 15px rgba(40,167,69,0.4);
+        }
+        pre {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            border: 1px solid #e9ecef;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        .status-container {
+            min-height: 60px;
+        }
+        .step-list {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 5px solid #007bff;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        h2 {
+            color: #495057;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 10px;
+        }
+        .token-display {
+            font-family: 'Courier New', monospace;
+            background: #f1f3f4;
+            padding: 10px;
+            border-radius: 5px;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Herramienta de Limpieza de Token</h1>
+        <p style="text-align: center; color: #666; font-size: 18px;">
+            Solución para el error "Cannot GET /api/inscripciones"
+        </p>
+        
+        <div class="warning">
+            <strong>🚨 Problema Identificado:</strong> Token JWT corrupto ("test...") en localStorage está causando el error "jwt malformed"
+        </div>
+
+        <div id="status" class="status-container"></div>
+
+        <h2>📊 Estado Actual del Storage</h2>
+        <button onclick="checkCurrentState()">🔍 Verificar Estado Completo</button>
+        <pre id="currentState">Haz clic en "Verificar Estado Completo" para analizar el localStorage</pre>
+
+        <h2>🧹 Herramientas de Limpieza</h2>
+        <div style="margin-bottom: 20px;">
+            <button onclick="clearCorruptedToken()">🎯 Limpiar Token Corrupto</button>
+            <button onclick="clearAllAuthData()" class="danger">🗑️ Limpiar Todos los Datos de Auth</button>
+            <button onclick="clearCompleteStorage()" class="danger">💣 Limpiar Todo el Storage</button>
+        </div>
+
+        <h2>✅ Verificación y Pruebas</h2>
+        <div style="margin-bottom: 20px;">
+            <button onclick="validateCleanup()" class="success-btn">✓ Validar Limpieza</button>
+            <button onclick="testBackendStatus()">🌐 Probar Backend</button>
+            <button onclick="redirectToApp()" class="success-btn">🚀 Ir a la App</button>
+        </div>
+
+        <div class="step-list">
+            <h3>📋 Pasos para Completar la Reparación:</h3>
+            <ol style="line-height: 1.8;">
+                <li><strong>Limpiar datos corruptos:</strong> Usa los botones de arriba para eliminar el token problemático</li>
+                <li><strong>Verificar limpieza:</strong> Confirma que no quedan tokens corruptos</li>
+                <li><strong>Ir a la aplicación:</strong> <a href="http://localhost:5173" target="_blank" style="color: #007bff;">http://localhost:5173</a></li>
+                <li><strong>Hacer login:</strong> Inicia sesión nuevamente con tus credenciales</li>
+                <li><strong>Probar "Mis Inscripciones":</strong> Verifica que la funcionalidad ahora trabaje correctamente</li>
+            </ol>
+        </div>
+
+        <div class="info">
+            <strong>💡 Información Técnica:</strong><br>
+            • Backend URL: http://localhost:3000<br>
+            • Frontend URL: http://localhost:5173<br>
+            • Endpoint problemático: /api/inscripciones/propias<br>
+            • Causa raíz: Token JWT malformado en localStorage
+        </div>
+    </div>
+
+    <script>
+        function showStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('status');
+            const iconMap = {
+                'info': '🔵',
+                'success': '✅',
+                'error': '❌',
+                'warning': '⚠️'
+            };
+            
+            statusDiv.innerHTML = `<div class="${type}">
+                ${iconMap[type] || '🔵'} ${message}
+            </div>`;
+            
+            // Auto-hide después de 8 segundos excepto para errores
+            if (type !== 'error') {
+                setTimeout(() => {
+                    statusDiv.innerHTML = '';
+                }, 8000);
+            }
+        }
+
+        function checkCurrentState() {
+            const currentState = document.getElementById('currentState');
+            const storageData = {};
+            
+            // Analizar localStorage completo
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                const value = localStorage.getItem(key);
+                storageData[key] = value;
+            }
+
+            let output = '';
+            
+            if (Object.keys(storageData).length === 0) {
+                output = '✅ localStorage completamente vacío - Estado limpio';
+                showStatus('localStorage está limpio', 'success');
+            } else {
+                output = 'Contenido actual del localStorage:\n\n';
+                output += JSON.stringify(storageData, null, 2);
+                
+                // Detectar tokens problemáticos
+                const token = localStorage.getItem('token');
+                if (token) {
+                    if (token.startsWith('test')) {
+                        showStatus(`Token corrupto detectado: "${token.substring(0, 25)}..." - ¡NECESITA LIMPIEZA!`, 'error');
+                    } else if (token.length < 50) {
+                        showStatus('Token sospechoso encontrado - podría estar corrupto', 'warning');
+                    } else {
+                        showStatus('Token válido encontrado', 'info');
+                    }
+                } else {
+                    showStatus('No se encontró token en localStorage', 'info');
+                }
+            }
+
+            currentState.textContent = output;
+        }
+
+        function clearCorruptedToken() {
+            try {
+                const token = localStorage.getItem('token');
+                if (token) {
+                    const isCorrupted = token.startsWith('test') || token.length < 50;
+                    localStorage.removeItem('token');
+                    
+                    if (isCorrupted) {
+                        showStatus(`Token corrupto eliminado exitosamente: "${token.substring(0, 20)}..."`, 'success');
+                    } else {
+                        showStatus('Token eliminado (podría haber sido válido)', 'warning');
+                    }
+                } else {
+                    showStatus('No se encontró token para eliminar', 'info');
+                }
+                
+                setTimeout(checkCurrentState, 500);
+            } catch (error) {
+                showStatus('Error al eliminar token: ' + error.message, 'error');
+            }
+        }
+
+        function clearAllAuthData() {
+            try {
+                const authKeys = ['token', 'user', 'authToken', 'accessToken', 'jwt', 'bearer', 'refreshToken', 'authData'];
+                const removedKeys = [];
+                
+                authKeys.forEach(key => {
+                    if (localStorage.getItem(key)) {
+                        localStorage.removeItem(key);
+                        removedKeys.push(key);
+                    }
+                });
+
+                if (removedKeys.length > 0) {
+                    showStatus(`Datos de autenticación eliminados: ${removedKeys.join(', ')}`, 'success');
+                } else {
+                    showStatus('No se encontraron datos de autenticación para eliminar', 'info');
+                }
+                
+                setTimeout(checkCurrentState, 500);
+            } catch (error) {
+                showStatus('Error al limpiar datos de autenticación: ' + error.message, 'error');
+            }
+        }
+
+        function clearCompleteStorage() {
+            if (confirm('⚠️ ¿Estás seguro? Esto eliminará TODOS los datos del localStorage de este sitio.')) {
+                try {
+                    const itemCount = localStorage.length;
+                    localStorage.clear();
+                    sessionStorage.clear(); // Limpiar también sessionStorage
+                    
+                    showStatus(`Storage completamente limpiado (${itemCount} elementos eliminados)`, 'success');
+                    setTimeout(checkCurrentState, 500);
+                } catch (error) {
+                    showStatus('Error al limpiar storage: ' + error.message, 'error');
+                }
+            }
+        }
+
+        function validateCleanup() {
+            checkCurrentState();
+            
+            const token = localStorage.getItem('token');
+            const problematicTokens = [];
+            
+            if (token && token.startsWith('test')) {
+                problematicTokens.push('Token corrupto "test..." aún presente');
+            }
+
+            if (problematicTokens.length === 0) {
+                showStatus('🎉 Validación exitosa - No se encontraron tokens corruptos', 'success');
+            } else {
+                showStatus('⚠️ Validación falló: ' + problematicTokens.join(', '), 'error');
+            }
+        }
+
+        async function testBackendStatus() {
+            try {
+                showStatus('🔄 Verificando conexión con el backend...', 'info');
+                
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 5000);
+                
+                const response = await fetch('http://localhost:3000/api/eventos', {
+                    signal: controller.signal,
+                    method: 'GET'
+                });
+                
+                clearTimeout(timeoutId);
+                
+                if (response.ok) {
+                    showStatus('✅ Backend funcionando correctamente en localhost:3000', 'success');
+                } else {
+                    showStatus(`⚠️ Backend responde con error: ${response.status} ${response.statusText}`, 'warning');
+                }
+            } catch (error) {
+                if (error.name === 'AbortError') {
+                    showStatus('❌ Timeout: El backend no responde. Verifica que esté ejecutándose en localhost:3000', 'error');
+                } else if (error.message.includes('fetch')) {
+                    showStatus('❌ No se puede conectar al backend. Asegúrate de que esté ejecutándose.', 'error');
+                } else {
+                    showStatus('❌ Error de conexión: ' + error.message, 'error');
+                }
+            }
+        }
+
+        function redirectToApp() {
+            showStatus('🚀 Redirigiendo a la aplicación...', 'info');
+            setTimeout(() => {
+                window.open('http://localhost:5173', '_blank');
+            }, 1000);
+        }
+
+        // Verificar estado inicial al cargar
+        window.addEventListener('load', function() {
+            showStatus('🔍 Analizando localStorage...', 'info');
+            setTimeout(checkCurrentState, 500);
+        });
+    </script>
+</body>
+</html>

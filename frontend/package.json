@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",  "scripts": {
-    "dev": "vite --host 192.168.103.50 --port 5173",
+    "dev": "vite --host localhost --port 5173",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
