@@ -95,9 +95,9 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
         tip_eve: evento.tip_eve || "",
         fec_ini_eve: evento.fec_ini_eve ? evento.fec_ini_eve.split("T")[0] : "",
         fec_fin_eve: evento.fec_fin_eve ? evento.fec_fin_eve.split("T")[0] : "",
-        dur_hor_eve: evento.dur_hor_eve ? Number(evento.dur_hor_eve) : "",
-        val_eve: Number(evento.val_eve),
+        dur_hor_eve: evento.dur_hor_eve ? Number(evento.dur_hor_eve) : "",        val_eve: Number(evento.val_eve),
         por_min_asi_eve: Number(evento.por_min_asi_eve),
+        cupo_max_eve: Number(evento.cupo_max_eve) || "",
         img_por_eve: null,
         est_eve: evento.est_eve || "ACTIVO",
         not_min_cur:
@@ -231,9 +231,20 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
     } else if (formData.val_eve < 0) {
       errores.push("El valor del evento debe ser 0 o un número positivo");
     }
-    if (!formData.fec_fin_eve) errores.push("La fecha de fin es obligatoria");
-    if (!formData.dur_hor_eve || formData.dur_hor_eve <= 0)
+    if (!formData.fec_fin_eve) errores.push("La fecha de fin es obligatoria");    if (!formData.dur_hor_eve || formData.dur_hor_eve <= 0)
       errores.push("La duración debe ser mayor a 0 horas");
+    
+    // Validar cupo máximo
+    if (
+      formData.cupo_max_eve === "" ||
+      formData.cupo_max_eve === null ||
+      formData.cupo_max_eve === undefined
+    ) {
+      errores.push("El cupo máximo es obligatorio");
+    } else if (formData.cupo_max_eve <= 0) {
+      errores.push("El cupo máximo debe ser mayor a 0");
+    }
+    
     // Validar fechas
     if (formData.fec_ini_eve && formData.fec_fin_eve) {
       if (new Date(formData.fec_ini_eve) > new Date(formData.fec_fin_eve)) {
@@ -276,10 +287,10 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
       formDataToSend.append("fec_ini_eve", formData.fec_ini_eve);
       formDataToSend.append("val_eve", formData.val_eve);
       formDataToSend.append("img_por_eve", formData.img_por_eve);
-      formDataToSend.append("est_eve", formData.est_eve);
-      formDataToSend.append("fec_fin_eve", formData.fec_fin_eve);
+      formDataToSend.append("est_eve", formData.est_eve);      formDataToSend.append("fec_fin_eve", formData.fec_fin_eve);
       formDataToSend.append("dur_hor_eve", formData.dur_hor_eve);
       formDataToSend.append("por_min_asi_eve", formData.por_min_asi_eve);
+      formDataToSend.append("cupo_max_eve", formData.cupo_max_eve);
 
       // Campos específicos para cursos
       if (formData.tip_eve === "CURSO") {
