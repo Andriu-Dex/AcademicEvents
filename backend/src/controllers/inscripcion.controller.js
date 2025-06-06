@@ -392,22 +392,31 @@ const validarInscripcion = async (req, res) => {
         });      }
     }    // Gestionar cupos según el cambio de estado
     try {
-      console.log(`Transición de estado: ${estadoAnterior} → ${est_ins} para evento ${inscripcion.id_eve_ins}`);
+      console.log(`🔄 GESTIÓN DE CUPOS - Transición de estado: ${estadoAnterior} → ${est_ins} para evento ${inscripcion.id_eve_ins}`);
+      
+      // Obtener estado actual del evento antes del cambio
+      const eventoAntesCambio = await prisma.evento.findUnique({
+        where: { id_eve: inscripcion.id_eve_ins },
+        select: { cupo_dis_eve: true, cupo_max_eve: true, nom_eve: true }
+      });
+      console.log(`📊 Estado del evento "${eventoAntesCambio.nom_eve}" antes del cambio: cupo_dis=${eventoAntesCambio.cupo_dis_eve}, cupo_max=${eventoAntesCambio.cupo_max_eve}`);
       
       // Transición PENDIENTE → ACEPTADA: reducir cupo (primera vez que se ocupa el cupo)
       if (estadoAnterior === "PENDIENTE" && est_ins === "ACEPTADA") {
-        console.log("Reduciendo cupo: PENDIENTE → ACEPTADA");
-        await reducirCupoEvento(inscripcion.id_eve_ins);
-      }
-      // Transición ACEPTADA → RECHAZADA: aumentar cupo (liberar cupo ocupado)
+        console.log("⬇️ Reduciendo cupo: PENDIENTE → ACEPTADA");
+        const resultado = await reducirCupoEvento(inscripcion.id_eve_ins);
+        console.log(`✅ Cupo reducido exitosamente. Nuevo cupo disponible: ${resultado.cupo_dis_eve}`);
+      }      // Transición ACEPTADA → RECHAZADA: aumentar cupo (liberar cupo ocupado)
       else if (estadoAnterior === "ACEPTADA" && est_ins === "RECHAZADA") {
-        console.log("Aumentando cupo: ACEPTADA → RECHAZADA");
-        await aumentarCupoEvento(inscripcion.id_eve_ins);
+        console.log("⬆️ Aumentando cupo: ACEPTADA → RECHAZADA");
+        const resultado = await aumentarCupoEvento(inscripcion.id_eve_ins);
+        console.log(`✅ Cupo aumentado exitosamente. Nuevo cupo disponible: ${resultado.cupo_dis_eve}`);
       }
       // Transición FINALIZADA → RECHAZADA: aumentar cupo (liberar cupo que estaba ocupado)
       else if (estadoAnterior === "FINALIZADA" && est_ins === "RECHAZADA") {
-        console.log("Aumentando cupo: FINALIZADA → RECHAZADA");
-        await aumentarCupoEvento(inscripcion.id_eve_ins);
+        console.log("⬆️ Aumentando cupo: FINALIZADA → RECHAZADA");
+        const resultado = await aumentarCupoEvento(inscripcion.id_eve_ins);
+        console.log(`✅ Cupo aumentado exitosamente. Nuevo cupo disponible: ${resultado.cupo_dis_eve}`);
       }
       // Transición PENDIENTE → RECHAZADA: no afecta cupos (nunca se ocupó)
       else if (estadoAnterior === "PENDIENTE" && est_ins === "RECHAZADA") {
@@ -418,24 +427,27 @@ const validarInscripcion = async (req, res) => {
       else if (estadoAnterior === "RECHAZADA" && est_ins === "PENDIENTE") {
         console.log("Sin cambio de cupo: RECHAZADA → PENDIENTE (esperando aceptación)");
         // No hacer nada con los cupos hasta que se acepte
-      }
-      // Transición RECHAZADA → ACEPTADA: reducir cupo (ahora sí ocupa cupo)
+      }      // Transición RECHAZADA → ACEPTADA: reducir cupo (ahora sí ocupa cupo)
       else if (estadoAnterior === "RECHAZADA" && est_ins === "ACEPTADA") {
-        console.log("Reduciendo cupo: RECHAZADA → ACEPTADA");
-        await reducirCupoEvento(inscripcion.id_eve_ins);
+        console.log("⬇️ Reduciendo cupo: RECHAZADA → ACEPTADA");
+        const resultado = await reducirCupoEvento(inscripcion.id_eve_ins);
+        console.log(`✅ Cupo reducido exitosamente. Nuevo cupo disponible: ${resultado.cupo_dis_eve}`);
       }
       // Transición ACEPTADA → PENDIENTE: mantener cupo ocupado (regresa a revisión)
       else if (estadoAnterior === "ACEPTADA" && est_ins === "PENDIENTE") {
         console.log("Sin cambio de cupo: ACEPTADA → PENDIENTE (mantiene cupo ocupado)");
         // No hacer nada, mantener el cupo ocupado
-      }
-      // Transición a FINALIZADA: mantener estado actual de cupos
+      }      // Transición a FINALIZADA: mantener estado actual de cupos
       else if (est_ins === "FINALIZADA") {
         console.log("Sin cambio de cupo: transición a FINALIZADA (mantiene estado actual)");
         // No hacer nada con los cupos
       }
+      // Agregar log para casos no manejados
+      else {
+        console.log(`⚠️ Transición no requiere cambio de cupo: ${estadoAnterior} → ${est_ins}`);
+      }
     } catch (cupoError) {
-      console.error("Error al gestionar cupos:", cupoError);
+      console.error("❌ Error al gestionar cupos:", cupoError);
       // No fallar la operación por errores de cupo, solo registrar
     }
 
