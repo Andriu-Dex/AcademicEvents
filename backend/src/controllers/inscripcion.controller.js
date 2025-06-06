@@ -321,11 +321,9 @@ const validarInscripcion = async (req, res) => {
     
     if (estadoAnterior === "ACEPTADA" && estadoNuevo === "PENDIENTE") {
       actualizacionCupo = 1; // Una inscripción aceptada vuelve a pendiente: se libera un cupo
-    }
-
-    // Actualizar cupos si es necesario
+    }    // Actualizar cupos si es necesario
     if (actualizacionCupo !== 0) {
-      await prisma.evento.update({
+      const eventoActualizado = await prisma.evento.update({
         where: { id_eve: idEvento },
         data: {
           cupo_dis_eve: {
@@ -335,6 +333,13 @@ const validarInscripcion = async (req, res) => {
       });
       
       console.log(`✅ Cupos actualizados para evento ${idEvento}: ${actualizacionCupo > 0 ? 'incrementado' : 'decrementado'} en ${Math.abs(actualizacionCupo)}`);
+      console.log(`📊 Cupos disponibles después de la actualización: ${eventoActualizado.cupo_dis_eve}`);
+      
+      // BLOQUEO AUTOMÁTICO: Si cupos llegan a 0, bloquear nuevas inscripciones
+      if (eventoActualizado.cupo_dis_eve === 0 && estadoAnterior === "PENDIENTE" && estadoNuevo === "ACEPTADA") {
+        console.log(`🚫 Cupos agotados para evento ${idEvento}. Las nuevas inscripciones serán bloqueadas automáticamente.`);
+        // Nota: El bloqueo se maneja en la función crearInscripcion al verificar cupo_dis_eve > 0
+      }
     }
 
     // Actualizar inscripción con los datos

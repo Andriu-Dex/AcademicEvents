@@ -132,11 +132,15 @@ const EventsRoute = () => {
     };
 
     if (usuario) obtenerInscripciones();
-  }, [usuario, eventos.length]);
-  const inscribirse = async () => {
+  }, [usuario, eventos.length]);  const inscribirse = async () => {
     // Validación de campos
     if (!cartaMotivacion.trim()) {
       return toast.error("Debes escribir una carta de motivación");
+    }
+
+    // ✅ VALIDACIÓN DE CUPOS DISPONIBLES
+    if (eventoSeleccionado.cupo_dis_eve <= 0) {
+      return toast.error("No hay cupos disponibles para este evento");
     }
 
     // Solo validar archivo para eventos con costo o si se subió un archivo para eventos gratuitos
