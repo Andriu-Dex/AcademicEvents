@@ -23,6 +23,7 @@ import AdminEventInscription from "./views/admin/AdminEventInscription";
 
 // Rutas protegidas
 import PrivateRouteAdmin from "./components/PrivateRouteAdmin";
+import ProtectedRoute from "./components/ProtectedRoute";
 import PrivateLayout from "./layouts/PrivateLayout";
 
 // Toasts
@@ -40,38 +41,46 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/registro" element={<Register />} />
           {/* ✅ Ruta temporal para probar Home con diferentes roles */}
-          <Route path="/home" element={<Home />} />
+          <Route path="/home" element={<Home />} />{" "}
           {/* Rutas privadas (usuario autenticado) */}
           <Route
             path="/eventos"
             element={
-              <PrivateLayout>
-                <EventsRoute />
-              </PrivateLayout>
+              <ProtectedRoute>
+                <PrivateLayout>
+                  <EventsRoute />
+                </PrivateLayout>
+              </ProtectedRoute>
             }
           />
           <Route
             path="/inscripciones"
             element={
-              <PrivateLayout>
-                <MyInscriptions />
-              </PrivateLayout>
+              <ProtectedRoute>
+                <PrivateLayout>
+                  <MyInscriptions />
+                </PrivateLayout>
+              </ProtectedRoute>
             }
           />{" "}
           <Route
             path="/certificados"
             element={
-              <PrivateLayout>
-                <CertificatesRoute />
-              </PrivateLayout>
+              <ProtectedRoute>
+                <PrivateLayout>
+                  <CertificatesRoute />
+                </PrivateLayout>
+              </ProtectedRoute>
             }
           />
           <Route
             path="/perfil"
             element={
-              <PrivateLayout>
-                <Perfil />
-              </PrivateLayout>
+              <ProtectedRoute>
+                <PrivateLayout>
+                  <Perfil />
+                </PrivateLayout>
+              </ProtectedRoute>
             }
           />
           {/* Rutas protegidas para ADMIN */}

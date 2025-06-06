@@ -121,6 +121,42 @@
   margin-bottom: 0.5rem;
 }
 
+/* Cupos disponibles */
+.evento-card .cupos-disponibles {
+  font-size: 0.85rem;
+  color: #3b82f6;
+  font-weight: 600;
+  background-color: #dbeafe;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  display: inline-block;
+  margin: 0.25rem 0;
+  border: 1px solid #93c5fd;
+}
+
+/* Cupos disponibles cuando están agotados (0) */
+.evento-card .cupos-agotados {
+  font-size: 0.85rem;
+  color: #dc2626;
+  font-weight: 600;
+  background-color: #fee2e2;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  display: inline-block;
+  margin: 0.25rem 0;
+  border: 1px solid #fca5a5;
+  animation: pulse-red 2s infinite;
+}
+
+@keyframes pulse-red {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.1);
+  }
+}
+
 .nombre-evento-er {
   font-size: 1.5rem;
   font-weight: 600;

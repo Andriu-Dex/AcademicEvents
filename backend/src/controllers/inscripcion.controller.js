@@ -41,12 +41,17 @@ const crearInscripcion = async (req, res) => {
       return res
         .status(400)
         .json({ msg: "Debe incluir una carta de motivación" });
-    }
-
-    // Obtenemos el evento para verificar si tiene costo
+    }    // Obtenemos el evento para verificar si tiene costo
     const evento = await prisma.evento.findUnique({ where: { id_eve } });
     if (!evento) {
       return res.status(404).json({ msg: "Evento no encontrado" });
+    }
+
+    // Verificar cupos disponibles
+    if (evento.cupo_dis_eve <= 0) {
+      return res.status(400).json({ 
+        msg: "No hay cupos disponibles para este evento" 
+      });
     }
 
     // Solo exigimos comprobante para eventos con costo
@@ -245,9 +250,7 @@ const validarInscripcion = async (req, res) => {
     ];
     if (!estadosPermitidos.includes(est_ins)) {
       return res.status(400).json({ msg: "Estado inválido" });
-    }
-
-    const inscripcion = await prisma.inscripcion.findUnique({
+    }    const inscripcion = await prisma.inscripcion.findUnique({
       where: { id_ins: id },
       include: { evento: true },
     });
@@ -255,6 +258,10 @@ const validarInscripcion = async (req, res) => {
     if (!inscripcion) {
       return res.status(404).json({ msg: "Inscripción no encontrada" });
     }
+
+    const estadoAnterior = inscripcion.est_ins;
+    const estadoNuevo = est_ins;
+    const idEvento = inscripcion.id_eve_ins;
 
     const asistenciaNum = Number(asistencia);
     const notaFinalNum = Number(nota_final);
@@ -287,8 +294,55 @@ const validarInscripcion = async (req, res) => {
         return res.status(400).json({
           msg: `No cumple requisitos para finalizar: nota mínima ${notaMinima}, asistencia mínima ${asistenciaMinima}%`,
         });
+      }    }
+
+    // VALIDACIÓN DE CUPOS DISPONIBLES
+    // Verificar que hay cupos disponibles antes de aceptar una inscripción
+    if (estadoAnterior === "PENDIENTE" && estadoNuevo === "ACEPTADA") {
+      if (inscripcion.evento.cupo_dis_eve <= 0) {
+        return res.status(400).json({
+          msg: "No se puede aceptar la inscripción: no hay cupos disponibles para este evento"
+        });
       }
-    } // Actualizar inscripción con los datos
+    }
+
+    // LÓGICA DE ACTUALIZACIÓN DE CUPOS
+    let actualizacionCupo = 0;
+    
+    // Casos donde se debe decrementar el cupo (quitar un cupo disponible)
+    if (estadoAnterior === "PENDIENTE" && estadoNuevo === "ACEPTADA") {
+      actualizacionCupo = -1; // Una inscripción pendiente se acepta: se ocupa un cupo
+    }
+    
+    // Casos donde se debe incrementar el cupo (liberar un cupo)
+    if ((estadoAnterior === "ACEPTADA" || estadoAnterior === "PENDIENTE") && estadoNuevo === "RECHAZADA") {
+      actualizacionCupo = 1; // Una inscripción aceptada/pendiente se rechaza: se libera un cupo
+    }
+    
+    if (estadoAnterior === "ACEPTADA" && estadoNuevo === "PENDIENTE") {
+      actualizacionCupo = 1; // Una inscripción aceptada vuelve a pendiente: se libera un cupo
+    }    // Actualizar cupos si es necesario
+    if (actualizacionCupo !== 0) {
+      const eventoActualizado = await prisma.evento.update({
+        where: { id_eve: idEvento },
+        data: {
+          cupo_dis_eve: {
+            increment: actualizacionCupo
+          }
+        }
+      });
+      
+      console.log(`✅ Cupos actualizados para evento ${idEvento}: ${actualizacionCupo > 0 ? 'incrementado' : 'decrementado'} en ${Math.abs(actualizacionCupo)}`);
+      console.log(`📊 Cupos disponibles después de la actualización: ${eventoActualizado.cupo_dis_eve}`);
+      
+      // BLOQUEO AUTOMÁTICO: Si cupos llegan a 0, bloquear nuevas inscripciones
+      if (eventoActualizado.cupo_dis_eve === 0 && estadoAnterior === "PENDIENTE" && estadoNuevo === "ACEPTADA") {
+        console.log(`🚫 Cupos agotados para evento ${idEvento}. Las nuevas inscripciones serán bloqueadas automáticamente.`);
+        // Nota: El bloqueo se maneja en la función crearInscripcion al verificar cupo_dis_eve > 0
+      }
+    }
+
+    // Actualizar inscripción con los datos
     const actualizada = await prisma.inscripcion.update({
       where: { id_ins: id },
       data: {

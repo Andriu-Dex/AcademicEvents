@@ -19,6 +19,7 @@ import {
   Tag,
   Plus,
   Star,
+  UserCheck,
 } from "lucide-react";
 import "./styles/AdminEvents.css";
 
@@ -301,11 +302,37 @@ const AdminEvents = () => {
                       {" – "}
                       {obtenerFechaFin(eve)}
                     </span>
-                  </div>
+                  </div>{" "}
                   <div className="detail-item">
                     <Clock size={16} className="icon-inline" />
                     <span>
                       <strong>Duración:</strong> {`${eve.dur_hor_eve} horas`}
+                    </span>
+                  </div>{" "}
+                  {/* Cupos disponibles */}
+                  <div
+                    className={`detail-item ${
+                      eve.cupo_dis_eve === 0
+                        ? "cupos-agotados-admin"
+                        : "cupos-disponibles-admin"
+                    }`}
+                  >
+                    <UserCheck size={16} className="icon-inline" />
+                    {/* <span>
+                      {eve.cupo_dis_eve === 0 
+                        ? `🚫 AGOTADO (0 de ${eve.cupo_max_eve})` 
+                        : `Cupos disponibles: ${eve.cupo_dis_eve || 0} de ${eve.cupo_max_eve}`
+                      }
+                    </span> */}
+                    <span>
+                      <strong>
+                        {eve.cupo_dis_eve === 0
+                          ? "🚫 AGOTADO"
+                          : "Cupos disponibles:"}
+                      </strong>{" "}
+                      {eve.cupo_dis_eve === 0
+                        ? ` (0 de ${eve.cupo_max_eve})`
+                        : ` ${eve.cupo_dis_eve || 0} de ${eve.cupo_max_eve}`}
                     </span>
                   </div>
                   {/* Información exclusiva de cursos */}
