@@ -93,8 +93,7 @@ const Navbar = () => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
-  if (!usuario) {
+  }, []); if (!usuario) {
     return (
       <nav className="navbar">
         <div className="navbar-left">
@@ -106,8 +105,22 @@ const Navbar = () => {
             />
             <span className="navbar-logo-text">FISEI</span>
           </Link>
+          <div className="navbar-links">
+            <Link to="/home" className={`nav-link-item ${isActive("/home")}`}>
+              <span className="nav-link-icon">
+                <Home size={18} />
+              </span>
+              <span>Inicio</span>
+            </Link>
+            <Link to="/eventos" className={`nav-link-item ${isActive("/eventos")}`}>
+              <span className="nav-link-icon">
+                <Calendar size={18} />
+              </span>
+              <span>Eventos Públicos</span>
+            </Link>
+          </div>
         </div>
-        <div className="navbar-links">
+        <div className="navbar-auth">
           <Link to="/login" className="navbar-auth-btn login-btn">
             Iniciar sesión
           </Link>
