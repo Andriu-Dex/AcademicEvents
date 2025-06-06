@@ -1,0 +1,238 @@
+/* Contenedor principal */
+.eventos-container {
+    padding: 1.5rem;
+    background-color: #f9f9f9;
+    min-height: 100vh;
+    border-radius: 15px;
+    border: black 1px solid;
+    box-shadow: 0 0px 12px rgb(255, 255, 255, 0.8),
+        0 0px 24px rgb(151, 151, 151, 0.8);
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Título de la página */
+.eventos-titulo {
+    font-size: 1.7rem;
+    font-weight: bold;
+    color: #8a1538;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Contenedor del buscador */
+.buscador-contenedor {
+    position: relative;
+    margin-bottom: 2rem;
+    max-width: 600px;
+}
+
+.buscador-icono {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6b7280;
+}
+
+/* Campo de búsqueda */
+.eventos-buscador {
+    width: 100%;
+    padding: 12px 12px 12px 40px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.eventos-buscador:focus {
+    outline: none;
+    border-color: #8a1538;
+    box-shadow: 0 0 0 3px rgba(138, 21, 56, 0.1);
+}
+
+/* Grid de eventos */
+.eventos-grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    max-width: 100%;
+}
+
+/* Ajuste para cuando hay pocos eventos, que no se vean demasiado anchos */
+@media (min-width: 768px) {
+    .eventos-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 350px));
+        justify-content: center;
+    }
+}
+
+/* Tarjeta de evento */
+.evento-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.evento-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+        0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    border-color: #8a1538;
+}
+
+/* Imagen de portada */
+.evento-portada {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 8px 8px 0 0;
+    margin-bottom: 0.5rem;
+}
+
+/* Nombre del evento */
+.nombre-evento-er {
+    font-size: 1.25rem;
+    color: #1f2937;
+    margin: 1rem;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+/* Tipo de evento */
+.tipo {
+    display: inline-block;
+    padding: 4px 12px;
+    background-color: #8a1538;
+    color: white;
+    border-radius: 16px;
+    font-size: 0.875rem;
+    margin: 0 1rem;
+    font-weight: 500;
+}
+
+/* Precio del evento */
+.precio-evento {
+    color: #059669;
+    font-weight: 600;
+    margin: 0.5rem 1rem;
+}
+
+/* Descripción del evento */
+.descripcion-evento {
+    padding: 0 1rem;
+    color: #4b5563;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin: 0.75rem 0;
+}
+
+/* Fecha y duración */
+.fecha-evento-er,
+.duracion-evento-er {
+    color: #6b7280;
+    font-size: 0.95rem;
+    margin: 0.25rem 1rem;
+}
+
+/* Cupos disponibles */
+.cupos-disponibles {
+    font-size: 0.85rem;
+    color: #3b82f6;
+    font-weight: 600;
+    background-color: #dbeafe;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+    display: inline-block;
+    margin: 0.5rem 1rem;
+    border: 1px solid #93c5fd;
+}
+
+/* Cupos agotados */
+.cupos-agotados {
+    font-size: 0.85rem;
+    color: #dc2626;
+    font-weight: 600;
+    background-color: #fee2e2;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+    display: inline-block;
+    margin: 0.5rem 1rem;
+    border: 1px solid #fca5a5;
+}
+
+/* Modalidad y público objetivo */
+.modalidad,
+.publico {
+    color: #4b5563;
+    font-size: 0.9rem;
+    margin: 0.25rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Estado de carga */
+.eventos-cargando {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    gap: 1rem;
+}
+
+.spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border-left-color: #8a1538;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Mensaje cuando no hay eventos */
+.eventos-vacios {
+    text-align: center;
+    padding: 3rem;
+    color: #6b7280;
+    font-size: 1.1rem;
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+    .eventos-container {
+        padding: 1rem;
+    }
+
+    .eventos-titulo {
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .eventos-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .evento-card {
+        margin-bottom: 1.5rem;
+    }
+}
