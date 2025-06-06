@@ -260,8 +260,59 @@ const obtenerEventos = async (req, res) => {
       orderBy: { fec_ini_eve: "asc" },
     });
 
-    // ¡NO transformes nada, solo devuelve!
-    res.status(200).json(eventos);
+    // 🔧 AUTO-CORRECCIÓN MASIVA DE CUPOS INCONSISTENTES
+    // Verificar y corregir cupos disponibles para todos los eventos si están mal calculados
+    const eventosCorregidos = await Promise.allSettled(
+      eventos.map(async (evento) => {
+        try {
+          const inscripcionesAceptadas = await prisma.inscripcion.count({
+            where: {
+              id_eve_ins: evento.id_eve,
+              est_ins: "ACEPTADA"
+            }
+          });
+
+          const cupoMaximo = evento.cupo_max_eve;
+          const cupoDisponibleActual = evento.cupo_dis_eve;
+          const cupoDisponibleCorrecto = Math.max(0, cupoMaximo - inscripcionesAceptadas);
+
+          // Si hay inconsistencia, corregir automáticamente
+          if (cupoDisponibleActual !== cupoDisponibleCorrecto) {
+            console.log(`🔧 AUTO-CORRECCIÓN DE CUPOS para evento ${evento.id_eve} "${evento.nom_eve}":`);
+            console.log(`   - Cupo máximo: ${cupoMaximo}`);
+            console.log(`   - Inscripciones aceptadas: ${inscripcionesAceptadas}`);
+            console.log(`   - Cupo disponible actual (incorrecto): ${cupoDisponibleActual}`);
+            console.log(`   - Cupo disponible correcto: ${cupoDisponibleCorrecto}`);
+
+            // Actualizar en la base de datos
+            const eventoCorregido = await prisma.evento.update({
+              where: { id_eve: evento.id_eve },
+              data: { cupo_dis_eve: cupoDisponibleCorrecto },
+            });
+
+            console.log(`✅ Cupos corregidos automáticamente para evento "${evento.nom_eve}"`);
+            
+            // Retornar el evento con los cupos corregidos
+            return {
+              ...evento,
+              cupo_dis_eve: cupoDisponibleCorrecto
+            };
+          }
+
+          return evento;
+        } catch (error) {
+          console.error(`❌ Error en auto-corrección de cupos para evento ${evento.id_eve}:`, error);
+          return evento; // Retornar el evento original si falla la corrección
+        }
+      })
+    );
+
+    // Extraer los eventos corregidos (exitosos) de los resultados
+    const eventosFinales = eventosCorregidos.map(result => 
+      result.status === 'fulfilled' ? result.value : result.reason
+    );
+
+    res.status(200).json(eventosFinales);
   } catch (error) {
     res.status(500).json({
       msg: "Error al obtener eventos",
@@ -526,6 +577,50 @@ const obtenerEventoPorId = async (req, res) => {
 
     if (!evento) {
       return res.status(404).json({ msg: "Evento no encontrado" });
+    }
+
+    // 🔧 AUTO-CORRECCIÓN DE CUPOS INCONSISTENTES
+    // Verificar y corregir cupos disponibles si están mal calculados
+    try {
+      const inscripcionesAceptadas = await prisma.inscripcion.count({
+        where: {
+          id_eve_ins: parseInt(id),
+          est_ins: "ACEPTADA"
+        }
+      });
+
+      const cupoMaximo = evento.cupo_max_eve;
+      const cupoDisponibleActual = evento.cupo_dis_eve;
+      const cupoDisponibleCorrecto = Math.max(0, cupoMaximo - inscripcionesAceptadas);
+
+      // Si hay inconsistencia, corregir automáticamente
+      if (cupoDisponibleActual !== cupoDisponibleCorrecto) {
+        console.log(`🔧 AUTO-CORRECCIÓN DE CUPOS para evento ${id}:`);
+        console.log(`   - Cupo máximo: ${cupoMaximo}`);
+        console.log(`   - Inscripciones aceptadas: ${inscripcionesAceptadas}`);
+        console.log(`   - Cupo disponible actual (incorrecto): ${cupoDisponibleActual}`);
+        console.log(`   - Cupo disponible correcto: ${cupoDisponibleCorrecto}`);
+
+        // Actualizar en la base de datos
+        const eventoCorregido = await prisma.evento.update({
+          where: { id_eve: parseInt(id) },
+          data: { cupo_dis_eve: cupoDisponibleCorrecto },
+          include: {
+            eventos_curso: true,
+            eventos_carrera: {
+              include: { carrera: { select: { nom_car: true, id_car: true } } },
+            },
+          },
+        });
+
+        console.log(`✅ Cupos corregidos automáticamente para evento "${evento.nom_eve}"`);
+        
+        // Retornar el evento con los cupos corregidos
+        return res.status(200).json(eventoCorregido);
+      }
+    } catch (correccionError) {
+      console.error("❌ Error en auto-corrección de cupos:", correccionError);
+      // Si falla la corrección, continuar con el evento original
     }
 
     res.status(200).json(evento);
