@@ -208,7 +208,8 @@ function Home() {
                     padding: "12px 24px",
                   }}
                 >
-                  <Calendar size={18} className="me-2" /> Explorar eventos
+                  <Calendar size={18} className="me-2" />
+                  {isAuthenticated ? "Explorar eventos" : "Explorar eventos públicos"}
                 </Link>{" "}
                 <a
                   href="#carreras"
@@ -455,14 +456,17 @@ function Home() {
                   >
                     Carreras
                   </Link>
-                </li>                <li className="mb-2">
-                  <Link
-                    to="/inscripciones"
-                    className="text-white text-decoration-none small"
-                  >
-                    Inscripciones
-                  </Link>
                 </li>
+                {isAuthenticated && (
+                  <li className="mb-2">
+                    <Link
+                      to="/inscripciones"
+                      className="text-white text-decoration-none small"
+                    >
+                      Inscripciones
+                    </Link>
+                  </li>
+                )}
               </ul>
             </div>
             <div className="col-md-3 mb-3 mb-md-0">
