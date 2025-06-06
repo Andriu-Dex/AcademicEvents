@@ -25,6 +25,7 @@ function validarEventoGeneral({
   dur_hor_eve,
   por_min_asi_eve,
   fec_fin_eve,
+  cupo_max_eve,
 }) {
   // Validar que el nombre del evento esté presente
   if (!nom_eve) throw new Error("El nombre del evento es obligatorio");
@@ -48,9 +49,11 @@ function validarEventoGeneral({
   if (por_min_asi_eve < 80 || por_min_asi_eve > 100)
     throw new Error(
       "El porcentaje mínimo de asistencia debe estar entre 80% y 100%"
-    );
-  // Validar que la fecha de fin esté presente
+    );  // Validar que la fecha de fin esté presente
   if (!fec_fin_eve) throw new Error("La fecha de fin es obligatoria");
+  // Validar que el cupo máximo esté presente y sea mayor a 0
+  if (cupo_max_eve === undefined || cupo_max_eve <= 0)
+    throw new Error("El cupo máximo es obligatorio y debe ser mayor a 0");
   // Validar que la fecha de inicio no sea posterior a la fecha de fin
   const fechaInicio = new Date(fec_ini_eve);
   const fechaFin = new Date(fec_fin_eve);
@@ -95,8 +98,7 @@ async function subirImagenAImgur(archivo) {
 
 //Crea un nuevo evento académico, y si es curso, lo vincula a evento_curso
 const crearEvento = async (req, res) => {
-  try {
-    const {
+  try {    const {
       nom_eve,
       des_eve,
       tip_eve,
@@ -105,19 +107,19 @@ const crearEvento = async (req, res) => {
       dur_hor_eve,
       por_min_asi_eve,
       fec_fin_eve,
+      cupo_max_eve,
       not_min_cur,
-    } = req.body; // Convertir valores numéricos y fechas antes de validar
+    } = req.body;    // Convertir valores numéricos y fechas antes de validar
     const durHor = Number(dur_hor_eve);
     const porcMinAsi = Number(por_min_asi_eve);
     const valNum = Number(val_eve);
+    const cupoMax = Number(cupo_max_eve);
 
     // Convertir fechas a objetos Date en UTC para evitar problemas de zona horaria
     const fechaIni = parseUTCDate(fec_ini_eve);
     const fechaFin = parseUTCDate(fec_fin_eve);
 
-    const notaMin = not_min_cur !== undefined ? Number(not_min_cur) : undefined;
-
-    // Validaciones generales (debería validar los campos nuevos)
+    const notaMin = not_min_cur !== undefined ? Number(not_min_cur) : undefined;    // Validaciones generales (debería validar los campos nuevos)
     try {
       validarEventoGeneral({
         nom_eve,
@@ -127,6 +129,7 @@ const crearEvento = async (req, res) => {
         dur_hor_eve: durHor,
         por_min_asi_eve: porcMinAsi,
         fec_fin_eve: fechaFin,
+        cupo_max_eve: cupoMax,
       });
     } catch (e) {
       return res.status(400).json({ msg: e.message });
@@ -150,9 +153,7 @@ const crearEvento = async (req, res) => {
         console.error("Error al subir imagen:", error);
         // Si falla la carga, usamos la imagen por defecto
       }
-    }
-
-    // Crear evento en la base de datos
+    }    // Crear evento en la base de datos
     const nuevoEvento = await prisma.evento.create({
       data: {
         nom_eve,
@@ -163,6 +164,8 @@ const crearEvento = async (req, res) => {
         dur_hor_eve: durHor,
         por_min_asi_eve: porcMinAsi,
         fec_fin_eve: fechaFin,
+        cupo_max_eve: cupoMax,
+        cupo_dis_eve: cupoMax, // Inicialmente disponible = máximo
         img_por_eve: imgUrl,
         est_eve: "ACTIVO", // Estado por defecto según nuevo enum
         id_cue_cre_eve: req.usuario.id, // ID de la cuenta creadora
@@ -254,6 +257,7 @@ const camposEvento = [
   "dur_hor_eve",
   "por_min_asi_eve",
   "fec_fin_eve",
+  "cupo_max_eve",
 ];
 const camposCurso = ["not_min_cur"];
 // 2. Función principal para actualizar un evento
@@ -289,9 +293,7 @@ const actualizarEvento = async (req, res) => {
         console.error("Error al subir imagen en actualización:", error);
         // Si falla la carga, mantenemos la imagen anterior
       }
-    }
-
-    try {
+    }    try {
       validarEventoGeneral({
         nom_eve: dataEvento.nom_eve ?? eventoExistente.nom_eve,
         tip_eve: dataEvento.tip_eve ?? eventoExistente.tip_eve,
@@ -301,10 +303,11 @@ const actualizarEvento = async (req, res) => {
         por_min_asi_eve:
           dataEvento.por_min_asi_eve ?? eventoExistente.por_min_asi_eve,
         fec_fin_eve: dataEvento.fec_fin_eve ?? eventoExistente.fec_fin_eve,
+        cupo_max_eve: dataEvento.cupo_max_eve ?? eventoExistente.cupo_max_eve,
       });
     } catch (e) {
       return res.status(400).json({ msg: e.message });
-    } // 6. Actualiza evento principal
+    }// 6. Actualiza evento principal
     const eventoActualizado = await prisma.evento.update({
       where: { id_eve: id },
       data: {
@@ -325,11 +328,14 @@ const actualizarEvento = async (req, res) => {
         dur_hor_eve:
           dataEvento.dur_hor_eve !== undefined
             ? Number(dataEvento.dur_hor_eve)
-            : eventoExistente.dur_hor_eve,
-        por_min_asi_eve:
+            : eventoExistente.dur_hor_eve,        por_min_asi_eve:
           dataEvento.por_min_asi_eve !== undefined
             ? Number(dataEvento.por_min_asi_eve)
             : eventoExistente.por_min_asi_eve,
+        cupo_max_eve:
+          dataEvento.cupo_max_eve !== undefined
+            ? Number(dataEvento.cupo_max_eve)
+            : eventoExistente.cupo_max_eve,
         est_eve: dataEvento.est_eve || eventoExistente.est_eve,
         img_por_eve: imgUrl,
       },

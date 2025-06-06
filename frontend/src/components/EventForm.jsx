@@ -29,8 +29,7 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [carreras, setCarreras] = useState([]);
-  const [imagenPreview, setImagenPreview] = useState(null);
-  const [formData, setFormData] = useState({
+  const [imagenPreview, setImagenPreview] = useState(null);  const [formData, setFormData] = useState({
     nom_eve: "",
     des_eve: "",
     tip_eve: "",
@@ -40,6 +39,7 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
     val_eve: "",
     not_min_cur: "",
     por_min_asi_eve: "",
+    cupo_max_eve: "",
     carrerasSeleccionadas: [],
     esEventoGeneral: false,
     img_por_eve: null,
@@ -86,9 +86,7 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
       const esGeneral = !tieneCarreras;
 
       console.log("Carreras asociadas:", carrerasIds);
-      console.log("Es evento general:", esGeneral);
-
-      // Convertir fechas a formato yyyy-MM-dd
+      console.log("Es evento general:", esGeneral);      // Convertir fechas a formato yyyy-MM-dd
       setFormData({
         nom_eve: evento.nom_eve || "",
         des_eve: evento.des_eve || "",
@@ -98,6 +96,7 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
         dur_hor_eve: evento.dur_hor_eve ? Number(evento.dur_hor_eve) : "",
         val_eve: Number(evento.val_eve),
         por_min_asi_eve: Number(evento.por_min_asi_eve),
+        cupo_max_eve: evento.cupo_max_eve ? Number(evento.cupo_max_eve) : "",
         img_por_eve: null,
         est_eve: evento.est_eve || "ACTIVO",
         not_min_cur:
@@ -230,10 +229,11 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
       errores.push("El valor del evento es obligatorio");
     } else if (formData.val_eve < 0) {
       errores.push("El valor del evento debe ser 0 o un número positivo");
-    }
-    if (!formData.fec_fin_eve) errores.push("La fecha de fin es obligatoria");
+    }    if (!formData.fec_fin_eve) errores.push("La fecha de fin es obligatoria");
     if (!formData.dur_hor_eve || formData.dur_hor_eve <= 0)
       errores.push("La duración debe ser mayor a 0 horas");
+    if (!formData.cupo_max_eve || formData.cupo_max_eve <= 0)
+      errores.push("El cupo máximo debe ser mayor a 0");
     // Validar fechas
     if (formData.fec_ini_eve && formData.fec_fin_eve) {
       if (new Date(formData.fec_ini_eve) > new Date(formData.fec_fin_eve)) {
@@ -276,10 +276,10 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
       formDataToSend.append("fec_ini_eve", formData.fec_ini_eve);
       formDataToSend.append("val_eve", formData.val_eve);
       formDataToSend.append("img_por_eve", formData.img_por_eve);
-      formDataToSend.append("est_eve", formData.est_eve);
-      formDataToSend.append("fec_fin_eve", formData.fec_fin_eve);
+      formDataToSend.append("est_eve", formData.est_eve);      formDataToSend.append("fec_fin_eve", formData.fec_fin_eve);
       formDataToSend.append("dur_hor_eve", formData.dur_hor_eve);
       formDataToSend.append("por_min_asi_eve", formData.por_min_asi_eve);
+      formDataToSend.append("cupo_max_eve", formData.cupo_max_eve);
 
       // Campos específicos para cursos
       if (formData.tip_eve === "CURSO") {
@@ -531,9 +531,7 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
                   required
                 />
               </div>
-            </div>
-
-            <div className="form-group">
+            </div>            <div className="form-group">
               <label>Porcentaje Mínimo de Asistencia % *</label>
               <div className="input-with-icon">
                 <Star size={18} />{" "}
@@ -556,6 +554,33 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
                   max="100"
                   step="0.1"
                   placeholder="80"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label>Cupo Máximo *</label>
+              <div className="input-with-icon">
+                <Users size={18} />{" "}
+                <input
+                  type="number"
+                  name="cupo_max_eve"
+                  value={formData.cupo_max_eve}
+                  onChange={handleInputChange}
+                  onWheel={preventScrollChange}
+                  onMouseEnter={(e) => e.target.blur()}
+                  onFocus={(e) =>
+                    e.target.addEventListener("wheel", preventScrollChange, {
+                      passive: false,
+                    })
+                  }
+                  onBlur={(e) =>
+                    e.target.removeEventListener("wheel", preventScrollChange)
+                  }
+                  min="1"
+                  step="1"
+                  placeholder="Ej: 50, 100, 200"
                   required
                 />
               </div>
