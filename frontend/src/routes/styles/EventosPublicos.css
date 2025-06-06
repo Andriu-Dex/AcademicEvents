@@ -110,13 +110,16 @@
 /* Tipo de evento */
 .tipo {
     display: inline-block;
-    padding: 4px 12px;
+    padding: 5px 12px;
     background-color: #8a1538;
     color: white;
     border-radius: 16px;
-    font-size: 0.875rem;
+    font-size: 0.9rem;
     margin: 0 1rem;
-    font-weight: 500;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    box-shadow: 0 2px 4px rgba(138, 21, 56, 0.2);
 }
 
 /* Precio del evento */
@@ -146,14 +149,14 @@
 /* Cupos disponibles */
 .cupos-disponibles {
     font-size: 0.85rem;
-    color: #3b82f6;
+    color: #8a1538;
     font-weight: 600;
-    background-color: #dbeafe;
+    background-color: #fdf2f5;
     padding: 0.25rem 0.5rem;
     border-radius: 0.375rem;
     display: inline-block;
     margin: 0.5rem 1rem;
-    border: 1px solid #93c5fd;
+    border: 1px solid #e5c0cc;
 }
 
 /* Cupos agotados */
@@ -178,9 +181,11 @@
     align-items: center;
     gap: 0.5rem;
     padding: 0.25rem 0.75rem;
-    background-color: #f3f4f6;
+    background-color: #f8f0f4;
     border-radius: 0.375rem;
     width: fit-content;
+    border: 1px solid #e5c0cc;
+    color: #8a1538;
 }
 
 /* Footer del evento */
@@ -218,7 +223,8 @@
 /* Botón de requisitos */
 .btn-requisitos {
     padding: 0.5rem 1rem;
-    background-color: #8a1538;
+    background-color: #4b5563;
+    /* Color gris oscuro que combina con vino */
     color: white;
     border: none;
     border-radius: 0.375rem;
@@ -226,10 +232,14 @@
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .btn-requisitos:hover {
-    background-color: #6a102c;
+    background-color: #6B7280;
     transform: translateY(-1px);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -249,6 +259,7 @@
     text-align: center;
     display: flex;
     align-items: center;
+    gap: 0.25rem;
     justify-content: center;
 }
 
@@ -256,6 +267,322 @@
     background-color: #065f46;
     transform: translateY(-1px);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos para el toast de detalles del evento */
+.toast-detalle-evento {
+    width: auto !important;
+    max-width: 700px !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2) !important;
+    border-radius: 12px !important;
+}
+
+.detalle-evento-toast {
+    padding: 0;
+    max-height: 85vh;
+    overflow-y: auto;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #fff9fb;
+    border-radius: 8px;
+    color: #333;
+    scrollbar-width: thin;
+    border: 1px solid #e5c0cc;
+}
+
+.detalle-evento-toast::-webkit-scrollbar {
+    width: 8px;
+}
+
+.detalle-evento-toast::-webkit-scrollbar-track {
+    background: #f8f0f4;
+}
+
+.detalle-evento-toast::-webkit-scrollbar-thumb {
+    background-color: #8a1538;
+    border-radius: 20px;
+}
+
+/* Header del toast */
+.toast-header {
+    background-color: #8a1538;
+    background-image: linear-gradient(135deg, #8a1538 0%, #a61c48 100%);
+    color: white;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.detalle-evento-toast h3.toast-titulo {
+    font-size: 1.5rem;
+    margin: 0;
+    font-weight: 600;
+    color: white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.toast-badges {
+    display: flex;
+    gap: 8px;
+}
+
+.toast-estado-badge {
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.toast-estado-badge.activo {
+    background-color: rgba(22, 163, 74, 0.3);
+    color: #ecfdf5;
+}
+
+.toast-estado-badge.inactivo {
+    background-color: rgba(220, 38, 38, 0.3);
+    color: #fef2f2;
+}
+
+.toast-tipo-badge {
+    background-color: #f8f0f4;
+    color: #8a1538;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: 1px solid #e5c0cc;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* Grid layout para información */
+.toast-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 15px;
+    padding: 15px 20px;
+    background-color: #fffafc;
+    border-bottom: 1px solid #f1dae1;
+}
+
+/* Secciones */
+.toast-seccion {
+    margin-bottom: 22px;
+    padding: 0 20px;
+    background-color: #fffafc;
+    position: relative;
+}
+
+.toast-seccion:last-child {
+    margin-bottom: 15px;
+}
+
+.toast-seccion h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+    margin: 15px 0 12px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e9ecef;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.toast-seccion h5 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #444;
+    margin: 12px 0 8px;
+}
+
+/* Contenido dentro de las secciones */
+.toast-contenido {
+    padding: 5px 0;
+    border-radius: 8px;
+}
+
+.toast-info-item {
+    display: flex;
+    padding: 8px 0;
+    border-bottom: 1px dashed #eee;
+}
+
+.toast-info-item:last-child {
+    border-bottom: none;
+}
+
+.toast-label {
+    font-weight: 500;
+    color: #495057;
+    width: 120px;
+    min-width: 120px;
+}
+
+.toast-value {
+    color: #343a40;
+    font-weight: 400;
+}
+
+.toast-value.emphasized {
+    font-weight: 600;
+    color: #8a1538;
+}
+
+.toast-value.gratuito {
+    color: #16a34a;
+    font-weight: 600;
+}
+
+.toast-value.pago {
+    color: #9f1239;
+    font-weight: 600;
+}
+
+.total-cupos {
+    font-weight: normal;
+    font-size: 0.9em;
+    opacity: 0.8;
+    margin-left: 4px;
+}
+
+/* Descripciones */
+.toast-descripcion {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #495057;
+    background-color: #f8f0f4;
+    padding: 12px 15px;
+    border-radius: 8px;
+    border: 1px solid #e5c0cc;
+    margin-top: 5px;
+    white-space: pre-line;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Sección de requisitos destacada */
+.requisitos-seccion {
+    background-color: #fdf2f5;
+    padding: 18px 20px;
+    margin: 0;
+    border-top: 1px solid #e5c0cc;
+    border-bottom: 1px solid #e5c0cc;
+}
+
+.requisitos-seccion h4 {
+    color: #8a1538;
+    border-bottom-color: #e5c0cc;
+}
+
+.requisitos-contenido {
+    padding: 0;
+}
+
+/* Carreras elegibles */
+.carreras-elegibles {
+    margin-top: 15px;
+    padding: 0;
+}
+
+.carreras-lista {
+    list-style: none;
+    padding: 0;
+    margin: 8px 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.carrera-item {
+    background-color: #f5f6f8;
+    color: #444;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    display: inline-block;
+    border: 1px solid #ddd;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* Estilos para los tipos de usuarios */
+.usuario-requisitos {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    padding: 12px;
+    background-color: #f8eff1;
+    border-radius: 8px;
+    border: 1px solid #e5c0cc;
+    box-shadow: 0 2px 4px rgba(138, 21, 56, 0.05);
+}
+
+.usuario-requisitos h5 {
+    color: #8a1538;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.usuarios-lista {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.usuario-item {
+    background-color: #f8eff1;
+    color: #8a1538;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    display: inline-block;
+    border: 1px solid #e5c0cc;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* Curso requisitos */
+.curso-requisitos {
+    margin-top: 15px;
+    padding: 12px;
+    background-color: #fdf2f5;
+    border-radius: 8px;
+    border: 1px solid #e5c0cc;
+}
+
+.curso-requisitos h5 {
+    color: #8a1538;
+    margin-top: 0;
+}
+
+.toast-info {
+    font-style: italic;
+    color: #666;
+    margin: 8px 0;
+}
+
+/* Footer del toast */
+.toast-footer {
+    background-color: #f8f0f4;
+    border-top: 1px solid #e5c0cc;
+    padding: 15px 20px;
+    text-align: center;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+.toast-nota {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #8a1538;
+    font-style: italic;
+    font-weight: 500;
 }
 
 /* Estado de carga */
@@ -293,6 +620,13 @@
     padding: 3rem;
     color: #6b7280;
     font-size: 1.1rem;
+}
+
+/* Icono inline */
+.inline-icon {
+    vertical-align: middle;
+    margin-right: 4px;
+    display: inline-block;
 }
 
 /* Estilos responsivos */
