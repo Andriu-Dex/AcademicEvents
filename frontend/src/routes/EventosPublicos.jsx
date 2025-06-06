@@ -160,8 +160,7 @@ const EventosPublicos = () => {
                                 </p>                    <div className="evento-footer">
                                     <div className={`estado-evento ${evento.est_eve?.toLowerCase()}`}>
                                         {evento.est_eve === "ACTIVO" ? "⚡ ACTIVO" : "⏸️ INACTIVO"}
-                                    </div>
-                                    <button
+                                    </div>                                    <button
                                         onClick={() => {
                                             toast.info(
                                                 <div>
@@ -183,6 +182,9 @@ const EventosPublicos = () => {
                                     >
                                         Ver Requisitos
                                     </button>
+                                    <Link to="/login" className="btn-inscribirme">
+                                        Inscribirme
+                                    </Link>
                                 </div>
                             </div>
                         ))}
