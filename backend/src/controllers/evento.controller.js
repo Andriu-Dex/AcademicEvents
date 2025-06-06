@@ -51,27 +51,27 @@ function validarEventoGeneral({
       "El porcentaje mínimo de asistencia debe estar entre 80% y 100%"
     );  // Validar que la fecha de fin esté presente
   if (!fec_fin_eve) throw new Error("La fecha de fin es obligatoria");
-  
+
   // Validaciones específicas para cupo máximo
   if (cupo_max_eve === undefined || cupo_max_eve === null || cupo_max_eve === "") {
     throw new Error("❌ El cupo máximo es obligatorio. Por favor ingrese un valor válido.");
   }
-  
+
   // Convertir a número y realizar validaciones detalladas
   const cupoMaxNum = Number(cupo_max_eve);
-  
+
   if (isNaN(cupoMaxNum)) {
     throw new Error("❌ El cupo máximo debe ser un número válido. Ejemplo: 50, 100, 200");
   }
-  
+
   if (cupoMaxNum <= 0) {
     throw new Error("❌ El cupo máximo debe ser mayor a 0. Valor mínimo permitido: 1 persona");
   }
-  
+
   if (!Number.isInteger(cupoMaxNum)) {
     throw new Error("❌ El cupo máximo debe ser un número entero (sin decimales). Ejemplo: 50, no 50.5");
   }
-  
+
   if (cupoMaxNum > 10000) {
     throw new Error("❌ El cupo máximo no puede exceder las 10,000 personas por razones de capacidad");
   }
@@ -119,7 +119,8 @@ async function subirImagenAImgur(archivo) {
 
 //Crea un nuevo evento académico, y si es curso, lo vincula a evento_curso
 const crearEvento = async (req, res) => {
-  try {    const {
+  try {
+    const {
       nom_eve,
       des_eve,
       tip_eve,
@@ -179,7 +180,7 @@ const crearEvento = async (req, res) => {
     if (cupoMax !== Number(cupoMax) || cupoMax <= 0) {
       throw new Error("❌ Error interno: El cupo máximo no se pudo procesar correctamente");
     }
-    
+
     const nuevoEvento = await prisma.evento.create({
       data: {
         nom_eve,
@@ -291,7 +292,7 @@ const obtenerEventos = async (req, res) => {
             });
 
             console.log(`✅ Cupos corregidos automáticamente para evento "${evento.nom_eve}"`);
-            
+
             // Retornar el evento con los cupos corregidos
             return {
               ...evento,
@@ -308,7 +309,7 @@ const obtenerEventos = async (req, res) => {
     );
 
     // Extraer los eventos corregidos (exitosos) de los resultados
-    const eventosFinales = eventosCorregidos.map(result => 
+    const eventosFinales = eventosCorregidos.map(result =>
       result.status === 'fulfilled' ? result.value : result.reason
     );
 
@@ -371,7 +372,7 @@ const actualizarEvento = async (req, res) => {
         console.error("Error al subir imagen en actualización:", error);
         // Si falla la carga, mantenemos la imagen anterior
       }
-    }    try {
+    } try {
       validarEventoGeneral({
         nom_eve: dataEvento.nom_eve ?? eventoExistente.nom_eve,
         tip_eve: dataEvento.tip_eve ?? eventoExistente.tip_eve,
@@ -392,10 +393,10 @@ const actualizarEvento = async (req, res) => {
       const nuevoCupoMax = Number(dataEvento.cupo_max_eve);
       const cupoMaxAnterior = eventoExistente.cupo_max_eve;
       const cupoDisponibleAnterior = eventoExistente.cupo_dis_eve;
-      
+
       // Calcular cuántos cupos están ocupados actualmente
       const cuposOcupados = cupoMaxAnterior - cupoDisponibleAnterior;
-      
+
       // El nuevo cupo disponible será el nuevo máximo menos los cupos ocupados
       // Pero asegurándonos de que no sea negativo
       cupoDisponibleActualizado = Math.max(0, nuevoCupoMax - cuposOcupados);
@@ -584,7 +585,7 @@ const obtenerEventoPorId = async (req, res) => {
     try {
       const inscripcionesAceptadas = await prisma.inscripcion.count({
         where: {
-          id_eve_ins: parseInt(id),
+          id_eve_ins: id, // No convertir a entero, es un String en el esquema
           est_ins: "ACEPTADA"
         }
       });
@@ -603,7 +604,7 @@ const obtenerEventoPorId = async (req, res) => {
 
         // Actualizar en la base de datos
         const eventoCorregido = await prisma.evento.update({
-          where: { id_eve: parseInt(id) },
+          where: { id_eve: id }, // No convertir a entero, es un String en el esquema
           data: { cupo_dis_eve: cupoDisponibleCorrecto },
           include: {
             eventos_curso: true,
@@ -614,7 +615,7 @@ const obtenerEventoPorId = async (req, res) => {
         });
 
         console.log(`✅ Cupos corregidos automáticamente para evento "${evento.nom_eve}"`);
-        
+
         // Retornar el evento con los cupos corregidos
         return res.status(200).json(eventoCorregido);
       }
