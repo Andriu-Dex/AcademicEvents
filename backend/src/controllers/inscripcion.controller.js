@@ -294,6 +294,15 @@ const validarInscripcion = async (req, res) => {
         return res.status(400).json({
           msg: `No cumple requisitos para finalizar: nota mínima ${notaMinima}, asistencia mínima ${asistenciaMinima}%`,
         });
+      }    }
+
+    // VALIDACIÓN DE CUPOS DISPONIBLES
+    // Verificar que hay cupos disponibles antes de aceptar una inscripción
+    if (estadoAnterior === "PENDIENTE" && estadoNuevo === "ACEPTADA") {
+      if (inscripcion.evento.cupo_dis_eve <= 0) {
+        return res.status(400).json({
+          msg: "No se puede aceptar la inscripción: no hay cupos disponibles para este evento"
+        });
       }
     }
 

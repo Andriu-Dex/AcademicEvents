@@ -1,6 +1,5 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState, useCallback } from "react";
-import { useParams } from "react-router-dom";
 import axios from "axios";
 import { BadgeCheck, Clock, Ban, Eye, Download, Loader } from "lucide-react";
 import { toast } from "react-toastify";
@@ -63,7 +62,7 @@ const AdminEventInscription = () => {
       const token = localStorage.getItem("token");
       await axios.put(
         `${import.meta.env.VITE_API_URL}/api/inscripciones/validar/${id_ins}`,
-        { estado },
+        { est_ins: estado }, // Corregido: usar est_ins en lugar de estado
         { headers: { Authorization: `Bearer ${token}` } }
       );
       // Actualizar tanto las inscripciones como la información del evento
@@ -72,8 +71,9 @@ const AdminEventInscription = () => {
         obtenerNombreEvento() // Esto actualizará los cupos disponibles
       ]);
       toast.success(`Inscripción ${estado.toLowerCase()} exitosamente`);
-    } catch {
-      toast.error("No se pudo actualizar el estado");
+    } catch (error) {
+      console.error("Error al cambiar estado:", error);
+      toast.error(error.response?.data?.msg || "No se pudo actualizar el estado");
     } finally {
       setActualizandoId(null);
     }
@@ -84,7 +84,16 @@ const AdminEventInscription = () => {
       ? inscripciones
       : inscripciones.filter((i) => i.estado === filtro);
 
-  return (    <div className="admininscription-container">
+  // Cargar datos cuando el componente se monta
+  useEffect(() => {
+    Promise.all([
+      obtenerInscripciones(),
+      obtenerNombreEvento()
+    ]);
+  }, [id, obtenerInscripciones, obtenerNombreEvento]);
+
+  return (
+    <div className="admininscription-container">
       <div className="evento-header">
         <h2 className="admininscription-title">
           Inscripciones para:{" "}
