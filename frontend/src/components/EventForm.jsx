@@ -163,26 +163,39 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
         };
       });
       return;
-    }
-
-    // Para inputs numéricos, asegurarse de que se conviertan correctamente
+    }    // Para inputs numéricos, asegurarse de que se conviertan correctamente
     if (type === "number") {
       let numericValue = value === "" ? "" : Number(value);
 
       // Validaciones específicas para campos que no pueden ser negativos
       const camposPositivos = ["cupo_max_eve", "dur_hor_eve"];
       if (camposPositivos.includes(name) && numericValue < 0) {
-        // No permitir valores negativos para estos campos
+        // Mostrar mensaje específico para valores negativos
+        if (name === "cupo_max_eve") {
+          toast.error("❌ El cupo máximo no puede ser negativo");
+        }
         return;
       }
 
-      // Validación específica para cupo_max_eve (debe ser al menos 1)
-      if (name === "cupo_max_eve" && numericValue !== "" && numericValue < 1) {
-        return;
+      // Validación específica para cupo_max_eve
+      if (name === "cupo_max_eve") {
+        if (numericValue !== "" && numericValue < 1) {
+          toast.error("❌ El cupo máximo debe ser al menos 1 persona");
+          return;
+        }
+        if (numericValue > 10000) {
+          toast.error("❌ El cupo máximo no puede ser mayor a 10,000 personas");
+          return;
+        }
+        if (numericValue !== "" && !Number.isInteger(numericValue)) {
+          toast.error("❌ El cupo máximo debe ser un número entero");
+          return;
+        }
       }
 
       // Validación para val_eve (puede ser 0 pero no negativo)
       if (name === "val_eve" && numericValue < 0) {
+        toast.error("❌ El valor del evento no puede ser negativo");
         return;
       }
 
@@ -249,15 +262,21 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
     if (!formData.dur_hor_eve || formData.dur_hor_eve <= 0)
       errores.push("La duración debe ser mayor a 0 horas");
     
-    // Validación específica para cupo máximo (campo obligatorio)
+    // Validaciones específicas para cupo máximo (campo obligatorio)
     if (
       formData.cupo_max_eve === "" ||
       formData.cupo_max_eve === null ||
       formData.cupo_max_eve === undefined
     ) {
-      errores.push("El cupo máximo es obligatorio");
+      errores.push("❌ El cupo máximo es obligatorio. Por favor ingrese un valor.");
+    } else if (isNaN(formData.cupo_max_eve)) {
+      errores.push("❌ El cupo máximo debe ser un número válido.");
     } else if (formData.cupo_max_eve <= 0) {
-      errores.push("El cupo máximo debe ser mayor a 0");
+      errores.push("❌ El cupo máximo debe ser mayor a 0. Valor mínimo permitido: 1");
+    } else if (!Number.isInteger(Number(formData.cupo_max_eve))) {
+      errores.push("❌ El cupo máximo debe ser un número entero (sin decimales).");
+    } else if (formData.cupo_max_eve > 10000) {
+      errores.push("❌ El cupo máximo no puede ser mayor a 10,000 personas.");
     }
     // Validar fechas
     if (formData.fec_ini_eve && formData.fec_fin_eve) {
@@ -324,14 +343,14 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
           "carrerasIds",
           JSON.stringify(formData.carrerasSeleccionadas)
         );
-      }
-
-      let response;
+      }      let response;
       if (mode === "create") {
         response = await axiosInstance.post("/eventos", formDataToSend, {
           headers: { "Content-Type": "multipart/form-data" },
         });
-        toast.success("Evento creado exitosamente");
+        toast.success(
+          `✅ Evento creado exitosamente con cupo máximo de ${formData.cupo_max_eve} personas`
+        );
       } else {
         response = await axiosInstance.put(
           `/eventos/${eventId}`,
@@ -340,13 +359,27 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
             headers: { "Content-Type": "multipart/form-data" },
           }
         );
-        toast.success("Evento actualizado exitosamente");
-      }
-
-      navigate("/admin/eventos");
+        toast.success(
+          `✅ Evento actualizado exitosamente. Cupo máximo: ${formData.cupo_max_eve} personas`
+        );
+      }      navigate("/admin/eventos");
     } catch (error) {
       console.error("Error al guardar evento:", error);
-      toast.error(error.response?.data?.msg || "Error al guardar el evento");
+      
+      // Proporcionar mensajes de error más específicos
+      let errorMessage = "Error al guardar el evento";
+      
+      if (error.response?.data?.msg) {
+        errorMessage = error.response.data.msg;
+      } else if (error.response?.status === 400) {
+        errorMessage = "❌ Datos inválidos. Verifique el cupo máximo y otros campos obligatorios.";
+      } else if (error.response?.status === 500) {
+        errorMessage = "❌ Error del servidor. Intente nuevamente en unos momentos.";
+      } else if (error.code === "NETWORK_ERROR") {
+        errorMessage = "❌ Error de conexión. Verifique su conexión a internet.";
+      }
+      
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -582,10 +615,11 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
                   required
                 />
               </div>
-            </div>
-
-            <div className="form-group">
+            </div>            <div className="form-group">
               <label>Cupo Máximo *</label>
+              <small className="field-help-text">
+                ⚠️ Número total de personas que pueden inscribirse al evento (mínimo 1, máximo 10,000)
+              </small>
               <div className="input-with-icon">
                 <Users size={18} />{" "}
                 <input

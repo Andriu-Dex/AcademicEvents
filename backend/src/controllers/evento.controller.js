@@ -52,15 +52,28 @@ function validarEventoGeneral({
     );  // Validar que la fecha de fin esté presente
   if (!fec_fin_eve) throw new Error("La fecha de fin es obligatoria");
   
-  // Validar que el cupo máximo sea obligatorio
+  // Validaciones específicas para cupo máximo
   if (cupo_max_eve === undefined || cupo_max_eve === null || cupo_max_eve === "") {
-    throw new Error("El cupo máximo es obligatorio");
+    throw new Error("❌ El cupo máximo es obligatorio. Por favor ingrese un valor válido.");
   }
   
-  // Convertir a número y validar que sea mayor a 0
+  // Convertir a número y realizar validaciones detalladas
   const cupoMaxNum = Number(cupo_max_eve);
-  if (isNaN(cupoMaxNum) || cupoMaxNum <= 0) {
-    throw new Error("El cupo máximo debe ser un número mayor a 0");
+  
+  if (isNaN(cupoMaxNum)) {
+    throw new Error("❌ El cupo máximo debe ser un número válido. Ejemplo: 50, 100, 200");
+  }
+  
+  if (cupoMaxNum <= 0) {
+    throw new Error("❌ El cupo máximo debe ser mayor a 0. Valor mínimo permitido: 1 persona");
+  }
+  
+  if (!Number.isInteger(cupoMaxNum)) {
+    throw new Error("❌ El cupo máximo debe ser un número entero (sin decimales). Ejemplo: 50, no 50.5");
+  }
+  
+  if (cupoMaxNum > 10000) {
+    throw new Error("❌ El cupo máximo no puede exceder las 10,000 personas por razones de capacidad");
   }
   // Validar que la fecha de inicio no sea posterior a la fecha de fin
   const fechaInicio = new Date(fec_ini_eve);
@@ -162,6 +175,11 @@ const crearEvento = async (req, res) => {
         // Si falla la carga, usamos la imagen por defecto
       }
     }    // Crear evento en la base de datos
+    // Validación adicional: asegurar que cupo_dis_eve se inicialice igual a cupo_max_eve
+    if (cupoMax !== Number(cupoMax) || cupoMax <= 0) {
+      throw new Error("❌ Error interno: El cupo máximo no se pudo procesar correctamente");
+    }
+    
     const nuevoEvento = await prisma.evento.create({
       data: {
         nom_eve,
@@ -173,7 +191,7 @@ const crearEvento = async (req, res) => {
         por_min_asi_eve: porcMinAsi,
         fec_fin_eve: fechaFin,
         cupo_max_eve: cupoMax,
-        cupo_dis_eve: cupoMax, // Inicialmente disponible = máximo
+        cupo_dis_eve: cupoMax, // ✅ Inicialmente disponible = máximo
         img_por_eve: imgUrl,
         est_eve: "ACTIVO", // Estado por defecto según nuevo enum
         id_cue_cre_eve: req.usuario.id, // ID de la cuenta creadora

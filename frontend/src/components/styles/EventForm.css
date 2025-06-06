@@ -227,6 +227,22 @@
   color: #8a1538;
 }
 
+/* Texto de ayuda para campos */
+.field-help-text {
+  display: block;
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-bottom: 0.5rem;
+  margin-top: 0.25rem;
+  line-height: 1.3;
+  font-weight: 500;
+}
+
+.field-help-text::before {
+  content: "💡 ";
+  margin-right: 0.25rem;
+}
+
 /* Inputs */
 .form-group input,
 .form-group select,
