@@ -1,0 +1,209 @@
+.modal-requisitos-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-requisitos-contenido {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    animation: slideIn 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.modal-requisitos-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #f3f4f6;
+}
+
+.modal-requisitos-header h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0;
+}
+
+.modal-requisitos-cerrar {
+    background: none;
+    border: none;
+    color: #6b7280;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.modal-requisitos-cerrar:hover {
+    background-color: #f3f4f6;
+    color: #dc2626;
+}
+
+.modal-requisitos-cuerpo {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.seccion-requisitos {
+    background-color: #f9fafb;
+    padding: 1.25rem;
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
+}
+
+.seccion-requisitos h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.info-item {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+    color: #4b5563;
+}
+
+.info-label {
+    font-weight: 500;
+    min-width: 120px;
+}
+
+.info-value {
+    flex: 1;
+}
+
+.info-value.enfasis {
+    color: #1f2937;
+    font-weight: 500;
+}
+
+.lista-usuarios {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.usuario-item {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.4rem 0.75rem;
+    background-color: #8a1538;
+    color: white;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.lista-carreras {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 0;
+    display: grid;
+    gap: 0.5rem;
+}
+
+.carrera-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background-color: #f3f4f6;
+    border-radius: 4px;
+    color: #4b5563;
+}
+
+.badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.badge-estado {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.badge-estado.activo {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.badge-estado.inactivo {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.badge-tipo {
+    background-color: #ede9fe;
+    color: #5b21b6;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Estilizado del scrollbar */
+.modal-requisitos-contenido::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-requisitos-contenido::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.modal-requisitos-contenido::-webkit-scrollbar-thumb {
+    background: #8a1538;
+    border-radius: 4px;
+}
+
+.modal-requisitos-contenido::-webkit-scrollbar-thumb:hover {
+    background: #6d102c;
+}
