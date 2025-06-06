@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState, useCallback } from "react";
-import axiosInstance from "../../api/axiosConfig";
+import { useParams } from "react-router-dom";
+import axios from "axios";
 import { BadgeCheck, Clock, Ban, Eye, Download, Loader } from "lucide-react";
 import { toast } from "react-toastify";
 import "./styles/AdminEventInscription.css";
