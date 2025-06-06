@@ -344,6 +344,21 @@
   border-radius: 0.6rem;
   border: 2px solid rgba(239, 68, 68, 0.2);
   animation: pulseAlert 2s infinite;
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Estado de advertencia para pocos cupos */
+.cupos-disponibles.cupos-pocos {
+  color: #d97706;
+  background: rgba(251, 191, 36, 0.1);
+  padding: 0.6rem 1rem;
+  border-radius: 0.6rem;
+  border: 2px solid rgba(251, 191, 36, 0.3);
+  font-weight: 700;
+  animation: pulseWarning 3s infinite;
 }
 
 @keyframes pulseAlert {
@@ -355,6 +370,18 @@
   50% {
     transform: scale(1.02);
     opacity: 0.9;
+  }
+}
+
+@keyframes pulseWarning {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.01);
+    opacity: 0.95;
   }
 }
 

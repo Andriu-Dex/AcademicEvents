@@ -55,8 +55,7 @@ const AdminEventInscription = () => {
       console.error("Error al obtener nombre del evento", err);
       toast.error("Error al obtener nombre del evento");
     }
-  }, [id]);
-  const cambiarEstado = async (id_ins, estado) => {
+  }, [id]);  const cambiarEstado = async (id_ins, estado) => {
     setActualizandoId(id_ins);
     try {
       const token = localStorage.getItem("token");
@@ -65,12 +64,62 @@ const AdminEventInscription = () => {
         { est_ins: estado }, // Corregido: usar est_ins en lugar de estado
         { headers: { Authorization: `Bearer ${token}` } }
       );
+      
       // Actualizar tanto las inscripciones como la información del evento
       await Promise.all([
         obtenerInscripciones(),
         obtenerNombreEvento() // Esto actualizará los cupos disponibles
       ]);
+      
+      // Mensaje de éxito base
       toast.success(`Inscripción ${estado.toLowerCase()} exitosamente`);
+      
+      // 🚨 ALERTA ESPECIAL: Si se aceptó una inscripción, verificar cupos restantes
+      if (estado === "ACEPTADA") {
+        // Obtener información actualizada del evento
+        const token = localStorage.getItem("token");
+        const eventoRes = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/eventos/${id}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        
+        const cuposRestantes = eventoRes.data.cupo_dis_eve;
+        
+        if (cuposRestantes === 0) {
+          // 🚫 ALERTA CRÍTICA: Cupos agotados
+          toast.warning(
+            `🚫 ¡ATENCIÓN! Los cupos para este evento se han AGOTADO. No se pueden aceptar más inscripciones.`,
+            {
+              duration: 8000,
+              position: 'top-center',
+              style: {
+                background: '#fef3c7',
+                color: '#92400e',
+                border: '2px solid #f59e0b',
+                fontWeight: '600',
+                fontSize: '14px'
+              }
+            }
+          );
+        } else if (cuposRestantes <= 3) {
+          // ⚠️ ALERTA DE ADVERTENCIA: Pocos cupos restantes
+          toast.info(
+            `⚠️ ADVERTENCIA: Solo quedan ${cuposRestantes} cupo${cuposRestantes > 1 ? 's' : ''} disponible${cuposRestantes > 1 ? 's' : ''} para este evento.`,
+            {
+              duration: 6000,
+              position: 'top-center',
+              style: {
+                background: '#dbeafe',
+                color: '#1e40af',
+                border: '2px solid #3b82f6',
+                fontWeight: '600',
+                fontSize: '14px'
+              }
+            }
+          );
+        }
+      }
+      
     } catch (error) {
       console.error("Error al cambiar estado:", error);
       toast.error(error.response?.data?.msg || "No se pudo actualizar el estado");
@@ -98,13 +147,20 @@ const AdminEventInscription = () => {
         <h2 className="admininscription-title">
           Inscripciones para:{" "}
           <span className="nombre-evento">{nombreEvento}</span>
-        </h2>
-        {eventoInfo && (
+        </h2>        {eventoInfo && (
           <div className="cupos-info">
-            <span className={`cupos-disponibles ${eventoInfo.cupo_dis_eve === 0 ? 'cupos-agotados' : ''}`}>
+            <span className={`cupos-disponibles ${
+              eventoInfo.cupo_dis_eve === 0 
+                ? 'cupos-agotados' 
+                : eventoInfo.cupo_dis_eve <= 3 
+                  ? 'cupos-pocos' 
+                  : ''
+            }`}>
               {eventoInfo.cupo_dis_eve === 0 
                 ? "🚫 Sin cupos disponibles" 
-                : `📍 Cupos disponibles: ${eventoInfo.cupo_dis_eve} de ${eventoInfo.cupo_max_eve}`
+                : eventoInfo.cupo_dis_eve <= 3
+                  ? `⚠️ Pocos cupos: ${eventoInfo.cupo_dis_eve} de ${eventoInfo.cupo_max_eve}`
+                  : `📍 Cupos disponibles: ${eventoInfo.cupo_dis_eve} de ${eventoInfo.cupo_max_eve}`
               }
             </span>
           </div>
