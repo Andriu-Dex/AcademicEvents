@@ -182,15 +182,14 @@ function Home() {
             <div className="col-lg-6 text-white py-4">
               <h1 className="display-4 fw-bold mb-3 animate__animated animate__fadeInUp">
                 {usuario?.rol_usu === "ESTUDIANTE"
-                  ? `Facultad de Ingeniería en ${
-                      usuario?.carrera === "SOFTWARE"
-                        ? "Software"
-                        : usuario?.carrera === "TI"
-                        ? "Tecnologías de la Información"
-                        : usuario?.carrera === "INDUSTRIAL"
+                  ? `Facultad de Ingeniería en ${usuario?.carrera === "SOFTWARE"
+                    ? "Software"
+                    : usuario?.carrera === "TI"
+                      ? "Tecnologías de la Información"
+                      : usuario?.carrera === "INDUSTRIAL"
                         ? "Industrial"
                         : "Sistemas, Electrónica e Industrial"
-                    }`
+                  }`
                   : "Facultad de Ingeniería en Sistemas, Electrónica e Industrial"}
               </h1>
               <p className="lead mb-4 animate__animated animate__fadeInUp">
@@ -337,15 +336,14 @@ function Home() {
           <div className="col-lg-6 text-center">
             <h2 className="fw-bold" style={{ color: "#8A1538" }}>
               {usuario?.rol_usu === "ESTUDIANTE"
-                ? `Carrera de ${
-                    usuario?.carrera === "SOFTWARE"
-                      ? "Ingeniería en Software"
-                      : usuario?.carrera === "TI"
-                      ? "Tecnologías de la Información"
-                      : usuario?.carrera === "INDUSTRIAL"
+                ? `Carrera de ${usuario?.carrera === "SOFTWARE"
+                  ? "Ingeniería en Software"
+                  : usuario?.carrera === "TI"
+                    ? "Tecnologías de la Información"
+                    : usuario?.carrera === "INDUSTRIAL"
                       ? "Ingeniería Industrial"
                       : "Ingeniería en Sistemas"
-                  }`
+                }`
                 : "Nuestra Identidad"}
             </h2>
             <p className="text-muted">
@@ -457,21 +455,12 @@ function Home() {
                   >
                     Carreras
                   </Link>
-                </li>
-                <li className="mb-2">
+                </li>                <li className="mb-2">
                   <Link
                     to="/inscripciones"
                     className="text-white text-decoration-none small"
                   >
                     Inscripciones
-                  </Link>
-                </li>
-                <li className="mb-2">
-                  <Link
-                    to="/certificados"
-                    className="text-white text-decoration-none small"
-                  >
-                    Certificados
                   </Link>
                 </li>
               </ul>
