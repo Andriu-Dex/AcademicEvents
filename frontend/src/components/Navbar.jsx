@@ -107,16 +107,15 @@ const Navbar = () => {
                     <Home size={18} />
                   </span>
                   <span>Inicio</span>
-                </Link>
-                <Link
+                </Link>                <Link
                   to="/eventos"
                   className={`nav-link-item ${isActive("/eventos")}`}
                 >
                   <span className="nav-link-icon">
                     <Calendar size={18} />
                   </span>
-                  <span>Eventos</span>
-                </Link>              <Link
+                  <span>Eventos disponibles</span>
+                </Link><Link
                   to="/inscripciones"
                   className={`nav-link-item ${isActive("/inscripciones")}`}
                 >

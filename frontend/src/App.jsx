@@ -35,8 +35,8 @@ function App() {
     <BrowserRouter>
       <>
         <Routes>
-          {/* Redirección por defecto a login */}
-          <Route path="/" element={<Navigate to="/login" />} />
+          {/* Redirección por defecto a home */}
+          <Route path="/" element={<Navigate to="/home" />} />
           {/* Rutas públicas */}
           <Route path="/login" element={<Login />} />
           <Route path="/registro" element={<Register />} />
