@@ -125,8 +125,7 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
     // Quitar el foco para evitar que el navegador cambie el valor
     e.target.blur();
     return false;
-  };
-  // Función mejorada para manejar cambios en inputs
+  };  // Función mejorada para manejar cambios en inputs
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
 
@@ -168,8 +167,25 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
 
     // Para inputs numéricos, asegurarse de que se conviertan correctamente
     if (type === "number") {
-      // Si es un campo numérico, convertir a número o dejar vacío si no es válido
-      const numericValue = value === "" ? "" : Number(value);
+      let numericValue = value === "" ? "" : Number(value);
+
+      // Validaciones específicas para campos que no pueden ser negativos
+      const camposPositivos = ["cupo_max_eve", "dur_hor_eve"];
+      if (camposPositivos.includes(name) && numericValue < 0) {
+        // No permitir valores negativos para estos campos
+        return;
+      }
+
+      // Validación específica para cupo_max_eve (debe ser al menos 1)
+      if (name === "cupo_max_eve" && numericValue !== "" && numericValue < 1) {
+        return;
+      }
+
+      // Validación para val_eve (puede ser 0 pero no negativo)
+      if (name === "val_eve" && numericValue < 0) {
+        return;
+      }
+
       setFormData((prev) => ({
         ...prev,
         [name]: numericValue,
