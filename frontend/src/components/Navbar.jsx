@@ -13,8 +13,10 @@ import {
   User,
   CheckSquare,
   Sliders,
+  UserCheck,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import "./styles/Navbar.css";
 
 const Navbar = () => {
@@ -40,10 +42,40 @@ const Navbar = () => {
 
     // Para el resto de rutas
     return location.pathname.startsWith(path) ? "nav-link-active" : "";
-  };
-  const cerrarSesion = () => {
-    logout(); // Limpiar token y usuario
-    navigate("/login"); // Redirigir al login
+  }; const cerrarSesion = () => {
+    // Obtener el nombre del usuario para personalizar el mensaje
+    const nombreUsuario = usuario?.nom_usu || "Usuario";
+
+    // Limpiar la sesión
+    logout();
+
+    // Mostrar un toast estilizado
+    toast.success(
+      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+        <UserCheck size={20} color="#8a1538" />
+        <div>
+          <strong>¡Hasta pronto {nombreUsuario}!</strong>
+          <p style={{ margin: 0, fontSize: "0.85rem" }}>Sesión cerrada exitosamente</p>
+        </div>
+      </div>,
+      {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        style: {
+          borderLeft: "4px solid #8a1538",
+          backgroundColor: "white",
+          color: "#333",
+        },
+        icon: false,
+      }
+    );
+
+    // Redireccionar al home
+    navigate("/home");
   };
 
   // Cerrar el menú de perfil cuando se hace clic fuera de él
