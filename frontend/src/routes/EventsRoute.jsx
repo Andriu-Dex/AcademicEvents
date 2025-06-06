@@ -173,9 +173,7 @@ const EventsRoute = () => {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-      });
-
-      // Verificar que la respuesta fue exitosa
+      });      // Verificar que la respuesta fue exitosa
       if (response.status === 200 || response.status === 201) {
         toast.success("Inscripción enviada con éxito");
 
@@ -190,6 +188,14 @@ const EventsRoute = () => {
           setInscripcionesRechazadas((prev) =>
             prev.filter((id) => id !== eventoSeleccionado.id_eve)
           );
+        }
+
+        // Refrescar la lista de eventos para actualizar los cupos disponibles
+        try {
+          const eventosRes = await axiosInstance.get("/eventos");
+          setEventos(eventosRes.data);
+        } catch (error) {
+          console.error("Error al actualizar eventos:", error);
         }
 
         setEventoSeleccionado(null);

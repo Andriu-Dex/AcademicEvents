@@ -25,6 +25,7 @@ const AdminEventInscription = () => {
   const [asistencia, setAsistencia] = useState("");
   const [notaFinal, setNotaFinal] = useState("");
   const [enviandoFinalizacion, setEnviandoFinalizacion] = useState(false);
+  const [eventoInfo, setEventoInfo] = useState(null);
 
   const obtenerInscripciones = useCallback(async () => {
     try {
@@ -41,7 +42,6 @@ const AdminEventInscription = () => {
       setLoading(false);
     }
   }, [id]);
-
   const obtenerNombreEvento = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
@@ -50,12 +50,12 @@ const AdminEventInscription = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setNombreEvento(res.data.nom_eve);
+      setEventoInfo(res.data); // Guardar información completa del evento
     } catch (err) {
       console.error("Error al obtener nombre del evento", err);
       toast.error("Error al obtener nombre del evento");
     }
   }, [id]);
-
   const cambiarEstado = async (id_ins, estado) => {
     setActualizandoId(id_ins);
     try {
@@ -65,7 +65,12 @@ const AdminEventInscription = () => {
         { estado },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      await obtenerInscripciones();
+      // Actualizar tanto las inscripciones como la información del evento
+      await Promise.all([
+        obtenerInscripciones(),
+        obtenerNombreEvento() // Esto actualizará los cupos disponibles
+      ]);
+      toast.success(`Inscripción ${estado.toLowerCase()} exitosamente`);
     } catch {
       toast.error("No se pudo actualizar el estado");
     } finally {
@@ -78,12 +83,23 @@ const AdminEventInscription = () => {
       ? inscripciones
       : inscripciones.filter((i) => i.estado === filtro);
 
-  return (
-    <div className="admininscription-container">
-      <h2 className="admininscription-title">
-        Inscripciones para:{" "}
-        <span className="nombre-evento">{nombreEvento}</span>
-      </h2>
+  return (    <div className="admininscription-container">
+      <div className="evento-header">
+        <h2 className="admininscription-title">
+          Inscripciones para:{" "}
+          <span className="nombre-evento">{nombreEvento}</span>
+        </h2>
+        {eventoInfo && (
+          <div className="cupos-info">
+            <span className={`cupos-disponibles ${eventoInfo.cupo_dis_eve === 0 ? 'cupos-agotados' : ''}`}>
+              {eventoInfo.cupo_dis_eve === 0 
+                ? "🚫 Sin cupos disponibles" 
+                : `📍 Cupos disponibles: ${eventoInfo.cupo_dis_eve} de ${eventoInfo.cupo_max_eve}`
+              }
+            </span>
+          </div>
+        )}
+      </div>
 
       <div className="filtros">
         {["TODOS", "PENDIENTE", "ACEPTADA", "RECHAZADA", "FINALIZADA"].map(
@@ -271,11 +287,14 @@ const AdminEventInscription = () => {
                         asistencia: Number(asistencia),
                         nota_final: Number(notaFinal),
                       },
-                      { headers: { Authorization: `Bearer ${token}` } }
-                    );
+                      { headers: { Authorization: `Bearer ${token}` } }                    );
                     toast.success("Inscripción finalizada correctamente");
                     setMostrarFinalizarModal(false);
-                    await obtenerInscripciones();
+                    // Actualizar tanto las inscripciones como la información del evento
+                    await Promise.all([
+                      obtenerInscripciones(),
+                      obtenerNombreEvento() // Esto actualizará los cupos disponibles
+                    ]);
                   } catch (err) {
                     console.error(err);
                     toast.error("Error al finalizar");
