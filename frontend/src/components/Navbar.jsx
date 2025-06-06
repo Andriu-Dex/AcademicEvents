@@ -112,7 +112,7 @@ const Navbar = () => {
               </span>
               <span>Inicio</span>
             </Link>
-            <Link to="/eventos" className={`nav-link-item ${isActive("/eventos")}`}>
+            <Link to="/eventos-publicos" className={`nav-link-item ${isActive("/eventos-publicos")}`}>
               <span className="nav-link-icon">
                 <Calendar size={18} />
               </span>
@@ -153,8 +153,8 @@ const Navbar = () => {
                   </span>
                   <span>Inicio</span>
                 </Link>                <Link
-                  to="/eventos"
-                  className={`nav-link-item ${isActive("/eventos")}`}
+                  to="/eventos-publicos"
+                  className={`nav-link-item ${isActive("/eventos-publicos")}`}
                 >
                   <span className="nav-link-icon">
                     <Calendar size={18} />

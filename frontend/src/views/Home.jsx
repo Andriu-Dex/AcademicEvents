@@ -199,7 +199,7 @@ function Home() {
               </p>
               <div className="d-flex gap-3 flex-wrap">
                 <Link
-                  to="/eventos"
+                  to={isAuthenticated ? "/eventos" : "/eventos-publicos"}
                   className="btn btn-light fw-bold animate__animated animate__fadeInUp"
                   style={{
                     color: "#8A1538",
