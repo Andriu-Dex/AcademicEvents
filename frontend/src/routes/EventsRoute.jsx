@@ -328,8 +328,11 @@ const EventsRoute = () => {
                   Duración: {evento.dur_hor_eve} horas
                 </p>
                 {/* Cupos disponibles */}
-                <p className="cupos-disponibles">
-                  Cupos disponibles: {evento.cupo_dis_eve || 0}
+                <p className={evento.cupo_dis_eve === 0 ? "cupos-agotados" : "cupos-disponibles"}>
+                  {evento.cupo_dis_eve === 0 
+                    ? "🚫 Sin cupos disponibles" 
+                    : `Cupos disponibles: ${evento.cupo_dis_eve || 0}`
+                  }
                 </p>
                 {/* Modalidad si existe */}
                 {evento.modalidad && (
@@ -341,8 +344,7 @@ const EventsRoute = () => {
                     Dirigido a: {evento.publico_objetivo}
                   </p>
                 )}{" "}
-                {evento.pagado_eve && <p className="pago">Pagado</p>}{" "}
-                <button
+                {evento.pagado_eve && <p className="pago">Pagado</p>}{" "}                <button
                   onClick={() => {
                     // Para reinscripción, marcamos como tal
                     if (
@@ -356,10 +358,12 @@ const EventsRoute = () => {
                     }
                   }}
                   className="btn-inscribirme"
-                  disabled={inscripciones.includes(evento.id_eve)}
+                  disabled={inscripciones.includes(evento.id_eve) || evento.cupo_dis_eve === 0}
                 >
                   {inscripciones.includes(evento.id_eve)
                     ? "Ya inscrito"
+                    : evento.cupo_dis_eve === 0
+                    ? "Sin cupos"
                     : "Inscribirme"}
                 </button>
               </div>
