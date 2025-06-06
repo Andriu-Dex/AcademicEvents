@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./views/Login.jsx";
 import Register from "./views/Register.jsx";
 import Home from "./views/Home.jsx"; // Ruta temporal de prueba
-import EventosPublicos from "./routes/EventosPublicos";
+import EventosPublicosV2 from "./routes/EventosPublicosV2";
 
 // Vistas privadas (usuario autenticado)
 import EventsRoute from "./routes/EventsRoute";
@@ -44,7 +44,7 @@ function App() {
           {/* ✅ Ruta temporal para probar Home con diferentes roles */}
           <Route path="/home" element={<Home />} />
           {/* Ruta pública para eventos públicos */}
-          <Route path="/eventos-publicos" element={<EventosPublicos />} />
+          <Route path="/eventos-publicos" element={<EventosPublicosV2 />} />
           {/* Rutas privadas (usuario autenticado) */}
           <Route
             path="/eventos"
