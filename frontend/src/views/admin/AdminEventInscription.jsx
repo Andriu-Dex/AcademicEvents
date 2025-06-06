@@ -88,7 +88,7 @@ const AdminEventInscription = () => {
         if (cuposRestantes === 0) {
           // 🚫 ALERTA CRÍTICA: Cupos agotados
           toast.warning(
-            ``,
+            `🚫 ¡ATENCIÓN! Los cupos para este evento se han AGOTADO. No se pueden aceptar más inscripciones.`,
             {
               duration: 8000,
               position: 'top-center',
