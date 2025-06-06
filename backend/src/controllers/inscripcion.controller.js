@@ -294,33 +294,38 @@ const validarInscripcion = async (req, res) => {
         return res.status(400).json({
           msg: `No cumple requisitos para finalizar: nota mínima ${notaMinima}, asistencia mínima ${asistenciaMinima}%`,
         });
-      }    }    // LÓGICA DE ACTUALIZACIÓN DE CUPOS
-    // Cuando un admin acepta una inscripción: restar 1 al cupo disponible
+      }
+    }
+
+    // LÓGICA DE ACTUALIZACIÓN DE CUPOS
+    let actualizacionCupo = 0;
+    
+    // Casos donde se debe decrementar el cupo (quitar un cupo disponible)
     if (estadoAnterior === "PENDIENTE" && estadoNuevo === "ACEPTADA") {
-      await prisma.evento.update({
-        where: { id_eve: idEvento },
-        data: {
-          cupo_dis_eve: {
-            decrement: 1
-          }
-        }
-      });
-      
-      console.log(`✅ Inscripción aceptada - Cupo decrementado en 1 para evento ${idEvento}`);
+      actualizacionCupo = -1; // Una inscripción pendiente se acepta: se ocupa un cupo
     }
     
-    // Cuando una inscripción aceptada es rechazada: incrementar 1 al cupo disponible
-    if (estadoAnterior === "ACEPTADA" && (estadoNuevo === "RECHAZADA" || estadoNuevo === "PENDIENTE")) {
+    // Casos donde se debe incrementar el cupo (liberar un cupo)
+    if ((estadoAnterior === "ACEPTADA" || estadoAnterior === "PENDIENTE") && estadoNuevo === "RECHAZADA") {
+      actualizacionCupo = 1; // Una inscripción aceptada/pendiente se rechaza: se libera un cupo
+    }
+    
+    if (estadoAnterior === "ACEPTADA" && estadoNuevo === "PENDIENTE") {
+      actualizacionCupo = 1; // Una inscripción aceptada vuelve a pendiente: se libera un cupo
+    }
+
+    // Actualizar cupos si es necesario
+    if (actualizacionCupo !== 0) {
       await prisma.evento.update({
         where: { id_eve: idEvento },
         data: {
           cupo_dis_eve: {
-            increment: 1
+            increment: actualizacionCupo
           }
         }
       });
       
-      console.log(`🔄 Inscripción rechazada/revertida - Cupo incrementado en 1 para evento ${idEvento}`);
+      console.log(`✅ Cupos actualizados para evento ${idEvento}: ${actualizacionCupo > 0 ? 'incrementado' : 'decrementado'} en ${Math.abs(actualizacionCupo)}`);
     }
 
     // Actualizar inscripción con los datos
