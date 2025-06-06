@@ -258,6 +258,7 @@ const camposEvento = [
   "por_min_asi_eve",
   "fec_fin_eve",
   "cupo_max_eve",
+  "cupo_dis_eve",
 ];
 const camposCurso = ["not_min_cur"];
 // 2. Función principal para actualizar un evento
@@ -307,7 +308,22 @@ const actualizarEvento = async (req, res) => {
       });
     } catch (e) {
       return res.status(400).json({ msg: e.message });
-    }// 6. Actualiza evento principal
+    }    // 6. Actualiza evento principal
+    // Calcular cupo_dis_eve si se actualiza cupo_max_eve
+    let cupoDisponibleActualizado = eventoExistente.cupo_dis_eve;
+    if (dataEvento.cupo_max_eve !== undefined) {
+      const nuevoCupoMax = Number(dataEvento.cupo_max_eve);
+      const cupoMaxAnterior = eventoExistente.cupo_max_eve;
+      const cupoDisponibleAnterior = eventoExistente.cupo_dis_eve;
+      
+      // Calcular cuántos cupos están ocupados actualmente
+      const cuposOcupados = cupoMaxAnterior - cupoDisponibleAnterior;
+      
+      // El nuevo cupo disponible será el nuevo máximo menos los cupos ocupados
+      // Pero asegurándonos de que no sea negativo
+      cupoDisponibleActualizado = Math.max(0, nuevoCupoMax - cuposOcupados);
+    }
+
     const eventoActualizado = await prisma.evento.update({
       where: { id_eve: id },
       data: {
@@ -328,7 +344,8 @@ const actualizarEvento = async (req, res) => {
         dur_hor_eve:
           dataEvento.dur_hor_eve !== undefined
             ? Number(dataEvento.dur_hor_eve)
-            : eventoExistente.dur_hor_eve,        por_min_asi_eve:
+            : eventoExistente.dur_hor_eve,
+        por_min_asi_eve:
           dataEvento.por_min_asi_eve !== undefined
             ? Number(dataEvento.por_min_asi_eve)
             : eventoExistente.por_min_asi_eve,
@@ -336,6 +353,7 @@ const actualizarEvento = async (req, res) => {
           dataEvento.cupo_max_eve !== undefined
             ? Number(dataEvento.cupo_max_eve)
             : eventoExistente.cupo_max_eve,
+        cupo_dis_eve: cupoDisponibleActualizado,
         est_eve: dataEvento.est_eve || eventoExistente.est_eve,
         img_por_eve: imgUrl,
       },
