@@ -553,14 +553,15 @@ const obtenerEventosPorTipo = async (req, res) => {
     ];
     if (!tiposValidos.includes(tipo.toUpperCase())) {
       return res.status(400).json({ msg: "Tipo de evento no válido" });
-    }
-
-    // Busca todos los eventos de ese tipo, ordenados por fecha
+    }    // Busca todos los eventos de ese tipo, ordenados por fecha
     const eventos = await prisma.evento.findMany({
       where: { tip_eve: tipo.toUpperCase() },
       orderBy: { fec_ini_eve: "asc" },
       include: {
         eventos_curso: true, // Si quieres incluir datos de curso (serán null si no es CURSO)
+        eventos_carrera: {
+          include: { carrera: { select: { nom_car: true, id_car: true } } },
+        },
       },
     });
 

@@ -19,6 +19,7 @@ import {
   Tag,
   Plus,
   Star,
+  UserCheck,
 } from "lucide-react";
 import "./styles/AdminEvents.css";
 
@@ -301,11 +302,16 @@ const AdminEvents = () => {
                       {" – "}
                       {obtenerFechaFin(eve)}
                     </span>
-                  </div>
-                  <div className="detail-item">
+                  </div>                  <div className="detail-item">
                     <Clock size={16} className="icon-inline" />
                     <span>
                       <strong>Duración:</strong> {`${eve.dur_hor_eve} horas`}
+                    </span>
+                  </div>                  {/* Cupos disponibles */}
+                  <div className="detail-item">
+                    <UserCheck size={16} className="icon-inline" />
+                    <span>
+                      <strong>Cupos disponibles:</strong> {eve.cupo_dis_eve || 0} de {eve.cupo_max_eve}
                     </span>
                   </div>
                   {/* Información exclusiva de cursos */}

@@ -324,9 +324,12 @@ const EventsRoute = () => {
                 <p className="fecha-evento-er">
                   Fecha: {formatearFechaUTC(evento.fec_ini_eve)} a{" "}
                   {formatearFechaUTC(evento.fec_fin_eve)}
-                </p>
-                <p className="duracion-evento-er">
+                </p>                <p className="duracion-evento-er">
                   Duración: {evento.dur_hor_eve} horas
+                </p>
+                {/* Cupos disponibles */}
+                <p className="cupos-disponibles">
+                  Cupos disponibles: {evento.cupo_dis_eve || 0}
                 </p>
                 {/* Modalidad si existe */}
                 {evento.modalidad && (
