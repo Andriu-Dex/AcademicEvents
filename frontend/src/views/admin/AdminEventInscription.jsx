@@ -369,7 +369,7 @@ const AdminEventInscription = () => {
                   }
                 }}
                 disabled={enviandoFinalizacion}
-                className="btn-accion btn-finalizar-envio"
+                className=""
               >
                 {enviandoFinalizacion ? "Enviando..." : "Finalizar"}
               </button>
