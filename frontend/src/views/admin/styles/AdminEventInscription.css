@@ -23,7 +23,7 @@
 .admininscription-title {
   font-size: 1.7rem;
   font-weight: 800;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   color: #8a1538;
   text-align: center;
   letter-spacing: 0.5px;
@@ -34,6 +34,49 @@
   border-radius: 0.7rem;
   display: inline-block;
   width: 100%;
+}
+
+.evento-header {
+  margin-bottom: 2rem;
+}
+
+.cupos-info {
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.cupos-disponibles {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #059669, #047857);
+  color: white;
+  border-radius: 2rem;
+  font-weight: 600;
+  font-size: 1rem;
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.25);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.cupos-disponibles:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(5, 150, 105, 0.35);
+}
+
+.cupos-agotados {
+  background: linear-gradient(135deg, #dc2626, #b91c1c) !important;
+  animation: pulseRed 2s infinite;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3) !important;
+}
+
+@keyframes pulseRed {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(220, 38, 38, 0.5);
+  }
 }
 
 .nombre-evento {
