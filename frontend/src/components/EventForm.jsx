@@ -617,9 +617,6 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
               </div>
             </div>            <div className="form-group">
               <label>Cupo Máximo *</label>
-              <small className="field-help-text">
-                ⚠️ Número total de personas que pueden inscribirse al evento (mínimo 1, máximo 10,000)
-              </small>
               <div className="input-with-icon">
                 <Users size={18} />{" "}
                 <input
