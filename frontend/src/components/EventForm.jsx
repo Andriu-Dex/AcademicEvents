@@ -248,8 +248,17 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
     }    if (!formData.fec_fin_eve) errores.push("La fecha de fin es obligatoria");
     if (!formData.dur_hor_eve || formData.dur_hor_eve <= 0)
       errores.push("La duración debe ser mayor a 0 horas");
-    if (!formData.cupo_max_eve || formData.cupo_max_eve <= 0)
+    
+    // Validación específica para cupo máximo (campo obligatorio)
+    if (
+      formData.cupo_max_eve === "" ||
+      formData.cupo_max_eve === null ||
+      formData.cupo_max_eve === undefined
+    ) {
+      errores.push("El cupo máximo es obligatorio");
+    } else if (formData.cupo_max_eve <= 0) {
       errores.push("El cupo máximo debe ser mayor a 0");
+    }
     // Validar fechas
     if (formData.fec_ini_eve && formData.fec_fin_eve) {
       if (new Date(formData.fec_ini_eve) > new Date(formData.fec_fin_eve)) {

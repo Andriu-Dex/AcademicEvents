@@ -51,9 +51,17 @@ function validarEventoGeneral({
       "El porcentaje mínimo de asistencia debe estar entre 80% y 100%"
     );  // Validar que la fecha de fin esté presente
   if (!fec_fin_eve) throw new Error("La fecha de fin es obligatoria");
-  // Validar que el cupo máximo esté presente y sea mayor a 0
-  if (cupo_max_eve === undefined || cupo_max_eve <= 0)
-    throw new Error("El cupo máximo es obligatorio y debe ser mayor a 0");
+  
+  // Validar que el cupo máximo sea obligatorio
+  if (cupo_max_eve === undefined || cupo_max_eve === null || cupo_max_eve === "") {
+    throw new Error("El cupo máximo es obligatorio");
+  }
+  
+  // Convertir a número y validar que sea mayor a 0
+  const cupoMaxNum = Number(cupo_max_eve);
+  if (isNaN(cupoMaxNum) || cupoMaxNum <= 0) {
+    throw new Error("El cupo máximo debe ser un número mayor a 0");
+  }
   // Validar que la fecha de inicio no sea posterior a la fecha de fin
   const fechaInicio = new Date(fec_ini_eve);
   const fechaFin = new Date(fec_fin_eve);
