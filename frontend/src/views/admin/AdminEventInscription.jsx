@@ -37,7 +37,7 @@ const AdminEventInscription = () => {
       setInscripciones(res.data);
     } catch (err) {
       console.error(err);
-      toast.error("Error al cargar las inscripciones");
+      toast.error("");
     } finally {
       setLoading(false);
     }
