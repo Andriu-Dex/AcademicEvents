@@ -2,8 +2,9 @@
   "name": "frontend",
   "private": true,
   "version": "0.0.0",
-  "type": "module",  "scripts": {
-    "dev": "vite",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host --port 5173",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
@@ -13,6 +14,7 @@
     "axios": "^1.9.0",
     "bootstrap": "^5.3.6",
     "canvas-confetti": "^1.9.3",
+    "jwt-decode": "^4.0.0",
     "lucide-react": "^0.511.0",
     "react": "^19.1.0",
     "react-avatar-editor": "^13.0.2",
