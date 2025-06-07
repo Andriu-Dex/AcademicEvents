@@ -132,14 +132,15 @@ const EventsRoute = () => {
     };
 
     if (usuario) obtenerInscripciones();
-  }, [usuario, eventos.length]);  const inscribirse = async () => {
+  }, [usuario, eventos.length]);
+  const inscribirse = async () => {
     // Validación de campos
     if (!cartaMotivacion.trim()) {
       return toast.error("Debes escribir una carta de motivación");
     }
 
     // ✅ VALIDACIÓN DE CUPOS DISPONIBLES
-    if (eventoSeleccionado.cupo_dis_eve <= 0) {
+    if (eventoSeleccionado.cup_dis_eve <= 0) {
       return toast.error("No hay cupos disponibles para este evento");
     }
 
@@ -177,7 +178,7 @@ const EventsRoute = () => {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-      });      // Verificar que la respuesta fue exitosa
+      }); // Verificar que la respuesta fue exitosa
       if (response.status === 200 || response.status === 201) {
         toast.success("Inscripción enviada con éxito");
 
@@ -334,15 +335,21 @@ const EventsRoute = () => {
                 <p className="fecha-evento-er">
                   Fecha: {formatearFechaUTC(evento.fec_ini_eve)} a{" "}
                   {formatearFechaUTC(evento.fec_fin_eve)}
-                </p>                <p className="duracion-evento-er">
+                </p>{" "}
+                <p className="duracion-evento-er">
                   Duración: {evento.dur_hor_eve} horas
                 </p>
                 {/* Cupos disponibles */}
-                <p className={evento.cupo_dis_eve === 0 ? "cupos-agotados" : "cupos-disponibles"}>
-                  {evento.cupo_dis_eve === 0 
-                    ? "🚫 Sin cupos disponibles" 
-                    : `Cupos disponibles: ${evento.cupo_dis_eve || 0}`
+                <p
+                  className={
+                    evento.cup_dis_eve === 0
+                      ? "cupos-agotados"
+                      : "cupos-disponibles"
                   }
+                >
+                  {evento.cup_dis_eve === 0
+                    ? "🚫 Sin cupos disponibles"
+                    : `Cupos disponibles: ${evento.cup_dis_eve || 0}`}
                 </p>
                 {/* Modalidad si existe */}
                 {evento.modalidad && (
@@ -354,7 +361,8 @@ const EventsRoute = () => {
                     Dirigido a: {evento.publico_objetivo}
                   </p>
                 )}{" "}
-                {evento.pagado_eve && <p className="pago">Pagado</p>}{" "}                <button
+                {evento.pagado_eve && <p className="pago">Pagado</p>}{" "}
+                <button
                   onClick={() => {
                     // Para reinscripción, marcamos como tal
                     if (
@@ -368,11 +376,14 @@ const EventsRoute = () => {
                     }
                   }}
                   className="btn-inscribirme"
-                  disabled={inscripciones.includes(evento.id_eve) || evento.cupo_dis_eve === 0}
+                  disabled={
+                    inscripciones.includes(evento.id_eve) ||
+                    evento.cup_dis_eve === 0
+                  }
                 >
                   {inscripciones.includes(evento.id_eve)
                     ? "Ya inscrito"
-                    : evento.cupo_dis_eve === 0
+                    : evento.cup_dis_eve === 0
                     ? "Sin cupos"
                     : "Inscribirme"}
                 </button>
