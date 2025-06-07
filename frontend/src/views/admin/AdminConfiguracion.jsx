@@ -1,27 +1,46 @@
 import { useEffect, useState } from "react";
-import axiosInstance from "../../api/axiosConfig";
+import axiosInstance from "../../api/axiosConfig"; // Asegúrate de que axiosInstance esté configurado correctamente
 import { toast } from "react-toastify";
 import "./styles/AdminConfiguracion.css";
 
 const AdminConfiguracion = () => {
+  // Estado para almacenar la misión y visión
   const [form, setForm] = useState({ mision: "", vision: "", autoridades: "" });
+
+  // Función para cargar misión y visión de la facultad desde el backend
   const cargar = async () => {
     try {
-      const res = await axiosInstance.get("/configuracion");
-      if (res.data) setForm(res.data);
-    } catch {
+      // Cambiar la ruta de la API para que apunte a la facultad y recupere misión y visión
+      const res = await axiosInstance.get(`/facultades/1`); // 1 es el ID de la facultad, puedes cambiarlo dinámicamente si es necesario
+      if (res.data) {
+        // Asignamos los datos recibidos a nuestro estado
+        setForm({
+          mision: res.data.mis_fac,
+          vision: res.data.vis_fac,
+          autoridades: res.data.nom_dec_fac, // Cambiar según los datos que necesites (decano, subdecano, etc.)
+        });
+      }
+    } catch (error) {
       toast.error("Error al cargar configuración");
     }
   };
+
+  // Función para guardar los cambios en misión, visión y autoridades
   const guardar = async () => {
     try {
-      await axiosInstance.put("/configuracion", form);
+      // Realizamos la actualización de misión y visión en la facultad
+      await axiosInstance.put(`/facultades/1`, { // Aquí usamos PUT para actualizar misión y visión
+        mis_fac: form.mision,
+        vis_fac: form.vision,
+        // Asegúrate de pasar las autoridades si es necesario, por ejemplo, autoridades: form.autoridades
+      });
       toast.success("Configuración actualizada");
-    } catch {
+    } catch (error) {
       toast.error("Error al guardar configuración");
     }
   };
 
+  // Cargar la configuración al montar el componente
   useEffect(() => {
     cargar();
   }, []);

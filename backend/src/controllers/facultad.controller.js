@@ -2,34 +2,13 @@
 const prisma = require("../config/db");
 
 // ============================
-// Obtener todas las facultades
+// Obtener misión y visión de una facultad
 // ============================
-const obtenerFacultades = async (req, res) => {
-  try {
-    // Consultamos todas las facultades en la base de datos
-    const facultades = await prisma.facultad.findMany({
-      orderBy: { nom_fac: "asc" },
-    });
-
-    // Respondemos con las facultades obtenidas
-    res.status(200).json(facultades);
-  } catch (error) {
-    console.error("Error al obtener facultades:", error);
-    // En caso de error, enviamos respuesta con estado 500
-    res.status(500).json({
-      msg: "Error al obtener facultades",
-      error: error.message,
-    });
-  }
-};
-
-// ======================
-// Obtener una facultad
-// ======================
 const obtenerFacultad = async (req, res) => {
   try {
     const { id } = req.params;
 
+    // Consultamos la facultad por su ID
     const facultad = await prisma.facultad.findUnique({
       where: { id_fac: id },
     });
@@ -38,6 +17,7 @@ const obtenerFacultad = async (req, res) => {
       return res.status(404).json({ msg: "Facultad no encontrada" });
     }
 
+    // Respondemos con la facultad, incluyendo misión y visión
     res.status(200).json(facultad);
   } catch (error) {
     console.error("Error al obtener facultad:", error);
@@ -48,35 +28,61 @@ const obtenerFacultad = async (req, res) => {
   }
 };
 
-// ====================
-// Crear una facultad
-// ====================
+// ============================
+// Actualizar misión y visión de la facultad (solo ADMIN)
+// ============================
+const actualizarFacultad = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { mis_fac, vis_fac } = req.body;
+
+    // Validación de los campos requeridos
+    if (!mis_fac || mis_fac.trim() === "") {
+      return res.status(400).json({ msg: "La misión de la facultad es obligatoria" });
+    }
+
+    if (!vis_fac || vis_fac.trim() === "") {
+      return res.status(400).json({ msg: "La visión de la facultad es obligatoria" });
+    }
+
+    // Actualizamos los campos misión y visión en la facultad
+    const facultad = await prisma.facultad.update({
+      where: { id_fac: id },
+      data: { mis_fac, vis_fac },
+    });
+
+    // Respondemos con la facultad actualizada
+    res.status(200).json(facultad);
+  } catch (error) {
+    console.error("Error al actualizar facultad:", error);
+    res.status(500).json({
+      msg: "Error al actualizar facultad",
+      error: error.message,
+    });
+  }
+};
+
+// ============================
+// Crear una facultad (solo si no existe)
+// ============================
 const crearFacultad = async (req, res) => {
   try {
     const { nom_fac, des_fac, mis_fac, vis_fac } = req.body;
 
     if (!nom_fac || nom_fac.trim() === "") {
-      return res
-        .status(400)
-        .json({ msg: "El nombre de la facultad es obligatorio" });
+      return res.status(400).json({ msg: "El nombre de la facultad es obligatorio" });
     }
 
     if (!des_fac || des_fac.trim() === "") {
-      return res
-        .status(400)
-        .json({ msg: "La descripción de la facultad es obligatoria" });
+      return res.status(400).json({ msg: "La descripción de la facultad es obligatoria" });
     }
 
     if (!mis_fac || mis_fac.trim() === "") {
-      return res
-        .status(400)
-        .json({ msg: "La misión de la facultad es obligatoria" });
+      return res.status(400).json({ msg: "La misión de la facultad es obligatoria" });
     }
 
     if (!vis_fac || vis_fac.trim() === "") {
-      return res
-        .status(400)
-        .json({ msg: "La visión de la facultad es obligatoria" });
+      return res.status(400).json({ msg: "La visión de la facultad es obligatoria" });
     }
 
     const facultadExistente = await prisma.facultad.findUnique({
@@ -108,7 +114,7 @@ const crearFacultad = async (req, res) => {
 
 // Exportamos los métodos para que puedan ser usados en las rutas
 module.exports = {
-  obtenerFacultades,
   obtenerFacultad,
+  actualizarFacultad,
   crearFacultad,
 };

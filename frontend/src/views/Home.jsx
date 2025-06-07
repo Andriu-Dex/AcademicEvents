@@ -31,6 +31,20 @@ function Home() {
   // Estado para almacenar las carreras
   const [carreras, setCarreras] = useState([]);
 
+  // Estado para misión y visión
+  const [mision, setMision] = useState("");
+  const [vision, setVision] = useState("");
+  const [cargandoMisionVision, setCargandoMisionVision] = useState(true);
+
+  // Facultad actual (para contenido de la página)
+  const facultadActual = {
+    id: 1, // Asegúrate de poner el ID correcto de la facultad
+    nombre: "FISEI",
+    nombreCompleto:
+      "Facultad de Ingeniería en Sistemas, Electrónica e Industrial",
+    logo: "https://imgur.com/fch1iy6.png",
+  };
+
   // Cargar carreras desde la API
   useEffect(() => {
     const cargarCarreras = async () => {
@@ -45,13 +59,25 @@ function Home() {
     cargarCarreras();
   }, []);
 
-  // Facultad actual (para contenido de la página)
-  const facultadActual = {
-    nombre: "FISEI",
-    nombreCompleto:
-      "Facultad de Ingeniería en Sistemas, Electrónica e Industrial",
-    logo: "https://imgur.com/fch1iy6.png",
-  };
+  // Cargar misión y visión desde la API
+  useEffect(() => {
+    const cargarMisionVision = async () => {
+      setCargandoMisionVision(true);
+      try {
+        const res = await axiosInstance.get(`/facultades/${facultadActual.id}`);
+        setMision(res.data.mis_fac);
+        setVision(res.data.vis_fac);
+      } catch (error) {
+        console.error("Error al cargar la misión y visión:", error);
+        setMision("No disponible");
+        setVision("No disponible");
+      } finally {
+        setCargandoMisionVision(false);
+      }
+    };
+
+    cargarMisionVision();
+  }, [facultadActual.id]);
 
   // Estadísticas de la facultad
   const stats = [
@@ -120,26 +146,22 @@ function Home() {
     }
   };
 
-  // Info cards para misión y visión
-  const infoCardsPorCarrera = {
-    GENERAL: [
-      {
-        title: "Misión",
-        content:
-          "Formar profesionales líderes competentes, con visión humanista y pensamiento crítico, a través de la Docencia, la Investigación y la Vinculación, que apliquen, promuevan y difundan el conocimiento respondiendo a las necesidades del país.",
-        icon: <Target size={36} />,
-      },
-      {
-        title: "Visión",
-        content:
-          "La Facultad de Ingeniería en Sistemas, Electrónica e Industrial de la Universidad Técnica de Ambato por sus niveles de excelencia, se constituirá como un centro de formación superior con liderazgo y proyección nacional e internacional.",
-        icon: <Telescope size={36} />,
-      },
-    ],
-  };
+  // Info cards para misión y visión (ahora dinámico)
+  const infoCards = [
+    {
+      title: "Misión",
+      content: cargandoMisionVision ? "Cargando..." : mision,
+      icon: <Target size={36} />,
+    },
+    {
+      title: "Visión",
+      content: cargandoMisionVision ? "Cargando..." : vision,
+      icon: <Telescope size={36} />,
+    },
+  ];
 
   // Seleccionar los infoCards según el tipo de usuario y su carrera
-  const infoCards = infoCardsPorCarrera.GENERAL;
+  const infoCardsSeleccionados = infoCardsPorCarrera.GENERAL;
 
   // Cargar Bootstrap dinámicamente si no está presente
   useEffect(() => {
