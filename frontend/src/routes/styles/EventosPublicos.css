@@ -307,11 +307,9 @@
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(
-    circle,
-    rgba(255, 255, 255, 0.3) 0%,
-    rgba(255, 255, 255, 0) 70%
-  );
+  background: radial-gradient(circle,
+      rgba(255, 255, 255, 0.3) 0%,
+      rgba(255, 255, 255, 0) 70%);
   opacity: 0;
   transition: opacity 0.5s ease;
 }
@@ -447,7 +445,7 @@
 }
 
 /* Modalidad */
-.modalidad {
+.modalidad-evento {
   color: #8a1538;
   font-size: 0.9rem;
   margin: 0.25rem 1rem;
@@ -465,36 +463,34 @@
   overflow: hidden;
 }
 
-.evento-card:hover .modalidad {
+.evento-card:hover .modalidad-evento {
   transform: translateY(-1px) translateX(3px);
   box-shadow: 0 4px 8px rgba(138, 21, 56, 0.12);
 }
 
-.modalidad::before {
+.modalidad-evento::before {
   content: "";
   position: absolute;
   left: -100%;
   top: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.6) 50%,
-    rgba(255, 255, 255, 0) 100%
-  );
+  background: linear-gradient(90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.6) 50%,
+      rgba(255, 255, 255, 0) 100%);
   transition: left 0.7s ease;
 }
 
-.evento-card:hover .modalidad::before {
+.evento-card:hover .modalidad-evento::before {
   left: 100%;
 }
 
-.modalidad .inline-icon {
+.modalidad-evento .inline-icon {
   transition: transform 0.3s ease;
 }
 
-.evento-card:hover .modalidad .inline-icon {
+.evento-card:hover .modalidad-evento .inline-icon {
   transform: scale(1.2);
 }
 
@@ -725,11 +721,9 @@
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(
-    ellipse at center,
-    rgba(255, 255, 255, 0.3) 0%,
-    rgba(255, 255, 255, 0) 70%
-  );
+  background: radial-gradient(ellipse at center,
+      rgba(255, 255, 255, 0.3) 0%,
+      rgba(255, 255, 255, 0) 70%);
   animation: modalFadeIn 1.5s forwards;
   opacity: 0;
 }
@@ -809,12 +803,10 @@
   top: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.6) 50%,
-    rgba(255, 255, 255, 0) 100%
-  );
+  background: linear-gradient(90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.6) 50%,
+      rgba(255, 255, 255, 0) 100%);
   transition: left 2s ease;
   animation: shimmer 2s infinite 1s;
 }
@@ -1140,6 +1132,7 @@
 }
 
 @keyframes float {
+
   0%,
   100% {
     transform: translateY(0);
