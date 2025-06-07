@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState, useCallback } from "react";
-import axiosInstance from "../../api/axiosConfig";
+import axios from "axios";
 import { BadgeCheck, Clock, Ban, Eye, Download, Loader } from "lucide-react";
 import { toast } from "react-toastify";
 import "./styles/AdminEventInscription.css";
@@ -25,6 +25,7 @@ const AdminEventInscription = () => {
   const [asistencia, setAsistencia] = useState("");
   const [notaFinal, setNotaFinal] = useState("");
   const [enviandoFinalizacion, setEnviandoFinalizacion] = useState(false);
+  const [eventoInfo, setEventoInfo] = useState(null);
 
   const obtenerInscripciones = useCallback(async () => {
     try {
@@ -41,7 +42,6 @@ const AdminEventInscription = () => {
       setLoading(false);
     }
   }, [id]);
-
   const obtenerNombreEvento = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
@@ -50,24 +50,83 @@ const AdminEventInscription = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setNombreEvento(res.data.nom_eve);
+      setEventoInfo(res.data); // Guardar información completa del evento
     } catch (err) {
       console.error("Error al obtener nombre del evento", err);
       toast.error("Error al obtener nombre del evento");
     }
   }, [id]);
-
   const cambiarEstado = async (id_ins, estado) => {
     setActualizandoId(id_ins);
     try {
       const token = localStorage.getItem("token");
       await axios.put(
         `${import.meta.env.VITE_API_URL}/api/inscripciones/validar/${id_ins}`,
-        { estado },
+        { est_ins: estado }, // Corregido: usar est_ins en lugar de estado
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      await obtenerInscripciones();
-    } catch {
-      toast.error("No se pudo actualizar el estado");
+
+      // Actualizar tanto las inscripciones como la información del evento
+      await Promise.all([
+        obtenerInscripciones(),
+        obtenerNombreEvento(), // Esto actualizará los cupos disponibles
+      ]);
+
+      // Mensaje de éxito base
+      toast.success(`Inscripción ${estado.toLowerCase()} exitosamente`);
+
+      // 🚨 ALERTA ESPECIAL: Si se aceptó una inscripción, verificar cupos restantes
+      if (estado === "ACEPTADA") {
+        // Obtener información actualizada del evento
+        const token = localStorage.getItem("token");
+        const eventoRes = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/eventos/${id}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        const cuposRestantes = eventoRes.data.cup_dis_eve;
+
+        if (cuposRestantes === 0) {
+          // 🚫 ALERTA CRÍTICA: Cupos agotados
+          toast.warning(
+            `🚫 ¡ATENCIÓN! Los cupos para este evento se han AGOTADO. No se pueden aceptar más inscripciones.`,
+            {
+              duration: 8000,
+              position: "top-center",
+              style: {
+                background: "#fef3c7",
+                color: "#92400e",
+                border: "2px solid #f59e0b",
+                fontWeight: "600",
+                fontSize: "14px",
+              },
+            }
+          );
+        } else if (cuposRestantes <= 3) {
+          // ⚠️ ALERTA DE ADVERTENCIA: Pocos cupos restantes
+          toast.info(
+            `⚠️ ADVERTENCIA: Solo quedan ${cuposRestantes} cupo${
+              cuposRestantes > 1 ? "s" : ""
+            } disponible${cuposRestantes > 1 ? "s" : ""} para este evento.`,
+            {
+              duration: 6000,
+              position: "top-center",
+              style: {
+                background: "#dbeafe",
+                color: "#1e40af",
+                border: "2px solid #3b82f6",
+                fontWeight: "600",
+                fontSize: "14px",
+              },
+            }
+          );
+        }
+      }
+    } catch (error) {
+      console.error("Error al cambiar estado:", error);
+      toast.error(
+        error.response?.data?.msg || "No se pudo actualizar el estado"
+      );
     } finally {
       setActualizandoId(null);
     }
@@ -78,12 +137,38 @@ const AdminEventInscription = () => {
       ? inscripciones
       : inscripciones.filter((i) => i.estado === filtro);
 
+  // Cargar datos cuando el componente se monta
+  useEffect(() => {
+    Promise.all([obtenerInscripciones(), obtenerNombreEvento()]);
+  }, [id, obtenerInscripciones, obtenerNombreEvento]);
+
   return (
     <div className="admininscription-container">
-      <h2 className="admininscription-title">
-        Inscripciones para:{" "}
-        <span className="nombre-evento">{nombreEvento}</span>
-      </h2>
+      <div className="evento-header">
+        <h2 className="admininscription-title">
+          Inscripciones para:{" "}
+          <span className="nombre-evento">{nombreEvento}</span>
+        </h2>{" "}
+        {eventoInfo && (
+          <div className="cupos-info">
+            <span
+              className={`cupos-disponibles ${
+                eventoInfo.cup_dis_eve === 0
+                  ? "cupos-agotados"
+                  : eventoInfo.cup_dis_eve <= 3
+                  ? "cupos-pocos"
+                  : ""
+              }`}
+            >
+              {eventoInfo.cup_dis_eve === 0
+                ? "🚫 Sin cupos disponibles"
+                : eventoInfo.cup_dis_eve <= 3
+                ? `⚠️ Pocos cupos: ${eventoInfo.cup_dis_eve} de ${eventoInfo.cup_max_eve}`
+                : `📍 Cupos disponibles: ${eventoInfo.cup_dis_eve} de ${eventoInfo.cup_max_eve}`}
+            </span>
+          </div>
+        )}
+      </div>
 
       <div className="filtros">
         {["TODOS", "PENDIENTE", "ACEPTADA", "RECHAZADA", "FINALIZADA"].map(
@@ -275,7 +360,11 @@ const AdminEventInscription = () => {
                     );
                     toast.success("Inscripción finalizada correctamente");
                     setMostrarFinalizarModal(false);
-                    await obtenerInscripciones();
+                    // Actualizar tanto las inscripciones como la información del evento
+                    await Promise.all([
+                      obtenerInscripciones(),
+                      obtenerNombreEvento(), // Esto actualizará los cupos disponibles
+                    ]);
                   } catch (err) {
                     console.error(err);
                     toast.error("Error al finalizar");

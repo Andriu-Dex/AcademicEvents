@@ -1,0 +1,55 @@
+/* 
+ * Custom Bootstrap Overrides
+ * Este archivo contiene personalizaciones para Bootstrap
+ * Se carga después de Bootstrap para sobrescribir sus estilos
+ */
+
+/* Variables de color personalizadas */
+:root {
+  --bs-primary: #8a1538 !important;
+  --bs-primary-rgb: 138, 21, 56 !important;
+}
+
+/* Sobreescritura de clases de Bootstrap con mayor especificidad */
+/* Usamos un selector compuesto para aumentar la especificidad sin !important */
+body .bg-primary,
+body .btn-primary,
+body .badge-primary {
+  background-color: var(--bs-primary) !important;
+  border-color: var(--bs-primary) !important;
+}
+
+/* Input group con color personalizado */
+body .input-group .input-group-text {
+  background-color: var(--bs-primary) !important;
+  border-color: var(--bs-primary) !important;
+  color: white !important;
+}
+
+/* Botones de acción principal */
+body .btn-primary {
+  background-color: var(--bs-primary) !important;
+  border-color: var(--bs-primary) !important;
+}
+body .btn-primary:hover,
+body .btn-primary:focus {
+  background-color: #6e1029 !important;
+  border-color: #6e1029 !important;
+}
+
+/* Links con color personalizado */
+body a.text-primary,
+body .text-primary {
+  color: var(--bs-primary) !important;
+}
+
+/* Bordes con color personalizado */
+body .border-primary {
+  border-color: var(--bs-primary) !important;
+}
+
+/* Otras personalizaciones específicas */
+body .dropdown-item.active,
+body .dropdown-item:active {
+  background-color: var(--bs-primary) !important;
+}

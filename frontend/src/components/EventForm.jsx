@@ -40,6 +40,7 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
     val_eve: "",
     not_min_cur: "",
     por_min_asi_eve: "",
+    cup_max_eve: "",
     carrerasSeleccionadas: [],
     esEventoGeneral: false,
     img_por_eve: null,
@@ -86,9 +87,7 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
       const esGeneral = !tieneCarreras;
 
       console.log("Carreras asociadas:", carrerasIds);
-      console.log("Es evento general:", esGeneral);
-
-      // Convertir fechas a formato yyyy-MM-dd
+      console.log("Es evento general:", esGeneral); // Convertir fechas a formato yyyy-MM-dd
       setFormData({
         nom_eve: evento.nom_eve || "",
         des_eve: evento.des_eve || "",
@@ -98,6 +97,7 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
         dur_hor_eve: evento.dur_hor_eve ? Number(evento.dur_hor_eve) : "",
         val_eve: Number(evento.val_eve),
         por_min_asi_eve: Number(evento.por_min_asi_eve),
+        cup_max_eve: evento.cup_max_eve ? Number(evento.cup_max_eve) : "",
         img_por_eve: null,
         est_eve: evento.est_eve || "ACTIVO",
         not_min_cur:
@@ -126,8 +126,7 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
     // Quitar el foco para evitar que el navegador cambie el valor
     e.target.blur();
     return false;
-  };
-  // Función mejorada para manejar cambios en inputs
+  }; // Función mejorada para manejar cambios en inputs
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
 
@@ -165,12 +164,42 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
         };
       });
       return;
-    }
-
-    // Para inputs numéricos, asegurarse de que se conviertan correctamente
+    } // Para inputs numéricos, asegurarse de que se conviertan correctamente
     if (type === "number") {
-      // Si es un campo numérico, convertir a número o dejar vacío si no es válido
-      const numericValue = value === "" ? "" : Number(value);
+      let numericValue = value === "" ? "" : Number(value);
+
+      // Validaciones específicas para campos que no pueden ser negativos
+      const camposPositivos = ["cup_max_eve", "dur_hor_eve"];
+      if (camposPositivos.includes(name) && numericValue < 0) {
+        // Mostrar mensaje específico para valores negativos
+        if (name === "cup_max_eve") {
+          toast.error("❌ El cupo máximo no puede ser negativo");
+        }
+        return;
+      }
+
+      // Validación específica para cup_max_eve
+      if (name === "cup_max_eve") {
+        if (numericValue !== "" && numericValue < 1) {
+          toast.error("❌ El cupo máximo debe ser al menos 1 persona");
+          return;
+        }
+        if (numericValue > 10000) {
+          toast.error("❌ El cupo máximo no puede ser mayor a 10,000 personas");
+          return;
+        }
+        if (numericValue !== "" && !Number.isInteger(numericValue)) {
+          toast.error("❌ El cupo máximo debe ser un número entero");
+          return;
+        }
+      }
+
+      // Validación para val_eve (puede ser 0 pero no negativo)
+      if (name === "val_eve" && numericValue < 0) {
+        toast.error("❌ El valor del evento no puede ser negativo");
+        return;
+      }
+
       setFormData((prev) => ({
         ...prev,
         [name]: numericValue,
@@ -234,6 +263,29 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
     if (!formData.fec_fin_eve) errores.push("La fecha de fin es obligatoria");
     if (!formData.dur_hor_eve || formData.dur_hor_eve <= 0)
       errores.push("La duración debe ser mayor a 0 horas");
+
+    // Validaciones específicas para cupo máximo (campo obligatorio)
+    if (
+      formData.cup_max_eve === "" ||
+      formData.cup_max_eve === null ||
+      formData.cup_max_eve === undefined
+    ) {
+      errores.push(
+        "❌ El cupo máximo es obligatorio. Por favor ingrese un valor."
+      );
+    } else if (isNaN(formData.cup_max_eve)) {
+      errores.push("❌ El cupo máximo debe ser un número válido.");
+    } else if (formData.cup_max_eve <= 0) {
+      errores.push(
+        "❌ El cupo máximo debe ser mayor a 0. Valor mínimo permitido: 1"
+      );
+    } else if (!Number.isInteger(Number(formData.cup_max_eve))) {
+      errores.push(
+        "❌ El cupo máximo debe ser un número entero (sin decimales)."
+      );
+    } else if (formData.cup_max_eve > 10000) {
+      errores.push("❌ El cupo máximo no puede ser mayor a 10,000 personas.");
+    }
     // Validar fechas
     if (formData.fec_ini_eve && formData.fec_fin_eve) {
       if (new Date(formData.fec_ini_eve) > new Date(formData.fec_fin_eve)) {
@@ -280,6 +332,7 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
       formDataToSend.append("fec_fin_eve", formData.fec_fin_eve);
       formDataToSend.append("dur_hor_eve", formData.dur_hor_eve);
       formDataToSend.append("por_min_asi_eve", formData.por_min_asi_eve);
+      formDataToSend.append("cup_max_eve", formData.cup_max_eve);
 
       // Campos específicos para cursos
       if (formData.tip_eve === "CURSO") {
@@ -300,13 +353,15 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
           JSON.stringify(formData.carrerasSeleccionadas)
         );
       }
-
       let response;
       if (mode === "create") {
         response = await axiosInstance.post("/eventos", formDataToSend, {
           headers: { "Content-Type": "multipart/form-data" },
         });
-        toast.success("Evento creado exitosamente");
+        toast.success(
+          // `✅ Evento creado exitosamente con cupo máximo de ${formData.cup_max_eve} personas`
+          `Evento creado exitosamente`
+        );
       } else {
         response = await axiosInstance.put(
           `/eventos/${eventId}`,
@@ -315,13 +370,32 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
             headers: { "Content-Type": "multipart/form-data" },
           }
         );
-        toast.success("Evento actualizado exitosamente");
+        toast.success(
+          // `✅ Evento actualizado exitosamente. Cupo máximo: ${formData.cup_max_eve} personas`
+          `Evento actualizado exitosamente`
+        );
       }
-
       navigate("/admin/eventos");
     } catch (error) {
       console.error("Error al guardar evento:", error);
-      toast.error(error.response?.data?.msg || "Error al guardar el evento");
+
+      // Proporcionar mensajes de error más específicos
+      let errorMessage = "Error al guardar el evento";
+
+      if (error.response?.data?.msg) {
+        errorMessage = error.response.data.msg;
+      } else if (error.response?.status === 400) {
+        errorMessage =
+          "❌ Datos inválidos. Verifique el cupo máximo y otros campos obligatorios.";
+      } else if (error.response?.status === 500) {
+        errorMessage =
+          "❌ Error del servidor. Intente nuevamente en unos momentos.";
+      } else if (error.code === "NETWORK_ERROR") {
+        errorMessage =
+          "❌ Error de conexión. Verifique su conexión a internet.";
+      }
+
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -467,7 +541,6 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
                 />
               </div>
             </div>
-
             <div className="form-group">
               <label>Fecha de Fin *</label>
               <div className="input-with-icon date-picker-container">
@@ -505,7 +578,6 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
                 />
               </div>
             </div>
-
             <div className="form-group">
               <label>Duración (horas) *</label>
               <div className="input-with-icon">
@@ -531,8 +603,7 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
                   required
                 />
               </div>
-            </div>
-
+            </div>{" "}
             <div className="form-group">
               <label>Porcentaje Mínimo de Asistencia % *</label>
               <div className="input-with-icon">
@@ -559,8 +630,33 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
                   required
                 />
               </div>
+            </div>{" "}
+            <div className="form-group">
+              <label>Cupo Máximo *</label>
+              <div className="input-with-icon">
+                <Users size={18} />{" "}
+                <input
+                  type="number"
+                  name="cup_max_eve"
+                  value={formData.cup_max_eve}
+                  onChange={handleInputChange}
+                  onWheel={preventScrollChange}
+                  onMouseEnter={(e) => e.target.blur()}
+                  onFocus={(e) =>
+                    e.target.addEventListener("wheel", preventScrollChange, {
+                      passive: false,
+                    })
+                  }
+                  onBlur={(e) =>
+                    e.target.removeEventListener("wheel", preventScrollChange)
+                  }
+                  min="1"
+                  step="1"
+                  placeholder="Ej: 50, 100, 200"
+                  required
+                />
+              </div>
             </div>
-
             {esCurso && (
               <div className="form-group">
                 <label>Nota Mínima para Aprobar *</label>

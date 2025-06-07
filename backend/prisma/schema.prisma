@@ -56,20 +56,6 @@ model carta_motivacion {
   // observaciones  observacion_motivacion[]   // Relación 1:N (documento puede tener muchas observaciones)
 }
 
-// model observacion_motivacion {
-//   id_car_mot       String    @id // Reutiliza el uuid del documento
-//   obs_car_mot      String    // Observación del documento
-
-//   carta_motivacion carta_motivacion @relation(fields: [id_car_mot], references: [id_car_mot]) // Relación 1:1 (observación pertenece a un documento)
-// }
-
-// model observacion_comprobante {
-//   id_com_pag       String    @id // Reutiliza el uuid del documento
-//   obs_com_pag      String    // Observación del documento
-
-//   comprobante_pago comprobante_pago @relation(fields: [id_com_pag], references: [id_com_pag]) // Relación 1:1 (observación pertenece a un documento)
-// }
-
 model observacion_inscripcion {
   id_obs_ins       String    @id @default(uuid()) // UUID como ID de la observación
   id_ins_per       String    @unique // FK única a inscripción
@@ -132,13 +118,16 @@ model evento {
   des_eve         String?       // Descripción del evento
   tip_eve         tipo_evento   // Tipo de evento (CURSO, CONGRESO, WEBINAR, CHARLA, SOCIALIZACION, PUBLICO)
   fec_ini_eve     DateTime      // Fecha de inicio del evento
+  fec_cre_eve     DateTime      @default(now()) // Fecha de creación del evento
+  fec_fin_eve     DateTime      // Fecha de finalización del evento
+  dur_hor_eve     Int           // Duración en horas del evento
+  mod_eve         modalidad_evento // Modalidad del evento (PRESENCIAL, VIRTUAL, SEMIPRESENCIAL)
   val_eve         Float         // Valor del evento
   est_eve         estado_evento @default(ACTIVO) // Estado del evento (ACTIVO, INACTIVO, FINALIZADO, CANCELADO, SUSPENDIDO)
-  fec_cre_eve     DateTime      @default(now()) // Fecha de creación del evento
-  dur_hor_eve     Int           // Duración en horas del evento
   img_por_eve     String        // URL de la imagen del evento
   por_min_asi_eve Float         // Porcentaje mínimo de asistencia del evento
-  fec_fin_eve     DateTime      // Fecha de finalización del evento
+  cup_max_eve     Int           // Número máximo de cupos disponibles para el evento
+  cup_dis_eve     Int           // Número de cupos disponibles actualmente
   id_cue_cre_eve  String        // FK a cuenta creadora del evento
 
   inscritos       inscripcion[]    // Relación 1:N (evento puede tener muchas inscripciones)
@@ -264,4 +253,10 @@ enum estado_evento {
 enum tipo_certificado {
   PARTICIPACION
   APROBACION
+}
+
+enum modalidad_evento {
+  PRESENCIAL
+  VIRTUAL
+  SEMIPRESENCIAL
 }

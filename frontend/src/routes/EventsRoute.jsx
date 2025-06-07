@@ -139,6 +139,11 @@ const EventsRoute = () => {
       return toast.error("Debes escribir una carta de motivación");
     }
 
+    // ✅ VALIDACIÓN DE CUPOS DISPONIBLES
+    if (eventoSeleccionado.cup_dis_eve <= 0) {
+      return toast.error("No hay cupos disponibles para este evento");
+    }
+
     // Solo validar archivo para eventos con costo o si se subió un archivo para eventos gratuitos
     if (eventoSeleccionado.val_eve > 0 && !archivo) {
       return toast.error("Debes subir un comprobante de pago");
@@ -173,9 +178,7 @@ const EventsRoute = () => {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-      });
-
-      // Verificar que la respuesta fue exitosa
+      }); // Verificar que la respuesta fue exitosa
       if (response.status === 200 || response.status === 201) {
         toast.success("Inscripción enviada con éxito");
 
@@ -190,6 +193,14 @@ const EventsRoute = () => {
           setInscripcionesRechazadas((prev) =>
             prev.filter((id) => id !== eventoSeleccionado.id_eve)
           );
+        }
+
+        // Refrescar la lista de eventos para actualizar los cupos disponibles
+        try {
+          const eventosRes = await axiosInstance.get("/eventos");
+          setEventos(eventosRes.data);
+        } catch (error) {
+          console.error("Error al actualizar eventos:", error);
         }
 
         setEventoSeleccionado(null);
@@ -324,9 +335,21 @@ const EventsRoute = () => {
                 <p className="fecha-evento-er">
                   Fecha: {formatearFechaUTC(evento.fec_ini_eve)} a{" "}
                   {formatearFechaUTC(evento.fec_fin_eve)}
-                </p>
+                </p>{" "}
                 <p className="duracion-evento-er">
                   Duración: {evento.dur_hor_eve} horas
+                </p>
+                {/* Cupos disponibles */}
+                <p
+                  className={
+                    evento.cup_dis_eve === 0
+                      ? "cupos-agotados"
+                      : "cupos-disponibles"
+                  }
+                >
+                  {evento.cup_dis_eve === 0
+                    ? "🚫 Sin cupos disponibles"
+                    : `Cupos disponibles: ${evento.cup_dis_eve || 0}`}
                 </p>
                 {/* Modalidad si existe */}
                 {evento.modalidad && (
@@ -353,10 +376,15 @@ const EventsRoute = () => {
                     }
                   }}
                   className="btn-inscribirme"
-                  disabled={inscripciones.includes(evento.id_eve)}
+                  disabled={
+                    inscripciones.includes(evento.id_eve) ||
+                    evento.cup_dis_eve === 0
+                  }
                 >
                   {inscripciones.includes(evento.id_eve)
                     ? "Ya inscrito"
+                    : evento.cup_dis_eve === 0
+                    ? "Sin cupos"
                     : "Inscribirme"}
                 </button>
               </div>

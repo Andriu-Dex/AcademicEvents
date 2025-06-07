@@ -1,5 +1,7 @@
 // Estilos globales
 import "bootstrap/dist/css/bootstrap.min.css";
+// Importamos nuestros estilos personalizados después de Bootstrap
+import "./assets/custom-bootstrap.css";
 import "./index.css";
 
 // React core
