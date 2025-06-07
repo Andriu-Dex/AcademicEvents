@@ -35,7 +35,7 @@ function App() {
       <>
         <Routes>
           {/* Redirección por defecto a login */}
-          <Route path="/" element={<Navigate to="/login" />} />
+          <Route path="/" element={<Home />} /> 
           {/* Rutas públicas */}
           <Route path="/login" element={<Login />} />
           <Route path="/registro" element={<Register />} />
