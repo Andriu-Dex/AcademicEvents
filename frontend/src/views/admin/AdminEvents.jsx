@@ -20,6 +20,9 @@ import {
   Plus,
   Star,
   UserCheck,
+  MapPin,
+  Monitor,
+  Laptop,
 } from "lucide-react";
 import "./styles/AdminEvents.css";
 
@@ -312,8 +315,8 @@ const AdminEvents = () => {
                   {/* Cupos disponibles */}
                   <div
                     className={`detail-item ${eve.cup_dis_eve === 0
-                        ? "cupos-agotados-admin"
-                        : "cupos-disponibles-admin"
+                      ? "cupos-agotados-admin"
+                      : "cupos-disponibles-admin"
                       }`}
                   >
                     <UserCheck size={16} className="icon-inline" />
@@ -364,13 +367,40 @@ const AdminEvents = () => {
                         : "General"}
                     </span>
                   </div>
-                  {/* Modalidad del evento */}
+                  {/* Modalidad del evento con ícono correspondiente */}
                   <div className="detail-item">
-                    <Users size={16} className="icon-inline" />
-                    <span>
-                      <strong>Modalidad:</strong>{" "}
-                      {eve.mod_eve || "No especificada"}
-                    </span>
+                    {eve.mod_eve === "PRESENCIAL" && (
+                      <>
+                        <MapPin size={16} className="icon-inline" />
+                        <span>
+                          <strong>Modalidad:</strong> Presencial
+                        </span>
+                      </>
+                    )}
+                    {eve.mod_eve === "VIRTUAL" && (
+                      <>
+                        <Monitor size={16} className="icon-inline" />
+                        <span>
+                          <strong>Modalidad:</strong> Virtual
+                        </span>
+                      </>
+                    )}
+                    {eve.mod_eve === "SEMIPRESENCIAL" && (
+                      <>
+                        <Laptop size={16} className="icon-inline" />
+                        <span>
+                          <strong>Modalidad:</strong> Semipresencial
+                        </span>
+                      </>
+                    )}
+                    {!eve.mod_eve && (
+                      <>
+                        <Users size={16} className="icon-inline" />
+                        <span>
+                          <strong>Modalidad:</strong> No especificada
+                        </span>
+                      </>
+                    )}
                   </div>
                   {/* Estado del evento */}
                   <div
