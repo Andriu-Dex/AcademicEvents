@@ -16,6 +16,9 @@ import {
   Zap,
   Pause,
   Star,
+  MapPin,
+  Monitor,
+  Laptop,
 } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import Navbar from "../components/Navbar";
@@ -253,8 +256,18 @@ const EventosPublicos = () => {
                     )}
                   </p>{" "}
                   <p className="modalidad-evento">
-                    <Users size={16} className="inline-icon" /> Modalidad:{" "}
-                    {evento.mod_eve || "No especificada"}
+                    {evento.mod_eve === "PRESENCIAL" && (
+                      <><MapPin size={16} className="inline-icon" /> Modalidad: Presencial</>
+                    )}
+                    {evento.mod_eve === "VIRTUAL" && (
+                      <><Monitor size={16} className="inline-icon" /> Modalidad: Virtual</>
+                    )}
+                    {evento.mod_eve === "SEMIPRESENCIAL" && (
+                      <><Laptop size={16} className="inline-icon" /> Modalidad: Semipresencial</>
+                    )}
+                    {!evento.mod_eve && (
+                      <><Users size={16} className="inline-icon" /> Modalidad: No especificada</>
+                    )}
                   </p>
                   <div className="evento-footer">
                     {" "}
