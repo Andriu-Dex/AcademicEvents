@@ -170,7 +170,7 @@ function Home() {
       <Navbar usuario={usuario} />
       {/* Hero Section */}
       <div
-        className="container-fluid py-5 mb-4"
+        className="contenedor-principal-home"
         style={{
           background:
             "linear-gradient(rgba(138, 21, 56, 0.85), rgba(138, 21, 56, 0.9)), url('https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover no-repeat",
@@ -182,14 +182,15 @@ function Home() {
             <div className="col-lg-6 text-white py-4">
               <h1 className="display-4 fw-bold mb-3 animate__animated animate__fadeInUp">
                 {usuario?.rol_usu === "ESTUDIANTE"
-                  ? `Facultad de Ingeniería en ${usuario?.carrera === "SOFTWARE"
-                    ? "Software"
-                    : usuario?.carrera === "TI"
-                      ? "Tecnologías de la Información"
-                      : usuario?.carrera === "INDUSTRIAL"
+                  ? `Facultad de Ingeniería en ${
+                      usuario?.carrera === "SOFTWARE"
+                        ? "Software"
+                        : usuario?.carrera === "TI"
+                        ? "Tecnologías de la Información"
+                        : usuario?.carrera === "INDUSTRIAL"
                         ? "Industrial"
                         : "Sistemas, Electrónica e Industrial"
-                  }`
+                    }`
                   : "Facultad de Ingeniería en Sistemas, Electrónica e Industrial"}
               </h1>
               <p className="lead mb-4 animate__animated animate__fadeInUp">
@@ -209,7 +210,9 @@ function Home() {
                   }}
                 >
                   <Calendar size={18} className="me-2" />
-                  {isAuthenticated ? "Explorar eventos" : "Explorar eventos públicos"}
+                  {isAuthenticated
+                    ? "Explorar eventos"
+                    : "Explorar eventos públicos"}
                 </Link>{" "}
                 <a
                   href="#carreras"
@@ -337,14 +340,15 @@ function Home() {
           <div className="col-lg-6 text-center">
             <h2 className="fw-bold" style={{ color: "#8A1538" }}>
               {usuario?.rol_usu === "ESTUDIANTE"
-                ? `Carrera de ${usuario?.carrera === "SOFTWARE"
-                  ? "Ingeniería en Software"
-                  : usuario?.carrera === "TI"
-                    ? "Tecnologías de la Información"
-                    : usuario?.carrera === "INDUSTRIAL"
+                ? `Carrera de ${
+                    usuario?.carrera === "SOFTWARE"
+                      ? "Ingeniería en Software"
+                      : usuario?.carrera === "TI"
+                      ? "Tecnologías de la Información"
+                      : usuario?.carrera === "INDUSTRIAL"
                       ? "Ingeniería Industrial"
                       : "Ingeniería en Sistemas"
-                }`
+                  }`
                 : "Nuestra Identidad"}
             </h2>
             <p className="text-muted">
@@ -417,7 +421,7 @@ function Home() {
               </a>
               <a
                 href="https://andriu-dex.github.io/Andriu-Dex/"
-                Target="_blank"
+                target="_blank"
                 className="btn btn-outline-secondary fw-bold btn-lg mb-2"
                 style={{ borderRadius: "8px" }}
               >

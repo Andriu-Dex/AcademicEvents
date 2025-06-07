@@ -121,8 +121,8 @@ const Register = () => {
             ].map((name) => {
               const labels = {
                 ced_usu: "Cédula",
-                nom_usu: "Nombres",
-                ape_usu: "Apellidos",
+                nom_usu: "Nombre",
+                ape_usu: "Apellido",
                 cor_usu: "Correo electrónico",
                 con_usu: "Contraseña",
                 cel_usu: "Celular",
@@ -191,7 +191,6 @@ const Register = () => {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   className="form-control"
                   required
-                  placeholder="Confirma tu contraseña"
                 />
                 <button
                   type="button"
@@ -230,28 +229,6 @@ const Register = () => {
                 </div>
               </div>
             )}{" "}
-            {/* <div className="mb-3">
-              <label className="form-label fw-semibold">Confirmar Contraseña</label>
-              <div className="input-group">
-                <span className="input-group-text bg-primary text-white">
-                  <Lock size={18} />
-                </span>
-                <input
-                  type={showConfirmPassword ? "text" : "password"}
-                  name="confirmPassword"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="form-control"
-                  required
-                />
-                <span
-                  className="input-group-text cursor-pointer"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                >
-                  {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </span>
-              </div>
-            </div> */}
             <div className="alert alert-info mb-3">
               <small>
                 <strong>Nota importante:</strong> Después de registrarte,

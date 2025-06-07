@@ -165,7 +165,7 @@ const EventosPublicos = () => {
                 }
                 setFiltro(e.target.value);
               }}
-              className="eventos-buscador"
+              className="eventos-buscador-ep"
             />
           </div>
         </div>

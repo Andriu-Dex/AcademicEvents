@@ -72,7 +72,8 @@ export const AuthProvider = ({ children }) => {
 
   // Verificación periódica de la validez del token (Silent Check)
   useEffect(() => {
-    // No hacer nada si no hay token    if (!token) return;
+    // No hacer nada si no hay token
+    if (!token) return;
 
     // Función para verificar si el token está próximo a expirar
     const checkTokenExpiration = () => {

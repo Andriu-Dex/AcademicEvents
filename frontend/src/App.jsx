@@ -27,6 +27,9 @@ import PrivateRouteAdmin from "./components/PrivateRouteAdmin";
 import ProtectedRoute from "./components/ProtectedRoute";
 import PrivateLayout from "./layouts/PrivateLayout";
 
+// Componente para refrescar estilos en cambios de ruta
+import StyleRefresher from "./components/StyleRefresher";
+
 // Toasts
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -35,6 +38,9 @@ function App() {
   return (
     <BrowserRouter>
       <>
+        {/* Componente para refrescar estilos en cambios de ruta */}
+        <StyleRefresher />
+
         <Routes>
           {/* Redirección por defecto a home */}
           <Route path="/" element={<Navigate to="/home" />} />

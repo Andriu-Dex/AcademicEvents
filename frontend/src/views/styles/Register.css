@@ -32,7 +32,7 @@ a {
 }
 
 .btn-primary:disabled {
-  background-color: #8a1538 !important;
+  background-color: #8a1538;
   opacity: 0.8;
   cursor: not-allowed;
   position: relative;
@@ -60,7 +60,7 @@ a {
 
 a.text-primary:hover {
   text-decoration: underline;
-  color: #6e0e2d !important;
+  color: #6e0e2d;
 }
 
 .registro-titulo {
@@ -125,7 +125,7 @@ a.text-primary:hover {
 }
 
 input:focus {
-  border-color: #8a1538 !important;
+  border-color: #8a1538;
   box-shadow: 0 0 0 0.2rem rgba(138, 21, 56, 0.25);
 }
 
