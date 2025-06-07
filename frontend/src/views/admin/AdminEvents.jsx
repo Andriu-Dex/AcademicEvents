@@ -32,49 +32,37 @@ const getEstadoEventoUI = (estado) => {
       return {
         icon: <CheckCircle size={16} />,
         text: "Activo",
-        color: "text-green-600",
-        bgColor: "#e6f7ed",
-        textColor: "#10b981",
+        cssClass: "estado-activo-ae"
       };
     case "INACTIVO":
       return {
         icon: <XCircle size={16} />,
         text: "Inactivo",
-        color: "text-gray-400",
-        bgColor: "#f1f5f9",
-        textColor: "#64748b",
+        cssClass: "estado-inactivo-ae"
       };
     case "FINALIZADO":
       return {
         icon: <XCircle size={16} />,
         text: "Finalizado",
-        color: "text-red-600",
-        bgColor: "#fee2e2",
-        textColor: "#ef4444",
+        cssClass: "estado-finalizado-ae"
       };
     case "CANCELADO":
       return {
         icon: <XCircle size={16} />,
         text: "Cancelado",
-        color: "text-red-700",
-        bgColor: "#fecaca",
-        textColor: "#b91c1c",
+        cssClass: "estado-cancelado-ae"
       };
     case "SUSPENDIDO":
       return {
         icon: <XCircle size={16} />,
         text: "Suspendido",
-        color: "text-yellow-500",
-        bgColor: "#fef3c7",
-        textColor: "#f59e0b",
+        cssClass: "estado-suspendido-ae"
       };
     default:
       return {
         icon: <XCircle size={16} />,
         text: "Desconocido",
-        color: "text-gray-400",
-        bgColor: "#f1f5f9",
-        textColor: "#64748b",
+        cssClass: "estado-default-ae"
       };
   }
 };
@@ -96,6 +84,36 @@ const getTipoEventoIcon = (tipo) => {
       return <Target size={18} />;
     default:
       return <Tag size={18} />;
+  }
+};
+
+// Función para obtener el estilo y clase CSS de la modalidad del evento
+const getModalidadUI = (modalidad) => {
+  switch (modalidad) {
+    case "PRESENCIAL":
+      return {
+        icon: <MapPin size={16} />,
+        text: "Presencial",
+        cssClass: "modalidad-presencial-ae"
+      };
+    case "VIRTUAL":
+      return {
+        icon: <Monitor size={16} />,
+        text: "Virtual",
+        cssClass: "modalidad-virtual-ae"
+      };
+    case "SEMIPRESENCIAL":
+      return {
+        icon: <Laptop size={16} />,
+        text: "Semipresencial",
+        cssClass: "modalidad-semipresencial-ae"
+      };
+    default:
+      return {
+        icon: <Users size={16} />,
+        text: "No especificada",
+        cssClass: "modalidad-default-ae"
+      };
   }
 };
 
@@ -254,6 +272,7 @@ const AdminEvents = () => {
               ? "FINALIZADO"
               : eve.est_eve;
             const estadoUI = getEstadoEventoUI(estadoEvento);
+            const modalidadUI = getModalidadUI(eve.mod_eve);
 
             return (
               <div key={eve.id_eve} className="admin-event-card">
@@ -267,12 +286,7 @@ const AdminEvents = () => {
                 <div className="admin-event-header">
                   <h3 className="admin-event-name">{eve.nom_eve}</h3>
                   <span
-                    className="admin-event-label"
-                    style={{
-                      backgroundColor:
-                        eve.val_eve === 0 ? "#e6f7ed" : "#fff7e6",
-                      color: eve.val_eve === 0 ? "#10b981" : "#f59e0b",
-                    }}
+                    className={`admin-event-label ${eve.val_eve === 0 ? "valor-gratuito-ae" : "valor-pago-ae"}`}
                   >
                     {eve.val_eve === 0
                       ? "Gratuito"
@@ -367,51 +381,21 @@ const AdminEvents = () => {
                         : "General"}
                     </span>
                   </div>
-                  {/* Modalidad del evento con ícono correspondiente */}
+                  {/* Contenedor para estado y modalidad uno al lado del otro */}
                   <div className="detail-item">
-                    {eve.mod_eve === "PRESENCIAL" && (
-                      <>
-                        <MapPin size={16} className="icon-inline" />
-                        <span>
-                          <strong>Modalidad:</strong> Presencial
-                        </span>
-                      </>
-                    )}
-                    {eve.mod_eve === "VIRTUAL" && (
-                      <>
-                        <Monitor size={16} className="icon-inline" />
-                        <span>
-                          <strong>Modalidad:</strong> Virtual
-                        </span>
-                      </>
-                    )}
-                    {eve.mod_eve === "SEMIPRESENCIAL" && (
-                      <>
-                        <Laptop size={16} className="icon-inline" />
-                        <span>
-                          <strong>Modalidad:</strong> Semipresencial
-                        </span>
-                      </>
-                    )}
-                    {!eve.mod_eve && (
-                      <>
-                        <Users size={16} className="icon-inline" />
-                        <span>
-                          <strong>Modalidad:</strong> No especificada
-                        </span>
-                      </>
-                    )}
-                  </div>
-                  {/* Estado del evento */}
-                  <div
-                    className="admin-event-status"
-                    style={{
-                      backgroundColor: estadoUI.bgColor,
-                      color: estadoUI.textColor,
-                    }}
-                  >
-                    {estadoUI.icon}
-                    <span>{estadoUI.text}</span>
+                    <div className="estado-modalidad-container-ae">
+                      {/* Estado del evento */}
+                      <div className={`admin-event-status ${estadoUI.cssClass}`}>
+                        {estadoUI.icon}
+                        <span>{estadoUI.text}</span>
+                      </div>
+
+                      {/* Modalidad del evento con ícono correspondiente */}
+                      <div className={`modalidad-badge-ae ${modalidadUI.cssClass}`}>
+                        {modalidadUI.icon}
+                        {modalidadUI.text}
+                      </div>
+                    </div>
                   </div>
                 </div>
 
