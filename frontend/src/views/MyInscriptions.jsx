@@ -50,6 +50,20 @@ const MyInscriptions = () => {
   const [inscripcionSeleccionada, setInscripcionSeleccionada] = useState(null);
   const [nuevoArchivo, setNuevoArchivo] = useState(null);
   const [reenviando, setReenviando] = useState(false);
+  const cumpleRequisitosFront = (ins) => {
+    if (ins.est_ins !== "FINALIZADA") return false;
+
+    const asistenciaOk = ins.por_asi_fin_usu >= ins.evento.por_min_asi_eve;
+
+    const esCurso = ins.evento.tip_eve === "CURSO";
+    const notaOk =
+      !esCurso ||
+      ins.inscripcion_curso?.not_fin_usu >=
+        ins.evento.eventos_curso?.not_min_cur;
+
+    return asistenciaOk && notaOk;
+  };
+
   const obtenerInscripciones = async () => {
     try {
       console.log("🔍 Obteniendo inscripciones propias...");
@@ -175,28 +189,23 @@ const MyInscriptions = () => {
                   <p className="observacion-texto">{ins.observacion}</p>
                 </div>
               )}{" "}
-              {ins.est_ins === "FINALIZADA" && (
+              {ins.est_ins === "FINALIZADA" && cumpleRequisitosFront(ins) ? (
                 <div className="myins-certificado">
-                  {" "}
                   <button
                     onClick={async () => {
                       try {
                         toast.info("Preparando certificado...");
-                        // Hacer la petición a través de axios para que incluya el token
                         const response = await axiosInstance.get(
                           `/certificados/${ins.id_ins}`,
                           {
-                            responseType: "blob", // Importante para manejar PDF
+                            responseType: "blob",
                           }
                         );
 
-                        // Crear un blob URL para el PDF
                         const blob = new Blob([response.data], {
                           type: "application/pdf",
                         });
                         const url = window.URL.createObjectURL(blob);
-
-                        // Abrir en una nueva pestaña
                         window.open(url, "_blank");
                       } catch (error) {
                         console.error("Error al descargar certificado:", error);
@@ -216,7 +225,8 @@ const MyInscriptions = () => {
                   >
                     <Download size={16} />
                     Descargar certificado
-                  </button>{" "}
+                  </button>
+
                   <button
                     onClick={async () => {
                       try {
@@ -249,6 +259,15 @@ const MyInscriptions = () => {
                     Recibir por email
                   </button>
                 </div>
+              ) : (
+                ins.est_ins === "FINALIZADA" && (
+                  <div className="myins-certificado">
+                    <p className="myins-rechazo-certificado">
+                      No cumple los requisitos para obtener el certificado,
+                      rechazado por inasistencia.
+                    </p>
+                  </div>
+                )
               )}{" "}
               {ins.est_ins === "ACEPTADA" && (
                 <button
