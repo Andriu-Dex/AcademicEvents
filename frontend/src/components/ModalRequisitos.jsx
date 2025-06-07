@@ -9,6 +9,9 @@ import {
   AlertCircle,
   Zap,
   Pause,
+  MapPin,
+  Monitor,
+  Laptop,
 } from "lucide-react";
 import "./styles/ModalRequisitos.css";
 
@@ -52,8 +55,8 @@ const ModalRequisitos = ({ evento, onClose }) => {
             <h3>{evento.nom_eve}</h3>
             <span
               className={`badge badge-estado ${evento.est_eve?.toLowerCase() === "activo"
-                  ? "activo"
-                  : "inactivo"
+                ? "activo"
+                : "inactivo"
                 }`}
             >
               {evento.est_eve === "ACTIVO" ? (
@@ -107,7 +110,16 @@ const ModalRequisitos = ({ evento, onClose }) => {
             <div className="info-item">
               <span className="info-label">Modalidad:</span>
               <span className="info-value">
-                {evento.mod_eve || "No especificada"}
+                {evento.mod_eve === "PRESENCIAL" && (
+                  <><MapPin size={16} /> Presencial</>
+                )}
+                {evento.mod_eve === "VIRTUAL" && (
+                  <><Monitor size={16} /> Virtual</>
+                )}
+                {evento.mod_eve === "SEMIPRESENCIAL" && (
+                  <><Laptop size={16} /> Semipresencial</>
+                )}
+                {!evento.mod_eve && "No especificada"}
               </span>
             </div>
             <div className="info-item">
