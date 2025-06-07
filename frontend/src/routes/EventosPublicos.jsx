@@ -252,9 +252,9 @@ const EventosPublicos = () => {
                       </>
                     )}
                   </p>{" "}
-                  <p className="modalidad">
+                  <p className="modalidad-evento">
                     <Users size={16} className="inline-icon" /> Modalidad:{" "}
-                    {evento.modalidad || "No especificada"}
+                    {evento.mod_eve || "No especificada"}
                   </p>
                   <div className="evento-footer">
                     {" "}
