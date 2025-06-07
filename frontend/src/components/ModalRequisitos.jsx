@@ -51,11 +51,10 @@ const ModalRequisitos = ({ evento, onClose }) => {
           >
             <h3>{evento.nom_eve}</h3>
             <span
-              className={`badge badge-estado ${
-                evento.est_eve?.toLowerCase() === "activo"
+              className={`badge badge-estado ${evento.est_eve?.toLowerCase() === "activo"
                   ? "activo"
                   : "inactivo"
-              }`}
+                }`}
             >
               {evento.est_eve === "ACTIVO" ? (
                 <>
@@ -108,7 +107,7 @@ const ModalRequisitos = ({ evento, onClose }) => {
             <div className="info-item">
               <span className="info-label">Modalidad:</span>
               <span className="info-value">
-                {evento.modalidad || "No especificada"}
+                {evento.mod_eve || "No especificada"}
               </span>
             </div>
             <div className="info-item">
