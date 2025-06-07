@@ -352,8 +352,8 @@ const EventsRoute = () => {
                     : `Cupos disponibles: ${evento.cup_dis_eve || 0}`}
                 </p>
                 {/* Modalidad si existe */}
-                {evento.modalidad && (
-                  <p className="modalidad">Modalidad: {evento.modalidad}</p>
+                {evento.mod_eve && (
+                  <p className="modalidad-evento">Modalidad: {evento.mod_eve}</p>
                 )}
                 {/* Público objetivo si existe */}
                 {evento.publico_objetivo && (
@@ -384,8 +384,8 @@ const EventsRoute = () => {
                   {inscripciones.includes(evento.id_eve)
                     ? "Ya inscrito"
                     : evento.cup_dis_eve === 0
-                    ? "Sin cupos"
-                    : "Inscribirme"}
+                      ? "Sin cupos"
+                      : "Inscribirme"}
                 </button>
               </div>
             ))}
