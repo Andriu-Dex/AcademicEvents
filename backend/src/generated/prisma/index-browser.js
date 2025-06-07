@@ -198,15 +198,16 @@ exports.Prisma.EventoScalarFieldEnum = {
   des_eve: 'des_eve',
   tip_eve: 'tip_eve',
   fec_ini_eve: 'fec_ini_eve',
+  fec_cre_eve: 'fec_cre_eve',
+  fec_fin_eve: 'fec_fin_eve',
+  dur_hor_eve: 'dur_hor_eve',
+  mod_eve: 'mod_eve',
   val_eve: 'val_eve',
   est_eve: 'est_eve',
-  fec_cre_eve: 'fec_cre_eve',
-  dur_hor_eve: 'dur_hor_eve',
   img_por_eve: 'img_por_eve',
   por_min_asi_eve: 'por_min_asi_eve',
-  fec_fin_eve: 'fec_fin_eve',
-  cupo_max_eve: 'cupo_max_eve',
-  cupo_dis_eve: 'cupo_dis_eve',
+  cup_max_eve: 'cup_max_eve',
+  cup_dis_eve: 'cup_dis_eve',
   id_cue_cre_eve: 'id_cue_cre_eve'
 };
 
@@ -297,6 +298,12 @@ exports.tipo_evento = exports.$Enums.tipo_evento = {
   CHARLA: 'CHARLA',
   SOCIALIZACION: 'SOCIALIZACION',
   PUBLICO: 'PUBLICO'
+};
+
+exports.modalidad_evento = exports.$Enums.modalidad_evento = {
+  PRESENCIAL: 'PRESENCIAL',
+  VIRTUAL: 'VIRTUAL',
+  SEMIPRESENCIAL: 'SEMIPRESENCIAL'
 };
 
 exports.estado_evento = exports.$Enums.estado_evento = {

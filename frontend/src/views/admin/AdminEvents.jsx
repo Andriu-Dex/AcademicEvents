@@ -312,27 +312,21 @@ const AdminEvents = () => {
                   {/* Cupos disponibles */}
                   <div
                     className={`detail-item ${
-                      eve.cupo_dis_eve === 0
+                      eve.cup_dis_eve === 0
                         ? "cupos-agotados-admin"
                         : "cupos-disponibles-admin"
                     }`}
                   >
                     <UserCheck size={16} className="icon-inline" />
-                    {/* <span>
-                      {eve.cupo_dis_eve === 0 
-                        ? `🚫 AGOTADO (0 de ${eve.cupo_max_eve})` 
-                        : `Cupos disponibles: ${eve.cupo_dis_eve || 0} de ${eve.cupo_max_eve}`
-                      }
-                    </span> */}
                     <span>
                       <strong>
-                        {eve.cupo_dis_eve === 0
+                        {eve.cup_dis_eve === 0
                           ? "🚫 AGOTADO"
                           : "Cupos disponibles:"}
                       </strong>{" "}
-                      {eve.cupo_dis_eve === 0
-                        ? ` (0 de ${eve.cupo_max_eve})`
-                        : ` ${eve.cupo_dis_eve || 0} de ${eve.cupo_max_eve}`}
+                      {eve.cup_dis_eve === 0
+                        ? ` (0 de ${eve.cup_max_eve})`
+                        : ` ${eve.cup_dis_eve || 0} de ${eve.cup_max_eve}`}
                     </span>
                   </div>
                   {/* Información exclusiva de cursos */}

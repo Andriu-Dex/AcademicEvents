@@ -170,7 +170,7 @@ function Home() {
       <Navbar usuario={usuario} />
       {/* Hero Section */}
       <div
-        className="container-fluid py-5 mb-4"
+        className="contenedor-principal-home"
         style={{
           background:
             "linear-gradient(rgba(138, 21, 56, 0.85), rgba(138, 21, 56, 0.9)), url('https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover no-repeat",
@@ -200,7 +200,7 @@ function Home() {
               </p>
               <div className="d-flex gap-3 flex-wrap">
                 <Link
-                  to="/eventos"
+                  to={isAuthenticated ? "/eventos" : "/eventos-publicos"}
                   className="btn btn-light fw-bold animate__animated animate__fadeInUp"
                   style={{
                     color: "#8A1538",
@@ -209,7 +209,10 @@ function Home() {
                     padding: "12px 24px",
                   }}
                 >
-                  <Calendar size={18} className="me-2" /> Explorar eventos
+                  <Calendar size={18} className="me-2" />
+                  {isAuthenticated
+                    ? "Explorar eventos"
+                    : "Explorar eventos públicos"}
                 </Link>{" "}
                 <a
                   href="#carreras"
@@ -418,7 +421,7 @@ function Home() {
               </a>
               <a
                 href="https://andriu-dex.github.io/Andriu-Dex/"
-                Target="_blank"
+                target="_blank"
                 className="btn btn-outline-secondary fw-bold btn-lg mb-2"
                 style={{ borderRadius: "8px" }}
               >
@@ -458,22 +461,16 @@ function Home() {
                     Carreras
                   </Link>
                 </li>
-                <li className="mb-2">
-                  <Link
-                    to="/inscripciones"
-                    className="text-white text-decoration-none small"
-                  >
-                    Inscripciones
-                  </Link>
-                </li>
-                <li className="mb-2">
-                  <Link
-                    to="/certificados"
-                    className="text-white text-decoration-none small"
-                  >
-                    Certificados
-                  </Link>
-                </li>
+                {isAuthenticated && (
+                  <li className="mb-2">
+                    <Link
+                      to="/inscripciones"
+                      className="text-white text-decoration-none small"
+                    >
+                      Inscripciones
+                    </Link>
+                  </li>
+                )}
               </ul>
             </div>
             <div className="col-md-3 mb-3 mb-md-0">
