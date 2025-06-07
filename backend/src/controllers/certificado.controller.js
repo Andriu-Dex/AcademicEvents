@@ -25,26 +25,80 @@ const generarCertificado = async (req, res) => {
       where: { id_ins_per: id },
     }); // Si ya existe un certificado, devolvemos la URL
     if (certificadoExistente) {
-      // Enviamos el archivo al cliente
       const filePath = certificadoExistente.url_cer;
-      if (fs.existsSync(filePath)) {
-        // Obtenemos el nombre del archivo de la ruta
-        const fileName = path.basename(filePath);
 
-        // Configurar las cabeceras adecuadas para un archivo PDF
+      if (fs.existsSync(filePath)) {
+        const fileName = path.basename(filePath);
         res.setHeader("Content-Type", "application/pdf");
         res.setHeader(
           "Content-Disposition",
-          `attachment; filename=certificado-${id}.pdf`
+          `attachment; filename=${fileName}`
         );
-
-        // Transmitir el archivo al cliente
         return fs.createReadStream(filePath).pipe(res);
       } else {
-        console.error(`Archivo no encontrado: ${filePath}`);
-        return res
-          .status(404)
-          .json({ msg: "Archivo de certificado no encontrado" });
+        // 🛠 Regenerar si el archivo fue eliminado
+        const inscripcion = await prisma.inscripcion.findUnique({
+          where: { id_ins: id },
+          include: {
+            cuenta: {
+              include: {
+                usuario: {
+                  include: { carrera: true },
+                },
+              },
+            },
+            evento: {
+              include: { eventos_curso: true },
+            },
+            inscripcion_curso: true,
+          },
+        });
+
+        if (!inscripcion)
+          return res.status(404).json({ msg: "Inscripción no encontrada" });
+
+        const tipoCertificado = determinarTipoCertificado(inscripcion.evento);
+        const codigoValidacion = generarCodigoValidacion();
+
+        const datosCertificado = {
+          usuario: inscripcion.cuenta.usuario,
+          evento: inscripcion.evento,
+          inscripcion,
+          asistencia: inscripcion.por_asi_fin_usu || 0,
+          notaFinal: inscripcion.inscripcion_curso?.not_fin_usu || null,
+          tipoCertificado,
+          codigoValidacion,
+        };
+
+        const nombreArchivo = `certificado_${
+          inscripcion.id_ins
+        }_${Date.now()}.pdf`;
+        const rutaArchivo = path.join(certificadosDir, nombreArchivo);
+
+        const doc = generarCertificadoPDF(datosCertificado);
+        const stream = fs.createWriteStream(rutaArchivo);
+        doc.pipe(stream);
+
+        stream.on("finish", async () => {
+          await prisma.certificado.update({
+            where: { id_ins_per: id },
+            data: {
+              url_cer: rutaArchivo,
+              tip_cer: tipoCertificado,
+              cod_val_cer: codigoValidacion,
+            },
+          });
+
+          res.setHeader("Content-Type", "application/pdf");
+          res.setHeader(
+            "Content-Disposition",
+            `attachment; filename=${nombreArchivo}`
+          );
+          fs.createReadStream(rutaArchivo).pipe(res);
+        });
+
+        doc.end();
+        return;
       }
     }
 
