@@ -311,11 +311,10 @@ const AdminEvents = () => {
                   </div>{" "}
                   {/* Cupos disponibles */}
                   <div
-                    className={`detail-item ${
-                      eve.cup_dis_eve === 0
+                    className={`detail-item ${eve.cup_dis_eve === 0
                         ? "cupos-agotados-admin"
                         : "cupos-disponibles-admin"
-                    }`}
+                      }`}
                   >
                     <UserCheck size={16} className="icon-inline" />
                     <span>
@@ -360,9 +359,17 @@ const AdminEvents = () => {
                       </strong>{" "}
                       {eve.eventos_carrera && eve.eventos_carrera.length > 0
                         ? eve.eventos_carrera
-                            .map((ec) => ec.carrera.nom_car)
-                            .join(", ")
+                          .map((ec) => ec.carrera.nom_car)
+                          .join(", ")
                         : "General"}
+                    </span>
+                  </div>
+                  {/* Modalidad del evento */}
+                  <div className="detail-item">
+                    <Users size={16} className="icon-inline" />
+                    <span>
+                      <strong>Modalidad:</strong>{" "}
+                      {eve.mod_eve || "No especificada"}
                     </span>
                   </div>
                   {/* Estado del evento */}
