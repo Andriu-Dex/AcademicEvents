@@ -34,7 +34,7 @@ router.get("/propias", verificarToken, obtenerInscripcionesDelUsuarioActual);
 
 // Reenviar comprobante
 router.put(
-  "/inscripciones/reenviar/:id",
+  "/reenviar/:id",
   verificarToken,
   upload.single("archivo"),
   manejarErroresDeMulter,

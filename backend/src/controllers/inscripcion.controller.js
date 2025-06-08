@@ -27,10 +27,20 @@ const manejarErroresDeMulter = (err, req, res, next) => {
 // ==========================================
 const crearInscripcion = async (req, res) => {
   try {
+    console.log("Iniciando proceso de inscripción...");
     const { id_eve, carta_motivacion } = req.body;
     const id_cue = req.usuario.id; // Ahora trabajamos con ID de cuenta
 
     const archivo = req.file;
+
+    console.log(
+      `Datos recibidos: id_eve=${id_eve}, id_cue=${id_cue}, archivo=${
+        archivo ? "Sí" : "No"
+      }`
+    );
+    console.log(
+      `Carta motivación: ${carta_motivacion ? "Recibida" : "No recibida"}`
+    );
 
     if (!id_cue || !id_eve) {
       return res
@@ -42,11 +52,18 @@ const crearInscripcion = async (req, res) => {
       return res
         .status(400)
         .json({ msg: "Debe incluir una carta de motivación" });
-    } // Obtenemos el evento para verificar si tiene costo
+    }
+
+    // Obtenemos el evento para verificar si tiene costo
+    console.log(`Buscando evento con ID: ${id_eve}`);
     const evento = await prisma.evento.findUnique({ where: { id_eve } });
     if (!evento) {
       return res.status(404).json({ msg: "Evento no encontrado" });
     }
+
+    console.log(
+      `Evento encontrado: ${evento.nom_eve}, costo: ${evento.val_eve}, cupos: ${evento.cup_dis_eve}`
+    );
 
     // Verificar cupos disponibles
     if (evento.cup_dis_eve <= 0) {
@@ -83,16 +100,29 @@ const crearInscripcion = async (req, res) => {
     }
 
     // Verificar que la cuenta existe
+    console.log(`Verificando cuenta de usuario con ID: ${id_cue}`);
     const cuenta = await prisma.cuenta.findUnique({
       where: { id_cue },
       include: { usuario: true },
     });
     if (!cuenta) {
       return res.status(404).json({ msg: "Cuenta de usuario no encontrada" });
-    } // Verificar si el usuario ya está inscrito
+    }
+    console.log(
+      `Cuenta encontrada: ${cuenta.cor_usu}, usuario: ${cuenta.usuario.nom_usu}`
+    );
+
+    // Verificar si el usuario ya está inscrito
+    console.log(`Verificando si el usuario ya está inscrito en el evento`);
     const yaInscrito = await prisma.inscripcion.findFirst({
       where: { id_cor_ins: id_cue, id_eve_ins: id_eve },
     });
+
+    console.log(
+      `Inscripción existente: ${yaInscrito ? "Sí" : "No"}, Estado: ${
+        yaInscrito?.est_ins || "N/A"
+      }`
+    );
 
     // Permitir reinscripción si la inscripción anterior fue rechazada
     if (yaInscrito && yaInscrito.est_ins !== "RECHAZADA") {
@@ -100,6 +130,7 @@ const crearInscripcion = async (req, res) => {
     } // Si la inscripción estaba RECHAZADA, la actualizamos en lugar de crear una nueva
     if (yaInscrito && yaInscrito.est_ins === "RECHAZADA") {
       try {
+        console.log(`Actualizando inscripción rechazada: ${yaInscrito.id_ins}`);
         // Actualizar la inscripción existente
         await prisma.inscripcion.update({
           where: { id_ins: yaInscrito.id_ins },
@@ -113,17 +144,25 @@ const crearInscripcion = async (req, res) => {
         let urlComprobante = null;
         if (archivo) {
           try {
+            console.log(
+              `Procesando archivo de comprobante para inscripción rechazada`
+            );
             // Subir la imagen a Imgur
             urlComprobante = await subirImagenAImgur(archivo);
+            console.log(
+              `Imagen subida correctamente a Imgur: ${urlComprobante}`
+            );
 
             // Guardar el comprobante
             await prisma.comprobante_pago.create({
               data: {
-                id_ins_com_pag: yaInscrito.id_ins,
+                id_ins_per: yaInscrito.id_ins,
                 url_com_pag: urlComprobante,
               },
             });
+            console.log(`Comprobante guardado correctamente`);
           } catch (imgurError) {
+            console.error(`Error al subir imagen a Imgur:`, imgurError);
             return res
               .status(500)
               .json({ msg: "Error al procesar el comprobante" });
@@ -161,6 +200,9 @@ const crearInscripcion = async (req, res) => {
     }
 
     try {
+      console.log(
+        `Creando nueva inscripción para el usuario ${id_cue} en evento ${id_eve}`
+      );
       // Crear la inscripción
       const nuevaInscripcion = await prisma.inscripcion.create({
         data: {
@@ -169,8 +211,10 @@ const crearInscripcion = async (req, res) => {
           est_ins: "PENDIENTE", // Usando el nuevo campo est_ins
         },
       });
+      console.log(`Inscripción creada con ID: ${nuevaInscripcion.id_ins}`);
 
       // Crear la carta de motivación
+      console.log(`Guardando carta de motivación`);
       await prisma.carta_motivacion.create({
         data: {
           id_ins_per: nuevaInscripcion.id_ins,
@@ -178,12 +222,15 @@ const crearInscripcion = async (req, res) => {
           est_car_mot: "PENDIENTE",
         },
       });
+      console.log(`Carta de motivación guardada correctamente`);
 
       // Si se proporciona un archivo, subirlo a Imgur y guardar la URL
       if (archivo) {
         try {
+          console.log(`Procesando comprobante de pago`);
           // Subir la imagen a Imgur
           const imgurUrl = await subirImagenAImgur(archivo);
+          console.log(`Imagen subida a Imgur: ${imgurUrl}`);
 
           // Crear el comprobante de pago con la URL de Imgur
           await prisma.comprobante_pago.create({
@@ -193,7 +240,9 @@ const crearInscripcion = async (req, res) => {
               est_com_pag: "PENDIENTE",
             },
           });
+          console.log(`Comprobante guardado correctamente`);
         } catch (imgurError) {
+          console.error(`Error al subir imagen a Imgur:`, imgurError);
           // Si falla la subida a Imgur, registramos el error pero continuamos con la inscripción
           await prisma.comprobante_pago.create({
             data: {
@@ -202,11 +251,13 @@ const crearInscripcion = async (req, res) => {
               est_com_pag: "ERROR",
             },
           });
+          console.log(`Se registró el error con el comprobante`);
         }
       }
 
       res.status(201).json(nuevaInscripcion);
     } catch (error) {
+      console.error(`Error en el bloque de creación de inscripción:`, error);
       if (
         error.code === "P2002" &&
         error.meta?.target?.includes("id_cor_ins_id_eve_ins")
@@ -220,9 +271,12 @@ const crearInscripcion = async (req, res) => {
       throw error;
     }
   } catch (error) {
+    console.error(`Error general en crearInscripcion:`, error);
     res.status(500).json({
       msg: "Error al inscribirse al evento",
       error: error.message,
+      detalles:
+        process.env.NODE_ENV === "development" ? error.stack : undefined,
     });
   }
 };
@@ -260,7 +314,6 @@ const validarInscripcion = async (req, res) => {
       return res.status(404).json({ msg: "Inscripción no encontrada" });
     }
 
-
     const estadoNuevo = est_ins;
     const estadoAnterior = inscripcion.est_ins;
     const idEvento = inscripcion.id_eve_ins;
@@ -278,7 +331,7 @@ const validarInscripcion = async (req, res) => {
         if (isNaN(asistenciaNum) || asistenciaNum < 0 || asistenciaNum > 100) {
           return res.status(400).json({ msg: "Asistencia inválida (0–100)" });
         }
-        
+
         if (asistenciaNum < asistenciaMinima) {
           nuevoEstado = "REPROBADO_ASISTENCIA";
         }
@@ -305,11 +358,12 @@ const validarInscripcion = async (req, res) => {
       }
     }
 
-    if (nuevoEstado === "APROBADO"
-      || nuevoEstado === "REPROBADO_NOTA"
-      || nuevoEstado === "REPROBADO_ASISTENCIA"
-      || nuevoEstado === "REPROBADO_TOTAL") {
-
+    if (
+      nuevoEstado === "APROBADO" ||
+      nuevoEstado === "REPROBADO_NOTA" ||
+      nuevoEstado === "REPROBADO_ASISTENCIA" ||
+      nuevoEstado === "REPROBADO_TOTAL"
+    ) {
       // Actualizar el estado de la inscripción
       await prisma.inscripcion.update({
         where: { id_ins: id },
@@ -344,18 +398,16 @@ const validarInscripcion = async (req, res) => {
         // Crear nueva observación sin verificar si existe una anterior
         await prisma.observacion_inscripcion.update({
           data: {
-            id_ins_per: id,          // ID de la inscripción
-            obs_ins: observacion,    // Texto de la observación
+            id_ins_per: id, // ID de la inscripción
+            obs_ins: observacion, // Texto de la observación
           },
         });
       }
-
 
       return res.status(200).json({
         msg: `Inscripción finalizada correctamente con estado: ${nuevoEstado}`,
       });
     }
-
 
     // VALIDACIÓN DE CUPOS DISPONIBLES
     // Verificar que hay cupos disponibles antes de aceptar una inscripción
@@ -592,13 +644,21 @@ const reenviarComprobante = async (req, res) => {
     const { id } = req.params;
     const archivo = req.file;
 
+    console.log(`Iniciando reenvío de comprobante para inscripción ID: ${id}`);
+
     if (!archivo) {
       return res.status(400).json({ msg: "Debes subir un archivo" });
     }
 
+    console.log(`Archivo recibido:`, {
+      nombre: archivo.originalname,
+      tipo: archivo.mimetype,
+      tamaño: archivo.size,
+      ruta: archivo.path,
+    });
+
     // Validar tipo de archivo (solo imágenes para Imgur)
     const tiposPermitidos = ["image/jpeg", "image/jpg", "image/png"];
-
     if (!tiposPermitidos.includes(archivo.mimetype)) {
       return res.status(400).json({
         msg: "Tipo de archivo no permitido. Solo se aceptan imágenes (JPG, PNG)",
@@ -613,6 +673,7 @@ const reenviarComprobante = async (req, res) => {
       });
     }
 
+    // Buscar la inscripción
     const inscripcion = await prisma.inscripcion.findUnique({
       where: { id_ins: id },
       include: { cuenta: true, evento: true },
@@ -620,7 +681,13 @@ const reenviarComprobante = async (req, res) => {
 
     if (!inscripcion) {
       return res.status(404).json({ msg: "Inscripción no encontrada" });
-    } // Solo puede reenviar el mismo estudiante
+    }
+
+    console.log(
+      `Inscripción encontrada: ${inscripcion.id_ins}, Usuario: ${inscripcion.id_cor_ins}, Solicitante: ${req.usuario.id}`
+    );
+
+    // Solo puede reenviar el mismo estudiante
     if (inscripcion.id_cor_ins !== req.usuario.id) {
       return res
         .status(403)
@@ -629,7 +696,9 @@ const reenviarComprobante = async (req, res) => {
 
     try {
       // Subir la imagen a Imgur
+      console.log("Intentando subir imagen a Imgur...");
       const imgurUrl = await subirImagenAImgur(archivo);
+      console.log(`Imagen subida correctamente a Imgur: ${imgurUrl}`);
 
       // Crear un nuevo comprobante de pago con la URL de Imgur
       await prisma.comprobante_pago.create({
@@ -639,6 +708,7 @@ const reenviarComprobante = async (req, res) => {
           est_com_pag: "PENDIENTE",
         },
       });
+      console.log("Comprobante registrado en la base de datos");
 
       // Actualizar estado de la inscripción a pendiente
       const actualizada = await prisma.inscripcion.update({
@@ -647,20 +717,26 @@ const reenviarComprobante = async (req, res) => {
           est_ins: "PENDIENTE",
         },
       });
+      console.log("Inscripción actualizada a estado PENDIENTE");
 
       res.status(200).json({
         msg: "Comprobante reenviado correctamente",
         inscripcion: actualizada,
       });
-    } catch (error) {
-      res
-        .status(500)
-        .json({ msg: "Error al reenviar comprobante", error: error.message });
+    } catch (errorSubida) {
+      console.error("Error detallado al procesar comprobante:", errorSubida);
+      return res.status(500).json({
+        msg: "Error al procesar el comprobante de pago",
+        error: errorSubida.message,
+      });
     }
   } catch (error) {
-    res
-      .status(500)
-      .json({ msg: "Error al reenviar comprobante", error: error.message });
+    console.error("Error general en reenviarComprobante:", error);
+    res.status(500).json({
+      msg: "Error al reenviar comprobante",
+      error: error.message,
+      stack: process.env.NODE_ENV === "development" ? error.stack : undefined,
+    });
   }
 };
 
@@ -690,7 +766,6 @@ const obtenerInscripcionesPorEvento = async (req, res) => {
       },
       orderBy: { fec_ins: "desc" },
     });
-
 
     try {
       // Mapear los resultados para tener una estructura más limpia
@@ -776,7 +851,6 @@ const obtenerInscripcionUsuarioEnEvento = async (req, res) => {
 // Inscripciones propias (usuario autenticado)
 // ==============================
 const obtenerInscripcionesDelUsuarioActual = async (req, res) => {
-
   try {
     // Verificar si req.usuario está definido
     if (!req.usuario) {

@@ -162,17 +162,27 @@ const EventsRoute = () => {
     setSubiendo(true);
 
     const formData = new FormData();
-    formData.append("id_usu", usuario.id);
+    // Ya no usamos id_usu, ahora el backend obtiene el ID del token
     formData.append("id_eve", eventoSeleccionado.id_eve);
-    formData.append("archivo", archivo);
     formData.append("carta_motivacion", cartaMotivacion);
+    if (archivo) {
+      formData.append("archivo", archivo);
+    }
+
+    console.log("Enviando solicitud de inscripción...");
+    console.log(`ID evento: ${eventoSeleccionado.id_eve}`);
+    console.log(`Archivo: ${archivo ? archivo.name : "Ninguno"}`);
 
     try {
       const response = await axiosInstance.post("/inscripciones", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-      }); // Verificar que la respuesta fue exitosa
+      });
+
+      console.log("Respuesta del servidor:", response.data);
+
+      // Verificar que la respuesta fue exitosa
       if (response.status === 200 || response.status === 201) {
         toast.success("Inscripción enviada con éxito");
 
@@ -204,6 +214,16 @@ const EventsRoute = () => {
         setTimeout(() => setExitoVisible(false), 2000);
       }
     } catch (error) {
+      console.error("Error al inscribirse:", error);
+
+      // Información adicional para depuración
+      if (error.response) {
+        console.error("Respuesta de error del servidor:", {
+          status: error.response.status,
+          data: error.response.data,
+        });
+      }
+
       // Mostrar mensaje detallado del backend si existe
       if (error.response?.data?.msg) {
         toast.error(error.response.data.msg);
@@ -215,7 +235,6 @@ const EventsRoute = () => {
     }
   };
   const eventosDisponibles = eventos.filter((evento) => {
-
     // Si el evento es de tipo PUBLICO, está disponible para todos
     if (evento.tip_eve === "PUBLICO") {
       return true;

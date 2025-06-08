@@ -83,22 +83,22 @@ const MyInscriptions = () => {
       return;
     }
 
-    const tiposPermitidos = [
-      "application/pdf",
-      "image/jpeg",
-      "image/png",
-      "image/jpg",
-      "image/webp",
-    ];
-    if (!tiposPermitidos.includes(nuevoArchivo.type))
-      return toast.error("Archivo no permitido. Solo PDF o imágenes.");
+    const tiposPermitidos = ["image/jpeg", "image/png", "image/jpg"];
+    if (!tiposPermitidos.includes(nuevoArchivo.type)) {
+      toast.error("Archivo no permitido. Solo se permiten imágenes JPG o PNG.");
+      return;
+    }
 
     const formData = new FormData();
     formData.append("archivo", nuevoArchivo);
     try {
       setReenviando(true);
-      await axiosInstance.put(
-        `/inscripciones/reenviar/${inscripcionSeleccionada.id_ins}`,
+      console.log(
+        `Enviando comprobante para inscripción ID: ${inscripcionSeleccionada.id_ins}`
+      );
+
+      const response = await axiosInstance.put(
+        `/reenviar/${inscripcionSeleccionada.id_ins}`,
         formData,
         {
           headers: {
@@ -106,13 +106,18 @@ const MyInscriptions = () => {
           },
         }
       );
+
+      console.log("Respuesta del servidor:", response.data);
       toast.success("Comprobante reenviado correctamente");
       await obtenerInscripciones();
       setMostrarModal(false);
       setNuevoArchivo(null);
       setInscripcionSeleccionada(null);
     } catch (error) {
-      toast.error(error.response?.data?.msg || "Error al reenviar comprobante");
+      console.error("Error al reenviar comprobante:", error);
+      const errorMsg =
+        error.response?.data?.msg || "Error al reenviar comprobante";
+      toast.error(errorMsg);
     } finally {
       setReenviando(false);
     }
