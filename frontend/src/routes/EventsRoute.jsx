@@ -3,7 +3,14 @@ import axiosInstance from "../api/axiosConfig";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { CalendarDays, Search, CheckCircle, MapPin, Monitor, Laptop } from "lucide-react";
+import {
+  CalendarDays,
+  Search,
+  CheckCircle,
+  MapPin,
+  Monitor,
+  Laptop,
+} from "lucide-react";
 import "./styles/EventsRoute.css";
 
 // Función para formatear fechas correctamente usando UTC
@@ -281,8 +288,8 @@ const EventsRoute = () => {
         <CalendarDays size={24} />
         Eventos disponibles
       </h1>
-      <div className="buscador-contenedor">
-        <Search className="buscador-icono" size={18} />
+      <div className="buscador-contenedor-er">
+        <Search className="buscador-icono-er" size={18} />
         <input
           type="text"
           placeholder="Buscar por nombre..."
@@ -355,13 +362,22 @@ const EventsRoute = () => {
                 {evento.mod_eve && (
                   <p className="modalidad-evento">
                     {evento.mod_eve === "PRESENCIAL" && (
-                      <><MapPin size={16} className="inline-icon" /> Modalidad: Presencial</>
+                      <>
+                        <MapPin size={16} className="inline-icon" /> Modalidad:
+                        Presencial
+                      </>
                     )}
                     {evento.mod_eve === "VIRTUAL" && (
-                      <><Monitor size={16} className="inline-icon" /> Modalidad: Virtual</>
+                      <>
+                        <Monitor size={16} className="inline-icon" /> Modalidad:
+                        Virtual
+                      </>
                     )}
                     {evento.mod_eve === "SEMIPRESENCIAL" && (
-                      <><Laptop size={16} className="inline-icon" /> Modalidad: Semipresencial</>
+                      <>
+                        <Laptop size={16} className="inline-icon" /> Modalidad:
+                        Semipresencial
+                      </>
                     )}
                   </p>
                 )}
@@ -394,8 +410,8 @@ const EventsRoute = () => {
                   {inscripciones.includes(evento.id_eve)
                     ? "Ya inscrito"
                     : evento.cup_dis_eve === 0
-                      ? "Sin cupos"
-                      : "Inscribirme"}
+                    ? "Sin cupos"
+                    : "Inscribirme"}
                 </button>
               </div>
             ))}
