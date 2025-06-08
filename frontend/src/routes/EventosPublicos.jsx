@@ -19,6 +19,9 @@ import {
   MapPin,
   Monitor,
   Laptop,
+  Filter,
+  X,
+  ChevronDown,
 } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import Navbar from "../components/Navbar";
@@ -58,6 +61,94 @@ const EventosPublicos = () => {
   const [filtro, setFiltro] = useState("");
   const [cargando, setCargando] = useState(true);
   const [modalEvento, setModalEvento] = useState(null);
+  
+  // Estados para los filtros
+  const [filtros, setFiltros] = useState({
+    software: false,
+    industrial: false,
+    publico: false,
+    gratuito: false,
+    pagado: false,
+    completo: false,
+  });
+  const [mostrarFiltros, setMostrarFiltros] = useState(false);
+
+  // Función para aplicar filtros
+  const aplicarFiltros = (evento) => {
+    // Filtro por nombre
+    const coincideNombre = evento.nom_eve
+      .toLowerCase()
+      .includes(filtro.toLowerCase());
+    
+    if (!coincideNombre) return false;
+
+    // Si no hay filtros activos, mostrar todos
+    const hayFiltrosActivos = Object.values(filtros).some(f => f);
+    if (!hayFiltrosActivos) return true;
+
+    // Aplicar filtros específicos
+    if (filtros.software) {
+      const esSoftware = evento.eventos_carrera?.some(ec => 
+        ec.carrera?.nom_car?.toLowerCase().includes('software') ||
+        ec.carrera?.nom_car?.toLowerCase().includes('sistemas')
+      );
+      if (!esSoftware) return false;
+    }
+
+    if (filtros.industrial) {
+      const esIndustrial = evento.eventos_carrera?.some(ec => 
+        ec.carrera?.nom_car?.toLowerCase().includes('industrial')
+      );
+      if (!esIndustrial) return false;
+    }
+
+    if (filtros.publico) {
+      if (evento.tip_eve !== 'PUBLICO') return false;
+    }
+
+    if (filtros.gratuito) {
+      if (evento.val_eve !== 0) return false;
+    }
+
+    if (filtros.pagado) {
+      if (evento.val_eve === 0) return false;
+    }
+
+    if (filtros.completo) {
+      if (evento.cup_dis_eve !== 0) return false;
+    }
+
+    return true;
+  };
+
+  // Función para manejar cambios en filtros
+  const manejarCambioFiltro = (tipoFiltro) => {
+    setFiltros(prev => ({
+      ...prev,
+      [tipoFiltro]: !prev[tipoFiltro]
+    }));
+
+    // Añadir efecto de filtrado al grid
+    const eventosGrid = document.querySelector(".eventos-grid");
+    if (eventosGrid) {
+      eventosGrid.classList.add("filtering");
+      setTimeout(() => {
+        eventosGrid.classList.remove("filtering");
+      }, 300);
+    }
+  };
+
+  // Función para limpiar filtros
+  const limpiarFiltros = () => {
+    setFiltros({
+      software: false,
+      industrial: false,
+      publico: false,
+      gratuito: false,
+      pagado: false,
+      completo: false,
+    });
+  };
 
   useEffect(() => {
     if (usuario) {
@@ -173,6 +264,115 @@ const EventosPublicos = () => {
           </div>
         </div>
 
+        {/* Barra de filtros */}
+        <div className="filtros-contenedor">
+          <div className="filtros-header">
+            <button
+              className={`btn-toggle-filtros ${mostrarFiltros ? 'activo' : ''}`}
+              onClick={() => setMostrarFiltros(!mostrarFiltros)}
+            >
+              <Filter size={18} />
+              Filtros
+              <ChevronDown 
+                size={16} 
+                className={`chevron ${mostrarFiltros ? 'rotado' : ''}`}
+              />
+            </button>
+            
+            {Object.values(filtros).some(f => f) && (
+              <button
+                className="btn-limpiar-filtros"
+                onClick={limpiarFiltros}
+              >
+                <X size={16} />
+                Limpiar filtros
+              </button>
+            )}
+          </div>
+
+          {mostrarFiltros && (
+            <div className="filtros-grid">
+              <div className="filtro-categoria">
+                <h4>Por Carrera</h4>
+                <div className="filtros-opciones">
+                  <label className="filtro-opcion">
+                    <input
+                      type="checkbox"
+                      checked={filtros.software}
+                      onChange={() => manejarCambioFiltro('software')}
+                    />
+                    <span className="checkmark"></span>
+                    Software/Sistemas
+                  </label>
+                  <label className="filtro-opcion">
+                    <input
+                      type="checkbox"
+                      checked={filtros.industrial}
+                      onChange={() => manejarCambioFiltro('industrial')}
+                    />
+                    <span className="checkmark"></span>
+                    Industrial
+                  </label>
+                </div>
+              </div>
+
+              <div className="filtro-categoria">
+                <h4>Por Tipo</h4>
+                <div className="filtros-opciones">
+                  <label className="filtro-opcion">
+                    <input
+                      type="checkbox"
+                      checked={filtros.publico}
+                      onChange={() => manejarCambioFiltro('publico')}
+                    />
+                    <span className="checkmark"></span>
+                    Eventos Públicos
+                  </label>
+                </div>
+              </div>
+
+              <div className="filtro-categoria">
+                <h4>Por Precio</h4>
+                <div className="filtros-opciones">
+                  <label className="filtro-opcion">
+                    <input
+                      type="checkbox"
+                      checked={filtros.gratuito}
+                      onChange={() => manejarCambioFiltro('gratuito')}
+                    />
+                    <span className="checkmark"></span>
+                    Eventos Gratuitos
+                  </label>
+                  <label className="filtro-opcion">
+                    <input
+                      type="checkbox"
+                      checked={filtros.pagado}
+                      onChange={() => manejarCambioFiltro('pagado')}
+                    />
+                    <span className="checkmark"></span>
+                    Eventos de Pago
+                  </label>
+                </div>
+              </div>
+
+              <div className="filtro-categoria">
+                <h4>Por Disponibilidad</h4>
+                <div className="filtros-opciones">
+                  <label className="filtro-opcion">
+                    <input
+                      type="checkbox"
+                      checked={filtros.completo}
+                      onChange={() => manejarCambioFiltro('completo')}
+                    />
+                    <span className="checkmark"></span>
+                    Eventos Completos
+                  </label>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
         {eventos.length === 0 ? (
           <div className="eventos-vacios">
             <p>No hay eventos públicos disponibles en este momento.</p>
@@ -182,15 +382,23 @@ const EventosPublicos = () => {
             </Link>
           </div>
         ) : (
-          <div className="eventos-grid">
-            {eventos
-              .filter((ev) => {
-                const coincideNombre = ev.nom_eve
-                  .toLowerCase()
-                  .includes(filtro.toLowerCase());
-                return coincideNombre;
-              })
-              .map((evento, index) => (
+          <>
+            {/* Contador de resultados */}
+            <div className="resultados-contador">
+              <p>
+                Mostrando {eventos.filter(aplicarFiltros).length} de {eventos.length} eventos
+                {Object.values(filtros).some(f => f) && (
+                  <span className="filtros-activos-badge">
+                    ({Object.values(filtros).filter(f => f).length} filtro{Object.values(filtros).filter(f => f).length !== 1 ? 's' : ''} activo{Object.values(filtros).filter(f => f).length !== 1 ? 's' : ''})
+                  </span>
+                )}
+              </p>
+            </div>
+            
+            <div className="eventos-grid">
+              {eventos
+                .filter(aplicarFiltros)
+                .map((evento, index) => (
                 <div
                   key={evento.id_eve}
                   className="evento-card"
@@ -350,7 +558,8 @@ const EventosPublicos = () => {
                   </div>
                 </div>
               ))}
-          </div>
+            </div>
+          </>
         )}
       </div>
       {modalEvento && (
