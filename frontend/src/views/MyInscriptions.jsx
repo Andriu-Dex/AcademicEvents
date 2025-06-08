@@ -52,12 +52,9 @@ const MyInscriptions = () => {
   const [reenviando, setReenviando] = useState(false);
   const obtenerInscripciones = async () => {
     try {
-      console.log("🔍 Obteniendo inscripciones propias...");
       const token = localStorage.getItem("token");
-      console.log("🔑 Token disponible:", token ? "Sí" : "No");
 
       const res = await axiosInstance.get("/inscripciones/propias");
-      console.log("✅ Respuesta recibida:", res.data);
 
       setInscripciones(res.data);
     } catch (error) {
@@ -223,10 +220,6 @@ const MyInscriptions = () => {
                         toast.info("Enviando certificado a tu correo...");
                         const response = await axiosInstance.post(
                           `/certificados/enviar/${ins.id_ins}`
-                        );
-                        console.log(
-                          "Respuesta de envío por correo:",
-                          response.data
                         );
                         toast.success(
                           "Certificado enviado a tu correo electrónico"

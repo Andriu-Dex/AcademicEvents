@@ -8,9 +8,6 @@ const actualizarImagenPerfil = async (req, res) => {
     const { id } = req.usuario; // ID de la cuenta
     const archivo = req.file;
 
-    console.log(`📤 Actualizando imagen de perfil para cuenta con ID: ${id}`);
-    console.log(`📎 Información del archivo:`, archivo);
-
     if (!archivo) {
       return res.status(400).json({ msg: "Debes subir una imagen válida" });
     }
@@ -41,7 +38,6 @@ const actualizarImagenPerfil = async (req, res) => {
 
     // Subir imagen a Imgur
     const imgurUrl = await subirImagenAImgur(archivo);
-    console.log(`🔗 URL de Imgur obtenida: ${imgurUrl}`);
 
     // Actualizar el campo img_per_usu del usuario
     const usuarioActualizado = await prisma.usuario.update({
@@ -51,12 +47,9 @@ const actualizarImagenPerfil = async (req, res) => {
       },
     });
 
-    console.log(`✅ Imagen de perfil actualizada con éxito:`, imgurUrl);
-
     // Eliminar el archivo temporal
     if (fs.existsSync(archivo.path)) {
       fs.unlinkSync(archivo.path);
-      console.log(`🗑️ Archivo temporal eliminado: ${archivo.path}`);
     }
 
     return res.status(200).json({

@@ -108,7 +108,6 @@ const AdminEvents = () => {
     try {
       setLoading(true);
       const res = await axiosInstance.get("/eventos");
-      console.log("Eventos cargados:", res.data);
       setEventos(res.data);
     } catch (error) {
       console.error("Error al cargar eventos:", error);

@@ -77,7 +77,6 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
       const res = await axiosInstance.get(`/eventos/${eventId}`);
       const evento = res.data;
 
-      console.log("Evento cargado para editar:", evento);
       // Verificar si el evento tiene carreras asociadas o es general
       const tieneCarreras =
         evento.eventos_carrera && evento.eventos_carrera.length > 0;
@@ -86,8 +85,6 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
         : [];
       const esGeneral = !tieneCarreras;
 
-      console.log("Carreras asociadas:", carrerasIds);
-      console.log("Es evento general:", esGeneral); // Convertir fechas a formato yyyy-MM-dd
       setFormData({
         nom_eve: evento.nom_eve || "",
         des_eve: evento.des_eve || "",

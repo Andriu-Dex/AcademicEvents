@@ -1,4 +1,5 @@
 const prisma = require("../config/db");
+const { estado_inscripcion } = require("../generated/prisma");
 const { subirImagenAImgur } = require("../utils/imgur.utils");
 
 // Manejo de errores de multer
@@ -123,10 +124,6 @@ const crearInscripcion = async (req, res) => {
               },
             });
           } catch (imgurError) {
-            console.error(
-              "Error al subir imagen a Imgur para reinscripción:",
-              imgurError
-            );
             return res
               .status(500)
               .json({ msg: "Error al procesar el comprobante" });
@@ -159,7 +156,6 @@ const crearInscripcion = async (req, res) => {
           id_ins: yaInscrito.id_ins,
         });
       } catch (error) {
-        console.error("Error al actualizar inscripción rechazada:", error);
         throw error;
       }
     }
@@ -198,7 +194,6 @@ const crearInscripcion = async (req, res) => {
             },
           });
         } catch (imgurError) {
-          console.error("Error al subir imagen a Imgur:", imgurError);
           // Si falla la subida a Imgur, registramos el error pero continuamos con la inscripción
           await prisma.comprobante_pago.create({
             data: {
@@ -225,7 +220,6 @@ const crearInscripcion = async (req, res) => {
       throw error;
     }
   } catch (error) {
-    console.error("Error en crearInscripcion:", error);
     res.status(500).json({
       msg: "Error al inscribirse al evento",
       error: error.message,
@@ -241,15 +235,21 @@ const validarInscripcion = async (req, res) => {
     const { id } = req.params;
     const { est_ins, asistencia, nota_final, observacion } = req.body;
 
-    // Verificar estados permitidos con el nuevo enum
+    console.log(req.body);
+
+    // Verificar estados permitidos con el enum
     const estadosPermitidos = [
       "PENDIENTE",
       "ACEPTADA",
       "RECHAZADA",
-      "FINALIZADA",
+      "APROBADO",
+      "REPROBADO_NOTA",
+      "REPROBADO_ASISTENCIA",
+      "REPROBADO_TOTAL",
     ];
+
     if (!estadosPermitidos.includes(est_ins)) {
-      return res.status(400).json({ msg: "Estado inválido" });
+      return res.status(400).json({ msg: "Estado inválido" + est_ins });
     }
     const inscripcion = await prisma.inscripcion.findUnique({
       where: { id_ins: id },
@@ -260,43 +260,102 @@ const validarInscripcion = async (req, res) => {
       return res.status(404).json({ msg: "Inscripción no encontrada" });
     }
 
-    const estadoAnterior = inscripcion.est_ins;
+
     const estadoNuevo = est_ins;
+    const estadoAnterior = inscripcion.est_ins;
     const idEvento = inscripcion.id_eve_ins;
 
-    const asistenciaNum = Number(asistencia);
-    const notaFinalNum = Number(nota_final);
+    let asistenciaNum = asistencia !== undefined ? Number(asistencia) : -1;
+    let notaFinalNum = nota_final !== undefined ? Number(nota_final) : -1;
 
-    // Si el evento es un CURSO, validar nota y asistencia
-    if (inscripcion.evento.tip_eve === "CURSO" && est_ins === "FINALIZADA") {
-      if (asistencia === undefined || nota_final === undefined) {
-        return res.status(400).json({
-          msg: "Para finalizar el curso debes ingresar asistencia y nota final",
+    let nuevoEstado = est_ins; // Usamos el estado enviado si no se especifican asistencia ni nota
+
+    // Si no se proporciona asistencia, no se entra en la lógica de validación de asistencia y nota
+    if (asistenciaNum !== -1 || notaFinalNum !== -1) {
+      // Validación de asistencia
+      if (asistenciaNum !== -1) {
+        const asistenciaMinima = inscripcion.evento.por_min_asi_eve;
+        if (isNaN(asistenciaNum) || asistenciaNum < 0 || asistenciaNum > 100) {
+          return res.status(400).json({ msg: "Asistencia inválida (0–100)" });
+        }
+        
+        if (asistenciaNum < asistenciaMinima) {
+          nuevoEstado = "REPROBADO_ASISTENCIA";
+        }
+      }
+
+      // Validación de nota final (solo para eventos tipo CURSO)
+      if (inscripcion.evento.tip_eve === "CURSO" && notaFinalNum !== -1) {
+        const eventoCurso = await prisma.evento_curso.findUnique({
+          where: { id_eve_cur: inscripcion.evento.id_eve },
         });
-      }
 
-      if (isNaN(asistenciaNum) || asistenciaNum < 0 || asistenciaNum > 100) {
-        return res.status(400).json({ msg: "Asistencia inválida (0–100)" });
-      }
+        const notaMinima = eventoCurso.not_min_cur;
+        if (isNaN(notaFinalNum) || notaFinalNum < 0 || notaFinalNum > 10) {
+          return res.status(400).json({ msg: "Nota inválida (0–10)" });
+        }
 
-      if (isNaN(notaFinalNum) || notaFinalNum < 0 || notaFinalNum > 10) {
-        return res.status(400).json({ msg: "Nota inválida (0–10)" });
-      }
-
-      // Obtener la nota mínima del evento curso
-      const eventoCurso = await prisma.evento_curso.findUnique({
-        where: { id_eve_cur: inscripcion.evento.id_eve },
-      });
-
-      const notaMinima = eventoCurso ? eventoCurso.not_min_cur : 8;
-      const asistenciaMinima = inscripcion.evento.por_min_asi_eve ?? 80;
-
-      if (notaFinalNum < notaMinima || asistenciaNum < asistenciaMinima) {
-        return res.status(400).json({
-          msg: `No cumple requisitos para finalizar: nota mínima ${notaMinima}, asistencia mínima ${asistenciaMinima}%`,
-        });
+        if (notaFinalNum < notaMinima) {
+          nuevoEstado = "REPROBADO_NOTA";
+        } else if (nuevoEstado === "REPROBADO_ASISTENCIA") {
+          nuevoEstado = "REPROBADO_TOTAL"; // Si ya se reprobó por asistencia, se pone reprobado total
+        } else {
+          nuevoEstado = "APROBADO";
+        }
       }
     }
+
+    if (nuevoEstado === "APROBADO"
+      || nuevoEstado === "REPROBADO_NOTA"
+      || nuevoEstado === "REPROBADO_ASISTENCIA"
+      || nuevoEstado === "REPROBADO_TOTAL") {
+
+      // Actualizar el estado de la inscripción
+      await prisma.inscripcion.update({
+        where: { id_ins: id },
+        data: {
+          est_ins: nuevoEstado, // Estado calculado
+          por_asi_fin_usu: asistenciaNum, // Solo actualizar asistencia si se envió
+        },
+      });
+
+      if (inscripcion.evento.tip_eve === "CURSO" && notaFinalNum !== null) {
+        const inscripcionCurso = await prisma.inscripcion_curso.findUnique({
+          where: { id_ins_cur: id },
+        });
+        if (inscripcionCurso) {
+          await prisma.inscripcion_curso.update({
+            where: { id_ins_cur: id },
+            data: {
+              not_fin_usu: notaFinalNum, // Actualizar la nota final
+            },
+          });
+        } else {
+          await prisma.inscripcion_curso.create({
+            where: { id_ins_cur: id },
+            data: {
+              not_fin_usu: notaFinalNum, // Guardar la nota final
+            },
+          });
+        }
+      }
+
+      if (observacion) {
+        // Crear nueva observación sin verificar si existe una anterior
+        await prisma.observacion_inscripcion.update({
+          data: {
+            id_ins_per: id,          // ID de la inscripción
+            obs_ins: observacion,    // Texto de la observación
+          },
+        });
+      }
+
+
+      return res.status(200).json({
+        msg: `Inscripción finalizada correctamente con estado: ${nuevoEstado}`,
+      });
+    }
+
 
     // VALIDACIÓN DE CUPOS DISPONIBLES
     // Verificar que hay cupos disponibles antes de aceptar una inscripción
@@ -337,24 +396,12 @@ const validarInscripcion = async (req, res) => {
         },
       });
 
-      console.log(
-        `✅ Cupos actualizados para evento ${idEvento}: ${
-          actualizacionCupo > 0 ? "incrementado" : "decrementado"
-        } en ${Math.abs(actualizacionCupo)}`
-      );
-      console.log(
-        `📊 Cupos disponibles después de la actualización: ${eventoActualizado.cup_dis_eve}`
-      );
-
       // BLOQUEO AUTOMÁTICO: Si cupos llegan a 0, bloquear nuevas inscripciones
       if (
         eventoActualizado.cup_dis_eve === 0 &&
         estadoAnterior === "PENDIENTE" &&
         estadoNuevo === "ACEPTADA"
       ) {
-        console.log(
-          `🚫 Cupos agotados para evento ${idEvento}. Las nuevas inscripciones serán bloqueadas automáticamente.`
-        );
         // Nota: El bloqueo se maneja en la función crearInscripcion al verificar cup_dis_eve > 0
       }
     }
@@ -606,7 +653,6 @@ const reenviarComprobante = async (req, res) => {
         inscripcion: actualizada,
       });
     } catch (error) {
-      console.error("Error al reenviar comprobante:", error);
       res
         .status(500)
         .json({ msg: "Error al reenviar comprobante", error: error.message });
@@ -622,7 +668,6 @@ const reenviarComprobante = async (req, res) => {
 const obtenerInscripcionesPorEvento = async (req, res) => {
   try {
     const { id } = req.params;
-    console.log("🔍 Obteniendo inscripciones para evento ID:", id);
     const inscripciones = await prisma.inscripcion.findMany({
       where: { id_eve_ins: id },
       include: {
@@ -646,12 +691,10 @@ const obtenerInscripcionesPorEvento = async (req, res) => {
       orderBy: { fec_ins: "desc" },
     });
 
-    console.log(`✅ Inscripciones encontradas: ${inscripciones.length}`);
 
     try {
       // Mapear los resultados para tener una estructura más limpia
       const inscripcionesMapeadas = inscripciones.map((inscripcion) => {
-        console.log("Procesando inscripción:", inscripcion.id_ins);
         return {
           id_ins: inscripcion.id_ins,
           estado: inscripcion.est_ins,
@@ -674,14 +717,11 @@ const obtenerInscripcionesPorEvento = async (req, res) => {
         };
       });
 
-      console.log("✅ Mapeo de inscripciones completado");
       res.status(200).json(inscripcionesMapeadas);
     } catch (mapError) {
-      console.error("❌ Error durante el mapeo de inscripciones:", mapError);
       throw mapError;
     }
   } catch (error) {
-    console.error("❌ Error al obtener inscripciones del evento:", error);
     res.status(500).json({
       msg: "Error al obtener inscripciones del evento",
       error: error.message,
@@ -736,12 +776,10 @@ const obtenerInscripcionUsuarioEnEvento = async (req, res) => {
 // Inscripciones propias (usuario autenticado)
 // ==============================
 const obtenerInscripcionesDelUsuarioActual = async (req, res) => {
-  console.log("📋 Obteniendo inscripciones del usuario actual");
 
   try {
     // Verificar si req.usuario está definido
     if (!req.usuario) {
-      console.log("❌ Error: req.usuario no está definido");
       return res.status(401).json({
         msg: "Usuario no autenticado",
         error: "No hay información de usuario en la solicitud",
@@ -749,10 +787,8 @@ const obtenerInscripcionesDelUsuarioActual = async (req, res) => {
     }
 
     const id_cue = req.usuario.id; // Ahora usamos ID de cuenta
-    console.log("👤 ID de cuenta:", id_cue);
 
     // Log antes de la consulta a Prisma
-    console.log("🔍 Buscando inscripciones para la cuenta:", id_cue);
     const inscripciones = await prisma.inscripcion.findMany({
       where: { id_cor_ins: id_cue },
       include: {
@@ -767,7 +803,6 @@ const obtenerInscripcionesDelUsuarioActual = async (req, res) => {
       orderBy: { fec_ins: "desc" },
     });
 
-    console.log(`✅ Inscripciones encontradas: ${inscripciones.length}`); // Mapear los resultados para tener una estructura más limpia
     const inscripcionesMapeadas = inscripciones.map((inscripcion) => ({
       id_ins: inscripcion.id_ins,
       est_ins: inscripcion.est_ins,
@@ -781,9 +816,6 @@ const obtenerInscripcionesDelUsuarioActual = async (req, res) => {
 
     res.status(200).json(inscripcionesMapeadas);
   } catch (error) {
-    console.log("❌ Error al obtener inscripciones:", error);
-    console.log("Error stack:", error.stack);
-
     res.status(500).json({
       msg: "Error al obtener inscripciones",
       error: error.message,
@@ -797,7 +829,6 @@ const obtenerInscripcionesDelUsuarioActual = async (req, res) => {
 // ==============================
 const obtenerTodasLasInscripciones = async (req, res) => {
   try {
-    console.log("🔍 Obteniendo todas las inscripciones");
     const inscripciones = await prisma.inscripcion.findMany({
       include: {
         cuenta: {
@@ -819,10 +850,6 @@ const obtenerTodasLasInscripciones = async (req, res) => {
       },
       orderBy: { fec_ins: "desc" },
     });
-
-    console.log(
-      `✅ Total de inscripciones encontradas: ${inscripciones.length}`
-    );
 
     try {
       // Mapear los resultados para tener una estructura más limpia
@@ -852,14 +879,11 @@ const obtenerTodasLasInscripciones = async (req, res) => {
         };
       });
 
-      console.log("✅ Mapeo de inscripciones completado");
       res.status(200).json(inscripcionesMapeadas);
     } catch (mapError) {
-      console.error("❌ Error durante el mapeo de inscripciones:", mapError);
       throw mapError;
     }
   } catch (error) {
-    console.error("❌ Error al obtener todas las inscripciones:", error);
     res.status(500).json({
       msg: "Error al obtener todas las inscripciones",
       error: error.message,

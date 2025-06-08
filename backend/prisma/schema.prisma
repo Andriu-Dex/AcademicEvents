@@ -160,15 +160,15 @@ model inscripcion {
   est_ins           estado_inscripcion @default(PENDIENTE) // Estado de la inscripción (PENDIENTE, ACEPTADA, RECHAZADA, FINALIZADA)
   fec_ins           DateTime           @default(now()) // Fecha de inscripción
   usu_apr_cer       Boolean            @default(false) // Usuario aprueba el evento y el envio del certificado
-  por_asi_fin_usu   Float?            // Porcentaje de asistencia del usuario al evento
+  por_asi_fin_usu   Float?             // Porcentaje de asistencia del usuario al evento
 
   cuenta            cuenta             @relation(fields: [id_cor_ins], references: [id_cue]) // Relación 1:N (usuario puede tener muchas inscripciones)
   evento            evento             @relation(fields: [id_eve_ins], references: [id_eve]) // Relación 1:N (evento puede tener muchas inscripciones)
   inscripcion_curso inscripcion_curso? // Relación 1:1 (inscripción puede tener un curso)
-  comprobantes_pago      comprobante_pago[] // Relación 1:N (inscripción puede tener muchos comprobantes de pago)
+  comprobantes_pago comprobante_pago[] // Relación 1:N (inscripción puede tener muchos comprobantes de pago)
   cartas_motivacion carta_motivacion[] // Relación 1:N (inscripción puede tener muchas cartas de motivación)
-  observacion           observacion_inscripcion?   // Relación 1:1
-  certificado      certificado?       // Relación 1:1 (inscripción puede tener un certificado)
+  observacion       observacion_inscripcion?   // Relación 1:1
+  certificado       certificado?       // Relación 1:1 (inscripción puede tener un certificado)
 }
 
 model inscripcion_curso {
@@ -239,7 +239,10 @@ enum estado_inscripcion {
   PENDIENTE
   ACEPTADA
   RECHAZADA
-  FINALIZADA
+  APROBADO
+  REPROBADO_NOTA
+  REPROBADO_ASISTENCIA
+  REPROBADO_TOTAL
 }
 
 enum estado_evento {

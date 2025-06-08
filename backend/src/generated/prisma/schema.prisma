@@ -238,7 +238,10 @@ enum estado_inscripcion {
   PENDIENTE
   ACEPTADA
   RECHAZADA
-  FINALIZADA
+  APROBADO
+  REPROBADO_NOTA
+  REPROBADO_ASISTENCIA
+  REPROBADO_TOTAL
 }
 
 enum estado_evento {

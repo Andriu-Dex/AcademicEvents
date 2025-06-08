@@ -18,9 +18,6 @@ const CertificatesRoute = () => {
 
   // useEffect para ejecutar lógica al cargar el componente
   useEffect(() => {
-    // Verifica si el usuario está autenticado
-    console.log("Usuario autenticado:", usuario);
-
     // Si no hay usuario, redirige al login
     if (!usuario) return navigate("/login");
 

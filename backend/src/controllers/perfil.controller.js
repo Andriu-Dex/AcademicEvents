@@ -10,7 +10,6 @@ const { limpiarArchivosTemporales } = require("../middlewares/upload");
 const obtenerPerfil = async (req, res) => {
   try {
     const { id } = req.usuario; // Ahora id es el ID de la cuenta (id_cue)
-    console.log(`📂 Obteniendo perfil para cuenta con ID: ${id}`);
 
     // Primero buscamos la cuenta
     const cuenta = await prisma.cuenta.findUnique({
@@ -25,7 +24,6 @@ const obtenerPerfil = async (req, res) => {
     });
 
     if (!cuenta) {
-      console.log(`❌ Cuenta no encontrada: ${id}`);
       return res.status(404).json({ msg: "Cuenta no encontrada" });
     }
 
@@ -45,7 +43,6 @@ const obtenerPerfil = async (req, res) => {
     const usuario = cuenta.usuario;
 
     if (!usuario) {
-      console.log(`❌ Usuario no encontrado para la cuenta: ${id}`);
       return res.status(404).json({ msg: "Usuario no encontrado" });
     }    // Creamos el objeto de respuesta con los datos del usuario y la cuenta
     const perfilData = {
@@ -55,10 +52,6 @@ const obtenerPerfil = async (req, res) => {
       id_cue: cuenta.id_cue, // Incluimos el ID de la cuenta para referencia
       inscripciones: inscripciones,
     };
-
-    console.log(
-      `📄 Documento del usuario: ${perfilData.com_usu || "No tiene documento"}`
-    );
 
     return res.status(200).json(perfilData);
   } catch (error) {
@@ -72,9 +65,6 @@ const obtenerPerfil = async (req, res) => {
 // Convertir imagen a PDF usando pdf-lib y sharp
 const imagenAPDF = async (archivo) => {
   try {
-    console.log(
-      `🖼️ Procesando imagen: ${archivo.originalname}, tipo: ${archivo.mimetype}`
-    );
 
     // Configurar sharp para preservar metadatos y calidad
     let sharpInstance = sharp(archivo.path).withMetadata().rotate(); // Auto-rotación basada en metadatos EXIF
@@ -99,8 +89,6 @@ const imagenAPDF = async (archivo) => {
         withoutEnlargement: true, // No agrandar imágenes pequeñas
       })
       .toBuffer();
-
-    console.log(`✅ Imagen procesada correctamente: ${archivo.originalname}`);
 
     // Crear un nuevo documento PDF de tamaño A4
     const pdfDoc = await PDFDocument.create();
@@ -299,8 +287,6 @@ const combinarPDFs = async (archivos, usuario) => {
     // Guardar el archivo combinado
     fs.writeFileSync(rutaArchivoCombinado, pdfBytes);
 
-    console.log(`📑 Archivo combinado creado: ${nombreArchivoCombinado}`);
-
     return {
       filename: nombreArchivoCombinado,
       path: rutaArchivoCombinado,
@@ -315,17 +301,7 @@ const combinarPDFs = async (archivos, usuario) => {
 const actualizarDocumentos = async (req, res) => {
   try {
     const { id } = req.usuario; // Ahora id es el ID de la cuenta
-    console.log(
-      "req.files estructura completa:",
-      JSON.stringify(req.files, null, 2)
-    );
     const archivos = req.files ? Object.values(req.files).flat() : [];
-
-    console.log(`📤 Actualizando documentos para cuenta con ID: ${id}`);
-    console.log(
-      `📎 Archivos recibidos:`,
-      archivos.map((a) => a?.originalname || "indefinido")
-    );
 
     if (!archivos || archivos.length === 0) {
       return res.status(400).json({ msg: "Debes subir al menos un documento" });
@@ -386,7 +362,6 @@ const actualizarDocumentos = async (req, res) => {
 
     // Construir la ruta del archivo
     const rutaArchivo = `/uploads/${archivoFinal.filename}`;
-    console.log(`🔗 Ruta del archivo combinado guardada: ${rutaArchivo}`);
 
     // Actualizar el campo com_usu del usuario
     const usuarioActualizado = await prisma.usuario.update({
@@ -395,8 +370,6 @@ const actualizarDocumentos = async (req, res) => {
         com_usu: rutaArchivo,
       },
     });
-
-    console.log(`✅ Documentos actualizados con éxito:`, rutaArchivo);
 
     // Limpiar archivos temporales
     limpiarArchivosTemporales();
@@ -419,9 +392,6 @@ const actualizarDocumento = async (req, res) => {
     const { id } = req.usuario; // Ahora id es el ID de la cuenta
     const archivo = req.file;
 
-    console.log(`📤 Actualizando documento para cuenta con ID: ${id}`);
-    console.log(`📎 Información del archivo:`, archivo);
-
     if (!archivo) {
       return res.status(400).json({ msg: "Debes subir un archivo válido" });
     }
@@ -438,7 +408,6 @@ const actualizarDocumento = async (req, res) => {
 
     // Construir la ruta del archivo
     const rutaArchivo = `/uploads/${archivo.filename}`;
-    console.log(`🔗 Ruta del archivo guardada: ${rutaArchivo}`);
 
     // Actualizar el campo com_usu del usuario
     const usuarioActualizado = await prisma.usuario.update({
@@ -447,7 +416,6 @@ const actualizarDocumento = async (req, res) => {
         com_usu: rutaArchivo,
       },
     });
-    console.log(`✅ Documento actualizado con éxito:`, rutaArchivo);
 
     // Limpiar archivos temporales
     limpiarArchivosTemporales();

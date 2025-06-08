@@ -36,7 +36,6 @@ const AdminEventInscription = () => {
       );
       setInscripciones(res.data);
     } catch (err) {
-      console.error(err);
       toast.error("Error al cargar las inscripciones");
     } finally {
       setLoading(false);
@@ -52,11 +51,13 @@ const AdminEventInscription = () => {
       setNombreEvento(res.data.nom_eve);
       setEventoInfo(res.data); // Guardar información completa del evento
     } catch (err) {
-      console.error("Error al obtener nombre del evento", err);
       toast.error("Error al obtener nombre del evento");
     }
   }, [id]);
+
   const cambiarEstado = async (id_ins, estado) => {
+    console.log("Enviando solicitud con estado:", nuevoEstado); // Asegúrate de que el valor de `nuevoEstado` sea correcto
+    console.log("Observación:", observacion); // Verifica que la observación esté bien
     setActualizandoId(id_ins);
     try {
       const token = localStorage.getItem("token");
@@ -65,6 +66,7 @@ const AdminEventInscription = () => {
         { est_ins: estado }, // Corregido: usar est_ins en lugar de estado
         { headers: { Authorization: `Bearer ${token}` } }
       );
+      console.log(id_ins + " " + estado + " AdminEventInscription.jsx");
 
       // Actualizar tanto las inscripciones como la información del evento
       await Promise.all([
@@ -105,8 +107,7 @@ const AdminEventInscription = () => {
         } else if (cuposRestantes <= 3) {
           // ⚠️ ALERTA DE ADVERTENCIA: Pocos cupos restantes
           toast.info(
-            `⚠️ ADVERTENCIA: Solo quedan ${cuposRestantes} cupo${
-              cuposRestantes > 1 ? "s" : ""
+            `⚠️ ADVERTENCIA: Solo quedan ${cuposRestantes} cupo${cuposRestantes > 1 ? "s" : ""
             } disponible${cuposRestantes > 1 ? "s" : ""} para este evento.`,
             {
               duration: 6000,
@@ -123,7 +124,6 @@ const AdminEventInscription = () => {
         }
       }
     } catch (error) {
-      console.error("Error al cambiar estado:", error);
       toast.error(
         error.response?.data?.msg || "No se pudo actualizar el estado"
       );
@@ -152,32 +152,30 @@ const AdminEventInscription = () => {
         {eventoInfo && (
           <div className="cupos-info">
             <span
-              className={`cupos-disponibles ${
-                eventoInfo.cup_dis_eve === 0
+              className={`cupos-disponibles ${eventoInfo.cup_dis_eve === 0
                   ? "cupos-agotados"
                   : eventoInfo.cup_dis_eve <= 3
-                  ? "cupos-pocos"
-                  : ""
-              }`}
+                    ? "cupos-pocos"
+                    : ""
+                }`}
             >
               {eventoInfo.cup_dis_eve === 0
                 ? "🚫 Sin cupos disponibles"
                 : eventoInfo.cup_dis_eve <= 3
-                ? `⚠️ Pocos cupos: ${eventoInfo.cup_dis_eve} de ${eventoInfo.cup_max_eve}`
-                : `📍 Cupos disponibles: ${eventoInfo.cup_dis_eve} de ${eventoInfo.cup_max_eve}`}
+                  ? `⚠️ Pocos cupos: ${eventoInfo.cup_dis_eve} de ${eventoInfo.cup_max_eve}`
+                  : `📍 Cupos disponibles: ${eventoInfo.cup_dis_eve} de ${eventoInfo.cup_max_eve}`}
             </span>
           </div>
         )}
       </div>
 
       <div className="filtros">
-        {["TODOS", "PENDIENTE", "ACEPTADA", "RECHAZADA", "FINALIZADA"].map(
+        {["TODOS", "PENDIENTE", "ACEPTADA", "RECHAZADA", "APROBADO", "REPROBADO NOTA", "REPROBADO ASISTENCIA", "REPROBADO AMBAS"].map(
           (estado) => (
             <button
               key={estado}
-              className={`filtro-btn ${
-                filtro === estado ? "filtro-activo" : ""
-              }`}
+              className={`filtro-btn ${filtro === estado ? "filtro-activo" : ""
+                }`}
               onClick={() => setFiltro(estado)}
             >
               {estado}
@@ -222,7 +220,7 @@ const AdminEventInscription = () => {
                       <BadgeCheck size={14} />
                     )}
                     {inscripcion.estado === "RECHAZADA" && <Ban size={14} />}
-                    {inscripcion.estado === "FINALIZADA" && (
+                    {inscripcion.estado === "ACEPTADA" && (
                       <Download size={14} />
                     )}
                     {inscripcion.estado}
@@ -232,9 +230,8 @@ const AdminEventInscription = () => {
                 {inscripcion.comprobante && (
                   <div className="mt-2">
                     <a
-                      href={`${import.meta.env.VITE_API_URL}/uploads/${
-                        inscripcion.comprobante
-                      }`}
+                      href={`${import.meta.env.VITE_API_URL}/uploads/${inscripcion.comprobante
+                        }`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="link-comprobante"
@@ -346,13 +343,11 @@ const AdminEventInscription = () => {
                     }
                     const token = localStorage.getItem("token");
                     await axios.put(
-                      `${
-                        import.meta.env.VITE_API_URL
-                      }/api/inscripciones/validar/${
-                        inscripcionFinalizar.id_ins
+                      `${import.meta.env.VITE_API_URL
+                      }/api/inscripciones/validar/${inscripcionFinalizar.id_ins
                       }`,
                       {
-                        estado: "FINALIZADA",
+                        estado: "Prueba",
                         asistencia: Number(asistencia),
                         nota_final: Number(notaFinal),
                       },
@@ -366,7 +361,6 @@ const AdminEventInscription = () => {
                       obtenerNombreEvento(), // Esto actualizará los cupos disponibles
                     ]);
                   } catch (err) {
-                    console.error(err);
                     toast.error("Error al finalizar");
                   } finally {
                     setEnviandoFinalizacion(false);

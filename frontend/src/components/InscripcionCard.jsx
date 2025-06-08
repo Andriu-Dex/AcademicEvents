@@ -33,8 +33,10 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
     e.preventDefault();
     setMostrarComprobante(!mostrarComprobante);
   };
+
   const cambiarEstado = async (nuevoEstado) => {
     setLoading(true);
+    console.log(nuevoEstado + " lalalal InscripnCard.jsx");
     try {
       await axiosInstance.put(
         `/admin/inscripciones/validar/${inscripcion.id_ins}`,
@@ -71,7 +73,7 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
       await axiosInstance.put(
         `/admin/inscripciones/validar/${inscripcion.id_ins}`,
         {
-          est_ins: "FINALIZADA",
+          est_ins: "APROBADO",
           nota_final: esCurso ? Number(nota) : null,
           asistencia: Number(asistencia),
           observacion: observacion,

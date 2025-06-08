@@ -61,8 +61,6 @@ const Perfil = () => {
     try {
       setCargando(true);
       const res = await axiosInstance.get("/perfil");
-      console.log("Datos del perfil recibidos:", res.data);
-      console.log("Documento del usuario:", res.data.com_usu);
       setPerfilData(res.data);
     } catch (error) {
       toast.error("Error al cargar datos del perfil");

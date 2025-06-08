@@ -122,7 +122,6 @@ async function subirImagenAImgur(archivo) {
 
     return res.data.data.link;
   } catch (error) {
-    console.error("Error al subir imagen a Imgur:", error);
     return DEFAULT_IMAGE_URL; // En caso de error, usar imagen por defecto
   }
 }
@@ -294,29 +293,11 @@ const obtenerEventos = async (req, res) => {
 
           // Si hay inconsistencia, corregir automáticamente
           if (cupoDisponibleActual !== cupoDisponibleCorrecto) {
-            console.log(
-              `🔧 AUTO-CORRECCIÓN DE CUPOS para evento ${evento.id_eve} "${evento.nom_eve}":`
-            );
-            console.log(`   - Cupo máximo: ${cupoMaximo}`);
-            console.log(
-              `   - Inscripciones aceptadas: ${inscripcionesAceptadas}`
-            );
-            console.log(
-              `   - Cupo disponible actual (incorrecto): ${cupoDisponibleActual}`
-            );
-            console.log(
-              `   - Cupo disponible correcto: ${cupoDisponibleCorrecto}`
-            );
-
             // Actualizar en la base de datos
             const eventoCorregido = await prisma.evento.update({
               where: { id_eve: evento.id_eve },
               data: { cup_dis_eve: cupoDisponibleCorrecto },
             });
-
-            console.log(
-              `✅ Cupos corregidos automáticamente para evento "${evento.nom_eve}"`
-            );
 
             // Retornar el evento con los cupos corregidos
             return {
@@ -628,14 +609,6 @@ const obtenerEventoPorId = async (req, res) => {
 
       // Si hay inconsistencia, corregir automáticamente
       if (cupoDisponibleActual !== cupoDisponibleCorrecto) {
-        console.log(`🔧 AUTO-CORRECCIÓN DE CUPOS para evento ${id}:`);
-        console.log(`   - Cupo máximo: ${cupoMaximo}`);
-        console.log(`   - Inscripciones aceptadas: ${inscripcionesAceptadas}`);
-        console.log(
-          `   - Cupo disponible actual (incorrecto): ${cupoDisponibleActual}`
-        );
-        console.log(`   - Cupo disponible correcto: ${cupoDisponibleCorrecto}`);
-
         // Actualizar en la base de datos
         const eventoCorregido = await prisma.evento.update({
           where: { id_eve: id }, // No convertir a entero, es un String en el esquema
@@ -647,10 +620,6 @@ const obtenerEventoPorId = async (req, res) => {
             },
           },
         });
-
-        console.log(
-          `✅ Cupos corregidos automáticamente para evento "${evento.nom_eve}"`
-        );
 
         // Retornar el evento con los cupos corregidos
         return res.status(200).json(eventoCorregido);

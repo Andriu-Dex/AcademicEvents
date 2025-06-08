@@ -207,22 +207,6 @@ async function main() {
         cup_dis_eve: 100,
       },
       {
-        id_eve: "30854a1f-06c7-4c7c-979f-62545b54c9aa",
-        nom_eve: "Curso De Python",
-        des_eve: "Curso para aprender Python desde 0",
-        tip_eve: "CURSO",
-        fec_ini_eve: new Date("2025-06-07T00:00:00.000Z"),
-        fec_fin_eve: new Date("2025-06-08T00:00:00.000Z"),
-        dur_hor_eve: 5,
-        mod_eve: "VIRTUAL",
-        val_eve: 15.0,
-        est_eve: "ACTIVO",
-        img_por_eve: "https://i.imgur.com/uVj7k7q.jpeg",
-        por_min_asi_eve: 88,
-        cup_max_eve: 80,
-        cup_dis_eve: 80,
-      },
-      {
         id_eve: "02e1df41-a185-4a01-9e3b-156d579f523d",
         nom_eve: "Los Mejores Lenguajes De Programación",
         des_eve:
@@ -285,6 +269,43 @@ async function main() {
       )
     );
     console.log("Eventos adicionales insertados correctamente");
+
+    // 7. Evento de tipo CURSO
+    const eventoCurso = {
+      id_eve: "30854a1f-06c7-4c7c-979f-62545b54c9aa", // ID del evento CURSO
+      nom_eve: "Curso De Python",
+      des_eve: "Curso para aprender Python desde 0",
+      tip_eve: "CURSO",
+      fec_ini_eve: new Date("2025-06-07T00:00:00.000Z"),
+      fec_fin_eve: new Date("2025-06-08T00:00:00.000Z"),
+      dur_hor_eve: 5,
+      mod_eve: "VIRTUAL",
+      val_eve: 15.0,
+      est_eve: "ACTIVO",
+      img_por_eve: "https://i.imgur.com/uVj7k7q.jpeg",
+      por_min_asi_eve: 88,
+      cup_max_eve: 80,
+      cup_dis_eve: 80,
+      // Inserción de la relación con `eventos_curso`
+      eventos_curso: {
+        create: {
+          not_min_cur: 8.0, // Nota mínima del curso
+        },
+      },
+    };
+
+    await prisma.evento.upsert({
+      where: { id_eve: eventoCurso.id_eve },
+      update: { ...eventoCurso, id_cue_cre_eve: cuentaAdmin.id_cue },
+      create: {
+        ...eventoCurso,
+        id_cue_cre_eve: cuentaAdmin.id_cue,
+        eventos_curso: eventoCurso.eventos_curso
+      },
+    });
+
+    console.log("Evento CURSO insertado correctamente");
+
   } catch (error) {
     console.error("Error durante el seeding:", error);
     process.exit(1);
