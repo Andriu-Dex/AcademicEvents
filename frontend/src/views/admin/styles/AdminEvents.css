@@ -557,8 +557,9 @@
   border-radius: 0.5rem;
   font-size: 0.875rem;
   transition: all 0.3s ease;
-  background: white;
-  color: #000000;
+  background: white !important;
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
 }
 
 .filter-group input:focus,
@@ -566,6 +567,47 @@
   outline: none;
   border-color: #8a1538;
   box-shadow: 0 0 0 3px rgba(138, 21, 56, 0.1);
+}
+
+/* Estilos para placeholders */
+.filter-group input::placeholder {
+  color: #6b7280 !important;
+  opacity: 1;
+}
+
+.filter-group input::-webkit-input-placeholder {
+  color: #6b7280 !important;
+}
+
+.filter-group input::-moz-placeholder {
+  color: #6b7280 !important;
+  opacity: 1;
+}
+
+.filter-group input:-ms-input-placeholder {
+  color: #6b7280 !important;
+}
+
+/* Estilos específicos para inputs de fecha */
+.filter-group input[type="date"] {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+}
+
+.filter-group input[type="number"] {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+}
+
+.filter-group input[type="text"] {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+}
+
+/* Asegurar que el texto de los select sea visible */
+.filter-group select option {
+  color: #000000 !important;
+  background: white !important;
 }
 
 .checkbox-group {
@@ -579,7 +621,7 @@
   gap: 0.5rem;
   cursor: pointer;
   font-weight: 500;
-  color: #000000;
+  color: #000000 !important;
 }
 
 .checkbox-label input[type="checkbox"] {
@@ -587,6 +629,22 @@
   height: 18px;
   accent-color: #8a1538;
   margin: 0;
+}
+
+/* Forzar estilos para evitar conflictos con CSS global */
+.admin-events-filters input {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+  background-color: white !important;
+}
+
+.admin-events-filters select {
+  color: #000000 !important;
+  background-color: white !important;
+}
+
+.admin-events-filters label {
+  color: #000000 !important;
 }
 
 /* Sección de ordenamiento */
