@@ -85,6 +85,10 @@ app.use("/api/mva", require("./routes/mva.routes"));
 const perfilRoutes = require("./routes/perfil.routes");
 app.use("/api", perfilRoutes);
 
+// Rutas de subida de imágenes
+const uploadRoutes = require("./routes/upload.routes-mva");
+app.use("/api/upload", uploadRoutes);
+
 // ============================
 //  Iniciar el servidor
 // ============================

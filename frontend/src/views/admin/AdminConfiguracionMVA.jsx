@@ -9,13 +9,13 @@ import {
   Eye,
   User,
   Mail,
-  Image,
   EyeOff,
   Edit2,
   CheckCircle,
   AlertCircle,
   Home,
 } from "lucide-react";
+import ImageUpload from "../../components/ImageUpload-mva";
 import "./styles/AdminConfiguracionMVA.css";
 
 const AdminConfiguracionMVA = () => {
@@ -132,7 +132,7 @@ const AdminConfiguracionMVA = () => {
   return (
     <>
       {/* Botón para volver al home */}
-      <Link to="/home" className="home-button">
+      <Link to="/home" className="home-button-acmva">
         <Home size={22} color="white" />
       </Link>
 
@@ -322,37 +322,15 @@ const AdminConfiguracionMVA = () => {
                   </div>
                   <div className="autoridad-form-group">
                     <label>
-                      <span>
-                        <Image size={14} /> URL de imagen:
-                      </span>
-                      <input
-                        type="text"
-                        value={autoridad.imagen}
-                        onChange={(e) =>
-                          actualizarAutoridad(index, "imagen", e.target.value)
+                      <span>Imagen de perfil:</span>
+                      <ImageUpload
+                        currentImage={autoridad.imagen}
+                        onImageChange={(url) =>
+                          actualizarAutoridad(index, "imagen", url)
                         }
-                        placeholder="https://ejemplo.com/imagen.jpg"
-                        className="autoridad-input"
+                        placeholder="Subir foto de la autoridad"
                       />
                     </label>
-                  </div>
-                  <div className="autoridad-img-preview">
-                    {autoridad.imagen ? (
-                      <img
-                        src={autoridad.imagen}
-                        alt="Vista previa"
-                        onError={(e) => {
-                          e.target.onerror = null;
-                          e.target.src =
-                            "https://via.placeholder.com/100?text=Error";
-                        }}
-                      />
-                    ) : (
-                      <div className="img-placeholder">
-                        <Image size={32} />
-                        <span>Sin imagen</span>
-                      </div>
-                    )}
                   </div>
                 </div>
               ))}

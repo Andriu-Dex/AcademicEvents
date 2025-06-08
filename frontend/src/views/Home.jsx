@@ -172,7 +172,7 @@ function Home() {
   // Seleccionar los infoCards según el tipo de usuario y su carrera
   const infoCards = infoCardsPorCarrera.GENERAL;
 
-  // Cargar Bootstrap dinámicamente si no está presente
+  // Cargar Bootstrap dinámicamente si no está presente (se mantiene por compatibilidad con otras secciones)
   useEffect(() => {
     const id = "bootstrap-css";
     if (!document.getElementById(id)) {
@@ -278,49 +278,42 @@ function Home() {
         </div>
       </div>
       {/* Autoridades */}
-      <div className="container mb-5" id="autoridades">
-        <div className="row justify-content-center mb-4">
-          <div className="col-lg-6 text-center">
-            <h2 className="fw-bold" style={{ color: "#8A1538" }}>
-              Autoridades de la Facultad
-            </h2>
-            <p className="text-muted">Conoce a nuestro equipo directivo</p>
-          </div>
+      <section className="autoridades-section-h" id="autoridades">
+        <div className="autoridades-header-h">
+          <h2 className="autoridades-title-h">Autoridades de la Facultad</h2>
+          <p className="autoridades-subtitle-h">
+            Conoce a nuestro equipo directivo
+          </p>
         </div>
-        <div className="row g-4 justify-content-center">
+        <div className="autoridades-container-h">
           {autoridades.map((autoridad, index) => (
-            <div className="col-md-4" key={index}>
-              <div className="card text-center h-100 shadow-sm border-0 hover-card">
-                <div className="card-body p-4">
-                  <img
-                    src={autoridad.imagen}
-                    alt={autoridad.nombre}
-                    className="rounded-circle mb-3"
-                    style={{
-                      width: "120px",
-                      height: "120px",
-                      objectFit: "cover",
-                    }}
-                  />
-                  <h5
-                    className="card-title fw-bold"
-                    style={{ color: "#8A1538" }}
-                  >
-                    {autoridad.nombre}
-                  </h5>
-                  <p className="text-muted fw-semibold">{autoridad.cargo}</p>
-                  <a
-                    href={`mailto:${autoridad.email}`}
-                    className="btn btn-outline-primary btn-sm"
-                  >
-                    <Mail size={14} className="me-1" /> Contactar
-                  </a>
-                </div>
+            <article
+              className="autoridad-card-h"
+              key={index}
+              style={{
+                animation: `fadeInUp ${0.3 + index * 0.1}s ease-out forwards`,
+                opacity: 0,
+              }}
+            >
+              <div className="autoridad-content-h">
+                <img
+                  src={autoridad.imagen}
+                  alt={autoridad.nombre}
+                  className="autoridad-image-h"
+                />
+                <h3 className="autoridad-name-h">{autoridad.nombre}</h3>
+                <p className="autoridad-cargo-h">{autoridad.cargo}</p>
+                <a
+                  href={`mailto:${autoridad.email}`}
+                  className="autoridad-contact-h"
+                >
+                  <Mail size={14} className="autoridad-icon-h" /> Contactar
+                </a>
               </div>
-            </div>
+            </article>
           ))}
         </div>
-      </div>
+      </section>
       {/* Carreras Disponibles */}
       <div className="container mb-5" id="carreras">
         <div className="row justify-content-center mb-4">
@@ -328,7 +321,7 @@ function Home() {
             <h2 className="fw-bold" style={{ color: "#8A1538" }}>
               Nuestras Carreras
             </h2>
-            <p className="text-muted">
+            <p className="opciones-academicas-h">
               Descubre las opciones académicas que tenemos para ti
             </p>
           </div>
@@ -382,7 +375,7 @@ function Home() {
                   }`
                 : "Nuestra Identidad"}
             </h2>
-            <p className="text-muted">
+            <p className="mision-vision-h">
               {usuario?.rol_usu === "ESTUDIANTE"
                 ? "Principios y objetivos de tu carrera"
                 : "Los principios que nos guían"}
