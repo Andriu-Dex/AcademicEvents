@@ -148,6 +148,7 @@ const AdminEvents = () => {
     asistenciaMin: "",
     esGratuito: false,
     esPago: false,
+    eventosLlenos: false,
   });
   
   const [mostrarFiltros, setMostrarFiltros] = useState(false);
@@ -207,6 +208,19 @@ const AdminEvents = () => {
   // Función para aplicar filtros
   const aplicarFiltros = useCallback(() => {
     let eventosFiltrados = [...eventos];
+
+    // ✨ CONTROL DE VISIBILIDAD POR CUPOS:
+    // - Si filtro "Eventos Llenos" está activo: mostrar solo eventos con cupos === 0
+    // - Para todos los otros filtros: mostrar solo eventos con cupos > 0
+    // - Sin filtros activos: mostrar solo eventos con cupos > 0 (comportamiento por defecto)
+    
+    if (filtros.eventosLlenos) {
+      // Si el filtro "Eventos llenos" está activo, mostrar solo eventos con cupos === 0
+      eventosFiltrados = eventosFiltrados.filter(evento => evento.cup_dis_eve === 0);
+    } else {
+      // Para todos los otros casos, ocultar eventos sin cupos disponibles
+      eventosFiltrados = eventosFiltrados.filter(evento => evento.cup_dis_eve > 0);
+    }
 
     // Filtro por búsqueda (nombre)
     if (filtros.busqueda) {
@@ -390,6 +404,7 @@ const AdminEvents = () => {
       asistenciaMin: "",
       esGratuito: false,
       esPago: false,
+      eventosLlenos: false,
     });
     setOrdenamiento({
       campo: "fec_ini_eve",
@@ -728,6 +743,17 @@ const AdminEvents = () => {
                 Solo eventos de pago
               </label>
             </div>
+
+            <div className="filter-group checkbox-group">
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={filtros.eventosLlenos}
+                  onChange={(e) => handleFiltroChange("eventosLlenos", e.target.checked)}
+                />
+                🚫 Eventos llenos (sin cupos)
+              </label>
+            </div>
           </div>
 
           {/* Opciones de ordenamiento */}
@@ -886,13 +912,19 @@ const AdminEvents = () => {
                     <span>
                       <strong>
                         {eve.cup_dis_eve === 0
-                          ? "🚫 AGOTADO"
+                          ? "🚫 CUPOS AGOTADOS"
                           : "Cupos disponibles:"}
                       </strong>{" "}
                       {eve.cup_dis_eve === 0
                         ? ` (0 de ${eve.cup_max_eve})`
                         : ` ${eve.cup_dis_eve || 0} de ${eve.cup_max_eve}`}
                     </span>
+                    {/* Badge adicional para eventos sin cupos cuando se muestra filtro eventos llenos */}
+                    {eve.cup_dis_eve === 0 && filtros.eventosLlenos && (
+                      <span className="badge-cupos-agotados">
+                        🚫 SIN CUPOS
+                      </span>
+                    )}
                   </div>
                   {/* Información exclusiva de cursos */}
                   {esCurso && (

@@ -224,6 +224,31 @@
   color: #dc2626;
 }
 
+/* Badge para eventos sin cupos en filtro de eventos llenos */
+.badge-cupos-agotados {
+  display: inline-block;
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  box-shadow: 0 2px 4px rgba(220, 38, 38, 0.2);
+  border: 2px solid rgba(220, 38, 38, 0.3);
+  animation: glow-red 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow-red {
+  from {
+    box-shadow: 0 2px 4px rgba(220, 38, 38, 0.2);
+  }
+  to {
+    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.4), 0 0 0 1px rgba(220, 38, 38, 0.1);
+  }
+}
+
 @keyframes pulse-red-admin {
 
   0%,
