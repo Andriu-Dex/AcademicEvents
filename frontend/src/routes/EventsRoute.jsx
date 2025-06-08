@@ -290,31 +290,35 @@ const EventsRoute = () => {
         <CalendarDays size={24} />
         Eventos disponibles
       </h1>
-      <div className="buscador-contenedor-er">
-        <Search className="buscador-icono-er" size={18} />
-        <input
-          type="text"
-          placeholder="Buscar por nombre..."
-          value={filtro}
-          onChange={(e) => setFiltro(e.target.value)}
-          className="eventos-buscador"
-        />
-      </div>
-      
-      {/* Filtro de modalidad */}
-      <div className="filtro-modalidad-contenedor">
-        <div className="filtro-modalidad-wrapper">
-          <Filter className="filtro-modalidad-icono" size={18} />
-          <select
-            value={filtroModalidad}
-            onChange={(e) => setFiltroModalidad(e.target.value)}
-            className="filtro-modalidad-select"
-          >
-            <option value="">Todas las modalidades</option>
-            <option value="PRESENCIAL">Presencial</option>
-            <option value="VIRTUAL">Virtual</option>
-            <option value="SEMIPRESENCIAL">Semipresencial</option>
-          </select>
+      <div className="filtros-grupo">
+        <div className="buscador-contenedor-er">
+          <div className="buscador-wrapper-er">
+            <Search className="buscador-icono-er" size={18} />
+            <input
+              type="text"
+              placeholder="Buscar por nombre..."
+              value={filtro}
+              onChange={(e) => setFiltro(e.target.value)}
+              className="eventos-buscador"
+            />
+          </div>
+        </div>
+        
+        {/* Filtro de modalidad */}
+        <div className="filtro-modalidad-contenedor">
+          <div className="filtro-modalidad-wrapper">
+            <Filter className="filtro-modalidad-icono" size={18} />
+            <select
+              value={filtroModalidad}
+              onChange={(e) => setFiltroModalidad(e.target.value)}
+              className="filtro-modalidad-select"
+            >
+              <option value="">Todas las modalidades</option>
+              <option value="PRESENCIAL">Presencial</option>
+              <option value="VIRTUAL">Virtual</option>
+              <option value="SEMIPRESENCIAL">Semipresencial</option>
+            </select>
+          </div>
         </div>
       </div>
       {eventosDisponibles.length === 0 ? (

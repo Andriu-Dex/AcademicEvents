@@ -206,27 +206,36 @@
   gap: 0.75rem;
 }
 
-/* Estilo para el select de modalidad */
+/* Estilo mejorado para el select de modalidad */
 .modalidad-select {
   width: 100%;
-  padding: 0.5rem;
+  padding: 12px 16px;
   border: 2px solid #d1d5db;
-  border-radius: 6px;
+  border-radius: 12px;
   background-color: #fff;
-  color: #4a5568;
-  font-size: 0.95rem;
+  color: #333;
+  font-size: 1rem;
   cursor: pointer;
   transition: all 0.3s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%238a1538' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 12px center;
+  background-repeat: no-repeat;
+  background-size: 16px;
+  box-shadow: 0 2px 8px rgba(138, 21, 56, 0.08);
 }
 
 .modalidad-select:hover {
   border-color: #8a1538;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(138, 21, 56, 0.12);
 }
 
 .modalidad-select:focus {
   outline: none;
   border-color: #8a1538;
-  box-shadow: 0 0 0 3px rgba(138, 21, 56, 0.1);
+  box-shadow: 0 0 0 3px rgba(138, 21, 56, 0.1), 0 4px 12px rgba(138, 21, 56, 0.12);
+  transform: translateY(-1px);
 }
 
 .filtro-opcion {
