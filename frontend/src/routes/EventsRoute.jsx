@@ -313,7 +313,7 @@ const EventsRoute = () => {
               onChange={(e) => setFiltroModalidad(e.target.value)}
               className="filtro-modalidad-select"
             >
-              <option value="">Todas las modalidades</option>
+              <option value="">Todas</option>
               <option value="PRESENCIAL">Presencial</option>
               <option value="VIRTUAL">Virtual</option>
               <option value="SEMIPRESENCIAL">Semipresencial</option>

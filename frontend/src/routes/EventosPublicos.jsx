@@ -401,7 +401,7 @@ const EventosPublicos = () => {
                     onChange={(e) => setFiltros(prev => ({ ...prev, modalidad: e.target.value }))}
                     className="modalidad-select"
                   >
-                    <option value="">Todas las modalidades</option>
+                    <option value="">Todas</option>
                     <option value="PRESENCIAL">Presencial</option>
                     <option value="VIRTUAL">Virtual</option>
                     <option value="SEMIPRESENCIAL">Semipresencial</option>
