@@ -209,19 +209,6 @@ const AdminEvents = () => {
   const aplicarFiltros = useCallback(() => {
     let eventosFiltrados = [...eventos];
 
-    // ✨ CONTROL DE VISIBILIDAD POR CUPOS:
-    // - Si filtro "Eventos Llenos" está activo: mostrar solo eventos con cupos === 0
-    // - Para todos los otros filtros: mostrar solo eventos con cupos > 0
-    // - Sin filtros activos: mostrar solo eventos con cupos > 0 (comportamiento por defecto)
-    
-    if (filtros.eventosLlenos) {
-      // Si el filtro "Eventos llenos" está activo, mostrar solo eventos con cupos === 0
-      eventosFiltrados = eventosFiltrados.filter(evento => evento.cup_dis_eve === 0);
-    } else {
-      // Para todos los otros casos, ocultar eventos sin cupos disponibles
-      eventosFiltrados = eventosFiltrados.filter(evento => evento.cup_dis_eve > 0);
-    }
-
     // Filtro por búsqueda (nombre)
     if (filtros.busqueda) {
       eventosFiltrados = eventosFiltrados.filter(evento =>
@@ -334,6 +321,19 @@ const AdminEvents = () => {
       );
     }
 
+    // ✨ CONTROL DE VISIBILIDAD POR CUPOS:
+    // - Si filtro "Eventos Llenos" está activo: mostrar solo eventos con cupos === 0
+    // - Para todos los otros filtros: mostrar solo eventos con cupos > 0
+    // - Sin filtros activos: mostrar solo eventos con cupos > 0 (comportamiento por defecto)
+    
+    if (filtros.eventosLlenos) {
+      // Si el filtro "Eventos llenos" está activo, mostrar solo eventos con cupos === 0
+      eventosFiltrados = eventosFiltrados.filter(evento => evento.cup_dis_eve === 0);
+    } else {
+      // Para todos los otros casos, ocultar eventos sin cupos disponibles
+      eventosFiltrados = eventosFiltrados.filter(evento => evento.cup_dis_eve > 0);
+    }
+
     // Aplicar ordenamiento
     eventosFiltrados.sort((a, b) => {
       let valorA, valorB;
@@ -381,10 +381,21 @@ const AdminEvents = () => {
 
   // Manejar cambios en filtros
   const handleFiltroChange = (campo, valor) => {
-    setFiltros(prev => ({
-      ...prev,
-      [campo]: valor
-    }));
+    setFiltros(prev => {
+      let nuevosFiltros = {
+        ...prev,
+        [campo]: valor
+      };
+
+      // Lógica para filtros mutuamente excluyentes
+      if (campo === "esGratuito" && valor === true) {
+        nuevosFiltros.esPago = false;
+      } else if (campo === "esPago" && valor === true) {
+        nuevosFiltros.esGratuito = false;
+      }
+
+      return nuevosFiltros;
+    });
   };
 
   // Limpiar todos los filtros
