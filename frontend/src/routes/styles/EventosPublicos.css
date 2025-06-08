@@ -206,6 +206,29 @@
   gap: 0.75rem;
 }
 
+/* Estilo para el select de modalidad */
+.modalidad-select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 2px solid #d1d5db;
+  border-radius: 6px;
+  background-color: #fff;
+  color: #4a5568;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.modalidad-select:hover {
+  border-color: #8a1538;
+}
+
+.modalidad-select:focus {
+  outline: none;
+  border-color: #8a1538;
+  box-shadow: 0 0 0 3px rgba(138, 21, 56, 0.1);
+}
+
 .filtro-opcion {
   display: flex;
   align-items: center;

@@ -10,6 +10,7 @@ import {
   MapPin,
   Monitor,
   Laptop,
+  Filter,
 } from "lucide-react";
 import "./styles/EventsRoute.css";
 
@@ -44,6 +45,7 @@ const EventsRoute = () => {
   const navigate = useNavigate();
   const [eventos, setEventos] = useState([]);
   const [filtro, setFiltro] = useState("");
+  const [filtroModalidad, setFiltroModalidad] = useState(""); // Nuevo filtro de modalidad
   const [eventoSeleccionado, setEventoSeleccionado] = useState(null);
   const [archivo, setArchivo] = useState(null);
   const [cartaMotivacion, setCartaMotivacion] = useState("");
@@ -298,14 +300,37 @@ const EventsRoute = () => {
           className="eventos-buscador"
         />
       </div>
+      
+      {/* Filtro de modalidad */}
+      <div className="filtro-modalidad-contenedor">
+        <div className="filtro-modalidad-wrapper">
+          <Filter className="filtro-modalidad-icono" size={18} />
+          <select
+            value={filtroModalidad}
+            onChange={(e) => setFiltroModalidad(e.target.value)}
+            className="filtro-modalidad-select"
+          >
+            <option value="">Todas las modalidades</option>
+            <option value="PRESENCIAL">Presencial</option>
+            <option value="VIRTUAL">Virtual</option>
+            <option value="SEMIPRESENCIAL">Semipresencial</option>
+          </select>
+        </div>
+      </div>
       {eventosDisponibles.length === 0 ? (
         <p className="text-gray-600">No hay eventos disponibles para ti.</p>
       ) : (
         <div className="eventos-grid">
           {eventosDisponibles
-            .filter((ev) =>
-              ev.nom_eve.toLowerCase().includes(filtro.toLowerCase())
-            )
+            .filter((ev) => {
+              // Filtro por nombre
+              const coincideNombre = ev.nom_eve.toLowerCase().includes(filtro.toLowerCase());
+              
+              // Filtro por modalidad
+              const coincideModalidad = filtroModalidad === "" || ev.mod_eve === filtroModalidad;
+              
+              return coincideNombre && coincideModalidad;
+            })
             .map((evento) => (
               <div key={evento.id_eve} className="evento-card">
                 {/* Imagen de portada (real o placeholder) */}

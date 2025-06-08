@@ -70,6 +70,7 @@ const EventosPublicos = () => {
     gratuito: false,
     pagado: false,
     completo: false,
+    modalidad: "", // Nuevo filtro de modalidad
   });
   const [mostrarFiltros, setMostrarFiltros] = useState(false);
 
@@ -135,6 +136,11 @@ const EventosPublicos = () => {
       if (evento.val_eve === 0) return false;
     }
 
+    // Filtro por modalidad
+    if (filtros.modalidad) {
+      if (evento.mod_eve !== filtros.modalidad) return false;
+    }
+
     // Nota: El filtro "completo" ya se manejó en el control de visibilidad por cupos arriba
 
     return true;
@@ -166,6 +172,7 @@ const EventosPublicos = () => {
       gratuito: false,
       pagado: false,
       completo: false,
+      modalidad: "", // Incluir modalidad
     });
   };
 
@@ -383,6 +390,22 @@ const EventosPublicos = () => {
                     <span className="checkmark"></span>
                     Eventos Llenos (sin cupos)
                   </label>
+                </div>
+              </div>
+
+              <div className="filtro-categoria">
+                <h4>Por Modalidad</h4>
+                <div className="filtros-opciones">
+                  <select
+                    value={filtros.modalidad}
+                    onChange={(e) => setFiltros(prev => ({ ...prev, modalidad: e.target.value }))}
+                    className="modalidad-select"
+                  >
+                    <option value="">Todas las modalidades</option>
+                    <option value="PRESENCIAL">Presencial</option>
+                    <option value="VIRTUAL">Virtual</option>
+                    <option value="SEMIPRESENCIAL">Semipresencial</option>
+                  </select>
                 </div>
               </div>
             </div>

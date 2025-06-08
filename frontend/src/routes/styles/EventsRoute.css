@@ -34,6 +34,48 @@
   box-shadow: 0 0 0 2px rgba(138, 21, 56, 0.2);
 }
 
+/* Contenedor del filtro de modalidad */
+.filtro-modalidad-contenedor {
+  margin-bottom: 1.5rem;
+  max-width: 300px;
+}
+
+.filtro-modalidad-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.filtro-modalidad-icono {
+  position: absolute;
+  left: 0.75rem;
+  color: #8a1538;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.filtro-modalidad-select {
+  width: 100%;
+  padding: 0.55rem 0.75rem 0.55rem 2.5rem;
+  border: 1px solid #ddd;
+  border-radius: 0.5rem;
+  background-color: #fff;
+  color: #374151;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.filtro-modalidad-select:hover {
+  border-color: #8a1538;
+}
+
+.filtro-modalidad-select:focus {
+  outline: none;
+  border-color: #8a1538;
+  box-shadow: 0 0 0 2px rgba(138, 21, 56, 0.2);
+}
+
 .eventos-grid {
   display: grid;
   gap: 1.5rem;
