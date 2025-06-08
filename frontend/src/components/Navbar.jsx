@@ -35,9 +35,7 @@ const Navbar = () => {
 
     // Para /admin/eventos y /eventos, activo para todas las rutas que empiecen con esto
     if (path === "/admin/eventos" || path === "/eventos") {
-      return location.pathname.startsWith(path)
-        ? "nav-link-active"
-        : "";
+      return location.pathname.startsWith(path) ? "nav-link-active" : "";
     }
 
     // Para el resto de rutas
@@ -228,7 +226,7 @@ const Navbar = () => {
                 <span className="nav-link-icon">
                   <Sliders size={18} />
                 </span>
-                <span>Configuración</span>
+                <span>MVA</span>
               </Link>
             </>
           )}

@@ -515,7 +515,7 @@ const Login = () => {
           </p>
 
           <div
-            className="mt-4 text-center"
+            className="text-center"
             style={{
               animation: "fadeIn 1s ease 0.9s forwards",
               opacity: 0,

@@ -16,7 +16,7 @@ import Perfil from "./views/Perfil.jsx";
 import AdminDashboard from "./views/admin/AdminDashboard.jsx";
 import AdminEvents from "./views/admin/AdminEvents.jsx";
 import AdminCarreras from "./views/admin/AdminCarreras.jsx";
-import AdminConfiguracion from "./views/admin/AdminConfiguracion";
+import AdminConfiguracionMVA from "./views/admin/AdminConfiguracionMVA.jsx";
 import AdminInscripciones from "./views/admin/AdminInscripciones";
 import CreateEvent from "./views/admin/CreateEvent.jsx";
 import EditEvent from "./views/admin/EditEvent.jsx";
@@ -158,7 +158,7 @@ function App() {
             element={
               <PrivateRouteAdmin>
                 <PrivateLayout>
-                  <AdminConfiguracion />
+                  <AdminConfiguracionMVA />
                 </PrivateLayout>
               </PrivateRouteAdmin>
             }
