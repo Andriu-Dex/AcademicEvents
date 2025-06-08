@@ -30,19 +30,45 @@ function Home() {
   const { usuario } = useAuth();
   // Estado para almacenar las carreras
   const [carreras, setCarreras] = useState([]);
+  // Estado para almacenar la información MVA
+  const [mvaInfo, setMvaInfo] = useState({
+    mision: "",
+    vision: "",
+    autoridades: [],
+  });
 
-  // Cargar carreras desde la API
+  // Cargar carreras y MVA desde la API
   useEffect(() => {
-    const cargarCarreras = async () => {
+    const cargarDatos = async () => {
       try {
-        const res = await axiosInstance.get("/carreras");
-        setCarreras(res.data);
+        // Cargar carreras
+        const resCarreras = await axiosInstance.get("/carreras");
+        setCarreras(resCarreras.data);
+
+        // Cargar información MVA
+        const resMVA = await axiosInstance.get("/mva");
+
+        // Parsear el JSON de autoridades si existe
+        let autoridades = [];
+        if (resMVA.data && resMVA.data.autoridades) {
+          try {
+            autoridades = JSON.parse(resMVA.data.autoridades);
+          } catch (error) {
+            console.error("Error al parsear autoridades:", error);
+          }
+        }
+
+        setMvaInfo({
+          mision: resMVA.data?.mision || "",
+          vision: resMVA.data?.vision || "",
+          autoridades: autoridades,
+        });
       } catch (error) {
-        console.error("Error al cargar carreras:", error);
+        console.error("Error al cargar datos:", error);
       }
     };
 
-    cargarCarreras();
+    cargarDatos();
   }, []);
 
   // Facultad actual (para contenido de la página)
@@ -65,41 +91,44 @@ function Home() {
     { number: "95%", label: "Empleabilidad", icon: <TrendingUp size={36} /> },
   ];
 
-  // Autoridades de la facultad (actualizado con 5 autoridades y fotos reales)
-  const autoridades = [
-    {
-      cargo: "Decano",
-      nombre: "Dr. Franklin Mayorga Mogollón",
-      imagen: "https://i.imgur.com/hYBsxIf.png",
-      email: "fmayorga@uta.edu.ec",
-    },
-    {
-      cargo: "Subdecano",
-      nombre: "Dr. Javier Sánchez Torres",
-      imagen: "https://i.imgur.com/JIQy6Fa.png",
-      email: "j.sanchez@uta.edu.ec",
-    },
-    {
-      cargo:
-        "Coordinador de las Carrera de Software y Tecnologías de la Información",
-      nombre: "Ing. Mg. Marco Guachimboza",
-      imagen: "https://i.imgur.com/XDFrTBI.png",
-      email: "marcovguachimboza@uta.edu.ec",
-    },
-    {
-      cargo:
-        "Coordinador de las Carrera de Automatización y Robótica y Telecomunicaciones",
-      nombre: "Ing. Mg. Freddy Robalino",
-      imagen: "https://i.imgur.com/daKWf7d.png",
-      email: "r.morales@uta.edu.ec",
-    },
-    {
-      cargo: "Coordinador de las Carrera Ingeniería Industrial",
-      nombre: "Ing. Mg. César Rosero",
-      imagen: "https://i.imgur.com/d4hRu17.png",
-      email: "cesararosero@uta.edu.ec",
-    },
-  ];
+  // Usar las autoridades de la API, o las autoridades predeterminadas si no hay datos
+  const autoridades =
+    mvaInfo.autoridades.length > 0
+      ? mvaInfo.autoridades
+      : [
+          {
+            cargo: "Decano",
+            nombre: "Dr. Franklin Mayorga Mogollón",
+            imagen: "https://i.imgur.com/hYBsxIf.png",
+            email: "fmayorga@uta.edu.ec",
+          },
+          {
+            cargo: "Subdecano",
+            nombre: "Dr. Javier Sánchez Torres",
+            imagen: "https://i.imgur.com/JIQy6Fa.png",
+            email: "j.sanchez@uta.edu.ec",
+          },
+          {
+            cargo:
+              "Coordinador de las Carrera de Software y Tecnologías de la Información",
+            nombre: "Ing. Mg. Marco Guachimboza",
+            imagen: "https://i.imgur.com/XDFrTBI.png",
+            email: "marcovguachimboza@uta.edu.ec",
+          },
+          {
+            cargo:
+              "Coordinador de las Carrera de Automatización y Robótica y Telecomunicaciones",
+            nombre: "Ing. Mg. Freddy Robalino",
+            imagen: "https://i.imgur.com/daKWf7d.png",
+            email: "r.morales@uta.edu.ec",
+          },
+          {
+            cargo: "Coordinador de las Carrera Ingeniería Industrial",
+            nombre: "Ing. Mg. César Rosero",
+            imagen: "https://i.imgur.com/d4hRu17.png",
+            email: "cesararosero@uta.edu.ec",
+          },
+        ];
   // Función para obtener el icono correspondiente
   const getIconComponent = (iconName, size = 36) => {
     switch (iconName) {
@@ -120,18 +149,20 @@ function Home() {
     }
   };
 
-  // Info cards para misión y visión
+  // Info cards para misión y visión obtenidas de la API
   const infoCardsPorCarrera = {
     GENERAL: [
       {
         title: "Misión",
         content:
+          mvaInfo.mision ||
           "Formar profesionales líderes competentes, con visión humanista y pensamiento crítico, a través de la Docencia, la Investigación y la Vinculación, que apliquen, promuevan y difundan el conocimiento respondiendo a las necesidades del país.",
         icon: <Target size={36} />,
       },
       {
         title: "Visión",
         content:
+          mvaInfo.vision ||
           "La Facultad de Ingeniería en Sistemas, Electrónica e Industrial de la Universidad Técnica de Ambato por sus niveles de excelencia, se constituirá como un centro de formación superior con liderazgo y proyección nacional e internacional.",
         icon: <Telescope size={36} />,
       },
@@ -141,7 +172,7 @@ function Home() {
   // Seleccionar los infoCards según el tipo de usuario y su carrera
   const infoCards = infoCardsPorCarrera.GENERAL;
 
-  // Cargar Bootstrap dinámicamente si no está presente
+  // Cargar Bootstrap dinámicamente si no está presente (se mantiene por compatibilidad con otras secciones)
   useEffect(() => {
     const id = "bootstrap-css";
     if (!document.getElementById(id)) {
@@ -247,49 +278,42 @@ function Home() {
         </div>
       </div>
       {/* Autoridades */}
-      <div className="container mb-5" id="autoridades">
-        <div className="row justify-content-center mb-4">
-          <div className="col-lg-6 text-center">
-            <h2 className="fw-bold" style={{ color: "#8A1538" }}>
-              Autoridades de la Facultad
-            </h2>
-            <p className="text-muted">Conoce a nuestro equipo directivo</p>
-          </div>
+      <section className="autoridades-section-h" id="autoridades">
+        <div className="autoridades-header-h">
+          <h2 className="autoridades-title-h">Autoridades de la Facultad</h2>
+          <p className="autoridades-subtitle-h">
+            Conoce a nuestro equipo directivo
+          </p>
         </div>
-        <div className="row g-4 justify-content-center">
+        <div className="autoridades-container-h">
           {autoridades.map((autoridad, index) => (
-            <div className="col-md-4" key={index}>
-              <div className="card text-center h-100 shadow-sm border-0 hover-card">
-                <div className="card-body p-4">
-                  <img
-                    src={autoridad.imagen}
-                    alt={autoridad.nombre}
-                    className="rounded-circle mb-3"
-                    style={{
-                      width: "120px",
-                      height: "120px",
-                      objectFit: "cover",
-                    }}
-                  />
-                  <h5
-                    className="card-title fw-bold"
-                    style={{ color: "#8A1538" }}
-                  >
-                    {autoridad.nombre}
-                  </h5>
-                  <p className="text-muted fw-semibold">{autoridad.cargo}</p>
-                  <a
-                    href={`mailto:${autoridad.email}`}
-                    className="btn btn-outline-primary btn-sm"
-                  >
-                    <Mail size={14} className="me-1" /> Contactar
-                  </a>
-                </div>
+            <article
+              className="autoridad-card-h"
+              key={index}
+              style={{
+                animation: `fadeInUp ${0.3 + index * 0.1}s ease-out forwards`,
+                opacity: 0,
+              }}
+            >
+              <div className="autoridad-content-h">
+                <img
+                  src={autoridad.imagen}
+                  alt={autoridad.nombre}
+                  className="autoridad-image-h"
+                />
+                <h3 className="autoridad-name-h">{autoridad.nombre}</h3>
+                <p className="autoridad-cargo-h">{autoridad.cargo}</p>
+                <a
+                  href={`mailto:${autoridad.email}`}
+                  className="autoridad-contact-h"
+                >
+                  <Mail size={14} className="autoridad-icon-h" /> Contactar
+                </a>
               </div>
-            </div>
+            </article>
           ))}
         </div>
-      </div>
+      </section>
       {/* Carreras Disponibles */}
       <div className="container mb-5" id="carreras">
         <div className="row justify-content-center mb-4">
@@ -297,7 +321,7 @@ function Home() {
             <h2 className="fw-bold" style={{ color: "#8A1538" }}>
               Nuestras Carreras
             </h2>
-            <p className="text-muted">
+            <p className="opciones-academicas-h">
               Descubre las opciones académicas que tenemos para ti
             </p>
           </div>
@@ -351,7 +375,7 @@ function Home() {
                   }`
                 : "Nuestra Identidad"}
             </h2>
-            <p className="text-muted">
+            <p className="mision-vision-h">
               {usuario?.rol_usu === "ESTUDIANTE"
                 ? "Principios y objetivos de tu carrera"
                 : "Los principios que nos guían"}

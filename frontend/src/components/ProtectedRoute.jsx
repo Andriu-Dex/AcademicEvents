@@ -21,9 +21,9 @@ const ProtectedRoute = ({ children }) => {
     );
   }
 
-  // Si no hay usuario o token, redirigir al login
+  // Si no hay usuario o token, redirigir al home
   if (!usuario || !token) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/home" replace />;
   }
 
   // Si el usuario está autenticado, renderizar los componentes hijos

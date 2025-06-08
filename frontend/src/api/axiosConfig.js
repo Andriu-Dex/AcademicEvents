@@ -43,21 +43,20 @@ axiosInstance.interceptors.response.use(
       error.response.status === 401 &&
       !tokenExpirationNotified
     ) {
-      // Verificar si estamos en la página de login o registro
-      const isLoginPage =
+      // Verificar si estamos en la página de login, registro o home
+      const isLoginOrHomePage =
         window.location.pathname === "/login" ||
         window.location.pathname === "/" ||
-        window.location.pathname === "/register";
-
-      // Marcar que ya se ha notificado para evitar múltiples notificaciones
+        window.location.pathname === "/register" ||
+        window.location.pathname === "/home"; // Marcar que ya se ha notificado para evitar múltiples notificaciones
       tokenExpirationNotified = true;
 
       console.warn("Token expirado o inválido. Cerrando sesión...");
 
-      // Mostrar notificación al usuario solo si NO estamos en la página de login
-      if (!isLoginPage) {
+      // Mostrar notificación al usuario solo si NO estamos en la página de login o home
+      if (!isLoginOrHomePage) {
         toast.error(
-          "Tu sesión ha expirado. Por favor, inicia sesión nuevamente.",
+          "Tu sesión ha expirado. Serás redirigido a la página principal.",
           {
             onClose: () => {
               // Resetear la bandera después de que se cierre la notificación
@@ -68,13 +67,11 @@ axiosInstance.interceptors.response.use(
           }
         );
       } // Ejecutar logout si está disponible
-      if (logoutFunction && !isLoginPage) {
+      if (logoutFunction && !isLoginOrHomePage) {
         logoutFunction();
-      }
-
-      // Redirigir al login solo si no estamos ya en la página de login
-      if (!isLoginPage && window.location.pathname !== "/login") {
-        window.location.href = "/login";
+      } // Redirigir al home solo si no estamos ya en la página de home
+      if (!isLoginOrHomePage && window.location.pathname !== "/home") {
+        window.location.href = "/home";
       }
     }
 
