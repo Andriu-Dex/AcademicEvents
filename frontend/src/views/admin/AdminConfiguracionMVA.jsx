@@ -29,6 +29,10 @@ const AdminConfiguracionMVA = () => {
   const [previewMode, setPreviewMode] = useState(false);
   const [loading, setLoading] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [validationErrors, setValidationErrors] = useState({
+    mision: false,
+    vision: false,
+  });
 
   const defaultAutoridad = {
     cargo: "",
@@ -74,6 +78,20 @@ const AdminConfiguracionMVA = () => {
 
   const guardar = async () => {
     try {
+      // Validar que misión y visión no estén vacíos
+      const errors = {
+        mision: !form.mision.trim(),
+        vision: !form.vision.trim(),
+      };
+
+      setValidationErrors(errors);
+
+      // Si hay errores, mostrar mensaje y detener el guardado
+      if (errors.mision || errors.vision) {
+        toast.error("Los campos de Misión y Visión no pueden estar vacíos");
+        return;
+      }
+
       setLoading(true);
       setSaveSuccess(false);
 
@@ -166,13 +184,27 @@ const AdminConfiguracionMVA = () => {
               )}
             </div>
           ) : (
-            <textarea
-              rows={4}
-              className="adminconfig-textarea"
-              value={form.mision}
-              onChange={(e) => setForm({ ...form, mision: e.target.value })}
-              placeholder="Ingrese la misión de la facultad"
-            />
+            <>
+              <textarea
+                rows={4}
+                className={`adminconfig-textarea ${
+                  validationErrors.mision ? "error-input" : ""
+                }`}
+                value={form.mision}
+                onChange={(e) => {
+                  setForm({ ...form, mision: e.target.value });
+                  if (e.target.value.trim()) {
+                    setValidationErrors({ ...validationErrors, mision: false });
+                  }
+                }}
+                placeholder="Ingrese la misión de la facultad"
+              />
+              {validationErrors.mision && (
+                <p className="validation-error-message">
+                  Este campo es obligatorio
+                </p>
+              )}
+            </>
           )}
         </div>
 
@@ -187,13 +219,27 @@ const AdminConfiguracionMVA = () => {
               )}
             </div>
           ) : (
-            <textarea
-              rows={4}
-              className="adminconfig-textarea"
-              value={form.vision}
-              onChange={(e) => setForm({ ...form, vision: e.target.value })}
-              placeholder="Ingrese la visión de la facultad"
-            />
+            <>
+              <textarea
+                rows={4}
+                className={`adminconfig-textarea ${
+                  validationErrors.vision ? "error-input" : ""
+                }`}
+                value={form.vision}
+                onChange={(e) => {
+                  setForm({ ...form, vision: e.target.value });
+                  if (e.target.value.trim()) {
+                    setValidationErrors({ ...validationErrors, vision: false });
+                  }
+                }}
+                placeholder="Ingrese la visión de la facultad"
+              />
+              {validationErrors.vision && (
+                <p className="validation-error-message">
+                  Este campo es obligatorio
+                </p>
+              )}
+            </>
           )}
         </div>
 

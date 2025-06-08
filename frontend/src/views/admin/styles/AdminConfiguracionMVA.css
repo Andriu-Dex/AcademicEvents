@@ -310,6 +310,24 @@
   border-left: 3px solid #8a1538;
 }
 
+/* Estilos para validación de campos */
+.adminconfig-textarea.error-input {
+  border-color: #ef4444;
+  background-color: #fef2f2;
+  box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.2);
+}
+
+.validation-error-message {
+  color: #ef4444;
+  font-size: 0.85rem;
+  margin-top: -1rem;
+  margin-bottom: 1rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
 .text-muted {
   color: #64748b;
   font-style: italic;
