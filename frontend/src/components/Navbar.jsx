@@ -33,9 +33,9 @@ const Navbar = () => {
       return location.pathname === path ? "nav-link-active" : "";
     }
 
-    // Para /admin/eventos, activo para todas las rutas que empiecen con esto
-    if (path === "/admin/eventos") {
-      return location.pathname.startsWith("/admin/eventos")
+    // Para /admin/eventos y /eventos, activo para todas las rutas que empiecen con esto
+    if (path === "/admin/eventos" || path === "/eventos") {
+      return location.pathname.startsWith(path)
         ? "nav-link-active"
         : "";
     }
@@ -153,8 +153,8 @@ const Navbar = () => {
                   </span>
                   <span>Inicio</span>
                 </Link>                <Link
-                  to="/eventos-publicos"
-                  className={`nav-link-item ${isActive("/eventos-publicos")}`}
+                  to="/eventos"
+                  className={`nav-link-item ${isActive("/eventos")}`}
                 >
                   <span className="nav-link-icon">
                     <Calendar size={18} />
