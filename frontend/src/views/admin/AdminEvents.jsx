@@ -23,6 +23,14 @@ import {
   MapPin,
   Monitor,
   Laptop,
+  Search,
+  Filter,
+  X,
+  ChevronDown,
+  ArrowUpDown,
+  Calendar,
+  Hash,
+  Percent,
 } from "lucide-react";
 import "./styles/AdminEvents.css";
 
@@ -119,8 +127,35 @@ const getModalidadUI = (modalidad) => {
 
 const AdminEvents = () => {
   const [eventos, setEventos] = useState([]);
+  const [eventosFiltrados, setEventosFiltrados] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [carreras, setCarreras] = useState([]);
   const navigate = useNavigate();
+  
+  // Estados para filtros
+  const [filtros, setFiltros] = useState({
+    busqueda: "",
+    tipoEvento: "",
+    estado: "",
+    fechaInicio: "",
+    fechaFin: "",
+    carrera: "",
+    modalidad: "",
+    capacidadMin: "",
+    capacidadMax: "",
+    valorMin: "",
+    valorMax: "",
+    asistenciaMin: "",
+    esGratuito: false,
+    esPago: false,
+  });
+  
+  const [mostrarFiltros, setMostrarFiltros] = useState(false);
+  const [ordenamiento, setOrdenamiento] = useState({
+    campo: "fec_ini_eve",
+    direccion: "asc"
+  });
+  
   // Fecha actual para calcular estados de eventos
   const fechaActual = new Date();
 
@@ -131,6 +166,7 @@ const AdminEvents = () => {
       const res = await axiosInstance.get("/eventos");
       console.log("Eventos cargados:", res.data);
       setEventos(res.data);
+      setEventosFiltrados(res.data);
     } catch (error) {
       console.error("Error al cargar eventos:", error);
       toast.error("No se pudieron cargar los eventos");
@@ -139,9 +175,20 @@ const AdminEvents = () => {
     }
   }, []);
 
+  // Cargar carreras para el filtro
+  const cargarCarreras = useCallback(async () => {
+    try {
+      const res = await axiosInstance.get("/carreras");
+      setCarreras(res.data);
+    } catch (error) {
+      console.error("Error al cargar carreras:", error);
+    }
+  }, []);
+
   useEffect(() => {
     cargarEventos();
-  }, [cargarEventos]);
+    cargarCarreras();
+  }, [cargarEventos, cargarCarreras]);
 
   // Eliminar evento con confirmación y alertas
   const eliminarEvento = async (eventoId) => {
@@ -155,6 +202,207 @@ const AdminEvents = () => {
       console.error("Error al eliminar evento:", error);
       toast.error(error.response?.data?.msg || "No se pudo eliminar el evento");
     }
+  };
+
+  // Función para aplicar filtros
+  const aplicarFiltros = useCallback(() => {
+    let eventosFiltrados = [...eventos];
+
+    // Filtro por búsqueda (nombre)
+    if (filtros.busqueda) {
+      eventosFiltrados = eventosFiltrados.filter(evento =>
+        evento.nom_eve.toLowerCase().includes(filtros.busqueda.toLowerCase())
+      );
+    }
+
+    // Filtro por tipo de evento
+    if (filtros.tipoEvento) {
+      eventosFiltrados = eventosFiltrados.filter(evento =>
+        evento.tip_eve === filtros.tipoEvento
+      );
+    }
+
+    // Filtro por estado
+    if (filtros.estado) {
+      eventosFiltrados = eventosFiltrados.filter(evento => {
+        const esEventoFinalizado = (evento) => {
+          const esCurso = evento.tip_eve === "CURSO";
+          if (esCurso && evento.eventos_curso?.fec_fin_cur) {
+            return new Date(evento.eventos_curso.fec_fin_cur) < fechaActual;
+          } else if (evento.fec_fin_eve) {
+            return new Date(evento.fec_fin_eve) < fechaActual;
+          }
+          return evento.est_eve === "FINALIZADO" || evento.est_eve === "CANCELADO";
+        };
+
+        const estadoCalculado = esEventoFinalizado(evento) ? "FINALIZADO" : evento.est_eve;
+        return estadoCalculado === filtros.estado;
+      });
+    }
+
+    // Filtro por fecha de inicio
+    if (filtros.fechaInicio) {
+      eventosFiltrados = eventosFiltrados.filter(evento =>
+        new Date(evento.fec_ini_eve) >= new Date(filtros.fechaInicio)
+      );
+    }
+
+    // Filtro por fecha de fin
+    if (filtros.fechaFin) {
+      eventosFiltrados = eventosFiltrados.filter(evento =>
+        new Date(evento.fec_ini_eve) <= new Date(filtros.fechaFin)
+      );
+    }
+
+    // Filtro por carrera
+    if (filtros.carrera) {
+      eventosFiltrados = eventosFiltrados.filter(evento => {
+        if (filtros.carrera === "GENERAL") {
+          return !evento.eventos_carrera || evento.eventos_carrera.length === 0;
+        }
+        return evento.eventos_carrera?.some(ec => ec.carrera.id_car === filtros.carrera);
+      });
+    }
+
+    // Filtro por modalidad
+    if (filtros.modalidad) {
+      eventosFiltrados = eventosFiltrados.filter(evento =>
+        evento.mod_eve === filtros.modalidad
+      );
+    }
+
+    // Filtro por capacidad mínima
+    if (filtros.capacidadMin) {
+      eventosFiltrados = eventosFiltrados.filter(evento =>
+        evento.cup_max_eve >= parseInt(filtros.capacidadMin)
+      );
+    }
+
+    // Filtro por capacidad máxima
+    if (filtros.capacidadMax) {
+      eventosFiltrados = eventosFiltrados.filter(evento =>
+        evento.cup_max_eve <= parseInt(filtros.capacidadMax)
+      );
+    }
+
+    // Filtro por valor mínimo
+    if (filtros.valorMin) {
+      eventosFiltrados = eventosFiltrados.filter(evento =>
+        evento.val_eve >= parseFloat(filtros.valorMin)
+      );
+    }
+
+    // Filtro por valor máximo
+    if (filtros.valorMax) {
+      eventosFiltrados = eventosFiltrados.filter(evento =>
+        evento.val_eve <= parseFloat(filtros.valorMax)
+      );
+    }
+
+    // Filtro por asistencia mínima
+    if (filtros.asistenciaMin) {
+      eventosFiltrados = eventosFiltrados.filter(evento =>
+        evento.por_min_asi_eve >= parseInt(filtros.asistenciaMin)
+      );
+    }
+
+    // Filtro por eventos gratuitos
+    if (filtros.esGratuito) {
+      eventosFiltrados = eventosFiltrados.filter(evento =>
+        evento.val_eve === 0
+      );
+    }
+
+    // Filtro por eventos de pago
+    if (filtros.esPago) {
+      eventosFiltrados = eventosFiltrados.filter(evento =>
+        evento.val_eve > 0
+      );
+    }
+
+    // Aplicar ordenamiento
+    eventosFiltrados.sort((a, b) => {
+      let valorA, valorB;
+      
+      switch (ordenamiento.campo) {
+        case "nom_eve":
+          valorA = a.nom_eve.toLowerCase();
+          valorB = b.nom_eve.toLowerCase();
+          break;
+        case "fec_ini_eve":
+          valorA = new Date(a.fec_ini_eve);
+          valorB = new Date(b.fec_ini_eve);
+          break;
+        case "val_eve":
+          valorA = a.val_eve;
+          valorB = b.val_eve;
+          break;
+        case "cup_max_eve":
+          valorA = a.cup_max_eve;
+          valorB = b.cup_max_eve;
+          break;
+        case "cup_dis_eve":
+          valorA = a.cup_dis_eve;
+          valorB = b.cup_dis_eve;
+          break;
+        default:
+          valorA = a[ordenamiento.campo];
+          valorB = b[ordenamiento.campo];
+      }
+
+      if (ordenamiento.direccion === "asc") {
+        return valorA > valorB ? 1 : -1;
+      } else {
+        return valorA < valorB ? 1 : -1;
+      }
+    });
+
+    setEventosFiltrados(eventosFiltrados);
+  }, [eventos, filtros, ordenamiento, fechaActual]);
+
+  // Aplicar filtros cuando cambien
+  useEffect(() => {
+    aplicarFiltros();
+  }, [aplicarFiltros]);
+
+  // Manejar cambios en filtros
+  const handleFiltroChange = (campo, valor) => {
+    setFiltros(prev => ({
+      ...prev,
+      [campo]: valor
+    }));
+  };
+
+  // Limpiar todos los filtros
+  const limpiarFiltros = () => {
+    setFiltros({
+      busqueda: "",
+      tipoEvento: "",
+      estado: "",
+      fechaInicio: "",
+      fechaFin: "",
+      carrera: "",
+      modalidad: "",
+      capacidadMin: "",
+      capacidadMax: "",
+      valorMin: "",
+      valorMax: "",
+      asistenciaMin: "",
+      esGratuito: false,
+      esPago: false,
+    });
+    setOrdenamiento({
+      campo: "fec_ini_eve",
+      direccion: "asc"
+    });
+  };
+
+  // Manejar cambios en ordenamiento
+  const handleOrdenamientoChange = (campo) => {
+    setOrdenamiento(prev => ({
+      campo,
+      direccion: prev.campo === campo && prev.direccion === "asc" ? "desc" : "asc"
+    }));
   }; // Formato de fecha personalizado
   const formatearFecha = (fechaStr) => {
     if (!fechaStr) return "-";
@@ -241,32 +489,333 @@ const AdminEvents = () => {
     <div className="admin-events-container">
       <div className="admin-events-header">
         <h2 className="admin-events-title">Gestión de Eventos</h2>
-        <button className="admin-events-create-btn" onClick={handleCrearEvento}>
-          <Plus size={16} />
-          Crear nuevo evento
-        </button>
+        <div className="admin-events-actions">
+          <button 
+            className="admin-events-filter-toggle"
+            onClick={() => setMostrarFiltros(!mostrarFiltros)}
+          >
+            <Filter size={16} />
+            {mostrarFiltros ? "Ocultar Filtros" : "Mostrar Filtros"}
+          </button>
+          <button className="admin-events-create-btn" onClick={handleCrearEvento}>
+            <Plus size={16} />
+            Crear nuevo evento
+          </button>
+        </div>
       </div>
+
+      {/* Panel de Filtros */}
+      {mostrarFiltros && (
+        <div className="admin-events-filters">
+          <div className="filters-header">
+            <h3>Filtros Avanzados</h3>
+            <button className="clear-filters-btn" onClick={limpiarFiltros}>
+              <X size={16} />
+              Limpiar Filtros
+            </button>
+          </div>
+          
+          <div className="filters-grid">
+            {/* Búsqueda por nombre */}
+            <div className="filter-group">
+              <label>
+                <Search size={16} />
+                Buscar por nombre
+              </label>
+              <input
+                type="text"
+                placeholder="Nombre del evento..."
+                value={filtros.busqueda}
+                onChange={(e) => handleFiltroChange("busqueda", e.target.value)}
+              />
+            </div>
+
+            {/* Tipo de evento */}
+            <div className="filter-group">
+              <label>
+                <Tag size={16} />
+                Tipo de evento
+              </label>
+              <select
+                value={filtros.tipoEvento}
+                onChange={(e) => handleFiltroChange("tipoEvento", e.target.value)}
+              >
+                <option value="">Todos los tipos</option>
+                <option value="CURSO">Curso</option>
+                <option value="CONGRESO">Congreso</option>
+                <option value="WEBINAR">Webinar</option>
+                <option value="CHARLA">Charla</option>
+                <option value="SOCIALIZACION">Socialización</option>
+                <option value="PUBLICO">Público</option>
+              </select>
+            </div>
+
+            {/* Estado */}
+            <div className="filter-group">
+              <label>
+                <CheckCircle size={16} />
+                Estado
+              </label>
+              <select
+                value={filtros.estado}
+                onChange={(e) => handleFiltroChange("estado", e.target.value)}
+              >
+                <option value="">Todos los estados</option>
+                <option value="ACTIVO">Activo</option>
+                <option value="INACTIVO">Inactivo</option>
+                <option value="FINALIZADO">Finalizado</option>
+                <option value="CANCELADO">Cancelado</option>
+                <option value="SUSPENDIDO">Suspendido</option>
+              </select>
+            </div>
+
+            {/* Fecha de inicio */}
+            <div className="filter-group">
+              <label>
+                <Calendar size={16} />
+                Fecha inicio desde
+              </label>
+              <input
+                type="date"
+                value={filtros.fechaInicio}
+                onChange={(e) => handleFiltroChange("fechaInicio", e.target.value)}
+              />
+            </div>
+
+            {/* Fecha de fin */}
+            <div className="filter-group">
+              <label>
+                <Calendar size={16} />
+                Fecha inicio hasta
+              </label>
+              <input
+                type="date"
+                value={filtros.fechaFin}
+                onChange={(e) => handleFiltroChange("fechaFin", e.target.value)}
+              />
+            </div>
+
+            {/* Carrera */}
+            <div className="filter-group">
+              <label>
+                <GraduationCap size={16} />
+                Carrera asociada
+              </label>
+              <select
+                value={filtros.carrera}
+                onChange={(e) => handleFiltroChange("carrera", e.target.value)}
+              >
+                <option value="">Todas las carreras</option>
+                <option value="GENERAL">Eventos generales</option>
+                {carreras.map(carrera => (
+                  <option key={carrera.id_car} value={carrera.id_car}>
+                    {carrera.nom_car}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Modalidad */}
+            <div className="filter-group">
+              <label>
+                <Monitor size={16} />
+                Modalidad
+              </label>
+              <select
+                value={filtros.modalidad}
+                onChange={(e) => handleFiltroChange("modalidad", e.target.value)}
+              >
+                <option value="">Todas las modalidades</option>
+                <option value="PRESENCIAL">Presencial</option>
+                <option value="VIRTUAL">Virtual</option>
+                <option value="SEMIPRESENCIAL">Semipresencial</option>
+              </select>
+            </div>
+
+            {/* Capacidad mínima */}
+            <div className="filter-group">
+              <label>
+                <Users size={16} />
+                Capacidad mínima
+              </label>
+              <input
+                type="number"
+                placeholder="Ej: 20"
+                value={filtros.capacidadMin}
+                onChange={(e) => handleFiltroChange("capacidadMin", e.target.value)}
+              />
+            </div>
+
+            {/* Capacidad máxima */}
+            <div className="filter-group">
+              <label>
+                <Users size={16} />
+                Capacidad máxima
+              </label>
+              <input
+                type="number"
+                placeholder="Ej: 100"
+                value={filtros.capacidadMax}
+                onChange={(e) => handleFiltroChange("capacidadMax", e.target.value)}
+              />
+            </div>
+
+            {/* Valor mínimo */}
+            <div className="filter-group">
+              <label>
+                <DollarSign size={16} />
+                Precio mínimo
+              </label>
+              <input
+                type="number"
+                step="0.01"
+                placeholder="Ej: 10.00"
+                value={filtros.valorMin}
+                onChange={(e) => handleFiltroChange("valorMin", e.target.value)}
+              />
+            </div>
+
+            {/* Valor máximo */}
+            <div className="filter-group">
+              <label>
+                <DollarSign size={16} />
+                Precio máximo
+              </label>
+              <input
+                type="number"
+                step="0.01"
+                placeholder="Ej: 50.00"
+                value={filtros.valorMax}
+                onChange={(e) => handleFiltroChange("valorMax", e.target.value)}
+              />
+            </div>
+
+            {/* Asistencia mínima */}
+            <div className="filter-group">
+              <label>
+                <Percent size={16} />
+                Asistencia mínima (%)
+              </label>
+              <input
+                type="number"
+                min="0"
+                max="100"
+                placeholder="Ej: 80"
+                value={filtros.asistenciaMin}
+                onChange={(e) => handleFiltroChange("asistenciaMin", e.target.value)}
+              />
+            </div>
+
+            {/* Checkboxes para filtros especiales */}
+            <div className="filter-group checkbox-group">
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={filtros.esGratuito}
+                  onChange={(e) => handleFiltroChange("esGratuito", e.target.checked)}
+                />
+                Solo eventos gratuitos
+              </label>
+            </div>
+
+            <div className="filter-group checkbox-group">
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={filtros.esPago}
+                  onChange={(e) => handleFiltroChange("esPago", e.target.checked)}
+                />
+                Solo eventos de pago
+              </label>
+            </div>
+          </div>
+
+          {/* Opciones de ordenamiento */}
+          <div className="sorting-section">
+            <h4>Ordenar por:</h4>
+            <div className="sorting-options">
+              <button
+                className={`sort-btn ${ordenamiento.campo === "nom_eve" ? "active" : ""}`}
+                onClick={() => handleOrdenamientoChange("nom_eve")}
+              >
+                <ArrowUpDown size={14} />
+                Nombre {ordenamiento.campo === "nom_eve" && (ordenamiento.direccion === "asc" ? "↑" : "↓")}
+              </button>
+              <button
+                className={`sort-btn ${ordenamiento.campo === "fec_ini_eve" ? "active" : ""}`}
+                onClick={() => handleOrdenamientoChange("fec_ini_eve")}
+              >
+                <ArrowUpDown size={14} />
+                Fecha {ordenamiento.campo === "fec_ini_eve" && (ordenamiento.direccion === "asc" ? "↑" : "↓")}
+              </button>
+              <button
+                className={`sort-btn ${ordenamiento.campo === "val_eve" ? "active" : ""}`}
+                onClick={() => handleOrdenamientoChange("val_eve")}
+              >
+                <ArrowUpDown size={14} />
+                Precio {ordenamiento.campo === "val_eve" && (ordenamiento.direccion === "asc" ? "↑" : "↓")}
+              </button>
+              <button
+                className={`sort-btn ${ordenamiento.campo === "cup_max_eve" ? "active" : ""}`}
+                onClick={() => handleOrdenamientoChange("cup_max_eve")}
+              >
+                <ArrowUpDown size={14} />
+                Capacidad {ordenamiento.campo === "cup_max_eve" && (ordenamiento.direccion === "asc" ? "↑" : "↓")}
+              </button>
+              <button
+                className={`sort-btn ${ordenamiento.campo === "cup_dis_eve" ? "active" : ""}`}
+                onClick={() => handleOrdenamientoChange("cup_dis_eve")}
+              >
+                <ArrowUpDown size={14} />
+                Disponibles {ordenamiento.campo === "cup_dis_eve" && (ordenamiento.direccion === "asc" ? "↑" : "↓")}
+              </button>
+            </div>
+          </div>
+
+          {/* Contador de resultados */}
+          <div className="results-count">
+            <span>
+              Mostrando {eventosFiltrados.length} de {eventos.length} eventos
+            </span>
+          </div>
+        </div>
+      )}
 
       {loading ? (
         <div className="admin-events-loading">
           <div className="spinner"></div>
           <p>Cargando eventos...</p>
         </div>
-      ) : eventos.length === 0 ? (
+      ) : eventosFiltrados.length === 0 ? (
         <div className="admin-events-empty">
           <CalendarClock size={48} className="text-muted" />
-          <p>No hay eventos creados aún.</p>
-          <button
-            className="admin-events-create-btn"
-            onClick={handleCrearEvento}
-          >
-            <Plus size={16} />
-            Crear mi primer evento
-          </button>
+          {eventos.length === 0 ? (
+            <>
+              <p>No hay eventos creados aún.</p>
+              <button
+                className="admin-events-create-btn"
+                onClick={handleCrearEvento}
+              >
+                <Plus size={16} />
+                Crear mi primer evento
+              </button>
+            </>
+          ) : (
+            <>
+              <p>No se encontraron eventos con los filtros aplicados.</p>
+              <button
+                className="admin-events-create-btn secondary"
+                onClick={limpiarFiltros}
+              >
+                <X size={16} />
+                Limpiar filtros
+              </button>
+            </>
+          )}
         </div>
       ) : (
         <div className="admin-events-grid">
-          {eventos.map((eve) => {
+          {eventosFiltrados.map((eve) => {
             const esCurso = eve.tip_eve === "CURSO";
             const estadoEvento = esEventoFinalizado(eve)
               ? "FINALIZADO"
