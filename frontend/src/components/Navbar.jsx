@@ -42,7 +42,8 @@ const Navbar = () => {
 
     // Para el resto de rutas
     return location.pathname.startsWith(path) ? "nav-link-active" : "";
-  }; const cerrarSesion = () => {
+  };
+  const cerrarSesion = () => {
     // Obtener el nombre del usuario para personalizar el mensaje
     const nombreUsuario = usuario?.nom_usu || "Usuario";
 
@@ -55,7 +56,9 @@ const Navbar = () => {
         <UserCheck size={20} color="#8a1538" />
         <div>
           <strong>¡Hasta pronto {nombreUsuario}!</strong>
-          <p style={{ margin: 0, fontSize: "0.85rem" }}>Sesión cerrada exitosamente</p>
+          <p style={{ margin: 0, fontSize: "0.85rem" }}>
+            Sesión cerrada exitosamente
+          </p>
         </div>
       </div>,
       {
@@ -93,7 +96,8 @@ const Navbar = () => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []); if (!usuario) {
+  }, []);
+  if (!usuario) {
     return (
       <nav className="navbar">
         <div className="navbar-left">
@@ -112,7 +116,10 @@ const Navbar = () => {
               </span>
               <span>Inicio</span>
             </Link>
-            <Link to="/eventos-publicos" className={`nav-link-item ${isActive("/eventos-publicos")}`}>
+            <Link
+              to="/eventos-publicos"
+              className={`nav-link-item ${isActive("/eventos-publicos")}`}
+            >
               <span className="nav-link-icon">
                 <Calendar size={18} />
               </span>
@@ -145,84 +152,86 @@ const Navbar = () => {
         <div className="navbar-links">
           {(usuario.rol_usu === "ESTUDIANTE" ||
             usuario.rol_usu === "GENERAL") && (
-              <>
-                {" "}
-                <Link to="/home" className={`nav-link-item ${isActive("/home")}`}>
-                  <span className="nav-link-icon">
-                    <Home size={18} />
-                  </span>
-                  <span>Inicio</span>
-                </Link>                <Link
-                  to="/eventos-publicos"
-                  className={`nav-link-item ${isActive("/eventos-publicos")}`}
-                >
-                  <span className="nav-link-icon">
-                    <Calendar size={18} />
-                  </span>
-                  <span>Eventos disponibles</span>
-                </Link><Link
-                  to="/inscripciones"
-                  className={`nav-link-item ${isActive("/inscripciones")}`}
-                >
-                  <span className="nav-link-icon">
-                    <ClipboardList size={18} />
-                  </span>
-                  <span>Mis inscripciones</span>
-                </Link>
-              </>
-            )}{" "}
+            <>
+              {" "}
+              <Link to="/home" className={`nav-link-item ${isActive("/home")}`}>
+                <span className="nav-link-icon">
+                  <Home size={18} />
+                </span>
+                <span>Inicio</span>
+              </Link>{" "}
+              <Link
+                to="/eventos"
+                className={`nav-link-item ${isActive("/eventos")}`}
+              >
+                <span className="nav-link-icon">
+                  <Calendar size={18} />
+                </span>
+                <span>Eventos disponibles</span>
+              </Link>
+              <Link
+                to="/inscripciones"
+                className={`nav-link-item ${isActive("/inscripciones")}`}
+              >
+                <span className="nav-link-icon">
+                  <ClipboardList size={18} />
+                </span>
+                <span>Mis inscripciones</span>
+              </Link>
+            </>
+          )}{" "}
           {(usuario.rol_usu === "ADMIN_GLOBAL" ||
             usuario.rol_usu === "ADMIN_GENERAL") && (
-              <>
+            <>
+              {" "}
+              <Link
+                to="/admin"
+                className={`nav-link-item ${isActive("/admin")}`}
+              >
+                <span className="nav-link-icon">
+                  <Settings size={18} />
+                </span>
+                <span>Panel Admin</span>
+              </Link>
+              <Link
+                to="/admin/eventos"
+                className={`nav-link-item ${isActive("/admin/eventos")}`}
+              >
                 {" "}
-                <Link
-                  to="/admin"
-                  className={`nav-link-item ${isActive("/admin")}`}
-                >
-                  <span className="nav-link-icon">
-                    <Settings size={18} />
-                  </span>
-                  <span>Panel Admin</span>
-                </Link>
-                <Link
-                  to="/admin/eventos"
-                  className={`nav-link-item ${isActive("/admin/eventos")}`}
-                >
-                  {" "}
-                  <span className="nav-link-icon">
-                    <FileText size={18} />
-                  </span>
-                  <span>Gestionar eventos</span>
-                </Link>
-                <Link
-                  to="/admin/carreras"
-                  className={`nav-link-item ${isActive("/admin/carreras")}`}
-                >
-                  <span className="nav-link-icon">
-                    <GraduationCap size={18} />
-                  </span>
-                  <span>Gestionar carreras</span>
-                </Link>
-                <Link
-                  to="/admin/inscripciones"
-                  className={`nav-link-item ${isActive("/admin/inscripciones")}`}
-                >
-                  <span className="nav-link-icon">
-                    <CheckSquare size={18} />
-                  </span>
-                  <span>Validar inscripciones</span>
-                </Link>
-                <Link
-                  to="/admin/configuracion"
-                  className={`nav-link-item ${isActive("/admin/configuracion")}`}
-                >
-                  <span className="nav-link-icon">
-                    <Sliders size={18} />
-                  </span>
-                  <span>Configuración</span>
-                </Link>
-              </>
-            )}
+                <span className="nav-link-icon">
+                  <FileText size={18} />
+                </span>
+                <span>Gestionar eventos</span>
+              </Link>
+              <Link
+                to="/admin/carreras"
+                className={`nav-link-item ${isActive("/admin/carreras")}`}
+              >
+                <span className="nav-link-icon">
+                  <GraduationCap size={18} />
+                </span>
+                <span>Gestionar carreras</span>
+              </Link>
+              <Link
+                to="/admin/inscripciones"
+                className={`nav-link-item ${isActive("/admin/inscripciones")}`}
+              >
+                <span className="nav-link-icon">
+                  <CheckSquare size={18} />
+                </span>
+                <span>Validar inscripciones</span>
+              </Link>
+              <Link
+                to="/admin/configuracion"
+                className={`nav-link-item ${isActive("/admin/configuracion")}`}
+              >
+                <span className="nav-link-icon">
+                  <Sliders size={18} />
+                </span>
+                <span>Configuración</span>
+              </Link>
+            </>
+          )}
         </div>
       </div>{" "}
       <div className="navbar-profile" ref={profileMenuRef}>
