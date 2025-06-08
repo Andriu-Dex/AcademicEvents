@@ -75,6 +75,28 @@ const EventosPublicos = () => {
 
   // Función para aplicar filtros
   const aplicarFiltros = (evento) => {
+    // Convertir cupos a número para comparaciones
+    const cuposDisponibles = parseInt(evento.cup_dis_eve) || 0;
+    
+    // CONTROL DE VISIBILIDAD POR CUPOS:
+    // - Si filtro "Eventos Llenos" está activo: mostrar solo eventos con cupos === 0
+    // - Para todos los otros filtros: mostrar solo eventos con cupos > 0
+    // - Sin filtros activos: mostrar solo eventos con cupos > 0 (comportamiento por defecto)
+    const hayFiltrosActivos = Object.values(filtros).some(f => f);
+    
+    if (hayFiltrosActivos) {
+      // Si el filtro "completo" está activo, mostrar solo eventos con cupos === 0
+      if (filtros.completo) {
+        if (cuposDisponibles !== 0) return false;
+      } else {
+        // Para todos los otros filtros, mostrar solo eventos con cupos > 0
+        if (cuposDisponibles <= 0) return false;
+      }
+    } else {
+      // Si no hay filtros activos, mostrar solo eventos con cupos > 0 (comportamiento por defecto)
+      if (cuposDisponibles <= 0) return false;
+    }
+
     // Filtro por nombre
     const coincideNombre = evento.nom_eve
       .toLowerCase()
@@ -82,8 +104,7 @@ const EventosPublicos = () => {
     
     if (!coincideNombre) return false;
 
-    // Si no hay filtros activos, mostrar todos
-    const hayFiltrosActivos = Object.values(filtros).some(f => f);
+    // Si no hay filtros específicos activos, mostrar todos los que pasaron el filtro de cupos
     if (!hayFiltrosActivos) return true;
 
     // Aplicar filtros específicos
@@ -114,9 +135,7 @@ const EventosPublicos = () => {
       if (evento.val_eve === 0) return false;
     }
 
-    if (filtros.completo) {
-      if (evento.cup_dis_eve !== 0) return false;
-    }
+    // Nota: El filtro "completo" ya se manejó en el control de visibilidad por cupos arriba
 
     return true;
   };
@@ -161,12 +180,9 @@ const EventosPublicos = () => {
         // Utilizamos el endpoint que incluye las relaciones con carreras y cursos
         const eventosRes = await axiosInstance.get("/eventos");
 
-        // Filtramos los eventos que tienen cupos disponibles
-        const eventosPublicos = eventosRes.data.filter((evento) => {
-          // Convertimos a número para asegurar comparación correcta
-          const cuposDisponibles = parseInt(evento.cup_dis_eve) || 0;
-          return cuposDisponibles > 0;
-        });
+        // Obtenemos todos los eventos sin filtrar por cupos aquí
+        // El filtrado por cupos se hará en tiempo real según los filtros activos
+        const eventosPublicos = eventosRes.data;
 
         // Para cada evento, cargamos sus detalles completos incluyendo carreras asociadas
         const eventosConDetalles = await Promise.all(
@@ -365,7 +381,7 @@ const EventosPublicos = () => {
                       onChange={() => manejarCambioFiltro('completo')}
                     />
                     <span className="checkmark"></span>
-                    Eventos Completos
+                    Eventos Llenos (sin cupos)
                   </label>
                 </div>
               </div>
@@ -375,11 +391,23 @@ const EventosPublicos = () => {
 
         {eventos.length === 0 ? (
           <div className="eventos-vacios">
-            <p>No hay eventos públicos disponibles en este momento.</p>
+            <p>No hay eventos disponibles en este momento.</p>
             <Link to="/home" className="btn-volver">
               <Home size={18} />
               Volver al inicio
             </Link>
+          </div>
+        ) : eventos.filter(aplicarFiltros).length === 0 ? (
+          <div className="eventos-vacios">
+            <p>No se encontraron eventos que coincidan con los filtros seleccionados.</p>
+            <button 
+              className="btn-volver" 
+              onClick={limpiarFiltros}
+              style={{ background: '#8a1538', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+            >
+              <X size={18} />
+              Limpiar filtros
+            </button>
           </div>
         ) : (
           <>
