@@ -4,7 +4,7 @@ import axiosInstance from "../api/axiosConfig";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "../hooks/useAuth";
-import { Eye, EyeOff, Lock, AtSign, X } from "lucide-react";
+import { Eye, EyeOff, Lock, AtSign, X, Home } from "lucide-react";
 
 // Componente principal de Login
 const Login = () => {
@@ -224,15 +224,51 @@ const Login = () => {
         .wave-divider .shape-fill {
           fill: rgba(255, 255, 255, 0.4);
         }
-          /* Mejora la transición y diseño de sugerencias */
-        .suggestion-item:hover {
+          /* Mejora la transición y diseño de sugerencias */        .suggestion-item:hover {
           background-color: #f8d7da !important;
           color: #8A1538;
+        }
+        
+        /* Estilos para el botón de home */
+        .home-button {
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          width: 45px;
+          height: 45px;
+          background-color: rgba(138, 21, 56, 0.7);
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          box-shadow: 0 2px 8px rgba(138, 21, 56, 0.3);
+          transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+          z-index: 1000;
+          backdrop-filter: blur(3px);
+          animation: pulse 2s infinite;
+        }
+        
+        .home-button:hover {
+          background-color: rgba(138, 21, 56, 1);
+          transform: rotate(360deg) scale(1.1);
+          box-shadow: 0 5px 15px rgba(138, 21, 56, 0.5);
+        }
+        
+        @keyframes pulse {
+          0% {
+            box-shadow: 0 0 0 0 rgba(138, 21, 56, 0.5);
+          }
+          70% {
+            box-shadow: 0 0 0 10px rgba(138, 21, 56, 0);
+          }
+          100% {
+            box-shadow: 0 0 0 0 rgba(138, 21, 56, 0);
+          }
         }
           
 
       `}</style>
-
       {/* Fondo animado con imagen */}
       <div
         style={{
@@ -248,8 +284,7 @@ const Login = () => {
           animation: "moveBackground 30s ease infinite",
           zIndex: -1,
         }}
-      ></div>
-
+      ></div>{" "}
       {/* Onda decorativa inferior */}
       <div className="wave-divider">
         <svg
@@ -264,15 +299,22 @@ const Login = () => {
           ></path>
         </svg>
       </div>
-
+      {/* Botón para volver al home */}
+      <Link to="/home" className="home-button">
+        <Home size={22} color="white" />
+      </Link>
       {/* Contenedor principal centrado */}
       <div
         className="d-flex justify-content-center align-items-center"
-        style={{ height: "100vh", width: "100vw" }}
+        style={{
+          height: "calc(100vh - 20px)",
+          width: "100vw",
+          padding: "20px 0",
+        }}
       >
         {/* Tarjeta de inicio de sesión con animación */}
         <div
-          className={`shadow-lg p-4 p-md-5 rounded-4 text-center login-card ${
+          className={`shadow-lg p-4 p-md-5 pt-md-4 pb-md-5 rounded-4 text-center h-100 login-card ${
             fadeIn ? "animate__animated animate__fadeIn" : ""
           }`}
           style={{
@@ -285,7 +327,7 @@ const Login = () => {
           }}
         >
           {/* Logo con animación flotante */}
-          <div className="floating-icon mb-4">
+          <div className="floating-icon mb-2">
             {" "}
             <img
               src="https://i.imgur.com/KrUzH8J.png"
@@ -400,7 +442,7 @@ const Login = () => {
             {/* Andriu Dex */}
 
             {/* Campo de contraseña */}
-            <div className="mb-4">
+            <div className="mb-3">
               <label htmlFor="password" className="form-label fw-semibold">
                 Contraseña
               </label>

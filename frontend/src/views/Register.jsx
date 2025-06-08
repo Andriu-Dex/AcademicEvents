@@ -3,7 +3,16 @@ import { useState, useEffect } from "react";
 import axiosInstance from "../api/axiosConfig";
 import { toast } from "react-toastify";
 import { useNavigate, Link } from "react-router-dom";
-import { User, Mail, Lock, Phone, BookText, Eye, EyeOff } from "lucide-react";
+import {
+  User,
+  Mail,
+  Lock,
+  Phone,
+  BookText,
+  Eye,
+  EyeOff,
+  Home,
+} from "lucide-react";
 import "./styles/Register.css"; // Importa el archivo CSS
 
 const Register = () => {
@@ -91,6 +100,10 @@ const Register = () => {
   return (
     <div className="container-page">
       <div className="fixed-image" />
+      {/* Botón para volver al home */}
+      <Link to="/home" className="home-button">
+        <Home size={22} color="white" />
+      </Link>
       <div className="form-scroll">
         <div className="form-content">
           {" "}

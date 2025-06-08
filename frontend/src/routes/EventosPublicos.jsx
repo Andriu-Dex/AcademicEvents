@@ -16,6 +16,9 @@ import {
   Zap,
   Pause,
   Star,
+  MapPin,
+  Monitor,
+  Laptop,
 } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import Navbar from "../components/Navbar";
@@ -207,8 +210,8 @@ const EventosPublicos = () => {
                     />
                     <div className="portada-overlay"></div>
                   </div>
-                  <h2 className="nombre-evento-er">{evento.nom_eve}</h2>
-                  <p className="tipo">{evento.tip_eve}</p>
+                  <h2 className="nombre-evento-ep">{evento.nom_eve}</h2>
+                  <p className="tipo-ep">{evento.tip_eve}</p>
                   <p className="precio-evento">
                     <BadgeDollarSign size={16} />
                     {evento.val_eve === 0
@@ -224,12 +227,12 @@ const EventosPublicos = () => {
                       </p>
                     </div>
                   )}
-                  <p className="fecha-evento-er">
+                  <p className="fecha-evento-ep">
                     <Calendar size={16} className="inline-icon" /> Fecha:{" "}
                     {formatearFechaUTC(evento.fec_ini_eve)} a{" "}
                     {formatearFechaUTC(evento.fec_fin_eve)}
                   </p>{" "}
-                  <p className="duracion-evento-er">
+                  <p className="duracion-evento-ep">
                     <Clock size={16} className="inline-icon" /> Duración:{" "}
                     {evento.dur_hor_eve} horas
                   </p>
@@ -252,9 +255,31 @@ const EventosPublicos = () => {
                       </>
                     )}
                   </p>{" "}
-                  <p className="modalidad">
-                    <Users size={16} className="inline-icon" /> Modalidad:{" "}
-                    {evento.modalidad || "No especificada"}
+                  <p className="modalidad-evento">
+                    {evento.mod_eve === "PRESENCIAL" && (
+                      <>
+                        <MapPin size={16} className="inline-icon" /> Modalidad:
+                        Presencial
+                      </>
+                    )}
+                    {evento.mod_eve === "VIRTUAL" && (
+                      <>
+                        <Monitor size={16} className="inline-icon" /> Modalidad:
+                        Virtual
+                      </>
+                    )}
+                    {evento.mod_eve === "SEMIPRESENCIAL" && (
+                      <>
+                        <Laptop size={16} className="inline-icon" /> Modalidad:
+                        Semipresencial
+                      </>
+                    )}
+                    {!evento.mod_eve && (
+                      <>
+                        <Users size={16} className="inline-icon" /> Modalidad:
+                        No especificada
+                      </>
+                    )}
                   </p>
                   <div className="evento-footer">
                     {" "}
