@@ -45,6 +45,7 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
     esEventoGeneral: false,
     img_por_eve: null,
     est_eve: "ACTIVO",
+    mod_eve: "PRESENCIAL", // Valor por defecto para modalidad
   });
 
   const tiposEvento = [
@@ -97,6 +98,7 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
         cup_max_eve: evento.cup_max_eve ? Number(evento.cup_max_eve) : "",
         img_por_eve: null,
         est_eve: evento.est_eve || "ACTIVO",
+        mod_eve: evento.mod_eve || "PRESENCIAL", // Cargar la modalidad del evento
         not_min_cur:
           evento.tip_eve === "CURSO" && evento.eventos_curso
             ? Number(evento.eventos_curso.not_min_cur) || ""
@@ -326,6 +328,7 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
       formDataToSend.append("val_eve", formData.val_eve);
       formDataToSend.append("img_por_eve", formData.img_por_eve);
       formDataToSend.append("est_eve", formData.est_eve);
+      formDataToSend.append("mod_eve", formData.mod_eve); // Añadir la modalidad del evento
       formDataToSend.append("fec_fin_eve", formData.fec_fin_eve);
       formDataToSend.append("dur_hor_eve", formData.dur_hor_eve);
       formDataToSend.append("por_min_asi_eve", formData.por_min_asi_eve);
@@ -443,9 +446,8 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
                 name="nom_eve"
                 value={formData.nom_eve}
                 onChange={handleInputChange}
-                placeholder={`Ingrese el nombre del ${
-                  esCurso ? "curso" : "evento"
-                }`}
+                placeholder={`Ingrese el nombre del ${esCurso ? "curso" : "evento"
+                  }`}
                 required
               />
             </div>
@@ -464,6 +466,20 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
                     {tipo.label}
                   </option>
                 ))}
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label>Modalidad *</label>
+              <select
+                name="mod_eve"
+                value={formData.mod_eve}
+                onChange={handleInputChange}
+                required
+              >
+                <option value="PRESENCIAL">Presencial</option>
+                <option value="VIRTUAL">Virtual</option>
+                <option value="SEMIPRESENCIAL">Semipresencial</option>
               </select>
             </div>
 
@@ -492,9 +508,8 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
               name="des_eve"
               value={formData.des_eve}
               onChange={handleInputChange}
-              placeholder={`Describe el contenido y objetivos del ${
-                esCurso ? "curso" : "evento"
-              }`}
+              placeholder={`Describe el contenido y objetivos del ${esCurso ? "curso" : "evento"
+                }`}
               rows={4}
             />
           </div>

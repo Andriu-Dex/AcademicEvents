@@ -138,6 +138,7 @@ const crearEvento = async (req, res) => {
       dur_hor_eve,
       por_min_asi_eve,
       fec_fin_eve,
+      mod_eve,
       cup_max_eve,
       not_min_cur,
     } = req.body; // Convertir valores numéricos y fechas antes de validar
@@ -202,6 +203,7 @@ const crearEvento = async (req, res) => {
         dur_hor_eve: durHor,
         por_min_asi_eve: porcMinAsi,
         fec_fin_eve: fechaFin,
+        mod_eve: mod_eve || "PRESENCIAL", // Usar valor por defecto si no se proporciona
         cup_max_eve: cupoMax,
         cup_dis_eve: cupoMax, // ✅ Inicialmente disponible = máximo
         img_por_eve: imgUrl,
@@ -346,6 +348,7 @@ const camposEvento = [
   "fec_fin_eve",
   "cup_max_eve",
   "cup_dis_eve",
+  "mod_eve",
 ];
 const camposCurso = ["not_min_cur"];
 // 2. Función principal para actualizar un evento

@@ -9,6 +9,9 @@ import {
   AlertCircle,
   Zap,
   Pause,
+  MapPin,
+  Monitor,
+  Laptop,
 } from "lucide-react";
 import "./styles/ModalRequisitos.css";
 
@@ -40,22 +43,21 @@ const ModalRequisitos = ({ evento, onClose }) => {
   if (!evento) return null;
 
   return (
-    <div className="modal-requisitos-overlay" onClick={onClose}>
+    <div className="modal-requisitos-overlay-mr" onClick={onClose}>
       <div
-        className="modal-requisitos-contenido"
+        className="modal-requisitos-contenido-mr"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="modal-requisitos-header">
+        <div className="modal-requisitos-header-mr">
           <div
             style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}
           >
             <h3>{evento.nom_eve}</h3>
             <span
-              className={`badge badge-estado ${
-                evento.est_eve?.toLowerCase() === "activo"
-                  ? "activo"
-                  : "inactivo"
-              }`}
+              className={`badge-mr badge-estado-mr ${evento.est_eve?.toLowerCase() === "activo"
+                ? "activo"
+                : "inactivo"
+                }`}
             >
               {evento.est_eve === "ACTIVO" ? (
                 <>
@@ -67,62 +69,72 @@ const ModalRequisitos = ({ evento, onClose }) => {
                 </>
               )}
             </span>
-            <span className="badge badge-tipo">{evento.tip_eve}</span>
+            <span className="badge-tipo-mr">{evento.tip_eve}</span>
           </div>
-          <button className="modal-requisitos-cerrar" onClick={onClose}>
+
+          <button className="modal-requisitos-cerrar-mr" onClick={onClose}>
             <X size={20} />
           </button>
         </div>
 
-        <div className="modal-requisitos-cuerpo">
-          <div className="seccion-requisitos">
+        <div className="modal-requisitos-cuerpo-mr">
+          <div className="seccion-requisitos-mr">
             <h4>
               <Calendar size={18} /> Fechas del Evento
             </h4>
-            <div className="info-item">
-              <span className="info-label">Inicio:</span>
-              <span className="info-value">
+            <div className="info-item-mr">
+              <span className="info-label-mr">Inicio:</span>
+              <span className="info-value-mr">
                 {formatearFechaUTC(evento.fec_ini_eve)}
               </span>
             </div>
-            <div className="info-item">
-              <span className="info-label">Finalización:</span>
-              <span className="info-value">
+            <div className="info-item-mr">
+              <span className="info-label-mr">Finalización:</span>
+              <span className="info-value-mr">
                 {formatearFechaUTC(evento.fec_fin_eve)}
               </span>
             </div>
-            <div className="info-item">
-              <span className="info-label">Duración:</span>
-              <span className="info-value">{evento.dur_hor_eve} horas</span>
+            <div className="info-item-mr">
+              <span className="info-label-mr">Duración:</span>
+              <span className="info-value-mr">{evento.dur_hor_eve} horas</span>
             </div>
-            <div className="info-item">
-              <span className="info-label">Asistencia mín.:</span>
-              <span className="info-value">{evento.por_min_asi_eve}%</span>
+            <div className="info-item-mr">
+              <span className="info-label-mr">Asistencia mín.:</span>
+              <span className="info-value-mr">{evento.por_min_asi_eve}%</span>
             </div>
           </div>
 
-          <div className="seccion-requisitos">
+          <div className="seccion-requisitos-mr">
             <h4>
-              <Users size={18} /> Detalles de Participación
+              <Users size={18} /> Modalidad y Participación
             </h4>
-            <div className="info-item">
-              <span className="info-label">Modalidad:</span>
-              <span className="info-value">
-                {evento.modalidad || "No especificada"}
+            <div className="info-item-mr modalidad-item-mr">
+              <span className="info-label-mr">Modalidad:</span>
+              <span className="info-value-mr">
+                {evento.mod_eve === "PRESENCIAL" && (
+                  <span className="modalidad-badge-mr"><MapPin size={16} /> Presencial</span>
+                )}
+                {evento.mod_eve === "VIRTUAL" && (
+                  <span className="modalidad-badge-mr virtual"><Monitor size={16} /> Virtual</span>
+                )}
+                {evento.mod_eve === "SEMIPRESENCIAL" && (
+                  <span className="modalidad-badge-mr semi"><Laptop size={16} /> Semipresencial</span>
+                )}
+                {!evento.mod_eve && "No especificada"}
               </span>
             </div>
-            <div className="info-item">
-              <span className="info-label">Cupos:</span>
-              <span className="info-value enfasis">
+            <div className="info-item-mr">
+              <span className="info-label-mr">Cupos:</span>
+              <span className="info-value-mr enfasis">
                 {evento.cup_dis_eve} disponibles
                 <small style={{ marginLeft: "0.5rem", color: "#6b7280" }}>
                   de {evento.cup_max_eve}
                 </small>
               </span>
             </div>
-            <div className="info-item">
-              <span className="info-label">Costo:</span>
-              <span className="info-value enfasis">
+            <div className="info-item-mr">
+              <span className="info-label-mr">Costo:</span>
+              <span className="info-value-mr enfasis">
                 {evento.val_eve === 0
                   ? "Gratuito"
                   : `$${evento.val_eve.toFixed(2)}`}
@@ -130,75 +142,70 @@ const ModalRequisitos = ({ evento, onClose }) => {
             </div>
           </div>
 
-          <div className="seccion-requisitos">
+          <div className="seccion-requisitos-mr">
             <h4>
               <FileText size={18} /> Descripción del Evento
             </h4>
-            <p>{evento.des_eve || "No hay descripción disponible."}</p>
+            <p className="descripcion-evento">{evento.des_eve || "No hay descripción disponible."}</p>
           </div>
 
-          <div className="seccion-requisitos">
-            <h4>
-              <Target size={18} /> Objetivos del Evento
-            </h4>
-            <p>{evento.objetivos || "No se han especificado objetivos."}</p>
-          </div>
+          <div className="seccion-requisitos-mr">
+            <div className="requisitos-grid">
+              <div className="seccion-participantes-mr">
+                <h5 className="requisito-subtitulo">
+                  <Users size={16} /> Dirigido a
+                </h5>
+                <div className="grupos-participantes-mr">
+                  <div className="grupo-participante-mr">
+                    <span className={`usuario-item-mr ${evento.dirigido_estudiantes ? 'dirigido' : 'no-dirigido'}`}>
+                      <Users size={14} /> Estudiantes
+                    </span>
+                  </div>
+                  <div className="grupo-participante-mr">
+                    <span className={`usuario-item-mr ${evento.dirigido_docentes ? 'dirigido' : 'no-dirigido'}`}>
+                      <Users size={14} /> Docentes
+                    </span>
+                  </div>
+                  <div className="grupo-participante-mr">
+                    <span className={`usuario-item-mr ${evento.dirigido_publico ? 'dirigido' : 'no-dirigido'}`}>
+                      <Users size={14} /> Público General
+                    </span>
+                  </div>
+                </div>
+              </div>
 
-          <div className="seccion-requisitos">
-            <h4>
-              <CheckCircle size={18} /> Requisitos para Inscripción
-            </h4>
-            <p style={{ marginBottom: "1rem" }}>
-              {evento.requisitos ||
-                "No se han especificado requisitos generales."}
-            </p>
-
-            <div>
-              <h5 style={{ marginBottom: "0.5rem", color: "#374151" }}>
-                Tipos de usuarios elegibles:
-              </h5>
-              <div className="lista-usuarios">
-                <span className="usuario-item">
-                  <Users size={14} /> ESTUDIANTES
-                </span>
-                <span className="usuario-item">
-                  <Users size={14} /> DOCENTES
-                </span>
-                <span className="usuario-item">
-                  <Users size={14} /> PÚBLICO GENERAL
-                </span>
+              <div className="seccion-carreras-mr">
+                <h5 className="requisito-subtitulo">
+                  <FileText size={16} /> Carreras asociadas
+                </h5>
+                {evento.eventos_carrera && evento.eventos_carrera.length > 0 ? (
+                  <div className="carreras-contenedor-mr">
+                    {evento.eventos_carrera.map((carreraEvento) => (
+                      <div key={carreraEvento.id_eve_car} className="carrera-item-mr">
+                        <FileText size={14} />
+                        <span className="carrera-nombre-mr">
+                          {carreraEvento.carrera?.nom_car || "Carrera no especificada"}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="todas-carreras-mr">
+                    <FileText size={16} />
+                    <span>Este evento está abierto a todas las carreras de la universidad</span>
+                  </div>
+                )}
               </div>
             </div>
 
-            <div style={{ marginTop: "1.5rem" }}>
-              <h5 style={{ marginBottom: "0.5rem", color: "#374151" }}>
-                Carreras elegibles:
-              </h5>
-              {evento.eventos_carrera && evento.eventos_carrera.length > 0 ? (
-                <ul className="lista-carreras">
-                  {evento.eventos_carrera.map((carreraEvento) => (
-                    <li key={carreraEvento.id_eve_car} className="carrera-item">
-                      <FileText size={14} />
-                      {carreraEvento.carrera?.nom_car ||
-                        "Carrera no especificada"}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p style={{ color: "#6b7280", fontStyle: "italic" }}>
-                  Este evento está disponible para todas las carreras.
-                </p>
-              )}
-            </div>
-
             {evento.eventos_curso && (
-              <div style={{ marginTop: "1.5rem" }}>
-                <h5 style={{ marginBottom: "0.5rem", color: "#374151" }}>
-                  Requisitos del curso:
+              <div className="requisito-seccion curso-requisitos">
+                <h5 className="requisito-subtitulo">
+                  <AlertCircle size={16} /> Requisitos del curso
                 </h5>
-                <div className="info-item">
-                  <span className="info-label">Nota mínima:</span>
-                  <span className="info-value enfasis">
+                <div className="info-item-mr">
+                  <span className="info-label-mr">Nota mínima:</span>
+                  <span className="info-value-mr enfasis">
                     {evento.eventos_curso.not_min_cur}
                   </span>
                 </div>
@@ -207,7 +214,7 @@ const ModalRequisitos = ({ evento, onClose }) => {
           </div>
 
           {evento.datos_extra && (
-            <div className="seccion-requisitos">
+            <div className="seccion-requisitos-mr">
               <h4>
                 <AlertCircle size={18} /> Información Adicional
               </h4>
@@ -219,8 +226,15 @@ const ModalRequisitos = ({ evento, onClose }) => {
             style={{ marginTop: "1rem", textAlign: "center", color: "#6b7280" }}
           >
             <p>
-              Para inscribirse en este evento, inicie sesión o regístrese en la
-              plataforma.
+              Para inscribirse en este evento, {" "}
+              <a href="/login" style={{ color: "#8a1538", textDecoration: "underline" }}>
+                inicie sesión
+              </a>{" "}
+              o{" "}
+              <a href="/registro" style={{ color: "#8a1538", textDecoration: "underline" }}>
+                regístrese
+              </a>{" "}
+              en la plataforma.
             </p>
           </div>
         </div>
