@@ -22,9 +22,9 @@ const PrivateRouteAdmin = ({ children }) => {
     );
   }
 
-  // Si no hay usuario o token, redirigir al login
+  // Si no hay usuario o token, redirigir al home
   if (!usuario || !token) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/home" replace />;
   }
 
   // Verificar rol de administrador
