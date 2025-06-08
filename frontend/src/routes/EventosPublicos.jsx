@@ -49,7 +49,7 @@ const formatearFechaUTC = (fechaStr) => {
       timeZone: "UTC",
     });
   } catch (error) {
-    console.error("Error al formatear fecha:", error);
+    console.error("", error);
     return "-";
   }
 };
