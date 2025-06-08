@@ -286,10 +286,17 @@ const crearInscripcion = async (req, res) => {
 // ==============================
 const validarInscripcion = async (req, res) => {
   try {
+    console.log("============ INICIO VALIDAR INSCRIPCIÓN ============");
     const { id } = req.params;
     const { est_ins, asistencia, nota_final, observacion } = req.body;
 
-    console.log(req.body);
+    console.log("ID de inscripción:", id);
+    console.log("Datos recibidos:", {
+      est_ins,
+      asistencia,
+      nota_final,
+      observacion,
+    });
 
     // Verificar estados permitidos con el enum
     const estadosPermitidos = [
@@ -303,7 +310,8 @@ const validarInscripcion = async (req, res) => {
     ];
 
     if (!estadosPermitidos.includes(est_ins)) {
-      return res.status(400).json({ msg: "Estado inválido" + est_ins });
+      console.error("Estado inválido:", est_ins);
+      return res.status(400).json({ msg: "Estado inválido: " + est_ins });
     }
     const inscripcion = await prisma.inscripcion.findUnique({
       where: { id_ins: id },
@@ -319,12 +327,13 @@ const validarInscripcion = async (req, res) => {
     const idEvento = inscripcion.id_eve_ins;
 
     let asistenciaNum = asistencia !== undefined ? Number(asistencia) : -1;
-    let notaFinalNum = nota_final !== undefined ? Number(nota_final) : -1;
+    // Usar null en lugar de -1 para notas no definidas
+    let notaFinalNum = nota_final !== undefined ? Number(nota_final) : null;
 
     let nuevoEstado = est_ins; // Usamos el estado enviado si no se especifican asistencia ni nota
 
     // Si no se proporciona asistencia, no se entra en la lógica de validación de asistencia y nota
-    if (asistenciaNum !== -1 || notaFinalNum !== -1) {
+    if (asistenciaNum !== -1 || notaFinalNum !== null) {
       // Validación de asistencia
       if (asistenciaNum !== -1) {
         const asistenciaMinima = inscripcion.evento.por_min_asi_eve;
@@ -338,7 +347,7 @@ const validarInscripcion = async (req, res) => {
       }
 
       // Validación de nota final (solo para eventos tipo CURSO)
-      if (inscripcion.evento.tip_eve === "CURSO" && notaFinalNum !== -1) {
+      if (inscripcion.evento.tip_eve === "CURSO" && notaFinalNum !== null) {
         const eventoCurso = await prisma.evento_curso.findUnique({
           where: { id_eve_cur: inscripcion.evento.id_eve },
         });
@@ -373,7 +382,7 @@ const validarInscripcion = async (req, res) => {
         },
       });
 
-      if (inscripcion.evento.tip_eve === "CURSO" && notaFinalNum !== null) {
+      if (inscripcion.evento.tip_eve === "CURSO") {
         const inscripcionCurso = await prisma.inscripcion_curso.findUnique({
           where: { id_ins_cur: id },
         });
@@ -386,8 +395,8 @@ const validarInscripcion = async (req, res) => {
           });
         } else {
           await prisma.inscripcion_curso.create({
-            where: { id_ins_cur: id },
             data: {
+              id_ins_cur: id,
               not_fin_usu: notaFinalNum, // Guardar la nota final
             },
           });
@@ -395,13 +404,39 @@ const validarInscripcion = async (req, res) => {
       }
 
       if (observacion) {
-        // Crear nueva observación sin verificar si existe una anterior
-        await prisma.observacion_inscripcion.update({
-          data: {
-            id_ins_per: id, // ID de la inscripción
-            obs_ins: observacion, // Texto de la observación
-          },
-        });
+        console.log("Procesando observación:", observacion);
+        // Verificar si ya existe una observación para esta inscripción
+        const observacionExistente =
+          await prisma.observacion_inscripcion.findUnique({
+            where: { id_ins_per: id },
+          });
+
+        console.log(
+          "¿Existe observación previa?",
+          observacionExistente ? "Sí" : "No"
+        );
+
+        if (observacionExistente) {
+          // Actualizar observación existente
+          console.log("Actualizando observación existente");
+          await prisma.observacion_inscripcion.update({
+            where: { id_ins_per: id },
+            data: {
+              obs_ins: observacion,
+              id_adm_cre_obs: req.usuario.id,
+            },
+          });
+        } else {
+          // Crear nueva observación
+          console.log("Creando nueva observación");
+          await prisma.observacion_inscripcion.create({
+            data: {
+              id_ins_per: id,
+              obs_ins: observacion,
+              id_adm_cre_obs: req.usuario.id,
+            },
+          });
+        }
       }
 
       return res.status(200).json({
@@ -469,14 +504,21 @@ const validarInscripcion = async (req, res) => {
 
     // Guardar observación si se proporciona
     if (observacion) {
+      console.log("Procesando observación:", observacion);
       // Verificar si ya existe una observación para esta inscripción
       const observacionExistente =
         await prisma.observacion_inscripcion.findUnique({
           where: { id_ins_per: id },
         });
 
+      console.log(
+        "¿Existe observación previa?",
+        observacionExistente ? "Sí" : "No"
+      );
+
       if (observacionExistente) {
         // Actualizar observación existente
+        console.log("Actualizando observación existente");
         await prisma.observacion_inscripcion.update({
           where: { id_ins_per: id },
           data: {
@@ -486,6 +528,7 @@ const validarInscripcion = async (req, res) => {
         });
       } else {
         // Crear nueva observación
+        console.log("Creando nueva observación");
         await prisma.observacion_inscripcion.create({
           data: {
             id_ins_per: id,
@@ -498,12 +541,15 @@ const validarInscripcion = async (req, res) => {
 
     // Si es un curso, actualizar la nota final en inscripcion_curso
     if (inscripcion.evento.tip_eve === "CURSO") {
+      console.log("Es un curso, actualizando nota final:", notaFinalNum);
       // Buscar si ya existe inscripcion_curso
       const inscripcionCurso = await prisma.inscripcion_curso.findUnique({
         where: { id_ins_cur: id },
       });
+      console.log("Inscripción curso existente:", inscripcionCurso);
 
       if (inscripcionCurso) {
+        console.log("Actualizando inscripción curso existente");
         // Actualizar inscripcion_curso existente
         await prisma.inscripcion_curso.update({
           where: { id_ins_cur: id },
@@ -511,7 +557,9 @@ const validarInscripcion = async (req, res) => {
             not_fin_usu: notaFinalNum,
           },
         });
+        console.log("Inscripción curso actualizada correctamente");
       } else {
+        console.log("Creando nueva inscripción curso");
         // Crear inscripcion_curso si no existe
         await prisma.inscripcion_curso.create({
           data: {
@@ -519,6 +567,7 @@ const validarInscripcion = async (req, res) => {
             not_fin_usu: notaFinalNum,
           },
         });
+        console.log("Nueva inscripción curso creada correctamente");
       }
     }
 
@@ -526,10 +575,15 @@ const validarInscripcion = async (req, res) => {
       msg: "Inscripción actualizada correctamente",
       inscripcion: actualizada,
     });
+    console.log("============ FIN VALIDAR INSCRIPCIÓN: ÉXITO ============");
   } catch (error) {
+    console.error("============ ERROR EN VALIDAR INSCRIPCIÓN ============");
+    console.error("Mensaje de error:", error.message);
+    console.error("Stack de error:", error.stack);
     res.status(500).json({
       msg: "Error al validar inscripción",
       error: error.message,
+      stack: process.env.NODE_ENV === "development" ? error.stack : undefined,
     });
   }
 };

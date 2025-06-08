@@ -40,6 +40,26 @@ const estadoLabel = {
     icon: <FileText size={16} />,
     color: "estado-finalizada",
   },
+  APROBADO: {
+    text: "Aprobado",
+    icon: <BadgeCheck size={16} />,
+    color: "estado-finalizada",
+  },
+  REPROBADO_NOTA: {
+    text: "Reprobado por nota",
+    icon: <AlertCircle size={16} />,
+    color: "estado-rechazada",
+  },
+  REPROBADO_ASISTENCIA: {
+    text: "Reprobado por asistencia",
+    icon: <AlertCircle size={16} />,
+    color: "estado-rechazada",
+  },
+  REPROBADO_TOTAL: {
+    text: "Reprobado",
+    icon: <AlertCircle size={16} />,
+    color: "estado-rechazada",
+  },
 };
 
 const MyInscriptions = () => {
@@ -156,10 +176,12 @@ const MyInscriptions = () => {
                 {" "}
                 <h3 className="myins-event-name">{ins.evento.nom_eve}</h3>
                 <span
-                  className={`myins-estado ${estadoLabel[ins.est_ins].color}`}
+                  className={`myins-estado ${
+                    estadoLabel[ins.est_ins]?.color || "estado-pendiente"
+                  }`}
                 >
-                  {estadoLabel[ins.est_ins].icon}
-                  {estadoLabel[ins.est_ins].text}
+                  {estadoLabel[ins.est_ins]?.icon || <Clock size={16} />}
+                  {estadoLabel[ins.est_ins]?.text || ins.est_ins}
                 </span>
               </div>
               <p className="myins-datos">

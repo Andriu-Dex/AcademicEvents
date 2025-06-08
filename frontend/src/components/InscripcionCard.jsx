@@ -18,7 +18,9 @@ import "./styles/InscripcionCard.css";
 const InscripcionCard = ({ inscripcion, onUpdate }) => {
   const [expanded, setExpanded] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [nota, setNota] = useState(inscripcion.nota_final || "");
+  const [nota, setNota] = useState(
+    inscripcion.nota_final === -1 ? "" : inscripcion.nota_final || ""
+  );
   const [asistencia, setAsistencia] = useState(
     inscripcion.por_asi_fin_usu || ""
   );
