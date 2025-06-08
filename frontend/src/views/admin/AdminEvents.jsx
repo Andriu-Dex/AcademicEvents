@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import axiosInstance from "../../api/axiosConfig";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -156,8 +156,8 @@ const AdminEvents = () => {
     direccion: "asc"
   });
   
-  // Fecha actual para calcular estados de eventos
-  const fechaActual = new Date();
+  // Fecha actual para calcular estados de eventos (useMemo para evitar recreación en cada render)
+  const fechaActual = useMemo(() => new Date(), []);
 
   // Usar axiosInstance para la API con interceptores de token
   const cargarEventos = useCallback(async () => {
@@ -360,10 +360,10 @@ const AdminEvents = () => {
     setEventosFiltrados(eventosFiltrados);
   }, [eventos, filtros, ordenamiento, fechaActual]);
 
-  // Aplicar filtros cuando cambien
+  // Aplicar filtros automáticamente cuando cambien las dependencias
   useEffect(() => {
     aplicarFiltros();
-  }, [aplicarFiltros]);
+  }, [eventos, filtros, ordenamiento]);
 
   // Manejar cambios en filtros
   const handleFiltroChange = (campo, valor) => {
