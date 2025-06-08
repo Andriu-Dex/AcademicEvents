@@ -30,19 +30,45 @@ function Home() {
   const { usuario } = useAuth();
   // Estado para almacenar las carreras
   const [carreras, setCarreras] = useState([]);
+  // Estado para almacenar la información MVA
+  const [mvaInfo, setMvaInfo] = useState({
+    mision: "",
+    vision: "",
+    autoridades: [],
+  });
 
-  // Cargar carreras desde la API
+  // Cargar carreras y MVA desde la API
   useEffect(() => {
-    const cargarCarreras = async () => {
+    const cargarDatos = async () => {
       try {
-        const res = await axiosInstance.get("/carreras");
-        setCarreras(res.data);
+        // Cargar carreras
+        const resCarreras = await axiosInstance.get("/carreras");
+        setCarreras(resCarreras.data);
+
+        // Cargar información MVA
+        const resMVA = await axiosInstance.get("/mva");
+
+        // Parsear el JSON de autoridades si existe
+        let autoridades = [];
+        if (resMVA.data && resMVA.data.autoridades) {
+          try {
+            autoridades = JSON.parse(resMVA.data.autoridades);
+          } catch (error) {
+            console.error("Error al parsear autoridades:", error);
+          }
+        }
+
+        setMvaInfo({
+          mision: resMVA.data?.mision || "",
+          vision: resMVA.data?.vision || "",
+          autoridades: autoridades,
+        });
       } catch (error) {
-        console.error("Error al cargar carreras:", error);
+        console.error("Error al cargar datos:", error);
       }
     };
 
-    cargarCarreras();
+    cargarDatos();
   }, []);
 
   // Facultad actual (para contenido de la página)
@@ -65,41 +91,44 @@ function Home() {
     { number: "95%", label: "Empleabilidad", icon: <TrendingUp size={36} /> },
   ];
 
-  // Autoridades de la facultad (actualizado con 5 autoridades y fotos reales)
-  const autoridades = [
-    {
-      cargo: "Decano",
-      nombre: "Dr. Franklin Mayorga Mogollón",
-      imagen: "https://i.imgur.com/hYBsxIf.png",
-      email: "fmayorga@uta.edu.ec",
-    },
-    {
-      cargo: "Subdecano",
-      nombre: "Dr. Javier Sánchez Torres",
-      imagen: "https://i.imgur.com/JIQy6Fa.png",
-      email: "j.sanchez@uta.edu.ec",
-    },
-    {
-      cargo:
-        "Coordinador de las Carrera de Software y Tecnologías de la Información",
-      nombre: "Ing. Mg. Marco Guachimboza",
-      imagen: "https://i.imgur.com/XDFrTBI.png",
-      email: "marcovguachimboza@uta.edu.ec",
-    },
-    {
-      cargo:
-        "Coordinador de las Carrera de Automatización y Robótica y Telecomunicaciones",
-      nombre: "Ing. Mg. Freddy Robalino",
-      imagen: "https://i.imgur.com/daKWf7d.png",
-      email: "r.morales@uta.edu.ec",
-    },
-    {
-      cargo: "Coordinador de las Carrera Ingeniería Industrial",
-      nombre: "Ing. Mg. César Rosero",
-      imagen: "https://i.imgur.com/d4hRu17.png",
-      email: "cesararosero@uta.edu.ec",
-    },
-  ];
+  // Usar las autoridades de la API, o las autoridades predeterminadas si no hay datos
+  const autoridades =
+    mvaInfo.autoridades.length > 0
+      ? mvaInfo.autoridades
+      : [
+          {
+            cargo: "Decano",
+            nombre: "Dr. Franklin Mayorga Mogollón",
+            imagen: "https://i.imgur.com/hYBsxIf.png",
+            email: "fmayorga@uta.edu.ec",
+          },
+          {
+            cargo: "Subdecano",
+            nombre: "Dr. Javier Sánchez Torres",
+            imagen: "https://i.imgur.com/JIQy6Fa.png",
+            email: "j.sanchez@uta.edu.ec",
+          },
+          {
+            cargo:
+              "Coordinador de las Carrera de Software y Tecnologías de la Información",
+            nombre: "Ing. Mg. Marco Guachimboza",
+            imagen: "https://i.imgur.com/XDFrTBI.png",
+            email: "marcovguachimboza@uta.edu.ec",
+          },
+          {
+            cargo:
+              "Coordinador de las Carrera de Automatización y Robótica y Telecomunicaciones",
+            nombre: "Ing. Mg. Freddy Robalino",
+            imagen: "https://i.imgur.com/daKWf7d.png",
+            email: "r.morales@uta.edu.ec",
+          },
+          {
+            cargo: "Coordinador de las Carrera Ingeniería Industrial",
+            nombre: "Ing. Mg. César Rosero",
+            imagen: "https://i.imgur.com/d4hRu17.png",
+            email: "cesararosero@uta.edu.ec",
+          },
+        ];
   // Función para obtener el icono correspondiente
   const getIconComponent = (iconName, size = 36) => {
     switch (iconName) {
@@ -120,18 +149,20 @@ function Home() {
     }
   };
 
-  // Info cards para misión y visión
+  // Info cards para misión y visión obtenidas de la API
   const infoCardsPorCarrera = {
     GENERAL: [
       {
         title: "Misión",
         content:
+          mvaInfo.mision ||
           "Formar profesionales líderes competentes, con visión humanista y pensamiento crítico, a través de la Docencia, la Investigación y la Vinculación, que apliquen, promuevan y difundan el conocimiento respondiendo a las necesidades del país.",
         icon: <Target size={36} />,
       },
       {
         title: "Visión",
         content:
+          mvaInfo.vision ||
           "La Facultad de Ingeniería en Sistemas, Electrónica e Industrial de la Universidad Técnica de Ambato por sus niveles de excelencia, se constituirá como un centro de formación superior con liderazgo y proyección nacional e internacional.",
         icon: <Telescope size={36} />,
       },
