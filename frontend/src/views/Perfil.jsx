@@ -3,6 +3,8 @@ import { useAuth } from "../hooks/useAuth";
 import axiosInstance from "../api/axiosConfig";
 import { toast } from "react-toastify";
 import AvatarEditor from "react-avatar-editor";
+import { useTheme } from "../hooks/useTheme.js";
+
 import {
   User,
   Mail,
@@ -26,6 +28,8 @@ import {
   ZoomIn,
   ZoomOut,
   RotateCw,
+  AlertTriangle,
+  Shield,
 } from "lucide-react";
 import "./styles/Perfil.css";
 
@@ -50,11 +54,14 @@ const Perfil = () => {
   const [rotacionImagen, setRotacionImagen] = useState(0);
   const [subiendoImagen, setSubiendoImagen] = useState(false);
   const editorRef = useRef(null);
-
+  const [estadoSeleccionado, setEstadoSeleccionado] = useState("TODAS");
+  const { theme, setTheme, themesAvailable } = useTheme(); // ✅ Aquí está la clave
+  
   useEffect(() => {
     if (usuario) {
       cargarPerfil();
     }
+    console.log("Datos perfil:", perfilData);
   }, [usuario]);
 
   const cargarPerfil = async () => {
@@ -276,8 +283,8 @@ const Perfil = () => {
 
   if (cargando) {
     return (
-      <div className="perfil-loading">
-        <div className="perfil-spinner"></div>
+      <div className="perfil-loading-p">
+        <div className="perfil-spinner-p"></div>
         <p>Cargando perfil...</p>
       </div>
     );
@@ -285,16 +292,24 @@ const Perfil = () => {
 
   if (!perfilData) {
     return (
-      <div className="perfil-error">
+      <div className="perfil-error-p">
         <XCircle size={48} />
         <h2>Error al cargar el perfil</h2>
         <p>No se pudo obtener la información del perfil.</p>
-        <button className="btn-reintentar" onClick={cargarPerfil}>
+        <button className="btn-reintentar-p" onClick={cargarPerfil}>
           Reintentar
         </button>
       </div>
     );
   }
+
+  const totalFinalizados = perfilData.inscripciones.filter(
+    (i) => i.est_ins === "FINALIZADA"
+  ).length;
+
+  const totalActivas = perfilData.inscripciones.filter(
+    (i) => i.est_ins === "ACEPTADA" || i.est_ins === "PENDIENTE"
+  ).length;
 
   const formatearFecha = (fecha) => {
     if (!fecha) return "No disponible";
@@ -305,9 +320,29 @@ const Perfil = () => {
     });
   };
 
+  const inscripcionesFiltradas = perfilData.inscripciones.filter((ins) =>
+    estadoSeleccionado === "TODAS" ? true : ins.est_ins === estadoSeleccionado
+  );
+
   return (
-    <div className="perfil-container">
-      <h1 className="perfil-titulo">Mi Perfil</h1>{" "}
+    <div className="perfil-container-p">
+      <h1 className="perfil-titulo-p">Mi Perfil</h1>{" "}
+    <div className="perfil-header-flex">
+      <div className="tema-selector">
+        <label htmlFor="tema">🎨 Tema:</label>
+        <select
+          id="tema"
+          value={theme}
+          onChange={(e) => setTheme(e.target.value)}
+        >
+          {themesAvailable.map((t) => (
+            <option key={t} value={t}>
+              {t.charAt(0).toUpperCase() + t.slice(1)}
+            </option>
+          ))}
+        </select>
+      </div>
+    </div>
       <div className="perfil-card">
         <div className="perfil-header">
           <div
@@ -324,7 +359,9 @@ const Perfil = () => {
                 className="perfil-imagen"
               />
             ) : (
-              <User size={48} />
+              <div className="perfil-placeholder-avatar">
+                <User size={48} />
+              </div>
             )}
             <div className="perfil-avatar-overlay">
               <Camera size={16} />
@@ -340,152 +377,227 @@ const Perfil = () => {
           <div className="perfil-nombre">
             <h2>
               {perfilData.nom_usu} {perfilData.ape_usu}
-            </h2>{" "}
-            <span className={`perfil-rol ${perfilData.rol_usu.toLowerCase()}`}>
-              {perfilData.rol_usu === "ESTUDIANTE"
-                ? "Estudiante"
-                : perfilData.rol_usu === "ADMIN_GLOBAL" ||
-                  perfilData.rol_usu === "ADMIN_GENERAL"
-                ? "Administrador"
-                : "Usuario General"}
-            </span>
-          </div>
-        </div>
+            </h2>
+            <div className="insignias">
+              {/* Rol con ícono */}
+              {perfilData.rol_usu === "ESTUDIANTE" && (
+                <span className="rol-badge estudiante">
+                  <GraduationCap size={14} /> Estudiante
+                </span>
+              )}
+              {(perfilData.rol_usu === "ADMIN_GLOBAL" ||
+                perfilData.rol_usu === "ADMIN_GENERAL") && (
+                <span className="rol-badge admin">
+                  <Shield size={14} /> Administrador
+                </span>
+              )}
 
-        <div className="perfil-info">
-          <div className="perfil-grupo">
-            <div className="perfil-etiqueta">
-              <FileText size={18} />
-              <span>Cédula:</span>
-            </div>
-            <div className="perfil-valor">{perfilData.ced_usu}</div>
-          </div>
-          <div className="perfil-grupo">
-            <div className="perfil-etiqueta">
-              <Mail size={18} />
-              <span>Correo:</span>
-            </div>
-            <div className="perfil-valor">{perfilData.cor_usu}</div>
-          </div>
-          <div className="perfil-grupo">
-            <div className="perfil-etiqueta">
-              <Phone size={18} />
-              <span>Teléfono:</span>
-            </div>
-            <div className="perfil-valor">{perfilData.cel_usu}</div>
-          </div>
-          <div className="perfil-grupo">
-            <div className="perfil-etiqueta">
-              <GraduationCap size={18} />
-              <span>Carrera:</span>
-            </div>
-            <div className="perfil-valor">
-              {perfilData.carrera ? perfilData.carrera.nom_car : "No aplica"}
-            </div>
-          </div>
-          <div className="perfil-grupo">
-            <div className="perfil-etiqueta">
-              <Calendar size={18} />
-              <span>Fecha de registro:</span>
-            </div>
-            <div className="perfil-valor">
-              {formatearFecha(perfilData.fec_cre_usu)}
-            </div>
-          </div>
-          <div className="perfil-grupo documento-grupo">
-            <div className="perfil-etiqueta">
-              <FileText size={18} />
-              <span>Documentos:</span>
-            </div>
-            <div className="perfil-valor documento-valor">
-              {" "}
+              {/* Estado del perfil */}
               {perfilData.com_usu ? (
-                <div className="documento-info">
-                  {" "}
-                  <button
-                    className="btn-ver-documento"
-                    onClick={() => {
-                      const url = `${import.meta.env.VITE_API_URL}${
-                        perfilData.com_usu
-                      }`;
-                      // Abrir directamente en el navegador
-                      window.open(url, "_blank");
-                    }}
-                  >
-                    <Eye size={16} />
-                    Ver documento
-                  </button>
-                  <button
-                    className="btn-actualizar-documento"
-                    onClick={() => setMostrarModal(true)}
-                  >
-                    <Edit size={16} />
-                    Actualizar
-                  </button>
-                  <div className="documento-status">
-                    <small>
-                      Documento cargado: {perfilData.com_usu.split("/").pop()}
-                    </small>
-                  </div>
-                </div>
+                <span className="perfil-estado verificado">
+                  <CheckCircle size={14} /> Perfil verificado
+                </span>
               ) : (
-                <>
-                  <button
-                    className="btn-subir-documento"
-                    onClick={() => setMostrarModal(true)}
-                  >
-                    <Upload size={16} />
-                    Subir documentos
-                  </button>
-                  <div className="documento-status">
-                    <small>
-                      No has subido ningún documento aún.
-                      {perfilData.rol_usu === "ESTUDIANTE"
-                        ? " Debes subir tu cédula, papeleta de votación y certificado de matrícula."
-                        : " Debes subir tu cédula y papeleta de votación."}
-                    </small>
-                  </div>
-                </>
+                <span className="perfil-estado incompleto">
+                  <AlertTriangle size={14} /> Información incompleta
+                </span>
               )}
             </div>
           </div>
         </div>
+
+        <div className="perfil-grid">
+          {/* Tarjeta: Información Personal */}
+          <div className="perfil-card-info">
+            <h3>Información Personal</h3>
+            <div className="perfil-grupo">
+              <div className="perfil-etiqueta">
+                <FileText size={18} />
+                <span>Cédula:</span>
+              </div>
+              <div className="perfil-valor">{perfilData.ced_usu}</div>
+            </div>
+            <div className="perfil-grupo">
+              <div className="perfil-etiqueta">
+                <Mail size={18} />
+                <span>Correo:</span>
+              </div>
+              <div className="perfil-valor">{perfilData.cor_usu}</div>
+            </div>
+            <div className="perfil-grupo">
+              <div className="perfil-etiqueta">
+                <Phone size={18} />
+                <span>Teléfono:</span>
+              </div>
+              <div className="perfil-valor">{perfilData.cel_usu}</div>
+            </div>
+          </div>
+
+          {/* Tarjeta: Información Académica */}
+          <div className="perfil-card-academica">
+            <h3>Información Académica</h3>
+            <div className="perfil-grupo">
+              <div className="perfil-etiqueta">
+                <GraduationCap size={18} />
+                <span>Carrera:</span>
+              </div>
+              <div className="perfil-valor">
+                {perfilData.carrera ? perfilData.carrera.nom_car : "No aplica"}
+              </div>
+            </div>
+            <div className="perfil-grupo">
+              <div className="perfil-etiqueta">
+                <Calendar size={18} />
+                <span>Fecha de registro:</span>
+              </div>
+              <div className="perfil-valor">
+                {formatearFecha(perfilData.fec_cre_usu)}
+              </div>
+            </div>
+          </div>
+
+          {/* Tarjeta: Documentos */}
+          <div className="perfil-card-documentos">
+            <h3>Documentos</h3>
+            {perfilData.com_usu ? (
+              <div className="documento-info">
+                <button
+                  className="btn-ver-documento"
+                  onClick={() => {
+                    const url = `${import.meta.env.VITE_API_URL}${
+                      perfilData.com_usu
+                    }`;
+                    window.open(url, "_blank");
+                  }}
+                >
+                  <Eye size={16} />
+                  Ver documento
+                </button>
+                <button
+                  className="btn-actualizar-documento"
+                  onClick={() => setMostrarModal(true)}
+                >
+                  <Edit size={16} />
+                  Actualizar
+                </button>
+                <div className="documento-status">
+                  <small>
+                    Documento cargado: {perfilData.com_usu.split("/").pop()}
+                  </small>
+                </div>
+              </div>
+            ) : (
+              <>
+                <button
+                  className="btn-subir-documento"
+                  onClick={() => setMostrarModal(true)}
+                >
+                  <Upload size={16} />
+                  Subir documentos
+                </button>
+                <div className="documento-status">
+                  <small>
+                    No has subido ningún documento aún.
+                    {perfilData.rol_usu === "ESTUDIANTE"
+                      ? " Debes subir tu cédula, papeleta de votación y certificado de matrícula."
+                      : " Debes subir tu cédula y papeleta de votación."}
+                  </small>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+        <div className="perfil-estadisticas">
+          <div className="estadistica-item">
+            <h3>Eventos Completados</h3>
+            <span className="estadistica-numero">{totalFinalizados}</span>
+          </div>
+          <div className="estadistica-item">
+            <h3>Inscripciones Activas</h3>
+            <span className="estadistica-numero">{totalActivas}</span>
+          </div>
+        </div>
       </div>
       <div className="perfil-inscripciones">
+        <div className="perfilInscripcionesTitulo">
         <h2 className="inscripciones-titulo">Mis Inscripciones Recientes</h2>
+        </div>
+
         {perfilData.inscripciones.length === 0 ? (
           <p className="sin-inscripciones">
             No tienes inscripciones registradas.
           </p>
         ) : (
-          <div className="inscripciones-lista">
-            {perfilData.inscripciones.slice(0, 3).map((inscripcion) => (
-              <div key={inscripcion.id_ins} className="inscripcion-item">
-                <div className="inscripcion-nombre">
-                  {inscripcion.evento.nom_eve}
-                </div>
-                <div className="inscripcion-fecha">
-                  {formatearFecha(inscripcion.fec_ins)}
-                </div>
-                <div
-                  className={`inscripcion-estado ${inscripcion.est_ins.toLowerCase()}`}
+          <>
+            {/* Filtros rápidos */}
+            <div className="filtros-inscripciones">
+              {[
+                "TODAS",
+                "PENDIENTE",
+                "ACEPTADA",
+                "RECHAZADA",
+                "FINALIZADA",
+              ].map((estado) => (
+                <button
+                  key={estado}
+                  className={`filtro-btn ${
+                    estadoSeleccionado === estado ? "activo" : ""
+                  }`}
+                  onClick={() => setEstadoSeleccionado(estado)}
                 >
-                  {inscripcion.est_ins === "PENDIENTE" && <Clock size={14} />}
-                  {inscripcion.est_ins === "ACEPTADA" && (
-                    <CheckCircle size={14} />
-                  )}
-                  {inscripcion.est_ins === "RECHAZADA" && <XCircle size={14} />}
-                  {inscripcion.est_ins === "FINALIZADA" && (
-                    <FileText size={14} />
-                  )}
-                  {inscripcion.est_ins}
+                  {estado.charAt(0) + estado.slice(1).toLowerCase()}
+                </button>
+              ))}
+            </div>
+
+            {/* Lista visual de cards */}
+            <div className="inscripciones-cards">
+              {inscripcionesFiltradas.slice(0, 3).map((inscripcion) => (
+                <div key={inscripcion.id_ins} className="card-inscripcion">
+                  <div className="card-header">
+                    {inscripcion.evento.img_por_eve ? (
+                      <img
+                        src={inscripcion.evento.img_por_eve}
+                        alt="Evento"
+                        className="card-img"
+                      />
+                    ) : (
+                      <div className="card-img placeholder">Sin imagen</div>
+                    )}
+                  </div>
+                  <div className="card-body">
+                    <h3 className="card-titulo">
+                      {inscripcion.evento.nom_eve}
+                    </h3>
+                    <p className="card-fecha">
+                      Fecha inscripción: {formatearFecha(inscripcion.fec_ins)}
+                    </p>
+                    <div
+                      className={`card-estado ${inscripcion.est_ins.toLowerCase()}`}
+                    >
+                      {inscripcion.est_ins === "PENDIENTE" && (
+                        <Clock size={14} />
+                      )}
+                      {inscripcion.est_ins === "ACEPTADA" && (
+                        <CheckCircle size={14} />
+                      )}
+                      {inscripcion.est_ins === "RECHAZADA" && (
+                        <XCircle size={14} />
+                      )}
+                      {inscripcion.est_ins === "FINALIZADA" && (
+                        <FileText size={14} />
+                      )}
+                      {inscripcion.est_ins}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            ))}
-            <a href="/inscripciones" className="ver-todas">
-              Ver todas mis inscripciones
-            </a>
-          </div>
+              ))}
+
+              <a href="/inscripciones" className="ver-todas">
+                Ver todas mis inscripciones
+              </a>
+            </div>
+          </>
         )}
       </div>
       {mostrarModal && (

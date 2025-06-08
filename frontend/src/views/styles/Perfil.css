@@ -1,19 +1,19 @@
-.perfil-container {
+.perfil-container-p {
   max-width: 1000px;
   margin: 0 auto;
   padding: 20px;
 }
 
-.perfil-titulo {
+.perfil-titulo-p {
   font-size: 2rem;
-  color: #3f51b5;
+  color: #fff;
   margin-bottom: 1.5rem;
   font-weight: 600;
   border-bottom: 2px solid #eaeaea;
   padding-bottom: 0.5rem;
 }
 
-.perfil-loading {
+.perfil-loading-p {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -21,7 +21,7 @@
   height: 300px;
 }
 
-.perfil-spinner {
+.perfil-spinner-p {
   width: 40px;
   height: 40px;
   border: 4px solid rgba(0, 0, 0, 0.1);
@@ -37,13 +37,13 @@
   }
 }
 
-.perfil-error {
+.perfil-error-p {
   text-align: center;
   padding: 40px;
   color: #f44336;
 }
 
-.btn-reintentar {
+.btn-reintentar-p {
   background-color: #3f51b5;
   color: white;
   border: none;
@@ -55,30 +55,28 @@
   transition: background-color 0.3s;
 }
 
-.btn-reintentar:hover {
+.btn-reintentar-p:hover {
   background-color: #303f9f;
-}
-
-.perfil-card {
-  background-color: white;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  overflow: hidden;
-  margin-bottom: 24px;
 }
 
 .perfil-header {
   display: flex;
   align-items: center;
   padding: 24px;
-  background-color: #f7f7f7;
-  border-bottom: 1px solid #eaeaea;
+  background-color: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Profundidad */
+  border: 1px solid #eaeaea;
+}
+.perfil-header:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
 }
 
 .perfil-avatar {
-  width: 70px;
-  height: 70px;
-  background-color: #e0e0e0;
+  width: 80px;
+  height: 80px;
+  background-color: #f4f4f4;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -87,17 +85,29 @@
   position: relative;
   overflow: hidden;
   cursor: pointer;
+  border: 2px solid #ccc; /* ✅ borde visible */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* ✅ sombra suave */
   transition: all 0.3s ease;
 }
 
 .perfil-avatar:hover {
-  box-shadow: 0 0 0 2px #3f51b5, 0 0 10px rgba(63, 81, 181, 0.5);
+  transform: scale(1.05); /* ✅ efecto hover con zoom */
+  box-shadow: 0 4px 12px rgba(63, 81, 181, 0.2); /* opcional: más vivo */
 }
 
 .perfil-avatar:hover .perfil-avatar-overlay {
   opacity: 1;
 }
 
+.perfil-placeholder-avatar {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8a1538;
+  font-size: 1.2rem;
+}
 .perfil-avatar-overlay {
   position: absolute;
   bottom: 0;
@@ -256,19 +266,26 @@
 }
 
 .perfil-inscripciones {
-  background-color: white;
-  border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  padding: 24px;
+  margin-top: 2rem;
+  padding: 2rem;
+  background-color: var(--color-primario);
+  border-radius: 1rem;
 }
 
 .inscripciones-titulo {
   font-size: 1.25rem;
   margin: 0 0 16px;
-  color: #3f51b5;
+  color: #000;
   font-weight: 600;
 }
 
+.perfilInscripcionesTitulo {
+  background-color: white;
+  padding: 0.2rem;
+  padding-top: 1rem;
+  border-radius: 0.5rem;
+}
 .sin-inscripciones {
   color: #666;
   font-style: italic;
@@ -700,4 +717,287 @@
   .documento-preview {
     width: 100%;
   }
+}
+.perfil-grid {
+  display: grid;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+@media (min-width: 768px) {
+  .perfil-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Tarjetas visuales */
+.perfil-card-info,
+.perfil-card-academica,
+.perfil-card-documentos {
+  background-color: #fff;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  border: 1px solid #e2e8f0; /* Borde sutil */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Profundidad */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.perfil-card-info:hover,
+.perfil-card-academica:hover,
+.perfil-card-documentos:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+/* Títulos de tarjetas */
+.perfil-card-info h3,
+.perfil-card-academica h3,
+.perfil-card-documentos h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid #8a1538; /* Línea decorativa */
+  color: #222;
+}
+
+.perfil-container {
+  padding: 2rem; /* Asegura espacio interno */
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.perfil-card {
+  background-color: var(--color-primario);
+  padding: 2rem;
+  border-radius: 0.8rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  margin-bottom: 2rem;
+}
+
+.perfil-estadisticas {
+  display: flex;
+  gap: 2rem;
+  margin-top: 2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.estadistica-item {
+  flex: 1;
+  min-width: 200px;
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.estadistica-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.estadistica-item h3 {
+  font-size: 1.1rem;
+  color: #555;
+  margin-bottom: 0.5rem;
+}
+
+.estadistica-numero {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #8a1538;
+}
+
+.insignias {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.rol-badge,
+.perfil-estado {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.3rem 0.6rem;
+  border-radius: 12px;
+  background-color: #eee;
+  color: #444;
+}
+
+.rol-badge.estudiante {
+  background-color: #e3f2fd;
+  color: #0d47a1;
+}
+
+.rol-badge.admin {
+  background-color: #fce4ec;
+  color: #880e4f;
+}
+
+.perfil-estado.verificado {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.perfil-estado.incompleto {
+  background-color: #fff3e0;
+  color: #ef6c00;
+}
+
+.filtros-inscripciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.filtro-btn {
+  background-color: #eee;
+  border: none;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.filtro-btn.activo {
+  background-color: #570934;
+  color: #fff;
+}
+
+.inscripciones-cards {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+.card-inscripcion {
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
+}
+
+.card-inscripcion:hover {
+  transform: scale(1.01);
+}
+
+.card-header img.card-img,
+.card-img.placeholder {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  background: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #888;
+  font-size: 14px;
+  border-radius: 0.5rem;
+}
+
+.card-body {
+  padding: 1rem;
+}
+
+.card-titulo {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.card-fecha {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+.card-estado {
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+}
+
+.card-estado.pendiente {
+  color: #ffc107;
+}
+.card-estado.aceptada {
+  color: #28a745;
+}
+.card-estado.rechazada {
+  color: #dc3545;
+}
+.card-estado.finalizada {
+  color: #007bff;
+}
+
+/*Themas*/
+:root {
+  --color-primario: #fff;
+  --color-texto: #222;
+  --color-fondo: #ffffff;
+  --color-tarjeta: #f9fafb;
+  --color-borde: #eaeaea;
+}
+
+[data-theme="dark"] {
+  --color-primario: #000;
+  --color-texto: #ffffff;
+  --color-fondo: #121212;
+  --color-tarjeta: #1e1e1e;
+  --color-borde: #333;
+}
+
+[data-theme="blue"] {
+  --color-primario: #004080;
+}
+
+[data-theme="green"] {
+  --color-primario: #007a33;
+}
+
+[data-theme="pink"] {
+  --color-primario: #b2005d;
+}
+
+/*color: var(--color-primario); /* ✅ se adapta al tema */
+
+/* Luego usa estas variables en tu CSS
+.perfil-titulo {
+  color: var(--color-primario);
+}
+*/
+.tema-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #fff;
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  color: #000;
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+
+.tema-selector select {
+  border: none;
+  outline: none;
+  background: transparent;
+  color: inherit;
+  font-weight: bold;
+  font-size: 0.95rem;
+  cursor: pointer;
 }

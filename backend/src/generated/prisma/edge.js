@@ -325,7 +325,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\Users\\andri\\Documents\\D-Proyectos\\Git\\AcademicEvents\\backend\\src\\generated\\prisma",
+      "value": "C:\\Users\\Lenovo LOQ\\Desktop\\PM2\\AcademicEvents\\backend\\src\\generated\\prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -339,7 +339,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "C:\\Users\\andri\\Documents\\D-Proyectos\\Git\\AcademicEvents\\backend\\prisma\\schema.prisma",
+    "sourceFilePath": "C:\\Users\\Lenovo LOQ\\Desktop\\PM2\\AcademicEvents\\backend\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
