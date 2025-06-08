@@ -515,6 +515,54 @@
   border-color: #d1d5db;
 }
 
+/* Botones secundarios y de acción */
+.btn-secundario {
+  background: linear-gradient(135deg, #8a1538, #6e0e2d);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.875rem;
+  box-shadow: 0 2px 4px rgba(138, 21, 56, 0.2);
+  text-decoration: none;
+}
+
+.btn-secundario:hover {
+  background: linear-gradient(135deg, #6e0e2d, #5a0b26);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(138, 21, 56, 0.3);
+  color: white;
+  text-decoration: none;
+}
+
+.btn-limpiar-filtros {
+  background: linear-gradient(135deg, #8a1538, #6e0e2d);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.875rem;
+  box-shadow: 0 2px 4px rgba(138, 21, 56, 0.2);
+}
+
+.btn-limpiar-filtros:hover {
+  background: linear-gradient(135deg, #6e0e2d, #5a0b26);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(138, 21, 56, 0.3);
+}
+
 @keyframes fadeInUp {
   from {
     opacity: 0;

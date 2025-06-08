@@ -509,7 +509,7 @@
 }
 
 .clear-filters-btn {
-  background: linear-gradient(135deg, #ef4444, #dc2626);
+  background: linear-gradient(135deg, #8a1538, #6e0e2d);
   color: white;
   border: none;
   padding: 0.5rem 1rem;
@@ -521,11 +521,13 @@
   cursor: pointer;
   transition: all 0.3s ease;
   font-size: 0.875rem;
+  box-shadow: 0 2px 4px rgba(138, 21, 56, 0.2);
 }
 
 .clear-filters-btn:hover {
+  background: linear-gradient(135deg, #6e0e2d, #5a0b26);
   transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(239, 68, 68, 0.3);
+  box-shadow: 0 4px 8px rgba(138, 21, 56, 0.3);
 }
 
 .filters-grid {

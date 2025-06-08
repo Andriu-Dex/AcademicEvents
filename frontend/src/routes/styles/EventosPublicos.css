@@ -168,19 +168,22 @@
   display: flex;
   align-items: center;
   gap: 0.25rem;
-  background: #ff4444;
+  background: linear-gradient(135deg, #8a1538, #6e0e2d);
   color: white;
   border: none;
   padding: 0.5rem 1rem;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 0.9rem;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(138, 21, 56, 0.2);
 }
 
 .btn-limpiar-filtros:hover {
-  background: #cc3333;
+  background: linear-gradient(135deg, #6e0e2d, #5a0b26);
   transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(138, 21, 56, 0.3);
 }
 
 .filtros-grid {
