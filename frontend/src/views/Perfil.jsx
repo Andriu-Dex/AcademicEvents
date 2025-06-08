@@ -476,6 +476,18 @@ const Perfil = () => {
                   {inscripcion.est_ins === "FINALIZADA" && (
                     <FileText size={14} />
                   )}
+                  {inscripcion.est_ins === "APROBADO" && (
+                    <BadgeCheck size={14} />
+                  )}
+                  {inscripcion.est_ins === "REPROBADO_NOTA" && (
+                    <AlertCircle size={14} />
+                  )}
+                  {inscripcion.est_ins === "REPROBADO_ASISTENCIA" && (
+                    <AlertCircle size={14} />
+                  )}
+                  {inscripcion.est_ins === "REPROBADO_TOTAL" && (
+                    <AlertCircle size={14} />
+                  )}
                   {inscripcion.est_ins}
                 </div>
               </div>

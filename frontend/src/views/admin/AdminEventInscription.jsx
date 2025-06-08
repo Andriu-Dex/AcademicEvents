@@ -10,6 +10,10 @@ const colores = {
   ACEPTADA: "estado-aceptada",
   RECHAZADA: "estado-rechazada",
   FINALIZADA: "estado-finalizada",
+  APROBADO: "estado-aprobado",
+  REPROBADO_NOTA: "estado-reprobado-nota",
+  REPROBADO_ASISTENCIA: "estado-reprobado-asistencia",
+  REPROBADO_TOTAL: "estado-reprobado-total",
 };
 
 const AdminEventInscription = () => {
@@ -239,6 +243,14 @@ const AdminEventInscription = () => {
                     {inscripcion.estado === "FINALIZADA" && (
                       <Download size={14} />
                     )}
+                    {inscripcion.estado === "APROBADO" && (
+                      <BadgeCheck size={14} />
+                    )}
+                    {inscripcion.estado === "REPROBADO_NOTA" ||
+                    inscripcion.estado === "REPROBADO_ASISTENCIA" ||
+                    inscripcion.estado === "REPROBADO_TOTAL" ? (
+                      <Ban size={14} />
+                    ) : null}
                     {inscripcion.estado}
                   </span>
                 </div>

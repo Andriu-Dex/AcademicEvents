@@ -49,6 +49,7 @@ const EventsRoute = () => {
   const [cartaMotivacion, setCartaMotivacion] = useState("");
   const [inscripciones, setInscripciones] = useState([]);
   const [inscripcionesRechazadas, setInscripcionesRechazadas] = useState([]);
+  const [eventosAprobados, setEventosAprobados] = useState([]);
   const [subiendo, setSubiendo] = useState(false);
   const [exitoVisible, setExitoVisible] = useState(false);
   const [usuarioConCarrera, setUsuarioConCarrera] = useState(null);
@@ -86,15 +87,26 @@ const EventsRoute = () => {
         // Primero obtenemos las inscripciones propias del usuario
         const insRes = await axiosInstance.get("/inscripciones/propias");
 
-        // Filtramos sólo las inscripciones activas (PENDIENTES o ACEPTADAS)
+        // Filtramos sólo las inscripciones activas (PENDIENTES, ACEPTADAS o APROBADO)
         const inscripcionesActivas = insRes.data.filter(
-          (ins) => ins.est_ins === "PENDIENTE" || ins.est_ins === "ACEPTADA"
+          (ins) =>
+            ins.est_ins === "PENDIENTE" ||
+            ins.est_ins === "ACEPTADA" ||
+            ins.est_ins === "APROBADO"
         );
 
         // Extraemos los ids de los eventos en los que el usuario está inscrito activamente
         const eventosInscritos = inscripcionesActivas.map(
           (ins) => ins.evento.id_eve
         );
+
+        // Obtener eventos aprobados
+        const eventosAprobados = insRes.data
+          .filter((ins) => ins.est_ins === "APROBADO")
+          .map((ins) => ins.evento.id_eve);
+
+        // Guardar los eventos aprobados en el estado
+        setEventosAprobados(eventosAprobados);
 
         // Identificamos las inscripciones rechazadas para mostrar un mensaje especial
         const rechazadas = insRes.data.filter(
@@ -391,10 +403,14 @@ const EventsRoute = () => {
                   className="btn-inscribirme"
                   disabled={
                     inscripciones.includes(evento.id_eve) ||
+                    (eventosAprobados &&
+                      eventosAprobados.includes(evento.id_eve)) ||
                     evento.cup_dis_eve === 0
                   }
                 >
-                  {inscripciones.includes(evento.id_eve)
+                  {eventosAprobados && eventosAprobados.includes(evento.id_eve)
+                    ? "Evento aprobado"
+                    : inscripciones.includes(evento.id_eve)
                     ? "Ya inscrito"
                     : evento.cup_dis_eve === 0
                     ? "Sin cupos"

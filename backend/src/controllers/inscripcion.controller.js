@@ -124,8 +124,14 @@ const crearInscripcion = async (req, res) => {
       }`
     );
 
-    // Permitir reinscripción si la inscripción anterior fue rechazada
+    // Permitir reinscripción solo si la inscripción anterior fue rechazada
     if (yaInscrito && yaInscrito.est_ins !== "RECHAZADA") {
+      // Mensaje específico si el usuario ya aprobó el evento
+      if (yaInscrito.est_ins === "APROBADO") {
+        return res.status(400).json({
+          msg: "Ya has aprobado este evento, no puedes inscribirte nuevamente",
+        });
+      }
       return res.status(400).json({ msg: "Ya estás inscrito en este evento" });
     } // Si la inscripción estaba RECHAZADA, la actualizamos en lugar de crear una nueva
     if (yaInscrito && yaInscrito.est_ins === "RECHAZADA") {

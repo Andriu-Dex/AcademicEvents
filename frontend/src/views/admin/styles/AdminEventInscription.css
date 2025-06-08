@@ -110,6 +110,28 @@
   color: #1e3a8a;
 }
 
+.estado-aprobado {
+  background-color: #d1fae5;
+  color: #047857;
+  font-weight: 700;
+}
+
+.estado-reprobado-nota {
+  background-color: #fee2e2;
+  color: #ef4444;
+}
+
+.estado-reprobado-asistencia {
+  background-color: #ffedd5;
+  color: #f97316;
+}
+
+.estado-reprobado-total {
+  background-color: #fee2e2;
+  color: #7f1d1d;
+  font-weight: 700;
+}
+
 .card-inscripcion {
   padding: 1.25rem;
   background: rgba(255, 255, 255, 0.9);

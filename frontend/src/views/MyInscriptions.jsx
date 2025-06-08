@@ -43,22 +43,22 @@ const estadoLabel = {
   APROBADO: {
     text: "Aprobado",
     icon: <BadgeCheck size={16} />,
-    color: "estado-finalizada",
+    color: "estado-aprobado",
   },
   REPROBADO_NOTA: {
     text: "Reprobado por nota",
     icon: <AlertCircle size={16} />,
-    color: "estado-rechazada",
+    color: "estado-reprobado-nota",
   },
   REPROBADO_ASISTENCIA: {
     text: "Reprobado por asistencia",
     icon: <AlertCircle size={16} />,
-    color: "estado-rechazada",
+    color: "estado-reprobado-asistencia",
   },
   REPROBADO_TOTAL: {
     text: "Reprobado",
     icon: <AlertCircle size={16} />,
-    color: "estado-rechazada",
+    color: "estado-reprobado-total",
   },
 };
 

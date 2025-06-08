@@ -100,6 +100,14 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
         return "estado-rechazada";
       case "FINALIZADA":
         return "estado-finalizada";
+      case "APROBADO":
+        return "estado-aprobado";
+      case "REPROBADO_NOTA":
+        return "estado-reprobado-nota";
+      case "REPROBADO_ASISTENCIA":
+        return "estado-reprobado-asistencia";
+      case "REPROBADO_TOTAL":
+        return "estado-reprobado-total";
       default:
         return "";
     }
