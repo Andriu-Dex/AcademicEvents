@@ -105,19 +105,19 @@ const ModalRequisitos = ({ evento, onClose }) => {
 
           <div className="seccion-requisitos">
             <h4>
-              <Users size={18} /> Detalles de Participación
+              <Users size={18} /> Modalidad y Participación
             </h4>
-            <div className="info-item">
+            <div className="info-item modalidad-item">
               <span className="info-label">Modalidad:</span>
               <span className="info-value">
                 {evento.mod_eve === "PRESENCIAL" && (
-                  <><MapPin size={16} /> Presencial</>
+                  <span className="modalidad-badge"><MapPin size={16} /> Presencial</span>
                 )}
                 {evento.mod_eve === "VIRTUAL" && (
-                  <><Monitor size={16} /> Virtual</>
+                  <span className="modalidad-badge virtual"><Monitor size={16} /> Virtual</span>
                 )}
                 {evento.mod_eve === "SEMIPRESENCIAL" && (
-                  <><Laptop size={16} /> Semipresencial</>
+                  <span className="modalidad-badge semi"><Laptop size={16} /> Semipresencial</span>
                 )}
                 {!evento.mod_eve && "No especificada"}
               </span>
@@ -145,67 +145,62 @@ const ModalRequisitos = ({ evento, onClose }) => {
             <h4>
               <FileText size={18} /> Descripción del Evento
             </h4>
-            <p>{evento.des_eve || "No hay descripción disponible."}</p>
+            <p className="descripcion-evento">{evento.des_eve || "No hay descripción disponible."}</p>
           </div>
 
           <div className="seccion-requisitos">
-            <h4>
-              <Target size={18} /> Objetivos del Evento
-            </h4>
-            <p>{evento.objetivos || "No se han especificado objetivos."}</p>
-          </div>
+            <div className="requisitos-grid">
+              <div className="seccion-participantes">
+                <h5 className="requisito-subtitulo">
+                  <Users size={16} /> Dirigido a
+                </h5>
+                <div className="grupos-participantes">
+                  <div className="grupo-participante">
+                    <span className={`usuario-item ${evento.dirigido_estudiantes ? 'dirigido' : 'no-dirigido'}`}>
+                      <Users size={14} /> Estudiantes
+                    </span>
+                  </div>
+                  <div className="grupo-participante">
+                    <span className={`usuario-item ${evento.dirigido_docentes ? 'dirigido' : 'no-dirigido'}`}>
+                      <Users size={14} /> Docentes
+                    </span>
+                  </div>
+                  <div className="grupo-participante">
+                    <span className={`usuario-item ${evento.dirigido_publico ? 'dirigido' : 'no-dirigido'}`}>
+                      <Users size={14} /> Público General
+                    </span>
+                  </div>
+                </div>
+              </div>
 
-          <div className="seccion-requisitos">
-            <h4>
-              <CheckCircle size={18} /> Requisitos para Inscripción
-            </h4>
-            <p style={{ marginBottom: "1rem" }}>
-              {evento.requisitos ||
-                "No se han especificado requisitos generales."}
-            </p>
-
-            <div>
-              <h5 style={{ marginBottom: "0.5rem", color: "#374151" }}>
-                Tipos de usuarios elegibles:
-              </h5>
-              <div className="lista-usuarios">
-                <span className="usuario-item">
-                  <Users size={14} /> ESTUDIANTES
-                </span>
-                <span className="usuario-item">
-                  <Users size={14} /> DOCENTES
-                </span>
-                <span className="usuario-item">
-                  <Users size={14} /> PÚBLICO GENERAL
-                </span>
+              <div className="seccion-carreras">
+                <h5 className="requisito-subtitulo">
+                  <FileText size={16} /> Carreras asociadas
+                </h5>
+                {evento.eventos_carrera && evento.eventos_carrera.length > 0 ? (
+                  <div className="carreras-contenedor">
+                    {evento.eventos_carrera.map((carreraEvento) => (
+                      <div key={carreraEvento.id_eve_car} className="carrera-item">
+                        <FileText size={14} />
+                        <span className="carrera-nombre">
+                          {carreraEvento.carrera?.nom_car || "Carrera no especificada"}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="todas-carreras">
+                    <FileText size={16} />
+                    <span>Este evento está abierto a todas las carreras de la universidad</span>
+                  </div>
+                )}
               </div>
             </div>
 
-            <div style={{ marginTop: "1.5rem" }}>
-              <h5 style={{ marginBottom: "0.5rem", color: "#374151" }}>
-                Carreras elegibles:
-              </h5>
-              {evento.eventos_carrera && evento.eventos_carrera.length > 0 ? (
-                <ul className="lista-carreras">
-                  {evento.eventos_carrera.map((carreraEvento) => (
-                    <li key={carreraEvento.id_eve_car} className="carrera-item">
-                      <FileText size={14} />
-                      {carreraEvento.carrera?.nom_car ||
-                        "Carrera no especificada"}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p style={{ color: "#6b7280", fontStyle: "italic" }}>
-                  Este evento está disponible para todas las carreras.
-                </p>
-              )}
-            </div>
-
             {evento.eventos_curso && (
-              <div style={{ marginTop: "1.5rem" }}>
-                <h5 style={{ marginBottom: "0.5rem", color: "#374151" }}>
-                  Requisitos del curso:
+              <div className="requisito-seccion curso-requisitos">
+                <h5 className="requisito-subtitulo">
+                  <AlertCircle size={16} /> Requisitos del curso
                 </h5>
                 <div className="info-item">
                   <span className="info-label">Nota mínima:</span>

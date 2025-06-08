@@ -103,40 +103,150 @@
     font-weight: 500;
 }
 
-.lista-usuarios {
+.seccion-participantes,
+.seccion-carreras {
+    margin-top: 1.5rem;
+}
+
+.grupos-participantes {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.75rem;
-    margin-top: 0.5rem;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.grupo-participante {
+    flex: 1;
+    min-width: 150px;
 }
 
 .usuario-item {
     display: flex;
     align-items: center;
-    gap: 0.25rem;
-    padding: 0.4rem 0.75rem;
-    background-color: #8a1538;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
     color: white;
-    border-radius: 4px;
-    font-size: 0.9rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 100%;
 }
 
-.lista-carreras {
-    list-style: none;
-    padding: 0;
-    margin: 0.5rem 0 0;
+.usuario-item {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    color: #495057;
+}
+
+.usuario-item.dirigido {
+    background: linear-gradient(135deg, #8a1538, #741230);
+    color: #ffffff;
+    border: none;
+    box-shadow: 0 2px 4px rgba(138, 21, 56, 0.2);
+}
+
+.usuario-item.dirigido:hover {
+    background: linear-gradient(135deg, #741230, #8a1538);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(138, 21, 56, 0.25);
+}
+
+.usuario-item.no-dirigido {
+    background-color: #f8f9fa;
+    color: #6c757d;
+    border: 1px solid #dee2e6;
+}
+
+.usuario-item.no-dirigido:hover {
+    background-color: #f1f3f5;
+    border-color: #ced4da;
+    color: #495057;
+}
+
+.usuario-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.carreras-contenedor {
     display: grid;
-    gap: 0.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
 }
 
 .carrera-item {
     display: flex;
     align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background-color: #ffffff;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.carrera-item:hover {
+    background-color: #f8f9fa;
+    border-color: #8a1538;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(138, 21, 56, 0.08);
+}
+
+.carrera-nombre {
+    color: #495057;
+    font-weight: 500;
+    flex: 1;
+}
+
+.todas-carreras {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1.25rem;
+    background: linear-gradient(to right, #f8f9fa, #ffffff);
+    border: 1px solid #8a1538;
+    color: #8a1538;
+    border-radius: 8px;
+    font-weight: 500;
+    margin-top: 1rem;
+    text-align: center;
+}
+
+.todas-carreras:hover {
+    background: linear-gradient(to right, #fff5f7, #ffffff);
+    border-color: #741230;
+    box-shadow: 0 2px 6px rgba(138, 21, 56, 0.1);
+}
+
+.modalidad-item .info-value {
+    display: flex;
+    align-items: center;
     gap: 0.5rem;
-    padding: 0.5rem;
-    background-color: #f3f4f6;
-    border-radius: 4px;
-    color: #4b5563;
+}
+
+.modalidad-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: #f1f5f9;
+    color: #0f172a;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.modalidad-badge.virtual {
+    background-color: #e0f2fe;
+    color: #0369a1;
+}
+
+.modalidad-badge.semi {
+    background-color: #fef3c7;
+    color: #92400e;
 }
 
 .badge {
