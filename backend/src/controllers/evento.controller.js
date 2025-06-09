@@ -122,7 +122,6 @@ async function subirImagenAImgur(archivo) {
 
     return res.data.data.link;
   } catch (error) {
-    console.error("Error al subir imagen a Imgur:", error);
     return DEFAULT_IMAGE_URL; // En caso de error, usar imagen por defecto
   }
 }
@@ -277,13 +276,16 @@ const obtenerEventos = async (req, res) => {
 
     // 🔧 AUTO-CORRECCIÓN MASIVA DE CUPOS INCONSISTENTES
     // Verificar y corregir cupos disponibles para todos los eventos si están mal calculados
+    console.log("🔄 Verificando cupos disponibles para todos los eventos...");
+
     const eventosCorregidos = await Promise.allSettled(
       eventos.map(async (evento) => {
         try {
-          const inscripcionesAceptadas = await prisma.inscripcion.count({
+          // Contar inscripciones que ocupan cupo
+          const inscripcionesOcupandoCupo = await prisma.inscripcion.count({
             where: {
               id_eve_ins: evento.id_eve,
-              est_ins: "ACEPTADA",
+              cup_ocu: true,
             },
           });
 
@@ -291,34 +293,22 @@ const obtenerEventos = async (req, res) => {
           const cupoDisponibleActual = evento.cup_dis_eve;
           const cupoDisponibleCorrecto = Math.max(
             0,
-            cupoMaximo - inscripcionesAceptadas
+            cupoMaximo - inscripcionesOcupandoCupo
+          );
+
+          console.log(
+            `Evento ${evento.nom_eve}: Cupo actual=${cupoDisponibleActual}, Cupo calculado=${cupoDisponibleCorrecto}`
           );
 
           // Si hay inconsistencia, corregir automáticamente
           if (cupoDisponibleActual !== cupoDisponibleCorrecto) {
-            console.log(
-              `🔧 AUTO-CORRECCIÓN DE CUPOS para evento ${evento.id_eve} "${evento.nom_eve}":`
-            );
-            console.log(`   - Cupo máximo: ${cupoMaximo}`);
-            console.log(
-              `   - Inscripciones aceptadas: ${inscripcionesAceptadas}`
-            );
-            console.log(
-              `   - Cupo disponible actual (incorrecto): ${cupoDisponibleActual}`
-            );
-            console.log(
-              `   - Cupo disponible correcto: ${cupoDisponibleCorrecto}`
-            );
+            console.log(`⚠️ Corrigiendo cupo para evento ${evento.nom_eve}...`);
 
             // Actualizar en la base de datos
             const eventoCorregido = await prisma.evento.update({
               where: { id_eve: evento.id_eve },
               data: { cup_dis_eve: cupoDisponibleCorrecto },
             });
-
-            console.log(
-              `✅ Cupos corregidos automáticamente para evento "${evento.nom_eve}"`
-            );
 
             // Retornar el evento con los cupos corregidos
             return {
@@ -615,10 +605,13 @@ const obtenerEventoPorId = async (req, res) => {
     // 🔧 AUTO-CORRECCIÓN DE CUPOS INCONSISTENTES
     // Verificar y corregir cupos disponibles si están mal calculados
     try {
-      const inscripcionesAceptadas = await prisma.inscripcion.count({
+      console.log(`🔄 Verificando cupos para evento ID: ${id}`);
+
+      // Contar inscripciones que ocupan cupo
+      const inscripcionesOcupandoCupo = await prisma.inscripcion.count({
         where: {
-          id_eve_ins: id, // No convertir a entero, es un String en el esquema
-          est_ins: "ACEPTADA",
+          id_eve_ins: id,
+          cup_ocu: true,
         },
       });
 
@@ -626,22 +619,20 @@ const obtenerEventoPorId = async (req, res) => {
       const cupoDisponibleActual = evento.cup_dis_eve;
       const cupoDisponibleCorrecto = Math.max(
         0,
-        cupoMaximo - inscripcionesAceptadas
+        cupoMaximo - inscripcionesOcupandoCupo
+      );
+
+      console.log(
+        `Cupo actual=${cupoDisponibleActual}, Cupo calculado=${cupoDisponibleCorrecto}`
       );
 
       // Si hay inconsistencia, corregir automáticamente
       if (cupoDisponibleActual !== cupoDisponibleCorrecto) {
-        console.log(`🔧 AUTO-CORRECCIÓN DE CUPOS para evento ${id}:`);
-        console.log(`   - Cupo máximo: ${cupoMaximo}`);
-        console.log(`   - Inscripciones aceptadas: ${inscripcionesAceptadas}`);
-        console.log(
-          `   - Cupo disponible actual (incorrecto): ${cupoDisponibleActual}`
-        );
-        console.log(`   - Cupo disponible correcto: ${cupoDisponibleCorrecto}`);
+        console.log(`⚠️ Corrigiendo cupo para evento ${evento.nom_eve}...`);
 
         // Actualizar en la base de datos
         const eventoCorregido = await prisma.evento.update({
-          where: { id_eve: id }, // No convertir a entero, es un String en el esquema
+          where: { id_eve: id },
           data: { cup_dis_eve: cupoDisponibleCorrecto },
           include: {
             eventos_curso: true,
@@ -650,10 +641,6 @@ const obtenerEventoPorId = async (req, res) => {
             },
           },
         });
-
-        console.log(
-          `✅ Cupos corregidos automáticamente para evento "${evento.nom_eve}"`
-        );
 
         // Retornar el evento con los cupos corregidos
         return res.status(200).json(eventoCorregido);
@@ -739,6 +726,194 @@ function parseUTCDate(dateString) {
   }
 }
 
+// Función para verificar y corregir cupos de un evento
+const verificarYCorregirCupos = async (req, res) => {
+  try {
+    const { id } = req.params; // ID del evento a verificar/corregir
+
+    console.log(`⚙️ Iniciando verificación de cupos para evento ID: ${id}`);
+
+    // 1. Verificar que el evento existe
+    const evento = await prisma.evento.findUnique({
+      where: { id_eve: id },
+    });
+
+    if (!evento) {
+      return res.status(404).json({ msg: "Evento no encontrado" });
+    }
+
+    console.log(`Evento encontrado: ${evento.nom_eve}`);
+    console.log(`Cupo máximo actual: ${evento.cup_max_eve}`);
+    console.log(`Cupo disponible actual: ${evento.cup_dis_eve}`);
+
+    // 2. Contar inscripciones en estado ACEPTADA (las que ocupan cupo)
+    const inscripcionesAceptadas = await prisma.inscripcion.count({
+      where: {
+        id_eve_ins: id,
+        est_ins: "ACEPTADA",
+      },
+    });
+
+    console.log(`Inscripciones ACEPTADAS: ${inscripcionesAceptadas}`);
+
+    // 3. Calcular el cupo disponible correcto
+    const cupoMaximo = evento.cup_max_eve;
+    const cupoDisponibleActual = evento.cup_dis_eve;
+    const cupoDisponibleCorrecto = Math.max(
+      0,
+      cupoMaximo - inscripcionesAceptadas
+    );
+
+    console.log(`Cupo disponible calculado: ${cupoDisponibleCorrecto}`);
+
+    // 4. Verificar si hay inconsistencia
+    if (cupoDisponibleActual === cupoDisponibleCorrecto) {
+      return res.status(200).json({
+        success: true,
+        msg: "Los cupos están correctos, no se requiere corrección",
+        evento: {
+          id_eve: evento.id_eve,
+          nom_eve: evento.nom_eve,
+          cup_max_eve: cupoMaximo,
+          cup_dis_eve: cupoDisponibleActual,
+          inscripciones_aceptadas: inscripcionesAceptadas,
+        },
+      });
+    }
+
+    // 5. Corregir la inconsistencia
+    const eventoCorregido = await prisma.evento.update({
+      where: { id_eve: id },
+      data: { cup_dis_eve: cupoDisponibleCorrecto },
+    });
+
+    // 6. Registrar en la consola y devolver respuesta
+    console.log(`✅ Cupos corregidos para evento: ${evento.nom_eve}`);
+    console.log(`   Cupo disponible anterior: ${cupoDisponibleActual}`);
+    console.log(`   Cupo disponible corregido: ${cupoDisponibleCorrecto}`);
+
+    return res.status(200).json({
+      success: true,
+      msg: "Cupos corregidos exitosamente",
+      detalles: {
+        id_eve: evento.id_eve,
+        nom_eve: evento.nom_eve,
+        cup_max_eve: cupoMaximo,
+        cup_dis_eve_anterior: cupoDisponibleActual,
+        cup_dis_eve_corregido: cupoDisponibleCorrecto,
+        inscripciones_aceptadas: inscripcionesAceptadas,
+        diferencia: cupoDisponibleCorrecto - cupoDisponibleActual,
+      },
+    });
+  } catch (error) {
+    console.error("Error al verificar y corregir cupos:", error);
+    return res.status(500).json({
+      success: false,
+      msg: "Error al verificar y corregir cupos",
+      error: error.message,
+    });
+  }
+};
+
+// Función para verificar y corregir cupos de todos los eventos
+const verificarYCorregirTodosLosCupos = async (req, res) => {
+  try {
+    console.log("🔄 Iniciando verificación de cupos para todos los eventos");
+
+    // 1. Obtener todos los eventos
+    const eventos = await prisma.evento.findMany();
+    console.log(`Total de eventos encontrados: ${eventos.length}`);
+
+    // 2. Preparar para almacenar resultados
+    const resultados = {
+      total: eventos.length,
+      corregidos: 0,
+      correctos: 0,
+      detalles: [],
+    };
+
+    // 3. Procesar cada evento
+    for (const evento of eventos) {
+      // Contar inscripciones que ocupan cupo
+      const inscripcionesOcupandoCupo = await prisma.inscripcion.count({
+        where: {
+          id_eve_ins: evento.id_eve,
+          cup_ocu: true,
+        },
+      });
+
+      // Para comparación, contar también inscripciones aceptadas
+      const inscripcionesAceptadas = await prisma.inscripcion.count({
+        where: {
+          id_eve_ins: evento.id_eve,
+          est_ins: "ACEPTADA",
+        },
+      });
+
+      // Calcular cupo disponible correcto
+      const cupoMaximo = evento.cup_max_eve;
+      const cupoDisponibleActual = evento.cup_dis_eve;
+      const cupoDisponibleCorrecto = Math.max(
+        0,
+        cupoMaximo - inscripcionesOcupandoCupo
+      );
+
+      console.log(`Evento ${evento.nom_eve}:`);
+      console.log(`- Cupo máximo: ${cupoMaximo}`);
+      console.log(`- Cupo disponible actual: ${cupoDisponibleActual}`);
+      console.log(
+        `- Inscripciones ocupando cupo: ${inscripcionesOcupandoCupo}`
+      );
+      console.log(
+        `- Inscripciones en estado ACEPTADA: ${inscripcionesAceptadas}`
+      );
+      console.log(`- Cupo disponible correcto: ${cupoDisponibleCorrecto}`);
+
+      // Verificar si hay inconsistencia
+      if (cupoDisponibleActual !== cupoDisponibleCorrecto) {
+        // Corregir la inconsistencia
+        await prisma.evento.update({
+          where: { id_eve: evento.id_eve },
+          data: { cup_dis_eve: cupoDisponibleCorrecto },
+        });
+
+        // Registrar resultado
+        resultados.corregidos++;
+        resultados.detalles.push({
+          id_eve: evento.id_eve,
+          nom_eve: evento.nom_eve,
+          cup_max_eve: cupoMaximo,
+          cup_dis_eve_anterior: cupoDisponibleActual,
+          cup_dis_eve_corregido: cupoDisponibleCorrecto,
+          inscripciones_ocupando_cupo: inscripcionesOcupandoCupo,
+          inscripciones_aceptadas: inscripcionesAceptadas,
+          diferencia: cupoDisponibleCorrecto - cupoDisponibleActual,
+        });
+
+        console.log(`✅ Cupos corregidos para evento: ${evento.nom_eve}`);
+        console.log(`   Cupo disponible anterior: ${cupoDisponibleActual}`);
+        console.log(`   Cupo disponible corregido: ${cupoDisponibleCorrecto}`);
+      } else {
+        resultados.correctos++;
+      }
+    }
+
+    // 4. Devolver resultados
+    return res.status(200).json({
+      success: true,
+      msg: `Verificación de cupos completada. ${resultados.corregidos} eventos corregidos, ${resultados.correctos} eventos correctos.`,
+      resultados,
+    });
+  } catch (error) {
+    console.error("Error al verificar y corregir todos los cupos:", error);
+    return res.status(500).json({
+      success: false,
+      msg: "Error al verificar y corregir todos los cupos",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   crearEvento,
   obtenerEventos,
@@ -746,4 +921,6 @@ module.exports = {
   eliminarEvento,
   obtenerEventoPorId,
   obtenerEventosPorTipo,
+  verificarYCorregirCupos,
+  verificarYCorregirTodosLosCupos,
 };

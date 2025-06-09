@@ -161,6 +161,7 @@ model inscripcion {
   fec_ins         DateTime           @default(now()) // Fecha de inscripción
   usu_apr_cer     Boolean            @default(false) // Usuario aprueba el evento y el envio del certificado
   por_asi_fin_usu Float? // Porcentaje de asistencia del usuario al evento
+  cup_ocu         Boolean            @default(false) // Indica si esta inscripción está ocupando un cupo
 
   cuenta            cuenta                   @relation(fields: [id_cor_ins], references: [id_cue]) // Relación 1:N (usuario puede tener muchas inscripciones)
   evento            evento                   @relation(fields: [id_eve_ins], references: [id_eve]) // Relación 1:N (evento puede tener muchas inscripciones)
@@ -238,7 +239,10 @@ enum estado_inscripcion {
   PENDIENTE
   ACEPTADA
   RECHAZADA
-  FINALIZADA
+  APROBADO
+  REPROBADO_NOTA
+  REPROBADO_ASISTENCIA
+  REPROBADO_TOTAL
 }
 
 enum estado_evento {

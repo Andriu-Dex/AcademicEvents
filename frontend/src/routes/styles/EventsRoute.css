@@ -402,7 +402,7 @@
 
 .buscador-icono-er {
   position: absolute;
-  left: 0.5px;
+  left: 10px;
   top: 11px;
   color: #6b7280;
   pointer-events: none;
