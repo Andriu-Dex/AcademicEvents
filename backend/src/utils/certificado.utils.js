@@ -182,7 +182,7 @@ const generarCertificadoPDF = (datos) => {
 // Verificar si puede generar certificado
 // ============================
 const cumpleRequisitosCertificado = (inscripcion, evento, inscripcionCurso) => {
-  if (inscripcion.est_ins !== "FINALIZADA") return false;
+  if (inscripcion.est_ins !== "APROBADO") return false;
 
   const porcentajeAsistencia = inscripcion.por_asi_fin_usu || 0;
   const porcentajeMinimo = evento.por_min_asi_eve || 80;

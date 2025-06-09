@@ -203,7 +203,7 @@ const MyInscriptions = () => {
                   <p className="observacion-texto">{ins.observacion}</p>
                 </div>
               )}{" "}
-              {ins.est_ins === "FINALIZADA" && (
+              {ins.est_ins === "APROBADO" && (
                 <div className="myins-certificado">
                   {" "}
                   <button
