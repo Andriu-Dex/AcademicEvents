@@ -56,7 +56,7 @@ const estadoLabel = {
     color: "estado-reprobado-asistencia",
   },
   REPROBADO_TOTAL: {
-    text: "Reprobado",
+    text: "Reprobado por completo",
     icon: <AlertCircle size={16} />,
     color: "estado-reprobado-total",
   },
@@ -179,15 +179,15 @@ const MyInscriptions = () => {
               <div className="myins-header">
                 {" "}
                 <h3 className="myins-event-name">{ins.evento.nom_eve}</h3>
-                <span
-                  className={`myins-estado ${
-                    estadoLabel[ins.est_ins]?.color || "estado-pendiente"
-                  }`}
-                >
-                  {estadoLabel[ins.est_ins]?.icon || <Clock size={16} />}
-                  {estadoLabel[ins.est_ins]?.text || ins.est_ins}
-                </span>
               </div>
+              <span
+                className={`myins-estado ${
+                  estadoLabel[ins.est_ins]?.color || "estado-pendiente"
+                }`}
+              >
+                {estadoLabel[ins.est_ins]?.icon || <Clock size={16} />}
+                {estadoLabel[ins.est_ins]?.text || ins.est_ins}
+              </span>
               <p className="myins-datos">
                 Tipo: {ins.evento.tip_eve} <br /> Fecha:{" "}
                 {new Date(ins.evento.fec_ini_eve).toLocaleDateString("es-EC")} –{" "}

@@ -61,6 +61,7 @@ const EventsRoute = () => {
   const [inscripciones, setInscripciones] = useState([]);
   const [inscripcionesRechazadas, setInscripcionesRechazadas] = useState([]);
   const [eventosAprobados, setEventosAprobados] = useState([]);
+  const [eventosReprobados, setEventosReprobados] = useState([]);
   const [subiendo, setSubiendo] = useState(false);
   const [exitoVisible, setExitoVisible] = useState(false);
   const [usuarioConCarrera, setUsuarioConCarrera] = useState(null);
@@ -136,6 +137,19 @@ const EventsRoute = () => {
 
         // Guardar los eventos aprobados en el estado
         setEventosAprobados(eventosAprobados);
+
+        // Obtener eventos reprobados (por nota, asistencia o total)
+        const eventosReprobados = insRes.data
+          .filter(
+            (ins) =>
+              ins.est_ins === "REPROBADO_NOTA" ||
+              ins.est_ins === "REPROBADO_ASISTENCIA" ||
+              ins.est_ins === "REPROBADO_TOTAL"
+          )
+          .map((ins) => ins.evento.id_eve);
+
+        // Guardar los eventos reprobados en el estado
+        setEventosReprobados(eventosReprobados);
 
         // Identificamos las inscripciones rechazadas para mostrar un mensaje especial
         const rechazadas = insRes.data.filter(
@@ -408,6 +422,24 @@ const EventsRoute = () => {
             }}
             className="eventos-buscador-er"
           />
+          {filtro && (
+            <button
+              onClick={() => {
+                setFiltro("");
+                const eventosGrid = document.querySelector(".eventos-grid");
+                if (eventosGrid) {
+                  eventosGrid.classList.add("filtering");
+                  setTimeout(() => {
+                    eventosGrid.classList.remove("filtering");
+                  }, 300);
+                }
+              }}
+              className="limpiar-buscador-er"
+              title="Limpiar búsqueda"
+            >
+              <X size={16} />
+            </button>
+          )}
         </div>
       </div>
       {/* Barra de filtros */}
@@ -620,11 +652,16 @@ const EventsRoute = () => {
                   inscripciones.includes(evento.id_eve) ||
                   (eventosAprobados &&
                     eventosAprobados.includes(evento.id_eve)) ||
+                  (eventosReprobados &&
+                    eventosReprobados.includes(evento.id_eve)) ||
                   evento.cup_dis_eve === 0
                 }
               >
                 {eventosAprobados && eventosAprobados.includes(evento.id_eve)
                   ? "Evento aprobado"
+                  : eventosReprobados &&
+                    eventosReprobados.includes(evento.id_eve)
+                  ? "Evento reprobado"
                   : inscripciones.includes(evento.id_eve)
                   ? "Ya inscrito"
                   : evento.cup_dis_eve === 0
