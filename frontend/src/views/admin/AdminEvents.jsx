@@ -444,21 +444,33 @@ const AdminEvents = () => {
   const formatearFecha = (fechaStr) => {
     if (!fechaStr) return "-";
     try {
-      // Primero aseguramos que la fecha esté en formato UTC para evitar ajustes de zona horaria
-      const fechaParts = fechaStr.split("T")[0].split("-");
-      const year = parseInt(fechaParts[0]);
-      const month = parseInt(fechaParts[1]) - 1; // En JS, los meses van de 0 a 11
-      const day = parseInt(fechaParts[2]);
+      // Separar la fecha y obtener los componentes
+      const [datePart, timePart] = fechaStr.split("T");
+      const [year, month, day] = datePart.split("-");
+      const [hours, minutes] = timePart ? timePart.split(":") : ["00", "00"];
 
-      const fecha = new Date(Date.UTC(year, month, day));
+      // Crear la fecha usando UTC para mantener la hora exacta
+      const fecha = new Date(
+        Date.UTC(
+          parseInt(year),
+          parseInt(month) - 1,
+          parseInt(day),
+          parseInt(hours),
+          parseInt(minutes)
+        )
+      );
 
-      if (isNaN(fecha.getTime())) return "-"; // Verifica si la fecha es válida
+      if (isNaN(fecha.getTime())) return "-";
 
-      return fecha.toLocaleDateString("es-EC", {
+      // Formatear usando la zona horaria UTC
+      return fecha.toLocaleString("es-EC", {
         day: "2-digit",
         month: "2-digit",
         year: "numeric",
-        timeZone: "UTC", // Importante: usar UTC para evitar desplazamientos
+        hour: "2-digit",
+        minute: "2-digit",
+        hourCycle: "h23",
+        timeZone: "UTC", // Importante: usar UTC para mantener la hora exacta
       });
     } catch (error) {
       console.error("Error al formatear fecha:", error);
@@ -482,17 +494,30 @@ const AdminEvents = () => {
 
     // Si no hay fecha de fin, pero hay fecha de inicio y duración
     if (evento.fec_ini_eve && evento.dur_hrs_eve) {
-      const fechaInicio = new Date(evento.fec_ini_eve);
+      const [datePart, timePart] = evento.fec_ini_eve.split("T");
+      const [year, month, day] = datePart.split("-");
+      const [hours, minutes] = timePart ? timePart.split(":") : ["00", "00"];
+
+      const fechaInicio = new Date(
+        Date.UTC(
+          parseInt(year),
+          parseInt(month) - 1,
+          parseInt(day),
+          parseInt(hours),
+          parseInt(minutes)
+        )
+      );
+
       if (!isNaN(fechaInicio.getTime())) {
         // Eventos cortos (menos de 24h) terminan el mismo día
         if (evento.dur_hrs_eve <= 24) {
-          return formatearFecha(fechaInicio);
+          return formatearFecha(fechaInicio.toISOString());
         }
 
         // Eventos largos, calcular días (asumiendo 8h por día)
         const diasAdicionales = Math.ceil(evento.dur_hrs_eve / 8);
         const fechaFin = new Date(fechaInicio);
-        fechaFin.setDate(fechaFin.getDate() + diasAdicionales - 1);
+        fechaFin.setUTCDate(fechaFin.getUTCDate() + diasAdicionales - 1);
         return formatearFecha(fechaFin);
       }
     }

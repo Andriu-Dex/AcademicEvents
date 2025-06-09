@@ -491,9 +491,12 @@ const validarInscripcion = async (req, res) => {
         }
 
         if (notaFinalNum < notaMinima) {
-          nuevoEstado = "REPROBADO_NOTA";
-        } else if (nuevoEstado === "REPROBADO_ASISTENCIA") {
-          nuevoEstado = "REPROBADO_TOTAL"; // Si ya se reprobó por asistencia, se pone reprobado total
+          // Si ya se reprobó por asistencia y ahora por nota, es REPROBADO_TOTAL
+          if (nuevoEstado === "REPROBADO_ASISTENCIA") {
+            nuevoEstado = "REPROBADO_TOTAL";
+          } else {
+            nuevoEstado = "REPROBADO_NOTA";
+          }
         } else {
           nuevoEstado = "APROBADO";
         }

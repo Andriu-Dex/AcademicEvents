@@ -34,18 +34,27 @@ import "./styles/animaciones.css";
 const formatearFechaUTC = (fechaStr) => {
   if (!fechaStr) return "-";
   try {
-    const fechaParts = fechaStr.split("T")[0].split("-");
-    const year = parseInt(fechaParts[0]);
-    const month = parseInt(fechaParts[1]) - 1;
-    const day = parseInt(fechaParts[2]);
+    const [datePart, timePart] = fechaStr.split("T");
+    const [year, month, day] = datePart.split("-");
+    const [hours, minutes] = timePart ? timePart.split(":") : ["00", "00"];
 
-    const fecha = new Date(Date.UTC(year, month, day));
+    const fecha = new Date(
+      Date.UTC(
+        parseInt(year),
+        parseInt(month) - 1,
+        parseInt(day),
+        parseInt(hours),
+        parseInt(minutes)
+      )
+    );
     if (isNaN(fecha.getTime())) return "-";
 
-    return fecha.toLocaleDateString("es-EC", {
+    return fecha.toLocaleString("es-EC", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
       timeZone: "UTC",
     });
   } catch (error) {

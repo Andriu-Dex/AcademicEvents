@@ -21,19 +21,29 @@ const formatearFechaUTC = (fechaStr) => {
   if (!fechaStr) return "-";
   try {
     // Primero aseguramos que la fecha esté en formato UTC para evitar ajustes de zona horaria
-    const fechaParts = fechaStr.split("T")[0].split("-");
-    const year = parseInt(fechaParts[0]);
-    const month = parseInt(fechaParts[1]) - 1; // En JS, los meses van de 0 a 11
-    const day = parseInt(fechaParts[2]);
+    const [datePart, timePart] = fechaStr.split("T");
+    const [year, month, day] = datePart.split("-");
+    const [hours, minutes] = timePart ? timePart.split(":") : ["00", "00"];
 
-    const fecha = new Date(Date.UTC(year, month, day));
+    const fecha = new Date(
+      Date.UTC(
+        parseInt(year),
+        parseInt(month) - 1,
+        parseInt(day),
+        parseInt(hours),
+        parseInt(minutes)
+      )
+    );
 
     if (isNaN(fecha.getTime())) return "-"; // Verifica si la fecha es válida
 
-    return fecha.toLocaleDateString("es-EC", {
+    return fecha.toLocaleString("es-EC", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hourCycle: "h23",
       timeZone: "UTC", // Importante: usar UTC para evitar desplazamientos
     });
   } catch (error) {
@@ -61,6 +71,7 @@ const EventsRoute = () => {
   const [inscripciones, setInscripciones] = useState([]);
   const [inscripcionesRechazadas, setInscripcionesRechazadas] = useState([]);
   const [eventosAprobados, setEventosAprobados] = useState([]);
+  const [eventosReprobados, setEventosReprobados] = useState([]);
   const [subiendo, setSubiendo] = useState(false);
   const [exitoVisible, setExitoVisible] = useState(false);
   const [usuarioConCarrera, setUsuarioConCarrera] = useState(null);
@@ -136,6 +147,19 @@ const EventsRoute = () => {
 
         // Guardar los eventos aprobados en el estado
         setEventosAprobados(eventosAprobados);
+
+        // Obtener eventos reprobados (por nota, asistencia o total)
+        const eventosReprobados = insRes.data
+          .filter(
+            (ins) =>
+              ins.est_ins === "REPROBADO_NOTA" ||
+              ins.est_ins === "REPROBADO_ASISTENCIA" ||
+              ins.est_ins === "REPROBADO_TOTAL"
+          )
+          .map((ins) => ins.evento.id_eve);
+
+        // Guardar los eventos reprobados en el estado
+        setEventosReprobados(eventosReprobados);
 
         // Identificamos las inscripciones rechazadas para mostrar un mensaje especial
         const rechazadas = insRes.data.filter(
@@ -408,6 +432,24 @@ const EventsRoute = () => {
             }}
             className="eventos-buscador-er"
           />
+          {filtro && (
+            <button
+              onClick={() => {
+                setFiltro("");
+                const eventosGrid = document.querySelector(".eventos-grid");
+                if (eventosGrid) {
+                  eventosGrid.classList.add("filtering");
+                  setTimeout(() => {
+                    eventosGrid.classList.remove("filtering");
+                  }, 300);
+                }
+              }}
+              className="limpiar-buscador-er"
+              title="Limpiar búsqueda"
+            >
+              <X size={16} />
+            </button>
+          )}
         </div>
       </div>
       {/* Barra de filtros */}
@@ -528,7 +570,7 @@ const EventsRoute = () => {
               <img
                 src={evento.img_por_eve || "https://i.imgur.com/c6Ry30Z.jpeg"}
                 alt={`Portada de ${evento.nom_eve}`}
-                className="evento-portada"
+                className="evento-portada-er"
                 style={{
                   width: "100%",
                   height: "180px",
@@ -620,11 +662,16 @@ const EventsRoute = () => {
                   inscripciones.includes(evento.id_eve) ||
                   (eventosAprobados &&
                     eventosAprobados.includes(evento.id_eve)) ||
+                  (eventosReprobados &&
+                    eventosReprobados.includes(evento.id_eve)) ||
                   evento.cup_dis_eve === 0
                 }
               >
                 {eventosAprobados && eventosAprobados.includes(evento.id_eve)
                   ? "Evento aprobado"
+                  : eventosReprobados &&
+                    eventosReprobados.includes(evento.id_eve)
+                  ? "Evento reprobado"
                   : inscripciones.includes(evento.id_eve)
                   ? "Ya inscrito"
                   : evento.cup_dis_eve === 0

@@ -22,7 +22,7 @@
 .buscador-contenedor-er {
   position: relative;
   margin-bottom: 2rem;
-  max-width: 100%;
+  width: 40%;
 }
 
 .buscador-wrapper-er {
@@ -31,7 +31,34 @@
   border-radius: 12px;
   box-shadow: 0 3px 15px rgba(138, 21, 56, 0.08);
   margin-bottom: 0.8rem;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.evento-portada-er {
+  border: #0000007b 1px solid;
+  box-shadow: #0000007b 0px 2px 4px;
+}
+
+.limpiar-buscador-er {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #666;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.limpiar-buscador-er:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: #8a1538;
 }
 
 .buscador-wrapper-er:focus-within {
