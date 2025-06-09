@@ -40,37 +40,37 @@ const getEstadoEventoUI = (estado) => {
       return {
         icon: <CheckCircle size={16} />,
         text: "Activo",
-        cssClass: "estado-activo-ae"
+        cssClass: "estado-activo-ae",
       };
     case "INACTIVO":
       return {
         icon: <XCircle size={16} />,
         text: "Inactivo",
-        cssClass: "estado-inactivo-ae"
+        cssClass: "estado-inactivo-ae",
       };
     case "FINALIZADO":
       return {
         icon: <XCircle size={16} />,
         text: "Finalizado",
-        cssClass: "estado-finalizado-ae"
+        cssClass: "estado-finalizado-ae",
       };
     case "CANCELADO":
       return {
         icon: <XCircle size={16} />,
         text: "Cancelado",
-        cssClass: "estado-cancelado-ae"
+        cssClass: "estado-cancelado-ae",
       };
     case "SUSPENDIDO":
       return {
         icon: <XCircle size={16} />,
         text: "Suspendido",
-        cssClass: "estado-suspendido-ae"
+        cssClass: "estado-suspendido-ae",
       };
     default:
       return {
         icon: <XCircle size={16} />,
         text: "Desconocido",
-        cssClass: "estado-default-ae"
+        cssClass: "estado-default-ae",
       };
   }
 };
@@ -102,25 +102,25 @@ const getModalidadUI = (modalidad) => {
       return {
         icon: <MapPin size={16} />,
         text: "Presencial",
-        cssClass: "modalidad-presencial-ae"
+        cssClass: "modalidad-presencial-ae",
       };
     case "VIRTUAL":
       return {
         icon: <Monitor size={16} />,
         text: "Virtual",
-        cssClass: "modalidad-virtual-ae"
+        cssClass: "modalidad-virtual-ae",
       };
     case "SEMIPRESENCIAL":
       return {
         icon: <Laptop size={16} />,
         text: "Semipresencial",
-        cssClass: "modalidad-semipresencial-ae"
+        cssClass: "modalidad-semipresencial-ae",
       };
     default:
       return {
         icon: <Users size={16} />,
         text: "No especificada",
-        cssClass: "modalidad-default-ae"
+        cssClass: "modalidad-default-ae",
       };
   }
 };
@@ -131,7 +131,7 @@ const AdminEvents = () => {
   const [loading, setLoading] = useState(true);
   const [carreras, setCarreras] = useState([]);
   const navigate = useNavigate();
-  
+
   // Estados para filtros
   const [filtros, setFiltros] = useState({
     busqueda: "",
@@ -150,13 +150,13 @@ const AdminEvents = () => {
     esPago: false,
     eventosLlenos: false,
   });
-  
+
   const [mostrarFiltros, setMostrarFiltros] = useState(false);
   const [ordenamiento, setOrdenamiento] = useState({
     campo: "fec_ini_eve",
-    direccion: "asc"
+    direccion: "asc",
   });
-  
+
   // Fecha actual para calcular estados de eventos (useMemo para evitar recreación en cada render)
   const fechaActual = useMemo(() => new Date(), []);
 
@@ -210,21 +210,21 @@ const AdminEvents = () => {
 
     // Filtro por búsqueda (nombre)
     if (filtros.busqueda) {
-      eventosFiltrados = eventosFiltrados.filter(evento =>
+      eventosFiltrados = eventosFiltrados.filter((evento) =>
         evento.nom_eve.toLowerCase().includes(filtros.busqueda.toLowerCase())
       );
     }
 
     // Filtro por tipo de evento
     if (filtros.tipoEvento) {
-      eventosFiltrados = eventosFiltrados.filter(evento =>
-        evento.tip_eve === filtros.tipoEvento
+      eventosFiltrados = eventosFiltrados.filter(
+        (evento) => evento.tip_eve === filtros.tipoEvento
       );
     }
 
     // Filtro por estado
     if (filtros.estado) {
-      eventosFiltrados = eventosFiltrados.filter(evento => {
+      eventosFiltrados = eventosFiltrados.filter((evento) => {
         const esEventoFinalizado = (evento) => {
           const esCurso = evento.tip_eve === "CURSO";
           if (esCurso && evento.eventos_curso?.fec_fin_cur) {
@@ -232,91 +232,98 @@ const AdminEvents = () => {
           } else if (evento.fec_fin_eve) {
             return new Date(evento.fec_fin_eve) < fechaActual;
           }
-          return evento.est_eve === "FINALIZADO" || evento.est_eve === "CANCELADO";
+          return (
+            evento.est_eve === "FINALIZADO" || evento.est_eve === "CANCELADO"
+          );
         };
 
-        const estadoCalculado = esEventoFinalizado(evento) ? "FINALIZADO" : evento.est_eve;
+        const estadoCalculado = esEventoFinalizado(evento)
+          ? "FINALIZADO"
+          : evento.est_eve;
         return estadoCalculado === filtros.estado;
       });
     }
 
     // Filtro por fecha de inicio
     if (filtros.fechaInicio) {
-      eventosFiltrados = eventosFiltrados.filter(evento =>
-        new Date(evento.fec_ini_eve) >= new Date(filtros.fechaInicio)
+      eventosFiltrados = eventosFiltrados.filter(
+        (evento) =>
+          new Date(evento.fec_ini_eve) >= new Date(filtros.fechaInicio)
       );
     }
 
     // Filtro por fecha de fin
     if (filtros.fechaFin) {
-      eventosFiltrados = eventosFiltrados.filter(evento =>
-        new Date(evento.fec_ini_eve) <= new Date(filtros.fechaFin)
+      eventosFiltrados = eventosFiltrados.filter(
+        (evento) => new Date(evento.fec_ini_eve) <= new Date(filtros.fechaFin)
       );
     }
 
     // Filtro por carrera
     if (filtros.carrera) {
-      eventosFiltrados = eventosFiltrados.filter(evento => {
+      eventosFiltrados = eventosFiltrados.filter((evento) => {
         if (filtros.carrera === "GENERAL") {
           return !evento.eventos_carrera || evento.eventos_carrera.length === 0;
         }
-        return evento.eventos_carrera?.some(ec => ec.carrera.id_car === filtros.carrera);
+        return evento.eventos_carrera?.some(
+          (ec) => ec.carrera.id_car === filtros.carrera
+        );
       });
     }
 
     // Filtro por modalidad
     if (filtros.modalidad) {
-      eventosFiltrados = eventosFiltrados.filter(evento =>
-        evento.mod_eve === filtros.modalidad
+      eventosFiltrados = eventosFiltrados.filter(
+        (evento) => evento.mod_eve === filtros.modalidad
       );
     }
 
     // Filtro por capacidad mínima
     if (filtros.capacidadMin) {
-      eventosFiltrados = eventosFiltrados.filter(evento =>
-        evento.cup_max_eve >= parseInt(filtros.capacidadMin)
+      eventosFiltrados = eventosFiltrados.filter(
+        (evento) => evento.cup_max_eve >= parseInt(filtros.capacidadMin)
       );
     }
 
     // Filtro por capacidad máxima
     if (filtros.capacidadMax) {
-      eventosFiltrados = eventosFiltrados.filter(evento =>
-        evento.cup_max_eve <= parseInt(filtros.capacidadMax)
+      eventosFiltrados = eventosFiltrados.filter(
+        (evento) => evento.cup_max_eve <= parseInt(filtros.capacidadMax)
       );
     }
 
     // Filtro por valor mínimo
     if (filtros.valorMin) {
-      eventosFiltrados = eventosFiltrados.filter(evento =>
-        evento.val_eve >= parseFloat(filtros.valorMin)
+      eventosFiltrados = eventosFiltrados.filter(
+        (evento) => evento.val_eve >= parseFloat(filtros.valorMin)
       );
     }
 
     // Filtro por valor máximo
     if (filtros.valorMax) {
-      eventosFiltrados = eventosFiltrados.filter(evento =>
-        evento.val_eve <= parseFloat(filtros.valorMax)
+      eventosFiltrados = eventosFiltrados.filter(
+        (evento) => evento.val_eve <= parseFloat(filtros.valorMax)
       );
     }
 
     // Filtro por asistencia mínima
     if (filtros.asistenciaMin) {
-      eventosFiltrados = eventosFiltrados.filter(evento =>
-        evento.por_min_asi_eve >= parseInt(filtros.asistenciaMin)
+      eventosFiltrados = eventosFiltrados.filter(
+        (evento) => evento.por_min_asi_eve >= parseInt(filtros.asistenciaMin)
       );
     }
 
     // Filtro por eventos gratuitos
     if (filtros.esGratuito) {
-      eventosFiltrados = eventosFiltrados.filter(evento =>
-        evento.val_eve === 0
+      eventosFiltrados = eventosFiltrados.filter(
+        (evento) => evento.val_eve === 0
       );
     }
 
     // Filtro por eventos de pago
     if (filtros.esPago) {
-      eventosFiltrados = eventosFiltrados.filter(evento =>
-        evento.val_eve > 0
+      eventosFiltrados = eventosFiltrados.filter(
+        (evento) => evento.val_eve > 0
       );
     }
 
@@ -324,19 +331,23 @@ const AdminEvents = () => {
     // - Si filtro "Eventos Llenos" está activo: mostrar solo eventos con cupos === 0
     // - Para todos los otros filtros: mostrar solo eventos con cupos > 0
     // - Sin filtros activos: mostrar solo eventos con cupos > 0 (comportamiento por defecto)
-    
+
     if (filtros.eventosLlenos) {
       // Si el filtro "Eventos llenos" está activo, mostrar solo eventos con cupos === 0
-      eventosFiltrados = eventosFiltrados.filter(evento => evento.cup_dis_eve === 0);
+      eventosFiltrados = eventosFiltrados.filter(
+        (evento) => evento.cup_dis_eve === 0
+      );
     } else {
       // Para todos los otros casos, ocultar eventos sin cupos disponibles
-      eventosFiltrados = eventosFiltrados.filter(evento => evento.cup_dis_eve > 0);
+      eventosFiltrados = eventosFiltrados.filter(
+        (evento) => evento.cup_dis_eve > 0
+      );
     }
 
     // Aplicar ordenamiento
     eventosFiltrados.sort((a, b) => {
       let valorA, valorB;
-      
+
       switch (ordenamiento.campo) {
         case "nom_eve":
           valorA = a.nom_eve.toLowerCase();
@@ -380,10 +391,10 @@ const AdminEvents = () => {
 
   // Manejar cambios en filtros
   const handleFiltroChange = (campo, valor) => {
-    setFiltros(prev => {
+    setFiltros((prev) => {
       let nuevosFiltros = {
         ...prev,
-        [campo]: valor
+        [campo]: valor,
       };
 
       // Lógica para filtros mutuamente excluyentes
@@ -418,15 +429,16 @@ const AdminEvents = () => {
     });
     setOrdenamiento({
       campo: "fec_ini_eve",
-      direccion: "asc"
+      direccion: "asc",
     });
   };
 
   // Manejar cambios en ordenamiento
   const handleOrdenamientoChange = (campo) => {
-    setOrdenamiento(prev => ({
+    setOrdenamiento((prev) => ({
       campo,
-      direccion: prev.campo === campo && prev.direccion === "asc" ? "desc" : "asc"
+      direccion:
+        prev.campo === campo && prev.direccion === "asc" ? "desc" : "asc",
     }));
   }; // Formato de fecha personalizado
   const formatearFecha = (fechaStr) => {
@@ -515,14 +527,17 @@ const AdminEvents = () => {
       <div className="admin-events-header">
         <h2 className="admin-events-title">Gestión de Eventos</h2>
         <div className="admin-events-actions">
-          <button 
+          <button
             className="admin-events-filter-toggle"
             onClick={() => setMostrarFiltros(!mostrarFiltros)}
           >
             <Filter size={16} />
             {mostrarFiltros ? "Ocultar Filtros" : "Mostrar Filtros"}
           </button>
-          <button className="admin-events-create-btn" onClick={handleCrearEvento}>
+          <button
+            className="admin-events-create-btn"
+            onClick={handleCrearEvento}
+          >
             <Plus size={16} />
             Crear nuevo evento
           </button>
@@ -539,7 +554,7 @@ const AdminEvents = () => {
               Limpiar Filtros
             </button>
           </div>
-          
+
           <div className="filters-grid">
             {/* Búsqueda por nombre */}
             <div className="filter-group">
@@ -563,7 +578,9 @@ const AdminEvents = () => {
               </label>
               <select
                 value={filtros.tipoEvento}
-                onChange={(e) => handleFiltroChange("tipoEvento", e.target.value)}
+                onChange={(e) =>
+                  handleFiltroChange("tipoEvento", e.target.value)
+                }
               >
                 <option value="">Todos los tipos</option>
                 <option value="CURSO">Curso</option>
@@ -603,7 +620,9 @@ const AdminEvents = () => {
               <input
                 type="date"
                 value={filtros.fechaInicio}
-                onChange={(e) => handleFiltroChange("fechaInicio", e.target.value)}
+                onChange={(e) =>
+                  handleFiltroChange("fechaInicio", e.target.value)
+                }
               />
             </div>
 
@@ -632,7 +651,7 @@ const AdminEvents = () => {
               >
                 <option value="">Todas las carreras</option>
                 <option value="GENERAL">Eventos generales</option>
-                {carreras.map(carrera => (
+                {carreras.map((carrera) => (
                   <option key={carrera.id_car} value={carrera.id_car}>
                     {carrera.nom_car}
                   </option>
@@ -648,7 +667,9 @@ const AdminEvents = () => {
               </label>
               <select
                 value={filtros.modalidad}
-                onChange={(e) => handleFiltroChange("modalidad", e.target.value)}
+                onChange={(e) =>
+                  handleFiltroChange("modalidad", e.target.value)
+                }
               >
                 <option value="">Todas las modalidades</option>
                 <option value="PRESENCIAL">Presencial</option>
@@ -667,7 +688,9 @@ const AdminEvents = () => {
                 type="number"
                 placeholder="Ej: 20"
                 value={filtros.capacidadMin}
-                onChange={(e) => handleFiltroChange("capacidadMin", e.target.value)}
+                onChange={(e) =>
+                  handleFiltroChange("capacidadMin", e.target.value)
+                }
               />
             </div>
 
@@ -681,7 +704,9 @@ const AdminEvents = () => {
                 type="number"
                 placeholder="Ej: 100"
                 value={filtros.capacidadMax}
-                onChange={(e) => handleFiltroChange("capacidadMax", e.target.value)}
+                onChange={(e) =>
+                  handleFiltroChange("capacidadMax", e.target.value)
+                }
               />
             </div>
 
@@ -727,41 +752,51 @@ const AdminEvents = () => {
                 max="100"
                 placeholder="Ej: 80"
                 value={filtros.asistenciaMin}
-                onChange={(e) => handleFiltroChange("asistenciaMin", e.target.value)}
+                onChange={(e) =>
+                  handleFiltroChange("asistenciaMin", e.target.value)
+                }
               />
             </div>
 
             {/* Checkboxes para filtros especiales */}
             <div className="filter-group checkbox-group">
-              <label className="checkbox-label">
+              <label className="checkbox-label-ae">
                 <input
                   type="checkbox"
                   checked={filtros.esGratuito}
-                  onChange={(e) => handleFiltroChange("esGratuito", e.target.checked)}
+                  onChange={(e) =>
+                    handleFiltroChange("esGratuito", e.target.checked)
+                  }
                 />
-                Solo eventos gratuitos
+                <span className="labels-check-ae">Solo eventos gratuitos</span>
               </label>
             </div>
 
             <div className="filter-group checkbox-group">
-              <label className="checkbox-label">
+              <label className="checkbox-label-ae">
                 <input
                   type="checkbox"
                   checked={filtros.esPago}
-                  onChange={(e) => handleFiltroChange("esPago", e.target.checked)}
+                  onChange={(e) =>
+                    handleFiltroChange("esPago", e.target.checked)
+                  }
                 />
-                Solo eventos de pago
+                <span className="labels-check-ae">Solo eventos de pago</span>
               </label>
             </div>
 
             <div className="filter-group checkbox-group">
-              <label className="checkbox-label">
+              <label className="checkbox-label-ae">
                 <input
                   type="checkbox"
                   checked={filtros.eventosLlenos}
-                  onChange={(e) => handleFiltroChange("eventosLlenos", e.target.checked)}
+                  onChange={(e) =>
+                    handleFiltroChange("eventosLlenos", e.target.checked)
+                  }
                 />
-                🚫 Eventos llenos (sin cupos)
+                <span className="labels-check-ae">
+                  Eventos llenos (sin cupos)
+                </span>
               </label>
             </div>
           </div>
@@ -771,39 +806,59 @@ const AdminEvents = () => {
             <h4>Ordenar por:</h4>
             <div className="sorting-options">
               <button
-                className={`sort-btn ${ordenamiento.campo === "nom_eve" ? "active" : ""}`}
+                className={`sort-btn ${
+                  ordenamiento.campo === "nom_eve" ? "active" : ""
+                }`}
                 onClick={() => handleOrdenamientoChange("nom_eve")}
               >
                 <ArrowUpDown size={14} />
-                Nombre {ordenamiento.campo === "nom_eve" && (ordenamiento.direccion === "asc" ? "↑" : "↓")}
+                Nombre{" "}
+                {ordenamiento.campo === "nom_eve" &&
+                  (ordenamiento.direccion === "asc" ? "↑" : "↓")}
               </button>
               <button
-                className={`sort-btn ${ordenamiento.campo === "fec_ini_eve" ? "active" : ""}`}
+                className={`sort-btn ${
+                  ordenamiento.campo === "fec_ini_eve" ? "active" : ""
+                }`}
                 onClick={() => handleOrdenamientoChange("fec_ini_eve")}
               >
                 <ArrowUpDown size={14} />
-                Fecha {ordenamiento.campo === "fec_ini_eve" && (ordenamiento.direccion === "asc" ? "↑" : "↓")}
+                Fecha{" "}
+                {ordenamiento.campo === "fec_ini_eve" &&
+                  (ordenamiento.direccion === "asc" ? "↑" : "↓")}
               </button>
               <button
-                className={`sort-btn ${ordenamiento.campo === "val_eve" ? "active" : ""}`}
+                className={`sort-btn ${
+                  ordenamiento.campo === "val_eve" ? "active" : ""
+                }`}
                 onClick={() => handleOrdenamientoChange("val_eve")}
               >
                 <ArrowUpDown size={14} />
-                Precio {ordenamiento.campo === "val_eve" && (ordenamiento.direccion === "asc" ? "↑" : "↓")}
+                Precio{" "}
+                {ordenamiento.campo === "val_eve" &&
+                  (ordenamiento.direccion === "asc" ? "↑" : "↓")}
               </button>
               <button
-                className={`sort-btn ${ordenamiento.campo === "cup_max_eve" ? "active" : ""}`}
+                className={`sort-btn ${
+                  ordenamiento.campo === "cup_max_eve" ? "active" : ""
+                }`}
                 onClick={() => handleOrdenamientoChange("cup_max_eve")}
               >
                 <ArrowUpDown size={14} />
-                Capacidad {ordenamiento.campo === "cup_max_eve" && (ordenamiento.direccion === "asc" ? "↑" : "↓")}
+                Capacidad{" "}
+                {ordenamiento.campo === "cup_max_eve" &&
+                  (ordenamiento.direccion === "asc" ? "↑" : "↓")}
               </button>
               <button
-                className={`sort-btn ${ordenamiento.campo === "cup_dis_eve" ? "active" : ""}`}
+                className={`sort-btn ${
+                  ordenamiento.campo === "cup_dis_eve" ? "active" : ""
+                }`}
                 onClick={() => handleOrdenamientoChange("cup_dis_eve")}
               >
                 <ArrowUpDown size={14} />
-                Disponibles {ordenamiento.campo === "cup_dis_eve" && (ordenamiento.direccion === "asc" ? "↑" : "↓")}
+                Disponibles{" "}
+                {ordenamiento.campo === "cup_dis_eve" &&
+                  (ordenamiento.direccion === "asc" ? "↑" : "↓")}
               </button>
             </div>
           </div>
@@ -871,7 +926,9 @@ const AdminEvents = () => {
                 <div className="admin-event-header">
                   <h3 className="admin-event-name">{eve.nom_eve}</h3>
                   <span
-                    className={`admin-event-label ${eve.val_eve === 0 ? "valor-gratuito-ae" : "valor-pago-ae"}`}
+                    className={`admin-event-label ${
+                      eve.val_eve === 0 ? "valor-gratuito-ae" : "valor-pago-ae"
+                    }`}
                   >
                     {eve.val_eve === 0
                       ? "Gratuito"
@@ -913,10 +970,11 @@ const AdminEvents = () => {
                   </div>{" "}
                   {/* Cupos disponibles */}
                   <div
-                    className={`detail-item ${eve.cup_dis_eve === 0
-                      ? "cupos-agotados-admin"
-                      : "cupos-disponibles-admin"
-                      }`}
+                    className={`detail-item ${
+                      eve.cup_dis_eve === 0
+                        ? "cupos-agotados-admin"
+                        : "cupos-disponibles-admin"
+                    }`}
                   >
                     <UserCheck size={16} className="icon-inline" />
                     <span>
@@ -931,9 +989,7 @@ const AdminEvents = () => {
                     </span>
                     {/* Badge adicional para eventos sin cupos cuando se muestra filtro eventos llenos */}
                     {eve.cup_dis_eve === 0 && filtros.eventosLlenos && (
-                      <span className="badge-cupos-agotados">
-                        🚫 SIN CUPOS
-                      </span>
+                      <span className="badge-cupos-agotados">🚫 SIN CUPOS</span>
                     )}
                   </div>
                   {/* Información exclusiva de cursos */}
@@ -967,8 +1023,8 @@ const AdminEvents = () => {
                       </strong>{" "}
                       {eve.eventos_carrera && eve.eventos_carrera.length > 0
                         ? eve.eventos_carrera
-                          .map((ec) => ec.carrera.nom_car)
-                          .join(", ")
+                            .map((ec) => ec.carrera.nom_car)
+                            .join(", ")
                         : "General"}
                     </span>
                   </div>
@@ -976,13 +1032,17 @@ const AdminEvents = () => {
                   <div className="detail-item">
                     <div className="estado-modalidad-container-ae">
                       {/* Estado del evento */}
-                      <div className={`admin-event-status ${estadoUI.cssClass}`}>
+                      <div
+                        className={`admin-event-status ${estadoUI.cssClass}`}
+                      >
                         {estadoUI.icon}
                         <span>{estadoUI.text}</span>
                       </div>
 
                       {/* Modalidad del evento con ícono correspondiente */}
-                      <div className={`modalidad-badge-ae ${modalidadUI.cssClass}`}>
+                      <div
+                        className={`modalidad-badge-ae ${modalidadUI.cssClass}`}
+                      >
                         {modalidadUI.icon}
                         {modalidadUI.text}
                       </div>

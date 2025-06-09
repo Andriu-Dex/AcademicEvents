@@ -245,12 +245,12 @@
     box-shadow: 0 2px 4px rgba(220, 38, 38, 0.2);
   }
   to {
-    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.4), 0 0 0 1px rgba(220, 38, 38, 0.1);
+    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.4),
+      0 0 0 1px rgba(220, 38, 38, 0.1);
   }
 }
 
 @keyframes pulse-red-admin {
-
   0%,
   100% {
     text-shadow: 0 0 0 rgba(220, 38, 38, 0.4);
@@ -394,6 +394,8 @@
   overflow: hidden;
   position: relative;
   border-radius: 0.5rem;
+  border: #0000007b 1px solid;
+  box-shadow: #0000007b 0px 2px 4px;
   margin-bottom: 1rem;
 }
 
@@ -506,60 +508,53 @@
 
 /* Estilos para el panel de filtros - Diseño moderno */
 .admin-events-filters {
-  background: white;
-  border-radius: 12px;
-  padding: 1.5rem;
-  margin-bottom: 2rem;
-  box-shadow: 0 2px 8px rgba(138, 21, 56, 0.08);
-  border: 1px solid #e5e7eb;
+  background: #fff;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
 }
 
 .filters-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 2px solid rgba(138, 21, 56, 0.1);
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .filters-header h3 {
-  color: #8a1538;
-  font-size: 1.25rem;
-  font-weight: 700;
-  margin: 0;
+  font-size: 1.1rem;
+  color: #111827;
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
 .clear-filters-btn {
-  background: linear-gradient(135deg, #8a1538, #6e0e2d);
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  font-weight: 600;
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: #f3f4f6;
+  border: none;
+  border-radius: 6px;
+  color: #4b5563;
+  font-size: 0.9rem;
   cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 0.875rem;
-  box-shadow: 0 2px 4px rgba(138, 21, 56, 0.2);
+  transition: all 0.2s;
 }
 
 .clear-filters-btn:hover {
-  background: linear-gradient(135deg, #6e0e2d, #5a0b26);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(138, 21, 56, 0.3);
+  background: #e5e7eb;
+  color: #1f2937;
 }
 
 .filters-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
 }
 
 .filter-group {
@@ -569,178 +564,97 @@
 }
 
 .filter-group label {
-  font-weight: 600;
-  color: #8a1538;
-  font-size: 0.875rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  margin-bottom: 0.25rem;
+  font-size: 0.9rem;
+  color: #4b5563;
 }
 
-/* Wrapper para inputs y selects con estilo moderno */
-.filter-input-wrapper {
-  position: relative;
-  overflow: hidden;
-  border-radius: 12px;
-  box-shadow: 0 3px 15px rgba(138, 21, 56, 0.08);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.filter-input-wrapper:focus-within {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(138, 21, 56, 0.12);
-}
-
-.filter-input-wrapper::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 2px;
-  background: linear-gradient(90deg, #8a1538, #a61c48);
-  transform: scaleX(0);
-  transform-origin: center;
-  transition: transform 0.3s ease;
-}
-
-.filter-input-wrapper:focus-within::after {
-  transform: scaleX(1);
-}
-
-.filter-group input,
+.filter-group input[type="text"],
+.filter-group input[type="number"],
+.filter-group input[type="date"],
 .filter-group select {
-  width: 100%;
-  padding: 14px 16px;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  background-color: #fff;
-  color: #333;
-  appearance: none;
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  transition: all 0.2s;
 }
 
-.filter-group select {
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%238a1538' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
-  background-position: right 12px center;
-  background-repeat: no-repeat;
-  background-size: 16px;
-  cursor: pointer;
-}
-
-.filter-group input:focus,
+.filter-group input[type="text"]:focus,
+.filter-group input[type="number"]:focus,
+.filter-group input[type="date"]:focus,
 .filter-group select:focus {
   outline: none;
   border-color: #8a1538;
-  box-shadow: none;
+  box-shadow: 0 0 0 2px rgba(138, 21, 56, 0.1);
 }
 
-.filter-group input:hover,
-.filter-group select:hover {
+/* Estilos para checkbox personalizado */
+.checkbox-group {
+  padding: 0.25rem 0;
+}
+
+.checkbox-label-ae {
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  padding-left: 1.75rem;
+}
+
+.checkbox-label-ae input[type="checkbox"] {
+  position: absolute;
+  cursor: pointer;
+  margin-right: 0.5rem;
+}
+
+.checkbox-label-ae .checkmark {
+  position: absolute;
+  left: 0;
+  height: 18px;
+  width: 18px;
+  background-color: #871212;
+  border: 2px solid #060707;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.checkbox-label-ae:hover .checkmark {
   border-color: #8a1538;
 }
 
-/* Estilos para placeholders */
-.filter-group input::placeholder {
-  color: #6b7280;
-  opacity: 1;
+.checkbox-label-ae input[type="checkbox"]:checked ~ .checkmark {
+  background-color: #8a1538;
+  border-color: #8a1538;
 }
 
-.filter-group input::-webkit-input-placeholder {
-  color: #6b7280;
+.labels-check-ae {
+  margin-left: 1.2rem;
 }
 
-.filter-group input::-moz-placeholder {
-  color: #6b7280;
-  opacity: 1;
+.checkbox-label-ae .checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+  left: 5px;
+  top: 2px;
+  width: 4px;
+  height: 8px;
+  border: solid rgb(109, 32, 32);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
 }
 
-.filter-group input:-ms-input-placeholder {
-  color: #6b7280;
+.checkbox-label-ae input[type="checkbox"]:checked ~ .checkmark:after {
+  display: block;
 }
 
-/* Estilos específicos para inputs de fecha y número */
-.filter-group input[type="date"],
-.filter-group input[type="number"] {
-  color: #333;
-  -webkit-text-fill-color: #333;
-}
-
-/* Responsive design para filtros */
-@media (max-width: 768px) {
-  .filters-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-  
-  .filter-group input,
-  .filter-group select {
-    padding: 12px 14px;
-    font-size: 0.95rem;
-  }
-  
-  .filters-header {
-    flex-direction: column;
-    gap: 1rem;
-    align-items: stretch;
-  }
-}
-
-.filter-group input[type="text"] {
-  color: #000000 !important;
-  -webkit-text-fill-color: #000000 !important;
-}
-
-/* Asegurar que el texto de los select sea visible */
-.filter-group select option {
-  color: #000000 !important;
-  background: white !important;
-}
-
-.checkbox-group {
-  flex-direction: row;
-  align-items: center;
-}
-
-.checkbox-label {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  cursor: pointer;
-  font-weight: 500;
-  color: #000000 !important;
-}
-
-.checkbox-label input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  accent-color: #8a1538;
-  margin: 0;
-}
-
-/* Forzar estilos para evitar conflictos con CSS global */
-.admin-events-filters input {
-  color: #000000 !important;
-  -webkit-text-fill-color: #000000 !important;
-  background-color: white !important;
-}
-
-.admin-events-filters select {
-  color: #000000 !important;
-  background-color: white !important;
-}
-
-.admin-events-filters label {
-  color: #000000 !important;
-}
-
-/* Sección de ordenamiento */
+/* Estilos de ordenamiento */
 .sorting-section {
-  margin-top: 2rem;
-  padding-top: 1.5rem;
-  border-top: 2px solid rgba(138, 21, 56, 0.1);
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e7eb;
 }
 
 .sorting-section h4 {
@@ -840,16 +754,16 @@
   .filters-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .sorting-options {
     flex-direction: column;
   }
-  
+
   .admin-events-actions {
     flex-direction: column;
     width: 100%;
   }
-  
+
   .admin-events-filter-toggle,
   .admin-events-create-btn {
     width: 100%;
