@@ -61,8 +61,6 @@ const Perfil = () => {
     try {
       setCargando(true);
       const res = await axiosInstance.get("/perfil");
-      console.log("Datos del perfil recibidos:", res.data);
-      console.log("Documento del usuario:", res.data.com_usu);
       setPerfilData(res.data);
     } catch (error) {
       toast.error("Error al cargar datos del perfil");
@@ -477,6 +475,18 @@ const Perfil = () => {
                   {inscripcion.est_ins === "RECHAZADA" && <XCircle size={14} />}
                   {inscripcion.est_ins === "FINALIZADA" && (
                     <FileText size={14} />
+                  )}
+                  {inscripcion.est_ins === "APROBADO" && (
+                    <BadgeCheck size={14} />
+                  )}
+                  {inscripcion.est_ins === "REPROBADO_NOTA" && (
+                    <AlertCircle size={14} />
+                  )}
+                  {inscripcion.est_ins === "REPROBADO_ASISTENCIA" && (
+                    <AlertCircle size={14} />
+                  )}
+                  {inscripcion.est_ins === "REPROBADO_TOTAL" && (
+                    <AlertCircle size={14} />
                   )}
                   {inscripcion.est_ins}
                 </div>

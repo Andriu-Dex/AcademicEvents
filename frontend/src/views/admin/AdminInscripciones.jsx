@@ -64,7 +64,6 @@ const AdminInscripciones = () => {
         setInscripciones(inscripcionesEnriquecidas);
       }
     } catch (error) {
-      console.error(error);
       toast.error("Error al cargar inscripciones");
       setInscripciones([]);
     } finally {

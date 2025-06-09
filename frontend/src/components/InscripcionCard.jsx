@@ -18,7 +18,9 @@ import "./styles/InscripcionCard.css";
 const InscripcionCard = ({ inscripcion, onUpdate }) => {
   const [expanded, setExpanded] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [nota, setNota] = useState(inscripcion.nota_final || "");
+  const [nota, setNota] = useState(
+    inscripcion.nota_final === -1 ? "" : inscripcion.nota_final || ""
+  );
   const [asistencia, setAsistencia] = useState(
     inscripcion.por_asi_fin_usu || ""
   );
@@ -33,8 +35,10 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
     e.preventDefault();
     setMostrarComprobante(!mostrarComprobante);
   };
+
   const cambiarEstado = async (nuevoEstado) => {
     setLoading(true);
+    console.log(nuevoEstado + " lalalal InscripnCard.jsx");
     try {
       await axiosInstance.put(
         `/admin/inscripciones/validar/${inscripcion.id_ins}`,
@@ -71,7 +75,7 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
       await axiosInstance.put(
         `/admin/inscripciones/validar/${inscripcion.id_ins}`,
         {
-          est_ins: "FINALIZADA",
+          est_ins: "APROBADO",
           nota_final: esCurso ? Number(nota) : null,
           asistencia: Number(asistencia),
           observacion: observacion,
@@ -96,6 +100,14 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
         return "estado-rechazada";
       case "FINALIZADA":
         return "estado-finalizada";
+      case "APROBADO":
+        return "estado-aprobado";
+      case "REPROBADO_NOTA":
+        return "estado-reprobado-nota";
+      case "REPROBADO_ASISTENCIA":
+        return "estado-reprobado-asistencia";
+      case "REPROBADO_TOTAL":
+        return "estado-reprobado-total";
       default:
         return "";
     }

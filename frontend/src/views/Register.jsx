@@ -116,7 +116,7 @@ const Register = () => {
               />
             </div>
             <h2 className="registro-titulo">Registro de Usuario</h2>
-            <p className="text-muted">
+            <p className="text-muted justify-content-center">
               {esUTA
                 ? "Registro como estudiante con correo institucional"
                 : "Registro como usuario general"}

@@ -165,7 +165,6 @@ const AdminEvents = () => {
     try {
       setLoading(true);
       const res = await axiosInstance.get("/eventos");
-      console.log("Eventos cargados:", res.data);
       setEventos(res.data);
       setEventosFiltrados(res.data);
     } catch (error) {

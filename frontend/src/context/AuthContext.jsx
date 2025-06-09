@@ -36,7 +36,6 @@ export const AuthProvider = ({ children }) => {
           setToken(token);
         } else {
           // Si el token ha expirado, limpiar localStorage
-          console.log("Token expirado encontrado al iniciar. Sesión cerrada.");
           localStorage.removeItem("authData");
           localStorage.removeItem("token");
         }
@@ -55,8 +54,6 @@ export const AuthProvider = ({ children }) => {
     setToken(token);
     localStorage.setItem("authData", JSON.stringify({ usuario, token }));
     localStorage.setItem("token", token);
-    // Comprobar el token se guarda correctamente
-    console.log("TOKEN:", localStorage.getItem("token"));
   };
   // Cerrar sesión y limpiar localStorage
   const logout = () => {
@@ -83,9 +80,6 @@ export const AuthProvider = ({ children }) => {
 
         // Si el token ya expiró, cerrar sesión
         if (decoded.exp <= currentTime) {
-          console.log(
-            "Token expirado detectado durante verificación periódica."
-          );
           toast.error(
             "Tu sesión ha expirado. Por favor, inicia sesión nuevamente."
           );

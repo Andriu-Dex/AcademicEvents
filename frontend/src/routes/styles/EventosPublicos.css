@@ -45,11 +45,15 @@
 /* Contenedor del buscador */
 .buscador-contenedor {
   position: relative;
-  margin-bottom: 2rem;
-  max-width: 600px;
+  display: block;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  width: 100%;
 }
 
 .buscador-wrapper {
+  width: 100%;
+  height: 100%;
   position: relative;
   overflow: hidden;
   border-radius: 12px;
@@ -79,7 +83,7 @@
   transform: scaleX(1);
 }
 
-.buscador-icono {
+.buscador-icono-ep {
   position: absolute;
   left: 16px;
   top: 50%;
@@ -89,7 +93,7 @@
   transition: transform 0.3s ease;
 }
 
-.buscador-wrapper:focus-within .buscador-icono {
+.buscador-wrapper:focus-within .buscador-icono-ep {
   transform: translateY(-50%) scale(1.1);
   color: #8a1538;
 }
@@ -104,6 +108,7 @@
   transition: all 0.3s ease;
   background-color: #fff;
   color: #333;
+  border-bottom: 1px solid #8d1111;
 }
 
 .eventos-buscador-ep:focus {
@@ -113,7 +118,7 @@
 }
 
 /* Estilos para la barra de filtros */
-.filtros-contenedor {
+.filtros-contenedor-ep {
   margin-bottom: 2rem;
   background: white;
   border-radius: 12px;
@@ -121,15 +126,20 @@
   border: 1px solid #e5e7eb;
   overflow: hidden;
   transition: all 0.3s ease;
+  width: 11%;
 }
 
-.filtros-header {
+.filtros-contenedor-ep.filtros-abierto {
+  width: 100%;
+}
+
+.filtros-header-ep {
   display: flex;
+  height: 53px;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 1.5rem;
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid #8d1111;
+  width: 100%;
 }
 
 .btn-toggle-filtros {
@@ -237,7 +247,8 @@
 .modalidad-select:focus {
   outline: none;
   border-color: #8a1538;
-  box-shadow: 0 0 0 3px rgba(138, 21, 56, 0.1), 0 4px 12px rgba(138, 21, 56, 0.12);
+  box-shadow: 0 0 0 3px rgba(138, 21, 56, 0.1),
+    0 4px 12px rgba(138, 21, 56, 0.12);
   transform: translateY(-1px);
 }
 
@@ -320,16 +331,16 @@
     gap: 1rem;
     padding: 1rem;
   }
-  
-  .filtros-header {
+
+  .filtros-header-ep {
     padding: 0.75rem 1rem;
   }
-  
+
   .btn-toggle-filtros {
     font-size: 0.9rem;
     padding: 0.4rem 0.8rem;
   }
-  
+
   .btn-limpiar-filtros {
     font-size: 0.8rem;
     padding: 0.4rem 0.8rem;

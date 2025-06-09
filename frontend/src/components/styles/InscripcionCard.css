@@ -82,6 +82,28 @@
   color: #4338ca;
 }
 
+.inscripcion-estado.estado-aprobado {
+  background-color: #d1fae5;
+  color: #047857;
+  font-weight: 700;
+}
+
+.inscripcion-estado.estado-reprobado-nota {
+  background-color: #fee2e2;
+  color: #ef4444;
+}
+
+.inscripcion-estado.estado-reprobado-asistencia {
+  background-color: #ffedd5;
+  color: #f97316;
+}
+
+.inscripcion-estado.estado-reprobado-total {
+  background-color: #fee2e2;
+  color: #7f1d1d;
+  font-weight: 700;
+}
+
 .inscripcion-card-subtitle {
   display: flex;
   flex-wrap: wrap;

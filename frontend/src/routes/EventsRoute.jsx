@@ -51,6 +51,7 @@ const EventsRoute = () => {
   const [cartaMotivacion, setCartaMotivacion] = useState("");
   const [inscripciones, setInscripciones] = useState([]);
   const [inscripcionesRechazadas, setInscripcionesRechazadas] = useState([]);
+  const [eventosAprobados, setEventosAprobados] = useState([]);
   const [subiendo, setSubiendo] = useState(false);
   const [exitoVisible, setExitoVisible] = useState(false);
   const [usuarioConCarrera, setUsuarioConCarrera] = useState(null);
@@ -61,22 +62,33 @@ const EventsRoute = () => {
     const obtenerEventos = async () => {
       try {
         // Primero obtenemos el perfil completo con información de carrera
+        console.log("🔍 Obteniendo perfil de usuario...");
         const perfilRes = await axiosInstance.get("/perfil");
         const perfilCompleto = perfilRes.data;
-        console.log("Perfil completo:", perfilCompleto);
+        console.log("✅ Perfil obtenido:", perfilCompleto);
 
-        // Luego obtenemos los eventos
-        const eventosRes = await axiosInstance.get("/eventos");
-        console.log("Eventos recibidos:", eventosRes.data);
-        console.log("Usuario actual:", usuario);
-        setEventos(eventosRes.data);
+        // Luego obtenemos los eventos con un parámetro para evitar caché
+        const timestamp = new Date().getTime();
+        console.log("🔍 Obteniendo eventos...");
+        const eventosRes = await axiosInstance.get(`/eventos?_t=${timestamp}`);
+
+        // Verificar si hay discrepancias entre el cupo calculado y el almacenado
+        console.log("Verificando cupos disponibles...");
+        try {
+          await axiosInstance.get("/eventos-verificar-cupos");
+        } catch (verifyError) {
+          console.warn("Error al verificar cupos:", verifyError);
+          // Continuar con la carga normal aunque falle la verificación
+        }
+
+        // Volver a obtener eventos después de verificar cupos
+        const eventosActualizadosRes = await axiosInstance.get(
+          `/eventos?_t=${new Date().getTime()}`
+        );
+        setEventos(eventosActualizadosRes.data);
 
         // Actualizamos el contexto de usuario con la información completa
         if (perfilCompleto && perfilCompleto.carrera) {
-          console.log(
-            "Actualizando usuario con carrera:",
-            perfilCompleto.carrera
-          );
           // Aquí deberíamos actualizar el contexto global, pero como no podemos,
           // usaremos el estado local para el filtrado
           setUsuarioConCarrera(perfilCompleto);
@@ -94,18 +106,27 @@ const EventsRoute = () => {
       try {
         // Primero obtenemos las inscripciones propias del usuario
         const insRes = await axiosInstance.get("/inscripciones/propias");
-        console.log("Inscripciones del usuario:", insRes.data);
 
-        // Filtramos sólo las inscripciones activas (PENDIENTES o ACEPTADAS)
+        // Filtramos sólo las inscripciones activas (PENDIENTES, ACEPTADAS o APROBADO)
         const inscripcionesActivas = insRes.data.filter(
-          (ins) => ins.est_ins === "PENDIENTE" || ins.est_ins === "ACEPTADA"
+          (ins) =>
+            ins.est_ins === "PENDIENTE" ||
+            ins.est_ins === "ACEPTADA" ||
+            ins.est_ins === "APROBADO"
         );
 
         // Extraemos los ids de los eventos en los que el usuario está inscrito activamente
         const eventosInscritos = inscripcionesActivas.map(
           (ins) => ins.evento.id_eve
         );
-        console.log("IDs de eventos con inscripción activa:", eventosInscritos);
+
+        // Obtener eventos aprobados
+        const eventosAprobados = insRes.data
+          .filter((ins) => ins.est_ins === "APROBADO")
+          .map((ins) => ins.evento.id_eve);
+
+        // Guardar los eventos aprobados en el estado
+        setEventosAprobados(eventosAprobados);
 
         // Identificamos las inscripciones rechazadas para mostrar un mensaje especial
         const rechazadas = insRes.data.filter(
@@ -115,10 +136,6 @@ const EventsRoute = () => {
         // Almacenar los IDs de eventos con inscripciones rechazadas
         const eventosRechazados = rechazadas.map((ins) => ins.evento.id_eve);
         setInscripcionesRechazadas(eventosRechazados);
-        console.log(
-          "IDs de eventos con inscripción rechazada:",
-          eventosRechazados
-        );
 
         if (rechazadas.length > 0) {
           // Informar al usuario que puede volver a inscribirse
@@ -177,17 +194,27 @@ const EventsRoute = () => {
     setSubiendo(true);
 
     const formData = new FormData();
-    formData.append("id_usu", usuario.id);
+    // Ya no usamos id_usu, ahora el backend obtiene el ID del token
     formData.append("id_eve", eventoSeleccionado.id_eve);
-    formData.append("archivo", archivo);
     formData.append("carta_motivacion", cartaMotivacion);
+    if (archivo) {
+      formData.append("archivo", archivo);
+    }
+
+    console.log("Enviando solicitud de inscripción...");
+    console.log(`ID evento: ${eventoSeleccionado.id_eve}`);
+    console.log(`Archivo: ${archivo ? archivo.name : "Ninguno"}`);
 
     try {
       const response = await axiosInstance.post("/inscripciones", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-      }); // Verificar que la respuesta fue exitosa
+      });
+
+      console.log("Respuesta del servidor:", response.data);
+
+      // Verificar que la respuesta fue exitosa
       if (response.status === 200 || response.status === 201) {
         toast.success("Inscripción enviada con éxito");
 
@@ -219,6 +246,16 @@ const EventsRoute = () => {
         setTimeout(() => setExitoVisible(false), 2000);
       }
     } catch (error) {
+      console.error("Error al inscribirse:", error);
+
+      // Información adicional para depuración
+      if (error.response) {
+        console.error("Respuesta de error del servidor:", {
+          status: error.response.status,
+          data: error.response.data,
+        });
+      }
+
       // Mostrar mensaje detallado del backend si existe
       if (error.response?.data?.msg) {
         toast.error(error.response.data.msg);
@@ -230,43 +267,27 @@ const EventsRoute = () => {
     }
   };
   const eventosDisponibles = eventos.filter((evento) => {
-    // Debug logs
-    console.log("Filtrando evento:", evento.nom_eve);
-    console.log("Tipo de evento:", evento.tip_eve);
-    console.log("Carreras del evento:", evento.eventos_carrera);
-
-    // Ya no filtramos eventos en los que el usuario está inscrito
-    // porque queremos mostrarlos pero con el botón deshabilitado
-
     // Si el evento es de tipo PUBLICO, está disponible para todos
     if (evento.tip_eve === "PUBLICO") {
-      console.log("Evento tipo PUBLICO, incluir para todos");
       return true;
     }
 
     // Si el evento no tiene carreras asociadas, significa que es un evento general
     if (evento.eventos_carrera.length === 0) {
-      console.log(
-        "Evento general (sin carreras específicas), incluir para todos"
-      );
       return true;
     }
 
     // Para estudiantes, filtrar por su carrera
     const usuarioFinal = usuarioConCarrera || usuario;
     if (usuarioFinal?.rol_usu === "ESTUDIANTE") {
-      console.log("Usuario es ESTUDIANTE");
       // Si el usuario tiene una carrera asignada
       if (usuarioFinal.carrera) {
-        console.log("Carrera del usuario:", usuarioFinal.carrera.id_car);
         // Verificar si el evento está asociado a la carrera del usuario
         const tieneCarrera = evento.eventos_carrera.some(
           (ec) => ec.id_car_aso === usuarioFinal.carrera.id_car
         );
-        console.log("¿Evento asociado a carrera del usuario?", tieneCarrera);
         return tieneCarrera;
       } else {
-        console.log("Usuario no tiene carrera asignada");
         return false;
       }
     }
@@ -274,10 +295,6 @@ const EventsRoute = () => {
     // Para administradores, docentes y coordinadores, mostrar todos los eventos
     const tieneRolPermitido = ["ADMIN", "DOCENTE", "COORDINADOR"].includes(
       usuarioFinal?.rol_usu
-    );
-    console.log(
-      "¿Usuario tiene rol con todos los permisos?",
-      tieneRolPermitido
     );
     return tieneRolPermitido;
   });
@@ -433,10 +450,14 @@ const EventsRoute = () => {
                   className="btn-inscribirme"
                   disabled={
                     inscripciones.includes(evento.id_eve) ||
+                    (eventosAprobados &&
+                      eventosAprobados.includes(evento.id_eve)) ||
                     evento.cup_dis_eve === 0
                   }
                 >
-                  {inscripciones.includes(evento.id_eve)
+                  {eventosAprobados && eventosAprobados.includes(evento.id_eve)
+                    ? "Evento aprobado"
+                    : inscripciones.includes(evento.id_eve)
                     ? "Ya inscrito"
                     : evento.cup_dis_eve === 0
                     ? "Sin cupos"

@@ -61,7 +61,7 @@ const EventosPublicos = () => {
   const [filtro, setFiltro] = useState("");
   const [cargando, setCargando] = useState(true);
   const [modalEvento, setModalEvento] = useState(null);
-  
+
   // Estados para los filtros
   const [filtros, setFiltros] = useState({
     software: false,
@@ -78,13 +78,13 @@ const EventosPublicos = () => {
   const aplicarFiltros = (evento) => {
     // Convertir cupos a número para comparaciones
     const cuposDisponibles = parseInt(evento.cup_dis_eve) || 0;
-    
+
     // CONTROL DE VISIBILIDAD POR CUPOS:
     // - Si filtro "Eventos Llenos" está activo: mostrar solo eventos con cupos === 0
     // - Para todos los otros filtros: mostrar solo eventos con cupos > 0
     // - Sin filtros activos: mostrar solo eventos con cupos > 0 (comportamiento por defecto)
-    const hayFiltrosActivos = Object.values(filtros).some(f => f);
-    
+    const hayFiltrosActivos = Object.values(filtros).some((f) => f);
+
     if (hayFiltrosActivos) {
       // Si el filtro "completo" está activo, mostrar solo eventos con cupos === 0
       if (filtros.completo) {
@@ -102,7 +102,7 @@ const EventosPublicos = () => {
     const coincideNombre = evento.nom_eve
       .toLowerCase()
       .includes(filtro.toLowerCase());
-    
+
     if (!coincideNombre) return false;
 
     // Si no hay filtros específicos activos, mostrar todos los que pasaron el filtro de cupos
@@ -110,22 +110,23 @@ const EventosPublicos = () => {
 
     // Aplicar filtros específicos
     if (filtros.software) {
-      const esSoftware = evento.eventos_carrera?.some(ec => 
-        ec.carrera?.nom_car?.toLowerCase().includes('software') ||
-        ec.carrera?.nom_car?.toLowerCase().includes('sistemas')
+      const esSoftware = evento.eventos_carrera?.some(
+        (ec) =>
+          ec.carrera?.nom_car?.toLowerCase().includes("software") ||
+          ec.carrera?.nom_car?.toLowerCase().includes("sistemas")
       );
       if (!esSoftware) return false;
     }
 
     if (filtros.industrial) {
-      const esIndustrial = evento.eventos_carrera?.some(ec => 
-        ec.carrera?.nom_car?.toLowerCase().includes('industrial')
+      const esIndustrial = evento.eventos_carrera?.some((ec) =>
+        ec.carrera?.nom_car?.toLowerCase().includes("industrial")
       );
       if (!esIndustrial) return false;
     }
 
     if (filtros.publico) {
-      if (evento.tip_eve !== 'PUBLICO') return false;
+      if (evento.tip_eve !== "PUBLICO") return false;
     }
 
     if (filtros.gratuito) {
@@ -148,9 +149,9 @@ const EventosPublicos = () => {
 
   // Función para manejar cambios en filtros
   const manejarCambioFiltro = (tipoFiltro) => {
-    setFiltros(prev => ({
+    setFiltros((prev) => ({
       ...prev,
-      [tipoFiltro]: !prev[tipoFiltro]
+      [tipoFiltro]: !prev[tipoFiltro],
     }));
 
     // Añadir efecto de filtrado al grid
@@ -184,8 +185,19 @@ const EventosPublicos = () => {
 
     const obtenerEventos = async () => {
       try {
+        // Agregamos un timestamp para evitar caché
+        const timestamp = new Date().getTime();
+
+        // Verificar cupos antes de obtener eventos
+        try {
+          await axiosInstance.get("/eventos-verificar-cupos");
+        } catch (verifyError) {
+          console.warn("Error al verificar cupos:", verifyError);
+          // Continuar con la carga normal aunque falle la verificación
+        }
+
         // Utilizamos el endpoint que incluye las relaciones con carreras y cursos
-        const eventosRes = await axiosInstance.get("/eventos");
+        const eventosRes = await axiosInstance.get(`/eventos?_t=${timestamp}`);
 
         // Obtenemos todos los eventos sin filtrar por cupos aquí
         // El filtrado por cupos se hará en tiempo real según los filtros activos
@@ -265,7 +277,7 @@ const EventosPublicos = () => {
 
         <div className="buscador-contenedor">
           <div className="buscador-wrapper">
-            <Search className="buscador-icono" size={18} />{" "}
+            <Search className="buscador-icono-ep" size={18} />{" "}
             <input
               type="text"
               placeholder="Buscar por nombre del evento..."
@@ -288,25 +300,22 @@ const EventosPublicos = () => {
         </div>
 
         {/* Barra de filtros */}
-        <div className="filtros-contenedor">
-          <div className="filtros-header">
+        <div className="filtros-contenedor-ep">
+          <div className="filtros-header-ep">
             <button
-              className={`btn-toggle-filtros ${mostrarFiltros ? 'activo' : ''}`}
+              className={`btn-toggle-filtros ${mostrarFiltros ? "activo" : ""}`}
               onClick={() => setMostrarFiltros(!mostrarFiltros)}
             >
               <Filter size={18} />
               Filtros
-              <ChevronDown 
-                size={16} 
-                className={`chevron ${mostrarFiltros ? 'rotado' : ''}`}
+              <ChevronDown
+                size={16}
+                className={`chevron ${mostrarFiltros ? "rotado" : ""}`}
               />
             </button>
-            
-            {Object.values(filtros).some(f => f) && (
-              <button
-                className="btn-limpiar-filtros"
-                onClick={limpiarFiltros}
-              >
+
+            {Object.values(filtros).some((f) => f) && (
+              <button className="btn-limpiar-filtros" onClick={limpiarFiltros}>
                 <X size={16} />
                 Limpiar filtros
               </button>
@@ -322,7 +331,7 @@ const EventosPublicos = () => {
                     <input
                       type="checkbox"
                       checked={filtros.software}
-                      onChange={() => manejarCambioFiltro('software')}
+                      onChange={() => manejarCambioFiltro("software")}
                     />
                     <span className="checkmark"></span>
                     Software/Sistemas
@@ -331,7 +340,7 @@ const EventosPublicos = () => {
                     <input
                       type="checkbox"
                       checked={filtros.industrial}
-                      onChange={() => manejarCambioFiltro('industrial')}
+                      onChange={() => manejarCambioFiltro("industrial")}
                     />
                     <span className="checkmark"></span>
                     Industrial
@@ -346,7 +355,7 @@ const EventosPublicos = () => {
                     <input
                       type="checkbox"
                       checked={filtros.publico}
-                      onChange={() => manejarCambioFiltro('publico')}
+                      onChange={() => manejarCambioFiltro("publico")}
                     />
                     <span className="checkmark"></span>
                     Eventos Públicos
@@ -361,7 +370,7 @@ const EventosPublicos = () => {
                     <input
                       type="checkbox"
                       checked={filtros.gratuito}
-                      onChange={() => manejarCambioFiltro('gratuito')}
+                      onChange={() => manejarCambioFiltro("gratuito")}
                     />
                     <span className="checkmark"></span>
                     Eventos Gratuitos
@@ -370,7 +379,7 @@ const EventosPublicos = () => {
                     <input
                       type="checkbox"
                       checked={filtros.pagado}
-                      onChange={() => manejarCambioFiltro('pagado')}
+                      onChange={() => manejarCambioFiltro("pagado")}
                     />
                     <span className="checkmark"></span>
                     Eventos de Pago
@@ -385,7 +394,7 @@ const EventosPublicos = () => {
                     <input
                       type="checkbox"
                       checked={filtros.completo}
-                      onChange={() => manejarCambioFiltro('completo')}
+                      onChange={() => manejarCambioFiltro("completo")}
                     />
                     <span className="checkmark"></span>
                     Eventos Llenos (sin cupos)
@@ -398,7 +407,12 @@ const EventosPublicos = () => {
                 <div className="filtros-opciones">
                   <select
                     value={filtros.modalidad}
-                    onChange={(e) => setFiltros(prev => ({ ...prev, modalidad: e.target.value }))}
+                    onChange={(e) =>
+                      setFiltros((prev) => ({
+                        ...prev,
+                        modalidad: e.target.value,
+                      }))
+                    }
                     className="modalidad-select"
                   >
                     <option value="">Todas</option>
@@ -411,7 +425,6 @@ const EventosPublicos = () => {
             </div>
           )}
         </div>
-
         {eventos.length === 0 ? (
           <div className="eventos-vacios">
             <p>No hay eventos disponibles en este momento.</p>
@@ -422,11 +435,24 @@ const EventosPublicos = () => {
           </div>
         ) : eventos.filter(aplicarFiltros).length === 0 ? (
           <div className="eventos-vacios">
-            <p>No se encontraron eventos que coincidan con los filtros seleccionados.</p>
-            <button 
-              className="btn-volver" 
+            <p>
+              No se encontraron eventos que coincidan con los filtros
+              seleccionados.
+            </p>
+            <button
+              className="btn-volver"
               onClick={limpiarFiltros}
-              style={{ background: '#8a1538', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+              style={{
+                background: "#8a1538",
+                color: "white",
+                border: "none",
+                padding: "0.5rem 1rem",
+                borderRadius: "6px",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: "0.5rem",
+              }}
             >
               <X size={18} />
               Limpiar filtros
@@ -437,19 +463,26 @@ const EventosPublicos = () => {
             {/* Contador de resultados */}
             <div className="resultados-contador">
               <p>
-                Mostrando {eventos.filter(aplicarFiltros).length} de {eventos.length} eventos
-                {Object.values(filtros).some(f => f) && (
+                Mostrando {eventos.filter(aplicarFiltros).length} de{" "}
+                {eventos.length} eventos
+                {Object.values(filtros).some((f) => f) && (
                   <span className="filtros-activos-badge">
-                    ({Object.values(filtros).filter(f => f).length} filtro{Object.values(filtros).filter(f => f).length !== 1 ? 's' : ''} activo{Object.values(filtros).filter(f => f).length !== 1 ? 's' : ''})
+                    ({Object.values(filtros).filter((f) => f).length} filtro
+                    {Object.values(filtros).filter((f) => f).length !== 1
+                      ? "s"
+                      : ""}{" "}
+                    activo
+                    {Object.values(filtros).filter((f) => f).length !== 1
+                      ? "s"
+                      : ""}
+                    )
                   </span>
                 )}
               </p>
             </div>
-            
+
             <div className="eventos-grid">
-              {eventos
-                .filter(aplicarFiltros)
-                .map((evento, index) => (
+              {eventos.filter(aplicarFiltros).map((evento, index) => (
                 <div
                   key={evento.id_eve}
                   className="evento-card"

@@ -123,7 +123,10 @@ export const estado_inscripcion: {
   PENDIENTE: 'PENDIENTE',
   ACEPTADA: 'ACEPTADA',
   RECHAZADA: 'RECHAZADA',
-  FINALIZADA: 'FINALIZADA'
+  APROBADO: 'APROBADO',
+  REPROBADO_NOTA: 'REPROBADO_NOTA',
+  REPROBADO_ASISTENCIA: 'REPROBADO_ASISTENCIA',
+  REPROBADO_TOTAL: 'REPROBADO_TOTAL'
 };
 
 export type estado_inscripcion = (typeof estado_inscripcion)[keyof typeof estado_inscripcion]
@@ -508,8 +511,8 @@ export namespace Prisma {
   export import Exact = $Public.Exact
 
   /**
-   * Prisma Client JS version: 6.7.0
-   * Query Engine version: 3cff47a7f5d65c3ea74883f1d736e41d68ce91ed
+   * Prisma Client JS version: 6.9.0
+   * Query Engine version: 81e4af48011447c3cc503a190e86995b66d2a28e
    */
   export type PrismaVersion = {
     client: string
@@ -13916,6 +13919,7 @@ export namespace Prisma {
     fec_ins: Date | null
     usu_apr_cer: boolean | null
     por_asi_fin_usu: number | null
+    cup_ocu: boolean | null
   }
 
   export type InscripcionMaxAggregateOutputType = {
@@ -13926,6 +13930,7 @@ export namespace Prisma {
     fec_ins: Date | null
     usu_apr_cer: boolean | null
     por_asi_fin_usu: number | null
+    cup_ocu: boolean | null
   }
 
   export type InscripcionCountAggregateOutputType = {
@@ -13936,6 +13941,7 @@ export namespace Prisma {
     fec_ins: number
     usu_apr_cer: number
     por_asi_fin_usu: number
+    cup_ocu: number
     _all: number
   }
 
@@ -13956,6 +13962,7 @@ export namespace Prisma {
     fec_ins?: true
     usu_apr_cer?: true
     por_asi_fin_usu?: true
+    cup_ocu?: true
   }
 
   export type InscripcionMaxAggregateInputType = {
@@ -13966,6 +13973,7 @@ export namespace Prisma {
     fec_ins?: true
     usu_apr_cer?: true
     por_asi_fin_usu?: true
+    cup_ocu?: true
   }
 
   export type InscripcionCountAggregateInputType = {
@@ -13976,6 +13984,7 @@ export namespace Prisma {
     fec_ins?: true
     usu_apr_cer?: true
     por_asi_fin_usu?: true
+    cup_ocu?: true
     _all?: true
   }
 
@@ -14073,6 +14082,7 @@ export namespace Prisma {
     fec_ins: Date
     usu_apr_cer: boolean
     por_asi_fin_usu: number | null
+    cup_ocu: boolean
     _count: InscripcionCountAggregateOutputType | null
     _avg: InscripcionAvgAggregateOutputType | null
     _sum: InscripcionSumAggregateOutputType | null
@@ -14102,6 +14112,7 @@ export namespace Prisma {
     fec_ins?: boolean
     usu_apr_cer?: boolean
     por_asi_fin_usu?: boolean
+    cup_ocu?: boolean
     cuenta?: boolean | cuentaDefaultArgs<ExtArgs>
     evento?: boolean | eventoDefaultArgs<ExtArgs>
     inscripcion_curso?: boolean | inscripcion$inscripcion_cursoArgs<ExtArgs>
@@ -14120,6 +14131,7 @@ export namespace Prisma {
     fec_ins?: boolean
     usu_apr_cer?: boolean
     por_asi_fin_usu?: boolean
+    cup_ocu?: boolean
     cuenta?: boolean | cuentaDefaultArgs<ExtArgs>
     evento?: boolean | eventoDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["inscripcion"]>
@@ -14132,6 +14144,7 @@ export namespace Prisma {
     fec_ins?: boolean
     usu_apr_cer?: boolean
     por_asi_fin_usu?: boolean
+    cup_ocu?: boolean
     cuenta?: boolean | cuentaDefaultArgs<ExtArgs>
     evento?: boolean | eventoDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["inscripcion"]>
@@ -14144,9 +14157,10 @@ export namespace Prisma {
     fec_ins?: boolean
     usu_apr_cer?: boolean
     por_asi_fin_usu?: boolean
+    cup_ocu?: boolean
   }
 
-  export type inscripcionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_ins" | "id_cor_ins" | "id_eve_ins" | "est_ins" | "fec_ins" | "usu_apr_cer" | "por_asi_fin_usu", ExtArgs["result"]["inscripcion"]>
+  export type inscripcionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_ins" | "id_cor_ins" | "id_eve_ins" | "est_ins" | "fec_ins" | "usu_apr_cer" | "por_asi_fin_usu" | "cup_ocu", ExtArgs["result"]["inscripcion"]>
   export type inscripcionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     cuenta?: boolean | cuentaDefaultArgs<ExtArgs>
     evento?: boolean | eventoDefaultArgs<ExtArgs>
@@ -14185,6 +14199,7 @@ export namespace Prisma {
       fec_ins: Date
       usu_apr_cer: boolean
       por_asi_fin_usu: number | null
+      cup_ocu: boolean
     }, ExtArgs["result"]["inscripcion"]>
     composites: {}
   }
@@ -14622,6 +14637,7 @@ export namespace Prisma {
     readonly fec_ins: FieldRef<"inscripcion", 'DateTime'>
     readonly usu_apr_cer: FieldRef<"inscripcion", 'Boolean'>
     readonly por_asi_fin_usu: FieldRef<"inscripcion", 'Float'>
+    readonly cup_ocu: FieldRef<"inscripcion", 'Boolean'>
   }
     
 
@@ -18606,7 +18622,8 @@ export namespace Prisma {
     est_ins: 'est_ins',
     fec_ins: 'fec_ins',
     usu_apr_cer: 'usu_apr_cer',
-    por_asi_fin_usu: 'por_asi_fin_usu'
+    por_asi_fin_usu: 'por_asi_fin_usu',
+    cup_ocu: 'cup_ocu'
   };
 
   export type InscripcionScalarFieldEnum = (typeof InscripcionScalarFieldEnum)[keyof typeof InscripcionScalarFieldEnum]
@@ -19575,6 +19592,7 @@ export namespace Prisma {
     fec_ins?: DateTimeFilter<"inscripcion"> | Date | string
     usu_apr_cer?: BoolFilter<"inscripcion"> | boolean
     por_asi_fin_usu?: FloatNullableFilter<"inscripcion"> | number | null
+    cup_ocu?: BoolFilter<"inscripcion"> | boolean
     cuenta?: XOR<CuentaScalarRelationFilter, cuentaWhereInput>
     evento?: XOR<EventoScalarRelationFilter, eventoWhereInput>
     inscripcion_curso?: XOR<Inscripcion_cursoNullableScalarRelationFilter, inscripcion_cursoWhereInput> | null
@@ -19592,6 +19610,7 @@ export namespace Prisma {
     fec_ins?: SortOrder
     usu_apr_cer?: SortOrder
     por_asi_fin_usu?: SortOrderInput | SortOrder
+    cup_ocu?: SortOrder
     cuenta?: cuentaOrderByWithRelationInput
     evento?: eventoOrderByWithRelationInput
     inscripcion_curso?: inscripcion_cursoOrderByWithRelationInput
@@ -19612,6 +19631,7 @@ export namespace Prisma {
     fec_ins?: DateTimeFilter<"inscripcion"> | Date | string
     usu_apr_cer?: BoolFilter<"inscripcion"> | boolean
     por_asi_fin_usu?: FloatNullableFilter<"inscripcion"> | number | null
+    cup_ocu?: BoolFilter<"inscripcion"> | boolean
     cuenta?: XOR<CuentaScalarRelationFilter, cuentaWhereInput>
     evento?: XOR<EventoScalarRelationFilter, eventoWhereInput>
     inscripcion_curso?: XOR<Inscripcion_cursoNullableScalarRelationFilter, inscripcion_cursoWhereInput> | null
@@ -19629,6 +19649,7 @@ export namespace Prisma {
     fec_ins?: SortOrder
     usu_apr_cer?: SortOrder
     por_asi_fin_usu?: SortOrderInput | SortOrder
+    cup_ocu?: SortOrder
     _count?: inscripcionCountOrderByAggregateInput
     _avg?: inscripcionAvgOrderByAggregateInput
     _max?: inscripcionMaxOrderByAggregateInput
@@ -19647,6 +19668,7 @@ export namespace Prisma {
     fec_ins?: DateTimeWithAggregatesFilter<"inscripcion"> | Date | string
     usu_apr_cer?: BoolWithAggregatesFilter<"inscripcion"> | boolean
     por_asi_fin_usu?: FloatNullableWithAggregatesFilter<"inscripcion"> | number | null
+    cup_ocu?: BoolWithAggregatesFilter<"inscripcion"> | boolean
   }
 
   export type inscripcion_cursoWhereInput = {
@@ -20612,6 +20634,7 @@ export namespace Prisma {
     fec_ins?: Date | string
     usu_apr_cer?: boolean
     por_asi_fin_usu?: number | null
+    cup_ocu?: boolean
     cuenta: cuentaCreateNestedOneWithoutInscripcionesInput
     evento: eventoCreateNestedOneWithoutInscritosInput
     inscripcion_curso?: inscripcion_cursoCreateNestedOneWithoutInscripcionInput
@@ -20629,6 +20652,7 @@ export namespace Prisma {
     fec_ins?: Date | string
     usu_apr_cer?: boolean
     por_asi_fin_usu?: number | null
+    cup_ocu?: boolean
     inscripcion_curso?: inscripcion_cursoUncheckedCreateNestedOneWithoutInscripcionInput
     comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutInscripcionInput
     cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutInscripcionInput
@@ -20642,6 +20666,7 @@ export namespace Prisma {
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    cup_ocu?: BoolFieldUpdateOperationsInput | boolean
     cuenta?: cuentaUpdateOneRequiredWithoutInscripcionesNestedInput
     evento?: eventoUpdateOneRequiredWithoutInscritosNestedInput
     inscripcion_curso?: inscripcion_cursoUpdateOneWithoutInscripcionNestedInput
@@ -20659,6 +20684,7 @@ export namespace Prisma {
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    cup_ocu?: BoolFieldUpdateOperationsInput | boolean
     inscripcion_curso?: inscripcion_cursoUncheckedUpdateOneWithoutInscripcionNestedInput
     comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutInscripcionNestedInput
     cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutInscripcionNestedInput
@@ -20674,6 +20700,7 @@ export namespace Prisma {
     fec_ins?: Date | string
     usu_apr_cer?: boolean
     por_asi_fin_usu?: number | null
+    cup_ocu?: boolean
   }
 
   export type inscripcionUpdateManyMutationInput = {
@@ -20682,6 +20709,7 @@ export namespace Prisma {
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    cup_ocu?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type inscripcionUncheckedUpdateManyInput = {
@@ -20692,6 +20720,7 @@ export namespace Prisma {
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    cup_ocu?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type inscripcion_cursoCreateInput = {
@@ -21708,6 +21737,7 @@ export namespace Prisma {
     fec_ins?: SortOrder
     usu_apr_cer?: SortOrder
     por_asi_fin_usu?: SortOrder
+    cup_ocu?: SortOrder
   }
 
   export type inscripcionAvgOrderByAggregateInput = {
@@ -21722,6 +21752,7 @@ export namespace Prisma {
     fec_ins?: SortOrder
     usu_apr_cer?: SortOrder
     por_asi_fin_usu?: SortOrder
+    cup_ocu?: SortOrder
   }
 
   export type inscripcionMinOrderByAggregateInput = {
@@ -21732,6 +21763,7 @@ export namespace Prisma {
     fec_ins?: SortOrder
     usu_apr_cer?: SortOrder
     por_asi_fin_usu?: SortOrder
+    cup_ocu?: SortOrder
   }
 
   export type inscripcionSumOrderByAggregateInput = {
@@ -23441,6 +23473,7 @@ export namespace Prisma {
     fec_ins?: Date | string
     usu_apr_cer?: boolean
     por_asi_fin_usu?: number | null
+    cup_ocu?: boolean
     cuenta: cuentaCreateNestedOneWithoutInscripcionesInput
     evento: eventoCreateNestedOneWithoutInscritosInput
     inscripcion_curso?: inscripcion_cursoCreateNestedOneWithoutInscripcionInput
@@ -23457,6 +23490,7 @@ export namespace Prisma {
     fec_ins?: Date | string
     usu_apr_cer?: boolean
     por_asi_fin_usu?: number | null
+    cup_ocu?: boolean
     inscripcion_curso?: inscripcion_cursoUncheckedCreateNestedOneWithoutInscripcionInput
     cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutInscripcionInput
     observacion?: observacion_inscripcionUncheckedCreateNestedOneWithoutInscripcionInput
@@ -23522,6 +23556,7 @@ export namespace Prisma {
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    cup_ocu?: BoolFieldUpdateOperationsInput | boolean
     cuenta?: cuentaUpdateOneRequiredWithoutInscripcionesNestedInput
     evento?: eventoUpdateOneRequiredWithoutInscritosNestedInput
     inscripcion_curso?: inscripcion_cursoUpdateOneWithoutInscripcionNestedInput
@@ -23538,6 +23573,7 @@ export namespace Prisma {
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    cup_ocu?: BoolFieldUpdateOperationsInput | boolean
     inscripcion_curso?: inscripcion_cursoUncheckedUpdateOneWithoutInscripcionNestedInput
     cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutInscripcionNestedInput
     observacion?: observacion_inscripcionUncheckedUpdateOneWithoutInscripcionNestedInput
@@ -23581,6 +23617,7 @@ export namespace Prisma {
     fec_ins?: Date | string
     usu_apr_cer?: boolean
     por_asi_fin_usu?: number | null
+    cup_ocu?: boolean
     cuenta: cuentaCreateNestedOneWithoutInscripcionesInput
     evento: eventoCreateNestedOneWithoutInscritosInput
     inscripcion_curso?: inscripcion_cursoCreateNestedOneWithoutInscripcionInput
@@ -23597,6 +23634,7 @@ export namespace Prisma {
     fec_ins?: Date | string
     usu_apr_cer?: boolean
     por_asi_fin_usu?: number | null
+    cup_ocu?: boolean
     inscripcion_curso?: inscripcion_cursoUncheckedCreateNestedOneWithoutInscripcionInput
     comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutInscripcionInput
     observacion?: observacion_inscripcionUncheckedCreateNestedOneWithoutInscripcionInput
@@ -23662,6 +23700,7 @@ export namespace Prisma {
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    cup_ocu?: BoolFieldUpdateOperationsInput | boolean
     cuenta?: cuentaUpdateOneRequiredWithoutInscripcionesNestedInput
     evento?: eventoUpdateOneRequiredWithoutInscritosNestedInput
     inscripcion_curso?: inscripcion_cursoUpdateOneWithoutInscripcionNestedInput
@@ -23678,6 +23717,7 @@ export namespace Prisma {
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    cup_ocu?: BoolFieldUpdateOperationsInput | boolean
     inscripcion_curso?: inscripcion_cursoUncheckedUpdateOneWithoutInscripcionNestedInput
     comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutInscripcionNestedInput
     observacion?: observacion_inscripcionUncheckedUpdateOneWithoutInscripcionNestedInput
@@ -23690,6 +23730,7 @@ export namespace Prisma {
     fec_ins?: Date | string
     usu_apr_cer?: boolean
     por_asi_fin_usu?: number | null
+    cup_ocu?: boolean
     cuenta: cuentaCreateNestedOneWithoutInscripcionesInput
     evento: eventoCreateNestedOneWithoutInscritosInput
     inscripcion_curso?: inscripcion_cursoCreateNestedOneWithoutInscripcionInput
@@ -23706,6 +23747,7 @@ export namespace Prisma {
     fec_ins?: Date | string
     usu_apr_cer?: boolean
     por_asi_fin_usu?: number | null
+    cup_ocu?: boolean
     inscripcion_curso?: inscripcion_cursoUncheckedCreateNestedOneWithoutInscripcionInput
     comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutInscripcionInput
     cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutInscripcionInput
@@ -23765,6 +23807,7 @@ export namespace Prisma {
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    cup_ocu?: BoolFieldUpdateOperationsInput | boolean
     cuenta?: cuentaUpdateOneRequiredWithoutInscripcionesNestedInput
     evento?: eventoUpdateOneRequiredWithoutInscritosNestedInput
     inscripcion_curso?: inscripcion_cursoUpdateOneWithoutInscripcionNestedInput
@@ -23781,6 +23824,7 @@ export namespace Prisma {
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    cup_ocu?: BoolFieldUpdateOperationsInput | boolean
     inscripcion_curso?: inscripcion_cursoUncheckedUpdateOneWithoutInscripcionNestedInput
     comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutInscripcionNestedInput
     cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutInscripcionNestedInput
@@ -23859,6 +23903,7 @@ export namespace Prisma {
     fec_ins?: Date | string
     usu_apr_cer?: boolean
     por_asi_fin_usu?: number | null
+    cup_ocu?: boolean
     evento: eventoCreateNestedOneWithoutInscritosInput
     inscripcion_curso?: inscripcion_cursoCreateNestedOneWithoutInscripcionInput
     comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutInscripcionInput
@@ -23874,6 +23919,7 @@ export namespace Prisma {
     fec_ins?: Date | string
     usu_apr_cer?: boolean
     por_asi_fin_usu?: number | null
+    cup_ocu?: boolean
     inscripcion_curso?: inscripcion_cursoUncheckedCreateNestedOneWithoutInscripcionInput
     comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutInscripcionInput
     cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutInscripcionInput
@@ -24087,6 +24133,7 @@ export namespace Prisma {
     fec_ins?: DateTimeFilter<"inscripcion"> | Date | string
     usu_apr_cer?: BoolFilter<"inscripcion"> | boolean
     por_asi_fin_usu?: FloatNullableFilter<"inscripcion"> | number | null
+    cup_ocu?: BoolFilter<"inscripcion"> | boolean
   }
 
   export type carta_motivacionUpsertWithWhereUniqueWithoutAdminInput = {
@@ -24538,6 +24585,7 @@ export namespace Prisma {
     fec_ins?: Date | string
     usu_apr_cer?: boolean
     por_asi_fin_usu?: number | null
+    cup_ocu?: boolean
     cuenta: cuentaCreateNestedOneWithoutInscripcionesInput
     inscripcion_curso?: inscripcion_cursoCreateNestedOneWithoutInscripcionInput
     comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutInscripcionInput
@@ -24553,6 +24601,7 @@ export namespace Prisma {
     fec_ins?: Date | string
     usu_apr_cer?: boolean
     por_asi_fin_usu?: number | null
+    cup_ocu?: boolean
     inscripcion_curso?: inscripcion_cursoUncheckedCreateNestedOneWithoutInscripcionInput
     comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutInscripcionInput
     cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutInscripcionInput
@@ -25384,6 +25433,7 @@ export namespace Prisma {
     fec_ins?: Date | string
     usu_apr_cer?: boolean
     por_asi_fin_usu?: number | null
+    cup_ocu?: boolean
     cuenta: cuentaCreateNestedOneWithoutInscripcionesInput
     evento: eventoCreateNestedOneWithoutInscritosInput
     comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutInscripcionInput
@@ -25400,6 +25450,7 @@ export namespace Prisma {
     fec_ins?: Date | string
     usu_apr_cer?: boolean
     por_asi_fin_usu?: number | null
+    cup_ocu?: boolean
     comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutInscripcionInput
     cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutInscripcionInput
     observacion?: observacion_inscripcionUncheckedCreateNestedOneWithoutInscripcionInput
@@ -25428,6 +25479,7 @@ export namespace Prisma {
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    cup_ocu?: BoolFieldUpdateOperationsInput | boolean
     cuenta?: cuentaUpdateOneRequiredWithoutInscripcionesNestedInput
     evento?: eventoUpdateOneRequiredWithoutInscritosNestedInput
     comprobantes_pago?: comprobante_pagoUpdateManyWithoutInscripcionNestedInput
@@ -25444,6 +25496,7 @@ export namespace Prisma {
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    cup_ocu?: BoolFieldUpdateOperationsInput | boolean
     comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutInscripcionNestedInput
     cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutInscripcionNestedInput
     observacion?: observacion_inscripcionUncheckedUpdateOneWithoutInscripcionNestedInput
@@ -25456,6 +25509,7 @@ export namespace Prisma {
     fec_ins?: Date | string
     usu_apr_cer?: boolean
     por_asi_fin_usu?: number | null
+    cup_ocu?: boolean
     cuenta: cuentaCreateNestedOneWithoutInscripcionesInput
     evento: eventoCreateNestedOneWithoutInscritosInput
     inscripcion_curso?: inscripcion_cursoCreateNestedOneWithoutInscripcionInput
@@ -25472,6 +25526,7 @@ export namespace Prisma {
     fec_ins?: Date | string
     usu_apr_cer?: boolean
     por_asi_fin_usu?: number | null
+    cup_ocu?: boolean
     inscripcion_curso?: inscripcion_cursoUncheckedCreateNestedOneWithoutInscripcionInput
     comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutInscripcionInput
     cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutInscripcionInput
@@ -25500,6 +25555,7 @@ export namespace Prisma {
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    cup_ocu?: BoolFieldUpdateOperationsInput | boolean
     cuenta?: cuentaUpdateOneRequiredWithoutInscripcionesNestedInput
     evento?: eventoUpdateOneRequiredWithoutInscritosNestedInput
     inscripcion_curso?: inscripcion_cursoUpdateOneWithoutInscripcionNestedInput
@@ -25516,6 +25572,7 @@ export namespace Prisma {
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    cup_ocu?: BoolFieldUpdateOperationsInput | boolean
     inscripcion_curso?: inscripcion_cursoUncheckedUpdateOneWithoutInscripcionNestedInput
     comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutInscripcionNestedInput
     cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutInscripcionNestedInput
@@ -25625,6 +25682,7 @@ export namespace Prisma {
     fec_ins?: Date | string
     usu_apr_cer?: boolean
     por_asi_fin_usu?: number | null
+    cup_ocu?: boolean
   }
 
   export type carta_motivacionCreateManyAdminInput = {
@@ -25677,6 +25735,7 @@ export namespace Prisma {
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    cup_ocu?: BoolFieldUpdateOperationsInput | boolean
     evento?: eventoUpdateOneRequiredWithoutInscritosNestedInput
     inscripcion_curso?: inscripcion_cursoUpdateOneWithoutInscripcionNestedInput
     comprobantes_pago?: comprobante_pagoUpdateManyWithoutInscripcionNestedInput
@@ -25692,6 +25751,7 @@ export namespace Prisma {
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    cup_ocu?: BoolFieldUpdateOperationsInput | boolean
     inscripcion_curso?: inscripcion_cursoUncheckedUpdateOneWithoutInscripcionNestedInput
     comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutInscripcionNestedInput
     cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutInscripcionNestedInput
@@ -25706,6 +25766,7 @@ export namespace Prisma {
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    cup_ocu?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type carta_motivacionUpdateWithoutAdminInput = {
@@ -25975,6 +26036,7 @@ export namespace Prisma {
     fec_ins?: Date | string
     usu_apr_cer?: boolean
     por_asi_fin_usu?: number | null
+    cup_ocu?: boolean
   }
 
   export type evento_carreraCreateManyEventoInput = {
@@ -25989,6 +26051,7 @@ export namespace Prisma {
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    cup_ocu?: BoolFieldUpdateOperationsInput | boolean
     cuenta?: cuentaUpdateOneRequiredWithoutInscripcionesNestedInput
     inscripcion_curso?: inscripcion_cursoUpdateOneWithoutInscripcionNestedInput
     comprobantes_pago?: comprobante_pagoUpdateManyWithoutInscripcionNestedInput
@@ -26004,6 +26067,7 @@ export namespace Prisma {
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    cup_ocu?: BoolFieldUpdateOperationsInput | boolean
     inscripcion_curso?: inscripcion_cursoUncheckedUpdateOneWithoutInscripcionNestedInput
     comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutInscripcionNestedInput
     cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutInscripcionNestedInput
@@ -26018,6 +26082,7 @@ export namespace Prisma {
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    cup_ocu?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type evento_carreraUpdateWithoutEventoInput = {

@@ -6,7 +6,6 @@ const prisma = require("../config/db");
 // =====================
 const crearCarrera = async (req, res) => {
   try {
-    console.log("Body recibido:", req.body);
     const {
       nom_car,
       des_car,
@@ -16,14 +15,6 @@ const crearCarrera = async (req, res) => {
       id_fac_per,
       id_coo_per,
     } = req.body;
-
-    console.log("Nombre de carrera:", nom_car);
-    console.log("Descripción:", des_car);
-    console.log("Duración en semestres:", dur_sem_car);
-    console.log("Modalidad:", mod_car);
-    console.log("Icono:", ico_car);
-    console.log("ID de facultad:", id_fac_per);
-    console.log("ID de coordinador:", id_coo_per);
 
     if (!nom_car || nom_car.trim() === "") {
       return res
@@ -55,23 +46,19 @@ const crearCarrera = async (req, res) => {
         .json({ msg: "El ID de la facultad es obligatorio" });
     }
 
-    console.log("Verificando si la carrera existe...");
     const carreraExistente = await prisma.carrera.findUnique({
       where: { nom_car },
     });
 
     if (carreraExistente) {
-      console.log("Error: La carrera ya existe");
       return res.status(400).json({ msg: "La carrera ya existe" });
     }
 
-    console.log("Verificando si la facultad existe...");
     const facultadExistente = await prisma.facultad.findUnique({
       where: { id_fac: id_fac_per },
     });
 
     if (!facultadExistente) {
-      console.log("Error: La facultad no existe");
       return res.status(400).json({ msg: "La facultad no existe" });
     }
 
@@ -86,7 +73,6 @@ const crearCarrera = async (req, res) => {
       }
     }
 
-    console.log("Creando nueva carrera...");
     const nuevaCarrera = await prisma.carrera.create({
       data: {
         nom_car,
@@ -99,10 +85,8 @@ const crearCarrera = async (req, res) => {
       },
     });
 
-    console.log("Carrera creada exitosamente:", nuevaCarrera);
     res.status(201).json(nuevaCarrera);
   } catch (error) {
-    console.error("Error detallado al crear carrera:", error);
     res.status(500).json({
       msg: "Error al crear carrera",
       error: error.message,
@@ -169,9 +153,6 @@ const actualizarCarrera = async (req, res) => {
       id_coo_per,
     } = req.body;
 
-    console.log("Datos recibidos para actualización:", req.body);
-    console.log("ID de carrera a actualizar:", id);
-
     // Validaciones
     if (!nom_car || nom_car.trim() === "") {
       return res
@@ -203,11 +184,8 @@ const actualizarCarrera = async (req, res) => {
     });
 
     if (!carreraExistente) {
-      console.log("Error: Carrera no encontrada con ID:", id);
       return res.status(404).json({ msg: "Carrera no encontrada" });
     }
-
-    console.log("Carrera existente encontrada:", carreraExistente);
 
     // Verificar si el nombre actualizado ya existe en otra carrera
     if (nom_car !== carreraExistente.nom_car) {
@@ -219,7 +197,6 @@ const actualizarCarrera = async (req, res) => {
       });
 
       if (carreraConMismoNombre) {
-        console.log("Error: Ya existe otra carrera con ese nombre");
         return res.status(400).json({
           msg: "Ya existe otra carrera con ese nombre",
           detalles: { carreraExistente: carreraConMismoNombre.nom_car },
@@ -234,7 +211,6 @@ const actualizarCarrera = async (req, res) => {
       });
 
       if (!facultadExistente) {
-        console.log("Error: Facultad no encontrada con ID:", id_fac_per);
         return res.status(400).json({ msg: "La facultad no existe" });
       }
     }
@@ -246,7 +222,6 @@ const actualizarCarrera = async (req, res) => {
       });
 
       if (!coordinadorExistente) {
-        console.log("Error: Coordinador no encontrado con ID:", id_coo_per);
         return res.status(400).json({ msg: "El coordinador no existe" });
       }
     }
@@ -266,18 +241,14 @@ const actualizarCarrera = async (req, res) => {
       datosActualizacion.id_coo_per = id_coo_per === "" ? null : id_coo_per;
     }
 
-    console.log("Datos de actualización preparados:", datosActualizacion);
-
     // Actualizar la carrera
     const actualizada = await prisma.carrera.update({
       where: { id_car: id },
       data: datosActualizacion,
     });
 
-    console.log("Carrera actualizada exitosamente:", actualizada);
     res.json(actualizada);
   } catch (error) {
-    console.error("Error detallado al actualizar carrera:", error);
     res.status(500).json({
       msg: "Error al actualizar carrera",
       error: error.message || String(error),
@@ -316,7 +287,6 @@ const eliminarCarrera = async (req, res) => {
     // Respondemos con un mensaje de éxito
     res.status(200).json({ msg: "Carrera desactivada correctamente" });
   } catch (error) {
-    console.error("Error al desactivar carrera:", error);
     // Si ocurre un error, respondemos con estado 500
     res.status(500).json({
       msg: "Error al desactivar carrera",

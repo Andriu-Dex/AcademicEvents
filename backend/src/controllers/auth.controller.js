@@ -59,9 +59,6 @@ const registrarEstudiante = async (req, res) => {
     const { ced_usu, nom_usu, ape_usu, cor_usu, con_usu, cel_usu, id_car_est } =
       req.body;
 
-    // Validación de campos obligatorios
-    console.log("id_car_est recibido:", id_car_est);
-
     // Si es correo institucional, carrera es obligatoria
     const esUTA = cor_usu.endsWith("@uta.edu.ec");
     if (esUTA && !id_car_est) {
@@ -142,7 +139,6 @@ const registrarEstudiante = async (req, res) => {
       cuenta: resultado.cuenta,
     });
   } catch (error) {
-    console.error("Error en registrarEstudiante:", error);
     res
       .status(500)
       .json({ msg: "Error al registrar usuario", error: error.message });

@@ -307,6 +307,24 @@ body::after {
   color: #1d4ed8;
 }
 
+.estado-aprobado {
+  color: #047857; /* Verde esmeralda más intenso que el de aceptada */
+  font-weight: bold;
+}
+
+.estado-reprobado-nota {
+  color: #ef4444; /* Rojo menos intenso que el rechazada */
+}
+
+.estado-reprobado-asistencia {
+  color: #f97316; /* Naranja para diferenciar del reprobado por nota */
+}
+
+.estado-reprobado-total {
+  color: #7f1d1d; /* Rojo oscuro para reprobación total */
+  font-weight: bold;
+}
+
 /* =======================
    Datos adicionales de inscripción
    ======================= */
