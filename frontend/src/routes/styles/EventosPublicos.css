@@ -438,6 +438,8 @@
   overflow: hidden;
   border-radius: 8px 8px 0 0;
   margin-bottom: 0.5rem;
+  border: #0000007b 1px solid;
+  box-shadow: #0000007b 0px 2px 4px;
 }
 
 /* Imagen de portada */

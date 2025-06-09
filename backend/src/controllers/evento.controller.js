@@ -86,8 +86,9 @@ function validarEventoGeneral({
     );
   }
   // Validar que la fecha de inicio no sea posterior a la fecha de fin
-  const fechaInicio = new Date(fec_ini_eve);
-  const fechaFin = new Date(fec_fin_eve);
+  // Usar parseUTCDate para mantener las horas exactas
+  const fechaInicio = parseUTCDate(fec_ini_eve);
+  const fechaFin = parseUTCDate(fec_fin_eve);
   if (fechaInicio > fechaFin)
     throw new Error(
       "La fecha de inicio no puede ser posterior a la fecha de fin"
@@ -193,16 +194,20 @@ const crearEvento = async (req, res) => {
       );
     }
 
+    // Procesar las fechas para mantener las horas exactas
+    const fechaInicial = parseUTCDate(fec_ini_eve);
+    const fechaFinal = parseUTCDate(fec_fin_eve);
+
     const nuevoEvento = await prisma.evento.create({
       data: {
         nom_eve,
         des_eve,
         tip_eve,
-        fec_ini_eve: fechaIni,
+        fec_ini_eve: fechaInicial,
         val_eve: valNum,
         dur_hor_eve: durHor,
         por_min_asi_eve: porcMinAsi,
-        fec_fin_eve: fechaFin,
+        fec_fin_eve: fechaFinal,
         mod_eve: mod_eve || "PRESENCIAL", // Usar valor por defecto si no se proporciona
         cup_max_eve: cupoMax,
         cup_dis_eve: cupoMax, // ✅ Inicialmente disponible = máximo
@@ -436,10 +441,10 @@ const actualizarEvento = async (req, res) => {
             ? Number(dataEvento.val_eve)
             : eventoExistente.val_eve,
         fec_ini_eve: dataEvento.fec_ini_eve
-          ? new Date(dataEvento.fec_ini_eve)
+          ? parseUTCDate(dataEvento.fec_ini_eve)
           : eventoExistente.fec_ini_eve,
         fec_fin_eve: dataEvento.fec_fin_eve
-          ? new Date(dataEvento.fec_fin_eve)
+          ? parseUTCDate(dataEvento.fec_fin_eve)
           : eventoExistente.fec_fin_eve,
         dur_hor_eve:
           dataEvento.dur_hor_eve !== undefined
@@ -697,32 +702,57 @@ const obtenerEventosPorTipo = async (req, res) => {
 };
 
 /**
- * Convierte una fecha en formato YYYY-MM-DD a un objeto Date en UTC
- * para evitar problemas de zona horaria
+ * Procesa una fecha manteniendo la hora local sin ajustes de zona horaria
  */
 function parseUTCDate(dateString) {
+  console.log("📅 parseUTCDate - Input dateString:", dateString);
+
   if (!dateString) return null;
 
   try {
-    // Si la fecha ya tiene formato ISO con T, extraer solo la parte de la fecha
-    if (dateString.includes("T")) {
-      dateString = dateString.split("T")[0];
+    // La fecha puede venir en formato ISO (YYYY-MM-DDTHH:mm:ss) o solo fecha (YYYY-MM-DD)
+    const [datePart, timePart] = dateString.split("T");
+    console.log("📅 Partes de la fecha:", { datePart, timePart });
+
+    const [year, month, day] = datePart.split("-");
+    let hours = 0,
+      minutes = 0;
+
+    if (timePart) {
+      [hours, minutes] = timePart.split(":").map((n) => parseInt(n));
     }
 
-    const parts = dateString.split("-");
-    if (parts.length !== 3) return new Date(dateString); // Fallback
+    console.log("📅 Componentes desglosados:", {
+      year,
+      month,
+      day,
+      hours,
+      minutes,
+    });
 
-    // Crear fecha UTC explícita
-    return new Date(
+    // Crear la fecha usando UTC para mantener la hora exacta sin offset
+    const date = new Date(
       Date.UTC(
-        parseInt(parts[0]), // año
-        parseInt(parts[1]) - 1, // mes (0-11)
-        parseInt(parts[2]) // día
+        parseInt(year),
+        parseInt(month) - 1,
+        parseInt(day),
+        hours || 0,
+        minutes || 0
       )
     );
+
+    console.log("📅 Fecha resultante:", {
+      localDate: date.toLocaleString(),
+      isoString: date.toISOString(),
+      localHours: new Date(date.toLocaleString()).getHours(),
+      utcHours: date.getUTCHours(),
+      offset: date.getTimezoneOffset() / 60,
+    });
+
+    return date;
   } catch (error) {
     console.error("Error parsing date:", error);
-    return new Date(dateString); // Fallback
+    return null;
   }
 }
 

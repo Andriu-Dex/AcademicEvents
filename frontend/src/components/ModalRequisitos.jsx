@@ -19,18 +19,25 @@ import "./styles/ModalRequisitos.css";
 const formatearFechaUTC = (fechaStr) => {
   if (!fechaStr) return "-";
   try {
-    const fechaParts = fechaStr.split("T")[0].split("-");
+    const [datePart, timePart] = fechaStr.split("T");
+    const [year, month, day] = datePart.split("-");
+    const [hours, minutes] = timePart ? timePart.split(":") : ["00", "00"];
+
     const fecha = new Date(
       Date.UTC(
-        parseInt(fechaParts[0]),
-        parseInt(fechaParts[1]) - 1,
-        parseInt(fechaParts[2])
+        parseInt(year),
+        parseInt(month) - 1,
+        parseInt(day),
+        parseInt(hours),
+        parseInt(minutes)
       )
     );
-    return fecha.toLocaleDateString("es-EC", {
+    return fecha.toLocaleString("es-EC", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
       timeZone: "UTC",
     });
   } catch (error) {
@@ -54,10 +61,11 @@ const ModalRequisitos = ({ evento, onClose }) => {
           >
             <h3>{evento.nom_eve}</h3>
             <span
-              className={`badge-mr badge-estado-mr ${evento.est_eve?.toLowerCase() === "activo"
-                ? "activo"
-                : "inactivo"
-                }`}
+              className={`badge-mr badge-estado-mr ${
+                evento.est_eve?.toLowerCase() === "activo"
+                  ? "activo"
+                  : "inactivo"
+              }`}
             >
               {evento.est_eve === "ACTIVO" ? (
                 <>
@@ -112,13 +120,19 @@ const ModalRequisitos = ({ evento, onClose }) => {
               <span className="info-label-mr">Modalidad:</span>
               <span className="info-value-mr">
                 {evento.mod_eve === "PRESENCIAL" && (
-                  <span className="modalidad-badge-mr"><MapPin size={16} /> Presencial</span>
+                  <span className="modalidad-badge-mr">
+                    <MapPin size={16} /> Presencial
+                  </span>
                 )}
                 {evento.mod_eve === "VIRTUAL" && (
-                  <span className="modalidad-badge-mr virtual"><Monitor size={16} /> Virtual</span>
+                  <span className="modalidad-badge-mr virtual">
+                    <Monitor size={16} /> Virtual
+                  </span>
                 )}
                 {evento.mod_eve === "SEMIPRESENCIAL" && (
-                  <span className="modalidad-badge-mr semi"><Laptop size={16} /> Semipresencial</span>
+                  <span className="modalidad-badge-mr semi">
+                    <Laptop size={16} /> Semipresencial
+                  </span>
                 )}
                 {!evento.mod_eve && "No especificada"}
               </span>
@@ -146,7 +160,9 @@ const ModalRequisitos = ({ evento, onClose }) => {
             <h4>
               <FileText size={18} /> Descripción del Evento
             </h4>
-            <p className="descripcion-evento">{evento.des_eve || "No hay descripción disponible."}</p>
+            <p className="descripcion-evento">
+              {evento.des_eve || "No hay descripción disponible."}
+            </p>
           </div>
 
           <div className="seccion-requisitos-mr">
@@ -157,17 +173,29 @@ const ModalRequisitos = ({ evento, onClose }) => {
                 </h5>
                 <div className="grupos-participantes-mr">
                   <div className="grupo-participante-mr">
-                    <span className={`usuario-item-mr ${evento.dirigido_estudiantes ? 'dirigido' : 'no-dirigido'}`}>
+                    <span
+                      className={`usuario-item-mr ${
+                        evento.dirigido_estudiantes ? "dirigido" : "no-dirigido"
+                      }`}
+                    >
                       <Users size={14} /> Estudiantes
                     </span>
                   </div>
                   <div className="grupo-participante-mr">
-                    <span className={`usuario-item-mr ${evento.dirigido_docentes ? 'dirigido' : 'no-dirigido'}`}>
+                    <span
+                      className={`usuario-item-mr ${
+                        evento.dirigido_docentes ? "dirigido" : "no-dirigido"
+                      }`}
+                    >
                       <Users size={14} /> Docentes
                     </span>
                   </div>
                   <div className="grupo-participante-mr">
-                    <span className={`usuario-item-mr ${evento.dirigido_publico ? 'dirigido' : 'no-dirigido'}`}>
+                    <span
+                      className={`usuario-item-mr ${
+                        evento.dirigido_publico ? "dirigido" : "no-dirigido"
+                      }`}
+                    >
                       <Users size={14} /> Público General
                     </span>
                   </div>
@@ -181,10 +209,14 @@ const ModalRequisitos = ({ evento, onClose }) => {
                 {evento.eventos_carrera && evento.eventos_carrera.length > 0 ? (
                   <div className="carreras-contenedor-mr">
                     {evento.eventos_carrera.map((carreraEvento) => (
-                      <div key={carreraEvento.id_eve_car} className="carrera-item-mr">
+                      <div
+                        key={carreraEvento.id_eve_car}
+                        className="carrera-item-mr"
+                      >
                         <FileText size={14} />
                         <span className="carrera-nombre-mr">
-                          {carreraEvento.carrera?.nom_car || "Carrera no especificada"}
+                          {carreraEvento.carrera?.nom_car ||
+                            "Carrera no especificada"}
                         </span>
                       </div>
                     ))}
@@ -192,7 +224,10 @@ const ModalRequisitos = ({ evento, onClose }) => {
                 ) : (
                   <div className="todas-carreras-mr">
                     <FileText size={16} />
-                    <span>Este evento está abierto a todas las carreras de la universidad</span>
+                    <span>
+                      Este evento está abierto a todas las carreras de la
+                      universidad
+                    </span>
                   </div>
                 )}
               </div>
@@ -226,12 +261,18 @@ const ModalRequisitos = ({ evento, onClose }) => {
             style={{ marginTop: "1rem", textAlign: "center", color: "#6b7280" }}
           >
             <p>
-              Para inscribirse en este evento, {" "}
-              <a href="/login" style={{ color: "#8a1538", textDecoration: "underline" }}>
+              Para inscribirse en este evento,{" "}
+              <a
+                href="/login"
+                style={{ color: "#8a1538", textDecoration: "underline" }}
+              >
                 inicie sesión
               </a>{" "}
               o{" "}
-              <a href="/registro" style={{ color: "#8a1538", textDecoration: "underline" }}>
+              <a
+                href="/registro"
+                style={{ color: "#8a1538", textDecoration: "underline" }}
+              >
                 regístrese
               </a>{" "}
               en la plataforma.

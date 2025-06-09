@@ -34,6 +34,11 @@
   transition: transform 0.2s ease, box-shadow 0.3s ease;
 }
 
+.evento-portada-er {
+  border: #0000007b 1px solid;
+  box-shadow: #0000007b 0px 2px 4px;
+}
+
 .limpiar-buscador-er {
   position: absolute;
   right: 12px;

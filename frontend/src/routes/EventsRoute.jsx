@@ -21,19 +21,29 @@ const formatearFechaUTC = (fechaStr) => {
   if (!fechaStr) return "-";
   try {
     // Primero aseguramos que la fecha esté en formato UTC para evitar ajustes de zona horaria
-    const fechaParts = fechaStr.split("T")[0].split("-");
-    const year = parseInt(fechaParts[0]);
-    const month = parseInt(fechaParts[1]) - 1; // En JS, los meses van de 0 a 11
-    const day = parseInt(fechaParts[2]);
+    const [datePart, timePart] = fechaStr.split("T");
+    const [year, month, day] = datePart.split("-");
+    const [hours, minutes] = timePart ? timePart.split(":") : ["00", "00"];
 
-    const fecha = new Date(Date.UTC(year, month, day));
+    const fecha = new Date(
+      Date.UTC(
+        parseInt(year),
+        parseInt(month) - 1,
+        parseInt(day),
+        parseInt(hours),
+        parseInt(minutes)
+      )
+    );
 
     if (isNaN(fecha.getTime())) return "-"; // Verifica si la fecha es válida
 
-    return fecha.toLocaleDateString("es-EC", {
+    return fecha.toLocaleString("es-EC", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hourCycle: "h23",
       timeZone: "UTC", // Importante: usar UTC para evitar desplazamientos
     });
   } catch (error) {
@@ -560,7 +570,7 @@ const EventsRoute = () => {
               <img
                 src={evento.img_por_eve || "https://i.imgur.com/c6Ry30Z.jpeg"}
                 alt={`Portada de ${evento.nom_eve}`}
-                className="evento-portada"
+                className="evento-portada-er"
                 style={{
                   width: "100%",
                   height: "180px",

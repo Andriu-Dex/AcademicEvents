@@ -90,8 +90,8 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
         nom_eve: evento.nom_eve || "",
         des_eve: evento.des_eve || "",
         tip_eve: evento.tip_eve || "",
-        fec_ini_eve: evento.fec_ini_eve ? evento.fec_ini_eve.split("T")[0] : "",
-        fec_fin_eve: evento.fec_fin_eve ? evento.fec_fin_eve.split("T")[0] : "",
+        fec_ini_eve: evento.fec_ini_eve || "",
+        fec_fin_eve: evento.fec_fin_eve || "",
         dur_hor_eve: evento.dur_hor_eve ? Number(evento.dur_hor_eve) : "",
         val_eve: Number(evento.val_eve),
         por_min_asi_eve: Number(evento.por_min_asi_eve),
@@ -446,8 +446,9 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
                 name="nom_eve"
                 value={formData.nom_eve}
                 onChange={handleInputChange}
-                placeholder={`Ingrese el nombre del ${esCurso ? "curso" : "evento"
-                  }`}
+                placeholder={`Ingrese el nombre del ${
+                  esCurso ? "curso" : "evento"
+                }`}
                 required
               />
             </div>
@@ -508,8 +509,9 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
               name="des_eve"
               value={formData.des_eve}
               onChange={handleInputChange}
-              placeholder={`Describe el contenido y objetivos del ${esCurso ? "curso" : "evento"
-                }`}
+              placeholder={`Describe el contenido y objetivos del ${
+                esCurso ? "curso" : "evento"
+              }`}
               rows={4}
             />
           </div>
@@ -527,27 +529,38 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
                 <Calendar size={18} />{" "}
                 <DatePicker
                   selected={
-                    formData.fec_ini_eve
-                      ? new Date(formData.fec_ini_eve + "T12:00:00Z")
-                      : null
+                    formData.fec_ini_eve ? new Date(formData.fec_ini_eve) : null
                   }
                   onChange={(date) => {
-                    // Usar UTC para evitar problemas de zona horaria
-                    const year = date.getUTCFullYear();
-                    const month = String(date.getUTCMonth() + 1).padStart(
+                    if (!date) return;
+                    // Formatear la fecha usando UTC para mantener la hora exacta
+                    const utcYear = date.getUTCFullYear();
+                    const utcMonth = String(date.getUTCMonth() + 1).padStart(
                       2,
                       "0"
                     );
-                    const day = String(date.getUTCDate()).padStart(2, "0");
-                    const formattedDate = `${year}-${month}-${day}`;
+                    const utcDay = String(date.getUTCDate()).padStart(2, "0");
+                    const utcHours = String(date.getUTCHours()).padStart(
+                      2,
+                      "0"
+                    );
+                    const utcMinutes = String(date.getUTCMinutes()).padStart(
+                      2,
+                      "0"
+                    );
+                    const formattedDate = `${utcYear}-${utcMonth}-${utcDay}T${utcHours}:${utcMinutes}:00`;
                     setFormData((prev) => ({
                       ...prev,
                       fec_ini_eve: formattedDate,
                     }));
                   }}
-                  dateFormat="dd/MM/yyyy"
+                  dateFormat="dd/MM/yyyy HH:mm"
+                  showTimeSelect
+                  timeFormat="HH:mm"
+                  timeIntervals={15}
+                  timeCaption="Hora"
                   locale="es"
-                  placeholderText="Seleccionar fecha"
+                  placeholderText="Seleccionar fecha y hora"
                   className="date-picker-input"
                   required
                 />
@@ -559,32 +572,41 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
                 <Calendar size={18} />{" "}
                 <DatePicker
                   selected={
-                    formData.fec_fin_eve
-                      ? new Date(formData.fec_fin_eve + "T12:00:00Z")
-                      : null
+                    formData.fec_fin_eve ? new Date(formData.fec_fin_eve) : null
                   }
                   onChange={(date) => {
-                    // Usar UTC para evitar problemas de zona horaria
-                    const year = date.getUTCFullYear();
-                    const month = String(date.getUTCMonth() + 1).padStart(
+                    if (!date) return;
+                    // Formatear la fecha usando UTC para mantener la hora exacta
+                    const utcYear = date.getUTCFullYear();
+                    const utcMonth = String(date.getUTCMonth() + 1).padStart(
                       2,
                       "0"
                     );
-                    const day = String(date.getUTCDate()).padStart(2, "0");
-                    const formattedDate = `${year}-${month}-${day}`;
+                    const utcDay = String(date.getUTCDate()).padStart(2, "0");
+                    const utcHours = String(date.getUTCHours()).padStart(
+                      2,
+                      "0"
+                    );
+                    const utcMinutes = String(date.getUTCMinutes()).padStart(
+                      2,
+                      "0"
+                    );
+                    const formattedDate = `${utcYear}-${utcMonth}-${utcDay}T${utcHours}:${utcMinutes}:00`;
                     setFormData((prev) => ({
                       ...prev,
                       fec_fin_eve: formattedDate,
                     }));
                   }}
-                  dateFormat="dd/MM/yyyy"
+                  dateFormat="dd/MM/yyyy HH:mm"
+                  showTimeSelect
+                  timeFormat="HH:mm"
+                  timeIntervals={15}
+                  timeCaption="Hora"
                   locale="es"
-                  placeholderText="Seleccionar fecha"
+                  placeholderText="Seleccionar fecha y hora"
                   className="date-picker-input"
                   minDate={
-                    formData.fec_ini_eve
-                      ? new Date(formData.fec_ini_eve + "T12:00:00Z")
-                      : null
+                    formData.fec_ini_eve ? new Date(formData.fec_ini_eve) : null
                   }
                   required
                 />
