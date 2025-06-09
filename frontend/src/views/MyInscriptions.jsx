@@ -116,6 +116,10 @@ const MyInscriptions = () => {
       console.log(
         `Enviando comprobante para inscripción ID: ${inscripcionSeleccionada.id_ins}`
       );
+      console.log(
+        "Estado actual de la inscripción:",
+        inscripcionSeleccionada.est_ins
+      );
 
       const response = await axiosInstance.put(
         `/reenviar/${inscripcionSeleccionada.id_ins}`,

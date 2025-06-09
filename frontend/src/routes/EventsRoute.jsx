@@ -60,12 +60,30 @@ const EventsRoute = () => {
     const obtenerEventos = async () => {
       try {
         // Primero obtenemos el perfil completo con información de carrera
+        console.log("🔍 Obteniendo perfil de usuario...");
         const perfilRes = await axiosInstance.get("/perfil");
         const perfilCompleto = perfilRes.data;
+        console.log("✅ Perfil obtenido:", perfilCompleto);
 
-        // Luego obtenemos los eventos
-        const eventosRes = await axiosInstance.get("/eventos");
-        setEventos(eventosRes.data);
+        // Luego obtenemos los eventos con un parámetro para evitar caché
+        const timestamp = new Date().getTime();
+        console.log("🔍 Obteniendo eventos...");
+        const eventosRes = await axiosInstance.get(`/eventos?_t=${timestamp}`);
+
+        // Verificar si hay discrepancias entre el cupo calculado y el almacenado
+        console.log("Verificando cupos disponibles...");
+        try {
+          await axiosInstance.get("/eventos-verificar-cupos");
+        } catch (verifyError) {
+          console.warn("Error al verificar cupos:", verifyError);
+          // Continuar con la carga normal aunque falle la verificación
+        }
+
+        // Volver a obtener eventos después de verificar cupos
+        const eventosActualizadosRes = await axiosInstance.get(
+          `/eventos?_t=${new Date().getTime()}`
+        );
+        setEventos(eventosActualizadosRes.data);
 
         // Actualizamos el contexto de usuario con la información completa
         if (perfilCompleto && perfilCompleto.carrera) {

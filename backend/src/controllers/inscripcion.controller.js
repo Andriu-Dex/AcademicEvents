@@ -1,6 +1,55 @@
 const prisma = require("../config/db");
 const { estado_inscripcion } = require("../generated/prisma");
 const { subirImagenAImgur } = require("../utils/imgur.utils");
+const {
+  calcularCuposDisponibles,
+  sincronizarCuposDisponibles,
+  actualizarEstadoYSincronizarCupos,
+} = require("../utils/cupo.utils");
+
+/**
+ * Función auxiliar para guardar o actualizar una observación
+ * @param {string} idInscripcion - ID de la inscripción
+ * @param {string} observacion - Texto de la observación
+ * @param {string} idAdmin - ID del administrador que crea la observación
+ */
+async function guardarObservacion(idInscripcion, observacion, idAdmin) {
+  console.log(`Procesando observación para inscripción ${idInscripcion}`);
+
+  // Verificar si ya existe una observación para esta inscripción
+  const observacionExistente = await prisma.observacion_inscripcion.findUnique({
+    where: { id_ins_per: idInscripcion },
+  });
+
+  console.log(
+    "¿Existe observación previa?",
+    observacionExistente ? "Sí" : "No"
+  );
+
+  if (observacionExistente) {
+    // Actualizar observación existente
+    console.log("Actualizando observación existente");
+    await prisma.observacion_inscripcion.update({
+      where: { id_ins_per: idInscripcion },
+      data: {
+        obs_ins: observacion,
+        id_adm_cre_obs: idAdmin,
+      },
+    });
+  } else {
+    // Crear nueva observación
+    console.log("Creando nueva observación");
+    await prisma.observacion_inscripcion.create({
+      data: {
+        id_ins_per: idInscripcion,
+        obs_ins: observacion,
+        id_adm_cre_obs: idAdmin,
+      },
+    });
+  }
+
+  console.log("✅ Observación guardada correctamente");
+}
 
 // Manejo de errores de multer
 const manejarErroresDeMulter = (err, req, res, next) => {
@@ -137,14 +186,18 @@ const crearInscripcion = async (req, res) => {
     if (yaInscrito && yaInscrito.est_ins === "RECHAZADA") {
       try {
         console.log(`Actualizando inscripción rechazada: ${yaInscrito.id_ins}`);
-        // Actualizar la inscripción existente
-        await prisma.inscripcion.update({
-          where: { id_ins: yaInscrito.id_ins },
-          data: {
-            est_ins: "PENDIENTE", // Cambiar estado a PENDIENTE
-            fec_ins: new Date(), // Actualizar fecha de inscripción
-          },
-        });
+
+        // Usamos nuestra función centralizada para actualizar el estado
+        const resultado = await actualizarEstadoYSincronizarCupos(
+          yaInscrito.id_ins,
+          "PENDIENTE",
+          { fec_ins: new Date() } // Actualizar fecha de inscripción
+        );
+
+        console.log(
+          `✅ Estado actualizado de ${resultado.inscripcion.estadoAnterior} a PENDIENTE`
+        );
+        console.log(`📊 Cupos disponibles: ${resultado.evento.cuposDespues}`);
 
         // Si hay un archivo, lo procesamos
         let urlComprobante = null;
@@ -209,61 +262,100 @@ const crearInscripcion = async (req, res) => {
       console.log(
         `Creando nueva inscripción para el usuario ${id_cue} en evento ${id_eve}`
       );
-      // Crear la inscripción
-      const nuevaInscripcion = await prisma.inscripcion.create({
-        data: {
-          id_cor_ins: id_cue, // Ahora usamos id_cor_ins en lugar de id_usu_ins
-          id_eve_ins: id_eve,
-          est_ins: "PENDIENTE", // Usando el nuevo campo est_ins
-        },
-      });
-      console.log(`Inscripción creada con ID: ${nuevaInscripcion.id_ins}`);
 
-      // Crear la carta de motivación
-      console.log(`Guardando carta de motivación`);
-      await prisma.carta_motivacion.create({
-        data: {
-          id_ins_per: nuevaInscripcion.id_ins,
-          con_car_mot: carta_motivacion,
-          est_car_mot: "PENDIENTE",
-        },
-      });
-      console.log(`Carta de motivación guardada correctamente`);
+      // Realizamos todo el proceso en una transacción para garantizar consistencia
+      await prisma
+        .$transaction(async (tx) => {
+          console.log(`🔄 Iniciando transacción para crear inscripción`);
 
-      // Si se proporciona un archivo, subirlo a Imgur y guardar la URL
-      if (archivo) {
-        try {
-          console.log(`Procesando comprobante de pago`);
-          // Subir la imagen a Imgur
-          const imgurUrl = await subirImagenAImgur(archivo);
-          console.log(`Imagen subida a Imgur: ${imgurUrl}`);
+          // 1. Recalcular cupos disponibles antes de crear la inscripción para verificar
+          const { disponibles } = await calcularCuposDisponibles(id_eve, tx);
+          console.log(
+            `📊 Cupos disponibles actuales verificados: ${disponibles}`
+          );
 
-          // Crear el comprobante de pago con la URL de Imgur
-          await prisma.comprobante_pago.create({
+          if (disponibles <= 0) {
+            throw new Error("No hay cupos disponibles para este evento");
+          }
+
+          // 2. Crear la inscripción
+          const nuevaInscripcion = await tx.inscripcion.create({
             data: {
-              id_ins_per: nuevaInscripcion.id_ins,
-              url_com_pag: imgurUrl,
-              est_com_pag: "PENDIENTE",
+              id_cor_ins: id_cue,
+              id_eve_ins: id_eve,
+              est_ins: "PENDIENTE",
+              cup_ocu: false, // Las inscripciones PENDIENTES no ocupan cupo
             },
           });
-          console.log(`Comprobante guardado correctamente`);
-        } catch (imgurError) {
-          console.error(`Error al subir imagen a Imgur:`, imgurError);
-          // Si falla la subida a Imgur, registramos el error pero continuamos con la inscripción
-          await prisma.comprobante_pago.create({
+          console.log(
+            `✅ Inscripción creada con ID: ${nuevaInscripcion.id_ins}`
+          );
+
+          // 3. Crear la carta de motivación
+          await tx.carta_motivacion.create({
             data: {
               id_ins_per: nuevaInscripcion.id_ins,
-              url_com_pag: "Error al subir imagen",
-              est_com_pag: "ERROR",
+              con_car_mot: carta_motivacion,
+              est_car_mot: "PENDIENTE",
             },
           });
-          console.log(`Se registró el error con el comprobante`);
-        }
-      }
+          console.log(`✅ Carta de motivación guardada correctamente`);
 
-      res.status(201).json(nuevaInscripcion);
+          // 4. No es necesario sincronizar cupos aquí ya que el estado es PENDIENTE
+          // y solo las inscripciones ACEPTADAS afectan los cupos disponibles
+
+          // Devolvemos la inscripción creada para usarla fuera de la transacción
+          return nuevaInscripcion;
+        })
+        .then(async (nuevaInscripcion) => {
+          // Este bloque se ejecuta después de que la transacción se ha completado con éxito
+
+          // Si se proporciona un archivo, lo procesamos después de la transacción principal
+          // para no bloquear la creación de la inscripción si hay problemas con la imagen
+          if (archivo) {
+            try {
+              console.log(`Procesando comprobante de pago`);
+              // Subir la imagen a Imgur
+              const imgurUrl = await subirImagenAImgur(archivo);
+              console.log(`Imagen subida a Imgur: ${imgurUrl}`);
+
+              // Crear el comprobante de pago con la URL de Imgur
+              await prisma.comprobante_pago.create({
+                data: {
+                  id_ins_per: nuevaInscripcion.id_ins,
+                  url_com_pag: imgurUrl,
+                  est_com_pag: "PENDIENTE",
+                },
+              });
+              console.log(`Comprobante guardado correctamente`);
+            } catch (imgurError) {
+              console.error(`Error al subir imagen a Imgur:`, imgurError);
+              // Si falla la subida a Imgur, registramos el error pero continuamos con la inscripción
+              await prisma.comprobante_pago.create({
+                data: {
+                  id_ins_per: nuevaInscripcion.id_ins,
+                  url_com_pag: "Error al subir imagen",
+                  est_com_pag: "ERROR",
+                },
+              });
+              console.log(`Se registró el error con el comprobante`);
+            }
+          }
+
+          // Verificamos los cupos después de todo el proceso
+          await sincronizarCuposDisponibles(id_eve);
+
+          res.status(201).json(nuevaInscripcion);
+        });
     } catch (error) {
       console.error(`Error en el bloque de creación de inscripción:`, error);
+
+      if (error.message === "No hay cupos disponibles para este evento") {
+        return res.status(400).json({
+          msg: error.message,
+        });
+      }
+
       if (
         error.code === "P2002" &&
         error.meta?.target?.includes("id_cor_ins_id_eve_ins")
@@ -319,9 +411,17 @@ const validarInscripcion = async (req, res) => {
       console.error("Estado inválido:", est_ins);
       return res.status(400).json({ msg: "Estado inválido: " + est_ins });
     }
+
+    // Obtener la inscripción actual con datos del evento
     const inscripcion = await prisma.inscripcion.findUnique({
       where: { id_ins: id },
-      include: { evento: true },
+      include: {
+        evento: {
+          include: {
+            eventos_curso: true, // Incluir datos del curso si existe
+          },
+        },
+      },
     });
 
     if (!inscripcion) {
@@ -331,6 +431,33 @@ const validarInscripcion = async (req, res) => {
     const estadoNuevo = est_ins;
     const estadoAnterior = inscripcion.est_ins;
     const idEvento = inscripcion.id_eve_ins;
+
+    // Validación especial: no permitir cambio de APROBADO o REPROBADO a RECHAZADA
+    const estadosFinales = [
+      "APROBADO",
+      "REPROBADO_NOTA",
+      "REPROBADO_ASISTENCIA",
+      "REPROBADO_TOTAL",
+    ];
+    if (
+      estadosFinales.includes(estadoAnterior) &&
+      estadoNuevo === "RECHAZADA"
+    ) {
+      return res.status(400).json({
+        msg: "No se puede cambiar una inscripción finalizada (APROBADO o REPROBADO) a RECHAZADA.",
+      });
+    }
+
+    // Verificación para REPROBADO/APROBADO
+    if (
+      estadosFinales.includes(estadoAnterior) &&
+      (estadoNuevo === "PENDIENTE" || estadoNuevo === "RECHAZADA")
+    ) {
+      console.log(
+        `ALERTA: Se intenta cambiar de ${estadoAnterior} a ${estadoNuevo}, lo cual podría afectar los cupos`
+      );
+      // Permitimos la operación pero registramos la alerta
+    }
 
     let asistenciaNum = asistencia !== undefined ? Number(asistencia) : -1;
     // Usar null en lugar de -1 para notas no definidas
@@ -379,75 +506,65 @@ const validarInscripcion = async (req, res) => {
       nuevoEstado === "REPROBADO_ASISTENCIA" ||
       nuevoEstado === "REPROBADO_TOTAL"
     ) {
-      // Actualizar el estado de la inscripción
-      await prisma.inscripcion.update({
-        where: { id_ins: id },
-        data: {
-          est_ins: nuevoEstado, // Estado calculado
-          por_asi_fin_usu: asistenciaNum, // Solo actualizar asistencia si se envió
-        },
-      });
+      console.log(`⚠️ Inscripción finalizando con estado: ${nuevoEstado}`);
 
-      if (inscripcion.evento.tip_eve === "CURSO") {
-        const inscripcionCurso = await prisma.inscripcion_curso.findUnique({
-          where: { id_ins_cur: id },
-        });
-        if (inscripcionCurso) {
-          await prisma.inscripcion_curso.update({
-            where: { id_ins_cur: id },
-            data: {
-              not_fin_usu: notaFinalNum, // Actualizar la nota final
-            },
-          });
-        } else {
-          await prisma.inscripcion_curso.create({
-            data: {
-              id_ins_cur: id,
-              not_fin_usu: notaFinalNum, // Guardar la nota final
-            },
-          });
-        }
-      }
-
-      if (observacion) {
-        console.log("Procesando observación:", observacion);
-        // Verificar si ya existe una observación para esta inscripción
-        const observacionExistente =
-          await prisma.observacion_inscripcion.findUnique({
-            where: { id_ins_per: id },
-          });
-
-        console.log(
-          "¿Existe observación previa?",
-          observacionExistente ? "Sí" : "No"
+      try {
+        // Usamos nuestra función centralizada para actualizar el estado
+        const resultado = await actualizarEstadoYSincronizarCupos(
+          id,
+          nuevoEstado,
+          { por_asi_fin_usu: asistenciaNum }
         );
 
-        if (observacionExistente) {
-          // Actualizar observación existente
-          console.log("Actualizando observación existente");
-          await prisma.observacion_inscripcion.update({
-            where: { id_ins_per: id },
-            data: {
-              obs_ins: observacion,
-              id_adm_cre_obs: req.usuario.id,
-            },
-          });
-        } else {
-          // Crear nueva observación
-          console.log("Creando nueva observación");
-          await prisma.observacion_inscripcion.create({
-            data: {
-              id_ins_per: id,
-              obs_ins: observacion,
-              id_adm_cre_obs: req.usuario.id,
-            },
-          });
-        }
-      }
+        console.log(
+          `✅ Estado actualizado de ${resultado.inscripcion.estadoAnterior} a ${nuevoEstado}`
+        );
 
-      return res.status(200).json({
-        msg: `Inscripción finalizada correctamente con estado: ${nuevoEstado}`,
-      });
+        if (resultado.evento.cuposCambiados) {
+          console.log(
+            `📈 Cupos disponibles actualizados: ${resultado.evento.cuposAntes} → ${resultado.evento.cuposDespues}`
+          );
+        } else {
+          console.log(
+            `📊 Cupos disponibles sin cambios: ${resultado.evento.cuposDespues}`
+          );
+        }
+
+        // Actualizar la nota si es un curso
+        if (inscripcion.evento.tip_eve === "CURSO") {
+          const inscripcionCurso = await prisma.inscripcion_curso.findUnique({
+            where: { id_ins_cur: id },
+          });
+
+          if (inscripcionCurso) {
+            await prisma.inscripcion_curso.update({
+              where: { id_ins_cur: id },
+              data: { not_fin_usu: notaFinalNum },
+            });
+            console.log(`✅ Nota actualizada a: ${notaFinalNum}`);
+          } else {
+            await prisma.inscripcion_curso.create({
+              data: {
+                id_ins_cur: id,
+                not_fin_usu: notaFinalNum,
+              },
+            });
+            console.log(`✅ Nota registrada: ${notaFinalNum}`);
+          }
+        }
+
+        // Guardar observación si se proporciona
+        if (observacion) {
+          await guardarObservacion(id, observacion, req.usuario.id);
+        }
+
+        return res.status(200).json({
+          msg: `Inscripción finalizada correctamente con estado: ${nuevoEstado}`,
+        });
+      } catch (error) {
+        console.error(`❌ Error al finalizar inscripción:`, error);
+        throw error;
+      }
     }
 
     // VALIDACIÓN DE CUPOS DISPONIBLES
@@ -460,88 +577,60 @@ const validarInscripcion = async (req, res) => {
       }
     }
 
-    // LÓGICA DE ACTUALIZACIÓN DE CUPOS
-    let actualizacionCupo = 0;
+    // ENFOQUE MEJORADO: UTILIZANDO LA FUNCIÓN CENTRALIZADA DE ACTUALIZACIÓN DE ESTADO
+    console.log(`📊 MÉTODO ROBUSTO: Actualización atómica de estado y cupos`);
+    console.log(`Cambio de estado: ${estadoAnterior} → ${estadoNuevo}`);
+    console.log(`ID Evento: ${idEvento}, ID Inscripción: ${id}`);
 
-    // Casos donde se debe decrementar el cupo (quitar un cupo disponible)
-    if (estadoAnterior === "PENDIENTE" && estadoNuevo === "ACEPTADA") {
-      actualizacionCupo = -1; // Una inscripción pendiente se acepta: se ocupa un cupo
-    }
+    try {
+      // Utilizamos la función centralizada que maneja todo en una transacción atómica
+      const resultado = await actualizarEstadoYSincronizarCupos(
+        id,
+        estadoNuevo,
+        { por_asi_fin_usu: asistenciaNum } // Datos adicionales para la actualización
+      );
 
-    // Casos donde se debe incrementar el cupo (liberar un cupo)
-    if (
-      (estadoAnterior === "ACEPTADA" || estadoAnterior === "PENDIENTE") &&
-      estadoNuevo === "RECHAZADA"
-    ) {
-      actualizacionCupo = 1; // Una inscripción aceptada/pendiente se rechaza: se libera un cupo
-    }
+      console.log(
+        `✅ Actualización de estado y sincronización de cupos completada`
+      );
+      console.log(
+        `📊 Resultado: Estado cambiado de ${resultado.inscripcion.estadoAnterior} a ${resultado.inscripcion.estadoNuevo}`
+      );
 
-    if (estadoAnterior === "ACEPTADA" && estadoNuevo === "PENDIENTE") {
-      actualizacionCupo = 1; // Una inscripción aceptada vuelve a pendiente: se libera un cupo
-    } // Actualizar cupos si es necesario
-    if (actualizacionCupo !== 0) {
-      const eventoActualizado = await prisma.evento.update({
-        where: { id_eve: idEvento },
-        data: {
-          cup_dis_eve: {
-            increment: actualizacionCupo,
-          },
-        },
-      });
+      if (resultado.evento.cuposCambiados) {
+        console.log(
+          `📈 Cupos disponibles actualizados de ${resultado.evento.cuposAntes} a ${resultado.evento.cuposDespues}`
+        );
+      } else {
+        console.log(
+          `📊 No fue necesario cambiar los cupos disponibles (siguen en ${resultado.evento.cuposDespues})`
+        );
+      }
 
-      // BLOQUEO AUTOMÁTICO: Si cupos llegan a 0, bloquear nuevas inscripciones
-      if (
-        eventoActualizado.cup_dis_eve === 0 &&
-        estadoAnterior === "PENDIENTE" &&
-        estadoNuevo === "ACEPTADA"
-      ) {
+      // BLOQUEO AUTOMÁTICO: Si cupos llegan a 0, registrar alerta
+      if (resultado.evento.cuposDespues === 0) {
+        console.log("🚫 ALERTA: Cupos agotados para este evento");
         // Nota: El bloqueo se maneja en la función crearInscripcion al verificar cup_dis_eve > 0
       }
+    } catch (error) {
+      console.error(
+        "❌ Error en actualización de estado y sincronización de cupos:",
+        error
+      );
+      // Si hay error en la transacción, se hace rollback automáticamente
+      throw error; // Propagar el error para que se maneje en el catch global
     }
 
-    // Actualizar inscripción con los datos
-    const actualizada = await prisma.inscripcion.update({
-      where: { id_ins: id },
-      data: {
-        est_ins, // Actualizado a usar est_ins
-        por_asi_fin_usu: asistenciaNum, // Actualizado a usar por_asi_fin_usu
-      },
-    });
+    // Ahora vamos a eliminar la actualización duplicada que se hacía después de la transacción
+    // y solo conservar las actualizaciones de elementos adicionales como observaciones o datos de curso
 
     // Guardar observación si se proporciona
     if (observacion) {
-      console.log("Procesando observación:", observacion);
-      // Verificar si ya existe una observación para esta inscripción
-      const observacionExistente =
-        await prisma.observacion_inscripcion.findUnique({
-          where: { id_ins_per: id },
-        });
-
-      console.log(
-        "¿Existe observación previa?",
-        observacionExistente ? "Sí" : "No"
-      );
-
-      if (observacionExistente) {
-        // Actualizar observación existente
-        console.log("Actualizando observación existente");
-        await prisma.observacion_inscripcion.update({
-          where: { id_ins_per: id },
-          data: {
-            obs_ins: observacion,
-            id_adm_cre_obs: req.usuario.id,
-          },
-        });
-      } else {
-        // Crear nueva observación
-        console.log("Creando nueva observación");
-        await prisma.observacion_inscripcion.create({
-          data: {
-            id_ins_per: id,
-            obs_ins: observacion,
-            id_adm_cre_obs: req.usuario.id,
-          },
-        });
+      try {
+        await guardarObservacion(id, observacion, req.usuario.id);
+      } catch (error) {
+        console.error("Error al procesar observación:", error);
+        // Continuar con la operación aunque falle la observación
       }
     }
 
@@ -576,6 +665,11 @@ const validarInscripcion = async (req, res) => {
         console.log("Nueva inscripción curso creada correctamente");
       }
     }
+
+    // Obtener los datos actualizados de la inscripción para devolverlos en la respuesta
+    const actualizada = await prisma.inscripcion.findUnique({
+      where: { id_ins: id },
+    });
 
     res.status(200).json({
       msg: "Inscripción actualizada correctamente",
@@ -701,6 +795,7 @@ const path = require("path");
 
 const reenviarComprobante = async (req, res) => {
   try {
+    console.log("========== INICIO REENVIAR COMPROBANTE ==========");
     const { id } = req.params;
     const archivo = req.file;
 
@@ -746,6 +841,18 @@ const reenviarComprobante = async (req, res) => {
     console.log(
       `Inscripción encontrada: ${inscripcion.id_ins}, Usuario: ${inscripcion.id_cor_ins}, Solicitante: ${req.usuario.id}`
     );
+    console.log(`Estado actual de la inscripción: ${inscripcion.est_ins}`);
+    console.log(`ID del evento: ${inscripcion.id_eve_ins}`);
+
+    // Verificar cupos antes de cualquier operación
+    console.log("Verificando cupos iniciales del evento...");
+    const cuposIniciales = await prisma.evento.findUnique({
+      where: { id_eve: inscripcion.id_eve_ins },
+      select: { cup_dis_eve: true, cup_max_eve: true, nom_eve: true },
+    });
+    console.log(
+      `Cupos iniciales para evento '${cuposIniciales.nom_eve}': ${cuposIniciales.cup_dis_eve}/${cuposIniciales.cup_max_eve}`
+    );
 
     // Solo puede reenviar el mismo estudiante
     if (inscripcion.id_cor_ins !== req.usuario.id) {
@@ -753,6 +860,24 @@ const reenviarComprobante = async (req, res) => {
         .status(403)
         .json({ msg: "No tienes permiso para modificar esta inscripción" });
     }
+
+    // Verificar si hay cambio de estado que requiere actualización de cupos
+    const estadoAnterior = inscripcion.est_ins;
+    const estadoNuevo = "PENDIENTE";
+    let actualizacionCupo = 0;
+
+    console.log(`Cambio de estado: ${estadoAnterior} → ${estadoNuevo}`);
+
+    // IMPORTANTE: Nunca afectar cupos en el reenvío de comprobante
+    // El reenvío es un caso especial que no debe modificar los cupos disponibles
+    console.log(
+      "‼️ ATENCIÓN: El reenvío de comprobante es un caso especial y no debe modificar cupos"
+    );
+    actualizacionCupo = 0;
+
+    console.log(
+      `‼️ NUNCA se modificarán cupos para reenvío de comprobante en transición ${estadoAnterior} → ${estadoNuevo}`
+    );
 
     try {
       // Subir la imagen a Imgur
@@ -770,19 +895,69 @@ const reenviarComprobante = async (req, res) => {
       });
       console.log("Comprobante registrado en la base de datos");
 
-      // Actualizar estado de la inscripción a pendiente
-      const actualizada = await prisma.inscripcion.update({
+      // Actualizar estado de la inscripción a pendiente y recalcular cupos en una transacción
+      console.log(`🔄 Utilizando función robusta para reenvío de comprobante`);
+
+      // Utilizamos la función centralizada que maneja todo en una transacción atómica
+      const resultado = await actualizarEstadoYSincronizarCupos(
+        id,
+        "PENDIENTE" // Siempre cambiamos a PENDIENTE en el reenvío de comprobante
+      );
+
+      console.log(
+        `✅ Actualización de estado y sincronización de cupos completada`
+      );
+      console.log(
+        `📊 Resultado: Estado cambiado de ${resultado.inscripcion.estadoAnterior} a ${resultado.inscripcion.estadoNuevo}`
+      );
+
+      if (resultado.evento.cuposCambiados) {
+        console.log(
+          `📈 Cupos disponibles actualizados de ${resultado.evento.cuposAntes} a ${resultado.evento.cuposDespues}`
+        );
+      } else {
+        console.log(
+          `📊 No fue necesario cambiar los cupos disponibles (siguen en ${resultado.evento.cuposDespues})`
+        );
+      }
+
+      // Obtener la inscripción actualizada para devolverla en la respuesta
+      const actualizada = await prisma.inscripcion.findUnique({
         where: { id_ins: id },
-        data: {
-          est_ins: "PENDIENTE",
-        },
       });
-      console.log("Inscripción actualizada a estado PENDIENTE");
+      console.log("Transacción completada correctamente");
+
+      // Verificar cupos finales para confirmar
+      try {
+        const cuposFinales = await prisma.evento.findUnique({
+          where: { id_eve: inscripcion.id_eve_ins },
+          select: { cup_dis_eve: true, cup_max_eve: true, nom_eve: true },
+        });
+        console.log(
+          `VERIFICACIÓN FINAL: Cupos para evento '${cuposFinales.nom_eve}': ${cuposFinales.cup_dis_eve}/${cuposFinales.cup_max_eve}`
+        );
+
+        // Comparar con cupos iniciales
+        const diferencia =
+          cuposFinales.cup_dis_eve - cuposIniciales.cup_dis_eve;
+        console.log(
+          `Diferencia de cupos: ${diferencia} (Deberían ser ${actualizacionCupo})`
+        );
+
+        if (diferencia !== actualizacionCupo) {
+          console.warn(
+            `ADVERTENCIA: La diferencia de cupos (${diferencia}) no coincide con lo esperado (${actualizacionCupo})`
+          );
+        }
+      } catch (error) {
+        console.error("Error al verificar cupos finales:", error);
+      }
 
       res.status(200).json({
         msg: "Comprobante reenviado correctamente",
         inscripcion: actualizada,
       });
+      console.log("========== FIN REENVIAR COMPROBANTE: ÉXITO ==========");
     } catch (errorSubida) {
       console.error("Error detallado al procesar comprobante:", errorSubida);
       return res.status(500).json({
@@ -791,6 +966,7 @@ const reenviarComprobante = async (req, res) => {
       });
     }
   } catch (error) {
+    console.error("========== ERROR EN REENVIAR COMPROBANTE ==========");
     console.error("Error general en reenviarComprobante:", error);
     res.status(500).json({
       msg: "Error al reenviar comprobante",
@@ -812,7 +988,11 @@ const obtenerInscripcionesPorEvento = async (req, res) => {
             usuario: true,
           },
         },
-        evento: true,
+        evento: {
+          include: {
+            eventos_curso: true, // Incluir información del curso si existe
+          },
+        },
         inscripcion_curso: true,
         comprobantes_pago: {
           orderBy: { fec_sub_com_pag: "desc" },
@@ -838,6 +1018,9 @@ const obtenerInscripcionesPorEvento = async (req, res) => {
           fec_ins: inscripcion.fec_ins,
           evento: {
             nom_eve: inscripcion.evento.nom_eve,
+            tip_eve: inscripcion.evento.tip_eve,
+            val_eve: inscripcion.evento.val_eve,
+            id_eve: inscripcion.evento.id_eve,
           },
           comprobante: inscripcion.comprobantes_pago[0]?.url_com_pag || null,
           carta_motivacion:

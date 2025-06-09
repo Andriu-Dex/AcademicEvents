@@ -11,6 +11,8 @@ const {
   eliminarEvento,
   obtenerEventoPorId,
   obtenerEventosPorTipo,
+  verificarYCorregirCupos,
+  verificarYCorregirTodosLosCupos,
 } = require("../controllers/evento.controller");
 
 // ============================
@@ -19,6 +21,9 @@ const {
 
 // Obtener todos los eventos (público)
 router.get("/eventos", obtenerEventos);
+
+// Verificar y corregir cupos (público) - Sin autenticación para solucionar el problema de cupos
+router.get("/eventos-verificar-cupos", verificarYCorregirTodosLosCupos);
 
 // Obtener un evento por ID (público)
 router.get("/eventos/:id", obtenerEventoPorId);
@@ -43,7 +48,26 @@ router.put(
 // Eliminar evento (solo admin)
 router.delete("/eventos/:id", verificarToken, onlyAdmin, eliminarEvento);
 
+// Verificar y corregir cupos (público) - Sin autenticación para solucionar el problema de cupos
+router.get("/eventos/verificar-cupos", verificarYCorregirTodosLosCupos);
+
 // Obtener eventos por tipo (público)
 router.get("/eventos/tipo/:tipo", obtenerEventosPorTipo);
+
+// Verificar y corregir cupos de un evento específico (solo admin)
+router.post(
+  "/eventos/:id/verificar-cupos",
+  verificarToken,
+  onlyAdmin,
+  verificarYCorregirCupos
+);
+
+// Verificar y corregir cupos de todos los eventos (solo admin)
+router.post(
+  "/eventos/verificar-todos-cupos",
+  verificarToken,
+  onlyAdmin,
+  verificarYCorregirTodosLosCupos
+);
 
 module.exports = router;

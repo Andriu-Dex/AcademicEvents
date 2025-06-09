@@ -4,6 +4,10 @@ import { toast } from "react-toastify"; // Importar toast para notificaciones
 // Crear una instancia de axios
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL + "/api", // URL base del backend desde las variables de entorno
+  headers: {
+    "Cache-Control": "no-cache",
+    Pragma: "no-cache",
+  },
 });
 
 // Variable para almacenar la función de logout
@@ -17,13 +21,18 @@ export const setLogoutFunction = (logout) => {
 // Interceptor de solicitudes - agregar token automáticamente
 axiosInstance.interceptors.request.use(
   (config) => {
+    console.log(`🔄 Enviando solicitud a: ${config.url}`);
     const token = localStorage.getItem("token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+      console.log(`🔑 Token incluido: ${token.substring(0, 15)}...`);
+    } else {
+      console.log(`⚠️ No hay token disponible`);
     }
     return config;
   },
   (error) => {
+    console.error(`❌ Error en solicitud: ${error.message}`);
     return Promise.reject(error);
   }
 );
@@ -34,9 +43,22 @@ let tokenExpirationNotified = false;
 // Interceptor de respuestas - manejar errores de autenticación
 axiosInstance.interceptors.response.use(
   (response) => {
+    console.log(`✅ Respuesta exitosa de: ${response.config.url}`);
     return response;
   },
   (error) => {
+    console.error(
+      `❌ Error en respuesta: ${error.config?.url || "URL desconocida"}`
+    );
+    console.error(
+      `📝 Detalles del error:`,
+      error.response?.data || error.message
+    );
+    console.error(
+      `🔢 Código de estado:`,
+      error.response?.status || "Desconocido"
+    );
+
     // Si el error es 401 (no autorizado), cerrar sesión automáticamente
     if (
       error.response &&

@@ -67,8 +67,19 @@ const EventosPublicos = () => {
 
     const obtenerEventos = async () => {
       try {
+        // Agregamos un timestamp para evitar caché
+        const timestamp = new Date().getTime();
+
+        // Verificar cupos antes de obtener eventos
+        try {
+          await axiosInstance.get("/eventos-verificar-cupos");
+        } catch (verifyError) {
+          console.warn("Error al verificar cupos:", verifyError);
+          // Continuar con la carga normal aunque falle la verificación
+        }
+
         // Utilizamos el endpoint que incluye las relaciones con carreras y cursos
-        const eventosRes = await axiosInstance.get("/eventos");
+        const eventosRes = await axiosInstance.get(`/eventos?_t=${timestamp}`);
 
         // Filtramos los eventos que tienen cupos disponibles
         const eventosPublicos = eventosRes.data.filter((evento) => {

@@ -30,6 +30,30 @@ const AdminEventInscription = () => {
   const [notaFinal, setNotaFinal] = useState("");
   const [enviandoFinalizacion, setEnviandoFinalizacion] = useState(false);
   const [eventoInfo, setEventoInfo] = useState(null);
+  const [corrigiendoCupos, setCorrigiendoCupos] = useState(false);
+
+  // Función para determinar el estado final al finalizar una inscripción
+  const determinarEstadoFinal = (asistencia, notaFinal, porcentajeMinimo) => {
+    // Si la asistencia es menor al porcentaje mínimo requerido
+    if (asistencia < porcentajeMinimo) {
+      return "REPROBADO_ASISTENCIA";
+    }
+
+    // Si es un curso, verificar la nota
+    if (inscripcionFinalizar?.evento?.tip_eve === "CURSO") {
+      // Obtener la nota mínima desde el curso
+      const notaMinima =
+        inscripcionFinalizar?.evento?.eventos_curso?.not_min_cur || 7;
+
+      // Si la nota es menor a la mínima, reprobar por nota
+      if (notaFinal < notaMinima) {
+        return "REPROBADO_NOTA";
+      }
+    }
+
+    // Si pasó todos los filtros, aprobar
+    return "APROBADO";
+  };
 
   const obtenerInscripciones = useCallback(async () => {
     try {
@@ -63,9 +87,40 @@ const AdminEventInscription = () => {
   const cambiarEstado = async (id_ins, estado) => {
     setActualizandoId(id_ins);
     try {
+      // Encontrar la inscripción actual
+      const inscripcionActual = inscripciones.find((i) => i.id_ins === id_ins);
+      if (!inscripcionActual) {
+        throw new Error("Inscripción no encontrada");
+      }
+
+      // Validar cambios de estado prohibidos
+      const estadosFinales = [
+        "APROBADO",
+        "REPROBADO_NOTA",
+        "REPROBADO_ASISTENCIA",
+        "REPROBADO_TOTAL",
+      ];
+      if (
+        estadosFinales.includes(inscripcionActual.estado) &&
+        estado === "RECHAZADA"
+      ) {
+        toast.error(
+          "No se puede cambiar una inscripción finalizada a RECHAZADA"
+        );
+        setActualizandoId(null);
+        return;
+      }
+
+      // Verificar si es un flujo de finalización
+      const esFlujoDeFinalizacion =
+        estadosFinales.includes(estado) ||
+        (estadosFinales.includes(inscripcionActual.estado) &&
+          estado === "ACEPTADA");
+
       console.log("Cambiando estado con los siguientes datos:");
       console.log("ID:", id_ins);
       console.log("Estado:", estado);
+      console.log("Es flujo de finalización:", esFlujoDeFinalizacion);
       console.log(
         "URL:",
         `${
@@ -78,7 +133,10 @@ const AdminEventInscription = () => {
         `${
           import.meta.env.VITE_API_URL
         }/api/admin/inscripciones/validar/${id_ins}`,
-        { est_ins: estado }, // Corregido: usar est_ins en lugar de estado
+        {
+          est_ins: estado,
+          esFlujoFinalizacion: esFlujoDeFinalizacion, // Agregar flag para todos los cambios de estado
+        },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
@@ -160,6 +218,96 @@ const AdminEventInscription = () => {
     Promise.all([obtenerInscripciones(), obtenerNombreEvento()]);
   }, [id, obtenerInscripciones, obtenerNombreEvento]);
 
+  // Función para verificar y corregir cupos del evento
+  const verificarYCorregirCupos = async () => {
+    setCorrigiendoCupos(true);
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/eventos/${id}/verificar-cupos`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      console.log("Respuesta de verificación de cupos:", response.data);
+
+      if (response.data.success) {
+        // Si no se requirió corrección
+        if (response.data.msg.includes("no se requiere corrección")) {
+          toast.success(
+            "✅ Los cupos están correctos, no se requiere corrección"
+          );
+        } else {
+          // Si se corrigieron los cupos
+          const { cup_dis_eve_anterior, cup_dis_eve_corregido, diferencia } =
+            response.data.detalles;
+
+          toast.success(
+            `✅ Cupos corregidos exitosamente. Antes: ${cup_dis_eve_anterior}, Ahora: ${cup_dis_eve_corregido} (${
+              diferencia > 0 ? `+${diferencia}` : diferencia
+            })`,
+            { duration: 6000 }
+          );
+        }
+
+        // Actualizar la información del evento para mostrar los cupos actualizados
+        await obtenerNombreEvento();
+      }
+    } catch (error) {
+      console.error("Error al verificar cupos:", error);
+      toast.error(
+        error.response?.data?.msg || "Error al verificar y corregir cupos"
+      );
+    } finally {
+      setCorrigiendoCupos(false);
+    }
+  };
+
+  // Función para verificar y corregir todos los cupos
+  const verificarYCorregirTodosLosCupos = async () => {
+    setCorrigiendoCupos(true);
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/eventos/verificar-todos-cupos`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      console.log(
+        "Respuesta de verificación de todos los cupos:",
+        response.data
+      );
+
+      if (response.data.success) {
+        const { corregidos, correctos, total } = response.data.resultados;
+
+        if (corregidos > 0) {
+          toast.success(
+            `✅ Verificación completa: ${corregidos} eventos corregidos, ${correctos} eventos correctos de un total de ${total}`,
+            { duration: 6000 }
+          );
+        } else {
+          toast.success(
+            `✅ Todos los eventos (${total}) tienen cupos correctos, no se requirió corrección`,
+            { duration: 4000 }
+          );
+        }
+
+        // Actualizar la información del evento para mostrar los cupos actualizados
+        await obtenerNombreEvento();
+      }
+    } catch (error) {
+      console.error("Error al verificar todos los cupos:", error);
+      toast.error(
+        error.response?.data?.msg ||
+          "Error al verificar y corregir todos los cupos"
+      );
+    } finally {
+      setCorrigiendoCupos(false);
+    }
+  };
+
   return (
     <div className="admininscription-container">
       <div className="evento-header">
@@ -184,24 +332,51 @@ const AdminEventInscription = () => {
                 ? `⚠️ Pocos cupos: ${eventoInfo.cup_dis_eve} de ${eventoInfo.cup_max_eve}`
                 : `📍 Cupos disponibles: ${eventoInfo.cup_dis_eve} de ${eventoInfo.cup_max_eve}`}
             </span>
+
+            <div className="cupos-actions">
+              <button
+                onClick={verificarYCorregirCupos}
+                disabled={corrigiendoCupos}
+                className="btn-verificar-cupos"
+                title="Verificar y corregir los cupos para este evento específico"
+              >
+                {corrigiendoCupos ? "Verificando..." : "Verificar cupos"}
+              </button>
+
+              <button
+                onClick={verificarYCorregirTodosLosCupos}
+                disabled={corrigiendoCupos}
+                className="btn-verificar-todos-cupos"
+                title="Verificar y corregir los cupos de todos los eventos"
+              >
+                {corrigiendoCupos
+                  ? "Verificando..."
+                  : "Verificar todos los eventos"}
+              </button>
+            </div>
           </div>
         )}
       </div>
 
       <div className="filtros">
-        {["TODOS", "PENDIENTE", "ACEPTADA", "RECHAZADA", "FINALIZADA"].map(
-          (estado) => (
-            <button
-              key={estado}
-              className={`filtro-btn ${
-                filtro === estado ? "filtro-activo" : ""
-              }`}
-              onClick={() => setFiltro(estado)}
-            >
-              {estado}
-            </button>
-          )
-        )}
+        {[
+          "TODOS",
+          "PENDIENTE",
+          "ACEPTADA",
+          "RECHAZADA",
+          "APROBADO",
+          "REPROBADO_NOTA",
+          "REPROBADO_ASISTENCIA",
+          "REPROBADO_TOTAL",
+        ].map((estado) => (
+          <button
+            key={estado}
+            className={`filtro-btn ${filtro === estado ? "filtro-activo" : ""}`}
+            onClick={() => setFiltro(estado)}
+          >
+            {estado}
+          </button>
+        ))}
       </div>
 
       {loading ? (
@@ -301,17 +476,55 @@ const AdminEventInscription = () => {
                   )}
 
                   {inscripcion.estado === "ACEPTADA" && (
+                    <>
+                      <button
+                        onClick={() => {
+                          setInscripcionFinalizar(inscripcion);
+                          setMostrarFinalizarModal(true);
+                          setNotaFinal("");
+                          setAsistencia("");
+                        }}
+                        className="btn-accion btn-finalizar"
+                      >
+                        Finalizar inscripción
+                      </button>
+
+                      <button
+                        onClick={() =>
+                          cambiarEstado(inscripcion.id_ins, "RECHAZADA")
+                        }
+                        disabled={actualizandoId === inscripcion.id_ins}
+                        className="btn-accion btn-rechazar"
+                      >
+                        {actualizandoId === inscripcion.id_ins
+                          ? "Actualizando..."
+                          : "Rechazar"}
+                      </button>
+                    </>
+                  )}
+
+                  {(inscripcion.estado === "REPROBADO_NOTA" ||
+                    inscripcion.estado === "REPROBADO_ASISTENCIA" ||
+                    inscripcion.estado === "REPROBADO_TOTAL") && (
                     <button
-                      onClick={() => {
-                        setInscripcionFinalizar(inscripcion);
-                        setMostrarFinalizarModal(true);
-                        setNotaFinal("");
-                        setAsistencia("");
-                      }}
-                      className="btn-accion btn-finalizar"
+                      onClick={() =>
+                        cambiarEstado(inscripcion.id_ins, "ACEPTADA")
+                      }
+                      disabled={actualizandoId === inscripcion.id_ins}
+                      className="btn-accion btn-aceptar"
                     >
-                      Finalizar inscripción
+                      {actualizandoId === inscripcion.id_ins
+                        ? "Actualizando..."
+                        : "Volver a Aceptada"}
                     </button>
+                  )}
+
+                  {inscripcion.estado === "APROBADO" && (
+                    <div className="mensaje-estado-final">
+                      <span className="texto-estado-final">
+                        Inscripción aprobada finalizada
+                      </span>
+                    </div>
                   )}
                 </div>
               </div>
@@ -396,9 +609,15 @@ const AdminEventInscription = () => {
                         inscripcionFinalizar.id_ins
                       }`,
                       {
-                        est_ins: "APROBADO", // Cambiado de estado a est_ins con valor APROBADO
+                        est_ins: determinarEstadoFinal(
+                          Number(asistencia),
+                          Number(notaFinal),
+                          inscripcionFinalizar?.evento?.por_min_asi_eve
+                        ),
                         asistencia: Number(asistencia),
                         nota_final: Number(notaFinal),
+                        esFlujoFinalizacion: true, // Marcar que viene de finalización
+                        observacion: "", // Agregar campo vacío para asegurar compatibilidad
                       },
                       { headers: { Authorization: `Bearer ${token}` } }
                     );
