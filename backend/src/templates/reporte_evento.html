@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Reporte de Evento</title>
+    <style>
+      .reporte-detalle-container {
+        max-width: 900px;
+        margin: 40px auto;
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 16px #0002;
+        padding: 32px;
+        display: flex;
+        flex-direction: column;
+        gap: 28px;
+      }
+
+      .reporte-btn-volver {
+        align-self: flex-start;
+        background: #8a1538;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 10px 26px;
+        font-weight: bold;
+        margin-bottom: 8px;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+
+      .reporte-btn-descargar {
+        display: block;
+        margin: 32px auto 0 auto; /* Centrado y un poco de espacio arriba */
+        background: #8a1538;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 34px;
+        font-weight: bold;
+        font-size: 1.08rem;
+        cursor: pointer;
+        box-shadow: 0 2px 8px #8a153820;
+        transition: background 0.2s;
+      }
+
+      .reporte-btn-descargar:hover {
+        background: #a22145;
+      }
+
+      .reporte-btn-volver:hover {
+        background: #670e2a;
+      }
+
+      .reporte-cabecera {
+        display: flex;
+        gap: 28px;
+        align-items: center;
+        justify-content: space-between;
+        background: #f5f6fa;
+        border-radius: 10px;
+        padding: 20px 28px;
+      }
+
+      .reporte-info {
+        flex: 2;
+      }
+
+      .reporte-titulo {
+        color: #8a1538;
+        font-size: 1.5rem;
+        margin-bottom: 18px;
+        font-weight: bold;
+        text-align: left;
+      }
+
+      .reporte-datos > div {
+        font-size: 1.15rem;
+        margin-bottom: 6px;
+      }
+
+      .reporte-img-box {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+      }
+
+      .reporte-img-box img {
+        max-width: 180px;
+        max-height: 110px;
+        border-radius: 10px;
+        background: #fff;
+        border: 1px solid #eee;
+      }
+
+      .reporte-participantes {
+        margin-top: 14px;
+      }
+
+      .reporte-participantes h3 {
+        color: #8a1538;
+        font-size: 1.5rem;
+        margin-bottom: 14px;
+      }
+
+      .reporte-participantes table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px #0001;
+      }
+
+      .reporte-participantes th,
+      .reporte-participantes td {
+        padding: 12px 14px;
+        text-align: left;
+      }
+
+      .reporte-participantes th {
+        background: #8a1538;
+        color: #fff;
+        font-weight: bold;
+        border-bottom: 2px solid #ececec;
+      }
+
+      .reporte-participantes tr:nth-child(even) {
+        background: #faf5f7;
+      }
+
+      .info-evento-detalle {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px 48px; /* espacio entre columnas y filas */
+        font-size: 1.1rem;
+        margin-top: 10px;
+        margin-bottom: 24px;
+      }
+      .info-evento-detalle div {
+        /* opcional, para alinear mejor verticalmente */
+        display: flex;
+        align-items: center;
+        /* puedes agregar más estilos aquí si deseas */
+      }
+      .info-evento-detalle strong {
+        font-weight: bold;
+        color: #222;
+        margin-right: 6px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 class="reporte-titulo">Reporte de Evento</h1>
+    <div class="reporte-cabecera">
+      <div class="reporte-info">
+        <h2 class="reporte-titulo">{{nombre_evento}}</h2>
+        <div class="info-evento-detalle">
+          <p><b>Creador:</b> {{creador}}</p>
+          <p><b>Duración:</b> {{duracion}} horas</p>
+          <p><b>Fecha inicio:</b> {{fecha_inicio}}</p>
+          <p><b>Fecha fin:</b> {{fecha_fin}}</p>
+        </div>
+      </div>
+      <div class="reporte-img-box">
+        <img src="{{img_por_eve}}" alt="img evento" />
+      </div>
+    </div>
+    <div class="reporte-participantes">
+      <h3>Detalle de los Inscritos al evento</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>N°</th>
+            <th>Cédula</th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Asistencia (%)</th>
+            {{columna_nota}}
+            <th>Resultado</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{tabla_inscritos}}
+        </tbody>
+      </table>
+    </div>
+  </body>
+</html>

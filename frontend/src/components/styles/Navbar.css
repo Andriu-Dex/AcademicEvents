@@ -54,7 +54,8 @@
 .navbar-links {
   display: flex;
   gap: 24px;
-  /* separación entre los enlaces */
+  display: flex;
+  align-items: center;
   margin-left: 12px;
 }
 

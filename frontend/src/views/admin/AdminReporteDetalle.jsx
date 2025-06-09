@@ -8,12 +8,41 @@ const AdminReporteDetalle = () => {
     const navigate = useNavigate();
     const [reporte, setReporte] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [downloadingPDF, setDownloadingPDF] = useState(false);
+
+    const descargarPDF = async () => {
+        setDownloadingPDF(true);
+        document.body.style.cursor = "wait"; // Cambia el cursor a "cargando"
+        try {
+            const response = await axiosInstance.get(`/admin/reportes-evento/pdf/${id_eve}`);
+            const { nom_eve, pdf } = response.data;
+            const byteCharacters = atob(pdf);
+            const byteNumbers = Array.from(byteCharacters, c => c.charCodeAt(0));
+            const byteArray = new Uint8Array(byteNumbers);
+            const blob = new Blob([byteArray], { type: "application/pdf" });
+            const fileName = `Reporte ${nom_eve}.pdf`;
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.setAttribute("download", fileName);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            URL.revokeObjectURL(url);
+        } catch (error) {
+            alert("No se pudo descargar el reporte PDF.\n" + error.message);
+            console.error(error);
+        } finally {
+            setDownloadingPDF(false);
+            document.body.style.cursor = "default"; // Regresa el cursor a normal
+        }
+    };
 
     useEffect(() => {
         const fetchReporte = async () => {
             try {
                 setLoading(true);
-                const res = await axiosInstance.get(`/admin/reportes/${id_eve}`);
+                const res = await axiosInstance.get(`/admin/reportes-evento/${id_eve}`);
                 setReporte(res.data);
             } catch {
                 setReporte(null);
@@ -36,7 +65,7 @@ const AdminReporteDetalle = () => {
     return (
         <div className="reporte-detalle-container">
             {/* Volver */}
-            <button className="reporte-btn-volver" onClick={() => navigate("/admin/reportes")}>
+            <button className="reporte-btn-volver" onClick={() => navigate("/admin/reportes-evento")}>
                 &larr; Volver a Reportes
             </button>
 
@@ -96,6 +125,14 @@ const AdminReporteDetalle = () => {
                     </tbody>
                 </table>
             </div>
+            <button
+                className="reporte-btn-descargar"
+                onClick={descargarPDF}
+                disabled={downloadingPDF}
+                style={{ opacity: downloadingPDF ? 0.7 : 1, pointerEvents: downloadingPDF ? "none" : "auto" }}
+            >
+                {downloadingPDF ? "Generando PDF..." : "Descargar PDF"}
+            </button>
         </div>
     );
 };

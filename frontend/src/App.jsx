@@ -15,6 +15,7 @@ import Perfil from "./views/Perfil.jsx";
 // Admin (panel de administración)
 import AdminDashboard from "./views/admin/AdminDashboard.jsx";
 import AdminReporteDetalle from "./views/admin/AdminReporteDetalle.jsx";
+import AdminReporteMes from "./views/admin/AdminReporteMes.jsx";
 import AdminEvents from "./views/admin/AdminEvents.jsx";
 import AdminCarreras from "./views/admin/AdminCarreras.jsx";
 import AdminConfiguracionMVA from "./views/admin/AdminConfiguracionMVA.jsx";
@@ -165,7 +166,7 @@ function App() {
             }
           />
           <Route
-            path="/admin/reportes"
+            path="/admin/reportes-evento"
             element={
               <PrivateRouteAdmin>
                 <PrivateLayout>
@@ -175,11 +176,21 @@ function App() {
             }
           />
           <Route
-            path="/admin/reportes/:id_eve"
+            path="/admin/reportes-evento/:id_eve"
             element={
               <PrivateRouteAdmin>
                 <PrivateLayout>
                   <AdminReporteDetalle />
+                </PrivateLayout>
+              </PrivateRouteAdmin>
+            }
+          />
+          <Route
+            path="/admin/reportes-mes"
+            element={
+              <PrivateRouteAdmin>
+                <PrivateLayout>
+                  <AdminReporteMes />
                 </PrivateLayout>
               </PrivateRouteAdmin>
             }

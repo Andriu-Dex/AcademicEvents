@@ -12,7 +12,7 @@ const AdminDashboard = () => {
     const cargarEventos = async () => {
       try {
         setLoading(true);
-        const res = await axiosInstance.get("/admin/reportes");
+        const res = await axiosInstance.get("/admin/reportes-evento");
         setEventos(res.data.eve);
       } catch (error) {
         setEventos([]);
@@ -41,7 +41,7 @@ const AdminDashboard = () => {
                 <div
                   className="evento-card"
                   key={evento.id_eve}
-                  onClick={() => navigate(`/admin/reportes/${evento.id_eve}`)}
+                  onClick={() => navigate(`/admin/reportes-evento/${evento.id_eve}`)}
                   style={{
                     cursor: "pointer",
                     border: "1px solid #ececec",

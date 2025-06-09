@@ -25,6 +25,8 @@ const Navbar = () => {
   const location = useLocation(); // Hook para obtener la ubicación actual
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const profileMenuRef = useRef(null);
+  const [showReportMenu, setShowReportMenu] = useState(false);
+  const reportMenuRef = useRef(null);
   // Función para determinar si un enlace está activo
   const isActive = (path) => {
     // Para rutas exactas
@@ -41,6 +43,19 @@ const Navbar = () => {
     // Para el resto de rutas
     return location.pathname.startsWith(path) ? "nav-link-active" : "";
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (reportMenuRef.current && !reportMenuRef.current.contains(event.target)) {
+        setShowReportMenu(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   const cerrarSesion = () => {
     // Obtener el nombre del usuario para personalizar el mensaje
     const nombreUsuario = usuario?.nom_usu || "Usuario";
@@ -228,16 +243,55 @@ const Navbar = () => {
                   </span>
                   <span>MVA</span>
                 </Link>
-                <Link
-                  to="/admin/reportes"
-                  className={`nav-link-item ${isActive("/admin/eventos")}`}
+                <div
+                  className="nav-link-item-container"
+                  ref={reportMenuRef}
+                  style={{ position: "relative", display: "inline-block" }}
                 >
-                  {" "}
-                  <span className="nav-link-icon">
-                    <FileText size={18} />
-                  </span>
-                  <span>Reportes</span>
-                </Link>
+                  <div
+                    className={`nav-link-item ${isActive("/admin/reportes")}`}
+                    onClick={() => setShowReportMenu((prev) => !prev)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <span className="nav-link-icon">
+                      <FileText size={18} />
+                    </span>
+                    <span>Reportes</span>
+                  </div>
+                  {showReportMenu && (
+                    <div
+                      className="report-dropdown-menu"
+                      style={{
+                        position: "absolute",
+                        top: "120%",
+                        left: 0,
+                        background: "#fff",
+                        boxShadow: "0 4px 18px #0002",
+                        borderRadius: "10px",
+                        zIndex: 10,
+                        minWidth: "170px",
+                      }}
+                    >
+                      <Link
+                        to="/admin/reportes-evento"
+                        className="dropdown-link"
+                        style={{ display: "block", padding: "12px 18px", color: "#8a1538", fontWeight: 600, textDecoration: "none" }}
+                        onClick={() => setShowReportMenu(false)}
+                      >
+                        Por Evento
+                      </Link>
+                      <Link
+                        to="/admin/reportes-mes"
+                        className="dropdown-link"
+                        style={{ display: "block", padding: "12px 18px", color: "#8a1538", fontWeight: 600, textDecoration: "none" }}
+                        onClick={() => setShowReportMenu(false)}
+                      >
+                        Por Mes
+                      </Link>
+                    </div>
+                  )}
+                </div>
+
               </>
             )}
         </div>
