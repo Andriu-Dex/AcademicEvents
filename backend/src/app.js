@@ -83,12 +83,15 @@ app.use("/api/mva", require("./routes/mva.routes"));
 
 // Rutas de perfil de usuario
 const perfilRoutes = require("./routes/perfil.routes");
-console.log("✅ Configurando rutas de perfil");
 app.use("/api", perfilRoutes);
 
 // Rutas de subida de imágenes
 const uploadRoutes = require("./routes/upload.routes-mva");
 app.use("/api/upload", uploadRoutes);
+
+// Rutas de reportes (solo admins)
+const reporteRoutes = require("./routes/reporte.routes");
+app.use("/api/admin", reporteRoutes);
 
 // ============================
 //  Iniciar el servidor
