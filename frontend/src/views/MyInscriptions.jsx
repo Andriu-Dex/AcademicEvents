@@ -40,6 +40,26 @@ const estadoLabel = {
     icon: <FileText size={16} />,
     color: "estado-finalizada",
   },
+  APROBADO: {
+    text: "Aprobado",
+    icon: <BadgeCheck size={16} />,
+    color: "estado-aprobado",
+  },
+  REPROBADO_NOTA: {
+    text: "Reprobado por nota",
+    icon: <AlertCircle size={16} />,
+    color: "estado-reprobado-nota",
+  },
+  REPROBADO_ASISTENCIA: {
+    text: "Reprobado por asistencia",
+    icon: <AlertCircle size={16} />,
+    color: "estado-reprobado-asistencia",
+  },
+  REPROBADO_TOTAL: {
+    text: "Reprobado por completo",
+    icon: <AlertCircle size={16} />,
+    color: "estado-reprobado-total",
+  },
 };
 
 const MyInscriptions = () => {
@@ -52,12 +72,9 @@ const MyInscriptions = () => {
   const [reenviando, setReenviando] = useState(false);
   const obtenerInscripciones = async () => {
     try {
-      console.log("🔍 Obteniendo inscripciones propias...");
       const token = localStorage.getItem("token");
-      console.log("🔑 Token disponible:", token ? "Sí" : "No");
 
       const res = await axiosInstance.get("/inscripciones/propias");
-      console.log("✅ Respuesta recibida:", res.data);
 
       setInscripciones(res.data);
     } catch (error) {
@@ -86,22 +103,26 @@ const MyInscriptions = () => {
       return;
     }
 
-    const tiposPermitidos = [
-      "application/pdf",
-      "image/jpeg",
-      "image/png",
-      "image/jpg",
-      "image/webp",
-    ];
-    if (!tiposPermitidos.includes(nuevoArchivo.type))
-      return toast.error("Archivo no permitido. Solo PDF o imágenes.");
+    const tiposPermitidos = ["image/jpeg", "image/png", "image/jpg"];
+    if (!tiposPermitidos.includes(nuevoArchivo.type)) {
+      toast.error("Archivo no permitido. Solo se permiten imágenes JPG o PNG.");
+      return;
+    }
 
     const formData = new FormData();
     formData.append("archivo", nuevoArchivo);
     try {
       setReenviando(true);
-      await axiosInstance.put(
-        `/inscripciones/reenviar/${inscripcionSeleccionada.id_ins}`,
+      console.log(
+        `Enviando comprobante para inscripción ID: ${inscripcionSeleccionada.id_ins}`
+      );
+      console.log(
+        "Estado actual de la inscripción:",
+        inscripcionSeleccionada.est_ins
+      );
+
+      const response = await axiosInstance.put(
+        `/reenviar/${inscripcionSeleccionada.id_ins}`,
         formData,
         {
           headers: {
@@ -109,13 +130,18 @@ const MyInscriptions = () => {
           },
         }
       );
+
+      console.log("Respuesta del servidor:", response.data);
       toast.success("Comprobante reenviado correctamente");
       await obtenerInscripciones();
       setMostrarModal(false);
       setNuevoArchivo(null);
       setInscripcionSeleccionada(null);
     } catch (error) {
-      toast.error(error.response?.data?.msg || "Error al reenviar comprobante");
+      console.error("Error al reenviar comprobante:", error);
+      const errorMsg =
+        error.response?.data?.msg || "Error al reenviar comprobante";
+      toast.error(errorMsg);
     } finally {
       setReenviando(false);
     }
@@ -153,13 +179,15 @@ const MyInscriptions = () => {
               <div className="myins-header">
                 {" "}
                 <h3 className="myins-event-name">{ins.evento.nom_eve}</h3>
-                <span
-                  className={`myins-estado ${estadoLabel[ins.est_ins].color}`}
-                >
-                  {estadoLabel[ins.est_ins].icon}
-                  {estadoLabel[ins.est_ins].text}
-                </span>
               </div>
+              <span
+                className={`myins-estado ${
+                  estadoLabel[ins.est_ins]?.color || "estado-pendiente"
+                }`}
+              >
+                {estadoLabel[ins.est_ins]?.icon || <Clock size={16} />}
+                {estadoLabel[ins.est_ins]?.text || ins.est_ins}
+              </span>
               <p className="myins-datos">
                 Tipo: {ins.evento.tip_eve} <br /> Fecha:{" "}
                 {new Date(ins.evento.fec_ini_eve).toLocaleDateString("es-EC")} –{" "}
@@ -175,7 +203,7 @@ const MyInscriptions = () => {
                   <p className="observacion-texto">{ins.observacion}</p>
                 </div>
               )}{" "}
-              {ins.est_ins === "FINALIZADA" && (
+              {ins.est_ins === "APROBADO" && (
                 <div className="myins-certificado">
                   {" "}
                   <button
@@ -223,10 +251,6 @@ const MyInscriptions = () => {
                         toast.info("Enviando certificado a tu correo...");
                         const response = await axiosInstance.post(
                           `/certificados/enviar/${ins.id_ins}`
-                        );
-                        console.log(
-                          "Respuesta de envío por correo:",
-                          response.data
                         );
                         toast.success(
                           "Certificado enviado a tu correo electrónico"

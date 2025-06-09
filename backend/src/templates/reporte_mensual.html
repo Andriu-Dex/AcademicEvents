@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Reporte Mensual de Eventos</title>
+    <style>
+      body {
+        background: #f6f7fa;
+        min-height: 100vh;
+        padding: 0;
+        margin: 0;
+        font-family: Arial, sans-serif;
+        color: #222;
+      }
+      .reporte-mes-container {
+        background: #f6f7fa; /* Fondo blanco translúcido, casi no se nota */
+        border-radius: 24px;
+        max-width: 850px;
+        margin: 2rem auto;
+        box-shadow: none; /* O muy suave: 0 2px 8px #00000008 */
+        padding: 2.5rem 2rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      h2 {
+        font-size: 2.2rem;
+        font-weight: bold;
+        color: #8a1538;
+        margin-bottom: 0.7rem;
+        letter-spacing: 1px;
+        text-align: center;
+      }
+      .resumen-mes {
+        text-align: center;
+        margin-bottom: 1.3rem;
+        font-size: 1.14rem;
+        color: #7e294c;
+        font-weight: 500;
+      }
+      table.reporte-mes-table {
+        width: 100%; /* Ocupa todo el panel interno */
+        border-collapse: separate;
+        border-spacing: 0;
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 2px 8px #0001;
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+      }
+      th,
+      td {
+        padding: 0.85rem 0.8rem;
+        text-align: center;
+        font-size: 1rem;
+      }
+      th {
+        background: #f5e9ec;
+        color: #8a1538;
+        font-size: 1.08rem;
+        font-weight: bold;
+        border-bottom: 2px solid #e8cbd2;
+      }
+      tbody tr {
+        transition: background 0.17s;
+      }
+      tbody tr:hover {
+        background: #fff3f6;
+      }
+      td {
+        color: #222;
+        border-bottom: 1px solid #f0e4e6;
+      }
+      tfoot tr td {
+        background: #f9d5e0;
+        color: #8a1538;
+        font-size: 1.08rem;
+        font-weight: bold;
+        border-top: 2px solid #e8cbd2;
+        text-align: left;
+        padding-left: 1.5rem;
+      }
+      tfoot tr td:last-child {
+        text-align: right;
+        color: #8a1538;
+        font-size: 1.18rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        padding-right: 2rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="reporte-mes-container">
+      <h2>Reporte Mensual de Eventos</h2>
+      <div class="resumen-mes">
+        <span><b>Año:</b> {{anio}} &nbsp; <b>Mes:</b> {{mes}}</span>
+      </div>
+      <table class="reporte-mes-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nombre del Evento</th>
+            <th>Tipo</th>
+            <th>Valor ($)</th>
+            <th>Fecha Fin</th>
+            <th>Creador</th>
+            <th>Inscritos</th>
+            <th>Total Evento ($)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{tabla_eventos}}
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="7" style="text-align: right; font-weight: bold">
+              Total del mes:
+            </td>
+            <td style="font-weight: bold">{{tot_tod_eve}}</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </body>
+</html>

@@ -3,7 +3,16 @@ import { useState, useEffect } from "react";
 import axiosInstance from "../api/axiosConfig";
 import { toast } from "react-toastify";
 import { useNavigate, Link } from "react-router-dom";
-import { User, Mail, Lock, Phone, BookText, Eye, EyeOff } from "lucide-react";
+import {
+  User,
+  Mail,
+  Lock,
+  Phone,
+  BookText,
+  Eye,
+  EyeOff,
+  Home,
+} from "lucide-react";
 import "./styles/Register.css"; // Importa el archivo CSS
 
 const Register = () => {
@@ -91,6 +100,10 @@ const Register = () => {
   return (
     <div className="container-page">
       <div className="fixed-image" />
+      {/* Botón para volver al home */}
+      <Link to="/home" className="home-button">
+        <Home size={22} color="white" />
+      </Link>
       <div className="form-scroll">
         <div className="form-content">
           {" "}
@@ -103,7 +116,7 @@ const Register = () => {
               />
             </div>
             <h2 className="registro-titulo">Registro de Usuario</h2>
-            <p className="text-muted">
+            <p className="text-muted justify-content-center">
               {esUTA
                 ? "Registro como estudiante con correo institucional"
                 : "Registro como usuario general"}
@@ -121,8 +134,8 @@ const Register = () => {
             ].map((name) => {
               const labels = {
                 ced_usu: "Cédula",
-                nom_usu: "Nombres",
-                ape_usu: "Apellidos",
+                nom_usu: "Nombre",
+                ape_usu: "Apellido",
                 cor_usu: "Correo electrónico",
                 con_usu: "Contraseña",
                 cel_usu: "Celular",
@@ -191,7 +204,6 @@ const Register = () => {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   className="form-control"
                   required
-                  placeholder="Confirma tu contraseña"
                 />
                 <button
                   type="button"
@@ -230,28 +242,6 @@ const Register = () => {
                 </div>
               </div>
             )}{" "}
-            {/* <div className="mb-3">
-              <label className="form-label fw-semibold">Confirmar Contraseña</label>
-              <div className="input-group">
-                <span className="input-group-text bg-primary text-white">
-                  <Lock size={18} />
-                </span>
-                <input
-                  type={showConfirmPassword ? "text" : "password"}
-                  name="confirmPassword"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="form-control"
-                  required
-                />
-                <span
-                  className="input-group-text cursor-pointer"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                >
-                  {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </span>
-              </div>
-            </div> */}
             <div className="alert alert-info mb-3">
               <small>
                 <strong>Nota importante:</strong> Después de registrarte,

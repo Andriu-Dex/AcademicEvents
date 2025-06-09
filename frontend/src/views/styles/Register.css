@@ -24,7 +24,7 @@ a {
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
   animation: fadeSlideUp 0.6s ease-out;
   max-width: 500px;
-  margin: 1rem auto;
+  margin: 0rem auto 1rem auto;
 }
 
 .input-group:hover {
@@ -32,7 +32,7 @@ a {
 }
 
 .btn-primary:disabled {
-  background-color: #8a1538 !important;
+  background-color: #8a1538;
   opacity: 0.8;
   cursor: not-allowed;
   position: relative;
@@ -60,7 +60,7 @@ a {
 
 a.text-primary:hover {
   text-decoration: underline;
-  color: #6e0e2d !important;
+  color: #6e0e2d;
 }
 
 .registro-titulo {
@@ -125,7 +125,7 @@ a.text-primary:hover {
 }
 
 input:focus {
-  border-color: #8a1538 !important;
+  border-color: #8a1538;
   box-shadow: 0 0 0 0.2rem rgba(138, 21, 56, 0.25);
 }
 
@@ -162,7 +162,7 @@ input:focus {
 }
 
 .input-group-text {
-  background-color: #8a1538 !important;
+  background-color: #8a1538;
   border: none;
 }
 
@@ -254,4 +254,30 @@ input[type="file"]::file-selector-button:hover {
   100% {
     opacity: 0.7;
   }
+}
+
+/* Estilos para el botón de home */
+.home-button {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 45px;
+  height: 45px;
+  background-color: rgba(138, 21, 56, 0.7);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 2px 8px rgba(138, 21, 56, 0.3);
+  transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  z-index: 1000;
+  backdrop-filter: blur(3px);
+  animation: pulse 2s infinite;
+}
+
+.home-button:hover {
+  background-color: rgba(138, 21, 56, 1);
+  transform: rotate(360deg) scale(1.1);
+  box-shadow: 0 5px 15px rgba(138, 21, 56, 0.5);
 }

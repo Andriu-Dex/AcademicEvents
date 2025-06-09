@@ -56,7 +56,6 @@ const AdminCarreras = () => {
   const cargarCarreras = async () => {
     try {
       const res = await axiosInstance.get("/carreras");
-      console.log("Carreras cargadas:", res.data);
       // Asegúrate de que cada carrera tenga todos los campos necesarios
       const carrerasConValidacion = res.data.map((carrera) => ({
         ...carrera,
@@ -121,7 +120,6 @@ const AdminCarreras = () => {
     if (!formData.id_fac_per) return toast.warning("Seleccione una facultad");
 
     try {
-      console.log("Enviando datos:", formData);
 
       await axiosInstance.post("/carreras", {
         ...formData,
@@ -166,7 +164,6 @@ const AdminCarreras = () => {
     }
   };
   const iniciarEdicion = (carrera) => {
-    console.log("Iniciando edición para la carrera:", carrera);
     console.log(
       "Duración de la carrera:",
       carrera.dur_sem_car,
@@ -180,8 +177,6 @@ const AdminCarreras = () => {
         carrera.dur_sem_car !== undefined && carrera.dur_sem_car !== null
           ? carrera.dur_sem_car.toString()
           : "";
-
-      console.log("Duración convertida a string:", duracionStr);
 
       setEditFormData({
         nom_car: carrera.nom_car || "",
@@ -220,14 +215,12 @@ const AdminCarreras = () => {
         ...editFormData,
         dur_sem_car: parseInt(editFormData.dur_sem_car),
       });
-      console.log("ID de la carrera a actualizar:", id);
 
       const response = await axiosInstance.put(`/carreras/${id}`, {
         ...editFormData,
         dur_sem_car: parseInt(editFormData.dur_sem_car),
       });
 
-      console.log("Respuesta del servidor:", response.data);
       toast.success("Carrera actualizada");
       setModalEdicion({ abierto: false, carrera: null });
       cargarCarreras();
@@ -255,9 +248,6 @@ const AdminCarreras = () => {
     const icon = iconOptions.find((opt) => opt.value === iconoValue);
     return icon ? icon.icon : <Laptop size={20} />;
   };
-
-  // Añadamos un console.log para ver el estado del modal
-  console.log("Estado del modal de edición:", modalEdicion);
 
   return (
     <div className="admincarreras-container">

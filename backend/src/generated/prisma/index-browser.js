@@ -20,12 +20,12 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 6.7.0
- * Query Engine version: 3cff47a7f5d65c3ea74883f1d736e41d68ce91ed
+ * Prisma Client JS version: 6.9.0
+ * Query Engine version: 81e4af48011447c3cc503a190e86995b66d2a28e
  */
 Prisma.prismaVersion = {
-  client: "6.7.0",
-  engine: "3cff47a7f5d65c3ea74883f1d736e41d68ce91ed"
+  client: "6.9.0",
+  engine: "81e4af48011447c3cc503a190e86995b66d2a28e"
 }
 
 Prisma.PrismaClientKnownRequestError = () => {
@@ -198,13 +198,16 @@ exports.Prisma.EventoScalarFieldEnum = {
   des_eve: 'des_eve',
   tip_eve: 'tip_eve',
   fec_ini_eve: 'fec_ini_eve',
+  fec_cre_eve: 'fec_cre_eve',
+  fec_fin_eve: 'fec_fin_eve',
+  dur_hor_eve: 'dur_hor_eve',
+  mod_eve: 'mod_eve',
   val_eve: 'val_eve',
   est_eve: 'est_eve',
-  fec_cre_eve: 'fec_cre_eve',
-  dur_hor_eve: 'dur_hor_eve',
   img_por_eve: 'img_por_eve',
   por_min_asi_eve: 'por_min_asi_eve',
-  fec_fin_eve: 'fec_fin_eve',
+  cup_max_eve: 'cup_max_eve',
+  cup_dis_eve: 'cup_dis_eve',
   id_cue_cre_eve: 'id_cue_cre_eve'
 };
 
@@ -227,7 +230,8 @@ exports.Prisma.InscripcionScalarFieldEnum = {
   est_ins: 'est_ins',
   fec_ins: 'fec_ins',
   usu_apr_cer: 'usu_apr_cer',
-  por_asi_fin_usu: 'por_asi_fin_usu'
+  por_asi_fin_usu: 'por_asi_fin_usu',
+  cup_ocu: 'cup_ocu'
 };
 
 exports.Prisma.Inscripcion_cursoScalarFieldEnum = {
@@ -297,6 +301,12 @@ exports.tipo_evento = exports.$Enums.tipo_evento = {
   PUBLICO: 'PUBLICO'
 };
 
+exports.modalidad_evento = exports.$Enums.modalidad_evento = {
+  PRESENCIAL: 'PRESENCIAL',
+  VIRTUAL: 'VIRTUAL',
+  SEMIPRESENCIAL: 'SEMIPRESENCIAL'
+};
+
 exports.estado_evento = exports.$Enums.estado_evento = {
   ACTIVO: 'ACTIVO',
   INACTIVO: 'INACTIVO',
@@ -309,7 +319,10 @@ exports.estado_inscripcion = exports.$Enums.estado_inscripcion = {
   PENDIENTE: 'PENDIENTE',
   ACEPTADA: 'ACEPTADA',
   RECHAZADA: 'RECHAZADA',
-  FINALIZADA: 'FINALIZADA'
+  APROBADO: 'APROBADO',
+  REPROBADO_NOTA: 'REPROBADO_NOTA',
+  REPROBADO_ASISTENCIA: 'REPROBADO_ASISTENCIA',
+  REPROBADO_TOTAL: 'REPROBADO_TOTAL'
 };
 
 exports.tipo_certificado = exports.$Enums.tipo_certificado = {

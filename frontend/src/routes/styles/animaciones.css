@@ -1,0 +1,150 @@
+/* Animaciones para EventosPublicos */
+
+/* Animación de entrada para tarjetas de eventos */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animación para el botón de inscribirse */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(4, 120, 87, 0.5);
+  }
+
+  70% {
+    box-shadow: 0 0 0 10px rgba(4, 120, 87, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(4, 120, 87, 0);
+  }
+}
+
+/* Animación de destello para badges */
+@keyframes badgeHighlight {
+  0% {
+    box-shadow: 0 0 0 0 rgba(138, 21, 56, 0.7);
+  }
+
+  70% {
+    box-shadow: 0 0 0 6px rgba(138, 21, 56, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(138, 21, 56, 0);
+  }
+}
+
+/* Animación para el spinner personalizado */
+@keyframes spinner3D {
+  0% {
+    transform: rotate(0deg) scale(1);
+    border-radius: 50%;
+  }
+
+  50% {
+    transform: rotate(180deg) scale(1.1);
+    border-radius: 30%;
+  }
+
+  100% {
+    transform: rotate(360deg) scale(1);
+    border-radius: 50%;
+  }
+}
+
+/* Animación para iconos de la tarjeta */
+@keyframes iconRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  25% {
+    transform: rotate(10deg);
+  }
+
+  50% {
+    transform: rotate(0deg);
+  }
+
+  75% {
+    transform: rotate(-10deg);
+  }
+
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+/* Animación de brillo para el título */
+@keyframes titleShadowPulse {
+  0% {
+    text-shadow: 0 0 10px rgba(138, 21, 56, 0);
+  }
+
+  50% {
+    text-shadow: 0 0 10px rgba(138, 21, 56, 0.5);
+  }
+
+  100% {
+    text-shadow: 0 0 10px rgba(138, 21, 56, 0);
+  }
+}
+
+/* Efecto de ripple para botones */
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(2.5);
+    opacity: 0;
+  }
+}
+
+/* Animación de aparición para el modal */
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Animación para las badges dentro del modal */
+@keyframes badgeFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Shimmer effect */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}

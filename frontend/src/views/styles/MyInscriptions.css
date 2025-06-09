@@ -68,7 +68,7 @@ body::after {
    Contenedor principal
    ======================= */
 .myins-container {
-  margin: 15px 30px;
+  margin: 15px 10px;
   padding: 0 1rem;
 }
 
@@ -266,7 +266,6 @@ body::after {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.5rem;
 }
 
 /* =======================
@@ -289,6 +288,9 @@ body::after {
   font-weight: 500;
   padding: 0.25rem 0.5rem;
   border-radius: 5px;
+  margin-bottom: 10px;
+  padding-right: 1rem;
+  width: fit-content;
 }
 
 .estado-pendiente {
@@ -305,6 +307,24 @@ body::after {
 
 .estado-finalizada {
   color: #1d4ed8;
+}
+
+.estado-aprobado {
+  color: #047857; /* Verde esmeralda más intenso que el de aceptada */
+  font-weight: bold;
+}
+
+.estado-reprobado-nota {
+  color: #ef4444; /* Rojo menos intenso que el rechazada */
+}
+
+.estado-reprobado-asistencia {
+  color: #f97316; /* Naranja para diferenciar del reprobado por nota */
+}
+
+.estado-reprobado-total {
+  color: #7f1d1d; /* Rojo oscuro para reprobación total */
+  font-weight: bold;
 }
 
 /* =======================

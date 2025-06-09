@@ -1,176 +1,346 @@
 /* Estilos para Home.jsx */
 
-/* Estilos base */
-.home-container {
-    min-height: 100vh;
-    min-width: 100vw;
-    background: linear-gradient(135deg, #f4f6fb 60%, #e3e8f0 100%);
+.contenedor-principal-home {
+  width: 100%;
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+  margin-bottom: 1.5rem;
+  margin-top: -1.5rem;
 }
 
 /* Estilos para el Hero Section */
 .hero-section {
-    background: linear-gradient(rgba(138, 21, 56, 0.85), rgba(138, 21, 56, 0.9)), url('https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover no-repeat;
-    min-height: 400px;
+  background: linear-gradient(rgba(138, 21, 56, 0.85), rgba(138, 21, 56, 0.9)),
+    url("https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80")
+      center/cover no-repeat;
+  min-height: 400px;
 }
 
 .hero-button-primary {
-    color: #8A1538;
-    border-radius: 8px;
-    font-size: 1rem;
-    padding: 12px 24px;
+  color: #8a1538;
+  border-radius: 8px;
+  font-size: 1rem;
+  padding: 12px 24px;
 }
 
 .hero-button-secondary {
-    border-radius: 8px;
-    font-size: 1rem;
-    padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 1rem;
+  padding: 12px 24px;
 }
 
 /* Estilos para tarjetas */
 .hover-card {
-    transition: all 0.3s ease;
-    cursor: pointer;
+  transition: all 0.3s ease;
+  cursor: pointer;
 }
 
 .hover-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 15px 30px rgba(138, 21, 56, 0.15) !important;
-    border-bottom: 3px solid #8A1538;
+  transform: translateY(-8px);
+  box-shadow: 0 15px 30px rgba(138, 21, 56, 0.15) !important;
+  border-bottom: 3px solid #8a1538;
 }
 
 /* Animaciones */
 @keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
 
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .animate__animated.animate__fadeInUp {
-    animation: fadeInUp 0.6s ease-out;
+  animation: fadeInUp 0.6s ease-out;
 }
 
 /* Estilos para sección de contacto */
 .contact-section {
-    border-radius: 15px;
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    border-top: 4px solid #8A1538;
+  border-radius: 15px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-top: 4px solid #8a1538;
 }
 
 .contact-button {
-    background: #8A1538;
-    color: #fff;
-    border-radius: 8px;
+  background: #8a1538;
+  color: #fff;
+  border-radius: 8px;
 }
 
 /* Colores principales */
 .primary-color {
-    color: #8A1538;
+  color: #8a1538;
 }
 
 .primary-bg {
-    background: #8A1538;
-    color: white;
-}
-
-/* Estilos para tarjetas de autoridades */
-.authority-img {
-    width: 120px;
-    height: 120px;
-    object-fit: cover;
+  background: #8a1538;
+  color: white;
 }
 
 /* Estilos de footer */
 .footer-logo {
-    width: 40px;
-    height: 40px;
+  width: 40px;
+  height: 40px;
 }
 
-/* Nuevos estilos extraídos de Home.jsx */
+/* Estilos generales */
 .stats-number {
-    color: #8A1538;
+  color: #8a1538;
 }
 
 .section-title {
-    color: #8A1538;
-}
-
-.authority-title {
-    color: #8A1538;
+  color: #8a1538;
 }
 
 .carrera-title {
-    color: #8A1538;
+  color: #8a1538;
 }
 
 .info-title {
-    color: #8A1538;
+  color: #8a1538;
 }
 
 .text-justified {
-    text-align: justify;
+  text-align: justify;
 }
 
 .carrera-info-btn {
-    background: #8A1538;
-    color: white;
+  background: #8a1538;
+  color: white;
 }
 
 .contacto-title {
-    color: #8A1538;
+  color: #8a1538;
 }
 
 .phone-btn {
-    border-radius: 8px;
+  border-radius: 8px;
 }
 
 .footer-divider {
-    background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.1);
 }
 
-/* Nuevos estilos extraídos de Home.jsx */
-.stats-number {
-    color: #8A1538;
+/* Estilos para sección Autoridades con sufijo "-h" */
+.autoridades-section-h {
+  max-width: 1200px;
+  margin: 0 auto 3rem;
+  padding: 0 1rem;
+  animation: fadeIn 1s ease-out;
 }
 
-.section-title {
-    color: #8A1538;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
-.authority-title {
-    color: #8A1538;
+.autoridades-header-h {
+  text-align: center;
+  margin-bottom: 2.5rem;
+  position: relative;
 }
 
-.carrera-title {
-    color: #8A1538;
+.autoridades-header-h::after {
+  content: "";
+  display: block;
+  width: 80px;
+  height: 3px;
+  background: linear-gradient(90deg, #8a1538, #c33c5e);
+  margin: 15px auto 0;
+  border-radius: 2px;
 }
 
-.info-title {
-    color: #8A1538;
+.autoridades-title-h {
+  font-weight: 700;
+  color: #8a1538;
+  margin-bottom: 0.5rem;
+  font-size: 2rem;
 }
 
-.text-justified {
-    text-align: justify;
+.autoridades-subtitle-h,
+.opciones-academicas-h,
+.mision-vision-h {
+  font-weight: 500;
+  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+  color: #6c757d;
+  margin-top: 0.4rem;
+  font-size: 1rem;
 }
 
-.carrera-info-btn {
-    background: #8A1538;
-    color: white;
+.autoridades-container-h {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  justify-content: center;
+  perspective: 1000px;
 }
 
-.contacto-title {
-    color: #8A1538;
+.autoridad-card-h {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  height: 100%;
+  border: 1px solid #f0f0f0;
+  position: relative;
 }
 
-.phone-btn {
-    border-radius: 8px;
+.autoridad-card-h:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 30px rgba(138, 21, 56, 0.15);
+  border-bottom: 3px solid #8a1538;
 }
 
-.footer-divider {
-    background: rgba(255, 255, 255, 0.1);
+.autoridad-card-h::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(90deg, #8a1538, #c33c5e);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+
+.autoridad-card-h:hover::before {
+  transform: scaleX(1);
+}
+
+.autoridad-content-h {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.autoridad-image-h {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 1rem;
+  border: 3px solid rgba(138, 21, 56, 0.1);
+  transition: transform 0.3s ease, border 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+.autoridad-card-h:hover .autoridad-image-h {
+  transform: scale(1.05);
+  border: 3px solid rgba(138, 21, 56, 0.3);
+  box-shadow: 0 8px 25px rgba(138, 21, 56, 0.2);
+}
+
+.autoridad-name-h {
+  color: #8a1538;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+  position: relative;
+  display: inline-block;
+}
+
+.autoridad-name-h::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -3px;
+  left: 50%;
+  background-color: #8a1538;
+  transition: width 0.3s ease, left 0.3s ease;
+}
+
+.autoridad-card-h:hover .autoridad-name-h::after {
+  width: 100%;
+  left: 0;
+}
+
+.autoridad-cargo-h {
+  color: #6c757d;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.autoridad-contact-h {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.5;
+  color: #8a1538;
+  text-align: center;
+  text-decoration: none;
+  vertical-align: middle;
+  cursor: pointer;
+  user-select: none;
+  background-color: transparent;
+  border: 1px solid #8a1538;
+  border-radius: 0.25rem;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
+    border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out,
+    transform 0.2s ease;
+}
+
+.autoridad-contact-h:hover {
+  color: #fff;
+  background-color: #8a1538;
+  border-color: #8a1538;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(138, 21, 56, 0.2);
+}
+
+.autoridad-contact-h:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(138, 21, 56, 0.1);
+}
+
+.autoridad-icon-h {
+  margin-right: 0.25rem;
+}
+
+/* Media queries para responsive */
+@media (max-width: 768px) {
+  .autoridades-container-h {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 576px) {
+  .autoridades-container-h {
+    grid-template-columns: 1fr;
+  }
+
+  .autoridad-card-h {
+    max-width: 320px;
+    margin: 0 auto;
+  }
+}
+
+/* Para asegurar que scroll sea suave */
+html {
+  scroll-behavior: smooth;
+}
+
+:target {
+  scroll-margin-top: 80px;
 }

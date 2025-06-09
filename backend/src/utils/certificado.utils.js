@@ -3,6 +3,13 @@ const fs = require("fs");
 const path = require("path");
 const { v4: uuidv4 } = require("uuid");
 
+// Función para asegurar que exista un directorio
+const asegurarDirectorio = (dir) => {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+};
+
 // Función para generar código de validación único
 const generarCodigoValidacion = () => {
   return uuidv4().substring(0, 8).toUpperCase();
@@ -12,168 +19,232 @@ const generarCodigoValidacion = () => {
 // Generar el contenido del PDF
 // ============================
 const generarCertificadoPDF = (datos) => {
-  // Crear un nuevo documento PDF en orientación horizontal
+  // Asegurar que existan los directorios necesarios
+  const fontsDir = path.join(__dirname, "../../assets/fonts");
+  const imagesDir = path.join(__dirname, "../../assets/img");
+  asegurarDirectorio(fontsDir);
+  asegurarDirectorio(imagesDir);
+
   const doc = new PDFDocument({ layout: "landscape", size: "A4", margin: 50 });
 
-  // Destructurar los datos necesarios
+  // Verificar y registrar la fuente GreatVibes
+  const fontPath = path.join(fontsDir, "GreatVibes-Regular.ttf");
+  if (!fs.existsSync(fontPath)) {
+    console.warn(
+      "⚠️ Fuente GreatVibes no encontrada, usando fuente alternativa"
+    );
+  } else {
+    doc.registerFont("GreatVibes", fontPath);
+  }
+
   const {
     usuario,
     evento,
-    inscripcion,
     asistencia,
     notaFinal,
     tipoCertificado,
+    codigoValidacion,
   } = datos;
 
-  // Colores del certificado
-  const colorPrimario = "#8a1538"; // Color principal institucional
-  const colorSecundario = "#1a3c6e"; // Color secundario
+  // 🎨 Fondo y bandas decorativas igual que ya lo tienes...
+  // 🎨 Fondo base
+  doc.rect(0, 0, doc.page.width, doc.page.height).fill("#ffffff");
 
-  // Añadir fondo decorativo
-  doc.rect(0, 0, doc.page.width, doc.page.height).fill("#f9f9f9");
+  // 🎨 Banda superior tipo Educativa
+  doc.save();
+  doc.fillColor("#8a1538"); // Color institucional
+  doc.moveTo(0, 0).lineTo(150, 0).lineTo(0, 150).closePath().fill();
 
-  // Borde decorativo
-  doc.lineWidth(10);
+  doc.fillColor("#e0b747"); // Dorado
   doc
-    .rect(20, 20, doc.page.width - 40, doc.page.height - 40)
-    .strokeColor(colorPrimario);
-  doc.stroke();
+    .moveTo(150, 0)
+    .lineTo(180, 0)
+    .lineTo(0, 180)
+    .lineTo(0, 150)
+    .closePath()
+    .fill();
+  doc.restore();
 
-  // Añadir logo (placeholder - reemplazar con tu logo real)
-  // doc.image(path.join(__dirname, '../../public/logo-universidad.png'), 50, 40, { width: 100 });
-
-  // Título del certificado
+  // 🎨 Banda inferior tipo Educativa
+  doc.save();
+  doc.fillColor("#8a1538");
   doc
+    .moveTo(doc.page.width, doc.page.height)
+    .lineTo(doc.page.width - 150, doc.page.height)
+    .lineTo(doc.page.width, doc.page.height - 150)
+    .closePath()
+    .fill();
+
+  doc.fillColor("#e0b747");
+  doc
+    .moveTo(doc.page.width - 150, doc.page.height)
+    .lineTo(doc.page.width - 180, doc.page.height)
+    .lineTo(doc.page.width, doc.page.height - 180)
+    .lineTo(doc.page.width, doc.page.height - 150)
+    .closePath()
+    .fill();
+  doc.restore();
+
+  // 🏷️ TÍTULOS SUPERIORES
+  let currentY = 90;
+
+  doc
+    .fillColor("#000000")
+    .font("Times-Bold")
+    .fontSize(50)
+    .text("CERTIFICADO", 0, currentY, { align: "center" });
+
+  currentY += 50;
+
+  doc
+    .fillColor("#e0b747")
     .font("Helvetica-Bold")
-    .fontSize(30)
-    .fillColor(colorPrimario)
-    .text("CERTIFICADO", 0, 70, { align: "center" });
-
-  // Subtítulo
-  doc
-    .font("Helvetica")
     .fontSize(16)
-    .fillColor(colorSecundario)
-    .text(
-      "DE " +
-        (tipoCertificado === "APROBACION" ? "APROBACIÓN" : "PARTICIPACIÓN"),
-      0,
-      105,
-      { align: "center" }
-    );
+    .text("DE RECONOCIMIENTO", 0, currentY, { align: "center" });
 
-  // Línea decorativa
+  currentY += 30;
+
   doc
-    .moveTo(doc.page.width / 2 - 100, 135)
-    .lineTo(doc.page.width / 2 + 100, 135)
-    .lineWidth(2)
-    .strokeColor(colorPrimario)
-    .stroke();
+    .fillColor("#999999")
+    .font("Helvetica")
+    .fontSize(10)
+    .text("Otorgado a", 0, currentY, { align: "center" });
 
-  // Cuerpo del certificado
+  // 🧑‍🎓 Nombre
+  currentY += 30;
+
+  doc
+    .fillColor("#000000")
+    .font(fs.existsSync(fontPath) ? "GreatVibes" : "Times-Roman")
+    .fontSize(42)
+    .text(`${usuario.nom_usu} ${usuario.ape_usu}`, 0, currentY, {
+      align: "center",
+    });
+
+  currentY += 55;
+
+  // Cédula y carrera
   doc
     .font("Helvetica")
-    .fontSize(14)
-    .fillColor("#333333")
-    .text("Se certifica que:", 0, 160, { align: "center" });
+    .fontSize(12)
+    .fillColor("#555555")
+    .text(`Cédula: ${usuario.ced_usu}`, 0, currentY, { align: "center" });
 
-  // Nombre del participante
-  doc
-    .font("Helvetica-Bold")
-    .fontSize(22)
-    .fillColor(colorSecundario)
-    .text(`${usuario.nom_usu} ${usuario.ape_usu}`, 0, 190, { align: "center" });
-
-  // Cédula
-  doc
-    .font("Helvetica")
-    .fontSize(14)
-    .fillColor("#333333")
-    .text(`Cédula: ${usuario.ced_usu}`, 0, 225, { align: "center" });
-
-  // Carrera (si aplica)
   if (usuario.carrera) {
-    doc.text(`Carrera: ${usuario.carrera.nom_car}`, 0, 250, {
+    currentY += 18;
+    doc.text(`Carrera: ${usuario.carrera.nom_car}`, 0, currentY, {
       align: "center",
     });
   }
 
-  // Texto principal
-  doc
-    .font("Helvetica")
-    .fontSize(14)
-    .text("Ha ", 150, 285)
-    .fillColor(colorPrimario)
-    .font("Helvetica-Bold")
-    .text(tipoCertificado === "APROBACION" ? "APROBADO" : "PARTICIPADO", {
-      continued: true,
-    })
-    .fillColor("#333333")
-    .font("Helvetica")
-    .text(" satisfactoriamente en el evento académico:", { continued: false });
+  currentY += 35;
 
-  // Nombre del evento
-  doc
-    .font("Helvetica-Bold")
-    .fontSize(18)
-    .fillColor(colorSecundario)
-    .text(`"${evento.nom_eve}"`, 0, 320, { align: "center" });
-
-  // Detalles del evento
+  // 📄 Descripción
   doc
     .font("Helvetica")
     .fontSize(14)
     .fillColor("#333333")
-    .text(`Tipo: ${evento.tip_eve}`, 150, 355);
+    .text(
+      `Ha ${
+        tipoCertificado === "APROBACION" ? "APROBADO" : "PARTICIPADO"
+      } satisfactoriamente en el evento académico:`,
+      0,
+      currentY,
+      { align: "center" }
+    );
 
-  doc.text(`Duración: ${evento.dur_hor_eve} horas`, 150, 380);
+  currentY += 35;
 
+  doc
+    .font("Helvetica-Bold")
+    .fontSize(16)
+    .fillColor("#e0b747")
+    .text(`"${evento.nom_eve}"`, 0, currentY, { align: "center" });
+
+  currentY += 40;
+
+  // 📚 Datos del evento
+  doc
+    .font("Helvetica")
+    .fontSize(12)
+    .fillColor("#000000")
+    .text(`Tipo: ${evento.tip_eve}`, 0, currentY, { align: "center" });
+
+  currentY += 18;
+  doc.text(`Duración: ${evento.dur_hor_eve} horas`, { align: "center" });
+
+  currentY += 18;
   doc.text(
     `Fecha: ${new Date(evento.fec_ini_eve).toLocaleDateString(
       "es-EC"
     )} - ${new Date(evento.fec_fin_eve).toLocaleDateString("es-EC")}`,
-    150,
-    405
+    { align: "center" }
   );
 
-  // Información académica
-  doc.text(`Porcentaje de asistencia: ${asistencia}%`, 150, 430);
+  currentY += 18;
+  doc.text(`Asistencia: ${asistencia}%`, { align: "center" });
 
-  // Si es un curso, mostrar la nota
   if (evento.tip_eve === "CURSO" && notaFinal !== null) {
-    doc.text(`Nota final: ${notaFinal}/10`, 150, 455);
+    currentY += 18;
+    doc.text(`Nota final: ${notaFinal}/10`, { align: "center" });
   }
 
-  // Fecha de emisión
+  // 🖼 Borde decorativo
   doc
+    .lineWidth(0.5)
+    .strokeColor("#cccccc")
+    .rect(15, 15, doc.page.width - 30, doc.page.height - 30)
+    .stroke();
+
+  // 🥇 Sello decorativo
+  const selloPath = path.join(imagesDir, "stampa.png");
+  if (fs.existsSync(selloPath)) {
+    doc.image(selloPath, doc.page.width - 190, doc.page.height - 260, {
+      width: 200,
+    });
+  } else {
+    console.warn("⚠️ Imagen de sello no encontrada");
+  }
+
+  // ✒️ Firma y fecha de emisión
+  const yFirma = doc.page.height - 130; // Ajustado para dar espacio a la fecha
+
+  // Fecha de emisión más visible
+  doc
+    .font("Helvetica")
     .fontSize(12)
+    .fillColor("#333333")
     .text(
-      `Fecha de emisión: ${new Date().toLocaleDateString("es-EC")}`,
+      `Emitido el ${new Date().toLocaleDateString("es-EC", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      })}`,
       0,
-      500,
+      yFirma - 10,
       { align: "center" }
     );
 
-  // Código de validación
   doc
-    .fontSize(10)
-    .fillColor("#666666")
-    .text(`Código de validación: ${datos.codigoValidacion}`, 0, 525, {
-      align: "center",
-    });
-
-  // Firma (línea para firma)
-  doc
-    .moveTo(doc.page.width / 2 - 100, 485)
-    .lineTo(doc.page.width / 2 + 100, 485)
-    .lineWidth(1)
+    .moveTo(doc.page.width / 2 - 100, yFirma + 20)
+    .lineTo(doc.page.width / 2 + 100, yFirma + 20)
     .strokeColor("#000000")
+    .lineWidth(1)
     .stroke();
 
   doc
-    .fontSize(12)
+    .font("Helvetica")
+    .fontSize(10)
     .fillColor("#333333")
-    .text("Firma del Director", 0, 490, { align: "center" });
+    .text("Firma del Director", 0, yFirma + 25, { align: "center" });
+
+  // 🔐 Código
+  doc
+    .fontSize(10)
+    .fillColor("#777777")
+    .text(`Código de validación: ${codigoValidacion}`, 0, yFirma + 45, {
+      align: "center",
+    });
 
   return doc;
 };
@@ -182,7 +253,7 @@ const generarCertificadoPDF = (datos) => {
 // Verificar si puede generar certificado
 // ============================
 const cumpleRequisitosCertificado = (inscripcion, evento, inscripcionCurso) => {
-  if (inscripcion.est_ins !== "FINALIZADA") return false;
+  if (inscripcion.est_ins !== "APROBADO") return false;
 
   const porcentajeAsistencia = inscripcion.por_asi_fin_usu || 0;
   const porcentajeMinimo = evento.por_min_asi_eve || 80;

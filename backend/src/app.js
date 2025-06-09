@@ -78,12 +78,20 @@ app.use("/api", facultadRoutes);
 const coordinadorRoutes = require("./routes/coordinador.routes");
 app.use("/api", coordinadorRoutes);
 
-// Rutas de gestión de configuraciones
-app.use("/api/configuracion", require("./routes/configuracion.routes"));
+// Rutas de gestión de MVA (Misión, Visión, Autoridades)
+app.use("/api/mva", require("./routes/mva.routes"));
 
 // Rutas de perfil de usuario
 const perfilRoutes = require("./routes/perfil.routes");
 app.use("/api", perfilRoutes);
+
+// Rutas de subida de imágenes
+const uploadRoutes = require("./routes/upload.routes-mva");
+app.use("/api/upload", uploadRoutes);
+
+// Rutas de reportes (solo admins)
+const reporteRoutes = require("./routes/reporte.routes");
+app.use("/api/admin", reporteRoutes);
 
 // ============================
 //  Iniciar el servidor

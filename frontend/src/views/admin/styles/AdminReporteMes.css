@@ -1,0 +1,139 @@
+.reporte-mes-container {
+  background: #f6f7fa;
+  min-height: 80vh;
+  padding: 2.5rem 2rem 2rem 2rem;
+  border-radius: 24px;
+  max-width: 1200px;
+  margin: 2rem auto;
+  box-shadow: 0 4px 32px #00000010;
+}
+
+.reporte-mes-container h2 {
+  font-size: 2.2rem;
+  font-weight: bold;
+  color: #8a1538;
+  margin-bottom: 0.7rem;
+  letter-spacing: 1px;
+  text-align: center;
+}
+
+.reporte-mes-filtros {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.reporte-mes-filtros select {
+  padding: 0.7rem 1.2rem;
+  border: 1.7px solid #8a1538;
+  border-radius: 12px;
+  background: #fff;
+  font-size: 1.08rem;
+  color: #8a1538;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s;
+  box-shadow: 0 1px 4px #8a153820;
+  appearance: none;
+}
+
+.reporte-mes-filtros select:focus {
+  border-color: #d03461;
+}
+
+.reporte-mes-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 2px 8px #0001;
+  overflow: hidden;
+}
+
+.reporte-btn-descargar {
+  display: block;
+  margin: 32px auto 0 auto; /* Centrado y un poco de espacio arriba */
+  background: #8a1538;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 34px;
+  font-weight: bold;
+  font-size: 1.08rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px #8a153820;
+  transition: background .2s;
+}
+
+.reporte-btn-descargar:hover {
+  background: #a22145;
+}
+
+.reporte-mes-table th,
+.reporte-mes-table td {
+  padding: 0.85rem 0.8rem;
+  text-align: center;
+  font-size: 1rem;
+}
+
+.reporte-mes-table th {
+  background: #f5e9ec;
+  color: #8a1538;
+  font-size: 1.08rem;
+  font-weight: bold;
+  border-bottom: 2px solid #e8cbd2;
+}
+
+.reporte-mes-table tbody tr {
+  transition: background 0.17s;
+}
+
+.reporte-mes-table tbody tr:hover {
+  background: #fff3f6;
+}
+
+.reporte-mes-table td {
+  color: #222;
+  border-bottom: 1px solid #f0e4e6;
+}
+
+/* -- Cambia el footer de la tabla para que el total esté a la izquierda -- */
+.reporte-mes-table tfoot tr td {
+  background: #f9d5e0;
+  color: #8a1538;
+  font-size: 1.08rem;
+  font-weight: bold;
+  border-top: 2px solid #e8cbd2;
+  text-align: left;
+  padding-left: 1.5rem;
+}
+
+/* -- Solo el último td (el total) alineado a la derecha y más grande -- */
+.reporte-mes-table tfoot tr td:last-child {
+  text-align: right;
+  color: #8a1538;
+  font-size: 1.18rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding-right: 2rem;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .reporte-mes-container {
+    padding: 1rem 0.5rem;
+  }
+  .reporte-mes-filtros {
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+  .reporte-mes-table th,
+  .reporte-mes-table td {
+    padding: 0.5rem 0.2rem;
+    font-size: 0.96rem;
+  }
+}
