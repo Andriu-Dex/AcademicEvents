@@ -11,6 +11,8 @@ import {
   Monitor,
   Laptop,
   Filter,
+  ChevronDown,
+  X,
 } from "lucide-react";
 import "./styles/EventsRoute.css";
 
@@ -45,7 +47,14 @@ const EventsRoute = () => {
   const navigate = useNavigate();
   const [eventos, setEventos] = useState([]);
   const [filtro, setFiltro] = useState("");
-  const [filtroModalidad, setFiltroModalidad] = useState(""); // Nuevo filtro de modalidad
+  const [filtroModalidad, setFiltroModalidad] = useState("");
+  const [filtros, setFiltros] = useState({
+    gratuito: false,
+    pagado: false,
+    completo: false,
+    modalidad: "",
+  });
+  const [mostrarFiltros, setMostrarFiltros] = useState(false);
   const [eventoSeleccionado, setEventoSeleccionado] = useState(null);
   const [archivo, setArchivo] = useState(null);
   const [cartaMotivacion, setCartaMotivacion] = useState("");
@@ -299,6 +308,79 @@ const EventsRoute = () => {
     return tieneRolPermitido;
   });
 
+  // Función para aplicar filtros
+  const aplicarFiltros = (evento) => {
+    // Convertir cupos a número para comparaciones
+    const cuposDisponibles = parseInt(evento.cup_dis_eve) || 0;
+
+    // CONTROL DE VISIBILIDAD POR CUPOS:
+    const hayFiltrosActivos = Object.values(filtros).some((f) => f);
+
+    if (hayFiltrosActivos) {
+      // Si el filtro "completo" está activo, mostrar solo eventos con cupos === 0
+      if (filtros.completo) {
+        if (cuposDisponibles !== 0) return false;
+      } else {
+        // Para todos los otros filtros, mostrar solo eventos con cupos > 0
+        if (cuposDisponibles <= 0) return false;
+      }
+    } else {
+      // Si no hay filtros activos, mostrar solo eventos con cupos > 0 (comportamiento por defecto)
+      if (cuposDisponibles <= 0) return false;
+    }
+
+    // Filtro por nombre
+    const coincideNombre = evento.nom_eve
+      .toLowerCase()
+      .includes(filtro.toLowerCase());
+
+    if (!coincideNombre) return false;
+
+    // Filtro por precio
+    if (filtros.gratuito) {
+      if (evento.val_eve !== 0) return false;
+    }
+
+    if (filtros.pagado) {
+      if (evento.val_eve === 0) return false;
+    }
+
+    // Filtro por modalidad
+    if (filtros.modalidad) {
+      if (evento.mod_eve !== filtros.modalidad) return false;
+    }
+
+    return true;
+  };
+
+  // Función para manejar cambios en filtros
+  const manejarCambioFiltro = (tipoFiltro) => {
+    setFiltros((prev) => ({
+      ...prev,
+      [tipoFiltro]: !prev[tipoFiltro],
+    }));
+
+    // Añadir efecto de filtrado al grid
+    const eventosGrid = document.querySelector(".eventos-grid");
+    if (eventosGrid) {
+      eventosGrid.classList.add("filtering");
+      setTimeout(() => {
+        eventosGrid.classList.remove("filtering");
+      }, 300);
+    }
+  };
+
+  // Función para limpiar filtros
+  const limpiarFiltros = () => {
+    setFiltros({
+      gratuito: false,
+      pagado: false,
+      completo: false,
+      modalidad: "",
+    });
+    setFiltro("");
+  };
+
   if (loading) return <p className="p-6">Cargando sesión...</p>;
 
   return (
@@ -307,164 +389,250 @@ const EventsRoute = () => {
         <CalendarDays size={24} />
         Eventos disponibles
       </h1>
-      <div className="filtros-grupo">
-        <div className="buscador-contenedor-er">
-          <div className="buscador-wrapper-er">
-            <Search className="buscador-icono-er" size={18} />
-            <input
-              type="text"
-              placeholder="Buscar por nombre..."
-              value={filtro}
-              onChange={(e) => setFiltro(e.target.value)}
-              className="eventos-buscador"
+      <div className="buscador-contenedor-er">
+        <div className="buscador-wrapper-er">
+          <Search className="buscador-icono-er" size={18} />
+          <input
+            type="text"
+            placeholder="Buscar por nombre del evento..."
+            value={filtro}
+            onChange={(e) => {
+              const eventosGrid = document.querySelector(".eventos-grid");
+              if (eventosGrid) {
+                eventosGrid.classList.add("filtering");
+                setTimeout(() => {
+                  eventosGrid.classList.remove("filtering");
+                }, 300);
+              }
+              setFiltro(e.target.value);
+            }}
+            className="eventos-buscador-er"
+          />
+        </div>
+      </div>
+      {/* Barra de filtros */}
+      <div
+        className={`filtros-contenedor-er${
+          mostrarFiltros ? " filtros-abierto" : ""
+        }`}
+      >
+        <div className="filtros-header-er">
+          <button
+            className={`btn-toggle-filtros ${mostrarFiltros ? "activo" : ""}`}
+            onClick={() => setMostrarFiltros(!mostrarFiltros)}
+          >
+            <Filter size={18} />
+            Filtros
+            <ChevronDown
+              size={16}
+              className={`chevron ${mostrarFiltros ? "rotado" : ""}`}
             />
-          </div>
+          </button>
+
+          {Object.values(filtros).some((f) => f) && (
+            <button className="btn-limpiar-filtros" onClick={limpiarFiltros}>
+              <X size={16} />
+              Limpiar filtros
+            </button>
+          )}
         </div>
-        
-        {/* Filtro de modalidad */}
-        <div className="filtro-modalidad-contenedor">
-          <div className="filtro-modalidad-wrapper">
-            <Filter className="filtro-modalidad-icono" size={18} />
-            <select
-              value={filtroModalidad}
-              onChange={(e) => setFiltroModalidad(e.target.value)}
-              className="filtro-modalidad-select"
-            >
-              <option value="">Todas</option>
-              <option value="PRESENCIAL">Presencial</option>
-              <option value="VIRTUAL">Virtual</option>
-              <option value="SEMIPRESENCIAL">Semipresencial</option>
-            </select>
+
+        {mostrarFiltros && (
+          <div className="filtros-grid">
+            <div className="filtro-categoria">
+              <h4>Por Precio</h4>
+              <div className="filtros-opciones">
+                <label className="filtro-opcion">
+                  <input
+                    type="checkbox"
+                    checked={filtros.gratuito}
+                    onChange={() => manejarCambioFiltro("gratuito")}
+                  />
+                  <span className="checkmark"></span>
+                  Eventos Gratuitos
+                </label>
+                <label className="filtro-opcion">
+                  <input
+                    type="checkbox"
+                    checked={filtros.pagado}
+                    onChange={() => manejarCambioFiltro("pagado")}
+                  />
+                  <span className="checkmark"></span>
+                  Eventos de Pago
+                </label>
+              </div>
+            </div>
+
+            <div className="filtro-categoria">
+              <h4>Por Disponibilidad</h4>
+              <div className="filtros-opciones">
+                <label className="filtro-opcion">
+                  <input
+                    type="checkbox"
+                    checked={filtros.completo}
+                    onChange={() => manejarCambioFiltro("completo")}
+                  />
+                  <span className="checkmark"></span>
+                  Eventos Llenos (sin cupos)
+                </label>
+              </div>
+            </div>
+
+            <div className="filtro-categoria">
+              <h4>Por Modalidad</h4>
+              <div className="filtros-opciones">
+                <select
+                  value={filtros.modalidad}
+                  onChange={(e) =>
+                    setFiltros((prev) => ({
+                      ...prev,
+                      modalidad: e.target.value,
+                    }))
+                  }
+                  className="modalidad-select"
+                >
+                  <option value="">Todas</option>
+                  <option value="PRESENCIAL">Presencial</option>
+                  <option value="VIRTUAL">Virtual</option>
+                  <option value="SEMIPRESENCIAL">Semipresencial</option>
+                </select>
+              </div>
+            </div>
           </div>
-        </div>
+        )}
+      </div>
+      {/* Contador de resultados */}
+      <div className="resultados-contador-er">
+        <p>
+          Mostrando {eventosDisponibles.filter(aplicarFiltros).length} de{" "}
+          {eventosDisponibles.length} eventos
+          {Object.values(filtros).some((f) => f) && (
+            <span className="filtros-activos-badge-er">
+              ({Object.values(filtros).filter((f) => f).length} filtro
+              {Object.values(filtros).filter((f) => f).length !== 1
+                ? "s"
+                : ""}{" "}
+              activo
+              {Object.values(filtros).filter((f) => f).length !== 1 ? "s" : ""})
+            </span>
+          )}
+        </p>
       </div>
       {eventosDisponibles.length === 0 ? (
         <p className="text-gray-600">No hay eventos disponibles para ti.</p>
       ) : (
         <div className="eventos-grid">
-          {eventosDisponibles
-            .filter((ev) => {
-              // Filtro por nombre
-              const coincideNombre = ev.nom_eve.toLowerCase().includes(filtro.toLowerCase());
-              
-              // Filtro por modalidad
-              const coincideModalidad = filtroModalidad === "" || ev.mod_eve === filtroModalidad;
-              
-              return coincideNombre && coincideModalidad;
-            })
-            .map((evento) => (
-              <div key={evento.id_eve} className="evento-card">
-                {/* Imagen de portada (real o placeholder) */}
-                <img
-                  src={evento.img_por_eve || "https://i.imgur.com/c6Ry30Z.jpeg"}
-                  alt={`Portada de ${evento.nom_eve}`}
-                  className="evento-portada"
-                  style={{
-                    width: "100%",
-                    height: "180px",
-                    objectFit: "cover",
-                    borderRadius: "8px 8px 0 0",
-                    marginBottom: "0.5rem",
-                  }}
-                />{" "}
-                <h2 className="nombre-evento-er">{evento.nom_eve}</h2>
-                <p className="tipo">{evento.tip_eve}</p>
-                {/* Precio del evento */}
-                <p className="precio-evento">
-                  {evento.val_eve === 0
-                    ? "Gratuito"
-                    : `Precio: $${evento.val_eve.toFixed(2)}`}
-                </p>
-                {/* Descripción del evento */}
-                {evento.des_eve && (
-                  <div className="descripcion-evento">
-                    <p>
-                      {evento.des_eve.length > 150
-                        ? `${evento.des_eve.substring(0, 150)}...`
-                        : evento.des_eve}
-                    </p>
-                  </div>
-                )}{" "}
-                <p className="fecha-evento-er">
-                  Fecha: {formatearFechaUTC(evento.fec_ini_eve)} a{" "}
-                  {formatearFechaUTC(evento.fec_fin_eve)}
-                </p>{" "}
-                <p className="duracion-evento-er">
-                  Duración: {evento.dur_hor_eve} horas
-                </p>
-                {/* Cupos disponibles */}
-                <p
-                  className={
-                    evento.cup_dis_eve === 0
-                      ? "cupos-agotados"
-                      : "cupos-disponibles"
-                  }
-                >
-                  {evento.cup_dis_eve === 0
-                    ? "🚫 Sin cupos disponibles"
-                    : `Cupos disponibles: ${evento.cup_dis_eve || 0}`}
-                </p>
-                {/* Modalidad con ícono */}
-                {evento.mod_eve && (
-                  <p className="modalidad-evento">
-                    {evento.mod_eve === "PRESENCIAL" && (
-                      <>
-                        <MapPin size={16} className="inline-icon" /> Modalidad:
-                        Presencial
-                      </>
-                    )}
-                    {evento.mod_eve === "VIRTUAL" && (
-                      <>
-                        <Monitor size={16} className="inline-icon" /> Modalidad:
-                        Virtual
-                      </>
-                    )}
-                    {evento.mod_eve === "SEMIPRESENCIAL" && (
-                      <>
-                        <Laptop size={16} className="inline-icon" /> Modalidad:
-                        Semipresencial
-                      </>
-                    )}
+          {eventosDisponibles.filter(aplicarFiltros).map((evento) => (
+            <div key={evento.id_eve} className="evento-card">
+              {/* Imagen de portada (real o placeholder) */}
+              <img
+                src={evento.img_por_eve || "https://i.imgur.com/c6Ry30Z.jpeg"}
+                alt={`Portada de ${evento.nom_eve}`}
+                className="evento-portada"
+                style={{
+                  width: "100%",
+                  height: "180px",
+                  objectFit: "cover",
+                  borderRadius: "8px 8px 0 0",
+                  marginBottom: "0.5rem",
+                }}
+              />{" "}
+              <h2 className="nombre-evento-er">{evento.nom_eve}</h2>
+              <p className="tipo">{evento.tip_eve}</p>
+              {/* Precio del evento */}
+              <p className="precio-evento">
+                {evento.val_eve === 0
+                  ? "Gratuito"
+                  : `Precio: $${evento.val_eve.toFixed(2)}`}
+              </p>
+              {/* Descripción del evento */}
+              {evento.des_eve && (
+                <div className="descripcion-evento">
+                  <p>
+                    {evento.des_eve.length > 150
+                      ? `${evento.des_eve.substring(0, 150)}...`
+                      : evento.des_eve}
                   </p>
-                )}
-                {/* Público objetivo si existe */}
-                {evento.publico_objetivo && (
-                  <p className="publico">
-                    Dirigido a: {evento.publico_objetivo}
-                  </p>
-                )}{" "}
-                {evento.pagado_eve && <p className="pago">Pagado</p>}{" "}
-                <button
-                  onClick={() => {
-                    // Para reinscripción, marcamos como tal
-                    if (
-                      inscripcionesRechazadas &&
-                      inscripcionesRechazadas.includes(evento.id_eve)
-                    ) {
-                      const eventoConMarca = { ...evento, reinscripcion: true };
-                      setEventoSeleccionado(eventoConMarca);
-                    } else {
-                      setEventoSeleccionado(evento);
-                    }
-                  }}
-                  className="btn-inscribirme"
-                  disabled={
-                    inscripciones.includes(evento.id_eve) ||
-                    (eventosAprobados &&
-                      eventosAprobados.includes(evento.id_eve)) ||
-                    evento.cup_dis_eve === 0
+                </div>
+              )}{" "}
+              <p className="fecha-evento-er">
+                Fecha: {formatearFechaUTC(evento.fec_ini_eve)} a{" "}
+                {formatearFechaUTC(evento.fec_fin_eve)}
+              </p>{" "}
+              <p className="duracion-evento-er">
+                Duración: {evento.dur_hor_eve} horas
+              </p>
+              {/* Cupos disponibles */}
+              <p
+                className={
+                  evento.cup_dis_eve === 0
+                    ? "cupos-agotados"
+                    : "cupos-disponibles"
+                }
+              >
+                {evento.cup_dis_eve === 0
+                  ? "🚫 Sin cupos disponibles"
+                  : `Cupos disponibles: ${evento.cup_dis_eve || 0}`}
+              </p>
+              {/* Modalidad con ícono */}
+              {evento.mod_eve && (
+                <p className="modalidad-evento">
+                  {evento.mod_eve === "PRESENCIAL" && (
+                    <>
+                      <MapPin size={16} className="inline-icon" /> Modalidad:
+                      Presencial
+                    </>
+                  )}
+                  {evento.mod_eve === "VIRTUAL" && (
+                    <>
+                      <Monitor size={16} className="inline-icon" /> Modalidad:
+                      Virtual
+                    </>
+                  )}
+                  {evento.mod_eve === "SEMIPRESENCIAL" && (
+                    <>
+                      <Laptop size={16} className="inline-icon" /> Modalidad:
+                      Semipresencial
+                    </>
+                  )}
+                </p>
+              )}
+              {/* Público objetivo si existe */}
+              {evento.publico_objetivo && (
+                <p className="publico">Dirigido a: {evento.publico_objetivo}</p>
+              )}{" "}
+              {evento.pagado_eve && <p className="pago">Pagado</p>}{" "}
+              <button
+                onClick={() => {
+                  // Para reinscripción, marcamos como tal
+                  if (
+                    inscripcionesRechazadas &&
+                    inscripcionesRechazadas.includes(evento.id_eve)
+                  ) {
+                    const eventoConMarca = { ...evento, reinscripcion: true };
+                    setEventoSeleccionado(eventoConMarca);
+                  } else {
+                    setEventoSeleccionado(evento);
                   }
-                >
-                  {eventosAprobados && eventosAprobados.includes(evento.id_eve)
-                    ? "Evento aprobado"
-                    : inscripciones.includes(evento.id_eve)
-                    ? "Ya inscrito"
-                    : evento.cup_dis_eve === 0
-                    ? "Sin cupos"
-                    : "Inscribirme"}
-                </button>
-              </div>
-            ))}
+                }}
+                className="btn-inscribirme"
+                disabled={
+                  inscripciones.includes(evento.id_eve) ||
+                  (eventosAprobados &&
+                    eventosAprobados.includes(evento.id_eve)) ||
+                  evento.cup_dis_eve === 0
+                }
+              >
+                {eventosAprobados && eventosAprobados.includes(evento.id_eve)
+                  ? "Evento aprobado"
+                  : inscripciones.includes(evento.id_eve)
+                  ? "Ya inscrito"
+                  : evento.cup_dis_eve === 0
+                  ? "Sin cupos"
+                  : "Inscribirme"}
+              </button>
+            </div>
+          ))}
         </div>
       )}{" "}
       {eventoSeleccionado && (

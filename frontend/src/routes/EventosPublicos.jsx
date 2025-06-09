@@ -275,7 +275,7 @@ const EventosPublicos = () => {
           Eventos Públicos
         </h1>
 
-        <div className="buscador-contenedor">
+        <div className="buscador-contenedor-ep">
           <div className="buscador-wrapper">
             <Search className="buscador-icono-ep" size={18} />{" "}
             <input
@@ -300,7 +300,11 @@ const EventosPublicos = () => {
         </div>
 
         {/* Barra de filtros */}
-        <div className="filtros-contenedor-ep">
+        <div
+          className={`filtros-contenedor-ep${
+            mostrarFiltros ? " filtros-abierto" : ""
+          }`}
+        >
           <div className="filtros-header-ep">
             <button
               className={`btn-toggle-filtros ${mostrarFiltros ? "activo" : ""}`}

@@ -43,11 +43,11 @@
 }
 
 /* Contenedor del buscador */
-.buscador-contenedor {
+.buscador-contenedor-ep {
   position: relative;
   display: block;
   justify-content: space-between;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   width: 100%;
 }
 
@@ -119,14 +119,13 @@
 
 /* Estilos para la barra de filtros */
 .filtros-contenedor-ep {
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   background: white;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(138, 21, 56, 0.08);
   border: 1px solid #e5e7eb;
   overflow: hidden;
-  transition: all 0.3s ease;
-  width: 11%;
+  width: 135px;
 }
 
 .filtros-contenedor-ep.filtros-abierto {
@@ -158,8 +157,9 @@
 }
 
 .btn-toggle-filtros:hover {
-  background: rgba(138, 21, 56, 0.1);
+  border-radius: 8px;
   transform: translateY(-1px);
+  transform: scale(1.03);
 }
 
 .btn-toggle-filtros.activo {
@@ -324,29 +324,6 @@
   }
 }
 
-/* Responsive para filtros */
-@media (max-width: 768px) {
-  .filtros-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-    padding: 1rem;
-  }
-
-  .filtros-header-ep {
-    padding: 0.75rem 1rem;
-  }
-
-  .btn-toggle-filtros {
-    font-size: 0.9rem;
-    padding: 0.4rem 0.8rem;
-  }
-
-  .btn-limpiar-filtros {
-    font-size: 0.8rem;
-    padding: 0.4rem 0.8rem;
-  }
-}
-
 /* Contador de resultados */
 .resultados-contador {
   margin-bottom: 1rem;
@@ -354,6 +331,7 @@
   background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
   border-radius: 8px;
   border-left: 4px solid #8a1538;
+  width: 230px;
 }
 
 .resultados-contador p {
@@ -1526,5 +1504,32 @@
 
   .evento-card {
     margin-bottom: 1.5rem;
+  }
+}
+
+/* Responsive para filtros */
+@media (max-width: 768px) {
+  .filtros-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .filtros-contenedor-ep {
+    min-width: 148px;
+  }
+
+  .filtros-header-ep {
+    padding: 0.75rem 1rem;
+  }
+
+  .btn-toggle-filtros {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
+  }
+
+  .btn-limpiar-filtros {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.8rem;
   }
 }
