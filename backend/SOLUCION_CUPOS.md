@@ -135,7 +135,7 @@ Esto simplifica la lógica y evita casos borde donde podría haber inconsistenci
                                           ▼
 ┌──────────────────┐               ┌───────────────────────┐
 │     RECHAZADA    │◄──────────────│       ACEPTADA        │
-│ (cup_ocu=false)               │   (cup_ocu=true)   │
+│ (cup_ocu=false)  │               │   (cup_ocu=true)      │
 └──────────────────┘               └──────────┬────────────┘
                                               │
                                               ▼
@@ -143,7 +143,7 @@ Esto simplifica la lógica y evita casos borde donde podría haber inconsistenci
                     ▼                         ▼                         ▼
          ┌────────────────┐         ┌─────────────────┐         ┌──────────────────┐
          │    APROBADO    │         │ REPROBADO_NOTA  │         │REPROBADO_*       │
-         │(cup_ocu=true)         │(cup_ocu=true)│         │(cup_ocu=true) │
+         │(cup_ocu=true)  │         │(cup_ocu=true)   │         │(cup_ocu=true)    │
          └────────────────┘         └─────────────────┘         └──────────────────┘
 ```
 
