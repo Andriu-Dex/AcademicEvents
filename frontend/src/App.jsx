@@ -14,8 +14,8 @@ import Perfil from "./views/Perfil.jsx";
 
 // Admin (panel de administración)
 import AdminDashboard from "./views/admin/AdminDashboard.jsx";
-import AdminReporteDetalle from "./views/admin/AdminReporteDetalle.jsx";
-import AdminReporteMes from "./views/admin/AdminReporteMes.jsx";
+import AdminReporteDetalle from "./views/admin/Reportes/AdminReporteDetalle.jsx";
+import AdminReporteMes from "./views/admin/Reportes/AdminReporteMes.jsx";
 import AdminEvents from "./views/admin/AdminEvents.jsx";
 import AdminCarreras from "./views/admin/AdminCarreras.jsx";
 import AdminConfiguracionMVA from "./views/admin/AdminConfiguracionMVA.jsx";
