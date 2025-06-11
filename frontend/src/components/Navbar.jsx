@@ -46,7 +46,10 @@ const Navbar = () => {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (reportMenuRef.current && !reportMenuRef.current.contains(event.target)) {
+      if (
+        reportMenuRef.current &&
+        !reportMenuRef.current.contains(event.target)
+      ) {
         setShowReportMenu(false);
       }
     };
@@ -112,7 +115,7 @@ const Navbar = () => {
   }, []);
   if (!usuario) {
     return (
-      <nav className="navbar">
+      <nav className="navbar-ae">
         <div className="navbar-left">
           <Link to="/" className="navbar-logo-container">
             <img
@@ -152,7 +155,7 @@ const Navbar = () => {
     );
   }
   return (
-    <nav className="navbar">
+    <nav className="navbar-ae">
       <div className="navbar-left">
         <Link to="/home" className="navbar-logo-container">
           <img
@@ -165,135 +168,146 @@ const Navbar = () => {
         <div className="navbar-links">
           {(usuario.rol_usu === "ESTUDIANTE" ||
             usuario.rol_usu === "GENERAL") && (
-              <>
-                {" "}
-                <Link to="/home" className={`nav-link-item ${isActive("/home")}`}>
-                  <span className="nav-link-icon">
-                    <Home size={18} />
-                  </span>
-                  <span>Inicio</span>
-                </Link>{" "}
-                <Link
-                  to="/eventos"
-                  className={`nav-link-item ${isActive("/eventos")}`}
-                >
-                  <span className="nav-link-icon">
-                    <Calendar size={18} />
-                  </span>
-                  <span>Eventos disponibles</span>
-                </Link>
-                <Link
-                  to="/inscripciones"
-                  className={`nav-link-item ${isActive("/inscripciones")}`}
-                >
-                  <span className="nav-link-icon">
-                    <ClipboardList size={18} />
-                  </span>
-                  <span>Mis inscripciones</span>
-                </Link>
-              </>
-            )}{" "}
+            <>
+              {" "}
+              <Link to="/home" className={`nav-link-item ${isActive("/home")}`}>
+                <span className="nav-link-icon">
+                  <Home size={18} />
+                </span>
+                <span>Inicio</span>
+              </Link>{" "}
+              <Link
+                to="/eventos"
+                className={`nav-link-item ${isActive("/eventos")}`}
+              >
+                <span className="nav-link-icon">
+                  <Calendar size={18} />
+                </span>
+                <span>Eventos disponibles</span>
+              </Link>
+              <Link
+                to="/inscripciones"
+                className={`nav-link-item ${isActive("/inscripciones")}`}
+              >
+                <span className="nav-link-icon">
+                  <ClipboardList size={18} />
+                </span>
+                <span>Mis inscripciones</span>
+              </Link>
+            </>
+          )}{" "}
           {(usuario.rol_usu === "ADMIN_GLOBAL" ||
             usuario.rol_usu === "ADMIN_GENERAL") && (
-              <>
+            <>
+              {" "}
+              <Link
+                to="/admin"
+                className={`nav-link-item ${isActive("/admin")}`}
+              >
+                <span className="nav-link-icon">
+                  <Settings size={18} />
+                </span>
+                <span>Dashboard</span>
+              </Link>
+              <Link
+                to="/admin/eventos"
+                className={`nav-link-item ${isActive("/admin/eventos")}`}
+              >
                 {" "}
-                <Link
-                  to="/admin"
-                  className={`nav-link-item ${isActive("/admin")}`}
+                <span className="nav-link-icon">
+                  <FileText size={18} />
+                </span>
+                <span>Gestionar eventos</span>
+              </Link>
+              <Link
+                to="/admin/carreras"
+                className={`nav-link-item ${isActive("/admin/carreras")}`}
+              >
+                <span className="nav-link-icon">
+                  <GraduationCap size={18} />
+                </span>
+                <span>Gestionar carreras</span>
+              </Link>
+              <Link
+                to="/admin/inscripciones"
+                className={`nav-link-item ${isActive("/admin/inscripciones")}`}
+              >
+                <span className="nav-link-icon">
+                  <CheckSquare size={18} />
+                </span>
+                <span>Validar inscripciones</span>
+              </Link>
+              <Link
+                to="/admin/configuracion"
+                className={`nav-link-item ${isActive("/admin/configuracion")}`}
+              >
+                <span className="nav-link-icon">
+                  <Sliders size={18} />
+                </span>
+                <span>MVA</span>
+              </Link>
+              <div
+                className="nav-link-item-container"
+                ref={reportMenuRef}
+                style={{ position: "relative", display: "inline-block" }}
+              >
+                <div
+                  className={`nav-link-item ${isActive("/admin/reportes")}`}
+                  onClick={() => setShowReportMenu((prev) => !prev)}
+                  style={{ cursor: "pointer" }}
                 >
-                  <span className="nav-link-icon">
-                    <Settings size={18} />
-                  </span>
-                  <span>Panel Admin</span>
-                </Link>
-                <Link
-                  to="/admin/eventos"
-                  className={`nav-link-item ${isActive("/admin/eventos")}`}
-                >
-                  {" "}
                   <span className="nav-link-icon">
                     <FileText size={18} />
                   </span>
-                  <span>Gestionar eventos</span>
-                </Link>
-                <Link
-                  to="/admin/carreras"
-                  className={`nav-link-item ${isActive("/admin/carreras")}`}
-                >
-                  <span className="nav-link-icon">
-                    <GraduationCap size={18} />
-                  </span>
-                  <span>Gestionar carreras</span>
-                </Link>
-                <Link
-                  to="/admin/inscripciones"
-                  className={`nav-link-item ${isActive("/admin/inscripciones")}`}
-                >
-                  <span className="nav-link-icon">
-                    <CheckSquare size={18} />
-                  </span>
-                  <span>Validar inscripciones</span>
-                </Link>
-                <Link
-                  to="/admin/configuracion"
-                  className={`nav-link-item ${isActive("/admin/configuracion")}`}
-                >
-                  <span className="nav-link-icon">
-                    <Sliders size={18} />
-                  </span>
-                  <span>MVA</span>
-                </Link>
-                <div
-                  className="nav-link-item-container"
-                  ref={reportMenuRef}
-                  style={{ position: "relative", display: "inline-block" }}
-                >
-                  <div
-                    className={`nav-link-item ${isActive("/admin/reportes")}`}
-                    onClick={() => setShowReportMenu((prev) => !prev)}
-                    style={{ cursor: "pointer" }}
-                  >
-                    <span className="nav-link-icon">
-                      <FileText size={18} />
-                    </span>
-                    <span>Reportes</span>
-                  </div>
-                  {showReportMenu && (
-                    <div
-                      className="report-dropdown-menu"
-                      style={{
-                        position: "absolute",
-                        top: "120%",
-                        left: 0,
-                        background: "#fff",
-                        boxShadow: "0 4px 18px #0002",
-                        borderRadius: "10px",
-                        zIndex: 10,
-                        minWidth: "170px",
-                      }}
-                    >
-                      <Link
-                        to="/admin/reportes-evento"
-                        className="dropdown-link"
-                        style={{ display: "block", padding: "12px 18px", color: "#8a1538", fontWeight: 600, textDecoration: "none" }}
-                        onClick={() => setShowReportMenu(false)}
-                      >
-                        Por Evento
-                      </Link>
-                      <Link
-                        to="/admin/reportes-mes"
-                        className="dropdown-link"
-                        style={{ display: "block", padding: "12px 18px", color: "#8a1538", fontWeight: 600, textDecoration: "none" }}
-                        onClick={() => setShowReportMenu(false)}
-                      >
-                        Por Mes
-                      </Link>
-                    </div>
-                  )}
+                  <span>Reportes</span>
                 </div>
-
-              </>
-            )}
+                {showReportMenu && (
+                  <div
+                    className="report-dropdown-menu"
+                    style={{
+                      position: "absolute",
+                      top: "120%",
+                      left: 0,
+                      background: "#fff",
+                      boxShadow: "0 4px 18px #0002",
+                      borderRadius: "10px",
+                      zIndex: 10,
+                      minWidth: "170px",
+                    }}
+                  >
+                    <Link
+                      to="/admin/reportes-evento"
+                      className="dropdown-link"
+                      style={{
+                        display: "block",
+                        padding: "12px 18px",
+                        color: "#8a1538",
+                        fontWeight: 600,
+                        textDecoration: "none",
+                      }}
+                      onClick={() => setShowReportMenu(false)}
+                    >
+                      Por Evento
+                    </Link>
+                    <Link
+                      to="/admin/reportes-mes"
+                      className="dropdown-link"
+                      style={{
+                        display: "block",
+                        padding: "12px 18px",
+                        color: "#8a1538",
+                        fontWeight: 600,
+                        textDecoration: "none",
+                      }}
+                      onClick={() => setShowReportMenu(false)}
+                    >
+                      Por Mes
+                    </Link>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
         </div>
       </div>{" "}
       <div className="navbar-profile" ref={profileMenuRef}>

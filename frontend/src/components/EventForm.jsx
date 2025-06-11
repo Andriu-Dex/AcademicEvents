@@ -21,8 +21,13 @@ import {
 } from "lucide-react";
 import "./styles/EventForm.css";
 import "./styles/CarreraCheckboxes.css";
+import {
+  formatDateForBackend,
+  formatDateForPicker,
+  isTomorrowOrLater,
+} from "../utils/dateUtils";
 
-// Registrar el idioma español
+// Registrar el idioma
 registerLocale("es", es);
 
 const EventForm = ({ eventId = null, mode = "create" }) => {
@@ -287,10 +292,19 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
     }
     // Validar fechas
     if (formData.fec_ini_eve && formData.fec_fin_eve) {
-      if (new Date(formData.fec_ini_eve) > new Date(formData.fec_fin_eve)) {
+      const fechaInicio = new Date(formData.fec_ini_eve);
+      const fechaFin = new Date(formData.fec_fin_eve);
+
+      // Verificar que la fecha de inicio no sea posterior a la fecha de fin
+      if (fechaInicio > fechaFin) {
         errores.push(
           "La fecha de inicio no puede ser posterior a la fecha de fin"
         );
+      }
+
+      // Verificar que la fecha de inicio sea a partir de mañana
+      if (!isTomorrowOrLater(fechaInicio)) {
+        errores.push("La fecha de inicio debe ser a partir de mañana");
       }
     }
 
@@ -324,12 +338,15 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
       formDataToSend.append("nom_eve", formData.nom_eve);
       formDataToSend.append("des_eve", formData.des_eve);
       formDataToSend.append("tip_eve", formData.tip_eve);
+
+      // Usar las fechas en formato ISO completo
       formDataToSend.append("fec_ini_eve", formData.fec_ini_eve);
+      formDataToSend.append("fec_fin_eve", formData.fec_fin_eve);
+
       formDataToSend.append("val_eve", formData.val_eve);
       formDataToSend.append("img_por_eve", formData.img_por_eve);
       formDataToSend.append("est_eve", formData.est_eve);
       formDataToSend.append("mod_eve", formData.mod_eve); // Añadir la modalidad del evento
-      formDataToSend.append("fec_fin_eve", formData.fec_fin_eve);
       formDataToSend.append("dur_hor_eve", formData.dur_hor_eve);
       formDataToSend.append("por_min_asi_eve", formData.por_min_asi_eve);
       formDataToSend.append("cup_max_eve", formData.cup_max_eve);
@@ -528,30 +545,29 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
               <div className="input-with-icon date-picker-container">
                 <Calendar size={18} />{" "}
                 <DatePicker
-                  selected={
-                    formData.fec_ini_eve ? new Date(formData.fec_ini_eve) : null
-                  }
+                  selected={formatDateForPicker(formData.fec_ini_eve)}
                   onChange={(date) => {
                     if (!date) return;
-                    // Formatear la fecha usando UTC para mantener la hora exacta
-                    const utcYear = date.getUTCFullYear();
-                    const utcMonth = String(date.getUTCMonth() + 1).padStart(
-                      2,
-                      "0"
-                    );
-                    const utcDay = String(date.getUTCDate()).padStart(2, "0");
-                    const utcHours = String(date.getUTCHours()).padStart(
-                      2,
-                      "0"
-                    );
-                    const utcMinutes = String(date.getUTCMinutes()).padStart(
-                      2,
-                      "0"
-                    );
-                    const formattedDate = `${utcYear}-${utcMonth}-${utcDay}T${utcHours}:${utcMinutes}:00`;
+
+                    // Verificar si es una selección de tiempo o fecha
+                    const isTimeSelection =
+                      formData.fec_ini_eve &&
+                      date.getDate() ===
+                        new Date(formData.fec_ini_eve).getDate() &&
+                      date.getMonth() ===
+                        new Date(formData.fec_ini_eve).getMonth() &&
+                      date.getFullYear() ===
+                        new Date(formData.fec_ini_eve).getFullYear();
+
+                    if (!isTimeSelection) {
+                      // Si es selección de fecha, establecer hora a 00:00
+                      date.setHours(0, 0, 0, 0);
+                    }
+
+                    // Usar la nueva utilidad para formatear la fecha
                     setFormData((prev) => ({
                       ...prev,
-                      fec_ini_eve: formattedDate,
+                      fec_ini_eve: formatDateForBackend(date),
                     }));
                   }}
                   dateFormat="dd/MM/yyyy HH:mm"
@@ -571,30 +587,29 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
               <div className="input-with-icon date-picker-container">
                 <Calendar size={18} />{" "}
                 <DatePicker
-                  selected={
-                    formData.fec_fin_eve ? new Date(formData.fec_fin_eve) : null
-                  }
+                  selected={formatDateForPicker(formData.fec_fin_eve)}
                   onChange={(date) => {
                     if (!date) return;
-                    // Formatear la fecha usando UTC para mantener la hora exacta
-                    const utcYear = date.getUTCFullYear();
-                    const utcMonth = String(date.getUTCMonth() + 1).padStart(
-                      2,
-                      "0"
-                    );
-                    const utcDay = String(date.getUTCDate()).padStart(2, "0");
-                    const utcHours = String(date.getUTCHours()).padStart(
-                      2,
-                      "0"
-                    );
-                    const utcMinutes = String(date.getUTCMinutes()).padStart(
-                      2,
-                      "0"
-                    );
-                    const formattedDate = `${utcYear}-${utcMonth}-${utcDay}T${utcHours}:${utcMinutes}:00`;
+
+                    // Verificar si es una selección de tiempo o fecha
+                    const isTimeSelection =
+                      formData.fec_fin_eve &&
+                      date.getDate() ===
+                        new Date(formData.fec_fin_eve).getDate() &&
+                      date.getMonth() ===
+                        new Date(formData.fec_fin_eve).getMonth() &&
+                      date.getFullYear() ===
+                        new Date(formData.fec_fin_eve).getFullYear();
+
+                    if (!isTimeSelection) {
+                      // Si es selección de fecha, establecer hora a 00:00
+                      date.setHours(0, 0, 0, 0);
+                    }
+
+                    // Usar la nueva utilidad para formatear la fecha
                     setFormData((prev) => ({
                       ...prev,
-                      fec_fin_eve: formattedDate,
+                      fec_fin_eve: formatDateForBackend(date),
                     }));
                   }}
                   dateFormat="dd/MM/yyyy HH:mm"
