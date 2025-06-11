@@ -1,7 +1,16 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../api/axiosConfig";
-import { Calendar, FileText, BarChart } from "lucide-react";
+import {
+  Calendar,
+  FileText,
+  BarChart,
+  GraduationCap,
+  ClipboardList,
+  CheckSquare,
+  Award,
+  Users,
+} from "lucide-react";
 import "./styles/AdminDashboard.css";
 import "./styles/reportes-options.css";
 
@@ -38,13 +47,53 @@ const AdminDashboard = () => {
         <div className="reportes-cards">
           <div
             className="reporte-card"
-            onClick={() => navigate("/admin/reportes-evento")}
+            onClick={() => navigate("/admin/reportes/carrera")}
           >
             <div className="reporte-icon">
-              <Calendar size={32} />
+              <GraduationCap size={32} />
             </div>
-            <h4>Reportes por Evento</h4>
-            <p>Visualice estadísticas detalladas por evento</p>
+            <h4>Reportes por Carrera</h4>
+            <p>Estadísticas de participación por carrera académica</p>
+          </div>
+          <div
+            className="reporte-card"
+            onClick={() => navigate("/admin/reportes/inscripciones")}
+          >
+            <div className="reporte-icon">
+              <ClipboardList size={32} />
+            </div>
+            <h4>Reportes de Inscripciones</h4>
+            <p>Estado y tendencias de inscripciones en eventos</p>
+          </div>
+          <div
+            className="reporte-card"
+            onClick={() => navigate("/admin/reportes/asistencia")}
+          >
+            <div className="reporte-icon">
+              <CheckSquare size={32} />
+            </div>
+            <h4>Reportes de Asistencia</h4>
+            <p>Análisis de asistencia vs inscripciones</p>
+          </div>
+          <div
+            className="reporte-card"
+            onClick={() => navigate("/admin/reportes/certificados")}
+          >
+            <div className="reporte-icon">
+              <Award size={32} />
+            </div>
+            <h4>Reportes de Certificados</h4>
+            <p>Estadísticas de emisión y descarga de certificados</p>
+          </div>
+          <div
+            className="reporte-card"
+            onClick={() => navigate("/admin/reportes/cupos")}
+          >
+            <div className="reporte-icon">
+              <Users size={32} />
+            </div>
+            <h4>Reportes de Cupos</h4>
+            <p>Análisis de ocupación y demanda de cupos</p>
           </div>
           <div
             className="reporte-card"

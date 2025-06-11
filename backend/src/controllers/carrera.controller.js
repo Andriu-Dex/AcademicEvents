@@ -122,7 +122,16 @@ const obtenerCarreras = async (req, res) => {
         ? `${carrera.coordinador.nom_coo} ${carrera.coordinador.ape_coo}`
         : null,
       // Incluimos los campos originales también para compatibilidad
-      ...carrera,
+      id_car: carrera.id_car,
+      nom_car: carrera.nom_car,
+      des_car: carrera.des_car,
+      dur_sem_car: carrera.dur_sem_car,
+      mod_car: carrera.mod_car,
+      ico_car: carrera.ico_car,
+      est_car: carrera.est_car,
+      fec_cre_car: carrera.fec_cre_car,
+      id_fac_per: carrera.id_fac_per,
+      id_coo_per: carrera.id_coo_per,
     }));
 
     // Respondemos con las carreras formateadas

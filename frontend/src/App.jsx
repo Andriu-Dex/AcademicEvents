@@ -24,6 +24,13 @@ import CreateEvent from "./views/admin/CreateEvent.jsx";
 import EditEvent from "./views/admin/EditEvent.jsx";
 import AdminEventInscription from "./views/admin/AdminEventInscription";
 
+// Reportes específicos
+import ReporteCarrera from "./views/admin/reportes/ReporteCarrera.jsx";
+import ReporteInscripciones from "./views/admin/reportes/ReporteInscripciones.jsx";
+import ReporteAsistencia from "./views/admin/reportes/ReporteAsistencia.jsx";
+import ReporteCertificados from "./views/admin/reportes/ReporteCertificados.jsx";
+import ReporteCupos from "./views/admin/reportes/ReporteCupos.jsx";
+
 // Rutas protegidas
 import PrivateRouteAdmin from "./components/PrivateRouteAdmin";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -191,6 +198,57 @@ function App() {
               <PrivateRouteAdmin>
                 <PrivateLayout>
                   <AdminReporteMes />
+                </PrivateLayout>
+              </PrivateRouteAdmin>
+            }
+          />
+          {/* Nuevas rutas para reportes específicos */}
+          <Route
+            path="/admin/reportes/carrera"
+            element={
+              <PrivateRouteAdmin>
+                <PrivateLayout>
+                  <ReporteCarrera />
+                </PrivateLayout>
+              </PrivateRouteAdmin>
+            }
+          />
+          <Route
+            path="/admin/reportes/inscripciones"
+            element={
+              <PrivateRouteAdmin>
+                <PrivateLayout>
+                  <ReporteInscripciones />
+                </PrivateLayout>
+              </PrivateRouteAdmin>
+            }
+          />
+          <Route
+            path="/admin/reportes/asistencia"
+            element={
+              <PrivateRouteAdmin>
+                <PrivateLayout>
+                  <ReporteAsistencia />
+                </PrivateLayout>
+              </PrivateRouteAdmin>
+            }
+          />
+          <Route
+            path="/admin/reportes/certificados"
+            element={
+              <PrivateRouteAdmin>
+                <PrivateLayout>
+                  <ReporteCertificados />
+                </PrivateLayout>
+              </PrivateRouteAdmin>
+            }
+          />
+          <Route
+            path="/admin/reportes/cupos"
+            element={
+              <PrivateRouteAdmin>
+                <PrivateLayout>
+                  <ReporteCupos />
                 </PrivateLayout>
               </PrivateRouteAdmin>
             }

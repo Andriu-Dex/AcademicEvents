@@ -9,6 +9,11 @@ const {
   obtenerTodasLasInscripciones,
 } = require("../controllers/inscripcion.controller");
 
+const { obtenerCarreras } = require("../controllers/carrera.controller");
+
+// Ruta para obtener todas las carreras (necesaria para reportes)
+router.get("/carreras", verificarToken, onlyAdmin, obtenerCarreras);
+
 // Ruta para obtener todas las inscripciones
 router.get(
   "/inscripciones",
