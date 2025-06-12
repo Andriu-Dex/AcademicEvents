@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../../api/axiosConfig";
-import { Award, Download, Filter, ArrowLeft, LineChart } from "lucide-react";
+import { Award, Download } from "lucide-react";
 import { toast } from "react-toastify";
 import "./styles/ReporteCertificados.css";
 
@@ -13,7 +12,6 @@ const ReporteCertificados = () => {
   const [eventosCertificados, setEventosCertificados] = useState([]);
   const [loading, setLoading] = useState(false);
   const [loadingPDF, setLoadingPDF] = useState(false);
-  const navigate = useNavigate();
 
   useEffect(() => {
     // Establecer fechas por defecto (último mes)
@@ -119,35 +117,23 @@ const ReporteCertificados = () => {
     return fecha.toLocaleDateString("es-ES");
   };
   return (
-    <div className="reporte-certificados-container">
-      <div className="reporte-header">
-        <button className="btn-volver" onClick={() => navigate("/admin")}>
-          <ArrowLeft size={18} />
-          Volver al Dashboard
-        </button>
+    <div className="reporte-certificados-container-rc">
+      <div className="reporte-header-rc">
         <h2>
-          <Award size={24} className="icon-header" />
+          <Award size={24} className="icon-header-rc" />
           Reportes de Certificados
         </h2>
-        <button
-          className="btn-descargar"
-          onClick={descargarPDF}
-          disabled={loadingPDF}
-        >
-          <Download size={18} />
-          {loadingPDF ? "Generando PDF..." : "Descargar Reporte"}
-        </button>
       </div>
 
-      <p className="reporte-descripcion">
+      <p className="reporte-descripcion-rc">
         Análisis de emisión y descarga de certificados por período
       </p>
 
       {/* Filtros */}
-      <div className="filtros-container">
-        <div className="filtro-grupo">
+      <div className="filtros-container-rc">
+        <div className="filtro-grupo-rc">
           <label>Período:</label>
-          <div className="fecha-inputs">
+          <div className="fecha-inputs-rc">
             <div>
               <span>Desde:</span>
               <input
@@ -170,7 +156,7 @@ const ReporteCertificados = () => {
         </div>
 
         <button
-          className="btn-descargar"
+          className="btn-descargar-rc"
           onClick={descargarPDF}
           disabled={loadingPDF || !fechaInicio || !fechaFin}
         >

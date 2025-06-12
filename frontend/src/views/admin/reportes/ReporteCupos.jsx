@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../../api/axiosConfig";
-import { Users, Download, Filter, ArrowLeft, PieChart } from "lucide-react";
+import { Users, Download } from "lucide-react";
 import { toast } from "react-toastify";
 import "./styles/ReporteCupos.css";
 
@@ -14,7 +13,6 @@ const ReporteCupos = () => {
   const [optimizacionCupos, setOptimizacionCupos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [loadingPDF, setLoadingPDF] = useState(false);
-  const navigate = useNavigate();
 
   // Cargar lista de eventos
   useEffect(() => {
@@ -131,33 +129,21 @@ const ReporteCupos = () => {
     return `${Math.round(valor * 100)}%`;
   };
   return (
-    <div className="reporte-cupos-container">
-      <div className="reporte-header">
-        <button className="btn-volver" onClick={() => navigate("/admin")}>
-          <ArrowLeft size={18} />
-          Volver al Dashboard
-        </button>
+    <div className="reporte-cupos-container-rcu">
+      <div className="reporte-header-rcu">
         <h2>
-          <Users size={24} className="icon-header" />
+          <Users size={24} className="icon-header-rcu" />
           Reportes de Cupos y Capacidad
         </h2>
-        <button
-          className="btn-descargar"
-          onClick={descargarPDF}
-          disabled={loadingPDF}
-        >
-          <Download size={18} />
-          {loadingPDF ? "Generando PDF..." : "Descargar Reporte"}
-        </button>
       </div>
 
-      <p className="reporte-descripcion">
+      <p className="reporte-descripcion-rcu">
         Análisis de ocupación, demanda y optimización de cupos por evento
       </p>
 
       {/* Filtros */}
-      <div className="filtros-container">
-        <div className="filtro-grupo">
+      <div className="filtros-container-rcu">
+        <div className="filtro-grupo-rcu">
           <label>Evento:</label>
           <select
             value={eventoSeleccionado}
@@ -173,7 +159,7 @@ const ReporteCupos = () => {
           </select>
         </div>
 
-        <div className="filtro-grupo">
+        <div className="filtro-grupo-rcu">
           <label>Tipo de Evento:</label>
           <select
             value={tipoEvento}
@@ -190,7 +176,7 @@ const ReporteCupos = () => {
         </div>
 
         <button
-          className="btn-descargar"
+          className="btn-descargar-rcu"
           onClick={descargarPDF}
           disabled={loadingPDF}
         >
@@ -199,7 +185,7 @@ const ReporteCupos = () => {
       </div>
 
       {loading ? (
-        <div className="loading-container">
+        <div className="loading-container-rcu">
           <p>Cargando datos de cupos y capacidad...</p>
         </div>
       ) : (

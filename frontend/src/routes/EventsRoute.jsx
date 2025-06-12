@@ -385,7 +385,7 @@ const EventsRoute = () => {
     }));
 
     // Añadir efecto de filtrado al grid
-    const eventosGrid = document.querySelector(".eventos-grid");
+    const eventosGrid = document.querySelector(".eventos-grid-er");
     if (eventosGrid) {
       eventosGrid.classList.add("filtering");
       setTimeout(() => {
@@ -408,7 +408,7 @@ const EventsRoute = () => {
   if (loading) return <p className="p-6">Cargando sesión...</p>;
 
   return (
-    <div className="eventos-container">
+    <div className="eventos-container-er">
       <h1 className="eventos-titulo">
         <CalendarDays size={24} />
         Eventos disponibles
@@ -421,7 +421,7 @@ const EventsRoute = () => {
             placeholder="Buscar por nombre del evento..."
             value={filtro}
             onChange={(e) => {
-              const eventosGrid = document.querySelector(".eventos-grid");
+              const eventosGrid = document.querySelector(".eventos-grid-er");
               if (eventosGrid) {
                 eventosGrid.classList.add("filtering");
                 setTimeout(() => {
@@ -436,7 +436,7 @@ const EventsRoute = () => {
             <button
               onClick={() => {
                 setFiltro("");
-                const eventosGrid = document.querySelector(".eventos-grid");
+                const eventosGrid = document.querySelector(".eventos-grid-er");
                 if (eventosGrid) {
                   eventosGrid.classList.add("filtering");
                   setTimeout(() => {
@@ -563,7 +563,7 @@ const EventsRoute = () => {
       {eventosDisponibles.length === 0 ? (
         <p className="text-gray-600">No hay eventos disponibles para ti.</p>
       ) : (
-        <div className="eventos-grid">
+        <div className="eventos-grid-er">
           {eventosDisponibles.filter(aplicarFiltros).map((evento) => (
             <div key={evento.id_eve} className="evento-card">
               {/* Imagen de portada (real o placeholder) */}

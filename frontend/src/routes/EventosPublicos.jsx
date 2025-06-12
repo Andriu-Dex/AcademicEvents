@@ -164,7 +164,7 @@ const EventosPublicos = () => {
     }));
 
     // Añadir efecto de filtrado al grid
-    const eventosGrid = document.querySelector(".eventos-grid");
+    const eventosGrid = document.querySelector(".eventos-grid-ep");
     if (eventosGrid) {
       eventosGrid.classList.add("filtering");
       setTimeout(() => {
@@ -254,7 +254,7 @@ const EventosPublicos = () => {
     return (
       <>
         <Navbar />
-        <div className="eventos-container">
+        <div className="eventos-container-ep">
           <div className="eventos-cargando">
             <div className="spinner"></div>
             <p>Cargando eventos públicos disponibles...</p>
@@ -278,7 +278,7 @@ const EventosPublicos = () => {
   return (
     <>
       <Navbar />
-      <div className="eventos-container">
+      <div className="eventos-container-ep">
         <h1 className="eventos-titulo">
           <CalendarDays size={24} />
           Eventos Públicos
@@ -293,7 +293,7 @@ const EventosPublicos = () => {
               value={filtro}
               onChange={(e) => {
                 // Añadir clase de filtrado al grid
-                const eventosGrid = document.querySelector(".eventos-grid");
+                const eventosGrid = document.querySelector(".eventos-grid-ep");
                 if (eventosGrid) {
                   eventosGrid.classList.add("filtering");
                   // Quitar la clase después de la animación
@@ -494,7 +494,7 @@ const EventosPublicos = () => {
               </p>
             </div>
 
-            <div className="eventos-grid">
+            <div className="eventos-grid-ep">
               {eventos.filter(aplicarFiltros).map((evento, index) => (
                 <div
                   key={evento.id_eve}

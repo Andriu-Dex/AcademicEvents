@@ -1,13 +1,6 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../../api/axiosConfig";
-import {
-  ClipboardList,
-  Download,
-  Filter,
-  ArrowLeft,
-  BarChart,
-} from "lucide-react";
+import { ClipboardList, Download } from "lucide-react";
 import { toast } from "react-toastify";
 import "./styles/ReporteInscripciones.css";
 
@@ -35,7 +28,6 @@ const ReporteInscripciones = () => {
   const [validaciones, setValidaciones] = useState([]);
   const [loading, setLoading] = useState(false);
   const [loadingPDF, setLoadingPDF] = useState(false);
-  const navigate = useNavigate();
 
   useEffect(() => {
     // Establecer fechas por defecto (último mes)
@@ -144,36 +136,21 @@ const ReporteInscripciones = () => {
     } de ${fecha.getFullYear()}`;
   };
   return (
-    <div className="reporte-inscripciones-container">
-      <div className="reporte-header">
-        {" "}
-        <button className="btn-volver" onClick={() => navigate("/admin")}>
-          <ArrowLeft size={18} />
-          Volver al Dashboard
-        </button>
+    <div className="reporte-inscripciones-container-ri">
+      <div className="reporte-header-ri">
         <h2>
-          <ClipboardList size={24} className="icon-header" />
+          <ClipboardList size={24} className="icon-header-ri" />
           Reportes de Inscripciones
         </h2>
-        <button
-          className="btn-descargar"
-          onClick={descargarPDF}
-          disabled={loadingPDF}
-        >
-          <Download size={18} />
-          {loadingPDF ? "Generando PDF..." : "Descargar Reporte"}
-        </button>
       </div>
-
-      <p className="reporte-descripcion">
+      <p className="reporte-descripcion-ri">
         Análisis de estados, tendencias y validaciones de inscripciones
-      </p>
-
+      </p>{" "}
       {/* Filtros */}
-      <div className="filtros-container">
-        <div className="filtro-grupo">
+      <div className="filtros-container-ri">
+        <div className="filtro-grupo-ri">
           <label>Período:</label>
-          <div className="fecha-inputs">
+          <div className="fecha-inputs-ri">
             <div>
               <span>Desde:</span>
               <input
@@ -193,9 +170,8 @@ const ReporteInscripciones = () => {
               />
             </div>
           </div>
-        </div>
-
-        <div className="filtro-grupo">
+        </div>{" "}
+        <div className="filtro-grupo-ri">
           <label>Estado:</label>
           <select
             value={estadoFiltro}
@@ -206,17 +182,15 @@ const ReporteInscripciones = () => {
             <option value="APROBADO">Aprobado</option>
             <option value="RECHAZADO">Rechazado</option>
           </select>
-        </div>
-
+        </div>{" "}
         <button
-          className="btn-descargar"
+          className="btn-descargar-ri"
           onClick={descargarPDF}
           disabled={loadingPDF || !fechaInicio || !fechaFin}
         >
           {loadingPDF ? "Generando PDF..." : "Descargar Reporte PDF"}
         </button>
       </div>
-
       {loading ? (
         <div className="loading-container">
           <p>Cargando datos de inscripciones...</p>

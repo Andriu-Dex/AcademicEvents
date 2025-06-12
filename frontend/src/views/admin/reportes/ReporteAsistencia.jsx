@@ -1,13 +1,6 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../../api/axiosConfig";
-import {
-  CheckSquare,
-  Download,
-  Filter,
-  ArrowLeft,
-  BarChart2,
-} from "lucide-react";
+import { CheckSquare, Download } from "lucide-react";
 import { toast } from "react-toastify";
 import "./styles/ReporteAsistencia.css";
 
@@ -20,7 +13,6 @@ const ReporteAsistencia = () => {
   const [noShowsAnalisis, setNoShowsAnalisis] = useState([]);
   const [loading, setLoading] = useState(false);
   const [loadingPDF, setLoadingPDF] = useState(false);
-  const navigate = useNavigate();
 
   // Cargar lista de eventos
   useEffect(() => {
@@ -137,37 +129,23 @@ const ReporteAsistencia = () => {
     return `${Math.round(valor * 100)}%`;
   };
   return (
-    <div className="reporte-asistencia-container">
-      <div className="reporte-header">
-        <button className="btn-volver" onClick={() => navigate("/admin")}>
-          <ArrowLeft size={18} />
-          Volver al Dashboard
-        </button>
+    <div className="reporte-asistencia-container-ra">
+      <div className="reporte-header-ra">
         <h2>
-          <CheckSquare size={24} className="icon-header" />
+          <CheckSquare size={24} className="icon-header-ra" />
           Reportes de Asistencia
         </h2>
-        <button
-          className="btn-descargar"
-          onClick={descargarPDF}
-          disabled={loadingPDF}
-        >
-          <Download size={18} />
-          {loadingPDF ? "Generando PDF..." : "Descargar Reporte"}
-        </button>{" "}
       </div>
-
-      <p className="reporte-descripcion">
+      <p className="reporte-descripcion-ra">
         Análisis comparativo de asistencia vs inscripciones en eventos
       </p>
       <p>
         Análisis de asistencia, comparativas entre eventos y análisis de
         no-shows
       </p>
-
-      {/* Filtros */}
-      <div className="filtros-container">
-        <div className="filtro-grupo">
+      {/* Filtros */}{" "}
+      <div className="filtros-container-ra">
+        <div className="filtro-grupo-ra">
           <label>Evento:</label>
           <select
             value={eventoSeleccionado}
@@ -183,7 +161,7 @@ const ReporteAsistencia = () => {
           </select>
         </div>
 
-        <div className="filtro-grupo">
+        <div className="filtro-grupo-ra">
           <label>Tipo de Evento:</label>
           <select
             value={tipoEvento}
@@ -200,16 +178,15 @@ const ReporteAsistencia = () => {
         </div>
 
         <button
-          className="btn-descargar"
+          className="btn-descargar-ra"
           onClick={descargarPDF}
           disabled={loadingPDF}
         >
           {loadingPDF ? "Generando PDF..." : "Descargar Reporte PDF"}
         </button>
       </div>
-
       {loading ? (
-        <div className="loading-container">
+        <div className="loading-container-ra">
           <p>Cargando datos de asistencia...</p>
         </div>
       ) : (

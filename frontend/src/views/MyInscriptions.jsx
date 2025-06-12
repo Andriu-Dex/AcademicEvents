@@ -240,7 +240,7 @@ const MyInscriptions = () => {
                         }
                       }
                     }}
-                    className="btn-descargar"
+                    className="btn-descargar-mi"
                   >
                     <Download size={16} />
                     Descargar certificado

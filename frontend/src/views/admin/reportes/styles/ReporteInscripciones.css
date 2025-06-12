@@ -1,4 +1,4 @@
-.reporte-inscripciones-container {
+.reporte-inscripciones-container-ri {
   padding: 2rem;
   background: #f8f9fa;
   border-radius: 10px;
@@ -7,16 +7,16 @@
   margin: 2rem auto;
 }
 
-.reporte-header {
+.reporte-header-ri {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   margin-bottom: 1.5rem;
   padding-bottom: 1rem;
   border-bottom: 1px solid #e3e3e3;
 }
 
-.reporte-header h2 {
+.reporte-header-ri h2 {
   color: #8a1538;
   font-size: 1.8rem;
   margin: 0;
@@ -25,18 +25,18 @@
   gap: 10px;
 }
 
-.icon-header {
+.icon-header-ri {
   color: #8a1538;
 }
 
-.reporte-descripcion {
+.reporte-descripcion-ri {
   color: #6c757d;
   margin-bottom: 2rem;
   text-align: center;
 }
 
-.btn-volver,
-.btn-descargar {
+.btn-volver-ri,
+.btn-descargar-ri {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -48,30 +48,30 @@
   border: none;
 }
 
-.btn-volver {
+.btn-volver-ri {
   background-color: #f0f0f0;
   color: #333;
 }
 
-.btn-volver:hover {
+.btn-volver-ri:hover {
   background-color: #e0e0e0;
 }
 
-.btn-descargar {
+.btn-descargar-ri {
   background-color: #8a1538;
   color: white;
 }
 
-.btn-descargar:hover {
+.btn-descargar-ri:hover {
   background-color: #761230;
 }
 
-.btn-descargar:disabled {
+.btn-descargar-ri:disabled {
   background-color: #ccc;
   cursor: not-allowed;
 }
 
-.filtros-container {
+.filtros-container-ri {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -84,19 +84,19 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-.filtro-grupo {
+.filtro-grupo-ri {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
-.filtro-grupo label {
+.filtro-grupo-ri label {
   font-weight: 600;
   color: #333;
   font-size: 0.9rem;
 }
 
-.fecha-inputs {
+.fecha-inputs-ri {
   display: flex;
   gap: 1rem;
 }

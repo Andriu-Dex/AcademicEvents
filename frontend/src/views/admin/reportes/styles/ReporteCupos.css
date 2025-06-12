@@ -1,4 +1,4 @@
-.reporte-cupos-container {
+.reporte-cupos-container-rcu {
   padding: 2rem;
   background: #f8f9fa;
   border-radius: 10px;
@@ -7,16 +7,16 @@
   margin: 2rem auto;
 }
 
-.reporte-header {
+.reporte-header-rcu {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   margin-bottom: 1.5rem;
   padding-bottom: 1rem;
   border-bottom: 1px solid #e3e3e3;
 }
 
-.reporte-header h2 {
+.reporte-header-rcu h2 {
   color: #8a1538;
   font-size: 1.8rem;
   margin: 0;
@@ -25,18 +25,18 @@
   gap: 10px;
 }
 
-.icon-header {
+.icon-header-rcu {
   color: #8a1538;
 }
 
-.reporte-descripcion {
+.reporte-descripcion-rcu {
   color: #6c757d;
   margin-bottom: 2rem;
   text-align: center;
 }
 
-.btn-volver,
-.btn-descargar {
+.btn-volver-rcu,
+.btn-descargar-rcu {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -48,30 +48,30 @@
   border: none;
 }
 
-.btn-volver {
+.btn-volver-rcu {
   background-color: #f0f0f0;
   color: #333;
 }
 
-.btn-volver:hover {
+.btn-volver-rcu:hover {
   background-color: #e0e0e0;
 }
 
-.btn-descargar {
+.btn-descargar-rcu {
   background-color: #8a1538;
   color: white;
 }
 
-.btn-descargar:hover {
+.btn-descargar-rcu:hover {
   background-color: #761230;
 }
 
-.btn-descargar:disabled {
+.btn-descargar-rcu:disabled {
   background-color: #ccc;
   cursor: not-allowed;
 }
 
-.filtros-container {
+.filtros-container-rcu {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -128,7 +128,7 @@
   transform: none;
 }
 
-.loading-container {
+.loading-container-rcu {
   text-align: center;
   padding: 2rem;
   background: white;
