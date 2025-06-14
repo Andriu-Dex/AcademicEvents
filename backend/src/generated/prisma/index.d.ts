@@ -2193,6 +2193,7 @@ export namespace Prisma {
     comprobantes_pago: number
     eventos: number
     observaciones_creadas: number
+    inscripciones_validadas: number
   }
 
   export type CuentaCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2201,6 +2202,7 @@ export namespace Prisma {
     comprobantes_pago?: boolean | CuentaCountOutputTypeCountComprobantes_pagoArgs
     eventos?: boolean | CuentaCountOutputTypeCountEventosArgs
     observaciones_creadas?: boolean | CuentaCountOutputTypeCountObservaciones_creadasArgs
+    inscripciones_validadas?: boolean | CuentaCountOutputTypeCountInscripciones_validadasArgs
   }
 
   // Custom InputTypes
@@ -2247,6 +2249,13 @@ export namespace Prisma {
    */
   export type CuentaCountOutputTypeCountObservaciones_creadasArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: observacion_inscripcionWhereInput
+  }
+
+  /**
+   * CuentaCountOutputType without action
+   */
+  export type CuentaCountOutputTypeCountInscripciones_validadasArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: inscripcionWhereInput
   }
 
 
@@ -7093,6 +7102,7 @@ export namespace Prisma {
     comprobantes_pago?: boolean | cuenta$comprobantes_pagoArgs<ExtArgs>
     eventos?: boolean | cuenta$eventosArgs<ExtArgs>
     observaciones_creadas?: boolean | cuenta$observaciones_creadasArgs<ExtArgs>
+    inscripciones_validadas?: boolean | cuenta$inscripciones_validadasArgs<ExtArgs>
     _count?: boolean | CuentaCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["cuenta"]>
 
@@ -7133,6 +7143,7 @@ export namespace Prisma {
     comprobantes_pago?: boolean | cuenta$comprobantes_pagoArgs<ExtArgs>
     eventos?: boolean | cuenta$eventosArgs<ExtArgs>
     observaciones_creadas?: boolean | cuenta$observaciones_creadasArgs<ExtArgs>
+    inscripciones_validadas?: boolean | cuenta$inscripciones_validadasArgs<ExtArgs>
     _count?: boolean | CuentaCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type cuentaIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -7151,6 +7162,7 @@ export namespace Prisma {
       comprobantes_pago: Prisma.$comprobante_pagoPayload<ExtArgs>[]
       eventos: Prisma.$eventoPayload<ExtArgs>[]
       observaciones_creadas: Prisma.$observacion_inscripcionPayload<ExtArgs>[]
+      inscripciones_validadas: Prisma.$inscripcionPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id_cue: string
@@ -7559,6 +7571,7 @@ export namespace Prisma {
     comprobantes_pago<T extends cuenta$comprobantes_pagoArgs<ExtArgs> = {}>(args?: Subset<T, cuenta$comprobantes_pagoArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$comprobante_pagoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     eventos<T extends cuenta$eventosArgs<ExtArgs> = {}>(args?: Subset<T, cuenta$eventosArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$eventoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     observaciones_creadas<T extends cuenta$observaciones_creadasArgs<ExtArgs> = {}>(args?: Subset<T, cuenta$observaciones_creadasArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$observacion_inscripcionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    inscripciones_validadas<T extends cuenta$inscripciones_validadasArgs<ExtArgs> = {}>(args?: Subset<T, cuenta$inscripciones_validadasArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$inscripcionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -8107,6 +8120,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: Observacion_inscripcionScalarFieldEnum | Observacion_inscripcionScalarFieldEnum[]
+  }
+
+  /**
+   * cuenta.inscripciones_validadas
+   */
+  export type cuenta$inscripciones_validadasArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the inscripcion
+     */
+    select?: inscripcionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the inscripcion
+     */
+    omit?: inscripcionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: inscripcionInclude<ExtArgs> | null
+    where?: inscripcionWhereInput
+    orderBy?: inscripcionOrderByWithRelationInput | inscripcionOrderByWithRelationInput[]
+    cursor?: inscripcionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: InscripcionScalarFieldEnum | InscripcionScalarFieldEnum[]
   }
 
   /**
@@ -13918,6 +13955,8 @@ export namespace Prisma {
     est_ins: $Enums.estado_inscripcion | null
     fec_ins: Date | null
     usu_apr_cer: boolean | null
+    id_adm_val_ins: string | null
+    fec_val_ins: Date | null
     por_asi_fin_usu: number | null
     cup_ocu: boolean | null
   }
@@ -13929,6 +13968,8 @@ export namespace Prisma {
     est_ins: $Enums.estado_inscripcion | null
     fec_ins: Date | null
     usu_apr_cer: boolean | null
+    id_adm_val_ins: string | null
+    fec_val_ins: Date | null
     por_asi_fin_usu: number | null
     cup_ocu: boolean | null
   }
@@ -13940,6 +13981,8 @@ export namespace Prisma {
     est_ins: number
     fec_ins: number
     usu_apr_cer: number
+    id_adm_val_ins: number
+    fec_val_ins: number
     por_asi_fin_usu: number
     cup_ocu: number
     _all: number
@@ -13961,6 +14004,8 @@ export namespace Prisma {
     est_ins?: true
     fec_ins?: true
     usu_apr_cer?: true
+    id_adm_val_ins?: true
+    fec_val_ins?: true
     por_asi_fin_usu?: true
     cup_ocu?: true
   }
@@ -13972,6 +14017,8 @@ export namespace Prisma {
     est_ins?: true
     fec_ins?: true
     usu_apr_cer?: true
+    id_adm_val_ins?: true
+    fec_val_ins?: true
     por_asi_fin_usu?: true
     cup_ocu?: true
   }
@@ -13983,6 +14030,8 @@ export namespace Prisma {
     est_ins?: true
     fec_ins?: true
     usu_apr_cer?: true
+    id_adm_val_ins?: true
+    fec_val_ins?: true
     por_asi_fin_usu?: true
     cup_ocu?: true
     _all?: true
@@ -14081,6 +14130,8 @@ export namespace Prisma {
     est_ins: $Enums.estado_inscripcion
     fec_ins: Date
     usu_apr_cer: boolean
+    id_adm_val_ins: string | null
+    fec_val_ins: Date | null
     por_asi_fin_usu: number | null
     cup_ocu: boolean
     _count: InscripcionCountAggregateOutputType | null
@@ -14111,6 +14162,8 @@ export namespace Prisma {
     est_ins?: boolean
     fec_ins?: boolean
     usu_apr_cer?: boolean
+    id_adm_val_ins?: boolean
+    fec_val_ins?: boolean
     por_asi_fin_usu?: boolean
     cup_ocu?: boolean
     cuenta?: boolean | cuentaDefaultArgs<ExtArgs>
@@ -14120,6 +14173,7 @@ export namespace Prisma {
     cartas_motivacion?: boolean | inscripcion$cartas_motivacionArgs<ExtArgs>
     observacion?: boolean | inscripcion$observacionArgs<ExtArgs>
     certificado?: boolean | inscripcion$certificadoArgs<ExtArgs>
+    admin_validador?: boolean | inscripcion$admin_validadorArgs<ExtArgs>
     _count?: boolean | InscripcionCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["inscripcion"]>
 
@@ -14130,10 +14184,13 @@ export namespace Prisma {
     est_ins?: boolean
     fec_ins?: boolean
     usu_apr_cer?: boolean
+    id_adm_val_ins?: boolean
+    fec_val_ins?: boolean
     por_asi_fin_usu?: boolean
     cup_ocu?: boolean
     cuenta?: boolean | cuentaDefaultArgs<ExtArgs>
     evento?: boolean | eventoDefaultArgs<ExtArgs>
+    admin_validador?: boolean | inscripcion$admin_validadorArgs<ExtArgs>
   }, ExtArgs["result"]["inscripcion"]>
 
   export type inscripcionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -14143,10 +14200,13 @@ export namespace Prisma {
     est_ins?: boolean
     fec_ins?: boolean
     usu_apr_cer?: boolean
+    id_adm_val_ins?: boolean
+    fec_val_ins?: boolean
     por_asi_fin_usu?: boolean
     cup_ocu?: boolean
     cuenta?: boolean | cuentaDefaultArgs<ExtArgs>
     evento?: boolean | eventoDefaultArgs<ExtArgs>
+    admin_validador?: boolean | inscripcion$admin_validadorArgs<ExtArgs>
   }, ExtArgs["result"]["inscripcion"]>
 
   export type inscripcionSelectScalar = {
@@ -14156,11 +14216,13 @@ export namespace Prisma {
     est_ins?: boolean
     fec_ins?: boolean
     usu_apr_cer?: boolean
+    id_adm_val_ins?: boolean
+    fec_val_ins?: boolean
     por_asi_fin_usu?: boolean
     cup_ocu?: boolean
   }
 
-  export type inscripcionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_ins" | "id_cor_ins" | "id_eve_ins" | "est_ins" | "fec_ins" | "usu_apr_cer" | "por_asi_fin_usu" | "cup_ocu", ExtArgs["result"]["inscripcion"]>
+  export type inscripcionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_ins" | "id_cor_ins" | "id_eve_ins" | "est_ins" | "fec_ins" | "usu_apr_cer" | "id_adm_val_ins" | "fec_val_ins" | "por_asi_fin_usu" | "cup_ocu", ExtArgs["result"]["inscripcion"]>
   export type inscripcionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     cuenta?: boolean | cuentaDefaultArgs<ExtArgs>
     evento?: boolean | eventoDefaultArgs<ExtArgs>
@@ -14169,15 +14231,18 @@ export namespace Prisma {
     cartas_motivacion?: boolean | inscripcion$cartas_motivacionArgs<ExtArgs>
     observacion?: boolean | inscripcion$observacionArgs<ExtArgs>
     certificado?: boolean | inscripcion$certificadoArgs<ExtArgs>
+    admin_validador?: boolean | inscripcion$admin_validadorArgs<ExtArgs>
     _count?: boolean | InscripcionCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type inscripcionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     cuenta?: boolean | cuentaDefaultArgs<ExtArgs>
     evento?: boolean | eventoDefaultArgs<ExtArgs>
+    admin_validador?: boolean | inscripcion$admin_validadorArgs<ExtArgs>
   }
   export type inscripcionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     cuenta?: boolean | cuentaDefaultArgs<ExtArgs>
     evento?: boolean | eventoDefaultArgs<ExtArgs>
+    admin_validador?: boolean | inscripcion$admin_validadorArgs<ExtArgs>
   }
 
   export type $inscripcionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -14190,6 +14255,7 @@ export namespace Prisma {
       cartas_motivacion: Prisma.$carta_motivacionPayload<ExtArgs>[]
       observacion: Prisma.$observacion_inscripcionPayload<ExtArgs> | null
       certificado: Prisma.$certificadoPayload<ExtArgs> | null
+      admin_validador: Prisma.$cuentaPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id_ins: string
@@ -14198,6 +14264,8 @@ export namespace Prisma {
       est_ins: $Enums.estado_inscripcion
       fec_ins: Date
       usu_apr_cer: boolean
+      id_adm_val_ins: string | null
+      fec_val_ins: Date | null
       por_asi_fin_usu: number | null
       cup_ocu: boolean
     }, ExtArgs["result"]["inscripcion"]>
@@ -14601,6 +14669,7 @@ export namespace Prisma {
     cartas_motivacion<T extends inscripcion$cartas_motivacionArgs<ExtArgs> = {}>(args?: Subset<T, inscripcion$cartas_motivacionArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$carta_motivacionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     observacion<T extends inscripcion$observacionArgs<ExtArgs> = {}>(args?: Subset<T, inscripcion$observacionArgs<ExtArgs>>): Prisma__observacion_inscripcionClient<$Result.GetResult<Prisma.$observacion_inscripcionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     certificado<T extends inscripcion$certificadoArgs<ExtArgs> = {}>(args?: Subset<T, inscripcion$certificadoArgs<ExtArgs>>): Prisma__certificadoClient<$Result.GetResult<Prisma.$certificadoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    admin_validador<T extends inscripcion$admin_validadorArgs<ExtArgs> = {}>(args?: Subset<T, inscripcion$admin_validadorArgs<ExtArgs>>): Prisma__cuentaClient<$Result.GetResult<Prisma.$cuentaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -14636,6 +14705,8 @@ export namespace Prisma {
     readonly est_ins: FieldRef<"inscripcion", 'estado_inscripcion'>
     readonly fec_ins: FieldRef<"inscripcion", 'DateTime'>
     readonly usu_apr_cer: FieldRef<"inscripcion", 'Boolean'>
+    readonly id_adm_val_ins: FieldRef<"inscripcion", 'String'>
+    readonly fec_val_ins: FieldRef<"inscripcion", 'DateTime'>
     readonly por_asi_fin_usu: FieldRef<"inscripcion", 'Float'>
     readonly cup_ocu: FieldRef<"inscripcion", 'Boolean'>
   }
@@ -15136,6 +15207,25 @@ export namespace Prisma {
      */
     include?: certificadoInclude<ExtArgs> | null
     where?: certificadoWhereInput
+  }
+
+  /**
+   * inscripcion.admin_validador
+   */
+  export type inscripcion$admin_validadorArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cuenta
+     */
+    select?: cuentaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the cuenta
+     */
+    omit?: cuentaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cuentaInclude<ExtArgs> | null
+    where?: cuentaWhereInput
   }
 
   /**
@@ -18622,6 +18712,8 @@ export namespace Prisma {
     est_ins: 'est_ins',
     fec_ins: 'fec_ins',
     usu_apr_cer: 'usu_apr_cer',
+    id_adm_val_ins: 'id_adm_val_ins',
+    fec_val_ins: 'fec_val_ins',
     por_asi_fin_usu: 'por_asi_fin_usu',
     cup_ocu: 'cup_ocu'
   };
@@ -19155,6 +19247,7 @@ export namespace Prisma {
     comprobantes_pago?: Comprobante_pagoListRelationFilter
     eventos?: EventoListRelationFilter
     observaciones_creadas?: Observacion_inscripcionListRelationFilter
+    inscripciones_validadas?: InscripcionListRelationFilter
   }
 
   export type cuentaOrderByWithRelationInput = {
@@ -19170,6 +19263,7 @@ export namespace Prisma {
     comprobantes_pago?: comprobante_pagoOrderByRelationAggregateInput
     eventos?: eventoOrderByRelationAggregateInput
     observaciones_creadas?: observacion_inscripcionOrderByRelationAggregateInput
+    inscripciones_validadas?: inscripcionOrderByRelationAggregateInput
   }
 
   export type cuentaWhereUniqueInput = Prisma.AtLeast<{
@@ -19188,6 +19282,7 @@ export namespace Prisma {
     comprobantes_pago?: Comprobante_pagoListRelationFilter
     eventos?: EventoListRelationFilter
     observaciones_creadas?: Observacion_inscripcionListRelationFilter
+    inscripciones_validadas?: InscripcionListRelationFilter
   }, "id_cue" | "cor_usu">
 
   export type cuentaOrderByWithAggregationInput = {
@@ -19591,6 +19686,8 @@ export namespace Prisma {
     est_ins?: Enumestado_inscripcionFilter<"inscripcion"> | $Enums.estado_inscripcion
     fec_ins?: DateTimeFilter<"inscripcion"> | Date | string
     usu_apr_cer?: BoolFilter<"inscripcion"> | boolean
+    id_adm_val_ins?: StringNullableFilter<"inscripcion"> | string | null
+    fec_val_ins?: DateTimeNullableFilter<"inscripcion"> | Date | string | null
     por_asi_fin_usu?: FloatNullableFilter<"inscripcion"> | number | null
     cup_ocu?: BoolFilter<"inscripcion"> | boolean
     cuenta?: XOR<CuentaScalarRelationFilter, cuentaWhereInput>
@@ -19600,6 +19697,7 @@ export namespace Prisma {
     cartas_motivacion?: Carta_motivacionListRelationFilter
     observacion?: XOR<Observacion_inscripcionNullableScalarRelationFilter, observacion_inscripcionWhereInput> | null
     certificado?: XOR<CertificadoNullableScalarRelationFilter, certificadoWhereInput> | null
+    admin_validador?: XOR<CuentaNullableScalarRelationFilter, cuentaWhereInput> | null
   }
 
   export type inscripcionOrderByWithRelationInput = {
@@ -19609,6 +19707,8 @@ export namespace Prisma {
     est_ins?: SortOrder
     fec_ins?: SortOrder
     usu_apr_cer?: SortOrder
+    id_adm_val_ins?: SortOrderInput | SortOrder
+    fec_val_ins?: SortOrderInput | SortOrder
     por_asi_fin_usu?: SortOrderInput | SortOrder
     cup_ocu?: SortOrder
     cuenta?: cuentaOrderByWithRelationInput
@@ -19618,6 +19718,7 @@ export namespace Prisma {
     cartas_motivacion?: carta_motivacionOrderByRelationAggregateInput
     observacion?: observacion_inscripcionOrderByWithRelationInput
     certificado?: certificadoOrderByWithRelationInput
+    admin_validador?: cuentaOrderByWithRelationInput
   }
 
   export type inscripcionWhereUniqueInput = Prisma.AtLeast<{
@@ -19630,6 +19731,8 @@ export namespace Prisma {
     est_ins?: Enumestado_inscripcionFilter<"inscripcion"> | $Enums.estado_inscripcion
     fec_ins?: DateTimeFilter<"inscripcion"> | Date | string
     usu_apr_cer?: BoolFilter<"inscripcion"> | boolean
+    id_adm_val_ins?: StringNullableFilter<"inscripcion"> | string | null
+    fec_val_ins?: DateTimeNullableFilter<"inscripcion"> | Date | string | null
     por_asi_fin_usu?: FloatNullableFilter<"inscripcion"> | number | null
     cup_ocu?: BoolFilter<"inscripcion"> | boolean
     cuenta?: XOR<CuentaScalarRelationFilter, cuentaWhereInput>
@@ -19639,6 +19742,7 @@ export namespace Prisma {
     cartas_motivacion?: Carta_motivacionListRelationFilter
     observacion?: XOR<Observacion_inscripcionNullableScalarRelationFilter, observacion_inscripcionWhereInput> | null
     certificado?: XOR<CertificadoNullableScalarRelationFilter, certificadoWhereInput> | null
+    admin_validador?: XOR<CuentaNullableScalarRelationFilter, cuentaWhereInput> | null
   }, "id_ins">
 
   export type inscripcionOrderByWithAggregationInput = {
@@ -19648,6 +19752,8 @@ export namespace Prisma {
     est_ins?: SortOrder
     fec_ins?: SortOrder
     usu_apr_cer?: SortOrder
+    id_adm_val_ins?: SortOrderInput | SortOrder
+    fec_val_ins?: SortOrderInput | SortOrder
     por_asi_fin_usu?: SortOrderInput | SortOrder
     cup_ocu?: SortOrder
     _count?: inscripcionCountOrderByAggregateInput
@@ -19667,6 +19773,8 @@ export namespace Prisma {
     est_ins?: Enumestado_inscripcionWithAggregatesFilter<"inscripcion"> | $Enums.estado_inscripcion
     fec_ins?: DateTimeWithAggregatesFilter<"inscripcion"> | Date | string
     usu_apr_cer?: BoolWithAggregatesFilter<"inscripcion"> | boolean
+    id_adm_val_ins?: StringNullableWithAggregatesFilter<"inscripcion"> | string | null
+    fec_val_ins?: DateTimeNullableWithAggregatesFilter<"inscripcion"> | Date | string | null
     por_asi_fin_usu?: FloatNullableWithAggregatesFilter<"inscripcion"> | number | null
     cup_ocu?: BoolWithAggregatesFilter<"inscripcion"> | boolean
   }
@@ -20169,6 +20277,7 @@ export namespace Prisma {
     comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutAdminInput
     eventos?: eventoCreateNestedManyWithoutCuentaInput
     observaciones_creadas?: observacion_inscripcionCreateNestedManyWithoutAdmin_creadorInput
+    inscripciones_validadas?: inscripcionCreateNestedManyWithoutAdmin_validadorInput
   }
 
   export type cuentaUncheckedCreateInput = {
@@ -20183,6 +20292,7 @@ export namespace Prisma {
     comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutAdminInput
     eventos?: eventoUncheckedCreateNestedManyWithoutCuentaInput
     observaciones_creadas?: observacion_inscripcionUncheckedCreateNestedManyWithoutAdmin_creadorInput
+    inscripciones_validadas?: inscripcionUncheckedCreateNestedManyWithoutAdmin_validadorInput
   }
 
   export type cuentaUpdateInput = {
@@ -20197,6 +20307,7 @@ export namespace Prisma {
     comprobantes_pago?: comprobante_pagoUpdateManyWithoutAdminNestedInput
     eventos?: eventoUpdateManyWithoutCuentaNestedInput
     observaciones_creadas?: observacion_inscripcionUpdateManyWithoutAdmin_creadorNestedInput
+    inscripciones_validadas?: inscripcionUpdateManyWithoutAdmin_validadorNestedInput
   }
 
   export type cuentaUncheckedUpdateInput = {
@@ -20211,6 +20322,7 @@ export namespace Prisma {
     comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutAdminNestedInput
     eventos?: eventoUncheckedUpdateManyWithoutCuentaNestedInput
     observaciones_creadas?: observacion_inscripcionUncheckedUpdateManyWithoutAdmin_creadorNestedInput
+    inscripciones_validadas?: inscripcionUncheckedUpdateManyWithoutAdmin_validadorNestedInput
   }
 
   export type cuentaCreateManyInput = {
@@ -20633,6 +20745,7 @@ export namespace Prisma {
     est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
     usu_apr_cer?: boolean
+    fec_val_ins?: Date | string | null
     por_asi_fin_usu?: number | null
     cup_ocu?: boolean
     cuenta: cuentaCreateNestedOneWithoutInscripcionesInput
@@ -20642,6 +20755,7 @@ export namespace Prisma {
     cartas_motivacion?: carta_motivacionCreateNestedManyWithoutInscripcionInput
     observacion?: observacion_inscripcionCreateNestedOneWithoutInscripcionInput
     certificado?: certificadoCreateNestedOneWithoutInscripcionInput
+    admin_validador?: cuentaCreateNestedOneWithoutInscripciones_validadasInput
   }
 
   export type inscripcionUncheckedCreateInput = {
@@ -20651,6 +20765,8 @@ export namespace Prisma {
     est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
     usu_apr_cer?: boolean
+    id_adm_val_ins?: string | null
+    fec_val_ins?: Date | string | null
     por_asi_fin_usu?: number | null
     cup_ocu?: boolean
     inscripcion_curso?: inscripcion_cursoUncheckedCreateNestedOneWithoutInscripcionInput
@@ -20665,6 +20781,7 @@ export namespace Prisma {
     est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    fec_val_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
     cup_ocu?: BoolFieldUpdateOperationsInput | boolean
     cuenta?: cuentaUpdateOneRequiredWithoutInscripcionesNestedInput
@@ -20674,6 +20791,7 @@ export namespace Prisma {
     cartas_motivacion?: carta_motivacionUpdateManyWithoutInscripcionNestedInput
     observacion?: observacion_inscripcionUpdateOneWithoutInscripcionNestedInput
     certificado?: certificadoUpdateOneWithoutInscripcionNestedInput
+    admin_validador?: cuentaUpdateOneWithoutInscripciones_validadasNestedInput
   }
 
   export type inscripcionUncheckedUpdateInput = {
@@ -20683,6 +20801,8 @@ export namespace Prisma {
     est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    id_adm_val_ins?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_val_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
     cup_ocu?: BoolFieldUpdateOperationsInput | boolean
     inscripcion_curso?: inscripcion_cursoUncheckedUpdateOneWithoutInscripcionNestedInput
@@ -20699,6 +20819,8 @@ export namespace Prisma {
     est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
     usu_apr_cer?: boolean
+    id_adm_val_ins?: string | null
+    fec_val_ins?: Date | string | null
     por_asi_fin_usu?: number | null
     cup_ocu?: boolean
   }
@@ -20708,6 +20830,7 @@ export namespace Prisma {
     est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    fec_val_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
     cup_ocu?: BoolFieldUpdateOperationsInput | boolean
   }
@@ -20719,6 +20842,8 @@ export namespace Prisma {
     est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    id_adm_val_ins?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_val_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
     cup_ocu?: BoolFieldUpdateOperationsInput | boolean
   }
@@ -21736,6 +21861,8 @@ export namespace Prisma {
     est_ins?: SortOrder
     fec_ins?: SortOrder
     usu_apr_cer?: SortOrder
+    id_adm_val_ins?: SortOrder
+    fec_val_ins?: SortOrder
     por_asi_fin_usu?: SortOrder
     cup_ocu?: SortOrder
   }
@@ -21751,6 +21878,8 @@ export namespace Prisma {
     est_ins?: SortOrder
     fec_ins?: SortOrder
     usu_apr_cer?: SortOrder
+    id_adm_val_ins?: SortOrder
+    fec_val_ins?: SortOrder
     por_asi_fin_usu?: SortOrder
     cup_ocu?: SortOrder
   }
@@ -21762,6 +21891,8 @@ export namespace Prisma {
     est_ins?: SortOrder
     fec_ins?: SortOrder
     usu_apr_cer?: SortOrder
+    id_adm_val_ins?: SortOrder
+    fec_val_ins?: SortOrder
     por_asi_fin_usu?: SortOrder
     cup_ocu?: SortOrder
   }
@@ -22123,6 +22254,13 @@ export namespace Prisma {
     connect?: observacion_inscripcionWhereUniqueInput | observacion_inscripcionWhereUniqueInput[]
   }
 
+  export type inscripcionCreateNestedManyWithoutAdmin_validadorInput = {
+    create?: XOR<inscripcionCreateWithoutAdmin_validadorInput, inscripcionUncheckedCreateWithoutAdmin_validadorInput> | inscripcionCreateWithoutAdmin_validadorInput[] | inscripcionUncheckedCreateWithoutAdmin_validadorInput[]
+    connectOrCreate?: inscripcionCreateOrConnectWithoutAdmin_validadorInput | inscripcionCreateOrConnectWithoutAdmin_validadorInput[]
+    createMany?: inscripcionCreateManyAdmin_validadorInputEnvelope
+    connect?: inscripcionWhereUniqueInput | inscripcionWhereUniqueInput[]
+  }
+
   export type inscripcionUncheckedCreateNestedManyWithoutCuentaInput = {
     create?: XOR<inscripcionCreateWithoutCuentaInput, inscripcionUncheckedCreateWithoutCuentaInput> | inscripcionCreateWithoutCuentaInput[] | inscripcionUncheckedCreateWithoutCuentaInput[]
     connectOrCreate?: inscripcionCreateOrConnectWithoutCuentaInput | inscripcionCreateOrConnectWithoutCuentaInput[]
@@ -22156,6 +22294,13 @@ export namespace Prisma {
     connectOrCreate?: observacion_inscripcionCreateOrConnectWithoutAdmin_creadorInput | observacion_inscripcionCreateOrConnectWithoutAdmin_creadorInput[]
     createMany?: observacion_inscripcionCreateManyAdmin_creadorInputEnvelope
     connect?: observacion_inscripcionWhereUniqueInput | observacion_inscripcionWhereUniqueInput[]
+  }
+
+  export type inscripcionUncheckedCreateNestedManyWithoutAdmin_validadorInput = {
+    create?: XOR<inscripcionCreateWithoutAdmin_validadorInput, inscripcionUncheckedCreateWithoutAdmin_validadorInput> | inscripcionCreateWithoutAdmin_validadorInput[] | inscripcionUncheckedCreateWithoutAdmin_validadorInput[]
+    connectOrCreate?: inscripcionCreateOrConnectWithoutAdmin_validadorInput | inscripcionCreateOrConnectWithoutAdmin_validadorInput[]
+    createMany?: inscripcionCreateManyAdmin_validadorInputEnvelope
+    connect?: inscripcionWhereUniqueInput | inscripcionWhereUniqueInput[]
   }
 
   export type Enumrol_usuarioFieldUpdateOperationsInput = {
@@ -22240,6 +22385,20 @@ export namespace Prisma {
     deleteMany?: observacion_inscripcionScalarWhereInput | observacion_inscripcionScalarWhereInput[]
   }
 
+  export type inscripcionUpdateManyWithoutAdmin_validadorNestedInput = {
+    create?: XOR<inscripcionCreateWithoutAdmin_validadorInput, inscripcionUncheckedCreateWithoutAdmin_validadorInput> | inscripcionCreateWithoutAdmin_validadorInput[] | inscripcionUncheckedCreateWithoutAdmin_validadorInput[]
+    connectOrCreate?: inscripcionCreateOrConnectWithoutAdmin_validadorInput | inscripcionCreateOrConnectWithoutAdmin_validadorInput[]
+    upsert?: inscripcionUpsertWithWhereUniqueWithoutAdmin_validadorInput | inscripcionUpsertWithWhereUniqueWithoutAdmin_validadorInput[]
+    createMany?: inscripcionCreateManyAdmin_validadorInputEnvelope
+    set?: inscripcionWhereUniqueInput | inscripcionWhereUniqueInput[]
+    disconnect?: inscripcionWhereUniqueInput | inscripcionWhereUniqueInput[]
+    delete?: inscripcionWhereUniqueInput | inscripcionWhereUniqueInput[]
+    connect?: inscripcionWhereUniqueInput | inscripcionWhereUniqueInput[]
+    update?: inscripcionUpdateWithWhereUniqueWithoutAdmin_validadorInput | inscripcionUpdateWithWhereUniqueWithoutAdmin_validadorInput[]
+    updateMany?: inscripcionUpdateManyWithWhereWithoutAdmin_validadorInput | inscripcionUpdateManyWithWhereWithoutAdmin_validadorInput[]
+    deleteMany?: inscripcionScalarWhereInput | inscripcionScalarWhereInput[]
+  }
+
   export type inscripcionUncheckedUpdateManyWithoutCuentaNestedInput = {
     create?: XOR<inscripcionCreateWithoutCuentaInput, inscripcionUncheckedCreateWithoutCuentaInput> | inscripcionCreateWithoutCuentaInput[] | inscripcionUncheckedCreateWithoutCuentaInput[]
     connectOrCreate?: inscripcionCreateOrConnectWithoutCuentaInput | inscripcionCreateOrConnectWithoutCuentaInput[]
@@ -22308,6 +22467,20 @@ export namespace Prisma {
     update?: observacion_inscripcionUpdateWithWhereUniqueWithoutAdmin_creadorInput | observacion_inscripcionUpdateWithWhereUniqueWithoutAdmin_creadorInput[]
     updateMany?: observacion_inscripcionUpdateManyWithWhereWithoutAdmin_creadorInput | observacion_inscripcionUpdateManyWithWhereWithoutAdmin_creadorInput[]
     deleteMany?: observacion_inscripcionScalarWhereInput | observacion_inscripcionScalarWhereInput[]
+  }
+
+  export type inscripcionUncheckedUpdateManyWithoutAdmin_validadorNestedInput = {
+    create?: XOR<inscripcionCreateWithoutAdmin_validadorInput, inscripcionUncheckedCreateWithoutAdmin_validadorInput> | inscripcionCreateWithoutAdmin_validadorInput[] | inscripcionUncheckedCreateWithoutAdmin_validadorInput[]
+    connectOrCreate?: inscripcionCreateOrConnectWithoutAdmin_validadorInput | inscripcionCreateOrConnectWithoutAdmin_validadorInput[]
+    upsert?: inscripcionUpsertWithWhereUniqueWithoutAdmin_validadorInput | inscripcionUpsertWithWhereUniqueWithoutAdmin_validadorInput[]
+    createMany?: inscripcionCreateManyAdmin_validadorInputEnvelope
+    set?: inscripcionWhereUniqueInput | inscripcionWhereUniqueInput[]
+    disconnect?: inscripcionWhereUniqueInput | inscripcionWhereUniqueInput[]
+    delete?: inscripcionWhereUniqueInput | inscripcionWhereUniqueInput[]
+    connect?: inscripcionWhereUniqueInput | inscripcionWhereUniqueInput[]
+    update?: inscripcionUpdateWithWhereUniqueWithoutAdmin_validadorInput | inscripcionUpdateWithWhereUniqueWithoutAdmin_validadorInput[]
+    updateMany?: inscripcionUpdateManyWithWhereWithoutAdmin_validadorInput | inscripcionUpdateManyWithWhereWithoutAdmin_validadorInput[]
+    deleteMany?: inscripcionScalarWhereInput | inscripcionScalarWhereInput[]
   }
 
   export type facultadCreateNestedOneWithoutCarrerasInput = {
@@ -22714,6 +22887,12 @@ export namespace Prisma {
     connect?: certificadoWhereUniqueInput
   }
 
+  export type cuentaCreateNestedOneWithoutInscripciones_validadasInput = {
+    create?: XOR<cuentaCreateWithoutInscripciones_validadasInput, cuentaUncheckedCreateWithoutInscripciones_validadasInput>
+    connectOrCreate?: cuentaCreateOrConnectWithoutInscripciones_validadasInput
+    connect?: cuentaWhereUniqueInput
+  }
+
   export type inscripcion_cursoUncheckedCreateNestedOneWithoutInscripcionInput = {
     create?: XOR<inscripcion_cursoCreateWithoutInscripcionInput, inscripcion_cursoUncheckedCreateWithoutInscripcionInput>
     connectOrCreate?: inscripcion_cursoCreateOrConnectWithoutInscripcionInput
@@ -22830,6 +23009,16 @@ export namespace Prisma {
     delete?: certificadoWhereInput | boolean
     connect?: certificadoWhereUniqueInput
     update?: XOR<XOR<certificadoUpdateToOneWithWhereWithoutInscripcionInput, certificadoUpdateWithoutInscripcionInput>, certificadoUncheckedUpdateWithoutInscripcionInput>
+  }
+
+  export type cuentaUpdateOneWithoutInscripciones_validadasNestedInput = {
+    create?: XOR<cuentaCreateWithoutInscripciones_validadasInput, cuentaUncheckedCreateWithoutInscripciones_validadasInput>
+    connectOrCreate?: cuentaCreateOrConnectWithoutInscripciones_validadasInput
+    upsert?: cuentaUpsertWithoutInscripciones_validadasInput
+    disconnect?: cuentaWhereInput | boolean
+    delete?: cuentaWhereInput | boolean
+    connect?: cuentaWhereUniqueInput
+    update?: XOR<XOR<cuentaUpdateToOneWithWhereWithoutInscripciones_validadasInput, cuentaUpdateWithoutInscripciones_validadasInput>, cuentaUncheckedUpdateWithoutInscripciones_validadasInput>
   }
 
   export type inscripcion_cursoUncheckedUpdateOneWithoutInscripcionNestedInput = {
@@ -23344,6 +23533,7 @@ export namespace Prisma {
     comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutAdminInput
     eventos?: eventoCreateNestedManyWithoutCuentaInput
     observaciones_creadas?: observacion_inscripcionCreateNestedManyWithoutAdmin_creadorInput
+    inscripciones_validadas?: inscripcionCreateNestedManyWithoutAdmin_validadorInput
   }
 
   export type cuentaUncheckedCreateWithoutUsuarioInput = {
@@ -23357,6 +23547,7 @@ export namespace Prisma {
     comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutAdminInput
     eventos?: eventoUncheckedCreateNestedManyWithoutCuentaInput
     observaciones_creadas?: observacion_inscripcionUncheckedCreateNestedManyWithoutAdmin_creadorInput
+    inscripciones_validadas?: inscripcionUncheckedCreateNestedManyWithoutAdmin_validadorInput
   }
 
   export type cuentaCreateOrConnectWithoutUsuarioInput = {
@@ -23447,6 +23638,7 @@ export namespace Prisma {
     cartas_motivacion?: carta_motivacionCreateNestedManyWithoutAdminInput
     eventos?: eventoCreateNestedManyWithoutCuentaInput
     observaciones_creadas?: observacion_inscripcionCreateNestedManyWithoutAdmin_creadorInput
+    inscripciones_validadas?: inscripcionCreateNestedManyWithoutAdmin_validadorInput
   }
 
   export type cuentaUncheckedCreateWithoutComprobantes_pagoInput = {
@@ -23460,6 +23652,7 @@ export namespace Prisma {
     cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutAdminInput
     eventos?: eventoUncheckedCreateNestedManyWithoutCuentaInput
     observaciones_creadas?: observacion_inscripcionUncheckedCreateNestedManyWithoutAdmin_creadorInput
+    inscripciones_validadas?: inscripcionUncheckedCreateNestedManyWithoutAdmin_validadorInput
   }
 
   export type cuentaCreateOrConnectWithoutComprobantes_pagoInput = {
@@ -23472,6 +23665,7 @@ export namespace Prisma {
     est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
     usu_apr_cer?: boolean
+    fec_val_ins?: Date | string | null
     por_asi_fin_usu?: number | null
     cup_ocu?: boolean
     cuenta: cuentaCreateNestedOneWithoutInscripcionesInput
@@ -23480,6 +23674,7 @@ export namespace Prisma {
     cartas_motivacion?: carta_motivacionCreateNestedManyWithoutInscripcionInput
     observacion?: observacion_inscripcionCreateNestedOneWithoutInscripcionInput
     certificado?: certificadoCreateNestedOneWithoutInscripcionInput
+    admin_validador?: cuentaCreateNestedOneWithoutInscripciones_validadasInput
   }
 
   export type inscripcionUncheckedCreateWithoutComprobantes_pagoInput = {
@@ -23489,6 +23684,8 @@ export namespace Prisma {
     est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
     usu_apr_cer?: boolean
+    id_adm_val_ins?: string | null
+    fec_val_ins?: Date | string | null
     por_asi_fin_usu?: number | null
     cup_ocu?: boolean
     inscripcion_curso?: inscripcion_cursoUncheckedCreateNestedOneWithoutInscripcionInput
@@ -23524,6 +23721,7 @@ export namespace Prisma {
     cartas_motivacion?: carta_motivacionUpdateManyWithoutAdminNestedInput
     eventos?: eventoUpdateManyWithoutCuentaNestedInput
     observaciones_creadas?: observacion_inscripcionUpdateManyWithoutAdmin_creadorNestedInput
+    inscripciones_validadas?: inscripcionUpdateManyWithoutAdmin_validadorNestedInput
   }
 
   export type cuentaUncheckedUpdateWithoutComprobantes_pagoInput = {
@@ -23537,6 +23735,7 @@ export namespace Prisma {
     cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutAdminNestedInput
     eventos?: eventoUncheckedUpdateManyWithoutCuentaNestedInput
     observaciones_creadas?: observacion_inscripcionUncheckedUpdateManyWithoutAdmin_creadorNestedInput
+    inscripciones_validadas?: inscripcionUncheckedUpdateManyWithoutAdmin_validadorNestedInput
   }
 
   export type inscripcionUpsertWithoutComprobantes_pagoInput = {
@@ -23555,6 +23754,7 @@ export namespace Prisma {
     est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    fec_val_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
     cup_ocu?: BoolFieldUpdateOperationsInput | boolean
     cuenta?: cuentaUpdateOneRequiredWithoutInscripcionesNestedInput
@@ -23563,6 +23763,7 @@ export namespace Prisma {
     cartas_motivacion?: carta_motivacionUpdateManyWithoutInscripcionNestedInput
     observacion?: observacion_inscripcionUpdateOneWithoutInscripcionNestedInput
     certificado?: certificadoUpdateOneWithoutInscripcionNestedInput
+    admin_validador?: cuentaUpdateOneWithoutInscripciones_validadasNestedInput
   }
 
   export type inscripcionUncheckedUpdateWithoutComprobantes_pagoInput = {
@@ -23572,6 +23773,8 @@ export namespace Prisma {
     est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    id_adm_val_ins?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_val_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
     cup_ocu?: BoolFieldUpdateOperationsInput | boolean
     inscripcion_curso?: inscripcion_cursoUncheckedUpdateOneWithoutInscripcionNestedInput
@@ -23591,6 +23794,7 @@ export namespace Prisma {
     comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutAdminInput
     eventos?: eventoCreateNestedManyWithoutCuentaInput
     observaciones_creadas?: observacion_inscripcionCreateNestedManyWithoutAdmin_creadorInput
+    inscripciones_validadas?: inscripcionCreateNestedManyWithoutAdmin_validadorInput
   }
 
   export type cuentaUncheckedCreateWithoutCartas_motivacionInput = {
@@ -23604,6 +23808,7 @@ export namespace Prisma {
     comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutAdminInput
     eventos?: eventoUncheckedCreateNestedManyWithoutCuentaInput
     observaciones_creadas?: observacion_inscripcionUncheckedCreateNestedManyWithoutAdmin_creadorInput
+    inscripciones_validadas?: inscripcionUncheckedCreateNestedManyWithoutAdmin_validadorInput
   }
 
   export type cuentaCreateOrConnectWithoutCartas_motivacionInput = {
@@ -23616,6 +23821,7 @@ export namespace Prisma {
     est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
     usu_apr_cer?: boolean
+    fec_val_ins?: Date | string | null
     por_asi_fin_usu?: number | null
     cup_ocu?: boolean
     cuenta: cuentaCreateNestedOneWithoutInscripcionesInput
@@ -23624,6 +23830,7 @@ export namespace Prisma {
     comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutInscripcionInput
     observacion?: observacion_inscripcionCreateNestedOneWithoutInscripcionInput
     certificado?: certificadoCreateNestedOneWithoutInscripcionInput
+    admin_validador?: cuentaCreateNestedOneWithoutInscripciones_validadasInput
   }
 
   export type inscripcionUncheckedCreateWithoutCartas_motivacionInput = {
@@ -23633,6 +23840,8 @@ export namespace Prisma {
     est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
     usu_apr_cer?: boolean
+    id_adm_val_ins?: string | null
+    fec_val_ins?: Date | string | null
     por_asi_fin_usu?: number | null
     cup_ocu?: boolean
     inscripcion_curso?: inscripcion_cursoUncheckedCreateNestedOneWithoutInscripcionInput
@@ -23668,6 +23877,7 @@ export namespace Prisma {
     comprobantes_pago?: comprobante_pagoUpdateManyWithoutAdminNestedInput
     eventos?: eventoUpdateManyWithoutCuentaNestedInput
     observaciones_creadas?: observacion_inscripcionUpdateManyWithoutAdmin_creadorNestedInput
+    inscripciones_validadas?: inscripcionUpdateManyWithoutAdmin_validadorNestedInput
   }
 
   export type cuentaUncheckedUpdateWithoutCartas_motivacionInput = {
@@ -23681,6 +23891,7 @@ export namespace Prisma {
     comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutAdminNestedInput
     eventos?: eventoUncheckedUpdateManyWithoutCuentaNestedInput
     observaciones_creadas?: observacion_inscripcionUncheckedUpdateManyWithoutAdmin_creadorNestedInput
+    inscripciones_validadas?: inscripcionUncheckedUpdateManyWithoutAdmin_validadorNestedInput
   }
 
   export type inscripcionUpsertWithoutCartas_motivacionInput = {
@@ -23699,6 +23910,7 @@ export namespace Prisma {
     est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    fec_val_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
     cup_ocu?: BoolFieldUpdateOperationsInput | boolean
     cuenta?: cuentaUpdateOneRequiredWithoutInscripcionesNestedInput
@@ -23707,6 +23919,7 @@ export namespace Prisma {
     comprobantes_pago?: comprobante_pagoUpdateManyWithoutInscripcionNestedInput
     observacion?: observacion_inscripcionUpdateOneWithoutInscripcionNestedInput
     certificado?: certificadoUpdateOneWithoutInscripcionNestedInput
+    admin_validador?: cuentaUpdateOneWithoutInscripciones_validadasNestedInput
   }
 
   export type inscripcionUncheckedUpdateWithoutCartas_motivacionInput = {
@@ -23716,6 +23929,8 @@ export namespace Prisma {
     est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    id_adm_val_ins?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_val_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
     cup_ocu?: BoolFieldUpdateOperationsInput | boolean
     inscripcion_curso?: inscripcion_cursoUncheckedUpdateOneWithoutInscripcionNestedInput
@@ -23729,6 +23944,7 @@ export namespace Prisma {
     est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
     usu_apr_cer?: boolean
+    fec_val_ins?: Date | string | null
     por_asi_fin_usu?: number | null
     cup_ocu?: boolean
     cuenta: cuentaCreateNestedOneWithoutInscripcionesInput
@@ -23737,6 +23953,7 @@ export namespace Prisma {
     comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutInscripcionInput
     cartas_motivacion?: carta_motivacionCreateNestedManyWithoutInscripcionInput
     certificado?: certificadoCreateNestedOneWithoutInscripcionInput
+    admin_validador?: cuentaCreateNestedOneWithoutInscripciones_validadasInput
   }
 
   export type inscripcionUncheckedCreateWithoutObservacionInput = {
@@ -23746,6 +23963,8 @@ export namespace Prisma {
     est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
     usu_apr_cer?: boolean
+    id_adm_val_ins?: string | null
+    fec_val_ins?: Date | string | null
     por_asi_fin_usu?: number | null
     cup_ocu?: boolean
     inscripcion_curso?: inscripcion_cursoUncheckedCreateNestedOneWithoutInscripcionInput
@@ -23770,6 +23989,7 @@ export namespace Prisma {
     cartas_motivacion?: carta_motivacionCreateNestedManyWithoutAdminInput
     comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutAdminInput
     eventos?: eventoCreateNestedManyWithoutCuentaInput
+    inscripciones_validadas?: inscripcionCreateNestedManyWithoutAdmin_validadorInput
   }
 
   export type cuentaUncheckedCreateWithoutObservaciones_creadasInput = {
@@ -23783,6 +24003,7 @@ export namespace Prisma {
     cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutAdminInput
     comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutAdminInput
     eventos?: eventoUncheckedCreateNestedManyWithoutCuentaInput
+    inscripciones_validadas?: inscripcionUncheckedCreateNestedManyWithoutAdmin_validadorInput
   }
 
   export type cuentaCreateOrConnectWithoutObservaciones_creadasInput = {
@@ -23806,6 +24027,7 @@ export namespace Prisma {
     est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    fec_val_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
     cup_ocu?: BoolFieldUpdateOperationsInput | boolean
     cuenta?: cuentaUpdateOneRequiredWithoutInscripcionesNestedInput
@@ -23814,6 +24036,7 @@ export namespace Prisma {
     comprobantes_pago?: comprobante_pagoUpdateManyWithoutInscripcionNestedInput
     cartas_motivacion?: carta_motivacionUpdateManyWithoutInscripcionNestedInput
     certificado?: certificadoUpdateOneWithoutInscripcionNestedInput
+    admin_validador?: cuentaUpdateOneWithoutInscripciones_validadasNestedInput
   }
 
   export type inscripcionUncheckedUpdateWithoutObservacionInput = {
@@ -23823,6 +24046,8 @@ export namespace Prisma {
     est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    id_adm_val_ins?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_val_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
     cup_ocu?: BoolFieldUpdateOperationsInput | boolean
     inscripcion_curso?: inscripcion_cursoUncheckedUpdateOneWithoutInscripcionNestedInput
@@ -23853,6 +24078,7 @@ export namespace Prisma {
     cartas_motivacion?: carta_motivacionUpdateManyWithoutAdminNestedInput
     comprobantes_pago?: comprobante_pagoUpdateManyWithoutAdminNestedInput
     eventos?: eventoUpdateManyWithoutCuentaNestedInput
+    inscripciones_validadas?: inscripcionUpdateManyWithoutAdmin_validadorNestedInput
   }
 
   export type cuentaUncheckedUpdateWithoutObservaciones_creadasInput = {
@@ -23866,6 +24092,7 @@ export namespace Prisma {
     cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutAdminNestedInput
     comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutAdminNestedInput
     eventos?: eventoUncheckedUpdateManyWithoutCuentaNestedInput
+    inscripciones_validadas?: inscripcionUncheckedUpdateManyWithoutAdmin_validadorNestedInput
   }
 
   export type usuarioCreateWithoutCuentasInput = {
@@ -23902,6 +24129,7 @@ export namespace Prisma {
     est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
     usu_apr_cer?: boolean
+    fec_val_ins?: Date | string | null
     por_asi_fin_usu?: number | null
     cup_ocu?: boolean
     evento: eventoCreateNestedOneWithoutInscritosInput
@@ -23910,6 +24138,7 @@ export namespace Prisma {
     cartas_motivacion?: carta_motivacionCreateNestedManyWithoutInscripcionInput
     observacion?: observacion_inscripcionCreateNestedOneWithoutInscripcionInput
     certificado?: certificadoCreateNestedOneWithoutInscripcionInput
+    admin_validador?: cuentaCreateNestedOneWithoutInscripciones_validadasInput
   }
 
   export type inscripcionUncheckedCreateWithoutCuentaInput = {
@@ -23918,6 +24147,8 @@ export namespace Prisma {
     est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
     usu_apr_cer?: boolean
+    id_adm_val_ins?: string | null
+    fec_val_ins?: Date | string | null
     por_asi_fin_usu?: number | null
     cup_ocu?: boolean
     inscripcion_curso?: inscripcion_cursoUncheckedCreateNestedOneWithoutInscripcionInput
@@ -24071,6 +24302,50 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type inscripcionCreateWithoutAdmin_validadorInput = {
+    id_ins?: string
+    est_ins?: $Enums.estado_inscripcion
+    fec_ins?: Date | string
+    usu_apr_cer?: boolean
+    fec_val_ins?: Date | string | null
+    por_asi_fin_usu?: number | null
+    cup_ocu?: boolean
+    cuenta: cuentaCreateNestedOneWithoutInscripcionesInput
+    evento: eventoCreateNestedOneWithoutInscritosInput
+    inscripcion_curso?: inscripcion_cursoCreateNestedOneWithoutInscripcionInput
+    comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutInscripcionInput
+    cartas_motivacion?: carta_motivacionCreateNestedManyWithoutInscripcionInput
+    observacion?: observacion_inscripcionCreateNestedOneWithoutInscripcionInput
+    certificado?: certificadoCreateNestedOneWithoutInscripcionInput
+  }
+
+  export type inscripcionUncheckedCreateWithoutAdmin_validadorInput = {
+    id_ins?: string
+    id_cor_ins: string
+    id_eve_ins: string
+    est_ins?: $Enums.estado_inscripcion
+    fec_ins?: Date | string
+    usu_apr_cer?: boolean
+    fec_val_ins?: Date | string | null
+    por_asi_fin_usu?: number | null
+    cup_ocu?: boolean
+    inscripcion_curso?: inscripcion_cursoUncheckedCreateNestedOneWithoutInscripcionInput
+    comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutInscripcionInput
+    cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutInscripcionInput
+    observacion?: observacion_inscripcionUncheckedCreateNestedOneWithoutInscripcionInput
+    certificado?: certificadoUncheckedCreateNestedOneWithoutInscripcionInput
+  }
+
+  export type inscripcionCreateOrConnectWithoutAdmin_validadorInput = {
+    where: inscripcionWhereUniqueInput
+    create: XOR<inscripcionCreateWithoutAdmin_validadorInput, inscripcionUncheckedCreateWithoutAdmin_validadorInput>
+  }
+
+  export type inscripcionCreateManyAdmin_validadorInputEnvelope = {
+    data: inscripcionCreateManyAdmin_validadorInput | inscripcionCreateManyAdmin_validadorInput[]
+    skipDuplicates?: boolean
+  }
+
   export type usuarioUpsertWithoutCuentasInput = {
     update: XOR<usuarioUpdateWithoutCuentasInput, usuarioUncheckedUpdateWithoutCuentasInput>
     create: XOR<usuarioCreateWithoutCuentasInput, usuarioUncheckedCreateWithoutCuentasInput>
@@ -24132,6 +24407,8 @@ export namespace Prisma {
     est_ins?: Enumestado_inscripcionFilter<"inscripcion"> | $Enums.estado_inscripcion
     fec_ins?: DateTimeFilter<"inscripcion"> | Date | string
     usu_apr_cer?: BoolFilter<"inscripcion"> | boolean
+    id_adm_val_ins?: StringNullableFilter<"inscripcion"> | string | null
+    fec_val_ins?: DateTimeNullableFilter<"inscripcion"> | Date | string | null
     por_asi_fin_usu?: FloatNullableFilter<"inscripcion"> | number | null
     cup_ocu?: BoolFilter<"inscripcion"> | boolean
   }
@@ -24258,6 +24535,22 @@ export namespace Prisma {
     obs_ins?: StringFilter<"observacion_inscripcion"> | string
     fec_cre_obs?: DateTimeFilter<"observacion_inscripcion"> | Date | string
     id_adm_cre_obs?: StringNullableFilter<"observacion_inscripcion"> | string | null
+  }
+
+  export type inscripcionUpsertWithWhereUniqueWithoutAdmin_validadorInput = {
+    where: inscripcionWhereUniqueInput
+    update: XOR<inscripcionUpdateWithoutAdmin_validadorInput, inscripcionUncheckedUpdateWithoutAdmin_validadorInput>
+    create: XOR<inscripcionCreateWithoutAdmin_validadorInput, inscripcionUncheckedCreateWithoutAdmin_validadorInput>
+  }
+
+  export type inscripcionUpdateWithWhereUniqueWithoutAdmin_validadorInput = {
+    where: inscripcionWhereUniqueInput
+    data: XOR<inscripcionUpdateWithoutAdmin_validadorInput, inscripcionUncheckedUpdateWithoutAdmin_validadorInput>
+  }
+
+  export type inscripcionUpdateManyWithWhereWithoutAdmin_validadorInput = {
+    where: inscripcionScalarWhereInput
+    data: XOR<inscripcionUpdateManyMutationInput, inscripcionUncheckedUpdateManyWithoutAdmin_validadorInput>
   }
 
   export type facultadCreateWithoutCarrerasInput = {
@@ -24584,6 +24877,7 @@ export namespace Prisma {
     est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
     usu_apr_cer?: boolean
+    fec_val_ins?: Date | string | null
     por_asi_fin_usu?: number | null
     cup_ocu?: boolean
     cuenta: cuentaCreateNestedOneWithoutInscripcionesInput
@@ -24592,6 +24886,7 @@ export namespace Prisma {
     cartas_motivacion?: carta_motivacionCreateNestedManyWithoutInscripcionInput
     observacion?: observacion_inscripcionCreateNestedOneWithoutInscripcionInput
     certificado?: certificadoCreateNestedOneWithoutInscripcionInput
+    admin_validador?: cuentaCreateNestedOneWithoutInscripciones_validadasInput
   }
 
   export type inscripcionUncheckedCreateWithoutEventoInput = {
@@ -24600,6 +24895,8 @@ export namespace Prisma {
     est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
     usu_apr_cer?: boolean
+    id_adm_val_ins?: string | null
+    fec_val_ins?: Date | string | null
     por_asi_fin_usu?: number | null
     cup_ocu?: boolean
     inscripcion_curso?: inscripcion_cursoUncheckedCreateNestedOneWithoutInscripcionInput
@@ -24665,6 +24962,7 @@ export namespace Prisma {
     cartas_motivacion?: carta_motivacionCreateNestedManyWithoutAdminInput
     comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutAdminInput
     observaciones_creadas?: observacion_inscripcionCreateNestedManyWithoutAdmin_creadorInput
+    inscripciones_validadas?: inscripcionCreateNestedManyWithoutAdmin_validadorInput
   }
 
   export type cuentaUncheckedCreateWithoutEventosInput = {
@@ -24678,6 +24976,7 @@ export namespace Prisma {
     cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutAdminInput
     comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutAdminInput
     observaciones_creadas?: observacion_inscripcionUncheckedCreateNestedManyWithoutAdmin_creadorInput
+    inscripciones_validadas?: inscripcionUncheckedCreateNestedManyWithoutAdmin_validadorInput
   }
 
   export type cuentaCreateOrConnectWithoutEventosInput = {
@@ -24758,6 +25057,7 @@ export namespace Prisma {
     cartas_motivacion?: carta_motivacionUpdateManyWithoutAdminNestedInput
     comprobantes_pago?: comprobante_pagoUpdateManyWithoutAdminNestedInput
     observaciones_creadas?: observacion_inscripcionUpdateManyWithoutAdmin_creadorNestedInput
+    inscripciones_validadas?: inscripcionUpdateManyWithoutAdmin_validadorNestedInput
   }
 
   export type cuentaUncheckedUpdateWithoutEventosInput = {
@@ -24771,6 +25071,7 @@ export namespace Prisma {
     cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutAdminNestedInput
     comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutAdminNestedInput
     observaciones_creadas?: observacion_inscripcionUncheckedUpdateManyWithoutAdmin_creadorNestedInput
+    inscripciones_validadas?: inscripcionUncheckedUpdateManyWithoutAdmin_validadorNestedInput
   }
 
   export type eventoCreateWithoutEventos_cursoInput = {
@@ -25056,6 +25357,7 @@ export namespace Prisma {
     comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutAdminInput
     eventos?: eventoCreateNestedManyWithoutCuentaInput
     observaciones_creadas?: observacion_inscripcionCreateNestedManyWithoutAdmin_creadorInput
+    inscripciones_validadas?: inscripcionCreateNestedManyWithoutAdmin_validadorInput
   }
 
   export type cuentaUncheckedCreateWithoutInscripcionesInput = {
@@ -25069,6 +25371,7 @@ export namespace Prisma {
     comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutAdminInput
     eventos?: eventoUncheckedCreateNestedManyWithoutCuentaInput
     observaciones_creadas?: observacion_inscripcionUncheckedCreateNestedManyWithoutAdmin_creadorInput
+    inscripciones_validadas?: inscripcionUncheckedCreateNestedManyWithoutAdmin_validadorInput
   }
 
   export type cuentaCreateOrConnectWithoutInscripcionesInput = {
@@ -25234,6 +25537,39 @@ export namespace Prisma {
     create: XOR<certificadoCreateWithoutInscripcionInput, certificadoUncheckedCreateWithoutInscripcionInput>
   }
 
+  export type cuentaCreateWithoutInscripciones_validadasInput = {
+    id_cue?: string
+    cor_usu: string
+    con_usu: string
+    fec_cre_cue?: Date | string
+    rol_usu: $Enums.rol_usuario
+    usuario: usuarioCreateNestedOneWithoutCuentasInput
+    inscripciones?: inscripcionCreateNestedManyWithoutCuentaInput
+    cartas_motivacion?: carta_motivacionCreateNestedManyWithoutAdminInput
+    comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutAdminInput
+    eventos?: eventoCreateNestedManyWithoutCuentaInput
+    observaciones_creadas?: observacion_inscripcionCreateNestedManyWithoutAdmin_creadorInput
+  }
+
+  export type cuentaUncheckedCreateWithoutInscripciones_validadasInput = {
+    id_cue?: string
+    id_usu_per: string
+    cor_usu: string
+    con_usu: string
+    fec_cre_cue?: Date | string
+    rol_usu: $Enums.rol_usuario
+    inscripciones?: inscripcionUncheckedCreateNestedManyWithoutCuentaInput
+    cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutAdminInput
+    comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutAdminInput
+    eventos?: eventoUncheckedCreateNestedManyWithoutCuentaInput
+    observaciones_creadas?: observacion_inscripcionUncheckedCreateNestedManyWithoutAdmin_creadorInput
+  }
+
+  export type cuentaCreateOrConnectWithoutInscripciones_validadasInput = {
+    where: cuentaWhereUniqueInput
+    create: XOR<cuentaCreateWithoutInscripciones_validadasInput, cuentaUncheckedCreateWithoutInscripciones_validadasInput>
+  }
+
   export type cuentaUpsertWithoutInscripcionesInput = {
     update: XOR<cuentaUpdateWithoutInscripcionesInput, cuentaUncheckedUpdateWithoutInscripcionesInput>
     create: XOR<cuentaCreateWithoutInscripcionesInput, cuentaUncheckedCreateWithoutInscripcionesInput>
@@ -25256,6 +25592,7 @@ export namespace Prisma {
     comprobantes_pago?: comprobante_pagoUpdateManyWithoutAdminNestedInput
     eventos?: eventoUpdateManyWithoutCuentaNestedInput
     observaciones_creadas?: observacion_inscripcionUpdateManyWithoutAdmin_creadorNestedInput
+    inscripciones_validadas?: inscripcionUpdateManyWithoutAdmin_validadorNestedInput
   }
 
   export type cuentaUncheckedUpdateWithoutInscripcionesInput = {
@@ -25269,6 +25606,7 @@ export namespace Prisma {
     comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutAdminNestedInput
     eventos?: eventoUncheckedUpdateManyWithoutCuentaNestedInput
     observaciones_creadas?: observacion_inscripcionUncheckedUpdateManyWithoutAdmin_creadorNestedInput
+    inscripciones_validadas?: inscripcionUncheckedUpdateManyWithoutAdmin_validadorNestedInput
   }
 
   export type eventoUpsertWithoutInscritosInput = {
@@ -25427,11 +25765,51 @@ export namespace Prisma {
     cod_val_cer?: StringFieldUpdateOperationsInput | string
   }
 
+  export type cuentaUpsertWithoutInscripciones_validadasInput = {
+    update: XOR<cuentaUpdateWithoutInscripciones_validadasInput, cuentaUncheckedUpdateWithoutInscripciones_validadasInput>
+    create: XOR<cuentaCreateWithoutInscripciones_validadasInput, cuentaUncheckedCreateWithoutInscripciones_validadasInput>
+    where?: cuentaWhereInput
+  }
+
+  export type cuentaUpdateToOneWithWhereWithoutInscripciones_validadasInput = {
+    where?: cuentaWhereInput
+    data: XOR<cuentaUpdateWithoutInscripciones_validadasInput, cuentaUncheckedUpdateWithoutInscripciones_validadasInput>
+  }
+
+  export type cuentaUpdateWithoutInscripciones_validadasInput = {
+    id_cue?: StringFieldUpdateOperationsInput | string
+    cor_usu?: StringFieldUpdateOperationsInput | string
+    con_usu?: StringFieldUpdateOperationsInput | string
+    fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
+    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    usuario?: usuarioUpdateOneRequiredWithoutCuentasNestedInput
+    inscripciones?: inscripcionUpdateManyWithoutCuentaNestedInput
+    cartas_motivacion?: carta_motivacionUpdateManyWithoutAdminNestedInput
+    comprobantes_pago?: comprobante_pagoUpdateManyWithoutAdminNestedInput
+    eventos?: eventoUpdateManyWithoutCuentaNestedInput
+    observaciones_creadas?: observacion_inscripcionUpdateManyWithoutAdmin_creadorNestedInput
+  }
+
+  export type cuentaUncheckedUpdateWithoutInscripciones_validadasInput = {
+    id_cue?: StringFieldUpdateOperationsInput | string
+    id_usu_per?: StringFieldUpdateOperationsInput | string
+    cor_usu?: StringFieldUpdateOperationsInput | string
+    con_usu?: StringFieldUpdateOperationsInput | string
+    fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
+    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    inscripciones?: inscripcionUncheckedUpdateManyWithoutCuentaNestedInput
+    cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutAdminNestedInput
+    comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutAdminNestedInput
+    eventos?: eventoUncheckedUpdateManyWithoutCuentaNestedInput
+    observaciones_creadas?: observacion_inscripcionUncheckedUpdateManyWithoutAdmin_creadorNestedInput
+  }
+
   export type inscripcionCreateWithoutInscripcion_cursoInput = {
     id_ins?: string
     est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
     usu_apr_cer?: boolean
+    fec_val_ins?: Date | string | null
     por_asi_fin_usu?: number | null
     cup_ocu?: boolean
     cuenta: cuentaCreateNestedOneWithoutInscripcionesInput
@@ -25440,6 +25818,7 @@ export namespace Prisma {
     cartas_motivacion?: carta_motivacionCreateNestedManyWithoutInscripcionInput
     observacion?: observacion_inscripcionCreateNestedOneWithoutInscripcionInput
     certificado?: certificadoCreateNestedOneWithoutInscripcionInput
+    admin_validador?: cuentaCreateNestedOneWithoutInscripciones_validadasInput
   }
 
   export type inscripcionUncheckedCreateWithoutInscripcion_cursoInput = {
@@ -25449,6 +25828,8 @@ export namespace Prisma {
     est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
     usu_apr_cer?: boolean
+    id_adm_val_ins?: string | null
+    fec_val_ins?: Date | string | null
     por_asi_fin_usu?: number | null
     cup_ocu?: boolean
     comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutInscripcionInput
@@ -25478,6 +25859,7 @@ export namespace Prisma {
     est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    fec_val_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
     cup_ocu?: BoolFieldUpdateOperationsInput | boolean
     cuenta?: cuentaUpdateOneRequiredWithoutInscripcionesNestedInput
@@ -25486,6 +25868,7 @@ export namespace Prisma {
     cartas_motivacion?: carta_motivacionUpdateManyWithoutInscripcionNestedInput
     observacion?: observacion_inscripcionUpdateOneWithoutInscripcionNestedInput
     certificado?: certificadoUpdateOneWithoutInscripcionNestedInput
+    admin_validador?: cuentaUpdateOneWithoutInscripciones_validadasNestedInput
   }
 
   export type inscripcionUncheckedUpdateWithoutInscripcion_cursoInput = {
@@ -25495,6 +25878,8 @@ export namespace Prisma {
     est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    id_adm_val_ins?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_val_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
     cup_ocu?: BoolFieldUpdateOperationsInput | boolean
     comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutInscripcionNestedInput
@@ -25508,6 +25893,7 @@ export namespace Prisma {
     est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
     usu_apr_cer?: boolean
+    fec_val_ins?: Date | string | null
     por_asi_fin_usu?: number | null
     cup_ocu?: boolean
     cuenta: cuentaCreateNestedOneWithoutInscripcionesInput
@@ -25516,6 +25902,7 @@ export namespace Prisma {
     comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutInscripcionInput
     cartas_motivacion?: carta_motivacionCreateNestedManyWithoutInscripcionInput
     observacion?: observacion_inscripcionCreateNestedOneWithoutInscripcionInput
+    admin_validador?: cuentaCreateNestedOneWithoutInscripciones_validadasInput
   }
 
   export type inscripcionUncheckedCreateWithoutCertificadoInput = {
@@ -25525,6 +25912,8 @@ export namespace Prisma {
     est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
     usu_apr_cer?: boolean
+    id_adm_val_ins?: string | null
+    fec_val_ins?: Date | string | null
     por_asi_fin_usu?: number | null
     cup_ocu?: boolean
     inscripcion_curso?: inscripcion_cursoUncheckedCreateNestedOneWithoutInscripcionInput
@@ -25554,6 +25943,7 @@ export namespace Prisma {
     est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    fec_val_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
     cup_ocu?: BoolFieldUpdateOperationsInput | boolean
     cuenta?: cuentaUpdateOneRequiredWithoutInscripcionesNestedInput
@@ -25562,6 +25952,7 @@ export namespace Prisma {
     comprobantes_pago?: comprobante_pagoUpdateManyWithoutInscripcionNestedInput
     cartas_motivacion?: carta_motivacionUpdateManyWithoutInscripcionNestedInput
     observacion?: observacion_inscripcionUpdateOneWithoutInscripcionNestedInput
+    admin_validador?: cuentaUpdateOneWithoutInscripciones_validadasNestedInput
   }
 
   export type inscripcionUncheckedUpdateWithoutCertificadoInput = {
@@ -25571,6 +25962,8 @@ export namespace Prisma {
     est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    id_adm_val_ins?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_val_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
     cup_ocu?: BoolFieldUpdateOperationsInput | boolean
     inscripcion_curso?: inscripcion_cursoUncheckedUpdateOneWithoutInscripcionNestedInput
@@ -25652,6 +26045,7 @@ export namespace Prisma {
     comprobantes_pago?: comprobante_pagoUpdateManyWithoutAdminNestedInput
     eventos?: eventoUpdateManyWithoutCuentaNestedInput
     observaciones_creadas?: observacion_inscripcionUpdateManyWithoutAdmin_creadorNestedInput
+    inscripciones_validadas?: inscripcionUpdateManyWithoutAdmin_validadorNestedInput
   }
 
   export type cuentaUncheckedUpdateWithoutUsuarioInput = {
@@ -25665,6 +26059,7 @@ export namespace Prisma {
     comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutAdminNestedInput
     eventos?: eventoUncheckedUpdateManyWithoutCuentaNestedInput
     observaciones_creadas?: observacion_inscripcionUncheckedUpdateManyWithoutAdmin_creadorNestedInput
+    inscripciones_validadas?: inscripcionUncheckedUpdateManyWithoutAdmin_validadorNestedInput
   }
 
   export type cuentaUncheckedUpdateManyWithoutUsuarioInput = {
@@ -25681,6 +26076,8 @@ export namespace Prisma {
     est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
     usu_apr_cer?: boolean
+    id_adm_val_ins?: string | null
+    fec_val_ins?: Date | string | null
     por_asi_fin_usu?: number | null
     cup_ocu?: boolean
   }
@@ -25729,11 +26126,24 @@ export namespace Prisma {
     fec_cre_obs?: Date | string
   }
 
+  export type inscripcionCreateManyAdmin_validadorInput = {
+    id_ins?: string
+    id_cor_ins: string
+    id_eve_ins: string
+    est_ins?: $Enums.estado_inscripcion
+    fec_ins?: Date | string
+    usu_apr_cer?: boolean
+    fec_val_ins?: Date | string | null
+    por_asi_fin_usu?: number | null
+    cup_ocu?: boolean
+  }
+
   export type inscripcionUpdateWithoutCuentaInput = {
     id_ins?: StringFieldUpdateOperationsInput | string
     est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    fec_val_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
     cup_ocu?: BoolFieldUpdateOperationsInput | boolean
     evento?: eventoUpdateOneRequiredWithoutInscritosNestedInput
@@ -25742,6 +26152,7 @@ export namespace Prisma {
     cartas_motivacion?: carta_motivacionUpdateManyWithoutInscripcionNestedInput
     observacion?: observacion_inscripcionUpdateOneWithoutInscripcionNestedInput
     certificado?: certificadoUpdateOneWithoutInscripcionNestedInput
+    admin_validador?: cuentaUpdateOneWithoutInscripciones_validadasNestedInput
   }
 
   export type inscripcionUncheckedUpdateWithoutCuentaInput = {
@@ -25750,6 +26161,8 @@ export namespace Prisma {
     est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    id_adm_val_ins?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_val_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
     cup_ocu?: BoolFieldUpdateOperationsInput | boolean
     inscripcion_curso?: inscripcion_cursoUncheckedUpdateOneWithoutInscripcionNestedInput
@@ -25765,6 +26178,8 @@ export namespace Prisma {
     est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    id_adm_val_ins?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_val_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
     cup_ocu?: BoolFieldUpdateOperationsInput | boolean
   }
@@ -25907,6 +26322,52 @@ export namespace Prisma {
     fec_cre_obs?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type inscripcionUpdateWithoutAdmin_validadorInput = {
+    id_ins?: StringFieldUpdateOperationsInput | string
+    est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
+    fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
+    usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    fec_val_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    cup_ocu?: BoolFieldUpdateOperationsInput | boolean
+    cuenta?: cuentaUpdateOneRequiredWithoutInscripcionesNestedInput
+    evento?: eventoUpdateOneRequiredWithoutInscritosNestedInput
+    inscripcion_curso?: inscripcion_cursoUpdateOneWithoutInscripcionNestedInput
+    comprobantes_pago?: comprobante_pagoUpdateManyWithoutInscripcionNestedInput
+    cartas_motivacion?: carta_motivacionUpdateManyWithoutInscripcionNestedInput
+    observacion?: observacion_inscripcionUpdateOneWithoutInscripcionNestedInput
+    certificado?: certificadoUpdateOneWithoutInscripcionNestedInput
+  }
+
+  export type inscripcionUncheckedUpdateWithoutAdmin_validadorInput = {
+    id_ins?: StringFieldUpdateOperationsInput | string
+    id_cor_ins?: StringFieldUpdateOperationsInput | string
+    id_eve_ins?: StringFieldUpdateOperationsInput | string
+    est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
+    fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
+    usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    fec_val_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    cup_ocu?: BoolFieldUpdateOperationsInput | boolean
+    inscripcion_curso?: inscripcion_cursoUncheckedUpdateOneWithoutInscripcionNestedInput
+    comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutInscripcionNestedInput
+    cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutInscripcionNestedInput
+    observacion?: observacion_inscripcionUncheckedUpdateOneWithoutInscripcionNestedInput
+    certificado?: certificadoUncheckedUpdateOneWithoutInscripcionNestedInput
+  }
+
+  export type inscripcionUncheckedUpdateManyWithoutAdmin_validadorInput = {
+    id_ins?: StringFieldUpdateOperationsInput | string
+    id_cor_ins?: StringFieldUpdateOperationsInput | string
+    id_eve_ins?: StringFieldUpdateOperationsInput | string
+    est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
+    fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
+    usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    fec_val_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    cup_ocu?: BoolFieldUpdateOperationsInput | boolean
+  }
+
   export type usuarioCreateManyCarreraInput = {
     id_usu?: string
     ced_usu: string
@@ -26035,6 +26496,8 @@ export namespace Prisma {
     est_ins?: $Enums.estado_inscripcion
     fec_ins?: Date | string
     usu_apr_cer?: boolean
+    id_adm_val_ins?: string | null
+    fec_val_ins?: Date | string | null
     por_asi_fin_usu?: number | null
     cup_ocu?: boolean
   }
@@ -26050,6 +26513,7 @@ export namespace Prisma {
     est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    fec_val_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
     cup_ocu?: BoolFieldUpdateOperationsInput | boolean
     cuenta?: cuentaUpdateOneRequiredWithoutInscripcionesNestedInput
@@ -26058,6 +26522,7 @@ export namespace Prisma {
     cartas_motivacion?: carta_motivacionUpdateManyWithoutInscripcionNestedInput
     observacion?: observacion_inscripcionUpdateOneWithoutInscripcionNestedInput
     certificado?: certificadoUpdateOneWithoutInscripcionNestedInput
+    admin_validador?: cuentaUpdateOneWithoutInscripciones_validadasNestedInput
   }
 
   export type inscripcionUncheckedUpdateWithoutEventoInput = {
@@ -26066,6 +26531,8 @@ export namespace Prisma {
     est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    id_adm_val_ins?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_val_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
     cup_ocu?: BoolFieldUpdateOperationsInput | boolean
     inscripcion_curso?: inscripcion_cursoUncheckedUpdateOneWithoutInscripcionNestedInput
@@ -26081,6 +26548,8 @@ export namespace Prisma {
     est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
     fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
     usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    id_adm_val_ins?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_val_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
     cup_ocu?: BoolFieldUpdateOperationsInput | boolean
   }

@@ -86,3 +86,21 @@ export const formatDateForPicker = (date) => {
     return null;
   }
 };
+
+/**
+ * Formatea una fecha para reportes evitando problemas de zona horaria
+ * @param {Date} date - Objeto Date de JavaScript
+ * @returns {string} - Fecha en formato YYYY-MM-DD sin conversión de zona horaria
+ */
+export const formatDateForReports = (date) => {
+  if (!date || !(date instanceof Date) || isNaN(date)) {
+    return null;
+  }
+
+  // Usar getFullYear, getMonth y getDate para evitar problemas de zona horaria
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  const day = date.getDate().toString().padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+};

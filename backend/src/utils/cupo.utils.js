@@ -143,12 +143,14 @@ async function sincronizarCuposDisponibles(idEvento, tx) {
  * @param {string} idInscripcion - ID de la inscripción a actualizar
  * @param {string} nuevoEstado - Nuevo estado de la inscripción
  * @param {object} datosAdicionales - Datos adicionales para la actualización de la inscripción
+ * @param {string} idAdministrador - ID del administrador que realiza la validación (opcional)
  * @returns {Promise<object>} Resultado de la operación
  */
 async function actualizarEstadoYSincronizarCupos(
   idInscripcion,
   nuevoEstado,
-  datosAdicionales = {}
+  datosAdicionales = {},
+  idAdministrador = null
 ) {
   console.log(
     `⚙️ Iniciando actualización de estado para inscripción ID: ${idInscripcion} → ${nuevoEstado}`
@@ -231,14 +233,27 @@ async function actualizarEstadoYSincronizarCupos(
 
       console.log(`🔢 Debe ocupar cupo ahora: ${debeOcuparCupo}`);
 
+      // Preparar datos de actualización incluyendo información de validación si corresponde
+      let datosActualizacion = {
+        est_ins: nuevoEstado,
+        cup_ocu: debeOcuparCupo,
+        ...datosAdicionales,
+      };
+
+      // Si hay un cambio de estado significativo y se proporciona un ID de administrador,
+      // registramos quién hizo la validación y cuándo
+      if (estadoAnterior !== nuevoEstado && idAdministrador) {
+        datosActualizacion.id_adm_val_ins = idAdministrador;
+        datosActualizacion.fec_val_ins = new Date();
+        console.log(
+          `👤 Validación registrada por administrador ID: ${idAdministrador}`
+        );
+      }
+
       // 3. Actualizar estado de inscripción y el campo cup_ocu
       await tx.inscripcion.update({
         where: { id_ins: idInscripcion },
-        data: {
-          est_ins: nuevoEstado,
-          cup_ocu: debeOcuparCupo,
-          ...datosAdicionales,
-        },
+        data: datosActualizacion,
       });
 
       console.log(`✅ Estado de inscripción actualizado a: ${nuevoEstado}`);

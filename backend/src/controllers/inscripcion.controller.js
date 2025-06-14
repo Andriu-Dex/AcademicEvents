@@ -516,7 +516,8 @@ const validarInscripcion = async (req, res) => {
         const resultado = await actualizarEstadoYSincronizarCupos(
           id,
           nuevoEstado,
-          { por_asi_fin_usu: asistenciaNum }
+          { por_asi_fin_usu: asistenciaNum },
+          req.usuario.id // Pasar ID del administrador que valida
         );
 
         console.log(
@@ -590,7 +591,8 @@ const validarInscripcion = async (req, res) => {
       const resultado = await actualizarEstadoYSincronizarCupos(
         id,
         estadoNuevo,
-        { por_asi_fin_usu: asistenciaNum } // Datos adicionales para la actualización
+        { por_asi_fin_usu: asistenciaNum }, // Datos adicionales para la actualización
+        req.usuario.id // Pasar ID del administrador que valida
       );
 
       console.log(

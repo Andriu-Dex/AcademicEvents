@@ -85,19 +85,19 @@ router.get(
 );
 
 // Reporte de Inscripciones
-router.post(
+router.get(
   "/reportes-inscripciones/estadisticas",
   verificarToken,
   onlyAdmin,
   getReporteInscripciones
 );
-router.post(
+router.get(
   "/reportes-inscripciones/tendencias",
   verificarToken,
   onlyAdmin,
   getReporteInscripciones
 );
-router.post(
+router.get(
   "/reportes-inscripciones/validaciones",
   verificarToken,
   onlyAdmin,

@@ -81,6 +81,7 @@ model cuenta {
   comprobantes_pago comprobante_pago[] // Relación 1:N (usuario puede validar muchos comprobantes de pago)
   eventos           evento[]      // Relación 1:N (usuario puede crear muchos eventos)
   observaciones_creadas  observacion_inscripcion[]  // Relación 1:N
+  inscripciones_validadas inscripcion[] @relation("admin_validador") // Relación 1:N (administrador puede validar muchas inscripciones)
 }
 
 model carrera {
@@ -160,6 +161,8 @@ model inscripcion {
   est_ins           estado_inscripcion @default(PENDIENTE) // Estado de la inscripción (PENDIENTE, ACEPTADA, RECHAZADA, FINALIZADA)
   fec_ins           DateTime           @default(now()) // Fecha de inscripción
   usu_apr_cer       Boolean            @default(false) // Usuario aprueba el evento y el envio del certificado
+  id_adm_val_ins    String?           // FK opcional a cuenta de administrador que validó la inscripción
+  fec_val_ins       DateTime?         // Fecha de validación de la inscripción
   por_asi_fin_usu   Float?             // Porcentaje de asistencia del usuario al evento
   cup_ocu           Boolean            @default(false) // Indica si esta inscripción está ocupando un cupo
 
@@ -170,6 +173,7 @@ model inscripcion {
   cartas_motivacion carta_motivacion[] // Relación 1:N (inscripción puede tener muchas cartas de motivación)
   observacion       observacion_inscripcion?   // Relación 1:1
   certificado       certificado?       // Relación 1:1 (inscripción puede tener un certificado)
+  admin_validador   cuenta?           @relation("admin_validador", fields: [id_adm_val_ins], references: [id_cue])
 }
 
 model inscripcion_curso {

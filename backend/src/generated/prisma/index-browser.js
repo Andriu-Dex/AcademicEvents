@@ -230,6 +230,8 @@ exports.Prisma.InscripcionScalarFieldEnum = {
   est_ins: 'est_ins',
   fec_ins: 'fec_ins',
   usu_apr_cer: 'usu_apr_cer',
+  id_adm_val_ins: 'id_adm_val_ins',
+  fec_val_ins: 'fec_val_ins',
   por_asi_fin_usu: 'por_asi_fin_usu',
   cup_ocu: 'cup_ocu'
 };

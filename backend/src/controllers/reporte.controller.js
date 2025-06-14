@@ -4,6 +4,7 @@ const {
   generarReporteEventoPDF,
   generarReporteMensualPDF,
 } = require("../utils/reporte.utils");
+const { analizarValidaciones } = require("../utils/validacion.utils");
 const path = require("path");
 const fs = require("fs");
 
@@ -590,7 +591,14 @@ async function descargarReporteCarreraPDF(req, res) {
 // Reporte de Inscripciones
 async function getReporteInscripciones(req, res) {
   try {
-    const { fechaInicio, fechaFin, estado } = req.body;
+    console.log("🔍 Ruta solicitada:", req.path);
+    console.log("🔍 Método HTTP:", req.method);
+
+    // Obtener parámetros dependiendo del método HTTP
+    const { fechaInicio, fechaFin, estado } =
+      req.method === "GET" ? req.query : req.body;
+
+    console.log("🔍 Parámetros recibidos:", { fechaInicio, fechaFin, estado });
 
     // Construir filtros
     const filtro = {};
@@ -612,14 +620,33 @@ async function getReporteInscripciones(req, res) {
         id_ins: true,
         fec_ins: true,
         est_ins: true,
-        usuario: {
+        fec_val_ins: true,
+        id_adm_val_ins: true,
+        cuenta: {
           select: {
-            id_usu: true,
-            nom_usu: true,
-            ape_usu: true,
-            carrera: {
+            id_cue: true,
+            usuario: {
               select: {
-                nom_car: true,
+                id_usu: true,
+                nom_usu: true,
+                ape_usu: true,
+                carrera: {
+                  select: {
+                    nom_car: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        admin_validador: {
+          select: {
+            id_cue: true,
+            rol_usu: true, // Agregamos el rol del usuario para poder mostrar información más detallada
+            usuario: {
+              select: {
+                nom_usu: true,
+                ape_usu: true,
               },
             },
           },
@@ -637,36 +664,106 @@ async function getReporteInscripciones(req, res) {
       },
     });
 
+    console.log(`📊 Inscripciones recuperadas: ${inscripciones.length}`);
+    if (inscripciones.length > 0) {
+      console.log(
+        "📋 Ejemplo de inscripción:",
+        JSON.stringify(inscripciones[0], null, 2)
+      );
+    }
+
+    // Transformar datos para compatibilidad con frontend
+    const inscripcionesTransformadas = inscripciones.map((ins) => ({
+      ...ins,
+      // Crear campo "usuario" para compatibilidad con frontend
+      usuario: ins.cuenta?.usuario || null,
+    }));
+
     if (req.path.includes("/estadisticas")) {
-      // Estadísticas generales
+      // Estadísticas generales con categorización detallada
+      const estadosAceptados = ["ACEPTADA"];
+      const estadosAprobados = ["APROBADO"];
+      const estadosRechazados = ["RECHAZADA"];
+      const estadosReprobados = [
+        "REPROBADO_NOTA",
+        "REPROBADO_ASISTENCIA",
+        "REPROBADO_TOTAL",
+      ];
+
       const estadisticas = {
-        total: inscripciones.length,
-        pendientes: inscripciones.filter((ins) => ins.est_ins === "PENDIENTE")
-          .length,
-        aceptadas: inscripciones.filter((ins) => ins.est_ins === "ACEPTADA")
-          .length,
-        rechazadas: inscripciones.filter((ins) => ins.est_ins === "RECHAZADA")
-          .length,
-        finalizadas: inscripciones.filter((ins) => ins.est_ins === "ACEPTADA")
-          .length,
+        total: inscripcionesTransformadas.length,
+        pendientes: inscripcionesTransformadas.filter(
+          (ins) => ins.est_ins === "PENDIENTE"
+        ).length,
+        aceptadas: inscripcionesTransformadas.filter((ins) =>
+          estadosAceptados.includes(ins.est_ins)
+        ).length,
+        aprobadas: inscripcionesTransformadas.filter((ins) =>
+          estadosAprobados.includes(ins.est_ins)
+        ).length,
+        rechazadas: inscripcionesTransformadas.filter((ins) =>
+          estadosRechazados.includes(ins.est_ins)
+        ).length,
+        reprobadas: inscripcionesTransformadas.filter((ins) =>
+          estadosReprobados.includes(ins.est_ins)
+        ).length,
+        // Mantener compatibilidad con frontend actual
+        // Sumar aceptadas + aprobadas para el campo "aprobadas" original del frontend
+        aprobadasTotal: inscripcionesTransformadas.filter((ins) =>
+          [...estadosAceptados, ...estadosAprobados].includes(ins.est_ins)
+        ).length,
       };
+
+      console.log("📊 Estadísticas detalladas:", estadisticas);
+      console.log(
+        "📋 Estados encontrados:",
+        inscripcionesTransformadas.map((ins) => ins.est_ins)
+      );
+
       return res.json(estadisticas);
     }
 
     if (req.path.includes("/tendencias")) {
       // Agrupar por mes para tendencias
-      const tendencias = agruparInscripcionesPorMes(inscripciones);
+      const fechaInicioObj = fechaInicio ? new Date(fechaInicio) : null;
+      const fechaFinObj = fechaFin ? new Date(fechaFin) : null;
+
+      // Calcular diferencia entre fechas en días
+      let usarRangoCompleto = false;
+      if (fechaInicioObj && fechaFinObj) {
+        const diffTime = Math.abs(fechaFinObj - fechaInicioObj);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        // Si el rango es mayor a 60 días o incluye más de 2 meses, usar el periodo completo
+        usarRangoCompleto = diffDays > 60;
+
+        // También verificar si las fechas cruzan diferentes años o están en meses no consecutivos
+        const mesInicio = fechaInicioObj.getMonth();
+        const mesFin = fechaFinObj.getMonth();
+        const añoInicio = fechaInicioObj.getFullYear();
+        const añoFin = fechaFinObj.getFullYear();
+
+        if (añoInicio !== añoFin || Math.abs(mesFin - mesInicio) > 1) {
+          usarRangoCompleto = true;
+        }
+      }
+
+      const tendencias = agruparInscripcionesPorMes(
+        inscripcionesTransformadas,
+        usarRangoCompleto ? fechaInicio : null,
+        usarRangoCompleto ? fechaFin : null
+      );
       return res.json(tendencias);
     }
 
     if (req.path.includes("/validaciones")) {
       // Estadísticas de validaciones
-      const validaciones = analizarValidaciones(inscripciones);
+      const validaciones = analizarValidaciones(inscripcionesTransformadas);
       return res.json(validaciones);
     }
 
     // Retornar listado completo si no hay path específico
-    res.json(inscripciones);
+    res.json(inscripcionesTransformadas);
   } catch (error) {
     console.error("Error al obtener reporte de inscripciones:", error);
     res
@@ -688,62 +785,150 @@ async function descargarReporteInscripcionesPDF(req, res) {
 }
 
 // Funciones auxiliares para reporte de inscripciones
-function agruparInscripcionesPorMes(inscripciones) {
+function agruparInscripcionesPorMes(inscripciones, fechaInicio, fechaFin) {
+  // Si se proporciona un rango de fechas, usar ese periodo en lugar de agrupar por mes
+  const usarRangoCompleto = fechaInicio && fechaFin;
+
   const meses = {};
+
+  // Array con nombres de los meses
+  const NOMBRES_MESES = [
+    "Enero",
+    "Febrero",
+    "Marzo",
+    "Abril",
+    "Mayo",
+    "Junio",
+    "Julio",
+    "Agosto",
+    "Septiembre",
+    "Octubre",
+    "Noviembre",
+    "Diciembre",
+  ];
+
+  // Estados detallados para mejor categorización
+  const estadosAceptados = ["ACEPTADA"]; // Inscripciones aceptadas para participar
+  const estadosAprobados = ["APROBADO"]; // Usuarios que aprobaron el evento
+  const estadosRechazados = ["RECHAZADA"]; // Inscripciones rechazadas
+  const estadosReprobados = [
+    "REPROBADO_NOTA",
+    "REPROBADO_ASISTENCIA",
+    "REPROBADO_TOTAL",
+  ]; // Usuarios que reprobaron el evento
+
+  // Formatear rango de fechas para mostrar si se usa el rango completo
+  let periodoStr = "Rango Completo";
+  if (usarRangoCompleto) {
+    // Usar UTC para evitar problemas de zona horaria
+    const fechaIni = new Date(fechaInicio + "T00:00:00.000Z");
+    const fechaFn = new Date(fechaFin + "T23:59:59.999Z");
+
+    // Extraer día, mes y año directamente para evitar desfases de zona horaria
+    const [anioIni, mesIniNum, diaIniNum] = fechaInicio.split("-").map(Number);
+    const [anioFin, mesFiniNum, diaFinNum] = fechaFin.split("-").map(Number);
+
+    const diaIni = diaIniNum.toString().padStart(2, "0");
+    const mesIni = NOMBRES_MESES[mesIniNum - 1]; // -1 porque los meses en array son 0-indexed
+    const diaFin = diaFinNum.toString().padStart(2, "0");
+    const mesFin = NOMBRES_MESES[mesFiniNum - 1];
+
+    periodoStr = `${diaIni} ${mesIni} - ${diaFin} ${mesFin} ${anioFin}`;
+
+    console.log(`🗓️ Periodo formateado: ${periodoStr}`);
+    console.log(`📅 Fechas originales: ${fechaInicio} a ${fechaFin}`);
+
+    // Crear una única entrada para todo el rango con categorías detalladas
+    const rangoKey = "rango-completo";
+    meses[rangoKey] = {
+      periodo: periodoStr,
+      total: 0,
+      pendientes: 0,
+      aceptadas: 0,
+      aprobadas: 0,
+      rechazadas: 0,
+      reprobadas: 0,
+      variacion: 0,
+    };
+  }
 
   inscripciones.forEach((ins) => {
     const fecha = new Date(ins.fec_ins);
-    const key = `${fecha.getFullYear()}-${fecha.getMonth() + 1}`;
 
-    if (!meses[key]) {
-      meses[key] = {
-        mes: fecha.getMonth() + 1,
-        año: fecha.getFullYear(),
-        total: 0,
-        pendientes: 0,
-        aceptadas: 0,
-        rechazadas: 0,
-        finalizadas: 0,
-      };
+    // Decidir qué clave usar según el modo (rango completo o por mes)
+    let key;
+    if (usarRangoCompleto) {
+      key = "rango-completo";
+    } else {
+      key = `${fecha.getFullYear()}-${fecha.getMonth() + 1}`;
+      const nombreMes = NOMBRES_MESES[fecha.getMonth()];
+
+      if (!meses[key]) {
+        meses[key] = {
+          mes: fecha.getMonth() + 1,
+          año: fecha.getFullYear(),
+          periodo: `${nombreMes} ${fecha.getFullYear()}`,
+          total: 0,
+          pendientes: 0,
+          aceptadas: 0,
+          aprobadas: 0,
+          rechazadas: 0,
+          reprobadas: 0,
+        };
+      }
     }
 
     meses[key].total++;
 
-    switch (ins.est_ins) {
-      case "PENDIENTE":
-        meses[key].pendientes++;
-        break;
-      case "ACEPTADA":
-        meses[key].aceptadas++;
-        break;
-      case "RECHAZADA":
-        meses[key].rechazadas++;
-        break;
-      case "ACEPTADA":
-        meses[key].finalizadas++;
-        break;
+    // Categorizar según el estado con más detalle
+    if (ins.est_ins === "PENDIENTE") {
+      meses[key].pendientes++;
+    } else if (estadosAceptados.includes(ins.est_ins)) {
+      meses[key].aceptadas++;
+    } else if (estadosAprobados.includes(ins.est_ins)) {
+      meses[key].aprobadas++;
+    } else if (estadosRechazados.includes(ins.est_ins)) {
+      meses[key].rechazadas++;
+    } else if (estadosReprobados.includes(ins.est_ins)) {
+      meses[key].reprobadas++;
+    } else {
+      // Si es un estado no reconocido, lo contamos como pendiente y registramos el estado
+      console.log(`Estado no categorizado en tendencias: ${ins.est_ins}`, {
+        id_ins: ins.id_ins,
+        estado: ins.est_ins,
+        fecha: ins.fec_ins,
+      });
+      meses[key].pendientes++;
     }
   });
 
-  return Object.values(meses).sort((a, b) => {
+  // Convertir a array y ordenar por fecha
+  const resultado = Object.values(meses).sort((a, b) => {
     if (a.año !== b.año) return a.año - b.año;
     return a.mes - b.mes;
   });
-}
 
-function analizarValidaciones(inscripciones) {
-  // Análisis de tiempos de validación
-  const validaciones = inscripciones.filter(
-    (ins) => ins.est_ins === "ACEPTADA" || ins.est_ins === "RECHAZADA"
-  );
+  // Calcular variación respecto al mes anterior
+  for (let i = 1; i < resultado.length; i++) {
+    const mesActual = resultado[i];
+    const mesAnterior = resultado[i - 1];
 
-  return {
-    total: validaciones.length,
-    tiempoPromedio: 48, // En horas (simulado)
-    aceptadas: validaciones.filter((ins) => ins.est_ins === "ACEPTADA").length,
-    rechazadas: validaciones.filter((ins) => ins.est_ins === "RECHAZADA")
-      .length,
-  };
+    if (mesAnterior.total > 0) {
+      const variacion = Math.round(
+        ((mesActual.total - mesAnterior.total) / mesAnterior.total) * 100
+      );
+      mesActual.variacion = variacion;
+    } else {
+      mesActual.variacion = mesActual.total > 0 ? 100 : 0;
+    }
+  }
+
+  // Para el primer mes, la variación es 0 o 100 si hay inscripciones
+  if (resultado.length > 0) {
+    resultado[0].variacion = 0;
+  }
+
+  return resultado;
 }
 
 // Reporte de Asistencia
