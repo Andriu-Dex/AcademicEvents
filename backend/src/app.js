@@ -97,6 +97,10 @@ app.use("/api", coordinadorRoutes);
 // Rutas de gestión de MVA (Misión, Visión, Autoridades)
 app.use("/api/mva", require("./routes/mva.routes"));
 
+// Rutas de estadísticas
+const estadisticasRoutes = require("./routes/estadisticas.routes");
+app.use("/api/estadisticas", estadisticasRoutes);
+
 // Rutas de perfil de usuario
 const perfilRoutes = require("./routes/perfil.routes");
 app.use("/api", perfilRoutes);

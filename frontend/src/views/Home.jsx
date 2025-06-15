@@ -50,6 +50,14 @@ function Home() {
     logo: "",
   });
 
+  // Estado para almacenar las estadísticas dinámicas
+  const [estadisticasHome, setEstadisticasHome] = useState({
+    carreras: 0,
+    eventosActivos: 0,
+    usuariosRegistrados: 0,
+    tasaParticipacion: "0%",
+  });
+
   // Estados y referencias para carruseles
   const [currentAutoridad, setCurrentAutoridad] = useState(0);
   const [currentCarrera, setCurrentCarrera] = useState(0);
@@ -182,6 +190,17 @@ function Home() {
               resFacultad.data.url_log_fac || "https://imgur.com/fch1iy6.png",
           });
         }
+
+        // Cargar estadísticas dinámicas
+        const resEstadisticas = await axiosInstance.get("/estadisticas/home");
+        if (resEstadisticas.data) {
+          setEstadisticasHome({
+            carreras: resEstadisticas.data.carreras || 0,
+            eventosActivos: resEstadisticas.data.eventosActivos || 0,
+            usuariosRegistrados: resEstadisticas.data.usuariosRegistrados || 0,
+            tasaParticipacion: resEstadisticas.data.tasaParticipacion || "0%",
+          });
+        }
       } catch (error) {
         console.error("Error al cargar datos:", error);
       }
@@ -198,16 +217,28 @@ function Home() {
     descripcion: facultadInfo.descripcion,
   };
 
-  // Estadísticas de la facultad
+  // Estadísticas dinámicas de la facultad
   const stats = [
     {
-      number: "1,200+",
-      label: "Estudiantes",
+      number: estadisticasHome.carreras.toString(),
+      label: "Carreras",
       icon: <GraduationCap size={36} />,
     },
-    { number: "45", label: "Docentes", icon: <Users size={36} /> },
-    { number: "8", label: "Laboratorios", icon: <Microscope size={36} /> },
-    { number: "95%", label: "Empleabilidad", icon: <TrendingUp size={36} /> },
+    {
+      number: estadisticasHome.eventosActivos.toString(),
+      label: "Eventos Activos",
+      icon: <Calendar size={36} />,
+    },
+    {
+      number: estadisticasHome.usuariosRegistrados.toString(),
+      label: "Usuarios Registrados",
+      icon: <Users size={36} />,
+    },
+    {
+      number: estadisticasHome.tasaParticipacion,
+      label: "Tasa de Participación",
+      icon: <TrendingUp size={36} />,
+    },
   ];
 
   // Usar las autoridades de la API, o las autoridades predeterminadas si no hay datos
