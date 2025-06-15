@@ -490,7 +490,7 @@ function Home() {
         if (timer) clearTimeout(timer);
         timer = setTimeout(() => {
           setShowNavbar(false);
-        }, 100); // Esperar 1 segundo antes de ocultar
+        }, 500); // Esperar 1 segundo antes de ocultar
       }
     };
 

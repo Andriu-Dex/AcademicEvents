@@ -92,23 +92,40 @@ const Navbar = () => {
   /**
    * Cierra la sesión del usuario
    */
-  const handleLogout = () => {
+
+  const cerrarSesion = () => {
+    // Obtener el nombre del usuario para personalizar el mensaje
+    const nombreUsuario = usuario?.nom_usu || "Usuario";
+
+    // Limpiar la sesión
     logout();
 
-    toast.success("Sesión cerrada correctamente", {
-      position: "top-center",
-      autoClose: 2000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      style: {
-        borderLeft: "4px solid #8a1538",
-        backgroundColor: "white",
-        color: "#333",
-      },
-      icon: false,
-    });
+    // Mostrar un toast estilizado
+    toast.success(
+      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+        <UserCheck size={20} color="#8a1538" />
+        <div>
+          <strong>¡Hasta pronto {nombreUsuario}!</strong>
+          <p style={{ margin: 0, fontSize: "0.85rem" }}>
+            Sesión cerrada exitosamente
+          </p>
+        </div>
+      </div>,
+      {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        style: {
+          borderLeft: "4px solid #8a1538",
+          backgroundColor: "white",
+          color: "#333",
+        },
+        icon: false,
+      }
+    );
 
     // Redireccionar al home usando navigate
     navigate("/home");
@@ -198,7 +215,7 @@ const Navbar = () => {
                 <span className="nav-link-icon">
                   <Calendar size={18} />
                 </span>
-                <span>Eventos disponibles</span>
+                <span>Eventos</span>
               </Link>
               <Link
                 to="/inscripciones"
@@ -276,7 +293,7 @@ const Navbar = () => {
               <User size={16} />
               <span>Mi Perfil</span>
             </Link>
-            <div className="profile-menu-item logout" onClick={handleLogout}>
+            <div className="profile-menu-item logout" onClick={cerrarSesion}>
               <LogOut size={16} />
               <span>Cerrar sesión</span>
             </div>
