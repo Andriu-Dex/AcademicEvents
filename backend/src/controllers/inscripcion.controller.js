@@ -1,6 +1,7 @@
 const prisma = require("../config/db");
 const { estado_inscripcion } = require("../generated/prisma");
 const { subirImagenAImgur } = require("../utils/imgur.utils");
+const socketService = require("../services/socket.service");
 const {
   calcularCuposDisponibles,
   sincronizarCuposDisponibles,
@@ -346,6 +347,20 @@ const crearInscripcion = async (req, res) => {
           await sincronizarCuposDisponibles(id_eve);
 
           res.status(201).json(nuevaInscripcion);
+
+          // 🔌 Notificar nueva inscripción por socket
+          try {
+            socketService.notifyInscriptionChange("created", {
+              inscripcion: nuevaInscripcion,
+              id_evento: id_eve,
+            });
+          } catch (socketError) {
+            console.error(
+              "Error al enviar notificación por socket:",
+              socketError
+            );
+            // No interferir con la operación principal
+          }
         });
     } catch (error) {
       console.error(`Error en el bloque de creación de inscripción:`, error);
@@ -680,6 +695,34 @@ const validarInscripcion = async (req, res) => {
       msg: "Inscripción actualizada correctamente",
       inscripcion: actualizada,
     });
+
+    // 🔌 Notificar cambios por socket
+    try {
+      // Notificar cambio en inscripción
+      socketService.notifyInscriptionChange("updated", {
+        id_ins: id,
+        estado_anterior: estadoAnterior,
+        estado_nuevo: nuevoEstado,
+        id_evento: idEvento,
+        inscripcion: actualizada,
+      });
+
+      // Si hay cambio en cupos, notificar también
+      if (
+        typeof resultado !== "undefined" &&
+        resultado.evento &&
+        resultado.evento.cuposCambiados
+      ) {
+        socketService.notifyCuposChange(
+          idEvento,
+          resultado.evento.cuposDespues
+        );
+      }
+    } catch (socketError) {
+      console.error("Error al enviar notificaciones por socket:", socketError);
+      // No interferir con la operación principal
+    }
+
     console.log("============ FIN VALIDAR INSCRIPCIÓN: ÉXITO ============");
   } catch (error) {
     console.error("============ ERROR EN VALIDAR INSCRIPCIÓN ============");

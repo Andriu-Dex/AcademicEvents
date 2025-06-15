@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useAuth } from "../hooks/useAuth";
+import { useHomeSocket } from "../hooks/useHomeSocket";
 import axiosInstance from "../api/axiosConfig";
 import {
   Users,
@@ -63,6 +64,80 @@ function Home() {
 
   // Referencia para detectar el área superior
   const topAreaRef = useRef(null);
+
+  // 🔌 Estados y hook para Socket.IO - Actualizaciones en tiempo real
+  const [notifications, setNotifications] = useState([]);
+  const [realtimeUpdates, setRealtimeUpdates] = useState({
+    events: 0,
+    inscriptions: 0,
+    cupos: 0,
+  });
+
+  // Hook personalizado para manejar actualizaciones del Home
+  const {
+    isConnected,
+    hasNewUpdates,
+    systemNotifications,
+    removeSystemNotification,
+  } = useHomeSocket({
+    onEventUpdate: (eventUpdate) => {
+      console.log("🏠 Home: Evento actualizado", eventUpdate);
+      // Incrementar contador de actualizaciones de eventos
+      setRealtimeUpdates((prev) => ({
+        ...prev,
+        events: prev.events + 1,
+      }));
+
+      // Mostrar notificación temporal
+      const message =
+        eventUpdate.action === "created"
+          ? `Nuevo evento: ${eventUpdate.data.nom_eve}`
+          : eventUpdate.action === "updated"
+          ? `Evento actualizado: ${eventUpdate.data.nom_eve}`
+          : `Evento eliminado: ${eventUpdate.data.nom_eve}`;
+
+      showTemporaryNotification(message, "info");
+    },
+
+    onInscriptionUpdate: (inscriptionUpdate) => {
+      console.log("🏠 Home: Inscripción actualizada", inscriptionUpdate);
+      setRealtimeUpdates((prev) => ({
+        ...prev,
+        inscriptions: prev.inscriptions + 1,
+      }));
+    },
+
+    onCuposUpdate: (cuposUpdate) => {
+      console.log("🏠 Home: Cupos actualizados", cuposUpdate);
+      setRealtimeUpdates((prev) => ({
+        ...prev,
+        cupos: prev.cupos + 1,
+      }));
+    },
+
+    onSystemNotification: (notification) => {
+      console.log("🏠 Home: Notificación del sistema", notification);
+      showTemporaryNotification(notification.message, notification.type);
+    },
+  });
+
+  // Función para mostrar notificaciones temporales
+  const showTemporaryNotification = (message, type = "info") => {
+    const id = Date.now();
+    const newNotification = { id, message, type, timestamp: new Date() };
+
+    setNotifications((prev) => [...prev, newNotification]);
+
+    // Auto-remover después de 5 segundos
+    setTimeout(() => {
+      setNotifications((prev) => prev.filter((notif) => notif.id !== id));
+    }, 5000);
+  };
+
+  // Función para remover notificación manualmente
+  const removeNotification = (id) => {
+    setNotifications((prev) => prev.filter((notif) => notif.id !== id));
+  };
 
   // Cargar carreras y MVA desde la API
   useEffect(() => {
@@ -418,6 +493,47 @@ function Home() {
       >
         <Navbar usuario={usuario} />
       </div>
+
+      {/* 🔌 Componente de notificaciones en tiempo real */}
+      {notifications.length > 0 && (
+        <div className="notificaciones-tiempo-real-hm">
+          {notifications.map((notif) => (
+            <div
+              key={notif.id}
+              className={`notificacion-item-hm notificacion-${notif.type}-hm`}
+              onClick={() => removeNotification(notif.id)}
+            >
+              <span className="notificacion-icono-hm">
+                {notif.type === "info" && "📢"}
+                {notif.type === "success" && "✅"}
+                {notif.type === "warning" && "⚠️"}
+                {notif.type === "error" && "❌"}
+              </span>
+              <span className="notificacion-mensaje-hm">{notif.message}</span>
+              <span className="notificacion-cerrar-hm">×</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* 🔌 Indicador de conexión Socket.IO (solo en desarrollo) */}
+      {import.meta.env.DEV && (
+        <div className="socket-status-hm">
+          <span
+            className={`socket-indicator-hm ${
+              isConnected ? "connected-hm" : "disconnected-hm"
+            }`}
+          >
+            {isConnected ? "🟢" : "🔴"} Socket
+          </span>
+          {hasNewUpdates && (
+            <span className="updates-indicator-hm">
+              📡 Actualizaciones: E:{realtimeUpdates.events} I:
+              {realtimeUpdates.inscriptions} C:{realtimeUpdates.cupos}
+            </span>
+          )}
+        </div>
+      )}
 
       {/* Hero Section */}
       <div

@@ -153,7 +153,7 @@ const Navbar = () => {
               <span className="nav-link-icon">
                 <Calendar size={18} />
               </span>
-              <span>Eventos Públicos</span>
+              <span>Eventos</span>
             </Link>
           </div>
         </div>

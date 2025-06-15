@@ -5,8 +5,11 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const path = require("path");
+const http = require("http");
+const { Server } = require("socket.io");
 const { scheduledCleanup } = require("./services/cleanupService");
 const { setupDirectories } = require("./utils/directory.utils");
+const socketService = require("./services/socket.service");
 
 // ============================
 //  Configuración inicial
@@ -14,6 +17,19 @@ const { setupDirectories } = require("./utils/directory.utils");
 dotenv.config(); // Cargar variables de entorno desde .env
 
 const app = express(); // Crear instancia de la aplicación
+const server = http.createServer(app); // Crear servidor HTTP
+
+// Configurar Socket.IO con CORS
+const io = new Server(server, {
+  cors: {
+    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+});
+
+// Inicializar el servicio de Socket.IO
+socketService.init(io);
 
 // Iniciar el servicio de limpieza programada
 scheduledCleanup();
@@ -99,6 +115,10 @@ app.use("/api/admin", reporteRoutes);
 const HOST = process.env.HOST || "localhost";
 const PORT = process.env.PORT_BACKEND || 3000;
 
-app.listen(PORT, HOST, () => {
+server.listen(PORT, HOST, () => {
   console.log(`✅ Servidor corriendo en http://${HOST}:${PORT} ✅`);
+  console.log(`🔌 Socket.IO configurado y funcionando`);
 });
+
+// Exportar socketService para uso en otros módulos
+module.exports = { app, server, io, socketService };

@@ -11,14 +11,17 @@ import ReactDOM from "react-dom/client";
 // App principal
 import App from "./App";
 
-// Contexto de autenticación
+// Contextos
 import { AuthProvider } from "./context/AuthContext";
+import { SocketProvider } from "./context/SocketContext";
 
-// Montaje de la aplicación con contexto y modo estricto
+// Montaje de la aplicación con contextos y modo estricto
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <AuthProvider>
-      <App />
+      <SocketProvider>
+        <App />
+      </SocketProvider>
     </AuthProvider>
   </React.StrictMode>
 );

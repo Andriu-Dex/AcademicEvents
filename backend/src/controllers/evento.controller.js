@@ -1,6 +1,7 @@
 const prisma = require("../config/db");
 const DEFAULT_IMAGE_URL = "https://i.imgur.com/f8adUbZ.png";
 const axios = require("axios");
+const socketService = require("../services/socket.service");
 require("dotenv").config();
 
 /**
@@ -244,6 +245,12 @@ const crearEvento = async (req, res) => {
     }
 
     res.status(201).json({
+      ...nuevoEvento,
+      eventos_curso: datosCurso,
+    });
+
+    // 🔌 Notificar a todos los clientes sobre el nuevo evento
+    socketService.notifyEventChange("created", {
       ...nuevoEvento,
       eventos_curso: datosCurso,
     });
@@ -549,6 +556,12 @@ const actualizarEvento = async (req, res) => {
       ...eventoActualizado,
       eventos_curso: cursoActualizado,
     });
+
+    // 🔌 Notificar a todos los clientes sobre la actualización del evento
+    socketService.notifyEventChange("updated", {
+      ...eventoActualizado,
+      eventos_curso: cursoActualizado,
+    });
   } catch (error) {
     res.status(500).json({
       // 10. Si hay un error no controlado, devuelve 500 y el mensaje de error
@@ -580,6 +593,12 @@ const eliminarEvento = async (req, res) => {
     await prisma.evento.delete({ where: { id_eve: id } });
 
     res.status(200).json({ msg: "Evento eliminado correctamente" });
+
+    // 🔌 Notificar a todos los clientes sobre la eliminación del evento
+    socketService.notifyEventChange("deleted", {
+      id_eve: id,
+      nom_eve: evento.nom_eve,
+    });
   } catch (error) {
     res.status(500).json({
       msg: "Error al eliminar evento",
