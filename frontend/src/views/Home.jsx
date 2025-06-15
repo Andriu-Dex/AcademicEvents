@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import EventosDestacados from "../components/home/EventosDestacados";
 import { useAuth } from "../hooks/useAuth";
 import { useHomeSocket } from "../hooks/useHomeSocket";
 import axiosInstance from "../api/axiosConfig";
@@ -635,6 +636,10 @@ function Home() {
           </div>
         </div>
       </div>
+
+      {/* Eventos Destacados */}
+      <EventosDestacados />
+
       {/* Autoridades - Carrusel */}
       <section className="autoridades-section-h" id="autoridades">
         <div className="autoridades-header-h">

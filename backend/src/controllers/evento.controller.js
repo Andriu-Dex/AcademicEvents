@@ -1007,6 +1007,162 @@ const verificarYCorregirTodosLosCupos = async (req, res) => {
   }
 };
 
+/**
+ * Obtiene todos los eventos destacados activos (máximo 8)
+ * @param {Object} req - La solicitud HTTP
+ * @param {Object} res - La respuesta HTTP
+ * @returns {Promise<void>}
+ */
+const obtenerEventosDestacados = async (req, res) => {
+  try {
+    // Verificar eventos pasados para desmarcarlos automáticamente
+    await desmarcadoAutomaticoEventosPasados();
+
+    // Obtener eventos destacados (máximo 8)
+    const eventosDestacados = await prisma.evento.findMany({
+      where: {
+        eve_des: true,
+        est_eve: "ACTIVO",
+      },
+      orderBy: {
+        fec_ini_eve: "asc",
+      },
+      take: 8,
+    });
+
+    return res.status(200).json({
+      eventosDestacados,
+      total: eventosDestacados.length,
+      ok: true,
+    });
+  } catch (error) {
+    console.error("Error al obtener eventos destacados:", error);
+    return res.status(500).json({
+      msg: "Error al obtener eventos destacados",
+      error: error.message,
+      ok: false,
+    });
+  }
+};
+
+/**
+ * Marca o desmarca un evento como destacado
+ * @param {Object} req - La solicitud HTTP con id del evento y estado destacado
+ * @param {Object} res - La respuesta HTTP
+ * @returns {Promise<void>}
+ */
+const toggleEventoDestacado = async (req, res) => {
+  try {
+    console.log("=== TOGGLE EVENTO DESTACADO - INICIO ===");
+    const { id } = req.params;
+    const { eve_des } = req.body;
+
+    console.log("ID recibido:", id);
+    console.log("Estado destacado recibido:", eve_des);
+    console.log("Params completos:", req.params);
+    console.log("Body completo:", req.body);
+
+    // Verificar si el evento existe
+    console.log("Buscando evento con ID:", id);
+    const eventoExistente = await prisma.evento.findUnique({
+      where: { id_eve: id },
+    });
+
+    console.log("Evento encontrado:", eventoExistente ? "SÍ" : "NO");
+
+    if (!eventoExistente) {
+      console.log("ERROR: Evento no encontrado, retornando 404");
+      return res.status(404).json({
+        msg: "Evento no encontrado",
+        ok: false,
+      });
+    }
+
+    console.log("Evento existente encontrado:", eventoExistente.nom_eve);
+
+    // Si vamos a marcar como destacado, verificar límite de 8
+    if (eve_des) {
+      console.log("Verificando límite de eventos destacados...");
+      const totalDestacados = await prisma.evento.count({
+        where: { eve_des: true },
+      });
+
+      console.log("Total eventos destacados actuales:", totalDestacados);
+
+      if (totalDestacados >= 8) {
+        console.log("ERROR: Límite de eventos destacados alcanzado");
+        return res.status(400).json({
+          msg: "Ya existen 8 eventos destacados. Debe desmarcar alguno antes de agregar otro.",
+          ok: false,
+        });
+      }
+    }
+
+    // Actualizar el evento
+    console.log("Actualizando evento con:", { id_eve: id, eve_des });
+    const eventoActualizado = await prisma.evento.update({
+      where: { id_eve: id },
+      data: { eve_des },
+    });
+
+    console.log("Evento actualizado exitosamente:", eventoActualizado.nom_eve);
+
+    const response = {
+      evento: eventoActualizado,
+      msg: eve_des
+        ? "Evento marcado como destacado"
+        : "Evento desmarcado como destacado",
+      ok: true,
+    };
+
+    console.log("Enviando respuesta:", response);
+    console.log("=== TOGGLE EVENTO DESTACADO - FIN EXITOSO ===");
+    return res.status(200).json(response);
+  } catch (error) {
+    console.error("=== ERROR EN TOGGLE EVENTO DESTACADO ===");
+    console.error("Error completo:", error);
+    console.error("Stack trace:", error.stack);
+    console.error("Mensaje:", error.message);
+    console.error("=== FIN ERROR ===");
+    return res.status(500).json({
+      msg: "Error al actualizar evento destacado",
+      error: error.message,
+      ok: false,
+    });
+  }
+};
+
+/**
+ * Desmarca automáticamente eventos pasados (finalizados)
+ * @returns {Promise<void>}
+ */
+const desmarcadoAutomaticoEventosPasados = async () => {
+  try {
+    const fechaActual = new Date();
+
+    // Buscar eventos destacados que ya finalizaron
+    const eventosFinalizados = await prisma.evento.updateMany({
+      where: {
+        eve_des: true,
+        fec_fin_eve: {
+          lt: fechaActual,
+        },
+      },
+      data: {
+        eve_des: false,
+      },
+    });
+
+    if (eventosFinalizados.count > 0) {
+      console.log(
+        `Se desmarcaron automáticamente ${eventosFinalizados.count} eventos destacados que ya finalizaron.`
+      );
+    }
+  } catch (error) {
+    console.error("Error en desmarcado automático de eventos:", error);
+  }
+};
+
 module.exports = {
   crearEvento,
   obtenerEventos,
@@ -1016,4 +1172,6 @@ module.exports = {
   obtenerEventosPorTipo,
   verificarYCorregirCupos,
   verificarYCorregirTodosLosCupos,
+  obtenerEventosDestacados,
+  toggleEventoDestacado,
 };

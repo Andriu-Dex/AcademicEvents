@@ -13,6 +13,8 @@ const {
   obtenerEventosPorTipo,
   verificarYCorregirCupos,
   verificarYCorregirTodosLosCupos,
+  obtenerEventosDestacados,
+  toggleEventoDestacado,
 } = require("../controllers/evento.controller");
 
 // ============================
@@ -22,8 +24,17 @@ const {
 // Obtener todos los eventos (público)
 router.get("/eventos", obtenerEventos);
 
+// Obtener eventos destacados (público)
+router.get("/eventos-destacados", obtenerEventosDestacados);
+
 // Verificar y corregir cupos (público) - Sin autenticación para solucionar el problema de cupos
 router.get("/eventos-verificar-cupos", verificarYCorregirTodosLosCupos);
+
+// Verificar y corregir cupos (público) - Sin autenticación para solucionar el problema de cupos
+router.get("/eventos/verificar-cupos", verificarYCorregirTodosLosCupos);
+
+// Obtener eventos por tipo (público)
+router.get("/eventos/tipo/:tipo", obtenerEventosPorTipo);
 
 // Obtener un evento por ID (público)
 router.get("/eventos/:id", obtenerEventoPorId);
@@ -48,12 +59,6 @@ router.put(
 // Eliminar evento (solo admin)
 router.delete("/eventos/:id", verificarToken, onlyAdmin, eliminarEvento);
 
-// Verificar y corregir cupos (público) - Sin autenticación para solucionar el problema de cupos
-router.get("/eventos/verificar-cupos", verificarYCorregirTodosLosCupos);
-
-// Obtener eventos por tipo (público)
-router.get("/eventos/tipo/:tipo", obtenerEventosPorTipo);
-
 // Verificar y corregir cupos de un evento específico (solo admin)
 router.post(
   "/eventos/:id/verificar-cupos",
@@ -62,7 +67,25 @@ router.post(
   verificarYCorregirCupos
 );
 
-// Verificar y corregir cupos de todos los eventos (solo admin)
+// Marcar/desmarcar evento como destacado (solo admin)
+router.patch(
+  "/eventos/:id/destacado",
+  (req, res, next) => {
+    console.log("=== RUTA DESTACADO - MIDDLEWARE LOG ===");
+    console.log("Método:", req.method);
+    console.log("URL:", req.originalUrl);
+    console.log("Params:", req.params);
+    console.log("Body:", req.body);
+    console.log("Headers:", req.headers);
+    console.log("=== FIN MIDDLEWARE LOG ===");
+    next();
+  },
+  verificarToken,
+  onlyAdmin,
+  toggleEventoDestacado
+);
+
+// Verificar y corregir todos los cupos (solo admin)
 router.post(
   "/eventos/verificar-todos-cupos",
   verificarToken,

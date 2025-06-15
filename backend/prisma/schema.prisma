@@ -129,6 +129,7 @@ model evento {
   por_min_asi_eve Float         // Porcentaje mínimo de asistencia del evento
   cup_max_eve     Int           // Número máximo de cupos disponibles para el evento
   cup_dis_eve     Int           // Número de cupos disponibles actualmente
+  eve_des         Boolean @default(false) // Indica si el evento es detastacado
   id_cue_cre_eve  String        // FK a cuenta creadora del evento
 
   inscritos       inscripcion[]    // Relación 1:N (evento puede tener muchas inscripciones)

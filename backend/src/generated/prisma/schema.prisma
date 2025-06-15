@@ -129,6 +129,7 @@ model evento {
   por_min_asi_eve Float // Porcentaje mínimo de asistencia del evento
   cup_max_eve     Int // Número máximo de cupos disponibles para el evento
   cup_dis_eve     Int // Número de cupos disponibles actualmente
+  eve_des         Boolean          @default(false) // Indica si el evento es detastacado
   id_cue_cre_eve  String // FK a cuenta creadora del evento
 
   inscritos       inscripcion[] // Relación 1:N (evento puede tener muchas inscripciones)
@@ -197,6 +198,8 @@ model certificado {
 model facultad {
   id_fac              String   @id @default(uuid()) // UUID como ID de la facultad
   nom_fac             String   @unique // Nombre único de la facultad
+  acr_fac             String? // Acrónimo de la facultad (ya no tiene valor por defecto)
+  url_log_fac         String? // URL del logo de la facultad (ya no tiene valor por defecto)
   des_fac             String // Descripción de la facultad
   mis_fac             String // Misión de la facultad
   vis_fac             String // Visión de la facultad

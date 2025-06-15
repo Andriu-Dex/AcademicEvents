@@ -1,0 +1,99 @@
+import React, { useState } from "react";
+import PropTypes from "prop-types";
+import { Star } from "lucide-react";
+import { toast } from "react-toastify";
+import EventoService from "../../services/EventoService";
+import "./styles/BotonEstrella.css";
+
+/**
+ * @component BotonEstrella
+ * @description Botón para marcar/desmarcar eventos como destacados con estrella mejorada
+ */
+const BotonEstrella = ({ idEvento, estadoInicial, onToggle, disabled }) => {
+  const [esDestacado, setEsDestacado] = useState(estadoInicial);
+  const [cargando, setCargando] = useState(false);
+  /**
+   * Maneja el clic en la estrella
+   */
+  const handleClick = async () => {
+    if (disabled || cargando) return;
+
+    try {
+      console.log("=== BOTON ESTRELLA - INICIO ===");
+      console.log("ID Evento:", idEvento);
+      console.log("Estado actual:", esDestacado);
+
+      setCargando(true);
+      const nuevoEstado = !esDestacado;
+      console.log("Nuevo estado a aplicar:", nuevoEstado);
+
+      // Llamar al servicio para actualizar
+      console.log("Llamando a EventoService.toggleEventoDestacado...");
+      const respuesta = await EventoService.toggleEventoDestacado(
+        idEvento,
+        nuevoEstado
+      );
+
+      console.log("Respuesta del servicio:", respuesta);
+
+      if (respuesta && respuesta.ok) {
+        console.log("Respuesta exitosa, actualizando estado local...");
+        setEsDestacado(nuevoEstado); // Notificar al componente padre del cambio
+        if (onToggle) {
+          console.log("Notificando al componente padre...");
+          onToggle(nuevoEstado);
+        }
+
+        console.log("=== BOTON ESTRELLA - FIN EXITOSO ===");
+      }
+    } catch (error) {
+      console.error("=== ERROR EN BOTON ESTRELLA ===");
+      console.error("Error completo:", error);
+      console.error("Mensaje:", error.message);
+      console.error("Stack:", error.stack);
+      console.error("=== FIN ERROR BOTON ESTRELLA ===");
+
+      toast.error(error.message || "Error al actualizar evento destacado");
+    } finally {
+      setCargando(false);
+    }
+  };
+
+  return (
+    <button
+      onClick={handleClick}
+      disabled={disabled || cargando}
+      className={`boton-estrella-be rounded-full p-2 transition-all duration-200 ${
+        esDestacado
+          ? "estrella-activa-be text-amber-500 hover:text-amber-600 drop-shadow-sm"
+          : "estrella-inactiva-be text-gray-300 hover:text-amber-400 hover:scale-110"
+      } ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+      title={esDestacado ? "Desmarcar como destacado" : "Marcar como destacado"}
+      aria-label={
+        esDestacado ? "Desmarcar como destacado" : "Marcar como destacado"
+      }
+    >
+      <Star
+        className={`text-xl transition-all duration-200 ${
+          cargando ? "animate-pulse" : ""
+        } ${esDestacado ? "drop-shadow-sm" : "hover:scale-110"}`}
+        fill={esDestacado ? "currentColor" : "none"}
+        strokeWidth={esDestacado ? 1 : 2}
+      />
+    </button>
+  );
+};
+
+BotonEstrella.propTypes = {
+  idEvento: PropTypes.string.isRequired,
+  estadoInicial: PropTypes.bool.isRequired,
+  onToggle: PropTypes.func,
+  disabled: PropTypes.bool,
+};
+
+BotonEstrella.defaultProps = {
+  estadoInicial: false,
+  disabled: false,
+};
+
+export default BotonEstrella;

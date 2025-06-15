@@ -43,6 +43,21 @@ setupDirectories();
 app.use(cors()); // Habilita CORS para todas las rutas
 app.use(express.json()); // Habilita el parseo de JSON en las peticiones
 
+// Middleware de logging para debug
+app.use((req, res, next) => {
+  if (req.originalUrl.includes("destacado")) {
+    console.log("=== REQUEST LOGGER ===");
+    console.log("Timestamp:", new Date().toISOString());
+    console.log("Método:", req.method);
+    console.log("URL:", req.originalUrl);
+    console.log("Params:", req.params);
+    console.log("Body:", req.body);
+    console.log("Headers Authorization:", req.headers.authorization);
+    console.log("=== FIN REQUEST LOGGER ===");
+  }
+  next();
+});
+
 // Servir archivos subidos (comprobantes, PDF, etc.)
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 

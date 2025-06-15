@@ -1,0 +1,226 @@
+/* Sección de Eventos Destacados */
+.eventos-destacados-section-h {
+  padding: 4rem 2rem;
+  background-color: #f8f9fa;
+  margin-bottom: 2rem;
+}
+
+.eventos-destacados-header-h {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.eventos-destacados-title-h {
+  font-weight: 700;
+  color: #8a1538;
+  margin-bottom: 0.5rem;
+  font-size: 2.25rem;
+}
+
+.eventos-destacados-subtitle-h {
+  color: #6c757d;
+  font-size: 1.1rem;
+  max-width: 600px;
+  margin: 0 auto 1.5rem auto;
+}
+
+/* Card de Evento Destacado */
+.evento-card-h {
+  width: 330px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  flex-shrink: 0;
+  margin: 0 0.75rem;
+}
+
+.evento-card-h:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* Contenedor de imagen con badge */
+.evento-image-container-h {
+  position: relative;
+  height: 180px;
+  overflow: hidden;
+}
+
+.evento-image-h {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.evento-card-h:hover .evento-image-h {
+  transform: scale(1.05);
+}
+
+.evento-badge-destacado-h {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background-color: rgba(255, 215, 0, 0.9);
+  color: #333;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Contenido del evento */
+.evento-content-h {
+  padding: 1.25rem;
+}
+
+.evento-titulo-h {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0rem;
+  color: #333;
+  line-height: 1.3;
+  height: 3.25rem;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+/* Detalles del evento */
+.evento-detalles-h {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.evento-fecha-h,
+.evento-duracion-h,
+.evento-modalidad-h {
+  display: flex;
+  align-items: center;
+  font-size: 0.875rem;
+  color: #555;
+}
+
+.evento-icon-h {
+  margin-right: 0.5rem;
+  color: #8a1538;
+}
+
+/* Footer del card */
+.evento-footer-h {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.evento-valor-h {
+  font-weight: 700;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+
+.evento-gratuito-h {
+  color: #198754;
+  background-color: rgba(25, 135, 84, 0.1);
+}
+
+.evento-pago-h {
+  color: #8a1538;
+  background-color: rgba(138, 21, 56, 0.1);
+}
+
+.evento-ver-mas-h {
+  color: #8a1538;
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-decoration: none;
+  padding: 0.35rem 0.75rem;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.evento-ver-mas-h:hover {
+  background-color: rgba(138, 21, 56, 0.1);
+  text-decoration: none;
+}
+
+/* Estados de carga y error */
+.eventos-destacados-loading-h,
+.eventos-destacados-error-h {
+  text-align: center;
+  padding: 2rem;
+  background-color: white;
+  border-radius: 8px;
+  margin: 1rem auto;
+  max-width: 600px;
+}
+
+.spinner-h {
+  width: 40px;
+  height: 40px;
+  margin: 0 auto 1rem auto;
+  border: 3px solid rgba(138, 21, 56, 0.3);
+  border-top-color: #8a1538;
+  border-radius: 50%;
+  animation: spin 1s infinite linear;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Carrusel */
+.eventos-carousel-h {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+}
+
+.eventos-static-h {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .eventos-destacados-section-h {
+    padding: 3rem 1rem;
+  }
+
+  .eventos-destacados-title-h {
+    font-size: 1.75rem;
+  }
+
+  .evento-card-h {
+    width: 100%;
+    max-width: 330px;
+  }
+
+  .carousel-btn-h {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+@media (max-width: 576px) {
+  .eventos-destacados-section-h {
+    padding: 2rem 1rem;
+  }
+
+  .eventos-destacados-title-h {
+    font-size: 1.5rem;
+  }
+}

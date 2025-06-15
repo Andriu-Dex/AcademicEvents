@@ -33,6 +33,8 @@ import {
   Percent,
 } from "lucide-react";
 import "./styles/AdminEvents.css";
+import "./styles/EventosDestacados.css";
+import BotonEstrella from "../../components/admin/BotonEstrella";
 
 const getEstadoEventoUI = (estado) => {
   switch (estado) {
@@ -930,7 +932,7 @@ const AdminEvents = () => {
           )}
         </div>
       ) : (
-        <div className="admin-events-grid">
+        <div className="admin-events-grid-ae">
           {eventosFiltrados.map((eve) => {
             const esCurso = eve.tip_eve === "CURSO";
             const estadoEvento = esEventoFinalizado(eve)
@@ -940,7 +942,12 @@ const AdminEvents = () => {
             const modalidadUI = getModalidadUI(eve.mod_eve);
 
             return (
-              <div key={eve.id_eve} className="admin-event-card">
+              <div
+                key={eve.id_eve}
+                className={`admin-event-card ${
+                  eve.eve_des ? "card-evento-destacado-ge" : ""
+                }`}
+              >
                 {/* Imagen de portada */}
                 {eve.img_por_eve && (
                   <div className="admin-event-image">
@@ -949,7 +956,25 @@ const AdminEvents = () => {
                 )}
 
                 <div className="admin-event-header">
-                  <h3 className="admin-event-name">{eve.nom_eve}</h3>
+                  <div className="admin-event-title-container-ae">
+                    <h3 className="admin-event-name">{eve.nom_eve}</h3>
+                    <div className="contenedor-estrella-ae">
+                      <BotonEstrella
+                        idEvento={eve.id_eve}
+                        estadoInicial={eve.eve_des || false}
+                        onToggle={(esDestacado) => {
+                          toast.success(
+                            esDestacado
+                              ? `Evento marcado como destacado`
+                              : `"${eve.nom_eve}" ya no se mostrará en destacados`
+                            // ? `"${eve.nom_eve}" se mostrará en la sección de destacados del Home`
+                          );
+                          // Opcional: Recargar datos si es necesario
+                          // cargarEventos();
+                        }}
+                      />
+                    </div>
+                  </div>
                   <span
                     className={`admin-event-label ${
                       eve.val_eve === 0 ? "valor-gratuito-ae" : "valor-pago-ae"

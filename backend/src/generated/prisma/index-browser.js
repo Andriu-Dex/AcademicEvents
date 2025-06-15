@@ -208,6 +208,7 @@ exports.Prisma.EventoScalarFieldEnum = {
   por_min_asi_eve: 'por_min_asi_eve',
   cup_max_eve: 'cup_max_eve',
   cup_dis_eve: 'cup_dis_eve',
+  eve_des: 'eve_des',
   id_cue_cre_eve: 'id_cue_cre_eve'
 };
 

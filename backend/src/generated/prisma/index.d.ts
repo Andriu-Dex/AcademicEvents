@@ -10534,6 +10534,7 @@ export namespace Prisma {
     por_min_asi_eve: number | null
     cup_max_eve: number | null
     cup_dis_eve: number | null
+    eve_des: boolean | null
     id_cue_cre_eve: string | null
   }
 
@@ -10553,6 +10554,7 @@ export namespace Prisma {
     por_min_asi_eve: number | null
     cup_max_eve: number | null
     cup_dis_eve: number | null
+    eve_des: boolean | null
     id_cue_cre_eve: string | null
   }
 
@@ -10572,6 +10574,7 @@ export namespace Prisma {
     por_min_asi_eve: number
     cup_max_eve: number
     cup_dis_eve: number
+    eve_des: number
     id_cue_cre_eve: number
     _all: number
   }
@@ -10609,6 +10612,7 @@ export namespace Prisma {
     por_min_asi_eve?: true
     cup_max_eve?: true
     cup_dis_eve?: true
+    eve_des?: true
     id_cue_cre_eve?: true
   }
 
@@ -10628,6 +10632,7 @@ export namespace Prisma {
     por_min_asi_eve?: true
     cup_max_eve?: true
     cup_dis_eve?: true
+    eve_des?: true
     id_cue_cre_eve?: true
   }
 
@@ -10647,6 +10652,7 @@ export namespace Prisma {
     por_min_asi_eve?: true
     cup_max_eve?: true
     cup_dis_eve?: true
+    eve_des?: true
     id_cue_cre_eve?: true
     _all?: true
   }
@@ -10753,6 +10759,7 @@ export namespace Prisma {
     por_min_asi_eve: number
     cup_max_eve: number
     cup_dis_eve: number
+    eve_des: boolean
     id_cue_cre_eve: string
     _count: EventoCountAggregateOutputType | null
     _avg: EventoAvgAggregateOutputType | null
@@ -10791,6 +10798,7 @@ export namespace Prisma {
     por_min_asi_eve?: boolean
     cup_max_eve?: boolean
     cup_dis_eve?: boolean
+    eve_des?: boolean
     id_cue_cre_eve?: boolean
     inscritos?: boolean | evento$inscritosArgs<ExtArgs>
     eventos_carrera?: boolean | evento$eventos_carreraArgs<ExtArgs>
@@ -10815,6 +10823,7 @@ export namespace Prisma {
     por_min_asi_eve?: boolean
     cup_max_eve?: boolean
     cup_dis_eve?: boolean
+    eve_des?: boolean
     id_cue_cre_eve?: boolean
     cuenta?: boolean | cuentaDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["evento"]>
@@ -10835,6 +10844,7 @@ export namespace Prisma {
     por_min_asi_eve?: boolean
     cup_max_eve?: boolean
     cup_dis_eve?: boolean
+    eve_des?: boolean
     id_cue_cre_eve?: boolean
     cuenta?: boolean | cuentaDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["evento"]>
@@ -10855,10 +10865,11 @@ export namespace Prisma {
     por_min_asi_eve?: boolean
     cup_max_eve?: boolean
     cup_dis_eve?: boolean
+    eve_des?: boolean
     id_cue_cre_eve?: boolean
   }
 
-  export type eventoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_eve" | "nom_eve" | "des_eve" | "tip_eve" | "fec_ini_eve" | "fec_cre_eve" | "fec_fin_eve" | "dur_hor_eve" | "mod_eve" | "val_eve" | "est_eve" | "img_por_eve" | "por_min_asi_eve" | "cup_max_eve" | "cup_dis_eve" | "id_cue_cre_eve", ExtArgs["result"]["evento"]>
+  export type eventoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_eve" | "nom_eve" | "des_eve" | "tip_eve" | "fec_ini_eve" | "fec_cre_eve" | "fec_fin_eve" | "dur_hor_eve" | "mod_eve" | "val_eve" | "est_eve" | "img_por_eve" | "por_min_asi_eve" | "cup_max_eve" | "cup_dis_eve" | "eve_des" | "id_cue_cre_eve", ExtArgs["result"]["evento"]>
   export type eventoInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     inscritos?: boolean | evento$inscritosArgs<ExtArgs>
     eventos_carrera?: boolean | evento$eventos_carreraArgs<ExtArgs>
@@ -10897,6 +10908,7 @@ export namespace Prisma {
       por_min_asi_eve: number
       cup_max_eve: number
       cup_dis_eve: number
+      eve_des: boolean
       id_cue_cre_eve: string
     }, ExtArgs["result"]["evento"]>
     composites: {}
@@ -11340,6 +11352,7 @@ export namespace Prisma {
     readonly por_min_asi_eve: FieldRef<"evento", 'Float'>
     readonly cup_max_eve: FieldRef<"evento", 'Int'>
     readonly cup_dis_eve: FieldRef<"evento", 'Int'>
+    readonly eve_des: FieldRef<"evento", 'Boolean'>
     readonly id_cue_cre_eve: FieldRef<"evento", 'String'>
   }
     
@@ -18707,6 +18720,7 @@ export namespace Prisma {
     por_min_asi_eve: 'por_min_asi_eve',
     cup_max_eve: 'cup_max_eve',
     cup_dis_eve: 'cup_dis_eve',
+    eve_des: 'eve_des',
     id_cue_cre_eve: 'id_cue_cre_eve'
   };
 
@@ -19507,6 +19521,7 @@ export namespace Prisma {
     por_min_asi_eve?: FloatFilter<"evento"> | number
     cup_max_eve?: IntFilter<"evento"> | number
     cup_dis_eve?: IntFilter<"evento"> | number
+    eve_des?: BoolFilter<"evento"> | boolean
     id_cue_cre_eve?: StringFilter<"evento"> | string
     inscritos?: InscripcionListRelationFilter
     eventos_carrera?: Evento_carreraListRelationFilter
@@ -19530,6 +19545,7 @@ export namespace Prisma {
     por_min_asi_eve?: SortOrder
     cup_max_eve?: SortOrder
     cup_dis_eve?: SortOrder
+    eve_des?: SortOrder
     id_cue_cre_eve?: SortOrder
     inscritos?: inscripcionOrderByRelationAggregateInput
     eventos_carrera?: evento_carreraOrderByRelationAggregateInput
@@ -19556,6 +19572,7 @@ export namespace Prisma {
     por_min_asi_eve?: FloatFilter<"evento"> | number
     cup_max_eve?: IntFilter<"evento"> | number
     cup_dis_eve?: IntFilter<"evento"> | number
+    eve_des?: BoolFilter<"evento"> | boolean
     id_cue_cre_eve?: StringFilter<"evento"> | string
     inscritos?: InscripcionListRelationFilter
     eventos_carrera?: Evento_carreraListRelationFilter
@@ -19579,6 +19596,7 @@ export namespace Prisma {
     por_min_asi_eve?: SortOrder
     cup_max_eve?: SortOrder
     cup_dis_eve?: SortOrder
+    eve_des?: SortOrder
     id_cue_cre_eve?: SortOrder
     _count?: eventoCountOrderByAggregateInput
     _avg?: eventoAvgOrderByAggregateInput
@@ -19606,6 +19624,7 @@ export namespace Prisma {
     por_min_asi_eve?: FloatWithAggregatesFilter<"evento"> | number
     cup_max_eve?: IntWithAggregatesFilter<"evento"> | number
     cup_dis_eve?: IntWithAggregatesFilter<"evento"> | number
+    eve_des?: BoolWithAggregatesFilter<"evento"> | boolean
     id_cue_cre_eve?: StringWithAggregatesFilter<"evento"> | string
   }
 
@@ -20569,6 +20588,7 @@ export namespace Prisma {
     por_min_asi_eve: number
     cup_max_eve: number
     cup_dis_eve: number
+    eve_des?: boolean
     inscritos?: inscripcionCreateNestedManyWithoutEventoInput
     eventos_carrera?: evento_carreraCreateNestedManyWithoutEventoInput
     eventos_curso?: evento_cursoCreateNestedOneWithoutEventoInput
@@ -20591,6 +20611,7 @@ export namespace Prisma {
     por_min_asi_eve: number
     cup_max_eve: number
     cup_dis_eve: number
+    eve_des?: boolean
     id_cue_cre_eve: string
     inscritos?: inscripcionUncheckedCreateNestedManyWithoutEventoInput
     eventos_carrera?: evento_carreraUncheckedCreateNestedManyWithoutEventoInput
@@ -20613,6 +20634,7 @@ export namespace Prisma {
     por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
     cup_max_eve?: IntFieldUpdateOperationsInput | number
     cup_dis_eve?: IntFieldUpdateOperationsInput | number
+    eve_des?: BoolFieldUpdateOperationsInput | boolean
     inscritos?: inscripcionUpdateManyWithoutEventoNestedInput
     eventos_carrera?: evento_carreraUpdateManyWithoutEventoNestedInput
     eventos_curso?: evento_cursoUpdateOneWithoutEventoNestedInput
@@ -20635,6 +20657,7 @@ export namespace Prisma {
     por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
     cup_max_eve?: IntFieldUpdateOperationsInput | number
     cup_dis_eve?: IntFieldUpdateOperationsInput | number
+    eve_des?: BoolFieldUpdateOperationsInput | boolean
     id_cue_cre_eve?: StringFieldUpdateOperationsInput | string
     inscritos?: inscripcionUncheckedUpdateManyWithoutEventoNestedInput
     eventos_carrera?: evento_carreraUncheckedUpdateManyWithoutEventoNestedInput
@@ -20657,6 +20680,7 @@ export namespace Prisma {
     por_min_asi_eve: number
     cup_max_eve: number
     cup_dis_eve: number
+    eve_des?: boolean
     id_cue_cre_eve: string
   }
 
@@ -20676,6 +20700,7 @@ export namespace Prisma {
     por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
     cup_max_eve?: IntFieldUpdateOperationsInput | number
     cup_dis_eve?: IntFieldUpdateOperationsInput | number
+    eve_des?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type eventoUncheckedUpdateManyInput = {
@@ -20694,6 +20719,7 @@ export namespace Prisma {
     por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
     cup_max_eve?: IntFieldUpdateOperationsInput | number
     cup_dis_eve?: IntFieldUpdateOperationsInput | number
+    eve_des?: BoolFieldUpdateOperationsInput | boolean
     id_cue_cre_eve?: StringFieldUpdateOperationsInput | string
   }
 
@@ -21716,6 +21742,7 @@ export namespace Prisma {
     por_min_asi_eve?: SortOrder
     cup_max_eve?: SortOrder
     cup_dis_eve?: SortOrder
+    eve_des?: SortOrder
     id_cue_cre_eve?: SortOrder
   }
 
@@ -21743,6 +21770,7 @@ export namespace Prisma {
     por_min_asi_eve?: SortOrder
     cup_max_eve?: SortOrder
     cup_dis_eve?: SortOrder
+    eve_des?: SortOrder
     id_cue_cre_eve?: SortOrder
   }
 
@@ -21762,6 +21790,7 @@ export namespace Prisma {
     por_min_asi_eve?: SortOrder
     cup_max_eve?: SortOrder
     cup_dis_eve?: SortOrder
+    eve_des?: SortOrder
     id_cue_cre_eve?: SortOrder
   }
 
@@ -24300,6 +24329,7 @@ export namespace Prisma {
     por_min_asi_eve: number
     cup_max_eve: number
     cup_dis_eve: number
+    eve_des?: boolean
     inscritos?: inscripcionCreateNestedManyWithoutEventoInput
     eventos_carrera?: evento_carreraCreateNestedManyWithoutEventoInput
     eventos_curso?: evento_cursoCreateNestedOneWithoutEventoInput
@@ -24321,6 +24351,7 @@ export namespace Prisma {
     por_min_asi_eve: number
     cup_max_eve: number
     cup_dis_eve: number
+    eve_des?: boolean
     inscritos?: inscripcionUncheckedCreateNestedManyWithoutEventoInput
     eventos_carrera?: evento_carreraUncheckedCreateNestedManyWithoutEventoInput
     eventos_curso?: evento_cursoUncheckedCreateNestedOneWithoutEventoInput
@@ -24565,6 +24596,7 @@ export namespace Prisma {
     por_min_asi_eve?: FloatFilter<"evento"> | number
     cup_max_eve?: IntFilter<"evento"> | number
     cup_dis_eve?: IntFilter<"evento"> | number
+    eve_des?: BoolFilter<"evento"> | boolean
     id_cue_cre_eve?: StringFilter<"evento"> | string
   }
 
@@ -25156,6 +25188,7 @@ export namespace Prisma {
     por_min_asi_eve: number
     cup_max_eve: number
     cup_dis_eve: number
+    eve_des?: boolean
     inscritos?: inscripcionCreateNestedManyWithoutEventoInput
     eventos_carrera?: evento_carreraCreateNestedManyWithoutEventoInput
     cuenta: cuentaCreateNestedOneWithoutEventosInput
@@ -25177,6 +25210,7 @@ export namespace Prisma {
     por_min_asi_eve: number
     cup_max_eve: number
     cup_dis_eve: number
+    eve_des?: boolean
     id_cue_cre_eve: string
     inscritos?: inscripcionUncheckedCreateNestedManyWithoutEventoInput
     eventos_carrera?: evento_carreraUncheckedCreateNestedManyWithoutEventoInput
@@ -25214,6 +25248,7 @@ export namespace Prisma {
     por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
     cup_max_eve?: IntFieldUpdateOperationsInput | number
     cup_dis_eve?: IntFieldUpdateOperationsInput | number
+    eve_des?: BoolFieldUpdateOperationsInput | boolean
     inscritos?: inscripcionUpdateManyWithoutEventoNestedInput
     eventos_carrera?: evento_carreraUpdateManyWithoutEventoNestedInput
     cuenta?: cuentaUpdateOneRequiredWithoutEventosNestedInput
@@ -25235,6 +25270,7 @@ export namespace Prisma {
     por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
     cup_max_eve?: IntFieldUpdateOperationsInput | number
     cup_dis_eve?: IntFieldUpdateOperationsInput | number
+    eve_des?: BoolFieldUpdateOperationsInput | boolean
     id_cue_cre_eve?: StringFieldUpdateOperationsInput | string
     inscritos?: inscripcionUncheckedUpdateManyWithoutEventoNestedInput
     eventos_carrera?: evento_carreraUncheckedUpdateManyWithoutEventoNestedInput
@@ -25289,6 +25325,7 @@ export namespace Prisma {
     por_min_asi_eve: number
     cup_max_eve: number
     cup_dis_eve: number
+    eve_des?: boolean
     inscritos?: inscripcionCreateNestedManyWithoutEventoInput
     eventos_curso?: evento_cursoCreateNestedOneWithoutEventoInput
     cuenta: cuentaCreateNestedOneWithoutEventosInput
@@ -25310,6 +25347,7 @@ export namespace Prisma {
     por_min_asi_eve: number
     cup_max_eve: number
     cup_dis_eve: number
+    eve_des?: boolean
     id_cue_cre_eve: string
     inscritos?: inscripcionUncheckedCreateNestedManyWithoutEventoInput
     eventos_curso?: evento_cursoUncheckedCreateNestedOneWithoutEventoInput
@@ -25386,6 +25424,7 @@ export namespace Prisma {
     por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
     cup_max_eve?: IntFieldUpdateOperationsInput | number
     cup_dis_eve?: IntFieldUpdateOperationsInput | number
+    eve_des?: BoolFieldUpdateOperationsInput | boolean
     inscritos?: inscripcionUpdateManyWithoutEventoNestedInput
     eventos_curso?: evento_cursoUpdateOneWithoutEventoNestedInput
     cuenta?: cuentaUpdateOneRequiredWithoutEventosNestedInput
@@ -25407,6 +25446,7 @@ export namespace Prisma {
     por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
     cup_max_eve?: IntFieldUpdateOperationsInput | number
     cup_dis_eve?: IntFieldUpdateOperationsInput | number
+    eve_des?: BoolFieldUpdateOperationsInput | boolean
     id_cue_cre_eve?: StringFieldUpdateOperationsInput | string
     inscritos?: inscripcionUncheckedUpdateManyWithoutEventoNestedInput
     eventos_curso?: evento_cursoUncheckedUpdateOneWithoutEventoNestedInput
@@ -25461,6 +25501,7 @@ export namespace Prisma {
     por_min_asi_eve: number
     cup_max_eve: number
     cup_dis_eve: number
+    eve_des?: boolean
     eventos_carrera?: evento_carreraCreateNestedManyWithoutEventoInput
     eventos_curso?: evento_cursoCreateNestedOneWithoutEventoInput
     cuenta: cuentaCreateNestedOneWithoutEventosInput
@@ -25482,6 +25523,7 @@ export namespace Prisma {
     por_min_asi_eve: number
     cup_max_eve: number
     cup_dis_eve: number
+    eve_des?: boolean
     id_cue_cre_eve: string
     eventos_carrera?: evento_carreraUncheckedCreateNestedManyWithoutEventoInput
     eventos_curso?: evento_cursoUncheckedCreateNestedOneWithoutEventoInput
@@ -25702,6 +25744,7 @@ export namespace Prisma {
     por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
     cup_max_eve?: IntFieldUpdateOperationsInput | number
     cup_dis_eve?: IntFieldUpdateOperationsInput | number
+    eve_des?: BoolFieldUpdateOperationsInput | boolean
     eventos_carrera?: evento_carreraUpdateManyWithoutEventoNestedInput
     eventos_curso?: evento_cursoUpdateOneWithoutEventoNestedInput
     cuenta?: cuentaUpdateOneRequiredWithoutEventosNestedInput
@@ -25723,6 +25766,7 @@ export namespace Prisma {
     por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
     cup_max_eve?: IntFieldUpdateOperationsInput | number
     cup_dis_eve?: IntFieldUpdateOperationsInput | number
+    eve_des?: BoolFieldUpdateOperationsInput | boolean
     id_cue_cre_eve?: StringFieldUpdateOperationsInput | string
     eventos_carrera?: evento_carreraUncheckedUpdateManyWithoutEventoNestedInput
     eventos_curso?: evento_cursoUncheckedUpdateOneWithoutEventoNestedInput
@@ -26183,6 +26227,7 @@ export namespace Prisma {
     por_min_asi_eve: number
     cup_max_eve: number
     cup_dis_eve: number
+    eve_des?: boolean
   }
 
   export type observacion_inscripcionCreateManyAdmin_creadorInput = {
@@ -26323,6 +26368,7 @@ export namespace Prisma {
     por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
     cup_max_eve?: IntFieldUpdateOperationsInput | number
     cup_dis_eve?: IntFieldUpdateOperationsInput | number
+    eve_des?: BoolFieldUpdateOperationsInput | boolean
     inscritos?: inscripcionUpdateManyWithoutEventoNestedInput
     eventos_carrera?: evento_carreraUpdateManyWithoutEventoNestedInput
     eventos_curso?: evento_cursoUpdateOneWithoutEventoNestedInput
@@ -26344,6 +26390,7 @@ export namespace Prisma {
     por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
     cup_max_eve?: IntFieldUpdateOperationsInput | number
     cup_dis_eve?: IntFieldUpdateOperationsInput | number
+    eve_des?: BoolFieldUpdateOperationsInput | boolean
     inscritos?: inscripcionUncheckedUpdateManyWithoutEventoNestedInput
     eventos_carrera?: evento_carreraUncheckedUpdateManyWithoutEventoNestedInput
     eventos_curso?: evento_cursoUncheckedUpdateOneWithoutEventoNestedInput
@@ -26365,6 +26412,7 @@ export namespace Prisma {
     por_min_asi_eve?: FloatFieldUpdateOperationsInput | number
     cup_max_eve?: IntFieldUpdateOperationsInput | number
     cup_dis_eve?: IntFieldUpdateOperationsInput | number
+    eve_des?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type observacion_inscripcionUpdateWithoutAdmin_creadorInput = {
