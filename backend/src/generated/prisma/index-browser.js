@@ -253,6 +253,8 @@ exports.Prisma.CertificadoScalarFieldEnum = {
 exports.Prisma.FacultadScalarFieldEnum = {
   id_fac: 'id_fac',
   nom_fac: 'nom_fac',
+  acr_fac: 'acr_fac',
+  url_log_fac: 'url_log_fac',
   des_fac: 'des_fac',
   mis_fac: 'mis_fac',
   vis_fac: 'vis_fac',

@@ -17384,6 +17384,8 @@ export namespace Prisma {
   export type FacultadMinAggregateOutputType = {
     id_fac: string | null
     nom_fac: string | null
+    acr_fac: string | null
+    url_log_fac: string | null
     des_fac: string | null
     mis_fac: string | null
     vis_fac: string | null
@@ -17401,6 +17403,8 @@ export namespace Prisma {
   export type FacultadMaxAggregateOutputType = {
     id_fac: string | null
     nom_fac: string | null
+    acr_fac: string | null
+    url_log_fac: string | null
     des_fac: string | null
     mis_fac: string | null
     vis_fac: string | null
@@ -17418,6 +17422,8 @@ export namespace Prisma {
   export type FacultadCountAggregateOutputType = {
     id_fac: number
     nom_fac: number
+    acr_fac: number
+    url_log_fac: number
     des_fac: number
     mis_fac: number
     vis_fac: number
@@ -17437,6 +17443,8 @@ export namespace Prisma {
   export type FacultadMinAggregateInputType = {
     id_fac?: true
     nom_fac?: true
+    acr_fac?: true
+    url_log_fac?: true
     des_fac?: true
     mis_fac?: true
     vis_fac?: true
@@ -17454,6 +17462,8 @@ export namespace Prisma {
   export type FacultadMaxAggregateInputType = {
     id_fac?: true
     nom_fac?: true
+    acr_fac?: true
+    url_log_fac?: true
     des_fac?: true
     mis_fac?: true
     vis_fac?: true
@@ -17471,6 +17481,8 @@ export namespace Prisma {
   export type FacultadCountAggregateInputType = {
     id_fac?: true
     nom_fac?: true
+    acr_fac?: true
+    url_log_fac?: true
     des_fac?: true
     mis_fac?: true
     vis_fac?: true
@@ -17561,6 +17573,8 @@ export namespace Prisma {
   export type FacultadGroupByOutputType = {
     id_fac: string
     nom_fac: string
+    acr_fac: string | null
+    url_log_fac: string | null
     des_fac: string
     mis_fac: string
     vis_fac: string
@@ -17595,6 +17609,8 @@ export namespace Prisma {
   export type facultadSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id_fac?: boolean
     nom_fac?: boolean
+    acr_fac?: boolean
+    url_log_fac?: boolean
     des_fac?: boolean
     mis_fac?: boolean
     vis_fac?: boolean
@@ -17614,6 +17630,8 @@ export namespace Prisma {
   export type facultadSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id_fac?: boolean
     nom_fac?: boolean
+    acr_fac?: boolean
+    url_log_fac?: boolean
     des_fac?: boolean
     mis_fac?: boolean
     vis_fac?: boolean
@@ -17631,6 +17649,8 @@ export namespace Prisma {
   export type facultadSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id_fac?: boolean
     nom_fac?: boolean
+    acr_fac?: boolean
+    url_log_fac?: boolean
     des_fac?: boolean
     mis_fac?: boolean
     vis_fac?: boolean
@@ -17648,6 +17668,8 @@ export namespace Prisma {
   export type facultadSelectScalar = {
     id_fac?: boolean
     nom_fac?: boolean
+    acr_fac?: boolean
+    url_log_fac?: boolean
     des_fac?: boolean
     mis_fac?: boolean
     vis_fac?: boolean
@@ -17662,7 +17684,7 @@ export namespace Prisma {
     url_img_sub_dec_fac?: boolean
   }
 
-  export type facultadOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_fac" | "nom_fac" | "des_fac" | "mis_fac" | "vis_fac" | "fec_cre_fac" | "nom_dec_fac" | "ape_dec_fac" | "cor_dec_fac" | "url_img_dec_fac" | "nom_sub_dec_fac" | "ape_sub_dec_fac" | "cor_sub_dec_fac" | "url_img_sub_dec_fac", ExtArgs["result"]["facultad"]>
+  export type facultadOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_fac" | "nom_fac" | "acr_fac" | "url_log_fac" | "des_fac" | "mis_fac" | "vis_fac" | "fec_cre_fac" | "nom_dec_fac" | "ape_dec_fac" | "cor_dec_fac" | "url_img_dec_fac" | "nom_sub_dec_fac" | "ape_sub_dec_fac" | "cor_sub_dec_fac" | "url_img_sub_dec_fac", ExtArgs["result"]["facultad"]>
   export type facultadInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     carreras?: boolean | facultad$carrerasArgs<ExtArgs>
     _count?: boolean | FacultadCountOutputTypeDefaultArgs<ExtArgs>
@@ -17678,6 +17700,8 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id_fac: string
       nom_fac: string
+      acr_fac: string | null
+      url_log_fac: string | null
       des_fac: string
       mis_fac: string
       vis_fac: string
@@ -18116,6 +18140,8 @@ export namespace Prisma {
   interface facultadFieldRefs {
     readonly id_fac: FieldRef<"facultad", 'String'>
     readonly nom_fac: FieldRef<"facultad", 'String'>
+    readonly acr_fac: FieldRef<"facultad", 'String'>
+    readonly url_log_fac: FieldRef<"facultad", 'String'>
     readonly des_fac: FieldRef<"facultad", 'String'>
     readonly mis_fac: FieldRef<"facultad", 'String'>
     readonly vis_fac: FieldRef<"facultad", 'String'>
@@ -18744,6 +18770,8 @@ export namespace Prisma {
   export const FacultadScalarFieldEnum: {
     id_fac: 'id_fac',
     nom_fac: 'nom_fac',
+    acr_fac: 'acr_fac',
+    url_log_fac: 'url_log_fac',
     des_fac: 'des_fac',
     mis_fac: 'mis_fac',
     vis_fac: 'vis_fac',
@@ -19887,6 +19915,8 @@ export namespace Prisma {
     NOT?: facultadWhereInput | facultadWhereInput[]
     id_fac?: StringFilter<"facultad"> | string
     nom_fac?: StringFilter<"facultad"> | string
+    acr_fac?: StringNullableFilter<"facultad"> | string | null
+    url_log_fac?: StringNullableFilter<"facultad"> | string | null
     des_fac?: StringFilter<"facultad"> | string
     mis_fac?: StringFilter<"facultad"> | string
     vis_fac?: StringFilter<"facultad"> | string
@@ -19905,6 +19935,8 @@ export namespace Prisma {
   export type facultadOrderByWithRelationInput = {
     id_fac?: SortOrder
     nom_fac?: SortOrder
+    acr_fac?: SortOrderInput | SortOrder
+    url_log_fac?: SortOrderInput | SortOrder
     des_fac?: SortOrder
     mis_fac?: SortOrder
     vis_fac?: SortOrder
@@ -19926,6 +19958,8 @@ export namespace Prisma {
     AND?: facultadWhereInput | facultadWhereInput[]
     OR?: facultadWhereInput[]
     NOT?: facultadWhereInput | facultadWhereInput[]
+    acr_fac?: StringNullableFilter<"facultad"> | string | null
+    url_log_fac?: StringNullableFilter<"facultad"> | string | null
     des_fac?: StringFilter<"facultad"> | string
     mis_fac?: StringFilter<"facultad"> | string
     vis_fac?: StringFilter<"facultad"> | string
@@ -19944,6 +19978,8 @@ export namespace Prisma {
   export type facultadOrderByWithAggregationInput = {
     id_fac?: SortOrder
     nom_fac?: SortOrder
+    acr_fac?: SortOrderInput | SortOrder
+    url_log_fac?: SortOrderInput | SortOrder
     des_fac?: SortOrder
     mis_fac?: SortOrder
     vis_fac?: SortOrder
@@ -19967,6 +20003,8 @@ export namespace Prisma {
     NOT?: facultadScalarWhereWithAggregatesInput | facultadScalarWhereWithAggregatesInput[]
     id_fac?: StringWithAggregatesFilter<"facultad"> | string
     nom_fac?: StringWithAggregatesFilter<"facultad"> | string
+    acr_fac?: StringNullableWithAggregatesFilter<"facultad"> | string | null
+    url_log_fac?: StringNullableWithAggregatesFilter<"facultad"> | string | null
     des_fac?: StringWithAggregatesFilter<"facultad"> | string
     mis_fac?: StringWithAggregatesFilter<"facultad"> | string
     vis_fac?: StringWithAggregatesFilter<"facultad"> | string
@@ -20947,6 +20985,8 @@ export namespace Prisma {
   export type facultadCreateInput = {
     id_fac?: string
     nom_fac: string
+    acr_fac?: string | null
+    url_log_fac?: string | null
     des_fac: string
     mis_fac: string
     vis_fac: string
@@ -20965,6 +21005,8 @@ export namespace Prisma {
   export type facultadUncheckedCreateInput = {
     id_fac?: string
     nom_fac: string
+    acr_fac?: string | null
+    url_log_fac?: string | null
     des_fac: string
     mis_fac: string
     vis_fac: string
@@ -20983,6 +21025,8 @@ export namespace Prisma {
   export type facultadUpdateInput = {
     id_fac?: StringFieldUpdateOperationsInput | string
     nom_fac?: StringFieldUpdateOperationsInput | string
+    acr_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    url_log_fac?: NullableStringFieldUpdateOperationsInput | string | null
     des_fac?: StringFieldUpdateOperationsInput | string
     mis_fac?: StringFieldUpdateOperationsInput | string
     vis_fac?: StringFieldUpdateOperationsInput | string
@@ -21001,6 +21045,8 @@ export namespace Prisma {
   export type facultadUncheckedUpdateInput = {
     id_fac?: StringFieldUpdateOperationsInput | string
     nom_fac?: StringFieldUpdateOperationsInput | string
+    acr_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    url_log_fac?: NullableStringFieldUpdateOperationsInput | string | null
     des_fac?: StringFieldUpdateOperationsInput | string
     mis_fac?: StringFieldUpdateOperationsInput | string
     vis_fac?: StringFieldUpdateOperationsInput | string
@@ -21019,6 +21065,8 @@ export namespace Prisma {
   export type facultadCreateManyInput = {
     id_fac?: string
     nom_fac: string
+    acr_fac?: string | null
+    url_log_fac?: string | null
     des_fac: string
     mis_fac: string
     vis_fac: string
@@ -21036,6 +21084,8 @@ export namespace Prisma {
   export type facultadUpdateManyMutationInput = {
     id_fac?: StringFieldUpdateOperationsInput | string
     nom_fac?: StringFieldUpdateOperationsInput | string
+    acr_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    url_log_fac?: NullableStringFieldUpdateOperationsInput | string | null
     des_fac?: StringFieldUpdateOperationsInput | string
     mis_fac?: StringFieldUpdateOperationsInput | string
     vis_fac?: StringFieldUpdateOperationsInput | string
@@ -21053,6 +21103,8 @@ export namespace Prisma {
   export type facultadUncheckedUpdateManyInput = {
     id_fac?: StringFieldUpdateOperationsInput | string
     nom_fac?: StringFieldUpdateOperationsInput | string
+    acr_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    url_log_fac?: NullableStringFieldUpdateOperationsInput | string | null
     des_fac?: StringFieldUpdateOperationsInput | string
     mis_fac?: StringFieldUpdateOperationsInput | string
     vis_fac?: StringFieldUpdateOperationsInput | string
@@ -21997,6 +22049,8 @@ export namespace Prisma {
   export type facultadCountOrderByAggregateInput = {
     id_fac?: SortOrder
     nom_fac?: SortOrder
+    acr_fac?: SortOrder
+    url_log_fac?: SortOrder
     des_fac?: SortOrder
     mis_fac?: SortOrder
     vis_fac?: SortOrder
@@ -22014,6 +22068,8 @@ export namespace Prisma {
   export type facultadMaxOrderByAggregateInput = {
     id_fac?: SortOrder
     nom_fac?: SortOrder
+    acr_fac?: SortOrder
+    url_log_fac?: SortOrder
     des_fac?: SortOrder
     mis_fac?: SortOrder
     vis_fac?: SortOrder
@@ -22031,6 +22087,8 @@ export namespace Prisma {
   export type facultadMinOrderByAggregateInput = {
     id_fac?: SortOrder
     nom_fac?: SortOrder
+    acr_fac?: SortOrder
+    url_log_fac?: SortOrder
     des_fac?: SortOrder
     mis_fac?: SortOrder
     vis_fac?: SortOrder
@@ -24556,6 +24614,8 @@ export namespace Prisma {
   export type facultadCreateWithoutCarrerasInput = {
     id_fac?: string
     nom_fac: string
+    acr_fac?: string | null
+    url_log_fac?: string | null
     des_fac: string
     mis_fac: string
     vis_fac: string
@@ -24573,6 +24633,8 @@ export namespace Prisma {
   export type facultadUncheckedCreateWithoutCarrerasInput = {
     id_fac?: string
     nom_fac: string
+    acr_fac?: string | null
+    url_log_fac?: string | null
     des_fac: string
     mis_fac: string
     vis_fac: string
@@ -24685,6 +24747,8 @@ export namespace Prisma {
   export type facultadUpdateWithoutCarrerasInput = {
     id_fac?: StringFieldUpdateOperationsInput | string
     nom_fac?: StringFieldUpdateOperationsInput | string
+    acr_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    url_log_fac?: NullableStringFieldUpdateOperationsInput | string | null
     des_fac?: StringFieldUpdateOperationsInput | string
     mis_fac?: StringFieldUpdateOperationsInput | string
     vis_fac?: StringFieldUpdateOperationsInput | string
@@ -24702,6 +24766,8 @@ export namespace Prisma {
   export type facultadUncheckedUpdateWithoutCarrerasInput = {
     id_fac?: StringFieldUpdateOperationsInput | string
     nom_fac?: StringFieldUpdateOperationsInput | string
+    acr_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    url_log_fac?: NullableStringFieldUpdateOperationsInput | string | null
     des_fac?: StringFieldUpdateOperationsInput | string
     mis_fac?: StringFieldUpdateOperationsInput | string
     vis_fac?: StringFieldUpdateOperationsInput | string

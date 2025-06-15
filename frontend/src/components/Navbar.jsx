@@ -1,6 +1,6 @@
-import { Link, useLocation } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
-import { useState, useRef, useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import React, { useState, useRef, useEffect } from "react";
 import {
   LogOut,
   Home,
@@ -15,17 +15,64 @@ import {
   Sliders,
   UserCheck,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import axiosInstance from "../api/axiosConfig";
 import "./styles/Navbar.css";
 
+/**
+ * Componente Navbar que muestra la barra de navegación de la aplicación
+ * @returns {JSX.Element} El componente Navbar
+ */
 const Navbar = () => {
   const { usuario, logout } = useAuth();
+  const location = useLocation();
   const navigate = useNavigate();
-  const location = useLocation(); // Hook para obtener la ubicación actual
   const [showProfileMenu, setShowProfileMenu] = useState(false);
-  const profileMenuRef = useRef(null);
-  // Función para determinar si un enlace está activo
+  const [logoFacultad, setLogoFacultad] = useState(
+    "https://imgur.com/fch1iy6.png"
+  );
+  const [acronimoFacultad, setAcronimoFacultad] = useState("FISEI");
+  const profileMenuRef = useRef();
+
+  /**
+   * Carga los datos de la facultad desde la API
+   */
+  const cargarDatosFacultad = async () => {
+    try {
+      const response = await axiosInstance.get("/facultad-principal");
+      if (response.data) {
+        setLogoFacultad(response.data.url_log_fac || logoFacultad);
+        setAcronimoFacultad(response.data.acr_fac || acronimoFacultad);
+      }
+    } catch (error) {
+      console.error("Error al cargar datos de la facultad:", error);
+    }
+  };
+
+  /**
+   * Cierra el menú de perfil si se hace clic fuera de él
+   */
+  const handleClickOutside = (event) => {
+    if (
+      profileMenuRef.current &&
+      !profileMenuRef.current.contains(event.target)
+    ) {
+      setShowProfileMenu(false);
+    }
+  };
+
+  /**
+   * Alterna la visibilidad del menú de perfil
+   */
+  const toggleProfileMenu = () => {
+    setShowProfileMenu(!showProfileMenu);
+  };
+
+  /**
+   * Determina si un enlace está activo
+   * @param {string} path - La ruta a verificar
+   * @returns {string} Clase CSS para marcar el enlace como activo
+   */
   const isActive = (path) => {
     // Para rutas exactas
     const exactPaths = ["/admin", "/home"];
@@ -42,59 +89,43 @@ const Navbar = () => {
     return location.pathname.startsWith(path) ? "nav-link-active" : "";
   };
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        profileMenuRef.current &&
-        !profileMenuRef.current.contains(event.target)
-      ) {
-        setShowProfileMenu(false);
-      }
-    };
+  /**
+   * Cierra la sesión del usuario
+   */
+  const handleLogout = () => {
+    logout();
 
+    toast.success("Sesión cerrada correctamente", {
+      position: "top-center",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      style: {
+        borderLeft: "4px solid #8a1538",
+        backgroundColor: "white",
+        color: "#333",
+      },
+      icon: false,
+    });
+
+    // Redireccionar al home usando navigate
+    navigate("/home");
+  };
+
+  // Equivalente a componentDidMount y componentWillUnmount
+  useEffect(() => {
+    cargarDatosFacultad();
+
+    // Agregar listener para cerrar el menú de perfil al hacer clic fuera de él
     document.addEventListener("mousedown", handleClickOutside);
+
+    // Cleanup function (equivalente a componentWillUnmount)
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
-
-  const cerrarSesion = () => {
-    // Obtener el nombre del usuario para personalizar el mensaje
-    const nombreUsuario = usuario?.nom_usu || "Usuario";
-
-    // Limpiar la sesión
-    logout();
-
-    // Mostrar un toast estilizado
-    toast.success(
-      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-        <UserCheck size={20} color="#8a1538" />
-        <div>
-          <strong>¡Hasta pronto {nombreUsuario}!</strong>
-          <p style={{ margin: 0, fontSize: "0.85rem" }}>
-            Sesión cerrada exitosamente
-          </p>
-        </div>
-      </div>,
-      {
-        position: "top-center",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        style: {
-          borderLeft: "4px solid #8a1538",
-          backgroundColor: "white",
-          color: "#333",
-        },
-        icon: false,
-      }
-    );
-
-    // Redireccionar al home
-    navigate("/home");
-  };
+  }, []); // El array vacío hace que se ejecute solo al montar y desmontar
 
   if (!usuario) {
     return (
@@ -102,11 +133,11 @@ const Navbar = () => {
         <div className="navbar-left">
           <Link to="/" className="navbar-logo-container">
             <img
-              src="https://imgur.com/fch1iy6.png"
-              alt="Logo FISEI"
+              src={logoFacultad}
+              alt={`Logo ${acronimoFacultad}`}
               className="navbar-logo-img"
             />
-            <span className="navbar-logo-text">FISEI</span>
+            <span className="navbar-logo-text">{acronimoFacultad}</span>
           </Link>
           <div className="navbar-links">
             <Link to="/home" className={`nav-link-item ${isActive("/home")}`}>
@@ -137,16 +168,17 @@ const Navbar = () => {
       </nav>
     );
   }
+
   return (
     <nav className="navbar-ae">
       <div className="navbar-left">
         <Link to="/home" className="navbar-logo-container">
           <img
-            src="https://imgur.com/fch1iy6.png"
-            alt="Logo FISEI"
+            src={logoFacultad}
+            alt={`Logo ${acronimoFacultad}`}
             className="navbar-logo-img"
           />
-          <span className="navbar-logo-text">FISEI</span>
+          <span className="navbar-logo-text">{acronimoFacultad}</span>
         </Link>{" "}
         <div className="navbar-links">
           {(usuario.rol_usu === "ESTUDIANTE" ||
@@ -234,10 +266,7 @@ const Navbar = () => {
         </div>
       </div>{" "}
       <div className="navbar-profile" ref={profileMenuRef}>
-        <div
-          className="profile-button"
-          onClick={() => setShowProfileMenu(!showProfileMenu)}
-        >
+        <div className="profile-button" onClick={toggleProfileMenu}>
           <User size={18} className="profile-icon" />
           <span className="profile-name">{usuario?.nom_usu || "Usuario"}</span>
         </div>
@@ -247,7 +276,7 @@ const Navbar = () => {
               <User size={16} />
               <span>Mi Perfil</span>
             </Link>
-            <div className="profile-menu-item logout" onClick={cerrarSesion}>
+            <div className="profile-menu-item logout" onClick={handleLogout}>
               <LogOut size={16} />
               <span>Cerrar sesión</span>
             </div>

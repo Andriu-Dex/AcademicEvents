@@ -46,6 +46,38 @@ const obtenerMVA = async (req, res) => {
 };
 
 // ==============================
+// Obtener datos de la facultad
+// ==============================
+const obtenerDatosFacultad = async (req, res) => {
+  try {
+    // Obtenemos la primera facultad (asumimos que es la principal)
+    const facultad = await prisma.facultad.findFirst();
+
+    if (!facultad) {
+      return res.status(404).json({ msg: "Facultad no encontrada" });
+    }
+
+    // Creamos el objeto de respuesta con los datos necesarios
+    const datosFacultad = {
+      nombre: facultad.nom_fac,
+      acronimo: facultad.acr_fac || "FISEI", // Valor por defecto si es null
+      logo: facultad.url_log_fac || "https://imgur.com/fch1iy6.png", // Valor por defecto si es null
+      descripcion: facultad.des_fac,
+    };
+
+    res.json(datosFacultad);
+  } catch (error) {
+    console.error("Error al obtener datos de la facultad:", error);
+    res
+      .status(500)
+      .json({
+        msg: "Error al obtener datos de la facultad",
+        error: error.message,
+      });
+  }
+};
+
+// ==============================
 // Actualizar información MVA
 // ==============================
 const actualizarMVA = async (req, res) => {
@@ -131,9 +163,62 @@ const actualizarMVA = async (req, res) => {
 };
 
 // ==============================
+// Actualizar datos de la facultad
+// ==============================
+const actualizarDatosFacultad = async (req, res) => {
+  try {
+    const { nombre, acronimo, logo } = req.body;
+
+    // Obtenemos la primera facultad
+    const facultad = await prisma.facultad.findFirst();
+
+    if (!facultad) {
+      return res.status(404).json({ msg: "Facultad no encontrada" });
+    }
+
+    // Validamos que al menos uno de los campos no esté vacío
+    if (!nombre && !acronimo && !logo) {
+      return res.status(400).json({
+        msg: "Debe proporcionar al menos un dato para actualizar",
+      });
+    }
+
+    // Creamos un objeto con los datos a actualizar
+    const datosActualizar = {};
+
+    if (nombre) datosActualizar.nom_fac = nombre;
+    if (acronimo) datosActualizar.acr_fac = acronimo;
+    if (logo) datosActualizar.url_log_fac = logo;
+
+    // Actualizamos los datos de la facultad
+    const facultadActualizada = await prisma.facultad.update({
+      where: { id_fac: facultad.id_fac },
+      data: datosActualizar,
+    });
+
+    // Preparamos la respuesta
+    const datosFacultad = {
+      nombre: facultadActualizada.nom_fac,
+      acronimo: facultadActualizada.acr_fac || "FISEI", // Valor por defecto si es null
+      logo: facultadActualizada.url_log_fac || "https://imgur.com/fch1iy6.png", // Valor por defecto si es null
+    };
+
+    res.status(200).json(datosFacultad);
+  } catch (error) {
+    console.error("Error al actualizar datos de la facultad:", error);
+    res.status(500).json({
+      msg: "Error al actualizar datos de la facultad",
+      error: error.message,
+    });
+  }
+};
+
+// ==============================
 // Exportamos las funciones
 // ==============================
 module.exports = {
   obtenerMVA,
   actualizarMVA,
+  obtenerDatosFacultad,
+  actualizarDatosFacultad,
 };

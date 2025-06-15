@@ -37,7 +37,7 @@
   }
 }
 
-.adminconfig-container {
+.adminconfig-container-acmva {
   padding: 2.5rem 1.5rem;
   max-width: 56rem;
   margin: 0.3rem auto 2rem auto;
@@ -48,25 +48,44 @@
   animation: fadeInConfig 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-@keyframes fadeInConfig {
-  from {
-    opacity: 0;
-    transform: translateY(24px) scale(0.97);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+.adminconfig-collapsible-header-acmva {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem 0;
+  transition: background-color 0.2s;
+  border-radius: 0.5rem;
 }
 
-.adminconfig-header {
+.adminconfig-collapsible-header-acmva:hover {
+  background-color: rgba(138, 21, 56, 0.05);
+}
+
+.adminconfig-collapse-btn-acmva {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8a1538;
+  transition: transform 0.2s;
+}
+
+.adminconfig-collapse-btn-acmva:hover {
+  transform: scale(1.2);
+}
+
+.adminconfig-header-acmva {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1.5rem;
 }
 
-.adminconfig-title {
+.adminconfig-title-acmva {
   font-size: 1.7rem;
   font-weight: 800;
   color: #8a1538;
@@ -79,7 +98,7 @@
   display: inline-block;
 }
 
-.adminconfig-preview-btn {
+.adminconfig-preview-btn-acmva {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -96,18 +115,18 @@
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-.adminconfig-preview-btn:hover {
+.adminconfig-preview-btn-acmva:hover {
   background: #e5e7eb;
   transform: translateY(-1px);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.adminconfig-preview-btn:active {
+.adminconfig-preview-btn-acmva:active {
   transform: translateY(1px);
   box-shadow: none;
 }
 
-.adminconfig-description {
+.adminconfig-description-acmva {
   color: #4b5563;
   margin-bottom: 2rem;
   line-height: 1.5;
@@ -118,7 +137,7 @@
   border-left: 4px solid #8a1538;
 }
 
-.adminconfig-section {
+.adminconfig-section-acmva {
   margin-bottom: 2rem;
   background-color: #f9fafb;
   padding: 1.5rem;
@@ -129,12 +148,12 @@
   overflow: hidden;
 }
 
-.adminconfig-section:hover {
+.adminconfig-section-acmva:hover {
   box-shadow: 0 4px 12px rgba(138, 21, 56, 0.08);
   transform: translateY(-2px);
 }
 
-.adminconfig-section-title {
+.adminconfig-section-title-acmva {
   font-size: 1.25rem;
   font-weight: 700;
   color: #8a1538;
@@ -145,24 +164,14 @@
   display: inline-block;
 }
 
-.adminconfig-info {
+.adminconfig-info-acmva {
   font-size: 0.9rem;
   color: #6b7280;
   margin-bottom: 1rem;
   font-style: italic;
 }
 
-.adminconfig-label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 700;
-  color: #1e293b;
-  font-size: 1.08rem;
-  letter-spacing: 0.2px;
-  transition: color 0.2s;
-}
-
-.adminconfig-textarea {
+.adminconfig-textarea-acmva {
   width: 100%;
   border: 1.5px solid #8a1538;
   padding: 0.7rem 1rem;
@@ -177,15 +186,24 @@
   min-height: 90px;
   animation: fadeInConfig 0.7s 0.1s backwards;
 }
-.adminconfig-textarea:focus {
+
+.adminconfig-textarea-acmva:focus {
   outline: none;
   border-color: #8a1538;
   background: #fff;
   box-shadow: 0 0 0 2px rgba(138, 21, 56, 0.2);
 }
 
-.adminconfig-btn {
-  background: linear-gradient(90deg, #8a1538 70%, #c33c5e 100%);
+/* Estilo para el textarea en el formulario de facultad */
+.facultad-input-acmva.textarea-acmva {
+  min-height: 100px;
+  resize: vertical;
+  line-height: 1.5;
+  font-family: inherit;
+}
+
+.adminconfig-btn-acmva {
+  background-color: #8a1538;
   color: #fff;
   padding: 0.7rem 2.2rem;
   border-radius: 0.6rem;
@@ -200,620 +218,324 @@
   align-items: center;
   gap: 0.5rem;
   justify-content: center;
-  min-width: 180px;
-  margin-left: auto;
-  margin-right: auto;
-  animation: fadeInConfig 0.7s 0.2s backwards;
-}
-.adminconfig-btn:hover {
-  background: #721530;
-  color: #fff;
-  transform: scale(1.06);
-  box-shadow: 0 0px 8px rgba(138, 21, 56, 0.2);
-  border: #721530 1.5px solid;
 }
 
-.adminconfig-btn:disabled {
-  background: #94a3b8;
-  cursor: not-allowed;
-  transform: none;
+.adminconfig-btn-acmva:hover {
+  background-color: #791230;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(138, 21, 56, 0.2);
+}
+
+.adminconfig-btn-acmva:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 3px rgba(138, 21, 56, 0.1);
+}
+
+.adminconfig-btn-acmva.loading-acmva {
+  background: #d1d5db;
+  color: #374151;
+  border-color: #9ca3af;
+  cursor: wait;
   opacity: 0.7;
-  border-color: #64748b;
 }
 
-.adminconfig-btn.loading {
-  background: #94a3b8;
-  position: relative;
-  overflow: hidden;
-}
-
-.adminconfig-btn.loading::after {
-  content: "";
-  position: absolute;
-  left: -100%;
-  top: 0;
-  width: 300%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.2) 20%,
-    rgba(255, 255, 255, 0.5) 60%,
-    transparent 100%
-  );
-  animation: loading 2s infinite;
-}
-
-@keyframes loading {
-  0% {
-    left: -100%;
-  }
-  100% {
-    left: 100%;
-  }
-}
-
-.adminconfig-btn.success {
-  background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+.adminconfig-btn-acmva.success-acmva {
+  background: #10b981;
   border-color: #059669;
+  color: white;
 }
 
-/* ===========================
-   RESPONSIVE DESIGN
-   =========================== */
-@media (max-width: 900px) {
-  .adminconfig-container {
-    padding: 1.2rem 0.5rem;
-    max-width: 100vw;
-  }
-  .adminconfig-title {
-    font-size: 1.2rem;
-    padding-bottom: 0.7rem;
-  }
-}
-
-@media (max-width: 700px) {
-  .adminconfig-container {
-    padding: 0.5rem 0.2rem;
-    margin: 0.5rem auto 0 auto;
-  }
-  .adminconfig-title {
-    font-size: 1rem;
-    padding-bottom: 0.5rem;
-  }
-  .adminconfig-label {
-    font-size: 0.98rem;
-  }
-  .adminconfig-textarea {
-    font-size: 0.98rem;
-    padding: 0.5rem 0.7rem;
-  }
-  .adminconfig-btn {
-    font-size: 0.98rem;
-    padding: 0.5rem 1.2rem;
-  }
-}
-
-/* ===========================
-   AUTORIDADES STYLES
-   =========================== */
-
-/* Preview mode styles */
-.adminconfig-preview-box {
-  background-color: #fff;
-  border-radius: 0.5rem;
-  padding: 1.2rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  line-height: 1.6;
-  color: #334155;
-  margin-bottom: 1rem;
-  border-left: 3px solid #8a1538;
-}
-
-/* Estilos para validación de campos */
-.adminconfig-textarea.error-input {
-  border-color: #ef4444;
-  background-color: #fef2f2;
-  box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.2);
-}
-
-.validation-error-message {
-  color: #ef4444;
-  font-size: 0.85rem;
-  margin-top: -1rem;
-  margin-bottom: 1rem;
-  font-weight: 500;
+.adminconfig-actions-acmva {
   display: flex;
-  align-items: center;
-  gap: 0.3rem;
-}
-
-.text-muted {
-  color: #64748b;
-  font-style: italic;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.adminconfig-autoridades-preview {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 1.5rem;
+  justify-content: flex-end;
   margin-top: 1.5rem;
 }
 
-.autoridad-card {
-  background: white;
-  border-radius: 0.8rem;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  transition: transform 0.3s, box-shadow 0.3s;
+.adminconfig-preview-box-acmva {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  min-height: 100px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.text-muted-acmva {
+  color: #9ca3af;
+  font-style: italic;
+}
+
+.validation-error-message-acmva {
+  color: #ef4444;
+  font-size: 0.875rem;
+  margin-top: -1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.error-input-acmva {
+  border-color: #ef4444 !important;
+  background-color: #fef2f2 !important;
+}
+
+/* Estilos para las autoridades */
+.adminconfig-autoridades-container-acmva {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  animation: fadeInCard 0.5s forwards;
+  gap: 1.5rem;
 }
 
-@keyframes fadeInCard {
-  from {
-    opacity: 0;
-    transform: translateY(15px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.autoridad-form-acmva {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.8rem;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s;
+  position: relative;
 }
 
-.autoridad-card:hover {
+.autoridad-form-acmva:hover {
+  box-shadow: 0 4px 12px rgba(138, 21, 56, 0.1);
+  transform: translateY(-2px);
+}
+
+.autoridad-form-header-acmva {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 0.75rem;
+}
+
+.autoridad-numero-acmva {
+  font-weight: 700;
+  color: #8a1538;
+  font-size: 1.1rem;
+}
+
+.autoridad-delete-btn-acmva {
+  background: none;
+  border: none;
+  color: #ef4444;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.autoridad-delete-btn-acmva:hover {
+  background: #fee2e2;
+  transform: scale(1.1);
+}
+
+.autoridad-form-group-acmva {
+  margin-bottom: 1rem;
+}
+
+.autoridad-form-group-acmva label {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.autoridad-form-group-acmva span {
+  display: block;
+  margin-bottom: 0.375rem;
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.autoridad-input-acmva {
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.autoridad-input-acmva:focus {
+  outline: none;
+  border-color: #8a1538;
+  box-shadow: 0 0 0 2px rgba(138, 21, 56, 0.2);
+}
+
+.autoridad-add-btn-acmva {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: #f9fafb;
+  border: 1px dashed #d1d5db;
+  border-radius: 0.5rem;
+  color: #4b5563;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 0.5rem;
+  width: 100%;
+}
+
+.autoridad-add-btn-acmva:hover {
+  background: #f3f4f6;
+  border-color: #8a1538;
+  color: #8a1538;
+}
+
+.adminconfig-autoridades-preview-acmva {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.autoridad-card-acmva {
+  background: #fff;
+  border-radius: 0.8rem;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s;
+  display: flex;
+  flex-direction: column;
+}
+
+.autoridad-card-acmva:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 24px rgba(138, 21, 56, 0.15);
 }
 
-.autoridad-imagen {
-  width: 100%;
-  height: 180px;
+.autoridad-imagen-acmva {
+  height: 200px;
   overflow: hidden;
   position: relative;
 }
 
-.autoridad-imagen img {
+.autoridad-imagen-acmva img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: transform 0.5s;
 }
 
-.autoridad-card:hover .autoridad-imagen img {
+.autoridad-card-acmva:hover .autoridad-imagen-acmva img {
   transform: scale(1.05);
 }
 
-.autoridad-info {
-  padding: 1.2rem;
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
+.autoridad-info-acmva {
+  padding: 1.25rem;
+  background: #fff;
 }
 
-.autoridad-info h4 {
-  color: #8a1538;
-  font-size: 1.2rem;
+.autoridad-info-acmva h4 {
   margin: 0 0 0.5rem 0;
+  font-size: 1.2rem;
+  color: #8a1538;
   font-weight: 700;
 }
 
-.autoridad-info h5 {
-  color: #374151;
-  font-size: 1.1rem;
-  margin: 0 0 1rem 0;
+.autoridad-info-acmva h5 {
+  margin: 0 0 0.75rem 0;
+  font-size: 1rem;
+  color: #1f2937;
   font-weight: 600;
 }
 
-.autoridad-info p {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: #6b7280;
-  font-size: 0.9rem;
+.autoridad-info-acmva p {
   margin: 0;
-  margin-top: auto;
-}
-
-/* Edit mode styles */
-.adminconfig-autoridades-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.5rem;
-  margin-top: 1rem;
-}
-
-.autoridad-form {
-  background: white;
-  border-radius: 0.8rem;
-  padding: 1.2rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  position: relative;
-  border: 1px solid #e5e7eb;
-  transition: box-shadow 0.3s, transform 0.2s;
-  animation: slideInForm 0.4s ease-out forwards;
-}
-
-@keyframes slideInForm {
-  from {
-    opacity: 0;
-    transform: translateX(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-.autoridad-form:hover {
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.12);
-}
-
-.autoridad-form-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-  padding-bottom: 0.8rem;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.autoridad-numero {
-  font-weight: 700;
-  color: #8a1538;
-  font-size: 1.1rem;
-  letter-spacing: 0.5px;
-}
-
-.autoridad-delete-btn {
-  background: transparent;
-  border: none;
-  color: #ef4444;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.3rem;
-  border-radius: 0.3rem;
-  transition: background 0.2s, transform 0.2s;
-}
-
-.autoridad-delete-btn:hover {
-  background: #fee2e2;
-  transform: scale(1.1);
-}
-
-.autoridad-form-group {
-  margin-bottom: 1rem;
-}
-
-.autoridad-form-group label {
-  display: block;
-  margin-bottom: 0.3rem;
-  font-weight: 600;
+  font-size: 0.875rem;
   color: #4b5563;
-  font-size: 0.95rem;
-}
-
-.autoridad-form-group label span {
   display: flex;
   align-items: center;
-  gap: 0.3rem;
-  margin-bottom: 0.3rem;
+  gap: 0.375rem;
 }
 
-.autoridad-input {
-  width: 100%;
-  border: 1px solid #d1d5db;
-  padding: 0.6rem;
-  border-radius: 0.4rem;
-  font-size: 0.95rem;
-  transition: border 0.2s, box-shadow 0.2s;
-}
-
-.autoridad-input:focus {
-  outline: none;
-  border-color: #8a1538;
-  box-shadow: 0 0 0 2px rgba(138, 21, 56, 0.1);
-}
-
-.autoridad-img-preview {
-  margin-top: 0.8rem;
-  width: 100%;
-  height: 100px;
-  border: 1px dashed #d1d5db;
-  border-radius: 0.4rem;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #f9fafb;
-}
-
-.autoridad-img-preview img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.img-placeholder {
+.empty-state-acmva {
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: #9ca3af;
-  gap: 0.5rem;
-}
-
-.autoridad-add-btn {
-  background: #fef2f2;
-  border: 1px dashed rgba(138, 21, 56, 0.5);
-  border-radius: 0.5rem;
-  padding: 1rem;
-  width: 100%;
-  display: flex;
-  align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  color: #8a1538;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
-  margin-top: 1rem;
-}
-
-.autoridad-add-btn:hover {
-  background: #fce7e7;
-  transform: scale(1.02);
-}
-
-/* Estilos para el componente de subida de imágenes con tema UTA */
-.autoridad-imagen-upload {
-  position: relative;
-  margin-top: 0.8rem;
-}
-
-.autoridad-upload-container {
-  border: 2px dashed #8a1538;
-  border-radius: 0.5rem;
-  padding: 1.5rem;
+  padding: 3rem 1.5rem;
   text-align: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  background: #fef2f2;
-  position: relative;
-  min-height: 120px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: #f9fafb;
+  border-radius: 0.8rem;
+  border: 1px dashed #d1d5db;
 }
 
-.autoridad-upload-container:hover,
-.autoridad-upload-container.dragover {
-  border-color: #6b1729;
-  background: #fee2e2;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(138, 21, 56, 0.15);
+.empty-state-acmva p {
+  margin: 1rem 0;
+  color: #6b7280;
+  font-size: 1rem;
 }
 
-.autoridad-upload-input {
-  display: none;
+.adminconfig-preview-btn-acmva.small-acmva {
+  font-size: 0.875rem;
+  padding: 0.375rem 0.75rem;
 }
 
-.autoridad-upload-content {
+/* Estilos para facultad */
+.facultad-form-acmva {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
+  gap: 1.25rem;
 }
 
-.autoridad-upload-icon {
-  color: #8a1538;
+.facultad-form-group-acmva {
   margin-bottom: 0.5rem;
 }
 
-.autoridad-upload-text {
-  font-weight: 600;
-  color: #8a1538;
-  margin: 0;
-  font-size: 0.95rem;
-}
-
-.autoridad-upload-hint {
-  color: #6b7280;
-  font-size: 0.8rem;
-  margin: 0;
-  opacity: 0.8;
-}
-
-.autoridad-upload-preview {
-  position: relative;
-  width: 100%;
-  max-width: 200px;
-  margin: 0 auto;
-  border-radius: 0.5rem;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.autoridad-upload-preview img {
-  width: 100%;
-  height: 120px;
-  object-fit: cover;
+.facultad-form-group-acmva label {
   display: block;
-  border-radius: 0.5rem;
+  width: 100%;
 }
 
-.autoridad-upload-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.autoridad-upload-preview:hover .autoridad-upload-overlay {
-  opacity: 1;
-}
-
-.autoridad-upload-actions {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.autoridad-upload-action {
-  background: #8a1538;
-  border: none;
-  color: white;
-  padding: 0.5rem;
-  border-radius: 0.3rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-}
-
-.autoridad-upload-action:hover {
-  background: #6b1729;
-  transform: scale(1.1);
-}
-
-.autoridad-upload-action.replace {
-  background: #8a1538;
-}
-
-.autoridad-upload-action.delete {
-  background: #dc2626;
-}
-
-.autoridad-upload-action.delete:hover {
-  background: #b91c1c;
-}
-
-.autoridad-upload-loading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 1rem;
-}
-
-.autoridad-upload-spinner {
-  width: 24px;
-  height: 24px;
-  border: 3px solid #e5e7eb;
-  border-top: 3px solid #8a1538;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-.autoridad-upload-progress {
-  color: #8a1538;
+.facultad-form-group-acmva span {
+  display: block;
+  margin-bottom: 0.5rem;
   font-weight: 600;
-  font-size: 0.9rem;
-}
-
-.autoridad-upload-error {
+  color: #374151;
+  font-size: 0.95rem;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  color: #dc2626;
-  background: #fee2e2;
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.3rem;
-  font-size: 0.85rem;
-  margin-top: 0.5rem;
-  border: 1px solid #fecaca;
+  gap: 0.375rem;
 }
 
-.autoridad-upload-success {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: #059669;
-  background: #d1fae5;
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.3rem;
-  font-size: 0.85rem;
-  margin-top: 0.5rem;
-  border: 1px solid #a7f3d0;
+.facultad-input-acmva {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #d1d5db;
+  color: rgb(52, 47, 47);
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  transition: all 0.2s;
+  background: #f9fafb;
 }
 
-/* Actualizaciones de estilos existentes para la paleta UTA */
-.autoridad-numero {
-  font-weight: 700;
-  color: #8a1538;
-  font-size: 1.1rem;
-  letter-spacing: 0.5px;
-}
-
-.autoridad-input:focus {
+.facultad-input-acmva:focus {
   outline: none;
   border-color: #8a1538;
-  box-shadow: 0 0 0 2px rgba(138, 21, 56, 0.1);
+  box-shadow: 0 0 0 2px rgba(138, 21, 56, 0.2);
+  background: #fff;
 }
 
-.autoridad-add-btn {
-  background: #fef2f2;
-  border: 1px dashed rgba(138, 21, 56, 0.5);
-  border-radius: 0.5rem;
-  padding: 1rem;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  color: #8a1538;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
-  margin-top: 1rem;
-}
-
-.autoridad-add-btn:hover {
-  background: #fce7e7;
-  transform: scale(1.02);
-}
-
-.autoridad-info h4 {
-  color: #8a1538;
-  font-size: 1.2rem;
-  margin: 0 0 0.5rem 0;
-  font-weight: 700;
-}
-
-.autoridad-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 24px rgba(138, 21, 56, 0.15);
-}
-
-.adminconfig-preview-box {
-  background-color: #fff;
-  border-radius: 0.5rem;
-  padding: 1.2rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  line-height: 1.6;
-  color: #334155;
-  margin-bottom: 1rem;
-  border-left: 3px solid #8a1538;
+@keyframes fadeInConfig {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }

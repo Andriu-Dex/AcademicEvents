@@ -35,8 +35,14 @@ const storage = multer.diskStorage({
 
 // Filtro para aceptar solo archivos con extensiones válidas y tipos MIME válidos
 const fileFilter = (req, file, cb) => {
-  const extensionesPermitidas = /\.(jpeg|jpg|png|pdf)$/;
-  const mimetiposPermitidos = ["image/jpeg", "image/png", "application/pdf"];
+  const extensionesPermitidas = /\.(jpeg|jpg|png|gif|bmp|pdf)$/;
+  const mimetiposPermitidos = [
+    "image/jpeg",
+    "image/png",
+    "image/gif",
+    "image/bmp",
+    "application/pdf",
+  ];
 
   const esExtensionValida = extensionesPermitidas.test(
     path.extname(file.originalname).toLowerCase()
@@ -46,7 +52,11 @@ const fileFilter = (req, file, cb) => {
   if (esExtensionValida && esMimeValido) {
     cb(null, true); // Archivo válido
   } else {
-    cb(new Error("Solo se permiten archivos JPEG, PNG o PDF con tipo válido"));
+    cb(
+      new Error(
+        "Solo se permiten archivos JPEG, PNG, GIF, BMP o PDF con tipo válido"
+      )
+    );
   }
 };
 

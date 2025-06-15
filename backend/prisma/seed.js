@@ -10,9 +10,15 @@ async function main() {
       where: {
         nom_fac: "Facultad de Ingeniería en Sistemas, Electrónica e Industrial",
       },
-      update: {},
+      update: {
+        // Actualizamos los nuevos campos para registros existentes
+        acr_fac: "FISEI",
+        url_log_fac: "https://imgur.com/fch1iy6.png",
+      },
       create: {
         nom_fac: "Facultad de Ingeniería en Sistemas, Electrónica e Industrial",
+        acr_fac: "FISEI",
+        url_log_fac: "https://imgur.com/fch1iy6.png",
         des_fac: "Facultad orientada a la tecnología y software.",
         mis_fac: "Formar profesionales líderes e innovadores.",
         vis_fac:
@@ -271,7 +277,7 @@ async function main() {
     console.log("Eventos adicionales insertados correctamente");
 
     // 7. Evento de tipo CURSO
-    const eventoCurso = {
+    const eventoCursoBase = {
       id_eve: "30854a1f-06c7-4c7c-979f-62545b54c9aa", // ID del evento CURSO
       nom_eve: "Curso De Python",
       des_eve: "Curso para aprender Python desde 0",
@@ -286,26 +292,26 @@ async function main() {
       por_min_asi_eve: 88,
       cup_max_eve: 80,
       cup_dis_eve: 80,
-      // Inserción de la relación con `eventos_curso`
-      eventos_curso: {
-        create: {
-          not_min_cur: 8.0, // Nota mínima del curso
-        },
-      },
     };
 
-    await prisma.evento.upsert({
-      where: { id_eve: eventoCurso.id_eve },
-      update: { ...eventoCurso, id_cue_cre_eve: cuentaAdmin.id_cue },
+    // Primero creamos o actualizamos el evento básico
+    const eventoCreado = await prisma.evento.upsert({
+      where: { id_eve: eventoCursoBase.id_eve },
+      update: { ...eventoCursoBase, id_cue_cre_eve: cuentaAdmin.id_cue },
+      create: { ...eventoCursoBase, id_cue_cre_eve: cuentaAdmin.id_cue },
+    });
+
+    // Luego upsert en evento_curso
+    await prisma.evento_curso.upsert({
+      where: { id_eve_cur: eventoCreado.id_eve },
+      update: { not_min_cur: 8.0 },
       create: {
-        ...eventoCurso,
-        id_cue_cre_eve: cuentaAdmin.id_cue,
-        eventos_curso: eventoCurso.eventos_curso
+        id_eve_cur: eventoCreado.id_eve,
+        not_min_cur: 8.0,
       },
     });
 
     console.log("Evento CURSO insertado correctamente");
-
   } catch (error) {
     console.error("Error durante el seeding:", error);
     process.exit(1);

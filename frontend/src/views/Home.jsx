@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import { useAuth } from "../hooks/useAuth";
 import axiosInstance from "../api/axiosConfig";
 import {
@@ -37,6 +38,15 @@ function Home() {
     mision: "",
     vision: "",
     autoridades: [],
+  });
+
+  // Estado para almacenar la información de la facultad
+  const [facultadInfo, setFacultadInfo] = useState({
+    nombre: "",
+    nombreCompleto: "",
+    acronimo: "",
+    descripcion: "",
+    logo: "",
   });
 
   // Estados y referencias para carruseles
@@ -80,6 +90,23 @@ function Home() {
           vision: resMVA.data?.vision || "",
           autoridades: autoridades,
         });
+
+        // Cargar información de la facultad
+        const resFacultad = await axiosInstance.get("/facultad-principal");
+        if (resFacultad.data) {
+          setFacultadInfo({
+            nombre:
+              resFacultad.data.nom_fac ||
+              "Facultad de Ingeniería en Sistemas, Electrónica e Industrial",
+            nombreCompleto:
+              resFacultad.data.nom_fac ||
+              "Facultad de Ingeniería en Sistemas, Electrónica e Industrial",
+            acronimo: resFacultad.data.acr_fac || "FISEI",
+            descripcion: resFacultad.data.des_fac || "",
+            logo:
+              resFacultad.data.url_log_fac || "https://imgur.com/fch1iy6.png",
+          });
+        }
       } catch (error) {
         console.error("Error al cargar datos:", error);
       }
@@ -88,12 +115,12 @@ function Home() {
     cargarDatos();
   }, []);
 
-  // Facultad actual (para contenido de la página)
+  // Facultad actual (ahora usando datos dinámicos)
   const facultadActual = {
-    nombre: "FISEI",
-    nombreCompleto:
-      "Facultad de Ingeniería en Sistemas, Electrónica e Industrial",
-    logo: "https://imgur.com/fch1iy6.png",
+    nombre: facultadInfo.nombre,
+    nombreCompleto: facultadInfo.nombreCompleto,
+    logo: facultadInfo.logo,
+    descripcion: facultadInfo.descripcion,
   };
 
   // Estadísticas de la facultad
@@ -357,7 +384,7 @@ function Home() {
         if (timer) clearTimeout(timer);
         timer = setTimeout(() => {
           setShowNavbar(false);
-        }, 1000); // Esperar 1 segundo antes de ocultar
+        }, 100); // Esperar 1 segundo antes de ocultar
       }
     };
 
@@ -407,22 +434,11 @@ function Home() {
           <div className="row align-items-center">
             <div className="col-lg-6 text-white py-4">
               <h1 className="display-4 fw-bold mb-3 animate__animated animate__fadeInUp">
-                {usuario?.rol_usu === "ESTUDIANTE"
-                  ? `Facultad de Ingeniería en ${
-                      usuario?.carrera === "SOFTWARE"
-                        ? "Software"
-                        : usuario?.carrera === "TI"
-                        ? "Tecnologías de la Información"
-                        : usuario?.carrera === "INDUSTRIAL"
-                        ? "Industrial"
-                        : "Sistemas, Electrónica e Industrial"
-                    }`
-                  : "Facultad de Ingeniería en Sistemas, Electrónica e Industrial"}
+                {facultadActual.nombreCompleto}
               </h1>
               <p className="lead mb-4 animate__animated animate__fadeInUp">
-                Formando profesionales líderes con visión humanista y
-                pensamiento crítico para responder a las necesidades
-                tecnológicas del país.
+                {facultadActual.descripcion ||
+                  "Formando profesionales líderes con visión humanista y pensamiento crítico para responder a las necesidades tecnológicas del país."}
               </p>
               <div className="d-flex gap-3 flex-wrap">
                 <Link
@@ -808,122 +824,7 @@ function Home() {
         </div>
       </div>
       {/* Footer */}
-      <footer className="bg-dark text-light py-4 mt-auto w-100 shadow-lg">
-        <div className="container">
-          <div className="row">
-            <div className="col-md-4 mb-3 mb-md-0">
-              <div className="d-flex align-items-center mb-3">
-                <img
-                  src={facultadActual.logo}
-                  alt="Logo"
-                  className="me-2"
-                  style={{ width: "40px", height: "40px" }}
-                />
-                <h5 className="mb-0">{facultadActual.nombre}</h5>
-              </div>
-              <p className="small mb-0">Universidad Técnica de Ambato</p>
-              <p className="small text-muted">
-                Formando el futuro tecnológico del Ecuador
-              </p>
-            </div>
-            <div className="col-md-2 mb-3 mb-md-0">
-              <h6 className="mb-3">Académico</h6>
-              <ul className="list-unstyled mb-0">
-                <li className="mb-2">
-                  <Link
-                    to="/carreras"
-                    className="text-white text-decoration-none small"
-                  >
-                    Carreras
-                  </Link>
-                </li>
-                {isAuthenticated && (
-                  <li className="mb-2">
-                    <Link
-                      to="/inscripciones"
-                      className="text-white text-decoration-none small"
-                    >
-                      Inscripciones
-                    </Link>
-                  </li>
-                )}
-              </ul>
-            </div>
-            <div className="col-md-3 mb-3 mb-md-0">
-              <h6 className="mb-3">Información</h6>
-              <ul className="list-unstyled mb-0">
-                <li className="mb-2">
-                  <a
-                    href="#autoridades"
-                    className="text-white text-decoration-none small"
-                  >
-                    Autoridades
-                  </a>
-                </li>
-                <li className="mb-2">
-                  <a
-                    href="#carreras"
-                    className="text-white text-decoration-none small"
-                  >
-                    Carreras
-                  </a>
-                </li>
-                <li className="mb-2">
-                  <a
-                    href="#mision-vision"
-                    className="text-white text-decoration-none small"
-                  >
-                    Misión y Visión
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div className="col-md-3">
-              <h6 className="mb-3">Contacto</h6>
-              <ul className="list-unstyled mb-0">
-                <li className="mb-2 small">
-                  <MapPin size={14} className="me-2" /> Av. de los Chasquis,
-                  Ambato
-                </li>
-                <li className="mb-2 small">
-                  <Mail size={14} className="me-2" /> info@uta.edu.ec
-                </li>
-                <li className="mb-2 small">
-                  <Phone size={14} className="me-2" /> (03) 252-1081
-                </li>
-              </ul>
-            </div>
-          </div>
-          <hr
-            className="my-3"
-            style={{ background: "rgba(255,255,255,0.1)" }}
-          />
-          <div className="row align-items-center">
-            <div className="col-md-6 text-center text-md-start">
-              <small>
-                &copy; {new Date().getFullYear()} {facultadActual.nombre} -
-                Universidad Técnica de Ambato
-              </small>
-            </div>
-            <div className="col-md-6 text-center text-md-end mt-3 mt-md-0">
-              <div className="d-flex justify-content-center justify-content-md-end">
-                <a href="#" className="text-white me-3">
-                  <i className="bi bi-facebook"></i>
-                </a>
-                <a href="#" className="text-white me-3">
-                  <i className="bi bi-twitter"></i>
-                </a>
-                <a href="#" className="text-white me-3">
-                  <i className="bi bi-instagram"></i>
-                </a>
-                <a href="#" className="text-white">
-                  <i className="bi bi-linkedin"></i>
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer isAuthenticated={usuario?.id ? true : false} />
       {/* Estilos adicionales para efectos hover */}
       <style>{`
         .hover-card {

@@ -48,6 +48,93 @@ const obtenerFacultad = async (req, res) => {
   }
 };
 
+// =============================
+// Obtener la primera facultad
+// =============================
+const obtenerPrimeraFacultad = async (req, res) => {
+  try {
+    const facultad = await prisma.facultad.findFirst({
+      orderBy: { fec_cre_fac: "asc" }, // Obtiene la primera facultad creada
+    });
+
+    if (!facultad) {
+      return res.status(404).json({ msg: "No hay facultades registradas" });
+    }
+
+    res.status(200).json(facultad);
+  } catch (error) {
+    console.error("Error al obtener la primera facultad:", error);
+    res.status(500).json({
+      msg: "Error al obtener la primera facultad",
+      error: error.message,
+    });
+  }
+};
+
+// ===========================
+// Actualizar datos básicos de facultad
+// ===========================
+const actualizarDatosFacultad = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { nom_fac, acr_fac, des_fac, url_log_fac } = req.body;
+
+    // Verificar que la facultad existe
+    const facultadExistente = await prisma.facultad.findUnique({
+      where: { id_fac: id },
+    });
+
+    if (!facultadExistente) {
+      return res.status(404).json({ msg: "Facultad no encontrada" });
+    }
+
+    // Validar datos
+    if (!nom_fac || nom_fac.trim() === "") {
+      return res
+        .status(400)
+        .json({ msg: "El nombre de la facultad es obligatorio" });
+    }
+
+    // Verificar si el nombre ya existe y no es el mismo facultad
+    if (nom_fac !== facultadExistente.nom_fac) {
+      const nombreExiste = await prisma.facultad.findFirst({
+        where: {
+          nom_fac,
+          id_fac: { not: id },
+        },
+      });
+
+      if (nombreExiste) {
+        return res
+          .status(400)
+          .json({ msg: "Ya existe otra facultad con ese nombre" });
+      }
+    }
+
+    // Actualizar la facultad
+    const facultadActualizada = await prisma.facultad.update({
+      where: { id_fac: id },
+      data: {
+        nom_fac,
+        acr_fac,
+        des_fac,
+        url_log_fac,
+      },
+    });
+
+    res.status(200).json({
+      msg: "Datos de la facultad actualizados correctamente",
+      facultad: facultadActualizada,
+    });
+  } catch (error) {
+    console.error("Error al actualizar datos de facultad:", error);
+    res.status(500).json({
+      msg: "Error al actualizar datos de facultad",
+      error: error.message,
+    });
+  }
+};
+
 // ====================
 // Crear una facultad
 // ====================
@@ -110,5 +197,7 @@ const crearFacultad = async (req, res) => {
 module.exports = {
   obtenerFacultades,
   obtenerFacultad,
+  obtenerPrimeraFacultad,
+  actualizarDatosFacultad,
   crearFacultad,
 };

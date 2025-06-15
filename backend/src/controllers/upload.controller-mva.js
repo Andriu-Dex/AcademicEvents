@@ -19,11 +19,13 @@ const subirImagen = async (req, res) => {
       "image/jpg",
       "image/png",
       "image/gif",
+      "image/bmp",
+      "application/pdf",
     ];
 
     if (!tiposPermitidos.includes(archivo.mimetype)) {
       return res.status(400).json({
-        msg: "El archivo debe ser una imagen (JPG, PNG, GIF)",
+        msg: "El archivo debe ser una imagen (JPG, PNG, GIF, BMP) o PDF",
       });
     }
 
