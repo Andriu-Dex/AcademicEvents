@@ -58,6 +58,66 @@
   animation: fadeInUp 0.6s ease-out;
 }
 
+/* Animaciones simples y suaves para carruseles */
+.carousel-item-h {
+  opacity: 1;
+  transform: translateX(0);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  animation-fill-mode: both;
+}
+
+/* Animación de entrada suave */
+@keyframes fadeInSlide {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Aplicar animación a nuevos elementos */
+.carousel-item-h {
+  animation: fadeInSlide 0.5s ease-out;
+}
+
+/* Mejora del hover */
+.autoridad-card-h,
+.carrera-card-h .card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.autoridad-card-h:hover,
+.carrera-card-h .card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(138, 21, 56, 0.15);
+}
+
+/* Suavizar transición del contenedor */
+.autoridades-carousel-h,
+.carreras-carousel-h {
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Deshabilitar transición durante el reset del carrusel infinito */
+.autoridades-carousel-h.no-transition,
+.carreras-carousel-h.no-transition {
+  transition: none !important;
+}
+
+/* Indicadores simplificados */
+.carousel-indicator-h {
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.carousel-indicator-h.active-h {
+  transform: scale(1.2);
+  box-shadow: 0 3px 6px rgba(138, 21, 56, 0.3);
+}
+
 /* Estilos para sección de contacto */
 .contact-section {
   border-radius: 15px;
@@ -181,6 +241,11 @@
   gap: 2rem;
   justify-content: center;
   perspective: 1000px;
+}
+
+/* Estilos actualizados para carrusel */
+.autoridades-section-h .carousel-container-h {
+  margin-top: 1rem;
 }
 
 .autoridad-card-h {
@@ -318,29 +383,288 @@
   margin-right: 0.25rem;
 }
 
-/* Media queries para responsive */
+/* Estilos para carruseles con sufijo "-h" */
+.carousel-container-h {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 3rem; /* Aumentado para dar espacio a los botones */
+  overflow: visible; /* Permite que los botones sean visibles */
+  min-height: 400px; /* Altura mínima para que el carrusel tenga suficiente espacio */
+}
+
+.autoridades-carousel-h,
+.carreras-carousel-h {
+  display: flex;
+  gap: 2rem;
+  overflow: visible; /* Permitir que las tarjetas duplicadas se vean */
+  flex: 1;
+  justify-content: flex-start;
+  align-items: stretch;
+  transition: transform 0.5s ease-in-out;
+  width: max-content;
+  position: relative;
+}
+
+.carousel-item-h {
+  flex: 0 0 auto;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+/* Dimensiones específicas para autoridades */
+.autoridades-carousel-h .carousel-item-h {
+  width: 300px;
+  max-width: 300px;
+  min-width: 300px;
+}
+
+/* Dimensiones específicas para carreras */
+.carreras-carousel-h .carousel-item-h {
+  width: 280px;
+  max-width: 280px;
+  min-width: 280px;
+  margin: 0;
+  flex-shrink: 0; /* Evitar que se encoja */
+  position: relative;
+  display: block;
+}
+
+.carousel-btn-h {
+  background: #8a1538;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(138, 21, 56, 0.2);
+  z-index: 20;
+  position: absolute;
+}
+
+.carousel-btn-prev-h {
+  left: 0;
+  position: absolute;
+}
+
+.carousel-btn-next-h {
+  right: 0;
+  position: absolute;
+}
+
+.carousel-btn-h:hover:not(:disabled) {
+  background: #a01b47;
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(138, 21, 56, 0.3);
+}
+
+.carousel-btn-h:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.carousel-indicators-h {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0rem;
+}
+
+.carousel-indicator-h {
+  width: 28px;
+  height: 6px;
+  border-radius: 8px;
+  border: none;
+  background: #ddd;
+  cursor: pointer;
+  padding: 0;
+  margin: 0 2px 0 2px;
+  transition: all 0.3s ease;
+}
+
+.carousel-indicator-h.active-h {
+  background: #8a1538;
+  transform: scale(1.2);
+}
+
+.carousel-indicator-h:hover {
+  background: #a01b47;
+}
+
+/* Media queries responsive para carruseles h */
+@media (max-width: 1024px) {
+  .autoridades-carousel-h .carousel-item-h {
+    width: 280px;
+    max-width: 280px;
+  }
+
+  .carreras-carousel-h .carousel-item-h {
+    width: 260px;
+    max-width: 260px;
+  }
+}
+
 @media (max-width: 768px) {
-  .autoridades-container-h {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  .carousel-container-h {
+    padding: 0 1rem;
+    gap: 0.5rem;
+    overflow: hidden; /* Asegurar que nada se desborde en dispositivos móviles */
+  }
+
+  .carousel-btn-h {
+    width: 40px;
+    height: 40px;
+  }
+
+  .carousel-btn-prev-h {
+    left: -10px;
+  }
+
+  .carousel-btn-next-h {
+    right: -10px;
+  }
+
+  .autoridades-carousel-h,
+  .carreras-carousel-h {
+    gap: 1rem;
+  }
+
+  .autoridades-carousel-h .carousel-item-h {
+    width: 250px;
+    max-width: 250px;
+  }
+
+  .carreras-carousel-h .carousel-item-h {
+    width: 240px;
+    max-width: 240px;
   }
 }
 
 @media (max-width: 576px) {
-  .autoridades-container-h {
-    grid-template-columns: 1fr;
-  }
-
-  .autoridad-card-h {
-    max-width: 320px;
-    margin: 0 auto;
+  .autoridades-carousel-h .carousel-item-h,
+  .carreras-carousel-h .carousel-item-h {
+    width: 280px;
+    max-width: 280px;
   }
 }
 
-/* Para asegurar que scroll sea suave */
-html {
-  scroll-behavior: smooth;
+/* Estilos para contenedores estáticos (cuando hay 3 o menos elementos) */
+.static-container-h {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
 }
 
-:target {
-  scroll-margin-top: 80px;
+.autoridades-static-h,
+.carreras-static-h {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: stretch;
+  width: 100%;
+}
+
+/* Responsividad para contenedores estáticos */
+@media (max-width: 768px) {
+  .static-container-h {
+    padding: 0 1rem;
+  }
+
+  .autoridades-static-h,
+  .carreras-static-h {
+    gap: 1rem;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .autoridades-static-h .carousel-item-h,
+  .carreras-static-h .carousel-item-h {
+    width: 100%;
+    max-width: 350px;
+  }
+}
+
+@media (max-width: 576px) {
+  .autoridades-static-h .carousel-item-h,
+  .carreras-static-h .carousel-item-h {
+    max-width: 280px;
+  }
+}
+
+/* Mejoras de accesibilidad para carruseles */
+.carousel-btn-h:focus {
+  outline: 2px solid #8a1538;
+  outline-offset: 2px;
+}
+
+.carousel-indicator-h:focus {
+  outline: 2px solid #8a1538;
+  outline-offset: 2px;
+}
+
+/* Animación para elementos del carrusel */
+.carousel-item-h {
+  animation-fill-mode: both;
+}
+
+/* Estados de carga para carruseles */
+.carousel-loading-h {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  color: #8a1538;
+}
+
+.carousel-window-h {
+  overflow: hidden; /* Esto oculta las tarjetas que se desbordan */
+  flex: 1;
+  width: 100%;
+  position: relative;
+}
+
+/* Estilos para el navbar oculto/visible */
+.top-detection-area-h {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 20px;
+  z-index: 1001; /* Un punto más alto que el navbar para asegurar la detección */
+  background: transparent;
+}
+
+.navbar-container-h {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+.navbar-hidden-h {
+  transform: translateY(-100%);
+  opacity: 0;
+}
+
+.navbar-visible-h {
+  transform: translateY(0);
+  opacity: 1;
 }

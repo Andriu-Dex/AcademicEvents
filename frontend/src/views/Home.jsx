@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { useAuth } from "../hooks/useAuth";
@@ -22,6 +22,8 @@ import {
   GraduationCap,
   BookOpen,
   Monitor,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import "./styles/Home.css";
 
@@ -36,6 +38,21 @@ function Home() {
     vision: "",
     autoridades: [],
   });
+
+  // Estados y referencias para carruseles
+  const [currentAutoridad, setCurrentAutoridad] = useState(0);
+  const [currentCarrera, setCurrentCarrera] = useState(0);
+  const [isHoveringAutoridades, setIsHoveringAutoridades] = useState(false);
+  const [isHoveringCarreras, setIsHoveringCarreras] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const autoridadesRef = useRef(null);
+  const carrerasRef = useRef(null);
+
+  // Estado para controlar la visibilidad del navbar
+  const [showNavbar, setShowNavbar] = useState(false);
+
+  // Referencia para detectar el área superior
+  const topAreaRef = useRef(null);
 
   // Cargar carreras y MVA desde la API
   useEffect(() => {
@@ -129,6 +146,21 @@ function Home() {
             email: "cesararosero@uta.edu.ec",
           },
         ];
+
+  // Determinar si se debe usar carrusel (solo si hay más de 3 elementos)
+  const shouldUseCarouselAutoridades = autoridades.length > 3;
+  const shouldUseCarouselCarreras = carreras.length > 3;
+
+  // Crear arrays extendidos para carrusel infinito (solo si se usa carrusel)
+  const extendedAutoridades =
+    shouldUseCarouselAutoridades && autoridades.length > 0
+      ? [...autoridades, ...autoridades.slice(0, 2)]
+      : autoridades;
+  const extendedCarreras =
+    shouldUseCarouselCarreras && carreras.length > 0
+      ? [...carreras, ...carreras.slice(0, 3)] // Asegurar que se dupliquen al menos 3 elementos
+      : carreras;
+
   // Función para obtener el icono correspondiente
   const getIconComponent = (iconName, size = 36) => {
     switch (iconName) {
@@ -148,6 +180,127 @@ function Home() {
         return <GraduationCap size={size} />;
     }
   };
+
+  // Funciones para carrusel infinito (solo activas si hay más de 3 elementos)
+  const nextAutoridad = () => {
+    if (shouldUseCarouselAutoridades && autoridades.length > 0) {
+      setCurrentAutoridad((prev) => prev + 1);
+    }
+  };
+
+  const prevAutoridad = () => {
+    if (shouldUseCarouselAutoridades && autoridades.length > 0) {
+      setCurrentAutoridad((prev) => prev - 1);
+    }
+  };
+
+  const nextCarrera = () => {
+    if (shouldUseCarouselCarreras && carreras.length > 0) {
+      setCurrentCarrera((prev) => prev + 1);
+    }
+  };
+
+  const prevCarrera = () => {
+    if (shouldUseCarouselCarreras && carreras.length > 0) {
+      setCurrentCarrera((prev) => prev - 1);
+    }
+  };
+
+  // Efectos para manejar el bucle infinito (solo si el carrusel está activo)
+  useEffect(() => {
+    if (
+      shouldUseCarouselAutoridades &&
+      currentAutoridad === autoridades.length &&
+      autoridades.length > 0
+    ) {
+      setTimeout(() => {
+        setIsTransitioning(true);
+        setCurrentAutoridad(0);
+        setTimeout(() => setIsTransitioning(false), 20);
+      }, 300); // Reducir tiempo para transición más rápida
+    } else if (
+      shouldUseCarouselAutoridades &&
+      currentAutoridad < 0 &&
+      autoridades.length > 0
+    ) {
+      setTimeout(() => {
+        setIsTransitioning(true);
+        setCurrentAutoridad(autoridades.length - 1);
+        setTimeout(() => setIsTransitioning(false), 20);
+      }, 300);
+    }
+  }, [currentAutoridad, autoridades.length, shouldUseCarouselAutoridades]);
+
+  useEffect(() => {
+    if (
+      shouldUseCarouselCarreras &&
+      currentCarrera === carreras.length &&
+      carreras.length > 0
+    ) {
+      setTimeout(() => {
+        setIsTransitioning(true);
+        setCurrentCarrera(0);
+        setTimeout(() => setIsTransitioning(false), 50); // Aumentado el tiempo para que sea más estable
+      }, 500); // Aumentado para dar tiempo a la transición
+    } else if (
+      shouldUseCarouselCarreras &&
+      currentCarrera < 0 &&
+      carreras.length > 0
+    ) {
+      setTimeout(() => {
+        setIsTransitioning(true);
+        setCurrentCarrera(carreras.length - 1);
+        setTimeout(() => setIsTransitioning(false), 50);
+      }, 500);
+    }
+  }, [currentCarrera, carreras.length, shouldUseCarouselCarreras]);
+
+  // Funciones para indicadores
+  const goToAutoridad = (index) => {
+    setCurrentAutoridad(index);
+  };
+
+  const goToCarrera = (index) => {
+    setCurrentCarrera(index);
+  };
+
+  // Auto-play para los carruseles (solo cuando el mouse está sobre ellos y hay más de 3 elementos)
+  useEffect(() => {
+    let autoridadesInterval;
+    let carrerasInterval;
+
+    if (
+      isHoveringAutoridades &&
+      shouldUseCarouselAutoridades &&
+      autoridades.length > 1
+    ) {
+      autoridadesInterval = setInterval(() => {
+        nextAutoridad();
+      }, 2000);
+    }
+
+    if (
+      isHoveringCarreras &&
+      shouldUseCarouselCarreras &&
+      carreras.length > 1
+    ) {
+      carrerasInterval = setInterval(() => {
+        nextCarrera();
+      }, 2000);
+    }
+
+    return () => {
+      if (autoridadesInterval) clearInterval(autoridadesInterval);
+      if (carrerasInterval) clearInterval(carrerasInterval);
+    };
+  }, [
+    autoridades.length,
+    carreras.length,
+    isHoveringAutoridades,
+    isHoveringCarreras,
+    shouldUseCarouselAutoridades,
+    shouldUseCarouselCarreras,
+  ]);
 
   // Info cards para misión y visión obtenidas de la API
   const infoCardsPorCarrera = {
@@ -188,6 +341,36 @@ function Home() {
   // Determina si el usuario está autenticado
   const isAuthenticated = usuario ? true : false;
 
+  // Efecto para controlar la visibilidad del navbar
+  useEffect(() => {
+    // Variable para almacenar el timer
+    let timer;
+
+    const handleMouseMove = (e) => {
+      // Si el mouse está en los primeros 80px de la pantalla o sobre el navbar cuando está visible
+      if (e.clientY <= 80) {
+        setShowNavbar(true);
+        // Limpiar el timer si existe
+        if (timer) clearTimeout(timer);
+      } else if (showNavbar) {
+        // Si el mouse sale de la zona y el navbar está visible, iniciamos un timer para ocultarlo
+        if (timer) clearTimeout(timer);
+        timer = setTimeout(() => {
+          setShowNavbar(false);
+        }, 1000); // Esperar 1 segundo antes de ocultar
+      }
+    };
+
+    // Agregar event listener al documento
+    document.addEventListener("mousemove", handleMouseMove);
+
+    // Limpiar event listener al desmontar el componente
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      if (timer) clearTimeout(timer);
+    };
+  }, [showNavbar]);
+
   return (
     <div
       className="d-flex flex-column"
@@ -197,8 +380,18 @@ function Home() {
         background: "linear-gradient(135deg, #f4f6fb 60%, #e3e8f0 100%)",
       }}
     >
-      {/* Header/Navbar */}
-      <Navbar usuario={usuario} />
+      {/* Área de detección superior */}
+      <div ref={topAreaRef} className="top-detection-area-h"></div>
+
+      {/* Header/Navbar con clase condicional para visibilidad */}
+      <div
+        className={`navbar-container-h ${
+          showNavbar ? "navbar-visible-h" : "navbar-hidden-h"
+        }`}
+      >
+        <Navbar usuario={usuario} />
+      </div>
+
       {/* Hero Section */}
       <div
         className="contenedor-principal-home"
@@ -206,6 +399,8 @@ function Home() {
           background:
             "linear-gradient(rgba(138, 21, 56, 0.85), rgba(138, 21, 56, 0.9)), url('https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover no-repeat",
           minHeight: "400px",
+          marginTop: "0", // Ajustado para compensar el navbar oculto
+          paddingTop: "70px", // Agregar padding para compensar el espacio del navbar
         }}
       >
         <div className="container">
@@ -277,7 +472,7 @@ function Home() {
           </div>
         </div>
       </div>
-      {/* Autoridades */}
+      {/* Autoridades - Carrusel */}
       <section className="autoridades-section-h" id="autoridades">
         <div className="autoridades-header-h">
           <h2 className="autoridades-title-h">Autoridades de la Facultad</h2>
@@ -285,36 +480,108 @@ function Home() {
             Conoce a nuestro equipo directivo
           </p>
         </div>
-        <div className="autoridades-container-h">
-          {autoridades.map((autoridad, index) => (
-            <article
-              className="autoridad-card-h"
-              key={index}
-              style={{
-                animation: `fadeInUp ${0.3 + index * 0.1}s ease-out forwards`,
-                opacity: 0,
-              }}
+        <div
+          className={
+            shouldUseCarouselAutoridades
+              ? "carousel-container-h"
+              : "static-container-h"
+          }
+          onMouseEnter={
+            shouldUseCarouselAutoridades
+              ? () => setIsHoveringAutoridades(true)
+              : undefined
+          }
+          onMouseLeave={
+            shouldUseCarouselAutoridades
+              ? () => setIsHoveringAutoridades(false)
+              : undefined
+          }
+        >
+          {shouldUseCarouselAutoridades && (
+            <button
+              className="carousel-btn-h carousel-btn-prev-h"
+              onClick={prevAutoridad}
+              style={{ position: "absolute", left: "-25px", zIndex: 20 }}
             >
-              <div className="autoridad-content-h">
-                <img
-                  src={autoridad.imagen}
-                  alt={autoridad.nombre}
-                  className="autoridad-image-h"
-                />
-                <h3 className="autoridad-name-h">{autoridad.nombre}</h3>
-                <p className="autoridad-cargo-h">{autoridad.cargo}</p>
-                <a
-                  href={`mailto:${autoridad.email}`}
-                  className="autoridad-contact-h"
+              <ChevronLeft size={24} />
+            </button>
+          )}
+
+          <div className="carousel-window-h">
+            <div
+              className={
+                shouldUseCarouselAutoridades
+                  ? "autoridades-carousel-h"
+                  : "autoridades-static-h"
+              }
+              ref={autoridadesRef}
+              style={
+                shouldUseCarouselAutoridades
+                  ? {
+                      transform: `translateX(-${
+                        currentAutoridad * (300 + 32)
+                      }px)`, // 300px width + 2rem gap
+                      transition: isTransitioning
+                        ? "none"
+                        : "transform 0.5s ease-in-out",
+                    }
+                  : {}
+              }
+            >
+              {extendedAutoridades.map((autoridad, index) => (
+                <article
+                  className="autoridad-card-h carousel-item-h"
+                  key={index}
                 >
-                  <Mail size={14} className="autoridad-icon-h" /> Contactar
-                </a>
-              </div>
-            </article>
-          ))}
+                  <div className="autoridad-content-h">
+                    <img
+                      src={autoridad.imagen}
+                      alt={autoridad.nombre}
+                      className="autoridad-image-h"
+                    />
+                    <h3 className="autoridad-name-h">{autoridad.nombre}</h3>
+                    <p className="autoridad-cargo-h">{autoridad.cargo}</p>
+                    <a
+                      href={`mailto:${autoridad.email}`}
+                      className="autoridad-contact-h"
+                    >
+                      <Mail size={14} className="autoridad-icon-h" /> Contactar
+                    </a>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          {shouldUseCarouselAutoridades && (
+            <button
+              className="carousel-btn-h carousel-btn-next-h"
+              onClick={nextAutoridad}
+              style={{ position: "absolute", right: "-25px", zIndex: 20 }}
+            >
+              <ChevronRight size={24} />
+            </button>
+          )}
         </div>
+
+        {/* Indicadores del carrusel (solo si el carrusel está activo) */}
+        {shouldUseCarouselAutoridades && autoridades.length > 1 && (
+          <div className="carousel-indicators-h">
+            {autoridades.map((_, index) => (
+              <button
+                key={index}
+                className={`carousel-indicator-h ${
+                  index === currentAutoridad % autoridades.length
+                    ? "active-h"
+                    : ""
+                }`}
+                onClick={() => goToAutoridad(index)}
+              />
+            ))}
+          </div>
+        )}
       </section>
-      {/* Carreras Disponibles */}
+      {/* Carreras Disponibles - Carrusel */}
       <div className="container mb-5" id="carreras">
         <div className="row justify-content-center mb-4">
           <div className="col-lg-6 text-center">
@@ -325,38 +592,123 @@ function Home() {
               Descubre las opciones académicas que tenemos para ti
             </p>
           </div>
-        </div>{" "}
-        <div className="row g-4">
-          {carreras.map((carrera, index) => (
-            <div className="col-md-6 col-lg-3" key={index}>
-              <div className="card h-100 shadow-sm border-0 hover-card">
-                <div className="card-body text-center p-4">
-                  <div className="display-4 mb-3">
-                    {getIconComponent(carrera.ico_car)}
-                  </div>
-                  <h5
-                    className="card-title fw-bold"
-                    style={{ color: "#8A1538" }}
-                  >
-                    {carrera.nom_car}
-                  </h5>
-                  <p className="card-text small text-muted mb-3">
-                    {carrera.des_car}
-                  </p>
-                  <div className="mb-3">
-                    <span className="badge bg-light text-dark me-2">
-                      <Clock size={14} className="me-1" /> {carrera.dur_sem_car}{" "}
-                      semestres
-                    </span>
-                    <span className="badge bg-light text-dark">
-                      <MapPin size={14} className="me-1" /> {carrera.mod_car}
-                    </span>
+        </div>
+
+        <div
+          className={
+            shouldUseCarouselCarreras
+              ? "carousel-container-h"
+              : "static-container-h"
+          }
+          onMouseEnter={
+            shouldUseCarouselCarreras
+              ? () => setIsHoveringCarreras(true)
+              : undefined
+          }
+          onMouseLeave={
+            shouldUseCarouselCarreras
+              ? () => setIsHoveringCarreras(false)
+              : undefined
+          }
+          style={{
+            maxWidth: "100%",
+            margin: "0 auto",
+            position: "relative",
+          }}
+        >
+          {shouldUseCarouselCarreras && (
+            <button
+              className="carousel-btn-h carousel-btn-prev-h"
+              onClick={prevCarrera}
+              style={{ position: "absolute", left: "-25px", zIndex: 20 }}
+            >
+              <ChevronLeft size={24} />
+            </button>
+          )}
+
+          <div className="carousel-window-h">
+            <div
+              className={
+                shouldUseCarouselCarreras
+                  ? "carreras-carousel-h"
+                  : "carreras-static-h"
+              }
+              ref={carrerasRef}
+              style={
+                shouldUseCarouselCarreras
+                  ? {
+                      transform: `translateX(-${
+                        currentCarrera * (280 + 32)
+                      }px)`, // 280px width + 2rem gap
+                      transition: isTransitioning
+                        ? "none"
+                        : "transform 0.5s ease-in-out",
+                      width: "max-content", // Asegurar que el ancho se ajuste al contenido
+                    }
+                  : {}
+              }
+            >
+              {extendedCarreras.map((carrera, index) => (
+                <div
+                  className="carrera-card-h carousel-item-h"
+                  key={`carrera-${index}`}
+                >
+                  <div className="card h-100 shadow-sm border-0 hover-card">
+                    <div className="card-body text-center p-4">
+                      <div className="display-4 mb-3">
+                        {getIconComponent(carrera.ico_car)}
+                      </div>
+                      <h5
+                        className="card-title fw-bold"
+                        style={{ color: "#8A1538" }}
+                      >
+                        {carrera.nom_car}
+                      </h5>
+                      <p className="card-text small text-muted mb-3">
+                        {carrera.des_car}
+                      </p>
+                      <div className="mb-3">
+                        <span className="badge bg-light text-dark me-2">
+                          <Clock size={14} className="me-1" />{" "}
+                          {carrera.dur_sem_car} semestres
+                        </span>
+                        <span className="badge bg-light text-dark">
+                          <MapPin size={14} className="me-1" />{" "}
+                          {carrera.mod_car}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
+              ))}
             </div>
-          ))}
+          </div>
+
+          {shouldUseCarouselCarreras && (
+            <button
+              className="carousel-btn-h carousel-btn-next-h"
+              onClick={nextCarrera}
+              style={{ position: "absolute", right: "-25px", zIndex: 20 }}
+            >
+              <ChevronRight size={24} />
+            </button>
+          )}
         </div>
+
+        {/* Indicadores del carrusel (solo si el carrusel está activo) */}
+        {shouldUseCarouselCarreras && carreras.length > 1 && (
+          <div className="carousel-indicators-h">
+            {carreras.map((_, index) => (
+              <button
+                key={index}
+                className={`carousel-indicator-h ${
+                  index === currentCarrera % carreras.length ? "active-h" : ""
+                }`}
+                onClick={() => goToCarrera(index)}
+              />
+            ))}
+          </div>
+        )}
       </div>
       {/* Misión y Visión */}
       <div className="container mb-5" id="mision-vision">
@@ -432,7 +784,7 @@ function Home() {
             </div>
             <div className="col-md-4 text-md-end">
               <a
-                href="https://andriu-dex.github.io/Andriu-Dex/"
+                href="https://fisei.uta.edu.ec/v4.0/index.php/facultad/historia-facultad"
                 target="_blank"
                 className="btn fw-bold btn-lg me-2 mb-2"
                 style={{
@@ -444,7 +796,7 @@ function Home() {
                 <Mail size={18} className="me-2" /> Contáctanos
               </a>
               <a
-                href="https://andriu-dex.github.io/Andriu-Dex/"
+                href="https://fisei.uta.edu.ec/v4.0/index.php/facultad/directorio-telefonico"
                 target="_blank"
                 className="btn btn-outline-secondary fw-bold btn-lg mb-2"
                 style={{ borderRadius: "8px" }}
