@@ -14,6 +14,7 @@ import {
   CheckSquare,
   Sliders,
   UserCheck,
+  Menu,
 } from "lucide-react";
 import { toast } from "react-toastify";
 import axiosInstance from "../api/axiosConfig";
@@ -28,11 +29,13 @@ const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [showHamburgerMenu, setShowHamburgerMenu] = useState(false);
   const [logoFacultad, setLogoFacultad] = useState(
     "https://imgur.com/fch1iy6.png"
   );
   const [acronimoFacultad, setAcronimoFacultad] = useState("FISEI");
   const profileMenuRef = useRef();
+  const hamburgerMenuRef = useRef();
 
   /**
    * Carga los datos de la facultad desde la API
@@ -50,14 +53,23 @@ const Navbar = () => {
   };
 
   /**
-   * Cierra el menú de perfil si se hace clic fuera de él
+   * Cierra los menús si se hace clic fuera de ellos
    */
   const handleClickOutside = (event) => {
+    // Cierra el menú de perfil si se hace clic fuera de él
     if (
       profileMenuRef.current &&
       !profileMenuRef.current.contains(event.target)
     ) {
       setShowProfileMenu(false);
+    }
+
+    // Cierra el menú hamburguesa si se hace clic fuera de él
+    if (
+      hamburgerMenuRef.current &&
+      !hamburgerMenuRef.current.contains(event.target)
+    ) {
+      setShowHamburgerMenu(false);
     }
   };
 
@@ -66,6 +78,13 @@ const Navbar = () => {
    */
   const toggleProfileMenu = () => {
     setShowProfileMenu(!showProfileMenu);
+  };
+
+  /**
+   * Alterna la visibilidad del menú hamburguesa
+   */
+  const toggleHamburgerMenu = () => {
+    setShowHamburgerMenu(!showHamburgerMenu);
   };
 
   /**
@@ -189,6 +208,41 @@ const Navbar = () => {
   return (
     <nav className="navbar-ae">
       <div className="navbar-left">
+        {usuario.rol_usu === "ADMIN_GLOBAL" && (
+          <div className="hamburger-menu-container" ref={hamburgerMenuRef}>
+            <button className="hamburger-button" onClick={toggleHamburgerMenu}>
+              <Menu size={24} />
+            </button>
+            {showHamburgerMenu && (
+              <div className="hamburger-menu">
+                <Link
+                  to="/admin/configuracion"
+                  className={`hamburger-menu-item ${isActive(
+                    "/admin/configuracion"
+                  )}`}
+                  onClick={toggleHamburgerMenu}
+                >
+                  <span className="hamburger-menu-icon">
+                    <Sliders size={18} />
+                  </span>
+                  <span>MVA</span>
+                </Link>
+                <Link
+                  to="/admin/gestion-admins"
+                  className={`hamburger-menu-item ${isActive(
+                    "/admin/gestion-admins"
+                  )}`}
+                  onClick={toggleHamburgerMenu}
+                >
+                  <span className="hamburger-menu-icon">
+                    <UserCheck size={18} />
+                  </span>
+                  <span>Gestionar Admins</span>
+                </Link>
+              </div>
+            )}
+          </div>
+        )}
         <Link to="/home" className="navbar-logo-container">
           <img
             src={logoFacultad}
@@ -269,28 +323,6 @@ const Navbar = () => {
                 </span>
                 <span>Validar inscripciones</span>
               </Link>
-              <Link
-                to="/admin/configuracion"
-                className={`nav-link-item ${isActive("/admin/configuracion")}`}
-              >
-                <span className="nav-link-icon">
-                  <Sliders size={18} />
-                </span>
-                <span>MVA</span>
-              </Link>
-              {usuario.rol_usu === "ADMIN_GLOBAL" && (
-                <Link
-                  to="/admin/gestion-admins"
-                  className={`nav-link-item ${isActive(
-                    "/admin/gestion-admins"
-                  )}`}
-                >
-                  <span className="nav-link-icon">
-                    <UserCheck size={18} />
-                  </span>
-                  <span>Gestionar Admins</span>
-                </Link>
-              )}
             </>
           )}
         </div>

@@ -3,6 +3,9 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 // Vistas públicas
 import Login from "./views/Login.jsx";
 import Register from "./views/Register.jsx";
+import ForgotPassword from "./views/ForgotPassword.jsx";
+import RecoveryInstructionsPage from "./views/RecoveryInstructions.jsx";
+import ResetPassword from "./views/ResetPassword.jsx";
 import Home from "./views/Home.jsx"; // Ruta temporal de prueba
 import EventosPublicos from "./routes/EventosPublicos";
 import VerifyEmail from "./views/VerifyEmail.jsx";
@@ -60,6 +63,16 @@ function App() {
           {/* Rutas públicas */}
           <Route path="/login" element={<Login />} />
           <Route path="/registro" element={<Register />} />
+          {/* Rutas de recuperación de contraseña */}
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route
+            path="/recovery-instructions"
+            element={<RecoveryInstructionsPage />}
+          />
+          <Route
+            path="/restablecer-contrasena/:token"
+            element={<ResetPassword />}
+          />
           {/* Rutas de verificación de correo */}
           <Route path="/verificar-correo/:token" element={<VerifyEmail />} />
           <Route

@@ -5,6 +5,7 @@ import { useNavigate, useLocation, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "../hooks/useAuth";
 import { Eye, EyeOff, Lock, AtSign, X, Home } from "lucide-react";
+import "./styles/Login.css";
 
 // Componente principal de Login
 const Login = () => {
@@ -41,6 +42,12 @@ const Login = () => {
       }
     }
   }, [usuario, location.pathname]);
+
+  // Añade una clase al body para estilos específicos de login
+  useEffect(() => {
+    document.body.classList.add("login-active");
+    return () => document.body.classList.remove("login-active");
+  }, []);
 
   // Guarda email si es nuevo
   const saveEmailIfNew = (nuevoEmail) => {
@@ -132,174 +139,10 @@ const Login = () => {
 
   return (
     <>
-      {/* Estilos personalizados para animaciones y diseño del login */}
-      <style>{`
-        html, body, #root {
-          margin: 0;
-          padding: 0;
-          height: 100%;
-          overflow: hidden;
-          background-color: transparent;
-          font-family: 'Poppins', 'Segoe UI', sans-serif;
-        }
-
-        @keyframes moveBackground {
-          0% { background-position: center top; }
-          50% { background-position: center bottom; }
-          100% { background-position: center top; }
-        }
-
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes float {
-          0% { transform: translateY(0px); }
-          50% { transform: translateY(-10px); }
-          100% { transform: translateY(0px); }
-        }
-
-        .form-control:focus {
-          border-color: #8A1538;
-          box-shadow: 0 0 0 0.25rem rgba(138, 21, 56, 0.25);
-        }
-
-        .input-group-text {
-          background-color: #8A1538;
-          color: white;
-          border: none;
-        }
-
-        .btn-login {
-          background-color: #8A1538;
-          color: white;
-          transition: all 0.3s ease;
-        }
-
-        .btn-login:hover {
-          background-color: #6a102c;
-          transform: translateY(-2px);
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        .alert {
-          animation: fadeIn 0.5s ease forwards;
-        }
-
-        .login-card {
-          transition: all 0.5s ease;
-          backdrop-filter: blur(10px);
-        }
-
-        .login-card:hover {
-          transform: translateY(-5px);
-          box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2) !important;
-        }
-
-        .floating-icon {
-          animation: float 6s ease-in-out infinite;
-        }
-
-        .input-animate {
-          transition: all 0.3s ease;
-        }
-
-        .input-animate:focus {
-          transform: translateX(5px);
-        }
-
-        .forgot-password {
-          color: #8A1538;
-          transition: all 0.3s ease;
-        }
-
-        .forgot-password:hover {
-          color: #6a102c;
-          text-decoration: underline !important;
-        }
-
-        .wave-divider {
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          width: 100%;
-          overflow: hidden;
-          line-height: 0;
-        }
-
-        .wave-divider svg {
-          display: block;
-          width: calc(100% + 1.3px);
-          height: 150px;
-        }
-
-        .wave-divider .shape-fill {
-          fill: rgba(255, 255, 255, 0.4);
-        }
-          /* Mejora la transición y diseño de sugerencias */        .suggestion-item:hover {
-          background-color: #f8d7da !important;
-          color: #8A1538;
-        }
-        
-        /* Estilos para el botón de home */
-        .home-button {
-          position: fixed;
-          top: 20px;
-          right: 20px;
-          width: 45px;
-          height: 45px;
-          background-color: rgba(138, 21, 56, 0.7);
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: white;
-          box-shadow: 0 2px 8px rgba(138, 21, 56, 0.3);
-          transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-          z-index: 1000;
-          backdrop-filter: blur(3px);
-          animation: pulse 2s infinite;
-        }
-        
-        .home-button:hover {
-          background-color: rgba(138, 21, 56, 1);
-          transform: rotate(360deg) scale(1.1);
-          box-shadow: 0 5px 15px rgba(138, 21, 56, 0.5);
-        }
-        
-        @keyframes pulse {
-          0% {
-            box-shadow: 0 0 0 0 rgba(138, 21, 56, 0.5);
-          }
-          70% {
-            box-shadow: 0 0 0 10px rgba(138, 21, 56, 0);
-          }
-          100% {
-            box-shadow: 0 0 0 0 rgba(138, 21, 56, 0);
-          }
-        }
-          
-
-      `}</style>
       {/* Fondo animado con imagen */}
-      <div
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          backgroundImage: "url('https://i.imgur.com/2mo8unt.jpg')",
-          backgroundSize: "cover",
-          backgroundRepeat: "repeat-y",
-          backgroundPosition: "center",
-          animation: "moveBackground 30s ease infinite",
-          zIndex: -1,
-        }}
-      ></div>{" "}
+      <div className="login-background-l"></div>{" "}
       {/* Onda decorativa inferior */}
-      <div className="wave-divider">
+      <div className="wave-divider-l">
         <svg
           data-name="Layer 1"
           xmlns="http://www.w3.org/2000/svg"
@@ -308,78 +151,50 @@ const Login = () => {
         >
           <path
             d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z"
-            className="shape-fill"
+            className="shape-fill-l"
           ></path>
         </svg>
       </div>
       {/* Botón para volver al home */}
-      <Link to="/home" className="home-button">
+      <Link to="/home" className="home-button-l">
         <Home size={22} color="white" />
       </Link>
       {/* Contenedor principal centrado */}
-      <div
-        className="d-flex justify-content-center align-items-center"
-        style={{
-          height: "calc(100vh - 20px)",
-          width: "100vw",
-          padding: "20px 0",
-        }}
-      >
+      <div className="login-main-container-l">
         {/* Tarjeta de inicio de sesión con animación */}
         <div
-          className={`shadow-lg p-4 p-md-5 pt-md-4 pb-md-5 rounded-4 text-center h-100 login-card ${
+          className={`login-card-l ${
             fadeIn ? "animate__animated animate__fadeIn" : ""
           }`}
-          style={{
-            maxWidth: "450px",
-            width: "90%",
-            backgroundColor: "rgba(255, 255, 255, 0.85)",
-            borderTop: "6px solid #8A1538",
-            animation: fadeIn ? "fadeIn 1s ease forwards" : "none",
-            opacity: fadeIn ? 1 : 0,
-          }}
         >
           {/* Logo con animación flotante */}
-          <div className="floating-icon mb-2">
-            {" "}
+          <div className="floating-icon-l">
             <img
               src="https://i.imgur.com/KrUzH8J.png"
               alt="Logo FISEI"
-              style={{ width: "320px", height: "auto" }}
-              className="img-fluid"
+              className="logo-img-l"
             />
           </div>
 
           {/* Título con animación */}
-          <div
-            style={{
-              animation: "fadeIn 1s ease 0.3s forwards",
-              opacity: 0,
-              animationFillMode: "forwards",
-            }}
-          >
-            <h2
-              className="mb-4"
-              style={{ color: "#8A1538", fontWeight: "bold" }}
-            >
-              Iniciar Sesión
-            </h2>
+          <div>
+            <h2 className="login-title-l">Iniciar Sesión</h2>
           </div>
 
           {/* Formulario de inicio de sesión */}
-          <form onSubmit={handleSubmit} className="text-start">
+          <form onSubmit={handleSubmit} className="login-form-l">
             {/* Campo de correo electrónico */}
-            <div className="mb-4 position-relative" style={{ zIndex: 5 }}>
-              <label htmlFor="email" className="form-label fw-semibold">
+            <div className="form-group-l">
+              <label htmlFor="email" className="form-label-l">
                 Correo electrónico
               </label>
-              <div className="input-group">
-                <span className="input-group-text">
+              <div className="input-group-l">
+                <span className="input-group-text-l">
                   <AtSign size={18} color="#ffffff" />
                 </span>
                 <input
                   type="email"
-                  className="form-control py-2"
+                  className="form-control-l input-animate-l"
                   id="email"
                   placeholder="usuario@uta.edu.ec"
                   value={email}
@@ -395,24 +210,9 @@ const Login = () => {
 
               {/* Autocompletado de correos guardados */}
               {mostrarSugerencias && (
-                <div
-                  className="position-absolute bg-white border rounded-3 shadow-sm"
-                  style={{
-                    width: "100%",
-                    zIndex: 20,
-                    maxHeight: "150px",
-                    overflowY: "auto",
-                    borderColor: "#8A1538",
-                    marginTop: "2px",
-                    top: "100%",
-                  }}
-                >
+                <div className="suggestions-container-l">
                   {sugerencias.map((correo, index) => (
-                    <div
-                      key={index}
-                      className="px-3 py-2 suggestion-item d-flex justify-content-between align-items-center"
-                      style={{ cursor: "pointer" }}
-                    >
+                    <div key={index} className="suggestion-item-l">
                       <span
                         onMouseDown={() => {
                           setEmail(correo);
@@ -423,8 +223,7 @@ const Login = () => {
                       </span>
                       <button
                         type="button"
-                        className="btn btn-link btn-sm text-danger ms-2"
-                        style={{ textDecoration: "none" }}
+                        className="btn-link-l"
                         onClick={(e) => {
                           e.stopPropagation();
                           // Eliminar correo de localStorage
@@ -452,64 +251,51 @@ const Login = () => {
                 </div>
               )}
             </div>
-            {/* Andriu Dex */}
-
             {/* Campo de contraseña */}
-            <div className="mb-3">
-              <label htmlFor="password" className="form-label fw-semibold">
+            <div className="form-group-password-l">
+              <label htmlFor="password" className="form-label-l">
                 Contraseña
               </label>
-              <div className="input-group">
-                {/* <span className="input-group-text">🔒</span> */}
-                <span className="input-group-text">
-                  <Lock size={18} strokeWidth={1.8} className="text-gray-700" />
+              <div className="input-group-password-l">
+                <span className="input-group-text-l">
+                  <Lock size={18} strokeWidth={1.8} />
                 </span>
                 <input
-                  type={showPassword ? "text" : "password"} // Alterna tipo input
-                  className="form-control py-2"
+                  type={showPassword ? "text" : "password"}
+                  className="form-control-l input-animate-l"
                   id="password"
                   placeholder="********"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
-                {/* Botón para mostrar/ocultar contraseña */}
                 <button
                   type="button"
-                  className="btn btn-outline-secondary"
+                  className="btn-outline-secondary-l"
                   onClick={() => setShowPassword(!showPassword)}
-                  style={{ border: "none", background: "transparent" }}
                   tabIndex={-1}
                 >
                   {showPassword ? (
-                    <EyeOff size={18} color="#323232" />
+                    <EyeOff size={18} color="#6b7280" />
                   ) : (
-                    <Eye size={18} color="#323232" />
+                    <Eye size={18} color="#6b7280" />
                   )}
                 </button>
               </div>
             </div>
 
             {/* Enlace para recuperar contraseña */}
-            <div className="mb-4 text-end">
-              <a
-                href="#"
-                className="text-decoration-none forgot-password"
-                style={{ fontSize: "0.9rem" }}
-              >
+            <div className="forgot-password-container-l">
+              <Link to="/forgot-password" className="forgot-password-l">
                 ¿Olvidaste tu contraseña?
-              </a>
+              </Link>
             </div>
 
             {/* Botón de envío con spinner de carga */}
-            <button
-              type="submit"
-              className="btn btn-login w-100 py-2 fw-bold d-flex align-items-center justify-content-center"
-              disabled={isLoading}
-            >
+            <button type="submit" className="btn-login-l" disabled={isLoading}>
               {isLoading ? (
                 <>
                   <span
-                    className="spinner-border spinner-border-sm me-2"
+                    className="spinner-border-sm-l"
                     role="status"
                     aria-hidden="true"
                   ></span>
@@ -520,22 +306,15 @@ const Login = () => {
               )}
             </button>
           </form>
-          <p className="mt-3 text-sm text-center">
+          <p className="register-text-l">
             ¿No tienes cuenta?{" "}
-            <Link to="/registro" className="text-blue-600 hover:underline">
+            <Link to="/registro" className="register-link-l hover:underline">
               Regístrate
             </Link>
           </p>
 
-          <div
-            className="text-center"
-            style={{
-              animation: "fadeIn 1s ease 0.9s forwards",
-              opacity: 0,
-              animationFillMode: "forwards",
-            }}
-          >
-            <small className="text-muted">
+          <div className="copyright-text-l">
+            <small>
               Universidad Técnica de Ambato &copy; {new Date().getFullYear()}
             </small>
           </div>

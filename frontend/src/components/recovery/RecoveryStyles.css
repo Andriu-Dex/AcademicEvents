@@ -1,0 +1,142 @@
+/* Estilos específicos para los componentes de recuperación de contraseña */
+
+/* Contenedor principal */
+.pw-recovery-container {
+  box-shadow: 0 4px 12px rgba(138, 21, 56, 0.1);
+  border: 1px solid rgba(138, 21, 56, 0.1);
+}
+
+.pw-recovery-container:hover {
+  box-shadow: 0 6px 16px rgba(138, 21, 56, 0.15);
+  transition: box-shadow 0.3s ease;
+}
+
+/* Título */
+.pw-recovery-title {
+  color: #8a1538 !important;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Formulario */
+.pw-recovery-form .pw-recovery-label {
+  color: #4a5568;
+  font-weight: 500;
+}
+
+.pw-recovery-input {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.pw-recovery-input:focus {
+  border-color: #8a1538 !important;
+  box-shadow: 0 0 0 3px rgba(138, 21, 56, 0.1) !important;
+  outline: none;
+}
+
+/* Botón principal */
+.pw-recovery-button {
+  background-color: #8a1538;
+  transition: all 0.3s ease;
+}
+
+.pw-recovery-button:hover {
+  background-color: #6e1029;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(138, 21, 56, 0.2);
+}
+
+.pw-recovery-button:disabled {
+  background-color: #c77b97;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Enlaces */
+.pw-recovery-link {
+  color: #8a1538 !important;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.pw-recovery-link:hover {
+  color: #6e1029 !important;
+  text-decoration: underline;
+}
+
+/* Contenedores de mensaje */
+.pw-recovery-message {
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+/* Estados específicos */
+.pw-reset-error,
+.pw-reset-success,
+.pw-reset-loading {
+  animation: fadeIn 0.3s ease-in;
+}
+
+.pw-reset-container {
+  box-shadow: 0 4px 20px rgba(138, 21, 56, 0.12);
+}
+
+/* Instrucciones de recuperación */
+.pw-recovery-instructions {
+  animation: slideUp 0.4s ease-out;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Spinner personalizado */
+.spinner-border-sm-pw {
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .pw-recovery-container {
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+
+  .pw-recovery-title {
+    font-size: 1.5rem;
+  }
+}

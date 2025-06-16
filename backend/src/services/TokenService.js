@@ -443,6 +443,91 @@ class TokenService {
       };
     }
   }
+
+  /**
+   * Invalida tokens específicos excepto el token activo
+   * @param {string} idCuenta - ID de la cuenta
+   * @param {string} tokenExcluido - Token que no debe invalidarse
+   * @param {string} tipoToken - Tipo de token a invalidar
+   * @param {string} razon - Razón de la invalidación
+   * @param {string} descripcion - Descripción detallada de la invalidación
+   * @returns {Promise<number>} Número de tokens invalidados
+   */
+  async invalidarTokensOtros(
+    idCuenta,
+    tokenExcluido,
+    tipoToken,
+    razon = "SEGURIDAD",
+    descripcion = "Invalidado por seguridad"
+  ) {
+    try {
+      // Primero, obtener los tokens activos que vamos a invalidar (excluyendo el tokenExcluido)
+      const tokensActivos = await prisma.token_cuenta.findMany({
+        where: {
+          id_cue_per: idCuenta,
+          tip_tok: tipoToken,
+          est_tok: "ACTIVO",
+          tok_val: {
+            not: tokenExcluido,
+          },
+        },
+      });
+
+      // Si no hay tokens activos, retornar 0
+      if (tokensActivos.length === 0) {
+        return 0;
+      }
+
+      // Actualizar tokens activos a estado INVALIDADO
+      const resultado = await prisma.token_cuenta.updateMany({
+        where: {
+          id_cue_per: idCuenta,
+          tip_tok: tipoToken,
+          est_tok: "ACTIVO",
+          tok_val: {
+            not: tokenExcluido,
+          },
+        },
+        data: {
+          est_tok: "INVALIDADO",
+        },
+      });
+
+      // Registrar razón de invalidación para cada token
+      for (const token of tokensActivos) {
+        await prisma.invalidacion_token.create({
+          data: {
+            id_tok_per: token.id_tok,
+            raz_inv: razon,
+            des_inv: descripcion,
+            fec_inv: new Date(),
+          },
+        });
+      }
+
+      console.log(
+        `[${new Date().toISOString()}] TokenService: ${
+          resultado.count
+        } tokens invalidados por seguridad para cuenta ${idCuenta}`
+      );
+      return resultado.count;
+    } catch (error) {
+      console.error(
+        `[${new Date().toISOString()}] Error al invalidar otros tokens:`,
+        error
+      );
+      throw new Error("Error al invalidar otros tokens por seguridad");
+    }
+  }
+
+  /**
+   * Método auxiliar que verifica si un método existe en este servicio
+   * @param {string} methodName - Nombre del método a verificar
+   * @returns {boolean} - true si el método existe, false en caso contrario
+   */
+  hasMethod(methodName) {
+    return typeof this[methodName] === "function";
+  }
 }
 
 module.exports = TokenService;

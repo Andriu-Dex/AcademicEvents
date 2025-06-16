@@ -663,6 +663,144 @@ class EmailTemplateService {
   }
 
   /**
+   * Obtiene la plantilla para la confirmación de cambio de contraseña
+   * @param {Object} params - Parámetros de la plantilla
+   * @param {string} params.nombre - Nombre del usuario
+   * @param {string} params.fechaCambio - Fecha del cambio de contraseña
+   * @returns {Object} Asunto y cuerpo HTML del correo
+   */
+  obtenerPlantillaConfirmacionCambioContrasena({
+    nombre,
+    fechaCambio,
+    facultad = null,
+  }) {
+    const temaConfig = emailConfig.tema;
+    const plantillaConfig = emailConfig.plantillas.recuperacion;
+
+    const asunto = "Confirmación de cambio de contraseña - AcademicEvents UTA";
+    const cuerpoHtml = `
+      <!DOCTYPE html>
+      <html lang="es">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Cambio de Contraseña Exitoso</title>
+        <style>
+          body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+          }
+          
+          .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+          }
+          
+          .header {
+            background-color: ${plantillaConfig.colorPrimario || "#8a1538"};
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+          }
+          
+          .logo {
+            max-width: 150px;
+            height: auto;
+            margin-bottom: 10px;
+          }
+          
+          h1 {
+            font-size: 24px;
+            margin: 0;
+            padding: 0;
+          }
+          
+          .content {
+            padding: 20px;
+          }
+          
+          .divider {
+            border: none;
+            height: 1px;
+            background-color: #e0e0e0;
+            margin: 20px 0;
+          }
+          
+          .security-notice {
+            background-color: #f8f8f8;
+            border-left: 4px solid #ffcc00;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+          }
+          
+          .notice-title {
+            font-weight: bold;
+            margin-top: 0;
+            color: #555;
+          }
+          
+          .footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 12px;
+            color: #777;
+          }
+          
+          @media screen and (max-width: 480px) {
+            .header {
+              padding: 15px;
+            }
+            
+            h1 {
+              font-size: 20px;
+            }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>✅ Contraseña Actualizada</h1>
+          </div>
+          
+          <div class="content">
+            <p>Hola <strong>${nombre}</strong>,</p>
+            
+            <p>Te confirmamos que la contraseña de tu cuenta en <strong>AcademicEvents</strong> ha sido cambiada exitosamente el <strong>${fechaCambio}</strong>.</p>
+            
+            <hr class="divider">
+            
+            <div class="security-notice">
+              <p class="notice-title">⚠️ Importante:</p>
+              <p>Si tú no realizaste este cambio, por favor contacta inmediatamente con soporte técnico o intenta recuperar tu cuenta nuevamente.</p>
+            </div>
+            
+            <p>No es necesario que respondas a este correo. Este es un mensaje automático para confirmar que tu contraseña ha sido cambiada correctamente.</p>
+          </div>
+          
+          <div class="footer">
+            <p>© ${new Date().getFullYear()} AcademicEvents - Universidad Técnica de Ambato</p>
+            <p>Este correo fue enviado a solicitud del usuario. Por favor no responder a este mensaje.</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    return { asunto, cuerpoHtml };
+  }
+
+  /**
    * Envía un correo electrónico
    * @param {Object} options - Opciones para el envío
    * @param {string} options.destinatario - Correo del destinatario
