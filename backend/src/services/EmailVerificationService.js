@@ -57,44 +57,161 @@ class EmailVerificationService {
       throw new Error("Error al enviar el correo de verificación");
     }
   }
-
   /**
    * Verifica un token de confirmación de correo electrónico
    * @param {string} tokenValue - Valor del token a verificar
    * @param {string} ip - Dirección IP desde donde se realiza la verificación
    * @returns {Promise<Object>} Resultado de la verificación
-   */
-  async verificarToken(tokenValue, ip) {
+   */ async verificarToken(tokenValue, ip) {
     try {
+      console.log(
+        `[${new Date().toISOString()}] Iniciando verificación de token: ${tokenValue} desde IP: ${ip}`
+      );
+
       // Validar token
       const resultadoValidacion = await this.tokenService.validarToken({
         tokenValue,
         tipoToken: "VERIFICAR_CORREO",
         ip,
       });
+      console.log(
+        `[${new Date().toISOString()}] Resultado validación token ${tokenValue}:`,
+        {
+          valido: resultadoValidacion.valido,
+          mensaje: resultadoValidacion.mensaje,
+          motivo: resultadoValidacion.motivo || "N/A",
+          estadoToken: resultadoValidacion.token?.est_tok || "N/A",
+          cuentaVerificada: resultadoValidacion.cuentaVerificada || false,
+        }
+      );
 
       if (!resultadoValidacion.valido) {
+        // Caso especial: token usado pero cuenta ya verificada
+        if (
+          resultadoValidacion.motivo === "USO_NORMAL" &&
+          resultadoValidacion.cuentaVerificada
+        ) {
+          console.log(
+            `[${new Date().toISOString()}] Token ${tokenValue} ya usado pero cuenta ya verificada, retornando éxito`
+          );
+          return {
+            success: true,
+            message: "¡Correo verificado exitosamente!",
+            idCuenta: resultadoValidacion.token.id_cue_per,
+          };
+        }
+
+        console.log(
+          `[${new Date().toISOString()}] Token inválido ${tokenValue}. Motivo: ${
+            resultadoValidacion.motivo || "ERROR_GENERICO"
+          }`
+        );
         return {
           success: false,
           message: resultadoValidacion.mensaje,
+          motivo: resultadoValidacion.motivo || "ERROR_GENERICO",
+          token: resultadoValidacion.token, // Pasar información del token
         };
       }
 
-      // Marcar token como usado
-      await this.tokenService.marcarTokenComoUsado(tokenValue, ip);
-
-      // Actualizar estado de verificación en la cuenta
-      await this.tokenService.actualizarEstadoVerificacion(
-        resultadoValidacion.token.id_cue_per
+      console.log(
+        `[${new Date().toISOString()}] Iniciando transacción para token ${tokenValue}`
       );
+      // Usar transacción para asegurar atomicidad
+      const resultado = await prisma.$transaction(async (tx) => {
+        // Verificar nuevamente que el token esté activo dentro de la transacción
+        const tokenActual = await tx.token_cuenta.findUnique({
+          where: { tok_val: tokenValue },
+        });
 
+        console.log(
+          `[${new Date().toISOString()}] Estado del token ${tokenValue} dentro de la transacción:`,
+          {
+            existe: !!tokenActual,
+            estado: tokenActual?.est_tok,
+          }
+        );
+
+        if (!tokenActual || tokenActual.est_tok !== "ACTIVO") {
+          console.log(
+            `[${new Date().toISOString()}] Token ${tokenValue} ya no válido durante la transacción. Estado: ${
+              tokenActual?.est_tok || "NO_EXISTE"
+            }`
+          );
+          throw new Error("Token ya no válido durante la transacción");
+        }
+        console.log(
+          `[${new Date().toISOString()}] Marcando token ${tokenValue} como usado`
+        );
+        // Marcar token como usado
+        await tx.token_cuenta.update({
+          where: { tok_val: tokenValue },
+          data: { est_tok: "USADO" },
+        });
+
+        console.log(
+          `[${new Date().toISOString()}] Registrando uso del token ${tokenValue}`
+        );
+        // Registrar el uso del token
+        await tx.uso_token.create({
+          data: {
+            id_tok_per: tokenActual.id_tok,
+            fec_uso: new Date(),
+            ip_uso: ip || "0.0.0.0",
+            exi_uso: true,
+          },
+        });
+
+        console.log(
+          `[${new Date().toISOString()}] Actualizando estado de verificación para la cuenta ${
+            resultadoValidacion.token.id_cue_per
+          }`
+        );
+        // Actualizar estado de verificación en la cuenta
+        const cuentaActualizada = await tx.cuenta.update({
+          where: { id_cue: resultadoValidacion.token.id_cue_per },
+          data: {
+            est_ver_cor: true,
+            fec_ver_cor: new Date(),
+          },
+        });
+
+        console.log(
+          `[${new Date().toISOString()}] Verificación completada con éxito para token ${tokenValue}, cuenta ${
+            resultadoValidacion.token.id_cue_per
+          }`
+        );
+        return cuentaActualizada;
+      });
+      console.log(
+        `[${new Date().toISOString()}] Retornando respuesta exitosa para token ${tokenValue}`
+      );
       return {
         success: true,
         message: "¡Correo verificado exitosamente!",
         idCuenta: resultadoValidacion.token.id_cue_per,
       };
     } catch (error) {
-      console.error("Error al verificar token:", error);
+      console.error(
+        `[${new Date().toISOString()}] Error al verificar token ${tokenValue}:`,
+        error
+      );
+
+      // Si el error es porque el token ya no es válido, devolver mensaje específico
+      if (error.message === "Token ya no válido durante la transacción") {
+        console.log(
+          `[${new Date().toISOString()}] Token ${tokenValue} rechazado por estar ya usado dentro de la transacción`
+        );
+        return {
+          success: false,
+          message: "Este enlace ya ha sido utilizado.",
+          motivo: "USO_NORMAL",
+        };
+      }
+
+      console.log(
+        `[${new Date().toISOString()}] Error general en verificación de token ${tokenValue}`
+      );
       throw new Error("Error al verificar el correo electrónico");
     }
   }

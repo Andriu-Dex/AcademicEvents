@@ -1,35 +1,73 @@
-import React, { useState } from "react";
+import React from "react";
 import { Send, Loader2 } from "lucide-react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import "../verification/styles/verification-styles.css";
 
 /**
- * Componente para reenviar la verificación de correo
- * @param {Object} props - Propiedades del componente
- * @param {string} props.defaultEmail - Correo electrónico predeterminado (opcional)
- * @param {Function} props.onSuccess - Función a ejecutar cuando el reenvío es exitoso
- * @returns {JSX.Element} Componente JSX
+ * @class ResendVerificationComponent
+ * @description Componente para reenviar la verificación de correo
  */
-const ResendVerification = ({ defaultEmail = "", onSuccess }) => {
-  const [email, setEmail] = useState(defaultEmail);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+class ResendVerificationComponent extends React.Component {
+  /**
+   * Constructor del componente
+   * @param {Object} props - Propiedades del componente
+   */
+  constructor(props) {
+    super(props);
 
-  const handleSubmit = async (e) => {
+    this.state = {
+      email: props.defaultEmail || "",
+      loading: false,
+      error: "",
+    };
+
+    // Bindings
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleEmailChange = this.handleEmailChange.bind(this);
+  }
+
+  /**
+   * Valida un email
+   * @param {string} email - Email a validar
+   * @returns {boolean} True si es válido
+   */
+  isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  /**
+   * Maneja el cambio en el campo de email
+   * @param {Event} e - Evento de cambio
+   */
+  handleEmailChange(e) {
+    this.setState({ email: e.target.value });
+  }
+
+  /**
+   * Maneja el envío del formulario
+   * @param {Event} e - Evento del formulario
+   */
+  async handleSubmit(e) {
     e.preventDefault();
+    const { email } = this.state;
 
     if (!email) {
-      setError("Por favor, ingresa tu correo electrónico");
+      this.setState({ error: "Por favor, ingrese su correo electrónico" });
       return;
     }
 
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError("Por favor, ingresa un correo electrónico válido");
+    if (!this.isValidEmail(email)) {
+      this.setState({
+        error: "Por favor, ingrese un correo electrónico válido",
+      });
       return;
     }
 
-    setLoading(true);
-    setError("");
+    this.setState({
+      loading: true,
+      error: "",
+    });
 
     try {
       const response = await axios.post(
@@ -41,88 +79,114 @@ const ResendVerification = ({ defaultEmail = "", onSuccess }) => {
 
       if (response.data.success) {
         toast.success(
-          "Correo de verificación reenviado. Por favor, revisa tu bandeja de entrada."
+          "Correo de verificación reenviado. Por favor, revise su bandeja de entrada."
         );
-        if (onSuccess) {
-          onSuccess(email);
+        if (this.props.onSuccess) {
+          this.props.onSuccess(email);
         }
       } else {
-        setError(
-          response.data.message || "Error al reenviar el correo de verificación"
-        );
+        this.setState({
+          error:
+            response.data.message ||
+            "Error al reenviar el correo de verificación",
+        });
       }
     } catch (error) {
       if (error.response?.data?.message) {
-        setError(error.response.data.message);
+        this.setState({ error: error.response.data.message });
 
         // Si hay un tiempo de espera debido al rate limiting
         if (error.response.data.tiempoRestante) {
           toast.warning(
-            `Intenta nuevamente en ${error.response.data.tiempoRestante} minutos`
+            `Intente nuevamente en ${error.response.data.tiempoRestante} minutos`
           );
         }
       } else {
-        setError(
-          "Error al comunicarse con el servidor. Intenta nuevamente más tarde."
-        );
+        this.setState({
+          error:
+            "Error al comunicarse con el servidor. Intente nuevamente más tarde.",
+        });
       }
     } finally {
-      setLoading(false);
+      this.setState({ loading: false });
     }
-  };
+  }
 
-  return (
-    <div className="contenedor-reenvio-rv bg-white p-6 rounded-lg shadow-md max-w-md mx-auto">
-      <h3 className="titulo-reenvio-rv text-xl font-semibold text-gray-800 mb-4">
-        Reenviar verificación de correo
-      </h3>
+  /**
+   * Render del componente
+   * @returns {JSX.Element} Componente JSX
+   */
+  render() {
+    const { email, loading, error } = this.state;
 
-      {error && (
-        <div className="error-reenvio-rv bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-          {error}
-        </div>
-      )}
-
-      <form onSubmit={handleSubmit} className="formulario-reenvio-rv">
-        <div className="mb-4">
-          <label
-            htmlFor="email"
-            className="etiqueta-email-rv block text-gray-700 mb-2"
-          >
-            Correo electrónico
-          </label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="tu@correo.com"
-            className="campo-email-rv w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            disabled={loading}
-          />
+    return (
+      <div className="container-vs" style={{ maxWidth: "480px" }}>
+        <div className="header-vs">
+          <h3 className="subtitle-vs">Reenviar Verificación de Correo</h3>
         </div>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="boton-enviar-rv w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition duration-300 flex items-center justify-center"
-        >
-          {" "}
-          {loading ? (
-            <>
-              <Loader2 className="animate-spin mr-2" size={16} />
-              Enviando...
-            </>
-          ) : (
-            <>
-              <Send className="mr-2" size={16} />
-              Reenviar verificación
-            </>
+        <div className="content-vs">
+          {error && (
+            <div className="error-message-vs" style={{ margin: "15px 0" }}>
+              {error}
+            </div>
           )}
-        </button>
-      </form>
-    </div>
-  );
-};
 
-export default ResendVerification;
+          <form onSubmit={this.handleSubmit} style={{ width: "100%" }}>
+            <div style={{ marginBottom: "20px" }}>
+              <label
+                htmlFor="email"
+                style={{
+                  display: "block",
+                  marginBottom: "8px",
+                  fontWeight: "500",
+                  color: "#333",
+                }}
+              >
+                Correo electrónico
+              </label>
+              <input
+                type="email"
+                id="email"
+                value={email}
+                onChange={this.handleEmailChange}
+                placeholder="su@correo.com"
+                style={{
+                  width: "100%",
+                  padding: "10px",
+                  border: "1px solid #d1d5db",
+                  borderRadius: "4px",
+                  fontSize: "16px",
+                }}
+                disabled={loading}
+              />
+            </div>
+
+            <div className="actions-vs">
+              <button
+                type="submit"
+                disabled={loading}
+                className="button-vs"
+                style={{ width: "100%" }}
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="spinner-vs" size={16} />
+                    Enviando...
+                  </>
+                ) : (
+                  <>
+                    <Send style={{ marginRight: "8px" }} size={16} />
+                    Reenviar verificación
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    );
+  }
+}
+
+export default ResendVerificationComponent;

@@ -88,6 +88,21 @@ export type facultad = $Result.DefaultSelection<Prisma.$facultadPayload>
  * 
  */
 export type token_cuenta = $Result.DefaultSelection<Prisma.$token_cuentaPayload>
+/**
+ * Model invalidacion_token
+ * 
+ */
+export type invalidacion_token = $Result.DefaultSelection<Prisma.$invalidacion_tokenPayload>
+/**
+ * Model uso_token
+ * 
+ */
+export type uso_token = $Result.DefaultSelection<Prisma.$uso_tokenPayload>
+/**
+ * Model metadata_token
+ * 
+ */
+export type metadata_token = $Result.DefaultSelection<Prisma.$metadata_tokenPayload>
 
 /**
  * Enums
@@ -174,6 +189,41 @@ export const tipo_token: {
 
 export type tipo_token = (typeof tipo_token)[keyof typeof tipo_token]
 
+
+export const estado_token: {
+  ACTIVO: 'ACTIVO',
+  USADO: 'USADO',
+  EXPIRADO: 'EXPIRADO',
+  INVALIDADO: 'INVALIDADO',
+  REEMPLAZADO: 'REEMPLAZADO'
+};
+
+export type estado_token = (typeof estado_token)[keyof typeof estado_token]
+
+
+export const razon_invalidacion: {
+  CORREO_INCORRECTO: 'CORREO_INCORRECTO',
+  SOLICITUD_USUARIO: 'SOLICITUD_USUARIO',
+  SEGURIDAD: 'SEGURIDAD',
+  ADMIN_MANUAL: 'ADMIN_MANUAL',
+  REEMPLAZO: 'REEMPLAZO',
+  ERROR_SISTEMA: 'ERROR_SISTEMA'
+};
+
+export type razon_invalidacion = (typeof razon_invalidacion)[keyof typeof razon_invalidacion]
+
+
+export const clave_metadata: {
+  CORREO_ORIGINAL: 'CORREO_ORIGINAL',
+  CORREO_NUEVO: 'CORREO_NUEVO',
+  INTENTOS_FALLIDOS: 'INTENTOS_FALLIDOS',
+  DISPOSITIVO: 'DISPOSITIVO',
+  NAVEGADOR: 'NAVEGADOR',
+  REFERENCIA_SOPORTE: 'REFERENCIA_SOPORTE'
+};
+
+export type clave_metadata = (typeof clave_metadata)[keyof typeof clave_metadata]
+
 }
 
 export type rol_usuario = $Enums.rol_usuario
@@ -207,6 +257,18 @@ export const modalidad_evento: typeof $Enums.modalidad_evento
 export type tipo_token = $Enums.tipo_token
 
 export const tipo_token: typeof $Enums.tipo_token
+
+export type estado_token = $Enums.estado_token
+
+export const estado_token: typeof $Enums.estado_token
+
+export type razon_invalidacion = $Enums.razon_invalidacion
+
+export const razon_invalidacion: typeof $Enums.razon_invalidacion
+
+export type clave_metadata = $Enums.clave_metadata
+
+export const clave_metadata: typeof $Enums.clave_metadata
 
 /**
  * ##  Prisma Client ʲˢ
@@ -482,6 +544,36 @@ export class PrismaClient<
     * ```
     */
   get token_cuenta(): Prisma.token_cuentaDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.invalidacion_token`: Exposes CRUD operations for the **invalidacion_token** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Invalidacion_tokens
+    * const invalidacion_tokens = await prisma.invalidacion_token.findMany()
+    * ```
+    */
+  get invalidacion_token(): Prisma.invalidacion_tokenDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.uso_token`: Exposes CRUD operations for the **uso_token** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Uso_tokens
+    * const uso_tokens = await prisma.uso_token.findMany()
+    * ```
+    */
+  get uso_token(): Prisma.uso_tokenDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.metadata_token`: Exposes CRUD operations for the **metadata_token** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Metadata_tokens
+    * const metadata_tokens = await prisma.metadata_token.findMany()
+    * ```
+    */
+  get metadata_token(): Prisma.metadata_tokenDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -936,7 +1028,10 @@ export namespace Prisma {
     inscripcion_curso: 'inscripcion_curso',
     certificado: 'certificado',
     facultad: 'facultad',
-    token_cuenta: 'token_cuenta'
+    token_cuenta: 'token_cuenta',
+    invalidacion_token: 'invalidacion_token',
+    uso_token: 'uso_token',
+    metadata_token: 'metadata_token'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -955,7 +1050,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "usuario" | "comprobante_pago" | "carta_motivacion" | "observacion_inscripcion" | "cuenta" | "carrera" | "coordinador" | "evento" | "evento_curso" | "evento_carrera" | "inscripcion" | "inscripcion_curso" | "certificado" | "facultad" | "token_cuenta"
+      modelProps: "usuario" | "comprobante_pago" | "carta_motivacion" | "observacion_inscripcion" | "cuenta" | "carrera" | "coordinador" | "evento" | "evento_curso" | "evento_carrera" | "inscripcion" | "inscripcion_curso" | "certificado" | "facultad" | "token_cuenta" | "invalidacion_token" | "uso_token" | "metadata_token"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2069,6 +2164,228 @@ export namespace Prisma {
           }
         }
       }
+      invalidacion_token: {
+        payload: Prisma.$invalidacion_tokenPayload<ExtArgs>
+        fields: Prisma.invalidacion_tokenFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.invalidacion_tokenFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$invalidacion_tokenPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.invalidacion_tokenFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$invalidacion_tokenPayload>
+          }
+          findFirst: {
+            args: Prisma.invalidacion_tokenFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$invalidacion_tokenPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.invalidacion_tokenFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$invalidacion_tokenPayload>
+          }
+          findMany: {
+            args: Prisma.invalidacion_tokenFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$invalidacion_tokenPayload>[]
+          }
+          create: {
+            args: Prisma.invalidacion_tokenCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$invalidacion_tokenPayload>
+          }
+          createMany: {
+            args: Prisma.invalidacion_tokenCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.invalidacion_tokenCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$invalidacion_tokenPayload>[]
+          }
+          delete: {
+            args: Prisma.invalidacion_tokenDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$invalidacion_tokenPayload>
+          }
+          update: {
+            args: Prisma.invalidacion_tokenUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$invalidacion_tokenPayload>
+          }
+          deleteMany: {
+            args: Prisma.invalidacion_tokenDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.invalidacion_tokenUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.invalidacion_tokenUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$invalidacion_tokenPayload>[]
+          }
+          upsert: {
+            args: Prisma.invalidacion_tokenUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$invalidacion_tokenPayload>
+          }
+          aggregate: {
+            args: Prisma.Invalidacion_tokenAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateInvalidacion_token>
+          }
+          groupBy: {
+            args: Prisma.invalidacion_tokenGroupByArgs<ExtArgs>
+            result: $Utils.Optional<Invalidacion_tokenGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.invalidacion_tokenCountArgs<ExtArgs>
+            result: $Utils.Optional<Invalidacion_tokenCountAggregateOutputType> | number
+          }
+        }
+      }
+      uso_token: {
+        payload: Prisma.$uso_tokenPayload<ExtArgs>
+        fields: Prisma.uso_tokenFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.uso_tokenFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$uso_tokenPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.uso_tokenFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$uso_tokenPayload>
+          }
+          findFirst: {
+            args: Prisma.uso_tokenFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$uso_tokenPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.uso_tokenFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$uso_tokenPayload>
+          }
+          findMany: {
+            args: Prisma.uso_tokenFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$uso_tokenPayload>[]
+          }
+          create: {
+            args: Prisma.uso_tokenCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$uso_tokenPayload>
+          }
+          createMany: {
+            args: Prisma.uso_tokenCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.uso_tokenCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$uso_tokenPayload>[]
+          }
+          delete: {
+            args: Prisma.uso_tokenDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$uso_tokenPayload>
+          }
+          update: {
+            args: Prisma.uso_tokenUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$uso_tokenPayload>
+          }
+          deleteMany: {
+            args: Prisma.uso_tokenDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.uso_tokenUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.uso_tokenUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$uso_tokenPayload>[]
+          }
+          upsert: {
+            args: Prisma.uso_tokenUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$uso_tokenPayload>
+          }
+          aggregate: {
+            args: Prisma.Uso_tokenAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateUso_token>
+          }
+          groupBy: {
+            args: Prisma.uso_tokenGroupByArgs<ExtArgs>
+            result: $Utils.Optional<Uso_tokenGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.uso_tokenCountArgs<ExtArgs>
+            result: $Utils.Optional<Uso_tokenCountAggregateOutputType> | number
+          }
+        }
+      }
+      metadata_token: {
+        payload: Prisma.$metadata_tokenPayload<ExtArgs>
+        fields: Prisma.metadata_tokenFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.metadata_tokenFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$metadata_tokenPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.metadata_tokenFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$metadata_tokenPayload>
+          }
+          findFirst: {
+            args: Prisma.metadata_tokenFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$metadata_tokenPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.metadata_tokenFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$metadata_tokenPayload>
+          }
+          findMany: {
+            args: Prisma.metadata_tokenFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$metadata_tokenPayload>[]
+          }
+          create: {
+            args: Prisma.metadata_tokenCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$metadata_tokenPayload>
+          }
+          createMany: {
+            args: Prisma.metadata_tokenCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.metadata_tokenCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$metadata_tokenPayload>[]
+          }
+          delete: {
+            args: Prisma.metadata_tokenDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$metadata_tokenPayload>
+          }
+          update: {
+            args: Prisma.metadata_tokenUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$metadata_tokenPayload>
+          }
+          deleteMany: {
+            args: Prisma.metadata_tokenDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.metadata_tokenUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.metadata_tokenUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$metadata_tokenPayload>[]
+          }
+          upsert: {
+            args: Prisma.metadata_tokenUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$metadata_tokenPayload>
+          }
+          aggregate: {
+            args: Prisma.Metadata_tokenAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateMetadata_token>
+          }
+          groupBy: {
+            args: Prisma.metadata_tokenGroupByArgs<ExtArgs>
+            result: $Utils.Optional<Metadata_tokenGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.metadata_tokenCountArgs<ExtArgs>
+            result: $Utils.Optional<Metadata_tokenCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -2168,6 +2485,9 @@ export namespace Prisma {
     certificado?: certificadoOmit
     facultad?: facultadOmit
     token_cuenta?: token_cuentaOmit
+    invalidacion_token?: invalidacion_tokenOmit
+    uso_token?: uso_tokenOmit
+    metadata_token?: metadata_tokenOmit
   }
 
   /* Types for Logging */
@@ -2300,6 +2620,7 @@ export namespace Prisma {
     observaciones_creadas: number
     inscripciones_validadas: number
     tokens_cuenta: number
+    tokens_invalidados: number
   }
 
   export type CuentaCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2310,6 +2631,7 @@ export namespace Prisma {
     observaciones_creadas?: boolean | CuentaCountOutputTypeCountObservaciones_creadasArgs
     inscripciones_validadas?: boolean | CuentaCountOutputTypeCountInscripciones_validadasArgs
     tokens_cuenta?: boolean | CuentaCountOutputTypeCountTokens_cuentaArgs
+    tokens_invalidados?: boolean | CuentaCountOutputTypeCountTokens_invalidadosArgs
   }
 
   // Custom InputTypes
@@ -2370,6 +2692,13 @@ export namespace Prisma {
    */
   export type CuentaCountOutputTypeCountTokens_cuentaArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: token_cuentaWhereInput
+  }
+
+  /**
+   * CuentaCountOutputType without action
+   */
+  export type CuentaCountOutputTypeCountTokens_invalidadosArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: invalidacion_tokenWhereInput
   }
 
 
@@ -2552,6 +2881,46 @@ export namespace Prisma {
    */
   export type FacultadCountOutputTypeCountCarrerasArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: carreraWhereInput
+  }
+
+
+  /**
+   * Count Type Token_cuentaCountOutputType
+   */
+
+  export type Token_cuentaCountOutputType = {
+    metadata: number
+    tokens_que_reemplaza: number
+  }
+
+  export type Token_cuentaCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    metadata?: boolean | Token_cuentaCountOutputTypeCountMetadataArgs
+    tokens_que_reemplaza?: boolean | Token_cuentaCountOutputTypeCountTokens_que_reemplazaArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * Token_cuentaCountOutputType without action
+   */
+  export type Token_cuentaCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Token_cuentaCountOutputType
+     */
+    select?: Token_cuentaCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * Token_cuentaCountOutputType without action
+   */
+  export type Token_cuentaCountOutputTypeCountMetadataArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: metadata_tokenWhereInput
+  }
+
+  /**
+   * Token_cuentaCountOutputType without action
+   */
+  export type Token_cuentaCountOutputTypeCountTokens_que_reemplazaArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: token_cuentaWhereInput
   }
 
 
@@ -7234,6 +7603,7 @@ export namespace Prisma {
     observaciones_creadas?: boolean | cuenta$observaciones_creadasArgs<ExtArgs>
     inscripciones_validadas?: boolean | cuenta$inscripciones_validadasArgs<ExtArgs>
     tokens_cuenta?: boolean | cuenta$tokens_cuentaArgs<ExtArgs>
+    tokens_invalidados?: boolean | cuenta$tokens_invalidadosArgs<ExtArgs>
     _count?: boolean | CuentaCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["cuenta"]>
 
@@ -7282,6 +7652,7 @@ export namespace Prisma {
     observaciones_creadas?: boolean | cuenta$observaciones_creadasArgs<ExtArgs>
     inscripciones_validadas?: boolean | cuenta$inscripciones_validadasArgs<ExtArgs>
     tokens_cuenta?: boolean | cuenta$tokens_cuentaArgs<ExtArgs>
+    tokens_invalidados?: boolean | cuenta$tokens_invalidadosArgs<ExtArgs>
     _count?: boolean | CuentaCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type cuentaIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -7302,6 +7673,7 @@ export namespace Prisma {
       observaciones_creadas: Prisma.$observacion_inscripcionPayload<ExtArgs>[]
       inscripciones_validadas: Prisma.$inscripcionPayload<ExtArgs>[]
       tokens_cuenta: Prisma.$token_cuentaPayload<ExtArgs>[]
+      tokens_invalidados: Prisma.$invalidacion_tokenPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id_cue: string
@@ -7714,6 +8086,7 @@ export namespace Prisma {
     observaciones_creadas<T extends cuenta$observaciones_creadasArgs<ExtArgs> = {}>(args?: Subset<T, cuenta$observaciones_creadasArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$observacion_inscripcionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     inscripciones_validadas<T extends cuenta$inscripciones_validadasArgs<ExtArgs> = {}>(args?: Subset<T, cuenta$inscripciones_validadasArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$inscripcionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     tokens_cuenta<T extends cuenta$tokens_cuentaArgs<ExtArgs> = {}>(args?: Subset<T, cuenta$tokens_cuentaArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$token_cuentaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    tokens_invalidados<T extends cuenta$tokens_invalidadosArgs<ExtArgs> = {}>(args?: Subset<T, cuenta$tokens_invalidadosArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$invalidacion_tokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -8312,6 +8685,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: Token_cuentaScalarFieldEnum | Token_cuentaScalarFieldEnum[]
+  }
+
+  /**
+   * cuenta.tokens_invalidados
+   */
+  export type cuenta$tokens_invalidadosArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the invalidacion_token
+     */
+    select?: invalidacion_tokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the invalidacion_token
+     */
+    omit?: invalidacion_tokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: invalidacion_tokenInclude<ExtArgs> | null
+    where?: invalidacion_tokenWhereInput
+    orderBy?: invalidacion_tokenOrderByWithRelationInput | invalidacion_tokenOrderByWithRelationInput[]
+    cursor?: invalidacion_tokenWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Invalidacion_tokenScalarFieldEnum | Invalidacion_tokenScalarFieldEnum[]
   }
 
   /**
@@ -18781,11 +19178,10 @@ export namespace Prisma {
     tok_val: string | null
     tip_tok: $Enums.tipo_token | null
     fec_exp_tok: Date | null
-    est_uso: boolean | null
-    fec_uso: Date | null
+    est_tok: $Enums.estado_token | null
     fec_cre_tok: Date | null
     ip_sol: string | null
-    ip_uso: string | null
+    id_tok_ree: string | null
   }
 
   export type Token_cuentaMaxAggregateOutputType = {
@@ -18794,11 +19190,10 @@ export namespace Prisma {
     tok_val: string | null
     tip_tok: $Enums.tipo_token | null
     fec_exp_tok: Date | null
-    est_uso: boolean | null
-    fec_uso: Date | null
+    est_tok: $Enums.estado_token | null
     fec_cre_tok: Date | null
     ip_sol: string | null
-    ip_uso: string | null
+    id_tok_ree: string | null
   }
 
   export type Token_cuentaCountAggregateOutputType = {
@@ -18807,11 +19202,10 @@ export namespace Prisma {
     tok_val: number
     tip_tok: number
     fec_exp_tok: number
-    est_uso: number
-    fec_uso: number
+    est_tok: number
     fec_cre_tok: number
     ip_sol: number
-    ip_uso: number
+    id_tok_ree: number
     _all: number
   }
 
@@ -18822,11 +19216,10 @@ export namespace Prisma {
     tok_val?: true
     tip_tok?: true
     fec_exp_tok?: true
-    est_uso?: true
-    fec_uso?: true
+    est_tok?: true
     fec_cre_tok?: true
     ip_sol?: true
-    ip_uso?: true
+    id_tok_ree?: true
   }
 
   export type Token_cuentaMaxAggregateInputType = {
@@ -18835,11 +19228,10 @@ export namespace Prisma {
     tok_val?: true
     tip_tok?: true
     fec_exp_tok?: true
-    est_uso?: true
-    fec_uso?: true
+    est_tok?: true
     fec_cre_tok?: true
     ip_sol?: true
-    ip_uso?: true
+    id_tok_ree?: true
   }
 
   export type Token_cuentaCountAggregateInputType = {
@@ -18848,11 +19240,10 @@ export namespace Prisma {
     tok_val?: true
     tip_tok?: true
     fec_exp_tok?: true
-    est_uso?: true
-    fec_uso?: true
+    est_tok?: true
     fec_cre_tok?: true
     ip_sol?: true
-    ip_uso?: true
+    id_tok_ree?: true
     _all?: true
   }
 
@@ -18934,11 +19325,10 @@ export namespace Prisma {
     tok_val: string
     tip_tok: $Enums.tipo_token
     fec_exp_tok: Date
-    est_uso: boolean
-    fec_uso: Date | null
+    est_tok: $Enums.estado_token
     fec_cre_tok: Date
     ip_sol: string | null
-    ip_uso: string | null
+    id_tok_ree: string | null
     _count: Token_cuentaCountAggregateOutputType | null
     _min: Token_cuentaMinAggregateOutputType | null
     _max: Token_cuentaMaxAggregateOutputType | null
@@ -18964,12 +19354,17 @@ export namespace Prisma {
     tok_val?: boolean
     tip_tok?: boolean
     fec_exp_tok?: boolean
-    est_uso?: boolean
-    fec_uso?: boolean
+    est_tok?: boolean
     fec_cre_tok?: boolean
     ip_sol?: boolean
-    ip_uso?: boolean
+    id_tok_ree?: boolean
     cuenta?: boolean | cuentaDefaultArgs<ExtArgs>
+    invalidacion?: boolean | token_cuenta$invalidacionArgs<ExtArgs>
+    uso_token?: boolean | token_cuenta$uso_tokenArgs<ExtArgs>
+    metadata?: boolean | token_cuenta$metadataArgs<ExtArgs>
+    token_reemplazado?: boolean | token_cuenta$token_reemplazadoArgs<ExtArgs>
+    tokens_que_reemplaza?: boolean | token_cuenta$tokens_que_reemplazaArgs<ExtArgs>
+    _count?: boolean | Token_cuentaCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["token_cuenta"]>
 
   export type token_cuentaSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -18978,12 +19373,12 @@ export namespace Prisma {
     tok_val?: boolean
     tip_tok?: boolean
     fec_exp_tok?: boolean
-    est_uso?: boolean
-    fec_uso?: boolean
+    est_tok?: boolean
     fec_cre_tok?: boolean
     ip_sol?: boolean
-    ip_uso?: boolean
+    id_tok_ree?: boolean
     cuenta?: boolean | cuentaDefaultArgs<ExtArgs>
+    token_reemplazado?: boolean | token_cuenta$token_reemplazadoArgs<ExtArgs>
   }, ExtArgs["result"]["token_cuenta"]>
 
   export type token_cuentaSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -18992,12 +19387,12 @@ export namespace Prisma {
     tok_val?: boolean
     tip_tok?: boolean
     fec_exp_tok?: boolean
-    est_uso?: boolean
-    fec_uso?: boolean
+    est_tok?: boolean
     fec_cre_tok?: boolean
     ip_sol?: boolean
-    ip_uso?: boolean
+    id_tok_ree?: boolean
     cuenta?: boolean | cuentaDefaultArgs<ExtArgs>
+    token_reemplazado?: boolean | token_cuenta$token_reemplazadoArgs<ExtArgs>
   }, ExtArgs["result"]["token_cuenta"]>
 
   export type token_cuentaSelectScalar = {
@@ -19006,28 +19401,40 @@ export namespace Prisma {
     tok_val?: boolean
     tip_tok?: boolean
     fec_exp_tok?: boolean
-    est_uso?: boolean
-    fec_uso?: boolean
+    est_tok?: boolean
     fec_cre_tok?: boolean
     ip_sol?: boolean
-    ip_uso?: boolean
+    id_tok_ree?: boolean
   }
 
-  export type token_cuentaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_tok" | "id_cue_per" | "tok_val" | "tip_tok" | "fec_exp_tok" | "est_uso" | "fec_uso" | "fec_cre_tok" | "ip_sol" | "ip_uso", ExtArgs["result"]["token_cuenta"]>
+  export type token_cuentaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_tok" | "id_cue_per" | "tok_val" | "tip_tok" | "fec_exp_tok" | "est_tok" | "fec_cre_tok" | "ip_sol" | "id_tok_ree", ExtArgs["result"]["token_cuenta"]>
   export type token_cuentaInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     cuenta?: boolean | cuentaDefaultArgs<ExtArgs>
+    invalidacion?: boolean | token_cuenta$invalidacionArgs<ExtArgs>
+    uso_token?: boolean | token_cuenta$uso_tokenArgs<ExtArgs>
+    metadata?: boolean | token_cuenta$metadataArgs<ExtArgs>
+    token_reemplazado?: boolean | token_cuenta$token_reemplazadoArgs<ExtArgs>
+    tokens_que_reemplaza?: boolean | token_cuenta$tokens_que_reemplazaArgs<ExtArgs>
+    _count?: boolean | Token_cuentaCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type token_cuentaIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     cuenta?: boolean | cuentaDefaultArgs<ExtArgs>
+    token_reemplazado?: boolean | token_cuenta$token_reemplazadoArgs<ExtArgs>
   }
   export type token_cuentaIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     cuenta?: boolean | cuentaDefaultArgs<ExtArgs>
+    token_reemplazado?: boolean | token_cuenta$token_reemplazadoArgs<ExtArgs>
   }
 
   export type $token_cuentaPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "token_cuenta"
     objects: {
       cuenta: Prisma.$cuentaPayload<ExtArgs>
+      invalidacion: Prisma.$invalidacion_tokenPayload<ExtArgs> | null
+      uso_token: Prisma.$uso_tokenPayload<ExtArgs> | null
+      metadata: Prisma.$metadata_tokenPayload<ExtArgs>[]
+      token_reemplazado: Prisma.$token_cuentaPayload<ExtArgs> | null
+      tokens_que_reemplaza: Prisma.$token_cuentaPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id_tok: string
@@ -19035,11 +19442,10 @@ export namespace Prisma {
       tok_val: string
       tip_tok: $Enums.tipo_token
       fec_exp_tok: Date
-      est_uso: boolean
-      fec_uso: Date | null
+      est_tok: $Enums.estado_token
       fec_cre_tok: Date
       ip_sol: string | null
-      ip_uso: string | null
+      id_tok_ree: string | null
     }, ExtArgs["result"]["token_cuenta"]>
     composites: {}
   }
@@ -19435,6 +19841,11 @@ export namespace Prisma {
   export interface Prisma__token_cuentaClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     cuenta<T extends cuentaDefaultArgs<ExtArgs> = {}>(args?: Subset<T, cuentaDefaultArgs<ExtArgs>>): Prisma__cuentaClient<$Result.GetResult<Prisma.$cuentaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    invalidacion<T extends token_cuenta$invalidacionArgs<ExtArgs> = {}>(args?: Subset<T, token_cuenta$invalidacionArgs<ExtArgs>>): Prisma__invalidacion_tokenClient<$Result.GetResult<Prisma.$invalidacion_tokenPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    uso_token<T extends token_cuenta$uso_tokenArgs<ExtArgs> = {}>(args?: Subset<T, token_cuenta$uso_tokenArgs<ExtArgs>>): Prisma__uso_tokenClient<$Result.GetResult<Prisma.$uso_tokenPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    metadata<T extends token_cuenta$metadataArgs<ExtArgs> = {}>(args?: Subset<T, token_cuenta$metadataArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$metadata_tokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    token_reemplazado<T extends token_cuenta$token_reemplazadoArgs<ExtArgs> = {}>(args?: Subset<T, token_cuenta$token_reemplazadoArgs<ExtArgs>>): Prisma__token_cuentaClient<$Result.GetResult<Prisma.$token_cuentaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    tokens_que_reemplaza<T extends token_cuenta$tokens_que_reemplazaArgs<ExtArgs> = {}>(args?: Subset<T, token_cuenta$tokens_que_reemplazaArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$token_cuentaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -19469,11 +19880,10 @@ export namespace Prisma {
     readonly tok_val: FieldRef<"token_cuenta", 'String'>
     readonly tip_tok: FieldRef<"token_cuenta", 'tipo_token'>
     readonly fec_exp_tok: FieldRef<"token_cuenta", 'DateTime'>
-    readonly est_uso: FieldRef<"token_cuenta", 'Boolean'>
-    readonly fec_uso: FieldRef<"token_cuenta", 'DateTime'>
+    readonly est_tok: FieldRef<"token_cuenta", 'estado_token'>
     readonly fec_cre_tok: FieldRef<"token_cuenta", 'DateTime'>
     readonly ip_sol: FieldRef<"token_cuenta", 'String'>
-    readonly ip_uso: FieldRef<"token_cuenta", 'String'>
+    readonly id_tok_ree: FieldRef<"token_cuenta", 'String'>
   }
     
 
@@ -19870,6 +20280,111 @@ export namespace Prisma {
   }
 
   /**
+   * token_cuenta.invalidacion
+   */
+  export type token_cuenta$invalidacionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the invalidacion_token
+     */
+    select?: invalidacion_tokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the invalidacion_token
+     */
+    omit?: invalidacion_tokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: invalidacion_tokenInclude<ExtArgs> | null
+    where?: invalidacion_tokenWhereInput
+  }
+
+  /**
+   * token_cuenta.uso_token
+   */
+  export type token_cuenta$uso_tokenArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the uso_token
+     */
+    select?: uso_tokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the uso_token
+     */
+    omit?: uso_tokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: uso_tokenInclude<ExtArgs> | null
+    where?: uso_tokenWhereInput
+  }
+
+  /**
+   * token_cuenta.metadata
+   */
+  export type token_cuenta$metadataArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the metadata_token
+     */
+    select?: metadata_tokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the metadata_token
+     */
+    omit?: metadata_tokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: metadata_tokenInclude<ExtArgs> | null
+    where?: metadata_tokenWhereInput
+    orderBy?: metadata_tokenOrderByWithRelationInput | metadata_tokenOrderByWithRelationInput[]
+    cursor?: metadata_tokenWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Metadata_tokenScalarFieldEnum | Metadata_tokenScalarFieldEnum[]
+  }
+
+  /**
+   * token_cuenta.token_reemplazado
+   */
+  export type token_cuenta$token_reemplazadoArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the token_cuenta
+     */
+    select?: token_cuentaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the token_cuenta
+     */
+    omit?: token_cuentaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: token_cuentaInclude<ExtArgs> | null
+    where?: token_cuentaWhereInput
+  }
+
+  /**
+   * token_cuenta.tokens_que_reemplaza
+   */
+  export type token_cuenta$tokens_que_reemplazaArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the token_cuenta
+     */
+    select?: token_cuentaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the token_cuenta
+     */
+    omit?: token_cuentaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: token_cuentaInclude<ExtArgs> | null
+    where?: token_cuentaWhereInput
+    orderBy?: token_cuentaOrderByWithRelationInput | token_cuentaOrderByWithRelationInput[]
+    cursor?: token_cuentaWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Token_cuentaScalarFieldEnum | Token_cuentaScalarFieldEnum[]
+  }
+
+  /**
    * token_cuenta without action
    */
   export type token_cuentaDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -19885,6 +20400,3246 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: token_cuentaInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model invalidacion_token
+   */
+
+  export type AggregateInvalidacion_token = {
+    _count: Invalidacion_tokenCountAggregateOutputType | null
+    _min: Invalidacion_tokenMinAggregateOutputType | null
+    _max: Invalidacion_tokenMaxAggregateOutputType | null
+  }
+
+  export type Invalidacion_tokenMinAggregateOutputType = {
+    id_inv_tok: string | null
+    id_tok_per: string | null
+    raz_inv: $Enums.razon_invalidacion | null
+    des_inv: string | null
+    fec_inv: Date | null
+    ip_inv: string | null
+    id_adm_inv: string | null
+  }
+
+  export type Invalidacion_tokenMaxAggregateOutputType = {
+    id_inv_tok: string | null
+    id_tok_per: string | null
+    raz_inv: $Enums.razon_invalidacion | null
+    des_inv: string | null
+    fec_inv: Date | null
+    ip_inv: string | null
+    id_adm_inv: string | null
+  }
+
+  export type Invalidacion_tokenCountAggregateOutputType = {
+    id_inv_tok: number
+    id_tok_per: number
+    raz_inv: number
+    des_inv: number
+    fec_inv: number
+    ip_inv: number
+    id_adm_inv: number
+    _all: number
+  }
+
+
+  export type Invalidacion_tokenMinAggregateInputType = {
+    id_inv_tok?: true
+    id_tok_per?: true
+    raz_inv?: true
+    des_inv?: true
+    fec_inv?: true
+    ip_inv?: true
+    id_adm_inv?: true
+  }
+
+  export type Invalidacion_tokenMaxAggregateInputType = {
+    id_inv_tok?: true
+    id_tok_per?: true
+    raz_inv?: true
+    des_inv?: true
+    fec_inv?: true
+    ip_inv?: true
+    id_adm_inv?: true
+  }
+
+  export type Invalidacion_tokenCountAggregateInputType = {
+    id_inv_tok?: true
+    id_tok_per?: true
+    raz_inv?: true
+    des_inv?: true
+    fec_inv?: true
+    ip_inv?: true
+    id_adm_inv?: true
+    _all?: true
+  }
+
+  export type Invalidacion_tokenAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which invalidacion_token to aggregate.
+     */
+    where?: invalidacion_tokenWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of invalidacion_tokens to fetch.
+     */
+    orderBy?: invalidacion_tokenOrderByWithRelationInput | invalidacion_tokenOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: invalidacion_tokenWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` invalidacion_tokens from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` invalidacion_tokens.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned invalidacion_tokens
+    **/
+    _count?: true | Invalidacion_tokenCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: Invalidacion_tokenMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: Invalidacion_tokenMaxAggregateInputType
+  }
+
+  export type GetInvalidacion_tokenAggregateType<T extends Invalidacion_tokenAggregateArgs> = {
+        [P in keyof T & keyof AggregateInvalidacion_token]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateInvalidacion_token[P]>
+      : GetScalarType<T[P], AggregateInvalidacion_token[P]>
+  }
+
+
+
+
+  export type invalidacion_tokenGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: invalidacion_tokenWhereInput
+    orderBy?: invalidacion_tokenOrderByWithAggregationInput | invalidacion_tokenOrderByWithAggregationInput[]
+    by: Invalidacion_tokenScalarFieldEnum[] | Invalidacion_tokenScalarFieldEnum
+    having?: invalidacion_tokenScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: Invalidacion_tokenCountAggregateInputType | true
+    _min?: Invalidacion_tokenMinAggregateInputType
+    _max?: Invalidacion_tokenMaxAggregateInputType
+  }
+
+  export type Invalidacion_tokenGroupByOutputType = {
+    id_inv_tok: string
+    id_tok_per: string
+    raz_inv: $Enums.razon_invalidacion
+    des_inv: string | null
+    fec_inv: Date
+    ip_inv: string | null
+    id_adm_inv: string | null
+    _count: Invalidacion_tokenCountAggregateOutputType | null
+    _min: Invalidacion_tokenMinAggregateOutputType | null
+    _max: Invalidacion_tokenMaxAggregateOutputType | null
+  }
+
+  type GetInvalidacion_tokenGroupByPayload<T extends invalidacion_tokenGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<Invalidacion_tokenGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof Invalidacion_tokenGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], Invalidacion_tokenGroupByOutputType[P]>
+            : GetScalarType<T[P], Invalidacion_tokenGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type invalidacion_tokenSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_inv_tok?: boolean
+    id_tok_per?: boolean
+    raz_inv?: boolean
+    des_inv?: boolean
+    fec_inv?: boolean
+    ip_inv?: boolean
+    id_adm_inv?: boolean
+    token?: boolean | token_cuentaDefaultArgs<ExtArgs>
+    admin?: boolean | invalidacion_token$adminArgs<ExtArgs>
+  }, ExtArgs["result"]["invalidacion_token"]>
+
+  export type invalidacion_tokenSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_inv_tok?: boolean
+    id_tok_per?: boolean
+    raz_inv?: boolean
+    des_inv?: boolean
+    fec_inv?: boolean
+    ip_inv?: boolean
+    id_adm_inv?: boolean
+    token?: boolean | token_cuentaDefaultArgs<ExtArgs>
+    admin?: boolean | invalidacion_token$adminArgs<ExtArgs>
+  }, ExtArgs["result"]["invalidacion_token"]>
+
+  export type invalidacion_tokenSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_inv_tok?: boolean
+    id_tok_per?: boolean
+    raz_inv?: boolean
+    des_inv?: boolean
+    fec_inv?: boolean
+    ip_inv?: boolean
+    id_adm_inv?: boolean
+    token?: boolean | token_cuentaDefaultArgs<ExtArgs>
+    admin?: boolean | invalidacion_token$adminArgs<ExtArgs>
+  }, ExtArgs["result"]["invalidacion_token"]>
+
+  export type invalidacion_tokenSelectScalar = {
+    id_inv_tok?: boolean
+    id_tok_per?: boolean
+    raz_inv?: boolean
+    des_inv?: boolean
+    fec_inv?: boolean
+    ip_inv?: boolean
+    id_adm_inv?: boolean
+  }
+
+  export type invalidacion_tokenOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_inv_tok" | "id_tok_per" | "raz_inv" | "des_inv" | "fec_inv" | "ip_inv" | "id_adm_inv", ExtArgs["result"]["invalidacion_token"]>
+  export type invalidacion_tokenInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    token?: boolean | token_cuentaDefaultArgs<ExtArgs>
+    admin?: boolean | invalidacion_token$adminArgs<ExtArgs>
+  }
+  export type invalidacion_tokenIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    token?: boolean | token_cuentaDefaultArgs<ExtArgs>
+    admin?: boolean | invalidacion_token$adminArgs<ExtArgs>
+  }
+  export type invalidacion_tokenIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    token?: boolean | token_cuentaDefaultArgs<ExtArgs>
+    admin?: boolean | invalidacion_token$adminArgs<ExtArgs>
+  }
+
+  export type $invalidacion_tokenPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "invalidacion_token"
+    objects: {
+      token: Prisma.$token_cuentaPayload<ExtArgs>
+      admin: Prisma.$cuentaPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id_inv_tok: string
+      id_tok_per: string
+      raz_inv: $Enums.razon_invalidacion
+      des_inv: string | null
+      fec_inv: Date
+      ip_inv: string | null
+      id_adm_inv: string | null
+    }, ExtArgs["result"]["invalidacion_token"]>
+    composites: {}
+  }
+
+  type invalidacion_tokenGetPayload<S extends boolean | null | undefined | invalidacion_tokenDefaultArgs> = $Result.GetResult<Prisma.$invalidacion_tokenPayload, S>
+
+  type invalidacion_tokenCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<invalidacion_tokenFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: Invalidacion_tokenCountAggregateInputType | true
+    }
+
+  export interface invalidacion_tokenDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['invalidacion_token'], meta: { name: 'invalidacion_token' } }
+    /**
+     * Find zero or one Invalidacion_token that matches the filter.
+     * @param {invalidacion_tokenFindUniqueArgs} args - Arguments to find a Invalidacion_token
+     * @example
+     * // Get one Invalidacion_token
+     * const invalidacion_token = await prisma.invalidacion_token.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends invalidacion_tokenFindUniqueArgs>(args: SelectSubset<T, invalidacion_tokenFindUniqueArgs<ExtArgs>>): Prisma__invalidacion_tokenClient<$Result.GetResult<Prisma.$invalidacion_tokenPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Invalidacion_token that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {invalidacion_tokenFindUniqueOrThrowArgs} args - Arguments to find a Invalidacion_token
+     * @example
+     * // Get one Invalidacion_token
+     * const invalidacion_token = await prisma.invalidacion_token.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends invalidacion_tokenFindUniqueOrThrowArgs>(args: SelectSubset<T, invalidacion_tokenFindUniqueOrThrowArgs<ExtArgs>>): Prisma__invalidacion_tokenClient<$Result.GetResult<Prisma.$invalidacion_tokenPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Invalidacion_token that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {invalidacion_tokenFindFirstArgs} args - Arguments to find a Invalidacion_token
+     * @example
+     * // Get one Invalidacion_token
+     * const invalidacion_token = await prisma.invalidacion_token.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends invalidacion_tokenFindFirstArgs>(args?: SelectSubset<T, invalidacion_tokenFindFirstArgs<ExtArgs>>): Prisma__invalidacion_tokenClient<$Result.GetResult<Prisma.$invalidacion_tokenPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Invalidacion_token that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {invalidacion_tokenFindFirstOrThrowArgs} args - Arguments to find a Invalidacion_token
+     * @example
+     * // Get one Invalidacion_token
+     * const invalidacion_token = await prisma.invalidacion_token.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends invalidacion_tokenFindFirstOrThrowArgs>(args?: SelectSubset<T, invalidacion_tokenFindFirstOrThrowArgs<ExtArgs>>): Prisma__invalidacion_tokenClient<$Result.GetResult<Prisma.$invalidacion_tokenPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Invalidacion_tokens that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {invalidacion_tokenFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Invalidacion_tokens
+     * const invalidacion_tokens = await prisma.invalidacion_token.findMany()
+     * 
+     * // Get first 10 Invalidacion_tokens
+     * const invalidacion_tokens = await prisma.invalidacion_token.findMany({ take: 10 })
+     * 
+     * // Only select the `id_inv_tok`
+     * const invalidacion_tokenWithId_inv_tokOnly = await prisma.invalidacion_token.findMany({ select: { id_inv_tok: true } })
+     * 
+     */
+    findMany<T extends invalidacion_tokenFindManyArgs>(args?: SelectSubset<T, invalidacion_tokenFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$invalidacion_tokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Invalidacion_token.
+     * @param {invalidacion_tokenCreateArgs} args - Arguments to create a Invalidacion_token.
+     * @example
+     * // Create one Invalidacion_token
+     * const Invalidacion_token = await prisma.invalidacion_token.create({
+     *   data: {
+     *     // ... data to create a Invalidacion_token
+     *   }
+     * })
+     * 
+     */
+    create<T extends invalidacion_tokenCreateArgs>(args: SelectSubset<T, invalidacion_tokenCreateArgs<ExtArgs>>): Prisma__invalidacion_tokenClient<$Result.GetResult<Prisma.$invalidacion_tokenPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Invalidacion_tokens.
+     * @param {invalidacion_tokenCreateManyArgs} args - Arguments to create many Invalidacion_tokens.
+     * @example
+     * // Create many Invalidacion_tokens
+     * const invalidacion_token = await prisma.invalidacion_token.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends invalidacion_tokenCreateManyArgs>(args?: SelectSubset<T, invalidacion_tokenCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Invalidacion_tokens and returns the data saved in the database.
+     * @param {invalidacion_tokenCreateManyAndReturnArgs} args - Arguments to create many Invalidacion_tokens.
+     * @example
+     * // Create many Invalidacion_tokens
+     * const invalidacion_token = await prisma.invalidacion_token.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Invalidacion_tokens and only return the `id_inv_tok`
+     * const invalidacion_tokenWithId_inv_tokOnly = await prisma.invalidacion_token.createManyAndReturn({
+     *   select: { id_inv_tok: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends invalidacion_tokenCreateManyAndReturnArgs>(args?: SelectSubset<T, invalidacion_tokenCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$invalidacion_tokenPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Invalidacion_token.
+     * @param {invalidacion_tokenDeleteArgs} args - Arguments to delete one Invalidacion_token.
+     * @example
+     * // Delete one Invalidacion_token
+     * const Invalidacion_token = await prisma.invalidacion_token.delete({
+     *   where: {
+     *     // ... filter to delete one Invalidacion_token
+     *   }
+     * })
+     * 
+     */
+    delete<T extends invalidacion_tokenDeleteArgs>(args: SelectSubset<T, invalidacion_tokenDeleteArgs<ExtArgs>>): Prisma__invalidacion_tokenClient<$Result.GetResult<Prisma.$invalidacion_tokenPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Invalidacion_token.
+     * @param {invalidacion_tokenUpdateArgs} args - Arguments to update one Invalidacion_token.
+     * @example
+     * // Update one Invalidacion_token
+     * const invalidacion_token = await prisma.invalidacion_token.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends invalidacion_tokenUpdateArgs>(args: SelectSubset<T, invalidacion_tokenUpdateArgs<ExtArgs>>): Prisma__invalidacion_tokenClient<$Result.GetResult<Prisma.$invalidacion_tokenPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Invalidacion_tokens.
+     * @param {invalidacion_tokenDeleteManyArgs} args - Arguments to filter Invalidacion_tokens to delete.
+     * @example
+     * // Delete a few Invalidacion_tokens
+     * const { count } = await prisma.invalidacion_token.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends invalidacion_tokenDeleteManyArgs>(args?: SelectSubset<T, invalidacion_tokenDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Invalidacion_tokens.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {invalidacion_tokenUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Invalidacion_tokens
+     * const invalidacion_token = await prisma.invalidacion_token.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends invalidacion_tokenUpdateManyArgs>(args: SelectSubset<T, invalidacion_tokenUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Invalidacion_tokens and returns the data updated in the database.
+     * @param {invalidacion_tokenUpdateManyAndReturnArgs} args - Arguments to update many Invalidacion_tokens.
+     * @example
+     * // Update many Invalidacion_tokens
+     * const invalidacion_token = await prisma.invalidacion_token.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Invalidacion_tokens and only return the `id_inv_tok`
+     * const invalidacion_tokenWithId_inv_tokOnly = await prisma.invalidacion_token.updateManyAndReturn({
+     *   select: { id_inv_tok: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends invalidacion_tokenUpdateManyAndReturnArgs>(args: SelectSubset<T, invalidacion_tokenUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$invalidacion_tokenPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Invalidacion_token.
+     * @param {invalidacion_tokenUpsertArgs} args - Arguments to update or create a Invalidacion_token.
+     * @example
+     * // Update or create a Invalidacion_token
+     * const invalidacion_token = await prisma.invalidacion_token.upsert({
+     *   create: {
+     *     // ... data to create a Invalidacion_token
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Invalidacion_token we want to update
+     *   }
+     * })
+     */
+    upsert<T extends invalidacion_tokenUpsertArgs>(args: SelectSubset<T, invalidacion_tokenUpsertArgs<ExtArgs>>): Prisma__invalidacion_tokenClient<$Result.GetResult<Prisma.$invalidacion_tokenPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Invalidacion_tokens.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {invalidacion_tokenCountArgs} args - Arguments to filter Invalidacion_tokens to count.
+     * @example
+     * // Count the number of Invalidacion_tokens
+     * const count = await prisma.invalidacion_token.count({
+     *   where: {
+     *     // ... the filter for the Invalidacion_tokens we want to count
+     *   }
+     * })
+    **/
+    count<T extends invalidacion_tokenCountArgs>(
+      args?: Subset<T, invalidacion_tokenCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], Invalidacion_tokenCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Invalidacion_token.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Invalidacion_tokenAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends Invalidacion_tokenAggregateArgs>(args: Subset<T, Invalidacion_tokenAggregateArgs>): Prisma.PrismaPromise<GetInvalidacion_tokenAggregateType<T>>
+
+    /**
+     * Group by Invalidacion_token.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {invalidacion_tokenGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends invalidacion_tokenGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: invalidacion_tokenGroupByArgs['orderBy'] }
+        : { orderBy?: invalidacion_tokenGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, invalidacion_tokenGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetInvalidacion_tokenGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the invalidacion_token model
+   */
+  readonly fields: invalidacion_tokenFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for invalidacion_token.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__invalidacion_tokenClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    token<T extends token_cuentaDefaultArgs<ExtArgs> = {}>(args?: Subset<T, token_cuentaDefaultArgs<ExtArgs>>): Prisma__token_cuentaClient<$Result.GetResult<Prisma.$token_cuentaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    admin<T extends invalidacion_token$adminArgs<ExtArgs> = {}>(args?: Subset<T, invalidacion_token$adminArgs<ExtArgs>>): Prisma__cuentaClient<$Result.GetResult<Prisma.$cuentaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the invalidacion_token model
+   */
+  interface invalidacion_tokenFieldRefs {
+    readonly id_inv_tok: FieldRef<"invalidacion_token", 'String'>
+    readonly id_tok_per: FieldRef<"invalidacion_token", 'String'>
+    readonly raz_inv: FieldRef<"invalidacion_token", 'razon_invalidacion'>
+    readonly des_inv: FieldRef<"invalidacion_token", 'String'>
+    readonly fec_inv: FieldRef<"invalidacion_token", 'DateTime'>
+    readonly ip_inv: FieldRef<"invalidacion_token", 'String'>
+    readonly id_adm_inv: FieldRef<"invalidacion_token", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * invalidacion_token findUnique
+   */
+  export type invalidacion_tokenFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the invalidacion_token
+     */
+    select?: invalidacion_tokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the invalidacion_token
+     */
+    omit?: invalidacion_tokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: invalidacion_tokenInclude<ExtArgs> | null
+    /**
+     * Filter, which invalidacion_token to fetch.
+     */
+    where: invalidacion_tokenWhereUniqueInput
+  }
+
+  /**
+   * invalidacion_token findUniqueOrThrow
+   */
+  export type invalidacion_tokenFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the invalidacion_token
+     */
+    select?: invalidacion_tokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the invalidacion_token
+     */
+    omit?: invalidacion_tokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: invalidacion_tokenInclude<ExtArgs> | null
+    /**
+     * Filter, which invalidacion_token to fetch.
+     */
+    where: invalidacion_tokenWhereUniqueInput
+  }
+
+  /**
+   * invalidacion_token findFirst
+   */
+  export type invalidacion_tokenFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the invalidacion_token
+     */
+    select?: invalidacion_tokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the invalidacion_token
+     */
+    omit?: invalidacion_tokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: invalidacion_tokenInclude<ExtArgs> | null
+    /**
+     * Filter, which invalidacion_token to fetch.
+     */
+    where?: invalidacion_tokenWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of invalidacion_tokens to fetch.
+     */
+    orderBy?: invalidacion_tokenOrderByWithRelationInput | invalidacion_tokenOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for invalidacion_tokens.
+     */
+    cursor?: invalidacion_tokenWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` invalidacion_tokens from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` invalidacion_tokens.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of invalidacion_tokens.
+     */
+    distinct?: Invalidacion_tokenScalarFieldEnum | Invalidacion_tokenScalarFieldEnum[]
+  }
+
+  /**
+   * invalidacion_token findFirstOrThrow
+   */
+  export type invalidacion_tokenFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the invalidacion_token
+     */
+    select?: invalidacion_tokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the invalidacion_token
+     */
+    omit?: invalidacion_tokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: invalidacion_tokenInclude<ExtArgs> | null
+    /**
+     * Filter, which invalidacion_token to fetch.
+     */
+    where?: invalidacion_tokenWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of invalidacion_tokens to fetch.
+     */
+    orderBy?: invalidacion_tokenOrderByWithRelationInput | invalidacion_tokenOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for invalidacion_tokens.
+     */
+    cursor?: invalidacion_tokenWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` invalidacion_tokens from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` invalidacion_tokens.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of invalidacion_tokens.
+     */
+    distinct?: Invalidacion_tokenScalarFieldEnum | Invalidacion_tokenScalarFieldEnum[]
+  }
+
+  /**
+   * invalidacion_token findMany
+   */
+  export type invalidacion_tokenFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the invalidacion_token
+     */
+    select?: invalidacion_tokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the invalidacion_token
+     */
+    omit?: invalidacion_tokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: invalidacion_tokenInclude<ExtArgs> | null
+    /**
+     * Filter, which invalidacion_tokens to fetch.
+     */
+    where?: invalidacion_tokenWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of invalidacion_tokens to fetch.
+     */
+    orderBy?: invalidacion_tokenOrderByWithRelationInput | invalidacion_tokenOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing invalidacion_tokens.
+     */
+    cursor?: invalidacion_tokenWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` invalidacion_tokens from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` invalidacion_tokens.
+     */
+    skip?: number
+    distinct?: Invalidacion_tokenScalarFieldEnum | Invalidacion_tokenScalarFieldEnum[]
+  }
+
+  /**
+   * invalidacion_token create
+   */
+  export type invalidacion_tokenCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the invalidacion_token
+     */
+    select?: invalidacion_tokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the invalidacion_token
+     */
+    omit?: invalidacion_tokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: invalidacion_tokenInclude<ExtArgs> | null
+    /**
+     * The data needed to create a invalidacion_token.
+     */
+    data: XOR<invalidacion_tokenCreateInput, invalidacion_tokenUncheckedCreateInput>
+  }
+
+  /**
+   * invalidacion_token createMany
+   */
+  export type invalidacion_tokenCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many invalidacion_tokens.
+     */
+    data: invalidacion_tokenCreateManyInput | invalidacion_tokenCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * invalidacion_token createManyAndReturn
+   */
+  export type invalidacion_tokenCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the invalidacion_token
+     */
+    select?: invalidacion_tokenSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the invalidacion_token
+     */
+    omit?: invalidacion_tokenOmit<ExtArgs> | null
+    /**
+     * The data used to create many invalidacion_tokens.
+     */
+    data: invalidacion_tokenCreateManyInput | invalidacion_tokenCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: invalidacion_tokenIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * invalidacion_token update
+   */
+  export type invalidacion_tokenUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the invalidacion_token
+     */
+    select?: invalidacion_tokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the invalidacion_token
+     */
+    omit?: invalidacion_tokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: invalidacion_tokenInclude<ExtArgs> | null
+    /**
+     * The data needed to update a invalidacion_token.
+     */
+    data: XOR<invalidacion_tokenUpdateInput, invalidacion_tokenUncheckedUpdateInput>
+    /**
+     * Choose, which invalidacion_token to update.
+     */
+    where: invalidacion_tokenWhereUniqueInput
+  }
+
+  /**
+   * invalidacion_token updateMany
+   */
+  export type invalidacion_tokenUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update invalidacion_tokens.
+     */
+    data: XOR<invalidacion_tokenUpdateManyMutationInput, invalidacion_tokenUncheckedUpdateManyInput>
+    /**
+     * Filter which invalidacion_tokens to update
+     */
+    where?: invalidacion_tokenWhereInput
+    /**
+     * Limit how many invalidacion_tokens to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * invalidacion_token updateManyAndReturn
+   */
+  export type invalidacion_tokenUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the invalidacion_token
+     */
+    select?: invalidacion_tokenSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the invalidacion_token
+     */
+    omit?: invalidacion_tokenOmit<ExtArgs> | null
+    /**
+     * The data used to update invalidacion_tokens.
+     */
+    data: XOR<invalidacion_tokenUpdateManyMutationInput, invalidacion_tokenUncheckedUpdateManyInput>
+    /**
+     * Filter which invalidacion_tokens to update
+     */
+    where?: invalidacion_tokenWhereInput
+    /**
+     * Limit how many invalidacion_tokens to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: invalidacion_tokenIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * invalidacion_token upsert
+   */
+  export type invalidacion_tokenUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the invalidacion_token
+     */
+    select?: invalidacion_tokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the invalidacion_token
+     */
+    omit?: invalidacion_tokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: invalidacion_tokenInclude<ExtArgs> | null
+    /**
+     * The filter to search for the invalidacion_token to update in case it exists.
+     */
+    where: invalidacion_tokenWhereUniqueInput
+    /**
+     * In case the invalidacion_token found by the `where` argument doesn't exist, create a new invalidacion_token with this data.
+     */
+    create: XOR<invalidacion_tokenCreateInput, invalidacion_tokenUncheckedCreateInput>
+    /**
+     * In case the invalidacion_token was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<invalidacion_tokenUpdateInput, invalidacion_tokenUncheckedUpdateInput>
+  }
+
+  /**
+   * invalidacion_token delete
+   */
+  export type invalidacion_tokenDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the invalidacion_token
+     */
+    select?: invalidacion_tokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the invalidacion_token
+     */
+    omit?: invalidacion_tokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: invalidacion_tokenInclude<ExtArgs> | null
+    /**
+     * Filter which invalidacion_token to delete.
+     */
+    where: invalidacion_tokenWhereUniqueInput
+  }
+
+  /**
+   * invalidacion_token deleteMany
+   */
+  export type invalidacion_tokenDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which invalidacion_tokens to delete
+     */
+    where?: invalidacion_tokenWhereInput
+    /**
+     * Limit how many invalidacion_tokens to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * invalidacion_token.admin
+   */
+  export type invalidacion_token$adminArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cuenta
+     */
+    select?: cuentaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the cuenta
+     */
+    omit?: cuentaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cuentaInclude<ExtArgs> | null
+    where?: cuentaWhereInput
+  }
+
+  /**
+   * invalidacion_token without action
+   */
+  export type invalidacion_tokenDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the invalidacion_token
+     */
+    select?: invalidacion_tokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the invalidacion_token
+     */
+    omit?: invalidacion_tokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: invalidacion_tokenInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model uso_token
+   */
+
+  export type AggregateUso_token = {
+    _count: Uso_tokenCountAggregateOutputType | null
+    _min: Uso_tokenMinAggregateOutputType | null
+    _max: Uso_tokenMaxAggregateOutputType | null
+  }
+
+  export type Uso_tokenMinAggregateOutputType = {
+    id_uso_tok: string | null
+    id_tok_per: string | null
+    fec_uso: Date | null
+    ip_uso: string | null
+    exi_uso: boolean | null
+    obs_uso: string | null
+  }
+
+  export type Uso_tokenMaxAggregateOutputType = {
+    id_uso_tok: string | null
+    id_tok_per: string | null
+    fec_uso: Date | null
+    ip_uso: string | null
+    exi_uso: boolean | null
+    obs_uso: string | null
+  }
+
+  export type Uso_tokenCountAggregateOutputType = {
+    id_uso_tok: number
+    id_tok_per: number
+    fec_uso: number
+    ip_uso: number
+    exi_uso: number
+    obs_uso: number
+    _all: number
+  }
+
+
+  export type Uso_tokenMinAggregateInputType = {
+    id_uso_tok?: true
+    id_tok_per?: true
+    fec_uso?: true
+    ip_uso?: true
+    exi_uso?: true
+    obs_uso?: true
+  }
+
+  export type Uso_tokenMaxAggregateInputType = {
+    id_uso_tok?: true
+    id_tok_per?: true
+    fec_uso?: true
+    ip_uso?: true
+    exi_uso?: true
+    obs_uso?: true
+  }
+
+  export type Uso_tokenCountAggregateInputType = {
+    id_uso_tok?: true
+    id_tok_per?: true
+    fec_uso?: true
+    ip_uso?: true
+    exi_uso?: true
+    obs_uso?: true
+    _all?: true
+  }
+
+  export type Uso_tokenAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which uso_token to aggregate.
+     */
+    where?: uso_tokenWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of uso_tokens to fetch.
+     */
+    orderBy?: uso_tokenOrderByWithRelationInput | uso_tokenOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: uso_tokenWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` uso_tokens from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` uso_tokens.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned uso_tokens
+    **/
+    _count?: true | Uso_tokenCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: Uso_tokenMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: Uso_tokenMaxAggregateInputType
+  }
+
+  export type GetUso_tokenAggregateType<T extends Uso_tokenAggregateArgs> = {
+        [P in keyof T & keyof AggregateUso_token]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateUso_token[P]>
+      : GetScalarType<T[P], AggregateUso_token[P]>
+  }
+
+
+
+
+  export type uso_tokenGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: uso_tokenWhereInput
+    orderBy?: uso_tokenOrderByWithAggregationInput | uso_tokenOrderByWithAggregationInput[]
+    by: Uso_tokenScalarFieldEnum[] | Uso_tokenScalarFieldEnum
+    having?: uso_tokenScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: Uso_tokenCountAggregateInputType | true
+    _min?: Uso_tokenMinAggregateInputType
+    _max?: Uso_tokenMaxAggregateInputType
+  }
+
+  export type Uso_tokenGroupByOutputType = {
+    id_uso_tok: string
+    id_tok_per: string
+    fec_uso: Date
+    ip_uso: string
+    exi_uso: boolean
+    obs_uso: string | null
+    _count: Uso_tokenCountAggregateOutputType | null
+    _min: Uso_tokenMinAggregateOutputType | null
+    _max: Uso_tokenMaxAggregateOutputType | null
+  }
+
+  type GetUso_tokenGroupByPayload<T extends uso_tokenGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<Uso_tokenGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof Uso_tokenGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], Uso_tokenGroupByOutputType[P]>
+            : GetScalarType<T[P], Uso_tokenGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type uso_tokenSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_uso_tok?: boolean
+    id_tok_per?: boolean
+    fec_uso?: boolean
+    ip_uso?: boolean
+    exi_uso?: boolean
+    obs_uso?: boolean
+    token?: boolean | token_cuentaDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["uso_token"]>
+
+  export type uso_tokenSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_uso_tok?: boolean
+    id_tok_per?: boolean
+    fec_uso?: boolean
+    ip_uso?: boolean
+    exi_uso?: boolean
+    obs_uso?: boolean
+    token?: boolean | token_cuentaDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["uso_token"]>
+
+  export type uso_tokenSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_uso_tok?: boolean
+    id_tok_per?: boolean
+    fec_uso?: boolean
+    ip_uso?: boolean
+    exi_uso?: boolean
+    obs_uso?: boolean
+    token?: boolean | token_cuentaDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["uso_token"]>
+
+  export type uso_tokenSelectScalar = {
+    id_uso_tok?: boolean
+    id_tok_per?: boolean
+    fec_uso?: boolean
+    ip_uso?: boolean
+    exi_uso?: boolean
+    obs_uso?: boolean
+  }
+
+  export type uso_tokenOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_uso_tok" | "id_tok_per" | "fec_uso" | "ip_uso" | "exi_uso" | "obs_uso", ExtArgs["result"]["uso_token"]>
+  export type uso_tokenInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    token?: boolean | token_cuentaDefaultArgs<ExtArgs>
+  }
+  export type uso_tokenIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    token?: boolean | token_cuentaDefaultArgs<ExtArgs>
+  }
+  export type uso_tokenIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    token?: boolean | token_cuentaDefaultArgs<ExtArgs>
+  }
+
+  export type $uso_tokenPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "uso_token"
+    objects: {
+      token: Prisma.$token_cuentaPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id_uso_tok: string
+      id_tok_per: string
+      fec_uso: Date
+      ip_uso: string
+      exi_uso: boolean
+      obs_uso: string | null
+    }, ExtArgs["result"]["uso_token"]>
+    composites: {}
+  }
+
+  type uso_tokenGetPayload<S extends boolean | null | undefined | uso_tokenDefaultArgs> = $Result.GetResult<Prisma.$uso_tokenPayload, S>
+
+  type uso_tokenCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<uso_tokenFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: Uso_tokenCountAggregateInputType | true
+    }
+
+  export interface uso_tokenDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['uso_token'], meta: { name: 'uso_token' } }
+    /**
+     * Find zero or one Uso_token that matches the filter.
+     * @param {uso_tokenFindUniqueArgs} args - Arguments to find a Uso_token
+     * @example
+     * // Get one Uso_token
+     * const uso_token = await prisma.uso_token.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends uso_tokenFindUniqueArgs>(args: SelectSubset<T, uso_tokenFindUniqueArgs<ExtArgs>>): Prisma__uso_tokenClient<$Result.GetResult<Prisma.$uso_tokenPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Uso_token that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {uso_tokenFindUniqueOrThrowArgs} args - Arguments to find a Uso_token
+     * @example
+     * // Get one Uso_token
+     * const uso_token = await prisma.uso_token.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends uso_tokenFindUniqueOrThrowArgs>(args: SelectSubset<T, uso_tokenFindUniqueOrThrowArgs<ExtArgs>>): Prisma__uso_tokenClient<$Result.GetResult<Prisma.$uso_tokenPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Uso_token that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {uso_tokenFindFirstArgs} args - Arguments to find a Uso_token
+     * @example
+     * // Get one Uso_token
+     * const uso_token = await prisma.uso_token.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends uso_tokenFindFirstArgs>(args?: SelectSubset<T, uso_tokenFindFirstArgs<ExtArgs>>): Prisma__uso_tokenClient<$Result.GetResult<Prisma.$uso_tokenPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Uso_token that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {uso_tokenFindFirstOrThrowArgs} args - Arguments to find a Uso_token
+     * @example
+     * // Get one Uso_token
+     * const uso_token = await prisma.uso_token.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends uso_tokenFindFirstOrThrowArgs>(args?: SelectSubset<T, uso_tokenFindFirstOrThrowArgs<ExtArgs>>): Prisma__uso_tokenClient<$Result.GetResult<Prisma.$uso_tokenPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Uso_tokens that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {uso_tokenFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Uso_tokens
+     * const uso_tokens = await prisma.uso_token.findMany()
+     * 
+     * // Get first 10 Uso_tokens
+     * const uso_tokens = await prisma.uso_token.findMany({ take: 10 })
+     * 
+     * // Only select the `id_uso_tok`
+     * const uso_tokenWithId_uso_tokOnly = await prisma.uso_token.findMany({ select: { id_uso_tok: true } })
+     * 
+     */
+    findMany<T extends uso_tokenFindManyArgs>(args?: SelectSubset<T, uso_tokenFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$uso_tokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Uso_token.
+     * @param {uso_tokenCreateArgs} args - Arguments to create a Uso_token.
+     * @example
+     * // Create one Uso_token
+     * const Uso_token = await prisma.uso_token.create({
+     *   data: {
+     *     // ... data to create a Uso_token
+     *   }
+     * })
+     * 
+     */
+    create<T extends uso_tokenCreateArgs>(args: SelectSubset<T, uso_tokenCreateArgs<ExtArgs>>): Prisma__uso_tokenClient<$Result.GetResult<Prisma.$uso_tokenPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Uso_tokens.
+     * @param {uso_tokenCreateManyArgs} args - Arguments to create many Uso_tokens.
+     * @example
+     * // Create many Uso_tokens
+     * const uso_token = await prisma.uso_token.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends uso_tokenCreateManyArgs>(args?: SelectSubset<T, uso_tokenCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Uso_tokens and returns the data saved in the database.
+     * @param {uso_tokenCreateManyAndReturnArgs} args - Arguments to create many Uso_tokens.
+     * @example
+     * // Create many Uso_tokens
+     * const uso_token = await prisma.uso_token.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Uso_tokens and only return the `id_uso_tok`
+     * const uso_tokenWithId_uso_tokOnly = await prisma.uso_token.createManyAndReturn({
+     *   select: { id_uso_tok: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends uso_tokenCreateManyAndReturnArgs>(args?: SelectSubset<T, uso_tokenCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$uso_tokenPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Uso_token.
+     * @param {uso_tokenDeleteArgs} args - Arguments to delete one Uso_token.
+     * @example
+     * // Delete one Uso_token
+     * const Uso_token = await prisma.uso_token.delete({
+     *   where: {
+     *     // ... filter to delete one Uso_token
+     *   }
+     * })
+     * 
+     */
+    delete<T extends uso_tokenDeleteArgs>(args: SelectSubset<T, uso_tokenDeleteArgs<ExtArgs>>): Prisma__uso_tokenClient<$Result.GetResult<Prisma.$uso_tokenPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Uso_token.
+     * @param {uso_tokenUpdateArgs} args - Arguments to update one Uso_token.
+     * @example
+     * // Update one Uso_token
+     * const uso_token = await prisma.uso_token.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends uso_tokenUpdateArgs>(args: SelectSubset<T, uso_tokenUpdateArgs<ExtArgs>>): Prisma__uso_tokenClient<$Result.GetResult<Prisma.$uso_tokenPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Uso_tokens.
+     * @param {uso_tokenDeleteManyArgs} args - Arguments to filter Uso_tokens to delete.
+     * @example
+     * // Delete a few Uso_tokens
+     * const { count } = await prisma.uso_token.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends uso_tokenDeleteManyArgs>(args?: SelectSubset<T, uso_tokenDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Uso_tokens.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {uso_tokenUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Uso_tokens
+     * const uso_token = await prisma.uso_token.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends uso_tokenUpdateManyArgs>(args: SelectSubset<T, uso_tokenUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Uso_tokens and returns the data updated in the database.
+     * @param {uso_tokenUpdateManyAndReturnArgs} args - Arguments to update many Uso_tokens.
+     * @example
+     * // Update many Uso_tokens
+     * const uso_token = await prisma.uso_token.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Uso_tokens and only return the `id_uso_tok`
+     * const uso_tokenWithId_uso_tokOnly = await prisma.uso_token.updateManyAndReturn({
+     *   select: { id_uso_tok: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends uso_tokenUpdateManyAndReturnArgs>(args: SelectSubset<T, uso_tokenUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$uso_tokenPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Uso_token.
+     * @param {uso_tokenUpsertArgs} args - Arguments to update or create a Uso_token.
+     * @example
+     * // Update or create a Uso_token
+     * const uso_token = await prisma.uso_token.upsert({
+     *   create: {
+     *     // ... data to create a Uso_token
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Uso_token we want to update
+     *   }
+     * })
+     */
+    upsert<T extends uso_tokenUpsertArgs>(args: SelectSubset<T, uso_tokenUpsertArgs<ExtArgs>>): Prisma__uso_tokenClient<$Result.GetResult<Prisma.$uso_tokenPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Uso_tokens.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {uso_tokenCountArgs} args - Arguments to filter Uso_tokens to count.
+     * @example
+     * // Count the number of Uso_tokens
+     * const count = await prisma.uso_token.count({
+     *   where: {
+     *     // ... the filter for the Uso_tokens we want to count
+     *   }
+     * })
+    **/
+    count<T extends uso_tokenCountArgs>(
+      args?: Subset<T, uso_tokenCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], Uso_tokenCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Uso_token.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Uso_tokenAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends Uso_tokenAggregateArgs>(args: Subset<T, Uso_tokenAggregateArgs>): Prisma.PrismaPromise<GetUso_tokenAggregateType<T>>
+
+    /**
+     * Group by Uso_token.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {uso_tokenGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends uso_tokenGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: uso_tokenGroupByArgs['orderBy'] }
+        : { orderBy?: uso_tokenGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, uso_tokenGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetUso_tokenGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the uso_token model
+   */
+  readonly fields: uso_tokenFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for uso_token.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__uso_tokenClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    token<T extends token_cuentaDefaultArgs<ExtArgs> = {}>(args?: Subset<T, token_cuentaDefaultArgs<ExtArgs>>): Prisma__token_cuentaClient<$Result.GetResult<Prisma.$token_cuentaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the uso_token model
+   */
+  interface uso_tokenFieldRefs {
+    readonly id_uso_tok: FieldRef<"uso_token", 'String'>
+    readonly id_tok_per: FieldRef<"uso_token", 'String'>
+    readonly fec_uso: FieldRef<"uso_token", 'DateTime'>
+    readonly ip_uso: FieldRef<"uso_token", 'String'>
+    readonly exi_uso: FieldRef<"uso_token", 'Boolean'>
+    readonly obs_uso: FieldRef<"uso_token", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * uso_token findUnique
+   */
+  export type uso_tokenFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the uso_token
+     */
+    select?: uso_tokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the uso_token
+     */
+    omit?: uso_tokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: uso_tokenInclude<ExtArgs> | null
+    /**
+     * Filter, which uso_token to fetch.
+     */
+    where: uso_tokenWhereUniqueInput
+  }
+
+  /**
+   * uso_token findUniqueOrThrow
+   */
+  export type uso_tokenFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the uso_token
+     */
+    select?: uso_tokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the uso_token
+     */
+    omit?: uso_tokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: uso_tokenInclude<ExtArgs> | null
+    /**
+     * Filter, which uso_token to fetch.
+     */
+    where: uso_tokenWhereUniqueInput
+  }
+
+  /**
+   * uso_token findFirst
+   */
+  export type uso_tokenFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the uso_token
+     */
+    select?: uso_tokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the uso_token
+     */
+    omit?: uso_tokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: uso_tokenInclude<ExtArgs> | null
+    /**
+     * Filter, which uso_token to fetch.
+     */
+    where?: uso_tokenWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of uso_tokens to fetch.
+     */
+    orderBy?: uso_tokenOrderByWithRelationInput | uso_tokenOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for uso_tokens.
+     */
+    cursor?: uso_tokenWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` uso_tokens from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` uso_tokens.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of uso_tokens.
+     */
+    distinct?: Uso_tokenScalarFieldEnum | Uso_tokenScalarFieldEnum[]
+  }
+
+  /**
+   * uso_token findFirstOrThrow
+   */
+  export type uso_tokenFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the uso_token
+     */
+    select?: uso_tokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the uso_token
+     */
+    omit?: uso_tokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: uso_tokenInclude<ExtArgs> | null
+    /**
+     * Filter, which uso_token to fetch.
+     */
+    where?: uso_tokenWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of uso_tokens to fetch.
+     */
+    orderBy?: uso_tokenOrderByWithRelationInput | uso_tokenOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for uso_tokens.
+     */
+    cursor?: uso_tokenWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` uso_tokens from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` uso_tokens.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of uso_tokens.
+     */
+    distinct?: Uso_tokenScalarFieldEnum | Uso_tokenScalarFieldEnum[]
+  }
+
+  /**
+   * uso_token findMany
+   */
+  export type uso_tokenFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the uso_token
+     */
+    select?: uso_tokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the uso_token
+     */
+    omit?: uso_tokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: uso_tokenInclude<ExtArgs> | null
+    /**
+     * Filter, which uso_tokens to fetch.
+     */
+    where?: uso_tokenWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of uso_tokens to fetch.
+     */
+    orderBy?: uso_tokenOrderByWithRelationInput | uso_tokenOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing uso_tokens.
+     */
+    cursor?: uso_tokenWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` uso_tokens from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` uso_tokens.
+     */
+    skip?: number
+    distinct?: Uso_tokenScalarFieldEnum | Uso_tokenScalarFieldEnum[]
+  }
+
+  /**
+   * uso_token create
+   */
+  export type uso_tokenCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the uso_token
+     */
+    select?: uso_tokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the uso_token
+     */
+    omit?: uso_tokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: uso_tokenInclude<ExtArgs> | null
+    /**
+     * The data needed to create a uso_token.
+     */
+    data: XOR<uso_tokenCreateInput, uso_tokenUncheckedCreateInput>
+  }
+
+  /**
+   * uso_token createMany
+   */
+  export type uso_tokenCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many uso_tokens.
+     */
+    data: uso_tokenCreateManyInput | uso_tokenCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * uso_token createManyAndReturn
+   */
+  export type uso_tokenCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the uso_token
+     */
+    select?: uso_tokenSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the uso_token
+     */
+    omit?: uso_tokenOmit<ExtArgs> | null
+    /**
+     * The data used to create many uso_tokens.
+     */
+    data: uso_tokenCreateManyInput | uso_tokenCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: uso_tokenIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * uso_token update
+   */
+  export type uso_tokenUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the uso_token
+     */
+    select?: uso_tokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the uso_token
+     */
+    omit?: uso_tokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: uso_tokenInclude<ExtArgs> | null
+    /**
+     * The data needed to update a uso_token.
+     */
+    data: XOR<uso_tokenUpdateInput, uso_tokenUncheckedUpdateInput>
+    /**
+     * Choose, which uso_token to update.
+     */
+    where: uso_tokenWhereUniqueInput
+  }
+
+  /**
+   * uso_token updateMany
+   */
+  export type uso_tokenUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update uso_tokens.
+     */
+    data: XOR<uso_tokenUpdateManyMutationInput, uso_tokenUncheckedUpdateManyInput>
+    /**
+     * Filter which uso_tokens to update
+     */
+    where?: uso_tokenWhereInput
+    /**
+     * Limit how many uso_tokens to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * uso_token updateManyAndReturn
+   */
+  export type uso_tokenUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the uso_token
+     */
+    select?: uso_tokenSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the uso_token
+     */
+    omit?: uso_tokenOmit<ExtArgs> | null
+    /**
+     * The data used to update uso_tokens.
+     */
+    data: XOR<uso_tokenUpdateManyMutationInput, uso_tokenUncheckedUpdateManyInput>
+    /**
+     * Filter which uso_tokens to update
+     */
+    where?: uso_tokenWhereInput
+    /**
+     * Limit how many uso_tokens to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: uso_tokenIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * uso_token upsert
+   */
+  export type uso_tokenUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the uso_token
+     */
+    select?: uso_tokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the uso_token
+     */
+    omit?: uso_tokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: uso_tokenInclude<ExtArgs> | null
+    /**
+     * The filter to search for the uso_token to update in case it exists.
+     */
+    where: uso_tokenWhereUniqueInput
+    /**
+     * In case the uso_token found by the `where` argument doesn't exist, create a new uso_token with this data.
+     */
+    create: XOR<uso_tokenCreateInput, uso_tokenUncheckedCreateInput>
+    /**
+     * In case the uso_token was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<uso_tokenUpdateInput, uso_tokenUncheckedUpdateInput>
+  }
+
+  /**
+   * uso_token delete
+   */
+  export type uso_tokenDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the uso_token
+     */
+    select?: uso_tokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the uso_token
+     */
+    omit?: uso_tokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: uso_tokenInclude<ExtArgs> | null
+    /**
+     * Filter which uso_token to delete.
+     */
+    where: uso_tokenWhereUniqueInput
+  }
+
+  /**
+   * uso_token deleteMany
+   */
+  export type uso_tokenDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which uso_tokens to delete
+     */
+    where?: uso_tokenWhereInput
+    /**
+     * Limit how many uso_tokens to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * uso_token without action
+   */
+  export type uso_tokenDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the uso_token
+     */
+    select?: uso_tokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the uso_token
+     */
+    omit?: uso_tokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: uso_tokenInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model metadata_token
+   */
+
+  export type AggregateMetadata_token = {
+    _count: Metadata_tokenCountAggregateOutputType | null
+    _min: Metadata_tokenMinAggregateOutputType | null
+    _max: Metadata_tokenMaxAggregateOutputType | null
+  }
+
+  export type Metadata_tokenMinAggregateOutputType = {
+    id_met_tok: string | null
+    id_tok_per: string | null
+    cla_met: $Enums.clave_metadata | null
+    val_met: string | null
+    fec_cre_met: Date | null
+  }
+
+  export type Metadata_tokenMaxAggregateOutputType = {
+    id_met_tok: string | null
+    id_tok_per: string | null
+    cla_met: $Enums.clave_metadata | null
+    val_met: string | null
+    fec_cre_met: Date | null
+  }
+
+  export type Metadata_tokenCountAggregateOutputType = {
+    id_met_tok: number
+    id_tok_per: number
+    cla_met: number
+    val_met: number
+    fec_cre_met: number
+    _all: number
+  }
+
+
+  export type Metadata_tokenMinAggregateInputType = {
+    id_met_tok?: true
+    id_tok_per?: true
+    cla_met?: true
+    val_met?: true
+    fec_cre_met?: true
+  }
+
+  export type Metadata_tokenMaxAggregateInputType = {
+    id_met_tok?: true
+    id_tok_per?: true
+    cla_met?: true
+    val_met?: true
+    fec_cre_met?: true
+  }
+
+  export type Metadata_tokenCountAggregateInputType = {
+    id_met_tok?: true
+    id_tok_per?: true
+    cla_met?: true
+    val_met?: true
+    fec_cre_met?: true
+    _all?: true
+  }
+
+  export type Metadata_tokenAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which metadata_token to aggregate.
+     */
+    where?: metadata_tokenWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of metadata_tokens to fetch.
+     */
+    orderBy?: metadata_tokenOrderByWithRelationInput | metadata_tokenOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: metadata_tokenWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` metadata_tokens from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` metadata_tokens.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned metadata_tokens
+    **/
+    _count?: true | Metadata_tokenCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: Metadata_tokenMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: Metadata_tokenMaxAggregateInputType
+  }
+
+  export type GetMetadata_tokenAggregateType<T extends Metadata_tokenAggregateArgs> = {
+        [P in keyof T & keyof AggregateMetadata_token]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateMetadata_token[P]>
+      : GetScalarType<T[P], AggregateMetadata_token[P]>
+  }
+
+
+
+
+  export type metadata_tokenGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: metadata_tokenWhereInput
+    orderBy?: metadata_tokenOrderByWithAggregationInput | metadata_tokenOrderByWithAggregationInput[]
+    by: Metadata_tokenScalarFieldEnum[] | Metadata_tokenScalarFieldEnum
+    having?: metadata_tokenScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: Metadata_tokenCountAggregateInputType | true
+    _min?: Metadata_tokenMinAggregateInputType
+    _max?: Metadata_tokenMaxAggregateInputType
+  }
+
+  export type Metadata_tokenGroupByOutputType = {
+    id_met_tok: string
+    id_tok_per: string
+    cla_met: $Enums.clave_metadata
+    val_met: string
+    fec_cre_met: Date
+    _count: Metadata_tokenCountAggregateOutputType | null
+    _min: Metadata_tokenMinAggregateOutputType | null
+    _max: Metadata_tokenMaxAggregateOutputType | null
+  }
+
+  type GetMetadata_tokenGroupByPayload<T extends metadata_tokenGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<Metadata_tokenGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof Metadata_tokenGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], Metadata_tokenGroupByOutputType[P]>
+            : GetScalarType<T[P], Metadata_tokenGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type metadata_tokenSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_met_tok?: boolean
+    id_tok_per?: boolean
+    cla_met?: boolean
+    val_met?: boolean
+    fec_cre_met?: boolean
+    token?: boolean | token_cuentaDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["metadata_token"]>
+
+  export type metadata_tokenSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_met_tok?: boolean
+    id_tok_per?: boolean
+    cla_met?: boolean
+    val_met?: boolean
+    fec_cre_met?: boolean
+    token?: boolean | token_cuentaDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["metadata_token"]>
+
+  export type metadata_tokenSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_met_tok?: boolean
+    id_tok_per?: boolean
+    cla_met?: boolean
+    val_met?: boolean
+    fec_cre_met?: boolean
+    token?: boolean | token_cuentaDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["metadata_token"]>
+
+  export type metadata_tokenSelectScalar = {
+    id_met_tok?: boolean
+    id_tok_per?: boolean
+    cla_met?: boolean
+    val_met?: boolean
+    fec_cre_met?: boolean
+  }
+
+  export type metadata_tokenOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_met_tok" | "id_tok_per" | "cla_met" | "val_met" | "fec_cre_met", ExtArgs["result"]["metadata_token"]>
+  export type metadata_tokenInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    token?: boolean | token_cuentaDefaultArgs<ExtArgs>
+  }
+  export type metadata_tokenIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    token?: boolean | token_cuentaDefaultArgs<ExtArgs>
+  }
+  export type metadata_tokenIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    token?: boolean | token_cuentaDefaultArgs<ExtArgs>
+  }
+
+  export type $metadata_tokenPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "metadata_token"
+    objects: {
+      token: Prisma.$token_cuentaPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id_met_tok: string
+      id_tok_per: string
+      cla_met: $Enums.clave_metadata
+      val_met: string
+      fec_cre_met: Date
+    }, ExtArgs["result"]["metadata_token"]>
+    composites: {}
+  }
+
+  type metadata_tokenGetPayload<S extends boolean | null | undefined | metadata_tokenDefaultArgs> = $Result.GetResult<Prisma.$metadata_tokenPayload, S>
+
+  type metadata_tokenCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<metadata_tokenFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: Metadata_tokenCountAggregateInputType | true
+    }
+
+  export interface metadata_tokenDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['metadata_token'], meta: { name: 'metadata_token' } }
+    /**
+     * Find zero or one Metadata_token that matches the filter.
+     * @param {metadata_tokenFindUniqueArgs} args - Arguments to find a Metadata_token
+     * @example
+     * // Get one Metadata_token
+     * const metadata_token = await prisma.metadata_token.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends metadata_tokenFindUniqueArgs>(args: SelectSubset<T, metadata_tokenFindUniqueArgs<ExtArgs>>): Prisma__metadata_tokenClient<$Result.GetResult<Prisma.$metadata_tokenPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Metadata_token that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {metadata_tokenFindUniqueOrThrowArgs} args - Arguments to find a Metadata_token
+     * @example
+     * // Get one Metadata_token
+     * const metadata_token = await prisma.metadata_token.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends metadata_tokenFindUniqueOrThrowArgs>(args: SelectSubset<T, metadata_tokenFindUniqueOrThrowArgs<ExtArgs>>): Prisma__metadata_tokenClient<$Result.GetResult<Prisma.$metadata_tokenPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Metadata_token that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {metadata_tokenFindFirstArgs} args - Arguments to find a Metadata_token
+     * @example
+     * // Get one Metadata_token
+     * const metadata_token = await prisma.metadata_token.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends metadata_tokenFindFirstArgs>(args?: SelectSubset<T, metadata_tokenFindFirstArgs<ExtArgs>>): Prisma__metadata_tokenClient<$Result.GetResult<Prisma.$metadata_tokenPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Metadata_token that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {metadata_tokenFindFirstOrThrowArgs} args - Arguments to find a Metadata_token
+     * @example
+     * // Get one Metadata_token
+     * const metadata_token = await prisma.metadata_token.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends metadata_tokenFindFirstOrThrowArgs>(args?: SelectSubset<T, metadata_tokenFindFirstOrThrowArgs<ExtArgs>>): Prisma__metadata_tokenClient<$Result.GetResult<Prisma.$metadata_tokenPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Metadata_tokens that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {metadata_tokenFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Metadata_tokens
+     * const metadata_tokens = await prisma.metadata_token.findMany()
+     * 
+     * // Get first 10 Metadata_tokens
+     * const metadata_tokens = await prisma.metadata_token.findMany({ take: 10 })
+     * 
+     * // Only select the `id_met_tok`
+     * const metadata_tokenWithId_met_tokOnly = await prisma.metadata_token.findMany({ select: { id_met_tok: true } })
+     * 
+     */
+    findMany<T extends metadata_tokenFindManyArgs>(args?: SelectSubset<T, metadata_tokenFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$metadata_tokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Metadata_token.
+     * @param {metadata_tokenCreateArgs} args - Arguments to create a Metadata_token.
+     * @example
+     * // Create one Metadata_token
+     * const Metadata_token = await prisma.metadata_token.create({
+     *   data: {
+     *     // ... data to create a Metadata_token
+     *   }
+     * })
+     * 
+     */
+    create<T extends metadata_tokenCreateArgs>(args: SelectSubset<T, metadata_tokenCreateArgs<ExtArgs>>): Prisma__metadata_tokenClient<$Result.GetResult<Prisma.$metadata_tokenPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Metadata_tokens.
+     * @param {metadata_tokenCreateManyArgs} args - Arguments to create many Metadata_tokens.
+     * @example
+     * // Create many Metadata_tokens
+     * const metadata_token = await prisma.metadata_token.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends metadata_tokenCreateManyArgs>(args?: SelectSubset<T, metadata_tokenCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Metadata_tokens and returns the data saved in the database.
+     * @param {metadata_tokenCreateManyAndReturnArgs} args - Arguments to create many Metadata_tokens.
+     * @example
+     * // Create many Metadata_tokens
+     * const metadata_token = await prisma.metadata_token.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Metadata_tokens and only return the `id_met_tok`
+     * const metadata_tokenWithId_met_tokOnly = await prisma.metadata_token.createManyAndReturn({
+     *   select: { id_met_tok: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends metadata_tokenCreateManyAndReturnArgs>(args?: SelectSubset<T, metadata_tokenCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$metadata_tokenPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Metadata_token.
+     * @param {metadata_tokenDeleteArgs} args - Arguments to delete one Metadata_token.
+     * @example
+     * // Delete one Metadata_token
+     * const Metadata_token = await prisma.metadata_token.delete({
+     *   where: {
+     *     // ... filter to delete one Metadata_token
+     *   }
+     * })
+     * 
+     */
+    delete<T extends metadata_tokenDeleteArgs>(args: SelectSubset<T, metadata_tokenDeleteArgs<ExtArgs>>): Prisma__metadata_tokenClient<$Result.GetResult<Prisma.$metadata_tokenPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Metadata_token.
+     * @param {metadata_tokenUpdateArgs} args - Arguments to update one Metadata_token.
+     * @example
+     * // Update one Metadata_token
+     * const metadata_token = await prisma.metadata_token.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends metadata_tokenUpdateArgs>(args: SelectSubset<T, metadata_tokenUpdateArgs<ExtArgs>>): Prisma__metadata_tokenClient<$Result.GetResult<Prisma.$metadata_tokenPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Metadata_tokens.
+     * @param {metadata_tokenDeleteManyArgs} args - Arguments to filter Metadata_tokens to delete.
+     * @example
+     * // Delete a few Metadata_tokens
+     * const { count } = await prisma.metadata_token.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends metadata_tokenDeleteManyArgs>(args?: SelectSubset<T, metadata_tokenDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Metadata_tokens.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {metadata_tokenUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Metadata_tokens
+     * const metadata_token = await prisma.metadata_token.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends metadata_tokenUpdateManyArgs>(args: SelectSubset<T, metadata_tokenUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Metadata_tokens and returns the data updated in the database.
+     * @param {metadata_tokenUpdateManyAndReturnArgs} args - Arguments to update many Metadata_tokens.
+     * @example
+     * // Update many Metadata_tokens
+     * const metadata_token = await prisma.metadata_token.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Metadata_tokens and only return the `id_met_tok`
+     * const metadata_tokenWithId_met_tokOnly = await prisma.metadata_token.updateManyAndReturn({
+     *   select: { id_met_tok: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends metadata_tokenUpdateManyAndReturnArgs>(args: SelectSubset<T, metadata_tokenUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$metadata_tokenPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Metadata_token.
+     * @param {metadata_tokenUpsertArgs} args - Arguments to update or create a Metadata_token.
+     * @example
+     * // Update or create a Metadata_token
+     * const metadata_token = await prisma.metadata_token.upsert({
+     *   create: {
+     *     // ... data to create a Metadata_token
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Metadata_token we want to update
+     *   }
+     * })
+     */
+    upsert<T extends metadata_tokenUpsertArgs>(args: SelectSubset<T, metadata_tokenUpsertArgs<ExtArgs>>): Prisma__metadata_tokenClient<$Result.GetResult<Prisma.$metadata_tokenPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Metadata_tokens.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {metadata_tokenCountArgs} args - Arguments to filter Metadata_tokens to count.
+     * @example
+     * // Count the number of Metadata_tokens
+     * const count = await prisma.metadata_token.count({
+     *   where: {
+     *     // ... the filter for the Metadata_tokens we want to count
+     *   }
+     * })
+    **/
+    count<T extends metadata_tokenCountArgs>(
+      args?: Subset<T, metadata_tokenCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], Metadata_tokenCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Metadata_token.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Metadata_tokenAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends Metadata_tokenAggregateArgs>(args: Subset<T, Metadata_tokenAggregateArgs>): Prisma.PrismaPromise<GetMetadata_tokenAggregateType<T>>
+
+    /**
+     * Group by Metadata_token.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {metadata_tokenGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends metadata_tokenGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: metadata_tokenGroupByArgs['orderBy'] }
+        : { orderBy?: metadata_tokenGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, metadata_tokenGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetMetadata_tokenGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the metadata_token model
+   */
+  readonly fields: metadata_tokenFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for metadata_token.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__metadata_tokenClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    token<T extends token_cuentaDefaultArgs<ExtArgs> = {}>(args?: Subset<T, token_cuentaDefaultArgs<ExtArgs>>): Prisma__token_cuentaClient<$Result.GetResult<Prisma.$token_cuentaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the metadata_token model
+   */
+  interface metadata_tokenFieldRefs {
+    readonly id_met_tok: FieldRef<"metadata_token", 'String'>
+    readonly id_tok_per: FieldRef<"metadata_token", 'String'>
+    readonly cla_met: FieldRef<"metadata_token", 'clave_metadata'>
+    readonly val_met: FieldRef<"metadata_token", 'String'>
+    readonly fec_cre_met: FieldRef<"metadata_token", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * metadata_token findUnique
+   */
+  export type metadata_tokenFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the metadata_token
+     */
+    select?: metadata_tokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the metadata_token
+     */
+    omit?: metadata_tokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: metadata_tokenInclude<ExtArgs> | null
+    /**
+     * Filter, which metadata_token to fetch.
+     */
+    where: metadata_tokenWhereUniqueInput
+  }
+
+  /**
+   * metadata_token findUniqueOrThrow
+   */
+  export type metadata_tokenFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the metadata_token
+     */
+    select?: metadata_tokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the metadata_token
+     */
+    omit?: metadata_tokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: metadata_tokenInclude<ExtArgs> | null
+    /**
+     * Filter, which metadata_token to fetch.
+     */
+    where: metadata_tokenWhereUniqueInput
+  }
+
+  /**
+   * metadata_token findFirst
+   */
+  export type metadata_tokenFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the metadata_token
+     */
+    select?: metadata_tokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the metadata_token
+     */
+    omit?: metadata_tokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: metadata_tokenInclude<ExtArgs> | null
+    /**
+     * Filter, which metadata_token to fetch.
+     */
+    where?: metadata_tokenWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of metadata_tokens to fetch.
+     */
+    orderBy?: metadata_tokenOrderByWithRelationInput | metadata_tokenOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for metadata_tokens.
+     */
+    cursor?: metadata_tokenWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` metadata_tokens from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` metadata_tokens.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of metadata_tokens.
+     */
+    distinct?: Metadata_tokenScalarFieldEnum | Metadata_tokenScalarFieldEnum[]
+  }
+
+  /**
+   * metadata_token findFirstOrThrow
+   */
+  export type metadata_tokenFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the metadata_token
+     */
+    select?: metadata_tokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the metadata_token
+     */
+    omit?: metadata_tokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: metadata_tokenInclude<ExtArgs> | null
+    /**
+     * Filter, which metadata_token to fetch.
+     */
+    where?: metadata_tokenWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of metadata_tokens to fetch.
+     */
+    orderBy?: metadata_tokenOrderByWithRelationInput | metadata_tokenOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for metadata_tokens.
+     */
+    cursor?: metadata_tokenWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` metadata_tokens from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` metadata_tokens.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of metadata_tokens.
+     */
+    distinct?: Metadata_tokenScalarFieldEnum | Metadata_tokenScalarFieldEnum[]
+  }
+
+  /**
+   * metadata_token findMany
+   */
+  export type metadata_tokenFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the metadata_token
+     */
+    select?: metadata_tokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the metadata_token
+     */
+    omit?: metadata_tokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: metadata_tokenInclude<ExtArgs> | null
+    /**
+     * Filter, which metadata_tokens to fetch.
+     */
+    where?: metadata_tokenWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of metadata_tokens to fetch.
+     */
+    orderBy?: metadata_tokenOrderByWithRelationInput | metadata_tokenOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing metadata_tokens.
+     */
+    cursor?: metadata_tokenWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` metadata_tokens from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` metadata_tokens.
+     */
+    skip?: number
+    distinct?: Metadata_tokenScalarFieldEnum | Metadata_tokenScalarFieldEnum[]
+  }
+
+  /**
+   * metadata_token create
+   */
+  export type metadata_tokenCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the metadata_token
+     */
+    select?: metadata_tokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the metadata_token
+     */
+    omit?: metadata_tokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: metadata_tokenInclude<ExtArgs> | null
+    /**
+     * The data needed to create a metadata_token.
+     */
+    data: XOR<metadata_tokenCreateInput, metadata_tokenUncheckedCreateInput>
+  }
+
+  /**
+   * metadata_token createMany
+   */
+  export type metadata_tokenCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many metadata_tokens.
+     */
+    data: metadata_tokenCreateManyInput | metadata_tokenCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * metadata_token createManyAndReturn
+   */
+  export type metadata_tokenCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the metadata_token
+     */
+    select?: metadata_tokenSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the metadata_token
+     */
+    omit?: metadata_tokenOmit<ExtArgs> | null
+    /**
+     * The data used to create many metadata_tokens.
+     */
+    data: metadata_tokenCreateManyInput | metadata_tokenCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: metadata_tokenIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * metadata_token update
+   */
+  export type metadata_tokenUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the metadata_token
+     */
+    select?: metadata_tokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the metadata_token
+     */
+    omit?: metadata_tokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: metadata_tokenInclude<ExtArgs> | null
+    /**
+     * The data needed to update a metadata_token.
+     */
+    data: XOR<metadata_tokenUpdateInput, metadata_tokenUncheckedUpdateInput>
+    /**
+     * Choose, which metadata_token to update.
+     */
+    where: metadata_tokenWhereUniqueInput
+  }
+
+  /**
+   * metadata_token updateMany
+   */
+  export type metadata_tokenUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update metadata_tokens.
+     */
+    data: XOR<metadata_tokenUpdateManyMutationInput, metadata_tokenUncheckedUpdateManyInput>
+    /**
+     * Filter which metadata_tokens to update
+     */
+    where?: metadata_tokenWhereInput
+    /**
+     * Limit how many metadata_tokens to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * metadata_token updateManyAndReturn
+   */
+  export type metadata_tokenUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the metadata_token
+     */
+    select?: metadata_tokenSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the metadata_token
+     */
+    omit?: metadata_tokenOmit<ExtArgs> | null
+    /**
+     * The data used to update metadata_tokens.
+     */
+    data: XOR<metadata_tokenUpdateManyMutationInput, metadata_tokenUncheckedUpdateManyInput>
+    /**
+     * Filter which metadata_tokens to update
+     */
+    where?: metadata_tokenWhereInput
+    /**
+     * Limit how many metadata_tokens to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: metadata_tokenIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * metadata_token upsert
+   */
+  export type metadata_tokenUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the metadata_token
+     */
+    select?: metadata_tokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the metadata_token
+     */
+    omit?: metadata_tokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: metadata_tokenInclude<ExtArgs> | null
+    /**
+     * The filter to search for the metadata_token to update in case it exists.
+     */
+    where: metadata_tokenWhereUniqueInput
+    /**
+     * In case the metadata_token found by the `where` argument doesn't exist, create a new metadata_token with this data.
+     */
+    create: XOR<metadata_tokenCreateInput, metadata_tokenUncheckedCreateInput>
+    /**
+     * In case the metadata_token was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<metadata_tokenUpdateInput, metadata_tokenUncheckedUpdateInput>
+  }
+
+  /**
+   * metadata_token delete
+   */
+  export type metadata_tokenDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the metadata_token
+     */
+    select?: metadata_tokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the metadata_token
+     */
+    omit?: metadata_tokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: metadata_tokenInclude<ExtArgs> | null
+    /**
+     * Filter which metadata_token to delete.
+     */
+    where: metadata_tokenWhereUniqueInput
+  }
+
+  /**
+   * metadata_token deleteMany
+   */
+  export type metadata_tokenDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which metadata_tokens to delete
+     */
+    where?: metadata_tokenWhereInput
+    /**
+     * Limit how many metadata_tokens to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * metadata_token without action
+   */
+  export type metadata_tokenDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the metadata_token
+     */
+    select?: metadata_tokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the metadata_token
+     */
+    omit?: metadata_tokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: metadata_tokenInclude<ExtArgs> | null
   }
 
 
@@ -20102,14 +23857,49 @@ export namespace Prisma {
     tok_val: 'tok_val',
     tip_tok: 'tip_tok',
     fec_exp_tok: 'fec_exp_tok',
-    est_uso: 'est_uso',
-    fec_uso: 'fec_uso',
+    est_tok: 'est_tok',
     fec_cre_tok: 'fec_cre_tok',
     ip_sol: 'ip_sol',
-    ip_uso: 'ip_uso'
+    id_tok_ree: 'id_tok_ree'
   };
 
   export type Token_cuentaScalarFieldEnum = (typeof Token_cuentaScalarFieldEnum)[keyof typeof Token_cuentaScalarFieldEnum]
+
+
+  export const Invalidacion_tokenScalarFieldEnum: {
+    id_inv_tok: 'id_inv_tok',
+    id_tok_per: 'id_tok_per',
+    raz_inv: 'raz_inv',
+    des_inv: 'des_inv',
+    fec_inv: 'fec_inv',
+    ip_inv: 'ip_inv',
+    id_adm_inv: 'id_adm_inv'
+  };
+
+  export type Invalidacion_tokenScalarFieldEnum = (typeof Invalidacion_tokenScalarFieldEnum)[keyof typeof Invalidacion_tokenScalarFieldEnum]
+
+
+  export const Uso_tokenScalarFieldEnum: {
+    id_uso_tok: 'id_uso_tok',
+    id_tok_per: 'id_tok_per',
+    fec_uso: 'fec_uso',
+    ip_uso: 'ip_uso',
+    exi_uso: 'exi_uso',
+    obs_uso: 'obs_uso'
+  };
+
+  export type Uso_tokenScalarFieldEnum = (typeof Uso_tokenScalarFieldEnum)[keyof typeof Uso_tokenScalarFieldEnum]
+
+
+  export const Metadata_tokenScalarFieldEnum: {
+    id_met_tok: 'id_met_tok',
+    id_tok_per: 'id_tok_per',
+    cla_met: 'cla_met',
+    val_met: 'val_met',
+    fec_cre_met: 'fec_cre_met'
+  };
+
+  export type Metadata_tokenScalarFieldEnum = (typeof Metadata_tokenScalarFieldEnum)[keyof typeof Metadata_tokenScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -20313,6 +24103,48 @@ export namespace Prisma {
    * Reference to a field of type 'tipo_token[]'
    */
   export type ListEnumtipo_tokenFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'tipo_token[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'estado_token'
+   */
+  export type Enumestado_tokenFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'estado_token'>
+    
+
+
+  /**
+   * Reference to a field of type 'estado_token[]'
+   */
+  export type ListEnumestado_tokenFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'estado_token[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'razon_invalidacion'
+   */
+  export type Enumrazon_invalidacionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'razon_invalidacion'>
+    
+
+
+  /**
+   * Reference to a field of type 'razon_invalidacion[]'
+   */
+  export type ListEnumrazon_invalidacionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'razon_invalidacion[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'clave_metadata'
+   */
+  export type Enumclave_metadataFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'clave_metadata'>
+    
+
+
+  /**
+   * Reference to a field of type 'clave_metadata[]'
+   */
+  export type ListEnumclave_metadataFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'clave_metadata[]'>
     
   /**
    * Deep Input Types
@@ -20616,6 +24448,7 @@ export namespace Prisma {
     observaciones_creadas?: Observacion_inscripcionListRelationFilter
     inscripciones_validadas?: InscripcionListRelationFilter
     tokens_cuenta?: Token_cuentaListRelationFilter
+    tokens_invalidados?: Invalidacion_tokenListRelationFilter
   }
 
   export type cuentaOrderByWithRelationInput = {
@@ -20635,6 +24468,7 @@ export namespace Prisma {
     observaciones_creadas?: observacion_inscripcionOrderByRelationAggregateInput
     inscripciones_validadas?: inscripcionOrderByRelationAggregateInput
     tokens_cuenta?: token_cuentaOrderByRelationAggregateInput
+    tokens_invalidados?: invalidacion_tokenOrderByRelationAggregateInput
   }
 
   export type cuentaWhereUniqueInput = Prisma.AtLeast<{
@@ -20657,6 +24491,7 @@ export namespace Prisma {
     observaciones_creadas?: Observacion_inscripcionListRelationFilter
     inscripciones_validadas?: InscripcionListRelationFilter
     tokens_cuenta?: Token_cuentaListRelationFilter
+    tokens_invalidados?: Invalidacion_tokenListRelationFilter
   }, "id_cue" | "cor_usu">
 
   export type cuentaOrderByWithAggregationInput = {
@@ -21383,12 +25218,16 @@ export namespace Prisma {
     tok_val?: StringFilter<"token_cuenta"> | string
     tip_tok?: Enumtipo_tokenFilter<"token_cuenta"> | $Enums.tipo_token
     fec_exp_tok?: DateTimeFilter<"token_cuenta"> | Date | string
-    est_uso?: BoolFilter<"token_cuenta"> | boolean
-    fec_uso?: DateTimeNullableFilter<"token_cuenta"> | Date | string | null
+    est_tok?: Enumestado_tokenFilter<"token_cuenta"> | $Enums.estado_token
     fec_cre_tok?: DateTimeFilter<"token_cuenta"> | Date | string
     ip_sol?: StringNullableFilter<"token_cuenta"> | string | null
-    ip_uso?: StringNullableFilter<"token_cuenta"> | string | null
+    id_tok_ree?: StringNullableFilter<"token_cuenta"> | string | null
     cuenta?: XOR<CuentaScalarRelationFilter, cuentaWhereInput>
+    invalidacion?: XOR<Invalidacion_tokenNullableScalarRelationFilter, invalidacion_tokenWhereInput> | null
+    uso_token?: XOR<Uso_tokenNullableScalarRelationFilter, uso_tokenWhereInput> | null
+    metadata?: Metadata_tokenListRelationFilter
+    token_reemplazado?: XOR<Token_cuentaNullableScalarRelationFilter, token_cuentaWhereInput> | null
+    tokens_que_reemplaza?: Token_cuentaListRelationFilter
   }
 
   export type token_cuentaOrderByWithRelationInput = {
@@ -21397,30 +25236,38 @@ export namespace Prisma {
     tok_val?: SortOrder
     tip_tok?: SortOrder
     fec_exp_tok?: SortOrder
-    est_uso?: SortOrder
-    fec_uso?: SortOrderInput | SortOrder
+    est_tok?: SortOrder
     fec_cre_tok?: SortOrder
     ip_sol?: SortOrderInput | SortOrder
-    ip_uso?: SortOrderInput | SortOrder
+    id_tok_ree?: SortOrderInput | SortOrder
     cuenta?: cuentaOrderByWithRelationInput
+    invalidacion?: invalidacion_tokenOrderByWithRelationInput
+    uso_token?: uso_tokenOrderByWithRelationInput
+    metadata?: metadata_tokenOrderByRelationAggregateInput
+    token_reemplazado?: token_cuentaOrderByWithRelationInput
+    tokens_que_reemplaza?: token_cuentaOrderByRelationAggregateInput
   }
 
   export type token_cuentaWhereUniqueInput = Prisma.AtLeast<{
     id_tok?: string
     tok_val?: string
+    id_tok_ree?: string
     AND?: token_cuentaWhereInput | token_cuentaWhereInput[]
     OR?: token_cuentaWhereInput[]
     NOT?: token_cuentaWhereInput | token_cuentaWhereInput[]
     id_cue_per?: StringFilter<"token_cuenta"> | string
     tip_tok?: Enumtipo_tokenFilter<"token_cuenta"> | $Enums.tipo_token
     fec_exp_tok?: DateTimeFilter<"token_cuenta"> | Date | string
-    est_uso?: BoolFilter<"token_cuenta"> | boolean
-    fec_uso?: DateTimeNullableFilter<"token_cuenta"> | Date | string | null
+    est_tok?: Enumestado_tokenFilter<"token_cuenta"> | $Enums.estado_token
     fec_cre_tok?: DateTimeFilter<"token_cuenta"> | Date | string
     ip_sol?: StringNullableFilter<"token_cuenta"> | string | null
-    ip_uso?: StringNullableFilter<"token_cuenta"> | string | null
     cuenta?: XOR<CuentaScalarRelationFilter, cuentaWhereInput>
-  }, "id_tok" | "tok_val">
+    invalidacion?: XOR<Invalidacion_tokenNullableScalarRelationFilter, invalidacion_tokenWhereInput> | null
+    uso_token?: XOR<Uso_tokenNullableScalarRelationFilter, uso_tokenWhereInput> | null
+    metadata?: Metadata_tokenListRelationFilter
+    token_reemplazado?: XOR<Token_cuentaNullableScalarRelationFilter, token_cuentaWhereInput> | null
+    tokens_que_reemplaza?: Token_cuentaListRelationFilter
+  }, "id_tok" | "tok_val" | "id_tok_ree">
 
   export type token_cuentaOrderByWithAggregationInput = {
     id_tok?: SortOrder
@@ -21428,11 +25275,10 @@ export namespace Prisma {
     tok_val?: SortOrder
     tip_tok?: SortOrder
     fec_exp_tok?: SortOrder
-    est_uso?: SortOrder
-    fec_uso?: SortOrderInput | SortOrder
+    est_tok?: SortOrder
     fec_cre_tok?: SortOrder
     ip_sol?: SortOrderInput | SortOrder
-    ip_uso?: SortOrderInput | SortOrder
+    id_tok_ree?: SortOrderInput | SortOrder
     _count?: token_cuentaCountOrderByAggregateInput
     _max?: token_cuentaMaxOrderByAggregateInput
     _min?: token_cuentaMinOrderByAggregateInput
@@ -21447,11 +25293,194 @@ export namespace Prisma {
     tok_val?: StringWithAggregatesFilter<"token_cuenta"> | string
     tip_tok?: Enumtipo_tokenWithAggregatesFilter<"token_cuenta"> | $Enums.tipo_token
     fec_exp_tok?: DateTimeWithAggregatesFilter<"token_cuenta"> | Date | string
-    est_uso?: BoolWithAggregatesFilter<"token_cuenta"> | boolean
-    fec_uso?: DateTimeNullableWithAggregatesFilter<"token_cuenta"> | Date | string | null
+    est_tok?: Enumestado_tokenWithAggregatesFilter<"token_cuenta"> | $Enums.estado_token
     fec_cre_tok?: DateTimeWithAggregatesFilter<"token_cuenta"> | Date | string
     ip_sol?: StringNullableWithAggregatesFilter<"token_cuenta"> | string | null
-    ip_uso?: StringNullableWithAggregatesFilter<"token_cuenta"> | string | null
+    id_tok_ree?: StringNullableWithAggregatesFilter<"token_cuenta"> | string | null
+  }
+
+  export type invalidacion_tokenWhereInput = {
+    AND?: invalidacion_tokenWhereInput | invalidacion_tokenWhereInput[]
+    OR?: invalidacion_tokenWhereInput[]
+    NOT?: invalidacion_tokenWhereInput | invalidacion_tokenWhereInput[]
+    id_inv_tok?: StringFilter<"invalidacion_token"> | string
+    id_tok_per?: StringFilter<"invalidacion_token"> | string
+    raz_inv?: Enumrazon_invalidacionFilter<"invalidacion_token"> | $Enums.razon_invalidacion
+    des_inv?: StringNullableFilter<"invalidacion_token"> | string | null
+    fec_inv?: DateTimeFilter<"invalidacion_token"> | Date | string
+    ip_inv?: StringNullableFilter<"invalidacion_token"> | string | null
+    id_adm_inv?: StringNullableFilter<"invalidacion_token"> | string | null
+    token?: XOR<Token_cuentaScalarRelationFilter, token_cuentaWhereInput>
+    admin?: XOR<CuentaNullableScalarRelationFilter, cuentaWhereInput> | null
+  }
+
+  export type invalidacion_tokenOrderByWithRelationInput = {
+    id_inv_tok?: SortOrder
+    id_tok_per?: SortOrder
+    raz_inv?: SortOrder
+    des_inv?: SortOrderInput | SortOrder
+    fec_inv?: SortOrder
+    ip_inv?: SortOrderInput | SortOrder
+    id_adm_inv?: SortOrderInput | SortOrder
+    token?: token_cuentaOrderByWithRelationInput
+    admin?: cuentaOrderByWithRelationInput
+  }
+
+  export type invalidacion_tokenWhereUniqueInput = Prisma.AtLeast<{
+    id_inv_tok?: string
+    id_tok_per?: string
+    AND?: invalidacion_tokenWhereInput | invalidacion_tokenWhereInput[]
+    OR?: invalidacion_tokenWhereInput[]
+    NOT?: invalidacion_tokenWhereInput | invalidacion_tokenWhereInput[]
+    raz_inv?: Enumrazon_invalidacionFilter<"invalidacion_token"> | $Enums.razon_invalidacion
+    des_inv?: StringNullableFilter<"invalidacion_token"> | string | null
+    fec_inv?: DateTimeFilter<"invalidacion_token"> | Date | string
+    ip_inv?: StringNullableFilter<"invalidacion_token"> | string | null
+    id_adm_inv?: StringNullableFilter<"invalidacion_token"> | string | null
+    token?: XOR<Token_cuentaScalarRelationFilter, token_cuentaWhereInput>
+    admin?: XOR<CuentaNullableScalarRelationFilter, cuentaWhereInput> | null
+  }, "id_inv_tok" | "id_tok_per">
+
+  export type invalidacion_tokenOrderByWithAggregationInput = {
+    id_inv_tok?: SortOrder
+    id_tok_per?: SortOrder
+    raz_inv?: SortOrder
+    des_inv?: SortOrderInput | SortOrder
+    fec_inv?: SortOrder
+    ip_inv?: SortOrderInput | SortOrder
+    id_adm_inv?: SortOrderInput | SortOrder
+    _count?: invalidacion_tokenCountOrderByAggregateInput
+    _max?: invalidacion_tokenMaxOrderByAggregateInput
+    _min?: invalidacion_tokenMinOrderByAggregateInput
+  }
+
+  export type invalidacion_tokenScalarWhereWithAggregatesInput = {
+    AND?: invalidacion_tokenScalarWhereWithAggregatesInput | invalidacion_tokenScalarWhereWithAggregatesInput[]
+    OR?: invalidacion_tokenScalarWhereWithAggregatesInput[]
+    NOT?: invalidacion_tokenScalarWhereWithAggregatesInput | invalidacion_tokenScalarWhereWithAggregatesInput[]
+    id_inv_tok?: StringWithAggregatesFilter<"invalidacion_token"> | string
+    id_tok_per?: StringWithAggregatesFilter<"invalidacion_token"> | string
+    raz_inv?: Enumrazon_invalidacionWithAggregatesFilter<"invalidacion_token"> | $Enums.razon_invalidacion
+    des_inv?: StringNullableWithAggregatesFilter<"invalidacion_token"> | string | null
+    fec_inv?: DateTimeWithAggregatesFilter<"invalidacion_token"> | Date | string
+    ip_inv?: StringNullableWithAggregatesFilter<"invalidacion_token"> | string | null
+    id_adm_inv?: StringNullableWithAggregatesFilter<"invalidacion_token"> | string | null
+  }
+
+  export type uso_tokenWhereInput = {
+    AND?: uso_tokenWhereInput | uso_tokenWhereInput[]
+    OR?: uso_tokenWhereInput[]
+    NOT?: uso_tokenWhereInput | uso_tokenWhereInput[]
+    id_uso_tok?: StringFilter<"uso_token"> | string
+    id_tok_per?: StringFilter<"uso_token"> | string
+    fec_uso?: DateTimeFilter<"uso_token"> | Date | string
+    ip_uso?: StringFilter<"uso_token"> | string
+    exi_uso?: BoolFilter<"uso_token"> | boolean
+    obs_uso?: StringNullableFilter<"uso_token"> | string | null
+    token?: XOR<Token_cuentaScalarRelationFilter, token_cuentaWhereInput>
+  }
+
+  export type uso_tokenOrderByWithRelationInput = {
+    id_uso_tok?: SortOrder
+    id_tok_per?: SortOrder
+    fec_uso?: SortOrder
+    ip_uso?: SortOrder
+    exi_uso?: SortOrder
+    obs_uso?: SortOrderInput | SortOrder
+    token?: token_cuentaOrderByWithRelationInput
+  }
+
+  export type uso_tokenWhereUniqueInput = Prisma.AtLeast<{
+    id_uso_tok?: string
+    id_tok_per?: string
+    AND?: uso_tokenWhereInput | uso_tokenWhereInput[]
+    OR?: uso_tokenWhereInput[]
+    NOT?: uso_tokenWhereInput | uso_tokenWhereInput[]
+    fec_uso?: DateTimeFilter<"uso_token"> | Date | string
+    ip_uso?: StringFilter<"uso_token"> | string
+    exi_uso?: BoolFilter<"uso_token"> | boolean
+    obs_uso?: StringNullableFilter<"uso_token"> | string | null
+    token?: XOR<Token_cuentaScalarRelationFilter, token_cuentaWhereInput>
+  }, "id_uso_tok" | "id_tok_per">
+
+  export type uso_tokenOrderByWithAggregationInput = {
+    id_uso_tok?: SortOrder
+    id_tok_per?: SortOrder
+    fec_uso?: SortOrder
+    ip_uso?: SortOrder
+    exi_uso?: SortOrder
+    obs_uso?: SortOrderInput | SortOrder
+    _count?: uso_tokenCountOrderByAggregateInput
+    _max?: uso_tokenMaxOrderByAggregateInput
+    _min?: uso_tokenMinOrderByAggregateInput
+  }
+
+  export type uso_tokenScalarWhereWithAggregatesInput = {
+    AND?: uso_tokenScalarWhereWithAggregatesInput | uso_tokenScalarWhereWithAggregatesInput[]
+    OR?: uso_tokenScalarWhereWithAggregatesInput[]
+    NOT?: uso_tokenScalarWhereWithAggregatesInput | uso_tokenScalarWhereWithAggregatesInput[]
+    id_uso_tok?: StringWithAggregatesFilter<"uso_token"> | string
+    id_tok_per?: StringWithAggregatesFilter<"uso_token"> | string
+    fec_uso?: DateTimeWithAggregatesFilter<"uso_token"> | Date | string
+    ip_uso?: StringWithAggregatesFilter<"uso_token"> | string
+    exi_uso?: BoolWithAggregatesFilter<"uso_token"> | boolean
+    obs_uso?: StringNullableWithAggregatesFilter<"uso_token"> | string | null
+  }
+
+  export type metadata_tokenWhereInput = {
+    AND?: metadata_tokenWhereInput | metadata_tokenWhereInput[]
+    OR?: metadata_tokenWhereInput[]
+    NOT?: metadata_tokenWhereInput | metadata_tokenWhereInput[]
+    id_met_tok?: StringFilter<"metadata_token"> | string
+    id_tok_per?: StringFilter<"metadata_token"> | string
+    cla_met?: Enumclave_metadataFilter<"metadata_token"> | $Enums.clave_metadata
+    val_met?: StringFilter<"metadata_token"> | string
+    fec_cre_met?: DateTimeFilter<"metadata_token"> | Date | string
+    token?: XOR<Token_cuentaScalarRelationFilter, token_cuentaWhereInput>
+  }
+
+  export type metadata_tokenOrderByWithRelationInput = {
+    id_met_tok?: SortOrder
+    id_tok_per?: SortOrder
+    cla_met?: SortOrder
+    val_met?: SortOrder
+    fec_cre_met?: SortOrder
+    token?: token_cuentaOrderByWithRelationInput
+  }
+
+  export type metadata_tokenWhereUniqueInput = Prisma.AtLeast<{
+    id_met_tok?: string
+    id_tok_per_cla_met?: metadata_tokenId_tok_perCla_metCompoundUniqueInput
+    AND?: metadata_tokenWhereInput | metadata_tokenWhereInput[]
+    OR?: metadata_tokenWhereInput[]
+    NOT?: metadata_tokenWhereInput | metadata_tokenWhereInput[]
+    id_tok_per?: StringFilter<"metadata_token"> | string
+    cla_met?: Enumclave_metadataFilter<"metadata_token"> | $Enums.clave_metadata
+    val_met?: StringFilter<"metadata_token"> | string
+    fec_cre_met?: DateTimeFilter<"metadata_token"> | Date | string
+    token?: XOR<Token_cuentaScalarRelationFilter, token_cuentaWhereInput>
+  }, "id_met_tok" | "id_tok_per_cla_met">
+
+  export type metadata_tokenOrderByWithAggregationInput = {
+    id_met_tok?: SortOrder
+    id_tok_per?: SortOrder
+    cla_met?: SortOrder
+    val_met?: SortOrder
+    fec_cre_met?: SortOrder
+    _count?: metadata_tokenCountOrderByAggregateInput
+    _max?: metadata_tokenMaxOrderByAggregateInput
+    _min?: metadata_tokenMinOrderByAggregateInput
+  }
+
+  export type metadata_tokenScalarWhereWithAggregatesInput = {
+    AND?: metadata_tokenScalarWhereWithAggregatesInput | metadata_tokenScalarWhereWithAggregatesInput[]
+    OR?: metadata_tokenScalarWhereWithAggregatesInput[]
+    NOT?: metadata_tokenScalarWhereWithAggregatesInput | metadata_tokenScalarWhereWithAggregatesInput[]
+    id_met_tok?: StringWithAggregatesFilter<"metadata_token"> | string
+    id_tok_per?: StringWithAggregatesFilter<"metadata_token"> | string
+    cla_met?: Enumclave_metadataWithAggregatesFilter<"metadata_token"> | $Enums.clave_metadata
+    val_met?: StringWithAggregatesFilter<"metadata_token"> | string
+    fec_cre_met?: DateTimeWithAggregatesFilter<"metadata_token"> | Date | string
   }
 
   export type usuarioCreateInput = {
@@ -21754,6 +25783,7 @@ export namespace Prisma {
     observaciones_creadas?: observacion_inscripcionCreateNestedManyWithoutAdmin_creadorInput
     inscripciones_validadas?: inscripcionCreateNestedManyWithoutAdmin_validadorInput
     tokens_cuenta?: token_cuentaCreateNestedManyWithoutCuentaInput
+    tokens_invalidados?: invalidacion_tokenCreateNestedManyWithoutAdminInput
   }
 
   export type cuentaUncheckedCreateInput = {
@@ -21772,6 +25802,7 @@ export namespace Prisma {
     observaciones_creadas?: observacion_inscripcionUncheckedCreateNestedManyWithoutAdmin_creadorInput
     inscripciones_validadas?: inscripcionUncheckedCreateNestedManyWithoutAdmin_validadorInput
     tokens_cuenta?: token_cuentaUncheckedCreateNestedManyWithoutCuentaInput
+    tokens_invalidados?: invalidacion_tokenUncheckedCreateNestedManyWithoutAdminInput
   }
 
   export type cuentaUpdateInput = {
@@ -21790,6 +25821,7 @@ export namespace Prisma {
     observaciones_creadas?: observacion_inscripcionUpdateManyWithoutAdmin_creadorNestedInput
     inscripciones_validadas?: inscripcionUpdateManyWithoutAdmin_validadorNestedInput
     tokens_cuenta?: token_cuentaUpdateManyWithoutCuentaNestedInput
+    tokens_invalidados?: invalidacion_tokenUpdateManyWithoutAdminNestedInput
   }
 
   export type cuentaUncheckedUpdateInput = {
@@ -21808,6 +25840,7 @@ export namespace Prisma {
     observaciones_creadas?: observacion_inscripcionUncheckedUpdateManyWithoutAdmin_creadorNestedInput
     inscripciones_validadas?: inscripcionUncheckedUpdateManyWithoutAdmin_validadorNestedInput
     tokens_cuenta?: token_cuentaUncheckedUpdateManyWithoutCuentaNestedInput
+    tokens_invalidados?: invalidacion_tokenUncheckedUpdateManyWithoutAdminNestedInput
   }
 
   export type cuentaCreateManyInput = {
@@ -22584,12 +26617,15 @@ export namespace Prisma {
     tok_val: string
     tip_tok: $Enums.tipo_token
     fec_exp_tok: Date | string
-    est_uso?: boolean
-    fec_uso?: Date | string | null
+    est_tok?: $Enums.estado_token
     fec_cre_tok?: Date | string
     ip_sol?: string | null
-    ip_uso?: string | null
     cuenta: cuentaCreateNestedOneWithoutTokens_cuentaInput
+    invalidacion?: invalidacion_tokenCreateNestedOneWithoutTokenInput
+    uso_token?: uso_tokenCreateNestedOneWithoutTokenInput
+    metadata?: metadata_tokenCreateNestedManyWithoutTokenInput
+    token_reemplazado?: token_cuentaCreateNestedOneWithoutTokens_que_reemplazaInput
+    tokens_que_reemplaza?: token_cuentaCreateNestedManyWithoutToken_reemplazadoInput
   }
 
   export type token_cuentaUncheckedCreateInput = {
@@ -22598,11 +26634,14 @@ export namespace Prisma {
     tok_val: string
     tip_tok: $Enums.tipo_token
     fec_exp_tok: Date | string
-    est_uso?: boolean
-    fec_uso?: Date | string | null
+    est_tok?: $Enums.estado_token
     fec_cre_tok?: Date | string
     ip_sol?: string | null
-    ip_uso?: string | null
+    id_tok_ree?: string | null
+    invalidacion?: invalidacion_tokenUncheckedCreateNestedOneWithoutTokenInput
+    uso_token?: uso_tokenUncheckedCreateNestedOneWithoutTokenInput
+    metadata?: metadata_tokenUncheckedCreateNestedManyWithoutTokenInput
+    tokens_que_reemplaza?: token_cuentaUncheckedCreateNestedManyWithoutToken_reemplazadoInput
   }
 
   export type token_cuentaUpdateInput = {
@@ -22610,12 +26649,15 @@ export namespace Prisma {
     tok_val?: StringFieldUpdateOperationsInput | string
     tip_tok?: Enumtipo_tokenFieldUpdateOperationsInput | $Enums.tipo_token
     fec_exp_tok?: DateTimeFieldUpdateOperationsInput | Date | string
-    est_uso?: BoolFieldUpdateOperationsInput | boolean
-    fec_uso?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    est_tok?: Enumestado_tokenFieldUpdateOperationsInput | $Enums.estado_token
     fec_cre_tok?: DateTimeFieldUpdateOperationsInput | Date | string
     ip_sol?: NullableStringFieldUpdateOperationsInput | string | null
-    ip_uso?: NullableStringFieldUpdateOperationsInput | string | null
     cuenta?: cuentaUpdateOneRequiredWithoutTokens_cuentaNestedInput
+    invalidacion?: invalidacion_tokenUpdateOneWithoutTokenNestedInput
+    uso_token?: uso_tokenUpdateOneWithoutTokenNestedInput
+    metadata?: metadata_tokenUpdateManyWithoutTokenNestedInput
+    token_reemplazado?: token_cuentaUpdateOneWithoutTokens_que_reemplazaNestedInput
+    tokens_que_reemplaza?: token_cuentaUpdateManyWithoutToken_reemplazadoNestedInput
   }
 
   export type token_cuentaUncheckedUpdateInput = {
@@ -22624,11 +26666,14 @@ export namespace Prisma {
     tok_val?: StringFieldUpdateOperationsInput | string
     tip_tok?: Enumtipo_tokenFieldUpdateOperationsInput | $Enums.tipo_token
     fec_exp_tok?: DateTimeFieldUpdateOperationsInput | Date | string
-    est_uso?: BoolFieldUpdateOperationsInput | boolean
-    fec_uso?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    est_tok?: Enumestado_tokenFieldUpdateOperationsInput | $Enums.estado_token
     fec_cre_tok?: DateTimeFieldUpdateOperationsInput | Date | string
     ip_sol?: NullableStringFieldUpdateOperationsInput | string | null
-    ip_uso?: NullableStringFieldUpdateOperationsInput | string | null
+    id_tok_ree?: NullableStringFieldUpdateOperationsInput | string | null
+    invalidacion?: invalidacion_tokenUncheckedUpdateOneWithoutTokenNestedInput
+    uso_token?: uso_tokenUncheckedUpdateOneWithoutTokenNestedInput
+    metadata?: metadata_tokenUncheckedUpdateManyWithoutTokenNestedInput
+    tokens_que_reemplaza?: token_cuentaUncheckedUpdateManyWithoutToken_reemplazadoNestedInput
   }
 
   export type token_cuentaCreateManyInput = {
@@ -22637,11 +26682,10 @@ export namespace Prisma {
     tok_val: string
     tip_tok: $Enums.tipo_token
     fec_exp_tok: Date | string
-    est_uso?: boolean
-    fec_uso?: Date | string | null
+    est_tok?: $Enums.estado_token
     fec_cre_tok?: Date | string
     ip_sol?: string | null
-    ip_uso?: string | null
+    id_tok_ree?: string | null
   }
 
   export type token_cuentaUpdateManyMutationInput = {
@@ -22649,11 +26693,9 @@ export namespace Prisma {
     tok_val?: StringFieldUpdateOperationsInput | string
     tip_tok?: Enumtipo_tokenFieldUpdateOperationsInput | $Enums.tipo_token
     fec_exp_tok?: DateTimeFieldUpdateOperationsInput | Date | string
-    est_uso?: BoolFieldUpdateOperationsInput | boolean
-    fec_uso?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    est_tok?: Enumestado_tokenFieldUpdateOperationsInput | $Enums.estado_token
     fec_cre_tok?: DateTimeFieldUpdateOperationsInput | Date | string
     ip_sol?: NullableStringFieldUpdateOperationsInput | string | null
-    ip_uso?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type token_cuentaUncheckedUpdateManyInput = {
@@ -22662,11 +26704,195 @@ export namespace Prisma {
     tok_val?: StringFieldUpdateOperationsInput | string
     tip_tok?: Enumtipo_tokenFieldUpdateOperationsInput | $Enums.tipo_token
     fec_exp_tok?: DateTimeFieldUpdateOperationsInput | Date | string
-    est_uso?: BoolFieldUpdateOperationsInput | boolean
-    fec_uso?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    est_tok?: Enumestado_tokenFieldUpdateOperationsInput | $Enums.estado_token
     fec_cre_tok?: DateTimeFieldUpdateOperationsInput | Date | string
     ip_sol?: NullableStringFieldUpdateOperationsInput | string | null
-    ip_uso?: NullableStringFieldUpdateOperationsInput | string | null
+    id_tok_ree?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type invalidacion_tokenCreateInput = {
+    id_inv_tok?: string
+    raz_inv: $Enums.razon_invalidacion
+    des_inv?: string | null
+    fec_inv?: Date | string
+    ip_inv?: string | null
+    token: token_cuentaCreateNestedOneWithoutInvalidacionInput
+    admin?: cuentaCreateNestedOneWithoutTokens_invalidadosInput
+  }
+
+  export type invalidacion_tokenUncheckedCreateInput = {
+    id_inv_tok?: string
+    id_tok_per: string
+    raz_inv: $Enums.razon_invalidacion
+    des_inv?: string | null
+    fec_inv?: Date | string
+    ip_inv?: string | null
+    id_adm_inv?: string | null
+  }
+
+  export type invalidacion_tokenUpdateInput = {
+    id_inv_tok?: StringFieldUpdateOperationsInput | string
+    raz_inv?: Enumrazon_invalidacionFieldUpdateOperationsInput | $Enums.razon_invalidacion
+    des_inv?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_inv?: DateTimeFieldUpdateOperationsInput | Date | string
+    ip_inv?: NullableStringFieldUpdateOperationsInput | string | null
+    token?: token_cuentaUpdateOneRequiredWithoutInvalidacionNestedInput
+    admin?: cuentaUpdateOneWithoutTokens_invalidadosNestedInput
+  }
+
+  export type invalidacion_tokenUncheckedUpdateInput = {
+    id_inv_tok?: StringFieldUpdateOperationsInput | string
+    id_tok_per?: StringFieldUpdateOperationsInput | string
+    raz_inv?: Enumrazon_invalidacionFieldUpdateOperationsInput | $Enums.razon_invalidacion
+    des_inv?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_inv?: DateTimeFieldUpdateOperationsInput | Date | string
+    ip_inv?: NullableStringFieldUpdateOperationsInput | string | null
+    id_adm_inv?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type invalidacion_tokenCreateManyInput = {
+    id_inv_tok?: string
+    id_tok_per: string
+    raz_inv: $Enums.razon_invalidacion
+    des_inv?: string | null
+    fec_inv?: Date | string
+    ip_inv?: string | null
+    id_adm_inv?: string | null
+  }
+
+  export type invalidacion_tokenUpdateManyMutationInput = {
+    id_inv_tok?: StringFieldUpdateOperationsInput | string
+    raz_inv?: Enumrazon_invalidacionFieldUpdateOperationsInput | $Enums.razon_invalidacion
+    des_inv?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_inv?: DateTimeFieldUpdateOperationsInput | Date | string
+    ip_inv?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type invalidacion_tokenUncheckedUpdateManyInput = {
+    id_inv_tok?: StringFieldUpdateOperationsInput | string
+    id_tok_per?: StringFieldUpdateOperationsInput | string
+    raz_inv?: Enumrazon_invalidacionFieldUpdateOperationsInput | $Enums.razon_invalidacion
+    des_inv?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_inv?: DateTimeFieldUpdateOperationsInput | Date | string
+    ip_inv?: NullableStringFieldUpdateOperationsInput | string | null
+    id_adm_inv?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type uso_tokenCreateInput = {
+    id_uso_tok?: string
+    fec_uso?: Date | string
+    ip_uso: string
+    exi_uso?: boolean
+    obs_uso?: string | null
+    token: token_cuentaCreateNestedOneWithoutUso_tokenInput
+  }
+
+  export type uso_tokenUncheckedCreateInput = {
+    id_uso_tok?: string
+    id_tok_per: string
+    fec_uso?: Date | string
+    ip_uso: string
+    exi_uso?: boolean
+    obs_uso?: string | null
+  }
+
+  export type uso_tokenUpdateInput = {
+    id_uso_tok?: StringFieldUpdateOperationsInput | string
+    fec_uso?: DateTimeFieldUpdateOperationsInput | Date | string
+    ip_uso?: StringFieldUpdateOperationsInput | string
+    exi_uso?: BoolFieldUpdateOperationsInput | boolean
+    obs_uso?: NullableStringFieldUpdateOperationsInput | string | null
+    token?: token_cuentaUpdateOneRequiredWithoutUso_tokenNestedInput
+  }
+
+  export type uso_tokenUncheckedUpdateInput = {
+    id_uso_tok?: StringFieldUpdateOperationsInput | string
+    id_tok_per?: StringFieldUpdateOperationsInput | string
+    fec_uso?: DateTimeFieldUpdateOperationsInput | Date | string
+    ip_uso?: StringFieldUpdateOperationsInput | string
+    exi_uso?: BoolFieldUpdateOperationsInput | boolean
+    obs_uso?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type uso_tokenCreateManyInput = {
+    id_uso_tok?: string
+    id_tok_per: string
+    fec_uso?: Date | string
+    ip_uso: string
+    exi_uso?: boolean
+    obs_uso?: string | null
+  }
+
+  export type uso_tokenUpdateManyMutationInput = {
+    id_uso_tok?: StringFieldUpdateOperationsInput | string
+    fec_uso?: DateTimeFieldUpdateOperationsInput | Date | string
+    ip_uso?: StringFieldUpdateOperationsInput | string
+    exi_uso?: BoolFieldUpdateOperationsInput | boolean
+    obs_uso?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type uso_tokenUncheckedUpdateManyInput = {
+    id_uso_tok?: StringFieldUpdateOperationsInput | string
+    id_tok_per?: StringFieldUpdateOperationsInput | string
+    fec_uso?: DateTimeFieldUpdateOperationsInput | Date | string
+    ip_uso?: StringFieldUpdateOperationsInput | string
+    exi_uso?: BoolFieldUpdateOperationsInput | boolean
+    obs_uso?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type metadata_tokenCreateInput = {
+    id_met_tok?: string
+    cla_met: $Enums.clave_metadata
+    val_met: string
+    fec_cre_met?: Date | string
+    token: token_cuentaCreateNestedOneWithoutMetadataInput
+  }
+
+  export type metadata_tokenUncheckedCreateInput = {
+    id_met_tok?: string
+    id_tok_per: string
+    cla_met: $Enums.clave_metadata
+    val_met: string
+    fec_cre_met?: Date | string
+  }
+
+  export type metadata_tokenUpdateInput = {
+    id_met_tok?: StringFieldUpdateOperationsInput | string
+    cla_met?: Enumclave_metadataFieldUpdateOperationsInput | $Enums.clave_metadata
+    val_met?: StringFieldUpdateOperationsInput | string
+    fec_cre_met?: DateTimeFieldUpdateOperationsInput | Date | string
+    token?: token_cuentaUpdateOneRequiredWithoutMetadataNestedInput
+  }
+
+  export type metadata_tokenUncheckedUpdateInput = {
+    id_met_tok?: StringFieldUpdateOperationsInput | string
+    id_tok_per?: StringFieldUpdateOperationsInput | string
+    cla_met?: Enumclave_metadataFieldUpdateOperationsInput | $Enums.clave_metadata
+    val_met?: StringFieldUpdateOperationsInput | string
+    fec_cre_met?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type metadata_tokenCreateManyInput = {
+    id_met_tok?: string
+    id_tok_per: string
+    cla_met: $Enums.clave_metadata
+    val_met: string
+    fec_cre_met?: Date | string
+  }
+
+  export type metadata_tokenUpdateManyMutationInput = {
+    id_met_tok?: StringFieldUpdateOperationsInput | string
+    cla_met?: Enumclave_metadataFieldUpdateOperationsInput | $Enums.clave_metadata
+    val_met?: StringFieldUpdateOperationsInput | string
+    fec_cre_met?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type metadata_tokenUncheckedUpdateManyInput = {
+    id_met_tok?: StringFieldUpdateOperationsInput | string
+    id_tok_per?: StringFieldUpdateOperationsInput | string
+    cla_met?: Enumclave_metadataFieldUpdateOperationsInput | $Enums.clave_metadata
+    val_met?: StringFieldUpdateOperationsInput | string
+    fec_cre_met?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -23008,6 +27234,12 @@ export namespace Prisma {
     none?: token_cuentaWhereInput
   }
 
+  export type Invalidacion_tokenListRelationFilter = {
+    every?: invalidacion_tokenWhereInput
+    some?: invalidacion_tokenWhereInput
+    none?: invalidacion_tokenWhereInput
+  }
+
   export type inscripcionOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -23029,6 +27261,10 @@ export namespace Prisma {
   }
 
   export type token_cuentaOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type invalidacion_tokenOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -23679,17 +27915,48 @@ export namespace Prisma {
     not?: NestedEnumtipo_tokenFilter<$PrismaModel> | $Enums.tipo_token
   }
 
+  export type Enumestado_tokenFilter<$PrismaModel = never> = {
+    equals?: $Enums.estado_token | Enumestado_tokenFieldRefInput<$PrismaModel>
+    in?: $Enums.estado_token[] | ListEnumestado_tokenFieldRefInput<$PrismaModel>
+    notIn?: $Enums.estado_token[] | ListEnumestado_tokenFieldRefInput<$PrismaModel>
+    not?: NestedEnumestado_tokenFilter<$PrismaModel> | $Enums.estado_token
+  }
+
+  export type Invalidacion_tokenNullableScalarRelationFilter = {
+    is?: invalidacion_tokenWhereInput | null
+    isNot?: invalidacion_tokenWhereInput | null
+  }
+
+  export type Uso_tokenNullableScalarRelationFilter = {
+    is?: uso_tokenWhereInput | null
+    isNot?: uso_tokenWhereInput | null
+  }
+
+  export type Metadata_tokenListRelationFilter = {
+    every?: metadata_tokenWhereInput
+    some?: metadata_tokenWhereInput
+    none?: metadata_tokenWhereInput
+  }
+
+  export type Token_cuentaNullableScalarRelationFilter = {
+    is?: token_cuentaWhereInput | null
+    isNot?: token_cuentaWhereInput | null
+  }
+
+  export type metadata_tokenOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type token_cuentaCountOrderByAggregateInput = {
     id_tok?: SortOrder
     id_cue_per?: SortOrder
     tok_val?: SortOrder
     tip_tok?: SortOrder
     fec_exp_tok?: SortOrder
-    est_uso?: SortOrder
-    fec_uso?: SortOrder
+    est_tok?: SortOrder
     fec_cre_tok?: SortOrder
     ip_sol?: SortOrder
-    ip_uso?: SortOrder
+    id_tok_ree?: SortOrder
   }
 
   export type token_cuentaMaxOrderByAggregateInput = {
@@ -23698,11 +27965,10 @@ export namespace Prisma {
     tok_val?: SortOrder
     tip_tok?: SortOrder
     fec_exp_tok?: SortOrder
-    est_uso?: SortOrder
-    fec_uso?: SortOrder
+    est_tok?: SortOrder
     fec_cre_tok?: SortOrder
     ip_sol?: SortOrder
-    ip_uso?: SortOrder
+    id_tok_ree?: SortOrder
   }
 
   export type token_cuentaMinOrderByAggregateInput = {
@@ -23711,11 +27977,10 @@ export namespace Prisma {
     tok_val?: SortOrder
     tip_tok?: SortOrder
     fec_exp_tok?: SortOrder
-    est_uso?: SortOrder
-    fec_uso?: SortOrder
+    est_tok?: SortOrder
     fec_cre_tok?: SortOrder
     ip_sol?: SortOrder
-    ip_uso?: SortOrder
+    id_tok_ree?: SortOrder
   }
 
   export type Enumtipo_tokenWithAggregatesFilter<$PrismaModel = never> = {
@@ -23726,6 +27991,141 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumtipo_tokenFilter<$PrismaModel>
     _max?: NestedEnumtipo_tokenFilter<$PrismaModel>
+  }
+
+  export type Enumestado_tokenWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.estado_token | Enumestado_tokenFieldRefInput<$PrismaModel>
+    in?: $Enums.estado_token[] | ListEnumestado_tokenFieldRefInput<$PrismaModel>
+    notIn?: $Enums.estado_token[] | ListEnumestado_tokenFieldRefInput<$PrismaModel>
+    not?: NestedEnumestado_tokenWithAggregatesFilter<$PrismaModel> | $Enums.estado_token
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumestado_tokenFilter<$PrismaModel>
+    _max?: NestedEnumestado_tokenFilter<$PrismaModel>
+  }
+
+  export type Enumrazon_invalidacionFilter<$PrismaModel = never> = {
+    equals?: $Enums.razon_invalidacion | Enumrazon_invalidacionFieldRefInput<$PrismaModel>
+    in?: $Enums.razon_invalidacion[] | ListEnumrazon_invalidacionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.razon_invalidacion[] | ListEnumrazon_invalidacionFieldRefInput<$PrismaModel>
+    not?: NestedEnumrazon_invalidacionFilter<$PrismaModel> | $Enums.razon_invalidacion
+  }
+
+  export type Token_cuentaScalarRelationFilter = {
+    is?: token_cuentaWhereInput
+    isNot?: token_cuentaWhereInput
+  }
+
+  export type invalidacion_tokenCountOrderByAggregateInput = {
+    id_inv_tok?: SortOrder
+    id_tok_per?: SortOrder
+    raz_inv?: SortOrder
+    des_inv?: SortOrder
+    fec_inv?: SortOrder
+    ip_inv?: SortOrder
+    id_adm_inv?: SortOrder
+  }
+
+  export type invalidacion_tokenMaxOrderByAggregateInput = {
+    id_inv_tok?: SortOrder
+    id_tok_per?: SortOrder
+    raz_inv?: SortOrder
+    des_inv?: SortOrder
+    fec_inv?: SortOrder
+    ip_inv?: SortOrder
+    id_adm_inv?: SortOrder
+  }
+
+  export type invalidacion_tokenMinOrderByAggregateInput = {
+    id_inv_tok?: SortOrder
+    id_tok_per?: SortOrder
+    raz_inv?: SortOrder
+    des_inv?: SortOrder
+    fec_inv?: SortOrder
+    ip_inv?: SortOrder
+    id_adm_inv?: SortOrder
+  }
+
+  export type Enumrazon_invalidacionWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.razon_invalidacion | Enumrazon_invalidacionFieldRefInput<$PrismaModel>
+    in?: $Enums.razon_invalidacion[] | ListEnumrazon_invalidacionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.razon_invalidacion[] | ListEnumrazon_invalidacionFieldRefInput<$PrismaModel>
+    not?: NestedEnumrazon_invalidacionWithAggregatesFilter<$PrismaModel> | $Enums.razon_invalidacion
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumrazon_invalidacionFilter<$PrismaModel>
+    _max?: NestedEnumrazon_invalidacionFilter<$PrismaModel>
+  }
+
+  export type uso_tokenCountOrderByAggregateInput = {
+    id_uso_tok?: SortOrder
+    id_tok_per?: SortOrder
+    fec_uso?: SortOrder
+    ip_uso?: SortOrder
+    exi_uso?: SortOrder
+    obs_uso?: SortOrder
+  }
+
+  export type uso_tokenMaxOrderByAggregateInput = {
+    id_uso_tok?: SortOrder
+    id_tok_per?: SortOrder
+    fec_uso?: SortOrder
+    ip_uso?: SortOrder
+    exi_uso?: SortOrder
+    obs_uso?: SortOrder
+  }
+
+  export type uso_tokenMinOrderByAggregateInput = {
+    id_uso_tok?: SortOrder
+    id_tok_per?: SortOrder
+    fec_uso?: SortOrder
+    ip_uso?: SortOrder
+    exi_uso?: SortOrder
+    obs_uso?: SortOrder
+  }
+
+  export type Enumclave_metadataFilter<$PrismaModel = never> = {
+    equals?: $Enums.clave_metadata | Enumclave_metadataFieldRefInput<$PrismaModel>
+    in?: $Enums.clave_metadata[] | ListEnumclave_metadataFieldRefInput<$PrismaModel>
+    notIn?: $Enums.clave_metadata[] | ListEnumclave_metadataFieldRefInput<$PrismaModel>
+    not?: NestedEnumclave_metadataFilter<$PrismaModel> | $Enums.clave_metadata
+  }
+
+  export type metadata_tokenId_tok_perCla_metCompoundUniqueInput = {
+    id_tok_per: string
+    cla_met: $Enums.clave_metadata
+  }
+
+  export type metadata_tokenCountOrderByAggregateInput = {
+    id_met_tok?: SortOrder
+    id_tok_per?: SortOrder
+    cla_met?: SortOrder
+    val_met?: SortOrder
+    fec_cre_met?: SortOrder
+  }
+
+  export type metadata_tokenMaxOrderByAggregateInput = {
+    id_met_tok?: SortOrder
+    id_tok_per?: SortOrder
+    cla_met?: SortOrder
+    val_met?: SortOrder
+    fec_cre_met?: SortOrder
+  }
+
+  export type metadata_tokenMinOrderByAggregateInput = {
+    id_met_tok?: SortOrder
+    id_tok_per?: SortOrder
+    cla_met?: SortOrder
+    val_met?: SortOrder
+    fec_cre_met?: SortOrder
+  }
+
+  export type Enumclave_metadataWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.clave_metadata | Enumclave_metadataFieldRefInput<$PrismaModel>
+    in?: $Enums.clave_metadata[] | ListEnumclave_metadataFieldRefInput<$PrismaModel>
+    notIn?: $Enums.clave_metadata[] | ListEnumclave_metadataFieldRefInput<$PrismaModel>
+    not?: NestedEnumclave_metadataWithAggregatesFilter<$PrismaModel> | $Enums.clave_metadata
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumclave_metadataFilter<$PrismaModel>
+    _max?: NestedEnumclave_metadataFilter<$PrismaModel>
   }
 
   export type carreraCreateNestedOneWithoutUsuarioInput = {
@@ -23951,6 +28351,13 @@ export namespace Prisma {
     connect?: token_cuentaWhereUniqueInput | token_cuentaWhereUniqueInput[]
   }
 
+  export type invalidacion_tokenCreateNestedManyWithoutAdminInput = {
+    create?: XOR<invalidacion_tokenCreateWithoutAdminInput, invalidacion_tokenUncheckedCreateWithoutAdminInput> | invalidacion_tokenCreateWithoutAdminInput[] | invalidacion_tokenUncheckedCreateWithoutAdminInput[]
+    connectOrCreate?: invalidacion_tokenCreateOrConnectWithoutAdminInput | invalidacion_tokenCreateOrConnectWithoutAdminInput[]
+    createMany?: invalidacion_tokenCreateManyAdminInputEnvelope
+    connect?: invalidacion_tokenWhereUniqueInput | invalidacion_tokenWhereUniqueInput[]
+  }
+
   export type inscripcionUncheckedCreateNestedManyWithoutCuentaInput = {
     create?: XOR<inscripcionCreateWithoutCuentaInput, inscripcionUncheckedCreateWithoutCuentaInput> | inscripcionCreateWithoutCuentaInput[] | inscripcionUncheckedCreateWithoutCuentaInput[]
     connectOrCreate?: inscripcionCreateOrConnectWithoutCuentaInput | inscripcionCreateOrConnectWithoutCuentaInput[]
@@ -23998,6 +28405,13 @@ export namespace Prisma {
     connectOrCreate?: token_cuentaCreateOrConnectWithoutCuentaInput | token_cuentaCreateOrConnectWithoutCuentaInput[]
     createMany?: token_cuentaCreateManyCuentaInputEnvelope
     connect?: token_cuentaWhereUniqueInput | token_cuentaWhereUniqueInput[]
+  }
+
+  export type invalidacion_tokenUncheckedCreateNestedManyWithoutAdminInput = {
+    create?: XOR<invalidacion_tokenCreateWithoutAdminInput, invalidacion_tokenUncheckedCreateWithoutAdminInput> | invalidacion_tokenCreateWithoutAdminInput[] | invalidacion_tokenUncheckedCreateWithoutAdminInput[]
+    connectOrCreate?: invalidacion_tokenCreateOrConnectWithoutAdminInput | invalidacion_tokenCreateOrConnectWithoutAdminInput[]
+    createMany?: invalidacion_tokenCreateManyAdminInputEnvelope
+    connect?: invalidacion_tokenWhereUniqueInput | invalidacion_tokenWhereUniqueInput[]
   }
 
   export type Enumrol_usuarioFieldUpdateOperationsInput = {
@@ -24114,6 +28528,20 @@ export namespace Prisma {
     deleteMany?: token_cuentaScalarWhereInput | token_cuentaScalarWhereInput[]
   }
 
+  export type invalidacion_tokenUpdateManyWithoutAdminNestedInput = {
+    create?: XOR<invalidacion_tokenCreateWithoutAdminInput, invalidacion_tokenUncheckedCreateWithoutAdminInput> | invalidacion_tokenCreateWithoutAdminInput[] | invalidacion_tokenUncheckedCreateWithoutAdminInput[]
+    connectOrCreate?: invalidacion_tokenCreateOrConnectWithoutAdminInput | invalidacion_tokenCreateOrConnectWithoutAdminInput[]
+    upsert?: invalidacion_tokenUpsertWithWhereUniqueWithoutAdminInput | invalidacion_tokenUpsertWithWhereUniqueWithoutAdminInput[]
+    createMany?: invalidacion_tokenCreateManyAdminInputEnvelope
+    set?: invalidacion_tokenWhereUniqueInput | invalidacion_tokenWhereUniqueInput[]
+    disconnect?: invalidacion_tokenWhereUniqueInput | invalidacion_tokenWhereUniqueInput[]
+    delete?: invalidacion_tokenWhereUniqueInput | invalidacion_tokenWhereUniqueInput[]
+    connect?: invalidacion_tokenWhereUniqueInput | invalidacion_tokenWhereUniqueInput[]
+    update?: invalidacion_tokenUpdateWithWhereUniqueWithoutAdminInput | invalidacion_tokenUpdateWithWhereUniqueWithoutAdminInput[]
+    updateMany?: invalidacion_tokenUpdateManyWithWhereWithoutAdminInput | invalidacion_tokenUpdateManyWithWhereWithoutAdminInput[]
+    deleteMany?: invalidacion_tokenScalarWhereInput | invalidacion_tokenScalarWhereInput[]
+  }
+
   export type inscripcionUncheckedUpdateManyWithoutCuentaNestedInput = {
     create?: XOR<inscripcionCreateWithoutCuentaInput, inscripcionUncheckedCreateWithoutCuentaInput> | inscripcionCreateWithoutCuentaInput[] | inscripcionUncheckedCreateWithoutCuentaInput[]
     connectOrCreate?: inscripcionCreateOrConnectWithoutCuentaInput | inscripcionCreateOrConnectWithoutCuentaInput[]
@@ -24210,6 +28638,20 @@ export namespace Prisma {
     update?: token_cuentaUpdateWithWhereUniqueWithoutCuentaInput | token_cuentaUpdateWithWhereUniqueWithoutCuentaInput[]
     updateMany?: token_cuentaUpdateManyWithWhereWithoutCuentaInput | token_cuentaUpdateManyWithWhereWithoutCuentaInput[]
     deleteMany?: token_cuentaScalarWhereInput | token_cuentaScalarWhereInput[]
+  }
+
+  export type invalidacion_tokenUncheckedUpdateManyWithoutAdminNestedInput = {
+    create?: XOR<invalidacion_tokenCreateWithoutAdminInput, invalidacion_tokenUncheckedCreateWithoutAdminInput> | invalidacion_tokenCreateWithoutAdminInput[] | invalidacion_tokenUncheckedCreateWithoutAdminInput[]
+    connectOrCreate?: invalidacion_tokenCreateOrConnectWithoutAdminInput | invalidacion_tokenCreateOrConnectWithoutAdminInput[]
+    upsert?: invalidacion_tokenUpsertWithWhereUniqueWithoutAdminInput | invalidacion_tokenUpsertWithWhereUniqueWithoutAdminInput[]
+    createMany?: invalidacion_tokenCreateManyAdminInputEnvelope
+    set?: invalidacion_tokenWhereUniqueInput | invalidacion_tokenWhereUniqueInput[]
+    disconnect?: invalidacion_tokenWhereUniqueInput | invalidacion_tokenWhereUniqueInput[]
+    delete?: invalidacion_tokenWhereUniqueInput | invalidacion_tokenWhereUniqueInput[]
+    connect?: invalidacion_tokenWhereUniqueInput | invalidacion_tokenWhereUniqueInput[]
+    update?: invalidacion_tokenUpdateWithWhereUniqueWithoutAdminInput | invalidacion_tokenUpdateWithWhereUniqueWithoutAdminInput[]
+    updateMany?: invalidacion_tokenUpdateManyWithWhereWithoutAdminInput | invalidacion_tokenUpdateManyWithWhereWithoutAdminInput[]
+    deleteMany?: invalidacion_tokenScalarWhereInput | invalidacion_tokenScalarWhereInput[]
   }
 
   export type facultadCreateNestedOneWithoutCarrerasInput = {
@@ -24884,8 +29326,70 @@ export namespace Prisma {
     connect?: cuentaWhereUniqueInput
   }
 
+  export type invalidacion_tokenCreateNestedOneWithoutTokenInput = {
+    create?: XOR<invalidacion_tokenCreateWithoutTokenInput, invalidacion_tokenUncheckedCreateWithoutTokenInput>
+    connectOrCreate?: invalidacion_tokenCreateOrConnectWithoutTokenInput
+    connect?: invalidacion_tokenWhereUniqueInput
+  }
+
+  export type uso_tokenCreateNestedOneWithoutTokenInput = {
+    create?: XOR<uso_tokenCreateWithoutTokenInput, uso_tokenUncheckedCreateWithoutTokenInput>
+    connectOrCreate?: uso_tokenCreateOrConnectWithoutTokenInput
+    connect?: uso_tokenWhereUniqueInput
+  }
+
+  export type metadata_tokenCreateNestedManyWithoutTokenInput = {
+    create?: XOR<metadata_tokenCreateWithoutTokenInput, metadata_tokenUncheckedCreateWithoutTokenInput> | metadata_tokenCreateWithoutTokenInput[] | metadata_tokenUncheckedCreateWithoutTokenInput[]
+    connectOrCreate?: metadata_tokenCreateOrConnectWithoutTokenInput | metadata_tokenCreateOrConnectWithoutTokenInput[]
+    createMany?: metadata_tokenCreateManyTokenInputEnvelope
+    connect?: metadata_tokenWhereUniqueInput | metadata_tokenWhereUniqueInput[]
+  }
+
+  export type token_cuentaCreateNestedOneWithoutTokens_que_reemplazaInput = {
+    create?: XOR<token_cuentaCreateWithoutTokens_que_reemplazaInput, token_cuentaUncheckedCreateWithoutTokens_que_reemplazaInput>
+    connectOrCreate?: token_cuentaCreateOrConnectWithoutTokens_que_reemplazaInput
+    connect?: token_cuentaWhereUniqueInput
+  }
+
+  export type token_cuentaCreateNestedManyWithoutToken_reemplazadoInput = {
+    create?: XOR<token_cuentaCreateWithoutToken_reemplazadoInput, token_cuentaUncheckedCreateWithoutToken_reemplazadoInput> | token_cuentaCreateWithoutToken_reemplazadoInput[] | token_cuentaUncheckedCreateWithoutToken_reemplazadoInput[]
+    connectOrCreate?: token_cuentaCreateOrConnectWithoutToken_reemplazadoInput | token_cuentaCreateOrConnectWithoutToken_reemplazadoInput[]
+    createMany?: token_cuentaCreateManyToken_reemplazadoInputEnvelope
+    connect?: token_cuentaWhereUniqueInput | token_cuentaWhereUniqueInput[]
+  }
+
+  export type invalidacion_tokenUncheckedCreateNestedOneWithoutTokenInput = {
+    create?: XOR<invalidacion_tokenCreateWithoutTokenInput, invalidacion_tokenUncheckedCreateWithoutTokenInput>
+    connectOrCreate?: invalidacion_tokenCreateOrConnectWithoutTokenInput
+    connect?: invalidacion_tokenWhereUniqueInput
+  }
+
+  export type uso_tokenUncheckedCreateNestedOneWithoutTokenInput = {
+    create?: XOR<uso_tokenCreateWithoutTokenInput, uso_tokenUncheckedCreateWithoutTokenInput>
+    connectOrCreate?: uso_tokenCreateOrConnectWithoutTokenInput
+    connect?: uso_tokenWhereUniqueInput
+  }
+
+  export type metadata_tokenUncheckedCreateNestedManyWithoutTokenInput = {
+    create?: XOR<metadata_tokenCreateWithoutTokenInput, metadata_tokenUncheckedCreateWithoutTokenInput> | metadata_tokenCreateWithoutTokenInput[] | metadata_tokenUncheckedCreateWithoutTokenInput[]
+    connectOrCreate?: metadata_tokenCreateOrConnectWithoutTokenInput | metadata_tokenCreateOrConnectWithoutTokenInput[]
+    createMany?: metadata_tokenCreateManyTokenInputEnvelope
+    connect?: metadata_tokenWhereUniqueInput | metadata_tokenWhereUniqueInput[]
+  }
+
+  export type token_cuentaUncheckedCreateNestedManyWithoutToken_reemplazadoInput = {
+    create?: XOR<token_cuentaCreateWithoutToken_reemplazadoInput, token_cuentaUncheckedCreateWithoutToken_reemplazadoInput> | token_cuentaCreateWithoutToken_reemplazadoInput[] | token_cuentaUncheckedCreateWithoutToken_reemplazadoInput[]
+    connectOrCreate?: token_cuentaCreateOrConnectWithoutToken_reemplazadoInput | token_cuentaCreateOrConnectWithoutToken_reemplazadoInput[]
+    createMany?: token_cuentaCreateManyToken_reemplazadoInputEnvelope
+    connect?: token_cuentaWhereUniqueInput | token_cuentaWhereUniqueInput[]
+  }
+
   export type Enumtipo_tokenFieldUpdateOperationsInput = {
     set?: $Enums.tipo_token
+  }
+
+  export type Enumestado_tokenFieldUpdateOperationsInput = {
+    set?: $Enums.estado_token
   }
 
   export type cuentaUpdateOneRequiredWithoutTokens_cuentaNestedInput = {
@@ -24894,6 +29398,178 @@ export namespace Prisma {
     upsert?: cuentaUpsertWithoutTokens_cuentaInput
     connect?: cuentaWhereUniqueInput
     update?: XOR<XOR<cuentaUpdateToOneWithWhereWithoutTokens_cuentaInput, cuentaUpdateWithoutTokens_cuentaInput>, cuentaUncheckedUpdateWithoutTokens_cuentaInput>
+  }
+
+  export type invalidacion_tokenUpdateOneWithoutTokenNestedInput = {
+    create?: XOR<invalidacion_tokenCreateWithoutTokenInput, invalidacion_tokenUncheckedCreateWithoutTokenInput>
+    connectOrCreate?: invalidacion_tokenCreateOrConnectWithoutTokenInput
+    upsert?: invalidacion_tokenUpsertWithoutTokenInput
+    disconnect?: invalidacion_tokenWhereInput | boolean
+    delete?: invalidacion_tokenWhereInput | boolean
+    connect?: invalidacion_tokenWhereUniqueInput
+    update?: XOR<XOR<invalidacion_tokenUpdateToOneWithWhereWithoutTokenInput, invalidacion_tokenUpdateWithoutTokenInput>, invalidacion_tokenUncheckedUpdateWithoutTokenInput>
+  }
+
+  export type uso_tokenUpdateOneWithoutTokenNestedInput = {
+    create?: XOR<uso_tokenCreateWithoutTokenInput, uso_tokenUncheckedCreateWithoutTokenInput>
+    connectOrCreate?: uso_tokenCreateOrConnectWithoutTokenInput
+    upsert?: uso_tokenUpsertWithoutTokenInput
+    disconnect?: uso_tokenWhereInput | boolean
+    delete?: uso_tokenWhereInput | boolean
+    connect?: uso_tokenWhereUniqueInput
+    update?: XOR<XOR<uso_tokenUpdateToOneWithWhereWithoutTokenInput, uso_tokenUpdateWithoutTokenInput>, uso_tokenUncheckedUpdateWithoutTokenInput>
+  }
+
+  export type metadata_tokenUpdateManyWithoutTokenNestedInput = {
+    create?: XOR<metadata_tokenCreateWithoutTokenInput, metadata_tokenUncheckedCreateWithoutTokenInput> | metadata_tokenCreateWithoutTokenInput[] | metadata_tokenUncheckedCreateWithoutTokenInput[]
+    connectOrCreate?: metadata_tokenCreateOrConnectWithoutTokenInput | metadata_tokenCreateOrConnectWithoutTokenInput[]
+    upsert?: metadata_tokenUpsertWithWhereUniqueWithoutTokenInput | metadata_tokenUpsertWithWhereUniqueWithoutTokenInput[]
+    createMany?: metadata_tokenCreateManyTokenInputEnvelope
+    set?: metadata_tokenWhereUniqueInput | metadata_tokenWhereUniqueInput[]
+    disconnect?: metadata_tokenWhereUniqueInput | metadata_tokenWhereUniqueInput[]
+    delete?: metadata_tokenWhereUniqueInput | metadata_tokenWhereUniqueInput[]
+    connect?: metadata_tokenWhereUniqueInput | metadata_tokenWhereUniqueInput[]
+    update?: metadata_tokenUpdateWithWhereUniqueWithoutTokenInput | metadata_tokenUpdateWithWhereUniqueWithoutTokenInput[]
+    updateMany?: metadata_tokenUpdateManyWithWhereWithoutTokenInput | metadata_tokenUpdateManyWithWhereWithoutTokenInput[]
+    deleteMany?: metadata_tokenScalarWhereInput | metadata_tokenScalarWhereInput[]
+  }
+
+  export type token_cuentaUpdateOneWithoutTokens_que_reemplazaNestedInput = {
+    create?: XOR<token_cuentaCreateWithoutTokens_que_reemplazaInput, token_cuentaUncheckedCreateWithoutTokens_que_reemplazaInput>
+    connectOrCreate?: token_cuentaCreateOrConnectWithoutTokens_que_reemplazaInput
+    upsert?: token_cuentaUpsertWithoutTokens_que_reemplazaInput
+    disconnect?: token_cuentaWhereInput | boolean
+    delete?: token_cuentaWhereInput | boolean
+    connect?: token_cuentaWhereUniqueInput
+    update?: XOR<XOR<token_cuentaUpdateToOneWithWhereWithoutTokens_que_reemplazaInput, token_cuentaUpdateWithoutTokens_que_reemplazaInput>, token_cuentaUncheckedUpdateWithoutTokens_que_reemplazaInput>
+  }
+
+  export type token_cuentaUpdateManyWithoutToken_reemplazadoNestedInput = {
+    create?: XOR<token_cuentaCreateWithoutToken_reemplazadoInput, token_cuentaUncheckedCreateWithoutToken_reemplazadoInput> | token_cuentaCreateWithoutToken_reemplazadoInput[] | token_cuentaUncheckedCreateWithoutToken_reemplazadoInput[]
+    connectOrCreate?: token_cuentaCreateOrConnectWithoutToken_reemplazadoInput | token_cuentaCreateOrConnectWithoutToken_reemplazadoInput[]
+    upsert?: token_cuentaUpsertWithWhereUniqueWithoutToken_reemplazadoInput | token_cuentaUpsertWithWhereUniqueWithoutToken_reemplazadoInput[]
+    createMany?: token_cuentaCreateManyToken_reemplazadoInputEnvelope
+    set?: token_cuentaWhereUniqueInput | token_cuentaWhereUniqueInput[]
+    disconnect?: token_cuentaWhereUniqueInput | token_cuentaWhereUniqueInput[]
+    delete?: token_cuentaWhereUniqueInput | token_cuentaWhereUniqueInput[]
+    connect?: token_cuentaWhereUniqueInput | token_cuentaWhereUniqueInput[]
+    update?: token_cuentaUpdateWithWhereUniqueWithoutToken_reemplazadoInput | token_cuentaUpdateWithWhereUniqueWithoutToken_reemplazadoInput[]
+    updateMany?: token_cuentaUpdateManyWithWhereWithoutToken_reemplazadoInput | token_cuentaUpdateManyWithWhereWithoutToken_reemplazadoInput[]
+    deleteMany?: token_cuentaScalarWhereInput | token_cuentaScalarWhereInput[]
+  }
+
+  export type invalidacion_tokenUncheckedUpdateOneWithoutTokenNestedInput = {
+    create?: XOR<invalidacion_tokenCreateWithoutTokenInput, invalidacion_tokenUncheckedCreateWithoutTokenInput>
+    connectOrCreate?: invalidacion_tokenCreateOrConnectWithoutTokenInput
+    upsert?: invalidacion_tokenUpsertWithoutTokenInput
+    disconnect?: invalidacion_tokenWhereInput | boolean
+    delete?: invalidacion_tokenWhereInput | boolean
+    connect?: invalidacion_tokenWhereUniqueInput
+    update?: XOR<XOR<invalidacion_tokenUpdateToOneWithWhereWithoutTokenInput, invalidacion_tokenUpdateWithoutTokenInput>, invalidacion_tokenUncheckedUpdateWithoutTokenInput>
+  }
+
+  export type uso_tokenUncheckedUpdateOneWithoutTokenNestedInput = {
+    create?: XOR<uso_tokenCreateWithoutTokenInput, uso_tokenUncheckedCreateWithoutTokenInput>
+    connectOrCreate?: uso_tokenCreateOrConnectWithoutTokenInput
+    upsert?: uso_tokenUpsertWithoutTokenInput
+    disconnect?: uso_tokenWhereInput | boolean
+    delete?: uso_tokenWhereInput | boolean
+    connect?: uso_tokenWhereUniqueInput
+    update?: XOR<XOR<uso_tokenUpdateToOneWithWhereWithoutTokenInput, uso_tokenUpdateWithoutTokenInput>, uso_tokenUncheckedUpdateWithoutTokenInput>
+  }
+
+  export type metadata_tokenUncheckedUpdateManyWithoutTokenNestedInput = {
+    create?: XOR<metadata_tokenCreateWithoutTokenInput, metadata_tokenUncheckedCreateWithoutTokenInput> | metadata_tokenCreateWithoutTokenInput[] | metadata_tokenUncheckedCreateWithoutTokenInput[]
+    connectOrCreate?: metadata_tokenCreateOrConnectWithoutTokenInput | metadata_tokenCreateOrConnectWithoutTokenInput[]
+    upsert?: metadata_tokenUpsertWithWhereUniqueWithoutTokenInput | metadata_tokenUpsertWithWhereUniqueWithoutTokenInput[]
+    createMany?: metadata_tokenCreateManyTokenInputEnvelope
+    set?: metadata_tokenWhereUniqueInput | metadata_tokenWhereUniqueInput[]
+    disconnect?: metadata_tokenWhereUniqueInput | metadata_tokenWhereUniqueInput[]
+    delete?: metadata_tokenWhereUniqueInput | metadata_tokenWhereUniqueInput[]
+    connect?: metadata_tokenWhereUniqueInput | metadata_tokenWhereUniqueInput[]
+    update?: metadata_tokenUpdateWithWhereUniqueWithoutTokenInput | metadata_tokenUpdateWithWhereUniqueWithoutTokenInput[]
+    updateMany?: metadata_tokenUpdateManyWithWhereWithoutTokenInput | metadata_tokenUpdateManyWithWhereWithoutTokenInput[]
+    deleteMany?: metadata_tokenScalarWhereInput | metadata_tokenScalarWhereInput[]
+  }
+
+  export type token_cuentaUncheckedUpdateManyWithoutToken_reemplazadoNestedInput = {
+    create?: XOR<token_cuentaCreateWithoutToken_reemplazadoInput, token_cuentaUncheckedCreateWithoutToken_reemplazadoInput> | token_cuentaCreateWithoutToken_reemplazadoInput[] | token_cuentaUncheckedCreateWithoutToken_reemplazadoInput[]
+    connectOrCreate?: token_cuentaCreateOrConnectWithoutToken_reemplazadoInput | token_cuentaCreateOrConnectWithoutToken_reemplazadoInput[]
+    upsert?: token_cuentaUpsertWithWhereUniqueWithoutToken_reemplazadoInput | token_cuentaUpsertWithWhereUniqueWithoutToken_reemplazadoInput[]
+    createMany?: token_cuentaCreateManyToken_reemplazadoInputEnvelope
+    set?: token_cuentaWhereUniqueInput | token_cuentaWhereUniqueInput[]
+    disconnect?: token_cuentaWhereUniqueInput | token_cuentaWhereUniqueInput[]
+    delete?: token_cuentaWhereUniqueInput | token_cuentaWhereUniqueInput[]
+    connect?: token_cuentaWhereUniqueInput | token_cuentaWhereUniqueInput[]
+    update?: token_cuentaUpdateWithWhereUniqueWithoutToken_reemplazadoInput | token_cuentaUpdateWithWhereUniqueWithoutToken_reemplazadoInput[]
+    updateMany?: token_cuentaUpdateManyWithWhereWithoutToken_reemplazadoInput | token_cuentaUpdateManyWithWhereWithoutToken_reemplazadoInput[]
+    deleteMany?: token_cuentaScalarWhereInput | token_cuentaScalarWhereInput[]
+  }
+
+  export type token_cuentaCreateNestedOneWithoutInvalidacionInput = {
+    create?: XOR<token_cuentaCreateWithoutInvalidacionInput, token_cuentaUncheckedCreateWithoutInvalidacionInput>
+    connectOrCreate?: token_cuentaCreateOrConnectWithoutInvalidacionInput
+    connect?: token_cuentaWhereUniqueInput
+  }
+
+  export type cuentaCreateNestedOneWithoutTokens_invalidadosInput = {
+    create?: XOR<cuentaCreateWithoutTokens_invalidadosInput, cuentaUncheckedCreateWithoutTokens_invalidadosInput>
+    connectOrCreate?: cuentaCreateOrConnectWithoutTokens_invalidadosInput
+    connect?: cuentaWhereUniqueInput
+  }
+
+  export type Enumrazon_invalidacionFieldUpdateOperationsInput = {
+    set?: $Enums.razon_invalidacion
+  }
+
+  export type token_cuentaUpdateOneRequiredWithoutInvalidacionNestedInput = {
+    create?: XOR<token_cuentaCreateWithoutInvalidacionInput, token_cuentaUncheckedCreateWithoutInvalidacionInput>
+    connectOrCreate?: token_cuentaCreateOrConnectWithoutInvalidacionInput
+    upsert?: token_cuentaUpsertWithoutInvalidacionInput
+    connect?: token_cuentaWhereUniqueInput
+    update?: XOR<XOR<token_cuentaUpdateToOneWithWhereWithoutInvalidacionInput, token_cuentaUpdateWithoutInvalidacionInput>, token_cuentaUncheckedUpdateWithoutInvalidacionInput>
+  }
+
+  export type cuentaUpdateOneWithoutTokens_invalidadosNestedInput = {
+    create?: XOR<cuentaCreateWithoutTokens_invalidadosInput, cuentaUncheckedCreateWithoutTokens_invalidadosInput>
+    connectOrCreate?: cuentaCreateOrConnectWithoutTokens_invalidadosInput
+    upsert?: cuentaUpsertWithoutTokens_invalidadosInput
+    disconnect?: cuentaWhereInput | boolean
+    delete?: cuentaWhereInput | boolean
+    connect?: cuentaWhereUniqueInput
+    update?: XOR<XOR<cuentaUpdateToOneWithWhereWithoutTokens_invalidadosInput, cuentaUpdateWithoutTokens_invalidadosInput>, cuentaUncheckedUpdateWithoutTokens_invalidadosInput>
+  }
+
+  export type token_cuentaCreateNestedOneWithoutUso_tokenInput = {
+    create?: XOR<token_cuentaCreateWithoutUso_tokenInput, token_cuentaUncheckedCreateWithoutUso_tokenInput>
+    connectOrCreate?: token_cuentaCreateOrConnectWithoutUso_tokenInput
+    connect?: token_cuentaWhereUniqueInput
+  }
+
+  export type token_cuentaUpdateOneRequiredWithoutUso_tokenNestedInput = {
+    create?: XOR<token_cuentaCreateWithoutUso_tokenInput, token_cuentaUncheckedCreateWithoutUso_tokenInput>
+    connectOrCreate?: token_cuentaCreateOrConnectWithoutUso_tokenInput
+    upsert?: token_cuentaUpsertWithoutUso_tokenInput
+    connect?: token_cuentaWhereUniqueInput
+    update?: XOR<XOR<token_cuentaUpdateToOneWithWhereWithoutUso_tokenInput, token_cuentaUpdateWithoutUso_tokenInput>, token_cuentaUncheckedUpdateWithoutUso_tokenInput>
+  }
+
+  export type token_cuentaCreateNestedOneWithoutMetadataInput = {
+    create?: XOR<token_cuentaCreateWithoutMetadataInput, token_cuentaUncheckedCreateWithoutMetadataInput>
+    connectOrCreate?: token_cuentaCreateOrConnectWithoutMetadataInput
+    connect?: token_cuentaWhereUniqueInput
+  }
+
+  export type Enumclave_metadataFieldUpdateOperationsInput = {
+    set?: $Enums.clave_metadata
+  }
+
+  export type token_cuentaUpdateOneRequiredWithoutMetadataNestedInput = {
+    create?: XOR<token_cuentaCreateWithoutMetadataInput, token_cuentaUncheckedCreateWithoutMetadataInput>
+    connectOrCreate?: token_cuentaCreateOrConnectWithoutMetadataInput
+    upsert?: token_cuentaUpsertWithoutMetadataInput
+    connect?: token_cuentaWhereUniqueInput
+    update?: XOR<XOR<token_cuentaUpdateToOneWithWhereWithoutMetadataInput, token_cuentaUpdateWithoutMetadataInput>, token_cuentaUncheckedUpdateWithoutMetadataInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -25239,6 +29915,13 @@ export namespace Prisma {
     not?: NestedEnumtipo_tokenFilter<$PrismaModel> | $Enums.tipo_token
   }
 
+  export type NestedEnumestado_tokenFilter<$PrismaModel = never> = {
+    equals?: $Enums.estado_token | Enumestado_tokenFieldRefInput<$PrismaModel>
+    in?: $Enums.estado_token[] | ListEnumestado_tokenFieldRefInput<$PrismaModel>
+    notIn?: $Enums.estado_token[] | ListEnumestado_tokenFieldRefInput<$PrismaModel>
+    not?: NestedEnumestado_tokenFilter<$PrismaModel> | $Enums.estado_token
+  }
+
   export type NestedEnumtipo_tokenWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.tipo_token | Enumtipo_tokenFieldRefInput<$PrismaModel>
     in?: $Enums.tipo_token[] | ListEnumtipo_tokenFieldRefInput<$PrismaModel>
@@ -25247,6 +29930,50 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumtipo_tokenFilter<$PrismaModel>
     _max?: NestedEnumtipo_tokenFilter<$PrismaModel>
+  }
+
+  export type NestedEnumestado_tokenWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.estado_token | Enumestado_tokenFieldRefInput<$PrismaModel>
+    in?: $Enums.estado_token[] | ListEnumestado_tokenFieldRefInput<$PrismaModel>
+    notIn?: $Enums.estado_token[] | ListEnumestado_tokenFieldRefInput<$PrismaModel>
+    not?: NestedEnumestado_tokenWithAggregatesFilter<$PrismaModel> | $Enums.estado_token
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumestado_tokenFilter<$PrismaModel>
+    _max?: NestedEnumestado_tokenFilter<$PrismaModel>
+  }
+
+  export type NestedEnumrazon_invalidacionFilter<$PrismaModel = never> = {
+    equals?: $Enums.razon_invalidacion | Enumrazon_invalidacionFieldRefInput<$PrismaModel>
+    in?: $Enums.razon_invalidacion[] | ListEnumrazon_invalidacionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.razon_invalidacion[] | ListEnumrazon_invalidacionFieldRefInput<$PrismaModel>
+    not?: NestedEnumrazon_invalidacionFilter<$PrismaModel> | $Enums.razon_invalidacion
+  }
+
+  export type NestedEnumrazon_invalidacionWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.razon_invalidacion | Enumrazon_invalidacionFieldRefInput<$PrismaModel>
+    in?: $Enums.razon_invalidacion[] | ListEnumrazon_invalidacionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.razon_invalidacion[] | ListEnumrazon_invalidacionFieldRefInput<$PrismaModel>
+    not?: NestedEnumrazon_invalidacionWithAggregatesFilter<$PrismaModel> | $Enums.razon_invalidacion
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumrazon_invalidacionFilter<$PrismaModel>
+    _max?: NestedEnumrazon_invalidacionFilter<$PrismaModel>
+  }
+
+  export type NestedEnumclave_metadataFilter<$PrismaModel = never> = {
+    equals?: $Enums.clave_metadata | Enumclave_metadataFieldRefInput<$PrismaModel>
+    in?: $Enums.clave_metadata[] | ListEnumclave_metadataFieldRefInput<$PrismaModel>
+    notIn?: $Enums.clave_metadata[] | ListEnumclave_metadataFieldRefInput<$PrismaModel>
+    not?: NestedEnumclave_metadataFilter<$PrismaModel> | $Enums.clave_metadata
+  }
+
+  export type NestedEnumclave_metadataWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.clave_metadata | Enumclave_metadataFieldRefInput<$PrismaModel>
+    in?: $Enums.clave_metadata[] | ListEnumclave_metadataFieldRefInput<$PrismaModel>
+    notIn?: $Enums.clave_metadata[] | ListEnumclave_metadataFieldRefInput<$PrismaModel>
+    not?: NestedEnumclave_metadataWithAggregatesFilter<$PrismaModel> | $Enums.clave_metadata
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumclave_metadataFilter<$PrismaModel>
+    _max?: NestedEnumclave_metadataFilter<$PrismaModel>
   }
 
   export type carreraCreateWithoutUsuarioInput = {
@@ -25297,6 +30024,7 @@ export namespace Prisma {
     observaciones_creadas?: observacion_inscripcionCreateNestedManyWithoutAdmin_creadorInput
     inscripciones_validadas?: inscripcionCreateNestedManyWithoutAdmin_validadorInput
     tokens_cuenta?: token_cuentaCreateNestedManyWithoutCuentaInput
+    tokens_invalidados?: invalidacion_tokenCreateNestedManyWithoutAdminInput
   }
 
   export type cuentaUncheckedCreateWithoutUsuarioInput = {
@@ -25314,6 +30042,7 @@ export namespace Prisma {
     observaciones_creadas?: observacion_inscripcionUncheckedCreateNestedManyWithoutAdmin_creadorInput
     inscripciones_validadas?: inscripcionUncheckedCreateNestedManyWithoutAdmin_validadorInput
     tokens_cuenta?: token_cuentaUncheckedCreateNestedManyWithoutCuentaInput
+    tokens_invalidados?: invalidacion_tokenUncheckedCreateNestedManyWithoutAdminInput
   }
 
   export type cuentaCreateOrConnectWithoutUsuarioInput = {
@@ -25410,6 +30139,7 @@ export namespace Prisma {
     observaciones_creadas?: observacion_inscripcionCreateNestedManyWithoutAdmin_creadorInput
     inscripciones_validadas?: inscripcionCreateNestedManyWithoutAdmin_validadorInput
     tokens_cuenta?: token_cuentaCreateNestedManyWithoutCuentaInput
+    tokens_invalidados?: invalidacion_tokenCreateNestedManyWithoutAdminInput
   }
 
   export type cuentaUncheckedCreateWithoutComprobantes_pagoInput = {
@@ -25427,6 +30157,7 @@ export namespace Prisma {
     observaciones_creadas?: observacion_inscripcionUncheckedCreateNestedManyWithoutAdmin_creadorInput
     inscripciones_validadas?: inscripcionUncheckedCreateNestedManyWithoutAdmin_validadorInput
     tokens_cuenta?: token_cuentaUncheckedCreateNestedManyWithoutCuentaInput
+    tokens_invalidados?: invalidacion_tokenUncheckedCreateNestedManyWithoutAdminInput
   }
 
   export type cuentaCreateOrConnectWithoutComprobantes_pagoInput = {
@@ -25499,6 +30230,7 @@ export namespace Prisma {
     observaciones_creadas?: observacion_inscripcionUpdateManyWithoutAdmin_creadorNestedInput
     inscripciones_validadas?: inscripcionUpdateManyWithoutAdmin_validadorNestedInput
     tokens_cuenta?: token_cuentaUpdateManyWithoutCuentaNestedInput
+    tokens_invalidados?: invalidacion_tokenUpdateManyWithoutAdminNestedInput
   }
 
   export type cuentaUncheckedUpdateWithoutComprobantes_pagoInput = {
@@ -25516,6 +30248,7 @@ export namespace Prisma {
     observaciones_creadas?: observacion_inscripcionUncheckedUpdateManyWithoutAdmin_creadorNestedInput
     inscripciones_validadas?: inscripcionUncheckedUpdateManyWithoutAdmin_validadorNestedInput
     tokens_cuenta?: token_cuentaUncheckedUpdateManyWithoutCuentaNestedInput
+    tokens_invalidados?: invalidacion_tokenUncheckedUpdateManyWithoutAdminNestedInput
   }
 
   export type inscripcionUpsertWithoutComprobantes_pagoInput = {
@@ -25578,6 +30311,7 @@ export namespace Prisma {
     observaciones_creadas?: observacion_inscripcionCreateNestedManyWithoutAdmin_creadorInput
     inscripciones_validadas?: inscripcionCreateNestedManyWithoutAdmin_validadorInput
     tokens_cuenta?: token_cuentaCreateNestedManyWithoutCuentaInput
+    tokens_invalidados?: invalidacion_tokenCreateNestedManyWithoutAdminInput
   }
 
   export type cuentaUncheckedCreateWithoutCartas_motivacionInput = {
@@ -25595,6 +30329,7 @@ export namespace Prisma {
     observaciones_creadas?: observacion_inscripcionUncheckedCreateNestedManyWithoutAdmin_creadorInput
     inscripciones_validadas?: inscripcionUncheckedCreateNestedManyWithoutAdmin_validadorInput
     tokens_cuenta?: token_cuentaUncheckedCreateNestedManyWithoutCuentaInput
+    tokens_invalidados?: invalidacion_tokenUncheckedCreateNestedManyWithoutAdminInput
   }
 
   export type cuentaCreateOrConnectWithoutCartas_motivacionInput = {
@@ -25667,6 +30402,7 @@ export namespace Prisma {
     observaciones_creadas?: observacion_inscripcionUpdateManyWithoutAdmin_creadorNestedInput
     inscripciones_validadas?: inscripcionUpdateManyWithoutAdmin_validadorNestedInput
     tokens_cuenta?: token_cuentaUpdateManyWithoutCuentaNestedInput
+    tokens_invalidados?: invalidacion_tokenUpdateManyWithoutAdminNestedInput
   }
 
   export type cuentaUncheckedUpdateWithoutCartas_motivacionInput = {
@@ -25684,6 +30420,7 @@ export namespace Prisma {
     observaciones_creadas?: observacion_inscripcionUncheckedUpdateManyWithoutAdmin_creadorNestedInput
     inscripciones_validadas?: inscripcionUncheckedUpdateManyWithoutAdmin_validadorNestedInput
     tokens_cuenta?: token_cuentaUncheckedUpdateManyWithoutCuentaNestedInput
+    tokens_invalidados?: invalidacion_tokenUncheckedUpdateManyWithoutAdminNestedInput
   }
 
   export type inscripcionUpsertWithoutCartas_motivacionInput = {
@@ -25785,6 +30522,7 @@ export namespace Prisma {
     eventos?: eventoCreateNestedManyWithoutCuentaInput
     inscripciones_validadas?: inscripcionCreateNestedManyWithoutAdmin_validadorInput
     tokens_cuenta?: token_cuentaCreateNestedManyWithoutCuentaInput
+    tokens_invalidados?: invalidacion_tokenCreateNestedManyWithoutAdminInput
   }
 
   export type cuentaUncheckedCreateWithoutObservaciones_creadasInput = {
@@ -25802,6 +30540,7 @@ export namespace Prisma {
     eventos?: eventoUncheckedCreateNestedManyWithoutCuentaInput
     inscripciones_validadas?: inscripcionUncheckedCreateNestedManyWithoutAdmin_validadorInput
     tokens_cuenta?: token_cuentaUncheckedCreateNestedManyWithoutCuentaInput
+    tokens_invalidados?: invalidacion_tokenUncheckedCreateNestedManyWithoutAdminInput
   }
 
   export type cuentaCreateOrConnectWithoutObservaciones_creadasInput = {
@@ -25880,6 +30619,7 @@ export namespace Prisma {
     eventos?: eventoUpdateManyWithoutCuentaNestedInput
     inscripciones_validadas?: inscripcionUpdateManyWithoutAdmin_validadorNestedInput
     tokens_cuenta?: token_cuentaUpdateManyWithoutCuentaNestedInput
+    tokens_invalidados?: invalidacion_tokenUpdateManyWithoutAdminNestedInput
   }
 
   export type cuentaUncheckedUpdateWithoutObservaciones_creadasInput = {
@@ -25897,6 +30637,7 @@ export namespace Prisma {
     eventos?: eventoUncheckedUpdateManyWithoutCuentaNestedInput
     inscripciones_validadas?: inscripcionUncheckedUpdateManyWithoutAdmin_validadorNestedInput
     tokens_cuenta?: token_cuentaUncheckedUpdateManyWithoutCuentaNestedInput
+    tokens_invalidados?: invalidacion_tokenUncheckedUpdateManyWithoutAdminNestedInput
   }
 
   export type usuarioCreateWithoutCuentasInput = {
@@ -26157,11 +30898,14 @@ export namespace Prisma {
     tok_val: string
     tip_tok: $Enums.tipo_token
     fec_exp_tok: Date | string
-    est_uso?: boolean
-    fec_uso?: Date | string | null
+    est_tok?: $Enums.estado_token
     fec_cre_tok?: Date | string
     ip_sol?: string | null
-    ip_uso?: string | null
+    invalidacion?: invalidacion_tokenCreateNestedOneWithoutTokenInput
+    uso_token?: uso_tokenCreateNestedOneWithoutTokenInput
+    metadata?: metadata_tokenCreateNestedManyWithoutTokenInput
+    token_reemplazado?: token_cuentaCreateNestedOneWithoutTokens_que_reemplazaInput
+    tokens_que_reemplaza?: token_cuentaCreateNestedManyWithoutToken_reemplazadoInput
   }
 
   export type token_cuentaUncheckedCreateWithoutCuentaInput = {
@@ -26169,11 +30913,14 @@ export namespace Prisma {
     tok_val: string
     tip_tok: $Enums.tipo_token
     fec_exp_tok: Date | string
-    est_uso?: boolean
-    fec_uso?: Date | string | null
+    est_tok?: $Enums.estado_token
     fec_cre_tok?: Date | string
     ip_sol?: string | null
-    ip_uso?: string | null
+    id_tok_ree?: string | null
+    invalidacion?: invalidacion_tokenUncheckedCreateNestedOneWithoutTokenInput
+    uso_token?: uso_tokenUncheckedCreateNestedOneWithoutTokenInput
+    metadata?: metadata_tokenUncheckedCreateNestedManyWithoutTokenInput
+    tokens_que_reemplaza?: token_cuentaUncheckedCreateNestedManyWithoutToken_reemplazadoInput
   }
 
   export type token_cuentaCreateOrConnectWithoutCuentaInput = {
@@ -26183,6 +30930,34 @@ export namespace Prisma {
 
   export type token_cuentaCreateManyCuentaInputEnvelope = {
     data: token_cuentaCreateManyCuentaInput | token_cuentaCreateManyCuentaInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type invalidacion_tokenCreateWithoutAdminInput = {
+    id_inv_tok?: string
+    raz_inv: $Enums.razon_invalidacion
+    des_inv?: string | null
+    fec_inv?: Date | string
+    ip_inv?: string | null
+    token: token_cuentaCreateNestedOneWithoutInvalidacionInput
+  }
+
+  export type invalidacion_tokenUncheckedCreateWithoutAdminInput = {
+    id_inv_tok?: string
+    id_tok_per: string
+    raz_inv: $Enums.razon_invalidacion
+    des_inv?: string | null
+    fec_inv?: Date | string
+    ip_inv?: string | null
+  }
+
+  export type invalidacion_tokenCreateOrConnectWithoutAdminInput = {
+    where: invalidacion_tokenWhereUniqueInput
+    create: XOR<invalidacion_tokenCreateWithoutAdminInput, invalidacion_tokenUncheckedCreateWithoutAdminInput>
+  }
+
+  export type invalidacion_tokenCreateManyAdminInputEnvelope = {
+    data: invalidacion_tokenCreateManyAdminInput | invalidacion_tokenCreateManyAdminInput[]
     skipDuplicates?: boolean
   }
 
@@ -26419,11 +31194,39 @@ export namespace Prisma {
     tok_val?: StringFilter<"token_cuenta"> | string
     tip_tok?: Enumtipo_tokenFilter<"token_cuenta"> | $Enums.tipo_token
     fec_exp_tok?: DateTimeFilter<"token_cuenta"> | Date | string
-    est_uso?: BoolFilter<"token_cuenta"> | boolean
-    fec_uso?: DateTimeNullableFilter<"token_cuenta"> | Date | string | null
+    est_tok?: Enumestado_tokenFilter<"token_cuenta"> | $Enums.estado_token
     fec_cre_tok?: DateTimeFilter<"token_cuenta"> | Date | string
     ip_sol?: StringNullableFilter<"token_cuenta"> | string | null
-    ip_uso?: StringNullableFilter<"token_cuenta"> | string | null
+    id_tok_ree?: StringNullableFilter<"token_cuenta"> | string | null
+  }
+
+  export type invalidacion_tokenUpsertWithWhereUniqueWithoutAdminInput = {
+    where: invalidacion_tokenWhereUniqueInput
+    update: XOR<invalidacion_tokenUpdateWithoutAdminInput, invalidacion_tokenUncheckedUpdateWithoutAdminInput>
+    create: XOR<invalidacion_tokenCreateWithoutAdminInput, invalidacion_tokenUncheckedCreateWithoutAdminInput>
+  }
+
+  export type invalidacion_tokenUpdateWithWhereUniqueWithoutAdminInput = {
+    where: invalidacion_tokenWhereUniqueInput
+    data: XOR<invalidacion_tokenUpdateWithoutAdminInput, invalidacion_tokenUncheckedUpdateWithoutAdminInput>
+  }
+
+  export type invalidacion_tokenUpdateManyWithWhereWithoutAdminInput = {
+    where: invalidacion_tokenScalarWhereInput
+    data: XOR<invalidacion_tokenUpdateManyMutationInput, invalidacion_tokenUncheckedUpdateManyWithoutAdminInput>
+  }
+
+  export type invalidacion_tokenScalarWhereInput = {
+    AND?: invalidacion_tokenScalarWhereInput | invalidacion_tokenScalarWhereInput[]
+    OR?: invalidacion_tokenScalarWhereInput[]
+    NOT?: invalidacion_tokenScalarWhereInput | invalidacion_tokenScalarWhereInput[]
+    id_inv_tok?: StringFilter<"invalidacion_token"> | string
+    id_tok_per?: StringFilter<"invalidacion_token"> | string
+    raz_inv?: Enumrazon_invalidacionFilter<"invalidacion_token"> | $Enums.razon_invalidacion
+    des_inv?: StringNullableFilter<"invalidacion_token"> | string | null
+    fec_inv?: DateTimeFilter<"invalidacion_token"> | Date | string
+    ip_inv?: StringNullableFilter<"invalidacion_token"> | string | null
+    id_adm_inv?: StringNullableFilter<"invalidacion_token"> | string | null
   }
 
   export type facultadCreateWithoutCarrerasInput = {
@@ -26847,6 +31650,7 @@ export namespace Prisma {
     observaciones_creadas?: observacion_inscripcionCreateNestedManyWithoutAdmin_creadorInput
     inscripciones_validadas?: inscripcionCreateNestedManyWithoutAdmin_validadorInput
     tokens_cuenta?: token_cuentaCreateNestedManyWithoutCuentaInput
+    tokens_invalidados?: invalidacion_tokenCreateNestedManyWithoutAdminInput
   }
 
   export type cuentaUncheckedCreateWithoutEventosInput = {
@@ -26864,6 +31668,7 @@ export namespace Prisma {
     observaciones_creadas?: observacion_inscripcionUncheckedCreateNestedManyWithoutAdmin_creadorInput
     inscripciones_validadas?: inscripcionUncheckedCreateNestedManyWithoutAdmin_validadorInput
     tokens_cuenta?: token_cuentaUncheckedCreateNestedManyWithoutCuentaInput
+    tokens_invalidados?: invalidacion_tokenUncheckedCreateNestedManyWithoutAdminInput
   }
 
   export type cuentaCreateOrConnectWithoutEventosInput = {
@@ -26948,6 +31753,7 @@ export namespace Prisma {
     observaciones_creadas?: observacion_inscripcionUpdateManyWithoutAdmin_creadorNestedInput
     inscripciones_validadas?: inscripcionUpdateManyWithoutAdmin_validadorNestedInput
     tokens_cuenta?: token_cuentaUpdateManyWithoutCuentaNestedInput
+    tokens_invalidados?: invalidacion_tokenUpdateManyWithoutAdminNestedInput
   }
 
   export type cuentaUncheckedUpdateWithoutEventosInput = {
@@ -26965,6 +31771,7 @@ export namespace Prisma {
     observaciones_creadas?: observacion_inscripcionUncheckedUpdateManyWithoutAdmin_creadorNestedInput
     inscripciones_validadas?: inscripcionUncheckedUpdateManyWithoutAdmin_validadorNestedInput
     tokens_cuenta?: token_cuentaUncheckedUpdateManyWithoutCuentaNestedInput
+    tokens_invalidados?: invalidacion_tokenUncheckedUpdateManyWithoutAdminNestedInput
   }
 
   export type eventoCreateWithoutEventos_cursoInput = {
@@ -27262,6 +32069,7 @@ export namespace Prisma {
     observaciones_creadas?: observacion_inscripcionCreateNestedManyWithoutAdmin_creadorInput
     inscripciones_validadas?: inscripcionCreateNestedManyWithoutAdmin_validadorInput
     tokens_cuenta?: token_cuentaCreateNestedManyWithoutCuentaInput
+    tokens_invalidados?: invalidacion_tokenCreateNestedManyWithoutAdminInput
   }
 
   export type cuentaUncheckedCreateWithoutInscripcionesInput = {
@@ -27279,6 +32087,7 @@ export namespace Prisma {
     observaciones_creadas?: observacion_inscripcionUncheckedCreateNestedManyWithoutAdmin_creadorInput
     inscripciones_validadas?: inscripcionUncheckedCreateNestedManyWithoutAdmin_validadorInput
     tokens_cuenta?: token_cuentaUncheckedCreateNestedManyWithoutCuentaInput
+    tokens_invalidados?: invalidacion_tokenUncheckedCreateNestedManyWithoutAdminInput
   }
 
   export type cuentaCreateOrConnectWithoutInscripcionesInput = {
@@ -27461,6 +32270,7 @@ export namespace Prisma {
     eventos?: eventoCreateNestedManyWithoutCuentaInput
     observaciones_creadas?: observacion_inscripcionCreateNestedManyWithoutAdmin_creadorInput
     tokens_cuenta?: token_cuentaCreateNestedManyWithoutCuentaInput
+    tokens_invalidados?: invalidacion_tokenCreateNestedManyWithoutAdminInput
   }
 
   export type cuentaUncheckedCreateWithoutInscripciones_validadasInput = {
@@ -27478,6 +32288,7 @@ export namespace Prisma {
     eventos?: eventoUncheckedCreateNestedManyWithoutCuentaInput
     observaciones_creadas?: observacion_inscripcionUncheckedCreateNestedManyWithoutAdmin_creadorInput
     tokens_cuenta?: token_cuentaUncheckedCreateNestedManyWithoutCuentaInput
+    tokens_invalidados?: invalidacion_tokenUncheckedCreateNestedManyWithoutAdminInput
   }
 
   export type cuentaCreateOrConnectWithoutInscripciones_validadasInput = {
@@ -27511,6 +32322,7 @@ export namespace Prisma {
     observaciones_creadas?: observacion_inscripcionUpdateManyWithoutAdmin_creadorNestedInput
     inscripciones_validadas?: inscripcionUpdateManyWithoutAdmin_validadorNestedInput
     tokens_cuenta?: token_cuentaUpdateManyWithoutCuentaNestedInput
+    tokens_invalidados?: invalidacion_tokenUpdateManyWithoutAdminNestedInput
   }
 
   export type cuentaUncheckedUpdateWithoutInscripcionesInput = {
@@ -27528,6 +32340,7 @@ export namespace Prisma {
     observaciones_creadas?: observacion_inscripcionUncheckedUpdateManyWithoutAdmin_creadorNestedInput
     inscripciones_validadas?: inscripcionUncheckedUpdateManyWithoutAdmin_validadorNestedInput
     tokens_cuenta?: token_cuentaUncheckedUpdateManyWithoutCuentaNestedInput
+    tokens_invalidados?: invalidacion_tokenUncheckedUpdateManyWithoutAdminNestedInput
   }
 
   export type eventoUpsertWithoutInscritosInput = {
@@ -27714,6 +32527,7 @@ export namespace Prisma {
     eventos?: eventoUpdateManyWithoutCuentaNestedInput
     observaciones_creadas?: observacion_inscripcionUpdateManyWithoutAdmin_creadorNestedInput
     tokens_cuenta?: token_cuentaUpdateManyWithoutCuentaNestedInput
+    tokens_invalidados?: invalidacion_tokenUpdateManyWithoutAdminNestedInput
   }
 
   export type cuentaUncheckedUpdateWithoutInscripciones_validadasInput = {
@@ -27731,6 +32545,7 @@ export namespace Prisma {
     eventos?: eventoUncheckedUpdateManyWithoutCuentaNestedInput
     observaciones_creadas?: observacion_inscripcionUncheckedUpdateManyWithoutAdmin_creadorNestedInput
     tokens_cuenta?: token_cuentaUncheckedUpdateManyWithoutCuentaNestedInput
+    tokens_invalidados?: invalidacion_tokenUncheckedUpdateManyWithoutAdminNestedInput
   }
 
   export type inscripcionCreateWithoutInscripcion_cursoInput = {
@@ -27970,6 +32785,7 @@ export namespace Prisma {
     eventos?: eventoCreateNestedManyWithoutCuentaInput
     observaciones_creadas?: observacion_inscripcionCreateNestedManyWithoutAdmin_creadorInput
     inscripciones_validadas?: inscripcionCreateNestedManyWithoutAdmin_validadorInput
+    tokens_invalidados?: invalidacion_tokenCreateNestedManyWithoutAdminInput
   }
 
   export type cuentaUncheckedCreateWithoutTokens_cuentaInput = {
@@ -27987,11 +32803,155 @@ export namespace Prisma {
     eventos?: eventoUncheckedCreateNestedManyWithoutCuentaInput
     observaciones_creadas?: observacion_inscripcionUncheckedCreateNestedManyWithoutAdmin_creadorInput
     inscripciones_validadas?: inscripcionUncheckedCreateNestedManyWithoutAdmin_validadorInput
+    tokens_invalidados?: invalidacion_tokenUncheckedCreateNestedManyWithoutAdminInput
   }
 
   export type cuentaCreateOrConnectWithoutTokens_cuentaInput = {
     where: cuentaWhereUniqueInput
     create: XOR<cuentaCreateWithoutTokens_cuentaInput, cuentaUncheckedCreateWithoutTokens_cuentaInput>
+  }
+
+  export type invalidacion_tokenCreateWithoutTokenInput = {
+    id_inv_tok?: string
+    raz_inv: $Enums.razon_invalidacion
+    des_inv?: string | null
+    fec_inv?: Date | string
+    ip_inv?: string | null
+    admin?: cuentaCreateNestedOneWithoutTokens_invalidadosInput
+  }
+
+  export type invalidacion_tokenUncheckedCreateWithoutTokenInput = {
+    id_inv_tok?: string
+    raz_inv: $Enums.razon_invalidacion
+    des_inv?: string | null
+    fec_inv?: Date | string
+    ip_inv?: string | null
+    id_adm_inv?: string | null
+  }
+
+  export type invalidacion_tokenCreateOrConnectWithoutTokenInput = {
+    where: invalidacion_tokenWhereUniqueInput
+    create: XOR<invalidacion_tokenCreateWithoutTokenInput, invalidacion_tokenUncheckedCreateWithoutTokenInput>
+  }
+
+  export type uso_tokenCreateWithoutTokenInput = {
+    id_uso_tok?: string
+    fec_uso?: Date | string
+    ip_uso: string
+    exi_uso?: boolean
+    obs_uso?: string | null
+  }
+
+  export type uso_tokenUncheckedCreateWithoutTokenInput = {
+    id_uso_tok?: string
+    fec_uso?: Date | string
+    ip_uso: string
+    exi_uso?: boolean
+    obs_uso?: string | null
+  }
+
+  export type uso_tokenCreateOrConnectWithoutTokenInput = {
+    where: uso_tokenWhereUniqueInput
+    create: XOR<uso_tokenCreateWithoutTokenInput, uso_tokenUncheckedCreateWithoutTokenInput>
+  }
+
+  export type metadata_tokenCreateWithoutTokenInput = {
+    id_met_tok?: string
+    cla_met: $Enums.clave_metadata
+    val_met: string
+    fec_cre_met?: Date | string
+  }
+
+  export type metadata_tokenUncheckedCreateWithoutTokenInput = {
+    id_met_tok?: string
+    cla_met: $Enums.clave_metadata
+    val_met: string
+    fec_cre_met?: Date | string
+  }
+
+  export type metadata_tokenCreateOrConnectWithoutTokenInput = {
+    where: metadata_tokenWhereUniqueInput
+    create: XOR<metadata_tokenCreateWithoutTokenInput, metadata_tokenUncheckedCreateWithoutTokenInput>
+  }
+
+  export type metadata_tokenCreateManyTokenInputEnvelope = {
+    data: metadata_tokenCreateManyTokenInput | metadata_tokenCreateManyTokenInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type token_cuentaCreateWithoutTokens_que_reemplazaInput = {
+    id_tok?: string
+    tok_val: string
+    tip_tok: $Enums.tipo_token
+    fec_exp_tok: Date | string
+    est_tok?: $Enums.estado_token
+    fec_cre_tok?: Date | string
+    ip_sol?: string | null
+    cuenta: cuentaCreateNestedOneWithoutTokens_cuentaInput
+    invalidacion?: invalidacion_tokenCreateNestedOneWithoutTokenInput
+    uso_token?: uso_tokenCreateNestedOneWithoutTokenInput
+    metadata?: metadata_tokenCreateNestedManyWithoutTokenInput
+    token_reemplazado?: token_cuentaCreateNestedOneWithoutTokens_que_reemplazaInput
+  }
+
+  export type token_cuentaUncheckedCreateWithoutTokens_que_reemplazaInput = {
+    id_tok?: string
+    id_cue_per: string
+    tok_val: string
+    tip_tok: $Enums.tipo_token
+    fec_exp_tok: Date | string
+    est_tok?: $Enums.estado_token
+    fec_cre_tok?: Date | string
+    ip_sol?: string | null
+    id_tok_ree?: string | null
+    invalidacion?: invalidacion_tokenUncheckedCreateNestedOneWithoutTokenInput
+    uso_token?: uso_tokenUncheckedCreateNestedOneWithoutTokenInput
+    metadata?: metadata_tokenUncheckedCreateNestedManyWithoutTokenInput
+  }
+
+  export type token_cuentaCreateOrConnectWithoutTokens_que_reemplazaInput = {
+    where: token_cuentaWhereUniqueInput
+    create: XOR<token_cuentaCreateWithoutTokens_que_reemplazaInput, token_cuentaUncheckedCreateWithoutTokens_que_reemplazaInput>
+  }
+
+  export type token_cuentaCreateWithoutToken_reemplazadoInput = {
+    id_tok?: string
+    tok_val: string
+    tip_tok: $Enums.tipo_token
+    fec_exp_tok: Date | string
+    est_tok?: $Enums.estado_token
+    fec_cre_tok?: Date | string
+    ip_sol?: string | null
+    cuenta: cuentaCreateNestedOneWithoutTokens_cuentaInput
+    invalidacion?: invalidacion_tokenCreateNestedOneWithoutTokenInput
+    uso_token?: uso_tokenCreateNestedOneWithoutTokenInput
+    metadata?: metadata_tokenCreateNestedManyWithoutTokenInput
+    tokens_que_reemplaza?: token_cuentaCreateNestedManyWithoutToken_reemplazadoInput
+  }
+
+  export type token_cuentaUncheckedCreateWithoutToken_reemplazadoInput = {
+    id_tok?: string
+    id_cue_per: string
+    tok_val: string
+    tip_tok: $Enums.tipo_token
+    fec_exp_tok: Date | string
+    est_tok?: $Enums.estado_token
+    fec_cre_tok?: Date | string
+    ip_sol?: string | null
+    invalidacion?: invalidacion_tokenUncheckedCreateNestedOneWithoutTokenInput
+    uso_token?: uso_tokenUncheckedCreateNestedOneWithoutTokenInput
+    metadata?: metadata_tokenUncheckedCreateNestedManyWithoutTokenInput
+    tokens_que_reemplaza?: token_cuentaUncheckedCreateNestedManyWithoutToken_reemplazadoInput
+  }
+
+  export type token_cuentaCreateOrConnectWithoutToken_reemplazadoInput = {
+    where: token_cuentaWhereUniqueInput
+    create: XOR<token_cuentaCreateWithoutToken_reemplazadoInput, token_cuentaUncheckedCreateWithoutToken_reemplazadoInput>
+  }
+
+  export type token_cuentaCreateManyToken_reemplazadoInputEnvelope = {
+    data: token_cuentaCreateManyToken_reemplazadoInput | token_cuentaCreateManyToken_reemplazadoInput[]
+    skipDuplicates?: boolean
   }
 
   export type cuentaUpsertWithoutTokens_cuentaInput = {
@@ -28020,6 +32980,7 @@ export namespace Prisma {
     eventos?: eventoUpdateManyWithoutCuentaNestedInput
     observaciones_creadas?: observacion_inscripcionUpdateManyWithoutAdmin_creadorNestedInput
     inscripciones_validadas?: inscripcionUpdateManyWithoutAdmin_validadorNestedInput
+    tokens_invalidados?: invalidacion_tokenUpdateManyWithoutAdminNestedInput
   }
 
   export type cuentaUncheckedUpdateWithoutTokens_cuentaInput = {
@@ -28037,6 +32998,463 @@ export namespace Prisma {
     eventos?: eventoUncheckedUpdateManyWithoutCuentaNestedInput
     observaciones_creadas?: observacion_inscripcionUncheckedUpdateManyWithoutAdmin_creadorNestedInput
     inscripciones_validadas?: inscripcionUncheckedUpdateManyWithoutAdmin_validadorNestedInput
+    tokens_invalidados?: invalidacion_tokenUncheckedUpdateManyWithoutAdminNestedInput
+  }
+
+  export type invalidacion_tokenUpsertWithoutTokenInput = {
+    update: XOR<invalidacion_tokenUpdateWithoutTokenInput, invalidacion_tokenUncheckedUpdateWithoutTokenInput>
+    create: XOR<invalidacion_tokenCreateWithoutTokenInput, invalidacion_tokenUncheckedCreateWithoutTokenInput>
+    where?: invalidacion_tokenWhereInput
+  }
+
+  export type invalidacion_tokenUpdateToOneWithWhereWithoutTokenInput = {
+    where?: invalidacion_tokenWhereInput
+    data: XOR<invalidacion_tokenUpdateWithoutTokenInput, invalidacion_tokenUncheckedUpdateWithoutTokenInput>
+  }
+
+  export type invalidacion_tokenUpdateWithoutTokenInput = {
+    id_inv_tok?: StringFieldUpdateOperationsInput | string
+    raz_inv?: Enumrazon_invalidacionFieldUpdateOperationsInput | $Enums.razon_invalidacion
+    des_inv?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_inv?: DateTimeFieldUpdateOperationsInput | Date | string
+    ip_inv?: NullableStringFieldUpdateOperationsInput | string | null
+    admin?: cuentaUpdateOneWithoutTokens_invalidadosNestedInput
+  }
+
+  export type invalidacion_tokenUncheckedUpdateWithoutTokenInput = {
+    id_inv_tok?: StringFieldUpdateOperationsInput | string
+    raz_inv?: Enumrazon_invalidacionFieldUpdateOperationsInput | $Enums.razon_invalidacion
+    des_inv?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_inv?: DateTimeFieldUpdateOperationsInput | Date | string
+    ip_inv?: NullableStringFieldUpdateOperationsInput | string | null
+    id_adm_inv?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type uso_tokenUpsertWithoutTokenInput = {
+    update: XOR<uso_tokenUpdateWithoutTokenInput, uso_tokenUncheckedUpdateWithoutTokenInput>
+    create: XOR<uso_tokenCreateWithoutTokenInput, uso_tokenUncheckedCreateWithoutTokenInput>
+    where?: uso_tokenWhereInput
+  }
+
+  export type uso_tokenUpdateToOneWithWhereWithoutTokenInput = {
+    where?: uso_tokenWhereInput
+    data: XOR<uso_tokenUpdateWithoutTokenInput, uso_tokenUncheckedUpdateWithoutTokenInput>
+  }
+
+  export type uso_tokenUpdateWithoutTokenInput = {
+    id_uso_tok?: StringFieldUpdateOperationsInput | string
+    fec_uso?: DateTimeFieldUpdateOperationsInput | Date | string
+    ip_uso?: StringFieldUpdateOperationsInput | string
+    exi_uso?: BoolFieldUpdateOperationsInput | boolean
+    obs_uso?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type uso_tokenUncheckedUpdateWithoutTokenInput = {
+    id_uso_tok?: StringFieldUpdateOperationsInput | string
+    fec_uso?: DateTimeFieldUpdateOperationsInput | Date | string
+    ip_uso?: StringFieldUpdateOperationsInput | string
+    exi_uso?: BoolFieldUpdateOperationsInput | boolean
+    obs_uso?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type metadata_tokenUpsertWithWhereUniqueWithoutTokenInput = {
+    where: metadata_tokenWhereUniqueInput
+    update: XOR<metadata_tokenUpdateWithoutTokenInput, metadata_tokenUncheckedUpdateWithoutTokenInput>
+    create: XOR<metadata_tokenCreateWithoutTokenInput, metadata_tokenUncheckedCreateWithoutTokenInput>
+  }
+
+  export type metadata_tokenUpdateWithWhereUniqueWithoutTokenInput = {
+    where: metadata_tokenWhereUniqueInput
+    data: XOR<metadata_tokenUpdateWithoutTokenInput, metadata_tokenUncheckedUpdateWithoutTokenInput>
+  }
+
+  export type metadata_tokenUpdateManyWithWhereWithoutTokenInput = {
+    where: metadata_tokenScalarWhereInput
+    data: XOR<metadata_tokenUpdateManyMutationInput, metadata_tokenUncheckedUpdateManyWithoutTokenInput>
+  }
+
+  export type metadata_tokenScalarWhereInput = {
+    AND?: metadata_tokenScalarWhereInput | metadata_tokenScalarWhereInput[]
+    OR?: metadata_tokenScalarWhereInput[]
+    NOT?: metadata_tokenScalarWhereInput | metadata_tokenScalarWhereInput[]
+    id_met_tok?: StringFilter<"metadata_token"> | string
+    id_tok_per?: StringFilter<"metadata_token"> | string
+    cla_met?: Enumclave_metadataFilter<"metadata_token"> | $Enums.clave_metadata
+    val_met?: StringFilter<"metadata_token"> | string
+    fec_cre_met?: DateTimeFilter<"metadata_token"> | Date | string
+  }
+
+  export type token_cuentaUpsertWithoutTokens_que_reemplazaInput = {
+    update: XOR<token_cuentaUpdateWithoutTokens_que_reemplazaInput, token_cuentaUncheckedUpdateWithoutTokens_que_reemplazaInput>
+    create: XOR<token_cuentaCreateWithoutTokens_que_reemplazaInput, token_cuentaUncheckedCreateWithoutTokens_que_reemplazaInput>
+    where?: token_cuentaWhereInput
+  }
+
+  export type token_cuentaUpdateToOneWithWhereWithoutTokens_que_reemplazaInput = {
+    where?: token_cuentaWhereInput
+    data: XOR<token_cuentaUpdateWithoutTokens_que_reemplazaInput, token_cuentaUncheckedUpdateWithoutTokens_que_reemplazaInput>
+  }
+
+  export type token_cuentaUpdateWithoutTokens_que_reemplazaInput = {
+    id_tok?: StringFieldUpdateOperationsInput | string
+    tok_val?: StringFieldUpdateOperationsInput | string
+    tip_tok?: Enumtipo_tokenFieldUpdateOperationsInput | $Enums.tipo_token
+    fec_exp_tok?: DateTimeFieldUpdateOperationsInput | Date | string
+    est_tok?: Enumestado_tokenFieldUpdateOperationsInput | $Enums.estado_token
+    fec_cre_tok?: DateTimeFieldUpdateOperationsInput | Date | string
+    ip_sol?: NullableStringFieldUpdateOperationsInput | string | null
+    cuenta?: cuentaUpdateOneRequiredWithoutTokens_cuentaNestedInput
+    invalidacion?: invalidacion_tokenUpdateOneWithoutTokenNestedInput
+    uso_token?: uso_tokenUpdateOneWithoutTokenNestedInput
+    metadata?: metadata_tokenUpdateManyWithoutTokenNestedInput
+    token_reemplazado?: token_cuentaUpdateOneWithoutTokens_que_reemplazaNestedInput
+  }
+
+  export type token_cuentaUncheckedUpdateWithoutTokens_que_reemplazaInput = {
+    id_tok?: StringFieldUpdateOperationsInput | string
+    id_cue_per?: StringFieldUpdateOperationsInput | string
+    tok_val?: StringFieldUpdateOperationsInput | string
+    tip_tok?: Enumtipo_tokenFieldUpdateOperationsInput | $Enums.tipo_token
+    fec_exp_tok?: DateTimeFieldUpdateOperationsInput | Date | string
+    est_tok?: Enumestado_tokenFieldUpdateOperationsInput | $Enums.estado_token
+    fec_cre_tok?: DateTimeFieldUpdateOperationsInput | Date | string
+    ip_sol?: NullableStringFieldUpdateOperationsInput | string | null
+    id_tok_ree?: NullableStringFieldUpdateOperationsInput | string | null
+    invalidacion?: invalidacion_tokenUncheckedUpdateOneWithoutTokenNestedInput
+    uso_token?: uso_tokenUncheckedUpdateOneWithoutTokenNestedInput
+    metadata?: metadata_tokenUncheckedUpdateManyWithoutTokenNestedInput
+  }
+
+  export type token_cuentaUpsertWithWhereUniqueWithoutToken_reemplazadoInput = {
+    where: token_cuentaWhereUniqueInput
+    update: XOR<token_cuentaUpdateWithoutToken_reemplazadoInput, token_cuentaUncheckedUpdateWithoutToken_reemplazadoInput>
+    create: XOR<token_cuentaCreateWithoutToken_reemplazadoInput, token_cuentaUncheckedCreateWithoutToken_reemplazadoInput>
+  }
+
+  export type token_cuentaUpdateWithWhereUniqueWithoutToken_reemplazadoInput = {
+    where: token_cuentaWhereUniqueInput
+    data: XOR<token_cuentaUpdateWithoutToken_reemplazadoInput, token_cuentaUncheckedUpdateWithoutToken_reemplazadoInput>
+  }
+
+  export type token_cuentaUpdateManyWithWhereWithoutToken_reemplazadoInput = {
+    where: token_cuentaScalarWhereInput
+    data: XOR<token_cuentaUpdateManyMutationInput, token_cuentaUncheckedUpdateManyWithoutToken_reemplazadoInput>
+  }
+
+  export type token_cuentaCreateWithoutInvalidacionInput = {
+    id_tok?: string
+    tok_val: string
+    tip_tok: $Enums.tipo_token
+    fec_exp_tok: Date | string
+    est_tok?: $Enums.estado_token
+    fec_cre_tok?: Date | string
+    ip_sol?: string | null
+    cuenta: cuentaCreateNestedOneWithoutTokens_cuentaInput
+    uso_token?: uso_tokenCreateNestedOneWithoutTokenInput
+    metadata?: metadata_tokenCreateNestedManyWithoutTokenInput
+    token_reemplazado?: token_cuentaCreateNestedOneWithoutTokens_que_reemplazaInput
+    tokens_que_reemplaza?: token_cuentaCreateNestedManyWithoutToken_reemplazadoInput
+  }
+
+  export type token_cuentaUncheckedCreateWithoutInvalidacionInput = {
+    id_tok?: string
+    id_cue_per: string
+    tok_val: string
+    tip_tok: $Enums.tipo_token
+    fec_exp_tok: Date | string
+    est_tok?: $Enums.estado_token
+    fec_cre_tok?: Date | string
+    ip_sol?: string | null
+    id_tok_ree?: string | null
+    uso_token?: uso_tokenUncheckedCreateNestedOneWithoutTokenInput
+    metadata?: metadata_tokenUncheckedCreateNestedManyWithoutTokenInput
+    tokens_que_reemplaza?: token_cuentaUncheckedCreateNestedManyWithoutToken_reemplazadoInput
+  }
+
+  export type token_cuentaCreateOrConnectWithoutInvalidacionInput = {
+    where: token_cuentaWhereUniqueInput
+    create: XOR<token_cuentaCreateWithoutInvalidacionInput, token_cuentaUncheckedCreateWithoutInvalidacionInput>
+  }
+
+  export type cuentaCreateWithoutTokens_invalidadosInput = {
+    id_cue?: string
+    cor_usu: string
+    con_usu: string
+    fec_cre_cue?: Date | string
+    rol_usu: $Enums.rol_usuario
+    est_ver_cor?: boolean
+    fec_ver_cor?: Date | string | null
+    usuario: usuarioCreateNestedOneWithoutCuentasInput
+    inscripciones?: inscripcionCreateNestedManyWithoutCuentaInput
+    cartas_motivacion?: carta_motivacionCreateNestedManyWithoutAdminInput
+    comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutAdminInput
+    eventos?: eventoCreateNestedManyWithoutCuentaInput
+    observaciones_creadas?: observacion_inscripcionCreateNestedManyWithoutAdmin_creadorInput
+    inscripciones_validadas?: inscripcionCreateNestedManyWithoutAdmin_validadorInput
+    tokens_cuenta?: token_cuentaCreateNestedManyWithoutCuentaInput
+  }
+
+  export type cuentaUncheckedCreateWithoutTokens_invalidadosInput = {
+    id_cue?: string
+    id_usu_per: string
+    cor_usu: string
+    con_usu: string
+    fec_cre_cue?: Date | string
+    rol_usu: $Enums.rol_usuario
+    est_ver_cor?: boolean
+    fec_ver_cor?: Date | string | null
+    inscripciones?: inscripcionUncheckedCreateNestedManyWithoutCuentaInput
+    cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutAdminInput
+    comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutAdminInput
+    eventos?: eventoUncheckedCreateNestedManyWithoutCuentaInput
+    observaciones_creadas?: observacion_inscripcionUncheckedCreateNestedManyWithoutAdmin_creadorInput
+    inscripciones_validadas?: inscripcionUncheckedCreateNestedManyWithoutAdmin_validadorInput
+    tokens_cuenta?: token_cuentaUncheckedCreateNestedManyWithoutCuentaInput
+  }
+
+  export type cuentaCreateOrConnectWithoutTokens_invalidadosInput = {
+    where: cuentaWhereUniqueInput
+    create: XOR<cuentaCreateWithoutTokens_invalidadosInput, cuentaUncheckedCreateWithoutTokens_invalidadosInput>
+  }
+
+  export type token_cuentaUpsertWithoutInvalidacionInput = {
+    update: XOR<token_cuentaUpdateWithoutInvalidacionInput, token_cuentaUncheckedUpdateWithoutInvalidacionInput>
+    create: XOR<token_cuentaCreateWithoutInvalidacionInput, token_cuentaUncheckedCreateWithoutInvalidacionInput>
+    where?: token_cuentaWhereInput
+  }
+
+  export type token_cuentaUpdateToOneWithWhereWithoutInvalidacionInput = {
+    where?: token_cuentaWhereInput
+    data: XOR<token_cuentaUpdateWithoutInvalidacionInput, token_cuentaUncheckedUpdateWithoutInvalidacionInput>
+  }
+
+  export type token_cuentaUpdateWithoutInvalidacionInput = {
+    id_tok?: StringFieldUpdateOperationsInput | string
+    tok_val?: StringFieldUpdateOperationsInput | string
+    tip_tok?: Enumtipo_tokenFieldUpdateOperationsInput | $Enums.tipo_token
+    fec_exp_tok?: DateTimeFieldUpdateOperationsInput | Date | string
+    est_tok?: Enumestado_tokenFieldUpdateOperationsInput | $Enums.estado_token
+    fec_cre_tok?: DateTimeFieldUpdateOperationsInput | Date | string
+    ip_sol?: NullableStringFieldUpdateOperationsInput | string | null
+    cuenta?: cuentaUpdateOneRequiredWithoutTokens_cuentaNestedInput
+    uso_token?: uso_tokenUpdateOneWithoutTokenNestedInput
+    metadata?: metadata_tokenUpdateManyWithoutTokenNestedInput
+    token_reemplazado?: token_cuentaUpdateOneWithoutTokens_que_reemplazaNestedInput
+    tokens_que_reemplaza?: token_cuentaUpdateManyWithoutToken_reemplazadoNestedInput
+  }
+
+  export type token_cuentaUncheckedUpdateWithoutInvalidacionInput = {
+    id_tok?: StringFieldUpdateOperationsInput | string
+    id_cue_per?: StringFieldUpdateOperationsInput | string
+    tok_val?: StringFieldUpdateOperationsInput | string
+    tip_tok?: Enumtipo_tokenFieldUpdateOperationsInput | $Enums.tipo_token
+    fec_exp_tok?: DateTimeFieldUpdateOperationsInput | Date | string
+    est_tok?: Enumestado_tokenFieldUpdateOperationsInput | $Enums.estado_token
+    fec_cre_tok?: DateTimeFieldUpdateOperationsInput | Date | string
+    ip_sol?: NullableStringFieldUpdateOperationsInput | string | null
+    id_tok_ree?: NullableStringFieldUpdateOperationsInput | string | null
+    uso_token?: uso_tokenUncheckedUpdateOneWithoutTokenNestedInput
+    metadata?: metadata_tokenUncheckedUpdateManyWithoutTokenNestedInput
+    tokens_que_reemplaza?: token_cuentaUncheckedUpdateManyWithoutToken_reemplazadoNestedInput
+  }
+
+  export type cuentaUpsertWithoutTokens_invalidadosInput = {
+    update: XOR<cuentaUpdateWithoutTokens_invalidadosInput, cuentaUncheckedUpdateWithoutTokens_invalidadosInput>
+    create: XOR<cuentaCreateWithoutTokens_invalidadosInput, cuentaUncheckedCreateWithoutTokens_invalidadosInput>
+    where?: cuentaWhereInput
+  }
+
+  export type cuentaUpdateToOneWithWhereWithoutTokens_invalidadosInput = {
+    where?: cuentaWhereInput
+    data: XOR<cuentaUpdateWithoutTokens_invalidadosInput, cuentaUncheckedUpdateWithoutTokens_invalidadosInput>
+  }
+
+  export type cuentaUpdateWithoutTokens_invalidadosInput = {
+    id_cue?: StringFieldUpdateOperationsInput | string
+    cor_usu?: StringFieldUpdateOperationsInput | string
+    con_usu?: StringFieldUpdateOperationsInput | string
+    fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
+    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    est_ver_cor?: BoolFieldUpdateOperationsInput | boolean
+    fec_ver_cor?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    usuario?: usuarioUpdateOneRequiredWithoutCuentasNestedInput
+    inscripciones?: inscripcionUpdateManyWithoutCuentaNestedInput
+    cartas_motivacion?: carta_motivacionUpdateManyWithoutAdminNestedInput
+    comprobantes_pago?: comprobante_pagoUpdateManyWithoutAdminNestedInput
+    eventos?: eventoUpdateManyWithoutCuentaNestedInput
+    observaciones_creadas?: observacion_inscripcionUpdateManyWithoutAdmin_creadorNestedInput
+    inscripciones_validadas?: inscripcionUpdateManyWithoutAdmin_validadorNestedInput
+    tokens_cuenta?: token_cuentaUpdateManyWithoutCuentaNestedInput
+  }
+
+  export type cuentaUncheckedUpdateWithoutTokens_invalidadosInput = {
+    id_cue?: StringFieldUpdateOperationsInput | string
+    id_usu_per?: StringFieldUpdateOperationsInput | string
+    cor_usu?: StringFieldUpdateOperationsInput | string
+    con_usu?: StringFieldUpdateOperationsInput | string
+    fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
+    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    est_ver_cor?: BoolFieldUpdateOperationsInput | boolean
+    fec_ver_cor?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    inscripciones?: inscripcionUncheckedUpdateManyWithoutCuentaNestedInput
+    cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutAdminNestedInput
+    comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutAdminNestedInput
+    eventos?: eventoUncheckedUpdateManyWithoutCuentaNestedInput
+    observaciones_creadas?: observacion_inscripcionUncheckedUpdateManyWithoutAdmin_creadorNestedInput
+    inscripciones_validadas?: inscripcionUncheckedUpdateManyWithoutAdmin_validadorNestedInput
+    tokens_cuenta?: token_cuentaUncheckedUpdateManyWithoutCuentaNestedInput
+  }
+
+  export type token_cuentaCreateWithoutUso_tokenInput = {
+    id_tok?: string
+    tok_val: string
+    tip_tok: $Enums.tipo_token
+    fec_exp_tok: Date | string
+    est_tok?: $Enums.estado_token
+    fec_cre_tok?: Date | string
+    ip_sol?: string | null
+    cuenta: cuentaCreateNestedOneWithoutTokens_cuentaInput
+    invalidacion?: invalidacion_tokenCreateNestedOneWithoutTokenInput
+    metadata?: metadata_tokenCreateNestedManyWithoutTokenInput
+    token_reemplazado?: token_cuentaCreateNestedOneWithoutTokens_que_reemplazaInput
+    tokens_que_reemplaza?: token_cuentaCreateNestedManyWithoutToken_reemplazadoInput
+  }
+
+  export type token_cuentaUncheckedCreateWithoutUso_tokenInput = {
+    id_tok?: string
+    id_cue_per: string
+    tok_val: string
+    tip_tok: $Enums.tipo_token
+    fec_exp_tok: Date | string
+    est_tok?: $Enums.estado_token
+    fec_cre_tok?: Date | string
+    ip_sol?: string | null
+    id_tok_ree?: string | null
+    invalidacion?: invalidacion_tokenUncheckedCreateNestedOneWithoutTokenInput
+    metadata?: metadata_tokenUncheckedCreateNestedManyWithoutTokenInput
+    tokens_que_reemplaza?: token_cuentaUncheckedCreateNestedManyWithoutToken_reemplazadoInput
+  }
+
+  export type token_cuentaCreateOrConnectWithoutUso_tokenInput = {
+    where: token_cuentaWhereUniqueInput
+    create: XOR<token_cuentaCreateWithoutUso_tokenInput, token_cuentaUncheckedCreateWithoutUso_tokenInput>
+  }
+
+  export type token_cuentaUpsertWithoutUso_tokenInput = {
+    update: XOR<token_cuentaUpdateWithoutUso_tokenInput, token_cuentaUncheckedUpdateWithoutUso_tokenInput>
+    create: XOR<token_cuentaCreateWithoutUso_tokenInput, token_cuentaUncheckedCreateWithoutUso_tokenInput>
+    where?: token_cuentaWhereInput
+  }
+
+  export type token_cuentaUpdateToOneWithWhereWithoutUso_tokenInput = {
+    where?: token_cuentaWhereInput
+    data: XOR<token_cuentaUpdateWithoutUso_tokenInput, token_cuentaUncheckedUpdateWithoutUso_tokenInput>
+  }
+
+  export type token_cuentaUpdateWithoutUso_tokenInput = {
+    id_tok?: StringFieldUpdateOperationsInput | string
+    tok_val?: StringFieldUpdateOperationsInput | string
+    tip_tok?: Enumtipo_tokenFieldUpdateOperationsInput | $Enums.tipo_token
+    fec_exp_tok?: DateTimeFieldUpdateOperationsInput | Date | string
+    est_tok?: Enumestado_tokenFieldUpdateOperationsInput | $Enums.estado_token
+    fec_cre_tok?: DateTimeFieldUpdateOperationsInput | Date | string
+    ip_sol?: NullableStringFieldUpdateOperationsInput | string | null
+    cuenta?: cuentaUpdateOneRequiredWithoutTokens_cuentaNestedInput
+    invalidacion?: invalidacion_tokenUpdateOneWithoutTokenNestedInput
+    metadata?: metadata_tokenUpdateManyWithoutTokenNestedInput
+    token_reemplazado?: token_cuentaUpdateOneWithoutTokens_que_reemplazaNestedInput
+    tokens_que_reemplaza?: token_cuentaUpdateManyWithoutToken_reemplazadoNestedInput
+  }
+
+  export type token_cuentaUncheckedUpdateWithoutUso_tokenInput = {
+    id_tok?: StringFieldUpdateOperationsInput | string
+    id_cue_per?: StringFieldUpdateOperationsInput | string
+    tok_val?: StringFieldUpdateOperationsInput | string
+    tip_tok?: Enumtipo_tokenFieldUpdateOperationsInput | $Enums.tipo_token
+    fec_exp_tok?: DateTimeFieldUpdateOperationsInput | Date | string
+    est_tok?: Enumestado_tokenFieldUpdateOperationsInput | $Enums.estado_token
+    fec_cre_tok?: DateTimeFieldUpdateOperationsInput | Date | string
+    ip_sol?: NullableStringFieldUpdateOperationsInput | string | null
+    id_tok_ree?: NullableStringFieldUpdateOperationsInput | string | null
+    invalidacion?: invalidacion_tokenUncheckedUpdateOneWithoutTokenNestedInput
+    metadata?: metadata_tokenUncheckedUpdateManyWithoutTokenNestedInput
+    tokens_que_reemplaza?: token_cuentaUncheckedUpdateManyWithoutToken_reemplazadoNestedInput
+  }
+
+  export type token_cuentaCreateWithoutMetadataInput = {
+    id_tok?: string
+    tok_val: string
+    tip_tok: $Enums.tipo_token
+    fec_exp_tok: Date | string
+    est_tok?: $Enums.estado_token
+    fec_cre_tok?: Date | string
+    ip_sol?: string | null
+    cuenta: cuentaCreateNestedOneWithoutTokens_cuentaInput
+    invalidacion?: invalidacion_tokenCreateNestedOneWithoutTokenInput
+    uso_token?: uso_tokenCreateNestedOneWithoutTokenInput
+    token_reemplazado?: token_cuentaCreateNestedOneWithoutTokens_que_reemplazaInput
+    tokens_que_reemplaza?: token_cuentaCreateNestedManyWithoutToken_reemplazadoInput
+  }
+
+  export type token_cuentaUncheckedCreateWithoutMetadataInput = {
+    id_tok?: string
+    id_cue_per: string
+    tok_val: string
+    tip_tok: $Enums.tipo_token
+    fec_exp_tok: Date | string
+    est_tok?: $Enums.estado_token
+    fec_cre_tok?: Date | string
+    ip_sol?: string | null
+    id_tok_ree?: string | null
+    invalidacion?: invalidacion_tokenUncheckedCreateNestedOneWithoutTokenInput
+    uso_token?: uso_tokenUncheckedCreateNestedOneWithoutTokenInput
+    tokens_que_reemplaza?: token_cuentaUncheckedCreateNestedManyWithoutToken_reemplazadoInput
+  }
+
+  export type token_cuentaCreateOrConnectWithoutMetadataInput = {
+    where: token_cuentaWhereUniqueInput
+    create: XOR<token_cuentaCreateWithoutMetadataInput, token_cuentaUncheckedCreateWithoutMetadataInput>
+  }
+
+  export type token_cuentaUpsertWithoutMetadataInput = {
+    update: XOR<token_cuentaUpdateWithoutMetadataInput, token_cuentaUncheckedUpdateWithoutMetadataInput>
+    create: XOR<token_cuentaCreateWithoutMetadataInput, token_cuentaUncheckedCreateWithoutMetadataInput>
+    where?: token_cuentaWhereInput
+  }
+
+  export type token_cuentaUpdateToOneWithWhereWithoutMetadataInput = {
+    where?: token_cuentaWhereInput
+    data: XOR<token_cuentaUpdateWithoutMetadataInput, token_cuentaUncheckedUpdateWithoutMetadataInput>
+  }
+
+  export type token_cuentaUpdateWithoutMetadataInput = {
+    id_tok?: StringFieldUpdateOperationsInput | string
+    tok_val?: StringFieldUpdateOperationsInput | string
+    tip_tok?: Enumtipo_tokenFieldUpdateOperationsInput | $Enums.tipo_token
+    fec_exp_tok?: DateTimeFieldUpdateOperationsInput | Date | string
+    est_tok?: Enumestado_tokenFieldUpdateOperationsInput | $Enums.estado_token
+    fec_cre_tok?: DateTimeFieldUpdateOperationsInput | Date | string
+    ip_sol?: NullableStringFieldUpdateOperationsInput | string | null
+    cuenta?: cuentaUpdateOneRequiredWithoutTokens_cuentaNestedInput
+    invalidacion?: invalidacion_tokenUpdateOneWithoutTokenNestedInput
+    uso_token?: uso_tokenUpdateOneWithoutTokenNestedInput
+    token_reemplazado?: token_cuentaUpdateOneWithoutTokens_que_reemplazaNestedInput
+    tokens_que_reemplaza?: token_cuentaUpdateManyWithoutToken_reemplazadoNestedInput
+  }
+
+  export type token_cuentaUncheckedUpdateWithoutMetadataInput = {
+    id_tok?: StringFieldUpdateOperationsInput | string
+    id_cue_per?: StringFieldUpdateOperationsInput | string
+    tok_val?: StringFieldUpdateOperationsInput | string
+    tip_tok?: Enumtipo_tokenFieldUpdateOperationsInput | $Enums.tipo_token
+    fec_exp_tok?: DateTimeFieldUpdateOperationsInput | Date | string
+    est_tok?: Enumestado_tokenFieldUpdateOperationsInput | $Enums.estado_token
+    fec_cre_tok?: DateTimeFieldUpdateOperationsInput | Date | string
+    ip_sol?: NullableStringFieldUpdateOperationsInput | string | null
+    id_tok_ree?: NullableStringFieldUpdateOperationsInput | string | null
+    invalidacion?: invalidacion_tokenUncheckedUpdateOneWithoutTokenNestedInput
+    uso_token?: uso_tokenUncheckedUpdateOneWithoutTokenNestedInput
+    tokens_que_reemplaza?: token_cuentaUncheckedUpdateManyWithoutToken_reemplazadoNestedInput
   }
 
   export type cuentaCreateManyUsuarioInput = {
@@ -28064,6 +33482,7 @@ export namespace Prisma {
     observaciones_creadas?: observacion_inscripcionUpdateManyWithoutAdmin_creadorNestedInput
     inscripciones_validadas?: inscripcionUpdateManyWithoutAdmin_validadorNestedInput
     tokens_cuenta?: token_cuentaUpdateManyWithoutCuentaNestedInput
+    tokens_invalidados?: invalidacion_tokenUpdateManyWithoutAdminNestedInput
   }
 
   export type cuentaUncheckedUpdateWithoutUsuarioInput = {
@@ -28081,6 +33500,7 @@ export namespace Prisma {
     observaciones_creadas?: observacion_inscripcionUncheckedUpdateManyWithoutAdmin_creadorNestedInput
     inscripciones_validadas?: inscripcionUncheckedUpdateManyWithoutAdmin_validadorNestedInput
     tokens_cuenta?: token_cuentaUncheckedUpdateManyWithoutCuentaNestedInput
+    tokens_invalidados?: invalidacion_tokenUncheckedUpdateManyWithoutAdminNestedInput
   }
 
   export type cuentaUncheckedUpdateManyWithoutUsuarioInput = {
@@ -28167,11 +33587,19 @@ export namespace Prisma {
     tok_val: string
     tip_tok: $Enums.tipo_token
     fec_exp_tok: Date | string
-    est_uso?: boolean
-    fec_uso?: Date | string | null
+    est_tok?: $Enums.estado_token
     fec_cre_tok?: Date | string
     ip_sol?: string | null
-    ip_uso?: string | null
+    id_tok_ree?: string | null
+  }
+
+  export type invalidacion_tokenCreateManyAdminInput = {
+    id_inv_tok?: string
+    id_tok_per: string
+    raz_inv: $Enums.razon_invalidacion
+    des_inv?: string | null
+    fec_inv?: Date | string
+    ip_inv?: string | null
   }
 
   export type inscripcionUpdateWithoutCuentaInput = {
@@ -28412,11 +33840,14 @@ export namespace Prisma {
     tok_val?: StringFieldUpdateOperationsInput | string
     tip_tok?: Enumtipo_tokenFieldUpdateOperationsInput | $Enums.tipo_token
     fec_exp_tok?: DateTimeFieldUpdateOperationsInput | Date | string
-    est_uso?: BoolFieldUpdateOperationsInput | boolean
-    fec_uso?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    est_tok?: Enumestado_tokenFieldUpdateOperationsInput | $Enums.estado_token
     fec_cre_tok?: DateTimeFieldUpdateOperationsInput | Date | string
     ip_sol?: NullableStringFieldUpdateOperationsInput | string | null
-    ip_uso?: NullableStringFieldUpdateOperationsInput | string | null
+    invalidacion?: invalidacion_tokenUpdateOneWithoutTokenNestedInput
+    uso_token?: uso_tokenUpdateOneWithoutTokenNestedInput
+    metadata?: metadata_tokenUpdateManyWithoutTokenNestedInput
+    token_reemplazado?: token_cuentaUpdateOneWithoutTokens_que_reemplazaNestedInput
+    tokens_que_reemplaza?: token_cuentaUpdateManyWithoutToken_reemplazadoNestedInput
   }
 
   export type token_cuentaUncheckedUpdateWithoutCuentaInput = {
@@ -28424,11 +33855,14 @@ export namespace Prisma {
     tok_val?: StringFieldUpdateOperationsInput | string
     tip_tok?: Enumtipo_tokenFieldUpdateOperationsInput | $Enums.tipo_token
     fec_exp_tok?: DateTimeFieldUpdateOperationsInput | Date | string
-    est_uso?: BoolFieldUpdateOperationsInput | boolean
-    fec_uso?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    est_tok?: Enumestado_tokenFieldUpdateOperationsInput | $Enums.estado_token
     fec_cre_tok?: DateTimeFieldUpdateOperationsInput | Date | string
     ip_sol?: NullableStringFieldUpdateOperationsInput | string | null
-    ip_uso?: NullableStringFieldUpdateOperationsInput | string | null
+    id_tok_ree?: NullableStringFieldUpdateOperationsInput | string | null
+    invalidacion?: invalidacion_tokenUncheckedUpdateOneWithoutTokenNestedInput
+    uso_token?: uso_tokenUncheckedUpdateOneWithoutTokenNestedInput
+    metadata?: metadata_tokenUncheckedUpdateManyWithoutTokenNestedInput
+    tokens_que_reemplaza?: token_cuentaUncheckedUpdateManyWithoutToken_reemplazadoNestedInput
   }
 
   export type token_cuentaUncheckedUpdateManyWithoutCuentaInput = {
@@ -28436,11 +33870,37 @@ export namespace Prisma {
     tok_val?: StringFieldUpdateOperationsInput | string
     tip_tok?: Enumtipo_tokenFieldUpdateOperationsInput | $Enums.tipo_token
     fec_exp_tok?: DateTimeFieldUpdateOperationsInput | Date | string
-    est_uso?: BoolFieldUpdateOperationsInput | boolean
-    fec_uso?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    est_tok?: Enumestado_tokenFieldUpdateOperationsInput | $Enums.estado_token
     fec_cre_tok?: DateTimeFieldUpdateOperationsInput | Date | string
     ip_sol?: NullableStringFieldUpdateOperationsInput | string | null
-    ip_uso?: NullableStringFieldUpdateOperationsInput | string | null
+    id_tok_ree?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type invalidacion_tokenUpdateWithoutAdminInput = {
+    id_inv_tok?: StringFieldUpdateOperationsInput | string
+    raz_inv?: Enumrazon_invalidacionFieldUpdateOperationsInput | $Enums.razon_invalidacion
+    des_inv?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_inv?: DateTimeFieldUpdateOperationsInput | Date | string
+    ip_inv?: NullableStringFieldUpdateOperationsInput | string | null
+    token?: token_cuentaUpdateOneRequiredWithoutInvalidacionNestedInput
+  }
+
+  export type invalidacion_tokenUncheckedUpdateWithoutAdminInput = {
+    id_inv_tok?: StringFieldUpdateOperationsInput | string
+    id_tok_per?: StringFieldUpdateOperationsInput | string
+    raz_inv?: Enumrazon_invalidacionFieldUpdateOperationsInput | $Enums.razon_invalidacion
+    des_inv?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_inv?: DateTimeFieldUpdateOperationsInput | Date | string
+    ip_inv?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type invalidacion_tokenUncheckedUpdateManyWithoutAdminInput = {
+    id_inv_tok?: StringFieldUpdateOperationsInput | string
+    id_tok_per?: StringFieldUpdateOperationsInput | string
+    raz_inv?: Enumrazon_invalidacionFieldUpdateOperationsInput | $Enums.razon_invalidacion
+    des_inv?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_inv?: DateTimeFieldUpdateOperationsInput | Date | string
+    ip_inv?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type usuarioCreateManyCarreraInput = {
@@ -28773,6 +34233,86 @@ export namespace Prisma {
     est_car?: BoolFieldUpdateOperationsInput | boolean
     fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
     id_coo_per?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type metadata_tokenCreateManyTokenInput = {
+    id_met_tok?: string
+    cla_met: $Enums.clave_metadata
+    val_met: string
+    fec_cre_met?: Date | string
+  }
+
+  export type token_cuentaCreateManyToken_reemplazadoInput = {
+    id_tok?: string
+    id_cue_per: string
+    tok_val: string
+    tip_tok: $Enums.tipo_token
+    fec_exp_tok: Date | string
+    est_tok?: $Enums.estado_token
+    fec_cre_tok?: Date | string
+    ip_sol?: string | null
+  }
+
+  export type metadata_tokenUpdateWithoutTokenInput = {
+    id_met_tok?: StringFieldUpdateOperationsInput | string
+    cla_met?: Enumclave_metadataFieldUpdateOperationsInput | $Enums.clave_metadata
+    val_met?: StringFieldUpdateOperationsInput | string
+    fec_cre_met?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type metadata_tokenUncheckedUpdateWithoutTokenInput = {
+    id_met_tok?: StringFieldUpdateOperationsInput | string
+    cla_met?: Enumclave_metadataFieldUpdateOperationsInput | $Enums.clave_metadata
+    val_met?: StringFieldUpdateOperationsInput | string
+    fec_cre_met?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type metadata_tokenUncheckedUpdateManyWithoutTokenInput = {
+    id_met_tok?: StringFieldUpdateOperationsInput | string
+    cla_met?: Enumclave_metadataFieldUpdateOperationsInput | $Enums.clave_metadata
+    val_met?: StringFieldUpdateOperationsInput | string
+    fec_cre_met?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type token_cuentaUpdateWithoutToken_reemplazadoInput = {
+    id_tok?: StringFieldUpdateOperationsInput | string
+    tok_val?: StringFieldUpdateOperationsInput | string
+    tip_tok?: Enumtipo_tokenFieldUpdateOperationsInput | $Enums.tipo_token
+    fec_exp_tok?: DateTimeFieldUpdateOperationsInput | Date | string
+    est_tok?: Enumestado_tokenFieldUpdateOperationsInput | $Enums.estado_token
+    fec_cre_tok?: DateTimeFieldUpdateOperationsInput | Date | string
+    ip_sol?: NullableStringFieldUpdateOperationsInput | string | null
+    cuenta?: cuentaUpdateOneRequiredWithoutTokens_cuentaNestedInput
+    invalidacion?: invalidacion_tokenUpdateOneWithoutTokenNestedInput
+    uso_token?: uso_tokenUpdateOneWithoutTokenNestedInput
+    metadata?: metadata_tokenUpdateManyWithoutTokenNestedInput
+    tokens_que_reemplaza?: token_cuentaUpdateManyWithoutToken_reemplazadoNestedInput
+  }
+
+  export type token_cuentaUncheckedUpdateWithoutToken_reemplazadoInput = {
+    id_tok?: StringFieldUpdateOperationsInput | string
+    id_cue_per?: StringFieldUpdateOperationsInput | string
+    tok_val?: StringFieldUpdateOperationsInput | string
+    tip_tok?: Enumtipo_tokenFieldUpdateOperationsInput | $Enums.tipo_token
+    fec_exp_tok?: DateTimeFieldUpdateOperationsInput | Date | string
+    est_tok?: Enumestado_tokenFieldUpdateOperationsInput | $Enums.estado_token
+    fec_cre_tok?: DateTimeFieldUpdateOperationsInput | Date | string
+    ip_sol?: NullableStringFieldUpdateOperationsInput | string | null
+    invalidacion?: invalidacion_tokenUncheckedUpdateOneWithoutTokenNestedInput
+    uso_token?: uso_tokenUncheckedUpdateOneWithoutTokenNestedInput
+    metadata?: metadata_tokenUncheckedUpdateManyWithoutTokenNestedInput
+    tokens_que_reemplaza?: token_cuentaUncheckedUpdateManyWithoutToken_reemplazadoNestedInput
+  }
+
+  export type token_cuentaUncheckedUpdateManyWithoutToken_reemplazadoInput = {
+    id_tok?: StringFieldUpdateOperationsInput | string
+    id_cue_per?: StringFieldUpdateOperationsInput | string
+    tok_val?: StringFieldUpdateOperationsInput | string
+    tip_tok?: Enumtipo_tokenFieldUpdateOperationsInput | $Enums.tipo_token
+    fec_exp_tok?: DateTimeFieldUpdateOperationsInput | Date | string
+    est_tok?: Enumestado_tokenFieldUpdateOperationsInput | $Enums.estado_token
+    fec_cre_tok?: DateTimeFieldUpdateOperationsInput | Date | string
+    ip_sol?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
 

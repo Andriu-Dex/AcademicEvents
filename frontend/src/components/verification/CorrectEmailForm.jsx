@@ -1,100 +1,157 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Mail, ArrowLeft, AlertTriangle, Loader2 } from "lucide-react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import "../verification/styles/verification-styles.css";
 
 /**
- * Componente para corregir el correo electrónico antes de verificar
- * @param {Object} props - Propiedades del componente
- * @param {string} props.currentEmail - Correo actual ingresado (incorrecto)
- * @param {boolean} props.isUTA - Si es correo UTA
- * @param {string} props.currentCarrera - ID de la carrera seleccionada inicialmente
- * @param {Function} props.onSuccess - Función a ejecutar cuando se corrige con éxito
- * @param {Function} props.onCancel - Función para cancelar y volver
- * @param {Array} props.carreras - Lista de carreras disponibles
- * @returns {JSX.Element} Componente JSX
+ * @class CorrectEmailFormComponent
+ * @description Componente para corregir el correo electrónico antes de verificar
  */
-const CorrectEmailForm = ({
-  currentEmail,
-  isUTA,
-  currentCarrera,
-  onSuccess,
-  onCancel,
-  carreras = [],
-}) => {
-  // Estados del formulario
-  const [email, setEmail] = useState("");
-  const [carreraId, setCarreraId] = useState(currentCarrera || "");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+class CorrectEmailFormComponent extends React.Component {
+  /**
+   * Constructor del componente
+   * @param {Object} props - Propiedades del componente
+   */
+  constructor(props) {
+    super(props);
 
-  // Detectar si el nuevo correo es UTA
-  const [newIsUTA, setNewIsUTA] = useState(false);
+    this.state = {
+      email: props.currentEmail || "",
+      carreraId: props.currentCarrera || "",
+      loading: false,
+      error: "",
+      newIsUTA: false,
+      typeChanged: false,
+    };
 
-  // Cambio de tipo detectado
-  const [typeChanged, setTypeChanged] = useState(false);
+    // Bindings
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleEmailChange = this.handleEmailChange.bind(this);
+    this.handleCarreraChange = this.handleCarreraChange.bind(this);
+    this.handleCancel = this.handleCancel.bind(this);
+  }
 
-  // Efecto para inicializar el formulario
-  useEffect(() => {
-    if (currentEmail) {
-      setEmail(currentEmail);
+  /**
+   * Ciclo de vida: cuando el componente se monta
+   */
+  componentDidMount() {
+    // Inicializar estado con props
+    if (this.props.currentEmail) {
+      this.setState({ email: this.props.currentEmail }, () => {
+        this.checkEmailType();
+      });
     }
-  }, [currentEmail]);
+  }
 
-  // Efecto para detectar cambio de tipo
-  useEffect(() => {
+  /**
+   * Verificar si es un email válido
+   * @param {string} email - Email a validar
+   * @returns {boolean} True si es válido
+   */
+  isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  /**
+   * Verifica el tipo de email y actualiza el estado
+   */
+  checkEmailType() {
+    const { email } = this.state;
+    const { isUTA } = this.props;
+
     if (email) {
       const esUTA = email.endsWith("@uta.edu.ec");
-      setNewIsUTA(esUTA);
 
-      // Detectar cambio de tipo
-      if (esUTA !== isUTA) {
-        setTypeChanged(true);
+      this.setState({ newIsUTA: esUTA }, () => {
+        // Detectar cambio de tipo
+        if (esUTA !== isUTA) {
+          this.setState({ typeChanged: true });
 
-        // Si cambia de general a UTA, carrera es obligatoria
-        if (esUTA && !carreraId) {
-          setError("Al usar correo UTA, debes seleccionar una carrera");
+          // Si cambia de general a UTA, carrera es obligatoria
+          if (esUTA && !this.state.carreraId) {
+            this.setState({
+              error: "Al usar correo UTA, debe seleccionar una carrera",
+            });
+          }
+          // Si cambia de UTA a general, quitar carrera
+          else if (!esUTA && this.state.carreraId) {
+            this.setState({
+              carreraId: "",
+              error: "",
+            });
+          }
+        } else {
+          this.setState({
+            typeChanged: false,
+            error: "",
+          });
         }
-        // Si cambia de UTA a general, quitar carrera
-        else if (!esUTA && carreraId) {
-          setCarreraId("");
-          setError("");
-        }
-      } else {
-        setTypeChanged(false);
-        setError("");
-      }
+      });
     }
-  }, [email, isUTA]);
+  }
 
-  // Validar email
-  const isValidEmail = (email) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  };
+  /**
+   * Maneja el cambio en el campo de email
+   * @param {Event} e - Evento de cambio
+   */
+  handleEmailChange(e) {
+    this.setState({ email: e.target.value }, () => {
+      this.checkEmailType();
+    });
+  }
 
-  // Manejar envío del formulario
-  const handleSubmit = async (e) => {
+  /**
+   * Maneja el cambio en el campo de carrera
+   * @param {Event} e - Evento de cambio
+   */
+  handleCarreraChange(e) {
+    this.setState({ carreraId: e.target.value });
+  }
+
+  /**
+   * Maneja el evento de cancelar
+   * @param {Event} e - Evento del click
+   */
+  handleCancel(e) {
     e.preventDefault();
+    if (this.props.onCancel) {
+      this.props.onCancel();
+    }
+  }
+
+  /**
+   * Maneja el envío del formulario
+   * @param {Event} e - Evento de submit
+   */
+  async handleSubmit(e) {
+    e.preventDefault();
+    const { email, carreraId, newIsUTA } = this.state;
+    const { currentEmail } = this.props;
 
     // Validaciones
     if (!email.trim()) {
-      setError("El correo electrónico es obligatorio");
+      this.setState({ error: "El correo electrónico es obligatorio" });
       return;
     }
 
-    if (!isValidEmail(email)) {
-      setError("Ingresa un correo electrónico válido");
+    if (!this.isValidEmail(email)) {
+      this.setState({ error: "Ingrese un correo electrónico válido" });
       return;
     }
 
     // Si es UTA, carrera es obligatoria
     if (newIsUTA && !carreraId) {
-      setError("Al usar correo UTA, debes seleccionar una carrera");
+      this.setState({
+        error: "Al usar correo UTA, debe seleccionar una carrera",
+      });
       return;
     }
 
-    setLoading(true);
-    setError("");
+    this.setState({
+      loading: true,
+      error: "",
+    });
 
     try {
       // Llamada a la API para corregir el correo
@@ -113,134 +170,193 @@ const CorrectEmailForm = ({
         );
 
         // Llamar a la función de éxito y pasar el nuevo correo
-        if (onSuccess) {
-          onSuccess(email);
+        if (this.props.onSuccess) {
+          this.props.onSuccess(email);
         }
       } else {
-        setError(response.data.message || "Error al actualizar el correo");
+        this.setState({
+          error: response.data.message || "Error al actualizar el correo",
+        });
       }
     } catch (error) {
       console.error("Error:", error);
 
       if (error.response?.data?.message) {
-        setError(error.response.data.message);
+        this.setState({ error: error.response.data.message });
       } else {
-        setError(
-          "Error al comunicarse con el servidor. Intenta nuevamente más tarde."
-        );
+        this.setState({
+          error:
+            "Error al comunicarse con el servidor. Intente nuevamente más tarde.",
+        });
       }
     } finally {
-      setLoading(false);
+      this.setState({ loading: false });
     }
-  };
+  }
 
-  return (
-    <div className="contenedor-correccion-ce bg-white p-8 rounded-lg shadow-md max-w-md mx-auto mt-10">
-      <div className="encabezado-correccion-ce flex justify-between items-center mb-6">
-        <button
-          onClick={onCancel}
-          className="boton-volver-ce flex items-center text-blue-600 hover:text-blue-800"
-        >
-          <ArrowLeft size={16} className="mr-1" />
-          Volver
-        </button>
-      </div>
+  /**
+   * Render del componente
+   * @returns {JSX.Element} Componente JSX
+   */
+  render() {
+    const { email, carreraId, loading, error, newIsUTA, typeChanged } =
+      this.state;
+    const { carreras = [] } = this.props;
 
-      <h2 className="titulo-correccion-ce text-2xl font-bold text-center text-gray-800 mb-4">
-        Corregir correo electrónico
-      </h2>
-
-      {typeChanged && (
-        <div className="alerta-cambio-ce bg-amber-50 border border-amber-200 text-amber-700 px-4 py-3 rounded mb-4">
-          <div className="flex items-center mb-2">
-            <AlertTriangle size={18} className="mr-2" />
-            <span className="font-medium">Cambio de tipo de cuenta</span>
-          </div>
-          <p className="texto-alerta-ce text-sm">
-            {newIsUTA
-              ? "Has cambiado a un correo institucional. Ahora debes seleccionar tu carrera."
-              : "Has cambiado a un correo no institucional. Tu cuenta será de tipo general."}
-          </p>
-        </div>
-      )}
-
-      {error && (
-        <div className="error-correccion-ce bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-          {error}
-        </div>
-      )}
-
-      <form onSubmit={handleSubmit} className="formulario-correccion-ce">
-        <div className="mb-4">
-          <label
-            htmlFor="email"
-            className="etiqueta-email-ce block text-gray-700 mb-2"
+    return (
+      <div className="container-vs">
+        <div className="header-vs">
+          <button
+            onClick={this.handleCancel}
+            className="link-vs"
+            style={{
+              position: "absolute",
+              left: "20px",
+              display: "flex",
+              alignItems: "center",
+            }}
           >
-            Correo electrónico
-          </label>
-          <div className="campo-email-container-ce relative">
-            <Mail
-              size={18}
-              className="icono-email-ce absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500"
-            />
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="campo-email-ce w-full pl-10 pr-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Ingresa el correo correcto"
-              disabled={loading}
-            />
-          </div>
-          <p className="texto-ayuda-ce text-sm text-gray-500 mt-1">
-            Asegúrate de escribir correctamente el correo para recibir la
-            verificación.
-          </p>
+            <ArrowLeft size={16} className="mr-1" />
+            Volver
+          </button>
+          <h2 className="title-vs">Corrección de Correo Electrónico</h2>
         </div>
 
-        {newIsUTA && (
-          <div className="mb-4">
-            <label
-              htmlFor="carrera"
-              className="etiqueta-carrera-ce block text-gray-700 mb-2"
-            >
-              Carrera
-            </label>
-            <select
-              id="carrera"
-              value={carreraId}
-              onChange={(e) => setCarreraId(e.target.value)}
-              className="campo-carrera-ce w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              disabled={loading || !newIsUTA}
-            >
-              <option value="">Selecciona tu carrera</option>
-              {carreras.map((carrera) => (
-                <option key={carrera.id_car} value={carrera.id_car}>
-                  {carrera.nom_car}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="boton-corregir-ce w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition duration-300 flex items-center justify-center"
-        >
-          {loading ? (
-            <>
-              <Loader2 className="animate-spin mr-2" size={16} />
-              Actualizando...
-            </>
-          ) : (
-            "Actualizar y enviar verificación"
+        <div className="content-vs">
+          {typeChanged && (
+            <div className="correction-message-vs">
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: "8px",
+                }}
+              >
+                <AlertTriangle size={18} style={{ marginRight: "8px" }} />
+                <span style={{ fontWeight: "600" }}>
+                  Cambio de tipo de cuenta
+                </span>
+              </div>
+              <p style={{ fontSize: "14px" }}>
+                {newIsUTA
+                  ? "Ha cambiado a un correo institucional. Ahora debe seleccionar su carrera."
+                  : "Ha cambiado a un correo no institucional. Su cuenta será de tipo general."}
+              </p>
+            </div>
           )}
-        </button>
-      </form>
-    </div>
-  );
-};
 
-export default CorrectEmailForm;
+          {error && (
+            <div className="error-message-vs" style={{ margin: "15px 0" }}>
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={this.handleSubmit} style={{ width: "100%" }}>
+            <div style={{ marginBottom: "20px" }}>
+              <label
+                htmlFor="email"
+                style={{
+                  display: "block",
+                  marginBottom: "8px",
+                  fontWeight: "500",
+                  color: "#333",
+                }}
+              >
+                Correo electrónico
+              </label>
+              <div style={{ position: "relative" }}>
+                <Mail
+                  size={18}
+                  style={{
+                    position: "absolute",
+                    left: "12px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    color: "#6b7280",
+                  }}
+                />
+                <input
+                  type="email"
+                  id="email"
+                  value={email}
+                  onChange={this.handleEmailChange}
+                  style={{
+                    width: "100%",
+                    padding: "10px 10px 10px 40px",
+                    border: "1px solid #d1d5db",
+                    borderRadius: "4px",
+                    fontSize: "16px",
+                  }}
+                  placeholder="Ingrese el correo correcto"
+                  disabled={loading}
+                />
+              </div>
+              <p
+                style={{ fontSize: "14px", color: "#6b7280", marginTop: "4px" }}
+              >
+                Asegúrese de escribir correctamente el correo para recibir la
+                verificación.
+              </p>
+            </div>
+
+            {newIsUTA && (
+              <div style={{ marginBottom: "20px" }}>
+                <label
+                  htmlFor="carrera"
+                  style={{
+                    display: "block",
+                    marginBottom: "8px",
+                    fontWeight: "500",
+                    color: "#333",
+                  }}
+                >
+                  Carrera
+                </label>
+                <select
+                  id="carrera"
+                  value={carreraId}
+                  onChange={this.handleCarreraChange}
+                  style={{
+                    width: "100%",
+                    padding: "10px",
+                    border: "1px solid #d1d5db",
+                    borderRadius: "4px",
+                    fontSize: "16px",
+                  }}
+                  disabled={loading || !newIsUTA}
+                >
+                  <option value="">Seleccione su carrera</option>
+                  {carreras.map((carrera) => (
+                    <option key={carrera.id_car} value={carrera.id_car}>
+                      {carrera.nom_car}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            <div className="actions-vs">
+              <button
+                type="submit"
+                disabled={loading}
+                className="button-vs"
+                style={{ width: "100%" }}
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="spinner-vs" size={16} />
+                    Actualizando...
+                  </>
+                ) : (
+                  "Actualizar y enviar verificación"
+                )}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    );
+  }
+}
+
+export default CorrectEmailFormComponent;

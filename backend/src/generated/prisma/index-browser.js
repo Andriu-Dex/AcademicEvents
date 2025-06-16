@@ -278,11 +278,37 @@ exports.Prisma.Token_cuentaScalarFieldEnum = {
   tok_val: 'tok_val',
   tip_tok: 'tip_tok',
   fec_exp_tok: 'fec_exp_tok',
-  est_uso: 'est_uso',
-  fec_uso: 'fec_uso',
+  est_tok: 'est_tok',
   fec_cre_tok: 'fec_cre_tok',
   ip_sol: 'ip_sol',
-  ip_uso: 'ip_uso'
+  id_tok_ree: 'id_tok_ree'
+};
+
+exports.Prisma.Invalidacion_tokenScalarFieldEnum = {
+  id_inv_tok: 'id_inv_tok',
+  id_tok_per: 'id_tok_per',
+  raz_inv: 'raz_inv',
+  des_inv: 'des_inv',
+  fec_inv: 'fec_inv',
+  ip_inv: 'ip_inv',
+  id_adm_inv: 'id_adm_inv'
+};
+
+exports.Prisma.Uso_tokenScalarFieldEnum = {
+  id_uso_tok: 'id_uso_tok',
+  id_tok_per: 'id_tok_per',
+  fec_uso: 'fec_uso',
+  ip_uso: 'ip_uso',
+  exi_uso: 'exi_uso',
+  obs_uso: 'obs_uso'
+};
+
+exports.Prisma.Metadata_tokenScalarFieldEnum = {
+  id_met_tok: 'id_met_tok',
+  id_tok_per: 'id_tok_per',
+  cla_met: 'cla_met',
+  val_met: 'val_met',
+  fec_cre_met: 'fec_cre_met'
 };
 
 exports.Prisma.SortOrder = {
@@ -357,6 +383,32 @@ exports.tipo_token = exports.$Enums.tipo_token = {
   ELIMINAR_CUENTA: 'ELIMINAR_CUENTA'
 };
 
+exports.estado_token = exports.$Enums.estado_token = {
+  ACTIVO: 'ACTIVO',
+  USADO: 'USADO',
+  EXPIRADO: 'EXPIRADO',
+  INVALIDADO: 'INVALIDADO',
+  REEMPLAZADO: 'REEMPLAZADO'
+};
+
+exports.razon_invalidacion = exports.$Enums.razon_invalidacion = {
+  CORREO_INCORRECTO: 'CORREO_INCORRECTO',
+  SOLICITUD_USUARIO: 'SOLICITUD_USUARIO',
+  SEGURIDAD: 'SEGURIDAD',
+  ADMIN_MANUAL: 'ADMIN_MANUAL',
+  REEMPLAZO: 'REEMPLAZO',
+  ERROR_SISTEMA: 'ERROR_SISTEMA'
+};
+
+exports.clave_metadata = exports.$Enums.clave_metadata = {
+  CORREO_ORIGINAL: 'CORREO_ORIGINAL',
+  CORREO_NUEVO: 'CORREO_NUEVO',
+  INTENTOS_FALLIDOS: 'INTENTOS_FALLIDOS',
+  DISPOSITIVO: 'DISPOSITIVO',
+  NAVEGADOR: 'NAVEGADOR',
+  REFERENCIA_SOPORTE: 'REFERENCIA_SOPORTE'
+};
+
 exports.Prisma.ModelName = {
   usuario: 'usuario',
   comprobante_pago: 'comprobante_pago',
@@ -372,7 +424,10 @@ exports.Prisma.ModelName = {
   inscripcion_curso: 'inscripcion_curso',
   certificado: 'certificado',
   facultad: 'facultad',
-  token_cuenta: 'token_cuenta'
+  token_cuenta: 'token_cuenta',
+  invalidacion_token: 'invalidacion_token',
+  uso_token: 'uso_token',
+  metadata_token: 'metadata_token'
 };
 
 /**

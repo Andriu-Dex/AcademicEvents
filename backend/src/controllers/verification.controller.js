@@ -21,16 +21,41 @@ const verificarToken = async (req, res) => {
     const { token } = req.params;
     const ip = req.ip || req.connection.remoteAddress;
 
+    console.log(
+      `[${new Date().toISOString()}] Controller: Solicitud de verificación para token: ${token}, IP: ${ip}`
+    );
+    console.log(`[${new Date().toISOString()}] Controller: Headers:`, {
+      referer: req.headers.referer || "N/A",
+      userAgent: req.headers["user-agent"] || "N/A",
+    });
+
     // Validar token
     const resultado = await emailVerificationService.verificarToken(token, ip);
+    console.log(
+      `[${new Date().toISOString()}] Controller: Resultado de verificación:`,
+      {
+        success: resultado.success,
+        message: resultado.message,
+        motivo: resultado.motivo || "N/A",
+      }
+    );
 
     if (!resultado.success) {
+      console.log(
+        `[${new Date().toISOString()}] Controller: Verificación fallida para token ${token}: ${
+          resultado.message
+        }`
+      );
       return res.status(400).json({
         success: false,
         message: resultado.message,
+        motivo: resultado.motivo || "ERROR_GENERICO",
       });
     }
 
+    console.log(
+      `[${new Date().toISOString()}] Controller: Verificación exitosa para token ${token}`
+    );
     return res.status(200).json({
       success: true,
       message: resultado.message,

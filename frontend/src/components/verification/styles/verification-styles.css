@@ -1,0 +1,190 @@
+/* 
+ * Estilos para componentes de verificación
+ * VS - VerificationStyles (prefijo de identificación)
+ */
+
+/* Colores institucionales */
+:root {
+  --color-primary-vs: #0056b3;
+  --color-secondary-vs: #003366;
+  --color-accent-vs: #ffcc00;
+  --color-success-vs: #28a745;
+  --color-warning-vs: #ffc107;
+  --color-danger-vs: #dc3545;
+  --color-light-vs: #f8f9fa;
+  --color-dark-vs: #343a40;
+}
+
+/* Estilos comunes para contenedores de verificación */
+.container-vs {
+  max-width: 580px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: var(--color-light-vs);
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-family: "Arial", sans-serif;
+}
+
+.header-vs {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--color-primary-vs);
+}
+
+.logo-vs {
+  max-width: 120px;
+  margin-bottom: 1rem;
+}
+
+.title-vs {
+  color: var(--color-primary-vs);
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.subtitle-vs {
+  color: var(--color-secondary-vs);
+  font-size: 1.25rem;
+  margin-top: 0.5rem;
+}
+
+.content-vs {
+  padding: 1rem 0;
+  line-height: 1.6;
+}
+
+.message-vs {
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.icon-vs {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+/* Estilos para mensajes de verificación */
+.success-message-vs {
+  color: var(--color-success-vs);
+  font-weight: 600;
+}
+
+.error-message-vs {
+  color: var(--color-danger-vs);
+  font-weight: 600;
+}
+
+.warning-message-vs {
+  color: var(--color-warning-vs);
+  font-weight: 600;
+}
+
+.correction-message-vs {
+  color: var(--color-primary-vs);
+  font-weight: 600;
+  background-color: rgba(0, 86, 179, 0.1);
+  padding: 1rem;
+  border-radius: 4px;
+  margin: 1rem 0;
+}
+
+/* Botones */
+.button-vs {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--color-primary-vs);
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.button-vs:hover {
+  background-color: var(--color-secondary-vs);
+}
+
+.button-vs:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.button-secondary-vs {
+  background-color: transparent;
+  color: var(--color-primary-vs);
+  border: 1px solid var(--color-primary-vs);
+}
+
+.button-secondary-vs:hover {
+  background-color: rgba(0, 86, 179, 0.1);
+  color: var(--color-secondary-vs);
+}
+
+.actions-vs {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+/* Estilos para spinners y loaders */
+.spinner-vs {
+  animation: spin-vs 1s linear infinite;
+  margin-right: 0.5rem;
+}
+
+@keyframes spin-vs {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Estilos específicos para cada estado de verificación */
+.status-icon-success-vs {
+  color: var(--color-success-vs);
+  font-size: 3rem;
+}
+
+.status-icon-error-vs {
+  color: var(--color-danger-vs);
+  font-size: 3rem;
+}
+
+.status-icon-warning-vs {
+  color: var(--color-warning-vs);
+  font-size: 3rem;
+}
+
+.footer-vs {
+  margin-top: 2rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: #666;
+  border-top: 1px solid #ddd;
+  padding-top: 1.5rem;
+}
+
+/* Estilos para enlaces */
+.link-vs {
+  color: var(--color-primary-vs);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.link-vs:hover {
+  color: var(--color-secondary-vs);
+  text-decoration: underline;
+}

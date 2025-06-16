@@ -1,67 +1,91 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { AlertTriangle, Loader2 } from "lucide-react";
+import { AlertTriangle, Loader2, RefreshCw, Mail } from "lucide-react";
+import "../verification/styles/verification-styles.css";
 
 /**
- * Componente que muestra una pantalla de error en la verificación
- * @param {Object} props - Propiedades del componente
- * @param {string} props.message - Mensaje de error
- * @param {string} props.email - Correo electrónico (opcional)
- * @param {Function} props.onResendClick - Función para reenviar verificación
- * @param {boolean} props.loading - Estado de carga
- * @returns {JSX.Element} Componente JSX
+ * @class VerificationErrorComponent
+ * @description Componente que muestra una pantalla de error en la verificación
  */
-const VerificationError = ({ message, email, onResendClick, loading }) => {
-  return (
-    <div className="contenedor-error-ve bg-white p-8 rounded-lg shadow-md max-w-md mx-auto mt-10">
-      {" "}
-      <div className="icono-error-ve text-center mb-6">
-        <AlertTriangle className="text-5xl text-yellow-500 mx-auto" size={48} />
-      </div>
-      <h2 className="titulo-error-ve text-2xl font-bold text-center text-gray-800 mb-4">
-        Error de verificación
-      </h2>
-      <div className="mensaje-error-ve text-center mb-6">
-        <p className="texto-error-ve text-red-600 font-medium">
-          {message ||
-            "Ha ocurrido un error al verificar tu correo electrónico."}
-        </p>
+class VerificationErrorComponent extends React.Component {
+  /**
+   * Render del componente
+   * @returns {JSX.Element} Componente JSX
+   */
+  render() {
+    const { message, email, onResendClick, loading, motivo } = this.props;
 
-        {email && (
-          <p className="texto-email-ve text-gray-600 mt-4">
-            Si deseas intentarlo nuevamente, puedes solicitar un nuevo enlace de
-            verificación.
-          </p>
-        )}
-      </div>
-      {email && (
-        <div className="acciones-error-ve">
-          <button
-            onClick={onResendClick}
-            disabled={loading}
-            className="boton-reenviar-ve w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition duration-300 flex items-center justify-center"
-          >
-            {" "}
-            {loading ? (
-              <>
-                <Loader2 className="animate-spin mr-2" size={16} /> Enviando...
-              </>
-            ) : (
-              "Reenviar verificación"
-            )}
-          </button>
+    // Determinar icono y mensaje basado en el motivo del error
+    let icon = <AlertTriangle className="status-icon-error-vs" />;
+    let title = "Error de verificación";
+    let helpText = "Ha ocurrido un error al verificar tu correo electrónico.";
+
+    // Personalizar la UI según el motivo del error
+    if (motivo === "CORRECCION_CORREO") {
+      icon = <Mail className="status-icon-warning-vs" />;
+      title = "Correo actualizado";
+      helpText =
+        "Se ha enviado un nuevo enlace de verificación a tu correo actualizado.";
+    } else if (motivo === "EXPIRADO") {
+      icon = <RefreshCw className="status-icon-warning-vs" />;
+      title = "Enlace expirado";
+      helpText = "El enlace de verificación ha expirado.";
+    }
+
+    return (
+      <div className="container-vs">
+        <div className="header-vs">
+          <h2 className="title-vs">{title}</h2>
         </div>
-      )}
-      <div className="enlaces-error-ve mt-4 text-center">
-        <Link
-          to="/login"
-          className="texto-login-ve text-blue-600 hover:underline"
-        >
-          Volver al inicio de sesión
-        </Link>
-      </div>
-    </div>
-  );
-};
+        <div className="content-vs">
+          <div className="icon-vs">{icon}</div>
 
-export default VerificationError;
+          <div className="message-vs">
+            <p className="error-message-vs">
+              {message ||
+                "Ha ocurrido un error al verificar tu correo electrónico."}
+            </p>
+
+            {motivo === "CORRECCION_CORREO" && (
+              <div className="correction-message-vs">
+                <p>
+                  Has corregido tu dirección de correo electrónico. Por favor,
+                  revisa tu bandeja de entrada y utiliza el enlace más reciente
+                  que te hemos enviado.
+                </p>
+              </div>
+            )}
+
+            {email && <p>{helpText}</p>}
+          </div>
+
+          {email && (
+            <div className="actions-vs">
+              <button
+                onClick={onResendClick}
+                disabled={loading}
+                className="button-vs"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="spinner-vs" size={16} /> Enviando...
+                  </>
+                ) : (
+                  "Reenviar verificación"
+                )}
+              </button>
+            </div>
+          )}
+
+          <div className="footer-vs">
+            <Link to="/login" className="link-vs">
+              Volver al inicio de sesión
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+}
+
+export default VerificationErrorComponent;

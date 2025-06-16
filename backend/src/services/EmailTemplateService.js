@@ -25,9 +25,8 @@ class EmailTemplateService {
    * @param {string} options.urlVerificacion - URL para verificar correo
    * @param {string} options.token - Token de verificación
    * @returns {Object} Asunto y cuerpo HTML del correo
-   */
-  obtenerPlantillaVerificacion({ nombre, urlVerificacion, token }) {
-    const asunto = "Verifica tu correo - AcademicEvents";
+   */ obtenerPlantillaVerificacion({ nombre, urlVerificacion, token }) {
+    const asunto = "Verificación de Correo Electrónico - AcademicEvents";
 
     const cuerpoHtml = `
     <!DOCTYPE html>
@@ -35,89 +34,136 @@ class EmailTemplateService {
     <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Verifica tu correo electrónico</title>
+      <title>Verificación de Correo Electrónico</title>
       <style>
         /* Estilos generales con identificadores únicos */
-        .container-ets {
+        .container-etv {
           font-family: 'Arial', sans-serif;
           max-width: 600px;
           margin: 0 auto;
-          padding: 20px;
-          background-color: #f9f9f9;
-          border-radius: 10px;
+          padding: 25px;
+          background-color: #ffffff;
+          border-radius: 8px;
           box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
-        .header-ets {
+        .header-etv {
           text-align: center;
           padding-bottom: 20px;
-          border-bottom: 2px solid #0056b3;
+          border-bottom: 3px solid #0056b3;
         }
-        .logo-ets {
+        .logo-etv {
           max-width: 150px;
-          margin-bottom: 10px;
+          margin-bottom: 15px;
         }
-        .title-ets {
+        .title-etv {
           color: #0056b3;
-          font-size: 24px;
+          font-size: 26px;
           margin: 0;
+          font-weight: bold;
         }
-        .content-ets {
-          padding: 20px 0;
-          line-height: 1.6;
+        .subtitle-etv {
+          color: #003366;
+          font-size: 18px;
+          margin-top: 10px;
         }
-        .verification-button-ets {
+        .content-etv {
+          padding: 25px 0;
+          line-height: 1.8;
+          color: #333333;
+        }
+        .greeting-etv {
+          font-size: 18px;
+          margin-bottom: 15px;
+        }
+        .verification-button-etv {
           display: block;
-          width: 200px;
-          margin: 30px auto;
-          padding: 12px 24px;
+          width: 250px;
+          margin: 35px auto;
+          padding: 15px 30px;
           background-color: #0056b3;
-          color: white;
+          color: white !important;
           text-align: center;
           text-decoration: none;
           border-radius: 5px;
           font-weight: bold;
           font-size: 16px;
+          border: none;
+          cursor: pointer;
+          transition: background-color 0.3s ease;
         }
-        .token-display-ets {
-          background-color: #f0f0f0;
-          padding: 10px;
+        .verification-button-etv:hover {
+          background-color: #003366;
+        }
+        .token-display-etv {
+          background-color: #f8f9fa;
+          padding: 15px;
+          border: 1px solid #e9ecef;
           border-radius: 5px;
           font-family: monospace;
-          margin: 20px 0;
+          margin: 25px 0;
           word-break: break-all;
           text-align: center;
+          font-size: 14px;
+          color: #495057;
         }
-        .footer-ets {
+        .notice-etv {
+          background-color: #e6f3ff;
+          padding: 15px;
+          border-radius: 5px;
+          margin: 20px 0;
+          font-size: 14px;
+          border-left: 4px solid #0056b3;
+        }
+        .footer-etv {
           margin-top: 30px;
           text-align: center;
+          font-size: 14px;
+          color: #6c757d;
+          border-top: 1px solid #dee2e6;
+          padding-top: 25px;
+        }
+        .social-etv {
+          margin-top: 15px;
+        }
+        .disclaimer-etv {
           font-size: 12px;
-          color: #666;
-          border-top: 1px solid #ddd;
-          padding-top: 20px;
+          color: #868e96;
+          margin-top: 15px;
         }
       </style>
     </head>
     <body>
-      <div class="container-ets">
-        <div class="header-ets">
-          <h1 class="title-ets">AcademicEvents</h1>
+      <div class="container-etv">
+        <div class="header-etv">
+          <h1 class="title-etv">AcademicEvents</h1>
+          <p class="subtitle-etv">Sistema de Gestión de Eventos Académicos</p>
         </div>
-        <div class="content-ets">
-          <p>Hola, ${nombre}:</p>
-          <p>Gracias por registrarte en <strong>AcademicEvents</strong>. Para completar tu registro, necesitamos verificar tu dirección de correo electrónico.</p>
+        <div class="content-etv">
+          <p class="greeting-etv">Estimado/a <strong>${nombre}</strong>:</p>
           
-          <p>Haz clic en el siguiente botón para verificar tu cuenta:</p>
+          <p>Le damos la más cordial bienvenida a <strong>AcademicEvents</strong>, el sistema oficial para la gestión de eventos académicos. Para completar su proceso de registro y garantizar la seguridad de su cuenta, es necesario verificar su dirección de correo electrónico.</p>
           
-          <a href="${urlVerificacion}" class="verification-button-ets">Verificar mi correo</a>
+          <p>Por favor, haga clic en el siguiente botón para validar su cuenta:</p>
           
-          <p>Si el botón no funciona, copia y pega el siguiente enlace en tu navegador:</p>
-          <div class="token-display-ets">${urlVerificacion}</div>
+          <a href="${urlVerificacion}" class="verification-button-etv">Verificar mi cuenta</a>
           
-          <p>Este enlace expirará en 24 horas. Si no solicitaste esta verificación, puedes ignorar este correo.</p>
+          <p>Si el botón anterior no funciona, puede copiar y pegar la siguiente URL en su navegador web:</p>
+          
+          <div class="token-display-etv">${urlVerificacion}</div>
+          
+          <div class="notice-etv">
+            <p><strong>Importante:</strong> Este enlace caducará en 24 horas por motivos de seguridad. Si no ha solicitado esta verificación, puede ignorar este mensaje.</p>
+          </div>
+          
+          <p>Le agradecemos por formar parte de nuestra comunidad académica.</p>
         </div>
-        <div class="footer-ets">
-          <p>&copy; ${new Date().getFullYear()} AcademicEvents - Sistema de Gestión de Eventos Académicos</p>
-          <p>Este es un correo automático, por favor no respondas a este mensaje.</p>
+        
+        <div class="footer-etv">
+          <p><strong>AcademicEvents</strong></p>
+          <p>Universidad Técnica de Ambato</p>
+          <p>&copy; ${new Date().getFullYear()} Todos los derechos reservados</p>
+          
+          <p class="disclaimer-etv">Este es un mensaje automático. Por favor, no responda a este correo electrónico.</p>
         </div>
       </div>
     </body>
