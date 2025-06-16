@@ -30,6 +30,10 @@ import {
 } from "lucide-react";
 import "./styles/Home.css";
 
+/**
+ * Componente principal de la página Home
+ * @returns {JSX.Element} Componente React
+ */
 function Home() {
   // Usar el usuario real del contexto de autenticación
   const { usuario } = useAuth();
@@ -164,6 +168,7 @@ function Home() {
         if (resMVA.data && resMVA.data.autoridades) {
           try {
             autoridades = JSON.parse(resMVA.data.autoridades);
+            console.log("Autoridades cargadas:", autoridades);
           } catch (error) {
             console.error("Error al parsear autoridades:", error);
           }
@@ -180,15 +185,14 @@ function Home() {
         if (resFacultad.data) {
           setFacultadInfo({
             nombre:
-              resFacultad.data.nom_fac ||
+              resFacultad.data.nombre ||
               "Facultad de Ingeniería en Sistemas, Electrónica e Industrial",
             nombreCompleto:
-              resFacultad.data.nom_fac ||
+              resFacultad.data.nombre ||
               "Facultad de Ingeniería en Sistemas, Electrónica e Industrial",
-            acronimo: resFacultad.data.acr_fac || "FISEI",
-            descripcion: resFacultad.data.des_fac || "",
-            logo:
-              resFacultad.data.url_log_fac || "https://imgur.com/fch1iy6.png",
+            acronimo: resFacultad.data.acronimo || "FISEI",
+            descripcion: resFacultad.data.descripcion || "",
+            logo: resFacultad.data.logo || "https://imgur.com/fch1iy6.png",
           });
         }
 
@@ -204,6 +208,10 @@ function Home() {
         }
       } catch (error) {
         console.error("Error al cargar datos:", error);
+        showTemporaryNotification(
+          "Error al cargar datos del sistema. Por favor, inténtalo de nuevo más tarde.",
+          "error"
+        );
       }
     };
 

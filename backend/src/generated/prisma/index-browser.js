@@ -120,6 +120,86 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
+exports.Prisma.UniversidadScalarFieldEnum = {
+  id_uni: 'id_uni',
+  nom_uni: 'nom_uni',
+  acr_uni: 'acr_uni',
+  url_log_uni: 'url_log_uni',
+  url_web_uni: 'url_web_uni',
+  dir_uni: 'dir_uni',
+  tel_uni: 'tel_uni',
+  cor_uni: 'cor_uni',
+  fec_fun_uni: 'fec_fun_uni',
+  fec_cre_uni: 'fec_cre_uni',
+  est_uni: 'est_uni'
+};
+
+exports.Prisma.Autoridad_universidadScalarFieldEnum = {
+  id_aut_uni: 'id_aut_uni',
+  id_uni_per: 'id_uni_per',
+  tip_aut_uni: 'tip_aut_uni',
+  nom_aut_uni: 'nom_aut_uni',
+  ape_aut_uni: 'ape_aut_uni',
+  cor_aut_uni: 'cor_aut_uni',
+  tel_aut_uni: 'tel_aut_uni',
+  url_img_aut_uni: 'url_img_aut_uni',
+  tit_aut_uni: 'tit_aut_uni',
+  fec_ini_aut_uni: 'fec_ini_aut_uni',
+  fec_fin_aut_uni: 'fec_fin_aut_uni',
+  est_aut_uni: 'est_aut_uni',
+  fec_cre_aut_uni: 'fec_cre_aut_uni'
+};
+
+exports.Prisma.FacultadScalarFieldEnum = {
+  id_fac: 'id_fac',
+  nom_fac: 'nom_fac',
+  acr_fac: 'acr_fac',
+  url_log_fac: 'url_log_fac',
+  des_fac: 'des_fac',
+  mis_fac: 'mis_fac',
+  vis_fac: 'vis_fac',
+  fec_cre_fac: 'fec_cre_fac',
+  id_uni_per: 'id_uni_per'
+};
+
+exports.Prisma.Autoridad_facultadScalarFieldEnum = {
+  id_aut_fac: 'id_aut_fac',
+  id_fac_per: 'id_fac_per',
+  tip_aut_fac: 'tip_aut_fac',
+  nom_aut_fac: 'nom_aut_fac',
+  ape_aut_fac: 'ape_aut_fac',
+  cor_aut_fac: 'cor_aut_fac',
+  tel_aut_fac: 'tel_aut_fac',
+  url_img_aut_fac: 'url_img_aut_fac',
+  tit_aut_fac: 'tit_aut_fac',
+  fec_ini_aut_fac: 'fec_ini_aut_fac',
+  fec_fin_aut_fac: 'fec_fin_aut_fac',
+  est_aut_fac: 'est_aut_fac',
+  fec_cre_aut_fac: 'fec_cre_aut_fac'
+};
+
+exports.Prisma.CarreraScalarFieldEnum = {
+  id_car: 'id_car',
+  nom_car: 'nom_car',
+  des_car: 'des_car',
+  dur_sem_car: 'dur_sem_car',
+  mod_car: 'mod_car',
+  ico_car: 'ico_car',
+  est_car: 'est_car',
+  fec_cre_car: 'fec_cre_car',
+  id_fac_per: 'id_fac_per',
+  id_coo_per: 'id_coo_per'
+};
+
+exports.Prisma.CoordinadorScalarFieldEnum = {
+  id_coo: 'id_coo',
+  nom_coo: 'nom_coo',
+  ape_coo: 'ape_coo',
+  cor_coo: 'cor_coo',
+  url_img_coo: 'url_img_coo',
+  tit_coo: 'tit_coo'
+};
+
 exports.Prisma.UsuarioScalarFieldEnum = {
   id_usu: 'id_usu',
   ced_usu: 'ced_usu',
@@ -130,6 +210,17 @@ exports.Prisma.UsuarioScalarFieldEnum = {
   com_usu: 'com_usu',
   id_car_est: 'id_car_est',
   img_per_usu: 'img_per_usu'
+};
+
+exports.Prisma.CuentaScalarFieldEnum = {
+  id_cue: 'id_cue',
+  id_usu_per: 'id_usu_per',
+  cor_usu: 'cor_usu',
+  con_usu: 'con_usu',
+  fec_cre_cue: 'fec_cre_cue',
+  rol_usu: 'rol_usu',
+  est_ver_cor: 'est_ver_cor',
+  fec_ver_cor: 'fec_ver_cor'
 };
 
 exports.Prisma.Comprobante_pagoScalarFieldEnum = {
@@ -159,39 +250,6 @@ exports.Prisma.Observacion_inscripcionScalarFieldEnum = {
   obs_ins: 'obs_ins',
   fec_cre_obs: 'fec_cre_obs',
   id_adm_cre_obs: 'id_adm_cre_obs'
-};
-
-exports.Prisma.CuentaScalarFieldEnum = {
-  id_cue: 'id_cue',
-  id_usu_per: 'id_usu_per',
-  cor_usu: 'cor_usu',
-  con_usu: 'con_usu',
-  fec_cre_cue: 'fec_cre_cue',
-  rol_usu: 'rol_usu',
-  est_ver_cor: 'est_ver_cor',
-  fec_ver_cor: 'fec_ver_cor'
-};
-
-exports.Prisma.CarreraScalarFieldEnum = {
-  id_car: 'id_car',
-  nom_car: 'nom_car',
-  des_car: 'des_car',
-  dur_sem_car: 'dur_sem_car',
-  mod_car: 'mod_car',
-  ico_car: 'ico_car',
-  est_car: 'est_car',
-  fec_cre_car: 'fec_cre_car',
-  id_fac_per: 'id_fac_per',
-  id_coo_per: 'id_coo_per'
-};
-
-exports.Prisma.CoordinadorScalarFieldEnum = {
-  id_coo: 'id_coo',
-  nom_coo: 'nom_coo',
-  ape_coo: 'ape_coo',
-  cor_coo: 'cor_coo',
-  url_img_coo: 'url_img_coo',
-  tit_coo: 'tit_coo'
 };
 
 exports.Prisma.EventoScalarFieldEnum = {
@@ -253,25 +311,6 @@ exports.Prisma.CertificadoScalarFieldEnum = {
   cod_val_cer: 'cod_val_cer'
 };
 
-exports.Prisma.FacultadScalarFieldEnum = {
-  id_fac: 'id_fac',
-  nom_fac: 'nom_fac',
-  acr_fac: 'acr_fac',
-  url_log_fac: 'url_log_fac',
-  des_fac: 'des_fac',
-  mis_fac: 'mis_fac',
-  vis_fac: 'vis_fac',
-  fec_cre_fac: 'fec_cre_fac',
-  nom_dec_fac: 'nom_dec_fac',
-  ape_dec_fac: 'ape_dec_fac',
-  cor_dec_fac: 'cor_dec_fac',
-  url_img_dec_fac: 'url_img_dec_fac',
-  nom_sub_dec_fac: 'nom_sub_dec_fac',
-  ape_sub_dec_fac: 'ape_sub_dec_fac',
-  cor_sub_dec_fac: 'cor_sub_dec_fac',
-  url_img_sub_dec_fac: 'url_img_sub_dec_fac'
-};
-
 exports.Prisma.Token_cuentaScalarFieldEnum = {
   id_tok: 'id_tok',
   id_cue_per: 'id_cue_per',
@@ -325,10 +364,22 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
-exports.estado_validacion = exports.$Enums.estado_validacion = {
-  PENDIENTE: 'PENDIENTE',
-  ACEPTADO: 'ACEPTADO',
-  RECHAZADO: 'RECHAZADO'
+exports.tipo_autoridad_universidad = exports.$Enums.tipo_autoridad_universidad = {
+  RECTOR: 'RECTOR',
+  VICERRECTOR_ACADEMICO: 'VICERRECTOR_ACADEMICO',
+  VICERRECTOR_INVESTIGACION: 'VICERRECTOR_INVESTIGACION',
+  VICERRECTOR_ADMINISTRATIVO: 'VICERRECTOR_ADMINISTRATIVO',
+  VICERRECTOR_VINCULACION: 'VICERRECTOR_VINCULACION',
+  SECRETARIO_GENERAL: 'SECRETARIO_GENERAL',
+  PROCURADOR: 'PROCURADOR',
+  DIRECTOR_FINANCIERO: 'DIRECTOR_FINANCIERO'
+};
+
+exports.tipo_autoridad_facultad = exports.$Enums.tipo_autoridad_facultad = {
+  DECANO: 'DECANO',
+  SUBDECANO: 'SUBDECANO',
+  SECRETARIO: 'SECRETARIO',
+  COORDINADOR: 'COORDINADOR'
 };
 
 exports.rol_usuario = exports.$Enums.rol_usuario = {
@@ -336,6 +387,12 @@ exports.rol_usuario = exports.$Enums.rol_usuario = {
   ADMIN_GENERAL: 'ADMIN_GENERAL',
   ESTUDIANTE: 'ESTUDIANTE',
   GENERAL: 'GENERAL'
+};
+
+exports.estado_validacion = exports.$Enums.estado_validacion = {
+  PENDIENTE: 'PENDIENTE',
+  ACEPTADO: 'ACEPTADO',
+  RECHAZADO: 'RECHAZADO'
 };
 
 exports.tipo_evento = exports.$Enums.tipo_evento = {
@@ -410,20 +467,23 @@ exports.clave_metadata = exports.$Enums.clave_metadata = {
 };
 
 exports.Prisma.ModelName = {
+  universidad: 'universidad',
+  autoridad_universidad: 'autoridad_universidad',
+  facultad: 'facultad',
+  autoridad_facultad: 'autoridad_facultad',
+  carrera: 'carrera',
+  coordinador: 'coordinador',
   usuario: 'usuario',
+  cuenta: 'cuenta',
   comprobante_pago: 'comprobante_pago',
   carta_motivacion: 'carta_motivacion',
   observacion_inscripcion: 'observacion_inscripcion',
-  cuenta: 'cuenta',
-  carrera: 'carrera',
-  coordinador: 'coordinador',
   evento: 'evento',
   evento_curso: 'evento_curso',
   evento_carrera: 'evento_carrera',
   inscripcion: 'inscripcion',
   inscripcion_curso: 'inscripcion_curso',
   certificado: 'certificado',
-  facultad: 'facultad',
   token_cuenta: 'token_cuenta',
   invalidacion_token: 'invalidacion_token',
   uso_token: 'uso_token',

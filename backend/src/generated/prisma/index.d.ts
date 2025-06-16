@@ -14,10 +14,45 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
 
 
 /**
+ * Model universidad
+ * 
+ */
+export type universidad = $Result.DefaultSelection<Prisma.$universidadPayload>
+/**
+ * Model autoridad_universidad
+ * 
+ */
+export type autoridad_universidad = $Result.DefaultSelection<Prisma.$autoridad_universidadPayload>
+/**
+ * Model facultad
+ * 
+ */
+export type facultad = $Result.DefaultSelection<Prisma.$facultadPayload>
+/**
+ * Model autoridad_facultad
+ * 
+ */
+export type autoridad_facultad = $Result.DefaultSelection<Prisma.$autoridad_facultadPayload>
+/**
+ * Model carrera
+ * 
+ */
+export type carrera = $Result.DefaultSelection<Prisma.$carreraPayload>
+/**
+ * Model coordinador
+ * 
+ */
+export type coordinador = $Result.DefaultSelection<Prisma.$coordinadorPayload>
+/**
  * Model usuario
  * 
  */
 export type usuario = $Result.DefaultSelection<Prisma.$usuarioPayload>
+/**
+ * Model cuenta
+ * 
+ */
+export type cuenta = $Result.DefaultSelection<Prisma.$cuentaPayload>
 /**
  * Model comprobante_pago
  * 
@@ -33,21 +68,6 @@ export type carta_motivacion = $Result.DefaultSelection<Prisma.$carta_motivacion
  * 
  */
 export type observacion_inscripcion = $Result.DefaultSelection<Prisma.$observacion_inscripcionPayload>
-/**
- * Model cuenta
- * 
- */
-export type cuenta = $Result.DefaultSelection<Prisma.$cuentaPayload>
-/**
- * Model carrera
- * 
- */
-export type carrera = $Result.DefaultSelection<Prisma.$carreraPayload>
-/**
- * Model coordinador
- * 
- */
-export type coordinador = $Result.DefaultSelection<Prisma.$coordinadorPayload>
 /**
  * Model evento
  * 
@@ -78,11 +98,6 @@ export type inscripcion_curso = $Result.DefaultSelection<Prisma.$inscripcion_cur
  * 
  */
 export type certificado = $Result.DefaultSelection<Prisma.$certificadoPayload>
-/**
- * Model facultad
- * 
- */
-export type facultad = $Result.DefaultSelection<Prisma.$facultadPayload>
 /**
  * Model token_cuenta
  * 
@@ -224,6 +239,30 @@ export const clave_metadata: {
 
 export type clave_metadata = (typeof clave_metadata)[keyof typeof clave_metadata]
 
+
+export const tipo_autoridad_universidad: {
+  RECTOR: 'RECTOR',
+  VICERRECTOR_ACADEMICO: 'VICERRECTOR_ACADEMICO',
+  VICERRECTOR_INVESTIGACION: 'VICERRECTOR_INVESTIGACION',
+  VICERRECTOR_ADMINISTRATIVO: 'VICERRECTOR_ADMINISTRATIVO',
+  VICERRECTOR_VINCULACION: 'VICERRECTOR_VINCULACION',
+  SECRETARIO_GENERAL: 'SECRETARIO_GENERAL',
+  PROCURADOR: 'PROCURADOR',
+  DIRECTOR_FINANCIERO: 'DIRECTOR_FINANCIERO'
+};
+
+export type tipo_autoridad_universidad = (typeof tipo_autoridad_universidad)[keyof typeof tipo_autoridad_universidad]
+
+
+export const tipo_autoridad_facultad: {
+  DECANO: 'DECANO',
+  SUBDECANO: 'SUBDECANO',
+  SECRETARIO: 'SECRETARIO',
+  COORDINADOR: 'COORDINADOR'
+};
+
+export type tipo_autoridad_facultad = (typeof tipo_autoridad_facultad)[keyof typeof tipo_autoridad_facultad]
+
 }
 
 export type rol_usuario = $Enums.rol_usuario
@@ -270,6 +309,14 @@ export type clave_metadata = $Enums.clave_metadata
 
 export const clave_metadata: typeof $Enums.clave_metadata
 
+export type tipo_autoridad_universidad = $Enums.tipo_autoridad_universidad
+
+export const tipo_autoridad_universidad: typeof $Enums.tipo_autoridad_universidad
+
+export type tipo_autoridad_facultad = $Enums.tipo_autoridad_facultad
+
+export const tipo_autoridad_facultad: typeof $Enums.tipo_autoridad_facultad
+
 /**
  * ##  Prisma Client ʲˢ
  *
@@ -277,8 +324,8 @@ export const clave_metadata: typeof $Enums.clave_metadata
  * @example
  * ```
  * const prisma = new PrismaClient()
- * // Fetch zero or more Usuarios
- * const usuarios = await prisma.usuario.findMany()
+ * // Fetch zero or more Universidads
+ * const universidads = await prisma.universidad.findMany()
  * ```
  *
  *
@@ -298,8 +345,8 @@ export class PrismaClient<
    * @example
    * ```
    * const prisma = new PrismaClient()
-   * // Fetch zero or more Usuarios
-   * const usuarios = await prisma.usuario.findMany()
+   * // Fetch zero or more Universidads
+   * const universidads = await prisma.universidad.findMany()
    * ```
    *
    *
@@ -396,6 +443,66 @@ export class PrismaClient<
   }>>
 
       /**
+   * `prisma.universidad`: Exposes CRUD operations for the **universidad** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Universidads
+    * const universidads = await prisma.universidad.findMany()
+    * ```
+    */
+  get universidad(): Prisma.universidadDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.autoridad_universidad`: Exposes CRUD operations for the **autoridad_universidad** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Autoridad_universidads
+    * const autoridad_universidads = await prisma.autoridad_universidad.findMany()
+    * ```
+    */
+  get autoridad_universidad(): Prisma.autoridad_universidadDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.facultad`: Exposes CRUD operations for the **facultad** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Facultads
+    * const facultads = await prisma.facultad.findMany()
+    * ```
+    */
+  get facultad(): Prisma.facultadDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.autoridad_facultad`: Exposes CRUD operations for the **autoridad_facultad** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Autoridad_facultads
+    * const autoridad_facultads = await prisma.autoridad_facultad.findMany()
+    * ```
+    */
+  get autoridad_facultad(): Prisma.autoridad_facultadDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.carrera`: Exposes CRUD operations for the **carrera** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Carreras
+    * const carreras = await prisma.carrera.findMany()
+    * ```
+    */
+  get carrera(): Prisma.carreraDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.coordinador`: Exposes CRUD operations for the **coordinador** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Coordinadors
+    * const coordinadors = await prisma.coordinador.findMany()
+    * ```
+    */
+  get coordinador(): Prisma.coordinadorDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.usuario`: Exposes CRUD operations for the **usuario** model.
     * Example usage:
     * ```ts
@@ -404,6 +511,16 @@ export class PrismaClient<
     * ```
     */
   get usuario(): Prisma.usuarioDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.cuenta`: Exposes CRUD operations for the **cuenta** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Cuentas
+    * const cuentas = await prisma.cuenta.findMany()
+    * ```
+    */
+  get cuenta(): Prisma.cuentaDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.comprobante_pago`: Exposes CRUD operations for the **comprobante_pago** model.
@@ -434,36 +551,6 @@ export class PrismaClient<
     * ```
     */
   get observacion_inscripcion(): Prisma.observacion_inscripcionDelegate<ExtArgs, ClientOptions>;
-
-  /**
-   * `prisma.cuenta`: Exposes CRUD operations for the **cuenta** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more Cuentas
-    * const cuentas = await prisma.cuenta.findMany()
-    * ```
-    */
-  get cuenta(): Prisma.cuentaDelegate<ExtArgs, ClientOptions>;
-
-  /**
-   * `prisma.carrera`: Exposes CRUD operations for the **carrera** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more Carreras
-    * const carreras = await prisma.carrera.findMany()
-    * ```
-    */
-  get carrera(): Prisma.carreraDelegate<ExtArgs, ClientOptions>;
-
-  /**
-   * `prisma.coordinador`: Exposes CRUD operations for the **coordinador** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more Coordinadors
-    * const coordinadors = await prisma.coordinador.findMany()
-    * ```
-    */
-  get coordinador(): Prisma.coordinadorDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.evento`: Exposes CRUD operations for the **evento** model.
@@ -524,16 +611,6 @@ export class PrismaClient<
     * ```
     */
   get certificado(): Prisma.certificadoDelegate<ExtArgs, ClientOptions>;
-
-  /**
-   * `prisma.facultad`: Exposes CRUD operations for the **facultad** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more Facultads
-    * const facultads = await prisma.facultad.findMany()
-    * ```
-    */
-  get facultad(): Prisma.facultadDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.token_cuenta`: Exposes CRUD operations for the **token_cuenta** model.
@@ -1014,20 +1091,23 @@ export namespace Prisma {
 
 
   export const ModelName: {
+    universidad: 'universidad',
+    autoridad_universidad: 'autoridad_universidad',
+    facultad: 'facultad',
+    autoridad_facultad: 'autoridad_facultad',
+    carrera: 'carrera',
+    coordinador: 'coordinador',
     usuario: 'usuario',
+    cuenta: 'cuenta',
     comprobante_pago: 'comprobante_pago',
     carta_motivacion: 'carta_motivacion',
     observacion_inscripcion: 'observacion_inscripcion',
-    cuenta: 'cuenta',
-    carrera: 'carrera',
-    coordinador: 'coordinador',
     evento: 'evento',
     evento_curso: 'evento_curso',
     evento_carrera: 'evento_carrera',
     inscripcion: 'inscripcion',
     inscripcion_curso: 'inscripcion_curso',
     certificado: 'certificado',
-    facultad: 'facultad',
     token_cuenta: 'token_cuenta',
     invalidacion_token: 'invalidacion_token',
     uso_token: 'uso_token',
@@ -1050,10 +1130,454 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "usuario" | "comprobante_pago" | "carta_motivacion" | "observacion_inscripcion" | "cuenta" | "carrera" | "coordinador" | "evento" | "evento_curso" | "evento_carrera" | "inscripcion" | "inscripcion_curso" | "certificado" | "facultad" | "token_cuenta" | "invalidacion_token" | "uso_token" | "metadata_token"
+      modelProps: "universidad" | "autoridad_universidad" | "facultad" | "autoridad_facultad" | "carrera" | "coordinador" | "usuario" | "cuenta" | "comprobante_pago" | "carta_motivacion" | "observacion_inscripcion" | "evento" | "evento_curso" | "evento_carrera" | "inscripcion" | "inscripcion_curso" | "certificado" | "token_cuenta" | "invalidacion_token" | "uso_token" | "metadata_token"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
+      universidad: {
+        payload: Prisma.$universidadPayload<ExtArgs>
+        fields: Prisma.universidadFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.universidadFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$universidadPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.universidadFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$universidadPayload>
+          }
+          findFirst: {
+            args: Prisma.universidadFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$universidadPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.universidadFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$universidadPayload>
+          }
+          findMany: {
+            args: Prisma.universidadFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$universidadPayload>[]
+          }
+          create: {
+            args: Prisma.universidadCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$universidadPayload>
+          }
+          createMany: {
+            args: Prisma.universidadCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.universidadCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$universidadPayload>[]
+          }
+          delete: {
+            args: Prisma.universidadDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$universidadPayload>
+          }
+          update: {
+            args: Prisma.universidadUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$universidadPayload>
+          }
+          deleteMany: {
+            args: Prisma.universidadDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.universidadUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.universidadUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$universidadPayload>[]
+          }
+          upsert: {
+            args: Prisma.universidadUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$universidadPayload>
+          }
+          aggregate: {
+            args: Prisma.UniversidadAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateUniversidad>
+          }
+          groupBy: {
+            args: Prisma.universidadGroupByArgs<ExtArgs>
+            result: $Utils.Optional<UniversidadGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.universidadCountArgs<ExtArgs>
+            result: $Utils.Optional<UniversidadCountAggregateOutputType> | number
+          }
+        }
+      }
+      autoridad_universidad: {
+        payload: Prisma.$autoridad_universidadPayload<ExtArgs>
+        fields: Prisma.autoridad_universidadFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.autoridad_universidadFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$autoridad_universidadPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.autoridad_universidadFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$autoridad_universidadPayload>
+          }
+          findFirst: {
+            args: Prisma.autoridad_universidadFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$autoridad_universidadPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.autoridad_universidadFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$autoridad_universidadPayload>
+          }
+          findMany: {
+            args: Prisma.autoridad_universidadFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$autoridad_universidadPayload>[]
+          }
+          create: {
+            args: Prisma.autoridad_universidadCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$autoridad_universidadPayload>
+          }
+          createMany: {
+            args: Prisma.autoridad_universidadCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.autoridad_universidadCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$autoridad_universidadPayload>[]
+          }
+          delete: {
+            args: Prisma.autoridad_universidadDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$autoridad_universidadPayload>
+          }
+          update: {
+            args: Prisma.autoridad_universidadUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$autoridad_universidadPayload>
+          }
+          deleteMany: {
+            args: Prisma.autoridad_universidadDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.autoridad_universidadUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.autoridad_universidadUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$autoridad_universidadPayload>[]
+          }
+          upsert: {
+            args: Prisma.autoridad_universidadUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$autoridad_universidadPayload>
+          }
+          aggregate: {
+            args: Prisma.Autoridad_universidadAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateAutoridad_universidad>
+          }
+          groupBy: {
+            args: Prisma.autoridad_universidadGroupByArgs<ExtArgs>
+            result: $Utils.Optional<Autoridad_universidadGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.autoridad_universidadCountArgs<ExtArgs>
+            result: $Utils.Optional<Autoridad_universidadCountAggregateOutputType> | number
+          }
+        }
+      }
+      facultad: {
+        payload: Prisma.$facultadPayload<ExtArgs>
+        fields: Prisma.facultadFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.facultadFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$facultadPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.facultadFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$facultadPayload>
+          }
+          findFirst: {
+            args: Prisma.facultadFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$facultadPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.facultadFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$facultadPayload>
+          }
+          findMany: {
+            args: Prisma.facultadFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$facultadPayload>[]
+          }
+          create: {
+            args: Prisma.facultadCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$facultadPayload>
+          }
+          createMany: {
+            args: Prisma.facultadCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.facultadCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$facultadPayload>[]
+          }
+          delete: {
+            args: Prisma.facultadDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$facultadPayload>
+          }
+          update: {
+            args: Prisma.facultadUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$facultadPayload>
+          }
+          deleteMany: {
+            args: Prisma.facultadDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.facultadUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.facultadUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$facultadPayload>[]
+          }
+          upsert: {
+            args: Prisma.facultadUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$facultadPayload>
+          }
+          aggregate: {
+            args: Prisma.FacultadAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateFacultad>
+          }
+          groupBy: {
+            args: Prisma.facultadGroupByArgs<ExtArgs>
+            result: $Utils.Optional<FacultadGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.facultadCountArgs<ExtArgs>
+            result: $Utils.Optional<FacultadCountAggregateOutputType> | number
+          }
+        }
+      }
+      autoridad_facultad: {
+        payload: Prisma.$autoridad_facultadPayload<ExtArgs>
+        fields: Prisma.autoridad_facultadFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.autoridad_facultadFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$autoridad_facultadPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.autoridad_facultadFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$autoridad_facultadPayload>
+          }
+          findFirst: {
+            args: Prisma.autoridad_facultadFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$autoridad_facultadPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.autoridad_facultadFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$autoridad_facultadPayload>
+          }
+          findMany: {
+            args: Prisma.autoridad_facultadFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$autoridad_facultadPayload>[]
+          }
+          create: {
+            args: Prisma.autoridad_facultadCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$autoridad_facultadPayload>
+          }
+          createMany: {
+            args: Prisma.autoridad_facultadCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.autoridad_facultadCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$autoridad_facultadPayload>[]
+          }
+          delete: {
+            args: Prisma.autoridad_facultadDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$autoridad_facultadPayload>
+          }
+          update: {
+            args: Prisma.autoridad_facultadUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$autoridad_facultadPayload>
+          }
+          deleteMany: {
+            args: Prisma.autoridad_facultadDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.autoridad_facultadUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.autoridad_facultadUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$autoridad_facultadPayload>[]
+          }
+          upsert: {
+            args: Prisma.autoridad_facultadUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$autoridad_facultadPayload>
+          }
+          aggregate: {
+            args: Prisma.Autoridad_facultadAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateAutoridad_facultad>
+          }
+          groupBy: {
+            args: Prisma.autoridad_facultadGroupByArgs<ExtArgs>
+            result: $Utils.Optional<Autoridad_facultadGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.autoridad_facultadCountArgs<ExtArgs>
+            result: $Utils.Optional<Autoridad_facultadCountAggregateOutputType> | number
+          }
+        }
+      }
+      carrera: {
+        payload: Prisma.$carreraPayload<ExtArgs>
+        fields: Prisma.carreraFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.carreraFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$carreraPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.carreraFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$carreraPayload>
+          }
+          findFirst: {
+            args: Prisma.carreraFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$carreraPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.carreraFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$carreraPayload>
+          }
+          findMany: {
+            args: Prisma.carreraFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$carreraPayload>[]
+          }
+          create: {
+            args: Prisma.carreraCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$carreraPayload>
+          }
+          createMany: {
+            args: Prisma.carreraCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.carreraCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$carreraPayload>[]
+          }
+          delete: {
+            args: Prisma.carreraDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$carreraPayload>
+          }
+          update: {
+            args: Prisma.carreraUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$carreraPayload>
+          }
+          deleteMany: {
+            args: Prisma.carreraDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.carreraUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.carreraUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$carreraPayload>[]
+          }
+          upsert: {
+            args: Prisma.carreraUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$carreraPayload>
+          }
+          aggregate: {
+            args: Prisma.CarreraAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCarrera>
+          }
+          groupBy: {
+            args: Prisma.carreraGroupByArgs<ExtArgs>
+            result: $Utils.Optional<CarreraGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.carreraCountArgs<ExtArgs>
+            result: $Utils.Optional<CarreraCountAggregateOutputType> | number
+          }
+        }
+      }
+      coordinador: {
+        payload: Prisma.$coordinadorPayload<ExtArgs>
+        fields: Prisma.coordinadorFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.coordinadorFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$coordinadorPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.coordinadorFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$coordinadorPayload>
+          }
+          findFirst: {
+            args: Prisma.coordinadorFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$coordinadorPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.coordinadorFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$coordinadorPayload>
+          }
+          findMany: {
+            args: Prisma.coordinadorFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$coordinadorPayload>[]
+          }
+          create: {
+            args: Prisma.coordinadorCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$coordinadorPayload>
+          }
+          createMany: {
+            args: Prisma.coordinadorCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.coordinadorCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$coordinadorPayload>[]
+          }
+          delete: {
+            args: Prisma.coordinadorDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$coordinadorPayload>
+          }
+          update: {
+            args: Prisma.coordinadorUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$coordinadorPayload>
+          }
+          deleteMany: {
+            args: Prisma.coordinadorDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.coordinadorUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.coordinadorUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$coordinadorPayload>[]
+          }
+          upsert: {
+            args: Prisma.coordinadorUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$coordinadorPayload>
+          }
+          aggregate: {
+            args: Prisma.CoordinadorAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCoordinador>
+          }
+          groupBy: {
+            args: Prisma.coordinadorGroupByArgs<ExtArgs>
+            result: $Utils.Optional<CoordinadorGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.coordinadorCountArgs<ExtArgs>
+            result: $Utils.Optional<CoordinadorCountAggregateOutputType> | number
+          }
+        }
+      }
       usuario: {
         payload: Prisma.$usuarioPayload<ExtArgs>
         fields: Prisma.usuarioFieldRefs
@@ -1125,6 +1649,80 @@ export namespace Prisma {
           count: {
             args: Prisma.usuarioCountArgs<ExtArgs>
             result: $Utils.Optional<UsuarioCountAggregateOutputType> | number
+          }
+        }
+      }
+      cuenta: {
+        payload: Prisma.$cuentaPayload<ExtArgs>
+        fields: Prisma.cuentaFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.cuentaFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$cuentaPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.cuentaFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$cuentaPayload>
+          }
+          findFirst: {
+            args: Prisma.cuentaFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$cuentaPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.cuentaFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$cuentaPayload>
+          }
+          findMany: {
+            args: Prisma.cuentaFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$cuentaPayload>[]
+          }
+          create: {
+            args: Prisma.cuentaCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$cuentaPayload>
+          }
+          createMany: {
+            args: Prisma.cuentaCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.cuentaCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$cuentaPayload>[]
+          }
+          delete: {
+            args: Prisma.cuentaDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$cuentaPayload>
+          }
+          update: {
+            args: Prisma.cuentaUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$cuentaPayload>
+          }
+          deleteMany: {
+            args: Prisma.cuentaDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.cuentaUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.cuentaUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$cuentaPayload>[]
+          }
+          upsert: {
+            args: Prisma.cuentaUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$cuentaPayload>
+          }
+          aggregate: {
+            args: Prisma.CuentaAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCuenta>
+          }
+          groupBy: {
+            args: Prisma.cuentaGroupByArgs<ExtArgs>
+            result: $Utils.Optional<CuentaGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.cuentaCountArgs<ExtArgs>
+            result: $Utils.Optional<CuentaCountAggregateOutputType> | number
           }
         }
       }
@@ -1347,228 +1945,6 @@ export namespace Prisma {
           count: {
             args: Prisma.observacion_inscripcionCountArgs<ExtArgs>
             result: $Utils.Optional<Observacion_inscripcionCountAggregateOutputType> | number
-          }
-        }
-      }
-      cuenta: {
-        payload: Prisma.$cuentaPayload<ExtArgs>
-        fields: Prisma.cuentaFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.cuentaFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$cuentaPayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.cuentaFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$cuentaPayload>
-          }
-          findFirst: {
-            args: Prisma.cuentaFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$cuentaPayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.cuentaFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$cuentaPayload>
-          }
-          findMany: {
-            args: Prisma.cuentaFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$cuentaPayload>[]
-          }
-          create: {
-            args: Prisma.cuentaCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$cuentaPayload>
-          }
-          createMany: {
-            args: Prisma.cuentaCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.cuentaCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$cuentaPayload>[]
-          }
-          delete: {
-            args: Prisma.cuentaDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$cuentaPayload>
-          }
-          update: {
-            args: Prisma.cuentaUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$cuentaPayload>
-          }
-          deleteMany: {
-            args: Prisma.cuentaDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.cuentaUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateManyAndReturn: {
-            args: Prisma.cuentaUpdateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$cuentaPayload>[]
-          }
-          upsert: {
-            args: Prisma.cuentaUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$cuentaPayload>
-          }
-          aggregate: {
-            args: Prisma.CuentaAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateCuenta>
-          }
-          groupBy: {
-            args: Prisma.cuentaGroupByArgs<ExtArgs>
-            result: $Utils.Optional<CuentaGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.cuentaCountArgs<ExtArgs>
-            result: $Utils.Optional<CuentaCountAggregateOutputType> | number
-          }
-        }
-      }
-      carrera: {
-        payload: Prisma.$carreraPayload<ExtArgs>
-        fields: Prisma.carreraFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.carreraFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$carreraPayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.carreraFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$carreraPayload>
-          }
-          findFirst: {
-            args: Prisma.carreraFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$carreraPayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.carreraFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$carreraPayload>
-          }
-          findMany: {
-            args: Prisma.carreraFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$carreraPayload>[]
-          }
-          create: {
-            args: Prisma.carreraCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$carreraPayload>
-          }
-          createMany: {
-            args: Prisma.carreraCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.carreraCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$carreraPayload>[]
-          }
-          delete: {
-            args: Prisma.carreraDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$carreraPayload>
-          }
-          update: {
-            args: Prisma.carreraUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$carreraPayload>
-          }
-          deleteMany: {
-            args: Prisma.carreraDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.carreraUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateManyAndReturn: {
-            args: Prisma.carreraUpdateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$carreraPayload>[]
-          }
-          upsert: {
-            args: Prisma.carreraUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$carreraPayload>
-          }
-          aggregate: {
-            args: Prisma.CarreraAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateCarrera>
-          }
-          groupBy: {
-            args: Prisma.carreraGroupByArgs<ExtArgs>
-            result: $Utils.Optional<CarreraGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.carreraCountArgs<ExtArgs>
-            result: $Utils.Optional<CarreraCountAggregateOutputType> | number
-          }
-        }
-      }
-      coordinador: {
-        payload: Prisma.$coordinadorPayload<ExtArgs>
-        fields: Prisma.coordinadorFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.coordinadorFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$coordinadorPayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.coordinadorFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$coordinadorPayload>
-          }
-          findFirst: {
-            args: Prisma.coordinadorFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$coordinadorPayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.coordinadorFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$coordinadorPayload>
-          }
-          findMany: {
-            args: Prisma.coordinadorFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$coordinadorPayload>[]
-          }
-          create: {
-            args: Prisma.coordinadorCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$coordinadorPayload>
-          }
-          createMany: {
-            args: Prisma.coordinadorCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.coordinadorCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$coordinadorPayload>[]
-          }
-          delete: {
-            args: Prisma.coordinadorDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$coordinadorPayload>
-          }
-          update: {
-            args: Prisma.coordinadorUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$coordinadorPayload>
-          }
-          deleteMany: {
-            args: Prisma.coordinadorDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.coordinadorUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateManyAndReturn: {
-            args: Prisma.coordinadorUpdateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$coordinadorPayload>[]
-          }
-          upsert: {
-            args: Prisma.coordinadorUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$coordinadorPayload>
-          }
-          aggregate: {
-            args: Prisma.CoordinadorAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateCoordinador>
-          }
-          groupBy: {
-            args: Prisma.coordinadorGroupByArgs<ExtArgs>
-            result: $Utils.Optional<CoordinadorGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.coordinadorCountArgs<ExtArgs>
-            result: $Utils.Optional<CoordinadorCountAggregateOutputType> | number
           }
         }
       }
@@ -2016,80 +2392,6 @@ export namespace Prisma {
           }
         }
       }
-      facultad: {
-        payload: Prisma.$facultadPayload<ExtArgs>
-        fields: Prisma.facultadFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.facultadFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$facultadPayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.facultadFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$facultadPayload>
-          }
-          findFirst: {
-            args: Prisma.facultadFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$facultadPayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.facultadFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$facultadPayload>
-          }
-          findMany: {
-            args: Prisma.facultadFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$facultadPayload>[]
-          }
-          create: {
-            args: Prisma.facultadCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$facultadPayload>
-          }
-          createMany: {
-            args: Prisma.facultadCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.facultadCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$facultadPayload>[]
-          }
-          delete: {
-            args: Prisma.facultadDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$facultadPayload>
-          }
-          update: {
-            args: Prisma.facultadUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$facultadPayload>
-          }
-          deleteMany: {
-            args: Prisma.facultadDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.facultadUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateManyAndReturn: {
-            args: Prisma.facultadUpdateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$facultadPayload>[]
-          }
-          upsert: {
-            args: Prisma.facultadUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$facultadPayload>
-          }
-          aggregate: {
-            args: Prisma.FacultadAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateFacultad>
-          }
-          groupBy: {
-            args: Prisma.facultadGroupByArgs<ExtArgs>
-            result: $Utils.Optional<FacultadGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.facultadCountArgs<ExtArgs>
-            result: $Utils.Optional<FacultadCountAggregateOutputType> | number
-          }
-        }
-      }
       token_cuenta: {
         payload: Prisma.$token_cuentaPayload<ExtArgs>
         fields: Prisma.token_cuentaFieldRefs
@@ -2470,20 +2772,23 @@ export namespace Prisma {
     omit?: Prisma.GlobalOmitConfig
   }
   export type GlobalOmitConfig = {
+    universidad?: universidadOmit
+    autoridad_universidad?: autoridad_universidadOmit
+    facultad?: facultadOmit
+    autoridad_facultad?: autoridad_facultadOmit
+    carrera?: carreraOmit
+    coordinador?: coordinadorOmit
     usuario?: usuarioOmit
+    cuenta?: cuentaOmit
     comprobante_pago?: comprobante_pagoOmit
     carta_motivacion?: carta_motivacionOmit
     observacion_inscripcion?: observacion_inscripcionOmit
-    cuenta?: cuentaOmit
-    carrera?: carreraOmit
-    coordinador?: coordinadorOmit
     evento?: eventoOmit
     evento_curso?: evento_cursoOmit
     evento_carrera?: evento_carreraOmit
     inscripcion?: inscripcionOmit
     inscripcion_curso?: inscripcion_cursoOmit
     certificado?: certificadoOmit
-    facultad?: facultadOmit
     token_cuenta?: token_cuentaOmit
     invalidacion_token?: invalidacion_tokenOmit
     uso_token?: uso_tokenOmit
@@ -2575,6 +2880,157 @@ export namespace Prisma {
   /**
    * Count Types
    */
+
+
+  /**
+   * Count Type UniversidadCountOutputType
+   */
+
+  export type UniversidadCountOutputType = {
+    facultades: number
+    autoridades: number
+  }
+
+  export type UniversidadCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    facultades?: boolean | UniversidadCountOutputTypeCountFacultadesArgs
+    autoridades?: boolean | UniversidadCountOutputTypeCountAutoridadesArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * UniversidadCountOutputType without action
+   */
+  export type UniversidadCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UniversidadCountOutputType
+     */
+    select?: UniversidadCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * UniversidadCountOutputType without action
+   */
+  export type UniversidadCountOutputTypeCountFacultadesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: facultadWhereInput
+  }
+
+  /**
+   * UniversidadCountOutputType without action
+   */
+  export type UniversidadCountOutputTypeCountAutoridadesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: autoridad_universidadWhereInput
+  }
+
+
+  /**
+   * Count Type FacultadCountOutputType
+   */
+
+  export type FacultadCountOutputType = {
+    carreras: number
+    autoridades: number
+  }
+
+  export type FacultadCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    carreras?: boolean | FacultadCountOutputTypeCountCarrerasArgs
+    autoridades?: boolean | FacultadCountOutputTypeCountAutoridadesArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * FacultadCountOutputType without action
+   */
+  export type FacultadCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FacultadCountOutputType
+     */
+    select?: FacultadCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * FacultadCountOutputType without action
+   */
+  export type FacultadCountOutputTypeCountCarrerasArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: carreraWhereInput
+  }
+
+  /**
+   * FacultadCountOutputType without action
+   */
+  export type FacultadCountOutputTypeCountAutoridadesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: autoridad_facultadWhereInput
+  }
+
+
+  /**
+   * Count Type CarreraCountOutputType
+   */
+
+  export type CarreraCountOutputType = {
+    usuario: number
+    eventos: number
+  }
+
+  export type CarreraCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    usuario?: boolean | CarreraCountOutputTypeCountUsuarioArgs
+    eventos?: boolean | CarreraCountOutputTypeCountEventosArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * CarreraCountOutputType without action
+   */
+  export type CarreraCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CarreraCountOutputType
+     */
+    select?: CarreraCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * CarreraCountOutputType without action
+   */
+  export type CarreraCountOutputTypeCountUsuarioArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: usuarioWhereInput
+  }
+
+  /**
+   * CarreraCountOutputType without action
+   */
+  export type CarreraCountOutputTypeCountEventosArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: evento_carreraWhereInput
+  }
+
+
+  /**
+   * Count Type CoordinadorCountOutputType
+   */
+
+  export type CoordinadorCountOutputType = {
+    carreras: number
+  }
+
+  export type CoordinadorCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    carreras?: boolean | CoordinadorCountOutputTypeCountCarrerasArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * CoordinadorCountOutputType without action
+   */
+  export type CoordinadorCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CoordinadorCountOutputType
+     */
+    select?: CoordinadorCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * CoordinadorCountOutputType without action
+   */
+  export type CoordinadorCountOutputTypeCountCarrerasArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: carreraWhereInput
+  }
 
 
   /**
@@ -2703,77 +3159,6 @@ export namespace Prisma {
 
 
   /**
-   * Count Type CarreraCountOutputType
-   */
-
-  export type CarreraCountOutputType = {
-    usuario: number
-    eventos: number
-  }
-
-  export type CarreraCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    usuario?: boolean | CarreraCountOutputTypeCountUsuarioArgs
-    eventos?: boolean | CarreraCountOutputTypeCountEventosArgs
-  }
-
-  // Custom InputTypes
-  /**
-   * CarreraCountOutputType without action
-   */
-  export type CarreraCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the CarreraCountOutputType
-     */
-    select?: CarreraCountOutputTypeSelect<ExtArgs> | null
-  }
-
-  /**
-   * CarreraCountOutputType without action
-   */
-  export type CarreraCountOutputTypeCountUsuarioArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: usuarioWhereInput
-  }
-
-  /**
-   * CarreraCountOutputType without action
-   */
-  export type CarreraCountOutputTypeCountEventosArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: evento_carreraWhereInput
-  }
-
-
-  /**
-   * Count Type CoordinadorCountOutputType
-   */
-
-  export type CoordinadorCountOutputType = {
-    carreras: number
-  }
-
-  export type CoordinadorCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    carreras?: boolean | CoordinadorCountOutputTypeCountCarrerasArgs
-  }
-
-  // Custom InputTypes
-  /**
-   * CoordinadorCountOutputType without action
-   */
-  export type CoordinadorCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the CoordinadorCountOutputType
-     */
-    select?: CoordinadorCountOutputTypeSelect<ExtArgs> | null
-  }
-
-  /**
-   * CoordinadorCountOutputType without action
-   */
-  export type CoordinadorCountOutputTypeCountCarrerasArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: carreraWhereInput
-  }
-
-
-  /**
    * Count Type EventoCountOutputType
    */
 
@@ -2854,37 +3239,6 @@ export namespace Prisma {
 
 
   /**
-   * Count Type FacultadCountOutputType
-   */
-
-  export type FacultadCountOutputType = {
-    carreras: number
-  }
-
-  export type FacultadCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    carreras?: boolean | FacultadCountOutputTypeCountCarrerasArgs
-  }
-
-  // Custom InputTypes
-  /**
-   * FacultadCountOutputType without action
-   */
-  export type FacultadCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the FacultadCountOutputType
-     */
-    select?: FacultadCountOutputTypeSelect<ExtArgs> | null
-  }
-
-  /**
-   * FacultadCountOutputType without action
-   */
-  export type FacultadCountOutputTypeCountCarrerasArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: carreraWhereInput
-  }
-
-
-  /**
    * Count Type Token_cuentaCountOutputType
    */
 
@@ -2927,6 +3281,6999 @@ export namespace Prisma {
   /**
    * Models
    */
+
+  /**
+   * Model universidad
+   */
+
+  export type AggregateUniversidad = {
+    _count: UniversidadCountAggregateOutputType | null
+    _min: UniversidadMinAggregateOutputType | null
+    _max: UniversidadMaxAggregateOutputType | null
+  }
+
+  export type UniversidadMinAggregateOutputType = {
+    id_uni: string | null
+    nom_uni: string | null
+    acr_uni: string | null
+    url_log_uni: string | null
+    url_web_uni: string | null
+    dir_uni: string | null
+    tel_uni: string | null
+    cor_uni: string | null
+    fec_fun_uni: Date | null
+    fec_cre_uni: Date | null
+    est_uni: boolean | null
+  }
+
+  export type UniversidadMaxAggregateOutputType = {
+    id_uni: string | null
+    nom_uni: string | null
+    acr_uni: string | null
+    url_log_uni: string | null
+    url_web_uni: string | null
+    dir_uni: string | null
+    tel_uni: string | null
+    cor_uni: string | null
+    fec_fun_uni: Date | null
+    fec_cre_uni: Date | null
+    est_uni: boolean | null
+  }
+
+  export type UniversidadCountAggregateOutputType = {
+    id_uni: number
+    nom_uni: number
+    acr_uni: number
+    url_log_uni: number
+    url_web_uni: number
+    dir_uni: number
+    tel_uni: number
+    cor_uni: number
+    fec_fun_uni: number
+    fec_cre_uni: number
+    est_uni: number
+    _all: number
+  }
+
+
+  export type UniversidadMinAggregateInputType = {
+    id_uni?: true
+    nom_uni?: true
+    acr_uni?: true
+    url_log_uni?: true
+    url_web_uni?: true
+    dir_uni?: true
+    tel_uni?: true
+    cor_uni?: true
+    fec_fun_uni?: true
+    fec_cre_uni?: true
+    est_uni?: true
+  }
+
+  export type UniversidadMaxAggregateInputType = {
+    id_uni?: true
+    nom_uni?: true
+    acr_uni?: true
+    url_log_uni?: true
+    url_web_uni?: true
+    dir_uni?: true
+    tel_uni?: true
+    cor_uni?: true
+    fec_fun_uni?: true
+    fec_cre_uni?: true
+    est_uni?: true
+  }
+
+  export type UniversidadCountAggregateInputType = {
+    id_uni?: true
+    nom_uni?: true
+    acr_uni?: true
+    url_log_uni?: true
+    url_web_uni?: true
+    dir_uni?: true
+    tel_uni?: true
+    cor_uni?: true
+    fec_fun_uni?: true
+    fec_cre_uni?: true
+    est_uni?: true
+    _all?: true
+  }
+
+  export type UniversidadAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which universidad to aggregate.
+     */
+    where?: universidadWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of universidads to fetch.
+     */
+    orderBy?: universidadOrderByWithRelationInput | universidadOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: universidadWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` universidads from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` universidads.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned universidads
+    **/
+    _count?: true | UniversidadCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: UniversidadMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: UniversidadMaxAggregateInputType
+  }
+
+  export type GetUniversidadAggregateType<T extends UniversidadAggregateArgs> = {
+        [P in keyof T & keyof AggregateUniversidad]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateUniversidad[P]>
+      : GetScalarType<T[P], AggregateUniversidad[P]>
+  }
+
+
+
+
+  export type universidadGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: universidadWhereInput
+    orderBy?: universidadOrderByWithAggregationInput | universidadOrderByWithAggregationInput[]
+    by: UniversidadScalarFieldEnum[] | UniversidadScalarFieldEnum
+    having?: universidadScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: UniversidadCountAggregateInputType | true
+    _min?: UniversidadMinAggregateInputType
+    _max?: UniversidadMaxAggregateInputType
+  }
+
+  export type UniversidadGroupByOutputType = {
+    id_uni: string
+    nom_uni: string
+    acr_uni: string | null
+    url_log_uni: string | null
+    url_web_uni: string | null
+    dir_uni: string
+    tel_uni: string | null
+    cor_uni: string | null
+    fec_fun_uni: Date | null
+    fec_cre_uni: Date
+    est_uni: boolean
+    _count: UniversidadCountAggregateOutputType | null
+    _min: UniversidadMinAggregateOutputType | null
+    _max: UniversidadMaxAggregateOutputType | null
+  }
+
+  type GetUniversidadGroupByPayload<T extends universidadGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<UniversidadGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof UniversidadGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], UniversidadGroupByOutputType[P]>
+            : GetScalarType<T[P], UniversidadGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type universidadSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_uni?: boolean
+    nom_uni?: boolean
+    acr_uni?: boolean
+    url_log_uni?: boolean
+    url_web_uni?: boolean
+    dir_uni?: boolean
+    tel_uni?: boolean
+    cor_uni?: boolean
+    fec_fun_uni?: boolean
+    fec_cre_uni?: boolean
+    est_uni?: boolean
+    facultades?: boolean | universidad$facultadesArgs<ExtArgs>
+    autoridades?: boolean | universidad$autoridadesArgs<ExtArgs>
+    _count?: boolean | UniversidadCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["universidad"]>
+
+  export type universidadSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_uni?: boolean
+    nom_uni?: boolean
+    acr_uni?: boolean
+    url_log_uni?: boolean
+    url_web_uni?: boolean
+    dir_uni?: boolean
+    tel_uni?: boolean
+    cor_uni?: boolean
+    fec_fun_uni?: boolean
+    fec_cre_uni?: boolean
+    est_uni?: boolean
+  }, ExtArgs["result"]["universidad"]>
+
+  export type universidadSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_uni?: boolean
+    nom_uni?: boolean
+    acr_uni?: boolean
+    url_log_uni?: boolean
+    url_web_uni?: boolean
+    dir_uni?: boolean
+    tel_uni?: boolean
+    cor_uni?: boolean
+    fec_fun_uni?: boolean
+    fec_cre_uni?: boolean
+    est_uni?: boolean
+  }, ExtArgs["result"]["universidad"]>
+
+  export type universidadSelectScalar = {
+    id_uni?: boolean
+    nom_uni?: boolean
+    acr_uni?: boolean
+    url_log_uni?: boolean
+    url_web_uni?: boolean
+    dir_uni?: boolean
+    tel_uni?: boolean
+    cor_uni?: boolean
+    fec_fun_uni?: boolean
+    fec_cre_uni?: boolean
+    est_uni?: boolean
+  }
+
+  export type universidadOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_uni" | "nom_uni" | "acr_uni" | "url_log_uni" | "url_web_uni" | "dir_uni" | "tel_uni" | "cor_uni" | "fec_fun_uni" | "fec_cre_uni" | "est_uni", ExtArgs["result"]["universidad"]>
+  export type universidadInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    facultades?: boolean | universidad$facultadesArgs<ExtArgs>
+    autoridades?: boolean | universidad$autoridadesArgs<ExtArgs>
+    _count?: boolean | UniversidadCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type universidadIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type universidadIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+
+  export type $universidadPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "universidad"
+    objects: {
+      facultades: Prisma.$facultadPayload<ExtArgs>[]
+      autoridades: Prisma.$autoridad_universidadPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id_uni: string
+      nom_uni: string
+      acr_uni: string | null
+      url_log_uni: string | null
+      url_web_uni: string | null
+      dir_uni: string
+      tel_uni: string | null
+      cor_uni: string | null
+      fec_fun_uni: Date | null
+      fec_cre_uni: Date
+      est_uni: boolean
+    }, ExtArgs["result"]["universidad"]>
+    composites: {}
+  }
+
+  type universidadGetPayload<S extends boolean | null | undefined | universidadDefaultArgs> = $Result.GetResult<Prisma.$universidadPayload, S>
+
+  type universidadCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<universidadFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: UniversidadCountAggregateInputType | true
+    }
+
+  export interface universidadDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['universidad'], meta: { name: 'universidad' } }
+    /**
+     * Find zero or one Universidad that matches the filter.
+     * @param {universidadFindUniqueArgs} args - Arguments to find a Universidad
+     * @example
+     * // Get one Universidad
+     * const universidad = await prisma.universidad.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends universidadFindUniqueArgs>(args: SelectSubset<T, universidadFindUniqueArgs<ExtArgs>>): Prisma__universidadClient<$Result.GetResult<Prisma.$universidadPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Universidad that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {universidadFindUniqueOrThrowArgs} args - Arguments to find a Universidad
+     * @example
+     * // Get one Universidad
+     * const universidad = await prisma.universidad.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends universidadFindUniqueOrThrowArgs>(args: SelectSubset<T, universidadFindUniqueOrThrowArgs<ExtArgs>>): Prisma__universidadClient<$Result.GetResult<Prisma.$universidadPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Universidad that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {universidadFindFirstArgs} args - Arguments to find a Universidad
+     * @example
+     * // Get one Universidad
+     * const universidad = await prisma.universidad.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends universidadFindFirstArgs>(args?: SelectSubset<T, universidadFindFirstArgs<ExtArgs>>): Prisma__universidadClient<$Result.GetResult<Prisma.$universidadPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Universidad that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {universidadFindFirstOrThrowArgs} args - Arguments to find a Universidad
+     * @example
+     * // Get one Universidad
+     * const universidad = await prisma.universidad.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends universidadFindFirstOrThrowArgs>(args?: SelectSubset<T, universidadFindFirstOrThrowArgs<ExtArgs>>): Prisma__universidadClient<$Result.GetResult<Prisma.$universidadPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Universidads that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {universidadFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Universidads
+     * const universidads = await prisma.universidad.findMany()
+     * 
+     * // Get first 10 Universidads
+     * const universidads = await prisma.universidad.findMany({ take: 10 })
+     * 
+     * // Only select the `id_uni`
+     * const universidadWithId_uniOnly = await prisma.universidad.findMany({ select: { id_uni: true } })
+     * 
+     */
+    findMany<T extends universidadFindManyArgs>(args?: SelectSubset<T, universidadFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$universidadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Universidad.
+     * @param {universidadCreateArgs} args - Arguments to create a Universidad.
+     * @example
+     * // Create one Universidad
+     * const Universidad = await prisma.universidad.create({
+     *   data: {
+     *     // ... data to create a Universidad
+     *   }
+     * })
+     * 
+     */
+    create<T extends universidadCreateArgs>(args: SelectSubset<T, universidadCreateArgs<ExtArgs>>): Prisma__universidadClient<$Result.GetResult<Prisma.$universidadPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Universidads.
+     * @param {universidadCreateManyArgs} args - Arguments to create many Universidads.
+     * @example
+     * // Create many Universidads
+     * const universidad = await prisma.universidad.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends universidadCreateManyArgs>(args?: SelectSubset<T, universidadCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Universidads and returns the data saved in the database.
+     * @param {universidadCreateManyAndReturnArgs} args - Arguments to create many Universidads.
+     * @example
+     * // Create many Universidads
+     * const universidad = await prisma.universidad.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Universidads and only return the `id_uni`
+     * const universidadWithId_uniOnly = await prisma.universidad.createManyAndReturn({
+     *   select: { id_uni: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends universidadCreateManyAndReturnArgs>(args?: SelectSubset<T, universidadCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$universidadPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Universidad.
+     * @param {universidadDeleteArgs} args - Arguments to delete one Universidad.
+     * @example
+     * // Delete one Universidad
+     * const Universidad = await prisma.universidad.delete({
+     *   where: {
+     *     // ... filter to delete one Universidad
+     *   }
+     * })
+     * 
+     */
+    delete<T extends universidadDeleteArgs>(args: SelectSubset<T, universidadDeleteArgs<ExtArgs>>): Prisma__universidadClient<$Result.GetResult<Prisma.$universidadPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Universidad.
+     * @param {universidadUpdateArgs} args - Arguments to update one Universidad.
+     * @example
+     * // Update one Universidad
+     * const universidad = await prisma.universidad.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends universidadUpdateArgs>(args: SelectSubset<T, universidadUpdateArgs<ExtArgs>>): Prisma__universidadClient<$Result.GetResult<Prisma.$universidadPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Universidads.
+     * @param {universidadDeleteManyArgs} args - Arguments to filter Universidads to delete.
+     * @example
+     * // Delete a few Universidads
+     * const { count } = await prisma.universidad.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends universidadDeleteManyArgs>(args?: SelectSubset<T, universidadDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Universidads.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {universidadUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Universidads
+     * const universidad = await prisma.universidad.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends universidadUpdateManyArgs>(args: SelectSubset<T, universidadUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Universidads and returns the data updated in the database.
+     * @param {universidadUpdateManyAndReturnArgs} args - Arguments to update many Universidads.
+     * @example
+     * // Update many Universidads
+     * const universidad = await prisma.universidad.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Universidads and only return the `id_uni`
+     * const universidadWithId_uniOnly = await prisma.universidad.updateManyAndReturn({
+     *   select: { id_uni: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends universidadUpdateManyAndReturnArgs>(args: SelectSubset<T, universidadUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$universidadPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Universidad.
+     * @param {universidadUpsertArgs} args - Arguments to update or create a Universidad.
+     * @example
+     * // Update or create a Universidad
+     * const universidad = await prisma.universidad.upsert({
+     *   create: {
+     *     // ... data to create a Universidad
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Universidad we want to update
+     *   }
+     * })
+     */
+    upsert<T extends universidadUpsertArgs>(args: SelectSubset<T, universidadUpsertArgs<ExtArgs>>): Prisma__universidadClient<$Result.GetResult<Prisma.$universidadPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Universidads.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {universidadCountArgs} args - Arguments to filter Universidads to count.
+     * @example
+     * // Count the number of Universidads
+     * const count = await prisma.universidad.count({
+     *   where: {
+     *     // ... the filter for the Universidads we want to count
+     *   }
+     * })
+    **/
+    count<T extends universidadCountArgs>(
+      args?: Subset<T, universidadCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], UniversidadCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Universidad.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UniversidadAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends UniversidadAggregateArgs>(args: Subset<T, UniversidadAggregateArgs>): Prisma.PrismaPromise<GetUniversidadAggregateType<T>>
+
+    /**
+     * Group by Universidad.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {universidadGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends universidadGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: universidadGroupByArgs['orderBy'] }
+        : { orderBy?: universidadGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, universidadGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetUniversidadGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the universidad model
+   */
+  readonly fields: universidadFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for universidad.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__universidadClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    facultades<T extends universidad$facultadesArgs<ExtArgs> = {}>(args?: Subset<T, universidad$facultadesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$facultadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    autoridades<T extends universidad$autoridadesArgs<ExtArgs> = {}>(args?: Subset<T, universidad$autoridadesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$autoridad_universidadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the universidad model
+   */
+  interface universidadFieldRefs {
+    readonly id_uni: FieldRef<"universidad", 'String'>
+    readonly nom_uni: FieldRef<"universidad", 'String'>
+    readonly acr_uni: FieldRef<"universidad", 'String'>
+    readonly url_log_uni: FieldRef<"universidad", 'String'>
+    readonly url_web_uni: FieldRef<"universidad", 'String'>
+    readonly dir_uni: FieldRef<"universidad", 'String'>
+    readonly tel_uni: FieldRef<"universidad", 'String'>
+    readonly cor_uni: FieldRef<"universidad", 'String'>
+    readonly fec_fun_uni: FieldRef<"universidad", 'DateTime'>
+    readonly fec_cre_uni: FieldRef<"universidad", 'DateTime'>
+    readonly est_uni: FieldRef<"universidad", 'Boolean'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * universidad findUnique
+   */
+  export type universidadFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the universidad
+     */
+    select?: universidadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the universidad
+     */
+    omit?: universidadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: universidadInclude<ExtArgs> | null
+    /**
+     * Filter, which universidad to fetch.
+     */
+    where: universidadWhereUniqueInput
+  }
+
+  /**
+   * universidad findUniqueOrThrow
+   */
+  export type universidadFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the universidad
+     */
+    select?: universidadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the universidad
+     */
+    omit?: universidadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: universidadInclude<ExtArgs> | null
+    /**
+     * Filter, which universidad to fetch.
+     */
+    where: universidadWhereUniqueInput
+  }
+
+  /**
+   * universidad findFirst
+   */
+  export type universidadFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the universidad
+     */
+    select?: universidadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the universidad
+     */
+    omit?: universidadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: universidadInclude<ExtArgs> | null
+    /**
+     * Filter, which universidad to fetch.
+     */
+    where?: universidadWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of universidads to fetch.
+     */
+    orderBy?: universidadOrderByWithRelationInput | universidadOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for universidads.
+     */
+    cursor?: universidadWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` universidads from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` universidads.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of universidads.
+     */
+    distinct?: UniversidadScalarFieldEnum | UniversidadScalarFieldEnum[]
+  }
+
+  /**
+   * universidad findFirstOrThrow
+   */
+  export type universidadFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the universidad
+     */
+    select?: universidadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the universidad
+     */
+    omit?: universidadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: universidadInclude<ExtArgs> | null
+    /**
+     * Filter, which universidad to fetch.
+     */
+    where?: universidadWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of universidads to fetch.
+     */
+    orderBy?: universidadOrderByWithRelationInput | universidadOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for universidads.
+     */
+    cursor?: universidadWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` universidads from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` universidads.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of universidads.
+     */
+    distinct?: UniversidadScalarFieldEnum | UniversidadScalarFieldEnum[]
+  }
+
+  /**
+   * universidad findMany
+   */
+  export type universidadFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the universidad
+     */
+    select?: universidadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the universidad
+     */
+    omit?: universidadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: universidadInclude<ExtArgs> | null
+    /**
+     * Filter, which universidads to fetch.
+     */
+    where?: universidadWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of universidads to fetch.
+     */
+    orderBy?: universidadOrderByWithRelationInput | universidadOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing universidads.
+     */
+    cursor?: universidadWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` universidads from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` universidads.
+     */
+    skip?: number
+    distinct?: UniversidadScalarFieldEnum | UniversidadScalarFieldEnum[]
+  }
+
+  /**
+   * universidad create
+   */
+  export type universidadCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the universidad
+     */
+    select?: universidadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the universidad
+     */
+    omit?: universidadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: universidadInclude<ExtArgs> | null
+    /**
+     * The data needed to create a universidad.
+     */
+    data: XOR<universidadCreateInput, universidadUncheckedCreateInput>
+  }
+
+  /**
+   * universidad createMany
+   */
+  export type universidadCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many universidads.
+     */
+    data: universidadCreateManyInput | universidadCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * universidad createManyAndReturn
+   */
+  export type universidadCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the universidad
+     */
+    select?: universidadSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the universidad
+     */
+    omit?: universidadOmit<ExtArgs> | null
+    /**
+     * The data used to create many universidads.
+     */
+    data: universidadCreateManyInput | universidadCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * universidad update
+   */
+  export type universidadUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the universidad
+     */
+    select?: universidadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the universidad
+     */
+    omit?: universidadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: universidadInclude<ExtArgs> | null
+    /**
+     * The data needed to update a universidad.
+     */
+    data: XOR<universidadUpdateInput, universidadUncheckedUpdateInput>
+    /**
+     * Choose, which universidad to update.
+     */
+    where: universidadWhereUniqueInput
+  }
+
+  /**
+   * universidad updateMany
+   */
+  export type universidadUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update universidads.
+     */
+    data: XOR<universidadUpdateManyMutationInput, universidadUncheckedUpdateManyInput>
+    /**
+     * Filter which universidads to update
+     */
+    where?: universidadWhereInput
+    /**
+     * Limit how many universidads to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * universidad updateManyAndReturn
+   */
+  export type universidadUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the universidad
+     */
+    select?: universidadSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the universidad
+     */
+    omit?: universidadOmit<ExtArgs> | null
+    /**
+     * The data used to update universidads.
+     */
+    data: XOR<universidadUpdateManyMutationInput, universidadUncheckedUpdateManyInput>
+    /**
+     * Filter which universidads to update
+     */
+    where?: universidadWhereInput
+    /**
+     * Limit how many universidads to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * universidad upsert
+   */
+  export type universidadUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the universidad
+     */
+    select?: universidadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the universidad
+     */
+    omit?: universidadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: universidadInclude<ExtArgs> | null
+    /**
+     * The filter to search for the universidad to update in case it exists.
+     */
+    where: universidadWhereUniqueInput
+    /**
+     * In case the universidad found by the `where` argument doesn't exist, create a new universidad with this data.
+     */
+    create: XOR<universidadCreateInput, universidadUncheckedCreateInput>
+    /**
+     * In case the universidad was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<universidadUpdateInput, universidadUncheckedUpdateInput>
+  }
+
+  /**
+   * universidad delete
+   */
+  export type universidadDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the universidad
+     */
+    select?: universidadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the universidad
+     */
+    omit?: universidadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: universidadInclude<ExtArgs> | null
+    /**
+     * Filter which universidad to delete.
+     */
+    where: universidadWhereUniqueInput
+  }
+
+  /**
+   * universidad deleteMany
+   */
+  export type universidadDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which universidads to delete
+     */
+    where?: universidadWhereInput
+    /**
+     * Limit how many universidads to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * universidad.facultades
+   */
+  export type universidad$facultadesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the facultad
+     */
+    select?: facultadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the facultad
+     */
+    omit?: facultadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: facultadInclude<ExtArgs> | null
+    where?: facultadWhereInput
+    orderBy?: facultadOrderByWithRelationInput | facultadOrderByWithRelationInput[]
+    cursor?: facultadWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: FacultadScalarFieldEnum | FacultadScalarFieldEnum[]
+  }
+
+  /**
+   * universidad.autoridades
+   */
+  export type universidad$autoridadesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the autoridad_universidad
+     */
+    select?: autoridad_universidadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the autoridad_universidad
+     */
+    omit?: autoridad_universidadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: autoridad_universidadInclude<ExtArgs> | null
+    where?: autoridad_universidadWhereInput
+    orderBy?: autoridad_universidadOrderByWithRelationInput | autoridad_universidadOrderByWithRelationInput[]
+    cursor?: autoridad_universidadWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Autoridad_universidadScalarFieldEnum | Autoridad_universidadScalarFieldEnum[]
+  }
+
+  /**
+   * universidad without action
+   */
+  export type universidadDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the universidad
+     */
+    select?: universidadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the universidad
+     */
+    omit?: universidadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: universidadInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model autoridad_universidad
+   */
+
+  export type AggregateAutoridad_universidad = {
+    _count: Autoridad_universidadCountAggregateOutputType | null
+    _min: Autoridad_universidadMinAggregateOutputType | null
+    _max: Autoridad_universidadMaxAggregateOutputType | null
+  }
+
+  export type Autoridad_universidadMinAggregateOutputType = {
+    id_aut_uni: string | null
+    id_uni_per: string | null
+    tip_aut_uni: $Enums.tipo_autoridad_universidad | null
+    nom_aut_uni: string | null
+    ape_aut_uni: string | null
+    cor_aut_uni: string | null
+    tel_aut_uni: string | null
+    url_img_aut_uni: string | null
+    tit_aut_uni: string | null
+    fec_ini_aut_uni: Date | null
+    fec_fin_aut_uni: Date | null
+    est_aut_uni: boolean | null
+    fec_cre_aut_uni: Date | null
+  }
+
+  export type Autoridad_universidadMaxAggregateOutputType = {
+    id_aut_uni: string | null
+    id_uni_per: string | null
+    tip_aut_uni: $Enums.tipo_autoridad_universidad | null
+    nom_aut_uni: string | null
+    ape_aut_uni: string | null
+    cor_aut_uni: string | null
+    tel_aut_uni: string | null
+    url_img_aut_uni: string | null
+    tit_aut_uni: string | null
+    fec_ini_aut_uni: Date | null
+    fec_fin_aut_uni: Date | null
+    est_aut_uni: boolean | null
+    fec_cre_aut_uni: Date | null
+  }
+
+  export type Autoridad_universidadCountAggregateOutputType = {
+    id_aut_uni: number
+    id_uni_per: number
+    tip_aut_uni: number
+    nom_aut_uni: number
+    ape_aut_uni: number
+    cor_aut_uni: number
+    tel_aut_uni: number
+    url_img_aut_uni: number
+    tit_aut_uni: number
+    fec_ini_aut_uni: number
+    fec_fin_aut_uni: number
+    est_aut_uni: number
+    fec_cre_aut_uni: number
+    _all: number
+  }
+
+
+  export type Autoridad_universidadMinAggregateInputType = {
+    id_aut_uni?: true
+    id_uni_per?: true
+    tip_aut_uni?: true
+    nom_aut_uni?: true
+    ape_aut_uni?: true
+    cor_aut_uni?: true
+    tel_aut_uni?: true
+    url_img_aut_uni?: true
+    tit_aut_uni?: true
+    fec_ini_aut_uni?: true
+    fec_fin_aut_uni?: true
+    est_aut_uni?: true
+    fec_cre_aut_uni?: true
+  }
+
+  export type Autoridad_universidadMaxAggregateInputType = {
+    id_aut_uni?: true
+    id_uni_per?: true
+    tip_aut_uni?: true
+    nom_aut_uni?: true
+    ape_aut_uni?: true
+    cor_aut_uni?: true
+    tel_aut_uni?: true
+    url_img_aut_uni?: true
+    tit_aut_uni?: true
+    fec_ini_aut_uni?: true
+    fec_fin_aut_uni?: true
+    est_aut_uni?: true
+    fec_cre_aut_uni?: true
+  }
+
+  export type Autoridad_universidadCountAggregateInputType = {
+    id_aut_uni?: true
+    id_uni_per?: true
+    tip_aut_uni?: true
+    nom_aut_uni?: true
+    ape_aut_uni?: true
+    cor_aut_uni?: true
+    tel_aut_uni?: true
+    url_img_aut_uni?: true
+    tit_aut_uni?: true
+    fec_ini_aut_uni?: true
+    fec_fin_aut_uni?: true
+    est_aut_uni?: true
+    fec_cre_aut_uni?: true
+    _all?: true
+  }
+
+  export type Autoridad_universidadAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which autoridad_universidad to aggregate.
+     */
+    where?: autoridad_universidadWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of autoridad_universidads to fetch.
+     */
+    orderBy?: autoridad_universidadOrderByWithRelationInput | autoridad_universidadOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: autoridad_universidadWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` autoridad_universidads from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` autoridad_universidads.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned autoridad_universidads
+    **/
+    _count?: true | Autoridad_universidadCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: Autoridad_universidadMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: Autoridad_universidadMaxAggregateInputType
+  }
+
+  export type GetAutoridad_universidadAggregateType<T extends Autoridad_universidadAggregateArgs> = {
+        [P in keyof T & keyof AggregateAutoridad_universidad]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAutoridad_universidad[P]>
+      : GetScalarType<T[P], AggregateAutoridad_universidad[P]>
+  }
+
+
+
+
+  export type autoridad_universidadGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: autoridad_universidadWhereInput
+    orderBy?: autoridad_universidadOrderByWithAggregationInput | autoridad_universidadOrderByWithAggregationInput[]
+    by: Autoridad_universidadScalarFieldEnum[] | Autoridad_universidadScalarFieldEnum
+    having?: autoridad_universidadScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: Autoridad_universidadCountAggregateInputType | true
+    _min?: Autoridad_universidadMinAggregateInputType
+    _max?: Autoridad_universidadMaxAggregateInputType
+  }
+
+  export type Autoridad_universidadGroupByOutputType = {
+    id_aut_uni: string
+    id_uni_per: string
+    tip_aut_uni: $Enums.tipo_autoridad_universidad
+    nom_aut_uni: string
+    ape_aut_uni: string
+    cor_aut_uni: string | null
+    tel_aut_uni: string | null
+    url_img_aut_uni: string | null
+    tit_aut_uni: string | null
+    fec_ini_aut_uni: Date
+    fec_fin_aut_uni: Date | null
+    est_aut_uni: boolean
+    fec_cre_aut_uni: Date
+    _count: Autoridad_universidadCountAggregateOutputType | null
+    _min: Autoridad_universidadMinAggregateOutputType | null
+    _max: Autoridad_universidadMaxAggregateOutputType | null
+  }
+
+  type GetAutoridad_universidadGroupByPayload<T extends autoridad_universidadGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<Autoridad_universidadGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof Autoridad_universidadGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], Autoridad_universidadGroupByOutputType[P]>
+            : GetScalarType<T[P], Autoridad_universidadGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type autoridad_universidadSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_aut_uni?: boolean
+    id_uni_per?: boolean
+    tip_aut_uni?: boolean
+    nom_aut_uni?: boolean
+    ape_aut_uni?: boolean
+    cor_aut_uni?: boolean
+    tel_aut_uni?: boolean
+    url_img_aut_uni?: boolean
+    tit_aut_uni?: boolean
+    fec_ini_aut_uni?: boolean
+    fec_fin_aut_uni?: boolean
+    est_aut_uni?: boolean
+    fec_cre_aut_uni?: boolean
+    universidad?: boolean | universidadDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["autoridad_universidad"]>
+
+  export type autoridad_universidadSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_aut_uni?: boolean
+    id_uni_per?: boolean
+    tip_aut_uni?: boolean
+    nom_aut_uni?: boolean
+    ape_aut_uni?: boolean
+    cor_aut_uni?: boolean
+    tel_aut_uni?: boolean
+    url_img_aut_uni?: boolean
+    tit_aut_uni?: boolean
+    fec_ini_aut_uni?: boolean
+    fec_fin_aut_uni?: boolean
+    est_aut_uni?: boolean
+    fec_cre_aut_uni?: boolean
+    universidad?: boolean | universidadDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["autoridad_universidad"]>
+
+  export type autoridad_universidadSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_aut_uni?: boolean
+    id_uni_per?: boolean
+    tip_aut_uni?: boolean
+    nom_aut_uni?: boolean
+    ape_aut_uni?: boolean
+    cor_aut_uni?: boolean
+    tel_aut_uni?: boolean
+    url_img_aut_uni?: boolean
+    tit_aut_uni?: boolean
+    fec_ini_aut_uni?: boolean
+    fec_fin_aut_uni?: boolean
+    est_aut_uni?: boolean
+    fec_cre_aut_uni?: boolean
+    universidad?: boolean | universidadDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["autoridad_universidad"]>
+
+  export type autoridad_universidadSelectScalar = {
+    id_aut_uni?: boolean
+    id_uni_per?: boolean
+    tip_aut_uni?: boolean
+    nom_aut_uni?: boolean
+    ape_aut_uni?: boolean
+    cor_aut_uni?: boolean
+    tel_aut_uni?: boolean
+    url_img_aut_uni?: boolean
+    tit_aut_uni?: boolean
+    fec_ini_aut_uni?: boolean
+    fec_fin_aut_uni?: boolean
+    est_aut_uni?: boolean
+    fec_cre_aut_uni?: boolean
+  }
+
+  export type autoridad_universidadOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_aut_uni" | "id_uni_per" | "tip_aut_uni" | "nom_aut_uni" | "ape_aut_uni" | "cor_aut_uni" | "tel_aut_uni" | "url_img_aut_uni" | "tit_aut_uni" | "fec_ini_aut_uni" | "fec_fin_aut_uni" | "est_aut_uni" | "fec_cre_aut_uni", ExtArgs["result"]["autoridad_universidad"]>
+  export type autoridad_universidadInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    universidad?: boolean | universidadDefaultArgs<ExtArgs>
+  }
+  export type autoridad_universidadIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    universidad?: boolean | universidadDefaultArgs<ExtArgs>
+  }
+  export type autoridad_universidadIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    universidad?: boolean | universidadDefaultArgs<ExtArgs>
+  }
+
+  export type $autoridad_universidadPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "autoridad_universidad"
+    objects: {
+      universidad: Prisma.$universidadPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id_aut_uni: string
+      id_uni_per: string
+      tip_aut_uni: $Enums.tipo_autoridad_universidad
+      nom_aut_uni: string
+      ape_aut_uni: string
+      cor_aut_uni: string | null
+      tel_aut_uni: string | null
+      url_img_aut_uni: string | null
+      tit_aut_uni: string | null
+      fec_ini_aut_uni: Date
+      fec_fin_aut_uni: Date | null
+      est_aut_uni: boolean
+      fec_cre_aut_uni: Date
+    }, ExtArgs["result"]["autoridad_universidad"]>
+    composites: {}
+  }
+
+  type autoridad_universidadGetPayload<S extends boolean | null | undefined | autoridad_universidadDefaultArgs> = $Result.GetResult<Prisma.$autoridad_universidadPayload, S>
+
+  type autoridad_universidadCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<autoridad_universidadFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: Autoridad_universidadCountAggregateInputType | true
+    }
+
+  export interface autoridad_universidadDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['autoridad_universidad'], meta: { name: 'autoridad_universidad' } }
+    /**
+     * Find zero or one Autoridad_universidad that matches the filter.
+     * @param {autoridad_universidadFindUniqueArgs} args - Arguments to find a Autoridad_universidad
+     * @example
+     * // Get one Autoridad_universidad
+     * const autoridad_universidad = await prisma.autoridad_universidad.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends autoridad_universidadFindUniqueArgs>(args: SelectSubset<T, autoridad_universidadFindUniqueArgs<ExtArgs>>): Prisma__autoridad_universidadClient<$Result.GetResult<Prisma.$autoridad_universidadPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Autoridad_universidad that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {autoridad_universidadFindUniqueOrThrowArgs} args - Arguments to find a Autoridad_universidad
+     * @example
+     * // Get one Autoridad_universidad
+     * const autoridad_universidad = await prisma.autoridad_universidad.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends autoridad_universidadFindUniqueOrThrowArgs>(args: SelectSubset<T, autoridad_universidadFindUniqueOrThrowArgs<ExtArgs>>): Prisma__autoridad_universidadClient<$Result.GetResult<Prisma.$autoridad_universidadPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Autoridad_universidad that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {autoridad_universidadFindFirstArgs} args - Arguments to find a Autoridad_universidad
+     * @example
+     * // Get one Autoridad_universidad
+     * const autoridad_universidad = await prisma.autoridad_universidad.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends autoridad_universidadFindFirstArgs>(args?: SelectSubset<T, autoridad_universidadFindFirstArgs<ExtArgs>>): Prisma__autoridad_universidadClient<$Result.GetResult<Prisma.$autoridad_universidadPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Autoridad_universidad that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {autoridad_universidadFindFirstOrThrowArgs} args - Arguments to find a Autoridad_universidad
+     * @example
+     * // Get one Autoridad_universidad
+     * const autoridad_universidad = await prisma.autoridad_universidad.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends autoridad_universidadFindFirstOrThrowArgs>(args?: SelectSubset<T, autoridad_universidadFindFirstOrThrowArgs<ExtArgs>>): Prisma__autoridad_universidadClient<$Result.GetResult<Prisma.$autoridad_universidadPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Autoridad_universidads that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {autoridad_universidadFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Autoridad_universidads
+     * const autoridad_universidads = await prisma.autoridad_universidad.findMany()
+     * 
+     * // Get first 10 Autoridad_universidads
+     * const autoridad_universidads = await prisma.autoridad_universidad.findMany({ take: 10 })
+     * 
+     * // Only select the `id_aut_uni`
+     * const autoridad_universidadWithId_aut_uniOnly = await prisma.autoridad_universidad.findMany({ select: { id_aut_uni: true } })
+     * 
+     */
+    findMany<T extends autoridad_universidadFindManyArgs>(args?: SelectSubset<T, autoridad_universidadFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$autoridad_universidadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Autoridad_universidad.
+     * @param {autoridad_universidadCreateArgs} args - Arguments to create a Autoridad_universidad.
+     * @example
+     * // Create one Autoridad_universidad
+     * const Autoridad_universidad = await prisma.autoridad_universidad.create({
+     *   data: {
+     *     // ... data to create a Autoridad_universidad
+     *   }
+     * })
+     * 
+     */
+    create<T extends autoridad_universidadCreateArgs>(args: SelectSubset<T, autoridad_universidadCreateArgs<ExtArgs>>): Prisma__autoridad_universidadClient<$Result.GetResult<Prisma.$autoridad_universidadPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Autoridad_universidads.
+     * @param {autoridad_universidadCreateManyArgs} args - Arguments to create many Autoridad_universidads.
+     * @example
+     * // Create many Autoridad_universidads
+     * const autoridad_universidad = await prisma.autoridad_universidad.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends autoridad_universidadCreateManyArgs>(args?: SelectSubset<T, autoridad_universidadCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Autoridad_universidads and returns the data saved in the database.
+     * @param {autoridad_universidadCreateManyAndReturnArgs} args - Arguments to create many Autoridad_universidads.
+     * @example
+     * // Create many Autoridad_universidads
+     * const autoridad_universidad = await prisma.autoridad_universidad.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Autoridad_universidads and only return the `id_aut_uni`
+     * const autoridad_universidadWithId_aut_uniOnly = await prisma.autoridad_universidad.createManyAndReturn({
+     *   select: { id_aut_uni: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends autoridad_universidadCreateManyAndReturnArgs>(args?: SelectSubset<T, autoridad_universidadCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$autoridad_universidadPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Autoridad_universidad.
+     * @param {autoridad_universidadDeleteArgs} args - Arguments to delete one Autoridad_universidad.
+     * @example
+     * // Delete one Autoridad_universidad
+     * const Autoridad_universidad = await prisma.autoridad_universidad.delete({
+     *   where: {
+     *     // ... filter to delete one Autoridad_universidad
+     *   }
+     * })
+     * 
+     */
+    delete<T extends autoridad_universidadDeleteArgs>(args: SelectSubset<T, autoridad_universidadDeleteArgs<ExtArgs>>): Prisma__autoridad_universidadClient<$Result.GetResult<Prisma.$autoridad_universidadPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Autoridad_universidad.
+     * @param {autoridad_universidadUpdateArgs} args - Arguments to update one Autoridad_universidad.
+     * @example
+     * // Update one Autoridad_universidad
+     * const autoridad_universidad = await prisma.autoridad_universidad.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends autoridad_universidadUpdateArgs>(args: SelectSubset<T, autoridad_universidadUpdateArgs<ExtArgs>>): Prisma__autoridad_universidadClient<$Result.GetResult<Prisma.$autoridad_universidadPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Autoridad_universidads.
+     * @param {autoridad_universidadDeleteManyArgs} args - Arguments to filter Autoridad_universidads to delete.
+     * @example
+     * // Delete a few Autoridad_universidads
+     * const { count } = await prisma.autoridad_universidad.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends autoridad_universidadDeleteManyArgs>(args?: SelectSubset<T, autoridad_universidadDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Autoridad_universidads.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {autoridad_universidadUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Autoridad_universidads
+     * const autoridad_universidad = await prisma.autoridad_universidad.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends autoridad_universidadUpdateManyArgs>(args: SelectSubset<T, autoridad_universidadUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Autoridad_universidads and returns the data updated in the database.
+     * @param {autoridad_universidadUpdateManyAndReturnArgs} args - Arguments to update many Autoridad_universidads.
+     * @example
+     * // Update many Autoridad_universidads
+     * const autoridad_universidad = await prisma.autoridad_universidad.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Autoridad_universidads and only return the `id_aut_uni`
+     * const autoridad_universidadWithId_aut_uniOnly = await prisma.autoridad_universidad.updateManyAndReturn({
+     *   select: { id_aut_uni: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends autoridad_universidadUpdateManyAndReturnArgs>(args: SelectSubset<T, autoridad_universidadUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$autoridad_universidadPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Autoridad_universidad.
+     * @param {autoridad_universidadUpsertArgs} args - Arguments to update or create a Autoridad_universidad.
+     * @example
+     * // Update or create a Autoridad_universidad
+     * const autoridad_universidad = await prisma.autoridad_universidad.upsert({
+     *   create: {
+     *     // ... data to create a Autoridad_universidad
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Autoridad_universidad we want to update
+     *   }
+     * })
+     */
+    upsert<T extends autoridad_universidadUpsertArgs>(args: SelectSubset<T, autoridad_universidadUpsertArgs<ExtArgs>>): Prisma__autoridad_universidadClient<$Result.GetResult<Prisma.$autoridad_universidadPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Autoridad_universidads.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {autoridad_universidadCountArgs} args - Arguments to filter Autoridad_universidads to count.
+     * @example
+     * // Count the number of Autoridad_universidads
+     * const count = await prisma.autoridad_universidad.count({
+     *   where: {
+     *     // ... the filter for the Autoridad_universidads we want to count
+     *   }
+     * })
+    **/
+    count<T extends autoridad_universidadCountArgs>(
+      args?: Subset<T, autoridad_universidadCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], Autoridad_universidadCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Autoridad_universidad.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Autoridad_universidadAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends Autoridad_universidadAggregateArgs>(args: Subset<T, Autoridad_universidadAggregateArgs>): Prisma.PrismaPromise<GetAutoridad_universidadAggregateType<T>>
+
+    /**
+     * Group by Autoridad_universidad.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {autoridad_universidadGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends autoridad_universidadGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: autoridad_universidadGroupByArgs['orderBy'] }
+        : { orderBy?: autoridad_universidadGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, autoridad_universidadGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAutoridad_universidadGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the autoridad_universidad model
+   */
+  readonly fields: autoridad_universidadFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for autoridad_universidad.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__autoridad_universidadClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    universidad<T extends universidadDefaultArgs<ExtArgs> = {}>(args?: Subset<T, universidadDefaultArgs<ExtArgs>>): Prisma__universidadClient<$Result.GetResult<Prisma.$universidadPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the autoridad_universidad model
+   */
+  interface autoridad_universidadFieldRefs {
+    readonly id_aut_uni: FieldRef<"autoridad_universidad", 'String'>
+    readonly id_uni_per: FieldRef<"autoridad_universidad", 'String'>
+    readonly tip_aut_uni: FieldRef<"autoridad_universidad", 'tipo_autoridad_universidad'>
+    readonly nom_aut_uni: FieldRef<"autoridad_universidad", 'String'>
+    readonly ape_aut_uni: FieldRef<"autoridad_universidad", 'String'>
+    readonly cor_aut_uni: FieldRef<"autoridad_universidad", 'String'>
+    readonly tel_aut_uni: FieldRef<"autoridad_universidad", 'String'>
+    readonly url_img_aut_uni: FieldRef<"autoridad_universidad", 'String'>
+    readonly tit_aut_uni: FieldRef<"autoridad_universidad", 'String'>
+    readonly fec_ini_aut_uni: FieldRef<"autoridad_universidad", 'DateTime'>
+    readonly fec_fin_aut_uni: FieldRef<"autoridad_universidad", 'DateTime'>
+    readonly est_aut_uni: FieldRef<"autoridad_universidad", 'Boolean'>
+    readonly fec_cre_aut_uni: FieldRef<"autoridad_universidad", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * autoridad_universidad findUnique
+   */
+  export type autoridad_universidadFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the autoridad_universidad
+     */
+    select?: autoridad_universidadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the autoridad_universidad
+     */
+    omit?: autoridad_universidadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: autoridad_universidadInclude<ExtArgs> | null
+    /**
+     * Filter, which autoridad_universidad to fetch.
+     */
+    where: autoridad_universidadWhereUniqueInput
+  }
+
+  /**
+   * autoridad_universidad findUniqueOrThrow
+   */
+  export type autoridad_universidadFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the autoridad_universidad
+     */
+    select?: autoridad_universidadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the autoridad_universidad
+     */
+    omit?: autoridad_universidadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: autoridad_universidadInclude<ExtArgs> | null
+    /**
+     * Filter, which autoridad_universidad to fetch.
+     */
+    where: autoridad_universidadWhereUniqueInput
+  }
+
+  /**
+   * autoridad_universidad findFirst
+   */
+  export type autoridad_universidadFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the autoridad_universidad
+     */
+    select?: autoridad_universidadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the autoridad_universidad
+     */
+    omit?: autoridad_universidadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: autoridad_universidadInclude<ExtArgs> | null
+    /**
+     * Filter, which autoridad_universidad to fetch.
+     */
+    where?: autoridad_universidadWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of autoridad_universidads to fetch.
+     */
+    orderBy?: autoridad_universidadOrderByWithRelationInput | autoridad_universidadOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for autoridad_universidads.
+     */
+    cursor?: autoridad_universidadWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` autoridad_universidads from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` autoridad_universidads.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of autoridad_universidads.
+     */
+    distinct?: Autoridad_universidadScalarFieldEnum | Autoridad_universidadScalarFieldEnum[]
+  }
+
+  /**
+   * autoridad_universidad findFirstOrThrow
+   */
+  export type autoridad_universidadFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the autoridad_universidad
+     */
+    select?: autoridad_universidadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the autoridad_universidad
+     */
+    omit?: autoridad_universidadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: autoridad_universidadInclude<ExtArgs> | null
+    /**
+     * Filter, which autoridad_universidad to fetch.
+     */
+    where?: autoridad_universidadWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of autoridad_universidads to fetch.
+     */
+    orderBy?: autoridad_universidadOrderByWithRelationInput | autoridad_universidadOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for autoridad_universidads.
+     */
+    cursor?: autoridad_universidadWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` autoridad_universidads from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` autoridad_universidads.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of autoridad_universidads.
+     */
+    distinct?: Autoridad_universidadScalarFieldEnum | Autoridad_universidadScalarFieldEnum[]
+  }
+
+  /**
+   * autoridad_universidad findMany
+   */
+  export type autoridad_universidadFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the autoridad_universidad
+     */
+    select?: autoridad_universidadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the autoridad_universidad
+     */
+    omit?: autoridad_universidadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: autoridad_universidadInclude<ExtArgs> | null
+    /**
+     * Filter, which autoridad_universidads to fetch.
+     */
+    where?: autoridad_universidadWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of autoridad_universidads to fetch.
+     */
+    orderBy?: autoridad_universidadOrderByWithRelationInput | autoridad_universidadOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing autoridad_universidads.
+     */
+    cursor?: autoridad_universidadWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` autoridad_universidads from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` autoridad_universidads.
+     */
+    skip?: number
+    distinct?: Autoridad_universidadScalarFieldEnum | Autoridad_universidadScalarFieldEnum[]
+  }
+
+  /**
+   * autoridad_universidad create
+   */
+  export type autoridad_universidadCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the autoridad_universidad
+     */
+    select?: autoridad_universidadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the autoridad_universidad
+     */
+    omit?: autoridad_universidadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: autoridad_universidadInclude<ExtArgs> | null
+    /**
+     * The data needed to create a autoridad_universidad.
+     */
+    data: XOR<autoridad_universidadCreateInput, autoridad_universidadUncheckedCreateInput>
+  }
+
+  /**
+   * autoridad_universidad createMany
+   */
+  export type autoridad_universidadCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many autoridad_universidads.
+     */
+    data: autoridad_universidadCreateManyInput | autoridad_universidadCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * autoridad_universidad createManyAndReturn
+   */
+  export type autoridad_universidadCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the autoridad_universidad
+     */
+    select?: autoridad_universidadSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the autoridad_universidad
+     */
+    omit?: autoridad_universidadOmit<ExtArgs> | null
+    /**
+     * The data used to create many autoridad_universidads.
+     */
+    data: autoridad_universidadCreateManyInput | autoridad_universidadCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: autoridad_universidadIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * autoridad_universidad update
+   */
+  export type autoridad_universidadUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the autoridad_universidad
+     */
+    select?: autoridad_universidadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the autoridad_universidad
+     */
+    omit?: autoridad_universidadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: autoridad_universidadInclude<ExtArgs> | null
+    /**
+     * The data needed to update a autoridad_universidad.
+     */
+    data: XOR<autoridad_universidadUpdateInput, autoridad_universidadUncheckedUpdateInput>
+    /**
+     * Choose, which autoridad_universidad to update.
+     */
+    where: autoridad_universidadWhereUniqueInput
+  }
+
+  /**
+   * autoridad_universidad updateMany
+   */
+  export type autoridad_universidadUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update autoridad_universidads.
+     */
+    data: XOR<autoridad_universidadUpdateManyMutationInput, autoridad_universidadUncheckedUpdateManyInput>
+    /**
+     * Filter which autoridad_universidads to update
+     */
+    where?: autoridad_universidadWhereInput
+    /**
+     * Limit how many autoridad_universidads to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * autoridad_universidad updateManyAndReturn
+   */
+  export type autoridad_universidadUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the autoridad_universidad
+     */
+    select?: autoridad_universidadSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the autoridad_universidad
+     */
+    omit?: autoridad_universidadOmit<ExtArgs> | null
+    /**
+     * The data used to update autoridad_universidads.
+     */
+    data: XOR<autoridad_universidadUpdateManyMutationInput, autoridad_universidadUncheckedUpdateManyInput>
+    /**
+     * Filter which autoridad_universidads to update
+     */
+    where?: autoridad_universidadWhereInput
+    /**
+     * Limit how many autoridad_universidads to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: autoridad_universidadIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * autoridad_universidad upsert
+   */
+  export type autoridad_universidadUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the autoridad_universidad
+     */
+    select?: autoridad_universidadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the autoridad_universidad
+     */
+    omit?: autoridad_universidadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: autoridad_universidadInclude<ExtArgs> | null
+    /**
+     * The filter to search for the autoridad_universidad to update in case it exists.
+     */
+    where: autoridad_universidadWhereUniqueInput
+    /**
+     * In case the autoridad_universidad found by the `where` argument doesn't exist, create a new autoridad_universidad with this data.
+     */
+    create: XOR<autoridad_universidadCreateInput, autoridad_universidadUncheckedCreateInput>
+    /**
+     * In case the autoridad_universidad was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<autoridad_universidadUpdateInput, autoridad_universidadUncheckedUpdateInput>
+  }
+
+  /**
+   * autoridad_universidad delete
+   */
+  export type autoridad_universidadDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the autoridad_universidad
+     */
+    select?: autoridad_universidadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the autoridad_universidad
+     */
+    omit?: autoridad_universidadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: autoridad_universidadInclude<ExtArgs> | null
+    /**
+     * Filter which autoridad_universidad to delete.
+     */
+    where: autoridad_universidadWhereUniqueInput
+  }
+
+  /**
+   * autoridad_universidad deleteMany
+   */
+  export type autoridad_universidadDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which autoridad_universidads to delete
+     */
+    where?: autoridad_universidadWhereInput
+    /**
+     * Limit how many autoridad_universidads to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * autoridad_universidad without action
+   */
+  export type autoridad_universidadDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the autoridad_universidad
+     */
+    select?: autoridad_universidadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the autoridad_universidad
+     */
+    omit?: autoridad_universidadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: autoridad_universidadInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model facultad
+   */
+
+  export type AggregateFacultad = {
+    _count: FacultadCountAggregateOutputType | null
+    _min: FacultadMinAggregateOutputType | null
+    _max: FacultadMaxAggregateOutputType | null
+  }
+
+  export type FacultadMinAggregateOutputType = {
+    id_fac: string | null
+    nom_fac: string | null
+    acr_fac: string | null
+    url_log_fac: string | null
+    des_fac: string | null
+    mis_fac: string | null
+    vis_fac: string | null
+    fec_cre_fac: Date | null
+    id_uni_per: string | null
+  }
+
+  export type FacultadMaxAggregateOutputType = {
+    id_fac: string | null
+    nom_fac: string | null
+    acr_fac: string | null
+    url_log_fac: string | null
+    des_fac: string | null
+    mis_fac: string | null
+    vis_fac: string | null
+    fec_cre_fac: Date | null
+    id_uni_per: string | null
+  }
+
+  export type FacultadCountAggregateOutputType = {
+    id_fac: number
+    nom_fac: number
+    acr_fac: number
+    url_log_fac: number
+    des_fac: number
+    mis_fac: number
+    vis_fac: number
+    fec_cre_fac: number
+    id_uni_per: number
+    _all: number
+  }
+
+
+  export type FacultadMinAggregateInputType = {
+    id_fac?: true
+    nom_fac?: true
+    acr_fac?: true
+    url_log_fac?: true
+    des_fac?: true
+    mis_fac?: true
+    vis_fac?: true
+    fec_cre_fac?: true
+    id_uni_per?: true
+  }
+
+  export type FacultadMaxAggregateInputType = {
+    id_fac?: true
+    nom_fac?: true
+    acr_fac?: true
+    url_log_fac?: true
+    des_fac?: true
+    mis_fac?: true
+    vis_fac?: true
+    fec_cre_fac?: true
+    id_uni_per?: true
+  }
+
+  export type FacultadCountAggregateInputType = {
+    id_fac?: true
+    nom_fac?: true
+    acr_fac?: true
+    url_log_fac?: true
+    des_fac?: true
+    mis_fac?: true
+    vis_fac?: true
+    fec_cre_fac?: true
+    id_uni_per?: true
+    _all?: true
+  }
+
+  export type FacultadAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which facultad to aggregate.
+     */
+    where?: facultadWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of facultads to fetch.
+     */
+    orderBy?: facultadOrderByWithRelationInput | facultadOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: facultadWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` facultads from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` facultads.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned facultads
+    **/
+    _count?: true | FacultadCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: FacultadMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: FacultadMaxAggregateInputType
+  }
+
+  export type GetFacultadAggregateType<T extends FacultadAggregateArgs> = {
+        [P in keyof T & keyof AggregateFacultad]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateFacultad[P]>
+      : GetScalarType<T[P], AggregateFacultad[P]>
+  }
+
+
+
+
+  export type facultadGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: facultadWhereInput
+    orderBy?: facultadOrderByWithAggregationInput | facultadOrderByWithAggregationInput[]
+    by: FacultadScalarFieldEnum[] | FacultadScalarFieldEnum
+    having?: facultadScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: FacultadCountAggregateInputType | true
+    _min?: FacultadMinAggregateInputType
+    _max?: FacultadMaxAggregateInputType
+  }
+
+  export type FacultadGroupByOutputType = {
+    id_fac: string
+    nom_fac: string
+    acr_fac: string | null
+    url_log_fac: string | null
+    des_fac: string
+    mis_fac: string
+    vis_fac: string
+    fec_cre_fac: Date
+    id_uni_per: string
+    _count: FacultadCountAggregateOutputType | null
+    _min: FacultadMinAggregateOutputType | null
+    _max: FacultadMaxAggregateOutputType | null
+  }
+
+  type GetFacultadGroupByPayload<T extends facultadGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<FacultadGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof FacultadGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], FacultadGroupByOutputType[P]>
+            : GetScalarType<T[P], FacultadGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type facultadSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_fac?: boolean
+    nom_fac?: boolean
+    acr_fac?: boolean
+    url_log_fac?: boolean
+    des_fac?: boolean
+    mis_fac?: boolean
+    vis_fac?: boolean
+    fec_cre_fac?: boolean
+    id_uni_per?: boolean
+    universidad?: boolean | universidadDefaultArgs<ExtArgs>
+    carreras?: boolean | facultad$carrerasArgs<ExtArgs>
+    autoridades?: boolean | facultad$autoridadesArgs<ExtArgs>
+    _count?: boolean | FacultadCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["facultad"]>
+
+  export type facultadSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_fac?: boolean
+    nom_fac?: boolean
+    acr_fac?: boolean
+    url_log_fac?: boolean
+    des_fac?: boolean
+    mis_fac?: boolean
+    vis_fac?: boolean
+    fec_cre_fac?: boolean
+    id_uni_per?: boolean
+    universidad?: boolean | universidadDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["facultad"]>
+
+  export type facultadSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_fac?: boolean
+    nom_fac?: boolean
+    acr_fac?: boolean
+    url_log_fac?: boolean
+    des_fac?: boolean
+    mis_fac?: boolean
+    vis_fac?: boolean
+    fec_cre_fac?: boolean
+    id_uni_per?: boolean
+    universidad?: boolean | universidadDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["facultad"]>
+
+  export type facultadSelectScalar = {
+    id_fac?: boolean
+    nom_fac?: boolean
+    acr_fac?: boolean
+    url_log_fac?: boolean
+    des_fac?: boolean
+    mis_fac?: boolean
+    vis_fac?: boolean
+    fec_cre_fac?: boolean
+    id_uni_per?: boolean
+  }
+
+  export type facultadOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_fac" | "nom_fac" | "acr_fac" | "url_log_fac" | "des_fac" | "mis_fac" | "vis_fac" | "fec_cre_fac" | "id_uni_per", ExtArgs["result"]["facultad"]>
+  export type facultadInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    universidad?: boolean | universidadDefaultArgs<ExtArgs>
+    carreras?: boolean | facultad$carrerasArgs<ExtArgs>
+    autoridades?: boolean | facultad$autoridadesArgs<ExtArgs>
+    _count?: boolean | FacultadCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type facultadIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    universidad?: boolean | universidadDefaultArgs<ExtArgs>
+  }
+  export type facultadIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    universidad?: boolean | universidadDefaultArgs<ExtArgs>
+  }
+
+  export type $facultadPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "facultad"
+    objects: {
+      universidad: Prisma.$universidadPayload<ExtArgs>
+      carreras: Prisma.$carreraPayload<ExtArgs>[]
+      autoridades: Prisma.$autoridad_facultadPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id_fac: string
+      nom_fac: string
+      acr_fac: string | null
+      url_log_fac: string | null
+      des_fac: string
+      mis_fac: string
+      vis_fac: string
+      fec_cre_fac: Date
+      id_uni_per: string
+    }, ExtArgs["result"]["facultad"]>
+    composites: {}
+  }
+
+  type facultadGetPayload<S extends boolean | null | undefined | facultadDefaultArgs> = $Result.GetResult<Prisma.$facultadPayload, S>
+
+  type facultadCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<facultadFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: FacultadCountAggregateInputType | true
+    }
+
+  export interface facultadDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['facultad'], meta: { name: 'facultad' } }
+    /**
+     * Find zero or one Facultad that matches the filter.
+     * @param {facultadFindUniqueArgs} args - Arguments to find a Facultad
+     * @example
+     * // Get one Facultad
+     * const facultad = await prisma.facultad.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends facultadFindUniqueArgs>(args: SelectSubset<T, facultadFindUniqueArgs<ExtArgs>>): Prisma__facultadClient<$Result.GetResult<Prisma.$facultadPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Facultad that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {facultadFindUniqueOrThrowArgs} args - Arguments to find a Facultad
+     * @example
+     * // Get one Facultad
+     * const facultad = await prisma.facultad.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends facultadFindUniqueOrThrowArgs>(args: SelectSubset<T, facultadFindUniqueOrThrowArgs<ExtArgs>>): Prisma__facultadClient<$Result.GetResult<Prisma.$facultadPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Facultad that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {facultadFindFirstArgs} args - Arguments to find a Facultad
+     * @example
+     * // Get one Facultad
+     * const facultad = await prisma.facultad.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends facultadFindFirstArgs>(args?: SelectSubset<T, facultadFindFirstArgs<ExtArgs>>): Prisma__facultadClient<$Result.GetResult<Prisma.$facultadPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Facultad that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {facultadFindFirstOrThrowArgs} args - Arguments to find a Facultad
+     * @example
+     * // Get one Facultad
+     * const facultad = await prisma.facultad.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends facultadFindFirstOrThrowArgs>(args?: SelectSubset<T, facultadFindFirstOrThrowArgs<ExtArgs>>): Prisma__facultadClient<$Result.GetResult<Prisma.$facultadPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Facultads that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {facultadFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Facultads
+     * const facultads = await prisma.facultad.findMany()
+     * 
+     * // Get first 10 Facultads
+     * const facultads = await prisma.facultad.findMany({ take: 10 })
+     * 
+     * // Only select the `id_fac`
+     * const facultadWithId_facOnly = await prisma.facultad.findMany({ select: { id_fac: true } })
+     * 
+     */
+    findMany<T extends facultadFindManyArgs>(args?: SelectSubset<T, facultadFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$facultadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Facultad.
+     * @param {facultadCreateArgs} args - Arguments to create a Facultad.
+     * @example
+     * // Create one Facultad
+     * const Facultad = await prisma.facultad.create({
+     *   data: {
+     *     // ... data to create a Facultad
+     *   }
+     * })
+     * 
+     */
+    create<T extends facultadCreateArgs>(args: SelectSubset<T, facultadCreateArgs<ExtArgs>>): Prisma__facultadClient<$Result.GetResult<Prisma.$facultadPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Facultads.
+     * @param {facultadCreateManyArgs} args - Arguments to create many Facultads.
+     * @example
+     * // Create many Facultads
+     * const facultad = await prisma.facultad.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends facultadCreateManyArgs>(args?: SelectSubset<T, facultadCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Facultads and returns the data saved in the database.
+     * @param {facultadCreateManyAndReturnArgs} args - Arguments to create many Facultads.
+     * @example
+     * // Create many Facultads
+     * const facultad = await prisma.facultad.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Facultads and only return the `id_fac`
+     * const facultadWithId_facOnly = await prisma.facultad.createManyAndReturn({
+     *   select: { id_fac: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends facultadCreateManyAndReturnArgs>(args?: SelectSubset<T, facultadCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$facultadPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Facultad.
+     * @param {facultadDeleteArgs} args - Arguments to delete one Facultad.
+     * @example
+     * // Delete one Facultad
+     * const Facultad = await prisma.facultad.delete({
+     *   where: {
+     *     // ... filter to delete one Facultad
+     *   }
+     * })
+     * 
+     */
+    delete<T extends facultadDeleteArgs>(args: SelectSubset<T, facultadDeleteArgs<ExtArgs>>): Prisma__facultadClient<$Result.GetResult<Prisma.$facultadPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Facultad.
+     * @param {facultadUpdateArgs} args - Arguments to update one Facultad.
+     * @example
+     * // Update one Facultad
+     * const facultad = await prisma.facultad.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends facultadUpdateArgs>(args: SelectSubset<T, facultadUpdateArgs<ExtArgs>>): Prisma__facultadClient<$Result.GetResult<Prisma.$facultadPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Facultads.
+     * @param {facultadDeleteManyArgs} args - Arguments to filter Facultads to delete.
+     * @example
+     * // Delete a few Facultads
+     * const { count } = await prisma.facultad.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends facultadDeleteManyArgs>(args?: SelectSubset<T, facultadDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Facultads.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {facultadUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Facultads
+     * const facultad = await prisma.facultad.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends facultadUpdateManyArgs>(args: SelectSubset<T, facultadUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Facultads and returns the data updated in the database.
+     * @param {facultadUpdateManyAndReturnArgs} args - Arguments to update many Facultads.
+     * @example
+     * // Update many Facultads
+     * const facultad = await prisma.facultad.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Facultads and only return the `id_fac`
+     * const facultadWithId_facOnly = await prisma.facultad.updateManyAndReturn({
+     *   select: { id_fac: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends facultadUpdateManyAndReturnArgs>(args: SelectSubset<T, facultadUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$facultadPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Facultad.
+     * @param {facultadUpsertArgs} args - Arguments to update or create a Facultad.
+     * @example
+     * // Update or create a Facultad
+     * const facultad = await prisma.facultad.upsert({
+     *   create: {
+     *     // ... data to create a Facultad
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Facultad we want to update
+     *   }
+     * })
+     */
+    upsert<T extends facultadUpsertArgs>(args: SelectSubset<T, facultadUpsertArgs<ExtArgs>>): Prisma__facultadClient<$Result.GetResult<Prisma.$facultadPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Facultads.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {facultadCountArgs} args - Arguments to filter Facultads to count.
+     * @example
+     * // Count the number of Facultads
+     * const count = await prisma.facultad.count({
+     *   where: {
+     *     // ... the filter for the Facultads we want to count
+     *   }
+     * })
+    **/
+    count<T extends facultadCountArgs>(
+      args?: Subset<T, facultadCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], FacultadCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Facultad.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FacultadAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends FacultadAggregateArgs>(args: Subset<T, FacultadAggregateArgs>): Prisma.PrismaPromise<GetFacultadAggregateType<T>>
+
+    /**
+     * Group by Facultad.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {facultadGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends facultadGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: facultadGroupByArgs['orderBy'] }
+        : { orderBy?: facultadGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, facultadGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetFacultadGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the facultad model
+   */
+  readonly fields: facultadFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for facultad.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__facultadClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    universidad<T extends universidadDefaultArgs<ExtArgs> = {}>(args?: Subset<T, universidadDefaultArgs<ExtArgs>>): Prisma__universidadClient<$Result.GetResult<Prisma.$universidadPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    carreras<T extends facultad$carrerasArgs<ExtArgs> = {}>(args?: Subset<T, facultad$carrerasArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$carreraPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    autoridades<T extends facultad$autoridadesArgs<ExtArgs> = {}>(args?: Subset<T, facultad$autoridadesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$autoridad_facultadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the facultad model
+   */
+  interface facultadFieldRefs {
+    readonly id_fac: FieldRef<"facultad", 'String'>
+    readonly nom_fac: FieldRef<"facultad", 'String'>
+    readonly acr_fac: FieldRef<"facultad", 'String'>
+    readonly url_log_fac: FieldRef<"facultad", 'String'>
+    readonly des_fac: FieldRef<"facultad", 'String'>
+    readonly mis_fac: FieldRef<"facultad", 'String'>
+    readonly vis_fac: FieldRef<"facultad", 'String'>
+    readonly fec_cre_fac: FieldRef<"facultad", 'DateTime'>
+    readonly id_uni_per: FieldRef<"facultad", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * facultad findUnique
+   */
+  export type facultadFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the facultad
+     */
+    select?: facultadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the facultad
+     */
+    omit?: facultadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: facultadInclude<ExtArgs> | null
+    /**
+     * Filter, which facultad to fetch.
+     */
+    where: facultadWhereUniqueInput
+  }
+
+  /**
+   * facultad findUniqueOrThrow
+   */
+  export type facultadFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the facultad
+     */
+    select?: facultadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the facultad
+     */
+    omit?: facultadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: facultadInclude<ExtArgs> | null
+    /**
+     * Filter, which facultad to fetch.
+     */
+    where: facultadWhereUniqueInput
+  }
+
+  /**
+   * facultad findFirst
+   */
+  export type facultadFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the facultad
+     */
+    select?: facultadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the facultad
+     */
+    omit?: facultadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: facultadInclude<ExtArgs> | null
+    /**
+     * Filter, which facultad to fetch.
+     */
+    where?: facultadWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of facultads to fetch.
+     */
+    orderBy?: facultadOrderByWithRelationInput | facultadOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for facultads.
+     */
+    cursor?: facultadWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` facultads from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` facultads.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of facultads.
+     */
+    distinct?: FacultadScalarFieldEnum | FacultadScalarFieldEnum[]
+  }
+
+  /**
+   * facultad findFirstOrThrow
+   */
+  export type facultadFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the facultad
+     */
+    select?: facultadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the facultad
+     */
+    omit?: facultadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: facultadInclude<ExtArgs> | null
+    /**
+     * Filter, which facultad to fetch.
+     */
+    where?: facultadWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of facultads to fetch.
+     */
+    orderBy?: facultadOrderByWithRelationInput | facultadOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for facultads.
+     */
+    cursor?: facultadWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` facultads from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` facultads.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of facultads.
+     */
+    distinct?: FacultadScalarFieldEnum | FacultadScalarFieldEnum[]
+  }
+
+  /**
+   * facultad findMany
+   */
+  export type facultadFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the facultad
+     */
+    select?: facultadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the facultad
+     */
+    omit?: facultadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: facultadInclude<ExtArgs> | null
+    /**
+     * Filter, which facultads to fetch.
+     */
+    where?: facultadWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of facultads to fetch.
+     */
+    orderBy?: facultadOrderByWithRelationInput | facultadOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing facultads.
+     */
+    cursor?: facultadWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` facultads from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` facultads.
+     */
+    skip?: number
+    distinct?: FacultadScalarFieldEnum | FacultadScalarFieldEnum[]
+  }
+
+  /**
+   * facultad create
+   */
+  export type facultadCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the facultad
+     */
+    select?: facultadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the facultad
+     */
+    omit?: facultadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: facultadInclude<ExtArgs> | null
+    /**
+     * The data needed to create a facultad.
+     */
+    data: XOR<facultadCreateInput, facultadUncheckedCreateInput>
+  }
+
+  /**
+   * facultad createMany
+   */
+  export type facultadCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many facultads.
+     */
+    data: facultadCreateManyInput | facultadCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * facultad createManyAndReturn
+   */
+  export type facultadCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the facultad
+     */
+    select?: facultadSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the facultad
+     */
+    omit?: facultadOmit<ExtArgs> | null
+    /**
+     * The data used to create many facultads.
+     */
+    data: facultadCreateManyInput | facultadCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: facultadIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * facultad update
+   */
+  export type facultadUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the facultad
+     */
+    select?: facultadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the facultad
+     */
+    omit?: facultadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: facultadInclude<ExtArgs> | null
+    /**
+     * The data needed to update a facultad.
+     */
+    data: XOR<facultadUpdateInput, facultadUncheckedUpdateInput>
+    /**
+     * Choose, which facultad to update.
+     */
+    where: facultadWhereUniqueInput
+  }
+
+  /**
+   * facultad updateMany
+   */
+  export type facultadUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update facultads.
+     */
+    data: XOR<facultadUpdateManyMutationInput, facultadUncheckedUpdateManyInput>
+    /**
+     * Filter which facultads to update
+     */
+    where?: facultadWhereInput
+    /**
+     * Limit how many facultads to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * facultad updateManyAndReturn
+   */
+  export type facultadUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the facultad
+     */
+    select?: facultadSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the facultad
+     */
+    omit?: facultadOmit<ExtArgs> | null
+    /**
+     * The data used to update facultads.
+     */
+    data: XOR<facultadUpdateManyMutationInput, facultadUncheckedUpdateManyInput>
+    /**
+     * Filter which facultads to update
+     */
+    where?: facultadWhereInput
+    /**
+     * Limit how many facultads to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: facultadIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * facultad upsert
+   */
+  export type facultadUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the facultad
+     */
+    select?: facultadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the facultad
+     */
+    omit?: facultadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: facultadInclude<ExtArgs> | null
+    /**
+     * The filter to search for the facultad to update in case it exists.
+     */
+    where: facultadWhereUniqueInput
+    /**
+     * In case the facultad found by the `where` argument doesn't exist, create a new facultad with this data.
+     */
+    create: XOR<facultadCreateInput, facultadUncheckedCreateInput>
+    /**
+     * In case the facultad was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<facultadUpdateInput, facultadUncheckedUpdateInput>
+  }
+
+  /**
+   * facultad delete
+   */
+  export type facultadDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the facultad
+     */
+    select?: facultadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the facultad
+     */
+    omit?: facultadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: facultadInclude<ExtArgs> | null
+    /**
+     * Filter which facultad to delete.
+     */
+    where: facultadWhereUniqueInput
+  }
+
+  /**
+   * facultad deleteMany
+   */
+  export type facultadDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which facultads to delete
+     */
+    where?: facultadWhereInput
+    /**
+     * Limit how many facultads to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * facultad.carreras
+   */
+  export type facultad$carrerasArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the carrera
+     */
+    select?: carreraSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the carrera
+     */
+    omit?: carreraOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: carreraInclude<ExtArgs> | null
+    where?: carreraWhereInput
+    orderBy?: carreraOrderByWithRelationInput | carreraOrderByWithRelationInput[]
+    cursor?: carreraWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CarreraScalarFieldEnum | CarreraScalarFieldEnum[]
+  }
+
+  /**
+   * facultad.autoridades
+   */
+  export type facultad$autoridadesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the autoridad_facultad
+     */
+    select?: autoridad_facultadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the autoridad_facultad
+     */
+    omit?: autoridad_facultadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: autoridad_facultadInclude<ExtArgs> | null
+    where?: autoridad_facultadWhereInput
+    orderBy?: autoridad_facultadOrderByWithRelationInput | autoridad_facultadOrderByWithRelationInput[]
+    cursor?: autoridad_facultadWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Autoridad_facultadScalarFieldEnum | Autoridad_facultadScalarFieldEnum[]
+  }
+
+  /**
+   * facultad without action
+   */
+  export type facultadDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the facultad
+     */
+    select?: facultadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the facultad
+     */
+    omit?: facultadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: facultadInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model autoridad_facultad
+   */
+
+  export type AggregateAutoridad_facultad = {
+    _count: Autoridad_facultadCountAggregateOutputType | null
+    _min: Autoridad_facultadMinAggregateOutputType | null
+    _max: Autoridad_facultadMaxAggregateOutputType | null
+  }
+
+  export type Autoridad_facultadMinAggregateOutputType = {
+    id_aut_fac: string | null
+    id_fac_per: string | null
+    tip_aut_fac: $Enums.tipo_autoridad_facultad | null
+    nom_aut_fac: string | null
+    ape_aut_fac: string | null
+    cor_aut_fac: string | null
+    tel_aut_fac: string | null
+    url_img_aut_fac: string | null
+    tit_aut_fac: string | null
+    fec_ini_aut_fac: Date | null
+    fec_fin_aut_fac: Date | null
+    est_aut_fac: boolean | null
+    fec_cre_aut_fac: Date | null
+  }
+
+  export type Autoridad_facultadMaxAggregateOutputType = {
+    id_aut_fac: string | null
+    id_fac_per: string | null
+    tip_aut_fac: $Enums.tipo_autoridad_facultad | null
+    nom_aut_fac: string | null
+    ape_aut_fac: string | null
+    cor_aut_fac: string | null
+    tel_aut_fac: string | null
+    url_img_aut_fac: string | null
+    tit_aut_fac: string | null
+    fec_ini_aut_fac: Date | null
+    fec_fin_aut_fac: Date | null
+    est_aut_fac: boolean | null
+    fec_cre_aut_fac: Date | null
+  }
+
+  export type Autoridad_facultadCountAggregateOutputType = {
+    id_aut_fac: number
+    id_fac_per: number
+    tip_aut_fac: number
+    nom_aut_fac: number
+    ape_aut_fac: number
+    cor_aut_fac: number
+    tel_aut_fac: number
+    url_img_aut_fac: number
+    tit_aut_fac: number
+    fec_ini_aut_fac: number
+    fec_fin_aut_fac: number
+    est_aut_fac: number
+    fec_cre_aut_fac: number
+    _all: number
+  }
+
+
+  export type Autoridad_facultadMinAggregateInputType = {
+    id_aut_fac?: true
+    id_fac_per?: true
+    tip_aut_fac?: true
+    nom_aut_fac?: true
+    ape_aut_fac?: true
+    cor_aut_fac?: true
+    tel_aut_fac?: true
+    url_img_aut_fac?: true
+    tit_aut_fac?: true
+    fec_ini_aut_fac?: true
+    fec_fin_aut_fac?: true
+    est_aut_fac?: true
+    fec_cre_aut_fac?: true
+  }
+
+  export type Autoridad_facultadMaxAggregateInputType = {
+    id_aut_fac?: true
+    id_fac_per?: true
+    tip_aut_fac?: true
+    nom_aut_fac?: true
+    ape_aut_fac?: true
+    cor_aut_fac?: true
+    tel_aut_fac?: true
+    url_img_aut_fac?: true
+    tit_aut_fac?: true
+    fec_ini_aut_fac?: true
+    fec_fin_aut_fac?: true
+    est_aut_fac?: true
+    fec_cre_aut_fac?: true
+  }
+
+  export type Autoridad_facultadCountAggregateInputType = {
+    id_aut_fac?: true
+    id_fac_per?: true
+    tip_aut_fac?: true
+    nom_aut_fac?: true
+    ape_aut_fac?: true
+    cor_aut_fac?: true
+    tel_aut_fac?: true
+    url_img_aut_fac?: true
+    tit_aut_fac?: true
+    fec_ini_aut_fac?: true
+    fec_fin_aut_fac?: true
+    est_aut_fac?: true
+    fec_cre_aut_fac?: true
+    _all?: true
+  }
+
+  export type Autoridad_facultadAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which autoridad_facultad to aggregate.
+     */
+    where?: autoridad_facultadWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of autoridad_facultads to fetch.
+     */
+    orderBy?: autoridad_facultadOrderByWithRelationInput | autoridad_facultadOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: autoridad_facultadWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` autoridad_facultads from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` autoridad_facultads.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned autoridad_facultads
+    **/
+    _count?: true | Autoridad_facultadCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: Autoridad_facultadMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: Autoridad_facultadMaxAggregateInputType
+  }
+
+  export type GetAutoridad_facultadAggregateType<T extends Autoridad_facultadAggregateArgs> = {
+        [P in keyof T & keyof AggregateAutoridad_facultad]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAutoridad_facultad[P]>
+      : GetScalarType<T[P], AggregateAutoridad_facultad[P]>
+  }
+
+
+
+
+  export type autoridad_facultadGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: autoridad_facultadWhereInput
+    orderBy?: autoridad_facultadOrderByWithAggregationInput | autoridad_facultadOrderByWithAggregationInput[]
+    by: Autoridad_facultadScalarFieldEnum[] | Autoridad_facultadScalarFieldEnum
+    having?: autoridad_facultadScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: Autoridad_facultadCountAggregateInputType | true
+    _min?: Autoridad_facultadMinAggregateInputType
+    _max?: Autoridad_facultadMaxAggregateInputType
+  }
+
+  export type Autoridad_facultadGroupByOutputType = {
+    id_aut_fac: string
+    id_fac_per: string
+    tip_aut_fac: $Enums.tipo_autoridad_facultad
+    nom_aut_fac: string
+    ape_aut_fac: string
+    cor_aut_fac: string | null
+    tel_aut_fac: string | null
+    url_img_aut_fac: string | null
+    tit_aut_fac: string | null
+    fec_ini_aut_fac: Date
+    fec_fin_aut_fac: Date | null
+    est_aut_fac: boolean
+    fec_cre_aut_fac: Date
+    _count: Autoridad_facultadCountAggregateOutputType | null
+    _min: Autoridad_facultadMinAggregateOutputType | null
+    _max: Autoridad_facultadMaxAggregateOutputType | null
+  }
+
+  type GetAutoridad_facultadGroupByPayload<T extends autoridad_facultadGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<Autoridad_facultadGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof Autoridad_facultadGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], Autoridad_facultadGroupByOutputType[P]>
+            : GetScalarType<T[P], Autoridad_facultadGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type autoridad_facultadSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_aut_fac?: boolean
+    id_fac_per?: boolean
+    tip_aut_fac?: boolean
+    nom_aut_fac?: boolean
+    ape_aut_fac?: boolean
+    cor_aut_fac?: boolean
+    tel_aut_fac?: boolean
+    url_img_aut_fac?: boolean
+    tit_aut_fac?: boolean
+    fec_ini_aut_fac?: boolean
+    fec_fin_aut_fac?: boolean
+    est_aut_fac?: boolean
+    fec_cre_aut_fac?: boolean
+    facultad?: boolean | facultadDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["autoridad_facultad"]>
+
+  export type autoridad_facultadSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_aut_fac?: boolean
+    id_fac_per?: boolean
+    tip_aut_fac?: boolean
+    nom_aut_fac?: boolean
+    ape_aut_fac?: boolean
+    cor_aut_fac?: boolean
+    tel_aut_fac?: boolean
+    url_img_aut_fac?: boolean
+    tit_aut_fac?: boolean
+    fec_ini_aut_fac?: boolean
+    fec_fin_aut_fac?: boolean
+    est_aut_fac?: boolean
+    fec_cre_aut_fac?: boolean
+    facultad?: boolean | facultadDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["autoridad_facultad"]>
+
+  export type autoridad_facultadSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_aut_fac?: boolean
+    id_fac_per?: boolean
+    tip_aut_fac?: boolean
+    nom_aut_fac?: boolean
+    ape_aut_fac?: boolean
+    cor_aut_fac?: boolean
+    tel_aut_fac?: boolean
+    url_img_aut_fac?: boolean
+    tit_aut_fac?: boolean
+    fec_ini_aut_fac?: boolean
+    fec_fin_aut_fac?: boolean
+    est_aut_fac?: boolean
+    fec_cre_aut_fac?: boolean
+    facultad?: boolean | facultadDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["autoridad_facultad"]>
+
+  export type autoridad_facultadSelectScalar = {
+    id_aut_fac?: boolean
+    id_fac_per?: boolean
+    tip_aut_fac?: boolean
+    nom_aut_fac?: boolean
+    ape_aut_fac?: boolean
+    cor_aut_fac?: boolean
+    tel_aut_fac?: boolean
+    url_img_aut_fac?: boolean
+    tit_aut_fac?: boolean
+    fec_ini_aut_fac?: boolean
+    fec_fin_aut_fac?: boolean
+    est_aut_fac?: boolean
+    fec_cre_aut_fac?: boolean
+  }
+
+  export type autoridad_facultadOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_aut_fac" | "id_fac_per" | "tip_aut_fac" | "nom_aut_fac" | "ape_aut_fac" | "cor_aut_fac" | "tel_aut_fac" | "url_img_aut_fac" | "tit_aut_fac" | "fec_ini_aut_fac" | "fec_fin_aut_fac" | "est_aut_fac" | "fec_cre_aut_fac", ExtArgs["result"]["autoridad_facultad"]>
+  export type autoridad_facultadInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    facultad?: boolean | facultadDefaultArgs<ExtArgs>
+  }
+  export type autoridad_facultadIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    facultad?: boolean | facultadDefaultArgs<ExtArgs>
+  }
+  export type autoridad_facultadIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    facultad?: boolean | facultadDefaultArgs<ExtArgs>
+  }
+
+  export type $autoridad_facultadPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "autoridad_facultad"
+    objects: {
+      facultad: Prisma.$facultadPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id_aut_fac: string
+      id_fac_per: string
+      tip_aut_fac: $Enums.tipo_autoridad_facultad
+      nom_aut_fac: string
+      ape_aut_fac: string
+      cor_aut_fac: string | null
+      tel_aut_fac: string | null
+      url_img_aut_fac: string | null
+      tit_aut_fac: string | null
+      fec_ini_aut_fac: Date
+      fec_fin_aut_fac: Date | null
+      est_aut_fac: boolean
+      fec_cre_aut_fac: Date
+    }, ExtArgs["result"]["autoridad_facultad"]>
+    composites: {}
+  }
+
+  type autoridad_facultadGetPayload<S extends boolean | null | undefined | autoridad_facultadDefaultArgs> = $Result.GetResult<Prisma.$autoridad_facultadPayload, S>
+
+  type autoridad_facultadCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<autoridad_facultadFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: Autoridad_facultadCountAggregateInputType | true
+    }
+
+  export interface autoridad_facultadDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['autoridad_facultad'], meta: { name: 'autoridad_facultad' } }
+    /**
+     * Find zero or one Autoridad_facultad that matches the filter.
+     * @param {autoridad_facultadFindUniqueArgs} args - Arguments to find a Autoridad_facultad
+     * @example
+     * // Get one Autoridad_facultad
+     * const autoridad_facultad = await prisma.autoridad_facultad.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends autoridad_facultadFindUniqueArgs>(args: SelectSubset<T, autoridad_facultadFindUniqueArgs<ExtArgs>>): Prisma__autoridad_facultadClient<$Result.GetResult<Prisma.$autoridad_facultadPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Autoridad_facultad that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {autoridad_facultadFindUniqueOrThrowArgs} args - Arguments to find a Autoridad_facultad
+     * @example
+     * // Get one Autoridad_facultad
+     * const autoridad_facultad = await prisma.autoridad_facultad.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends autoridad_facultadFindUniqueOrThrowArgs>(args: SelectSubset<T, autoridad_facultadFindUniqueOrThrowArgs<ExtArgs>>): Prisma__autoridad_facultadClient<$Result.GetResult<Prisma.$autoridad_facultadPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Autoridad_facultad that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {autoridad_facultadFindFirstArgs} args - Arguments to find a Autoridad_facultad
+     * @example
+     * // Get one Autoridad_facultad
+     * const autoridad_facultad = await prisma.autoridad_facultad.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends autoridad_facultadFindFirstArgs>(args?: SelectSubset<T, autoridad_facultadFindFirstArgs<ExtArgs>>): Prisma__autoridad_facultadClient<$Result.GetResult<Prisma.$autoridad_facultadPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Autoridad_facultad that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {autoridad_facultadFindFirstOrThrowArgs} args - Arguments to find a Autoridad_facultad
+     * @example
+     * // Get one Autoridad_facultad
+     * const autoridad_facultad = await prisma.autoridad_facultad.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends autoridad_facultadFindFirstOrThrowArgs>(args?: SelectSubset<T, autoridad_facultadFindFirstOrThrowArgs<ExtArgs>>): Prisma__autoridad_facultadClient<$Result.GetResult<Prisma.$autoridad_facultadPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Autoridad_facultads that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {autoridad_facultadFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Autoridad_facultads
+     * const autoridad_facultads = await prisma.autoridad_facultad.findMany()
+     * 
+     * // Get first 10 Autoridad_facultads
+     * const autoridad_facultads = await prisma.autoridad_facultad.findMany({ take: 10 })
+     * 
+     * // Only select the `id_aut_fac`
+     * const autoridad_facultadWithId_aut_facOnly = await prisma.autoridad_facultad.findMany({ select: { id_aut_fac: true } })
+     * 
+     */
+    findMany<T extends autoridad_facultadFindManyArgs>(args?: SelectSubset<T, autoridad_facultadFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$autoridad_facultadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Autoridad_facultad.
+     * @param {autoridad_facultadCreateArgs} args - Arguments to create a Autoridad_facultad.
+     * @example
+     * // Create one Autoridad_facultad
+     * const Autoridad_facultad = await prisma.autoridad_facultad.create({
+     *   data: {
+     *     // ... data to create a Autoridad_facultad
+     *   }
+     * })
+     * 
+     */
+    create<T extends autoridad_facultadCreateArgs>(args: SelectSubset<T, autoridad_facultadCreateArgs<ExtArgs>>): Prisma__autoridad_facultadClient<$Result.GetResult<Prisma.$autoridad_facultadPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Autoridad_facultads.
+     * @param {autoridad_facultadCreateManyArgs} args - Arguments to create many Autoridad_facultads.
+     * @example
+     * // Create many Autoridad_facultads
+     * const autoridad_facultad = await prisma.autoridad_facultad.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends autoridad_facultadCreateManyArgs>(args?: SelectSubset<T, autoridad_facultadCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Autoridad_facultads and returns the data saved in the database.
+     * @param {autoridad_facultadCreateManyAndReturnArgs} args - Arguments to create many Autoridad_facultads.
+     * @example
+     * // Create many Autoridad_facultads
+     * const autoridad_facultad = await prisma.autoridad_facultad.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Autoridad_facultads and only return the `id_aut_fac`
+     * const autoridad_facultadWithId_aut_facOnly = await prisma.autoridad_facultad.createManyAndReturn({
+     *   select: { id_aut_fac: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends autoridad_facultadCreateManyAndReturnArgs>(args?: SelectSubset<T, autoridad_facultadCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$autoridad_facultadPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Autoridad_facultad.
+     * @param {autoridad_facultadDeleteArgs} args - Arguments to delete one Autoridad_facultad.
+     * @example
+     * // Delete one Autoridad_facultad
+     * const Autoridad_facultad = await prisma.autoridad_facultad.delete({
+     *   where: {
+     *     // ... filter to delete one Autoridad_facultad
+     *   }
+     * })
+     * 
+     */
+    delete<T extends autoridad_facultadDeleteArgs>(args: SelectSubset<T, autoridad_facultadDeleteArgs<ExtArgs>>): Prisma__autoridad_facultadClient<$Result.GetResult<Prisma.$autoridad_facultadPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Autoridad_facultad.
+     * @param {autoridad_facultadUpdateArgs} args - Arguments to update one Autoridad_facultad.
+     * @example
+     * // Update one Autoridad_facultad
+     * const autoridad_facultad = await prisma.autoridad_facultad.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends autoridad_facultadUpdateArgs>(args: SelectSubset<T, autoridad_facultadUpdateArgs<ExtArgs>>): Prisma__autoridad_facultadClient<$Result.GetResult<Prisma.$autoridad_facultadPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Autoridad_facultads.
+     * @param {autoridad_facultadDeleteManyArgs} args - Arguments to filter Autoridad_facultads to delete.
+     * @example
+     * // Delete a few Autoridad_facultads
+     * const { count } = await prisma.autoridad_facultad.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends autoridad_facultadDeleteManyArgs>(args?: SelectSubset<T, autoridad_facultadDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Autoridad_facultads.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {autoridad_facultadUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Autoridad_facultads
+     * const autoridad_facultad = await prisma.autoridad_facultad.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends autoridad_facultadUpdateManyArgs>(args: SelectSubset<T, autoridad_facultadUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Autoridad_facultads and returns the data updated in the database.
+     * @param {autoridad_facultadUpdateManyAndReturnArgs} args - Arguments to update many Autoridad_facultads.
+     * @example
+     * // Update many Autoridad_facultads
+     * const autoridad_facultad = await prisma.autoridad_facultad.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Autoridad_facultads and only return the `id_aut_fac`
+     * const autoridad_facultadWithId_aut_facOnly = await prisma.autoridad_facultad.updateManyAndReturn({
+     *   select: { id_aut_fac: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends autoridad_facultadUpdateManyAndReturnArgs>(args: SelectSubset<T, autoridad_facultadUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$autoridad_facultadPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Autoridad_facultad.
+     * @param {autoridad_facultadUpsertArgs} args - Arguments to update or create a Autoridad_facultad.
+     * @example
+     * // Update or create a Autoridad_facultad
+     * const autoridad_facultad = await prisma.autoridad_facultad.upsert({
+     *   create: {
+     *     // ... data to create a Autoridad_facultad
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Autoridad_facultad we want to update
+     *   }
+     * })
+     */
+    upsert<T extends autoridad_facultadUpsertArgs>(args: SelectSubset<T, autoridad_facultadUpsertArgs<ExtArgs>>): Prisma__autoridad_facultadClient<$Result.GetResult<Prisma.$autoridad_facultadPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Autoridad_facultads.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {autoridad_facultadCountArgs} args - Arguments to filter Autoridad_facultads to count.
+     * @example
+     * // Count the number of Autoridad_facultads
+     * const count = await prisma.autoridad_facultad.count({
+     *   where: {
+     *     // ... the filter for the Autoridad_facultads we want to count
+     *   }
+     * })
+    **/
+    count<T extends autoridad_facultadCountArgs>(
+      args?: Subset<T, autoridad_facultadCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], Autoridad_facultadCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Autoridad_facultad.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Autoridad_facultadAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends Autoridad_facultadAggregateArgs>(args: Subset<T, Autoridad_facultadAggregateArgs>): Prisma.PrismaPromise<GetAutoridad_facultadAggregateType<T>>
+
+    /**
+     * Group by Autoridad_facultad.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {autoridad_facultadGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends autoridad_facultadGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: autoridad_facultadGroupByArgs['orderBy'] }
+        : { orderBy?: autoridad_facultadGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, autoridad_facultadGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAutoridad_facultadGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the autoridad_facultad model
+   */
+  readonly fields: autoridad_facultadFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for autoridad_facultad.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__autoridad_facultadClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    facultad<T extends facultadDefaultArgs<ExtArgs> = {}>(args?: Subset<T, facultadDefaultArgs<ExtArgs>>): Prisma__facultadClient<$Result.GetResult<Prisma.$facultadPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the autoridad_facultad model
+   */
+  interface autoridad_facultadFieldRefs {
+    readonly id_aut_fac: FieldRef<"autoridad_facultad", 'String'>
+    readonly id_fac_per: FieldRef<"autoridad_facultad", 'String'>
+    readonly tip_aut_fac: FieldRef<"autoridad_facultad", 'tipo_autoridad_facultad'>
+    readonly nom_aut_fac: FieldRef<"autoridad_facultad", 'String'>
+    readonly ape_aut_fac: FieldRef<"autoridad_facultad", 'String'>
+    readonly cor_aut_fac: FieldRef<"autoridad_facultad", 'String'>
+    readonly tel_aut_fac: FieldRef<"autoridad_facultad", 'String'>
+    readonly url_img_aut_fac: FieldRef<"autoridad_facultad", 'String'>
+    readonly tit_aut_fac: FieldRef<"autoridad_facultad", 'String'>
+    readonly fec_ini_aut_fac: FieldRef<"autoridad_facultad", 'DateTime'>
+    readonly fec_fin_aut_fac: FieldRef<"autoridad_facultad", 'DateTime'>
+    readonly est_aut_fac: FieldRef<"autoridad_facultad", 'Boolean'>
+    readonly fec_cre_aut_fac: FieldRef<"autoridad_facultad", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * autoridad_facultad findUnique
+   */
+  export type autoridad_facultadFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the autoridad_facultad
+     */
+    select?: autoridad_facultadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the autoridad_facultad
+     */
+    omit?: autoridad_facultadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: autoridad_facultadInclude<ExtArgs> | null
+    /**
+     * Filter, which autoridad_facultad to fetch.
+     */
+    where: autoridad_facultadWhereUniqueInput
+  }
+
+  /**
+   * autoridad_facultad findUniqueOrThrow
+   */
+  export type autoridad_facultadFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the autoridad_facultad
+     */
+    select?: autoridad_facultadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the autoridad_facultad
+     */
+    omit?: autoridad_facultadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: autoridad_facultadInclude<ExtArgs> | null
+    /**
+     * Filter, which autoridad_facultad to fetch.
+     */
+    where: autoridad_facultadWhereUniqueInput
+  }
+
+  /**
+   * autoridad_facultad findFirst
+   */
+  export type autoridad_facultadFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the autoridad_facultad
+     */
+    select?: autoridad_facultadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the autoridad_facultad
+     */
+    omit?: autoridad_facultadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: autoridad_facultadInclude<ExtArgs> | null
+    /**
+     * Filter, which autoridad_facultad to fetch.
+     */
+    where?: autoridad_facultadWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of autoridad_facultads to fetch.
+     */
+    orderBy?: autoridad_facultadOrderByWithRelationInput | autoridad_facultadOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for autoridad_facultads.
+     */
+    cursor?: autoridad_facultadWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` autoridad_facultads from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` autoridad_facultads.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of autoridad_facultads.
+     */
+    distinct?: Autoridad_facultadScalarFieldEnum | Autoridad_facultadScalarFieldEnum[]
+  }
+
+  /**
+   * autoridad_facultad findFirstOrThrow
+   */
+  export type autoridad_facultadFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the autoridad_facultad
+     */
+    select?: autoridad_facultadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the autoridad_facultad
+     */
+    omit?: autoridad_facultadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: autoridad_facultadInclude<ExtArgs> | null
+    /**
+     * Filter, which autoridad_facultad to fetch.
+     */
+    where?: autoridad_facultadWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of autoridad_facultads to fetch.
+     */
+    orderBy?: autoridad_facultadOrderByWithRelationInput | autoridad_facultadOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for autoridad_facultads.
+     */
+    cursor?: autoridad_facultadWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` autoridad_facultads from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` autoridad_facultads.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of autoridad_facultads.
+     */
+    distinct?: Autoridad_facultadScalarFieldEnum | Autoridad_facultadScalarFieldEnum[]
+  }
+
+  /**
+   * autoridad_facultad findMany
+   */
+  export type autoridad_facultadFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the autoridad_facultad
+     */
+    select?: autoridad_facultadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the autoridad_facultad
+     */
+    omit?: autoridad_facultadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: autoridad_facultadInclude<ExtArgs> | null
+    /**
+     * Filter, which autoridad_facultads to fetch.
+     */
+    where?: autoridad_facultadWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of autoridad_facultads to fetch.
+     */
+    orderBy?: autoridad_facultadOrderByWithRelationInput | autoridad_facultadOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing autoridad_facultads.
+     */
+    cursor?: autoridad_facultadWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` autoridad_facultads from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` autoridad_facultads.
+     */
+    skip?: number
+    distinct?: Autoridad_facultadScalarFieldEnum | Autoridad_facultadScalarFieldEnum[]
+  }
+
+  /**
+   * autoridad_facultad create
+   */
+  export type autoridad_facultadCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the autoridad_facultad
+     */
+    select?: autoridad_facultadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the autoridad_facultad
+     */
+    omit?: autoridad_facultadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: autoridad_facultadInclude<ExtArgs> | null
+    /**
+     * The data needed to create a autoridad_facultad.
+     */
+    data: XOR<autoridad_facultadCreateInput, autoridad_facultadUncheckedCreateInput>
+  }
+
+  /**
+   * autoridad_facultad createMany
+   */
+  export type autoridad_facultadCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many autoridad_facultads.
+     */
+    data: autoridad_facultadCreateManyInput | autoridad_facultadCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * autoridad_facultad createManyAndReturn
+   */
+  export type autoridad_facultadCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the autoridad_facultad
+     */
+    select?: autoridad_facultadSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the autoridad_facultad
+     */
+    omit?: autoridad_facultadOmit<ExtArgs> | null
+    /**
+     * The data used to create many autoridad_facultads.
+     */
+    data: autoridad_facultadCreateManyInput | autoridad_facultadCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: autoridad_facultadIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * autoridad_facultad update
+   */
+  export type autoridad_facultadUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the autoridad_facultad
+     */
+    select?: autoridad_facultadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the autoridad_facultad
+     */
+    omit?: autoridad_facultadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: autoridad_facultadInclude<ExtArgs> | null
+    /**
+     * The data needed to update a autoridad_facultad.
+     */
+    data: XOR<autoridad_facultadUpdateInput, autoridad_facultadUncheckedUpdateInput>
+    /**
+     * Choose, which autoridad_facultad to update.
+     */
+    where: autoridad_facultadWhereUniqueInput
+  }
+
+  /**
+   * autoridad_facultad updateMany
+   */
+  export type autoridad_facultadUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update autoridad_facultads.
+     */
+    data: XOR<autoridad_facultadUpdateManyMutationInput, autoridad_facultadUncheckedUpdateManyInput>
+    /**
+     * Filter which autoridad_facultads to update
+     */
+    where?: autoridad_facultadWhereInput
+    /**
+     * Limit how many autoridad_facultads to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * autoridad_facultad updateManyAndReturn
+   */
+  export type autoridad_facultadUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the autoridad_facultad
+     */
+    select?: autoridad_facultadSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the autoridad_facultad
+     */
+    omit?: autoridad_facultadOmit<ExtArgs> | null
+    /**
+     * The data used to update autoridad_facultads.
+     */
+    data: XOR<autoridad_facultadUpdateManyMutationInput, autoridad_facultadUncheckedUpdateManyInput>
+    /**
+     * Filter which autoridad_facultads to update
+     */
+    where?: autoridad_facultadWhereInput
+    /**
+     * Limit how many autoridad_facultads to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: autoridad_facultadIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * autoridad_facultad upsert
+   */
+  export type autoridad_facultadUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the autoridad_facultad
+     */
+    select?: autoridad_facultadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the autoridad_facultad
+     */
+    omit?: autoridad_facultadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: autoridad_facultadInclude<ExtArgs> | null
+    /**
+     * The filter to search for the autoridad_facultad to update in case it exists.
+     */
+    where: autoridad_facultadWhereUniqueInput
+    /**
+     * In case the autoridad_facultad found by the `where` argument doesn't exist, create a new autoridad_facultad with this data.
+     */
+    create: XOR<autoridad_facultadCreateInput, autoridad_facultadUncheckedCreateInput>
+    /**
+     * In case the autoridad_facultad was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<autoridad_facultadUpdateInput, autoridad_facultadUncheckedUpdateInput>
+  }
+
+  /**
+   * autoridad_facultad delete
+   */
+  export type autoridad_facultadDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the autoridad_facultad
+     */
+    select?: autoridad_facultadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the autoridad_facultad
+     */
+    omit?: autoridad_facultadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: autoridad_facultadInclude<ExtArgs> | null
+    /**
+     * Filter which autoridad_facultad to delete.
+     */
+    where: autoridad_facultadWhereUniqueInput
+  }
+
+  /**
+   * autoridad_facultad deleteMany
+   */
+  export type autoridad_facultadDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which autoridad_facultads to delete
+     */
+    where?: autoridad_facultadWhereInput
+    /**
+     * Limit how many autoridad_facultads to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * autoridad_facultad without action
+   */
+  export type autoridad_facultadDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the autoridad_facultad
+     */
+    select?: autoridad_facultadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the autoridad_facultad
+     */
+    omit?: autoridad_facultadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: autoridad_facultadInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model carrera
+   */
+
+  export type AggregateCarrera = {
+    _count: CarreraCountAggregateOutputType | null
+    _avg: CarreraAvgAggregateOutputType | null
+    _sum: CarreraSumAggregateOutputType | null
+    _min: CarreraMinAggregateOutputType | null
+    _max: CarreraMaxAggregateOutputType | null
+  }
+
+  export type CarreraAvgAggregateOutputType = {
+    dur_sem_car: number | null
+  }
+
+  export type CarreraSumAggregateOutputType = {
+    dur_sem_car: number | null
+  }
+
+  export type CarreraMinAggregateOutputType = {
+    id_car: string | null
+    nom_car: string | null
+    des_car: string | null
+    dur_sem_car: number | null
+    mod_car: string | null
+    ico_car: string | null
+    est_car: boolean | null
+    fec_cre_car: Date | null
+    id_fac_per: string | null
+    id_coo_per: string | null
+  }
+
+  export type CarreraMaxAggregateOutputType = {
+    id_car: string | null
+    nom_car: string | null
+    des_car: string | null
+    dur_sem_car: number | null
+    mod_car: string | null
+    ico_car: string | null
+    est_car: boolean | null
+    fec_cre_car: Date | null
+    id_fac_per: string | null
+    id_coo_per: string | null
+  }
+
+  export type CarreraCountAggregateOutputType = {
+    id_car: number
+    nom_car: number
+    des_car: number
+    dur_sem_car: number
+    mod_car: number
+    ico_car: number
+    est_car: number
+    fec_cre_car: number
+    id_fac_per: number
+    id_coo_per: number
+    _all: number
+  }
+
+
+  export type CarreraAvgAggregateInputType = {
+    dur_sem_car?: true
+  }
+
+  export type CarreraSumAggregateInputType = {
+    dur_sem_car?: true
+  }
+
+  export type CarreraMinAggregateInputType = {
+    id_car?: true
+    nom_car?: true
+    des_car?: true
+    dur_sem_car?: true
+    mod_car?: true
+    ico_car?: true
+    est_car?: true
+    fec_cre_car?: true
+    id_fac_per?: true
+    id_coo_per?: true
+  }
+
+  export type CarreraMaxAggregateInputType = {
+    id_car?: true
+    nom_car?: true
+    des_car?: true
+    dur_sem_car?: true
+    mod_car?: true
+    ico_car?: true
+    est_car?: true
+    fec_cre_car?: true
+    id_fac_per?: true
+    id_coo_per?: true
+  }
+
+  export type CarreraCountAggregateInputType = {
+    id_car?: true
+    nom_car?: true
+    des_car?: true
+    dur_sem_car?: true
+    mod_car?: true
+    ico_car?: true
+    est_car?: true
+    fec_cre_car?: true
+    id_fac_per?: true
+    id_coo_per?: true
+    _all?: true
+  }
+
+  export type CarreraAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which carrera to aggregate.
+     */
+    where?: carreraWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of carreras to fetch.
+     */
+    orderBy?: carreraOrderByWithRelationInput | carreraOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: carreraWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` carreras from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` carreras.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned carreras
+    **/
+    _count?: true | CarreraCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: CarreraAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: CarreraSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: CarreraMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: CarreraMaxAggregateInputType
+  }
+
+  export type GetCarreraAggregateType<T extends CarreraAggregateArgs> = {
+        [P in keyof T & keyof AggregateCarrera]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCarrera[P]>
+      : GetScalarType<T[P], AggregateCarrera[P]>
+  }
+
+
+
+
+  export type carreraGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: carreraWhereInput
+    orderBy?: carreraOrderByWithAggregationInput | carreraOrderByWithAggregationInput[]
+    by: CarreraScalarFieldEnum[] | CarreraScalarFieldEnum
+    having?: carreraScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: CarreraCountAggregateInputType | true
+    _avg?: CarreraAvgAggregateInputType
+    _sum?: CarreraSumAggregateInputType
+    _min?: CarreraMinAggregateInputType
+    _max?: CarreraMaxAggregateInputType
+  }
+
+  export type CarreraGroupByOutputType = {
+    id_car: string
+    nom_car: string
+    des_car: string
+    dur_sem_car: number
+    mod_car: string
+    ico_car: string
+    est_car: boolean
+    fec_cre_car: Date
+    id_fac_per: string
+    id_coo_per: string | null
+    _count: CarreraCountAggregateOutputType | null
+    _avg: CarreraAvgAggregateOutputType | null
+    _sum: CarreraSumAggregateOutputType | null
+    _min: CarreraMinAggregateOutputType | null
+    _max: CarreraMaxAggregateOutputType | null
+  }
+
+  type GetCarreraGroupByPayload<T extends carreraGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<CarreraGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof CarreraGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], CarreraGroupByOutputType[P]>
+            : GetScalarType<T[P], CarreraGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type carreraSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_car?: boolean
+    nom_car?: boolean
+    des_car?: boolean
+    dur_sem_car?: boolean
+    mod_car?: boolean
+    ico_car?: boolean
+    est_car?: boolean
+    fec_cre_car?: boolean
+    id_fac_per?: boolean
+    id_coo_per?: boolean
+    facultad?: boolean | facultadDefaultArgs<ExtArgs>
+    coordinador?: boolean | carrera$coordinadorArgs<ExtArgs>
+    usuario?: boolean | carrera$usuarioArgs<ExtArgs>
+    eventos?: boolean | carrera$eventosArgs<ExtArgs>
+    _count?: boolean | CarreraCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["carrera"]>
+
+  export type carreraSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_car?: boolean
+    nom_car?: boolean
+    des_car?: boolean
+    dur_sem_car?: boolean
+    mod_car?: boolean
+    ico_car?: boolean
+    est_car?: boolean
+    fec_cre_car?: boolean
+    id_fac_per?: boolean
+    id_coo_per?: boolean
+    facultad?: boolean | facultadDefaultArgs<ExtArgs>
+    coordinador?: boolean | carrera$coordinadorArgs<ExtArgs>
+  }, ExtArgs["result"]["carrera"]>
+
+  export type carreraSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_car?: boolean
+    nom_car?: boolean
+    des_car?: boolean
+    dur_sem_car?: boolean
+    mod_car?: boolean
+    ico_car?: boolean
+    est_car?: boolean
+    fec_cre_car?: boolean
+    id_fac_per?: boolean
+    id_coo_per?: boolean
+    facultad?: boolean | facultadDefaultArgs<ExtArgs>
+    coordinador?: boolean | carrera$coordinadorArgs<ExtArgs>
+  }, ExtArgs["result"]["carrera"]>
+
+  export type carreraSelectScalar = {
+    id_car?: boolean
+    nom_car?: boolean
+    des_car?: boolean
+    dur_sem_car?: boolean
+    mod_car?: boolean
+    ico_car?: boolean
+    est_car?: boolean
+    fec_cre_car?: boolean
+    id_fac_per?: boolean
+    id_coo_per?: boolean
+  }
+
+  export type carreraOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_car" | "nom_car" | "des_car" | "dur_sem_car" | "mod_car" | "ico_car" | "est_car" | "fec_cre_car" | "id_fac_per" | "id_coo_per", ExtArgs["result"]["carrera"]>
+  export type carreraInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    facultad?: boolean | facultadDefaultArgs<ExtArgs>
+    coordinador?: boolean | carrera$coordinadorArgs<ExtArgs>
+    usuario?: boolean | carrera$usuarioArgs<ExtArgs>
+    eventos?: boolean | carrera$eventosArgs<ExtArgs>
+    _count?: boolean | CarreraCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type carreraIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    facultad?: boolean | facultadDefaultArgs<ExtArgs>
+    coordinador?: boolean | carrera$coordinadorArgs<ExtArgs>
+  }
+  export type carreraIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    facultad?: boolean | facultadDefaultArgs<ExtArgs>
+    coordinador?: boolean | carrera$coordinadorArgs<ExtArgs>
+  }
+
+  export type $carreraPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "carrera"
+    objects: {
+      facultad: Prisma.$facultadPayload<ExtArgs>
+      coordinador: Prisma.$coordinadorPayload<ExtArgs> | null
+      usuario: Prisma.$usuarioPayload<ExtArgs>[]
+      eventos: Prisma.$evento_carreraPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id_car: string
+      nom_car: string
+      des_car: string
+      dur_sem_car: number
+      mod_car: string
+      ico_car: string
+      est_car: boolean
+      fec_cre_car: Date
+      id_fac_per: string
+      id_coo_per: string | null
+    }, ExtArgs["result"]["carrera"]>
+    composites: {}
+  }
+
+  type carreraGetPayload<S extends boolean | null | undefined | carreraDefaultArgs> = $Result.GetResult<Prisma.$carreraPayload, S>
+
+  type carreraCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<carreraFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: CarreraCountAggregateInputType | true
+    }
+
+  export interface carreraDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['carrera'], meta: { name: 'carrera' } }
+    /**
+     * Find zero or one Carrera that matches the filter.
+     * @param {carreraFindUniqueArgs} args - Arguments to find a Carrera
+     * @example
+     * // Get one Carrera
+     * const carrera = await prisma.carrera.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends carreraFindUniqueArgs>(args: SelectSubset<T, carreraFindUniqueArgs<ExtArgs>>): Prisma__carreraClient<$Result.GetResult<Prisma.$carreraPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Carrera that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {carreraFindUniqueOrThrowArgs} args - Arguments to find a Carrera
+     * @example
+     * // Get one Carrera
+     * const carrera = await prisma.carrera.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends carreraFindUniqueOrThrowArgs>(args: SelectSubset<T, carreraFindUniqueOrThrowArgs<ExtArgs>>): Prisma__carreraClient<$Result.GetResult<Prisma.$carreraPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Carrera that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {carreraFindFirstArgs} args - Arguments to find a Carrera
+     * @example
+     * // Get one Carrera
+     * const carrera = await prisma.carrera.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends carreraFindFirstArgs>(args?: SelectSubset<T, carreraFindFirstArgs<ExtArgs>>): Prisma__carreraClient<$Result.GetResult<Prisma.$carreraPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Carrera that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {carreraFindFirstOrThrowArgs} args - Arguments to find a Carrera
+     * @example
+     * // Get one Carrera
+     * const carrera = await prisma.carrera.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends carreraFindFirstOrThrowArgs>(args?: SelectSubset<T, carreraFindFirstOrThrowArgs<ExtArgs>>): Prisma__carreraClient<$Result.GetResult<Prisma.$carreraPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Carreras that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {carreraFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Carreras
+     * const carreras = await prisma.carrera.findMany()
+     * 
+     * // Get first 10 Carreras
+     * const carreras = await prisma.carrera.findMany({ take: 10 })
+     * 
+     * // Only select the `id_car`
+     * const carreraWithId_carOnly = await prisma.carrera.findMany({ select: { id_car: true } })
+     * 
+     */
+    findMany<T extends carreraFindManyArgs>(args?: SelectSubset<T, carreraFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$carreraPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Carrera.
+     * @param {carreraCreateArgs} args - Arguments to create a Carrera.
+     * @example
+     * // Create one Carrera
+     * const Carrera = await prisma.carrera.create({
+     *   data: {
+     *     // ... data to create a Carrera
+     *   }
+     * })
+     * 
+     */
+    create<T extends carreraCreateArgs>(args: SelectSubset<T, carreraCreateArgs<ExtArgs>>): Prisma__carreraClient<$Result.GetResult<Prisma.$carreraPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Carreras.
+     * @param {carreraCreateManyArgs} args - Arguments to create many Carreras.
+     * @example
+     * // Create many Carreras
+     * const carrera = await prisma.carrera.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends carreraCreateManyArgs>(args?: SelectSubset<T, carreraCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Carreras and returns the data saved in the database.
+     * @param {carreraCreateManyAndReturnArgs} args - Arguments to create many Carreras.
+     * @example
+     * // Create many Carreras
+     * const carrera = await prisma.carrera.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Carreras and only return the `id_car`
+     * const carreraWithId_carOnly = await prisma.carrera.createManyAndReturn({
+     *   select: { id_car: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends carreraCreateManyAndReturnArgs>(args?: SelectSubset<T, carreraCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$carreraPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Carrera.
+     * @param {carreraDeleteArgs} args - Arguments to delete one Carrera.
+     * @example
+     * // Delete one Carrera
+     * const Carrera = await prisma.carrera.delete({
+     *   where: {
+     *     // ... filter to delete one Carrera
+     *   }
+     * })
+     * 
+     */
+    delete<T extends carreraDeleteArgs>(args: SelectSubset<T, carreraDeleteArgs<ExtArgs>>): Prisma__carreraClient<$Result.GetResult<Prisma.$carreraPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Carrera.
+     * @param {carreraUpdateArgs} args - Arguments to update one Carrera.
+     * @example
+     * // Update one Carrera
+     * const carrera = await prisma.carrera.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends carreraUpdateArgs>(args: SelectSubset<T, carreraUpdateArgs<ExtArgs>>): Prisma__carreraClient<$Result.GetResult<Prisma.$carreraPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Carreras.
+     * @param {carreraDeleteManyArgs} args - Arguments to filter Carreras to delete.
+     * @example
+     * // Delete a few Carreras
+     * const { count } = await prisma.carrera.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends carreraDeleteManyArgs>(args?: SelectSubset<T, carreraDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Carreras.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {carreraUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Carreras
+     * const carrera = await prisma.carrera.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends carreraUpdateManyArgs>(args: SelectSubset<T, carreraUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Carreras and returns the data updated in the database.
+     * @param {carreraUpdateManyAndReturnArgs} args - Arguments to update many Carreras.
+     * @example
+     * // Update many Carreras
+     * const carrera = await prisma.carrera.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Carreras and only return the `id_car`
+     * const carreraWithId_carOnly = await prisma.carrera.updateManyAndReturn({
+     *   select: { id_car: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends carreraUpdateManyAndReturnArgs>(args: SelectSubset<T, carreraUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$carreraPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Carrera.
+     * @param {carreraUpsertArgs} args - Arguments to update or create a Carrera.
+     * @example
+     * // Update or create a Carrera
+     * const carrera = await prisma.carrera.upsert({
+     *   create: {
+     *     // ... data to create a Carrera
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Carrera we want to update
+     *   }
+     * })
+     */
+    upsert<T extends carreraUpsertArgs>(args: SelectSubset<T, carreraUpsertArgs<ExtArgs>>): Prisma__carreraClient<$Result.GetResult<Prisma.$carreraPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Carreras.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {carreraCountArgs} args - Arguments to filter Carreras to count.
+     * @example
+     * // Count the number of Carreras
+     * const count = await prisma.carrera.count({
+     *   where: {
+     *     // ... the filter for the Carreras we want to count
+     *   }
+     * })
+    **/
+    count<T extends carreraCountArgs>(
+      args?: Subset<T, carreraCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], CarreraCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Carrera.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CarreraAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends CarreraAggregateArgs>(args: Subset<T, CarreraAggregateArgs>): Prisma.PrismaPromise<GetCarreraAggregateType<T>>
+
+    /**
+     * Group by Carrera.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {carreraGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends carreraGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: carreraGroupByArgs['orderBy'] }
+        : { orderBy?: carreraGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, carreraGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCarreraGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the carrera model
+   */
+  readonly fields: carreraFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for carrera.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__carreraClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    facultad<T extends facultadDefaultArgs<ExtArgs> = {}>(args?: Subset<T, facultadDefaultArgs<ExtArgs>>): Prisma__facultadClient<$Result.GetResult<Prisma.$facultadPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    coordinador<T extends carrera$coordinadorArgs<ExtArgs> = {}>(args?: Subset<T, carrera$coordinadorArgs<ExtArgs>>): Prisma__coordinadorClient<$Result.GetResult<Prisma.$coordinadorPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    usuario<T extends carrera$usuarioArgs<ExtArgs> = {}>(args?: Subset<T, carrera$usuarioArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$usuarioPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    eventos<T extends carrera$eventosArgs<ExtArgs> = {}>(args?: Subset<T, carrera$eventosArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$evento_carreraPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the carrera model
+   */
+  interface carreraFieldRefs {
+    readonly id_car: FieldRef<"carrera", 'String'>
+    readonly nom_car: FieldRef<"carrera", 'String'>
+    readonly des_car: FieldRef<"carrera", 'String'>
+    readonly dur_sem_car: FieldRef<"carrera", 'Int'>
+    readonly mod_car: FieldRef<"carrera", 'String'>
+    readonly ico_car: FieldRef<"carrera", 'String'>
+    readonly est_car: FieldRef<"carrera", 'Boolean'>
+    readonly fec_cre_car: FieldRef<"carrera", 'DateTime'>
+    readonly id_fac_per: FieldRef<"carrera", 'String'>
+    readonly id_coo_per: FieldRef<"carrera", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * carrera findUnique
+   */
+  export type carreraFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the carrera
+     */
+    select?: carreraSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the carrera
+     */
+    omit?: carreraOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: carreraInclude<ExtArgs> | null
+    /**
+     * Filter, which carrera to fetch.
+     */
+    where: carreraWhereUniqueInput
+  }
+
+  /**
+   * carrera findUniqueOrThrow
+   */
+  export type carreraFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the carrera
+     */
+    select?: carreraSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the carrera
+     */
+    omit?: carreraOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: carreraInclude<ExtArgs> | null
+    /**
+     * Filter, which carrera to fetch.
+     */
+    where: carreraWhereUniqueInput
+  }
+
+  /**
+   * carrera findFirst
+   */
+  export type carreraFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the carrera
+     */
+    select?: carreraSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the carrera
+     */
+    omit?: carreraOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: carreraInclude<ExtArgs> | null
+    /**
+     * Filter, which carrera to fetch.
+     */
+    where?: carreraWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of carreras to fetch.
+     */
+    orderBy?: carreraOrderByWithRelationInput | carreraOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for carreras.
+     */
+    cursor?: carreraWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` carreras from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` carreras.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of carreras.
+     */
+    distinct?: CarreraScalarFieldEnum | CarreraScalarFieldEnum[]
+  }
+
+  /**
+   * carrera findFirstOrThrow
+   */
+  export type carreraFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the carrera
+     */
+    select?: carreraSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the carrera
+     */
+    omit?: carreraOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: carreraInclude<ExtArgs> | null
+    /**
+     * Filter, which carrera to fetch.
+     */
+    where?: carreraWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of carreras to fetch.
+     */
+    orderBy?: carreraOrderByWithRelationInput | carreraOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for carreras.
+     */
+    cursor?: carreraWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` carreras from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` carreras.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of carreras.
+     */
+    distinct?: CarreraScalarFieldEnum | CarreraScalarFieldEnum[]
+  }
+
+  /**
+   * carrera findMany
+   */
+  export type carreraFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the carrera
+     */
+    select?: carreraSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the carrera
+     */
+    omit?: carreraOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: carreraInclude<ExtArgs> | null
+    /**
+     * Filter, which carreras to fetch.
+     */
+    where?: carreraWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of carreras to fetch.
+     */
+    orderBy?: carreraOrderByWithRelationInput | carreraOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing carreras.
+     */
+    cursor?: carreraWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` carreras from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` carreras.
+     */
+    skip?: number
+    distinct?: CarreraScalarFieldEnum | CarreraScalarFieldEnum[]
+  }
+
+  /**
+   * carrera create
+   */
+  export type carreraCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the carrera
+     */
+    select?: carreraSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the carrera
+     */
+    omit?: carreraOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: carreraInclude<ExtArgs> | null
+    /**
+     * The data needed to create a carrera.
+     */
+    data: XOR<carreraCreateInput, carreraUncheckedCreateInput>
+  }
+
+  /**
+   * carrera createMany
+   */
+  export type carreraCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many carreras.
+     */
+    data: carreraCreateManyInput | carreraCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * carrera createManyAndReturn
+   */
+  export type carreraCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the carrera
+     */
+    select?: carreraSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the carrera
+     */
+    omit?: carreraOmit<ExtArgs> | null
+    /**
+     * The data used to create many carreras.
+     */
+    data: carreraCreateManyInput | carreraCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: carreraIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * carrera update
+   */
+  export type carreraUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the carrera
+     */
+    select?: carreraSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the carrera
+     */
+    omit?: carreraOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: carreraInclude<ExtArgs> | null
+    /**
+     * The data needed to update a carrera.
+     */
+    data: XOR<carreraUpdateInput, carreraUncheckedUpdateInput>
+    /**
+     * Choose, which carrera to update.
+     */
+    where: carreraWhereUniqueInput
+  }
+
+  /**
+   * carrera updateMany
+   */
+  export type carreraUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update carreras.
+     */
+    data: XOR<carreraUpdateManyMutationInput, carreraUncheckedUpdateManyInput>
+    /**
+     * Filter which carreras to update
+     */
+    where?: carreraWhereInput
+    /**
+     * Limit how many carreras to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * carrera updateManyAndReturn
+   */
+  export type carreraUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the carrera
+     */
+    select?: carreraSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the carrera
+     */
+    omit?: carreraOmit<ExtArgs> | null
+    /**
+     * The data used to update carreras.
+     */
+    data: XOR<carreraUpdateManyMutationInput, carreraUncheckedUpdateManyInput>
+    /**
+     * Filter which carreras to update
+     */
+    where?: carreraWhereInput
+    /**
+     * Limit how many carreras to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: carreraIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * carrera upsert
+   */
+  export type carreraUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the carrera
+     */
+    select?: carreraSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the carrera
+     */
+    omit?: carreraOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: carreraInclude<ExtArgs> | null
+    /**
+     * The filter to search for the carrera to update in case it exists.
+     */
+    where: carreraWhereUniqueInput
+    /**
+     * In case the carrera found by the `where` argument doesn't exist, create a new carrera with this data.
+     */
+    create: XOR<carreraCreateInput, carreraUncheckedCreateInput>
+    /**
+     * In case the carrera was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<carreraUpdateInput, carreraUncheckedUpdateInput>
+  }
+
+  /**
+   * carrera delete
+   */
+  export type carreraDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the carrera
+     */
+    select?: carreraSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the carrera
+     */
+    omit?: carreraOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: carreraInclude<ExtArgs> | null
+    /**
+     * Filter which carrera to delete.
+     */
+    where: carreraWhereUniqueInput
+  }
+
+  /**
+   * carrera deleteMany
+   */
+  export type carreraDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which carreras to delete
+     */
+    where?: carreraWhereInput
+    /**
+     * Limit how many carreras to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * carrera.coordinador
+   */
+  export type carrera$coordinadorArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the coordinador
+     */
+    select?: coordinadorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the coordinador
+     */
+    omit?: coordinadorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: coordinadorInclude<ExtArgs> | null
+    where?: coordinadorWhereInput
+  }
+
+  /**
+   * carrera.usuario
+   */
+  export type carrera$usuarioArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the usuario
+     */
+    select?: usuarioSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the usuario
+     */
+    omit?: usuarioOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: usuarioInclude<ExtArgs> | null
+    where?: usuarioWhereInput
+    orderBy?: usuarioOrderByWithRelationInput | usuarioOrderByWithRelationInput[]
+    cursor?: usuarioWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: UsuarioScalarFieldEnum | UsuarioScalarFieldEnum[]
+  }
+
+  /**
+   * carrera.eventos
+   */
+  export type carrera$eventosArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the evento_carrera
+     */
+    select?: evento_carreraSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the evento_carrera
+     */
+    omit?: evento_carreraOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: evento_carreraInclude<ExtArgs> | null
+    where?: evento_carreraWhereInput
+    orderBy?: evento_carreraOrderByWithRelationInput | evento_carreraOrderByWithRelationInput[]
+    cursor?: evento_carreraWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Evento_carreraScalarFieldEnum | Evento_carreraScalarFieldEnum[]
+  }
+
+  /**
+   * carrera without action
+   */
+  export type carreraDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the carrera
+     */
+    select?: carreraSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the carrera
+     */
+    omit?: carreraOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: carreraInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model coordinador
+   */
+
+  export type AggregateCoordinador = {
+    _count: CoordinadorCountAggregateOutputType | null
+    _min: CoordinadorMinAggregateOutputType | null
+    _max: CoordinadorMaxAggregateOutputType | null
+  }
+
+  export type CoordinadorMinAggregateOutputType = {
+    id_coo: string | null
+    nom_coo: string | null
+    ape_coo: string | null
+    cor_coo: string | null
+    url_img_coo: string | null
+    tit_coo: string | null
+  }
+
+  export type CoordinadorMaxAggregateOutputType = {
+    id_coo: string | null
+    nom_coo: string | null
+    ape_coo: string | null
+    cor_coo: string | null
+    url_img_coo: string | null
+    tit_coo: string | null
+  }
+
+  export type CoordinadorCountAggregateOutputType = {
+    id_coo: number
+    nom_coo: number
+    ape_coo: number
+    cor_coo: number
+    url_img_coo: number
+    tit_coo: number
+    _all: number
+  }
+
+
+  export type CoordinadorMinAggregateInputType = {
+    id_coo?: true
+    nom_coo?: true
+    ape_coo?: true
+    cor_coo?: true
+    url_img_coo?: true
+    tit_coo?: true
+  }
+
+  export type CoordinadorMaxAggregateInputType = {
+    id_coo?: true
+    nom_coo?: true
+    ape_coo?: true
+    cor_coo?: true
+    url_img_coo?: true
+    tit_coo?: true
+  }
+
+  export type CoordinadorCountAggregateInputType = {
+    id_coo?: true
+    nom_coo?: true
+    ape_coo?: true
+    cor_coo?: true
+    url_img_coo?: true
+    tit_coo?: true
+    _all?: true
+  }
+
+  export type CoordinadorAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which coordinador to aggregate.
+     */
+    where?: coordinadorWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of coordinadors to fetch.
+     */
+    orderBy?: coordinadorOrderByWithRelationInput | coordinadorOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: coordinadorWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` coordinadors from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` coordinadors.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned coordinadors
+    **/
+    _count?: true | CoordinadorCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: CoordinadorMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: CoordinadorMaxAggregateInputType
+  }
+
+  export type GetCoordinadorAggregateType<T extends CoordinadorAggregateArgs> = {
+        [P in keyof T & keyof AggregateCoordinador]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCoordinador[P]>
+      : GetScalarType<T[P], AggregateCoordinador[P]>
+  }
+
+
+
+
+  export type coordinadorGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: coordinadorWhereInput
+    orderBy?: coordinadorOrderByWithAggregationInput | coordinadorOrderByWithAggregationInput[]
+    by: CoordinadorScalarFieldEnum[] | CoordinadorScalarFieldEnum
+    having?: coordinadorScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: CoordinadorCountAggregateInputType | true
+    _min?: CoordinadorMinAggregateInputType
+    _max?: CoordinadorMaxAggregateInputType
+  }
+
+  export type CoordinadorGroupByOutputType = {
+    id_coo: string
+    nom_coo: string
+    ape_coo: string
+    cor_coo: string
+    url_img_coo: string
+    tit_coo: string
+    _count: CoordinadorCountAggregateOutputType | null
+    _min: CoordinadorMinAggregateOutputType | null
+    _max: CoordinadorMaxAggregateOutputType | null
+  }
+
+  type GetCoordinadorGroupByPayload<T extends coordinadorGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<CoordinadorGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof CoordinadorGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], CoordinadorGroupByOutputType[P]>
+            : GetScalarType<T[P], CoordinadorGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type coordinadorSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_coo?: boolean
+    nom_coo?: boolean
+    ape_coo?: boolean
+    cor_coo?: boolean
+    url_img_coo?: boolean
+    tit_coo?: boolean
+    carreras?: boolean | coordinador$carrerasArgs<ExtArgs>
+    _count?: boolean | CoordinadorCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["coordinador"]>
+
+  export type coordinadorSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_coo?: boolean
+    nom_coo?: boolean
+    ape_coo?: boolean
+    cor_coo?: boolean
+    url_img_coo?: boolean
+    tit_coo?: boolean
+  }, ExtArgs["result"]["coordinador"]>
+
+  export type coordinadorSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_coo?: boolean
+    nom_coo?: boolean
+    ape_coo?: boolean
+    cor_coo?: boolean
+    url_img_coo?: boolean
+    tit_coo?: boolean
+  }, ExtArgs["result"]["coordinador"]>
+
+  export type coordinadorSelectScalar = {
+    id_coo?: boolean
+    nom_coo?: boolean
+    ape_coo?: boolean
+    cor_coo?: boolean
+    url_img_coo?: boolean
+    tit_coo?: boolean
+  }
+
+  export type coordinadorOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_coo" | "nom_coo" | "ape_coo" | "cor_coo" | "url_img_coo" | "tit_coo", ExtArgs["result"]["coordinador"]>
+  export type coordinadorInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    carreras?: boolean | coordinador$carrerasArgs<ExtArgs>
+    _count?: boolean | CoordinadorCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type coordinadorIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type coordinadorIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+
+  export type $coordinadorPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "coordinador"
+    objects: {
+      carreras: Prisma.$carreraPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id_coo: string
+      nom_coo: string
+      ape_coo: string
+      cor_coo: string
+      url_img_coo: string
+      tit_coo: string
+    }, ExtArgs["result"]["coordinador"]>
+    composites: {}
+  }
+
+  type coordinadorGetPayload<S extends boolean | null | undefined | coordinadorDefaultArgs> = $Result.GetResult<Prisma.$coordinadorPayload, S>
+
+  type coordinadorCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<coordinadorFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: CoordinadorCountAggregateInputType | true
+    }
+
+  export interface coordinadorDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['coordinador'], meta: { name: 'coordinador' } }
+    /**
+     * Find zero or one Coordinador that matches the filter.
+     * @param {coordinadorFindUniqueArgs} args - Arguments to find a Coordinador
+     * @example
+     * // Get one Coordinador
+     * const coordinador = await prisma.coordinador.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends coordinadorFindUniqueArgs>(args: SelectSubset<T, coordinadorFindUniqueArgs<ExtArgs>>): Prisma__coordinadorClient<$Result.GetResult<Prisma.$coordinadorPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Coordinador that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {coordinadorFindUniqueOrThrowArgs} args - Arguments to find a Coordinador
+     * @example
+     * // Get one Coordinador
+     * const coordinador = await prisma.coordinador.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends coordinadorFindUniqueOrThrowArgs>(args: SelectSubset<T, coordinadorFindUniqueOrThrowArgs<ExtArgs>>): Prisma__coordinadorClient<$Result.GetResult<Prisma.$coordinadorPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Coordinador that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {coordinadorFindFirstArgs} args - Arguments to find a Coordinador
+     * @example
+     * // Get one Coordinador
+     * const coordinador = await prisma.coordinador.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends coordinadorFindFirstArgs>(args?: SelectSubset<T, coordinadorFindFirstArgs<ExtArgs>>): Prisma__coordinadorClient<$Result.GetResult<Prisma.$coordinadorPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Coordinador that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {coordinadorFindFirstOrThrowArgs} args - Arguments to find a Coordinador
+     * @example
+     * // Get one Coordinador
+     * const coordinador = await prisma.coordinador.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends coordinadorFindFirstOrThrowArgs>(args?: SelectSubset<T, coordinadorFindFirstOrThrowArgs<ExtArgs>>): Prisma__coordinadorClient<$Result.GetResult<Prisma.$coordinadorPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Coordinadors that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {coordinadorFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Coordinadors
+     * const coordinadors = await prisma.coordinador.findMany()
+     * 
+     * // Get first 10 Coordinadors
+     * const coordinadors = await prisma.coordinador.findMany({ take: 10 })
+     * 
+     * // Only select the `id_coo`
+     * const coordinadorWithId_cooOnly = await prisma.coordinador.findMany({ select: { id_coo: true } })
+     * 
+     */
+    findMany<T extends coordinadorFindManyArgs>(args?: SelectSubset<T, coordinadorFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$coordinadorPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Coordinador.
+     * @param {coordinadorCreateArgs} args - Arguments to create a Coordinador.
+     * @example
+     * // Create one Coordinador
+     * const Coordinador = await prisma.coordinador.create({
+     *   data: {
+     *     // ... data to create a Coordinador
+     *   }
+     * })
+     * 
+     */
+    create<T extends coordinadorCreateArgs>(args: SelectSubset<T, coordinadorCreateArgs<ExtArgs>>): Prisma__coordinadorClient<$Result.GetResult<Prisma.$coordinadorPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Coordinadors.
+     * @param {coordinadorCreateManyArgs} args - Arguments to create many Coordinadors.
+     * @example
+     * // Create many Coordinadors
+     * const coordinador = await prisma.coordinador.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends coordinadorCreateManyArgs>(args?: SelectSubset<T, coordinadorCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Coordinadors and returns the data saved in the database.
+     * @param {coordinadorCreateManyAndReturnArgs} args - Arguments to create many Coordinadors.
+     * @example
+     * // Create many Coordinadors
+     * const coordinador = await prisma.coordinador.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Coordinadors and only return the `id_coo`
+     * const coordinadorWithId_cooOnly = await prisma.coordinador.createManyAndReturn({
+     *   select: { id_coo: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends coordinadorCreateManyAndReturnArgs>(args?: SelectSubset<T, coordinadorCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$coordinadorPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Coordinador.
+     * @param {coordinadorDeleteArgs} args - Arguments to delete one Coordinador.
+     * @example
+     * // Delete one Coordinador
+     * const Coordinador = await prisma.coordinador.delete({
+     *   where: {
+     *     // ... filter to delete one Coordinador
+     *   }
+     * })
+     * 
+     */
+    delete<T extends coordinadorDeleteArgs>(args: SelectSubset<T, coordinadorDeleteArgs<ExtArgs>>): Prisma__coordinadorClient<$Result.GetResult<Prisma.$coordinadorPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Coordinador.
+     * @param {coordinadorUpdateArgs} args - Arguments to update one Coordinador.
+     * @example
+     * // Update one Coordinador
+     * const coordinador = await prisma.coordinador.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends coordinadorUpdateArgs>(args: SelectSubset<T, coordinadorUpdateArgs<ExtArgs>>): Prisma__coordinadorClient<$Result.GetResult<Prisma.$coordinadorPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Coordinadors.
+     * @param {coordinadorDeleteManyArgs} args - Arguments to filter Coordinadors to delete.
+     * @example
+     * // Delete a few Coordinadors
+     * const { count } = await prisma.coordinador.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends coordinadorDeleteManyArgs>(args?: SelectSubset<T, coordinadorDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Coordinadors.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {coordinadorUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Coordinadors
+     * const coordinador = await prisma.coordinador.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends coordinadorUpdateManyArgs>(args: SelectSubset<T, coordinadorUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Coordinadors and returns the data updated in the database.
+     * @param {coordinadorUpdateManyAndReturnArgs} args - Arguments to update many Coordinadors.
+     * @example
+     * // Update many Coordinadors
+     * const coordinador = await prisma.coordinador.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Coordinadors and only return the `id_coo`
+     * const coordinadorWithId_cooOnly = await prisma.coordinador.updateManyAndReturn({
+     *   select: { id_coo: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends coordinadorUpdateManyAndReturnArgs>(args: SelectSubset<T, coordinadorUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$coordinadorPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Coordinador.
+     * @param {coordinadorUpsertArgs} args - Arguments to update or create a Coordinador.
+     * @example
+     * // Update or create a Coordinador
+     * const coordinador = await prisma.coordinador.upsert({
+     *   create: {
+     *     // ... data to create a Coordinador
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Coordinador we want to update
+     *   }
+     * })
+     */
+    upsert<T extends coordinadorUpsertArgs>(args: SelectSubset<T, coordinadorUpsertArgs<ExtArgs>>): Prisma__coordinadorClient<$Result.GetResult<Prisma.$coordinadorPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Coordinadors.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {coordinadorCountArgs} args - Arguments to filter Coordinadors to count.
+     * @example
+     * // Count the number of Coordinadors
+     * const count = await prisma.coordinador.count({
+     *   where: {
+     *     // ... the filter for the Coordinadors we want to count
+     *   }
+     * })
+    **/
+    count<T extends coordinadorCountArgs>(
+      args?: Subset<T, coordinadorCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], CoordinadorCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Coordinador.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CoordinadorAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends CoordinadorAggregateArgs>(args: Subset<T, CoordinadorAggregateArgs>): Prisma.PrismaPromise<GetCoordinadorAggregateType<T>>
+
+    /**
+     * Group by Coordinador.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {coordinadorGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends coordinadorGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: coordinadorGroupByArgs['orderBy'] }
+        : { orderBy?: coordinadorGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, coordinadorGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCoordinadorGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the coordinador model
+   */
+  readonly fields: coordinadorFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for coordinador.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__coordinadorClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    carreras<T extends coordinador$carrerasArgs<ExtArgs> = {}>(args?: Subset<T, coordinador$carrerasArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$carreraPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the coordinador model
+   */
+  interface coordinadorFieldRefs {
+    readonly id_coo: FieldRef<"coordinador", 'String'>
+    readonly nom_coo: FieldRef<"coordinador", 'String'>
+    readonly ape_coo: FieldRef<"coordinador", 'String'>
+    readonly cor_coo: FieldRef<"coordinador", 'String'>
+    readonly url_img_coo: FieldRef<"coordinador", 'String'>
+    readonly tit_coo: FieldRef<"coordinador", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * coordinador findUnique
+   */
+  export type coordinadorFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the coordinador
+     */
+    select?: coordinadorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the coordinador
+     */
+    omit?: coordinadorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: coordinadorInclude<ExtArgs> | null
+    /**
+     * Filter, which coordinador to fetch.
+     */
+    where: coordinadorWhereUniqueInput
+  }
+
+  /**
+   * coordinador findUniqueOrThrow
+   */
+  export type coordinadorFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the coordinador
+     */
+    select?: coordinadorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the coordinador
+     */
+    omit?: coordinadorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: coordinadorInclude<ExtArgs> | null
+    /**
+     * Filter, which coordinador to fetch.
+     */
+    where: coordinadorWhereUniqueInput
+  }
+
+  /**
+   * coordinador findFirst
+   */
+  export type coordinadorFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the coordinador
+     */
+    select?: coordinadorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the coordinador
+     */
+    omit?: coordinadorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: coordinadorInclude<ExtArgs> | null
+    /**
+     * Filter, which coordinador to fetch.
+     */
+    where?: coordinadorWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of coordinadors to fetch.
+     */
+    orderBy?: coordinadorOrderByWithRelationInput | coordinadorOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for coordinadors.
+     */
+    cursor?: coordinadorWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` coordinadors from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` coordinadors.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of coordinadors.
+     */
+    distinct?: CoordinadorScalarFieldEnum | CoordinadorScalarFieldEnum[]
+  }
+
+  /**
+   * coordinador findFirstOrThrow
+   */
+  export type coordinadorFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the coordinador
+     */
+    select?: coordinadorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the coordinador
+     */
+    omit?: coordinadorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: coordinadorInclude<ExtArgs> | null
+    /**
+     * Filter, which coordinador to fetch.
+     */
+    where?: coordinadorWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of coordinadors to fetch.
+     */
+    orderBy?: coordinadorOrderByWithRelationInput | coordinadorOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for coordinadors.
+     */
+    cursor?: coordinadorWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` coordinadors from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` coordinadors.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of coordinadors.
+     */
+    distinct?: CoordinadorScalarFieldEnum | CoordinadorScalarFieldEnum[]
+  }
+
+  /**
+   * coordinador findMany
+   */
+  export type coordinadorFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the coordinador
+     */
+    select?: coordinadorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the coordinador
+     */
+    omit?: coordinadorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: coordinadorInclude<ExtArgs> | null
+    /**
+     * Filter, which coordinadors to fetch.
+     */
+    where?: coordinadorWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of coordinadors to fetch.
+     */
+    orderBy?: coordinadorOrderByWithRelationInput | coordinadorOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing coordinadors.
+     */
+    cursor?: coordinadorWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` coordinadors from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` coordinadors.
+     */
+    skip?: number
+    distinct?: CoordinadorScalarFieldEnum | CoordinadorScalarFieldEnum[]
+  }
+
+  /**
+   * coordinador create
+   */
+  export type coordinadorCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the coordinador
+     */
+    select?: coordinadorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the coordinador
+     */
+    omit?: coordinadorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: coordinadorInclude<ExtArgs> | null
+    /**
+     * The data needed to create a coordinador.
+     */
+    data: XOR<coordinadorCreateInput, coordinadorUncheckedCreateInput>
+  }
+
+  /**
+   * coordinador createMany
+   */
+  export type coordinadorCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many coordinadors.
+     */
+    data: coordinadorCreateManyInput | coordinadorCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * coordinador createManyAndReturn
+   */
+  export type coordinadorCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the coordinador
+     */
+    select?: coordinadorSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the coordinador
+     */
+    omit?: coordinadorOmit<ExtArgs> | null
+    /**
+     * The data used to create many coordinadors.
+     */
+    data: coordinadorCreateManyInput | coordinadorCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * coordinador update
+   */
+  export type coordinadorUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the coordinador
+     */
+    select?: coordinadorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the coordinador
+     */
+    omit?: coordinadorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: coordinadorInclude<ExtArgs> | null
+    /**
+     * The data needed to update a coordinador.
+     */
+    data: XOR<coordinadorUpdateInput, coordinadorUncheckedUpdateInput>
+    /**
+     * Choose, which coordinador to update.
+     */
+    where: coordinadorWhereUniqueInput
+  }
+
+  /**
+   * coordinador updateMany
+   */
+  export type coordinadorUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update coordinadors.
+     */
+    data: XOR<coordinadorUpdateManyMutationInput, coordinadorUncheckedUpdateManyInput>
+    /**
+     * Filter which coordinadors to update
+     */
+    where?: coordinadorWhereInput
+    /**
+     * Limit how many coordinadors to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * coordinador updateManyAndReturn
+   */
+  export type coordinadorUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the coordinador
+     */
+    select?: coordinadorSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the coordinador
+     */
+    omit?: coordinadorOmit<ExtArgs> | null
+    /**
+     * The data used to update coordinadors.
+     */
+    data: XOR<coordinadorUpdateManyMutationInput, coordinadorUncheckedUpdateManyInput>
+    /**
+     * Filter which coordinadors to update
+     */
+    where?: coordinadorWhereInput
+    /**
+     * Limit how many coordinadors to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * coordinador upsert
+   */
+  export type coordinadorUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the coordinador
+     */
+    select?: coordinadorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the coordinador
+     */
+    omit?: coordinadorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: coordinadorInclude<ExtArgs> | null
+    /**
+     * The filter to search for the coordinador to update in case it exists.
+     */
+    where: coordinadorWhereUniqueInput
+    /**
+     * In case the coordinador found by the `where` argument doesn't exist, create a new coordinador with this data.
+     */
+    create: XOR<coordinadorCreateInput, coordinadorUncheckedCreateInput>
+    /**
+     * In case the coordinador was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<coordinadorUpdateInput, coordinadorUncheckedUpdateInput>
+  }
+
+  /**
+   * coordinador delete
+   */
+  export type coordinadorDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the coordinador
+     */
+    select?: coordinadorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the coordinador
+     */
+    omit?: coordinadorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: coordinadorInclude<ExtArgs> | null
+    /**
+     * Filter which coordinador to delete.
+     */
+    where: coordinadorWhereUniqueInput
+  }
+
+  /**
+   * coordinador deleteMany
+   */
+  export type coordinadorDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which coordinadors to delete
+     */
+    where?: coordinadorWhereInput
+    /**
+     * Limit how many coordinadors to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * coordinador.carreras
+   */
+  export type coordinador$carrerasArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the carrera
+     */
+    select?: carreraSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the carrera
+     */
+    omit?: carreraOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: carreraInclude<ExtArgs> | null
+    where?: carreraWhereInput
+    orderBy?: carreraOrderByWithRelationInput | carreraOrderByWithRelationInput[]
+    cursor?: carreraWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CarreraScalarFieldEnum | CarreraScalarFieldEnum[]
+  }
+
+  /**
+   * coordinador without action
+   */
+  export type coordinadorDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the coordinador
+     */
+    select?: coordinadorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the coordinador
+     */
+    omit?: coordinadorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: coordinadorInclude<ExtArgs> | null
+  }
+
 
   /**
    * Model usuario
@@ -4084,6 +11431,1329 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: usuarioInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model cuenta
+   */
+
+  export type AggregateCuenta = {
+    _count: CuentaCountAggregateOutputType | null
+    _min: CuentaMinAggregateOutputType | null
+    _max: CuentaMaxAggregateOutputType | null
+  }
+
+  export type CuentaMinAggregateOutputType = {
+    id_cue: string | null
+    id_usu_per: string | null
+    cor_usu: string | null
+    con_usu: string | null
+    fec_cre_cue: Date | null
+    rol_usu: $Enums.rol_usuario | null
+    est_ver_cor: boolean | null
+    fec_ver_cor: Date | null
+  }
+
+  export type CuentaMaxAggregateOutputType = {
+    id_cue: string | null
+    id_usu_per: string | null
+    cor_usu: string | null
+    con_usu: string | null
+    fec_cre_cue: Date | null
+    rol_usu: $Enums.rol_usuario | null
+    est_ver_cor: boolean | null
+    fec_ver_cor: Date | null
+  }
+
+  export type CuentaCountAggregateOutputType = {
+    id_cue: number
+    id_usu_per: number
+    cor_usu: number
+    con_usu: number
+    fec_cre_cue: number
+    rol_usu: number
+    est_ver_cor: number
+    fec_ver_cor: number
+    _all: number
+  }
+
+
+  export type CuentaMinAggregateInputType = {
+    id_cue?: true
+    id_usu_per?: true
+    cor_usu?: true
+    con_usu?: true
+    fec_cre_cue?: true
+    rol_usu?: true
+    est_ver_cor?: true
+    fec_ver_cor?: true
+  }
+
+  export type CuentaMaxAggregateInputType = {
+    id_cue?: true
+    id_usu_per?: true
+    cor_usu?: true
+    con_usu?: true
+    fec_cre_cue?: true
+    rol_usu?: true
+    est_ver_cor?: true
+    fec_ver_cor?: true
+  }
+
+  export type CuentaCountAggregateInputType = {
+    id_cue?: true
+    id_usu_per?: true
+    cor_usu?: true
+    con_usu?: true
+    fec_cre_cue?: true
+    rol_usu?: true
+    est_ver_cor?: true
+    fec_ver_cor?: true
+    _all?: true
+  }
+
+  export type CuentaAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which cuenta to aggregate.
+     */
+    where?: cuentaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of cuentas to fetch.
+     */
+    orderBy?: cuentaOrderByWithRelationInput | cuentaOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: cuentaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` cuentas from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` cuentas.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned cuentas
+    **/
+    _count?: true | CuentaCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: CuentaMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: CuentaMaxAggregateInputType
+  }
+
+  export type GetCuentaAggregateType<T extends CuentaAggregateArgs> = {
+        [P in keyof T & keyof AggregateCuenta]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCuenta[P]>
+      : GetScalarType<T[P], AggregateCuenta[P]>
+  }
+
+
+
+
+  export type cuentaGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: cuentaWhereInput
+    orderBy?: cuentaOrderByWithAggregationInput | cuentaOrderByWithAggregationInput[]
+    by: CuentaScalarFieldEnum[] | CuentaScalarFieldEnum
+    having?: cuentaScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: CuentaCountAggregateInputType | true
+    _min?: CuentaMinAggregateInputType
+    _max?: CuentaMaxAggregateInputType
+  }
+
+  export type CuentaGroupByOutputType = {
+    id_cue: string
+    id_usu_per: string
+    cor_usu: string
+    con_usu: string
+    fec_cre_cue: Date
+    rol_usu: $Enums.rol_usuario
+    est_ver_cor: boolean
+    fec_ver_cor: Date | null
+    _count: CuentaCountAggregateOutputType | null
+    _min: CuentaMinAggregateOutputType | null
+    _max: CuentaMaxAggregateOutputType | null
+  }
+
+  type GetCuentaGroupByPayload<T extends cuentaGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<CuentaGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof CuentaGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], CuentaGroupByOutputType[P]>
+            : GetScalarType<T[P], CuentaGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type cuentaSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_cue?: boolean
+    id_usu_per?: boolean
+    cor_usu?: boolean
+    con_usu?: boolean
+    fec_cre_cue?: boolean
+    rol_usu?: boolean
+    est_ver_cor?: boolean
+    fec_ver_cor?: boolean
+    usuario?: boolean | usuarioDefaultArgs<ExtArgs>
+    inscripciones?: boolean | cuenta$inscripcionesArgs<ExtArgs>
+    cartas_motivacion?: boolean | cuenta$cartas_motivacionArgs<ExtArgs>
+    comprobantes_pago?: boolean | cuenta$comprobantes_pagoArgs<ExtArgs>
+    eventos?: boolean | cuenta$eventosArgs<ExtArgs>
+    observaciones_creadas?: boolean | cuenta$observaciones_creadasArgs<ExtArgs>
+    inscripciones_validadas?: boolean | cuenta$inscripciones_validadasArgs<ExtArgs>
+    tokens_cuenta?: boolean | cuenta$tokens_cuentaArgs<ExtArgs>
+    tokens_invalidados?: boolean | cuenta$tokens_invalidadosArgs<ExtArgs>
+    _count?: boolean | CuentaCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["cuenta"]>
+
+  export type cuentaSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_cue?: boolean
+    id_usu_per?: boolean
+    cor_usu?: boolean
+    con_usu?: boolean
+    fec_cre_cue?: boolean
+    rol_usu?: boolean
+    est_ver_cor?: boolean
+    fec_ver_cor?: boolean
+    usuario?: boolean | usuarioDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["cuenta"]>
+
+  export type cuentaSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_cue?: boolean
+    id_usu_per?: boolean
+    cor_usu?: boolean
+    con_usu?: boolean
+    fec_cre_cue?: boolean
+    rol_usu?: boolean
+    est_ver_cor?: boolean
+    fec_ver_cor?: boolean
+    usuario?: boolean | usuarioDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["cuenta"]>
+
+  export type cuentaSelectScalar = {
+    id_cue?: boolean
+    id_usu_per?: boolean
+    cor_usu?: boolean
+    con_usu?: boolean
+    fec_cre_cue?: boolean
+    rol_usu?: boolean
+    est_ver_cor?: boolean
+    fec_ver_cor?: boolean
+  }
+
+  export type cuentaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_cue" | "id_usu_per" | "cor_usu" | "con_usu" | "fec_cre_cue" | "rol_usu" | "est_ver_cor" | "fec_ver_cor", ExtArgs["result"]["cuenta"]>
+  export type cuentaInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    usuario?: boolean | usuarioDefaultArgs<ExtArgs>
+    inscripciones?: boolean | cuenta$inscripcionesArgs<ExtArgs>
+    cartas_motivacion?: boolean | cuenta$cartas_motivacionArgs<ExtArgs>
+    comprobantes_pago?: boolean | cuenta$comprobantes_pagoArgs<ExtArgs>
+    eventos?: boolean | cuenta$eventosArgs<ExtArgs>
+    observaciones_creadas?: boolean | cuenta$observaciones_creadasArgs<ExtArgs>
+    inscripciones_validadas?: boolean | cuenta$inscripciones_validadasArgs<ExtArgs>
+    tokens_cuenta?: boolean | cuenta$tokens_cuentaArgs<ExtArgs>
+    tokens_invalidados?: boolean | cuenta$tokens_invalidadosArgs<ExtArgs>
+    _count?: boolean | CuentaCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type cuentaIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    usuario?: boolean | usuarioDefaultArgs<ExtArgs>
+  }
+  export type cuentaIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    usuario?: boolean | usuarioDefaultArgs<ExtArgs>
+  }
+
+  export type $cuentaPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "cuenta"
+    objects: {
+      usuario: Prisma.$usuarioPayload<ExtArgs>
+      inscripciones: Prisma.$inscripcionPayload<ExtArgs>[]
+      cartas_motivacion: Prisma.$carta_motivacionPayload<ExtArgs>[]
+      comprobantes_pago: Prisma.$comprobante_pagoPayload<ExtArgs>[]
+      eventos: Prisma.$eventoPayload<ExtArgs>[]
+      observaciones_creadas: Prisma.$observacion_inscripcionPayload<ExtArgs>[]
+      inscripciones_validadas: Prisma.$inscripcionPayload<ExtArgs>[]
+      tokens_cuenta: Prisma.$token_cuentaPayload<ExtArgs>[]
+      tokens_invalidados: Prisma.$invalidacion_tokenPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id_cue: string
+      id_usu_per: string
+      cor_usu: string
+      con_usu: string
+      fec_cre_cue: Date
+      rol_usu: $Enums.rol_usuario
+      est_ver_cor: boolean
+      fec_ver_cor: Date | null
+    }, ExtArgs["result"]["cuenta"]>
+    composites: {}
+  }
+
+  type cuentaGetPayload<S extends boolean | null | undefined | cuentaDefaultArgs> = $Result.GetResult<Prisma.$cuentaPayload, S>
+
+  type cuentaCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<cuentaFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: CuentaCountAggregateInputType | true
+    }
+
+  export interface cuentaDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['cuenta'], meta: { name: 'cuenta' } }
+    /**
+     * Find zero or one Cuenta that matches the filter.
+     * @param {cuentaFindUniqueArgs} args - Arguments to find a Cuenta
+     * @example
+     * // Get one Cuenta
+     * const cuenta = await prisma.cuenta.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends cuentaFindUniqueArgs>(args: SelectSubset<T, cuentaFindUniqueArgs<ExtArgs>>): Prisma__cuentaClient<$Result.GetResult<Prisma.$cuentaPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Cuenta that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {cuentaFindUniqueOrThrowArgs} args - Arguments to find a Cuenta
+     * @example
+     * // Get one Cuenta
+     * const cuenta = await prisma.cuenta.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends cuentaFindUniqueOrThrowArgs>(args: SelectSubset<T, cuentaFindUniqueOrThrowArgs<ExtArgs>>): Prisma__cuentaClient<$Result.GetResult<Prisma.$cuentaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Cuenta that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {cuentaFindFirstArgs} args - Arguments to find a Cuenta
+     * @example
+     * // Get one Cuenta
+     * const cuenta = await prisma.cuenta.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends cuentaFindFirstArgs>(args?: SelectSubset<T, cuentaFindFirstArgs<ExtArgs>>): Prisma__cuentaClient<$Result.GetResult<Prisma.$cuentaPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Cuenta that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {cuentaFindFirstOrThrowArgs} args - Arguments to find a Cuenta
+     * @example
+     * // Get one Cuenta
+     * const cuenta = await prisma.cuenta.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends cuentaFindFirstOrThrowArgs>(args?: SelectSubset<T, cuentaFindFirstOrThrowArgs<ExtArgs>>): Prisma__cuentaClient<$Result.GetResult<Prisma.$cuentaPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Cuentas that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {cuentaFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Cuentas
+     * const cuentas = await prisma.cuenta.findMany()
+     * 
+     * // Get first 10 Cuentas
+     * const cuentas = await prisma.cuenta.findMany({ take: 10 })
+     * 
+     * // Only select the `id_cue`
+     * const cuentaWithId_cueOnly = await prisma.cuenta.findMany({ select: { id_cue: true } })
+     * 
+     */
+    findMany<T extends cuentaFindManyArgs>(args?: SelectSubset<T, cuentaFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$cuentaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Cuenta.
+     * @param {cuentaCreateArgs} args - Arguments to create a Cuenta.
+     * @example
+     * // Create one Cuenta
+     * const Cuenta = await prisma.cuenta.create({
+     *   data: {
+     *     // ... data to create a Cuenta
+     *   }
+     * })
+     * 
+     */
+    create<T extends cuentaCreateArgs>(args: SelectSubset<T, cuentaCreateArgs<ExtArgs>>): Prisma__cuentaClient<$Result.GetResult<Prisma.$cuentaPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Cuentas.
+     * @param {cuentaCreateManyArgs} args - Arguments to create many Cuentas.
+     * @example
+     * // Create many Cuentas
+     * const cuenta = await prisma.cuenta.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends cuentaCreateManyArgs>(args?: SelectSubset<T, cuentaCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Cuentas and returns the data saved in the database.
+     * @param {cuentaCreateManyAndReturnArgs} args - Arguments to create many Cuentas.
+     * @example
+     * // Create many Cuentas
+     * const cuenta = await prisma.cuenta.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Cuentas and only return the `id_cue`
+     * const cuentaWithId_cueOnly = await prisma.cuenta.createManyAndReturn({
+     *   select: { id_cue: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends cuentaCreateManyAndReturnArgs>(args?: SelectSubset<T, cuentaCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$cuentaPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Cuenta.
+     * @param {cuentaDeleteArgs} args - Arguments to delete one Cuenta.
+     * @example
+     * // Delete one Cuenta
+     * const Cuenta = await prisma.cuenta.delete({
+     *   where: {
+     *     // ... filter to delete one Cuenta
+     *   }
+     * })
+     * 
+     */
+    delete<T extends cuentaDeleteArgs>(args: SelectSubset<T, cuentaDeleteArgs<ExtArgs>>): Prisma__cuentaClient<$Result.GetResult<Prisma.$cuentaPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Cuenta.
+     * @param {cuentaUpdateArgs} args - Arguments to update one Cuenta.
+     * @example
+     * // Update one Cuenta
+     * const cuenta = await prisma.cuenta.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends cuentaUpdateArgs>(args: SelectSubset<T, cuentaUpdateArgs<ExtArgs>>): Prisma__cuentaClient<$Result.GetResult<Prisma.$cuentaPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Cuentas.
+     * @param {cuentaDeleteManyArgs} args - Arguments to filter Cuentas to delete.
+     * @example
+     * // Delete a few Cuentas
+     * const { count } = await prisma.cuenta.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends cuentaDeleteManyArgs>(args?: SelectSubset<T, cuentaDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Cuentas.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {cuentaUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Cuentas
+     * const cuenta = await prisma.cuenta.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends cuentaUpdateManyArgs>(args: SelectSubset<T, cuentaUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Cuentas and returns the data updated in the database.
+     * @param {cuentaUpdateManyAndReturnArgs} args - Arguments to update many Cuentas.
+     * @example
+     * // Update many Cuentas
+     * const cuenta = await prisma.cuenta.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Cuentas and only return the `id_cue`
+     * const cuentaWithId_cueOnly = await prisma.cuenta.updateManyAndReturn({
+     *   select: { id_cue: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends cuentaUpdateManyAndReturnArgs>(args: SelectSubset<T, cuentaUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$cuentaPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Cuenta.
+     * @param {cuentaUpsertArgs} args - Arguments to update or create a Cuenta.
+     * @example
+     * // Update or create a Cuenta
+     * const cuenta = await prisma.cuenta.upsert({
+     *   create: {
+     *     // ... data to create a Cuenta
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Cuenta we want to update
+     *   }
+     * })
+     */
+    upsert<T extends cuentaUpsertArgs>(args: SelectSubset<T, cuentaUpsertArgs<ExtArgs>>): Prisma__cuentaClient<$Result.GetResult<Prisma.$cuentaPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Cuentas.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {cuentaCountArgs} args - Arguments to filter Cuentas to count.
+     * @example
+     * // Count the number of Cuentas
+     * const count = await prisma.cuenta.count({
+     *   where: {
+     *     // ... the filter for the Cuentas we want to count
+     *   }
+     * })
+    **/
+    count<T extends cuentaCountArgs>(
+      args?: Subset<T, cuentaCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], CuentaCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Cuenta.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CuentaAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends CuentaAggregateArgs>(args: Subset<T, CuentaAggregateArgs>): Prisma.PrismaPromise<GetCuentaAggregateType<T>>
+
+    /**
+     * Group by Cuenta.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {cuentaGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends cuentaGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: cuentaGroupByArgs['orderBy'] }
+        : { orderBy?: cuentaGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, cuentaGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCuentaGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the cuenta model
+   */
+  readonly fields: cuentaFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for cuenta.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__cuentaClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    usuario<T extends usuarioDefaultArgs<ExtArgs> = {}>(args?: Subset<T, usuarioDefaultArgs<ExtArgs>>): Prisma__usuarioClient<$Result.GetResult<Prisma.$usuarioPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    inscripciones<T extends cuenta$inscripcionesArgs<ExtArgs> = {}>(args?: Subset<T, cuenta$inscripcionesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$inscripcionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    cartas_motivacion<T extends cuenta$cartas_motivacionArgs<ExtArgs> = {}>(args?: Subset<T, cuenta$cartas_motivacionArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$carta_motivacionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    comprobantes_pago<T extends cuenta$comprobantes_pagoArgs<ExtArgs> = {}>(args?: Subset<T, cuenta$comprobantes_pagoArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$comprobante_pagoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    eventos<T extends cuenta$eventosArgs<ExtArgs> = {}>(args?: Subset<T, cuenta$eventosArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$eventoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    observaciones_creadas<T extends cuenta$observaciones_creadasArgs<ExtArgs> = {}>(args?: Subset<T, cuenta$observaciones_creadasArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$observacion_inscripcionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    inscripciones_validadas<T extends cuenta$inscripciones_validadasArgs<ExtArgs> = {}>(args?: Subset<T, cuenta$inscripciones_validadasArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$inscripcionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    tokens_cuenta<T extends cuenta$tokens_cuentaArgs<ExtArgs> = {}>(args?: Subset<T, cuenta$tokens_cuentaArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$token_cuentaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    tokens_invalidados<T extends cuenta$tokens_invalidadosArgs<ExtArgs> = {}>(args?: Subset<T, cuenta$tokens_invalidadosArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$invalidacion_tokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the cuenta model
+   */
+  interface cuentaFieldRefs {
+    readonly id_cue: FieldRef<"cuenta", 'String'>
+    readonly id_usu_per: FieldRef<"cuenta", 'String'>
+    readonly cor_usu: FieldRef<"cuenta", 'String'>
+    readonly con_usu: FieldRef<"cuenta", 'String'>
+    readonly fec_cre_cue: FieldRef<"cuenta", 'DateTime'>
+    readonly rol_usu: FieldRef<"cuenta", 'rol_usuario'>
+    readonly est_ver_cor: FieldRef<"cuenta", 'Boolean'>
+    readonly fec_ver_cor: FieldRef<"cuenta", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * cuenta findUnique
+   */
+  export type cuentaFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cuenta
+     */
+    select?: cuentaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the cuenta
+     */
+    omit?: cuentaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cuentaInclude<ExtArgs> | null
+    /**
+     * Filter, which cuenta to fetch.
+     */
+    where: cuentaWhereUniqueInput
+  }
+
+  /**
+   * cuenta findUniqueOrThrow
+   */
+  export type cuentaFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cuenta
+     */
+    select?: cuentaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the cuenta
+     */
+    omit?: cuentaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cuentaInclude<ExtArgs> | null
+    /**
+     * Filter, which cuenta to fetch.
+     */
+    where: cuentaWhereUniqueInput
+  }
+
+  /**
+   * cuenta findFirst
+   */
+  export type cuentaFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cuenta
+     */
+    select?: cuentaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the cuenta
+     */
+    omit?: cuentaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cuentaInclude<ExtArgs> | null
+    /**
+     * Filter, which cuenta to fetch.
+     */
+    where?: cuentaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of cuentas to fetch.
+     */
+    orderBy?: cuentaOrderByWithRelationInput | cuentaOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for cuentas.
+     */
+    cursor?: cuentaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` cuentas from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` cuentas.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of cuentas.
+     */
+    distinct?: CuentaScalarFieldEnum | CuentaScalarFieldEnum[]
+  }
+
+  /**
+   * cuenta findFirstOrThrow
+   */
+  export type cuentaFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cuenta
+     */
+    select?: cuentaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the cuenta
+     */
+    omit?: cuentaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cuentaInclude<ExtArgs> | null
+    /**
+     * Filter, which cuenta to fetch.
+     */
+    where?: cuentaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of cuentas to fetch.
+     */
+    orderBy?: cuentaOrderByWithRelationInput | cuentaOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for cuentas.
+     */
+    cursor?: cuentaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` cuentas from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` cuentas.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of cuentas.
+     */
+    distinct?: CuentaScalarFieldEnum | CuentaScalarFieldEnum[]
+  }
+
+  /**
+   * cuenta findMany
+   */
+  export type cuentaFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cuenta
+     */
+    select?: cuentaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the cuenta
+     */
+    omit?: cuentaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cuentaInclude<ExtArgs> | null
+    /**
+     * Filter, which cuentas to fetch.
+     */
+    where?: cuentaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of cuentas to fetch.
+     */
+    orderBy?: cuentaOrderByWithRelationInput | cuentaOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing cuentas.
+     */
+    cursor?: cuentaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` cuentas from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` cuentas.
+     */
+    skip?: number
+    distinct?: CuentaScalarFieldEnum | CuentaScalarFieldEnum[]
+  }
+
+  /**
+   * cuenta create
+   */
+  export type cuentaCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cuenta
+     */
+    select?: cuentaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the cuenta
+     */
+    omit?: cuentaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cuentaInclude<ExtArgs> | null
+    /**
+     * The data needed to create a cuenta.
+     */
+    data: XOR<cuentaCreateInput, cuentaUncheckedCreateInput>
+  }
+
+  /**
+   * cuenta createMany
+   */
+  export type cuentaCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many cuentas.
+     */
+    data: cuentaCreateManyInput | cuentaCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * cuenta createManyAndReturn
+   */
+  export type cuentaCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cuenta
+     */
+    select?: cuentaSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the cuenta
+     */
+    omit?: cuentaOmit<ExtArgs> | null
+    /**
+     * The data used to create many cuentas.
+     */
+    data: cuentaCreateManyInput | cuentaCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cuentaIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * cuenta update
+   */
+  export type cuentaUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cuenta
+     */
+    select?: cuentaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the cuenta
+     */
+    omit?: cuentaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cuentaInclude<ExtArgs> | null
+    /**
+     * The data needed to update a cuenta.
+     */
+    data: XOR<cuentaUpdateInput, cuentaUncheckedUpdateInput>
+    /**
+     * Choose, which cuenta to update.
+     */
+    where: cuentaWhereUniqueInput
+  }
+
+  /**
+   * cuenta updateMany
+   */
+  export type cuentaUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update cuentas.
+     */
+    data: XOR<cuentaUpdateManyMutationInput, cuentaUncheckedUpdateManyInput>
+    /**
+     * Filter which cuentas to update
+     */
+    where?: cuentaWhereInput
+    /**
+     * Limit how many cuentas to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * cuenta updateManyAndReturn
+   */
+  export type cuentaUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cuenta
+     */
+    select?: cuentaSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the cuenta
+     */
+    omit?: cuentaOmit<ExtArgs> | null
+    /**
+     * The data used to update cuentas.
+     */
+    data: XOR<cuentaUpdateManyMutationInput, cuentaUncheckedUpdateManyInput>
+    /**
+     * Filter which cuentas to update
+     */
+    where?: cuentaWhereInput
+    /**
+     * Limit how many cuentas to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cuentaIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * cuenta upsert
+   */
+  export type cuentaUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cuenta
+     */
+    select?: cuentaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the cuenta
+     */
+    omit?: cuentaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cuentaInclude<ExtArgs> | null
+    /**
+     * The filter to search for the cuenta to update in case it exists.
+     */
+    where: cuentaWhereUniqueInput
+    /**
+     * In case the cuenta found by the `where` argument doesn't exist, create a new cuenta with this data.
+     */
+    create: XOR<cuentaCreateInput, cuentaUncheckedCreateInput>
+    /**
+     * In case the cuenta was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<cuentaUpdateInput, cuentaUncheckedUpdateInput>
+  }
+
+  /**
+   * cuenta delete
+   */
+  export type cuentaDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cuenta
+     */
+    select?: cuentaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the cuenta
+     */
+    omit?: cuentaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cuentaInclude<ExtArgs> | null
+    /**
+     * Filter which cuenta to delete.
+     */
+    where: cuentaWhereUniqueInput
+  }
+
+  /**
+   * cuenta deleteMany
+   */
+  export type cuentaDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which cuentas to delete
+     */
+    where?: cuentaWhereInput
+    /**
+     * Limit how many cuentas to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * cuenta.inscripciones
+   */
+  export type cuenta$inscripcionesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the inscripcion
+     */
+    select?: inscripcionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the inscripcion
+     */
+    omit?: inscripcionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: inscripcionInclude<ExtArgs> | null
+    where?: inscripcionWhereInput
+    orderBy?: inscripcionOrderByWithRelationInput | inscripcionOrderByWithRelationInput[]
+    cursor?: inscripcionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: InscripcionScalarFieldEnum | InscripcionScalarFieldEnum[]
+  }
+
+  /**
+   * cuenta.cartas_motivacion
+   */
+  export type cuenta$cartas_motivacionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the carta_motivacion
+     */
+    select?: carta_motivacionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the carta_motivacion
+     */
+    omit?: carta_motivacionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: carta_motivacionInclude<ExtArgs> | null
+    where?: carta_motivacionWhereInput
+    orderBy?: carta_motivacionOrderByWithRelationInput | carta_motivacionOrderByWithRelationInput[]
+    cursor?: carta_motivacionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Carta_motivacionScalarFieldEnum | Carta_motivacionScalarFieldEnum[]
+  }
+
+  /**
+   * cuenta.comprobantes_pago
+   */
+  export type cuenta$comprobantes_pagoArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the comprobante_pago
+     */
+    select?: comprobante_pagoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the comprobante_pago
+     */
+    omit?: comprobante_pagoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: comprobante_pagoInclude<ExtArgs> | null
+    where?: comprobante_pagoWhereInput
+    orderBy?: comprobante_pagoOrderByWithRelationInput | comprobante_pagoOrderByWithRelationInput[]
+    cursor?: comprobante_pagoWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Comprobante_pagoScalarFieldEnum | Comprobante_pagoScalarFieldEnum[]
+  }
+
+  /**
+   * cuenta.eventos
+   */
+  export type cuenta$eventosArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the evento
+     */
+    select?: eventoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the evento
+     */
+    omit?: eventoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: eventoInclude<ExtArgs> | null
+    where?: eventoWhereInput
+    orderBy?: eventoOrderByWithRelationInput | eventoOrderByWithRelationInput[]
+    cursor?: eventoWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: EventoScalarFieldEnum | EventoScalarFieldEnum[]
+  }
+
+  /**
+   * cuenta.observaciones_creadas
+   */
+  export type cuenta$observaciones_creadasArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the observacion_inscripcion
+     */
+    select?: observacion_inscripcionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the observacion_inscripcion
+     */
+    omit?: observacion_inscripcionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: observacion_inscripcionInclude<ExtArgs> | null
+    where?: observacion_inscripcionWhereInput
+    orderBy?: observacion_inscripcionOrderByWithRelationInput | observacion_inscripcionOrderByWithRelationInput[]
+    cursor?: observacion_inscripcionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Observacion_inscripcionScalarFieldEnum | Observacion_inscripcionScalarFieldEnum[]
+  }
+
+  /**
+   * cuenta.inscripciones_validadas
+   */
+  export type cuenta$inscripciones_validadasArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the inscripcion
+     */
+    select?: inscripcionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the inscripcion
+     */
+    omit?: inscripcionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: inscripcionInclude<ExtArgs> | null
+    where?: inscripcionWhereInput
+    orderBy?: inscripcionOrderByWithRelationInput | inscripcionOrderByWithRelationInput[]
+    cursor?: inscripcionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: InscripcionScalarFieldEnum | InscripcionScalarFieldEnum[]
+  }
+
+  /**
+   * cuenta.tokens_cuenta
+   */
+  export type cuenta$tokens_cuentaArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the token_cuenta
+     */
+    select?: token_cuentaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the token_cuenta
+     */
+    omit?: token_cuentaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: token_cuentaInclude<ExtArgs> | null
+    where?: token_cuentaWhereInput
+    orderBy?: token_cuentaOrderByWithRelationInput | token_cuentaOrderByWithRelationInput[]
+    cursor?: token_cuentaWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Token_cuentaScalarFieldEnum | Token_cuentaScalarFieldEnum[]
+  }
+
+  /**
+   * cuenta.tokens_invalidados
+   */
+  export type cuenta$tokens_invalidadosArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the invalidacion_token
+     */
+    select?: invalidacion_tokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the invalidacion_token
+     */
+    omit?: invalidacion_tokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: invalidacion_tokenInclude<ExtArgs> | null
+    where?: invalidacion_tokenWhereInput
+    orderBy?: invalidacion_tokenOrderByWithRelationInput | invalidacion_tokenOrderByWithRelationInput[]
+    cursor?: invalidacion_tokenWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Invalidacion_tokenScalarFieldEnum | Invalidacion_tokenScalarFieldEnum[]
+  }
+
+  /**
+   * cuenta without action
+   */
+  export type cuentaDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cuenta
+     */
+    select?: cuentaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the cuenta
+     */
+    omit?: cuentaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cuentaInclude<ExtArgs> | null
   }
 
 
@@ -7404,3654 +16074,6 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: observacion_inscripcionInclude<ExtArgs> | null
-  }
-
-
-  /**
-   * Model cuenta
-   */
-
-  export type AggregateCuenta = {
-    _count: CuentaCountAggregateOutputType | null
-    _min: CuentaMinAggregateOutputType | null
-    _max: CuentaMaxAggregateOutputType | null
-  }
-
-  export type CuentaMinAggregateOutputType = {
-    id_cue: string | null
-    id_usu_per: string | null
-    cor_usu: string | null
-    con_usu: string | null
-    fec_cre_cue: Date | null
-    rol_usu: $Enums.rol_usuario | null
-    est_ver_cor: boolean | null
-    fec_ver_cor: Date | null
-  }
-
-  export type CuentaMaxAggregateOutputType = {
-    id_cue: string | null
-    id_usu_per: string | null
-    cor_usu: string | null
-    con_usu: string | null
-    fec_cre_cue: Date | null
-    rol_usu: $Enums.rol_usuario | null
-    est_ver_cor: boolean | null
-    fec_ver_cor: Date | null
-  }
-
-  export type CuentaCountAggregateOutputType = {
-    id_cue: number
-    id_usu_per: number
-    cor_usu: number
-    con_usu: number
-    fec_cre_cue: number
-    rol_usu: number
-    est_ver_cor: number
-    fec_ver_cor: number
-    _all: number
-  }
-
-
-  export type CuentaMinAggregateInputType = {
-    id_cue?: true
-    id_usu_per?: true
-    cor_usu?: true
-    con_usu?: true
-    fec_cre_cue?: true
-    rol_usu?: true
-    est_ver_cor?: true
-    fec_ver_cor?: true
-  }
-
-  export type CuentaMaxAggregateInputType = {
-    id_cue?: true
-    id_usu_per?: true
-    cor_usu?: true
-    con_usu?: true
-    fec_cre_cue?: true
-    rol_usu?: true
-    est_ver_cor?: true
-    fec_ver_cor?: true
-  }
-
-  export type CuentaCountAggregateInputType = {
-    id_cue?: true
-    id_usu_per?: true
-    cor_usu?: true
-    con_usu?: true
-    fec_cre_cue?: true
-    rol_usu?: true
-    est_ver_cor?: true
-    fec_ver_cor?: true
-    _all?: true
-  }
-
-  export type CuentaAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which cuenta to aggregate.
-     */
-    where?: cuentaWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of cuentas to fetch.
-     */
-    orderBy?: cuentaOrderByWithRelationInput | cuentaOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: cuentaWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` cuentas from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` cuentas.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned cuentas
-    **/
-    _count?: true | CuentaCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: CuentaMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: CuentaMaxAggregateInputType
-  }
-
-  export type GetCuentaAggregateType<T extends CuentaAggregateArgs> = {
-        [P in keyof T & keyof AggregateCuenta]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateCuenta[P]>
-      : GetScalarType<T[P], AggregateCuenta[P]>
-  }
-
-
-
-
-  export type cuentaGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: cuentaWhereInput
-    orderBy?: cuentaOrderByWithAggregationInput | cuentaOrderByWithAggregationInput[]
-    by: CuentaScalarFieldEnum[] | CuentaScalarFieldEnum
-    having?: cuentaScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: CuentaCountAggregateInputType | true
-    _min?: CuentaMinAggregateInputType
-    _max?: CuentaMaxAggregateInputType
-  }
-
-  export type CuentaGroupByOutputType = {
-    id_cue: string
-    id_usu_per: string
-    cor_usu: string
-    con_usu: string
-    fec_cre_cue: Date
-    rol_usu: $Enums.rol_usuario
-    est_ver_cor: boolean
-    fec_ver_cor: Date | null
-    _count: CuentaCountAggregateOutputType | null
-    _min: CuentaMinAggregateOutputType | null
-    _max: CuentaMaxAggregateOutputType | null
-  }
-
-  type GetCuentaGroupByPayload<T extends cuentaGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<CuentaGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof CuentaGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], CuentaGroupByOutputType[P]>
-            : GetScalarType<T[P], CuentaGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type cuentaSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id_cue?: boolean
-    id_usu_per?: boolean
-    cor_usu?: boolean
-    con_usu?: boolean
-    fec_cre_cue?: boolean
-    rol_usu?: boolean
-    est_ver_cor?: boolean
-    fec_ver_cor?: boolean
-    usuario?: boolean | usuarioDefaultArgs<ExtArgs>
-    inscripciones?: boolean | cuenta$inscripcionesArgs<ExtArgs>
-    cartas_motivacion?: boolean | cuenta$cartas_motivacionArgs<ExtArgs>
-    comprobantes_pago?: boolean | cuenta$comprobantes_pagoArgs<ExtArgs>
-    eventos?: boolean | cuenta$eventosArgs<ExtArgs>
-    observaciones_creadas?: boolean | cuenta$observaciones_creadasArgs<ExtArgs>
-    inscripciones_validadas?: boolean | cuenta$inscripciones_validadasArgs<ExtArgs>
-    tokens_cuenta?: boolean | cuenta$tokens_cuentaArgs<ExtArgs>
-    tokens_invalidados?: boolean | cuenta$tokens_invalidadosArgs<ExtArgs>
-    _count?: boolean | CuentaCountOutputTypeDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["cuenta"]>
-
-  export type cuentaSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id_cue?: boolean
-    id_usu_per?: boolean
-    cor_usu?: boolean
-    con_usu?: boolean
-    fec_cre_cue?: boolean
-    rol_usu?: boolean
-    est_ver_cor?: boolean
-    fec_ver_cor?: boolean
-    usuario?: boolean | usuarioDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["cuenta"]>
-
-  export type cuentaSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id_cue?: boolean
-    id_usu_per?: boolean
-    cor_usu?: boolean
-    con_usu?: boolean
-    fec_cre_cue?: boolean
-    rol_usu?: boolean
-    est_ver_cor?: boolean
-    fec_ver_cor?: boolean
-    usuario?: boolean | usuarioDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["cuenta"]>
-
-  export type cuentaSelectScalar = {
-    id_cue?: boolean
-    id_usu_per?: boolean
-    cor_usu?: boolean
-    con_usu?: boolean
-    fec_cre_cue?: boolean
-    rol_usu?: boolean
-    est_ver_cor?: boolean
-    fec_ver_cor?: boolean
-  }
-
-  export type cuentaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_cue" | "id_usu_per" | "cor_usu" | "con_usu" | "fec_cre_cue" | "rol_usu" | "est_ver_cor" | "fec_ver_cor", ExtArgs["result"]["cuenta"]>
-  export type cuentaInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    usuario?: boolean | usuarioDefaultArgs<ExtArgs>
-    inscripciones?: boolean | cuenta$inscripcionesArgs<ExtArgs>
-    cartas_motivacion?: boolean | cuenta$cartas_motivacionArgs<ExtArgs>
-    comprobantes_pago?: boolean | cuenta$comprobantes_pagoArgs<ExtArgs>
-    eventos?: boolean | cuenta$eventosArgs<ExtArgs>
-    observaciones_creadas?: boolean | cuenta$observaciones_creadasArgs<ExtArgs>
-    inscripciones_validadas?: boolean | cuenta$inscripciones_validadasArgs<ExtArgs>
-    tokens_cuenta?: boolean | cuenta$tokens_cuentaArgs<ExtArgs>
-    tokens_invalidados?: boolean | cuenta$tokens_invalidadosArgs<ExtArgs>
-    _count?: boolean | CuentaCountOutputTypeDefaultArgs<ExtArgs>
-  }
-  export type cuentaIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    usuario?: boolean | usuarioDefaultArgs<ExtArgs>
-  }
-  export type cuentaIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    usuario?: boolean | usuarioDefaultArgs<ExtArgs>
-  }
-
-  export type $cuentaPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "cuenta"
-    objects: {
-      usuario: Prisma.$usuarioPayload<ExtArgs>
-      inscripciones: Prisma.$inscripcionPayload<ExtArgs>[]
-      cartas_motivacion: Prisma.$carta_motivacionPayload<ExtArgs>[]
-      comprobantes_pago: Prisma.$comprobante_pagoPayload<ExtArgs>[]
-      eventos: Prisma.$eventoPayload<ExtArgs>[]
-      observaciones_creadas: Prisma.$observacion_inscripcionPayload<ExtArgs>[]
-      inscripciones_validadas: Prisma.$inscripcionPayload<ExtArgs>[]
-      tokens_cuenta: Prisma.$token_cuentaPayload<ExtArgs>[]
-      tokens_invalidados: Prisma.$invalidacion_tokenPayload<ExtArgs>[]
-    }
-    scalars: $Extensions.GetPayloadResult<{
-      id_cue: string
-      id_usu_per: string
-      cor_usu: string
-      con_usu: string
-      fec_cre_cue: Date
-      rol_usu: $Enums.rol_usuario
-      est_ver_cor: boolean
-      fec_ver_cor: Date | null
-    }, ExtArgs["result"]["cuenta"]>
-    composites: {}
-  }
-
-  type cuentaGetPayload<S extends boolean | null | undefined | cuentaDefaultArgs> = $Result.GetResult<Prisma.$cuentaPayload, S>
-
-  type cuentaCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
-    Omit<cuentaFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
-      select?: CuentaCountAggregateInputType | true
-    }
-
-  export interface cuentaDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['cuenta'], meta: { name: 'cuenta' } }
-    /**
-     * Find zero or one Cuenta that matches the filter.
-     * @param {cuentaFindUniqueArgs} args - Arguments to find a Cuenta
-     * @example
-     * // Get one Cuenta
-     * const cuenta = await prisma.cuenta.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends cuentaFindUniqueArgs>(args: SelectSubset<T, cuentaFindUniqueArgs<ExtArgs>>): Prisma__cuentaClient<$Result.GetResult<Prisma.$cuentaPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find one Cuenta that matches the filter or throw an error with `error.code='P2025'`
-     * if no matches were found.
-     * @param {cuentaFindUniqueOrThrowArgs} args - Arguments to find a Cuenta
-     * @example
-     * // Get one Cuenta
-     * const cuenta = await prisma.cuenta.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends cuentaFindUniqueOrThrowArgs>(args: SelectSubset<T, cuentaFindUniqueOrThrowArgs<ExtArgs>>): Prisma__cuentaClient<$Result.GetResult<Prisma.$cuentaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first Cuenta that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {cuentaFindFirstArgs} args - Arguments to find a Cuenta
-     * @example
-     * // Get one Cuenta
-     * const cuenta = await prisma.cuenta.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends cuentaFindFirstArgs>(args?: SelectSubset<T, cuentaFindFirstArgs<ExtArgs>>): Prisma__cuentaClient<$Result.GetResult<Prisma.$cuentaPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first Cuenta that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {cuentaFindFirstOrThrowArgs} args - Arguments to find a Cuenta
-     * @example
-     * // Get one Cuenta
-     * const cuenta = await prisma.cuenta.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends cuentaFindFirstOrThrowArgs>(args?: SelectSubset<T, cuentaFindFirstOrThrowArgs<ExtArgs>>): Prisma__cuentaClient<$Result.GetResult<Prisma.$cuentaPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find zero or more Cuentas that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {cuentaFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all Cuentas
-     * const cuentas = await prisma.cuenta.findMany()
-     * 
-     * // Get first 10 Cuentas
-     * const cuentas = await prisma.cuenta.findMany({ take: 10 })
-     * 
-     * // Only select the `id_cue`
-     * const cuentaWithId_cueOnly = await prisma.cuenta.findMany({ select: { id_cue: true } })
-     * 
-     */
-    findMany<T extends cuentaFindManyArgs>(args?: SelectSubset<T, cuentaFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$cuentaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
-
-    /**
-     * Create a Cuenta.
-     * @param {cuentaCreateArgs} args - Arguments to create a Cuenta.
-     * @example
-     * // Create one Cuenta
-     * const Cuenta = await prisma.cuenta.create({
-     *   data: {
-     *     // ... data to create a Cuenta
-     *   }
-     * })
-     * 
-     */
-    create<T extends cuentaCreateArgs>(args: SelectSubset<T, cuentaCreateArgs<ExtArgs>>): Prisma__cuentaClient<$Result.GetResult<Prisma.$cuentaPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Create many Cuentas.
-     * @param {cuentaCreateManyArgs} args - Arguments to create many Cuentas.
-     * @example
-     * // Create many Cuentas
-     * const cuenta = await prisma.cuenta.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends cuentaCreateManyArgs>(args?: SelectSubset<T, cuentaCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many Cuentas and returns the data saved in the database.
-     * @param {cuentaCreateManyAndReturnArgs} args - Arguments to create many Cuentas.
-     * @example
-     * // Create many Cuentas
-     * const cuenta = await prisma.cuenta.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many Cuentas and only return the `id_cue`
-     * const cuentaWithId_cueOnly = await prisma.cuenta.createManyAndReturn({
-     *   select: { id_cue: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends cuentaCreateManyAndReturnArgs>(args?: SelectSubset<T, cuentaCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$cuentaPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Delete a Cuenta.
-     * @param {cuentaDeleteArgs} args - Arguments to delete one Cuenta.
-     * @example
-     * // Delete one Cuenta
-     * const Cuenta = await prisma.cuenta.delete({
-     *   where: {
-     *     // ... filter to delete one Cuenta
-     *   }
-     * })
-     * 
-     */
-    delete<T extends cuentaDeleteArgs>(args: SelectSubset<T, cuentaDeleteArgs<ExtArgs>>): Prisma__cuentaClient<$Result.GetResult<Prisma.$cuentaPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Update one Cuenta.
-     * @param {cuentaUpdateArgs} args - Arguments to update one Cuenta.
-     * @example
-     * // Update one Cuenta
-     * const cuenta = await prisma.cuenta.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends cuentaUpdateArgs>(args: SelectSubset<T, cuentaUpdateArgs<ExtArgs>>): Prisma__cuentaClient<$Result.GetResult<Prisma.$cuentaPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Delete zero or more Cuentas.
-     * @param {cuentaDeleteManyArgs} args - Arguments to filter Cuentas to delete.
-     * @example
-     * // Delete a few Cuentas
-     * const { count } = await prisma.cuenta.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends cuentaDeleteManyArgs>(args?: SelectSubset<T, cuentaDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more Cuentas.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {cuentaUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many Cuentas
-     * const cuenta = await prisma.cuenta.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends cuentaUpdateManyArgs>(args: SelectSubset<T, cuentaUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more Cuentas and returns the data updated in the database.
-     * @param {cuentaUpdateManyAndReturnArgs} args - Arguments to update many Cuentas.
-     * @example
-     * // Update many Cuentas
-     * const cuenta = await prisma.cuenta.updateManyAndReturn({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Update zero or more Cuentas and only return the `id_cue`
-     * const cuentaWithId_cueOnly = await prisma.cuenta.updateManyAndReturn({
-     *   select: { id_cue: true },
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    updateManyAndReturn<T extends cuentaUpdateManyAndReturnArgs>(args: SelectSubset<T, cuentaUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$cuentaPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Create or update one Cuenta.
-     * @param {cuentaUpsertArgs} args - Arguments to update or create a Cuenta.
-     * @example
-     * // Update or create a Cuenta
-     * const cuenta = await prisma.cuenta.upsert({
-     *   create: {
-     *     // ... data to create a Cuenta
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the Cuenta we want to update
-     *   }
-     * })
-     */
-    upsert<T extends cuentaUpsertArgs>(args: SelectSubset<T, cuentaUpsertArgs<ExtArgs>>): Prisma__cuentaClient<$Result.GetResult<Prisma.$cuentaPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-
-    /**
-     * Count the number of Cuentas.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {cuentaCountArgs} args - Arguments to filter Cuentas to count.
-     * @example
-     * // Count the number of Cuentas
-     * const count = await prisma.cuenta.count({
-     *   where: {
-     *     // ... the filter for the Cuentas we want to count
-     *   }
-     * })
-    **/
-    count<T extends cuentaCountArgs>(
-      args?: Subset<T, cuentaCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], CuentaCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a Cuenta.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CuentaAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends CuentaAggregateArgs>(args: Subset<T, CuentaAggregateArgs>): Prisma.PrismaPromise<GetCuentaAggregateType<T>>
-
-    /**
-     * Group by Cuenta.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {cuentaGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends cuentaGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: cuentaGroupByArgs['orderBy'] }
-        : { orderBy?: cuentaGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, cuentaGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCuentaGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the cuenta model
-   */
-  readonly fields: cuentaFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for cuenta.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__cuentaClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    usuario<T extends usuarioDefaultArgs<ExtArgs> = {}>(args?: Subset<T, usuarioDefaultArgs<ExtArgs>>): Prisma__usuarioClient<$Result.GetResult<Prisma.$usuarioPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    inscripciones<T extends cuenta$inscripcionesArgs<ExtArgs> = {}>(args?: Subset<T, cuenta$inscripcionesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$inscripcionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    cartas_motivacion<T extends cuenta$cartas_motivacionArgs<ExtArgs> = {}>(args?: Subset<T, cuenta$cartas_motivacionArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$carta_motivacionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    comprobantes_pago<T extends cuenta$comprobantes_pagoArgs<ExtArgs> = {}>(args?: Subset<T, cuenta$comprobantes_pagoArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$comprobante_pagoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    eventos<T extends cuenta$eventosArgs<ExtArgs> = {}>(args?: Subset<T, cuenta$eventosArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$eventoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    observaciones_creadas<T extends cuenta$observaciones_creadasArgs<ExtArgs> = {}>(args?: Subset<T, cuenta$observaciones_creadasArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$observacion_inscripcionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    inscripciones_validadas<T extends cuenta$inscripciones_validadasArgs<ExtArgs> = {}>(args?: Subset<T, cuenta$inscripciones_validadasArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$inscripcionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    tokens_cuenta<T extends cuenta$tokens_cuentaArgs<ExtArgs> = {}>(args?: Subset<T, cuenta$tokens_cuentaArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$token_cuentaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    tokens_invalidados<T extends cuenta$tokens_invalidadosArgs<ExtArgs> = {}>(args?: Subset<T, cuenta$tokens_invalidadosArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$invalidacion_tokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the cuenta model
-   */
-  interface cuentaFieldRefs {
-    readonly id_cue: FieldRef<"cuenta", 'String'>
-    readonly id_usu_per: FieldRef<"cuenta", 'String'>
-    readonly cor_usu: FieldRef<"cuenta", 'String'>
-    readonly con_usu: FieldRef<"cuenta", 'String'>
-    readonly fec_cre_cue: FieldRef<"cuenta", 'DateTime'>
-    readonly rol_usu: FieldRef<"cuenta", 'rol_usuario'>
-    readonly est_ver_cor: FieldRef<"cuenta", 'Boolean'>
-    readonly fec_ver_cor: FieldRef<"cuenta", 'DateTime'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * cuenta findUnique
-   */
-  export type cuentaFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the cuenta
-     */
-    select?: cuentaSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the cuenta
-     */
-    omit?: cuentaOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: cuentaInclude<ExtArgs> | null
-    /**
-     * Filter, which cuenta to fetch.
-     */
-    where: cuentaWhereUniqueInput
-  }
-
-  /**
-   * cuenta findUniqueOrThrow
-   */
-  export type cuentaFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the cuenta
-     */
-    select?: cuentaSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the cuenta
-     */
-    omit?: cuentaOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: cuentaInclude<ExtArgs> | null
-    /**
-     * Filter, which cuenta to fetch.
-     */
-    where: cuentaWhereUniqueInput
-  }
-
-  /**
-   * cuenta findFirst
-   */
-  export type cuentaFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the cuenta
-     */
-    select?: cuentaSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the cuenta
-     */
-    omit?: cuentaOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: cuentaInclude<ExtArgs> | null
-    /**
-     * Filter, which cuenta to fetch.
-     */
-    where?: cuentaWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of cuentas to fetch.
-     */
-    orderBy?: cuentaOrderByWithRelationInput | cuentaOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for cuentas.
-     */
-    cursor?: cuentaWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` cuentas from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` cuentas.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of cuentas.
-     */
-    distinct?: CuentaScalarFieldEnum | CuentaScalarFieldEnum[]
-  }
-
-  /**
-   * cuenta findFirstOrThrow
-   */
-  export type cuentaFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the cuenta
-     */
-    select?: cuentaSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the cuenta
-     */
-    omit?: cuentaOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: cuentaInclude<ExtArgs> | null
-    /**
-     * Filter, which cuenta to fetch.
-     */
-    where?: cuentaWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of cuentas to fetch.
-     */
-    orderBy?: cuentaOrderByWithRelationInput | cuentaOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for cuentas.
-     */
-    cursor?: cuentaWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` cuentas from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` cuentas.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of cuentas.
-     */
-    distinct?: CuentaScalarFieldEnum | CuentaScalarFieldEnum[]
-  }
-
-  /**
-   * cuenta findMany
-   */
-  export type cuentaFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the cuenta
-     */
-    select?: cuentaSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the cuenta
-     */
-    omit?: cuentaOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: cuentaInclude<ExtArgs> | null
-    /**
-     * Filter, which cuentas to fetch.
-     */
-    where?: cuentaWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of cuentas to fetch.
-     */
-    orderBy?: cuentaOrderByWithRelationInput | cuentaOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing cuentas.
-     */
-    cursor?: cuentaWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` cuentas from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` cuentas.
-     */
-    skip?: number
-    distinct?: CuentaScalarFieldEnum | CuentaScalarFieldEnum[]
-  }
-
-  /**
-   * cuenta create
-   */
-  export type cuentaCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the cuenta
-     */
-    select?: cuentaSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the cuenta
-     */
-    omit?: cuentaOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: cuentaInclude<ExtArgs> | null
-    /**
-     * The data needed to create a cuenta.
-     */
-    data: XOR<cuentaCreateInput, cuentaUncheckedCreateInput>
-  }
-
-  /**
-   * cuenta createMany
-   */
-  export type cuentaCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many cuentas.
-     */
-    data: cuentaCreateManyInput | cuentaCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * cuenta createManyAndReturn
-   */
-  export type cuentaCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the cuenta
-     */
-    select?: cuentaSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the cuenta
-     */
-    omit?: cuentaOmit<ExtArgs> | null
-    /**
-     * The data used to create many cuentas.
-     */
-    data: cuentaCreateManyInput | cuentaCreateManyInput[]
-    skipDuplicates?: boolean
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: cuentaIncludeCreateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * cuenta update
-   */
-  export type cuentaUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the cuenta
-     */
-    select?: cuentaSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the cuenta
-     */
-    omit?: cuentaOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: cuentaInclude<ExtArgs> | null
-    /**
-     * The data needed to update a cuenta.
-     */
-    data: XOR<cuentaUpdateInput, cuentaUncheckedUpdateInput>
-    /**
-     * Choose, which cuenta to update.
-     */
-    where: cuentaWhereUniqueInput
-  }
-
-  /**
-   * cuenta updateMany
-   */
-  export type cuentaUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update cuentas.
-     */
-    data: XOR<cuentaUpdateManyMutationInput, cuentaUncheckedUpdateManyInput>
-    /**
-     * Filter which cuentas to update
-     */
-    where?: cuentaWhereInput
-    /**
-     * Limit how many cuentas to update.
-     */
-    limit?: number
-  }
-
-  /**
-   * cuenta updateManyAndReturn
-   */
-  export type cuentaUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the cuenta
-     */
-    select?: cuentaSelectUpdateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the cuenta
-     */
-    omit?: cuentaOmit<ExtArgs> | null
-    /**
-     * The data used to update cuentas.
-     */
-    data: XOR<cuentaUpdateManyMutationInput, cuentaUncheckedUpdateManyInput>
-    /**
-     * Filter which cuentas to update
-     */
-    where?: cuentaWhereInput
-    /**
-     * Limit how many cuentas to update.
-     */
-    limit?: number
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: cuentaIncludeUpdateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * cuenta upsert
-   */
-  export type cuentaUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the cuenta
-     */
-    select?: cuentaSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the cuenta
-     */
-    omit?: cuentaOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: cuentaInclude<ExtArgs> | null
-    /**
-     * The filter to search for the cuenta to update in case it exists.
-     */
-    where: cuentaWhereUniqueInput
-    /**
-     * In case the cuenta found by the `where` argument doesn't exist, create a new cuenta with this data.
-     */
-    create: XOR<cuentaCreateInput, cuentaUncheckedCreateInput>
-    /**
-     * In case the cuenta was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<cuentaUpdateInput, cuentaUncheckedUpdateInput>
-  }
-
-  /**
-   * cuenta delete
-   */
-  export type cuentaDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the cuenta
-     */
-    select?: cuentaSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the cuenta
-     */
-    omit?: cuentaOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: cuentaInclude<ExtArgs> | null
-    /**
-     * Filter which cuenta to delete.
-     */
-    where: cuentaWhereUniqueInput
-  }
-
-  /**
-   * cuenta deleteMany
-   */
-  export type cuentaDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which cuentas to delete
-     */
-    where?: cuentaWhereInput
-    /**
-     * Limit how many cuentas to delete.
-     */
-    limit?: number
-  }
-
-  /**
-   * cuenta.inscripciones
-   */
-  export type cuenta$inscripcionesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the inscripcion
-     */
-    select?: inscripcionSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the inscripcion
-     */
-    omit?: inscripcionOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: inscripcionInclude<ExtArgs> | null
-    where?: inscripcionWhereInput
-    orderBy?: inscripcionOrderByWithRelationInput | inscripcionOrderByWithRelationInput[]
-    cursor?: inscripcionWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: InscripcionScalarFieldEnum | InscripcionScalarFieldEnum[]
-  }
-
-  /**
-   * cuenta.cartas_motivacion
-   */
-  export type cuenta$cartas_motivacionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the carta_motivacion
-     */
-    select?: carta_motivacionSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the carta_motivacion
-     */
-    omit?: carta_motivacionOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: carta_motivacionInclude<ExtArgs> | null
-    where?: carta_motivacionWhereInput
-    orderBy?: carta_motivacionOrderByWithRelationInput | carta_motivacionOrderByWithRelationInput[]
-    cursor?: carta_motivacionWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: Carta_motivacionScalarFieldEnum | Carta_motivacionScalarFieldEnum[]
-  }
-
-  /**
-   * cuenta.comprobantes_pago
-   */
-  export type cuenta$comprobantes_pagoArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the comprobante_pago
-     */
-    select?: comprobante_pagoSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the comprobante_pago
-     */
-    omit?: comprobante_pagoOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: comprobante_pagoInclude<ExtArgs> | null
-    where?: comprobante_pagoWhereInput
-    orderBy?: comprobante_pagoOrderByWithRelationInput | comprobante_pagoOrderByWithRelationInput[]
-    cursor?: comprobante_pagoWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: Comprobante_pagoScalarFieldEnum | Comprobante_pagoScalarFieldEnum[]
-  }
-
-  /**
-   * cuenta.eventos
-   */
-  export type cuenta$eventosArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the evento
-     */
-    select?: eventoSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the evento
-     */
-    omit?: eventoOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: eventoInclude<ExtArgs> | null
-    where?: eventoWhereInput
-    orderBy?: eventoOrderByWithRelationInput | eventoOrderByWithRelationInput[]
-    cursor?: eventoWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: EventoScalarFieldEnum | EventoScalarFieldEnum[]
-  }
-
-  /**
-   * cuenta.observaciones_creadas
-   */
-  export type cuenta$observaciones_creadasArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the observacion_inscripcion
-     */
-    select?: observacion_inscripcionSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the observacion_inscripcion
-     */
-    omit?: observacion_inscripcionOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: observacion_inscripcionInclude<ExtArgs> | null
-    where?: observacion_inscripcionWhereInput
-    orderBy?: observacion_inscripcionOrderByWithRelationInput | observacion_inscripcionOrderByWithRelationInput[]
-    cursor?: observacion_inscripcionWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: Observacion_inscripcionScalarFieldEnum | Observacion_inscripcionScalarFieldEnum[]
-  }
-
-  /**
-   * cuenta.inscripciones_validadas
-   */
-  export type cuenta$inscripciones_validadasArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the inscripcion
-     */
-    select?: inscripcionSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the inscripcion
-     */
-    omit?: inscripcionOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: inscripcionInclude<ExtArgs> | null
-    where?: inscripcionWhereInput
-    orderBy?: inscripcionOrderByWithRelationInput | inscripcionOrderByWithRelationInput[]
-    cursor?: inscripcionWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: InscripcionScalarFieldEnum | InscripcionScalarFieldEnum[]
-  }
-
-  /**
-   * cuenta.tokens_cuenta
-   */
-  export type cuenta$tokens_cuentaArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the token_cuenta
-     */
-    select?: token_cuentaSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the token_cuenta
-     */
-    omit?: token_cuentaOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: token_cuentaInclude<ExtArgs> | null
-    where?: token_cuentaWhereInput
-    orderBy?: token_cuentaOrderByWithRelationInput | token_cuentaOrderByWithRelationInput[]
-    cursor?: token_cuentaWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: Token_cuentaScalarFieldEnum | Token_cuentaScalarFieldEnum[]
-  }
-
-  /**
-   * cuenta.tokens_invalidados
-   */
-  export type cuenta$tokens_invalidadosArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the invalidacion_token
-     */
-    select?: invalidacion_tokenSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the invalidacion_token
-     */
-    omit?: invalidacion_tokenOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: invalidacion_tokenInclude<ExtArgs> | null
-    where?: invalidacion_tokenWhereInput
-    orderBy?: invalidacion_tokenOrderByWithRelationInput | invalidacion_tokenOrderByWithRelationInput[]
-    cursor?: invalidacion_tokenWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: Invalidacion_tokenScalarFieldEnum | Invalidacion_tokenScalarFieldEnum[]
-  }
-
-  /**
-   * cuenta without action
-   */
-  export type cuentaDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the cuenta
-     */
-    select?: cuentaSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the cuenta
-     */
-    omit?: cuentaOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: cuentaInclude<ExtArgs> | null
-  }
-
-
-  /**
-   * Model carrera
-   */
-
-  export type AggregateCarrera = {
-    _count: CarreraCountAggregateOutputType | null
-    _avg: CarreraAvgAggregateOutputType | null
-    _sum: CarreraSumAggregateOutputType | null
-    _min: CarreraMinAggregateOutputType | null
-    _max: CarreraMaxAggregateOutputType | null
-  }
-
-  export type CarreraAvgAggregateOutputType = {
-    dur_sem_car: number | null
-  }
-
-  export type CarreraSumAggregateOutputType = {
-    dur_sem_car: number | null
-  }
-
-  export type CarreraMinAggregateOutputType = {
-    id_car: string | null
-    nom_car: string | null
-    des_car: string | null
-    dur_sem_car: number | null
-    mod_car: string | null
-    ico_car: string | null
-    est_car: boolean | null
-    fec_cre_car: Date | null
-    id_fac_per: string | null
-    id_coo_per: string | null
-  }
-
-  export type CarreraMaxAggregateOutputType = {
-    id_car: string | null
-    nom_car: string | null
-    des_car: string | null
-    dur_sem_car: number | null
-    mod_car: string | null
-    ico_car: string | null
-    est_car: boolean | null
-    fec_cre_car: Date | null
-    id_fac_per: string | null
-    id_coo_per: string | null
-  }
-
-  export type CarreraCountAggregateOutputType = {
-    id_car: number
-    nom_car: number
-    des_car: number
-    dur_sem_car: number
-    mod_car: number
-    ico_car: number
-    est_car: number
-    fec_cre_car: number
-    id_fac_per: number
-    id_coo_per: number
-    _all: number
-  }
-
-
-  export type CarreraAvgAggregateInputType = {
-    dur_sem_car?: true
-  }
-
-  export type CarreraSumAggregateInputType = {
-    dur_sem_car?: true
-  }
-
-  export type CarreraMinAggregateInputType = {
-    id_car?: true
-    nom_car?: true
-    des_car?: true
-    dur_sem_car?: true
-    mod_car?: true
-    ico_car?: true
-    est_car?: true
-    fec_cre_car?: true
-    id_fac_per?: true
-    id_coo_per?: true
-  }
-
-  export type CarreraMaxAggregateInputType = {
-    id_car?: true
-    nom_car?: true
-    des_car?: true
-    dur_sem_car?: true
-    mod_car?: true
-    ico_car?: true
-    est_car?: true
-    fec_cre_car?: true
-    id_fac_per?: true
-    id_coo_per?: true
-  }
-
-  export type CarreraCountAggregateInputType = {
-    id_car?: true
-    nom_car?: true
-    des_car?: true
-    dur_sem_car?: true
-    mod_car?: true
-    ico_car?: true
-    est_car?: true
-    fec_cre_car?: true
-    id_fac_per?: true
-    id_coo_per?: true
-    _all?: true
-  }
-
-  export type CarreraAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which carrera to aggregate.
-     */
-    where?: carreraWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of carreras to fetch.
-     */
-    orderBy?: carreraOrderByWithRelationInput | carreraOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: carreraWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` carreras from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` carreras.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned carreras
-    **/
-    _count?: true | CarreraCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to average
-    **/
-    _avg?: CarreraAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: CarreraSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: CarreraMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: CarreraMaxAggregateInputType
-  }
-
-  export type GetCarreraAggregateType<T extends CarreraAggregateArgs> = {
-        [P in keyof T & keyof AggregateCarrera]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateCarrera[P]>
-      : GetScalarType<T[P], AggregateCarrera[P]>
-  }
-
-
-
-
-  export type carreraGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: carreraWhereInput
-    orderBy?: carreraOrderByWithAggregationInput | carreraOrderByWithAggregationInput[]
-    by: CarreraScalarFieldEnum[] | CarreraScalarFieldEnum
-    having?: carreraScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: CarreraCountAggregateInputType | true
-    _avg?: CarreraAvgAggregateInputType
-    _sum?: CarreraSumAggregateInputType
-    _min?: CarreraMinAggregateInputType
-    _max?: CarreraMaxAggregateInputType
-  }
-
-  export type CarreraGroupByOutputType = {
-    id_car: string
-    nom_car: string
-    des_car: string
-    dur_sem_car: number
-    mod_car: string
-    ico_car: string
-    est_car: boolean
-    fec_cre_car: Date
-    id_fac_per: string
-    id_coo_per: string | null
-    _count: CarreraCountAggregateOutputType | null
-    _avg: CarreraAvgAggregateOutputType | null
-    _sum: CarreraSumAggregateOutputType | null
-    _min: CarreraMinAggregateOutputType | null
-    _max: CarreraMaxAggregateOutputType | null
-  }
-
-  type GetCarreraGroupByPayload<T extends carreraGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<CarreraGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof CarreraGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], CarreraGroupByOutputType[P]>
-            : GetScalarType<T[P], CarreraGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type carreraSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id_car?: boolean
-    nom_car?: boolean
-    des_car?: boolean
-    dur_sem_car?: boolean
-    mod_car?: boolean
-    ico_car?: boolean
-    est_car?: boolean
-    fec_cre_car?: boolean
-    id_fac_per?: boolean
-    id_coo_per?: boolean
-    facultad?: boolean | facultadDefaultArgs<ExtArgs>
-    coordinador?: boolean | carrera$coordinadorArgs<ExtArgs>
-    usuario?: boolean | carrera$usuarioArgs<ExtArgs>
-    eventos?: boolean | carrera$eventosArgs<ExtArgs>
-    _count?: boolean | CarreraCountOutputTypeDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["carrera"]>
-
-  export type carreraSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id_car?: boolean
-    nom_car?: boolean
-    des_car?: boolean
-    dur_sem_car?: boolean
-    mod_car?: boolean
-    ico_car?: boolean
-    est_car?: boolean
-    fec_cre_car?: boolean
-    id_fac_per?: boolean
-    id_coo_per?: boolean
-    facultad?: boolean | facultadDefaultArgs<ExtArgs>
-    coordinador?: boolean | carrera$coordinadorArgs<ExtArgs>
-  }, ExtArgs["result"]["carrera"]>
-
-  export type carreraSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id_car?: boolean
-    nom_car?: boolean
-    des_car?: boolean
-    dur_sem_car?: boolean
-    mod_car?: boolean
-    ico_car?: boolean
-    est_car?: boolean
-    fec_cre_car?: boolean
-    id_fac_per?: boolean
-    id_coo_per?: boolean
-    facultad?: boolean | facultadDefaultArgs<ExtArgs>
-    coordinador?: boolean | carrera$coordinadorArgs<ExtArgs>
-  }, ExtArgs["result"]["carrera"]>
-
-  export type carreraSelectScalar = {
-    id_car?: boolean
-    nom_car?: boolean
-    des_car?: boolean
-    dur_sem_car?: boolean
-    mod_car?: boolean
-    ico_car?: boolean
-    est_car?: boolean
-    fec_cre_car?: boolean
-    id_fac_per?: boolean
-    id_coo_per?: boolean
-  }
-
-  export type carreraOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_car" | "nom_car" | "des_car" | "dur_sem_car" | "mod_car" | "ico_car" | "est_car" | "fec_cre_car" | "id_fac_per" | "id_coo_per", ExtArgs["result"]["carrera"]>
-  export type carreraInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    facultad?: boolean | facultadDefaultArgs<ExtArgs>
-    coordinador?: boolean | carrera$coordinadorArgs<ExtArgs>
-    usuario?: boolean | carrera$usuarioArgs<ExtArgs>
-    eventos?: boolean | carrera$eventosArgs<ExtArgs>
-    _count?: boolean | CarreraCountOutputTypeDefaultArgs<ExtArgs>
-  }
-  export type carreraIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    facultad?: boolean | facultadDefaultArgs<ExtArgs>
-    coordinador?: boolean | carrera$coordinadorArgs<ExtArgs>
-  }
-  export type carreraIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    facultad?: boolean | facultadDefaultArgs<ExtArgs>
-    coordinador?: boolean | carrera$coordinadorArgs<ExtArgs>
-  }
-
-  export type $carreraPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "carrera"
-    objects: {
-      facultad: Prisma.$facultadPayload<ExtArgs>
-      coordinador: Prisma.$coordinadorPayload<ExtArgs> | null
-      usuario: Prisma.$usuarioPayload<ExtArgs>[]
-      eventos: Prisma.$evento_carreraPayload<ExtArgs>[]
-    }
-    scalars: $Extensions.GetPayloadResult<{
-      id_car: string
-      nom_car: string
-      des_car: string
-      dur_sem_car: number
-      mod_car: string
-      ico_car: string
-      est_car: boolean
-      fec_cre_car: Date
-      id_fac_per: string
-      id_coo_per: string | null
-    }, ExtArgs["result"]["carrera"]>
-    composites: {}
-  }
-
-  type carreraGetPayload<S extends boolean | null | undefined | carreraDefaultArgs> = $Result.GetResult<Prisma.$carreraPayload, S>
-
-  type carreraCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
-    Omit<carreraFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
-      select?: CarreraCountAggregateInputType | true
-    }
-
-  export interface carreraDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['carrera'], meta: { name: 'carrera' } }
-    /**
-     * Find zero or one Carrera that matches the filter.
-     * @param {carreraFindUniqueArgs} args - Arguments to find a Carrera
-     * @example
-     * // Get one Carrera
-     * const carrera = await prisma.carrera.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends carreraFindUniqueArgs>(args: SelectSubset<T, carreraFindUniqueArgs<ExtArgs>>): Prisma__carreraClient<$Result.GetResult<Prisma.$carreraPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find one Carrera that matches the filter or throw an error with `error.code='P2025'`
-     * if no matches were found.
-     * @param {carreraFindUniqueOrThrowArgs} args - Arguments to find a Carrera
-     * @example
-     * // Get one Carrera
-     * const carrera = await prisma.carrera.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends carreraFindUniqueOrThrowArgs>(args: SelectSubset<T, carreraFindUniqueOrThrowArgs<ExtArgs>>): Prisma__carreraClient<$Result.GetResult<Prisma.$carreraPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first Carrera that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {carreraFindFirstArgs} args - Arguments to find a Carrera
-     * @example
-     * // Get one Carrera
-     * const carrera = await prisma.carrera.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends carreraFindFirstArgs>(args?: SelectSubset<T, carreraFindFirstArgs<ExtArgs>>): Prisma__carreraClient<$Result.GetResult<Prisma.$carreraPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first Carrera that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {carreraFindFirstOrThrowArgs} args - Arguments to find a Carrera
-     * @example
-     * // Get one Carrera
-     * const carrera = await prisma.carrera.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends carreraFindFirstOrThrowArgs>(args?: SelectSubset<T, carreraFindFirstOrThrowArgs<ExtArgs>>): Prisma__carreraClient<$Result.GetResult<Prisma.$carreraPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find zero or more Carreras that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {carreraFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all Carreras
-     * const carreras = await prisma.carrera.findMany()
-     * 
-     * // Get first 10 Carreras
-     * const carreras = await prisma.carrera.findMany({ take: 10 })
-     * 
-     * // Only select the `id_car`
-     * const carreraWithId_carOnly = await prisma.carrera.findMany({ select: { id_car: true } })
-     * 
-     */
-    findMany<T extends carreraFindManyArgs>(args?: SelectSubset<T, carreraFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$carreraPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
-
-    /**
-     * Create a Carrera.
-     * @param {carreraCreateArgs} args - Arguments to create a Carrera.
-     * @example
-     * // Create one Carrera
-     * const Carrera = await prisma.carrera.create({
-     *   data: {
-     *     // ... data to create a Carrera
-     *   }
-     * })
-     * 
-     */
-    create<T extends carreraCreateArgs>(args: SelectSubset<T, carreraCreateArgs<ExtArgs>>): Prisma__carreraClient<$Result.GetResult<Prisma.$carreraPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Create many Carreras.
-     * @param {carreraCreateManyArgs} args - Arguments to create many Carreras.
-     * @example
-     * // Create many Carreras
-     * const carrera = await prisma.carrera.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends carreraCreateManyArgs>(args?: SelectSubset<T, carreraCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many Carreras and returns the data saved in the database.
-     * @param {carreraCreateManyAndReturnArgs} args - Arguments to create many Carreras.
-     * @example
-     * // Create many Carreras
-     * const carrera = await prisma.carrera.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many Carreras and only return the `id_car`
-     * const carreraWithId_carOnly = await prisma.carrera.createManyAndReturn({
-     *   select: { id_car: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends carreraCreateManyAndReturnArgs>(args?: SelectSubset<T, carreraCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$carreraPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Delete a Carrera.
-     * @param {carreraDeleteArgs} args - Arguments to delete one Carrera.
-     * @example
-     * // Delete one Carrera
-     * const Carrera = await prisma.carrera.delete({
-     *   where: {
-     *     // ... filter to delete one Carrera
-     *   }
-     * })
-     * 
-     */
-    delete<T extends carreraDeleteArgs>(args: SelectSubset<T, carreraDeleteArgs<ExtArgs>>): Prisma__carreraClient<$Result.GetResult<Prisma.$carreraPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Update one Carrera.
-     * @param {carreraUpdateArgs} args - Arguments to update one Carrera.
-     * @example
-     * // Update one Carrera
-     * const carrera = await prisma.carrera.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends carreraUpdateArgs>(args: SelectSubset<T, carreraUpdateArgs<ExtArgs>>): Prisma__carreraClient<$Result.GetResult<Prisma.$carreraPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Delete zero or more Carreras.
-     * @param {carreraDeleteManyArgs} args - Arguments to filter Carreras to delete.
-     * @example
-     * // Delete a few Carreras
-     * const { count } = await prisma.carrera.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends carreraDeleteManyArgs>(args?: SelectSubset<T, carreraDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more Carreras.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {carreraUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many Carreras
-     * const carrera = await prisma.carrera.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends carreraUpdateManyArgs>(args: SelectSubset<T, carreraUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more Carreras and returns the data updated in the database.
-     * @param {carreraUpdateManyAndReturnArgs} args - Arguments to update many Carreras.
-     * @example
-     * // Update many Carreras
-     * const carrera = await prisma.carrera.updateManyAndReturn({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Update zero or more Carreras and only return the `id_car`
-     * const carreraWithId_carOnly = await prisma.carrera.updateManyAndReturn({
-     *   select: { id_car: true },
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    updateManyAndReturn<T extends carreraUpdateManyAndReturnArgs>(args: SelectSubset<T, carreraUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$carreraPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Create or update one Carrera.
-     * @param {carreraUpsertArgs} args - Arguments to update or create a Carrera.
-     * @example
-     * // Update or create a Carrera
-     * const carrera = await prisma.carrera.upsert({
-     *   create: {
-     *     // ... data to create a Carrera
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the Carrera we want to update
-     *   }
-     * })
-     */
-    upsert<T extends carreraUpsertArgs>(args: SelectSubset<T, carreraUpsertArgs<ExtArgs>>): Prisma__carreraClient<$Result.GetResult<Prisma.$carreraPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-
-    /**
-     * Count the number of Carreras.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {carreraCountArgs} args - Arguments to filter Carreras to count.
-     * @example
-     * // Count the number of Carreras
-     * const count = await prisma.carrera.count({
-     *   where: {
-     *     // ... the filter for the Carreras we want to count
-     *   }
-     * })
-    **/
-    count<T extends carreraCountArgs>(
-      args?: Subset<T, carreraCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], CarreraCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a Carrera.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CarreraAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends CarreraAggregateArgs>(args: Subset<T, CarreraAggregateArgs>): Prisma.PrismaPromise<GetCarreraAggregateType<T>>
-
-    /**
-     * Group by Carrera.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {carreraGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends carreraGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: carreraGroupByArgs['orderBy'] }
-        : { orderBy?: carreraGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, carreraGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCarreraGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the carrera model
-   */
-  readonly fields: carreraFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for carrera.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__carreraClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    facultad<T extends facultadDefaultArgs<ExtArgs> = {}>(args?: Subset<T, facultadDefaultArgs<ExtArgs>>): Prisma__facultadClient<$Result.GetResult<Prisma.$facultadPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    coordinador<T extends carrera$coordinadorArgs<ExtArgs> = {}>(args?: Subset<T, carrera$coordinadorArgs<ExtArgs>>): Prisma__coordinadorClient<$Result.GetResult<Prisma.$coordinadorPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-    usuario<T extends carrera$usuarioArgs<ExtArgs> = {}>(args?: Subset<T, carrera$usuarioArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$usuarioPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    eventos<T extends carrera$eventosArgs<ExtArgs> = {}>(args?: Subset<T, carrera$eventosArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$evento_carreraPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the carrera model
-   */
-  interface carreraFieldRefs {
-    readonly id_car: FieldRef<"carrera", 'String'>
-    readonly nom_car: FieldRef<"carrera", 'String'>
-    readonly des_car: FieldRef<"carrera", 'String'>
-    readonly dur_sem_car: FieldRef<"carrera", 'Int'>
-    readonly mod_car: FieldRef<"carrera", 'String'>
-    readonly ico_car: FieldRef<"carrera", 'String'>
-    readonly est_car: FieldRef<"carrera", 'Boolean'>
-    readonly fec_cre_car: FieldRef<"carrera", 'DateTime'>
-    readonly id_fac_per: FieldRef<"carrera", 'String'>
-    readonly id_coo_per: FieldRef<"carrera", 'String'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * carrera findUnique
-   */
-  export type carreraFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the carrera
-     */
-    select?: carreraSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the carrera
-     */
-    omit?: carreraOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: carreraInclude<ExtArgs> | null
-    /**
-     * Filter, which carrera to fetch.
-     */
-    where: carreraWhereUniqueInput
-  }
-
-  /**
-   * carrera findUniqueOrThrow
-   */
-  export type carreraFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the carrera
-     */
-    select?: carreraSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the carrera
-     */
-    omit?: carreraOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: carreraInclude<ExtArgs> | null
-    /**
-     * Filter, which carrera to fetch.
-     */
-    where: carreraWhereUniqueInput
-  }
-
-  /**
-   * carrera findFirst
-   */
-  export type carreraFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the carrera
-     */
-    select?: carreraSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the carrera
-     */
-    omit?: carreraOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: carreraInclude<ExtArgs> | null
-    /**
-     * Filter, which carrera to fetch.
-     */
-    where?: carreraWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of carreras to fetch.
-     */
-    orderBy?: carreraOrderByWithRelationInput | carreraOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for carreras.
-     */
-    cursor?: carreraWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` carreras from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` carreras.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of carreras.
-     */
-    distinct?: CarreraScalarFieldEnum | CarreraScalarFieldEnum[]
-  }
-
-  /**
-   * carrera findFirstOrThrow
-   */
-  export type carreraFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the carrera
-     */
-    select?: carreraSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the carrera
-     */
-    omit?: carreraOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: carreraInclude<ExtArgs> | null
-    /**
-     * Filter, which carrera to fetch.
-     */
-    where?: carreraWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of carreras to fetch.
-     */
-    orderBy?: carreraOrderByWithRelationInput | carreraOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for carreras.
-     */
-    cursor?: carreraWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` carreras from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` carreras.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of carreras.
-     */
-    distinct?: CarreraScalarFieldEnum | CarreraScalarFieldEnum[]
-  }
-
-  /**
-   * carrera findMany
-   */
-  export type carreraFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the carrera
-     */
-    select?: carreraSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the carrera
-     */
-    omit?: carreraOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: carreraInclude<ExtArgs> | null
-    /**
-     * Filter, which carreras to fetch.
-     */
-    where?: carreraWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of carreras to fetch.
-     */
-    orderBy?: carreraOrderByWithRelationInput | carreraOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing carreras.
-     */
-    cursor?: carreraWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` carreras from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` carreras.
-     */
-    skip?: number
-    distinct?: CarreraScalarFieldEnum | CarreraScalarFieldEnum[]
-  }
-
-  /**
-   * carrera create
-   */
-  export type carreraCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the carrera
-     */
-    select?: carreraSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the carrera
-     */
-    omit?: carreraOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: carreraInclude<ExtArgs> | null
-    /**
-     * The data needed to create a carrera.
-     */
-    data: XOR<carreraCreateInput, carreraUncheckedCreateInput>
-  }
-
-  /**
-   * carrera createMany
-   */
-  export type carreraCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many carreras.
-     */
-    data: carreraCreateManyInput | carreraCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * carrera createManyAndReturn
-   */
-  export type carreraCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the carrera
-     */
-    select?: carreraSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the carrera
-     */
-    omit?: carreraOmit<ExtArgs> | null
-    /**
-     * The data used to create many carreras.
-     */
-    data: carreraCreateManyInput | carreraCreateManyInput[]
-    skipDuplicates?: boolean
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: carreraIncludeCreateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * carrera update
-   */
-  export type carreraUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the carrera
-     */
-    select?: carreraSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the carrera
-     */
-    omit?: carreraOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: carreraInclude<ExtArgs> | null
-    /**
-     * The data needed to update a carrera.
-     */
-    data: XOR<carreraUpdateInput, carreraUncheckedUpdateInput>
-    /**
-     * Choose, which carrera to update.
-     */
-    where: carreraWhereUniqueInput
-  }
-
-  /**
-   * carrera updateMany
-   */
-  export type carreraUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update carreras.
-     */
-    data: XOR<carreraUpdateManyMutationInput, carreraUncheckedUpdateManyInput>
-    /**
-     * Filter which carreras to update
-     */
-    where?: carreraWhereInput
-    /**
-     * Limit how many carreras to update.
-     */
-    limit?: number
-  }
-
-  /**
-   * carrera updateManyAndReturn
-   */
-  export type carreraUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the carrera
-     */
-    select?: carreraSelectUpdateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the carrera
-     */
-    omit?: carreraOmit<ExtArgs> | null
-    /**
-     * The data used to update carreras.
-     */
-    data: XOR<carreraUpdateManyMutationInput, carreraUncheckedUpdateManyInput>
-    /**
-     * Filter which carreras to update
-     */
-    where?: carreraWhereInput
-    /**
-     * Limit how many carreras to update.
-     */
-    limit?: number
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: carreraIncludeUpdateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * carrera upsert
-   */
-  export type carreraUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the carrera
-     */
-    select?: carreraSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the carrera
-     */
-    omit?: carreraOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: carreraInclude<ExtArgs> | null
-    /**
-     * The filter to search for the carrera to update in case it exists.
-     */
-    where: carreraWhereUniqueInput
-    /**
-     * In case the carrera found by the `where` argument doesn't exist, create a new carrera with this data.
-     */
-    create: XOR<carreraCreateInput, carreraUncheckedCreateInput>
-    /**
-     * In case the carrera was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<carreraUpdateInput, carreraUncheckedUpdateInput>
-  }
-
-  /**
-   * carrera delete
-   */
-  export type carreraDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the carrera
-     */
-    select?: carreraSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the carrera
-     */
-    omit?: carreraOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: carreraInclude<ExtArgs> | null
-    /**
-     * Filter which carrera to delete.
-     */
-    where: carreraWhereUniqueInput
-  }
-
-  /**
-   * carrera deleteMany
-   */
-  export type carreraDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which carreras to delete
-     */
-    where?: carreraWhereInput
-    /**
-     * Limit how many carreras to delete.
-     */
-    limit?: number
-  }
-
-  /**
-   * carrera.coordinador
-   */
-  export type carrera$coordinadorArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the coordinador
-     */
-    select?: coordinadorSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the coordinador
-     */
-    omit?: coordinadorOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: coordinadorInclude<ExtArgs> | null
-    where?: coordinadorWhereInput
-  }
-
-  /**
-   * carrera.usuario
-   */
-  export type carrera$usuarioArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the usuario
-     */
-    select?: usuarioSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the usuario
-     */
-    omit?: usuarioOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: usuarioInclude<ExtArgs> | null
-    where?: usuarioWhereInput
-    orderBy?: usuarioOrderByWithRelationInput | usuarioOrderByWithRelationInput[]
-    cursor?: usuarioWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: UsuarioScalarFieldEnum | UsuarioScalarFieldEnum[]
-  }
-
-  /**
-   * carrera.eventos
-   */
-  export type carrera$eventosArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the evento_carrera
-     */
-    select?: evento_carreraSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the evento_carrera
-     */
-    omit?: evento_carreraOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: evento_carreraInclude<ExtArgs> | null
-    where?: evento_carreraWhereInput
-    orderBy?: evento_carreraOrderByWithRelationInput | evento_carreraOrderByWithRelationInput[]
-    cursor?: evento_carreraWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: Evento_carreraScalarFieldEnum | Evento_carreraScalarFieldEnum[]
-  }
-
-  /**
-   * carrera without action
-   */
-  export type carreraDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the carrera
-     */
-    select?: carreraSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the carrera
-     */
-    omit?: carreraOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: carreraInclude<ExtArgs> | null
-  }
-
-
-  /**
-   * Model coordinador
-   */
-
-  export type AggregateCoordinador = {
-    _count: CoordinadorCountAggregateOutputType | null
-    _min: CoordinadorMinAggregateOutputType | null
-    _max: CoordinadorMaxAggregateOutputType | null
-  }
-
-  export type CoordinadorMinAggregateOutputType = {
-    id_coo: string | null
-    nom_coo: string | null
-    ape_coo: string | null
-    cor_coo: string | null
-    url_img_coo: string | null
-    tit_coo: string | null
-  }
-
-  export type CoordinadorMaxAggregateOutputType = {
-    id_coo: string | null
-    nom_coo: string | null
-    ape_coo: string | null
-    cor_coo: string | null
-    url_img_coo: string | null
-    tit_coo: string | null
-  }
-
-  export type CoordinadorCountAggregateOutputType = {
-    id_coo: number
-    nom_coo: number
-    ape_coo: number
-    cor_coo: number
-    url_img_coo: number
-    tit_coo: number
-    _all: number
-  }
-
-
-  export type CoordinadorMinAggregateInputType = {
-    id_coo?: true
-    nom_coo?: true
-    ape_coo?: true
-    cor_coo?: true
-    url_img_coo?: true
-    tit_coo?: true
-  }
-
-  export type CoordinadorMaxAggregateInputType = {
-    id_coo?: true
-    nom_coo?: true
-    ape_coo?: true
-    cor_coo?: true
-    url_img_coo?: true
-    tit_coo?: true
-  }
-
-  export type CoordinadorCountAggregateInputType = {
-    id_coo?: true
-    nom_coo?: true
-    ape_coo?: true
-    cor_coo?: true
-    url_img_coo?: true
-    tit_coo?: true
-    _all?: true
-  }
-
-  export type CoordinadorAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which coordinador to aggregate.
-     */
-    where?: coordinadorWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of coordinadors to fetch.
-     */
-    orderBy?: coordinadorOrderByWithRelationInput | coordinadorOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: coordinadorWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` coordinadors from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` coordinadors.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned coordinadors
-    **/
-    _count?: true | CoordinadorCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: CoordinadorMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: CoordinadorMaxAggregateInputType
-  }
-
-  export type GetCoordinadorAggregateType<T extends CoordinadorAggregateArgs> = {
-        [P in keyof T & keyof AggregateCoordinador]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateCoordinador[P]>
-      : GetScalarType<T[P], AggregateCoordinador[P]>
-  }
-
-
-
-
-  export type coordinadorGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: coordinadorWhereInput
-    orderBy?: coordinadorOrderByWithAggregationInput | coordinadorOrderByWithAggregationInput[]
-    by: CoordinadorScalarFieldEnum[] | CoordinadorScalarFieldEnum
-    having?: coordinadorScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: CoordinadorCountAggregateInputType | true
-    _min?: CoordinadorMinAggregateInputType
-    _max?: CoordinadorMaxAggregateInputType
-  }
-
-  export type CoordinadorGroupByOutputType = {
-    id_coo: string
-    nom_coo: string
-    ape_coo: string
-    cor_coo: string
-    url_img_coo: string
-    tit_coo: string
-    _count: CoordinadorCountAggregateOutputType | null
-    _min: CoordinadorMinAggregateOutputType | null
-    _max: CoordinadorMaxAggregateOutputType | null
-  }
-
-  type GetCoordinadorGroupByPayload<T extends coordinadorGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<CoordinadorGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof CoordinadorGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], CoordinadorGroupByOutputType[P]>
-            : GetScalarType<T[P], CoordinadorGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type coordinadorSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id_coo?: boolean
-    nom_coo?: boolean
-    ape_coo?: boolean
-    cor_coo?: boolean
-    url_img_coo?: boolean
-    tit_coo?: boolean
-    carreras?: boolean | coordinador$carrerasArgs<ExtArgs>
-    _count?: boolean | CoordinadorCountOutputTypeDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["coordinador"]>
-
-  export type coordinadorSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id_coo?: boolean
-    nom_coo?: boolean
-    ape_coo?: boolean
-    cor_coo?: boolean
-    url_img_coo?: boolean
-    tit_coo?: boolean
-  }, ExtArgs["result"]["coordinador"]>
-
-  export type coordinadorSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id_coo?: boolean
-    nom_coo?: boolean
-    ape_coo?: boolean
-    cor_coo?: boolean
-    url_img_coo?: boolean
-    tit_coo?: boolean
-  }, ExtArgs["result"]["coordinador"]>
-
-  export type coordinadorSelectScalar = {
-    id_coo?: boolean
-    nom_coo?: boolean
-    ape_coo?: boolean
-    cor_coo?: boolean
-    url_img_coo?: boolean
-    tit_coo?: boolean
-  }
-
-  export type coordinadorOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_coo" | "nom_coo" | "ape_coo" | "cor_coo" | "url_img_coo" | "tit_coo", ExtArgs["result"]["coordinador"]>
-  export type coordinadorInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    carreras?: boolean | coordinador$carrerasArgs<ExtArgs>
-    _count?: boolean | CoordinadorCountOutputTypeDefaultArgs<ExtArgs>
-  }
-  export type coordinadorIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
-  export type coordinadorIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
-
-  export type $coordinadorPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "coordinador"
-    objects: {
-      carreras: Prisma.$carreraPayload<ExtArgs>[]
-    }
-    scalars: $Extensions.GetPayloadResult<{
-      id_coo: string
-      nom_coo: string
-      ape_coo: string
-      cor_coo: string
-      url_img_coo: string
-      tit_coo: string
-    }, ExtArgs["result"]["coordinador"]>
-    composites: {}
-  }
-
-  type coordinadorGetPayload<S extends boolean | null | undefined | coordinadorDefaultArgs> = $Result.GetResult<Prisma.$coordinadorPayload, S>
-
-  type coordinadorCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
-    Omit<coordinadorFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
-      select?: CoordinadorCountAggregateInputType | true
-    }
-
-  export interface coordinadorDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['coordinador'], meta: { name: 'coordinador' } }
-    /**
-     * Find zero or one Coordinador that matches the filter.
-     * @param {coordinadorFindUniqueArgs} args - Arguments to find a Coordinador
-     * @example
-     * // Get one Coordinador
-     * const coordinador = await prisma.coordinador.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends coordinadorFindUniqueArgs>(args: SelectSubset<T, coordinadorFindUniqueArgs<ExtArgs>>): Prisma__coordinadorClient<$Result.GetResult<Prisma.$coordinadorPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find one Coordinador that matches the filter or throw an error with `error.code='P2025'`
-     * if no matches were found.
-     * @param {coordinadorFindUniqueOrThrowArgs} args - Arguments to find a Coordinador
-     * @example
-     * // Get one Coordinador
-     * const coordinador = await prisma.coordinador.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends coordinadorFindUniqueOrThrowArgs>(args: SelectSubset<T, coordinadorFindUniqueOrThrowArgs<ExtArgs>>): Prisma__coordinadorClient<$Result.GetResult<Prisma.$coordinadorPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first Coordinador that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {coordinadorFindFirstArgs} args - Arguments to find a Coordinador
-     * @example
-     * // Get one Coordinador
-     * const coordinador = await prisma.coordinador.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends coordinadorFindFirstArgs>(args?: SelectSubset<T, coordinadorFindFirstArgs<ExtArgs>>): Prisma__coordinadorClient<$Result.GetResult<Prisma.$coordinadorPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first Coordinador that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {coordinadorFindFirstOrThrowArgs} args - Arguments to find a Coordinador
-     * @example
-     * // Get one Coordinador
-     * const coordinador = await prisma.coordinador.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends coordinadorFindFirstOrThrowArgs>(args?: SelectSubset<T, coordinadorFindFirstOrThrowArgs<ExtArgs>>): Prisma__coordinadorClient<$Result.GetResult<Prisma.$coordinadorPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find zero or more Coordinadors that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {coordinadorFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all Coordinadors
-     * const coordinadors = await prisma.coordinador.findMany()
-     * 
-     * // Get first 10 Coordinadors
-     * const coordinadors = await prisma.coordinador.findMany({ take: 10 })
-     * 
-     * // Only select the `id_coo`
-     * const coordinadorWithId_cooOnly = await prisma.coordinador.findMany({ select: { id_coo: true } })
-     * 
-     */
-    findMany<T extends coordinadorFindManyArgs>(args?: SelectSubset<T, coordinadorFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$coordinadorPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
-
-    /**
-     * Create a Coordinador.
-     * @param {coordinadorCreateArgs} args - Arguments to create a Coordinador.
-     * @example
-     * // Create one Coordinador
-     * const Coordinador = await prisma.coordinador.create({
-     *   data: {
-     *     // ... data to create a Coordinador
-     *   }
-     * })
-     * 
-     */
-    create<T extends coordinadorCreateArgs>(args: SelectSubset<T, coordinadorCreateArgs<ExtArgs>>): Prisma__coordinadorClient<$Result.GetResult<Prisma.$coordinadorPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Create many Coordinadors.
-     * @param {coordinadorCreateManyArgs} args - Arguments to create many Coordinadors.
-     * @example
-     * // Create many Coordinadors
-     * const coordinador = await prisma.coordinador.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends coordinadorCreateManyArgs>(args?: SelectSubset<T, coordinadorCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many Coordinadors and returns the data saved in the database.
-     * @param {coordinadorCreateManyAndReturnArgs} args - Arguments to create many Coordinadors.
-     * @example
-     * // Create many Coordinadors
-     * const coordinador = await prisma.coordinador.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many Coordinadors and only return the `id_coo`
-     * const coordinadorWithId_cooOnly = await prisma.coordinador.createManyAndReturn({
-     *   select: { id_coo: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends coordinadorCreateManyAndReturnArgs>(args?: SelectSubset<T, coordinadorCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$coordinadorPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Delete a Coordinador.
-     * @param {coordinadorDeleteArgs} args - Arguments to delete one Coordinador.
-     * @example
-     * // Delete one Coordinador
-     * const Coordinador = await prisma.coordinador.delete({
-     *   where: {
-     *     // ... filter to delete one Coordinador
-     *   }
-     * })
-     * 
-     */
-    delete<T extends coordinadorDeleteArgs>(args: SelectSubset<T, coordinadorDeleteArgs<ExtArgs>>): Prisma__coordinadorClient<$Result.GetResult<Prisma.$coordinadorPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Update one Coordinador.
-     * @param {coordinadorUpdateArgs} args - Arguments to update one Coordinador.
-     * @example
-     * // Update one Coordinador
-     * const coordinador = await prisma.coordinador.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends coordinadorUpdateArgs>(args: SelectSubset<T, coordinadorUpdateArgs<ExtArgs>>): Prisma__coordinadorClient<$Result.GetResult<Prisma.$coordinadorPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Delete zero or more Coordinadors.
-     * @param {coordinadorDeleteManyArgs} args - Arguments to filter Coordinadors to delete.
-     * @example
-     * // Delete a few Coordinadors
-     * const { count } = await prisma.coordinador.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends coordinadorDeleteManyArgs>(args?: SelectSubset<T, coordinadorDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more Coordinadors.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {coordinadorUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many Coordinadors
-     * const coordinador = await prisma.coordinador.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends coordinadorUpdateManyArgs>(args: SelectSubset<T, coordinadorUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more Coordinadors and returns the data updated in the database.
-     * @param {coordinadorUpdateManyAndReturnArgs} args - Arguments to update many Coordinadors.
-     * @example
-     * // Update many Coordinadors
-     * const coordinador = await prisma.coordinador.updateManyAndReturn({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Update zero or more Coordinadors and only return the `id_coo`
-     * const coordinadorWithId_cooOnly = await prisma.coordinador.updateManyAndReturn({
-     *   select: { id_coo: true },
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    updateManyAndReturn<T extends coordinadorUpdateManyAndReturnArgs>(args: SelectSubset<T, coordinadorUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$coordinadorPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Create or update one Coordinador.
-     * @param {coordinadorUpsertArgs} args - Arguments to update or create a Coordinador.
-     * @example
-     * // Update or create a Coordinador
-     * const coordinador = await prisma.coordinador.upsert({
-     *   create: {
-     *     // ... data to create a Coordinador
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the Coordinador we want to update
-     *   }
-     * })
-     */
-    upsert<T extends coordinadorUpsertArgs>(args: SelectSubset<T, coordinadorUpsertArgs<ExtArgs>>): Prisma__coordinadorClient<$Result.GetResult<Prisma.$coordinadorPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-
-    /**
-     * Count the number of Coordinadors.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {coordinadorCountArgs} args - Arguments to filter Coordinadors to count.
-     * @example
-     * // Count the number of Coordinadors
-     * const count = await prisma.coordinador.count({
-     *   where: {
-     *     // ... the filter for the Coordinadors we want to count
-     *   }
-     * })
-    **/
-    count<T extends coordinadorCountArgs>(
-      args?: Subset<T, coordinadorCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], CoordinadorCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a Coordinador.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CoordinadorAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends CoordinadorAggregateArgs>(args: Subset<T, CoordinadorAggregateArgs>): Prisma.PrismaPromise<GetCoordinadorAggregateType<T>>
-
-    /**
-     * Group by Coordinador.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {coordinadorGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends coordinadorGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: coordinadorGroupByArgs['orderBy'] }
-        : { orderBy?: coordinadorGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, coordinadorGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCoordinadorGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the coordinador model
-   */
-  readonly fields: coordinadorFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for coordinador.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__coordinadorClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    carreras<T extends coordinador$carrerasArgs<ExtArgs> = {}>(args?: Subset<T, coordinador$carrerasArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$carreraPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the coordinador model
-   */
-  interface coordinadorFieldRefs {
-    readonly id_coo: FieldRef<"coordinador", 'String'>
-    readonly nom_coo: FieldRef<"coordinador", 'String'>
-    readonly ape_coo: FieldRef<"coordinador", 'String'>
-    readonly cor_coo: FieldRef<"coordinador", 'String'>
-    readonly url_img_coo: FieldRef<"coordinador", 'String'>
-    readonly tit_coo: FieldRef<"coordinador", 'String'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * coordinador findUnique
-   */
-  export type coordinadorFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the coordinador
-     */
-    select?: coordinadorSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the coordinador
-     */
-    omit?: coordinadorOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: coordinadorInclude<ExtArgs> | null
-    /**
-     * Filter, which coordinador to fetch.
-     */
-    where: coordinadorWhereUniqueInput
-  }
-
-  /**
-   * coordinador findUniqueOrThrow
-   */
-  export type coordinadorFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the coordinador
-     */
-    select?: coordinadorSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the coordinador
-     */
-    omit?: coordinadorOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: coordinadorInclude<ExtArgs> | null
-    /**
-     * Filter, which coordinador to fetch.
-     */
-    where: coordinadorWhereUniqueInput
-  }
-
-  /**
-   * coordinador findFirst
-   */
-  export type coordinadorFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the coordinador
-     */
-    select?: coordinadorSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the coordinador
-     */
-    omit?: coordinadorOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: coordinadorInclude<ExtArgs> | null
-    /**
-     * Filter, which coordinador to fetch.
-     */
-    where?: coordinadorWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of coordinadors to fetch.
-     */
-    orderBy?: coordinadorOrderByWithRelationInput | coordinadorOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for coordinadors.
-     */
-    cursor?: coordinadorWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` coordinadors from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` coordinadors.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of coordinadors.
-     */
-    distinct?: CoordinadorScalarFieldEnum | CoordinadorScalarFieldEnum[]
-  }
-
-  /**
-   * coordinador findFirstOrThrow
-   */
-  export type coordinadorFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the coordinador
-     */
-    select?: coordinadorSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the coordinador
-     */
-    omit?: coordinadorOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: coordinadorInclude<ExtArgs> | null
-    /**
-     * Filter, which coordinador to fetch.
-     */
-    where?: coordinadorWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of coordinadors to fetch.
-     */
-    orderBy?: coordinadorOrderByWithRelationInput | coordinadorOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for coordinadors.
-     */
-    cursor?: coordinadorWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` coordinadors from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` coordinadors.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of coordinadors.
-     */
-    distinct?: CoordinadorScalarFieldEnum | CoordinadorScalarFieldEnum[]
-  }
-
-  /**
-   * coordinador findMany
-   */
-  export type coordinadorFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the coordinador
-     */
-    select?: coordinadorSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the coordinador
-     */
-    omit?: coordinadorOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: coordinadorInclude<ExtArgs> | null
-    /**
-     * Filter, which coordinadors to fetch.
-     */
-    where?: coordinadorWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of coordinadors to fetch.
-     */
-    orderBy?: coordinadorOrderByWithRelationInput | coordinadorOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing coordinadors.
-     */
-    cursor?: coordinadorWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` coordinadors from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` coordinadors.
-     */
-    skip?: number
-    distinct?: CoordinadorScalarFieldEnum | CoordinadorScalarFieldEnum[]
-  }
-
-  /**
-   * coordinador create
-   */
-  export type coordinadorCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the coordinador
-     */
-    select?: coordinadorSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the coordinador
-     */
-    omit?: coordinadorOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: coordinadorInclude<ExtArgs> | null
-    /**
-     * The data needed to create a coordinador.
-     */
-    data: XOR<coordinadorCreateInput, coordinadorUncheckedCreateInput>
-  }
-
-  /**
-   * coordinador createMany
-   */
-  export type coordinadorCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many coordinadors.
-     */
-    data: coordinadorCreateManyInput | coordinadorCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * coordinador createManyAndReturn
-   */
-  export type coordinadorCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the coordinador
-     */
-    select?: coordinadorSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the coordinador
-     */
-    omit?: coordinadorOmit<ExtArgs> | null
-    /**
-     * The data used to create many coordinadors.
-     */
-    data: coordinadorCreateManyInput | coordinadorCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * coordinador update
-   */
-  export type coordinadorUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the coordinador
-     */
-    select?: coordinadorSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the coordinador
-     */
-    omit?: coordinadorOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: coordinadorInclude<ExtArgs> | null
-    /**
-     * The data needed to update a coordinador.
-     */
-    data: XOR<coordinadorUpdateInput, coordinadorUncheckedUpdateInput>
-    /**
-     * Choose, which coordinador to update.
-     */
-    where: coordinadorWhereUniqueInput
-  }
-
-  /**
-   * coordinador updateMany
-   */
-  export type coordinadorUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update coordinadors.
-     */
-    data: XOR<coordinadorUpdateManyMutationInput, coordinadorUncheckedUpdateManyInput>
-    /**
-     * Filter which coordinadors to update
-     */
-    where?: coordinadorWhereInput
-    /**
-     * Limit how many coordinadors to update.
-     */
-    limit?: number
-  }
-
-  /**
-   * coordinador updateManyAndReturn
-   */
-  export type coordinadorUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the coordinador
-     */
-    select?: coordinadorSelectUpdateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the coordinador
-     */
-    omit?: coordinadorOmit<ExtArgs> | null
-    /**
-     * The data used to update coordinadors.
-     */
-    data: XOR<coordinadorUpdateManyMutationInput, coordinadorUncheckedUpdateManyInput>
-    /**
-     * Filter which coordinadors to update
-     */
-    where?: coordinadorWhereInput
-    /**
-     * Limit how many coordinadors to update.
-     */
-    limit?: number
-  }
-
-  /**
-   * coordinador upsert
-   */
-  export type coordinadorUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the coordinador
-     */
-    select?: coordinadorSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the coordinador
-     */
-    omit?: coordinadorOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: coordinadorInclude<ExtArgs> | null
-    /**
-     * The filter to search for the coordinador to update in case it exists.
-     */
-    where: coordinadorWhereUniqueInput
-    /**
-     * In case the coordinador found by the `where` argument doesn't exist, create a new coordinador with this data.
-     */
-    create: XOR<coordinadorCreateInput, coordinadorUncheckedCreateInput>
-    /**
-     * In case the coordinador was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<coordinadorUpdateInput, coordinadorUncheckedUpdateInput>
-  }
-
-  /**
-   * coordinador delete
-   */
-  export type coordinadorDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the coordinador
-     */
-    select?: coordinadorSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the coordinador
-     */
-    omit?: coordinadorOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: coordinadorInclude<ExtArgs> | null
-    /**
-     * Filter which coordinador to delete.
-     */
-    where: coordinadorWhereUniqueInput
-  }
-
-  /**
-   * coordinador deleteMany
-   */
-  export type coordinadorDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which coordinadors to delete
-     */
-    where?: coordinadorWhereInput
-    /**
-     * Limit how many coordinadors to delete.
-     */
-    limit?: number
-  }
-
-  /**
-   * coordinador.carreras
-   */
-  export type coordinador$carrerasArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the carrera
-     */
-    select?: carreraSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the carrera
-     */
-    omit?: carreraOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: carreraInclude<ExtArgs> | null
-    where?: carreraWhereInput
-    orderBy?: carreraOrderByWithRelationInput | carreraOrderByWithRelationInput[]
-    cursor?: carreraWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: CarreraScalarFieldEnum | CarreraScalarFieldEnum[]
-  }
-
-  /**
-   * coordinador without action
-   */
-  export type coordinadorDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the coordinador
-     */
-    select?: coordinadorSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the coordinador
-     */
-    omit?: coordinadorOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: coordinadorInclude<ExtArgs> | null
   }
 
 
@@ -17950,1219 +22972,6 @@ export namespace Prisma {
 
 
   /**
-   * Model facultad
-   */
-
-  export type AggregateFacultad = {
-    _count: FacultadCountAggregateOutputType | null
-    _min: FacultadMinAggregateOutputType | null
-    _max: FacultadMaxAggregateOutputType | null
-  }
-
-  export type FacultadMinAggregateOutputType = {
-    id_fac: string | null
-    nom_fac: string | null
-    acr_fac: string | null
-    url_log_fac: string | null
-    des_fac: string | null
-    mis_fac: string | null
-    vis_fac: string | null
-    fec_cre_fac: Date | null
-    nom_dec_fac: string | null
-    ape_dec_fac: string | null
-    cor_dec_fac: string | null
-    url_img_dec_fac: string | null
-    nom_sub_dec_fac: string | null
-    ape_sub_dec_fac: string | null
-    cor_sub_dec_fac: string | null
-    url_img_sub_dec_fac: string | null
-  }
-
-  export type FacultadMaxAggregateOutputType = {
-    id_fac: string | null
-    nom_fac: string | null
-    acr_fac: string | null
-    url_log_fac: string | null
-    des_fac: string | null
-    mis_fac: string | null
-    vis_fac: string | null
-    fec_cre_fac: Date | null
-    nom_dec_fac: string | null
-    ape_dec_fac: string | null
-    cor_dec_fac: string | null
-    url_img_dec_fac: string | null
-    nom_sub_dec_fac: string | null
-    ape_sub_dec_fac: string | null
-    cor_sub_dec_fac: string | null
-    url_img_sub_dec_fac: string | null
-  }
-
-  export type FacultadCountAggregateOutputType = {
-    id_fac: number
-    nom_fac: number
-    acr_fac: number
-    url_log_fac: number
-    des_fac: number
-    mis_fac: number
-    vis_fac: number
-    fec_cre_fac: number
-    nom_dec_fac: number
-    ape_dec_fac: number
-    cor_dec_fac: number
-    url_img_dec_fac: number
-    nom_sub_dec_fac: number
-    ape_sub_dec_fac: number
-    cor_sub_dec_fac: number
-    url_img_sub_dec_fac: number
-    _all: number
-  }
-
-
-  export type FacultadMinAggregateInputType = {
-    id_fac?: true
-    nom_fac?: true
-    acr_fac?: true
-    url_log_fac?: true
-    des_fac?: true
-    mis_fac?: true
-    vis_fac?: true
-    fec_cre_fac?: true
-    nom_dec_fac?: true
-    ape_dec_fac?: true
-    cor_dec_fac?: true
-    url_img_dec_fac?: true
-    nom_sub_dec_fac?: true
-    ape_sub_dec_fac?: true
-    cor_sub_dec_fac?: true
-    url_img_sub_dec_fac?: true
-  }
-
-  export type FacultadMaxAggregateInputType = {
-    id_fac?: true
-    nom_fac?: true
-    acr_fac?: true
-    url_log_fac?: true
-    des_fac?: true
-    mis_fac?: true
-    vis_fac?: true
-    fec_cre_fac?: true
-    nom_dec_fac?: true
-    ape_dec_fac?: true
-    cor_dec_fac?: true
-    url_img_dec_fac?: true
-    nom_sub_dec_fac?: true
-    ape_sub_dec_fac?: true
-    cor_sub_dec_fac?: true
-    url_img_sub_dec_fac?: true
-  }
-
-  export type FacultadCountAggregateInputType = {
-    id_fac?: true
-    nom_fac?: true
-    acr_fac?: true
-    url_log_fac?: true
-    des_fac?: true
-    mis_fac?: true
-    vis_fac?: true
-    fec_cre_fac?: true
-    nom_dec_fac?: true
-    ape_dec_fac?: true
-    cor_dec_fac?: true
-    url_img_dec_fac?: true
-    nom_sub_dec_fac?: true
-    ape_sub_dec_fac?: true
-    cor_sub_dec_fac?: true
-    url_img_sub_dec_fac?: true
-    _all?: true
-  }
-
-  export type FacultadAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which facultad to aggregate.
-     */
-    where?: facultadWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of facultads to fetch.
-     */
-    orderBy?: facultadOrderByWithRelationInput | facultadOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: facultadWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` facultads from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` facultads.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned facultads
-    **/
-    _count?: true | FacultadCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: FacultadMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: FacultadMaxAggregateInputType
-  }
-
-  export type GetFacultadAggregateType<T extends FacultadAggregateArgs> = {
-        [P in keyof T & keyof AggregateFacultad]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateFacultad[P]>
-      : GetScalarType<T[P], AggregateFacultad[P]>
-  }
-
-
-
-
-  export type facultadGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: facultadWhereInput
-    orderBy?: facultadOrderByWithAggregationInput | facultadOrderByWithAggregationInput[]
-    by: FacultadScalarFieldEnum[] | FacultadScalarFieldEnum
-    having?: facultadScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: FacultadCountAggregateInputType | true
-    _min?: FacultadMinAggregateInputType
-    _max?: FacultadMaxAggregateInputType
-  }
-
-  export type FacultadGroupByOutputType = {
-    id_fac: string
-    nom_fac: string
-    acr_fac: string | null
-    url_log_fac: string | null
-    des_fac: string
-    mis_fac: string
-    vis_fac: string
-    fec_cre_fac: Date
-    nom_dec_fac: string
-    ape_dec_fac: string
-    cor_dec_fac: string
-    url_img_dec_fac: string
-    nom_sub_dec_fac: string
-    ape_sub_dec_fac: string
-    cor_sub_dec_fac: string
-    url_img_sub_dec_fac: string
-    _count: FacultadCountAggregateOutputType | null
-    _min: FacultadMinAggregateOutputType | null
-    _max: FacultadMaxAggregateOutputType | null
-  }
-
-  type GetFacultadGroupByPayload<T extends facultadGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<FacultadGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof FacultadGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], FacultadGroupByOutputType[P]>
-            : GetScalarType<T[P], FacultadGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type facultadSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id_fac?: boolean
-    nom_fac?: boolean
-    acr_fac?: boolean
-    url_log_fac?: boolean
-    des_fac?: boolean
-    mis_fac?: boolean
-    vis_fac?: boolean
-    fec_cre_fac?: boolean
-    nom_dec_fac?: boolean
-    ape_dec_fac?: boolean
-    cor_dec_fac?: boolean
-    url_img_dec_fac?: boolean
-    nom_sub_dec_fac?: boolean
-    ape_sub_dec_fac?: boolean
-    cor_sub_dec_fac?: boolean
-    url_img_sub_dec_fac?: boolean
-    carreras?: boolean | facultad$carrerasArgs<ExtArgs>
-    _count?: boolean | FacultadCountOutputTypeDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["facultad"]>
-
-  export type facultadSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id_fac?: boolean
-    nom_fac?: boolean
-    acr_fac?: boolean
-    url_log_fac?: boolean
-    des_fac?: boolean
-    mis_fac?: boolean
-    vis_fac?: boolean
-    fec_cre_fac?: boolean
-    nom_dec_fac?: boolean
-    ape_dec_fac?: boolean
-    cor_dec_fac?: boolean
-    url_img_dec_fac?: boolean
-    nom_sub_dec_fac?: boolean
-    ape_sub_dec_fac?: boolean
-    cor_sub_dec_fac?: boolean
-    url_img_sub_dec_fac?: boolean
-  }, ExtArgs["result"]["facultad"]>
-
-  export type facultadSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id_fac?: boolean
-    nom_fac?: boolean
-    acr_fac?: boolean
-    url_log_fac?: boolean
-    des_fac?: boolean
-    mis_fac?: boolean
-    vis_fac?: boolean
-    fec_cre_fac?: boolean
-    nom_dec_fac?: boolean
-    ape_dec_fac?: boolean
-    cor_dec_fac?: boolean
-    url_img_dec_fac?: boolean
-    nom_sub_dec_fac?: boolean
-    ape_sub_dec_fac?: boolean
-    cor_sub_dec_fac?: boolean
-    url_img_sub_dec_fac?: boolean
-  }, ExtArgs["result"]["facultad"]>
-
-  export type facultadSelectScalar = {
-    id_fac?: boolean
-    nom_fac?: boolean
-    acr_fac?: boolean
-    url_log_fac?: boolean
-    des_fac?: boolean
-    mis_fac?: boolean
-    vis_fac?: boolean
-    fec_cre_fac?: boolean
-    nom_dec_fac?: boolean
-    ape_dec_fac?: boolean
-    cor_dec_fac?: boolean
-    url_img_dec_fac?: boolean
-    nom_sub_dec_fac?: boolean
-    ape_sub_dec_fac?: boolean
-    cor_sub_dec_fac?: boolean
-    url_img_sub_dec_fac?: boolean
-  }
-
-  export type facultadOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_fac" | "nom_fac" | "acr_fac" | "url_log_fac" | "des_fac" | "mis_fac" | "vis_fac" | "fec_cre_fac" | "nom_dec_fac" | "ape_dec_fac" | "cor_dec_fac" | "url_img_dec_fac" | "nom_sub_dec_fac" | "ape_sub_dec_fac" | "cor_sub_dec_fac" | "url_img_sub_dec_fac", ExtArgs["result"]["facultad"]>
-  export type facultadInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    carreras?: boolean | facultad$carrerasArgs<ExtArgs>
-    _count?: boolean | FacultadCountOutputTypeDefaultArgs<ExtArgs>
-  }
-  export type facultadIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
-  export type facultadIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
-
-  export type $facultadPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "facultad"
-    objects: {
-      carreras: Prisma.$carreraPayload<ExtArgs>[]
-    }
-    scalars: $Extensions.GetPayloadResult<{
-      id_fac: string
-      nom_fac: string
-      acr_fac: string | null
-      url_log_fac: string | null
-      des_fac: string
-      mis_fac: string
-      vis_fac: string
-      fec_cre_fac: Date
-      nom_dec_fac: string
-      ape_dec_fac: string
-      cor_dec_fac: string
-      url_img_dec_fac: string
-      nom_sub_dec_fac: string
-      ape_sub_dec_fac: string
-      cor_sub_dec_fac: string
-      url_img_sub_dec_fac: string
-    }, ExtArgs["result"]["facultad"]>
-    composites: {}
-  }
-
-  type facultadGetPayload<S extends boolean | null | undefined | facultadDefaultArgs> = $Result.GetResult<Prisma.$facultadPayload, S>
-
-  type facultadCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
-    Omit<facultadFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
-      select?: FacultadCountAggregateInputType | true
-    }
-
-  export interface facultadDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['facultad'], meta: { name: 'facultad' } }
-    /**
-     * Find zero or one Facultad that matches the filter.
-     * @param {facultadFindUniqueArgs} args - Arguments to find a Facultad
-     * @example
-     * // Get one Facultad
-     * const facultad = await prisma.facultad.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends facultadFindUniqueArgs>(args: SelectSubset<T, facultadFindUniqueArgs<ExtArgs>>): Prisma__facultadClient<$Result.GetResult<Prisma.$facultadPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find one Facultad that matches the filter or throw an error with `error.code='P2025'`
-     * if no matches were found.
-     * @param {facultadFindUniqueOrThrowArgs} args - Arguments to find a Facultad
-     * @example
-     * // Get one Facultad
-     * const facultad = await prisma.facultad.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends facultadFindUniqueOrThrowArgs>(args: SelectSubset<T, facultadFindUniqueOrThrowArgs<ExtArgs>>): Prisma__facultadClient<$Result.GetResult<Prisma.$facultadPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first Facultad that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {facultadFindFirstArgs} args - Arguments to find a Facultad
-     * @example
-     * // Get one Facultad
-     * const facultad = await prisma.facultad.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends facultadFindFirstArgs>(args?: SelectSubset<T, facultadFindFirstArgs<ExtArgs>>): Prisma__facultadClient<$Result.GetResult<Prisma.$facultadPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first Facultad that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {facultadFindFirstOrThrowArgs} args - Arguments to find a Facultad
-     * @example
-     * // Get one Facultad
-     * const facultad = await prisma.facultad.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends facultadFindFirstOrThrowArgs>(args?: SelectSubset<T, facultadFindFirstOrThrowArgs<ExtArgs>>): Prisma__facultadClient<$Result.GetResult<Prisma.$facultadPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find zero or more Facultads that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {facultadFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all Facultads
-     * const facultads = await prisma.facultad.findMany()
-     * 
-     * // Get first 10 Facultads
-     * const facultads = await prisma.facultad.findMany({ take: 10 })
-     * 
-     * // Only select the `id_fac`
-     * const facultadWithId_facOnly = await prisma.facultad.findMany({ select: { id_fac: true } })
-     * 
-     */
-    findMany<T extends facultadFindManyArgs>(args?: SelectSubset<T, facultadFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$facultadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
-
-    /**
-     * Create a Facultad.
-     * @param {facultadCreateArgs} args - Arguments to create a Facultad.
-     * @example
-     * // Create one Facultad
-     * const Facultad = await prisma.facultad.create({
-     *   data: {
-     *     // ... data to create a Facultad
-     *   }
-     * })
-     * 
-     */
-    create<T extends facultadCreateArgs>(args: SelectSubset<T, facultadCreateArgs<ExtArgs>>): Prisma__facultadClient<$Result.GetResult<Prisma.$facultadPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Create many Facultads.
-     * @param {facultadCreateManyArgs} args - Arguments to create many Facultads.
-     * @example
-     * // Create many Facultads
-     * const facultad = await prisma.facultad.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends facultadCreateManyArgs>(args?: SelectSubset<T, facultadCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many Facultads and returns the data saved in the database.
-     * @param {facultadCreateManyAndReturnArgs} args - Arguments to create many Facultads.
-     * @example
-     * // Create many Facultads
-     * const facultad = await prisma.facultad.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many Facultads and only return the `id_fac`
-     * const facultadWithId_facOnly = await prisma.facultad.createManyAndReturn({
-     *   select: { id_fac: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends facultadCreateManyAndReturnArgs>(args?: SelectSubset<T, facultadCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$facultadPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Delete a Facultad.
-     * @param {facultadDeleteArgs} args - Arguments to delete one Facultad.
-     * @example
-     * // Delete one Facultad
-     * const Facultad = await prisma.facultad.delete({
-     *   where: {
-     *     // ... filter to delete one Facultad
-     *   }
-     * })
-     * 
-     */
-    delete<T extends facultadDeleteArgs>(args: SelectSubset<T, facultadDeleteArgs<ExtArgs>>): Prisma__facultadClient<$Result.GetResult<Prisma.$facultadPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Update one Facultad.
-     * @param {facultadUpdateArgs} args - Arguments to update one Facultad.
-     * @example
-     * // Update one Facultad
-     * const facultad = await prisma.facultad.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends facultadUpdateArgs>(args: SelectSubset<T, facultadUpdateArgs<ExtArgs>>): Prisma__facultadClient<$Result.GetResult<Prisma.$facultadPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Delete zero or more Facultads.
-     * @param {facultadDeleteManyArgs} args - Arguments to filter Facultads to delete.
-     * @example
-     * // Delete a few Facultads
-     * const { count } = await prisma.facultad.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends facultadDeleteManyArgs>(args?: SelectSubset<T, facultadDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more Facultads.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {facultadUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many Facultads
-     * const facultad = await prisma.facultad.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends facultadUpdateManyArgs>(args: SelectSubset<T, facultadUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more Facultads and returns the data updated in the database.
-     * @param {facultadUpdateManyAndReturnArgs} args - Arguments to update many Facultads.
-     * @example
-     * // Update many Facultads
-     * const facultad = await prisma.facultad.updateManyAndReturn({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Update zero or more Facultads and only return the `id_fac`
-     * const facultadWithId_facOnly = await prisma.facultad.updateManyAndReturn({
-     *   select: { id_fac: true },
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    updateManyAndReturn<T extends facultadUpdateManyAndReturnArgs>(args: SelectSubset<T, facultadUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$facultadPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Create or update one Facultad.
-     * @param {facultadUpsertArgs} args - Arguments to update or create a Facultad.
-     * @example
-     * // Update or create a Facultad
-     * const facultad = await prisma.facultad.upsert({
-     *   create: {
-     *     // ... data to create a Facultad
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the Facultad we want to update
-     *   }
-     * })
-     */
-    upsert<T extends facultadUpsertArgs>(args: SelectSubset<T, facultadUpsertArgs<ExtArgs>>): Prisma__facultadClient<$Result.GetResult<Prisma.$facultadPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-
-    /**
-     * Count the number of Facultads.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {facultadCountArgs} args - Arguments to filter Facultads to count.
-     * @example
-     * // Count the number of Facultads
-     * const count = await prisma.facultad.count({
-     *   where: {
-     *     // ... the filter for the Facultads we want to count
-     *   }
-     * })
-    **/
-    count<T extends facultadCountArgs>(
-      args?: Subset<T, facultadCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], FacultadCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a Facultad.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {FacultadAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends FacultadAggregateArgs>(args: Subset<T, FacultadAggregateArgs>): Prisma.PrismaPromise<GetFacultadAggregateType<T>>
-
-    /**
-     * Group by Facultad.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {facultadGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends facultadGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: facultadGroupByArgs['orderBy'] }
-        : { orderBy?: facultadGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, facultadGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetFacultadGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the facultad model
-   */
-  readonly fields: facultadFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for facultad.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__facultadClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    carreras<T extends facultad$carrerasArgs<ExtArgs> = {}>(args?: Subset<T, facultad$carrerasArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$carreraPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the facultad model
-   */
-  interface facultadFieldRefs {
-    readonly id_fac: FieldRef<"facultad", 'String'>
-    readonly nom_fac: FieldRef<"facultad", 'String'>
-    readonly acr_fac: FieldRef<"facultad", 'String'>
-    readonly url_log_fac: FieldRef<"facultad", 'String'>
-    readonly des_fac: FieldRef<"facultad", 'String'>
-    readonly mis_fac: FieldRef<"facultad", 'String'>
-    readonly vis_fac: FieldRef<"facultad", 'String'>
-    readonly fec_cre_fac: FieldRef<"facultad", 'DateTime'>
-    readonly nom_dec_fac: FieldRef<"facultad", 'String'>
-    readonly ape_dec_fac: FieldRef<"facultad", 'String'>
-    readonly cor_dec_fac: FieldRef<"facultad", 'String'>
-    readonly url_img_dec_fac: FieldRef<"facultad", 'String'>
-    readonly nom_sub_dec_fac: FieldRef<"facultad", 'String'>
-    readonly ape_sub_dec_fac: FieldRef<"facultad", 'String'>
-    readonly cor_sub_dec_fac: FieldRef<"facultad", 'String'>
-    readonly url_img_sub_dec_fac: FieldRef<"facultad", 'String'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * facultad findUnique
-   */
-  export type facultadFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the facultad
-     */
-    select?: facultadSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the facultad
-     */
-    omit?: facultadOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: facultadInclude<ExtArgs> | null
-    /**
-     * Filter, which facultad to fetch.
-     */
-    where: facultadWhereUniqueInput
-  }
-
-  /**
-   * facultad findUniqueOrThrow
-   */
-  export type facultadFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the facultad
-     */
-    select?: facultadSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the facultad
-     */
-    omit?: facultadOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: facultadInclude<ExtArgs> | null
-    /**
-     * Filter, which facultad to fetch.
-     */
-    where: facultadWhereUniqueInput
-  }
-
-  /**
-   * facultad findFirst
-   */
-  export type facultadFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the facultad
-     */
-    select?: facultadSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the facultad
-     */
-    omit?: facultadOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: facultadInclude<ExtArgs> | null
-    /**
-     * Filter, which facultad to fetch.
-     */
-    where?: facultadWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of facultads to fetch.
-     */
-    orderBy?: facultadOrderByWithRelationInput | facultadOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for facultads.
-     */
-    cursor?: facultadWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` facultads from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` facultads.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of facultads.
-     */
-    distinct?: FacultadScalarFieldEnum | FacultadScalarFieldEnum[]
-  }
-
-  /**
-   * facultad findFirstOrThrow
-   */
-  export type facultadFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the facultad
-     */
-    select?: facultadSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the facultad
-     */
-    omit?: facultadOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: facultadInclude<ExtArgs> | null
-    /**
-     * Filter, which facultad to fetch.
-     */
-    where?: facultadWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of facultads to fetch.
-     */
-    orderBy?: facultadOrderByWithRelationInput | facultadOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for facultads.
-     */
-    cursor?: facultadWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` facultads from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` facultads.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of facultads.
-     */
-    distinct?: FacultadScalarFieldEnum | FacultadScalarFieldEnum[]
-  }
-
-  /**
-   * facultad findMany
-   */
-  export type facultadFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the facultad
-     */
-    select?: facultadSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the facultad
-     */
-    omit?: facultadOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: facultadInclude<ExtArgs> | null
-    /**
-     * Filter, which facultads to fetch.
-     */
-    where?: facultadWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of facultads to fetch.
-     */
-    orderBy?: facultadOrderByWithRelationInput | facultadOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing facultads.
-     */
-    cursor?: facultadWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` facultads from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` facultads.
-     */
-    skip?: number
-    distinct?: FacultadScalarFieldEnum | FacultadScalarFieldEnum[]
-  }
-
-  /**
-   * facultad create
-   */
-  export type facultadCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the facultad
-     */
-    select?: facultadSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the facultad
-     */
-    omit?: facultadOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: facultadInclude<ExtArgs> | null
-    /**
-     * The data needed to create a facultad.
-     */
-    data: XOR<facultadCreateInput, facultadUncheckedCreateInput>
-  }
-
-  /**
-   * facultad createMany
-   */
-  export type facultadCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many facultads.
-     */
-    data: facultadCreateManyInput | facultadCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * facultad createManyAndReturn
-   */
-  export type facultadCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the facultad
-     */
-    select?: facultadSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the facultad
-     */
-    omit?: facultadOmit<ExtArgs> | null
-    /**
-     * The data used to create many facultads.
-     */
-    data: facultadCreateManyInput | facultadCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * facultad update
-   */
-  export type facultadUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the facultad
-     */
-    select?: facultadSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the facultad
-     */
-    omit?: facultadOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: facultadInclude<ExtArgs> | null
-    /**
-     * The data needed to update a facultad.
-     */
-    data: XOR<facultadUpdateInput, facultadUncheckedUpdateInput>
-    /**
-     * Choose, which facultad to update.
-     */
-    where: facultadWhereUniqueInput
-  }
-
-  /**
-   * facultad updateMany
-   */
-  export type facultadUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update facultads.
-     */
-    data: XOR<facultadUpdateManyMutationInput, facultadUncheckedUpdateManyInput>
-    /**
-     * Filter which facultads to update
-     */
-    where?: facultadWhereInput
-    /**
-     * Limit how many facultads to update.
-     */
-    limit?: number
-  }
-
-  /**
-   * facultad updateManyAndReturn
-   */
-  export type facultadUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the facultad
-     */
-    select?: facultadSelectUpdateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the facultad
-     */
-    omit?: facultadOmit<ExtArgs> | null
-    /**
-     * The data used to update facultads.
-     */
-    data: XOR<facultadUpdateManyMutationInput, facultadUncheckedUpdateManyInput>
-    /**
-     * Filter which facultads to update
-     */
-    where?: facultadWhereInput
-    /**
-     * Limit how many facultads to update.
-     */
-    limit?: number
-  }
-
-  /**
-   * facultad upsert
-   */
-  export type facultadUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the facultad
-     */
-    select?: facultadSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the facultad
-     */
-    omit?: facultadOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: facultadInclude<ExtArgs> | null
-    /**
-     * The filter to search for the facultad to update in case it exists.
-     */
-    where: facultadWhereUniqueInput
-    /**
-     * In case the facultad found by the `where` argument doesn't exist, create a new facultad with this data.
-     */
-    create: XOR<facultadCreateInput, facultadUncheckedCreateInput>
-    /**
-     * In case the facultad was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<facultadUpdateInput, facultadUncheckedUpdateInput>
-  }
-
-  /**
-   * facultad delete
-   */
-  export type facultadDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the facultad
-     */
-    select?: facultadSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the facultad
-     */
-    omit?: facultadOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: facultadInclude<ExtArgs> | null
-    /**
-     * Filter which facultad to delete.
-     */
-    where: facultadWhereUniqueInput
-  }
-
-  /**
-   * facultad deleteMany
-   */
-  export type facultadDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which facultads to delete
-     */
-    where?: facultadWhereInput
-    /**
-     * Limit how many facultads to delete.
-     */
-    limit?: number
-  }
-
-  /**
-   * facultad.carreras
-   */
-  export type facultad$carrerasArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the carrera
-     */
-    select?: carreraSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the carrera
-     */
-    omit?: carreraOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: carreraInclude<ExtArgs> | null
-    where?: carreraWhereInput
-    orderBy?: carreraOrderByWithRelationInput | carreraOrderByWithRelationInput[]
-    cursor?: carreraWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: CarreraScalarFieldEnum | CarreraScalarFieldEnum[]
-  }
-
-  /**
-   * facultad without action
-   */
-  export type facultadDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the facultad
-     */
-    select?: facultadSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the facultad
-     */
-    omit?: facultadOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: facultadInclude<ExtArgs> | null
-  }
-
-
-  /**
    * Model token_cuenta
    */
 
@@ -23657,6 +27466,104 @@ export namespace Prisma {
   export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
+  export const UniversidadScalarFieldEnum: {
+    id_uni: 'id_uni',
+    nom_uni: 'nom_uni',
+    acr_uni: 'acr_uni',
+    url_log_uni: 'url_log_uni',
+    url_web_uni: 'url_web_uni',
+    dir_uni: 'dir_uni',
+    tel_uni: 'tel_uni',
+    cor_uni: 'cor_uni',
+    fec_fun_uni: 'fec_fun_uni',
+    fec_cre_uni: 'fec_cre_uni',
+    est_uni: 'est_uni'
+  };
+
+  export type UniversidadScalarFieldEnum = (typeof UniversidadScalarFieldEnum)[keyof typeof UniversidadScalarFieldEnum]
+
+
+  export const Autoridad_universidadScalarFieldEnum: {
+    id_aut_uni: 'id_aut_uni',
+    id_uni_per: 'id_uni_per',
+    tip_aut_uni: 'tip_aut_uni',
+    nom_aut_uni: 'nom_aut_uni',
+    ape_aut_uni: 'ape_aut_uni',
+    cor_aut_uni: 'cor_aut_uni',
+    tel_aut_uni: 'tel_aut_uni',
+    url_img_aut_uni: 'url_img_aut_uni',
+    tit_aut_uni: 'tit_aut_uni',
+    fec_ini_aut_uni: 'fec_ini_aut_uni',
+    fec_fin_aut_uni: 'fec_fin_aut_uni',
+    est_aut_uni: 'est_aut_uni',
+    fec_cre_aut_uni: 'fec_cre_aut_uni'
+  };
+
+  export type Autoridad_universidadScalarFieldEnum = (typeof Autoridad_universidadScalarFieldEnum)[keyof typeof Autoridad_universidadScalarFieldEnum]
+
+
+  export const FacultadScalarFieldEnum: {
+    id_fac: 'id_fac',
+    nom_fac: 'nom_fac',
+    acr_fac: 'acr_fac',
+    url_log_fac: 'url_log_fac',
+    des_fac: 'des_fac',
+    mis_fac: 'mis_fac',
+    vis_fac: 'vis_fac',
+    fec_cre_fac: 'fec_cre_fac',
+    id_uni_per: 'id_uni_per'
+  };
+
+  export type FacultadScalarFieldEnum = (typeof FacultadScalarFieldEnum)[keyof typeof FacultadScalarFieldEnum]
+
+
+  export const Autoridad_facultadScalarFieldEnum: {
+    id_aut_fac: 'id_aut_fac',
+    id_fac_per: 'id_fac_per',
+    tip_aut_fac: 'tip_aut_fac',
+    nom_aut_fac: 'nom_aut_fac',
+    ape_aut_fac: 'ape_aut_fac',
+    cor_aut_fac: 'cor_aut_fac',
+    tel_aut_fac: 'tel_aut_fac',
+    url_img_aut_fac: 'url_img_aut_fac',
+    tit_aut_fac: 'tit_aut_fac',
+    fec_ini_aut_fac: 'fec_ini_aut_fac',
+    fec_fin_aut_fac: 'fec_fin_aut_fac',
+    est_aut_fac: 'est_aut_fac',
+    fec_cre_aut_fac: 'fec_cre_aut_fac'
+  };
+
+  export type Autoridad_facultadScalarFieldEnum = (typeof Autoridad_facultadScalarFieldEnum)[keyof typeof Autoridad_facultadScalarFieldEnum]
+
+
+  export const CarreraScalarFieldEnum: {
+    id_car: 'id_car',
+    nom_car: 'nom_car',
+    des_car: 'des_car',
+    dur_sem_car: 'dur_sem_car',
+    mod_car: 'mod_car',
+    ico_car: 'ico_car',
+    est_car: 'est_car',
+    fec_cre_car: 'fec_cre_car',
+    id_fac_per: 'id_fac_per',
+    id_coo_per: 'id_coo_per'
+  };
+
+  export type CarreraScalarFieldEnum = (typeof CarreraScalarFieldEnum)[keyof typeof CarreraScalarFieldEnum]
+
+
+  export const CoordinadorScalarFieldEnum: {
+    id_coo: 'id_coo',
+    nom_coo: 'nom_coo',
+    ape_coo: 'ape_coo',
+    cor_coo: 'cor_coo',
+    url_img_coo: 'url_img_coo',
+    tit_coo: 'tit_coo'
+  };
+
+  export type CoordinadorScalarFieldEnum = (typeof CoordinadorScalarFieldEnum)[keyof typeof CoordinadorScalarFieldEnum]
+
+
   export const UsuarioScalarFieldEnum: {
     id_usu: 'id_usu',
     ced_usu: 'ced_usu',
@@ -23670,6 +27577,20 @@ export namespace Prisma {
   };
 
   export type UsuarioScalarFieldEnum = (typeof UsuarioScalarFieldEnum)[keyof typeof UsuarioScalarFieldEnum]
+
+
+  export const CuentaScalarFieldEnum: {
+    id_cue: 'id_cue',
+    id_usu_per: 'id_usu_per',
+    cor_usu: 'cor_usu',
+    con_usu: 'con_usu',
+    fec_cre_cue: 'fec_cre_cue',
+    rol_usu: 'rol_usu',
+    est_ver_cor: 'est_ver_cor',
+    fec_ver_cor: 'fec_ver_cor'
+  };
+
+  export type CuentaScalarFieldEnum = (typeof CuentaScalarFieldEnum)[keyof typeof CuentaScalarFieldEnum]
 
 
   export const Comprobante_pagoScalarFieldEnum: {
@@ -23708,48 +27629,6 @@ export namespace Prisma {
   };
 
   export type Observacion_inscripcionScalarFieldEnum = (typeof Observacion_inscripcionScalarFieldEnum)[keyof typeof Observacion_inscripcionScalarFieldEnum]
-
-
-  export const CuentaScalarFieldEnum: {
-    id_cue: 'id_cue',
-    id_usu_per: 'id_usu_per',
-    cor_usu: 'cor_usu',
-    con_usu: 'con_usu',
-    fec_cre_cue: 'fec_cre_cue',
-    rol_usu: 'rol_usu',
-    est_ver_cor: 'est_ver_cor',
-    fec_ver_cor: 'fec_ver_cor'
-  };
-
-  export type CuentaScalarFieldEnum = (typeof CuentaScalarFieldEnum)[keyof typeof CuentaScalarFieldEnum]
-
-
-  export const CarreraScalarFieldEnum: {
-    id_car: 'id_car',
-    nom_car: 'nom_car',
-    des_car: 'des_car',
-    dur_sem_car: 'dur_sem_car',
-    mod_car: 'mod_car',
-    ico_car: 'ico_car',
-    est_car: 'est_car',
-    fec_cre_car: 'fec_cre_car',
-    id_fac_per: 'id_fac_per',
-    id_coo_per: 'id_coo_per'
-  };
-
-  export type CarreraScalarFieldEnum = (typeof CarreraScalarFieldEnum)[keyof typeof CarreraScalarFieldEnum]
-
-
-  export const CoordinadorScalarFieldEnum: {
-    id_coo: 'id_coo',
-    nom_coo: 'nom_coo',
-    ape_coo: 'ape_coo',
-    cor_coo: 'cor_coo',
-    url_img_coo: 'url_img_coo',
-    tit_coo: 'tit_coo'
-  };
-
-  export type CoordinadorScalarFieldEnum = (typeof CoordinadorScalarFieldEnum)[keyof typeof CoordinadorScalarFieldEnum]
 
 
   export const EventoScalarFieldEnum: {
@@ -23827,28 +27706,6 @@ export namespace Prisma {
   };
 
   export type CertificadoScalarFieldEnum = (typeof CertificadoScalarFieldEnum)[keyof typeof CertificadoScalarFieldEnum]
-
-
-  export const FacultadScalarFieldEnum: {
-    id_fac: 'id_fac',
-    nom_fac: 'nom_fac',
-    acr_fac: 'acr_fac',
-    url_log_fac: 'url_log_fac',
-    des_fac: 'des_fac',
-    mis_fac: 'mis_fac',
-    vis_fac: 'vis_fac',
-    fec_cre_fac: 'fec_cre_fac',
-    nom_dec_fac: 'nom_dec_fac',
-    ape_dec_fac: 'ape_dec_fac',
-    cor_dec_fac: 'cor_dec_fac',
-    url_img_dec_fac: 'url_img_dec_fac',
-    nom_sub_dec_fac: 'nom_sub_dec_fac',
-    ape_sub_dec_fac: 'ape_sub_dec_fac',
-    cor_sub_dec_fac: 'cor_sub_dec_fac',
-    url_img_sub_dec_fac: 'url_img_sub_dec_fac'
-  };
-
-  export type FacultadScalarFieldEnum = (typeof FacultadScalarFieldEnum)[keyof typeof FacultadScalarFieldEnum]
 
 
   export const Token_cuentaScalarFieldEnum: {
@@ -23960,16 +27817,51 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'estado_validacion'
+   * Reference to a field of type 'Boolean'
    */
-  export type Enumestado_validacionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'estado_validacion'>
+  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
 
   /**
-   * Reference to a field of type 'estado_validacion[]'
+   * Reference to a field of type 'tipo_autoridad_universidad'
    */
-  export type ListEnumestado_validacionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'estado_validacion[]'>
+  export type Enumtipo_autoridad_universidadFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'tipo_autoridad_universidad'>
+    
+
+
+  /**
+   * Reference to a field of type 'tipo_autoridad_universidad[]'
+   */
+  export type ListEnumtipo_autoridad_universidadFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'tipo_autoridad_universidad[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'tipo_autoridad_facultad'
+   */
+  export type Enumtipo_autoridad_facultadFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'tipo_autoridad_facultad'>
+    
+
+
+  /**
+   * Reference to a field of type 'tipo_autoridad_facultad[]'
+   */
+  export type ListEnumtipo_autoridad_facultadFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'tipo_autoridad_facultad[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Int'
+   */
+  export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+    
+
+
+  /**
+   * Reference to a field of type 'Int[]'
+   */
+  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
     
 
 
@@ -23988,23 +27880,16 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'Boolean'
+   * Reference to a field of type 'estado_validacion'
    */
-  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+  export type Enumestado_validacionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'estado_validacion'>
     
 
 
   /**
-   * Reference to a field of type 'Int'
+   * Reference to a field of type 'estado_validacion[]'
    */
-  export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
-    
-
-
-  /**
-   * Reference to a field of type 'Int[]'
-   */
-  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+  export type ListEnumestado_validacionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'estado_validacion[]'>
     
 
 
@@ -24151,6 +28036,516 @@ export namespace Prisma {
    */
 
 
+  export type universidadWhereInput = {
+    AND?: universidadWhereInput | universidadWhereInput[]
+    OR?: universidadWhereInput[]
+    NOT?: universidadWhereInput | universidadWhereInput[]
+    id_uni?: StringFilter<"universidad"> | string
+    nom_uni?: StringFilter<"universidad"> | string
+    acr_uni?: StringNullableFilter<"universidad"> | string | null
+    url_log_uni?: StringNullableFilter<"universidad"> | string | null
+    url_web_uni?: StringNullableFilter<"universidad"> | string | null
+    dir_uni?: StringFilter<"universidad"> | string
+    tel_uni?: StringNullableFilter<"universidad"> | string | null
+    cor_uni?: StringNullableFilter<"universidad"> | string | null
+    fec_fun_uni?: DateTimeNullableFilter<"universidad"> | Date | string | null
+    fec_cre_uni?: DateTimeFilter<"universidad"> | Date | string
+    est_uni?: BoolFilter<"universidad"> | boolean
+    facultades?: FacultadListRelationFilter
+    autoridades?: Autoridad_universidadListRelationFilter
+  }
+
+  export type universidadOrderByWithRelationInput = {
+    id_uni?: SortOrder
+    nom_uni?: SortOrder
+    acr_uni?: SortOrderInput | SortOrder
+    url_log_uni?: SortOrderInput | SortOrder
+    url_web_uni?: SortOrderInput | SortOrder
+    dir_uni?: SortOrder
+    tel_uni?: SortOrderInput | SortOrder
+    cor_uni?: SortOrderInput | SortOrder
+    fec_fun_uni?: SortOrderInput | SortOrder
+    fec_cre_uni?: SortOrder
+    est_uni?: SortOrder
+    facultades?: facultadOrderByRelationAggregateInput
+    autoridades?: autoridad_universidadOrderByRelationAggregateInput
+  }
+
+  export type universidadWhereUniqueInput = Prisma.AtLeast<{
+    id_uni?: string
+    nom_uni?: string
+    acr_uni?: string
+    AND?: universidadWhereInput | universidadWhereInput[]
+    OR?: universidadWhereInput[]
+    NOT?: universidadWhereInput | universidadWhereInput[]
+    url_log_uni?: StringNullableFilter<"universidad"> | string | null
+    url_web_uni?: StringNullableFilter<"universidad"> | string | null
+    dir_uni?: StringFilter<"universidad"> | string
+    tel_uni?: StringNullableFilter<"universidad"> | string | null
+    cor_uni?: StringNullableFilter<"universidad"> | string | null
+    fec_fun_uni?: DateTimeNullableFilter<"universidad"> | Date | string | null
+    fec_cre_uni?: DateTimeFilter<"universidad"> | Date | string
+    est_uni?: BoolFilter<"universidad"> | boolean
+    facultades?: FacultadListRelationFilter
+    autoridades?: Autoridad_universidadListRelationFilter
+  }, "id_uni" | "nom_uni" | "acr_uni">
+
+  export type universidadOrderByWithAggregationInput = {
+    id_uni?: SortOrder
+    nom_uni?: SortOrder
+    acr_uni?: SortOrderInput | SortOrder
+    url_log_uni?: SortOrderInput | SortOrder
+    url_web_uni?: SortOrderInput | SortOrder
+    dir_uni?: SortOrder
+    tel_uni?: SortOrderInput | SortOrder
+    cor_uni?: SortOrderInput | SortOrder
+    fec_fun_uni?: SortOrderInput | SortOrder
+    fec_cre_uni?: SortOrder
+    est_uni?: SortOrder
+    _count?: universidadCountOrderByAggregateInput
+    _max?: universidadMaxOrderByAggregateInput
+    _min?: universidadMinOrderByAggregateInput
+  }
+
+  export type universidadScalarWhereWithAggregatesInput = {
+    AND?: universidadScalarWhereWithAggregatesInput | universidadScalarWhereWithAggregatesInput[]
+    OR?: universidadScalarWhereWithAggregatesInput[]
+    NOT?: universidadScalarWhereWithAggregatesInput | universidadScalarWhereWithAggregatesInput[]
+    id_uni?: StringWithAggregatesFilter<"universidad"> | string
+    nom_uni?: StringWithAggregatesFilter<"universidad"> | string
+    acr_uni?: StringNullableWithAggregatesFilter<"universidad"> | string | null
+    url_log_uni?: StringNullableWithAggregatesFilter<"universidad"> | string | null
+    url_web_uni?: StringNullableWithAggregatesFilter<"universidad"> | string | null
+    dir_uni?: StringWithAggregatesFilter<"universidad"> | string
+    tel_uni?: StringNullableWithAggregatesFilter<"universidad"> | string | null
+    cor_uni?: StringNullableWithAggregatesFilter<"universidad"> | string | null
+    fec_fun_uni?: DateTimeNullableWithAggregatesFilter<"universidad"> | Date | string | null
+    fec_cre_uni?: DateTimeWithAggregatesFilter<"universidad"> | Date | string
+    est_uni?: BoolWithAggregatesFilter<"universidad"> | boolean
+  }
+
+  export type autoridad_universidadWhereInput = {
+    AND?: autoridad_universidadWhereInput | autoridad_universidadWhereInput[]
+    OR?: autoridad_universidadWhereInput[]
+    NOT?: autoridad_universidadWhereInput | autoridad_universidadWhereInput[]
+    id_aut_uni?: StringFilter<"autoridad_universidad"> | string
+    id_uni_per?: StringFilter<"autoridad_universidad"> | string
+    tip_aut_uni?: Enumtipo_autoridad_universidadFilter<"autoridad_universidad"> | $Enums.tipo_autoridad_universidad
+    nom_aut_uni?: StringFilter<"autoridad_universidad"> | string
+    ape_aut_uni?: StringFilter<"autoridad_universidad"> | string
+    cor_aut_uni?: StringNullableFilter<"autoridad_universidad"> | string | null
+    tel_aut_uni?: StringNullableFilter<"autoridad_universidad"> | string | null
+    url_img_aut_uni?: StringNullableFilter<"autoridad_universidad"> | string | null
+    tit_aut_uni?: StringNullableFilter<"autoridad_universidad"> | string | null
+    fec_ini_aut_uni?: DateTimeFilter<"autoridad_universidad"> | Date | string
+    fec_fin_aut_uni?: DateTimeNullableFilter<"autoridad_universidad"> | Date | string | null
+    est_aut_uni?: BoolFilter<"autoridad_universidad"> | boolean
+    fec_cre_aut_uni?: DateTimeFilter<"autoridad_universidad"> | Date | string
+    universidad?: XOR<UniversidadScalarRelationFilter, universidadWhereInput>
+  }
+
+  export type autoridad_universidadOrderByWithRelationInput = {
+    id_aut_uni?: SortOrder
+    id_uni_per?: SortOrder
+    tip_aut_uni?: SortOrder
+    nom_aut_uni?: SortOrder
+    ape_aut_uni?: SortOrder
+    cor_aut_uni?: SortOrderInput | SortOrder
+    tel_aut_uni?: SortOrderInput | SortOrder
+    url_img_aut_uni?: SortOrderInput | SortOrder
+    tit_aut_uni?: SortOrderInput | SortOrder
+    fec_ini_aut_uni?: SortOrder
+    fec_fin_aut_uni?: SortOrderInput | SortOrder
+    est_aut_uni?: SortOrder
+    fec_cre_aut_uni?: SortOrder
+    universidad?: universidadOrderByWithRelationInput
+  }
+
+  export type autoridad_universidadWhereUniqueInput = Prisma.AtLeast<{
+    id_aut_uni?: string
+    AND?: autoridad_universidadWhereInput | autoridad_universidadWhereInput[]
+    OR?: autoridad_universidadWhereInput[]
+    NOT?: autoridad_universidadWhereInput | autoridad_universidadWhereInput[]
+    id_uni_per?: StringFilter<"autoridad_universidad"> | string
+    tip_aut_uni?: Enumtipo_autoridad_universidadFilter<"autoridad_universidad"> | $Enums.tipo_autoridad_universidad
+    nom_aut_uni?: StringFilter<"autoridad_universidad"> | string
+    ape_aut_uni?: StringFilter<"autoridad_universidad"> | string
+    cor_aut_uni?: StringNullableFilter<"autoridad_universidad"> | string | null
+    tel_aut_uni?: StringNullableFilter<"autoridad_universidad"> | string | null
+    url_img_aut_uni?: StringNullableFilter<"autoridad_universidad"> | string | null
+    tit_aut_uni?: StringNullableFilter<"autoridad_universidad"> | string | null
+    fec_ini_aut_uni?: DateTimeFilter<"autoridad_universidad"> | Date | string
+    fec_fin_aut_uni?: DateTimeNullableFilter<"autoridad_universidad"> | Date | string | null
+    est_aut_uni?: BoolFilter<"autoridad_universidad"> | boolean
+    fec_cre_aut_uni?: DateTimeFilter<"autoridad_universidad"> | Date | string
+    universidad?: XOR<UniversidadScalarRelationFilter, universidadWhereInput>
+  }, "id_aut_uni">
+
+  export type autoridad_universidadOrderByWithAggregationInput = {
+    id_aut_uni?: SortOrder
+    id_uni_per?: SortOrder
+    tip_aut_uni?: SortOrder
+    nom_aut_uni?: SortOrder
+    ape_aut_uni?: SortOrder
+    cor_aut_uni?: SortOrderInput | SortOrder
+    tel_aut_uni?: SortOrderInput | SortOrder
+    url_img_aut_uni?: SortOrderInput | SortOrder
+    tit_aut_uni?: SortOrderInput | SortOrder
+    fec_ini_aut_uni?: SortOrder
+    fec_fin_aut_uni?: SortOrderInput | SortOrder
+    est_aut_uni?: SortOrder
+    fec_cre_aut_uni?: SortOrder
+    _count?: autoridad_universidadCountOrderByAggregateInput
+    _max?: autoridad_universidadMaxOrderByAggregateInput
+    _min?: autoridad_universidadMinOrderByAggregateInput
+  }
+
+  export type autoridad_universidadScalarWhereWithAggregatesInput = {
+    AND?: autoridad_universidadScalarWhereWithAggregatesInput | autoridad_universidadScalarWhereWithAggregatesInput[]
+    OR?: autoridad_universidadScalarWhereWithAggregatesInput[]
+    NOT?: autoridad_universidadScalarWhereWithAggregatesInput | autoridad_universidadScalarWhereWithAggregatesInput[]
+    id_aut_uni?: StringWithAggregatesFilter<"autoridad_universidad"> | string
+    id_uni_per?: StringWithAggregatesFilter<"autoridad_universidad"> | string
+    tip_aut_uni?: Enumtipo_autoridad_universidadWithAggregatesFilter<"autoridad_universidad"> | $Enums.tipo_autoridad_universidad
+    nom_aut_uni?: StringWithAggregatesFilter<"autoridad_universidad"> | string
+    ape_aut_uni?: StringWithAggregatesFilter<"autoridad_universidad"> | string
+    cor_aut_uni?: StringNullableWithAggregatesFilter<"autoridad_universidad"> | string | null
+    tel_aut_uni?: StringNullableWithAggregatesFilter<"autoridad_universidad"> | string | null
+    url_img_aut_uni?: StringNullableWithAggregatesFilter<"autoridad_universidad"> | string | null
+    tit_aut_uni?: StringNullableWithAggregatesFilter<"autoridad_universidad"> | string | null
+    fec_ini_aut_uni?: DateTimeWithAggregatesFilter<"autoridad_universidad"> | Date | string
+    fec_fin_aut_uni?: DateTimeNullableWithAggregatesFilter<"autoridad_universidad"> | Date | string | null
+    est_aut_uni?: BoolWithAggregatesFilter<"autoridad_universidad"> | boolean
+    fec_cre_aut_uni?: DateTimeWithAggregatesFilter<"autoridad_universidad"> | Date | string
+  }
+
+  export type facultadWhereInput = {
+    AND?: facultadWhereInput | facultadWhereInput[]
+    OR?: facultadWhereInput[]
+    NOT?: facultadWhereInput | facultadWhereInput[]
+    id_fac?: StringFilter<"facultad"> | string
+    nom_fac?: StringFilter<"facultad"> | string
+    acr_fac?: StringNullableFilter<"facultad"> | string | null
+    url_log_fac?: StringNullableFilter<"facultad"> | string | null
+    des_fac?: StringFilter<"facultad"> | string
+    mis_fac?: StringFilter<"facultad"> | string
+    vis_fac?: StringFilter<"facultad"> | string
+    fec_cre_fac?: DateTimeFilter<"facultad"> | Date | string
+    id_uni_per?: StringFilter<"facultad"> | string
+    universidad?: XOR<UniversidadScalarRelationFilter, universidadWhereInput>
+    carreras?: CarreraListRelationFilter
+    autoridades?: Autoridad_facultadListRelationFilter
+  }
+
+  export type facultadOrderByWithRelationInput = {
+    id_fac?: SortOrder
+    nom_fac?: SortOrder
+    acr_fac?: SortOrderInput | SortOrder
+    url_log_fac?: SortOrderInput | SortOrder
+    des_fac?: SortOrder
+    mis_fac?: SortOrder
+    vis_fac?: SortOrder
+    fec_cre_fac?: SortOrder
+    id_uni_per?: SortOrder
+    universidad?: universidadOrderByWithRelationInput
+    carreras?: carreraOrderByRelationAggregateInput
+    autoridades?: autoridad_facultadOrderByRelationAggregateInput
+  }
+
+  export type facultadWhereUniqueInput = Prisma.AtLeast<{
+    id_fac?: string
+    nom_fac?: string
+    AND?: facultadWhereInput | facultadWhereInput[]
+    OR?: facultadWhereInput[]
+    NOT?: facultadWhereInput | facultadWhereInput[]
+    acr_fac?: StringNullableFilter<"facultad"> | string | null
+    url_log_fac?: StringNullableFilter<"facultad"> | string | null
+    des_fac?: StringFilter<"facultad"> | string
+    mis_fac?: StringFilter<"facultad"> | string
+    vis_fac?: StringFilter<"facultad"> | string
+    fec_cre_fac?: DateTimeFilter<"facultad"> | Date | string
+    id_uni_per?: StringFilter<"facultad"> | string
+    universidad?: XOR<UniversidadScalarRelationFilter, universidadWhereInput>
+    carreras?: CarreraListRelationFilter
+    autoridades?: Autoridad_facultadListRelationFilter
+  }, "id_fac" | "nom_fac">
+
+  export type facultadOrderByWithAggregationInput = {
+    id_fac?: SortOrder
+    nom_fac?: SortOrder
+    acr_fac?: SortOrderInput | SortOrder
+    url_log_fac?: SortOrderInput | SortOrder
+    des_fac?: SortOrder
+    mis_fac?: SortOrder
+    vis_fac?: SortOrder
+    fec_cre_fac?: SortOrder
+    id_uni_per?: SortOrder
+    _count?: facultadCountOrderByAggregateInput
+    _max?: facultadMaxOrderByAggregateInput
+    _min?: facultadMinOrderByAggregateInput
+  }
+
+  export type facultadScalarWhereWithAggregatesInput = {
+    AND?: facultadScalarWhereWithAggregatesInput | facultadScalarWhereWithAggregatesInput[]
+    OR?: facultadScalarWhereWithAggregatesInput[]
+    NOT?: facultadScalarWhereWithAggregatesInput | facultadScalarWhereWithAggregatesInput[]
+    id_fac?: StringWithAggregatesFilter<"facultad"> | string
+    nom_fac?: StringWithAggregatesFilter<"facultad"> | string
+    acr_fac?: StringNullableWithAggregatesFilter<"facultad"> | string | null
+    url_log_fac?: StringNullableWithAggregatesFilter<"facultad"> | string | null
+    des_fac?: StringWithAggregatesFilter<"facultad"> | string
+    mis_fac?: StringWithAggregatesFilter<"facultad"> | string
+    vis_fac?: StringWithAggregatesFilter<"facultad"> | string
+    fec_cre_fac?: DateTimeWithAggregatesFilter<"facultad"> | Date | string
+    id_uni_per?: StringWithAggregatesFilter<"facultad"> | string
+  }
+
+  export type autoridad_facultadWhereInput = {
+    AND?: autoridad_facultadWhereInput | autoridad_facultadWhereInput[]
+    OR?: autoridad_facultadWhereInput[]
+    NOT?: autoridad_facultadWhereInput | autoridad_facultadWhereInput[]
+    id_aut_fac?: StringFilter<"autoridad_facultad"> | string
+    id_fac_per?: StringFilter<"autoridad_facultad"> | string
+    tip_aut_fac?: Enumtipo_autoridad_facultadFilter<"autoridad_facultad"> | $Enums.tipo_autoridad_facultad
+    nom_aut_fac?: StringFilter<"autoridad_facultad"> | string
+    ape_aut_fac?: StringFilter<"autoridad_facultad"> | string
+    cor_aut_fac?: StringNullableFilter<"autoridad_facultad"> | string | null
+    tel_aut_fac?: StringNullableFilter<"autoridad_facultad"> | string | null
+    url_img_aut_fac?: StringNullableFilter<"autoridad_facultad"> | string | null
+    tit_aut_fac?: StringNullableFilter<"autoridad_facultad"> | string | null
+    fec_ini_aut_fac?: DateTimeFilter<"autoridad_facultad"> | Date | string
+    fec_fin_aut_fac?: DateTimeNullableFilter<"autoridad_facultad"> | Date | string | null
+    est_aut_fac?: BoolFilter<"autoridad_facultad"> | boolean
+    fec_cre_aut_fac?: DateTimeFilter<"autoridad_facultad"> | Date | string
+    facultad?: XOR<FacultadScalarRelationFilter, facultadWhereInput>
+  }
+
+  export type autoridad_facultadOrderByWithRelationInput = {
+    id_aut_fac?: SortOrder
+    id_fac_per?: SortOrder
+    tip_aut_fac?: SortOrder
+    nom_aut_fac?: SortOrder
+    ape_aut_fac?: SortOrder
+    cor_aut_fac?: SortOrderInput | SortOrder
+    tel_aut_fac?: SortOrderInput | SortOrder
+    url_img_aut_fac?: SortOrderInput | SortOrder
+    tit_aut_fac?: SortOrderInput | SortOrder
+    fec_ini_aut_fac?: SortOrder
+    fec_fin_aut_fac?: SortOrderInput | SortOrder
+    est_aut_fac?: SortOrder
+    fec_cre_aut_fac?: SortOrder
+    facultad?: facultadOrderByWithRelationInput
+  }
+
+  export type autoridad_facultadWhereUniqueInput = Prisma.AtLeast<{
+    id_aut_fac?: string
+    AND?: autoridad_facultadWhereInput | autoridad_facultadWhereInput[]
+    OR?: autoridad_facultadWhereInput[]
+    NOT?: autoridad_facultadWhereInput | autoridad_facultadWhereInput[]
+    id_fac_per?: StringFilter<"autoridad_facultad"> | string
+    tip_aut_fac?: Enumtipo_autoridad_facultadFilter<"autoridad_facultad"> | $Enums.tipo_autoridad_facultad
+    nom_aut_fac?: StringFilter<"autoridad_facultad"> | string
+    ape_aut_fac?: StringFilter<"autoridad_facultad"> | string
+    cor_aut_fac?: StringNullableFilter<"autoridad_facultad"> | string | null
+    tel_aut_fac?: StringNullableFilter<"autoridad_facultad"> | string | null
+    url_img_aut_fac?: StringNullableFilter<"autoridad_facultad"> | string | null
+    tit_aut_fac?: StringNullableFilter<"autoridad_facultad"> | string | null
+    fec_ini_aut_fac?: DateTimeFilter<"autoridad_facultad"> | Date | string
+    fec_fin_aut_fac?: DateTimeNullableFilter<"autoridad_facultad"> | Date | string | null
+    est_aut_fac?: BoolFilter<"autoridad_facultad"> | boolean
+    fec_cre_aut_fac?: DateTimeFilter<"autoridad_facultad"> | Date | string
+    facultad?: XOR<FacultadScalarRelationFilter, facultadWhereInput>
+  }, "id_aut_fac">
+
+  export type autoridad_facultadOrderByWithAggregationInput = {
+    id_aut_fac?: SortOrder
+    id_fac_per?: SortOrder
+    tip_aut_fac?: SortOrder
+    nom_aut_fac?: SortOrder
+    ape_aut_fac?: SortOrder
+    cor_aut_fac?: SortOrderInput | SortOrder
+    tel_aut_fac?: SortOrderInput | SortOrder
+    url_img_aut_fac?: SortOrderInput | SortOrder
+    tit_aut_fac?: SortOrderInput | SortOrder
+    fec_ini_aut_fac?: SortOrder
+    fec_fin_aut_fac?: SortOrderInput | SortOrder
+    est_aut_fac?: SortOrder
+    fec_cre_aut_fac?: SortOrder
+    _count?: autoridad_facultadCountOrderByAggregateInput
+    _max?: autoridad_facultadMaxOrderByAggregateInput
+    _min?: autoridad_facultadMinOrderByAggregateInput
+  }
+
+  export type autoridad_facultadScalarWhereWithAggregatesInput = {
+    AND?: autoridad_facultadScalarWhereWithAggregatesInput | autoridad_facultadScalarWhereWithAggregatesInput[]
+    OR?: autoridad_facultadScalarWhereWithAggregatesInput[]
+    NOT?: autoridad_facultadScalarWhereWithAggregatesInput | autoridad_facultadScalarWhereWithAggregatesInput[]
+    id_aut_fac?: StringWithAggregatesFilter<"autoridad_facultad"> | string
+    id_fac_per?: StringWithAggregatesFilter<"autoridad_facultad"> | string
+    tip_aut_fac?: Enumtipo_autoridad_facultadWithAggregatesFilter<"autoridad_facultad"> | $Enums.tipo_autoridad_facultad
+    nom_aut_fac?: StringWithAggregatesFilter<"autoridad_facultad"> | string
+    ape_aut_fac?: StringWithAggregatesFilter<"autoridad_facultad"> | string
+    cor_aut_fac?: StringNullableWithAggregatesFilter<"autoridad_facultad"> | string | null
+    tel_aut_fac?: StringNullableWithAggregatesFilter<"autoridad_facultad"> | string | null
+    url_img_aut_fac?: StringNullableWithAggregatesFilter<"autoridad_facultad"> | string | null
+    tit_aut_fac?: StringNullableWithAggregatesFilter<"autoridad_facultad"> | string | null
+    fec_ini_aut_fac?: DateTimeWithAggregatesFilter<"autoridad_facultad"> | Date | string
+    fec_fin_aut_fac?: DateTimeNullableWithAggregatesFilter<"autoridad_facultad"> | Date | string | null
+    est_aut_fac?: BoolWithAggregatesFilter<"autoridad_facultad"> | boolean
+    fec_cre_aut_fac?: DateTimeWithAggregatesFilter<"autoridad_facultad"> | Date | string
+  }
+
+  export type carreraWhereInput = {
+    AND?: carreraWhereInput | carreraWhereInput[]
+    OR?: carreraWhereInput[]
+    NOT?: carreraWhereInput | carreraWhereInput[]
+    id_car?: StringFilter<"carrera"> | string
+    nom_car?: StringFilter<"carrera"> | string
+    des_car?: StringFilter<"carrera"> | string
+    dur_sem_car?: IntFilter<"carrera"> | number
+    mod_car?: StringFilter<"carrera"> | string
+    ico_car?: StringFilter<"carrera"> | string
+    est_car?: BoolFilter<"carrera"> | boolean
+    fec_cre_car?: DateTimeFilter<"carrera"> | Date | string
+    id_fac_per?: StringFilter<"carrera"> | string
+    id_coo_per?: StringNullableFilter<"carrera"> | string | null
+    facultad?: XOR<FacultadScalarRelationFilter, facultadWhereInput>
+    coordinador?: XOR<CoordinadorNullableScalarRelationFilter, coordinadorWhereInput> | null
+    usuario?: UsuarioListRelationFilter
+    eventos?: Evento_carreraListRelationFilter
+  }
+
+  export type carreraOrderByWithRelationInput = {
+    id_car?: SortOrder
+    nom_car?: SortOrder
+    des_car?: SortOrder
+    dur_sem_car?: SortOrder
+    mod_car?: SortOrder
+    ico_car?: SortOrder
+    est_car?: SortOrder
+    fec_cre_car?: SortOrder
+    id_fac_per?: SortOrder
+    id_coo_per?: SortOrderInput | SortOrder
+    facultad?: facultadOrderByWithRelationInput
+    coordinador?: coordinadorOrderByWithRelationInput
+    usuario?: usuarioOrderByRelationAggregateInput
+    eventos?: evento_carreraOrderByRelationAggregateInput
+  }
+
+  export type carreraWhereUniqueInput = Prisma.AtLeast<{
+    id_car?: string
+    nom_car?: string
+    AND?: carreraWhereInput | carreraWhereInput[]
+    OR?: carreraWhereInput[]
+    NOT?: carreraWhereInput | carreraWhereInput[]
+    des_car?: StringFilter<"carrera"> | string
+    dur_sem_car?: IntFilter<"carrera"> | number
+    mod_car?: StringFilter<"carrera"> | string
+    ico_car?: StringFilter<"carrera"> | string
+    est_car?: BoolFilter<"carrera"> | boolean
+    fec_cre_car?: DateTimeFilter<"carrera"> | Date | string
+    id_fac_per?: StringFilter<"carrera"> | string
+    id_coo_per?: StringNullableFilter<"carrera"> | string | null
+    facultad?: XOR<FacultadScalarRelationFilter, facultadWhereInput>
+    coordinador?: XOR<CoordinadorNullableScalarRelationFilter, coordinadorWhereInput> | null
+    usuario?: UsuarioListRelationFilter
+    eventos?: Evento_carreraListRelationFilter
+  }, "id_car" | "nom_car">
+
+  export type carreraOrderByWithAggregationInput = {
+    id_car?: SortOrder
+    nom_car?: SortOrder
+    des_car?: SortOrder
+    dur_sem_car?: SortOrder
+    mod_car?: SortOrder
+    ico_car?: SortOrder
+    est_car?: SortOrder
+    fec_cre_car?: SortOrder
+    id_fac_per?: SortOrder
+    id_coo_per?: SortOrderInput | SortOrder
+    _count?: carreraCountOrderByAggregateInput
+    _avg?: carreraAvgOrderByAggregateInput
+    _max?: carreraMaxOrderByAggregateInput
+    _min?: carreraMinOrderByAggregateInput
+    _sum?: carreraSumOrderByAggregateInput
+  }
+
+  export type carreraScalarWhereWithAggregatesInput = {
+    AND?: carreraScalarWhereWithAggregatesInput | carreraScalarWhereWithAggregatesInput[]
+    OR?: carreraScalarWhereWithAggregatesInput[]
+    NOT?: carreraScalarWhereWithAggregatesInput | carreraScalarWhereWithAggregatesInput[]
+    id_car?: StringWithAggregatesFilter<"carrera"> | string
+    nom_car?: StringWithAggregatesFilter<"carrera"> | string
+    des_car?: StringWithAggregatesFilter<"carrera"> | string
+    dur_sem_car?: IntWithAggregatesFilter<"carrera"> | number
+    mod_car?: StringWithAggregatesFilter<"carrera"> | string
+    ico_car?: StringWithAggregatesFilter<"carrera"> | string
+    est_car?: BoolWithAggregatesFilter<"carrera"> | boolean
+    fec_cre_car?: DateTimeWithAggregatesFilter<"carrera"> | Date | string
+    id_fac_per?: StringWithAggregatesFilter<"carrera"> | string
+    id_coo_per?: StringNullableWithAggregatesFilter<"carrera"> | string | null
+  }
+
+  export type coordinadorWhereInput = {
+    AND?: coordinadorWhereInput | coordinadorWhereInput[]
+    OR?: coordinadorWhereInput[]
+    NOT?: coordinadorWhereInput | coordinadorWhereInput[]
+    id_coo?: StringFilter<"coordinador"> | string
+    nom_coo?: StringFilter<"coordinador"> | string
+    ape_coo?: StringFilter<"coordinador"> | string
+    cor_coo?: StringFilter<"coordinador"> | string
+    url_img_coo?: StringFilter<"coordinador"> | string
+    tit_coo?: StringFilter<"coordinador"> | string
+    carreras?: CarreraListRelationFilter
+  }
+
+  export type coordinadorOrderByWithRelationInput = {
+    id_coo?: SortOrder
+    nom_coo?: SortOrder
+    ape_coo?: SortOrder
+    cor_coo?: SortOrder
+    url_img_coo?: SortOrder
+    tit_coo?: SortOrder
+    carreras?: carreraOrderByRelationAggregateInput
+  }
+
+  export type coordinadorWhereUniqueInput = Prisma.AtLeast<{
+    id_coo?: string
+    cor_coo?: string
+    AND?: coordinadorWhereInput | coordinadorWhereInput[]
+    OR?: coordinadorWhereInput[]
+    NOT?: coordinadorWhereInput | coordinadorWhereInput[]
+    nom_coo?: StringFilter<"coordinador"> | string
+    ape_coo?: StringFilter<"coordinador"> | string
+    url_img_coo?: StringFilter<"coordinador"> | string
+    tit_coo?: StringFilter<"coordinador"> | string
+    carreras?: CarreraListRelationFilter
+  }, "id_coo" | "cor_coo">
+
+  export type coordinadorOrderByWithAggregationInput = {
+    id_coo?: SortOrder
+    nom_coo?: SortOrder
+    ape_coo?: SortOrder
+    cor_coo?: SortOrder
+    url_img_coo?: SortOrder
+    tit_coo?: SortOrder
+    _count?: coordinadorCountOrderByAggregateInput
+    _max?: coordinadorMaxOrderByAggregateInput
+    _min?: coordinadorMinOrderByAggregateInput
+  }
+
+  export type coordinadorScalarWhereWithAggregatesInput = {
+    AND?: coordinadorScalarWhereWithAggregatesInput | coordinadorScalarWhereWithAggregatesInput[]
+    OR?: coordinadorScalarWhereWithAggregatesInput[]
+    NOT?: coordinadorScalarWhereWithAggregatesInput | coordinadorScalarWhereWithAggregatesInput[]
+    id_coo?: StringWithAggregatesFilter<"coordinador"> | string
+    nom_coo?: StringWithAggregatesFilter<"coordinador"> | string
+    ape_coo?: StringWithAggregatesFilter<"coordinador"> | string
+    cor_coo?: StringWithAggregatesFilter<"coordinador"> | string
+    url_img_coo?: StringWithAggregatesFilter<"coordinador"> | string
+    tit_coo?: StringWithAggregatesFilter<"coordinador"> | string
+  }
+
   export type usuarioWhereInput = {
     AND?: usuarioWhereInput | usuarioWhereInput[]
     OR?: usuarioWhereInput[]
@@ -24227,6 +28622,100 @@ export namespace Prisma {
     com_usu?: StringNullableWithAggregatesFilter<"usuario"> | string | null
     id_car_est?: StringNullableWithAggregatesFilter<"usuario"> | string | null
     img_per_usu?: StringNullableWithAggregatesFilter<"usuario"> | string | null
+  }
+
+  export type cuentaWhereInput = {
+    AND?: cuentaWhereInput | cuentaWhereInput[]
+    OR?: cuentaWhereInput[]
+    NOT?: cuentaWhereInput | cuentaWhereInput[]
+    id_cue?: StringFilter<"cuenta"> | string
+    id_usu_per?: StringFilter<"cuenta"> | string
+    cor_usu?: StringFilter<"cuenta"> | string
+    con_usu?: StringFilter<"cuenta"> | string
+    fec_cre_cue?: DateTimeFilter<"cuenta"> | Date | string
+    rol_usu?: Enumrol_usuarioFilter<"cuenta"> | $Enums.rol_usuario
+    est_ver_cor?: BoolFilter<"cuenta"> | boolean
+    fec_ver_cor?: DateTimeNullableFilter<"cuenta"> | Date | string | null
+    usuario?: XOR<UsuarioScalarRelationFilter, usuarioWhereInput>
+    inscripciones?: InscripcionListRelationFilter
+    cartas_motivacion?: Carta_motivacionListRelationFilter
+    comprobantes_pago?: Comprobante_pagoListRelationFilter
+    eventos?: EventoListRelationFilter
+    observaciones_creadas?: Observacion_inscripcionListRelationFilter
+    inscripciones_validadas?: InscripcionListRelationFilter
+    tokens_cuenta?: Token_cuentaListRelationFilter
+    tokens_invalidados?: Invalidacion_tokenListRelationFilter
+  }
+
+  export type cuentaOrderByWithRelationInput = {
+    id_cue?: SortOrder
+    id_usu_per?: SortOrder
+    cor_usu?: SortOrder
+    con_usu?: SortOrder
+    fec_cre_cue?: SortOrder
+    rol_usu?: SortOrder
+    est_ver_cor?: SortOrder
+    fec_ver_cor?: SortOrderInput | SortOrder
+    usuario?: usuarioOrderByWithRelationInput
+    inscripciones?: inscripcionOrderByRelationAggregateInput
+    cartas_motivacion?: carta_motivacionOrderByRelationAggregateInput
+    comprobantes_pago?: comprobante_pagoOrderByRelationAggregateInput
+    eventos?: eventoOrderByRelationAggregateInput
+    observaciones_creadas?: observacion_inscripcionOrderByRelationAggregateInput
+    inscripciones_validadas?: inscripcionOrderByRelationAggregateInput
+    tokens_cuenta?: token_cuentaOrderByRelationAggregateInput
+    tokens_invalidados?: invalidacion_tokenOrderByRelationAggregateInput
+  }
+
+  export type cuentaWhereUniqueInput = Prisma.AtLeast<{
+    id_cue?: string
+    cor_usu?: string
+    AND?: cuentaWhereInput | cuentaWhereInput[]
+    OR?: cuentaWhereInput[]
+    NOT?: cuentaWhereInput | cuentaWhereInput[]
+    id_usu_per?: StringFilter<"cuenta"> | string
+    con_usu?: StringFilter<"cuenta"> | string
+    fec_cre_cue?: DateTimeFilter<"cuenta"> | Date | string
+    rol_usu?: Enumrol_usuarioFilter<"cuenta"> | $Enums.rol_usuario
+    est_ver_cor?: BoolFilter<"cuenta"> | boolean
+    fec_ver_cor?: DateTimeNullableFilter<"cuenta"> | Date | string | null
+    usuario?: XOR<UsuarioScalarRelationFilter, usuarioWhereInput>
+    inscripciones?: InscripcionListRelationFilter
+    cartas_motivacion?: Carta_motivacionListRelationFilter
+    comprobantes_pago?: Comprobante_pagoListRelationFilter
+    eventos?: EventoListRelationFilter
+    observaciones_creadas?: Observacion_inscripcionListRelationFilter
+    inscripciones_validadas?: InscripcionListRelationFilter
+    tokens_cuenta?: Token_cuentaListRelationFilter
+    tokens_invalidados?: Invalidacion_tokenListRelationFilter
+  }, "id_cue" | "cor_usu">
+
+  export type cuentaOrderByWithAggregationInput = {
+    id_cue?: SortOrder
+    id_usu_per?: SortOrder
+    cor_usu?: SortOrder
+    con_usu?: SortOrder
+    fec_cre_cue?: SortOrder
+    rol_usu?: SortOrder
+    est_ver_cor?: SortOrder
+    fec_ver_cor?: SortOrderInput | SortOrder
+    _count?: cuentaCountOrderByAggregateInput
+    _max?: cuentaMaxOrderByAggregateInput
+    _min?: cuentaMinOrderByAggregateInput
+  }
+
+  export type cuentaScalarWhereWithAggregatesInput = {
+    AND?: cuentaScalarWhereWithAggregatesInput | cuentaScalarWhereWithAggregatesInput[]
+    OR?: cuentaScalarWhereWithAggregatesInput[]
+    NOT?: cuentaScalarWhereWithAggregatesInput | cuentaScalarWhereWithAggregatesInput[]
+    id_cue?: StringWithAggregatesFilter<"cuenta"> | string
+    id_usu_per?: StringWithAggregatesFilter<"cuenta"> | string
+    cor_usu?: StringWithAggregatesFilter<"cuenta"> | string
+    con_usu?: StringWithAggregatesFilter<"cuenta"> | string
+    fec_cre_cue?: DateTimeWithAggregatesFilter<"cuenta"> | Date | string
+    rol_usu?: Enumrol_usuarioWithAggregatesFilter<"cuenta"> | $Enums.rol_usuario
+    est_ver_cor?: BoolWithAggregatesFilter<"cuenta"> | boolean
+    fec_ver_cor?: DateTimeNullableWithAggregatesFilter<"cuenta"> | Date | string | null
   }
 
   export type comprobante_pagoWhereInput = {
@@ -24426,251 +28915,6 @@ export namespace Prisma {
     obs_ins?: StringWithAggregatesFilter<"observacion_inscripcion"> | string
     fec_cre_obs?: DateTimeWithAggregatesFilter<"observacion_inscripcion"> | Date | string
     id_adm_cre_obs?: StringNullableWithAggregatesFilter<"observacion_inscripcion"> | string | null
-  }
-
-  export type cuentaWhereInput = {
-    AND?: cuentaWhereInput | cuentaWhereInput[]
-    OR?: cuentaWhereInput[]
-    NOT?: cuentaWhereInput | cuentaWhereInput[]
-    id_cue?: StringFilter<"cuenta"> | string
-    id_usu_per?: StringFilter<"cuenta"> | string
-    cor_usu?: StringFilter<"cuenta"> | string
-    con_usu?: StringFilter<"cuenta"> | string
-    fec_cre_cue?: DateTimeFilter<"cuenta"> | Date | string
-    rol_usu?: Enumrol_usuarioFilter<"cuenta"> | $Enums.rol_usuario
-    est_ver_cor?: BoolFilter<"cuenta"> | boolean
-    fec_ver_cor?: DateTimeNullableFilter<"cuenta"> | Date | string | null
-    usuario?: XOR<UsuarioScalarRelationFilter, usuarioWhereInput>
-    inscripciones?: InscripcionListRelationFilter
-    cartas_motivacion?: Carta_motivacionListRelationFilter
-    comprobantes_pago?: Comprobante_pagoListRelationFilter
-    eventos?: EventoListRelationFilter
-    observaciones_creadas?: Observacion_inscripcionListRelationFilter
-    inscripciones_validadas?: InscripcionListRelationFilter
-    tokens_cuenta?: Token_cuentaListRelationFilter
-    tokens_invalidados?: Invalidacion_tokenListRelationFilter
-  }
-
-  export type cuentaOrderByWithRelationInput = {
-    id_cue?: SortOrder
-    id_usu_per?: SortOrder
-    cor_usu?: SortOrder
-    con_usu?: SortOrder
-    fec_cre_cue?: SortOrder
-    rol_usu?: SortOrder
-    est_ver_cor?: SortOrder
-    fec_ver_cor?: SortOrderInput | SortOrder
-    usuario?: usuarioOrderByWithRelationInput
-    inscripciones?: inscripcionOrderByRelationAggregateInput
-    cartas_motivacion?: carta_motivacionOrderByRelationAggregateInput
-    comprobantes_pago?: comprobante_pagoOrderByRelationAggregateInput
-    eventos?: eventoOrderByRelationAggregateInput
-    observaciones_creadas?: observacion_inscripcionOrderByRelationAggregateInput
-    inscripciones_validadas?: inscripcionOrderByRelationAggregateInput
-    tokens_cuenta?: token_cuentaOrderByRelationAggregateInput
-    tokens_invalidados?: invalidacion_tokenOrderByRelationAggregateInput
-  }
-
-  export type cuentaWhereUniqueInput = Prisma.AtLeast<{
-    id_cue?: string
-    cor_usu?: string
-    AND?: cuentaWhereInput | cuentaWhereInput[]
-    OR?: cuentaWhereInput[]
-    NOT?: cuentaWhereInput | cuentaWhereInput[]
-    id_usu_per?: StringFilter<"cuenta"> | string
-    con_usu?: StringFilter<"cuenta"> | string
-    fec_cre_cue?: DateTimeFilter<"cuenta"> | Date | string
-    rol_usu?: Enumrol_usuarioFilter<"cuenta"> | $Enums.rol_usuario
-    est_ver_cor?: BoolFilter<"cuenta"> | boolean
-    fec_ver_cor?: DateTimeNullableFilter<"cuenta"> | Date | string | null
-    usuario?: XOR<UsuarioScalarRelationFilter, usuarioWhereInput>
-    inscripciones?: InscripcionListRelationFilter
-    cartas_motivacion?: Carta_motivacionListRelationFilter
-    comprobantes_pago?: Comprobante_pagoListRelationFilter
-    eventos?: EventoListRelationFilter
-    observaciones_creadas?: Observacion_inscripcionListRelationFilter
-    inscripciones_validadas?: InscripcionListRelationFilter
-    tokens_cuenta?: Token_cuentaListRelationFilter
-    tokens_invalidados?: Invalidacion_tokenListRelationFilter
-  }, "id_cue" | "cor_usu">
-
-  export type cuentaOrderByWithAggregationInput = {
-    id_cue?: SortOrder
-    id_usu_per?: SortOrder
-    cor_usu?: SortOrder
-    con_usu?: SortOrder
-    fec_cre_cue?: SortOrder
-    rol_usu?: SortOrder
-    est_ver_cor?: SortOrder
-    fec_ver_cor?: SortOrderInput | SortOrder
-    _count?: cuentaCountOrderByAggregateInput
-    _max?: cuentaMaxOrderByAggregateInput
-    _min?: cuentaMinOrderByAggregateInput
-  }
-
-  export type cuentaScalarWhereWithAggregatesInput = {
-    AND?: cuentaScalarWhereWithAggregatesInput | cuentaScalarWhereWithAggregatesInput[]
-    OR?: cuentaScalarWhereWithAggregatesInput[]
-    NOT?: cuentaScalarWhereWithAggregatesInput | cuentaScalarWhereWithAggregatesInput[]
-    id_cue?: StringWithAggregatesFilter<"cuenta"> | string
-    id_usu_per?: StringWithAggregatesFilter<"cuenta"> | string
-    cor_usu?: StringWithAggregatesFilter<"cuenta"> | string
-    con_usu?: StringWithAggregatesFilter<"cuenta"> | string
-    fec_cre_cue?: DateTimeWithAggregatesFilter<"cuenta"> | Date | string
-    rol_usu?: Enumrol_usuarioWithAggregatesFilter<"cuenta"> | $Enums.rol_usuario
-    est_ver_cor?: BoolWithAggregatesFilter<"cuenta"> | boolean
-    fec_ver_cor?: DateTimeNullableWithAggregatesFilter<"cuenta"> | Date | string | null
-  }
-
-  export type carreraWhereInput = {
-    AND?: carreraWhereInput | carreraWhereInput[]
-    OR?: carreraWhereInput[]
-    NOT?: carreraWhereInput | carreraWhereInput[]
-    id_car?: StringFilter<"carrera"> | string
-    nom_car?: StringFilter<"carrera"> | string
-    des_car?: StringFilter<"carrera"> | string
-    dur_sem_car?: IntFilter<"carrera"> | number
-    mod_car?: StringFilter<"carrera"> | string
-    ico_car?: StringFilter<"carrera"> | string
-    est_car?: BoolFilter<"carrera"> | boolean
-    fec_cre_car?: DateTimeFilter<"carrera"> | Date | string
-    id_fac_per?: StringFilter<"carrera"> | string
-    id_coo_per?: StringNullableFilter<"carrera"> | string | null
-    facultad?: XOR<FacultadScalarRelationFilter, facultadWhereInput>
-    coordinador?: XOR<CoordinadorNullableScalarRelationFilter, coordinadorWhereInput> | null
-    usuario?: UsuarioListRelationFilter
-    eventos?: Evento_carreraListRelationFilter
-  }
-
-  export type carreraOrderByWithRelationInput = {
-    id_car?: SortOrder
-    nom_car?: SortOrder
-    des_car?: SortOrder
-    dur_sem_car?: SortOrder
-    mod_car?: SortOrder
-    ico_car?: SortOrder
-    est_car?: SortOrder
-    fec_cre_car?: SortOrder
-    id_fac_per?: SortOrder
-    id_coo_per?: SortOrderInput | SortOrder
-    facultad?: facultadOrderByWithRelationInput
-    coordinador?: coordinadorOrderByWithRelationInput
-    usuario?: usuarioOrderByRelationAggregateInput
-    eventos?: evento_carreraOrderByRelationAggregateInput
-  }
-
-  export type carreraWhereUniqueInput = Prisma.AtLeast<{
-    id_car?: string
-    nom_car?: string
-    AND?: carreraWhereInput | carreraWhereInput[]
-    OR?: carreraWhereInput[]
-    NOT?: carreraWhereInput | carreraWhereInput[]
-    des_car?: StringFilter<"carrera"> | string
-    dur_sem_car?: IntFilter<"carrera"> | number
-    mod_car?: StringFilter<"carrera"> | string
-    ico_car?: StringFilter<"carrera"> | string
-    est_car?: BoolFilter<"carrera"> | boolean
-    fec_cre_car?: DateTimeFilter<"carrera"> | Date | string
-    id_fac_per?: StringFilter<"carrera"> | string
-    id_coo_per?: StringNullableFilter<"carrera"> | string | null
-    facultad?: XOR<FacultadScalarRelationFilter, facultadWhereInput>
-    coordinador?: XOR<CoordinadorNullableScalarRelationFilter, coordinadorWhereInput> | null
-    usuario?: UsuarioListRelationFilter
-    eventos?: Evento_carreraListRelationFilter
-  }, "id_car" | "nom_car">
-
-  export type carreraOrderByWithAggregationInput = {
-    id_car?: SortOrder
-    nom_car?: SortOrder
-    des_car?: SortOrder
-    dur_sem_car?: SortOrder
-    mod_car?: SortOrder
-    ico_car?: SortOrder
-    est_car?: SortOrder
-    fec_cre_car?: SortOrder
-    id_fac_per?: SortOrder
-    id_coo_per?: SortOrderInput | SortOrder
-    _count?: carreraCountOrderByAggregateInput
-    _avg?: carreraAvgOrderByAggregateInput
-    _max?: carreraMaxOrderByAggregateInput
-    _min?: carreraMinOrderByAggregateInput
-    _sum?: carreraSumOrderByAggregateInput
-  }
-
-  export type carreraScalarWhereWithAggregatesInput = {
-    AND?: carreraScalarWhereWithAggregatesInput | carreraScalarWhereWithAggregatesInput[]
-    OR?: carreraScalarWhereWithAggregatesInput[]
-    NOT?: carreraScalarWhereWithAggregatesInput | carreraScalarWhereWithAggregatesInput[]
-    id_car?: StringWithAggregatesFilter<"carrera"> | string
-    nom_car?: StringWithAggregatesFilter<"carrera"> | string
-    des_car?: StringWithAggregatesFilter<"carrera"> | string
-    dur_sem_car?: IntWithAggregatesFilter<"carrera"> | number
-    mod_car?: StringWithAggregatesFilter<"carrera"> | string
-    ico_car?: StringWithAggregatesFilter<"carrera"> | string
-    est_car?: BoolWithAggregatesFilter<"carrera"> | boolean
-    fec_cre_car?: DateTimeWithAggregatesFilter<"carrera"> | Date | string
-    id_fac_per?: StringWithAggregatesFilter<"carrera"> | string
-    id_coo_per?: StringNullableWithAggregatesFilter<"carrera"> | string | null
-  }
-
-  export type coordinadorWhereInput = {
-    AND?: coordinadorWhereInput | coordinadorWhereInput[]
-    OR?: coordinadorWhereInput[]
-    NOT?: coordinadorWhereInput | coordinadorWhereInput[]
-    id_coo?: StringFilter<"coordinador"> | string
-    nom_coo?: StringFilter<"coordinador"> | string
-    ape_coo?: StringFilter<"coordinador"> | string
-    cor_coo?: StringFilter<"coordinador"> | string
-    url_img_coo?: StringFilter<"coordinador"> | string
-    tit_coo?: StringFilter<"coordinador"> | string
-    carreras?: CarreraListRelationFilter
-  }
-
-  export type coordinadorOrderByWithRelationInput = {
-    id_coo?: SortOrder
-    nom_coo?: SortOrder
-    ape_coo?: SortOrder
-    cor_coo?: SortOrder
-    url_img_coo?: SortOrder
-    tit_coo?: SortOrder
-    carreras?: carreraOrderByRelationAggregateInput
-  }
-
-  export type coordinadorWhereUniqueInput = Prisma.AtLeast<{
-    id_coo?: string
-    cor_coo?: string
-    AND?: coordinadorWhereInput | coordinadorWhereInput[]
-    OR?: coordinadorWhereInput[]
-    NOT?: coordinadorWhereInput | coordinadorWhereInput[]
-    nom_coo?: StringFilter<"coordinador"> | string
-    ape_coo?: StringFilter<"coordinador"> | string
-    url_img_coo?: StringFilter<"coordinador"> | string
-    tit_coo?: StringFilter<"coordinador"> | string
-    carreras?: CarreraListRelationFilter
-  }, "id_coo" | "cor_coo">
-
-  export type coordinadorOrderByWithAggregationInput = {
-    id_coo?: SortOrder
-    nom_coo?: SortOrder
-    ape_coo?: SortOrder
-    cor_coo?: SortOrder
-    url_img_coo?: SortOrder
-    tit_coo?: SortOrder
-    _count?: coordinadorCountOrderByAggregateInput
-    _max?: coordinadorMaxOrderByAggregateInput
-    _min?: coordinadorMinOrderByAggregateInput
-  }
-
-  export type coordinadorScalarWhereWithAggregatesInput = {
-    AND?: coordinadorScalarWhereWithAggregatesInput | coordinadorScalarWhereWithAggregatesInput[]
-    OR?: coordinadorScalarWhereWithAggregatesInput[]
-    NOT?: coordinadorScalarWhereWithAggregatesInput | coordinadorScalarWhereWithAggregatesInput[]
-    id_coo?: StringWithAggregatesFilter<"coordinador"> | string
-    nom_coo?: StringWithAggregatesFilter<"coordinador"> | string
-    ape_coo?: StringWithAggregatesFilter<"coordinador"> | string
-    cor_coo?: StringWithAggregatesFilter<"coordinador"> | string
-    url_img_coo?: StringWithAggregatesFilter<"coordinador"> | string
-    tit_coo?: StringWithAggregatesFilter<"coordinador"> | string
   }
 
   export type eventoWhereInput = {
@@ -25099,116 +29343,6 @@ export namespace Prisma {
     cod_val_cer?: StringWithAggregatesFilter<"certificado"> | string
   }
 
-  export type facultadWhereInput = {
-    AND?: facultadWhereInput | facultadWhereInput[]
-    OR?: facultadWhereInput[]
-    NOT?: facultadWhereInput | facultadWhereInput[]
-    id_fac?: StringFilter<"facultad"> | string
-    nom_fac?: StringFilter<"facultad"> | string
-    acr_fac?: StringNullableFilter<"facultad"> | string | null
-    url_log_fac?: StringNullableFilter<"facultad"> | string | null
-    des_fac?: StringFilter<"facultad"> | string
-    mis_fac?: StringFilter<"facultad"> | string
-    vis_fac?: StringFilter<"facultad"> | string
-    fec_cre_fac?: DateTimeFilter<"facultad"> | Date | string
-    nom_dec_fac?: StringFilter<"facultad"> | string
-    ape_dec_fac?: StringFilter<"facultad"> | string
-    cor_dec_fac?: StringFilter<"facultad"> | string
-    url_img_dec_fac?: StringFilter<"facultad"> | string
-    nom_sub_dec_fac?: StringFilter<"facultad"> | string
-    ape_sub_dec_fac?: StringFilter<"facultad"> | string
-    cor_sub_dec_fac?: StringFilter<"facultad"> | string
-    url_img_sub_dec_fac?: StringFilter<"facultad"> | string
-    carreras?: CarreraListRelationFilter
-  }
-
-  export type facultadOrderByWithRelationInput = {
-    id_fac?: SortOrder
-    nom_fac?: SortOrder
-    acr_fac?: SortOrderInput | SortOrder
-    url_log_fac?: SortOrderInput | SortOrder
-    des_fac?: SortOrder
-    mis_fac?: SortOrder
-    vis_fac?: SortOrder
-    fec_cre_fac?: SortOrder
-    nom_dec_fac?: SortOrder
-    ape_dec_fac?: SortOrder
-    cor_dec_fac?: SortOrder
-    url_img_dec_fac?: SortOrder
-    nom_sub_dec_fac?: SortOrder
-    ape_sub_dec_fac?: SortOrder
-    cor_sub_dec_fac?: SortOrder
-    url_img_sub_dec_fac?: SortOrder
-    carreras?: carreraOrderByRelationAggregateInput
-  }
-
-  export type facultadWhereUniqueInput = Prisma.AtLeast<{
-    id_fac?: string
-    nom_fac?: string
-    AND?: facultadWhereInput | facultadWhereInput[]
-    OR?: facultadWhereInput[]
-    NOT?: facultadWhereInput | facultadWhereInput[]
-    acr_fac?: StringNullableFilter<"facultad"> | string | null
-    url_log_fac?: StringNullableFilter<"facultad"> | string | null
-    des_fac?: StringFilter<"facultad"> | string
-    mis_fac?: StringFilter<"facultad"> | string
-    vis_fac?: StringFilter<"facultad"> | string
-    fec_cre_fac?: DateTimeFilter<"facultad"> | Date | string
-    nom_dec_fac?: StringFilter<"facultad"> | string
-    ape_dec_fac?: StringFilter<"facultad"> | string
-    cor_dec_fac?: StringFilter<"facultad"> | string
-    url_img_dec_fac?: StringFilter<"facultad"> | string
-    nom_sub_dec_fac?: StringFilter<"facultad"> | string
-    ape_sub_dec_fac?: StringFilter<"facultad"> | string
-    cor_sub_dec_fac?: StringFilter<"facultad"> | string
-    url_img_sub_dec_fac?: StringFilter<"facultad"> | string
-    carreras?: CarreraListRelationFilter
-  }, "id_fac" | "nom_fac">
-
-  export type facultadOrderByWithAggregationInput = {
-    id_fac?: SortOrder
-    nom_fac?: SortOrder
-    acr_fac?: SortOrderInput | SortOrder
-    url_log_fac?: SortOrderInput | SortOrder
-    des_fac?: SortOrder
-    mis_fac?: SortOrder
-    vis_fac?: SortOrder
-    fec_cre_fac?: SortOrder
-    nom_dec_fac?: SortOrder
-    ape_dec_fac?: SortOrder
-    cor_dec_fac?: SortOrder
-    url_img_dec_fac?: SortOrder
-    nom_sub_dec_fac?: SortOrder
-    ape_sub_dec_fac?: SortOrder
-    cor_sub_dec_fac?: SortOrder
-    url_img_sub_dec_fac?: SortOrder
-    _count?: facultadCountOrderByAggregateInput
-    _max?: facultadMaxOrderByAggregateInput
-    _min?: facultadMinOrderByAggregateInput
-  }
-
-  export type facultadScalarWhereWithAggregatesInput = {
-    AND?: facultadScalarWhereWithAggregatesInput | facultadScalarWhereWithAggregatesInput[]
-    OR?: facultadScalarWhereWithAggregatesInput[]
-    NOT?: facultadScalarWhereWithAggregatesInput | facultadScalarWhereWithAggregatesInput[]
-    id_fac?: StringWithAggregatesFilter<"facultad"> | string
-    nom_fac?: StringWithAggregatesFilter<"facultad"> | string
-    acr_fac?: StringNullableWithAggregatesFilter<"facultad"> | string | null
-    url_log_fac?: StringNullableWithAggregatesFilter<"facultad"> | string | null
-    des_fac?: StringWithAggregatesFilter<"facultad"> | string
-    mis_fac?: StringWithAggregatesFilter<"facultad"> | string
-    vis_fac?: StringWithAggregatesFilter<"facultad"> | string
-    fec_cre_fac?: DateTimeWithAggregatesFilter<"facultad"> | Date | string
-    nom_dec_fac?: StringWithAggregatesFilter<"facultad"> | string
-    ape_dec_fac?: StringWithAggregatesFilter<"facultad"> | string
-    cor_dec_fac?: StringWithAggregatesFilter<"facultad"> | string
-    url_img_dec_fac?: StringWithAggregatesFilter<"facultad"> | string
-    nom_sub_dec_fac?: StringWithAggregatesFilter<"facultad"> | string
-    ape_sub_dec_fac?: StringWithAggregatesFilter<"facultad"> | string
-    cor_sub_dec_fac?: StringWithAggregatesFilter<"facultad"> | string
-    url_img_sub_dec_fac?: StringWithAggregatesFilter<"facultad"> | string
-  }
-
   export type token_cuentaWhereInput = {
     AND?: token_cuentaWhereInput | token_cuentaWhereInput[]
     OR?: token_cuentaWhereInput[]
@@ -25483,6 +29617,589 @@ export namespace Prisma {
     fec_cre_met?: DateTimeWithAggregatesFilter<"metadata_token"> | Date | string
   }
 
+  export type universidadCreateInput = {
+    id_uni?: string
+    nom_uni: string
+    acr_uni?: string | null
+    url_log_uni?: string | null
+    url_web_uni?: string | null
+    dir_uni: string
+    tel_uni?: string | null
+    cor_uni?: string | null
+    fec_fun_uni?: Date | string | null
+    fec_cre_uni?: Date | string
+    est_uni?: boolean
+    facultades?: facultadCreateNestedManyWithoutUniversidadInput
+    autoridades?: autoridad_universidadCreateNestedManyWithoutUniversidadInput
+  }
+
+  export type universidadUncheckedCreateInput = {
+    id_uni?: string
+    nom_uni: string
+    acr_uni?: string | null
+    url_log_uni?: string | null
+    url_web_uni?: string | null
+    dir_uni: string
+    tel_uni?: string | null
+    cor_uni?: string | null
+    fec_fun_uni?: Date | string | null
+    fec_cre_uni?: Date | string
+    est_uni?: boolean
+    facultades?: facultadUncheckedCreateNestedManyWithoutUniversidadInput
+    autoridades?: autoridad_universidadUncheckedCreateNestedManyWithoutUniversidadInput
+  }
+
+  export type universidadUpdateInput = {
+    id_uni?: StringFieldUpdateOperationsInput | string
+    nom_uni?: StringFieldUpdateOperationsInput | string
+    acr_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    url_log_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    url_web_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    dir_uni?: StringFieldUpdateOperationsInput | string
+    tel_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    cor_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_fun_uni?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fec_cre_uni?: DateTimeFieldUpdateOperationsInput | Date | string
+    est_uni?: BoolFieldUpdateOperationsInput | boolean
+    facultades?: facultadUpdateManyWithoutUniversidadNestedInput
+    autoridades?: autoridad_universidadUpdateManyWithoutUniversidadNestedInput
+  }
+
+  export type universidadUncheckedUpdateInput = {
+    id_uni?: StringFieldUpdateOperationsInput | string
+    nom_uni?: StringFieldUpdateOperationsInput | string
+    acr_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    url_log_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    url_web_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    dir_uni?: StringFieldUpdateOperationsInput | string
+    tel_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    cor_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_fun_uni?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fec_cre_uni?: DateTimeFieldUpdateOperationsInput | Date | string
+    est_uni?: BoolFieldUpdateOperationsInput | boolean
+    facultades?: facultadUncheckedUpdateManyWithoutUniversidadNestedInput
+    autoridades?: autoridad_universidadUncheckedUpdateManyWithoutUniversidadNestedInput
+  }
+
+  export type universidadCreateManyInput = {
+    id_uni?: string
+    nom_uni: string
+    acr_uni?: string | null
+    url_log_uni?: string | null
+    url_web_uni?: string | null
+    dir_uni: string
+    tel_uni?: string | null
+    cor_uni?: string | null
+    fec_fun_uni?: Date | string | null
+    fec_cre_uni?: Date | string
+    est_uni?: boolean
+  }
+
+  export type universidadUpdateManyMutationInput = {
+    id_uni?: StringFieldUpdateOperationsInput | string
+    nom_uni?: StringFieldUpdateOperationsInput | string
+    acr_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    url_log_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    url_web_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    dir_uni?: StringFieldUpdateOperationsInput | string
+    tel_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    cor_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_fun_uni?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fec_cre_uni?: DateTimeFieldUpdateOperationsInput | Date | string
+    est_uni?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type universidadUncheckedUpdateManyInput = {
+    id_uni?: StringFieldUpdateOperationsInput | string
+    nom_uni?: StringFieldUpdateOperationsInput | string
+    acr_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    url_log_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    url_web_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    dir_uni?: StringFieldUpdateOperationsInput | string
+    tel_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    cor_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_fun_uni?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fec_cre_uni?: DateTimeFieldUpdateOperationsInput | Date | string
+    est_uni?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type autoridad_universidadCreateInput = {
+    id_aut_uni?: string
+    tip_aut_uni: $Enums.tipo_autoridad_universidad
+    nom_aut_uni: string
+    ape_aut_uni: string
+    cor_aut_uni?: string | null
+    tel_aut_uni?: string | null
+    url_img_aut_uni?: string | null
+    tit_aut_uni?: string | null
+    fec_ini_aut_uni: Date | string
+    fec_fin_aut_uni?: Date | string | null
+    est_aut_uni?: boolean
+    fec_cre_aut_uni?: Date | string
+    universidad: universidadCreateNestedOneWithoutAutoridadesInput
+  }
+
+  export type autoridad_universidadUncheckedCreateInput = {
+    id_aut_uni?: string
+    id_uni_per: string
+    tip_aut_uni: $Enums.tipo_autoridad_universidad
+    nom_aut_uni: string
+    ape_aut_uni: string
+    cor_aut_uni?: string | null
+    tel_aut_uni?: string | null
+    url_img_aut_uni?: string | null
+    tit_aut_uni?: string | null
+    fec_ini_aut_uni: Date | string
+    fec_fin_aut_uni?: Date | string | null
+    est_aut_uni?: boolean
+    fec_cre_aut_uni?: Date | string
+  }
+
+  export type autoridad_universidadUpdateInput = {
+    id_aut_uni?: StringFieldUpdateOperationsInput | string
+    tip_aut_uni?: Enumtipo_autoridad_universidadFieldUpdateOperationsInput | $Enums.tipo_autoridad_universidad
+    nom_aut_uni?: StringFieldUpdateOperationsInput | string
+    ape_aut_uni?: StringFieldUpdateOperationsInput | string
+    cor_aut_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    tel_aut_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    url_img_aut_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    tit_aut_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_ini_aut_uni?: DateTimeFieldUpdateOperationsInput | Date | string
+    fec_fin_aut_uni?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    est_aut_uni?: BoolFieldUpdateOperationsInput | boolean
+    fec_cre_aut_uni?: DateTimeFieldUpdateOperationsInput | Date | string
+    universidad?: universidadUpdateOneRequiredWithoutAutoridadesNestedInput
+  }
+
+  export type autoridad_universidadUncheckedUpdateInput = {
+    id_aut_uni?: StringFieldUpdateOperationsInput | string
+    id_uni_per?: StringFieldUpdateOperationsInput | string
+    tip_aut_uni?: Enumtipo_autoridad_universidadFieldUpdateOperationsInput | $Enums.tipo_autoridad_universidad
+    nom_aut_uni?: StringFieldUpdateOperationsInput | string
+    ape_aut_uni?: StringFieldUpdateOperationsInput | string
+    cor_aut_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    tel_aut_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    url_img_aut_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    tit_aut_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_ini_aut_uni?: DateTimeFieldUpdateOperationsInput | Date | string
+    fec_fin_aut_uni?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    est_aut_uni?: BoolFieldUpdateOperationsInput | boolean
+    fec_cre_aut_uni?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type autoridad_universidadCreateManyInput = {
+    id_aut_uni?: string
+    id_uni_per: string
+    tip_aut_uni: $Enums.tipo_autoridad_universidad
+    nom_aut_uni: string
+    ape_aut_uni: string
+    cor_aut_uni?: string | null
+    tel_aut_uni?: string | null
+    url_img_aut_uni?: string | null
+    tit_aut_uni?: string | null
+    fec_ini_aut_uni: Date | string
+    fec_fin_aut_uni?: Date | string | null
+    est_aut_uni?: boolean
+    fec_cre_aut_uni?: Date | string
+  }
+
+  export type autoridad_universidadUpdateManyMutationInput = {
+    id_aut_uni?: StringFieldUpdateOperationsInput | string
+    tip_aut_uni?: Enumtipo_autoridad_universidadFieldUpdateOperationsInput | $Enums.tipo_autoridad_universidad
+    nom_aut_uni?: StringFieldUpdateOperationsInput | string
+    ape_aut_uni?: StringFieldUpdateOperationsInput | string
+    cor_aut_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    tel_aut_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    url_img_aut_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    tit_aut_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_ini_aut_uni?: DateTimeFieldUpdateOperationsInput | Date | string
+    fec_fin_aut_uni?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    est_aut_uni?: BoolFieldUpdateOperationsInput | boolean
+    fec_cre_aut_uni?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type autoridad_universidadUncheckedUpdateManyInput = {
+    id_aut_uni?: StringFieldUpdateOperationsInput | string
+    id_uni_per?: StringFieldUpdateOperationsInput | string
+    tip_aut_uni?: Enumtipo_autoridad_universidadFieldUpdateOperationsInput | $Enums.tipo_autoridad_universidad
+    nom_aut_uni?: StringFieldUpdateOperationsInput | string
+    ape_aut_uni?: StringFieldUpdateOperationsInput | string
+    cor_aut_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    tel_aut_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    url_img_aut_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    tit_aut_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_ini_aut_uni?: DateTimeFieldUpdateOperationsInput | Date | string
+    fec_fin_aut_uni?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    est_aut_uni?: BoolFieldUpdateOperationsInput | boolean
+    fec_cre_aut_uni?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type facultadCreateInput = {
+    id_fac?: string
+    nom_fac: string
+    acr_fac?: string | null
+    url_log_fac?: string | null
+    des_fac: string
+    mis_fac: string
+    vis_fac: string
+    fec_cre_fac?: Date | string
+    universidad: universidadCreateNestedOneWithoutFacultadesInput
+    carreras?: carreraCreateNestedManyWithoutFacultadInput
+    autoridades?: autoridad_facultadCreateNestedManyWithoutFacultadInput
+  }
+
+  export type facultadUncheckedCreateInput = {
+    id_fac?: string
+    nom_fac: string
+    acr_fac?: string | null
+    url_log_fac?: string | null
+    des_fac: string
+    mis_fac: string
+    vis_fac: string
+    fec_cre_fac?: Date | string
+    id_uni_per: string
+    carreras?: carreraUncheckedCreateNestedManyWithoutFacultadInput
+    autoridades?: autoridad_facultadUncheckedCreateNestedManyWithoutFacultadInput
+  }
+
+  export type facultadUpdateInput = {
+    id_fac?: StringFieldUpdateOperationsInput | string
+    nom_fac?: StringFieldUpdateOperationsInput | string
+    acr_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    url_log_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    des_fac?: StringFieldUpdateOperationsInput | string
+    mis_fac?: StringFieldUpdateOperationsInput | string
+    vis_fac?: StringFieldUpdateOperationsInput | string
+    fec_cre_fac?: DateTimeFieldUpdateOperationsInput | Date | string
+    universidad?: universidadUpdateOneRequiredWithoutFacultadesNestedInput
+    carreras?: carreraUpdateManyWithoutFacultadNestedInput
+    autoridades?: autoridad_facultadUpdateManyWithoutFacultadNestedInput
+  }
+
+  export type facultadUncheckedUpdateInput = {
+    id_fac?: StringFieldUpdateOperationsInput | string
+    nom_fac?: StringFieldUpdateOperationsInput | string
+    acr_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    url_log_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    des_fac?: StringFieldUpdateOperationsInput | string
+    mis_fac?: StringFieldUpdateOperationsInput | string
+    vis_fac?: StringFieldUpdateOperationsInput | string
+    fec_cre_fac?: DateTimeFieldUpdateOperationsInput | Date | string
+    id_uni_per?: StringFieldUpdateOperationsInput | string
+    carreras?: carreraUncheckedUpdateManyWithoutFacultadNestedInput
+    autoridades?: autoridad_facultadUncheckedUpdateManyWithoutFacultadNestedInput
+  }
+
+  export type facultadCreateManyInput = {
+    id_fac?: string
+    nom_fac: string
+    acr_fac?: string | null
+    url_log_fac?: string | null
+    des_fac: string
+    mis_fac: string
+    vis_fac: string
+    fec_cre_fac?: Date | string
+    id_uni_per: string
+  }
+
+  export type facultadUpdateManyMutationInput = {
+    id_fac?: StringFieldUpdateOperationsInput | string
+    nom_fac?: StringFieldUpdateOperationsInput | string
+    acr_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    url_log_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    des_fac?: StringFieldUpdateOperationsInput | string
+    mis_fac?: StringFieldUpdateOperationsInput | string
+    vis_fac?: StringFieldUpdateOperationsInput | string
+    fec_cre_fac?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type facultadUncheckedUpdateManyInput = {
+    id_fac?: StringFieldUpdateOperationsInput | string
+    nom_fac?: StringFieldUpdateOperationsInput | string
+    acr_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    url_log_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    des_fac?: StringFieldUpdateOperationsInput | string
+    mis_fac?: StringFieldUpdateOperationsInput | string
+    vis_fac?: StringFieldUpdateOperationsInput | string
+    fec_cre_fac?: DateTimeFieldUpdateOperationsInput | Date | string
+    id_uni_per?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type autoridad_facultadCreateInput = {
+    id_aut_fac?: string
+    tip_aut_fac: $Enums.tipo_autoridad_facultad
+    nom_aut_fac: string
+    ape_aut_fac: string
+    cor_aut_fac?: string | null
+    tel_aut_fac?: string | null
+    url_img_aut_fac?: string | null
+    tit_aut_fac?: string | null
+    fec_ini_aut_fac: Date | string
+    fec_fin_aut_fac?: Date | string | null
+    est_aut_fac?: boolean
+    fec_cre_aut_fac?: Date | string
+    facultad: facultadCreateNestedOneWithoutAutoridadesInput
+  }
+
+  export type autoridad_facultadUncheckedCreateInput = {
+    id_aut_fac?: string
+    id_fac_per: string
+    tip_aut_fac: $Enums.tipo_autoridad_facultad
+    nom_aut_fac: string
+    ape_aut_fac: string
+    cor_aut_fac?: string | null
+    tel_aut_fac?: string | null
+    url_img_aut_fac?: string | null
+    tit_aut_fac?: string | null
+    fec_ini_aut_fac: Date | string
+    fec_fin_aut_fac?: Date | string | null
+    est_aut_fac?: boolean
+    fec_cre_aut_fac?: Date | string
+  }
+
+  export type autoridad_facultadUpdateInput = {
+    id_aut_fac?: StringFieldUpdateOperationsInput | string
+    tip_aut_fac?: Enumtipo_autoridad_facultadFieldUpdateOperationsInput | $Enums.tipo_autoridad_facultad
+    nom_aut_fac?: StringFieldUpdateOperationsInput | string
+    ape_aut_fac?: StringFieldUpdateOperationsInput | string
+    cor_aut_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    tel_aut_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    url_img_aut_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    tit_aut_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_ini_aut_fac?: DateTimeFieldUpdateOperationsInput | Date | string
+    fec_fin_aut_fac?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    est_aut_fac?: BoolFieldUpdateOperationsInput | boolean
+    fec_cre_aut_fac?: DateTimeFieldUpdateOperationsInput | Date | string
+    facultad?: facultadUpdateOneRequiredWithoutAutoridadesNestedInput
+  }
+
+  export type autoridad_facultadUncheckedUpdateInput = {
+    id_aut_fac?: StringFieldUpdateOperationsInput | string
+    id_fac_per?: StringFieldUpdateOperationsInput | string
+    tip_aut_fac?: Enumtipo_autoridad_facultadFieldUpdateOperationsInput | $Enums.tipo_autoridad_facultad
+    nom_aut_fac?: StringFieldUpdateOperationsInput | string
+    ape_aut_fac?: StringFieldUpdateOperationsInput | string
+    cor_aut_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    tel_aut_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    url_img_aut_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    tit_aut_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_ini_aut_fac?: DateTimeFieldUpdateOperationsInput | Date | string
+    fec_fin_aut_fac?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    est_aut_fac?: BoolFieldUpdateOperationsInput | boolean
+    fec_cre_aut_fac?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type autoridad_facultadCreateManyInput = {
+    id_aut_fac?: string
+    id_fac_per: string
+    tip_aut_fac: $Enums.tipo_autoridad_facultad
+    nom_aut_fac: string
+    ape_aut_fac: string
+    cor_aut_fac?: string | null
+    tel_aut_fac?: string | null
+    url_img_aut_fac?: string | null
+    tit_aut_fac?: string | null
+    fec_ini_aut_fac: Date | string
+    fec_fin_aut_fac?: Date | string | null
+    est_aut_fac?: boolean
+    fec_cre_aut_fac?: Date | string
+  }
+
+  export type autoridad_facultadUpdateManyMutationInput = {
+    id_aut_fac?: StringFieldUpdateOperationsInput | string
+    tip_aut_fac?: Enumtipo_autoridad_facultadFieldUpdateOperationsInput | $Enums.tipo_autoridad_facultad
+    nom_aut_fac?: StringFieldUpdateOperationsInput | string
+    ape_aut_fac?: StringFieldUpdateOperationsInput | string
+    cor_aut_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    tel_aut_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    url_img_aut_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    tit_aut_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_ini_aut_fac?: DateTimeFieldUpdateOperationsInput | Date | string
+    fec_fin_aut_fac?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    est_aut_fac?: BoolFieldUpdateOperationsInput | boolean
+    fec_cre_aut_fac?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type autoridad_facultadUncheckedUpdateManyInput = {
+    id_aut_fac?: StringFieldUpdateOperationsInput | string
+    id_fac_per?: StringFieldUpdateOperationsInput | string
+    tip_aut_fac?: Enumtipo_autoridad_facultadFieldUpdateOperationsInput | $Enums.tipo_autoridad_facultad
+    nom_aut_fac?: StringFieldUpdateOperationsInput | string
+    ape_aut_fac?: StringFieldUpdateOperationsInput | string
+    cor_aut_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    tel_aut_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    url_img_aut_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    tit_aut_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_ini_aut_fac?: DateTimeFieldUpdateOperationsInput | Date | string
+    fec_fin_aut_fac?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    est_aut_fac?: BoolFieldUpdateOperationsInput | boolean
+    fec_cre_aut_fac?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type carreraCreateInput = {
+    id_car?: string
+    nom_car: string
+    des_car: string
+    dur_sem_car: number
+    mod_car: string
+    ico_car: string
+    est_car?: boolean
+    fec_cre_car?: Date | string
+    facultad: facultadCreateNestedOneWithoutCarrerasInput
+    coordinador?: coordinadorCreateNestedOneWithoutCarrerasInput
+    usuario?: usuarioCreateNestedManyWithoutCarreraInput
+    eventos?: evento_carreraCreateNestedManyWithoutCarreraInput
+  }
+
+  export type carreraUncheckedCreateInput = {
+    id_car?: string
+    nom_car: string
+    des_car: string
+    dur_sem_car: number
+    mod_car: string
+    ico_car: string
+    est_car?: boolean
+    fec_cre_car?: Date | string
+    id_fac_per: string
+    id_coo_per?: string | null
+    usuario?: usuarioUncheckedCreateNestedManyWithoutCarreraInput
+    eventos?: evento_carreraUncheckedCreateNestedManyWithoutCarreraInput
+  }
+
+  export type carreraUpdateInput = {
+    id_car?: StringFieldUpdateOperationsInput | string
+    nom_car?: StringFieldUpdateOperationsInput | string
+    des_car?: StringFieldUpdateOperationsInput | string
+    dur_sem_car?: IntFieldUpdateOperationsInput | number
+    mod_car?: StringFieldUpdateOperationsInput | string
+    ico_car?: StringFieldUpdateOperationsInput | string
+    est_car?: BoolFieldUpdateOperationsInput | boolean
+    fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
+    facultad?: facultadUpdateOneRequiredWithoutCarrerasNestedInput
+    coordinador?: coordinadorUpdateOneWithoutCarrerasNestedInput
+    usuario?: usuarioUpdateManyWithoutCarreraNestedInput
+    eventos?: evento_carreraUpdateManyWithoutCarreraNestedInput
+  }
+
+  export type carreraUncheckedUpdateInput = {
+    id_car?: StringFieldUpdateOperationsInput | string
+    nom_car?: StringFieldUpdateOperationsInput | string
+    des_car?: StringFieldUpdateOperationsInput | string
+    dur_sem_car?: IntFieldUpdateOperationsInput | number
+    mod_car?: StringFieldUpdateOperationsInput | string
+    ico_car?: StringFieldUpdateOperationsInput | string
+    est_car?: BoolFieldUpdateOperationsInput | boolean
+    fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
+    id_fac_per?: StringFieldUpdateOperationsInput | string
+    id_coo_per?: NullableStringFieldUpdateOperationsInput | string | null
+    usuario?: usuarioUncheckedUpdateManyWithoutCarreraNestedInput
+    eventos?: evento_carreraUncheckedUpdateManyWithoutCarreraNestedInput
+  }
+
+  export type carreraCreateManyInput = {
+    id_car?: string
+    nom_car: string
+    des_car: string
+    dur_sem_car: number
+    mod_car: string
+    ico_car: string
+    est_car?: boolean
+    fec_cre_car?: Date | string
+    id_fac_per: string
+    id_coo_per?: string | null
+  }
+
+  export type carreraUpdateManyMutationInput = {
+    id_car?: StringFieldUpdateOperationsInput | string
+    nom_car?: StringFieldUpdateOperationsInput | string
+    des_car?: StringFieldUpdateOperationsInput | string
+    dur_sem_car?: IntFieldUpdateOperationsInput | number
+    mod_car?: StringFieldUpdateOperationsInput | string
+    ico_car?: StringFieldUpdateOperationsInput | string
+    est_car?: BoolFieldUpdateOperationsInput | boolean
+    fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type carreraUncheckedUpdateManyInput = {
+    id_car?: StringFieldUpdateOperationsInput | string
+    nom_car?: StringFieldUpdateOperationsInput | string
+    des_car?: StringFieldUpdateOperationsInput | string
+    dur_sem_car?: IntFieldUpdateOperationsInput | number
+    mod_car?: StringFieldUpdateOperationsInput | string
+    ico_car?: StringFieldUpdateOperationsInput | string
+    est_car?: BoolFieldUpdateOperationsInput | boolean
+    fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
+    id_fac_per?: StringFieldUpdateOperationsInput | string
+    id_coo_per?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type coordinadorCreateInput = {
+    id_coo?: string
+    nom_coo: string
+    ape_coo: string
+    cor_coo: string
+    url_img_coo: string
+    tit_coo: string
+    carreras?: carreraCreateNestedManyWithoutCoordinadorInput
+  }
+
+  export type coordinadorUncheckedCreateInput = {
+    id_coo?: string
+    nom_coo: string
+    ape_coo: string
+    cor_coo: string
+    url_img_coo: string
+    tit_coo: string
+    carreras?: carreraUncheckedCreateNestedManyWithoutCoordinadorInput
+  }
+
+  export type coordinadorUpdateInput = {
+    id_coo?: StringFieldUpdateOperationsInput | string
+    nom_coo?: StringFieldUpdateOperationsInput | string
+    ape_coo?: StringFieldUpdateOperationsInput | string
+    cor_coo?: StringFieldUpdateOperationsInput | string
+    url_img_coo?: StringFieldUpdateOperationsInput | string
+    tit_coo?: StringFieldUpdateOperationsInput | string
+    carreras?: carreraUpdateManyWithoutCoordinadorNestedInput
+  }
+
+  export type coordinadorUncheckedUpdateInput = {
+    id_coo?: StringFieldUpdateOperationsInput | string
+    nom_coo?: StringFieldUpdateOperationsInput | string
+    ape_coo?: StringFieldUpdateOperationsInput | string
+    cor_coo?: StringFieldUpdateOperationsInput | string
+    url_img_coo?: StringFieldUpdateOperationsInput | string
+    tit_coo?: StringFieldUpdateOperationsInput | string
+    carreras?: carreraUncheckedUpdateManyWithoutCoordinadorNestedInput
+  }
+
+  export type coordinadorCreateManyInput = {
+    id_coo?: string
+    nom_coo: string
+    ape_coo: string
+    cor_coo: string
+    url_img_coo: string
+    tit_coo: string
+  }
+
+  export type coordinadorUpdateManyMutationInput = {
+    id_coo?: StringFieldUpdateOperationsInput | string
+    nom_coo?: StringFieldUpdateOperationsInput | string
+    ape_coo?: StringFieldUpdateOperationsInput | string
+    cor_coo?: StringFieldUpdateOperationsInput | string
+    url_img_coo?: StringFieldUpdateOperationsInput | string
+    tit_coo?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type coordinadorUncheckedUpdateManyInput = {
+    id_coo?: StringFieldUpdateOperationsInput | string
+    nom_coo?: StringFieldUpdateOperationsInput | string
+    ape_coo?: StringFieldUpdateOperationsInput | string
+    cor_coo?: StringFieldUpdateOperationsInput | string
+    url_img_coo?: StringFieldUpdateOperationsInput | string
+    tit_coo?: StringFieldUpdateOperationsInput | string
+  }
+
   export type usuarioCreateInput = {
     id_usu?: string
     ced_usu: string
@@ -25568,6 +30285,114 @@ export namespace Prisma {
     com_usu?: NullableStringFieldUpdateOperationsInput | string | null
     id_car_est?: NullableStringFieldUpdateOperationsInput | string | null
     img_per_usu?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type cuentaCreateInput = {
+    id_cue?: string
+    cor_usu: string
+    con_usu: string
+    fec_cre_cue?: Date | string
+    rol_usu: $Enums.rol_usuario
+    est_ver_cor?: boolean
+    fec_ver_cor?: Date | string | null
+    usuario: usuarioCreateNestedOneWithoutCuentasInput
+    inscripciones?: inscripcionCreateNestedManyWithoutCuentaInput
+    cartas_motivacion?: carta_motivacionCreateNestedManyWithoutAdminInput
+    comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutAdminInput
+    eventos?: eventoCreateNestedManyWithoutCuentaInput
+    observaciones_creadas?: observacion_inscripcionCreateNestedManyWithoutAdmin_creadorInput
+    inscripciones_validadas?: inscripcionCreateNestedManyWithoutAdmin_validadorInput
+    tokens_cuenta?: token_cuentaCreateNestedManyWithoutCuentaInput
+    tokens_invalidados?: invalidacion_tokenCreateNestedManyWithoutAdminInput
+  }
+
+  export type cuentaUncheckedCreateInput = {
+    id_cue?: string
+    id_usu_per: string
+    cor_usu: string
+    con_usu: string
+    fec_cre_cue?: Date | string
+    rol_usu: $Enums.rol_usuario
+    est_ver_cor?: boolean
+    fec_ver_cor?: Date | string | null
+    inscripciones?: inscripcionUncheckedCreateNestedManyWithoutCuentaInput
+    cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutAdminInput
+    comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutAdminInput
+    eventos?: eventoUncheckedCreateNestedManyWithoutCuentaInput
+    observaciones_creadas?: observacion_inscripcionUncheckedCreateNestedManyWithoutAdmin_creadorInput
+    inscripciones_validadas?: inscripcionUncheckedCreateNestedManyWithoutAdmin_validadorInput
+    tokens_cuenta?: token_cuentaUncheckedCreateNestedManyWithoutCuentaInput
+    tokens_invalidados?: invalidacion_tokenUncheckedCreateNestedManyWithoutAdminInput
+  }
+
+  export type cuentaUpdateInput = {
+    id_cue?: StringFieldUpdateOperationsInput | string
+    cor_usu?: StringFieldUpdateOperationsInput | string
+    con_usu?: StringFieldUpdateOperationsInput | string
+    fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
+    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    est_ver_cor?: BoolFieldUpdateOperationsInput | boolean
+    fec_ver_cor?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    usuario?: usuarioUpdateOneRequiredWithoutCuentasNestedInput
+    inscripciones?: inscripcionUpdateManyWithoutCuentaNestedInput
+    cartas_motivacion?: carta_motivacionUpdateManyWithoutAdminNestedInput
+    comprobantes_pago?: comprobante_pagoUpdateManyWithoutAdminNestedInput
+    eventos?: eventoUpdateManyWithoutCuentaNestedInput
+    observaciones_creadas?: observacion_inscripcionUpdateManyWithoutAdmin_creadorNestedInput
+    inscripciones_validadas?: inscripcionUpdateManyWithoutAdmin_validadorNestedInput
+    tokens_cuenta?: token_cuentaUpdateManyWithoutCuentaNestedInput
+    tokens_invalidados?: invalidacion_tokenUpdateManyWithoutAdminNestedInput
+  }
+
+  export type cuentaUncheckedUpdateInput = {
+    id_cue?: StringFieldUpdateOperationsInput | string
+    id_usu_per?: StringFieldUpdateOperationsInput | string
+    cor_usu?: StringFieldUpdateOperationsInput | string
+    con_usu?: StringFieldUpdateOperationsInput | string
+    fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
+    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    est_ver_cor?: BoolFieldUpdateOperationsInput | boolean
+    fec_ver_cor?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    inscripciones?: inscripcionUncheckedUpdateManyWithoutCuentaNestedInput
+    cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutAdminNestedInput
+    comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutAdminNestedInput
+    eventos?: eventoUncheckedUpdateManyWithoutCuentaNestedInput
+    observaciones_creadas?: observacion_inscripcionUncheckedUpdateManyWithoutAdmin_creadorNestedInput
+    inscripciones_validadas?: inscripcionUncheckedUpdateManyWithoutAdmin_validadorNestedInput
+    tokens_cuenta?: token_cuentaUncheckedUpdateManyWithoutCuentaNestedInput
+    tokens_invalidados?: invalidacion_tokenUncheckedUpdateManyWithoutAdminNestedInput
+  }
+
+  export type cuentaCreateManyInput = {
+    id_cue?: string
+    id_usu_per: string
+    cor_usu: string
+    con_usu: string
+    fec_cre_cue?: Date | string
+    rol_usu: $Enums.rol_usuario
+    est_ver_cor?: boolean
+    fec_ver_cor?: Date | string | null
+  }
+
+  export type cuentaUpdateManyMutationInput = {
+    id_cue?: StringFieldUpdateOperationsInput | string
+    cor_usu?: StringFieldUpdateOperationsInput | string
+    con_usu?: StringFieldUpdateOperationsInput | string
+    fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
+    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    est_ver_cor?: BoolFieldUpdateOperationsInput | boolean
+    fec_ver_cor?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type cuentaUncheckedUpdateManyInput = {
+    id_cue?: StringFieldUpdateOperationsInput | string
+    id_usu_per?: StringFieldUpdateOperationsInput | string
+    cor_usu?: StringFieldUpdateOperationsInput | string
+    con_usu?: StringFieldUpdateOperationsInput | string
+    fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
+    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    est_ver_cor?: BoolFieldUpdateOperationsInput | boolean
+    fec_ver_cor?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type comprobante_pagoCreateInput = {
@@ -25765,278 +30590,6 @@ export namespace Prisma {
     obs_ins?: StringFieldUpdateOperationsInput | string
     fec_cre_obs?: DateTimeFieldUpdateOperationsInput | Date | string
     id_adm_cre_obs?: NullableStringFieldUpdateOperationsInput | string | null
-  }
-
-  export type cuentaCreateInput = {
-    id_cue?: string
-    cor_usu: string
-    con_usu: string
-    fec_cre_cue?: Date | string
-    rol_usu: $Enums.rol_usuario
-    est_ver_cor?: boolean
-    fec_ver_cor?: Date | string | null
-    usuario: usuarioCreateNestedOneWithoutCuentasInput
-    inscripciones?: inscripcionCreateNestedManyWithoutCuentaInput
-    cartas_motivacion?: carta_motivacionCreateNestedManyWithoutAdminInput
-    comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutAdminInput
-    eventos?: eventoCreateNestedManyWithoutCuentaInput
-    observaciones_creadas?: observacion_inscripcionCreateNestedManyWithoutAdmin_creadorInput
-    inscripciones_validadas?: inscripcionCreateNestedManyWithoutAdmin_validadorInput
-    tokens_cuenta?: token_cuentaCreateNestedManyWithoutCuentaInput
-    tokens_invalidados?: invalidacion_tokenCreateNestedManyWithoutAdminInput
-  }
-
-  export type cuentaUncheckedCreateInput = {
-    id_cue?: string
-    id_usu_per: string
-    cor_usu: string
-    con_usu: string
-    fec_cre_cue?: Date | string
-    rol_usu: $Enums.rol_usuario
-    est_ver_cor?: boolean
-    fec_ver_cor?: Date | string | null
-    inscripciones?: inscripcionUncheckedCreateNestedManyWithoutCuentaInput
-    cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutAdminInput
-    comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutAdminInput
-    eventos?: eventoUncheckedCreateNestedManyWithoutCuentaInput
-    observaciones_creadas?: observacion_inscripcionUncheckedCreateNestedManyWithoutAdmin_creadorInput
-    inscripciones_validadas?: inscripcionUncheckedCreateNestedManyWithoutAdmin_validadorInput
-    tokens_cuenta?: token_cuentaUncheckedCreateNestedManyWithoutCuentaInput
-    tokens_invalidados?: invalidacion_tokenUncheckedCreateNestedManyWithoutAdminInput
-  }
-
-  export type cuentaUpdateInput = {
-    id_cue?: StringFieldUpdateOperationsInput | string
-    cor_usu?: StringFieldUpdateOperationsInput | string
-    con_usu?: StringFieldUpdateOperationsInput | string
-    fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
-    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
-    est_ver_cor?: BoolFieldUpdateOperationsInput | boolean
-    fec_ver_cor?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    usuario?: usuarioUpdateOneRequiredWithoutCuentasNestedInput
-    inscripciones?: inscripcionUpdateManyWithoutCuentaNestedInput
-    cartas_motivacion?: carta_motivacionUpdateManyWithoutAdminNestedInput
-    comprobantes_pago?: comprobante_pagoUpdateManyWithoutAdminNestedInput
-    eventos?: eventoUpdateManyWithoutCuentaNestedInput
-    observaciones_creadas?: observacion_inscripcionUpdateManyWithoutAdmin_creadorNestedInput
-    inscripciones_validadas?: inscripcionUpdateManyWithoutAdmin_validadorNestedInput
-    tokens_cuenta?: token_cuentaUpdateManyWithoutCuentaNestedInput
-    tokens_invalidados?: invalidacion_tokenUpdateManyWithoutAdminNestedInput
-  }
-
-  export type cuentaUncheckedUpdateInput = {
-    id_cue?: StringFieldUpdateOperationsInput | string
-    id_usu_per?: StringFieldUpdateOperationsInput | string
-    cor_usu?: StringFieldUpdateOperationsInput | string
-    con_usu?: StringFieldUpdateOperationsInput | string
-    fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
-    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
-    est_ver_cor?: BoolFieldUpdateOperationsInput | boolean
-    fec_ver_cor?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    inscripciones?: inscripcionUncheckedUpdateManyWithoutCuentaNestedInput
-    cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutAdminNestedInput
-    comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutAdminNestedInput
-    eventos?: eventoUncheckedUpdateManyWithoutCuentaNestedInput
-    observaciones_creadas?: observacion_inscripcionUncheckedUpdateManyWithoutAdmin_creadorNestedInput
-    inscripciones_validadas?: inscripcionUncheckedUpdateManyWithoutAdmin_validadorNestedInput
-    tokens_cuenta?: token_cuentaUncheckedUpdateManyWithoutCuentaNestedInput
-    tokens_invalidados?: invalidacion_tokenUncheckedUpdateManyWithoutAdminNestedInput
-  }
-
-  export type cuentaCreateManyInput = {
-    id_cue?: string
-    id_usu_per: string
-    cor_usu: string
-    con_usu: string
-    fec_cre_cue?: Date | string
-    rol_usu: $Enums.rol_usuario
-    est_ver_cor?: boolean
-    fec_ver_cor?: Date | string | null
-  }
-
-  export type cuentaUpdateManyMutationInput = {
-    id_cue?: StringFieldUpdateOperationsInput | string
-    cor_usu?: StringFieldUpdateOperationsInput | string
-    con_usu?: StringFieldUpdateOperationsInput | string
-    fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
-    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
-    est_ver_cor?: BoolFieldUpdateOperationsInput | boolean
-    fec_ver_cor?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  }
-
-  export type cuentaUncheckedUpdateManyInput = {
-    id_cue?: StringFieldUpdateOperationsInput | string
-    id_usu_per?: StringFieldUpdateOperationsInput | string
-    cor_usu?: StringFieldUpdateOperationsInput | string
-    con_usu?: StringFieldUpdateOperationsInput | string
-    fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
-    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
-    est_ver_cor?: BoolFieldUpdateOperationsInput | boolean
-    fec_ver_cor?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  }
-
-  export type carreraCreateInput = {
-    id_car?: string
-    nom_car: string
-    des_car: string
-    dur_sem_car: number
-    mod_car: string
-    ico_car: string
-    est_car?: boolean
-    fec_cre_car?: Date | string
-    facultad: facultadCreateNestedOneWithoutCarrerasInput
-    coordinador?: coordinadorCreateNestedOneWithoutCarrerasInput
-    usuario?: usuarioCreateNestedManyWithoutCarreraInput
-    eventos?: evento_carreraCreateNestedManyWithoutCarreraInput
-  }
-
-  export type carreraUncheckedCreateInput = {
-    id_car?: string
-    nom_car: string
-    des_car: string
-    dur_sem_car: number
-    mod_car: string
-    ico_car: string
-    est_car?: boolean
-    fec_cre_car?: Date | string
-    id_fac_per: string
-    id_coo_per?: string | null
-    usuario?: usuarioUncheckedCreateNestedManyWithoutCarreraInput
-    eventos?: evento_carreraUncheckedCreateNestedManyWithoutCarreraInput
-  }
-
-  export type carreraUpdateInput = {
-    id_car?: StringFieldUpdateOperationsInput | string
-    nom_car?: StringFieldUpdateOperationsInput | string
-    des_car?: StringFieldUpdateOperationsInput | string
-    dur_sem_car?: IntFieldUpdateOperationsInput | number
-    mod_car?: StringFieldUpdateOperationsInput | string
-    ico_car?: StringFieldUpdateOperationsInput | string
-    est_car?: BoolFieldUpdateOperationsInput | boolean
-    fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
-    facultad?: facultadUpdateOneRequiredWithoutCarrerasNestedInput
-    coordinador?: coordinadorUpdateOneWithoutCarrerasNestedInput
-    usuario?: usuarioUpdateManyWithoutCarreraNestedInput
-    eventos?: evento_carreraUpdateManyWithoutCarreraNestedInput
-  }
-
-  export type carreraUncheckedUpdateInput = {
-    id_car?: StringFieldUpdateOperationsInput | string
-    nom_car?: StringFieldUpdateOperationsInput | string
-    des_car?: StringFieldUpdateOperationsInput | string
-    dur_sem_car?: IntFieldUpdateOperationsInput | number
-    mod_car?: StringFieldUpdateOperationsInput | string
-    ico_car?: StringFieldUpdateOperationsInput | string
-    est_car?: BoolFieldUpdateOperationsInput | boolean
-    fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
-    id_fac_per?: StringFieldUpdateOperationsInput | string
-    id_coo_per?: NullableStringFieldUpdateOperationsInput | string | null
-    usuario?: usuarioUncheckedUpdateManyWithoutCarreraNestedInput
-    eventos?: evento_carreraUncheckedUpdateManyWithoutCarreraNestedInput
-  }
-
-  export type carreraCreateManyInput = {
-    id_car?: string
-    nom_car: string
-    des_car: string
-    dur_sem_car: number
-    mod_car: string
-    ico_car: string
-    est_car?: boolean
-    fec_cre_car?: Date | string
-    id_fac_per: string
-    id_coo_per?: string | null
-  }
-
-  export type carreraUpdateManyMutationInput = {
-    id_car?: StringFieldUpdateOperationsInput | string
-    nom_car?: StringFieldUpdateOperationsInput | string
-    des_car?: StringFieldUpdateOperationsInput | string
-    dur_sem_car?: IntFieldUpdateOperationsInput | number
-    mod_car?: StringFieldUpdateOperationsInput | string
-    ico_car?: StringFieldUpdateOperationsInput | string
-    est_car?: BoolFieldUpdateOperationsInput | boolean
-    fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type carreraUncheckedUpdateManyInput = {
-    id_car?: StringFieldUpdateOperationsInput | string
-    nom_car?: StringFieldUpdateOperationsInput | string
-    des_car?: StringFieldUpdateOperationsInput | string
-    dur_sem_car?: IntFieldUpdateOperationsInput | number
-    mod_car?: StringFieldUpdateOperationsInput | string
-    ico_car?: StringFieldUpdateOperationsInput | string
-    est_car?: BoolFieldUpdateOperationsInput | boolean
-    fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
-    id_fac_per?: StringFieldUpdateOperationsInput | string
-    id_coo_per?: NullableStringFieldUpdateOperationsInput | string | null
-  }
-
-  export type coordinadorCreateInput = {
-    id_coo?: string
-    nom_coo: string
-    ape_coo: string
-    cor_coo: string
-    url_img_coo: string
-    tit_coo: string
-    carreras?: carreraCreateNestedManyWithoutCoordinadorInput
-  }
-
-  export type coordinadorUncheckedCreateInput = {
-    id_coo?: string
-    nom_coo: string
-    ape_coo: string
-    cor_coo: string
-    url_img_coo: string
-    tit_coo: string
-    carreras?: carreraUncheckedCreateNestedManyWithoutCoordinadorInput
-  }
-
-  export type coordinadorUpdateInput = {
-    id_coo?: StringFieldUpdateOperationsInput | string
-    nom_coo?: StringFieldUpdateOperationsInput | string
-    ape_coo?: StringFieldUpdateOperationsInput | string
-    cor_coo?: StringFieldUpdateOperationsInput | string
-    url_img_coo?: StringFieldUpdateOperationsInput | string
-    tit_coo?: StringFieldUpdateOperationsInput | string
-    carreras?: carreraUpdateManyWithoutCoordinadorNestedInput
-  }
-
-  export type coordinadorUncheckedUpdateInput = {
-    id_coo?: StringFieldUpdateOperationsInput | string
-    nom_coo?: StringFieldUpdateOperationsInput | string
-    ape_coo?: StringFieldUpdateOperationsInput | string
-    cor_coo?: StringFieldUpdateOperationsInput | string
-    url_img_coo?: StringFieldUpdateOperationsInput | string
-    tit_coo?: StringFieldUpdateOperationsInput | string
-    carreras?: carreraUncheckedUpdateManyWithoutCoordinadorNestedInput
-  }
-
-  export type coordinadorCreateManyInput = {
-    id_coo?: string
-    nom_coo: string
-    ape_coo: string
-    cor_coo: string
-    url_img_coo: string
-    tit_coo: string
-  }
-
-  export type coordinadorUpdateManyMutationInput = {
-    id_coo?: StringFieldUpdateOperationsInput | string
-    nom_coo?: StringFieldUpdateOperationsInput | string
-    ape_coo?: StringFieldUpdateOperationsInput | string
-    cor_coo?: StringFieldUpdateOperationsInput | string
-    url_img_coo?: StringFieldUpdateOperationsInput | string
-    tit_coo?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type coordinadorUncheckedUpdateManyInput = {
-    id_coo?: StringFieldUpdateOperationsInput | string
-    nom_coo?: StringFieldUpdateOperationsInput | string
-    ape_coo?: StringFieldUpdateOperationsInput | string
-    cor_coo?: StringFieldUpdateOperationsInput | string
-    url_img_coo?: StringFieldUpdateOperationsInput | string
-    tit_coo?: StringFieldUpdateOperationsInput | string
   }
 
   export type eventoCreateInput = {
@@ -26475,143 +31028,6 @@ export namespace Prisma {
     cod_val_cer?: StringFieldUpdateOperationsInput | string
   }
 
-  export type facultadCreateInput = {
-    id_fac?: string
-    nom_fac: string
-    acr_fac?: string | null
-    url_log_fac?: string | null
-    des_fac: string
-    mis_fac: string
-    vis_fac: string
-    fec_cre_fac?: Date | string
-    nom_dec_fac: string
-    ape_dec_fac: string
-    cor_dec_fac: string
-    url_img_dec_fac: string
-    nom_sub_dec_fac: string
-    ape_sub_dec_fac: string
-    cor_sub_dec_fac: string
-    url_img_sub_dec_fac: string
-    carreras?: carreraCreateNestedManyWithoutFacultadInput
-  }
-
-  export type facultadUncheckedCreateInput = {
-    id_fac?: string
-    nom_fac: string
-    acr_fac?: string | null
-    url_log_fac?: string | null
-    des_fac: string
-    mis_fac: string
-    vis_fac: string
-    fec_cre_fac?: Date | string
-    nom_dec_fac: string
-    ape_dec_fac: string
-    cor_dec_fac: string
-    url_img_dec_fac: string
-    nom_sub_dec_fac: string
-    ape_sub_dec_fac: string
-    cor_sub_dec_fac: string
-    url_img_sub_dec_fac: string
-    carreras?: carreraUncheckedCreateNestedManyWithoutFacultadInput
-  }
-
-  export type facultadUpdateInput = {
-    id_fac?: StringFieldUpdateOperationsInput | string
-    nom_fac?: StringFieldUpdateOperationsInput | string
-    acr_fac?: NullableStringFieldUpdateOperationsInput | string | null
-    url_log_fac?: NullableStringFieldUpdateOperationsInput | string | null
-    des_fac?: StringFieldUpdateOperationsInput | string
-    mis_fac?: StringFieldUpdateOperationsInput | string
-    vis_fac?: StringFieldUpdateOperationsInput | string
-    fec_cre_fac?: DateTimeFieldUpdateOperationsInput | Date | string
-    nom_dec_fac?: StringFieldUpdateOperationsInput | string
-    ape_dec_fac?: StringFieldUpdateOperationsInput | string
-    cor_dec_fac?: StringFieldUpdateOperationsInput | string
-    url_img_dec_fac?: StringFieldUpdateOperationsInput | string
-    nom_sub_dec_fac?: StringFieldUpdateOperationsInput | string
-    ape_sub_dec_fac?: StringFieldUpdateOperationsInput | string
-    cor_sub_dec_fac?: StringFieldUpdateOperationsInput | string
-    url_img_sub_dec_fac?: StringFieldUpdateOperationsInput | string
-    carreras?: carreraUpdateManyWithoutFacultadNestedInput
-  }
-
-  export type facultadUncheckedUpdateInput = {
-    id_fac?: StringFieldUpdateOperationsInput | string
-    nom_fac?: StringFieldUpdateOperationsInput | string
-    acr_fac?: NullableStringFieldUpdateOperationsInput | string | null
-    url_log_fac?: NullableStringFieldUpdateOperationsInput | string | null
-    des_fac?: StringFieldUpdateOperationsInput | string
-    mis_fac?: StringFieldUpdateOperationsInput | string
-    vis_fac?: StringFieldUpdateOperationsInput | string
-    fec_cre_fac?: DateTimeFieldUpdateOperationsInput | Date | string
-    nom_dec_fac?: StringFieldUpdateOperationsInput | string
-    ape_dec_fac?: StringFieldUpdateOperationsInput | string
-    cor_dec_fac?: StringFieldUpdateOperationsInput | string
-    url_img_dec_fac?: StringFieldUpdateOperationsInput | string
-    nom_sub_dec_fac?: StringFieldUpdateOperationsInput | string
-    ape_sub_dec_fac?: StringFieldUpdateOperationsInput | string
-    cor_sub_dec_fac?: StringFieldUpdateOperationsInput | string
-    url_img_sub_dec_fac?: StringFieldUpdateOperationsInput | string
-    carreras?: carreraUncheckedUpdateManyWithoutFacultadNestedInput
-  }
-
-  export type facultadCreateManyInput = {
-    id_fac?: string
-    nom_fac: string
-    acr_fac?: string | null
-    url_log_fac?: string | null
-    des_fac: string
-    mis_fac: string
-    vis_fac: string
-    fec_cre_fac?: Date | string
-    nom_dec_fac: string
-    ape_dec_fac: string
-    cor_dec_fac: string
-    url_img_dec_fac: string
-    nom_sub_dec_fac: string
-    ape_sub_dec_fac: string
-    cor_sub_dec_fac: string
-    url_img_sub_dec_fac: string
-  }
-
-  export type facultadUpdateManyMutationInput = {
-    id_fac?: StringFieldUpdateOperationsInput | string
-    nom_fac?: StringFieldUpdateOperationsInput | string
-    acr_fac?: NullableStringFieldUpdateOperationsInput | string | null
-    url_log_fac?: NullableStringFieldUpdateOperationsInput | string | null
-    des_fac?: StringFieldUpdateOperationsInput | string
-    mis_fac?: StringFieldUpdateOperationsInput | string
-    vis_fac?: StringFieldUpdateOperationsInput | string
-    fec_cre_fac?: DateTimeFieldUpdateOperationsInput | Date | string
-    nom_dec_fac?: StringFieldUpdateOperationsInput | string
-    ape_dec_fac?: StringFieldUpdateOperationsInput | string
-    cor_dec_fac?: StringFieldUpdateOperationsInput | string
-    url_img_dec_fac?: StringFieldUpdateOperationsInput | string
-    nom_sub_dec_fac?: StringFieldUpdateOperationsInput | string
-    ape_sub_dec_fac?: StringFieldUpdateOperationsInput | string
-    cor_sub_dec_fac?: StringFieldUpdateOperationsInput | string
-    url_img_sub_dec_fac?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type facultadUncheckedUpdateManyInput = {
-    id_fac?: StringFieldUpdateOperationsInput | string
-    nom_fac?: StringFieldUpdateOperationsInput | string
-    acr_fac?: NullableStringFieldUpdateOperationsInput | string | null
-    url_log_fac?: NullableStringFieldUpdateOperationsInput | string | null
-    des_fac?: StringFieldUpdateOperationsInput | string
-    mis_fac?: StringFieldUpdateOperationsInput | string
-    vis_fac?: StringFieldUpdateOperationsInput | string
-    fec_cre_fac?: DateTimeFieldUpdateOperationsInput | Date | string
-    nom_dec_fac?: StringFieldUpdateOperationsInput | string
-    ape_dec_fac?: StringFieldUpdateOperationsInput | string
-    cor_dec_fac?: StringFieldUpdateOperationsInput | string
-    url_img_dec_fac?: StringFieldUpdateOperationsInput | string
-    nom_sub_dec_fac?: StringFieldUpdateOperationsInput | string
-    ape_sub_dec_fac?: StringFieldUpdateOperationsInput | string
-    cor_sub_dec_fac?: StringFieldUpdateOperationsInput | string
-    url_img_sub_dec_fac?: StringFieldUpdateOperationsInput | string
-  }
-
   export type token_cuentaCreateInput = {
     id_tok?: string
     tok_val: string
@@ -26910,17 +31326,6 @@ export namespace Prisma {
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
-  export type DateTimeFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeFilter<$PrismaModel> | Date | string
-  }
-
   export type StringNullableFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -26936,6 +31341,494 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type DateTimeFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeFilter<$PrismaModel> | Date | string
+  }
+
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type FacultadListRelationFilter = {
+    every?: facultadWhereInput
+    some?: facultadWhereInput
+    none?: facultadWhereInput
+  }
+
+  export type Autoridad_universidadListRelationFilter = {
+    every?: autoridad_universidadWhereInput
+    some?: autoridad_universidadWhereInput
+    none?: autoridad_universidadWhereInput
+  }
+
+  export type SortOrderInput = {
+    sort: SortOrder
+    nulls?: NullsOrder
+  }
+
+  export type facultadOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type autoridad_universidadOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type universidadCountOrderByAggregateInput = {
+    id_uni?: SortOrder
+    nom_uni?: SortOrder
+    acr_uni?: SortOrder
+    url_log_uni?: SortOrder
+    url_web_uni?: SortOrder
+    dir_uni?: SortOrder
+    tel_uni?: SortOrder
+    cor_uni?: SortOrder
+    fec_fun_uni?: SortOrder
+    fec_cre_uni?: SortOrder
+    est_uni?: SortOrder
+  }
+
+  export type universidadMaxOrderByAggregateInput = {
+    id_uni?: SortOrder
+    nom_uni?: SortOrder
+    acr_uni?: SortOrder
+    url_log_uni?: SortOrder
+    url_web_uni?: SortOrder
+    dir_uni?: SortOrder
+    tel_uni?: SortOrder
+    cor_uni?: SortOrder
+    fec_fun_uni?: SortOrder
+    fec_cre_uni?: SortOrder
+    est_uni?: SortOrder
+  }
+
+  export type universidadMinOrderByAggregateInput = {
+    id_uni?: SortOrder
+    nom_uni?: SortOrder
+    acr_uni?: SortOrder
+    url_log_uni?: SortOrder
+    url_web_uni?: SortOrder
+    dir_uni?: SortOrder
+    tel_uni?: SortOrder
+    cor_uni?: SortOrder
+    fec_fun_uni?: SortOrder
+    fec_cre_uni?: SortOrder
+    est_uni?: SortOrder
+  }
+
+  export type StringWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel>
+    in?: string[] | ListStringFieldRefInput<$PrismaModel>
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringWithAggregatesFilter<$PrismaModel> | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedStringFilter<$PrismaModel>
+    _max?: NestedStringFilter<$PrismaModel>
+  }
+
+  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedDateTimeFilter<$PrismaModel>
+    _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type Enumtipo_autoridad_universidadFilter<$PrismaModel = never> = {
+    equals?: $Enums.tipo_autoridad_universidad | Enumtipo_autoridad_universidadFieldRefInput<$PrismaModel>
+    in?: $Enums.tipo_autoridad_universidad[] | ListEnumtipo_autoridad_universidadFieldRefInput<$PrismaModel>
+    notIn?: $Enums.tipo_autoridad_universidad[] | ListEnumtipo_autoridad_universidadFieldRefInput<$PrismaModel>
+    not?: NestedEnumtipo_autoridad_universidadFilter<$PrismaModel> | $Enums.tipo_autoridad_universidad
+  }
+
+  export type UniversidadScalarRelationFilter = {
+    is?: universidadWhereInput
+    isNot?: universidadWhereInput
+  }
+
+  export type autoridad_universidadCountOrderByAggregateInput = {
+    id_aut_uni?: SortOrder
+    id_uni_per?: SortOrder
+    tip_aut_uni?: SortOrder
+    nom_aut_uni?: SortOrder
+    ape_aut_uni?: SortOrder
+    cor_aut_uni?: SortOrder
+    tel_aut_uni?: SortOrder
+    url_img_aut_uni?: SortOrder
+    tit_aut_uni?: SortOrder
+    fec_ini_aut_uni?: SortOrder
+    fec_fin_aut_uni?: SortOrder
+    est_aut_uni?: SortOrder
+    fec_cre_aut_uni?: SortOrder
+  }
+
+  export type autoridad_universidadMaxOrderByAggregateInput = {
+    id_aut_uni?: SortOrder
+    id_uni_per?: SortOrder
+    tip_aut_uni?: SortOrder
+    nom_aut_uni?: SortOrder
+    ape_aut_uni?: SortOrder
+    cor_aut_uni?: SortOrder
+    tel_aut_uni?: SortOrder
+    url_img_aut_uni?: SortOrder
+    tit_aut_uni?: SortOrder
+    fec_ini_aut_uni?: SortOrder
+    fec_fin_aut_uni?: SortOrder
+    est_aut_uni?: SortOrder
+    fec_cre_aut_uni?: SortOrder
+  }
+
+  export type autoridad_universidadMinOrderByAggregateInput = {
+    id_aut_uni?: SortOrder
+    id_uni_per?: SortOrder
+    tip_aut_uni?: SortOrder
+    nom_aut_uni?: SortOrder
+    ape_aut_uni?: SortOrder
+    cor_aut_uni?: SortOrder
+    tel_aut_uni?: SortOrder
+    url_img_aut_uni?: SortOrder
+    tit_aut_uni?: SortOrder
+    fec_ini_aut_uni?: SortOrder
+    fec_fin_aut_uni?: SortOrder
+    est_aut_uni?: SortOrder
+    fec_cre_aut_uni?: SortOrder
+  }
+
+  export type Enumtipo_autoridad_universidadWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.tipo_autoridad_universidad | Enumtipo_autoridad_universidadFieldRefInput<$PrismaModel>
+    in?: $Enums.tipo_autoridad_universidad[] | ListEnumtipo_autoridad_universidadFieldRefInput<$PrismaModel>
+    notIn?: $Enums.tipo_autoridad_universidad[] | ListEnumtipo_autoridad_universidadFieldRefInput<$PrismaModel>
+    not?: NestedEnumtipo_autoridad_universidadWithAggregatesFilter<$PrismaModel> | $Enums.tipo_autoridad_universidad
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumtipo_autoridad_universidadFilter<$PrismaModel>
+    _max?: NestedEnumtipo_autoridad_universidadFilter<$PrismaModel>
+  }
+
+  export type CarreraListRelationFilter = {
+    every?: carreraWhereInput
+    some?: carreraWhereInput
+    none?: carreraWhereInput
+  }
+
+  export type Autoridad_facultadListRelationFilter = {
+    every?: autoridad_facultadWhereInput
+    some?: autoridad_facultadWhereInput
+    none?: autoridad_facultadWhereInput
+  }
+
+  export type carreraOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type autoridad_facultadOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type facultadCountOrderByAggregateInput = {
+    id_fac?: SortOrder
+    nom_fac?: SortOrder
+    acr_fac?: SortOrder
+    url_log_fac?: SortOrder
+    des_fac?: SortOrder
+    mis_fac?: SortOrder
+    vis_fac?: SortOrder
+    fec_cre_fac?: SortOrder
+    id_uni_per?: SortOrder
+  }
+
+  export type facultadMaxOrderByAggregateInput = {
+    id_fac?: SortOrder
+    nom_fac?: SortOrder
+    acr_fac?: SortOrder
+    url_log_fac?: SortOrder
+    des_fac?: SortOrder
+    mis_fac?: SortOrder
+    vis_fac?: SortOrder
+    fec_cre_fac?: SortOrder
+    id_uni_per?: SortOrder
+  }
+
+  export type facultadMinOrderByAggregateInput = {
+    id_fac?: SortOrder
+    nom_fac?: SortOrder
+    acr_fac?: SortOrder
+    url_log_fac?: SortOrder
+    des_fac?: SortOrder
+    mis_fac?: SortOrder
+    vis_fac?: SortOrder
+    fec_cre_fac?: SortOrder
+    id_uni_per?: SortOrder
+  }
+
+  export type Enumtipo_autoridad_facultadFilter<$PrismaModel = never> = {
+    equals?: $Enums.tipo_autoridad_facultad | Enumtipo_autoridad_facultadFieldRefInput<$PrismaModel>
+    in?: $Enums.tipo_autoridad_facultad[] | ListEnumtipo_autoridad_facultadFieldRefInput<$PrismaModel>
+    notIn?: $Enums.tipo_autoridad_facultad[] | ListEnumtipo_autoridad_facultadFieldRefInput<$PrismaModel>
+    not?: NestedEnumtipo_autoridad_facultadFilter<$PrismaModel> | $Enums.tipo_autoridad_facultad
+  }
+
+  export type FacultadScalarRelationFilter = {
+    is?: facultadWhereInput
+    isNot?: facultadWhereInput
+  }
+
+  export type autoridad_facultadCountOrderByAggregateInput = {
+    id_aut_fac?: SortOrder
+    id_fac_per?: SortOrder
+    tip_aut_fac?: SortOrder
+    nom_aut_fac?: SortOrder
+    ape_aut_fac?: SortOrder
+    cor_aut_fac?: SortOrder
+    tel_aut_fac?: SortOrder
+    url_img_aut_fac?: SortOrder
+    tit_aut_fac?: SortOrder
+    fec_ini_aut_fac?: SortOrder
+    fec_fin_aut_fac?: SortOrder
+    est_aut_fac?: SortOrder
+    fec_cre_aut_fac?: SortOrder
+  }
+
+  export type autoridad_facultadMaxOrderByAggregateInput = {
+    id_aut_fac?: SortOrder
+    id_fac_per?: SortOrder
+    tip_aut_fac?: SortOrder
+    nom_aut_fac?: SortOrder
+    ape_aut_fac?: SortOrder
+    cor_aut_fac?: SortOrder
+    tel_aut_fac?: SortOrder
+    url_img_aut_fac?: SortOrder
+    tit_aut_fac?: SortOrder
+    fec_ini_aut_fac?: SortOrder
+    fec_fin_aut_fac?: SortOrder
+    est_aut_fac?: SortOrder
+    fec_cre_aut_fac?: SortOrder
+  }
+
+  export type autoridad_facultadMinOrderByAggregateInput = {
+    id_aut_fac?: SortOrder
+    id_fac_per?: SortOrder
+    tip_aut_fac?: SortOrder
+    nom_aut_fac?: SortOrder
+    ape_aut_fac?: SortOrder
+    cor_aut_fac?: SortOrder
+    tel_aut_fac?: SortOrder
+    url_img_aut_fac?: SortOrder
+    tit_aut_fac?: SortOrder
+    fec_ini_aut_fac?: SortOrder
+    fec_fin_aut_fac?: SortOrder
+    est_aut_fac?: SortOrder
+    fec_cre_aut_fac?: SortOrder
+  }
+
+  export type Enumtipo_autoridad_facultadWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.tipo_autoridad_facultad | Enumtipo_autoridad_facultadFieldRefInput<$PrismaModel>
+    in?: $Enums.tipo_autoridad_facultad[] | ListEnumtipo_autoridad_facultadFieldRefInput<$PrismaModel>
+    notIn?: $Enums.tipo_autoridad_facultad[] | ListEnumtipo_autoridad_facultadFieldRefInput<$PrismaModel>
+    not?: NestedEnumtipo_autoridad_facultadWithAggregatesFilter<$PrismaModel> | $Enums.tipo_autoridad_facultad
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumtipo_autoridad_facultadFilter<$PrismaModel>
+    _max?: NestedEnumtipo_autoridad_facultadFilter<$PrismaModel>
+  }
+
+  export type IntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
+  }
+
+  export type CoordinadorNullableScalarRelationFilter = {
+    is?: coordinadorWhereInput | null
+    isNot?: coordinadorWhereInput | null
+  }
+
+  export type UsuarioListRelationFilter = {
+    every?: usuarioWhereInput
+    some?: usuarioWhereInput
+    none?: usuarioWhereInput
+  }
+
+  export type Evento_carreraListRelationFilter = {
+    every?: evento_carreraWhereInput
+    some?: evento_carreraWhereInput
+    none?: evento_carreraWhereInput
+  }
+
+  export type usuarioOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type evento_carreraOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type carreraCountOrderByAggregateInput = {
+    id_car?: SortOrder
+    nom_car?: SortOrder
+    des_car?: SortOrder
+    dur_sem_car?: SortOrder
+    mod_car?: SortOrder
+    ico_car?: SortOrder
+    est_car?: SortOrder
+    fec_cre_car?: SortOrder
+    id_fac_per?: SortOrder
+    id_coo_per?: SortOrder
+  }
+
+  export type carreraAvgOrderByAggregateInput = {
+    dur_sem_car?: SortOrder
+  }
+
+  export type carreraMaxOrderByAggregateInput = {
+    id_car?: SortOrder
+    nom_car?: SortOrder
+    des_car?: SortOrder
+    dur_sem_car?: SortOrder
+    mod_car?: SortOrder
+    ico_car?: SortOrder
+    est_car?: SortOrder
+    fec_cre_car?: SortOrder
+    id_fac_per?: SortOrder
+    id_coo_per?: SortOrder
+  }
+
+  export type carreraMinOrderByAggregateInput = {
+    id_car?: SortOrder
+    nom_car?: SortOrder
+    des_car?: SortOrder
+    dur_sem_car?: SortOrder
+    mod_car?: SortOrder
+    ico_car?: SortOrder
+    est_car?: SortOrder
+    fec_cre_car?: SortOrder
+    id_fac_per?: SortOrder
+    id_coo_per?: SortOrder
+  }
+
+  export type carreraSumOrderByAggregateInput = {
+    dur_sem_car?: SortOrder
+  }
+
+  export type IntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type coordinadorCountOrderByAggregateInput = {
+    id_coo?: SortOrder
+    nom_coo?: SortOrder
+    ape_coo?: SortOrder
+    cor_coo?: SortOrder
+    url_img_coo?: SortOrder
+    tit_coo?: SortOrder
+  }
+
+  export type coordinadorMaxOrderByAggregateInput = {
+    id_coo?: SortOrder
+    nom_coo?: SortOrder
+    ape_coo?: SortOrder
+    cor_coo?: SortOrder
+    url_img_coo?: SortOrder
+    tit_coo?: SortOrder
+  }
+
+  export type coordinadorMinOrderByAggregateInput = {
+    id_coo?: SortOrder
+    nom_coo?: SortOrder
+    ape_coo?: SortOrder
+    cor_coo?: SortOrder
+    url_img_coo?: SortOrder
+    tit_coo?: SortOrder
+  }
+
   export type CarreraNullableScalarRelationFilter = {
     is?: carreraWhereInput | null
     isNot?: carreraWhereInput | null
@@ -26945,11 +31838,6 @@ export namespace Prisma {
     every?: cuentaWhereInput
     some?: cuentaWhereInput
     none?: cuentaWhereInput
-  }
-
-  export type SortOrderInput = {
-    sort: SortOrder
-    nulls?: NullsOrder
   }
 
   export type cuentaOrderByRelationAggregateInput = {
@@ -26992,205 +31880,11 @@ export namespace Prisma {
     img_per_usu?: SortOrder
   }
 
-  export type StringWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel>
-    in?: string[] | ListStringFieldRefInput<$PrismaModel>
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringWithAggregatesFilter<$PrismaModel> | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedStringFilter<$PrismaModel>
-    _max?: NestedStringFilter<$PrismaModel>
-  }
-
-  export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedDateTimeFilter<$PrismaModel>
-    _max?: NestedDateTimeFilter<$PrismaModel>
-  }
-
-  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
-  }
-
-  export type Enumestado_validacionFilter<$PrismaModel = never> = {
-    equals?: $Enums.estado_validacion | Enumestado_validacionFieldRefInput<$PrismaModel>
-    in?: $Enums.estado_validacion[] | ListEnumestado_validacionFieldRefInput<$PrismaModel>
-    notIn?: $Enums.estado_validacion[] | ListEnumestado_validacionFieldRefInput<$PrismaModel>
-    not?: NestedEnumestado_validacionFilter<$PrismaModel> | $Enums.estado_validacion
-  }
-
-  export type DateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
-  }
-
-  export type CuentaNullableScalarRelationFilter = {
-    is?: cuentaWhereInput | null
-    isNot?: cuentaWhereInput | null
-  }
-
-  export type InscripcionScalarRelationFilter = {
-    is?: inscripcionWhereInput
-    isNot?: inscripcionWhereInput
-  }
-
-  export type comprobante_pagoCountOrderByAggregateInput = {
-    id_com_pag?: SortOrder
-    id_ins_per?: SortOrder
-    url_com_pag?: SortOrder
-    est_com_pag?: SortOrder
-    fec_sub_com_pag?: SortOrder
-    fec_val_com_pag?: SortOrder
-    id_adm_val_com_pag?: SortOrder
-    fec_pag_ins?: SortOrder
-  }
-
-  export type comprobante_pagoMaxOrderByAggregateInput = {
-    id_com_pag?: SortOrder
-    id_ins_per?: SortOrder
-    url_com_pag?: SortOrder
-    est_com_pag?: SortOrder
-    fec_sub_com_pag?: SortOrder
-    fec_val_com_pag?: SortOrder
-    id_adm_val_com_pag?: SortOrder
-    fec_pag_ins?: SortOrder
-  }
-
-  export type comprobante_pagoMinOrderByAggregateInput = {
-    id_com_pag?: SortOrder
-    id_ins_per?: SortOrder
-    url_com_pag?: SortOrder
-    est_com_pag?: SortOrder
-    fec_sub_com_pag?: SortOrder
-    fec_val_com_pag?: SortOrder
-    id_adm_val_com_pag?: SortOrder
-    fec_pag_ins?: SortOrder
-  }
-
-  export type Enumestado_validacionWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.estado_validacion | Enumestado_validacionFieldRefInput<$PrismaModel>
-    in?: $Enums.estado_validacion[] | ListEnumestado_validacionFieldRefInput<$PrismaModel>
-    notIn?: $Enums.estado_validacion[] | ListEnumestado_validacionFieldRefInput<$PrismaModel>
-    not?: NestedEnumestado_validacionWithAggregatesFilter<$PrismaModel> | $Enums.estado_validacion
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumestado_validacionFilter<$PrismaModel>
-    _max?: NestedEnumestado_validacionFilter<$PrismaModel>
-  }
-
-  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
-  }
-
-  export type carta_motivacionCountOrderByAggregateInput = {
-    id_car_mot?: SortOrder
-    id_ins_per?: SortOrder
-    con_car_mot?: SortOrder
-    est_car_mot?: SortOrder
-    fec_sub_car_mot?: SortOrder
-    fec_val_car_mot?: SortOrder
-    id_adm_val_car_mot?: SortOrder
-  }
-
-  export type carta_motivacionMaxOrderByAggregateInput = {
-    id_car_mot?: SortOrder
-    id_ins_per?: SortOrder
-    con_car_mot?: SortOrder
-    est_car_mot?: SortOrder
-    fec_sub_car_mot?: SortOrder
-    fec_val_car_mot?: SortOrder
-    id_adm_val_car_mot?: SortOrder
-  }
-
-  export type carta_motivacionMinOrderByAggregateInput = {
-    id_car_mot?: SortOrder
-    id_ins_per?: SortOrder
-    con_car_mot?: SortOrder
-    est_car_mot?: SortOrder
-    fec_sub_car_mot?: SortOrder
-    fec_val_car_mot?: SortOrder
-    id_adm_val_car_mot?: SortOrder
-  }
-
-  export type observacion_inscripcionCountOrderByAggregateInput = {
-    id_obs_ins?: SortOrder
-    id_ins_per?: SortOrder
-    obs_ins?: SortOrder
-    fec_cre_obs?: SortOrder
-    id_adm_cre_obs?: SortOrder
-  }
-
-  export type observacion_inscripcionMaxOrderByAggregateInput = {
-    id_obs_ins?: SortOrder
-    id_ins_per?: SortOrder
-    obs_ins?: SortOrder
-    fec_cre_obs?: SortOrder
-    id_adm_cre_obs?: SortOrder
-  }
-
-  export type observacion_inscripcionMinOrderByAggregateInput = {
-    id_obs_ins?: SortOrder
-    id_ins_per?: SortOrder
-    obs_ins?: SortOrder
-    fec_cre_obs?: SortOrder
-    id_adm_cre_obs?: SortOrder
-  }
-
   export type Enumrol_usuarioFilter<$PrismaModel = never> = {
     equals?: $Enums.rol_usuario | Enumrol_usuarioFieldRefInput<$PrismaModel>
     in?: $Enums.rol_usuario[] | ListEnumrol_usuarioFieldRefInput<$PrismaModel>
     notIn?: $Enums.rol_usuario[] | ListEnumrol_usuarioFieldRefInput<$PrismaModel>
     not?: NestedEnumrol_usuarioFilter<$PrismaModel> | $Enums.rol_usuario
-  }
-
-  export type BoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
   export type UsuarioScalarRelationFilter = {
@@ -27311,153 +32005,118 @@ export namespace Prisma {
     _max?: NestedEnumrol_usuarioFilter<$PrismaModel>
   }
 
-  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+  export type Enumestado_validacionFilter<$PrismaModel = never> = {
+    equals?: $Enums.estado_validacion | Enumestado_validacionFieldRefInput<$PrismaModel>
+    in?: $Enums.estado_validacion[] | ListEnumestado_validacionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.estado_validacion[] | ListEnumestado_validacionFieldRefInput<$PrismaModel>
+    not?: NestedEnumestado_validacionFilter<$PrismaModel> | $Enums.estado_validacion
+  }
+
+  export type CuentaNullableScalarRelationFilter = {
+    is?: cuentaWhereInput | null
+    isNot?: cuentaWhereInput | null
+  }
+
+  export type InscripcionScalarRelationFilter = {
+    is?: inscripcionWhereInput
+    isNot?: inscripcionWhereInput
+  }
+
+  export type comprobante_pagoCountOrderByAggregateInput = {
+    id_com_pag?: SortOrder
+    id_ins_per?: SortOrder
+    url_com_pag?: SortOrder
+    est_com_pag?: SortOrder
+    fec_sub_com_pag?: SortOrder
+    fec_val_com_pag?: SortOrder
+    id_adm_val_com_pag?: SortOrder
+    fec_pag_ins?: SortOrder
+  }
+
+  export type comprobante_pagoMaxOrderByAggregateInput = {
+    id_com_pag?: SortOrder
+    id_ins_per?: SortOrder
+    url_com_pag?: SortOrder
+    est_com_pag?: SortOrder
+    fec_sub_com_pag?: SortOrder
+    fec_val_com_pag?: SortOrder
+    id_adm_val_com_pag?: SortOrder
+    fec_pag_ins?: SortOrder
+  }
+
+  export type comprobante_pagoMinOrderByAggregateInput = {
+    id_com_pag?: SortOrder
+    id_ins_per?: SortOrder
+    url_com_pag?: SortOrder
+    est_com_pag?: SortOrder
+    fec_sub_com_pag?: SortOrder
+    fec_val_com_pag?: SortOrder
+    id_adm_val_com_pag?: SortOrder
+    fec_pag_ins?: SortOrder
+  }
+
+  export type Enumestado_validacionWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.estado_validacion | Enumestado_validacionFieldRefInput<$PrismaModel>
+    in?: $Enums.estado_validacion[] | ListEnumestado_validacionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.estado_validacion[] | ListEnumestado_validacionFieldRefInput<$PrismaModel>
+    not?: NestedEnumestado_validacionWithAggregatesFilter<$PrismaModel> | $Enums.estado_validacion
     _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
+    _min?: NestedEnumestado_validacionFilter<$PrismaModel>
+    _max?: NestedEnumestado_validacionFilter<$PrismaModel>
   }
 
-  export type IntFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntFilter<$PrismaModel> | number
+  export type carta_motivacionCountOrderByAggregateInput = {
+    id_car_mot?: SortOrder
+    id_ins_per?: SortOrder
+    con_car_mot?: SortOrder
+    est_car_mot?: SortOrder
+    fec_sub_car_mot?: SortOrder
+    fec_val_car_mot?: SortOrder
+    id_adm_val_car_mot?: SortOrder
   }
 
-  export type FacultadScalarRelationFilter = {
-    is?: facultadWhereInput
-    isNot?: facultadWhereInput
+  export type carta_motivacionMaxOrderByAggregateInput = {
+    id_car_mot?: SortOrder
+    id_ins_per?: SortOrder
+    con_car_mot?: SortOrder
+    est_car_mot?: SortOrder
+    fec_sub_car_mot?: SortOrder
+    fec_val_car_mot?: SortOrder
+    id_adm_val_car_mot?: SortOrder
   }
 
-  export type CoordinadorNullableScalarRelationFilter = {
-    is?: coordinadorWhereInput | null
-    isNot?: coordinadorWhereInput | null
+  export type carta_motivacionMinOrderByAggregateInput = {
+    id_car_mot?: SortOrder
+    id_ins_per?: SortOrder
+    con_car_mot?: SortOrder
+    est_car_mot?: SortOrder
+    fec_sub_car_mot?: SortOrder
+    fec_val_car_mot?: SortOrder
+    id_adm_val_car_mot?: SortOrder
   }
 
-  export type UsuarioListRelationFilter = {
-    every?: usuarioWhereInput
-    some?: usuarioWhereInput
-    none?: usuarioWhereInput
+  export type observacion_inscripcionCountOrderByAggregateInput = {
+    id_obs_ins?: SortOrder
+    id_ins_per?: SortOrder
+    obs_ins?: SortOrder
+    fec_cre_obs?: SortOrder
+    id_adm_cre_obs?: SortOrder
   }
 
-  export type Evento_carreraListRelationFilter = {
-    every?: evento_carreraWhereInput
-    some?: evento_carreraWhereInput
-    none?: evento_carreraWhereInput
+  export type observacion_inscripcionMaxOrderByAggregateInput = {
+    id_obs_ins?: SortOrder
+    id_ins_per?: SortOrder
+    obs_ins?: SortOrder
+    fec_cre_obs?: SortOrder
+    id_adm_cre_obs?: SortOrder
   }
 
-  export type usuarioOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type evento_carreraOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type carreraCountOrderByAggregateInput = {
-    id_car?: SortOrder
-    nom_car?: SortOrder
-    des_car?: SortOrder
-    dur_sem_car?: SortOrder
-    mod_car?: SortOrder
-    ico_car?: SortOrder
-    est_car?: SortOrder
-    fec_cre_car?: SortOrder
-    id_fac_per?: SortOrder
-    id_coo_per?: SortOrder
-  }
-
-  export type carreraAvgOrderByAggregateInput = {
-    dur_sem_car?: SortOrder
-  }
-
-  export type carreraMaxOrderByAggregateInput = {
-    id_car?: SortOrder
-    nom_car?: SortOrder
-    des_car?: SortOrder
-    dur_sem_car?: SortOrder
-    mod_car?: SortOrder
-    ico_car?: SortOrder
-    est_car?: SortOrder
-    fec_cre_car?: SortOrder
-    id_fac_per?: SortOrder
-    id_coo_per?: SortOrder
-  }
-
-  export type carreraMinOrderByAggregateInput = {
-    id_car?: SortOrder
-    nom_car?: SortOrder
-    des_car?: SortOrder
-    dur_sem_car?: SortOrder
-    mod_car?: SortOrder
-    ico_car?: SortOrder
-    est_car?: SortOrder
-    fec_cre_car?: SortOrder
-    id_fac_per?: SortOrder
-    id_coo_per?: SortOrder
-  }
-
-  export type carreraSumOrderByAggregateInput = {
-    dur_sem_car?: SortOrder
-  }
-
-  export type IntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
-  }
-
-  export type CarreraListRelationFilter = {
-    every?: carreraWhereInput
-    some?: carreraWhereInput
-    none?: carreraWhereInput
-  }
-
-  export type carreraOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type coordinadorCountOrderByAggregateInput = {
-    id_coo?: SortOrder
-    nom_coo?: SortOrder
-    ape_coo?: SortOrder
-    cor_coo?: SortOrder
-    url_img_coo?: SortOrder
-    tit_coo?: SortOrder
-  }
-
-  export type coordinadorMaxOrderByAggregateInput = {
-    id_coo?: SortOrder
-    nom_coo?: SortOrder
-    ape_coo?: SortOrder
-    cor_coo?: SortOrder
-    url_img_coo?: SortOrder
-    tit_coo?: SortOrder
-  }
-
-  export type coordinadorMinOrderByAggregateInput = {
-    id_coo?: SortOrder
-    nom_coo?: SortOrder
-    ape_coo?: SortOrder
-    cor_coo?: SortOrder
-    url_img_coo?: SortOrder
-    tit_coo?: SortOrder
+  export type observacion_inscripcionMinOrderByAggregateInput = {
+    id_obs_ins?: SortOrder
+    id_ins_per?: SortOrder
+    obs_ins?: SortOrder
+    fec_cre_obs?: SortOrder
+    id_adm_cre_obs?: SortOrder
   }
 
   export type Enumtipo_eventoFilter<$PrismaModel = never> = {
@@ -27851,63 +32510,6 @@ export namespace Prisma {
     _max?: NestedEnumtipo_certificadoFilter<$PrismaModel>
   }
 
-  export type facultadCountOrderByAggregateInput = {
-    id_fac?: SortOrder
-    nom_fac?: SortOrder
-    acr_fac?: SortOrder
-    url_log_fac?: SortOrder
-    des_fac?: SortOrder
-    mis_fac?: SortOrder
-    vis_fac?: SortOrder
-    fec_cre_fac?: SortOrder
-    nom_dec_fac?: SortOrder
-    ape_dec_fac?: SortOrder
-    cor_dec_fac?: SortOrder
-    url_img_dec_fac?: SortOrder
-    nom_sub_dec_fac?: SortOrder
-    ape_sub_dec_fac?: SortOrder
-    cor_sub_dec_fac?: SortOrder
-    url_img_sub_dec_fac?: SortOrder
-  }
-
-  export type facultadMaxOrderByAggregateInput = {
-    id_fac?: SortOrder
-    nom_fac?: SortOrder
-    acr_fac?: SortOrder
-    url_log_fac?: SortOrder
-    des_fac?: SortOrder
-    mis_fac?: SortOrder
-    vis_fac?: SortOrder
-    fec_cre_fac?: SortOrder
-    nom_dec_fac?: SortOrder
-    ape_dec_fac?: SortOrder
-    cor_dec_fac?: SortOrder
-    url_img_dec_fac?: SortOrder
-    nom_sub_dec_fac?: SortOrder
-    ape_sub_dec_fac?: SortOrder
-    cor_sub_dec_fac?: SortOrder
-    url_img_sub_dec_fac?: SortOrder
-  }
-
-  export type facultadMinOrderByAggregateInput = {
-    id_fac?: SortOrder
-    nom_fac?: SortOrder
-    acr_fac?: SortOrder
-    url_log_fac?: SortOrder
-    des_fac?: SortOrder
-    mis_fac?: SortOrder
-    vis_fac?: SortOrder
-    fec_cre_fac?: SortOrder
-    nom_dec_fac?: SortOrder
-    ape_dec_fac?: SortOrder
-    cor_dec_fac?: SortOrder
-    url_img_dec_fac?: SortOrder
-    nom_sub_dec_fac?: SortOrder
-    ape_sub_dec_fac?: SortOrder
-    cor_sub_dec_fac?: SortOrder
-    url_img_sub_dec_fac?: SortOrder
-  }
-
   export type Enumtipo_tokenFilter<$PrismaModel = never> = {
     equals?: $Enums.tipo_token | Enumtipo_tokenFieldRefInput<$PrismaModel>
     in?: $Enums.tipo_token[] | ListEnumtipo_tokenFieldRefInput<$PrismaModel>
@@ -28128,6 +32730,408 @@ export namespace Prisma {
     _max?: NestedEnumclave_metadataFilter<$PrismaModel>
   }
 
+  export type facultadCreateNestedManyWithoutUniversidadInput = {
+    create?: XOR<facultadCreateWithoutUniversidadInput, facultadUncheckedCreateWithoutUniversidadInput> | facultadCreateWithoutUniversidadInput[] | facultadUncheckedCreateWithoutUniversidadInput[]
+    connectOrCreate?: facultadCreateOrConnectWithoutUniversidadInput | facultadCreateOrConnectWithoutUniversidadInput[]
+    createMany?: facultadCreateManyUniversidadInputEnvelope
+    connect?: facultadWhereUniqueInput | facultadWhereUniqueInput[]
+  }
+
+  export type autoridad_universidadCreateNestedManyWithoutUniversidadInput = {
+    create?: XOR<autoridad_universidadCreateWithoutUniversidadInput, autoridad_universidadUncheckedCreateWithoutUniversidadInput> | autoridad_universidadCreateWithoutUniversidadInput[] | autoridad_universidadUncheckedCreateWithoutUniversidadInput[]
+    connectOrCreate?: autoridad_universidadCreateOrConnectWithoutUniversidadInput | autoridad_universidadCreateOrConnectWithoutUniversidadInput[]
+    createMany?: autoridad_universidadCreateManyUniversidadInputEnvelope
+    connect?: autoridad_universidadWhereUniqueInput | autoridad_universidadWhereUniqueInput[]
+  }
+
+  export type facultadUncheckedCreateNestedManyWithoutUniversidadInput = {
+    create?: XOR<facultadCreateWithoutUniversidadInput, facultadUncheckedCreateWithoutUniversidadInput> | facultadCreateWithoutUniversidadInput[] | facultadUncheckedCreateWithoutUniversidadInput[]
+    connectOrCreate?: facultadCreateOrConnectWithoutUniversidadInput | facultadCreateOrConnectWithoutUniversidadInput[]
+    createMany?: facultadCreateManyUniversidadInputEnvelope
+    connect?: facultadWhereUniqueInput | facultadWhereUniqueInput[]
+  }
+
+  export type autoridad_universidadUncheckedCreateNestedManyWithoutUniversidadInput = {
+    create?: XOR<autoridad_universidadCreateWithoutUniversidadInput, autoridad_universidadUncheckedCreateWithoutUniversidadInput> | autoridad_universidadCreateWithoutUniversidadInput[] | autoridad_universidadUncheckedCreateWithoutUniversidadInput[]
+    connectOrCreate?: autoridad_universidadCreateOrConnectWithoutUniversidadInput | autoridad_universidadCreateOrConnectWithoutUniversidadInput[]
+    createMany?: autoridad_universidadCreateManyUniversidadInputEnvelope
+    connect?: autoridad_universidadWhereUniqueInput | autoridad_universidadWhereUniqueInput[]
+  }
+
+  export type StringFieldUpdateOperationsInput = {
+    set?: string
+  }
+
+  export type NullableStringFieldUpdateOperationsInput = {
+    set?: string | null
+  }
+
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
+  }
+
+  export type DateTimeFieldUpdateOperationsInput = {
+    set?: Date | string
+  }
+
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
+  }
+
+  export type facultadUpdateManyWithoutUniversidadNestedInput = {
+    create?: XOR<facultadCreateWithoutUniversidadInput, facultadUncheckedCreateWithoutUniversidadInput> | facultadCreateWithoutUniversidadInput[] | facultadUncheckedCreateWithoutUniversidadInput[]
+    connectOrCreate?: facultadCreateOrConnectWithoutUniversidadInput | facultadCreateOrConnectWithoutUniversidadInput[]
+    upsert?: facultadUpsertWithWhereUniqueWithoutUniversidadInput | facultadUpsertWithWhereUniqueWithoutUniversidadInput[]
+    createMany?: facultadCreateManyUniversidadInputEnvelope
+    set?: facultadWhereUniqueInput | facultadWhereUniqueInput[]
+    disconnect?: facultadWhereUniqueInput | facultadWhereUniqueInput[]
+    delete?: facultadWhereUniqueInput | facultadWhereUniqueInput[]
+    connect?: facultadWhereUniqueInput | facultadWhereUniqueInput[]
+    update?: facultadUpdateWithWhereUniqueWithoutUniversidadInput | facultadUpdateWithWhereUniqueWithoutUniversidadInput[]
+    updateMany?: facultadUpdateManyWithWhereWithoutUniversidadInput | facultadUpdateManyWithWhereWithoutUniversidadInput[]
+    deleteMany?: facultadScalarWhereInput | facultadScalarWhereInput[]
+  }
+
+  export type autoridad_universidadUpdateManyWithoutUniversidadNestedInput = {
+    create?: XOR<autoridad_universidadCreateWithoutUniversidadInput, autoridad_universidadUncheckedCreateWithoutUniversidadInput> | autoridad_universidadCreateWithoutUniversidadInput[] | autoridad_universidadUncheckedCreateWithoutUniversidadInput[]
+    connectOrCreate?: autoridad_universidadCreateOrConnectWithoutUniversidadInput | autoridad_universidadCreateOrConnectWithoutUniversidadInput[]
+    upsert?: autoridad_universidadUpsertWithWhereUniqueWithoutUniversidadInput | autoridad_universidadUpsertWithWhereUniqueWithoutUniversidadInput[]
+    createMany?: autoridad_universidadCreateManyUniversidadInputEnvelope
+    set?: autoridad_universidadWhereUniqueInput | autoridad_universidadWhereUniqueInput[]
+    disconnect?: autoridad_universidadWhereUniqueInput | autoridad_universidadWhereUniqueInput[]
+    delete?: autoridad_universidadWhereUniqueInput | autoridad_universidadWhereUniqueInput[]
+    connect?: autoridad_universidadWhereUniqueInput | autoridad_universidadWhereUniqueInput[]
+    update?: autoridad_universidadUpdateWithWhereUniqueWithoutUniversidadInput | autoridad_universidadUpdateWithWhereUniqueWithoutUniversidadInput[]
+    updateMany?: autoridad_universidadUpdateManyWithWhereWithoutUniversidadInput | autoridad_universidadUpdateManyWithWhereWithoutUniversidadInput[]
+    deleteMany?: autoridad_universidadScalarWhereInput | autoridad_universidadScalarWhereInput[]
+  }
+
+  export type facultadUncheckedUpdateManyWithoutUniversidadNestedInput = {
+    create?: XOR<facultadCreateWithoutUniversidadInput, facultadUncheckedCreateWithoutUniversidadInput> | facultadCreateWithoutUniversidadInput[] | facultadUncheckedCreateWithoutUniversidadInput[]
+    connectOrCreate?: facultadCreateOrConnectWithoutUniversidadInput | facultadCreateOrConnectWithoutUniversidadInput[]
+    upsert?: facultadUpsertWithWhereUniqueWithoutUniversidadInput | facultadUpsertWithWhereUniqueWithoutUniversidadInput[]
+    createMany?: facultadCreateManyUniversidadInputEnvelope
+    set?: facultadWhereUniqueInput | facultadWhereUniqueInput[]
+    disconnect?: facultadWhereUniqueInput | facultadWhereUniqueInput[]
+    delete?: facultadWhereUniqueInput | facultadWhereUniqueInput[]
+    connect?: facultadWhereUniqueInput | facultadWhereUniqueInput[]
+    update?: facultadUpdateWithWhereUniqueWithoutUniversidadInput | facultadUpdateWithWhereUniqueWithoutUniversidadInput[]
+    updateMany?: facultadUpdateManyWithWhereWithoutUniversidadInput | facultadUpdateManyWithWhereWithoutUniversidadInput[]
+    deleteMany?: facultadScalarWhereInput | facultadScalarWhereInput[]
+  }
+
+  export type autoridad_universidadUncheckedUpdateManyWithoutUniversidadNestedInput = {
+    create?: XOR<autoridad_universidadCreateWithoutUniversidadInput, autoridad_universidadUncheckedCreateWithoutUniversidadInput> | autoridad_universidadCreateWithoutUniversidadInput[] | autoridad_universidadUncheckedCreateWithoutUniversidadInput[]
+    connectOrCreate?: autoridad_universidadCreateOrConnectWithoutUniversidadInput | autoridad_universidadCreateOrConnectWithoutUniversidadInput[]
+    upsert?: autoridad_universidadUpsertWithWhereUniqueWithoutUniversidadInput | autoridad_universidadUpsertWithWhereUniqueWithoutUniversidadInput[]
+    createMany?: autoridad_universidadCreateManyUniversidadInputEnvelope
+    set?: autoridad_universidadWhereUniqueInput | autoridad_universidadWhereUniqueInput[]
+    disconnect?: autoridad_universidadWhereUniqueInput | autoridad_universidadWhereUniqueInput[]
+    delete?: autoridad_universidadWhereUniqueInput | autoridad_universidadWhereUniqueInput[]
+    connect?: autoridad_universidadWhereUniqueInput | autoridad_universidadWhereUniqueInput[]
+    update?: autoridad_universidadUpdateWithWhereUniqueWithoutUniversidadInput | autoridad_universidadUpdateWithWhereUniqueWithoutUniversidadInput[]
+    updateMany?: autoridad_universidadUpdateManyWithWhereWithoutUniversidadInput | autoridad_universidadUpdateManyWithWhereWithoutUniversidadInput[]
+    deleteMany?: autoridad_universidadScalarWhereInput | autoridad_universidadScalarWhereInput[]
+  }
+
+  export type universidadCreateNestedOneWithoutAutoridadesInput = {
+    create?: XOR<universidadCreateWithoutAutoridadesInput, universidadUncheckedCreateWithoutAutoridadesInput>
+    connectOrCreate?: universidadCreateOrConnectWithoutAutoridadesInput
+    connect?: universidadWhereUniqueInput
+  }
+
+  export type Enumtipo_autoridad_universidadFieldUpdateOperationsInput = {
+    set?: $Enums.tipo_autoridad_universidad
+  }
+
+  export type universidadUpdateOneRequiredWithoutAutoridadesNestedInput = {
+    create?: XOR<universidadCreateWithoutAutoridadesInput, universidadUncheckedCreateWithoutAutoridadesInput>
+    connectOrCreate?: universidadCreateOrConnectWithoutAutoridadesInput
+    upsert?: universidadUpsertWithoutAutoridadesInput
+    connect?: universidadWhereUniqueInput
+    update?: XOR<XOR<universidadUpdateToOneWithWhereWithoutAutoridadesInput, universidadUpdateWithoutAutoridadesInput>, universidadUncheckedUpdateWithoutAutoridadesInput>
+  }
+
+  export type universidadCreateNestedOneWithoutFacultadesInput = {
+    create?: XOR<universidadCreateWithoutFacultadesInput, universidadUncheckedCreateWithoutFacultadesInput>
+    connectOrCreate?: universidadCreateOrConnectWithoutFacultadesInput
+    connect?: universidadWhereUniqueInput
+  }
+
+  export type carreraCreateNestedManyWithoutFacultadInput = {
+    create?: XOR<carreraCreateWithoutFacultadInput, carreraUncheckedCreateWithoutFacultadInput> | carreraCreateWithoutFacultadInput[] | carreraUncheckedCreateWithoutFacultadInput[]
+    connectOrCreate?: carreraCreateOrConnectWithoutFacultadInput | carreraCreateOrConnectWithoutFacultadInput[]
+    createMany?: carreraCreateManyFacultadInputEnvelope
+    connect?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
+  }
+
+  export type autoridad_facultadCreateNestedManyWithoutFacultadInput = {
+    create?: XOR<autoridad_facultadCreateWithoutFacultadInput, autoridad_facultadUncheckedCreateWithoutFacultadInput> | autoridad_facultadCreateWithoutFacultadInput[] | autoridad_facultadUncheckedCreateWithoutFacultadInput[]
+    connectOrCreate?: autoridad_facultadCreateOrConnectWithoutFacultadInput | autoridad_facultadCreateOrConnectWithoutFacultadInput[]
+    createMany?: autoridad_facultadCreateManyFacultadInputEnvelope
+    connect?: autoridad_facultadWhereUniqueInput | autoridad_facultadWhereUniqueInput[]
+  }
+
+  export type carreraUncheckedCreateNestedManyWithoutFacultadInput = {
+    create?: XOR<carreraCreateWithoutFacultadInput, carreraUncheckedCreateWithoutFacultadInput> | carreraCreateWithoutFacultadInput[] | carreraUncheckedCreateWithoutFacultadInput[]
+    connectOrCreate?: carreraCreateOrConnectWithoutFacultadInput | carreraCreateOrConnectWithoutFacultadInput[]
+    createMany?: carreraCreateManyFacultadInputEnvelope
+    connect?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
+  }
+
+  export type autoridad_facultadUncheckedCreateNestedManyWithoutFacultadInput = {
+    create?: XOR<autoridad_facultadCreateWithoutFacultadInput, autoridad_facultadUncheckedCreateWithoutFacultadInput> | autoridad_facultadCreateWithoutFacultadInput[] | autoridad_facultadUncheckedCreateWithoutFacultadInput[]
+    connectOrCreate?: autoridad_facultadCreateOrConnectWithoutFacultadInput | autoridad_facultadCreateOrConnectWithoutFacultadInput[]
+    createMany?: autoridad_facultadCreateManyFacultadInputEnvelope
+    connect?: autoridad_facultadWhereUniqueInput | autoridad_facultadWhereUniqueInput[]
+  }
+
+  export type universidadUpdateOneRequiredWithoutFacultadesNestedInput = {
+    create?: XOR<universidadCreateWithoutFacultadesInput, universidadUncheckedCreateWithoutFacultadesInput>
+    connectOrCreate?: universidadCreateOrConnectWithoutFacultadesInput
+    upsert?: universidadUpsertWithoutFacultadesInput
+    connect?: universidadWhereUniqueInput
+    update?: XOR<XOR<universidadUpdateToOneWithWhereWithoutFacultadesInput, universidadUpdateWithoutFacultadesInput>, universidadUncheckedUpdateWithoutFacultadesInput>
+  }
+
+  export type carreraUpdateManyWithoutFacultadNestedInput = {
+    create?: XOR<carreraCreateWithoutFacultadInput, carreraUncheckedCreateWithoutFacultadInput> | carreraCreateWithoutFacultadInput[] | carreraUncheckedCreateWithoutFacultadInput[]
+    connectOrCreate?: carreraCreateOrConnectWithoutFacultadInput | carreraCreateOrConnectWithoutFacultadInput[]
+    upsert?: carreraUpsertWithWhereUniqueWithoutFacultadInput | carreraUpsertWithWhereUniqueWithoutFacultadInput[]
+    createMany?: carreraCreateManyFacultadInputEnvelope
+    set?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
+    disconnect?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
+    delete?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
+    connect?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
+    update?: carreraUpdateWithWhereUniqueWithoutFacultadInput | carreraUpdateWithWhereUniqueWithoutFacultadInput[]
+    updateMany?: carreraUpdateManyWithWhereWithoutFacultadInput | carreraUpdateManyWithWhereWithoutFacultadInput[]
+    deleteMany?: carreraScalarWhereInput | carreraScalarWhereInput[]
+  }
+
+  export type autoridad_facultadUpdateManyWithoutFacultadNestedInput = {
+    create?: XOR<autoridad_facultadCreateWithoutFacultadInput, autoridad_facultadUncheckedCreateWithoutFacultadInput> | autoridad_facultadCreateWithoutFacultadInput[] | autoridad_facultadUncheckedCreateWithoutFacultadInput[]
+    connectOrCreate?: autoridad_facultadCreateOrConnectWithoutFacultadInput | autoridad_facultadCreateOrConnectWithoutFacultadInput[]
+    upsert?: autoridad_facultadUpsertWithWhereUniqueWithoutFacultadInput | autoridad_facultadUpsertWithWhereUniqueWithoutFacultadInput[]
+    createMany?: autoridad_facultadCreateManyFacultadInputEnvelope
+    set?: autoridad_facultadWhereUniqueInput | autoridad_facultadWhereUniqueInput[]
+    disconnect?: autoridad_facultadWhereUniqueInput | autoridad_facultadWhereUniqueInput[]
+    delete?: autoridad_facultadWhereUniqueInput | autoridad_facultadWhereUniqueInput[]
+    connect?: autoridad_facultadWhereUniqueInput | autoridad_facultadWhereUniqueInput[]
+    update?: autoridad_facultadUpdateWithWhereUniqueWithoutFacultadInput | autoridad_facultadUpdateWithWhereUniqueWithoutFacultadInput[]
+    updateMany?: autoridad_facultadUpdateManyWithWhereWithoutFacultadInput | autoridad_facultadUpdateManyWithWhereWithoutFacultadInput[]
+    deleteMany?: autoridad_facultadScalarWhereInput | autoridad_facultadScalarWhereInput[]
+  }
+
+  export type carreraUncheckedUpdateManyWithoutFacultadNestedInput = {
+    create?: XOR<carreraCreateWithoutFacultadInput, carreraUncheckedCreateWithoutFacultadInput> | carreraCreateWithoutFacultadInput[] | carreraUncheckedCreateWithoutFacultadInput[]
+    connectOrCreate?: carreraCreateOrConnectWithoutFacultadInput | carreraCreateOrConnectWithoutFacultadInput[]
+    upsert?: carreraUpsertWithWhereUniqueWithoutFacultadInput | carreraUpsertWithWhereUniqueWithoutFacultadInput[]
+    createMany?: carreraCreateManyFacultadInputEnvelope
+    set?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
+    disconnect?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
+    delete?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
+    connect?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
+    update?: carreraUpdateWithWhereUniqueWithoutFacultadInput | carreraUpdateWithWhereUniqueWithoutFacultadInput[]
+    updateMany?: carreraUpdateManyWithWhereWithoutFacultadInput | carreraUpdateManyWithWhereWithoutFacultadInput[]
+    deleteMany?: carreraScalarWhereInput | carreraScalarWhereInput[]
+  }
+
+  export type autoridad_facultadUncheckedUpdateManyWithoutFacultadNestedInput = {
+    create?: XOR<autoridad_facultadCreateWithoutFacultadInput, autoridad_facultadUncheckedCreateWithoutFacultadInput> | autoridad_facultadCreateWithoutFacultadInput[] | autoridad_facultadUncheckedCreateWithoutFacultadInput[]
+    connectOrCreate?: autoridad_facultadCreateOrConnectWithoutFacultadInput | autoridad_facultadCreateOrConnectWithoutFacultadInput[]
+    upsert?: autoridad_facultadUpsertWithWhereUniqueWithoutFacultadInput | autoridad_facultadUpsertWithWhereUniqueWithoutFacultadInput[]
+    createMany?: autoridad_facultadCreateManyFacultadInputEnvelope
+    set?: autoridad_facultadWhereUniqueInput | autoridad_facultadWhereUniqueInput[]
+    disconnect?: autoridad_facultadWhereUniqueInput | autoridad_facultadWhereUniqueInput[]
+    delete?: autoridad_facultadWhereUniqueInput | autoridad_facultadWhereUniqueInput[]
+    connect?: autoridad_facultadWhereUniqueInput | autoridad_facultadWhereUniqueInput[]
+    update?: autoridad_facultadUpdateWithWhereUniqueWithoutFacultadInput | autoridad_facultadUpdateWithWhereUniqueWithoutFacultadInput[]
+    updateMany?: autoridad_facultadUpdateManyWithWhereWithoutFacultadInput | autoridad_facultadUpdateManyWithWhereWithoutFacultadInput[]
+    deleteMany?: autoridad_facultadScalarWhereInput | autoridad_facultadScalarWhereInput[]
+  }
+
+  export type facultadCreateNestedOneWithoutAutoridadesInput = {
+    create?: XOR<facultadCreateWithoutAutoridadesInput, facultadUncheckedCreateWithoutAutoridadesInput>
+    connectOrCreate?: facultadCreateOrConnectWithoutAutoridadesInput
+    connect?: facultadWhereUniqueInput
+  }
+
+  export type Enumtipo_autoridad_facultadFieldUpdateOperationsInput = {
+    set?: $Enums.tipo_autoridad_facultad
+  }
+
+  export type facultadUpdateOneRequiredWithoutAutoridadesNestedInput = {
+    create?: XOR<facultadCreateWithoutAutoridadesInput, facultadUncheckedCreateWithoutAutoridadesInput>
+    connectOrCreate?: facultadCreateOrConnectWithoutAutoridadesInput
+    upsert?: facultadUpsertWithoutAutoridadesInput
+    connect?: facultadWhereUniqueInput
+    update?: XOR<XOR<facultadUpdateToOneWithWhereWithoutAutoridadesInput, facultadUpdateWithoutAutoridadesInput>, facultadUncheckedUpdateWithoutAutoridadesInput>
+  }
+
+  export type facultadCreateNestedOneWithoutCarrerasInput = {
+    create?: XOR<facultadCreateWithoutCarrerasInput, facultadUncheckedCreateWithoutCarrerasInput>
+    connectOrCreate?: facultadCreateOrConnectWithoutCarrerasInput
+    connect?: facultadWhereUniqueInput
+  }
+
+  export type coordinadorCreateNestedOneWithoutCarrerasInput = {
+    create?: XOR<coordinadorCreateWithoutCarrerasInput, coordinadorUncheckedCreateWithoutCarrerasInput>
+    connectOrCreate?: coordinadorCreateOrConnectWithoutCarrerasInput
+    connect?: coordinadorWhereUniqueInput
+  }
+
+  export type usuarioCreateNestedManyWithoutCarreraInput = {
+    create?: XOR<usuarioCreateWithoutCarreraInput, usuarioUncheckedCreateWithoutCarreraInput> | usuarioCreateWithoutCarreraInput[] | usuarioUncheckedCreateWithoutCarreraInput[]
+    connectOrCreate?: usuarioCreateOrConnectWithoutCarreraInput | usuarioCreateOrConnectWithoutCarreraInput[]
+    createMany?: usuarioCreateManyCarreraInputEnvelope
+    connect?: usuarioWhereUniqueInput | usuarioWhereUniqueInput[]
+  }
+
+  export type evento_carreraCreateNestedManyWithoutCarreraInput = {
+    create?: XOR<evento_carreraCreateWithoutCarreraInput, evento_carreraUncheckedCreateWithoutCarreraInput> | evento_carreraCreateWithoutCarreraInput[] | evento_carreraUncheckedCreateWithoutCarreraInput[]
+    connectOrCreate?: evento_carreraCreateOrConnectWithoutCarreraInput | evento_carreraCreateOrConnectWithoutCarreraInput[]
+    createMany?: evento_carreraCreateManyCarreraInputEnvelope
+    connect?: evento_carreraWhereUniqueInput | evento_carreraWhereUniqueInput[]
+  }
+
+  export type usuarioUncheckedCreateNestedManyWithoutCarreraInput = {
+    create?: XOR<usuarioCreateWithoutCarreraInput, usuarioUncheckedCreateWithoutCarreraInput> | usuarioCreateWithoutCarreraInput[] | usuarioUncheckedCreateWithoutCarreraInput[]
+    connectOrCreate?: usuarioCreateOrConnectWithoutCarreraInput | usuarioCreateOrConnectWithoutCarreraInput[]
+    createMany?: usuarioCreateManyCarreraInputEnvelope
+    connect?: usuarioWhereUniqueInput | usuarioWhereUniqueInput[]
+  }
+
+  export type evento_carreraUncheckedCreateNestedManyWithoutCarreraInput = {
+    create?: XOR<evento_carreraCreateWithoutCarreraInput, evento_carreraUncheckedCreateWithoutCarreraInput> | evento_carreraCreateWithoutCarreraInput[] | evento_carreraUncheckedCreateWithoutCarreraInput[]
+    connectOrCreate?: evento_carreraCreateOrConnectWithoutCarreraInput | evento_carreraCreateOrConnectWithoutCarreraInput[]
+    createMany?: evento_carreraCreateManyCarreraInputEnvelope
+    connect?: evento_carreraWhereUniqueInput | evento_carreraWhereUniqueInput[]
+  }
+
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type facultadUpdateOneRequiredWithoutCarrerasNestedInput = {
+    create?: XOR<facultadCreateWithoutCarrerasInput, facultadUncheckedCreateWithoutCarrerasInput>
+    connectOrCreate?: facultadCreateOrConnectWithoutCarrerasInput
+    upsert?: facultadUpsertWithoutCarrerasInput
+    connect?: facultadWhereUniqueInput
+    update?: XOR<XOR<facultadUpdateToOneWithWhereWithoutCarrerasInput, facultadUpdateWithoutCarrerasInput>, facultadUncheckedUpdateWithoutCarrerasInput>
+  }
+
+  export type coordinadorUpdateOneWithoutCarrerasNestedInput = {
+    create?: XOR<coordinadorCreateWithoutCarrerasInput, coordinadorUncheckedCreateWithoutCarrerasInput>
+    connectOrCreate?: coordinadorCreateOrConnectWithoutCarrerasInput
+    upsert?: coordinadorUpsertWithoutCarrerasInput
+    disconnect?: coordinadorWhereInput | boolean
+    delete?: coordinadorWhereInput | boolean
+    connect?: coordinadorWhereUniqueInput
+    update?: XOR<XOR<coordinadorUpdateToOneWithWhereWithoutCarrerasInput, coordinadorUpdateWithoutCarrerasInput>, coordinadorUncheckedUpdateWithoutCarrerasInput>
+  }
+
+  export type usuarioUpdateManyWithoutCarreraNestedInput = {
+    create?: XOR<usuarioCreateWithoutCarreraInput, usuarioUncheckedCreateWithoutCarreraInput> | usuarioCreateWithoutCarreraInput[] | usuarioUncheckedCreateWithoutCarreraInput[]
+    connectOrCreate?: usuarioCreateOrConnectWithoutCarreraInput | usuarioCreateOrConnectWithoutCarreraInput[]
+    upsert?: usuarioUpsertWithWhereUniqueWithoutCarreraInput | usuarioUpsertWithWhereUniqueWithoutCarreraInput[]
+    createMany?: usuarioCreateManyCarreraInputEnvelope
+    set?: usuarioWhereUniqueInput | usuarioWhereUniqueInput[]
+    disconnect?: usuarioWhereUniqueInput | usuarioWhereUniqueInput[]
+    delete?: usuarioWhereUniqueInput | usuarioWhereUniqueInput[]
+    connect?: usuarioWhereUniqueInput | usuarioWhereUniqueInput[]
+    update?: usuarioUpdateWithWhereUniqueWithoutCarreraInput | usuarioUpdateWithWhereUniqueWithoutCarreraInput[]
+    updateMany?: usuarioUpdateManyWithWhereWithoutCarreraInput | usuarioUpdateManyWithWhereWithoutCarreraInput[]
+    deleteMany?: usuarioScalarWhereInput | usuarioScalarWhereInput[]
+  }
+
+  export type evento_carreraUpdateManyWithoutCarreraNestedInput = {
+    create?: XOR<evento_carreraCreateWithoutCarreraInput, evento_carreraUncheckedCreateWithoutCarreraInput> | evento_carreraCreateWithoutCarreraInput[] | evento_carreraUncheckedCreateWithoutCarreraInput[]
+    connectOrCreate?: evento_carreraCreateOrConnectWithoutCarreraInput | evento_carreraCreateOrConnectWithoutCarreraInput[]
+    upsert?: evento_carreraUpsertWithWhereUniqueWithoutCarreraInput | evento_carreraUpsertWithWhereUniqueWithoutCarreraInput[]
+    createMany?: evento_carreraCreateManyCarreraInputEnvelope
+    set?: evento_carreraWhereUniqueInput | evento_carreraWhereUniqueInput[]
+    disconnect?: evento_carreraWhereUniqueInput | evento_carreraWhereUniqueInput[]
+    delete?: evento_carreraWhereUniqueInput | evento_carreraWhereUniqueInput[]
+    connect?: evento_carreraWhereUniqueInput | evento_carreraWhereUniqueInput[]
+    update?: evento_carreraUpdateWithWhereUniqueWithoutCarreraInput | evento_carreraUpdateWithWhereUniqueWithoutCarreraInput[]
+    updateMany?: evento_carreraUpdateManyWithWhereWithoutCarreraInput | evento_carreraUpdateManyWithWhereWithoutCarreraInput[]
+    deleteMany?: evento_carreraScalarWhereInput | evento_carreraScalarWhereInput[]
+  }
+
+  export type usuarioUncheckedUpdateManyWithoutCarreraNestedInput = {
+    create?: XOR<usuarioCreateWithoutCarreraInput, usuarioUncheckedCreateWithoutCarreraInput> | usuarioCreateWithoutCarreraInput[] | usuarioUncheckedCreateWithoutCarreraInput[]
+    connectOrCreate?: usuarioCreateOrConnectWithoutCarreraInput | usuarioCreateOrConnectWithoutCarreraInput[]
+    upsert?: usuarioUpsertWithWhereUniqueWithoutCarreraInput | usuarioUpsertWithWhereUniqueWithoutCarreraInput[]
+    createMany?: usuarioCreateManyCarreraInputEnvelope
+    set?: usuarioWhereUniqueInput | usuarioWhereUniqueInput[]
+    disconnect?: usuarioWhereUniqueInput | usuarioWhereUniqueInput[]
+    delete?: usuarioWhereUniqueInput | usuarioWhereUniqueInput[]
+    connect?: usuarioWhereUniqueInput | usuarioWhereUniqueInput[]
+    update?: usuarioUpdateWithWhereUniqueWithoutCarreraInput | usuarioUpdateWithWhereUniqueWithoutCarreraInput[]
+    updateMany?: usuarioUpdateManyWithWhereWithoutCarreraInput | usuarioUpdateManyWithWhereWithoutCarreraInput[]
+    deleteMany?: usuarioScalarWhereInput | usuarioScalarWhereInput[]
+  }
+
+  export type evento_carreraUncheckedUpdateManyWithoutCarreraNestedInput = {
+    create?: XOR<evento_carreraCreateWithoutCarreraInput, evento_carreraUncheckedCreateWithoutCarreraInput> | evento_carreraCreateWithoutCarreraInput[] | evento_carreraUncheckedCreateWithoutCarreraInput[]
+    connectOrCreate?: evento_carreraCreateOrConnectWithoutCarreraInput | evento_carreraCreateOrConnectWithoutCarreraInput[]
+    upsert?: evento_carreraUpsertWithWhereUniqueWithoutCarreraInput | evento_carreraUpsertWithWhereUniqueWithoutCarreraInput[]
+    createMany?: evento_carreraCreateManyCarreraInputEnvelope
+    set?: evento_carreraWhereUniqueInput | evento_carreraWhereUniqueInput[]
+    disconnect?: evento_carreraWhereUniqueInput | evento_carreraWhereUniqueInput[]
+    delete?: evento_carreraWhereUniqueInput | evento_carreraWhereUniqueInput[]
+    connect?: evento_carreraWhereUniqueInput | evento_carreraWhereUniqueInput[]
+    update?: evento_carreraUpdateWithWhereUniqueWithoutCarreraInput | evento_carreraUpdateWithWhereUniqueWithoutCarreraInput[]
+    updateMany?: evento_carreraUpdateManyWithWhereWithoutCarreraInput | evento_carreraUpdateManyWithWhereWithoutCarreraInput[]
+    deleteMany?: evento_carreraScalarWhereInput | evento_carreraScalarWhereInput[]
+  }
+
+  export type carreraCreateNestedManyWithoutCoordinadorInput = {
+    create?: XOR<carreraCreateWithoutCoordinadorInput, carreraUncheckedCreateWithoutCoordinadorInput> | carreraCreateWithoutCoordinadorInput[] | carreraUncheckedCreateWithoutCoordinadorInput[]
+    connectOrCreate?: carreraCreateOrConnectWithoutCoordinadorInput | carreraCreateOrConnectWithoutCoordinadorInput[]
+    createMany?: carreraCreateManyCoordinadorInputEnvelope
+    connect?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
+  }
+
+  export type carreraUncheckedCreateNestedManyWithoutCoordinadorInput = {
+    create?: XOR<carreraCreateWithoutCoordinadorInput, carreraUncheckedCreateWithoutCoordinadorInput> | carreraCreateWithoutCoordinadorInput[] | carreraUncheckedCreateWithoutCoordinadorInput[]
+    connectOrCreate?: carreraCreateOrConnectWithoutCoordinadorInput | carreraCreateOrConnectWithoutCoordinadorInput[]
+    createMany?: carreraCreateManyCoordinadorInputEnvelope
+    connect?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
+  }
+
+  export type carreraUpdateManyWithoutCoordinadorNestedInput = {
+    create?: XOR<carreraCreateWithoutCoordinadorInput, carreraUncheckedCreateWithoutCoordinadorInput> | carreraCreateWithoutCoordinadorInput[] | carreraUncheckedCreateWithoutCoordinadorInput[]
+    connectOrCreate?: carreraCreateOrConnectWithoutCoordinadorInput | carreraCreateOrConnectWithoutCoordinadorInput[]
+    upsert?: carreraUpsertWithWhereUniqueWithoutCoordinadorInput | carreraUpsertWithWhereUniqueWithoutCoordinadorInput[]
+    createMany?: carreraCreateManyCoordinadorInputEnvelope
+    set?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
+    disconnect?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
+    delete?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
+    connect?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
+    update?: carreraUpdateWithWhereUniqueWithoutCoordinadorInput | carreraUpdateWithWhereUniqueWithoutCoordinadorInput[]
+    updateMany?: carreraUpdateManyWithWhereWithoutCoordinadorInput | carreraUpdateManyWithWhereWithoutCoordinadorInput[]
+    deleteMany?: carreraScalarWhereInput | carreraScalarWhereInput[]
+  }
+
+  export type carreraUncheckedUpdateManyWithoutCoordinadorNestedInput = {
+    create?: XOR<carreraCreateWithoutCoordinadorInput, carreraUncheckedCreateWithoutCoordinadorInput> | carreraCreateWithoutCoordinadorInput[] | carreraUncheckedCreateWithoutCoordinadorInput[]
+    connectOrCreate?: carreraCreateOrConnectWithoutCoordinadorInput | carreraCreateOrConnectWithoutCoordinadorInput[]
+    upsert?: carreraUpsertWithWhereUniqueWithoutCoordinadorInput | carreraUpsertWithWhereUniqueWithoutCoordinadorInput[]
+    createMany?: carreraCreateManyCoordinadorInputEnvelope
+    set?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
+    disconnect?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
+    delete?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
+    connect?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
+    update?: carreraUpdateWithWhereUniqueWithoutCoordinadorInput | carreraUpdateWithWhereUniqueWithoutCoordinadorInput[]
+    updateMany?: carreraUpdateManyWithWhereWithoutCoordinadorInput | carreraUpdateManyWithWhereWithoutCoordinadorInput[]
+    deleteMany?: carreraScalarWhereInput | carreraScalarWhereInput[]
+  }
+
   export type carreraCreateNestedOneWithoutUsuarioInput = {
     create?: XOR<carreraCreateWithoutUsuarioInput, carreraUncheckedCreateWithoutUsuarioInput>
     connectOrCreate?: carreraCreateOrConnectWithoutUsuarioInput
@@ -28146,18 +33150,6 @@ export namespace Prisma {
     connectOrCreate?: cuentaCreateOrConnectWithoutUsuarioInput | cuentaCreateOrConnectWithoutUsuarioInput[]
     createMany?: cuentaCreateManyUsuarioInputEnvelope
     connect?: cuentaWhereUniqueInput | cuentaWhereUniqueInput[]
-  }
-
-  export type StringFieldUpdateOperationsInput = {
-    set?: string
-  }
-
-  export type DateTimeFieldUpdateOperationsInput = {
-    set?: Date | string
-  }
-
-  export type NullableStringFieldUpdateOperationsInput = {
-    set?: string | null
   }
 
   export type carreraUpdateOneWithoutUsuarioNestedInput = {
@@ -28196,104 +33188,6 @@ export namespace Prisma {
     update?: cuentaUpdateWithWhereUniqueWithoutUsuarioInput | cuentaUpdateWithWhereUniqueWithoutUsuarioInput[]
     updateMany?: cuentaUpdateManyWithWhereWithoutUsuarioInput | cuentaUpdateManyWithWhereWithoutUsuarioInput[]
     deleteMany?: cuentaScalarWhereInput | cuentaScalarWhereInput[]
-  }
-
-  export type cuentaCreateNestedOneWithoutComprobantes_pagoInput = {
-    create?: XOR<cuentaCreateWithoutComprobantes_pagoInput, cuentaUncheckedCreateWithoutComprobantes_pagoInput>
-    connectOrCreate?: cuentaCreateOrConnectWithoutComprobantes_pagoInput
-    connect?: cuentaWhereUniqueInput
-  }
-
-  export type inscripcionCreateNestedOneWithoutComprobantes_pagoInput = {
-    create?: XOR<inscripcionCreateWithoutComprobantes_pagoInput, inscripcionUncheckedCreateWithoutComprobantes_pagoInput>
-    connectOrCreate?: inscripcionCreateOrConnectWithoutComprobantes_pagoInput
-    connect?: inscripcionWhereUniqueInput
-  }
-
-  export type Enumestado_validacionFieldUpdateOperationsInput = {
-    set?: $Enums.estado_validacion
-  }
-
-  export type NullableDateTimeFieldUpdateOperationsInput = {
-    set?: Date | string | null
-  }
-
-  export type cuentaUpdateOneWithoutComprobantes_pagoNestedInput = {
-    create?: XOR<cuentaCreateWithoutComprobantes_pagoInput, cuentaUncheckedCreateWithoutComprobantes_pagoInput>
-    connectOrCreate?: cuentaCreateOrConnectWithoutComprobantes_pagoInput
-    upsert?: cuentaUpsertWithoutComprobantes_pagoInput
-    disconnect?: cuentaWhereInput | boolean
-    delete?: cuentaWhereInput | boolean
-    connect?: cuentaWhereUniqueInput
-    update?: XOR<XOR<cuentaUpdateToOneWithWhereWithoutComprobantes_pagoInput, cuentaUpdateWithoutComprobantes_pagoInput>, cuentaUncheckedUpdateWithoutComprobantes_pagoInput>
-  }
-
-  export type inscripcionUpdateOneRequiredWithoutComprobantes_pagoNestedInput = {
-    create?: XOR<inscripcionCreateWithoutComprobantes_pagoInput, inscripcionUncheckedCreateWithoutComprobantes_pagoInput>
-    connectOrCreate?: inscripcionCreateOrConnectWithoutComprobantes_pagoInput
-    upsert?: inscripcionUpsertWithoutComprobantes_pagoInput
-    connect?: inscripcionWhereUniqueInput
-    update?: XOR<XOR<inscripcionUpdateToOneWithWhereWithoutComprobantes_pagoInput, inscripcionUpdateWithoutComprobantes_pagoInput>, inscripcionUncheckedUpdateWithoutComprobantes_pagoInput>
-  }
-
-  export type cuentaCreateNestedOneWithoutCartas_motivacionInput = {
-    create?: XOR<cuentaCreateWithoutCartas_motivacionInput, cuentaUncheckedCreateWithoutCartas_motivacionInput>
-    connectOrCreate?: cuentaCreateOrConnectWithoutCartas_motivacionInput
-    connect?: cuentaWhereUniqueInput
-  }
-
-  export type inscripcionCreateNestedOneWithoutCartas_motivacionInput = {
-    create?: XOR<inscripcionCreateWithoutCartas_motivacionInput, inscripcionUncheckedCreateWithoutCartas_motivacionInput>
-    connectOrCreate?: inscripcionCreateOrConnectWithoutCartas_motivacionInput
-    connect?: inscripcionWhereUniqueInput
-  }
-
-  export type cuentaUpdateOneWithoutCartas_motivacionNestedInput = {
-    create?: XOR<cuentaCreateWithoutCartas_motivacionInput, cuentaUncheckedCreateWithoutCartas_motivacionInput>
-    connectOrCreate?: cuentaCreateOrConnectWithoutCartas_motivacionInput
-    upsert?: cuentaUpsertWithoutCartas_motivacionInput
-    disconnect?: cuentaWhereInput | boolean
-    delete?: cuentaWhereInput | boolean
-    connect?: cuentaWhereUniqueInput
-    update?: XOR<XOR<cuentaUpdateToOneWithWhereWithoutCartas_motivacionInput, cuentaUpdateWithoutCartas_motivacionInput>, cuentaUncheckedUpdateWithoutCartas_motivacionInput>
-  }
-
-  export type inscripcionUpdateOneRequiredWithoutCartas_motivacionNestedInput = {
-    create?: XOR<inscripcionCreateWithoutCartas_motivacionInput, inscripcionUncheckedCreateWithoutCartas_motivacionInput>
-    connectOrCreate?: inscripcionCreateOrConnectWithoutCartas_motivacionInput
-    upsert?: inscripcionUpsertWithoutCartas_motivacionInput
-    connect?: inscripcionWhereUniqueInput
-    update?: XOR<XOR<inscripcionUpdateToOneWithWhereWithoutCartas_motivacionInput, inscripcionUpdateWithoutCartas_motivacionInput>, inscripcionUncheckedUpdateWithoutCartas_motivacionInput>
-  }
-
-  export type inscripcionCreateNestedOneWithoutObservacionInput = {
-    create?: XOR<inscripcionCreateWithoutObservacionInput, inscripcionUncheckedCreateWithoutObservacionInput>
-    connectOrCreate?: inscripcionCreateOrConnectWithoutObservacionInput
-    connect?: inscripcionWhereUniqueInput
-  }
-
-  export type cuentaCreateNestedOneWithoutObservaciones_creadasInput = {
-    create?: XOR<cuentaCreateWithoutObservaciones_creadasInput, cuentaUncheckedCreateWithoutObservaciones_creadasInput>
-    connectOrCreate?: cuentaCreateOrConnectWithoutObservaciones_creadasInput
-    connect?: cuentaWhereUniqueInput
-  }
-
-  export type inscripcionUpdateOneRequiredWithoutObservacionNestedInput = {
-    create?: XOR<inscripcionCreateWithoutObservacionInput, inscripcionUncheckedCreateWithoutObservacionInput>
-    connectOrCreate?: inscripcionCreateOrConnectWithoutObservacionInput
-    upsert?: inscripcionUpsertWithoutObservacionInput
-    connect?: inscripcionWhereUniqueInput
-    update?: XOR<XOR<inscripcionUpdateToOneWithWhereWithoutObservacionInput, inscripcionUpdateWithoutObservacionInput>, inscripcionUncheckedUpdateWithoutObservacionInput>
-  }
-
-  export type cuentaUpdateOneWithoutObservaciones_creadasNestedInput = {
-    create?: XOR<cuentaCreateWithoutObservaciones_creadasInput, cuentaUncheckedCreateWithoutObservaciones_creadasInput>
-    connectOrCreate?: cuentaCreateOrConnectWithoutObservaciones_creadasInput
-    upsert?: cuentaUpsertWithoutObservaciones_creadasInput
-    disconnect?: cuentaWhereInput | boolean
-    delete?: cuentaWhereInput | boolean
-    connect?: cuentaWhereUniqueInput
-    update?: XOR<XOR<cuentaUpdateToOneWithWhereWithoutObservaciones_creadasInput, cuentaUpdateWithoutObservaciones_creadasInput>, cuentaUncheckedUpdateWithoutObservaciones_creadasInput>
   }
 
   export type usuarioCreateNestedOneWithoutCuentasInput = {
@@ -28416,10 +33310,6 @@ export namespace Prisma {
 
   export type Enumrol_usuarioFieldUpdateOperationsInput = {
     set?: $Enums.rol_usuario
-  }
-
-  export type BoolFieldUpdateOperationsInput = {
-    set?: boolean
   }
 
   export type usuarioUpdateOneRequiredWithoutCuentasNestedInput = {
@@ -28654,168 +33544,98 @@ export namespace Prisma {
     deleteMany?: invalidacion_tokenScalarWhereInput | invalidacion_tokenScalarWhereInput[]
   }
 
-  export type facultadCreateNestedOneWithoutCarrerasInput = {
-    create?: XOR<facultadCreateWithoutCarrerasInput, facultadUncheckedCreateWithoutCarrerasInput>
-    connectOrCreate?: facultadCreateOrConnectWithoutCarrerasInput
-    connect?: facultadWhereUniqueInput
+  export type cuentaCreateNestedOneWithoutComprobantes_pagoInput = {
+    create?: XOR<cuentaCreateWithoutComprobantes_pagoInput, cuentaUncheckedCreateWithoutComprobantes_pagoInput>
+    connectOrCreate?: cuentaCreateOrConnectWithoutComprobantes_pagoInput
+    connect?: cuentaWhereUniqueInput
   }
 
-  export type coordinadorCreateNestedOneWithoutCarrerasInput = {
-    create?: XOR<coordinadorCreateWithoutCarrerasInput, coordinadorUncheckedCreateWithoutCarrerasInput>
-    connectOrCreate?: coordinadorCreateOrConnectWithoutCarrerasInput
-    connect?: coordinadorWhereUniqueInput
+  export type inscripcionCreateNestedOneWithoutComprobantes_pagoInput = {
+    create?: XOR<inscripcionCreateWithoutComprobantes_pagoInput, inscripcionUncheckedCreateWithoutComprobantes_pagoInput>
+    connectOrCreate?: inscripcionCreateOrConnectWithoutComprobantes_pagoInput
+    connect?: inscripcionWhereUniqueInput
   }
 
-  export type usuarioCreateNestedManyWithoutCarreraInput = {
-    create?: XOR<usuarioCreateWithoutCarreraInput, usuarioUncheckedCreateWithoutCarreraInput> | usuarioCreateWithoutCarreraInput[] | usuarioUncheckedCreateWithoutCarreraInput[]
-    connectOrCreate?: usuarioCreateOrConnectWithoutCarreraInput | usuarioCreateOrConnectWithoutCarreraInput[]
-    createMany?: usuarioCreateManyCarreraInputEnvelope
-    connect?: usuarioWhereUniqueInput | usuarioWhereUniqueInput[]
+  export type Enumestado_validacionFieldUpdateOperationsInput = {
+    set?: $Enums.estado_validacion
   }
 
-  export type evento_carreraCreateNestedManyWithoutCarreraInput = {
-    create?: XOR<evento_carreraCreateWithoutCarreraInput, evento_carreraUncheckedCreateWithoutCarreraInput> | evento_carreraCreateWithoutCarreraInput[] | evento_carreraUncheckedCreateWithoutCarreraInput[]
-    connectOrCreate?: evento_carreraCreateOrConnectWithoutCarreraInput | evento_carreraCreateOrConnectWithoutCarreraInput[]
-    createMany?: evento_carreraCreateManyCarreraInputEnvelope
-    connect?: evento_carreraWhereUniqueInput | evento_carreraWhereUniqueInput[]
+  export type cuentaUpdateOneWithoutComprobantes_pagoNestedInput = {
+    create?: XOR<cuentaCreateWithoutComprobantes_pagoInput, cuentaUncheckedCreateWithoutComprobantes_pagoInput>
+    connectOrCreate?: cuentaCreateOrConnectWithoutComprobantes_pagoInput
+    upsert?: cuentaUpsertWithoutComprobantes_pagoInput
+    disconnect?: cuentaWhereInput | boolean
+    delete?: cuentaWhereInput | boolean
+    connect?: cuentaWhereUniqueInput
+    update?: XOR<XOR<cuentaUpdateToOneWithWhereWithoutComprobantes_pagoInput, cuentaUpdateWithoutComprobantes_pagoInput>, cuentaUncheckedUpdateWithoutComprobantes_pagoInput>
   }
 
-  export type usuarioUncheckedCreateNestedManyWithoutCarreraInput = {
-    create?: XOR<usuarioCreateWithoutCarreraInput, usuarioUncheckedCreateWithoutCarreraInput> | usuarioCreateWithoutCarreraInput[] | usuarioUncheckedCreateWithoutCarreraInput[]
-    connectOrCreate?: usuarioCreateOrConnectWithoutCarreraInput | usuarioCreateOrConnectWithoutCarreraInput[]
-    createMany?: usuarioCreateManyCarreraInputEnvelope
-    connect?: usuarioWhereUniqueInput | usuarioWhereUniqueInput[]
+  export type inscripcionUpdateOneRequiredWithoutComprobantes_pagoNestedInput = {
+    create?: XOR<inscripcionCreateWithoutComprobantes_pagoInput, inscripcionUncheckedCreateWithoutComprobantes_pagoInput>
+    connectOrCreate?: inscripcionCreateOrConnectWithoutComprobantes_pagoInput
+    upsert?: inscripcionUpsertWithoutComprobantes_pagoInput
+    connect?: inscripcionWhereUniqueInput
+    update?: XOR<XOR<inscripcionUpdateToOneWithWhereWithoutComprobantes_pagoInput, inscripcionUpdateWithoutComprobantes_pagoInput>, inscripcionUncheckedUpdateWithoutComprobantes_pagoInput>
   }
 
-  export type evento_carreraUncheckedCreateNestedManyWithoutCarreraInput = {
-    create?: XOR<evento_carreraCreateWithoutCarreraInput, evento_carreraUncheckedCreateWithoutCarreraInput> | evento_carreraCreateWithoutCarreraInput[] | evento_carreraUncheckedCreateWithoutCarreraInput[]
-    connectOrCreate?: evento_carreraCreateOrConnectWithoutCarreraInput | evento_carreraCreateOrConnectWithoutCarreraInput[]
-    createMany?: evento_carreraCreateManyCarreraInputEnvelope
-    connect?: evento_carreraWhereUniqueInput | evento_carreraWhereUniqueInput[]
+  export type cuentaCreateNestedOneWithoutCartas_motivacionInput = {
+    create?: XOR<cuentaCreateWithoutCartas_motivacionInput, cuentaUncheckedCreateWithoutCartas_motivacionInput>
+    connectOrCreate?: cuentaCreateOrConnectWithoutCartas_motivacionInput
+    connect?: cuentaWhereUniqueInput
   }
 
-  export type IntFieldUpdateOperationsInput = {
-    set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
+  export type inscripcionCreateNestedOneWithoutCartas_motivacionInput = {
+    create?: XOR<inscripcionCreateWithoutCartas_motivacionInput, inscripcionUncheckedCreateWithoutCartas_motivacionInput>
+    connectOrCreate?: inscripcionCreateOrConnectWithoutCartas_motivacionInput
+    connect?: inscripcionWhereUniqueInput
   }
 
-  export type facultadUpdateOneRequiredWithoutCarrerasNestedInput = {
-    create?: XOR<facultadCreateWithoutCarrerasInput, facultadUncheckedCreateWithoutCarrerasInput>
-    connectOrCreate?: facultadCreateOrConnectWithoutCarrerasInput
-    upsert?: facultadUpsertWithoutCarrerasInput
-    connect?: facultadWhereUniqueInput
-    update?: XOR<XOR<facultadUpdateToOneWithWhereWithoutCarrerasInput, facultadUpdateWithoutCarrerasInput>, facultadUncheckedUpdateWithoutCarrerasInput>
+  export type cuentaUpdateOneWithoutCartas_motivacionNestedInput = {
+    create?: XOR<cuentaCreateWithoutCartas_motivacionInput, cuentaUncheckedCreateWithoutCartas_motivacionInput>
+    connectOrCreate?: cuentaCreateOrConnectWithoutCartas_motivacionInput
+    upsert?: cuentaUpsertWithoutCartas_motivacionInput
+    disconnect?: cuentaWhereInput | boolean
+    delete?: cuentaWhereInput | boolean
+    connect?: cuentaWhereUniqueInput
+    update?: XOR<XOR<cuentaUpdateToOneWithWhereWithoutCartas_motivacionInput, cuentaUpdateWithoutCartas_motivacionInput>, cuentaUncheckedUpdateWithoutCartas_motivacionInput>
   }
 
-  export type coordinadorUpdateOneWithoutCarrerasNestedInput = {
-    create?: XOR<coordinadorCreateWithoutCarrerasInput, coordinadorUncheckedCreateWithoutCarrerasInput>
-    connectOrCreate?: coordinadorCreateOrConnectWithoutCarrerasInput
-    upsert?: coordinadorUpsertWithoutCarrerasInput
-    disconnect?: coordinadorWhereInput | boolean
-    delete?: coordinadorWhereInput | boolean
-    connect?: coordinadorWhereUniqueInput
-    update?: XOR<XOR<coordinadorUpdateToOneWithWhereWithoutCarrerasInput, coordinadorUpdateWithoutCarrerasInput>, coordinadorUncheckedUpdateWithoutCarrerasInput>
+  export type inscripcionUpdateOneRequiredWithoutCartas_motivacionNestedInput = {
+    create?: XOR<inscripcionCreateWithoutCartas_motivacionInput, inscripcionUncheckedCreateWithoutCartas_motivacionInput>
+    connectOrCreate?: inscripcionCreateOrConnectWithoutCartas_motivacionInput
+    upsert?: inscripcionUpsertWithoutCartas_motivacionInput
+    connect?: inscripcionWhereUniqueInput
+    update?: XOR<XOR<inscripcionUpdateToOneWithWhereWithoutCartas_motivacionInput, inscripcionUpdateWithoutCartas_motivacionInput>, inscripcionUncheckedUpdateWithoutCartas_motivacionInput>
   }
 
-  export type usuarioUpdateManyWithoutCarreraNestedInput = {
-    create?: XOR<usuarioCreateWithoutCarreraInput, usuarioUncheckedCreateWithoutCarreraInput> | usuarioCreateWithoutCarreraInput[] | usuarioUncheckedCreateWithoutCarreraInput[]
-    connectOrCreate?: usuarioCreateOrConnectWithoutCarreraInput | usuarioCreateOrConnectWithoutCarreraInput[]
-    upsert?: usuarioUpsertWithWhereUniqueWithoutCarreraInput | usuarioUpsertWithWhereUniqueWithoutCarreraInput[]
-    createMany?: usuarioCreateManyCarreraInputEnvelope
-    set?: usuarioWhereUniqueInput | usuarioWhereUniqueInput[]
-    disconnect?: usuarioWhereUniqueInput | usuarioWhereUniqueInput[]
-    delete?: usuarioWhereUniqueInput | usuarioWhereUniqueInput[]
-    connect?: usuarioWhereUniqueInput | usuarioWhereUniqueInput[]
-    update?: usuarioUpdateWithWhereUniqueWithoutCarreraInput | usuarioUpdateWithWhereUniqueWithoutCarreraInput[]
-    updateMany?: usuarioUpdateManyWithWhereWithoutCarreraInput | usuarioUpdateManyWithWhereWithoutCarreraInput[]
-    deleteMany?: usuarioScalarWhereInput | usuarioScalarWhereInput[]
+  export type inscripcionCreateNestedOneWithoutObservacionInput = {
+    create?: XOR<inscripcionCreateWithoutObservacionInput, inscripcionUncheckedCreateWithoutObservacionInput>
+    connectOrCreate?: inscripcionCreateOrConnectWithoutObservacionInput
+    connect?: inscripcionWhereUniqueInput
   }
 
-  export type evento_carreraUpdateManyWithoutCarreraNestedInput = {
-    create?: XOR<evento_carreraCreateWithoutCarreraInput, evento_carreraUncheckedCreateWithoutCarreraInput> | evento_carreraCreateWithoutCarreraInput[] | evento_carreraUncheckedCreateWithoutCarreraInput[]
-    connectOrCreate?: evento_carreraCreateOrConnectWithoutCarreraInput | evento_carreraCreateOrConnectWithoutCarreraInput[]
-    upsert?: evento_carreraUpsertWithWhereUniqueWithoutCarreraInput | evento_carreraUpsertWithWhereUniqueWithoutCarreraInput[]
-    createMany?: evento_carreraCreateManyCarreraInputEnvelope
-    set?: evento_carreraWhereUniqueInput | evento_carreraWhereUniqueInput[]
-    disconnect?: evento_carreraWhereUniqueInput | evento_carreraWhereUniqueInput[]
-    delete?: evento_carreraWhereUniqueInput | evento_carreraWhereUniqueInput[]
-    connect?: evento_carreraWhereUniqueInput | evento_carreraWhereUniqueInput[]
-    update?: evento_carreraUpdateWithWhereUniqueWithoutCarreraInput | evento_carreraUpdateWithWhereUniqueWithoutCarreraInput[]
-    updateMany?: evento_carreraUpdateManyWithWhereWithoutCarreraInput | evento_carreraUpdateManyWithWhereWithoutCarreraInput[]
-    deleteMany?: evento_carreraScalarWhereInput | evento_carreraScalarWhereInput[]
+  export type cuentaCreateNestedOneWithoutObservaciones_creadasInput = {
+    create?: XOR<cuentaCreateWithoutObservaciones_creadasInput, cuentaUncheckedCreateWithoutObservaciones_creadasInput>
+    connectOrCreate?: cuentaCreateOrConnectWithoutObservaciones_creadasInput
+    connect?: cuentaWhereUniqueInput
   }
 
-  export type usuarioUncheckedUpdateManyWithoutCarreraNestedInput = {
-    create?: XOR<usuarioCreateWithoutCarreraInput, usuarioUncheckedCreateWithoutCarreraInput> | usuarioCreateWithoutCarreraInput[] | usuarioUncheckedCreateWithoutCarreraInput[]
-    connectOrCreate?: usuarioCreateOrConnectWithoutCarreraInput | usuarioCreateOrConnectWithoutCarreraInput[]
-    upsert?: usuarioUpsertWithWhereUniqueWithoutCarreraInput | usuarioUpsertWithWhereUniqueWithoutCarreraInput[]
-    createMany?: usuarioCreateManyCarreraInputEnvelope
-    set?: usuarioWhereUniqueInput | usuarioWhereUniqueInput[]
-    disconnect?: usuarioWhereUniqueInput | usuarioWhereUniqueInput[]
-    delete?: usuarioWhereUniqueInput | usuarioWhereUniqueInput[]
-    connect?: usuarioWhereUniqueInput | usuarioWhereUniqueInput[]
-    update?: usuarioUpdateWithWhereUniqueWithoutCarreraInput | usuarioUpdateWithWhereUniqueWithoutCarreraInput[]
-    updateMany?: usuarioUpdateManyWithWhereWithoutCarreraInput | usuarioUpdateManyWithWhereWithoutCarreraInput[]
-    deleteMany?: usuarioScalarWhereInput | usuarioScalarWhereInput[]
+  export type inscripcionUpdateOneRequiredWithoutObservacionNestedInput = {
+    create?: XOR<inscripcionCreateWithoutObservacionInput, inscripcionUncheckedCreateWithoutObservacionInput>
+    connectOrCreate?: inscripcionCreateOrConnectWithoutObservacionInput
+    upsert?: inscripcionUpsertWithoutObservacionInput
+    connect?: inscripcionWhereUniqueInput
+    update?: XOR<XOR<inscripcionUpdateToOneWithWhereWithoutObservacionInput, inscripcionUpdateWithoutObservacionInput>, inscripcionUncheckedUpdateWithoutObservacionInput>
   }
 
-  export type evento_carreraUncheckedUpdateManyWithoutCarreraNestedInput = {
-    create?: XOR<evento_carreraCreateWithoutCarreraInput, evento_carreraUncheckedCreateWithoutCarreraInput> | evento_carreraCreateWithoutCarreraInput[] | evento_carreraUncheckedCreateWithoutCarreraInput[]
-    connectOrCreate?: evento_carreraCreateOrConnectWithoutCarreraInput | evento_carreraCreateOrConnectWithoutCarreraInput[]
-    upsert?: evento_carreraUpsertWithWhereUniqueWithoutCarreraInput | evento_carreraUpsertWithWhereUniqueWithoutCarreraInput[]
-    createMany?: evento_carreraCreateManyCarreraInputEnvelope
-    set?: evento_carreraWhereUniqueInput | evento_carreraWhereUniqueInput[]
-    disconnect?: evento_carreraWhereUniqueInput | evento_carreraWhereUniqueInput[]
-    delete?: evento_carreraWhereUniqueInput | evento_carreraWhereUniqueInput[]
-    connect?: evento_carreraWhereUniqueInput | evento_carreraWhereUniqueInput[]
-    update?: evento_carreraUpdateWithWhereUniqueWithoutCarreraInput | evento_carreraUpdateWithWhereUniqueWithoutCarreraInput[]
-    updateMany?: evento_carreraUpdateManyWithWhereWithoutCarreraInput | evento_carreraUpdateManyWithWhereWithoutCarreraInput[]
-    deleteMany?: evento_carreraScalarWhereInput | evento_carreraScalarWhereInput[]
-  }
-
-  export type carreraCreateNestedManyWithoutCoordinadorInput = {
-    create?: XOR<carreraCreateWithoutCoordinadorInput, carreraUncheckedCreateWithoutCoordinadorInput> | carreraCreateWithoutCoordinadorInput[] | carreraUncheckedCreateWithoutCoordinadorInput[]
-    connectOrCreate?: carreraCreateOrConnectWithoutCoordinadorInput | carreraCreateOrConnectWithoutCoordinadorInput[]
-    createMany?: carreraCreateManyCoordinadorInputEnvelope
-    connect?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
-  }
-
-  export type carreraUncheckedCreateNestedManyWithoutCoordinadorInput = {
-    create?: XOR<carreraCreateWithoutCoordinadorInput, carreraUncheckedCreateWithoutCoordinadorInput> | carreraCreateWithoutCoordinadorInput[] | carreraUncheckedCreateWithoutCoordinadorInput[]
-    connectOrCreate?: carreraCreateOrConnectWithoutCoordinadorInput | carreraCreateOrConnectWithoutCoordinadorInput[]
-    createMany?: carreraCreateManyCoordinadorInputEnvelope
-    connect?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
-  }
-
-  export type carreraUpdateManyWithoutCoordinadorNestedInput = {
-    create?: XOR<carreraCreateWithoutCoordinadorInput, carreraUncheckedCreateWithoutCoordinadorInput> | carreraCreateWithoutCoordinadorInput[] | carreraUncheckedCreateWithoutCoordinadorInput[]
-    connectOrCreate?: carreraCreateOrConnectWithoutCoordinadorInput | carreraCreateOrConnectWithoutCoordinadorInput[]
-    upsert?: carreraUpsertWithWhereUniqueWithoutCoordinadorInput | carreraUpsertWithWhereUniqueWithoutCoordinadorInput[]
-    createMany?: carreraCreateManyCoordinadorInputEnvelope
-    set?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
-    disconnect?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
-    delete?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
-    connect?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
-    update?: carreraUpdateWithWhereUniqueWithoutCoordinadorInput | carreraUpdateWithWhereUniqueWithoutCoordinadorInput[]
-    updateMany?: carreraUpdateManyWithWhereWithoutCoordinadorInput | carreraUpdateManyWithWhereWithoutCoordinadorInput[]
-    deleteMany?: carreraScalarWhereInput | carreraScalarWhereInput[]
-  }
-
-  export type carreraUncheckedUpdateManyWithoutCoordinadorNestedInput = {
-    create?: XOR<carreraCreateWithoutCoordinadorInput, carreraUncheckedCreateWithoutCoordinadorInput> | carreraCreateWithoutCoordinadorInput[] | carreraUncheckedCreateWithoutCoordinadorInput[]
-    connectOrCreate?: carreraCreateOrConnectWithoutCoordinadorInput | carreraCreateOrConnectWithoutCoordinadorInput[]
-    upsert?: carreraUpsertWithWhereUniqueWithoutCoordinadorInput | carreraUpsertWithWhereUniqueWithoutCoordinadorInput[]
-    createMany?: carreraCreateManyCoordinadorInputEnvelope
-    set?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
-    disconnect?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
-    delete?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
-    connect?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
-    update?: carreraUpdateWithWhereUniqueWithoutCoordinadorInput | carreraUpdateWithWhereUniqueWithoutCoordinadorInput[]
-    updateMany?: carreraUpdateManyWithWhereWithoutCoordinadorInput | carreraUpdateManyWithWhereWithoutCoordinadorInput[]
-    deleteMany?: carreraScalarWhereInput | carreraScalarWhereInput[]
+  export type cuentaUpdateOneWithoutObservaciones_creadasNestedInput = {
+    create?: XOR<cuentaCreateWithoutObservaciones_creadasInput, cuentaUncheckedCreateWithoutObservaciones_creadasInput>
+    connectOrCreate?: cuentaCreateOrConnectWithoutObservaciones_creadasInput
+    upsert?: cuentaUpsertWithoutObservaciones_creadasInput
+    disconnect?: cuentaWhereInput | boolean
+    delete?: cuentaWhereInput | boolean
+    connect?: cuentaWhereUniqueInput
+    update?: XOR<XOR<cuentaUpdateToOneWithWhereWithoutObservaciones_creadasInput, cuentaUpdateWithoutObservaciones_creadasInput>, cuentaUncheckedUpdateWithoutObservaciones_creadasInput>
   }
 
   export type inscripcionCreateNestedManyWithoutEventoInput = {
@@ -29278,48 +34098,6 @@ export namespace Prisma {
     update?: XOR<XOR<inscripcionUpdateToOneWithWhereWithoutCertificadoInput, inscripcionUpdateWithoutCertificadoInput>, inscripcionUncheckedUpdateWithoutCertificadoInput>
   }
 
-  export type carreraCreateNestedManyWithoutFacultadInput = {
-    create?: XOR<carreraCreateWithoutFacultadInput, carreraUncheckedCreateWithoutFacultadInput> | carreraCreateWithoutFacultadInput[] | carreraUncheckedCreateWithoutFacultadInput[]
-    connectOrCreate?: carreraCreateOrConnectWithoutFacultadInput | carreraCreateOrConnectWithoutFacultadInput[]
-    createMany?: carreraCreateManyFacultadInputEnvelope
-    connect?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
-  }
-
-  export type carreraUncheckedCreateNestedManyWithoutFacultadInput = {
-    create?: XOR<carreraCreateWithoutFacultadInput, carreraUncheckedCreateWithoutFacultadInput> | carreraCreateWithoutFacultadInput[] | carreraUncheckedCreateWithoutFacultadInput[]
-    connectOrCreate?: carreraCreateOrConnectWithoutFacultadInput | carreraCreateOrConnectWithoutFacultadInput[]
-    createMany?: carreraCreateManyFacultadInputEnvelope
-    connect?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
-  }
-
-  export type carreraUpdateManyWithoutFacultadNestedInput = {
-    create?: XOR<carreraCreateWithoutFacultadInput, carreraUncheckedCreateWithoutFacultadInput> | carreraCreateWithoutFacultadInput[] | carreraUncheckedCreateWithoutFacultadInput[]
-    connectOrCreate?: carreraCreateOrConnectWithoutFacultadInput | carreraCreateOrConnectWithoutFacultadInput[]
-    upsert?: carreraUpsertWithWhereUniqueWithoutFacultadInput | carreraUpsertWithWhereUniqueWithoutFacultadInput[]
-    createMany?: carreraCreateManyFacultadInputEnvelope
-    set?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
-    disconnect?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
-    delete?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
-    connect?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
-    update?: carreraUpdateWithWhereUniqueWithoutFacultadInput | carreraUpdateWithWhereUniqueWithoutFacultadInput[]
-    updateMany?: carreraUpdateManyWithWhereWithoutFacultadInput | carreraUpdateManyWithWhereWithoutFacultadInput[]
-    deleteMany?: carreraScalarWhereInput | carreraScalarWhereInput[]
-  }
-
-  export type carreraUncheckedUpdateManyWithoutFacultadNestedInput = {
-    create?: XOR<carreraCreateWithoutFacultadInput, carreraUncheckedCreateWithoutFacultadInput> | carreraCreateWithoutFacultadInput[] | carreraUncheckedCreateWithoutFacultadInput[]
-    connectOrCreate?: carreraCreateOrConnectWithoutFacultadInput | carreraCreateOrConnectWithoutFacultadInput[]
-    upsert?: carreraUpsertWithWhereUniqueWithoutFacultadInput | carreraUpsertWithWhereUniqueWithoutFacultadInput[]
-    createMany?: carreraCreateManyFacultadInputEnvelope
-    set?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
-    disconnect?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
-    delete?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
-    connect?: carreraWhereUniqueInput | carreraWhereUniqueInput[]
-    update?: carreraUpdateWithWhereUniqueWithoutFacultadInput | carreraUpdateWithWhereUniqueWithoutFacultadInput[]
-    updateMany?: carreraUpdateManyWithWhereWithoutFacultadInput | carreraUpdateManyWithWhereWithoutFacultadInput[]
-    deleteMany?: carreraScalarWhereInput | carreraScalarWhereInput[]
-  }
-
   export type cuentaCreateNestedOneWithoutTokens_cuentaInput = {
     create?: XOR<cuentaCreateWithoutTokens_cuentaInput, cuentaUncheckedCreateWithoutTokens_cuentaInput>
     connectOrCreate?: cuentaCreateOrConnectWithoutTokens_cuentaInput
@@ -29586,17 +34364,6 @@ export namespace Prisma {
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
-  export type NestedDateTimeFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeFilter<$PrismaModel> | Date | string
-  }
-
   export type NestedStringNullableFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -29609,6 +34376,33 @@ export namespace Prisma {
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type NestedDateTimeFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeFilter<$PrismaModel> | Date | string
+  }
+
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
   export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
@@ -29639,20 +34433,6 @@ export namespace Prisma {
     not?: NestedIntFilter<$PrismaModel> | number
   }
 
-  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedDateTimeFilter<$PrismaModel>
-    _max?: NestedDateTimeFilter<$PrismaModel>
-  }
-
   export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -29681,34 +34461,6 @@ export namespace Prisma {
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
-  export type NestedEnumestado_validacionFilter<$PrismaModel = never> = {
-    equals?: $Enums.estado_validacion | Enumestado_validacionFieldRefInput<$PrismaModel>
-    in?: $Enums.estado_validacion[] | ListEnumestado_validacionFieldRefInput<$PrismaModel>
-    notIn?: $Enums.estado_validacion[] | ListEnumestado_validacionFieldRefInput<$PrismaModel>
-    not?: NestedEnumestado_validacionFilter<$PrismaModel> | $Enums.estado_validacion
-  }
-
-  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
-  }
-
-  export type NestedEnumestado_validacionWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.estado_validacion | Enumestado_validacionFieldRefInput<$PrismaModel>
-    in?: $Enums.estado_validacion[] | ListEnumestado_validacionFieldRefInput<$PrismaModel>
-    notIn?: $Enums.estado_validacion[] | ListEnumestado_validacionFieldRefInput<$PrismaModel>
-    not?: NestedEnumestado_validacionWithAggregatesFilter<$PrismaModel> | $Enums.estado_validacion
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumestado_validacionFilter<$PrismaModel>
-    _max?: NestedEnumestado_validacionFilter<$PrismaModel>
-  }
-
   export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
@@ -29723,26 +34475,18 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
-  export type NestedEnumrol_usuarioFilter<$PrismaModel = never> = {
-    equals?: $Enums.rol_usuario | Enumrol_usuarioFieldRefInput<$PrismaModel>
-    in?: $Enums.rol_usuario[] | ListEnumrol_usuarioFieldRefInput<$PrismaModel>
-    notIn?: $Enums.rol_usuario[] | ListEnumrol_usuarioFieldRefInput<$PrismaModel>
-    not?: NestedEnumrol_usuarioFilter<$PrismaModel> | $Enums.rol_usuario
-  }
-
-  export type NestedBoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
-  }
-
-  export type NestedEnumrol_usuarioWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.rol_usuario | Enumrol_usuarioFieldRefInput<$PrismaModel>
-    in?: $Enums.rol_usuario[] | ListEnumrol_usuarioFieldRefInput<$PrismaModel>
-    notIn?: $Enums.rol_usuario[] | ListEnumrol_usuarioFieldRefInput<$PrismaModel>
-    not?: NestedEnumrol_usuarioWithAggregatesFilter<$PrismaModel> | $Enums.rol_usuario
+  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
     _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumrol_usuarioFilter<$PrismaModel>
-    _max?: NestedEnumrol_usuarioFilter<$PrismaModel>
+    _min?: NestedDateTimeFilter<$PrismaModel>
+    _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
   export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -29751,6 +34495,40 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedBoolFilter<$PrismaModel>
     _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type NestedEnumtipo_autoridad_universidadFilter<$PrismaModel = never> = {
+    equals?: $Enums.tipo_autoridad_universidad | Enumtipo_autoridad_universidadFieldRefInput<$PrismaModel>
+    in?: $Enums.tipo_autoridad_universidad[] | ListEnumtipo_autoridad_universidadFieldRefInput<$PrismaModel>
+    notIn?: $Enums.tipo_autoridad_universidad[] | ListEnumtipo_autoridad_universidadFieldRefInput<$PrismaModel>
+    not?: NestedEnumtipo_autoridad_universidadFilter<$PrismaModel> | $Enums.tipo_autoridad_universidad
+  }
+
+  export type NestedEnumtipo_autoridad_universidadWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.tipo_autoridad_universidad | Enumtipo_autoridad_universidadFieldRefInput<$PrismaModel>
+    in?: $Enums.tipo_autoridad_universidad[] | ListEnumtipo_autoridad_universidadFieldRefInput<$PrismaModel>
+    notIn?: $Enums.tipo_autoridad_universidad[] | ListEnumtipo_autoridad_universidadFieldRefInput<$PrismaModel>
+    not?: NestedEnumtipo_autoridad_universidadWithAggregatesFilter<$PrismaModel> | $Enums.tipo_autoridad_universidad
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumtipo_autoridad_universidadFilter<$PrismaModel>
+    _max?: NestedEnumtipo_autoridad_universidadFilter<$PrismaModel>
+  }
+
+  export type NestedEnumtipo_autoridad_facultadFilter<$PrismaModel = never> = {
+    equals?: $Enums.tipo_autoridad_facultad | Enumtipo_autoridad_facultadFieldRefInput<$PrismaModel>
+    in?: $Enums.tipo_autoridad_facultad[] | ListEnumtipo_autoridad_facultadFieldRefInput<$PrismaModel>
+    notIn?: $Enums.tipo_autoridad_facultad[] | ListEnumtipo_autoridad_facultadFieldRefInput<$PrismaModel>
+    not?: NestedEnumtipo_autoridad_facultadFilter<$PrismaModel> | $Enums.tipo_autoridad_facultad
+  }
+
+  export type NestedEnumtipo_autoridad_facultadWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.tipo_autoridad_facultad | Enumtipo_autoridad_facultadFieldRefInput<$PrismaModel>
+    in?: $Enums.tipo_autoridad_facultad[] | ListEnumtipo_autoridad_facultadFieldRefInput<$PrismaModel>
+    notIn?: $Enums.tipo_autoridad_facultad[] | ListEnumtipo_autoridad_facultadFieldRefInput<$PrismaModel>
+    not?: NestedEnumtipo_autoridad_facultadWithAggregatesFilter<$PrismaModel> | $Enums.tipo_autoridad_facultad
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumtipo_autoridad_facultadFilter<$PrismaModel>
+    _max?: NestedEnumtipo_autoridad_facultadFilter<$PrismaModel>
   }
 
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
@@ -29778,6 +34556,40 @@ export namespace Prisma {
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
+  export type NestedEnumrol_usuarioFilter<$PrismaModel = never> = {
+    equals?: $Enums.rol_usuario | Enumrol_usuarioFieldRefInput<$PrismaModel>
+    in?: $Enums.rol_usuario[] | ListEnumrol_usuarioFieldRefInput<$PrismaModel>
+    notIn?: $Enums.rol_usuario[] | ListEnumrol_usuarioFieldRefInput<$PrismaModel>
+    not?: NestedEnumrol_usuarioFilter<$PrismaModel> | $Enums.rol_usuario
+  }
+
+  export type NestedEnumrol_usuarioWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.rol_usuario | Enumrol_usuarioFieldRefInput<$PrismaModel>
+    in?: $Enums.rol_usuario[] | ListEnumrol_usuarioFieldRefInput<$PrismaModel>
+    notIn?: $Enums.rol_usuario[] | ListEnumrol_usuarioFieldRefInput<$PrismaModel>
+    not?: NestedEnumrol_usuarioWithAggregatesFilter<$PrismaModel> | $Enums.rol_usuario
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumrol_usuarioFilter<$PrismaModel>
+    _max?: NestedEnumrol_usuarioFilter<$PrismaModel>
+  }
+
+  export type NestedEnumestado_validacionFilter<$PrismaModel = never> = {
+    equals?: $Enums.estado_validacion | Enumestado_validacionFieldRefInput<$PrismaModel>
+    in?: $Enums.estado_validacion[] | ListEnumestado_validacionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.estado_validacion[] | ListEnumestado_validacionFieldRefInput<$PrismaModel>
+    not?: NestedEnumestado_validacionFilter<$PrismaModel> | $Enums.estado_validacion
+  }
+
+  export type NestedEnumestado_validacionWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.estado_validacion | Enumestado_validacionFieldRefInput<$PrismaModel>
+    in?: $Enums.estado_validacion[] | ListEnumestado_validacionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.estado_validacion[] | ListEnumestado_validacionFieldRefInput<$PrismaModel>
+    not?: NestedEnumestado_validacionWithAggregatesFilter<$PrismaModel> | $Enums.estado_validacion
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumestado_validacionFilter<$PrismaModel>
+    _max?: NestedEnumestado_validacionFilter<$PrismaModel>
   }
 
   export type NestedEnumtipo_eventoFilter<$PrismaModel = never> = {
@@ -29976,6 +34788,800 @@ export namespace Prisma {
     _max?: NestedEnumclave_metadataFilter<$PrismaModel>
   }
 
+  export type facultadCreateWithoutUniversidadInput = {
+    id_fac?: string
+    nom_fac: string
+    acr_fac?: string | null
+    url_log_fac?: string | null
+    des_fac: string
+    mis_fac: string
+    vis_fac: string
+    fec_cre_fac?: Date | string
+    carreras?: carreraCreateNestedManyWithoutFacultadInput
+    autoridades?: autoridad_facultadCreateNestedManyWithoutFacultadInput
+  }
+
+  export type facultadUncheckedCreateWithoutUniversidadInput = {
+    id_fac?: string
+    nom_fac: string
+    acr_fac?: string | null
+    url_log_fac?: string | null
+    des_fac: string
+    mis_fac: string
+    vis_fac: string
+    fec_cre_fac?: Date | string
+    carreras?: carreraUncheckedCreateNestedManyWithoutFacultadInput
+    autoridades?: autoridad_facultadUncheckedCreateNestedManyWithoutFacultadInput
+  }
+
+  export type facultadCreateOrConnectWithoutUniversidadInput = {
+    where: facultadWhereUniqueInput
+    create: XOR<facultadCreateWithoutUniversidadInput, facultadUncheckedCreateWithoutUniversidadInput>
+  }
+
+  export type facultadCreateManyUniversidadInputEnvelope = {
+    data: facultadCreateManyUniversidadInput | facultadCreateManyUniversidadInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type autoridad_universidadCreateWithoutUniversidadInput = {
+    id_aut_uni?: string
+    tip_aut_uni: $Enums.tipo_autoridad_universidad
+    nom_aut_uni: string
+    ape_aut_uni: string
+    cor_aut_uni?: string | null
+    tel_aut_uni?: string | null
+    url_img_aut_uni?: string | null
+    tit_aut_uni?: string | null
+    fec_ini_aut_uni: Date | string
+    fec_fin_aut_uni?: Date | string | null
+    est_aut_uni?: boolean
+    fec_cre_aut_uni?: Date | string
+  }
+
+  export type autoridad_universidadUncheckedCreateWithoutUniversidadInput = {
+    id_aut_uni?: string
+    tip_aut_uni: $Enums.tipo_autoridad_universidad
+    nom_aut_uni: string
+    ape_aut_uni: string
+    cor_aut_uni?: string | null
+    tel_aut_uni?: string | null
+    url_img_aut_uni?: string | null
+    tit_aut_uni?: string | null
+    fec_ini_aut_uni: Date | string
+    fec_fin_aut_uni?: Date | string | null
+    est_aut_uni?: boolean
+    fec_cre_aut_uni?: Date | string
+  }
+
+  export type autoridad_universidadCreateOrConnectWithoutUniversidadInput = {
+    where: autoridad_universidadWhereUniqueInput
+    create: XOR<autoridad_universidadCreateWithoutUniversidadInput, autoridad_universidadUncheckedCreateWithoutUniversidadInput>
+  }
+
+  export type autoridad_universidadCreateManyUniversidadInputEnvelope = {
+    data: autoridad_universidadCreateManyUniversidadInput | autoridad_universidadCreateManyUniversidadInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type facultadUpsertWithWhereUniqueWithoutUniversidadInput = {
+    where: facultadWhereUniqueInput
+    update: XOR<facultadUpdateWithoutUniversidadInput, facultadUncheckedUpdateWithoutUniversidadInput>
+    create: XOR<facultadCreateWithoutUniversidadInput, facultadUncheckedCreateWithoutUniversidadInput>
+  }
+
+  export type facultadUpdateWithWhereUniqueWithoutUniversidadInput = {
+    where: facultadWhereUniqueInput
+    data: XOR<facultadUpdateWithoutUniversidadInput, facultadUncheckedUpdateWithoutUniversidadInput>
+  }
+
+  export type facultadUpdateManyWithWhereWithoutUniversidadInput = {
+    where: facultadScalarWhereInput
+    data: XOR<facultadUpdateManyMutationInput, facultadUncheckedUpdateManyWithoutUniversidadInput>
+  }
+
+  export type facultadScalarWhereInput = {
+    AND?: facultadScalarWhereInput | facultadScalarWhereInput[]
+    OR?: facultadScalarWhereInput[]
+    NOT?: facultadScalarWhereInput | facultadScalarWhereInput[]
+    id_fac?: StringFilter<"facultad"> | string
+    nom_fac?: StringFilter<"facultad"> | string
+    acr_fac?: StringNullableFilter<"facultad"> | string | null
+    url_log_fac?: StringNullableFilter<"facultad"> | string | null
+    des_fac?: StringFilter<"facultad"> | string
+    mis_fac?: StringFilter<"facultad"> | string
+    vis_fac?: StringFilter<"facultad"> | string
+    fec_cre_fac?: DateTimeFilter<"facultad"> | Date | string
+    id_uni_per?: StringFilter<"facultad"> | string
+  }
+
+  export type autoridad_universidadUpsertWithWhereUniqueWithoutUniversidadInput = {
+    where: autoridad_universidadWhereUniqueInput
+    update: XOR<autoridad_universidadUpdateWithoutUniversidadInput, autoridad_universidadUncheckedUpdateWithoutUniversidadInput>
+    create: XOR<autoridad_universidadCreateWithoutUniversidadInput, autoridad_universidadUncheckedCreateWithoutUniversidadInput>
+  }
+
+  export type autoridad_universidadUpdateWithWhereUniqueWithoutUniversidadInput = {
+    where: autoridad_universidadWhereUniqueInput
+    data: XOR<autoridad_universidadUpdateWithoutUniversidadInput, autoridad_universidadUncheckedUpdateWithoutUniversidadInput>
+  }
+
+  export type autoridad_universidadUpdateManyWithWhereWithoutUniversidadInput = {
+    where: autoridad_universidadScalarWhereInput
+    data: XOR<autoridad_universidadUpdateManyMutationInput, autoridad_universidadUncheckedUpdateManyWithoutUniversidadInput>
+  }
+
+  export type autoridad_universidadScalarWhereInput = {
+    AND?: autoridad_universidadScalarWhereInput | autoridad_universidadScalarWhereInput[]
+    OR?: autoridad_universidadScalarWhereInput[]
+    NOT?: autoridad_universidadScalarWhereInput | autoridad_universidadScalarWhereInput[]
+    id_aut_uni?: StringFilter<"autoridad_universidad"> | string
+    id_uni_per?: StringFilter<"autoridad_universidad"> | string
+    tip_aut_uni?: Enumtipo_autoridad_universidadFilter<"autoridad_universidad"> | $Enums.tipo_autoridad_universidad
+    nom_aut_uni?: StringFilter<"autoridad_universidad"> | string
+    ape_aut_uni?: StringFilter<"autoridad_universidad"> | string
+    cor_aut_uni?: StringNullableFilter<"autoridad_universidad"> | string | null
+    tel_aut_uni?: StringNullableFilter<"autoridad_universidad"> | string | null
+    url_img_aut_uni?: StringNullableFilter<"autoridad_universidad"> | string | null
+    tit_aut_uni?: StringNullableFilter<"autoridad_universidad"> | string | null
+    fec_ini_aut_uni?: DateTimeFilter<"autoridad_universidad"> | Date | string
+    fec_fin_aut_uni?: DateTimeNullableFilter<"autoridad_universidad"> | Date | string | null
+    est_aut_uni?: BoolFilter<"autoridad_universidad"> | boolean
+    fec_cre_aut_uni?: DateTimeFilter<"autoridad_universidad"> | Date | string
+  }
+
+  export type universidadCreateWithoutAutoridadesInput = {
+    id_uni?: string
+    nom_uni: string
+    acr_uni?: string | null
+    url_log_uni?: string | null
+    url_web_uni?: string | null
+    dir_uni: string
+    tel_uni?: string | null
+    cor_uni?: string | null
+    fec_fun_uni?: Date | string | null
+    fec_cre_uni?: Date | string
+    est_uni?: boolean
+    facultades?: facultadCreateNestedManyWithoutUniversidadInput
+  }
+
+  export type universidadUncheckedCreateWithoutAutoridadesInput = {
+    id_uni?: string
+    nom_uni: string
+    acr_uni?: string | null
+    url_log_uni?: string | null
+    url_web_uni?: string | null
+    dir_uni: string
+    tel_uni?: string | null
+    cor_uni?: string | null
+    fec_fun_uni?: Date | string | null
+    fec_cre_uni?: Date | string
+    est_uni?: boolean
+    facultades?: facultadUncheckedCreateNestedManyWithoutUniversidadInput
+  }
+
+  export type universidadCreateOrConnectWithoutAutoridadesInput = {
+    where: universidadWhereUniqueInput
+    create: XOR<universidadCreateWithoutAutoridadesInput, universidadUncheckedCreateWithoutAutoridadesInput>
+  }
+
+  export type universidadUpsertWithoutAutoridadesInput = {
+    update: XOR<universidadUpdateWithoutAutoridadesInput, universidadUncheckedUpdateWithoutAutoridadesInput>
+    create: XOR<universidadCreateWithoutAutoridadesInput, universidadUncheckedCreateWithoutAutoridadesInput>
+    where?: universidadWhereInput
+  }
+
+  export type universidadUpdateToOneWithWhereWithoutAutoridadesInput = {
+    where?: universidadWhereInput
+    data: XOR<universidadUpdateWithoutAutoridadesInput, universidadUncheckedUpdateWithoutAutoridadesInput>
+  }
+
+  export type universidadUpdateWithoutAutoridadesInput = {
+    id_uni?: StringFieldUpdateOperationsInput | string
+    nom_uni?: StringFieldUpdateOperationsInput | string
+    acr_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    url_log_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    url_web_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    dir_uni?: StringFieldUpdateOperationsInput | string
+    tel_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    cor_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_fun_uni?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fec_cre_uni?: DateTimeFieldUpdateOperationsInput | Date | string
+    est_uni?: BoolFieldUpdateOperationsInput | boolean
+    facultades?: facultadUpdateManyWithoutUniversidadNestedInput
+  }
+
+  export type universidadUncheckedUpdateWithoutAutoridadesInput = {
+    id_uni?: StringFieldUpdateOperationsInput | string
+    nom_uni?: StringFieldUpdateOperationsInput | string
+    acr_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    url_log_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    url_web_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    dir_uni?: StringFieldUpdateOperationsInput | string
+    tel_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    cor_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_fun_uni?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fec_cre_uni?: DateTimeFieldUpdateOperationsInput | Date | string
+    est_uni?: BoolFieldUpdateOperationsInput | boolean
+    facultades?: facultadUncheckedUpdateManyWithoutUniversidadNestedInput
+  }
+
+  export type universidadCreateWithoutFacultadesInput = {
+    id_uni?: string
+    nom_uni: string
+    acr_uni?: string | null
+    url_log_uni?: string | null
+    url_web_uni?: string | null
+    dir_uni: string
+    tel_uni?: string | null
+    cor_uni?: string | null
+    fec_fun_uni?: Date | string | null
+    fec_cre_uni?: Date | string
+    est_uni?: boolean
+    autoridades?: autoridad_universidadCreateNestedManyWithoutUniversidadInput
+  }
+
+  export type universidadUncheckedCreateWithoutFacultadesInput = {
+    id_uni?: string
+    nom_uni: string
+    acr_uni?: string | null
+    url_log_uni?: string | null
+    url_web_uni?: string | null
+    dir_uni: string
+    tel_uni?: string | null
+    cor_uni?: string | null
+    fec_fun_uni?: Date | string | null
+    fec_cre_uni?: Date | string
+    est_uni?: boolean
+    autoridades?: autoridad_universidadUncheckedCreateNestedManyWithoutUniversidadInput
+  }
+
+  export type universidadCreateOrConnectWithoutFacultadesInput = {
+    where: universidadWhereUniqueInput
+    create: XOR<universidadCreateWithoutFacultadesInput, universidadUncheckedCreateWithoutFacultadesInput>
+  }
+
+  export type carreraCreateWithoutFacultadInput = {
+    id_car?: string
+    nom_car: string
+    des_car: string
+    dur_sem_car: number
+    mod_car: string
+    ico_car: string
+    est_car?: boolean
+    fec_cre_car?: Date | string
+    coordinador?: coordinadorCreateNestedOneWithoutCarrerasInput
+    usuario?: usuarioCreateNestedManyWithoutCarreraInput
+    eventos?: evento_carreraCreateNestedManyWithoutCarreraInput
+  }
+
+  export type carreraUncheckedCreateWithoutFacultadInput = {
+    id_car?: string
+    nom_car: string
+    des_car: string
+    dur_sem_car: number
+    mod_car: string
+    ico_car: string
+    est_car?: boolean
+    fec_cre_car?: Date | string
+    id_coo_per?: string | null
+    usuario?: usuarioUncheckedCreateNestedManyWithoutCarreraInput
+    eventos?: evento_carreraUncheckedCreateNestedManyWithoutCarreraInput
+  }
+
+  export type carreraCreateOrConnectWithoutFacultadInput = {
+    where: carreraWhereUniqueInput
+    create: XOR<carreraCreateWithoutFacultadInput, carreraUncheckedCreateWithoutFacultadInput>
+  }
+
+  export type carreraCreateManyFacultadInputEnvelope = {
+    data: carreraCreateManyFacultadInput | carreraCreateManyFacultadInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type autoridad_facultadCreateWithoutFacultadInput = {
+    id_aut_fac?: string
+    tip_aut_fac: $Enums.tipo_autoridad_facultad
+    nom_aut_fac: string
+    ape_aut_fac: string
+    cor_aut_fac?: string | null
+    tel_aut_fac?: string | null
+    url_img_aut_fac?: string | null
+    tit_aut_fac?: string | null
+    fec_ini_aut_fac: Date | string
+    fec_fin_aut_fac?: Date | string | null
+    est_aut_fac?: boolean
+    fec_cre_aut_fac?: Date | string
+  }
+
+  export type autoridad_facultadUncheckedCreateWithoutFacultadInput = {
+    id_aut_fac?: string
+    tip_aut_fac: $Enums.tipo_autoridad_facultad
+    nom_aut_fac: string
+    ape_aut_fac: string
+    cor_aut_fac?: string | null
+    tel_aut_fac?: string | null
+    url_img_aut_fac?: string | null
+    tit_aut_fac?: string | null
+    fec_ini_aut_fac: Date | string
+    fec_fin_aut_fac?: Date | string | null
+    est_aut_fac?: boolean
+    fec_cre_aut_fac?: Date | string
+  }
+
+  export type autoridad_facultadCreateOrConnectWithoutFacultadInput = {
+    where: autoridad_facultadWhereUniqueInput
+    create: XOR<autoridad_facultadCreateWithoutFacultadInput, autoridad_facultadUncheckedCreateWithoutFacultadInput>
+  }
+
+  export type autoridad_facultadCreateManyFacultadInputEnvelope = {
+    data: autoridad_facultadCreateManyFacultadInput | autoridad_facultadCreateManyFacultadInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type universidadUpsertWithoutFacultadesInput = {
+    update: XOR<universidadUpdateWithoutFacultadesInput, universidadUncheckedUpdateWithoutFacultadesInput>
+    create: XOR<universidadCreateWithoutFacultadesInput, universidadUncheckedCreateWithoutFacultadesInput>
+    where?: universidadWhereInput
+  }
+
+  export type universidadUpdateToOneWithWhereWithoutFacultadesInput = {
+    where?: universidadWhereInput
+    data: XOR<universidadUpdateWithoutFacultadesInput, universidadUncheckedUpdateWithoutFacultadesInput>
+  }
+
+  export type universidadUpdateWithoutFacultadesInput = {
+    id_uni?: StringFieldUpdateOperationsInput | string
+    nom_uni?: StringFieldUpdateOperationsInput | string
+    acr_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    url_log_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    url_web_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    dir_uni?: StringFieldUpdateOperationsInput | string
+    tel_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    cor_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_fun_uni?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fec_cre_uni?: DateTimeFieldUpdateOperationsInput | Date | string
+    est_uni?: BoolFieldUpdateOperationsInput | boolean
+    autoridades?: autoridad_universidadUpdateManyWithoutUniversidadNestedInput
+  }
+
+  export type universidadUncheckedUpdateWithoutFacultadesInput = {
+    id_uni?: StringFieldUpdateOperationsInput | string
+    nom_uni?: StringFieldUpdateOperationsInput | string
+    acr_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    url_log_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    url_web_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    dir_uni?: StringFieldUpdateOperationsInput | string
+    tel_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    cor_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_fun_uni?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fec_cre_uni?: DateTimeFieldUpdateOperationsInput | Date | string
+    est_uni?: BoolFieldUpdateOperationsInput | boolean
+    autoridades?: autoridad_universidadUncheckedUpdateManyWithoutUniversidadNestedInput
+  }
+
+  export type carreraUpsertWithWhereUniqueWithoutFacultadInput = {
+    where: carreraWhereUniqueInput
+    update: XOR<carreraUpdateWithoutFacultadInput, carreraUncheckedUpdateWithoutFacultadInput>
+    create: XOR<carreraCreateWithoutFacultadInput, carreraUncheckedCreateWithoutFacultadInput>
+  }
+
+  export type carreraUpdateWithWhereUniqueWithoutFacultadInput = {
+    where: carreraWhereUniqueInput
+    data: XOR<carreraUpdateWithoutFacultadInput, carreraUncheckedUpdateWithoutFacultadInput>
+  }
+
+  export type carreraUpdateManyWithWhereWithoutFacultadInput = {
+    where: carreraScalarWhereInput
+    data: XOR<carreraUpdateManyMutationInput, carreraUncheckedUpdateManyWithoutFacultadInput>
+  }
+
+  export type carreraScalarWhereInput = {
+    AND?: carreraScalarWhereInput | carreraScalarWhereInput[]
+    OR?: carreraScalarWhereInput[]
+    NOT?: carreraScalarWhereInput | carreraScalarWhereInput[]
+    id_car?: StringFilter<"carrera"> | string
+    nom_car?: StringFilter<"carrera"> | string
+    des_car?: StringFilter<"carrera"> | string
+    dur_sem_car?: IntFilter<"carrera"> | number
+    mod_car?: StringFilter<"carrera"> | string
+    ico_car?: StringFilter<"carrera"> | string
+    est_car?: BoolFilter<"carrera"> | boolean
+    fec_cre_car?: DateTimeFilter<"carrera"> | Date | string
+    id_fac_per?: StringFilter<"carrera"> | string
+    id_coo_per?: StringNullableFilter<"carrera"> | string | null
+  }
+
+  export type autoridad_facultadUpsertWithWhereUniqueWithoutFacultadInput = {
+    where: autoridad_facultadWhereUniqueInput
+    update: XOR<autoridad_facultadUpdateWithoutFacultadInput, autoridad_facultadUncheckedUpdateWithoutFacultadInput>
+    create: XOR<autoridad_facultadCreateWithoutFacultadInput, autoridad_facultadUncheckedCreateWithoutFacultadInput>
+  }
+
+  export type autoridad_facultadUpdateWithWhereUniqueWithoutFacultadInput = {
+    where: autoridad_facultadWhereUniqueInput
+    data: XOR<autoridad_facultadUpdateWithoutFacultadInput, autoridad_facultadUncheckedUpdateWithoutFacultadInput>
+  }
+
+  export type autoridad_facultadUpdateManyWithWhereWithoutFacultadInput = {
+    where: autoridad_facultadScalarWhereInput
+    data: XOR<autoridad_facultadUpdateManyMutationInput, autoridad_facultadUncheckedUpdateManyWithoutFacultadInput>
+  }
+
+  export type autoridad_facultadScalarWhereInput = {
+    AND?: autoridad_facultadScalarWhereInput | autoridad_facultadScalarWhereInput[]
+    OR?: autoridad_facultadScalarWhereInput[]
+    NOT?: autoridad_facultadScalarWhereInput | autoridad_facultadScalarWhereInput[]
+    id_aut_fac?: StringFilter<"autoridad_facultad"> | string
+    id_fac_per?: StringFilter<"autoridad_facultad"> | string
+    tip_aut_fac?: Enumtipo_autoridad_facultadFilter<"autoridad_facultad"> | $Enums.tipo_autoridad_facultad
+    nom_aut_fac?: StringFilter<"autoridad_facultad"> | string
+    ape_aut_fac?: StringFilter<"autoridad_facultad"> | string
+    cor_aut_fac?: StringNullableFilter<"autoridad_facultad"> | string | null
+    tel_aut_fac?: StringNullableFilter<"autoridad_facultad"> | string | null
+    url_img_aut_fac?: StringNullableFilter<"autoridad_facultad"> | string | null
+    tit_aut_fac?: StringNullableFilter<"autoridad_facultad"> | string | null
+    fec_ini_aut_fac?: DateTimeFilter<"autoridad_facultad"> | Date | string
+    fec_fin_aut_fac?: DateTimeNullableFilter<"autoridad_facultad"> | Date | string | null
+    est_aut_fac?: BoolFilter<"autoridad_facultad"> | boolean
+    fec_cre_aut_fac?: DateTimeFilter<"autoridad_facultad"> | Date | string
+  }
+
+  export type facultadCreateWithoutAutoridadesInput = {
+    id_fac?: string
+    nom_fac: string
+    acr_fac?: string | null
+    url_log_fac?: string | null
+    des_fac: string
+    mis_fac: string
+    vis_fac: string
+    fec_cre_fac?: Date | string
+    universidad: universidadCreateNestedOneWithoutFacultadesInput
+    carreras?: carreraCreateNestedManyWithoutFacultadInput
+  }
+
+  export type facultadUncheckedCreateWithoutAutoridadesInput = {
+    id_fac?: string
+    nom_fac: string
+    acr_fac?: string | null
+    url_log_fac?: string | null
+    des_fac: string
+    mis_fac: string
+    vis_fac: string
+    fec_cre_fac?: Date | string
+    id_uni_per: string
+    carreras?: carreraUncheckedCreateNestedManyWithoutFacultadInput
+  }
+
+  export type facultadCreateOrConnectWithoutAutoridadesInput = {
+    where: facultadWhereUniqueInput
+    create: XOR<facultadCreateWithoutAutoridadesInput, facultadUncheckedCreateWithoutAutoridadesInput>
+  }
+
+  export type facultadUpsertWithoutAutoridadesInput = {
+    update: XOR<facultadUpdateWithoutAutoridadesInput, facultadUncheckedUpdateWithoutAutoridadesInput>
+    create: XOR<facultadCreateWithoutAutoridadesInput, facultadUncheckedCreateWithoutAutoridadesInput>
+    where?: facultadWhereInput
+  }
+
+  export type facultadUpdateToOneWithWhereWithoutAutoridadesInput = {
+    where?: facultadWhereInput
+    data: XOR<facultadUpdateWithoutAutoridadesInput, facultadUncheckedUpdateWithoutAutoridadesInput>
+  }
+
+  export type facultadUpdateWithoutAutoridadesInput = {
+    id_fac?: StringFieldUpdateOperationsInput | string
+    nom_fac?: StringFieldUpdateOperationsInput | string
+    acr_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    url_log_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    des_fac?: StringFieldUpdateOperationsInput | string
+    mis_fac?: StringFieldUpdateOperationsInput | string
+    vis_fac?: StringFieldUpdateOperationsInput | string
+    fec_cre_fac?: DateTimeFieldUpdateOperationsInput | Date | string
+    universidad?: universidadUpdateOneRequiredWithoutFacultadesNestedInput
+    carreras?: carreraUpdateManyWithoutFacultadNestedInput
+  }
+
+  export type facultadUncheckedUpdateWithoutAutoridadesInput = {
+    id_fac?: StringFieldUpdateOperationsInput | string
+    nom_fac?: StringFieldUpdateOperationsInput | string
+    acr_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    url_log_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    des_fac?: StringFieldUpdateOperationsInput | string
+    mis_fac?: StringFieldUpdateOperationsInput | string
+    vis_fac?: StringFieldUpdateOperationsInput | string
+    fec_cre_fac?: DateTimeFieldUpdateOperationsInput | Date | string
+    id_uni_per?: StringFieldUpdateOperationsInput | string
+    carreras?: carreraUncheckedUpdateManyWithoutFacultadNestedInput
+  }
+
+  export type facultadCreateWithoutCarrerasInput = {
+    id_fac?: string
+    nom_fac: string
+    acr_fac?: string | null
+    url_log_fac?: string | null
+    des_fac: string
+    mis_fac: string
+    vis_fac: string
+    fec_cre_fac?: Date | string
+    universidad: universidadCreateNestedOneWithoutFacultadesInput
+    autoridades?: autoridad_facultadCreateNestedManyWithoutFacultadInput
+  }
+
+  export type facultadUncheckedCreateWithoutCarrerasInput = {
+    id_fac?: string
+    nom_fac: string
+    acr_fac?: string | null
+    url_log_fac?: string | null
+    des_fac: string
+    mis_fac: string
+    vis_fac: string
+    fec_cre_fac?: Date | string
+    id_uni_per: string
+    autoridades?: autoridad_facultadUncheckedCreateNestedManyWithoutFacultadInput
+  }
+
+  export type facultadCreateOrConnectWithoutCarrerasInput = {
+    where: facultadWhereUniqueInput
+    create: XOR<facultadCreateWithoutCarrerasInput, facultadUncheckedCreateWithoutCarrerasInput>
+  }
+
+  export type coordinadorCreateWithoutCarrerasInput = {
+    id_coo?: string
+    nom_coo: string
+    ape_coo: string
+    cor_coo: string
+    url_img_coo: string
+    tit_coo: string
+  }
+
+  export type coordinadorUncheckedCreateWithoutCarrerasInput = {
+    id_coo?: string
+    nom_coo: string
+    ape_coo: string
+    cor_coo: string
+    url_img_coo: string
+    tit_coo: string
+  }
+
+  export type coordinadorCreateOrConnectWithoutCarrerasInput = {
+    where: coordinadorWhereUniqueInput
+    create: XOR<coordinadorCreateWithoutCarrerasInput, coordinadorUncheckedCreateWithoutCarrerasInput>
+  }
+
+  export type usuarioCreateWithoutCarreraInput = {
+    id_usu?: string
+    ced_usu: string
+    nom_usu: string
+    ape_usu: string
+    cel_usu: string
+    fec_cre_usu?: Date | string
+    com_usu?: string | null
+    img_per_usu?: string | null
+    cuentas?: cuentaCreateNestedManyWithoutUsuarioInput
+  }
+
+  export type usuarioUncheckedCreateWithoutCarreraInput = {
+    id_usu?: string
+    ced_usu: string
+    nom_usu: string
+    ape_usu: string
+    cel_usu: string
+    fec_cre_usu?: Date | string
+    com_usu?: string | null
+    img_per_usu?: string | null
+    cuentas?: cuentaUncheckedCreateNestedManyWithoutUsuarioInput
+  }
+
+  export type usuarioCreateOrConnectWithoutCarreraInput = {
+    where: usuarioWhereUniqueInput
+    create: XOR<usuarioCreateWithoutCarreraInput, usuarioUncheckedCreateWithoutCarreraInput>
+  }
+
+  export type usuarioCreateManyCarreraInputEnvelope = {
+    data: usuarioCreateManyCarreraInput | usuarioCreateManyCarreraInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type evento_carreraCreateWithoutCarreraInput = {
+    id_eve_car?: string
+    fec_aso?: Date | string
+    evento: eventoCreateNestedOneWithoutEventos_carreraInput
+  }
+
+  export type evento_carreraUncheckedCreateWithoutCarreraInput = {
+    id_eve_car?: string
+    id_eve_aso: string
+    fec_aso?: Date | string
+  }
+
+  export type evento_carreraCreateOrConnectWithoutCarreraInput = {
+    where: evento_carreraWhereUniqueInput
+    create: XOR<evento_carreraCreateWithoutCarreraInput, evento_carreraUncheckedCreateWithoutCarreraInput>
+  }
+
+  export type evento_carreraCreateManyCarreraInputEnvelope = {
+    data: evento_carreraCreateManyCarreraInput | evento_carreraCreateManyCarreraInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type facultadUpsertWithoutCarrerasInput = {
+    update: XOR<facultadUpdateWithoutCarrerasInput, facultadUncheckedUpdateWithoutCarrerasInput>
+    create: XOR<facultadCreateWithoutCarrerasInput, facultadUncheckedCreateWithoutCarrerasInput>
+    where?: facultadWhereInput
+  }
+
+  export type facultadUpdateToOneWithWhereWithoutCarrerasInput = {
+    where?: facultadWhereInput
+    data: XOR<facultadUpdateWithoutCarrerasInput, facultadUncheckedUpdateWithoutCarrerasInput>
+  }
+
+  export type facultadUpdateWithoutCarrerasInput = {
+    id_fac?: StringFieldUpdateOperationsInput | string
+    nom_fac?: StringFieldUpdateOperationsInput | string
+    acr_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    url_log_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    des_fac?: StringFieldUpdateOperationsInput | string
+    mis_fac?: StringFieldUpdateOperationsInput | string
+    vis_fac?: StringFieldUpdateOperationsInput | string
+    fec_cre_fac?: DateTimeFieldUpdateOperationsInput | Date | string
+    universidad?: universidadUpdateOneRequiredWithoutFacultadesNestedInput
+    autoridades?: autoridad_facultadUpdateManyWithoutFacultadNestedInput
+  }
+
+  export type facultadUncheckedUpdateWithoutCarrerasInput = {
+    id_fac?: StringFieldUpdateOperationsInput | string
+    nom_fac?: StringFieldUpdateOperationsInput | string
+    acr_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    url_log_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    des_fac?: StringFieldUpdateOperationsInput | string
+    mis_fac?: StringFieldUpdateOperationsInput | string
+    vis_fac?: StringFieldUpdateOperationsInput | string
+    fec_cre_fac?: DateTimeFieldUpdateOperationsInput | Date | string
+    id_uni_per?: StringFieldUpdateOperationsInput | string
+    autoridades?: autoridad_facultadUncheckedUpdateManyWithoutFacultadNestedInput
+  }
+
+  export type coordinadorUpsertWithoutCarrerasInput = {
+    update: XOR<coordinadorUpdateWithoutCarrerasInput, coordinadorUncheckedUpdateWithoutCarrerasInput>
+    create: XOR<coordinadorCreateWithoutCarrerasInput, coordinadorUncheckedCreateWithoutCarrerasInput>
+    where?: coordinadorWhereInput
+  }
+
+  export type coordinadorUpdateToOneWithWhereWithoutCarrerasInput = {
+    where?: coordinadorWhereInput
+    data: XOR<coordinadorUpdateWithoutCarrerasInput, coordinadorUncheckedUpdateWithoutCarrerasInput>
+  }
+
+  export type coordinadorUpdateWithoutCarrerasInput = {
+    id_coo?: StringFieldUpdateOperationsInput | string
+    nom_coo?: StringFieldUpdateOperationsInput | string
+    ape_coo?: StringFieldUpdateOperationsInput | string
+    cor_coo?: StringFieldUpdateOperationsInput | string
+    url_img_coo?: StringFieldUpdateOperationsInput | string
+    tit_coo?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type coordinadorUncheckedUpdateWithoutCarrerasInput = {
+    id_coo?: StringFieldUpdateOperationsInput | string
+    nom_coo?: StringFieldUpdateOperationsInput | string
+    ape_coo?: StringFieldUpdateOperationsInput | string
+    cor_coo?: StringFieldUpdateOperationsInput | string
+    url_img_coo?: StringFieldUpdateOperationsInput | string
+    tit_coo?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type usuarioUpsertWithWhereUniqueWithoutCarreraInput = {
+    where: usuarioWhereUniqueInput
+    update: XOR<usuarioUpdateWithoutCarreraInput, usuarioUncheckedUpdateWithoutCarreraInput>
+    create: XOR<usuarioCreateWithoutCarreraInput, usuarioUncheckedCreateWithoutCarreraInput>
+  }
+
+  export type usuarioUpdateWithWhereUniqueWithoutCarreraInput = {
+    where: usuarioWhereUniqueInput
+    data: XOR<usuarioUpdateWithoutCarreraInput, usuarioUncheckedUpdateWithoutCarreraInput>
+  }
+
+  export type usuarioUpdateManyWithWhereWithoutCarreraInput = {
+    where: usuarioScalarWhereInput
+    data: XOR<usuarioUpdateManyMutationInput, usuarioUncheckedUpdateManyWithoutCarreraInput>
+  }
+
+  export type usuarioScalarWhereInput = {
+    AND?: usuarioScalarWhereInput | usuarioScalarWhereInput[]
+    OR?: usuarioScalarWhereInput[]
+    NOT?: usuarioScalarWhereInput | usuarioScalarWhereInput[]
+    id_usu?: StringFilter<"usuario"> | string
+    ced_usu?: StringFilter<"usuario"> | string
+    nom_usu?: StringFilter<"usuario"> | string
+    ape_usu?: StringFilter<"usuario"> | string
+    cel_usu?: StringFilter<"usuario"> | string
+    fec_cre_usu?: DateTimeFilter<"usuario"> | Date | string
+    com_usu?: StringNullableFilter<"usuario"> | string | null
+    id_car_est?: StringNullableFilter<"usuario"> | string | null
+    img_per_usu?: StringNullableFilter<"usuario"> | string | null
+  }
+
+  export type evento_carreraUpsertWithWhereUniqueWithoutCarreraInput = {
+    where: evento_carreraWhereUniqueInput
+    update: XOR<evento_carreraUpdateWithoutCarreraInput, evento_carreraUncheckedUpdateWithoutCarreraInput>
+    create: XOR<evento_carreraCreateWithoutCarreraInput, evento_carreraUncheckedCreateWithoutCarreraInput>
+  }
+
+  export type evento_carreraUpdateWithWhereUniqueWithoutCarreraInput = {
+    where: evento_carreraWhereUniqueInput
+    data: XOR<evento_carreraUpdateWithoutCarreraInput, evento_carreraUncheckedUpdateWithoutCarreraInput>
+  }
+
+  export type evento_carreraUpdateManyWithWhereWithoutCarreraInput = {
+    where: evento_carreraScalarWhereInput
+    data: XOR<evento_carreraUpdateManyMutationInput, evento_carreraUncheckedUpdateManyWithoutCarreraInput>
+  }
+
+  export type evento_carreraScalarWhereInput = {
+    AND?: evento_carreraScalarWhereInput | evento_carreraScalarWhereInput[]
+    OR?: evento_carreraScalarWhereInput[]
+    NOT?: evento_carreraScalarWhereInput | evento_carreraScalarWhereInput[]
+    id_eve_car?: StringFilter<"evento_carrera"> | string
+    id_car_aso?: StringFilter<"evento_carrera"> | string
+    id_eve_aso?: StringFilter<"evento_carrera"> | string
+    fec_aso?: DateTimeFilter<"evento_carrera"> | Date | string
+  }
+
+  export type carreraCreateWithoutCoordinadorInput = {
+    id_car?: string
+    nom_car: string
+    des_car: string
+    dur_sem_car: number
+    mod_car: string
+    ico_car: string
+    est_car?: boolean
+    fec_cre_car?: Date | string
+    facultad: facultadCreateNestedOneWithoutCarrerasInput
+    usuario?: usuarioCreateNestedManyWithoutCarreraInput
+    eventos?: evento_carreraCreateNestedManyWithoutCarreraInput
+  }
+
+  export type carreraUncheckedCreateWithoutCoordinadorInput = {
+    id_car?: string
+    nom_car: string
+    des_car: string
+    dur_sem_car: number
+    mod_car: string
+    ico_car: string
+    est_car?: boolean
+    fec_cre_car?: Date | string
+    id_fac_per: string
+    usuario?: usuarioUncheckedCreateNestedManyWithoutCarreraInput
+    eventos?: evento_carreraUncheckedCreateNestedManyWithoutCarreraInput
+  }
+
+  export type carreraCreateOrConnectWithoutCoordinadorInput = {
+    where: carreraWhereUniqueInput
+    create: XOR<carreraCreateWithoutCoordinadorInput, carreraUncheckedCreateWithoutCoordinadorInput>
+  }
+
+  export type carreraCreateManyCoordinadorInputEnvelope = {
+    data: carreraCreateManyCoordinadorInput | carreraCreateManyCoordinadorInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type carreraUpsertWithWhereUniqueWithoutCoordinadorInput = {
+    where: carreraWhereUniqueInput
+    update: XOR<carreraUpdateWithoutCoordinadorInput, carreraUncheckedUpdateWithoutCoordinadorInput>
+    create: XOR<carreraCreateWithoutCoordinadorInput, carreraUncheckedCreateWithoutCoordinadorInput>
+  }
+
+  export type carreraUpdateWithWhereUniqueWithoutCoordinadorInput = {
+    where: carreraWhereUniqueInput
+    data: XOR<carreraUpdateWithoutCoordinadorInput, carreraUncheckedUpdateWithoutCoordinadorInput>
+  }
+
+  export type carreraUpdateManyWithWhereWithoutCoordinadorInput = {
+    where: carreraScalarWhereInput
+    data: XOR<carreraUpdateManyMutationInput, carreraUncheckedUpdateManyWithoutCoordinadorInput>
+  }
+
   export type carreraCreateWithoutUsuarioInput = {
     id_car?: string
     nom_car: string
@@ -30122,522 +35728,6 @@ export namespace Prisma {
     rol_usu?: Enumrol_usuarioFilter<"cuenta"> | $Enums.rol_usuario
     est_ver_cor?: BoolFilter<"cuenta"> | boolean
     fec_ver_cor?: DateTimeNullableFilter<"cuenta"> | Date | string | null
-  }
-
-  export type cuentaCreateWithoutComprobantes_pagoInput = {
-    id_cue?: string
-    cor_usu: string
-    con_usu: string
-    fec_cre_cue?: Date | string
-    rol_usu: $Enums.rol_usuario
-    est_ver_cor?: boolean
-    fec_ver_cor?: Date | string | null
-    usuario: usuarioCreateNestedOneWithoutCuentasInput
-    inscripciones?: inscripcionCreateNestedManyWithoutCuentaInput
-    cartas_motivacion?: carta_motivacionCreateNestedManyWithoutAdminInput
-    eventos?: eventoCreateNestedManyWithoutCuentaInput
-    observaciones_creadas?: observacion_inscripcionCreateNestedManyWithoutAdmin_creadorInput
-    inscripciones_validadas?: inscripcionCreateNestedManyWithoutAdmin_validadorInput
-    tokens_cuenta?: token_cuentaCreateNestedManyWithoutCuentaInput
-    tokens_invalidados?: invalidacion_tokenCreateNestedManyWithoutAdminInput
-  }
-
-  export type cuentaUncheckedCreateWithoutComprobantes_pagoInput = {
-    id_cue?: string
-    id_usu_per: string
-    cor_usu: string
-    con_usu: string
-    fec_cre_cue?: Date | string
-    rol_usu: $Enums.rol_usuario
-    est_ver_cor?: boolean
-    fec_ver_cor?: Date | string | null
-    inscripciones?: inscripcionUncheckedCreateNestedManyWithoutCuentaInput
-    cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutAdminInput
-    eventos?: eventoUncheckedCreateNestedManyWithoutCuentaInput
-    observaciones_creadas?: observacion_inscripcionUncheckedCreateNestedManyWithoutAdmin_creadorInput
-    inscripciones_validadas?: inscripcionUncheckedCreateNestedManyWithoutAdmin_validadorInput
-    tokens_cuenta?: token_cuentaUncheckedCreateNestedManyWithoutCuentaInput
-    tokens_invalidados?: invalidacion_tokenUncheckedCreateNestedManyWithoutAdminInput
-  }
-
-  export type cuentaCreateOrConnectWithoutComprobantes_pagoInput = {
-    where: cuentaWhereUniqueInput
-    create: XOR<cuentaCreateWithoutComprobantes_pagoInput, cuentaUncheckedCreateWithoutComprobantes_pagoInput>
-  }
-
-  export type inscripcionCreateWithoutComprobantes_pagoInput = {
-    id_ins?: string
-    est_ins?: $Enums.estado_inscripcion
-    fec_ins?: Date | string
-    usu_apr_cer?: boolean
-    fec_val_ins?: Date | string | null
-    por_asi_fin_usu?: number | null
-    cup_ocu?: boolean
-    cuenta: cuentaCreateNestedOneWithoutInscripcionesInput
-    evento: eventoCreateNestedOneWithoutInscritosInput
-    inscripcion_curso?: inscripcion_cursoCreateNestedOneWithoutInscripcionInput
-    cartas_motivacion?: carta_motivacionCreateNestedManyWithoutInscripcionInput
-    observacion?: observacion_inscripcionCreateNestedOneWithoutInscripcionInput
-    certificado?: certificadoCreateNestedOneWithoutInscripcionInput
-    admin_validador?: cuentaCreateNestedOneWithoutInscripciones_validadasInput
-  }
-
-  export type inscripcionUncheckedCreateWithoutComprobantes_pagoInput = {
-    id_ins?: string
-    id_cor_ins: string
-    id_eve_ins: string
-    est_ins?: $Enums.estado_inscripcion
-    fec_ins?: Date | string
-    usu_apr_cer?: boolean
-    id_adm_val_ins?: string | null
-    fec_val_ins?: Date | string | null
-    por_asi_fin_usu?: number | null
-    cup_ocu?: boolean
-    inscripcion_curso?: inscripcion_cursoUncheckedCreateNestedOneWithoutInscripcionInput
-    cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutInscripcionInput
-    observacion?: observacion_inscripcionUncheckedCreateNestedOneWithoutInscripcionInput
-    certificado?: certificadoUncheckedCreateNestedOneWithoutInscripcionInput
-  }
-
-  export type inscripcionCreateOrConnectWithoutComprobantes_pagoInput = {
-    where: inscripcionWhereUniqueInput
-    create: XOR<inscripcionCreateWithoutComprobantes_pagoInput, inscripcionUncheckedCreateWithoutComprobantes_pagoInput>
-  }
-
-  export type cuentaUpsertWithoutComprobantes_pagoInput = {
-    update: XOR<cuentaUpdateWithoutComprobantes_pagoInput, cuentaUncheckedUpdateWithoutComprobantes_pagoInput>
-    create: XOR<cuentaCreateWithoutComprobantes_pagoInput, cuentaUncheckedCreateWithoutComprobantes_pagoInput>
-    where?: cuentaWhereInput
-  }
-
-  export type cuentaUpdateToOneWithWhereWithoutComprobantes_pagoInput = {
-    where?: cuentaWhereInput
-    data: XOR<cuentaUpdateWithoutComprobantes_pagoInput, cuentaUncheckedUpdateWithoutComprobantes_pagoInput>
-  }
-
-  export type cuentaUpdateWithoutComprobantes_pagoInput = {
-    id_cue?: StringFieldUpdateOperationsInput | string
-    cor_usu?: StringFieldUpdateOperationsInput | string
-    con_usu?: StringFieldUpdateOperationsInput | string
-    fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
-    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
-    est_ver_cor?: BoolFieldUpdateOperationsInput | boolean
-    fec_ver_cor?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    usuario?: usuarioUpdateOneRequiredWithoutCuentasNestedInput
-    inscripciones?: inscripcionUpdateManyWithoutCuentaNestedInput
-    cartas_motivacion?: carta_motivacionUpdateManyWithoutAdminNestedInput
-    eventos?: eventoUpdateManyWithoutCuentaNestedInput
-    observaciones_creadas?: observacion_inscripcionUpdateManyWithoutAdmin_creadorNestedInput
-    inscripciones_validadas?: inscripcionUpdateManyWithoutAdmin_validadorNestedInput
-    tokens_cuenta?: token_cuentaUpdateManyWithoutCuentaNestedInput
-    tokens_invalidados?: invalidacion_tokenUpdateManyWithoutAdminNestedInput
-  }
-
-  export type cuentaUncheckedUpdateWithoutComprobantes_pagoInput = {
-    id_cue?: StringFieldUpdateOperationsInput | string
-    id_usu_per?: StringFieldUpdateOperationsInput | string
-    cor_usu?: StringFieldUpdateOperationsInput | string
-    con_usu?: StringFieldUpdateOperationsInput | string
-    fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
-    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
-    est_ver_cor?: BoolFieldUpdateOperationsInput | boolean
-    fec_ver_cor?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    inscripciones?: inscripcionUncheckedUpdateManyWithoutCuentaNestedInput
-    cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutAdminNestedInput
-    eventos?: eventoUncheckedUpdateManyWithoutCuentaNestedInput
-    observaciones_creadas?: observacion_inscripcionUncheckedUpdateManyWithoutAdmin_creadorNestedInput
-    inscripciones_validadas?: inscripcionUncheckedUpdateManyWithoutAdmin_validadorNestedInput
-    tokens_cuenta?: token_cuentaUncheckedUpdateManyWithoutCuentaNestedInput
-    tokens_invalidados?: invalidacion_tokenUncheckedUpdateManyWithoutAdminNestedInput
-  }
-
-  export type inscripcionUpsertWithoutComprobantes_pagoInput = {
-    update: XOR<inscripcionUpdateWithoutComprobantes_pagoInput, inscripcionUncheckedUpdateWithoutComprobantes_pagoInput>
-    create: XOR<inscripcionCreateWithoutComprobantes_pagoInput, inscripcionUncheckedCreateWithoutComprobantes_pagoInput>
-    where?: inscripcionWhereInput
-  }
-
-  export type inscripcionUpdateToOneWithWhereWithoutComprobantes_pagoInput = {
-    where?: inscripcionWhereInput
-    data: XOR<inscripcionUpdateWithoutComprobantes_pagoInput, inscripcionUncheckedUpdateWithoutComprobantes_pagoInput>
-  }
-
-  export type inscripcionUpdateWithoutComprobantes_pagoInput = {
-    id_ins?: StringFieldUpdateOperationsInput | string
-    est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
-    fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
-    usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
-    fec_val_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
-    cup_ocu?: BoolFieldUpdateOperationsInput | boolean
-    cuenta?: cuentaUpdateOneRequiredWithoutInscripcionesNestedInput
-    evento?: eventoUpdateOneRequiredWithoutInscritosNestedInput
-    inscripcion_curso?: inscripcion_cursoUpdateOneWithoutInscripcionNestedInput
-    cartas_motivacion?: carta_motivacionUpdateManyWithoutInscripcionNestedInput
-    observacion?: observacion_inscripcionUpdateOneWithoutInscripcionNestedInput
-    certificado?: certificadoUpdateOneWithoutInscripcionNestedInput
-    admin_validador?: cuentaUpdateOneWithoutInscripciones_validadasNestedInput
-  }
-
-  export type inscripcionUncheckedUpdateWithoutComprobantes_pagoInput = {
-    id_ins?: StringFieldUpdateOperationsInput | string
-    id_cor_ins?: StringFieldUpdateOperationsInput | string
-    id_eve_ins?: StringFieldUpdateOperationsInput | string
-    est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
-    fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
-    usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
-    id_adm_val_ins?: NullableStringFieldUpdateOperationsInput | string | null
-    fec_val_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
-    cup_ocu?: BoolFieldUpdateOperationsInput | boolean
-    inscripcion_curso?: inscripcion_cursoUncheckedUpdateOneWithoutInscripcionNestedInput
-    cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutInscripcionNestedInput
-    observacion?: observacion_inscripcionUncheckedUpdateOneWithoutInscripcionNestedInput
-    certificado?: certificadoUncheckedUpdateOneWithoutInscripcionNestedInput
-  }
-
-  export type cuentaCreateWithoutCartas_motivacionInput = {
-    id_cue?: string
-    cor_usu: string
-    con_usu: string
-    fec_cre_cue?: Date | string
-    rol_usu: $Enums.rol_usuario
-    est_ver_cor?: boolean
-    fec_ver_cor?: Date | string | null
-    usuario: usuarioCreateNestedOneWithoutCuentasInput
-    inscripciones?: inscripcionCreateNestedManyWithoutCuentaInput
-    comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutAdminInput
-    eventos?: eventoCreateNestedManyWithoutCuentaInput
-    observaciones_creadas?: observacion_inscripcionCreateNestedManyWithoutAdmin_creadorInput
-    inscripciones_validadas?: inscripcionCreateNestedManyWithoutAdmin_validadorInput
-    tokens_cuenta?: token_cuentaCreateNestedManyWithoutCuentaInput
-    tokens_invalidados?: invalidacion_tokenCreateNestedManyWithoutAdminInput
-  }
-
-  export type cuentaUncheckedCreateWithoutCartas_motivacionInput = {
-    id_cue?: string
-    id_usu_per: string
-    cor_usu: string
-    con_usu: string
-    fec_cre_cue?: Date | string
-    rol_usu: $Enums.rol_usuario
-    est_ver_cor?: boolean
-    fec_ver_cor?: Date | string | null
-    inscripciones?: inscripcionUncheckedCreateNestedManyWithoutCuentaInput
-    comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutAdminInput
-    eventos?: eventoUncheckedCreateNestedManyWithoutCuentaInput
-    observaciones_creadas?: observacion_inscripcionUncheckedCreateNestedManyWithoutAdmin_creadorInput
-    inscripciones_validadas?: inscripcionUncheckedCreateNestedManyWithoutAdmin_validadorInput
-    tokens_cuenta?: token_cuentaUncheckedCreateNestedManyWithoutCuentaInput
-    tokens_invalidados?: invalidacion_tokenUncheckedCreateNestedManyWithoutAdminInput
-  }
-
-  export type cuentaCreateOrConnectWithoutCartas_motivacionInput = {
-    where: cuentaWhereUniqueInput
-    create: XOR<cuentaCreateWithoutCartas_motivacionInput, cuentaUncheckedCreateWithoutCartas_motivacionInput>
-  }
-
-  export type inscripcionCreateWithoutCartas_motivacionInput = {
-    id_ins?: string
-    est_ins?: $Enums.estado_inscripcion
-    fec_ins?: Date | string
-    usu_apr_cer?: boolean
-    fec_val_ins?: Date | string | null
-    por_asi_fin_usu?: number | null
-    cup_ocu?: boolean
-    cuenta: cuentaCreateNestedOneWithoutInscripcionesInput
-    evento: eventoCreateNestedOneWithoutInscritosInput
-    inscripcion_curso?: inscripcion_cursoCreateNestedOneWithoutInscripcionInput
-    comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutInscripcionInput
-    observacion?: observacion_inscripcionCreateNestedOneWithoutInscripcionInput
-    certificado?: certificadoCreateNestedOneWithoutInscripcionInput
-    admin_validador?: cuentaCreateNestedOneWithoutInscripciones_validadasInput
-  }
-
-  export type inscripcionUncheckedCreateWithoutCartas_motivacionInput = {
-    id_ins?: string
-    id_cor_ins: string
-    id_eve_ins: string
-    est_ins?: $Enums.estado_inscripcion
-    fec_ins?: Date | string
-    usu_apr_cer?: boolean
-    id_adm_val_ins?: string | null
-    fec_val_ins?: Date | string | null
-    por_asi_fin_usu?: number | null
-    cup_ocu?: boolean
-    inscripcion_curso?: inscripcion_cursoUncheckedCreateNestedOneWithoutInscripcionInput
-    comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutInscripcionInput
-    observacion?: observacion_inscripcionUncheckedCreateNestedOneWithoutInscripcionInput
-    certificado?: certificadoUncheckedCreateNestedOneWithoutInscripcionInput
-  }
-
-  export type inscripcionCreateOrConnectWithoutCartas_motivacionInput = {
-    where: inscripcionWhereUniqueInput
-    create: XOR<inscripcionCreateWithoutCartas_motivacionInput, inscripcionUncheckedCreateWithoutCartas_motivacionInput>
-  }
-
-  export type cuentaUpsertWithoutCartas_motivacionInput = {
-    update: XOR<cuentaUpdateWithoutCartas_motivacionInput, cuentaUncheckedUpdateWithoutCartas_motivacionInput>
-    create: XOR<cuentaCreateWithoutCartas_motivacionInput, cuentaUncheckedCreateWithoutCartas_motivacionInput>
-    where?: cuentaWhereInput
-  }
-
-  export type cuentaUpdateToOneWithWhereWithoutCartas_motivacionInput = {
-    where?: cuentaWhereInput
-    data: XOR<cuentaUpdateWithoutCartas_motivacionInput, cuentaUncheckedUpdateWithoutCartas_motivacionInput>
-  }
-
-  export type cuentaUpdateWithoutCartas_motivacionInput = {
-    id_cue?: StringFieldUpdateOperationsInput | string
-    cor_usu?: StringFieldUpdateOperationsInput | string
-    con_usu?: StringFieldUpdateOperationsInput | string
-    fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
-    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
-    est_ver_cor?: BoolFieldUpdateOperationsInput | boolean
-    fec_ver_cor?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    usuario?: usuarioUpdateOneRequiredWithoutCuentasNestedInput
-    inscripciones?: inscripcionUpdateManyWithoutCuentaNestedInput
-    comprobantes_pago?: comprobante_pagoUpdateManyWithoutAdminNestedInput
-    eventos?: eventoUpdateManyWithoutCuentaNestedInput
-    observaciones_creadas?: observacion_inscripcionUpdateManyWithoutAdmin_creadorNestedInput
-    inscripciones_validadas?: inscripcionUpdateManyWithoutAdmin_validadorNestedInput
-    tokens_cuenta?: token_cuentaUpdateManyWithoutCuentaNestedInput
-    tokens_invalidados?: invalidacion_tokenUpdateManyWithoutAdminNestedInput
-  }
-
-  export type cuentaUncheckedUpdateWithoutCartas_motivacionInput = {
-    id_cue?: StringFieldUpdateOperationsInput | string
-    id_usu_per?: StringFieldUpdateOperationsInput | string
-    cor_usu?: StringFieldUpdateOperationsInput | string
-    con_usu?: StringFieldUpdateOperationsInput | string
-    fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
-    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
-    est_ver_cor?: BoolFieldUpdateOperationsInput | boolean
-    fec_ver_cor?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    inscripciones?: inscripcionUncheckedUpdateManyWithoutCuentaNestedInput
-    comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutAdminNestedInput
-    eventos?: eventoUncheckedUpdateManyWithoutCuentaNestedInput
-    observaciones_creadas?: observacion_inscripcionUncheckedUpdateManyWithoutAdmin_creadorNestedInput
-    inscripciones_validadas?: inscripcionUncheckedUpdateManyWithoutAdmin_validadorNestedInput
-    tokens_cuenta?: token_cuentaUncheckedUpdateManyWithoutCuentaNestedInput
-    tokens_invalidados?: invalidacion_tokenUncheckedUpdateManyWithoutAdminNestedInput
-  }
-
-  export type inscripcionUpsertWithoutCartas_motivacionInput = {
-    update: XOR<inscripcionUpdateWithoutCartas_motivacionInput, inscripcionUncheckedUpdateWithoutCartas_motivacionInput>
-    create: XOR<inscripcionCreateWithoutCartas_motivacionInput, inscripcionUncheckedCreateWithoutCartas_motivacionInput>
-    where?: inscripcionWhereInput
-  }
-
-  export type inscripcionUpdateToOneWithWhereWithoutCartas_motivacionInput = {
-    where?: inscripcionWhereInput
-    data: XOR<inscripcionUpdateWithoutCartas_motivacionInput, inscripcionUncheckedUpdateWithoutCartas_motivacionInput>
-  }
-
-  export type inscripcionUpdateWithoutCartas_motivacionInput = {
-    id_ins?: StringFieldUpdateOperationsInput | string
-    est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
-    fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
-    usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
-    fec_val_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
-    cup_ocu?: BoolFieldUpdateOperationsInput | boolean
-    cuenta?: cuentaUpdateOneRequiredWithoutInscripcionesNestedInput
-    evento?: eventoUpdateOneRequiredWithoutInscritosNestedInput
-    inscripcion_curso?: inscripcion_cursoUpdateOneWithoutInscripcionNestedInput
-    comprobantes_pago?: comprobante_pagoUpdateManyWithoutInscripcionNestedInput
-    observacion?: observacion_inscripcionUpdateOneWithoutInscripcionNestedInput
-    certificado?: certificadoUpdateOneWithoutInscripcionNestedInput
-    admin_validador?: cuentaUpdateOneWithoutInscripciones_validadasNestedInput
-  }
-
-  export type inscripcionUncheckedUpdateWithoutCartas_motivacionInput = {
-    id_ins?: StringFieldUpdateOperationsInput | string
-    id_cor_ins?: StringFieldUpdateOperationsInput | string
-    id_eve_ins?: StringFieldUpdateOperationsInput | string
-    est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
-    fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
-    usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
-    id_adm_val_ins?: NullableStringFieldUpdateOperationsInput | string | null
-    fec_val_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
-    cup_ocu?: BoolFieldUpdateOperationsInput | boolean
-    inscripcion_curso?: inscripcion_cursoUncheckedUpdateOneWithoutInscripcionNestedInput
-    comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutInscripcionNestedInput
-    observacion?: observacion_inscripcionUncheckedUpdateOneWithoutInscripcionNestedInput
-    certificado?: certificadoUncheckedUpdateOneWithoutInscripcionNestedInput
-  }
-
-  export type inscripcionCreateWithoutObservacionInput = {
-    id_ins?: string
-    est_ins?: $Enums.estado_inscripcion
-    fec_ins?: Date | string
-    usu_apr_cer?: boolean
-    fec_val_ins?: Date | string | null
-    por_asi_fin_usu?: number | null
-    cup_ocu?: boolean
-    cuenta: cuentaCreateNestedOneWithoutInscripcionesInput
-    evento: eventoCreateNestedOneWithoutInscritosInput
-    inscripcion_curso?: inscripcion_cursoCreateNestedOneWithoutInscripcionInput
-    comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutInscripcionInput
-    cartas_motivacion?: carta_motivacionCreateNestedManyWithoutInscripcionInput
-    certificado?: certificadoCreateNestedOneWithoutInscripcionInput
-    admin_validador?: cuentaCreateNestedOneWithoutInscripciones_validadasInput
-  }
-
-  export type inscripcionUncheckedCreateWithoutObservacionInput = {
-    id_ins?: string
-    id_cor_ins: string
-    id_eve_ins: string
-    est_ins?: $Enums.estado_inscripcion
-    fec_ins?: Date | string
-    usu_apr_cer?: boolean
-    id_adm_val_ins?: string | null
-    fec_val_ins?: Date | string | null
-    por_asi_fin_usu?: number | null
-    cup_ocu?: boolean
-    inscripcion_curso?: inscripcion_cursoUncheckedCreateNestedOneWithoutInscripcionInput
-    comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutInscripcionInput
-    cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutInscripcionInput
-    certificado?: certificadoUncheckedCreateNestedOneWithoutInscripcionInput
-  }
-
-  export type inscripcionCreateOrConnectWithoutObservacionInput = {
-    where: inscripcionWhereUniqueInput
-    create: XOR<inscripcionCreateWithoutObservacionInput, inscripcionUncheckedCreateWithoutObservacionInput>
-  }
-
-  export type cuentaCreateWithoutObservaciones_creadasInput = {
-    id_cue?: string
-    cor_usu: string
-    con_usu: string
-    fec_cre_cue?: Date | string
-    rol_usu: $Enums.rol_usuario
-    est_ver_cor?: boolean
-    fec_ver_cor?: Date | string | null
-    usuario: usuarioCreateNestedOneWithoutCuentasInput
-    inscripciones?: inscripcionCreateNestedManyWithoutCuentaInput
-    cartas_motivacion?: carta_motivacionCreateNestedManyWithoutAdminInput
-    comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutAdminInput
-    eventos?: eventoCreateNestedManyWithoutCuentaInput
-    inscripciones_validadas?: inscripcionCreateNestedManyWithoutAdmin_validadorInput
-    tokens_cuenta?: token_cuentaCreateNestedManyWithoutCuentaInput
-    tokens_invalidados?: invalidacion_tokenCreateNestedManyWithoutAdminInput
-  }
-
-  export type cuentaUncheckedCreateWithoutObservaciones_creadasInput = {
-    id_cue?: string
-    id_usu_per: string
-    cor_usu: string
-    con_usu: string
-    fec_cre_cue?: Date | string
-    rol_usu: $Enums.rol_usuario
-    est_ver_cor?: boolean
-    fec_ver_cor?: Date | string | null
-    inscripciones?: inscripcionUncheckedCreateNestedManyWithoutCuentaInput
-    cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutAdminInput
-    comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutAdminInput
-    eventos?: eventoUncheckedCreateNestedManyWithoutCuentaInput
-    inscripciones_validadas?: inscripcionUncheckedCreateNestedManyWithoutAdmin_validadorInput
-    tokens_cuenta?: token_cuentaUncheckedCreateNestedManyWithoutCuentaInput
-    tokens_invalidados?: invalidacion_tokenUncheckedCreateNestedManyWithoutAdminInput
-  }
-
-  export type cuentaCreateOrConnectWithoutObservaciones_creadasInput = {
-    where: cuentaWhereUniqueInput
-    create: XOR<cuentaCreateWithoutObservaciones_creadasInput, cuentaUncheckedCreateWithoutObservaciones_creadasInput>
-  }
-
-  export type inscripcionUpsertWithoutObservacionInput = {
-    update: XOR<inscripcionUpdateWithoutObservacionInput, inscripcionUncheckedUpdateWithoutObservacionInput>
-    create: XOR<inscripcionCreateWithoutObservacionInput, inscripcionUncheckedCreateWithoutObservacionInput>
-    where?: inscripcionWhereInput
-  }
-
-  export type inscripcionUpdateToOneWithWhereWithoutObservacionInput = {
-    where?: inscripcionWhereInput
-    data: XOR<inscripcionUpdateWithoutObservacionInput, inscripcionUncheckedUpdateWithoutObservacionInput>
-  }
-
-  export type inscripcionUpdateWithoutObservacionInput = {
-    id_ins?: StringFieldUpdateOperationsInput | string
-    est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
-    fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
-    usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
-    fec_val_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
-    cup_ocu?: BoolFieldUpdateOperationsInput | boolean
-    cuenta?: cuentaUpdateOneRequiredWithoutInscripcionesNestedInput
-    evento?: eventoUpdateOneRequiredWithoutInscritosNestedInput
-    inscripcion_curso?: inscripcion_cursoUpdateOneWithoutInscripcionNestedInput
-    comprobantes_pago?: comprobante_pagoUpdateManyWithoutInscripcionNestedInput
-    cartas_motivacion?: carta_motivacionUpdateManyWithoutInscripcionNestedInput
-    certificado?: certificadoUpdateOneWithoutInscripcionNestedInput
-    admin_validador?: cuentaUpdateOneWithoutInscripciones_validadasNestedInput
-  }
-
-  export type inscripcionUncheckedUpdateWithoutObservacionInput = {
-    id_ins?: StringFieldUpdateOperationsInput | string
-    id_cor_ins?: StringFieldUpdateOperationsInput | string
-    id_eve_ins?: StringFieldUpdateOperationsInput | string
-    est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
-    fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
-    usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
-    id_adm_val_ins?: NullableStringFieldUpdateOperationsInput | string | null
-    fec_val_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
-    cup_ocu?: BoolFieldUpdateOperationsInput | boolean
-    inscripcion_curso?: inscripcion_cursoUncheckedUpdateOneWithoutInscripcionNestedInput
-    comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutInscripcionNestedInput
-    cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutInscripcionNestedInput
-    certificado?: certificadoUncheckedUpdateOneWithoutInscripcionNestedInput
-  }
-
-  export type cuentaUpsertWithoutObservaciones_creadasInput = {
-    update: XOR<cuentaUpdateWithoutObservaciones_creadasInput, cuentaUncheckedUpdateWithoutObservaciones_creadasInput>
-    create: XOR<cuentaCreateWithoutObservaciones_creadasInput, cuentaUncheckedCreateWithoutObservaciones_creadasInput>
-    where?: cuentaWhereInput
-  }
-
-  export type cuentaUpdateToOneWithWhereWithoutObservaciones_creadasInput = {
-    where?: cuentaWhereInput
-    data: XOR<cuentaUpdateWithoutObservaciones_creadasInput, cuentaUncheckedUpdateWithoutObservaciones_creadasInput>
-  }
-
-  export type cuentaUpdateWithoutObservaciones_creadasInput = {
-    id_cue?: StringFieldUpdateOperationsInput | string
-    cor_usu?: StringFieldUpdateOperationsInput | string
-    con_usu?: StringFieldUpdateOperationsInput | string
-    fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
-    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
-    est_ver_cor?: BoolFieldUpdateOperationsInput | boolean
-    fec_ver_cor?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    usuario?: usuarioUpdateOneRequiredWithoutCuentasNestedInput
-    inscripciones?: inscripcionUpdateManyWithoutCuentaNestedInput
-    cartas_motivacion?: carta_motivacionUpdateManyWithoutAdminNestedInput
-    comprobantes_pago?: comprobante_pagoUpdateManyWithoutAdminNestedInput
-    eventos?: eventoUpdateManyWithoutCuentaNestedInput
-    inscripciones_validadas?: inscripcionUpdateManyWithoutAdmin_validadorNestedInput
-    tokens_cuenta?: token_cuentaUpdateManyWithoutCuentaNestedInput
-    tokens_invalidados?: invalidacion_tokenUpdateManyWithoutAdminNestedInput
-  }
-
-  export type cuentaUncheckedUpdateWithoutObservaciones_creadasInput = {
-    id_cue?: StringFieldUpdateOperationsInput | string
-    id_usu_per?: StringFieldUpdateOperationsInput | string
-    cor_usu?: StringFieldUpdateOperationsInput | string
-    con_usu?: StringFieldUpdateOperationsInput | string
-    fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
-    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
-    est_ver_cor?: BoolFieldUpdateOperationsInput | boolean
-    fec_ver_cor?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    inscripciones?: inscripcionUncheckedUpdateManyWithoutCuentaNestedInput
-    cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutAdminNestedInput
-    comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutAdminNestedInput
-    eventos?: eventoUncheckedUpdateManyWithoutCuentaNestedInput
-    inscripciones_validadas?: inscripcionUncheckedUpdateManyWithoutAdmin_validadorNestedInput
-    tokens_cuenta?: token_cuentaUncheckedUpdateManyWithoutCuentaNestedInput
-    tokens_invalidados?: invalidacion_tokenUncheckedUpdateManyWithoutAdminNestedInput
   }
 
   export type usuarioCreateWithoutCuentasInput = {
@@ -31229,331 +36319,520 @@ export namespace Prisma {
     id_adm_inv?: StringNullableFilter<"invalidacion_token"> | string | null
   }
 
-  export type facultadCreateWithoutCarrerasInput = {
-    id_fac?: string
-    nom_fac: string
-    acr_fac?: string | null
-    url_log_fac?: string | null
-    des_fac: string
-    mis_fac: string
-    vis_fac: string
-    fec_cre_fac?: Date | string
-    nom_dec_fac: string
-    ape_dec_fac: string
-    cor_dec_fac: string
-    url_img_dec_fac: string
-    nom_sub_dec_fac: string
-    ape_sub_dec_fac: string
-    cor_sub_dec_fac: string
-    url_img_sub_dec_fac: string
+  export type cuentaCreateWithoutComprobantes_pagoInput = {
+    id_cue?: string
+    cor_usu: string
+    con_usu: string
+    fec_cre_cue?: Date | string
+    rol_usu: $Enums.rol_usuario
+    est_ver_cor?: boolean
+    fec_ver_cor?: Date | string | null
+    usuario: usuarioCreateNestedOneWithoutCuentasInput
+    inscripciones?: inscripcionCreateNestedManyWithoutCuentaInput
+    cartas_motivacion?: carta_motivacionCreateNestedManyWithoutAdminInput
+    eventos?: eventoCreateNestedManyWithoutCuentaInput
+    observaciones_creadas?: observacion_inscripcionCreateNestedManyWithoutAdmin_creadorInput
+    inscripciones_validadas?: inscripcionCreateNestedManyWithoutAdmin_validadorInput
+    tokens_cuenta?: token_cuentaCreateNestedManyWithoutCuentaInput
+    tokens_invalidados?: invalidacion_tokenCreateNestedManyWithoutAdminInput
   }
 
-  export type facultadUncheckedCreateWithoutCarrerasInput = {
-    id_fac?: string
-    nom_fac: string
-    acr_fac?: string | null
-    url_log_fac?: string | null
-    des_fac: string
-    mis_fac: string
-    vis_fac: string
-    fec_cre_fac?: Date | string
-    nom_dec_fac: string
-    ape_dec_fac: string
-    cor_dec_fac: string
-    url_img_dec_fac: string
-    nom_sub_dec_fac: string
-    ape_sub_dec_fac: string
-    cor_sub_dec_fac: string
-    url_img_sub_dec_fac: string
+  export type cuentaUncheckedCreateWithoutComprobantes_pagoInput = {
+    id_cue?: string
+    id_usu_per: string
+    cor_usu: string
+    con_usu: string
+    fec_cre_cue?: Date | string
+    rol_usu: $Enums.rol_usuario
+    est_ver_cor?: boolean
+    fec_ver_cor?: Date | string | null
+    inscripciones?: inscripcionUncheckedCreateNestedManyWithoutCuentaInput
+    cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutAdminInput
+    eventos?: eventoUncheckedCreateNestedManyWithoutCuentaInput
+    observaciones_creadas?: observacion_inscripcionUncheckedCreateNestedManyWithoutAdmin_creadorInput
+    inscripciones_validadas?: inscripcionUncheckedCreateNestedManyWithoutAdmin_validadorInput
+    tokens_cuenta?: token_cuentaUncheckedCreateNestedManyWithoutCuentaInput
+    tokens_invalidados?: invalidacion_tokenUncheckedCreateNestedManyWithoutAdminInput
   }
 
-  export type facultadCreateOrConnectWithoutCarrerasInput = {
-    where: facultadWhereUniqueInput
-    create: XOR<facultadCreateWithoutCarrerasInput, facultadUncheckedCreateWithoutCarrerasInput>
+  export type cuentaCreateOrConnectWithoutComprobantes_pagoInput = {
+    where: cuentaWhereUniqueInput
+    create: XOR<cuentaCreateWithoutComprobantes_pagoInput, cuentaUncheckedCreateWithoutComprobantes_pagoInput>
   }
 
-  export type coordinadorCreateWithoutCarrerasInput = {
-    id_coo?: string
-    nom_coo: string
-    ape_coo: string
-    cor_coo: string
-    url_img_coo: string
-    tit_coo: string
+  export type inscripcionCreateWithoutComprobantes_pagoInput = {
+    id_ins?: string
+    est_ins?: $Enums.estado_inscripcion
+    fec_ins?: Date | string
+    usu_apr_cer?: boolean
+    fec_val_ins?: Date | string | null
+    por_asi_fin_usu?: number | null
+    cup_ocu?: boolean
+    cuenta: cuentaCreateNestedOneWithoutInscripcionesInput
+    evento: eventoCreateNestedOneWithoutInscritosInput
+    inscripcion_curso?: inscripcion_cursoCreateNestedOneWithoutInscripcionInput
+    cartas_motivacion?: carta_motivacionCreateNestedManyWithoutInscripcionInput
+    observacion?: observacion_inscripcionCreateNestedOneWithoutInscripcionInput
+    certificado?: certificadoCreateNestedOneWithoutInscripcionInput
+    admin_validador?: cuentaCreateNestedOneWithoutInscripciones_validadasInput
   }
 
-  export type coordinadorUncheckedCreateWithoutCarrerasInput = {
-    id_coo?: string
-    nom_coo: string
-    ape_coo: string
-    cor_coo: string
-    url_img_coo: string
-    tit_coo: string
+  export type inscripcionUncheckedCreateWithoutComprobantes_pagoInput = {
+    id_ins?: string
+    id_cor_ins: string
+    id_eve_ins: string
+    est_ins?: $Enums.estado_inscripcion
+    fec_ins?: Date | string
+    usu_apr_cer?: boolean
+    id_adm_val_ins?: string | null
+    fec_val_ins?: Date | string | null
+    por_asi_fin_usu?: number | null
+    cup_ocu?: boolean
+    inscripcion_curso?: inscripcion_cursoUncheckedCreateNestedOneWithoutInscripcionInput
+    cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutInscripcionInput
+    observacion?: observacion_inscripcionUncheckedCreateNestedOneWithoutInscripcionInput
+    certificado?: certificadoUncheckedCreateNestedOneWithoutInscripcionInput
   }
 
-  export type coordinadorCreateOrConnectWithoutCarrerasInput = {
-    where: coordinadorWhereUniqueInput
-    create: XOR<coordinadorCreateWithoutCarrerasInput, coordinadorUncheckedCreateWithoutCarrerasInput>
+  export type inscripcionCreateOrConnectWithoutComprobantes_pagoInput = {
+    where: inscripcionWhereUniqueInput
+    create: XOR<inscripcionCreateWithoutComprobantes_pagoInput, inscripcionUncheckedCreateWithoutComprobantes_pagoInput>
   }
 
-  export type usuarioCreateWithoutCarreraInput = {
-    id_usu?: string
-    ced_usu: string
-    nom_usu: string
-    ape_usu: string
-    cel_usu: string
-    fec_cre_usu?: Date | string
-    com_usu?: string | null
-    img_per_usu?: string | null
-    cuentas?: cuentaCreateNestedManyWithoutUsuarioInput
+  export type cuentaUpsertWithoutComprobantes_pagoInput = {
+    update: XOR<cuentaUpdateWithoutComprobantes_pagoInput, cuentaUncheckedUpdateWithoutComprobantes_pagoInput>
+    create: XOR<cuentaCreateWithoutComprobantes_pagoInput, cuentaUncheckedCreateWithoutComprobantes_pagoInput>
+    where?: cuentaWhereInput
   }
 
-  export type usuarioUncheckedCreateWithoutCarreraInput = {
-    id_usu?: string
-    ced_usu: string
-    nom_usu: string
-    ape_usu: string
-    cel_usu: string
-    fec_cre_usu?: Date | string
-    com_usu?: string | null
-    img_per_usu?: string | null
-    cuentas?: cuentaUncheckedCreateNestedManyWithoutUsuarioInput
+  export type cuentaUpdateToOneWithWhereWithoutComprobantes_pagoInput = {
+    where?: cuentaWhereInput
+    data: XOR<cuentaUpdateWithoutComprobantes_pagoInput, cuentaUncheckedUpdateWithoutComprobantes_pagoInput>
   }
 
-  export type usuarioCreateOrConnectWithoutCarreraInput = {
-    where: usuarioWhereUniqueInput
-    create: XOR<usuarioCreateWithoutCarreraInput, usuarioUncheckedCreateWithoutCarreraInput>
+  export type cuentaUpdateWithoutComprobantes_pagoInput = {
+    id_cue?: StringFieldUpdateOperationsInput | string
+    cor_usu?: StringFieldUpdateOperationsInput | string
+    con_usu?: StringFieldUpdateOperationsInput | string
+    fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
+    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    est_ver_cor?: BoolFieldUpdateOperationsInput | boolean
+    fec_ver_cor?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    usuario?: usuarioUpdateOneRequiredWithoutCuentasNestedInput
+    inscripciones?: inscripcionUpdateManyWithoutCuentaNestedInput
+    cartas_motivacion?: carta_motivacionUpdateManyWithoutAdminNestedInput
+    eventos?: eventoUpdateManyWithoutCuentaNestedInput
+    observaciones_creadas?: observacion_inscripcionUpdateManyWithoutAdmin_creadorNestedInput
+    inscripciones_validadas?: inscripcionUpdateManyWithoutAdmin_validadorNestedInput
+    tokens_cuenta?: token_cuentaUpdateManyWithoutCuentaNestedInput
+    tokens_invalidados?: invalidacion_tokenUpdateManyWithoutAdminNestedInput
   }
 
-  export type usuarioCreateManyCarreraInputEnvelope = {
-    data: usuarioCreateManyCarreraInput | usuarioCreateManyCarreraInput[]
-    skipDuplicates?: boolean
+  export type cuentaUncheckedUpdateWithoutComprobantes_pagoInput = {
+    id_cue?: StringFieldUpdateOperationsInput | string
+    id_usu_per?: StringFieldUpdateOperationsInput | string
+    cor_usu?: StringFieldUpdateOperationsInput | string
+    con_usu?: StringFieldUpdateOperationsInput | string
+    fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
+    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    est_ver_cor?: BoolFieldUpdateOperationsInput | boolean
+    fec_ver_cor?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    inscripciones?: inscripcionUncheckedUpdateManyWithoutCuentaNestedInput
+    cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutAdminNestedInput
+    eventos?: eventoUncheckedUpdateManyWithoutCuentaNestedInput
+    observaciones_creadas?: observacion_inscripcionUncheckedUpdateManyWithoutAdmin_creadorNestedInput
+    inscripciones_validadas?: inscripcionUncheckedUpdateManyWithoutAdmin_validadorNestedInput
+    tokens_cuenta?: token_cuentaUncheckedUpdateManyWithoutCuentaNestedInput
+    tokens_invalidados?: invalidacion_tokenUncheckedUpdateManyWithoutAdminNestedInput
   }
 
-  export type evento_carreraCreateWithoutCarreraInput = {
-    id_eve_car?: string
-    fec_aso?: Date | string
-    evento: eventoCreateNestedOneWithoutEventos_carreraInput
+  export type inscripcionUpsertWithoutComprobantes_pagoInput = {
+    update: XOR<inscripcionUpdateWithoutComprobantes_pagoInput, inscripcionUncheckedUpdateWithoutComprobantes_pagoInput>
+    create: XOR<inscripcionCreateWithoutComprobantes_pagoInput, inscripcionUncheckedCreateWithoutComprobantes_pagoInput>
+    where?: inscripcionWhereInput
   }
 
-  export type evento_carreraUncheckedCreateWithoutCarreraInput = {
-    id_eve_car?: string
-    id_eve_aso: string
-    fec_aso?: Date | string
+  export type inscripcionUpdateToOneWithWhereWithoutComprobantes_pagoInput = {
+    where?: inscripcionWhereInput
+    data: XOR<inscripcionUpdateWithoutComprobantes_pagoInput, inscripcionUncheckedUpdateWithoutComprobantes_pagoInput>
   }
 
-  export type evento_carreraCreateOrConnectWithoutCarreraInput = {
-    where: evento_carreraWhereUniqueInput
-    create: XOR<evento_carreraCreateWithoutCarreraInput, evento_carreraUncheckedCreateWithoutCarreraInput>
+  export type inscripcionUpdateWithoutComprobantes_pagoInput = {
+    id_ins?: StringFieldUpdateOperationsInput | string
+    est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
+    fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
+    usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    fec_val_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    cup_ocu?: BoolFieldUpdateOperationsInput | boolean
+    cuenta?: cuentaUpdateOneRequiredWithoutInscripcionesNestedInput
+    evento?: eventoUpdateOneRequiredWithoutInscritosNestedInput
+    inscripcion_curso?: inscripcion_cursoUpdateOneWithoutInscripcionNestedInput
+    cartas_motivacion?: carta_motivacionUpdateManyWithoutInscripcionNestedInput
+    observacion?: observacion_inscripcionUpdateOneWithoutInscripcionNestedInput
+    certificado?: certificadoUpdateOneWithoutInscripcionNestedInput
+    admin_validador?: cuentaUpdateOneWithoutInscripciones_validadasNestedInput
   }
 
-  export type evento_carreraCreateManyCarreraInputEnvelope = {
-    data: evento_carreraCreateManyCarreraInput | evento_carreraCreateManyCarreraInput[]
-    skipDuplicates?: boolean
+  export type inscripcionUncheckedUpdateWithoutComprobantes_pagoInput = {
+    id_ins?: StringFieldUpdateOperationsInput | string
+    id_cor_ins?: StringFieldUpdateOperationsInput | string
+    id_eve_ins?: StringFieldUpdateOperationsInput | string
+    est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
+    fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
+    usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    id_adm_val_ins?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_val_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    cup_ocu?: BoolFieldUpdateOperationsInput | boolean
+    inscripcion_curso?: inscripcion_cursoUncheckedUpdateOneWithoutInscripcionNestedInput
+    cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutInscripcionNestedInput
+    observacion?: observacion_inscripcionUncheckedUpdateOneWithoutInscripcionNestedInput
+    certificado?: certificadoUncheckedUpdateOneWithoutInscripcionNestedInput
   }
 
-  export type facultadUpsertWithoutCarrerasInput = {
-    update: XOR<facultadUpdateWithoutCarrerasInput, facultadUncheckedUpdateWithoutCarrerasInput>
-    create: XOR<facultadCreateWithoutCarrerasInput, facultadUncheckedCreateWithoutCarrerasInput>
-    where?: facultadWhereInput
+  export type cuentaCreateWithoutCartas_motivacionInput = {
+    id_cue?: string
+    cor_usu: string
+    con_usu: string
+    fec_cre_cue?: Date | string
+    rol_usu: $Enums.rol_usuario
+    est_ver_cor?: boolean
+    fec_ver_cor?: Date | string | null
+    usuario: usuarioCreateNestedOneWithoutCuentasInput
+    inscripciones?: inscripcionCreateNestedManyWithoutCuentaInput
+    comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutAdminInput
+    eventos?: eventoCreateNestedManyWithoutCuentaInput
+    observaciones_creadas?: observacion_inscripcionCreateNestedManyWithoutAdmin_creadorInput
+    inscripciones_validadas?: inscripcionCreateNestedManyWithoutAdmin_validadorInput
+    tokens_cuenta?: token_cuentaCreateNestedManyWithoutCuentaInput
+    tokens_invalidados?: invalidacion_tokenCreateNestedManyWithoutAdminInput
   }
 
-  export type facultadUpdateToOneWithWhereWithoutCarrerasInput = {
-    where?: facultadWhereInput
-    data: XOR<facultadUpdateWithoutCarrerasInput, facultadUncheckedUpdateWithoutCarrerasInput>
+  export type cuentaUncheckedCreateWithoutCartas_motivacionInput = {
+    id_cue?: string
+    id_usu_per: string
+    cor_usu: string
+    con_usu: string
+    fec_cre_cue?: Date | string
+    rol_usu: $Enums.rol_usuario
+    est_ver_cor?: boolean
+    fec_ver_cor?: Date | string | null
+    inscripciones?: inscripcionUncheckedCreateNestedManyWithoutCuentaInput
+    comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutAdminInput
+    eventos?: eventoUncheckedCreateNestedManyWithoutCuentaInput
+    observaciones_creadas?: observacion_inscripcionUncheckedCreateNestedManyWithoutAdmin_creadorInput
+    inscripciones_validadas?: inscripcionUncheckedCreateNestedManyWithoutAdmin_validadorInput
+    tokens_cuenta?: token_cuentaUncheckedCreateNestedManyWithoutCuentaInput
+    tokens_invalidados?: invalidacion_tokenUncheckedCreateNestedManyWithoutAdminInput
   }
 
-  export type facultadUpdateWithoutCarrerasInput = {
-    id_fac?: StringFieldUpdateOperationsInput | string
-    nom_fac?: StringFieldUpdateOperationsInput | string
-    acr_fac?: NullableStringFieldUpdateOperationsInput | string | null
-    url_log_fac?: NullableStringFieldUpdateOperationsInput | string | null
-    des_fac?: StringFieldUpdateOperationsInput | string
-    mis_fac?: StringFieldUpdateOperationsInput | string
-    vis_fac?: StringFieldUpdateOperationsInput | string
-    fec_cre_fac?: DateTimeFieldUpdateOperationsInput | Date | string
-    nom_dec_fac?: StringFieldUpdateOperationsInput | string
-    ape_dec_fac?: StringFieldUpdateOperationsInput | string
-    cor_dec_fac?: StringFieldUpdateOperationsInput | string
-    url_img_dec_fac?: StringFieldUpdateOperationsInput | string
-    nom_sub_dec_fac?: StringFieldUpdateOperationsInput | string
-    ape_sub_dec_fac?: StringFieldUpdateOperationsInput | string
-    cor_sub_dec_fac?: StringFieldUpdateOperationsInput | string
-    url_img_sub_dec_fac?: StringFieldUpdateOperationsInput | string
+  export type cuentaCreateOrConnectWithoutCartas_motivacionInput = {
+    where: cuentaWhereUniqueInput
+    create: XOR<cuentaCreateWithoutCartas_motivacionInput, cuentaUncheckedCreateWithoutCartas_motivacionInput>
   }
 
-  export type facultadUncheckedUpdateWithoutCarrerasInput = {
-    id_fac?: StringFieldUpdateOperationsInput | string
-    nom_fac?: StringFieldUpdateOperationsInput | string
-    acr_fac?: NullableStringFieldUpdateOperationsInput | string | null
-    url_log_fac?: NullableStringFieldUpdateOperationsInput | string | null
-    des_fac?: StringFieldUpdateOperationsInput | string
-    mis_fac?: StringFieldUpdateOperationsInput | string
-    vis_fac?: StringFieldUpdateOperationsInput | string
-    fec_cre_fac?: DateTimeFieldUpdateOperationsInput | Date | string
-    nom_dec_fac?: StringFieldUpdateOperationsInput | string
-    ape_dec_fac?: StringFieldUpdateOperationsInput | string
-    cor_dec_fac?: StringFieldUpdateOperationsInput | string
-    url_img_dec_fac?: StringFieldUpdateOperationsInput | string
-    nom_sub_dec_fac?: StringFieldUpdateOperationsInput | string
-    ape_sub_dec_fac?: StringFieldUpdateOperationsInput | string
-    cor_sub_dec_fac?: StringFieldUpdateOperationsInput | string
-    url_img_sub_dec_fac?: StringFieldUpdateOperationsInput | string
+  export type inscripcionCreateWithoutCartas_motivacionInput = {
+    id_ins?: string
+    est_ins?: $Enums.estado_inscripcion
+    fec_ins?: Date | string
+    usu_apr_cer?: boolean
+    fec_val_ins?: Date | string | null
+    por_asi_fin_usu?: number | null
+    cup_ocu?: boolean
+    cuenta: cuentaCreateNestedOneWithoutInscripcionesInput
+    evento: eventoCreateNestedOneWithoutInscritosInput
+    inscripcion_curso?: inscripcion_cursoCreateNestedOneWithoutInscripcionInput
+    comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutInscripcionInput
+    observacion?: observacion_inscripcionCreateNestedOneWithoutInscripcionInput
+    certificado?: certificadoCreateNestedOneWithoutInscripcionInput
+    admin_validador?: cuentaCreateNestedOneWithoutInscripciones_validadasInput
   }
 
-  export type coordinadorUpsertWithoutCarrerasInput = {
-    update: XOR<coordinadorUpdateWithoutCarrerasInput, coordinadorUncheckedUpdateWithoutCarrerasInput>
-    create: XOR<coordinadorCreateWithoutCarrerasInput, coordinadorUncheckedCreateWithoutCarrerasInput>
-    where?: coordinadorWhereInput
+  export type inscripcionUncheckedCreateWithoutCartas_motivacionInput = {
+    id_ins?: string
+    id_cor_ins: string
+    id_eve_ins: string
+    est_ins?: $Enums.estado_inscripcion
+    fec_ins?: Date | string
+    usu_apr_cer?: boolean
+    id_adm_val_ins?: string | null
+    fec_val_ins?: Date | string | null
+    por_asi_fin_usu?: number | null
+    cup_ocu?: boolean
+    inscripcion_curso?: inscripcion_cursoUncheckedCreateNestedOneWithoutInscripcionInput
+    comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutInscripcionInput
+    observacion?: observacion_inscripcionUncheckedCreateNestedOneWithoutInscripcionInput
+    certificado?: certificadoUncheckedCreateNestedOneWithoutInscripcionInput
   }
 
-  export type coordinadorUpdateToOneWithWhereWithoutCarrerasInput = {
-    where?: coordinadorWhereInput
-    data: XOR<coordinadorUpdateWithoutCarrerasInput, coordinadorUncheckedUpdateWithoutCarrerasInput>
+  export type inscripcionCreateOrConnectWithoutCartas_motivacionInput = {
+    where: inscripcionWhereUniqueInput
+    create: XOR<inscripcionCreateWithoutCartas_motivacionInput, inscripcionUncheckedCreateWithoutCartas_motivacionInput>
   }
 
-  export type coordinadorUpdateWithoutCarrerasInput = {
-    id_coo?: StringFieldUpdateOperationsInput | string
-    nom_coo?: StringFieldUpdateOperationsInput | string
-    ape_coo?: StringFieldUpdateOperationsInput | string
-    cor_coo?: StringFieldUpdateOperationsInput | string
-    url_img_coo?: StringFieldUpdateOperationsInput | string
-    tit_coo?: StringFieldUpdateOperationsInput | string
+  export type cuentaUpsertWithoutCartas_motivacionInput = {
+    update: XOR<cuentaUpdateWithoutCartas_motivacionInput, cuentaUncheckedUpdateWithoutCartas_motivacionInput>
+    create: XOR<cuentaCreateWithoutCartas_motivacionInput, cuentaUncheckedCreateWithoutCartas_motivacionInput>
+    where?: cuentaWhereInput
   }
 
-  export type coordinadorUncheckedUpdateWithoutCarrerasInput = {
-    id_coo?: StringFieldUpdateOperationsInput | string
-    nom_coo?: StringFieldUpdateOperationsInput | string
-    ape_coo?: StringFieldUpdateOperationsInput | string
-    cor_coo?: StringFieldUpdateOperationsInput | string
-    url_img_coo?: StringFieldUpdateOperationsInput | string
-    tit_coo?: StringFieldUpdateOperationsInput | string
+  export type cuentaUpdateToOneWithWhereWithoutCartas_motivacionInput = {
+    where?: cuentaWhereInput
+    data: XOR<cuentaUpdateWithoutCartas_motivacionInput, cuentaUncheckedUpdateWithoutCartas_motivacionInput>
   }
 
-  export type usuarioUpsertWithWhereUniqueWithoutCarreraInput = {
-    where: usuarioWhereUniqueInput
-    update: XOR<usuarioUpdateWithoutCarreraInput, usuarioUncheckedUpdateWithoutCarreraInput>
-    create: XOR<usuarioCreateWithoutCarreraInput, usuarioUncheckedCreateWithoutCarreraInput>
+  export type cuentaUpdateWithoutCartas_motivacionInput = {
+    id_cue?: StringFieldUpdateOperationsInput | string
+    cor_usu?: StringFieldUpdateOperationsInput | string
+    con_usu?: StringFieldUpdateOperationsInput | string
+    fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
+    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    est_ver_cor?: BoolFieldUpdateOperationsInput | boolean
+    fec_ver_cor?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    usuario?: usuarioUpdateOneRequiredWithoutCuentasNestedInput
+    inscripciones?: inscripcionUpdateManyWithoutCuentaNestedInput
+    comprobantes_pago?: comprobante_pagoUpdateManyWithoutAdminNestedInput
+    eventos?: eventoUpdateManyWithoutCuentaNestedInput
+    observaciones_creadas?: observacion_inscripcionUpdateManyWithoutAdmin_creadorNestedInput
+    inscripciones_validadas?: inscripcionUpdateManyWithoutAdmin_validadorNestedInput
+    tokens_cuenta?: token_cuentaUpdateManyWithoutCuentaNestedInput
+    tokens_invalidados?: invalidacion_tokenUpdateManyWithoutAdminNestedInput
   }
 
-  export type usuarioUpdateWithWhereUniqueWithoutCarreraInput = {
-    where: usuarioWhereUniqueInput
-    data: XOR<usuarioUpdateWithoutCarreraInput, usuarioUncheckedUpdateWithoutCarreraInput>
+  export type cuentaUncheckedUpdateWithoutCartas_motivacionInput = {
+    id_cue?: StringFieldUpdateOperationsInput | string
+    id_usu_per?: StringFieldUpdateOperationsInput | string
+    cor_usu?: StringFieldUpdateOperationsInput | string
+    con_usu?: StringFieldUpdateOperationsInput | string
+    fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
+    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    est_ver_cor?: BoolFieldUpdateOperationsInput | boolean
+    fec_ver_cor?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    inscripciones?: inscripcionUncheckedUpdateManyWithoutCuentaNestedInput
+    comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutAdminNestedInput
+    eventos?: eventoUncheckedUpdateManyWithoutCuentaNestedInput
+    observaciones_creadas?: observacion_inscripcionUncheckedUpdateManyWithoutAdmin_creadorNestedInput
+    inscripciones_validadas?: inscripcionUncheckedUpdateManyWithoutAdmin_validadorNestedInput
+    tokens_cuenta?: token_cuentaUncheckedUpdateManyWithoutCuentaNestedInput
+    tokens_invalidados?: invalidacion_tokenUncheckedUpdateManyWithoutAdminNestedInput
   }
 
-  export type usuarioUpdateManyWithWhereWithoutCarreraInput = {
-    where: usuarioScalarWhereInput
-    data: XOR<usuarioUpdateManyMutationInput, usuarioUncheckedUpdateManyWithoutCarreraInput>
+  export type inscripcionUpsertWithoutCartas_motivacionInput = {
+    update: XOR<inscripcionUpdateWithoutCartas_motivacionInput, inscripcionUncheckedUpdateWithoutCartas_motivacionInput>
+    create: XOR<inscripcionCreateWithoutCartas_motivacionInput, inscripcionUncheckedCreateWithoutCartas_motivacionInput>
+    where?: inscripcionWhereInput
   }
 
-  export type usuarioScalarWhereInput = {
-    AND?: usuarioScalarWhereInput | usuarioScalarWhereInput[]
-    OR?: usuarioScalarWhereInput[]
-    NOT?: usuarioScalarWhereInput | usuarioScalarWhereInput[]
-    id_usu?: StringFilter<"usuario"> | string
-    ced_usu?: StringFilter<"usuario"> | string
-    nom_usu?: StringFilter<"usuario"> | string
-    ape_usu?: StringFilter<"usuario"> | string
-    cel_usu?: StringFilter<"usuario"> | string
-    fec_cre_usu?: DateTimeFilter<"usuario"> | Date | string
-    com_usu?: StringNullableFilter<"usuario"> | string | null
-    id_car_est?: StringNullableFilter<"usuario"> | string | null
-    img_per_usu?: StringNullableFilter<"usuario"> | string | null
+  export type inscripcionUpdateToOneWithWhereWithoutCartas_motivacionInput = {
+    where?: inscripcionWhereInput
+    data: XOR<inscripcionUpdateWithoutCartas_motivacionInput, inscripcionUncheckedUpdateWithoutCartas_motivacionInput>
   }
 
-  export type evento_carreraUpsertWithWhereUniqueWithoutCarreraInput = {
-    where: evento_carreraWhereUniqueInput
-    update: XOR<evento_carreraUpdateWithoutCarreraInput, evento_carreraUncheckedUpdateWithoutCarreraInput>
-    create: XOR<evento_carreraCreateWithoutCarreraInput, evento_carreraUncheckedCreateWithoutCarreraInput>
+  export type inscripcionUpdateWithoutCartas_motivacionInput = {
+    id_ins?: StringFieldUpdateOperationsInput | string
+    est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
+    fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
+    usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    fec_val_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    cup_ocu?: BoolFieldUpdateOperationsInput | boolean
+    cuenta?: cuentaUpdateOneRequiredWithoutInscripcionesNestedInput
+    evento?: eventoUpdateOneRequiredWithoutInscritosNestedInput
+    inscripcion_curso?: inscripcion_cursoUpdateOneWithoutInscripcionNestedInput
+    comprobantes_pago?: comprobante_pagoUpdateManyWithoutInscripcionNestedInput
+    observacion?: observacion_inscripcionUpdateOneWithoutInscripcionNestedInput
+    certificado?: certificadoUpdateOneWithoutInscripcionNestedInput
+    admin_validador?: cuentaUpdateOneWithoutInscripciones_validadasNestedInput
   }
 
-  export type evento_carreraUpdateWithWhereUniqueWithoutCarreraInput = {
-    where: evento_carreraWhereUniqueInput
-    data: XOR<evento_carreraUpdateWithoutCarreraInput, evento_carreraUncheckedUpdateWithoutCarreraInput>
+  export type inscripcionUncheckedUpdateWithoutCartas_motivacionInput = {
+    id_ins?: StringFieldUpdateOperationsInput | string
+    id_cor_ins?: StringFieldUpdateOperationsInput | string
+    id_eve_ins?: StringFieldUpdateOperationsInput | string
+    est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
+    fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
+    usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    id_adm_val_ins?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_val_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    cup_ocu?: BoolFieldUpdateOperationsInput | boolean
+    inscripcion_curso?: inscripcion_cursoUncheckedUpdateOneWithoutInscripcionNestedInput
+    comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutInscripcionNestedInput
+    observacion?: observacion_inscripcionUncheckedUpdateOneWithoutInscripcionNestedInput
+    certificado?: certificadoUncheckedUpdateOneWithoutInscripcionNestedInput
   }
 
-  export type evento_carreraUpdateManyWithWhereWithoutCarreraInput = {
-    where: evento_carreraScalarWhereInput
-    data: XOR<evento_carreraUpdateManyMutationInput, evento_carreraUncheckedUpdateManyWithoutCarreraInput>
+  export type inscripcionCreateWithoutObservacionInput = {
+    id_ins?: string
+    est_ins?: $Enums.estado_inscripcion
+    fec_ins?: Date | string
+    usu_apr_cer?: boolean
+    fec_val_ins?: Date | string | null
+    por_asi_fin_usu?: number | null
+    cup_ocu?: boolean
+    cuenta: cuentaCreateNestedOneWithoutInscripcionesInput
+    evento: eventoCreateNestedOneWithoutInscritosInput
+    inscripcion_curso?: inscripcion_cursoCreateNestedOneWithoutInscripcionInput
+    comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutInscripcionInput
+    cartas_motivacion?: carta_motivacionCreateNestedManyWithoutInscripcionInput
+    certificado?: certificadoCreateNestedOneWithoutInscripcionInput
+    admin_validador?: cuentaCreateNestedOneWithoutInscripciones_validadasInput
   }
 
-  export type evento_carreraScalarWhereInput = {
-    AND?: evento_carreraScalarWhereInput | evento_carreraScalarWhereInput[]
-    OR?: evento_carreraScalarWhereInput[]
-    NOT?: evento_carreraScalarWhereInput | evento_carreraScalarWhereInput[]
-    id_eve_car?: StringFilter<"evento_carrera"> | string
-    id_car_aso?: StringFilter<"evento_carrera"> | string
-    id_eve_aso?: StringFilter<"evento_carrera"> | string
-    fec_aso?: DateTimeFilter<"evento_carrera"> | Date | string
+  export type inscripcionUncheckedCreateWithoutObservacionInput = {
+    id_ins?: string
+    id_cor_ins: string
+    id_eve_ins: string
+    est_ins?: $Enums.estado_inscripcion
+    fec_ins?: Date | string
+    usu_apr_cer?: boolean
+    id_adm_val_ins?: string | null
+    fec_val_ins?: Date | string | null
+    por_asi_fin_usu?: number | null
+    cup_ocu?: boolean
+    inscripcion_curso?: inscripcion_cursoUncheckedCreateNestedOneWithoutInscripcionInput
+    comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutInscripcionInput
+    cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutInscripcionInput
+    certificado?: certificadoUncheckedCreateNestedOneWithoutInscripcionInput
   }
 
-  export type carreraCreateWithoutCoordinadorInput = {
-    id_car?: string
-    nom_car: string
-    des_car: string
-    dur_sem_car: number
-    mod_car: string
-    ico_car: string
-    est_car?: boolean
-    fec_cre_car?: Date | string
-    facultad: facultadCreateNestedOneWithoutCarrerasInput
-    usuario?: usuarioCreateNestedManyWithoutCarreraInput
-    eventos?: evento_carreraCreateNestedManyWithoutCarreraInput
+  export type inscripcionCreateOrConnectWithoutObservacionInput = {
+    where: inscripcionWhereUniqueInput
+    create: XOR<inscripcionCreateWithoutObservacionInput, inscripcionUncheckedCreateWithoutObservacionInput>
   }
 
-  export type carreraUncheckedCreateWithoutCoordinadorInput = {
-    id_car?: string
-    nom_car: string
-    des_car: string
-    dur_sem_car: number
-    mod_car: string
-    ico_car: string
-    est_car?: boolean
-    fec_cre_car?: Date | string
-    id_fac_per: string
-    usuario?: usuarioUncheckedCreateNestedManyWithoutCarreraInput
-    eventos?: evento_carreraUncheckedCreateNestedManyWithoutCarreraInput
+  export type cuentaCreateWithoutObservaciones_creadasInput = {
+    id_cue?: string
+    cor_usu: string
+    con_usu: string
+    fec_cre_cue?: Date | string
+    rol_usu: $Enums.rol_usuario
+    est_ver_cor?: boolean
+    fec_ver_cor?: Date | string | null
+    usuario: usuarioCreateNestedOneWithoutCuentasInput
+    inscripciones?: inscripcionCreateNestedManyWithoutCuentaInput
+    cartas_motivacion?: carta_motivacionCreateNestedManyWithoutAdminInput
+    comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutAdminInput
+    eventos?: eventoCreateNestedManyWithoutCuentaInput
+    inscripciones_validadas?: inscripcionCreateNestedManyWithoutAdmin_validadorInput
+    tokens_cuenta?: token_cuentaCreateNestedManyWithoutCuentaInput
+    tokens_invalidados?: invalidacion_tokenCreateNestedManyWithoutAdminInput
   }
 
-  export type carreraCreateOrConnectWithoutCoordinadorInput = {
-    where: carreraWhereUniqueInput
-    create: XOR<carreraCreateWithoutCoordinadorInput, carreraUncheckedCreateWithoutCoordinadorInput>
+  export type cuentaUncheckedCreateWithoutObservaciones_creadasInput = {
+    id_cue?: string
+    id_usu_per: string
+    cor_usu: string
+    con_usu: string
+    fec_cre_cue?: Date | string
+    rol_usu: $Enums.rol_usuario
+    est_ver_cor?: boolean
+    fec_ver_cor?: Date | string | null
+    inscripciones?: inscripcionUncheckedCreateNestedManyWithoutCuentaInput
+    cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutAdminInput
+    comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutAdminInput
+    eventos?: eventoUncheckedCreateNestedManyWithoutCuentaInput
+    inscripciones_validadas?: inscripcionUncheckedCreateNestedManyWithoutAdmin_validadorInput
+    tokens_cuenta?: token_cuentaUncheckedCreateNestedManyWithoutCuentaInput
+    tokens_invalidados?: invalidacion_tokenUncheckedCreateNestedManyWithoutAdminInput
   }
 
-  export type carreraCreateManyCoordinadorInputEnvelope = {
-    data: carreraCreateManyCoordinadorInput | carreraCreateManyCoordinadorInput[]
-    skipDuplicates?: boolean
+  export type cuentaCreateOrConnectWithoutObservaciones_creadasInput = {
+    where: cuentaWhereUniqueInput
+    create: XOR<cuentaCreateWithoutObservaciones_creadasInput, cuentaUncheckedCreateWithoutObservaciones_creadasInput>
   }
 
-  export type carreraUpsertWithWhereUniqueWithoutCoordinadorInput = {
-    where: carreraWhereUniqueInput
-    update: XOR<carreraUpdateWithoutCoordinadorInput, carreraUncheckedUpdateWithoutCoordinadorInput>
-    create: XOR<carreraCreateWithoutCoordinadorInput, carreraUncheckedCreateWithoutCoordinadorInput>
+  export type inscripcionUpsertWithoutObservacionInput = {
+    update: XOR<inscripcionUpdateWithoutObservacionInput, inscripcionUncheckedUpdateWithoutObservacionInput>
+    create: XOR<inscripcionCreateWithoutObservacionInput, inscripcionUncheckedCreateWithoutObservacionInput>
+    where?: inscripcionWhereInput
   }
 
-  export type carreraUpdateWithWhereUniqueWithoutCoordinadorInput = {
-    where: carreraWhereUniqueInput
-    data: XOR<carreraUpdateWithoutCoordinadorInput, carreraUncheckedUpdateWithoutCoordinadorInput>
+  export type inscripcionUpdateToOneWithWhereWithoutObservacionInput = {
+    where?: inscripcionWhereInput
+    data: XOR<inscripcionUpdateWithoutObservacionInput, inscripcionUncheckedUpdateWithoutObservacionInput>
   }
 
-  export type carreraUpdateManyWithWhereWithoutCoordinadorInput = {
-    where: carreraScalarWhereInput
-    data: XOR<carreraUpdateManyMutationInput, carreraUncheckedUpdateManyWithoutCoordinadorInput>
+  export type inscripcionUpdateWithoutObservacionInput = {
+    id_ins?: StringFieldUpdateOperationsInput | string
+    est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
+    fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
+    usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    fec_val_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    cup_ocu?: BoolFieldUpdateOperationsInput | boolean
+    cuenta?: cuentaUpdateOneRequiredWithoutInscripcionesNestedInput
+    evento?: eventoUpdateOneRequiredWithoutInscritosNestedInput
+    inscripcion_curso?: inscripcion_cursoUpdateOneWithoutInscripcionNestedInput
+    comprobantes_pago?: comprobante_pagoUpdateManyWithoutInscripcionNestedInput
+    cartas_motivacion?: carta_motivacionUpdateManyWithoutInscripcionNestedInput
+    certificado?: certificadoUpdateOneWithoutInscripcionNestedInput
+    admin_validador?: cuentaUpdateOneWithoutInscripciones_validadasNestedInput
   }
 
-  export type carreraScalarWhereInput = {
-    AND?: carreraScalarWhereInput | carreraScalarWhereInput[]
-    OR?: carreraScalarWhereInput[]
-    NOT?: carreraScalarWhereInput | carreraScalarWhereInput[]
-    id_car?: StringFilter<"carrera"> | string
-    nom_car?: StringFilter<"carrera"> | string
-    des_car?: StringFilter<"carrera"> | string
-    dur_sem_car?: IntFilter<"carrera"> | number
-    mod_car?: StringFilter<"carrera"> | string
-    ico_car?: StringFilter<"carrera"> | string
-    est_car?: BoolFilter<"carrera"> | boolean
-    fec_cre_car?: DateTimeFilter<"carrera"> | Date | string
-    id_fac_per?: StringFilter<"carrera"> | string
-    id_coo_per?: StringNullableFilter<"carrera"> | string | null
+  export type inscripcionUncheckedUpdateWithoutObservacionInput = {
+    id_ins?: StringFieldUpdateOperationsInput | string
+    id_cor_ins?: StringFieldUpdateOperationsInput | string
+    id_eve_ins?: StringFieldUpdateOperationsInput | string
+    est_ins?: Enumestado_inscripcionFieldUpdateOperationsInput | $Enums.estado_inscripcion
+    fec_ins?: DateTimeFieldUpdateOperationsInput | Date | string
+    usu_apr_cer?: BoolFieldUpdateOperationsInput | boolean
+    id_adm_val_ins?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_val_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
+    cup_ocu?: BoolFieldUpdateOperationsInput | boolean
+    inscripcion_curso?: inscripcion_cursoUncheckedUpdateOneWithoutInscripcionNestedInput
+    comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutInscripcionNestedInput
+    cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutInscripcionNestedInput
+    certificado?: certificadoUncheckedUpdateOneWithoutInscripcionNestedInput
+  }
+
+  export type cuentaUpsertWithoutObservaciones_creadasInput = {
+    update: XOR<cuentaUpdateWithoutObservaciones_creadasInput, cuentaUncheckedUpdateWithoutObservaciones_creadasInput>
+    create: XOR<cuentaCreateWithoutObservaciones_creadasInput, cuentaUncheckedCreateWithoutObservaciones_creadasInput>
+    where?: cuentaWhereInput
+  }
+
+  export type cuentaUpdateToOneWithWhereWithoutObservaciones_creadasInput = {
+    where?: cuentaWhereInput
+    data: XOR<cuentaUpdateWithoutObservaciones_creadasInput, cuentaUncheckedUpdateWithoutObservaciones_creadasInput>
+  }
+
+  export type cuentaUpdateWithoutObservaciones_creadasInput = {
+    id_cue?: StringFieldUpdateOperationsInput | string
+    cor_usu?: StringFieldUpdateOperationsInput | string
+    con_usu?: StringFieldUpdateOperationsInput | string
+    fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
+    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    est_ver_cor?: BoolFieldUpdateOperationsInput | boolean
+    fec_ver_cor?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    usuario?: usuarioUpdateOneRequiredWithoutCuentasNestedInput
+    inscripciones?: inscripcionUpdateManyWithoutCuentaNestedInput
+    cartas_motivacion?: carta_motivacionUpdateManyWithoutAdminNestedInput
+    comprobantes_pago?: comprobante_pagoUpdateManyWithoutAdminNestedInput
+    eventos?: eventoUpdateManyWithoutCuentaNestedInput
+    inscripciones_validadas?: inscripcionUpdateManyWithoutAdmin_validadorNestedInput
+    tokens_cuenta?: token_cuentaUpdateManyWithoutCuentaNestedInput
+    tokens_invalidados?: invalidacion_tokenUpdateManyWithoutAdminNestedInput
+  }
+
+  export type cuentaUncheckedUpdateWithoutObservaciones_creadasInput = {
+    id_cue?: StringFieldUpdateOperationsInput | string
+    id_usu_per?: StringFieldUpdateOperationsInput | string
+    cor_usu?: StringFieldUpdateOperationsInput | string
+    con_usu?: StringFieldUpdateOperationsInput | string
+    fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
+    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    est_ver_cor?: BoolFieldUpdateOperationsInput | boolean
+    fec_ver_cor?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    inscripciones?: inscripcionUncheckedUpdateManyWithoutCuentaNestedInput
+    cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutAdminNestedInput
+    comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutAdminNestedInput
+    eventos?: eventoUncheckedUpdateManyWithoutCuentaNestedInput
+    inscripciones_validadas?: inscripcionUncheckedUpdateManyWithoutAdmin_validadorNestedInput
+    tokens_cuenta?: token_cuentaUncheckedUpdateManyWithoutCuentaNestedInput
+    tokens_invalidados?: invalidacion_tokenUncheckedUpdateManyWithoutAdminNestedInput
   }
 
   export type inscripcionCreateWithoutEventoInput = {
@@ -32716,60 +37995,6 @@ export namespace Prisma {
     observacion?: observacion_inscripcionUncheckedUpdateOneWithoutInscripcionNestedInput
   }
 
-  export type carreraCreateWithoutFacultadInput = {
-    id_car?: string
-    nom_car: string
-    des_car: string
-    dur_sem_car: number
-    mod_car: string
-    ico_car: string
-    est_car?: boolean
-    fec_cre_car?: Date | string
-    coordinador?: coordinadorCreateNestedOneWithoutCarrerasInput
-    usuario?: usuarioCreateNestedManyWithoutCarreraInput
-    eventos?: evento_carreraCreateNestedManyWithoutCarreraInput
-  }
-
-  export type carreraUncheckedCreateWithoutFacultadInput = {
-    id_car?: string
-    nom_car: string
-    des_car: string
-    dur_sem_car: number
-    mod_car: string
-    ico_car: string
-    est_car?: boolean
-    fec_cre_car?: Date | string
-    id_coo_per?: string | null
-    usuario?: usuarioUncheckedCreateNestedManyWithoutCarreraInput
-    eventos?: evento_carreraUncheckedCreateNestedManyWithoutCarreraInput
-  }
-
-  export type carreraCreateOrConnectWithoutFacultadInput = {
-    where: carreraWhereUniqueInput
-    create: XOR<carreraCreateWithoutFacultadInput, carreraUncheckedCreateWithoutFacultadInput>
-  }
-
-  export type carreraCreateManyFacultadInputEnvelope = {
-    data: carreraCreateManyFacultadInput | carreraCreateManyFacultadInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type carreraUpsertWithWhereUniqueWithoutFacultadInput = {
-    where: carreraWhereUniqueInput
-    update: XOR<carreraUpdateWithoutFacultadInput, carreraUncheckedUpdateWithoutFacultadInput>
-    create: XOR<carreraCreateWithoutFacultadInput, carreraUncheckedCreateWithoutFacultadInput>
-  }
-
-  export type carreraUpdateWithWhereUniqueWithoutFacultadInput = {
-    where: carreraWhereUniqueInput
-    data: XOR<carreraUpdateWithoutFacultadInput, carreraUncheckedUpdateWithoutFacultadInput>
-  }
-
-  export type carreraUpdateManyWithWhereWithoutFacultadInput = {
-    where: carreraScalarWhereInput
-    data: XOR<carreraUpdateManyMutationInput, carreraUncheckedUpdateManyWithoutFacultadInput>
-  }
-
   export type cuentaCreateWithoutTokens_cuentaInput = {
     id_cue?: string
     cor_usu: string
@@ -33457,6 +38682,348 @@ export namespace Prisma {
     tokens_que_reemplaza?: token_cuentaUncheckedUpdateManyWithoutToken_reemplazadoNestedInput
   }
 
+  export type facultadCreateManyUniversidadInput = {
+    id_fac?: string
+    nom_fac: string
+    acr_fac?: string | null
+    url_log_fac?: string | null
+    des_fac: string
+    mis_fac: string
+    vis_fac: string
+    fec_cre_fac?: Date | string
+  }
+
+  export type autoridad_universidadCreateManyUniversidadInput = {
+    id_aut_uni?: string
+    tip_aut_uni: $Enums.tipo_autoridad_universidad
+    nom_aut_uni: string
+    ape_aut_uni: string
+    cor_aut_uni?: string | null
+    tel_aut_uni?: string | null
+    url_img_aut_uni?: string | null
+    tit_aut_uni?: string | null
+    fec_ini_aut_uni: Date | string
+    fec_fin_aut_uni?: Date | string | null
+    est_aut_uni?: boolean
+    fec_cre_aut_uni?: Date | string
+  }
+
+  export type facultadUpdateWithoutUniversidadInput = {
+    id_fac?: StringFieldUpdateOperationsInput | string
+    nom_fac?: StringFieldUpdateOperationsInput | string
+    acr_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    url_log_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    des_fac?: StringFieldUpdateOperationsInput | string
+    mis_fac?: StringFieldUpdateOperationsInput | string
+    vis_fac?: StringFieldUpdateOperationsInput | string
+    fec_cre_fac?: DateTimeFieldUpdateOperationsInput | Date | string
+    carreras?: carreraUpdateManyWithoutFacultadNestedInput
+    autoridades?: autoridad_facultadUpdateManyWithoutFacultadNestedInput
+  }
+
+  export type facultadUncheckedUpdateWithoutUniversidadInput = {
+    id_fac?: StringFieldUpdateOperationsInput | string
+    nom_fac?: StringFieldUpdateOperationsInput | string
+    acr_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    url_log_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    des_fac?: StringFieldUpdateOperationsInput | string
+    mis_fac?: StringFieldUpdateOperationsInput | string
+    vis_fac?: StringFieldUpdateOperationsInput | string
+    fec_cre_fac?: DateTimeFieldUpdateOperationsInput | Date | string
+    carreras?: carreraUncheckedUpdateManyWithoutFacultadNestedInput
+    autoridades?: autoridad_facultadUncheckedUpdateManyWithoutFacultadNestedInput
+  }
+
+  export type facultadUncheckedUpdateManyWithoutUniversidadInput = {
+    id_fac?: StringFieldUpdateOperationsInput | string
+    nom_fac?: StringFieldUpdateOperationsInput | string
+    acr_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    url_log_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    des_fac?: StringFieldUpdateOperationsInput | string
+    mis_fac?: StringFieldUpdateOperationsInput | string
+    vis_fac?: StringFieldUpdateOperationsInput | string
+    fec_cre_fac?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type autoridad_universidadUpdateWithoutUniversidadInput = {
+    id_aut_uni?: StringFieldUpdateOperationsInput | string
+    tip_aut_uni?: Enumtipo_autoridad_universidadFieldUpdateOperationsInput | $Enums.tipo_autoridad_universidad
+    nom_aut_uni?: StringFieldUpdateOperationsInput | string
+    ape_aut_uni?: StringFieldUpdateOperationsInput | string
+    cor_aut_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    tel_aut_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    url_img_aut_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    tit_aut_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_ini_aut_uni?: DateTimeFieldUpdateOperationsInput | Date | string
+    fec_fin_aut_uni?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    est_aut_uni?: BoolFieldUpdateOperationsInput | boolean
+    fec_cre_aut_uni?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type autoridad_universidadUncheckedUpdateWithoutUniversidadInput = {
+    id_aut_uni?: StringFieldUpdateOperationsInput | string
+    tip_aut_uni?: Enumtipo_autoridad_universidadFieldUpdateOperationsInput | $Enums.tipo_autoridad_universidad
+    nom_aut_uni?: StringFieldUpdateOperationsInput | string
+    ape_aut_uni?: StringFieldUpdateOperationsInput | string
+    cor_aut_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    tel_aut_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    url_img_aut_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    tit_aut_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_ini_aut_uni?: DateTimeFieldUpdateOperationsInput | Date | string
+    fec_fin_aut_uni?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    est_aut_uni?: BoolFieldUpdateOperationsInput | boolean
+    fec_cre_aut_uni?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type autoridad_universidadUncheckedUpdateManyWithoutUniversidadInput = {
+    id_aut_uni?: StringFieldUpdateOperationsInput | string
+    tip_aut_uni?: Enumtipo_autoridad_universidadFieldUpdateOperationsInput | $Enums.tipo_autoridad_universidad
+    nom_aut_uni?: StringFieldUpdateOperationsInput | string
+    ape_aut_uni?: StringFieldUpdateOperationsInput | string
+    cor_aut_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    tel_aut_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    url_img_aut_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    tit_aut_uni?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_ini_aut_uni?: DateTimeFieldUpdateOperationsInput | Date | string
+    fec_fin_aut_uni?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    est_aut_uni?: BoolFieldUpdateOperationsInput | boolean
+    fec_cre_aut_uni?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type carreraCreateManyFacultadInput = {
+    id_car?: string
+    nom_car: string
+    des_car: string
+    dur_sem_car: number
+    mod_car: string
+    ico_car: string
+    est_car?: boolean
+    fec_cre_car?: Date | string
+    id_coo_per?: string | null
+  }
+
+  export type autoridad_facultadCreateManyFacultadInput = {
+    id_aut_fac?: string
+    tip_aut_fac: $Enums.tipo_autoridad_facultad
+    nom_aut_fac: string
+    ape_aut_fac: string
+    cor_aut_fac?: string | null
+    tel_aut_fac?: string | null
+    url_img_aut_fac?: string | null
+    tit_aut_fac?: string | null
+    fec_ini_aut_fac: Date | string
+    fec_fin_aut_fac?: Date | string | null
+    est_aut_fac?: boolean
+    fec_cre_aut_fac?: Date | string
+  }
+
+  export type carreraUpdateWithoutFacultadInput = {
+    id_car?: StringFieldUpdateOperationsInput | string
+    nom_car?: StringFieldUpdateOperationsInput | string
+    des_car?: StringFieldUpdateOperationsInput | string
+    dur_sem_car?: IntFieldUpdateOperationsInput | number
+    mod_car?: StringFieldUpdateOperationsInput | string
+    ico_car?: StringFieldUpdateOperationsInput | string
+    est_car?: BoolFieldUpdateOperationsInput | boolean
+    fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
+    coordinador?: coordinadorUpdateOneWithoutCarrerasNestedInput
+    usuario?: usuarioUpdateManyWithoutCarreraNestedInput
+    eventos?: evento_carreraUpdateManyWithoutCarreraNestedInput
+  }
+
+  export type carreraUncheckedUpdateWithoutFacultadInput = {
+    id_car?: StringFieldUpdateOperationsInput | string
+    nom_car?: StringFieldUpdateOperationsInput | string
+    des_car?: StringFieldUpdateOperationsInput | string
+    dur_sem_car?: IntFieldUpdateOperationsInput | number
+    mod_car?: StringFieldUpdateOperationsInput | string
+    ico_car?: StringFieldUpdateOperationsInput | string
+    est_car?: BoolFieldUpdateOperationsInput | boolean
+    fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
+    id_coo_per?: NullableStringFieldUpdateOperationsInput | string | null
+    usuario?: usuarioUncheckedUpdateManyWithoutCarreraNestedInput
+    eventos?: evento_carreraUncheckedUpdateManyWithoutCarreraNestedInput
+  }
+
+  export type carreraUncheckedUpdateManyWithoutFacultadInput = {
+    id_car?: StringFieldUpdateOperationsInput | string
+    nom_car?: StringFieldUpdateOperationsInput | string
+    des_car?: StringFieldUpdateOperationsInput | string
+    dur_sem_car?: IntFieldUpdateOperationsInput | number
+    mod_car?: StringFieldUpdateOperationsInput | string
+    ico_car?: StringFieldUpdateOperationsInput | string
+    est_car?: BoolFieldUpdateOperationsInput | boolean
+    fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
+    id_coo_per?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type autoridad_facultadUpdateWithoutFacultadInput = {
+    id_aut_fac?: StringFieldUpdateOperationsInput | string
+    tip_aut_fac?: Enumtipo_autoridad_facultadFieldUpdateOperationsInput | $Enums.tipo_autoridad_facultad
+    nom_aut_fac?: StringFieldUpdateOperationsInput | string
+    ape_aut_fac?: StringFieldUpdateOperationsInput | string
+    cor_aut_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    tel_aut_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    url_img_aut_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    tit_aut_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_ini_aut_fac?: DateTimeFieldUpdateOperationsInput | Date | string
+    fec_fin_aut_fac?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    est_aut_fac?: BoolFieldUpdateOperationsInput | boolean
+    fec_cre_aut_fac?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type autoridad_facultadUncheckedUpdateWithoutFacultadInput = {
+    id_aut_fac?: StringFieldUpdateOperationsInput | string
+    tip_aut_fac?: Enumtipo_autoridad_facultadFieldUpdateOperationsInput | $Enums.tipo_autoridad_facultad
+    nom_aut_fac?: StringFieldUpdateOperationsInput | string
+    ape_aut_fac?: StringFieldUpdateOperationsInput | string
+    cor_aut_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    tel_aut_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    url_img_aut_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    tit_aut_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_ini_aut_fac?: DateTimeFieldUpdateOperationsInput | Date | string
+    fec_fin_aut_fac?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    est_aut_fac?: BoolFieldUpdateOperationsInput | boolean
+    fec_cre_aut_fac?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type autoridad_facultadUncheckedUpdateManyWithoutFacultadInput = {
+    id_aut_fac?: StringFieldUpdateOperationsInput | string
+    tip_aut_fac?: Enumtipo_autoridad_facultadFieldUpdateOperationsInput | $Enums.tipo_autoridad_facultad
+    nom_aut_fac?: StringFieldUpdateOperationsInput | string
+    ape_aut_fac?: StringFieldUpdateOperationsInput | string
+    cor_aut_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    tel_aut_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    url_img_aut_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    tit_aut_fac?: NullableStringFieldUpdateOperationsInput | string | null
+    fec_ini_aut_fac?: DateTimeFieldUpdateOperationsInput | Date | string
+    fec_fin_aut_fac?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    est_aut_fac?: BoolFieldUpdateOperationsInput | boolean
+    fec_cre_aut_fac?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type usuarioCreateManyCarreraInput = {
+    id_usu?: string
+    ced_usu: string
+    nom_usu: string
+    ape_usu: string
+    cel_usu: string
+    fec_cre_usu?: Date | string
+    com_usu?: string | null
+    img_per_usu?: string | null
+  }
+
+  export type evento_carreraCreateManyCarreraInput = {
+    id_eve_car?: string
+    id_eve_aso: string
+    fec_aso?: Date | string
+  }
+
+  export type usuarioUpdateWithoutCarreraInput = {
+    id_usu?: StringFieldUpdateOperationsInput | string
+    ced_usu?: StringFieldUpdateOperationsInput | string
+    nom_usu?: StringFieldUpdateOperationsInput | string
+    ape_usu?: StringFieldUpdateOperationsInput | string
+    cel_usu?: StringFieldUpdateOperationsInput | string
+    fec_cre_usu?: DateTimeFieldUpdateOperationsInput | Date | string
+    com_usu?: NullableStringFieldUpdateOperationsInput | string | null
+    img_per_usu?: NullableStringFieldUpdateOperationsInput | string | null
+    cuentas?: cuentaUpdateManyWithoutUsuarioNestedInput
+  }
+
+  export type usuarioUncheckedUpdateWithoutCarreraInput = {
+    id_usu?: StringFieldUpdateOperationsInput | string
+    ced_usu?: StringFieldUpdateOperationsInput | string
+    nom_usu?: StringFieldUpdateOperationsInput | string
+    ape_usu?: StringFieldUpdateOperationsInput | string
+    cel_usu?: StringFieldUpdateOperationsInput | string
+    fec_cre_usu?: DateTimeFieldUpdateOperationsInput | Date | string
+    com_usu?: NullableStringFieldUpdateOperationsInput | string | null
+    img_per_usu?: NullableStringFieldUpdateOperationsInput | string | null
+    cuentas?: cuentaUncheckedUpdateManyWithoutUsuarioNestedInput
+  }
+
+  export type usuarioUncheckedUpdateManyWithoutCarreraInput = {
+    id_usu?: StringFieldUpdateOperationsInput | string
+    ced_usu?: StringFieldUpdateOperationsInput | string
+    nom_usu?: StringFieldUpdateOperationsInput | string
+    ape_usu?: StringFieldUpdateOperationsInput | string
+    cel_usu?: StringFieldUpdateOperationsInput | string
+    fec_cre_usu?: DateTimeFieldUpdateOperationsInput | Date | string
+    com_usu?: NullableStringFieldUpdateOperationsInput | string | null
+    img_per_usu?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type evento_carreraUpdateWithoutCarreraInput = {
+    id_eve_car?: StringFieldUpdateOperationsInput | string
+    fec_aso?: DateTimeFieldUpdateOperationsInput | Date | string
+    evento?: eventoUpdateOneRequiredWithoutEventos_carreraNestedInput
+  }
+
+  export type evento_carreraUncheckedUpdateWithoutCarreraInput = {
+    id_eve_car?: StringFieldUpdateOperationsInput | string
+    id_eve_aso?: StringFieldUpdateOperationsInput | string
+    fec_aso?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type evento_carreraUncheckedUpdateManyWithoutCarreraInput = {
+    id_eve_car?: StringFieldUpdateOperationsInput | string
+    id_eve_aso?: StringFieldUpdateOperationsInput | string
+    fec_aso?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type carreraCreateManyCoordinadorInput = {
+    id_car?: string
+    nom_car: string
+    des_car: string
+    dur_sem_car: number
+    mod_car: string
+    ico_car: string
+    est_car?: boolean
+    fec_cre_car?: Date | string
+    id_fac_per: string
+  }
+
+  export type carreraUpdateWithoutCoordinadorInput = {
+    id_car?: StringFieldUpdateOperationsInput | string
+    nom_car?: StringFieldUpdateOperationsInput | string
+    des_car?: StringFieldUpdateOperationsInput | string
+    dur_sem_car?: IntFieldUpdateOperationsInput | number
+    mod_car?: StringFieldUpdateOperationsInput | string
+    ico_car?: StringFieldUpdateOperationsInput | string
+    est_car?: BoolFieldUpdateOperationsInput | boolean
+    fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
+    facultad?: facultadUpdateOneRequiredWithoutCarrerasNestedInput
+    usuario?: usuarioUpdateManyWithoutCarreraNestedInput
+    eventos?: evento_carreraUpdateManyWithoutCarreraNestedInput
+  }
+
+  export type carreraUncheckedUpdateWithoutCoordinadorInput = {
+    id_car?: StringFieldUpdateOperationsInput | string
+    nom_car?: StringFieldUpdateOperationsInput | string
+    des_car?: StringFieldUpdateOperationsInput | string
+    dur_sem_car?: IntFieldUpdateOperationsInput | number
+    mod_car?: StringFieldUpdateOperationsInput | string
+    ico_car?: StringFieldUpdateOperationsInput | string
+    est_car?: BoolFieldUpdateOperationsInput | boolean
+    fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
+    id_fac_per?: StringFieldUpdateOperationsInput | string
+    usuario?: usuarioUncheckedUpdateManyWithoutCarreraNestedInput
+    eventos?: evento_carreraUncheckedUpdateManyWithoutCarreraNestedInput
+  }
+
+  export type carreraUncheckedUpdateManyWithoutCoordinadorInput = {
+    id_car?: StringFieldUpdateOperationsInput | string
+    nom_car?: StringFieldUpdateOperationsInput | string
+    des_car?: StringFieldUpdateOperationsInput | string
+    dur_sem_car?: IntFieldUpdateOperationsInput | number
+    mod_car?: StringFieldUpdateOperationsInput | string
+    ico_car?: StringFieldUpdateOperationsInput | string
+    est_car?: BoolFieldUpdateOperationsInput | boolean
+    fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
+    id_fac_per?: StringFieldUpdateOperationsInput | string
+  }
+
   export type cuentaCreateManyUsuarioInput = {
     id_cue?: string
     cor_usu: string
@@ -33903,128 +39470,6 @@ export namespace Prisma {
     ip_inv?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
-  export type usuarioCreateManyCarreraInput = {
-    id_usu?: string
-    ced_usu: string
-    nom_usu: string
-    ape_usu: string
-    cel_usu: string
-    fec_cre_usu?: Date | string
-    com_usu?: string | null
-    img_per_usu?: string | null
-  }
-
-  export type evento_carreraCreateManyCarreraInput = {
-    id_eve_car?: string
-    id_eve_aso: string
-    fec_aso?: Date | string
-  }
-
-  export type usuarioUpdateWithoutCarreraInput = {
-    id_usu?: StringFieldUpdateOperationsInput | string
-    ced_usu?: StringFieldUpdateOperationsInput | string
-    nom_usu?: StringFieldUpdateOperationsInput | string
-    ape_usu?: StringFieldUpdateOperationsInput | string
-    cel_usu?: StringFieldUpdateOperationsInput | string
-    fec_cre_usu?: DateTimeFieldUpdateOperationsInput | Date | string
-    com_usu?: NullableStringFieldUpdateOperationsInput | string | null
-    img_per_usu?: NullableStringFieldUpdateOperationsInput | string | null
-    cuentas?: cuentaUpdateManyWithoutUsuarioNestedInput
-  }
-
-  export type usuarioUncheckedUpdateWithoutCarreraInput = {
-    id_usu?: StringFieldUpdateOperationsInput | string
-    ced_usu?: StringFieldUpdateOperationsInput | string
-    nom_usu?: StringFieldUpdateOperationsInput | string
-    ape_usu?: StringFieldUpdateOperationsInput | string
-    cel_usu?: StringFieldUpdateOperationsInput | string
-    fec_cre_usu?: DateTimeFieldUpdateOperationsInput | Date | string
-    com_usu?: NullableStringFieldUpdateOperationsInput | string | null
-    img_per_usu?: NullableStringFieldUpdateOperationsInput | string | null
-    cuentas?: cuentaUncheckedUpdateManyWithoutUsuarioNestedInput
-  }
-
-  export type usuarioUncheckedUpdateManyWithoutCarreraInput = {
-    id_usu?: StringFieldUpdateOperationsInput | string
-    ced_usu?: StringFieldUpdateOperationsInput | string
-    nom_usu?: StringFieldUpdateOperationsInput | string
-    ape_usu?: StringFieldUpdateOperationsInput | string
-    cel_usu?: StringFieldUpdateOperationsInput | string
-    fec_cre_usu?: DateTimeFieldUpdateOperationsInput | Date | string
-    com_usu?: NullableStringFieldUpdateOperationsInput | string | null
-    img_per_usu?: NullableStringFieldUpdateOperationsInput | string | null
-  }
-
-  export type evento_carreraUpdateWithoutCarreraInput = {
-    id_eve_car?: StringFieldUpdateOperationsInput | string
-    fec_aso?: DateTimeFieldUpdateOperationsInput | Date | string
-    evento?: eventoUpdateOneRequiredWithoutEventos_carreraNestedInput
-  }
-
-  export type evento_carreraUncheckedUpdateWithoutCarreraInput = {
-    id_eve_car?: StringFieldUpdateOperationsInput | string
-    id_eve_aso?: StringFieldUpdateOperationsInput | string
-    fec_aso?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type evento_carreraUncheckedUpdateManyWithoutCarreraInput = {
-    id_eve_car?: StringFieldUpdateOperationsInput | string
-    id_eve_aso?: StringFieldUpdateOperationsInput | string
-    fec_aso?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type carreraCreateManyCoordinadorInput = {
-    id_car?: string
-    nom_car: string
-    des_car: string
-    dur_sem_car: number
-    mod_car: string
-    ico_car: string
-    est_car?: boolean
-    fec_cre_car?: Date | string
-    id_fac_per: string
-  }
-
-  export type carreraUpdateWithoutCoordinadorInput = {
-    id_car?: StringFieldUpdateOperationsInput | string
-    nom_car?: StringFieldUpdateOperationsInput | string
-    des_car?: StringFieldUpdateOperationsInput | string
-    dur_sem_car?: IntFieldUpdateOperationsInput | number
-    mod_car?: StringFieldUpdateOperationsInput | string
-    ico_car?: StringFieldUpdateOperationsInput | string
-    est_car?: BoolFieldUpdateOperationsInput | boolean
-    fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
-    facultad?: facultadUpdateOneRequiredWithoutCarrerasNestedInput
-    usuario?: usuarioUpdateManyWithoutCarreraNestedInput
-    eventos?: evento_carreraUpdateManyWithoutCarreraNestedInput
-  }
-
-  export type carreraUncheckedUpdateWithoutCoordinadorInput = {
-    id_car?: StringFieldUpdateOperationsInput | string
-    nom_car?: StringFieldUpdateOperationsInput | string
-    des_car?: StringFieldUpdateOperationsInput | string
-    dur_sem_car?: IntFieldUpdateOperationsInput | number
-    mod_car?: StringFieldUpdateOperationsInput | string
-    ico_car?: StringFieldUpdateOperationsInput | string
-    est_car?: BoolFieldUpdateOperationsInput | boolean
-    fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
-    id_fac_per?: StringFieldUpdateOperationsInput | string
-    usuario?: usuarioUncheckedUpdateManyWithoutCarreraNestedInput
-    eventos?: evento_carreraUncheckedUpdateManyWithoutCarreraNestedInput
-  }
-
-  export type carreraUncheckedUpdateManyWithoutCoordinadorInput = {
-    id_car?: StringFieldUpdateOperationsInput | string
-    nom_car?: StringFieldUpdateOperationsInput | string
-    des_car?: StringFieldUpdateOperationsInput | string
-    dur_sem_car?: IntFieldUpdateOperationsInput | number
-    mod_car?: StringFieldUpdateOperationsInput | string
-    ico_car?: StringFieldUpdateOperationsInput | string
-    est_car?: BoolFieldUpdateOperationsInput | boolean
-    fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
-    id_fac_per?: StringFieldUpdateOperationsInput | string
-  }
-
   export type inscripcionCreateManyEventoInput = {
     id_ins?: string
     id_cor_ins: string
@@ -34181,58 +39626,6 @@ export namespace Prisma {
     fec_sub_car_mot?: DateTimeFieldUpdateOperationsInput | Date | string
     fec_val_car_mot?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     id_adm_val_car_mot?: NullableStringFieldUpdateOperationsInput | string | null
-  }
-
-  export type carreraCreateManyFacultadInput = {
-    id_car?: string
-    nom_car: string
-    des_car: string
-    dur_sem_car: number
-    mod_car: string
-    ico_car: string
-    est_car?: boolean
-    fec_cre_car?: Date | string
-    id_coo_per?: string | null
-  }
-
-  export type carreraUpdateWithoutFacultadInput = {
-    id_car?: StringFieldUpdateOperationsInput | string
-    nom_car?: StringFieldUpdateOperationsInput | string
-    des_car?: StringFieldUpdateOperationsInput | string
-    dur_sem_car?: IntFieldUpdateOperationsInput | number
-    mod_car?: StringFieldUpdateOperationsInput | string
-    ico_car?: StringFieldUpdateOperationsInput | string
-    est_car?: BoolFieldUpdateOperationsInput | boolean
-    fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
-    coordinador?: coordinadorUpdateOneWithoutCarrerasNestedInput
-    usuario?: usuarioUpdateManyWithoutCarreraNestedInput
-    eventos?: evento_carreraUpdateManyWithoutCarreraNestedInput
-  }
-
-  export type carreraUncheckedUpdateWithoutFacultadInput = {
-    id_car?: StringFieldUpdateOperationsInput | string
-    nom_car?: StringFieldUpdateOperationsInput | string
-    des_car?: StringFieldUpdateOperationsInput | string
-    dur_sem_car?: IntFieldUpdateOperationsInput | number
-    mod_car?: StringFieldUpdateOperationsInput | string
-    ico_car?: StringFieldUpdateOperationsInput | string
-    est_car?: BoolFieldUpdateOperationsInput | boolean
-    fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
-    id_coo_per?: NullableStringFieldUpdateOperationsInput | string | null
-    usuario?: usuarioUncheckedUpdateManyWithoutCarreraNestedInput
-    eventos?: evento_carreraUncheckedUpdateManyWithoutCarreraNestedInput
-  }
-
-  export type carreraUncheckedUpdateManyWithoutFacultadInput = {
-    id_car?: StringFieldUpdateOperationsInput | string
-    nom_car?: StringFieldUpdateOperationsInput | string
-    des_car?: StringFieldUpdateOperationsInput | string
-    dur_sem_car?: IntFieldUpdateOperationsInput | number
-    mod_car?: StringFieldUpdateOperationsInput | string
-    ico_car?: StringFieldUpdateOperationsInput | string
-    est_car?: BoolFieldUpdateOperationsInput | boolean
-    fec_cre_car?: DateTimeFieldUpdateOperationsInput | Date | string
-    id_coo_per?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type metadata_tokenCreateManyTokenInput = {

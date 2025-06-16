@@ -5,7 +5,34 @@ async function main() {
   console.log("URL de conexión:", process.env.DATABASE_URL);
 
   try {
-    // 1. Crear facultad
+    // 1. Crear universidad
+    const universidad = await prisma.universidad.upsert({
+      where: {
+        nom_uni: "Universidad Técnica De Ambato",
+      },
+      update: {
+        acr_uni: "UTA",
+        url_log_uni: "https://i.imgur.com/MgZ1TiM.png",
+        url_web_uni: "https://uta.edu.ec/",
+        dir_uni: "Av. Los Chasquis y Rio Payamino",
+        tel_uni: "03-3700090",
+        cor_uni: "utarectorado@uta.edu.ec",
+        fec_fun_uni: new Date("1969-04-18"),
+      },
+      create: {
+        nom_uni: "Universidad Técnica De Ambato",
+        acr_uni: "UTA",
+        url_log_uni: "https://i.imgur.com/MgZ1TiM.png",
+        url_web_uni: "https://uta.edu.ec/",
+        dir_uni: "Av. Los Chasquis y Rio Payamino",
+        tel_uni: "03-3700090",
+        cor_uni: "utarectorado@uta.edu.ec",
+        fec_fun_uni: new Date("1969-04-18"),
+      },
+    });
+    console.log("Universidad creada correctamente");
+
+    // 2. Crear facultad
     const facultad = await prisma.facultad.upsert({
       where: {
         nom_fac: "Facultad de Ingeniería en Sistemas, Electrónica e Industrial",
@@ -14,27 +41,101 @@ async function main() {
         // Actualizamos los nuevos campos para registros existentes
         acr_fac: "FISEI",
         url_log_fac: "https://imgur.com/fch1iy6.png",
+        id_uni_per: universidad.id_uni,
       },
       create: {
         nom_fac: "Facultad de Ingeniería en Sistemas, Electrónica e Industrial",
         acr_fac: "FISEI",
         url_log_fac: "https://imgur.com/fch1iy6.png",
-        des_fac: "Facultad orientada a la tecnología y software.",
-        mis_fac: "Formar profesionales líderes e innovadores.",
+        des_fac:
+          "Formar profesionales íntegros y competentes, fomentar la investigación científica y tecnológica, y promover un ambiente de integración y colaboración que responda a las demandas del entorno nacional e internacional.",
+        mis_fac:
+          "Formar profesionales líderes competentes, con visión humanista y pensamiento crítico, a través de la Docencia, la Investigación y la Vinculación, que apliquen, promuevan y difundan el conocimiento respondiendo a las necesidades del país.",
         vis_fac:
-          "Ser referente nacional e internacional en formación tecnológica.",
-        nom_dec_fac: "Ing. Franklin",
-        ape_dec_fac: "Mayorga Mogollón",
-        cor_dec_fac: "fmayorga@uta.edu.ec",
-        url_img_dec_fac: "https://i.imgur.com/hYBsxIf.png",
-        nom_sub_dec_fac: "Dr. Javier",
-        ape_sub_dec_fac: "Sánchez Torres",
-        cor_sub_dec_fac: "j.sanchez@uta.edu.ec",
-        url_img_sub_dec_fac: "https://i.imgur.com/JIQy6Fa.png",
+          "La Facultad de Ingeniería en Sistemas, Electrónica e Industrial de la Universidad Técnica de Ambato, por sus niveles de excelencia, se constituirá como un centro de formación superior con liderazgo y proyección nacional e internacional.",
+        id_uni_per: universidad.id_uni,
       },
     });
+    console.log("Facultad creada correctamente");
 
-    // 2. Crear carreras
+    // 3. Crear autoridades de la facultad
+    const autoridadesFacultad = [
+      {
+        id_fac_per: facultad.id_fac,
+        tip_aut_fac: "DECANO",
+        nom_aut_fac: "Franklin",
+        ape_aut_fac: "Mayorga Mogollón",
+        cor_aut_fac: "fmayorga@uta.edu.ec",
+        url_img_aut_fac: "https://i.imgur.com/hYBsxIf.png",
+        tit_aut_fac: "Dr.",
+        fec_ini_aut_fac: new Date("2023-01-01"),
+      },
+      {
+        id_fac_per: facultad.id_fac,
+        tip_aut_fac: "SUBDECANO",
+        nom_aut_fac: "Javier",
+        ape_aut_fac: "Sánchez Torres",
+        cor_aut_fac: "j.sanchez@uta.edu.ec",
+        url_img_aut_fac: "https://i.imgur.com/JIQy6Fa.png",
+        tit_aut_fac: "Dr.",
+        fec_ini_aut_fac: new Date("2023-01-01"),
+      },
+    ];
+
+    // Creación de autoridades de facultad
+    await Promise.all(
+      autoridadesFacultad.map((autoridad) =>
+        prisma.autoridad_facultad.upsert({
+          where: {
+            id_aut_fac: `${autoridad.id_fac_per}-${autoridad.tip_aut_fac}`,
+          },
+          update: autoridad,
+          create: {
+            ...autoridad,
+            id_aut_fac: `${autoridad.id_fac_per}-${autoridad.tip_aut_fac}`,
+          },
+        })
+      )
+    );
+    console.log("Autoridades de facultad creadas correctamente");
+
+    // 4. Crear coordinadores
+    const coordinadores = [
+      {
+        nom_coo: "Marco Guachimboza",
+        ape_coo: "",
+        cor_coo: "marcovguachimboza@uta.edu.ec",
+        url_img_coo: "https://i.imgur.com/XDFrTBI.png",
+        tit_coo: "Ing. Mg.",
+      },
+      {
+        nom_coo: "Freddy Robalino",
+        ape_coo: "",
+        cor_coo: "r.morales@uta.edu.ec",
+        url_img_coo: "https://i.imgur.com/daKWf7d.png",
+        tit_coo: "Ing. Mg.",
+      },
+      {
+        nom_coo: "César Rosero",
+        ape_coo: "",
+        cor_coo: "cesararosero@uta.edu.ec",
+        url_img_coo: "https://i.imgur.com/d4hRu17.png",
+        tit_coo: "Ing. Mg.",
+      },
+    ];
+
+    const coordinadoresCreados = await Promise.all(
+      coordinadores.map((coordinador) =>
+        prisma.coordinador.upsert({
+          where: { cor_coo: coordinador.cor_coo },
+          update: coordinador,
+          create: coordinador,
+        })
+      )
+    );
+    console.log("Coordinadores creados correctamente");
+
+    // 5. Crear carreras
     const carreras = [
       {
         nom_car: "Tecnologías de la Información",
@@ -44,6 +145,7 @@ async function main() {
         mod_car: "PRESENCIAL",
         ico_car: "https://i.imgur.com/aqDLXJ5.png",
         id_fac_per: facultad.id_fac,
+        id_coo_per: coordinadoresCreados[0].id_coo, // Marco Guachimboza
       },
       {
         nom_car: "Telecomunicaciones",
@@ -53,6 +155,7 @@ async function main() {
         mod_car: "PRESENCIAL",
         ico_car: "https://i.imgur.com/wCcBd1j.png",
         id_fac_per: facultad.id_fac,
+        id_coo_per: coordinadoresCreados[1].id_coo, // Freddy Robalino
       },
       {
         nom_car: "Ingeniería Industrial",
@@ -62,6 +165,7 @@ async function main() {
         mod_car: "PRESENCIAL",
         ico_car: "https://i.imgur.com/FeH6kXA.png",
         id_fac_per: facultad.id_fac,
+        id_coo_per: coordinadoresCreados[2].id_coo, // César Rosero
       },
       {
         nom_car: "Software",
@@ -71,6 +175,7 @@ async function main() {
         mod_car: "SEMIPRESENCIAL",
         ico_car: "https://i.imgur.com/UdwSGn9.png",
         id_fac_per: facultad.id_fac,
+        id_coo_per: coordinadoresCreados[0].id_coo, // Marco Guachimboza
       },
       {
         nom_car: "Automatización y Robótica",
@@ -80,6 +185,7 @@ async function main() {
         mod_car: "PRESENCIAL",
         ico_car: "https://i.imgur.com/Z6w3jgc.png",
         id_fac_per: facultad.id_fac,
+        id_coo_per: coordinadoresCreados[1].id_coo, // Freddy Robalino
       },
     ];
 
@@ -94,6 +200,7 @@ async function main() {
             dur_sem_car: carrera.dur_sem_car,
             mod_car: carrera.mod_car,
             ico_car: carrera.ico_car,
+            id_coo_per: carrera.id_coo_per,
           },
           create: { ...carrera, est_car: true },
         })
@@ -101,7 +208,7 @@ async function main() {
     );
     console.log("Carreras insertadas correctamente");
 
-    // 3. Usuarios de prueba
+    // 6. Usuarios de prueba
     await prisma.usuario.upsert({
       where: { ced_usu: "9999999999" },
       update: {},
@@ -148,12 +255,12 @@ async function main() {
 
     console.log("Usuarios de prueba insertados correctamente");
 
-    // 4. Obtener cuenta admin
+    // 7. Obtener cuenta admin
     const cuentaAdmin = await prisma.cuenta.findUnique({
       where: { cor_usu: "admin@uta.edu.ec" },
     });
 
-    // 5. Insertar evento principal
+    // 8. Insertar evento principal
     await prisma.evento.upsert({
       where: { id_eve: "80ce8ece-c17a-4c82-9d0d-be303eb25e37" },
       update: {
@@ -194,7 +301,7 @@ async function main() {
     });
     console.log("Evento principal insertado correctamente");
 
-    // 6. Eventos adicionales
+    // 9. Eventos adicionales
     const eventos = [
       {
         id_eve: "73c28d62-e7e4-45df-81c8-654e9fb2d36c",
@@ -276,7 +383,7 @@ async function main() {
     );
     console.log("Eventos adicionales insertados correctamente");
 
-    // 7. Evento de tipo CURSO
+    // 10. Evento de tipo CURSO
     const eventoCursoBase = {
       id_eve: "30854a1f-06c7-4c7c-979f-62545b54c9aa", // ID del evento CURSO
       nom_eve: "Curso De Python",
