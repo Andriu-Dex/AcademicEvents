@@ -1,4 +1,5 @@
 const prisma = require("../config/db");
+const jwt = require("jsonwebtoken");
 
 /**
  * @class EmailVerificationService
@@ -92,12 +93,14 @@ class EmailVerificationService {
           resultadoValidacion.cuentaVerificada
         ) {
           console.log(
-            `[${new Date().toISOString()}] Token ${tokenValue} ya usado pero cuenta ya verificada, retornando éxito`
+            `[${new Date().toISOString()}] Token ${tokenValue} ya usado y cuenta ya verificada, retornando error`
           );
+
           return {
-            success: true,
-            message: "¡Correo verificado exitosamente!",
-            idCuenta: resultadoValidacion.token.id_cue_per,
+            success: false,
+            message: "Este enlace ya ha sido utilizado.",
+            motivo: "USO_NORMAL",
+            token: resultadoValidacion.token,
           };
         }
 
@@ -183,13 +186,41 @@ class EmailVerificationService {
         );
         return cuentaActualizada;
       });
+
+      // Obtener la información completa de la cuenta para generar el JWT
+      const cuentaCompleta = await prisma.cuenta.findUnique({
+        where: { id_cue: resultadoValidacion.token.id_cue_per },
+        include: {
+          usuario: true,
+        },
+      });
+
+      // Generar token JWT para autenticación automática
+      const jwtToken = jwt.sign(
+        {
+          id: cuentaCompleta.id_cue,
+          rol_usu: cuentaCompleta.rol_usu,
+        },
+        process.env.JWT_SECRET,
+        { expiresIn: "2h" }
+      );
+
       console.log(
-        `[${new Date().toISOString()}] Retornando respuesta exitosa para token ${tokenValue}`
+        `[${new Date().toISOString()}] Retornando respuesta exitosa con JWT para token ${tokenValue}`
       );
       return {
         success: true,
         message: "¡Correo verificado exitosamente!",
         idCuenta: resultadoValidacion.token.id_cue_per,
+        // Datos de autenticación para login automático
+        authToken: jwtToken,
+        usuario: {
+          id: cuentaCompleta.id_cue,
+          correo: cuentaCompleta.cor_usu,
+          rol_usu: cuentaCompleta.rol_usu,
+          nom_usu: cuentaCompleta.usuario.nom_usu,
+          ape_usu: cuentaCompleta.usuario.ape_usu,
+        },
       };
     } catch (error) {
       console.error(

@@ -33,30 +33,9 @@ function analizarValidaciones(inscripciones) {
       },
     ];
   }
-
   // Agrupar por responsable (usando datos reales del administrador validador)
   const porResponsable = {};
   validaciones.forEach((ins) => {
-    // Debug: Log de cada inscripción para ver qué datos tenemos
-    console.log("🔍 Analizando inscripción:", {
-      id_ins: ins.id_ins,
-      estado: ins.est_ins,
-      id_adm_val_ins: ins.id_adm_val_ins,
-      tiene_admin_validador: !!ins.admin_validador,
-      admin_validador: ins.admin_validador
-        ? {
-            id_cue: ins.admin_validador.id_cue,
-            tiene_usuario: !!ins.admin_validador.usuario,
-            usuario: ins.admin_validador.usuario
-              ? {
-                  nom_usu: ins.admin_validador.usuario.nom_usu,
-                  ape_usu: ins.admin_validador.usuario.ape_usu,
-                }
-              : null,
-          }
-        : null,
-    });
-
     // Obtener información del administrador validador
     let responsableId = ins.id_adm_val_ins || "desconocido";
     let nombreResponsable = "Sistema";
@@ -67,14 +46,9 @@ function analizarValidaciones(inscripciones) {
     } else if (ins.id_adm_val_ins) {
       // Tenemos ID del validador pero no los datos completos
       nombreResponsable = `Validador ID: ${ins.id_adm_val_ins}`;
-      console.log(
-        "⚠️ Inscripción con ID de validador pero sin datos del admin_validador:",
-        ins.id_ins
-      );
     } else {
       // No tenemos ni ID ni datos del validador
       nombreResponsable = "Validación sin registro de responsable";
-      console.log("❌ Inscripción sin validador registrado:", ins.id_ins);
     }
 
     // Clave para agrupar (usamos el ID real o "desconocido-estado" si no hay ID)

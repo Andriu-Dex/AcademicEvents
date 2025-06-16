@@ -37,6 +37,7 @@ const verificarToken = async (req, res) => {
         success: resultado.success,
         message: resultado.message,
         motivo: resultado.motivo || "N/A",
+        tieneAuth: !!resultado.authToken,
       }
     );
 
@@ -56,10 +57,20 @@ const verificarToken = async (req, res) => {
     console.log(
       `[${new Date().toISOString()}] Controller: Verificación exitosa para token ${token}`
     );
-    return res.status(200).json({
+
+    // Respuesta exitosa con datos de autenticación
+    const response = {
       success: true,
       message: resultado.message,
-    });
+    };
+
+    // Si hay datos de autenticación, incluirlos
+    if (resultado.authToken && resultado.usuario) {
+      response.authToken = resultado.authToken;
+      response.usuario = resultado.usuario;
+    }
+
+    return res.status(200).json(response);
   } catch (error) {
     console.error("Error en verificación de token:", error);
     return res.status(500).json({

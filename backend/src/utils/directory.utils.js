@@ -13,7 +13,6 @@ const setupDirectories = () => {
   // Crear directorio base si no existe
   if (!fs.existsSync(baseDir)) {
     fs.mkdirSync(baseDir, { recursive: true });
-    console.log("✅ Directorio base de uploads creado");
   }
 
   // Crear cada subdirectorio
@@ -21,11 +20,8 @@ const setupDirectories = () => {
     const dirPath = path.join(baseDir, dir);
     if (!fs.existsSync(dirPath)) {
       fs.mkdirSync(dirPath, { recursive: true });
-      console.log(`✅ Directorio ${dir} creado`);
     }
   });
-
-  console.log("✅ Estructura de directorios verificada correctamente");
 };
 
 module.exports = {

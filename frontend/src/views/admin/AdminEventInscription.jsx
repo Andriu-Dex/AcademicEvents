@@ -117,17 +117,6 @@ const AdminEventInscription = () => {
         (estadosFinales.includes(inscripcionActual.estado) &&
           estado === "ACEPTADA");
 
-      console.log("Cambiando estado con los siguientes datos:");
-      console.log("ID:", id_ins);
-      console.log("Estado:", estado);
-      console.log("Es flujo de finalización:", esFlujoDeFinalizacion);
-      console.log(
-        "URL:",
-        `${
-          import.meta.env.VITE_API_URL
-        }/api/admin/inscripciones/validar/${id_ins}`
-      );
-
       const token = localStorage.getItem("token");
       const response = await axios.put(
         `${
@@ -139,8 +128,6 @@ const AdminEventInscription = () => {
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
-      console.log("Respuesta del servidor:", response.data);
 
       // Actualizar tanto las inscripciones como la información del evento
       await Promise.all([
@@ -228,8 +215,6 @@ const AdminEventInscription = () => {
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
-      console.log("Respuesta de verificación de cupos:", response.data);
 
       if (response.data.success) {
         // Si no se requirió corrección

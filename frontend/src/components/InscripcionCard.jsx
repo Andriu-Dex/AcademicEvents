@@ -38,7 +38,6 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
 
   const cambiarEstado = async (nuevoEstado) => {
     setLoading(true);
-    console.log(nuevoEstado + " lalalal InscripnCard.jsx");
     try {
       await axiosInstance.put(
         `/admin/inscripciones/validar/${inscripcion.id_ins}`,

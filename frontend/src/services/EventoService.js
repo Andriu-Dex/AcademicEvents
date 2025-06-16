@@ -6,7 +6,6 @@ class EventoService {
   constructor() {
     this.baseURL =
       (import.meta.env.VITE_API_URL || "http://localhost:3000") + "/api";
-    console.log("EventoService - Base URL configurada:", this.baseURL);
   }
 
   /**
@@ -28,7 +27,6 @@ class EventoService {
       throw error;
     }
   }
-
   /**
    * Marca o desmarca un evento como destacado
    * @param {string} idEvento - ID del evento
@@ -38,24 +36,14 @@ class EventoService {
     esDestacado
   ) {
     try {
-      console.log("=== FRONTEND - TOGGLE EVENTO DESTACADO ===");
-      console.log("ID Evento:", idEvento);
-      console.log("Es Destacado:", esDestacado);
-
       const token = localStorage.getItem("token");
-      console.log("Token encontrado:", token ? "SÍ" : "NO");
 
       if (!token) {
         throw new Error("No se encontró token de autenticación");
       }
 
       const url = `${this.baseURL}/eventos/${idEvento}/destacado`;
-      console.log("URL completa:", url);
-      console.log("BaseURL:", this.baseURL);
-      console.log("Método: PATCH, Valor eve_des:", esDestacado);
-
       const requestBody = { eve_des: esDestacado };
-      console.log("Body a enviar:", JSON.stringify(requestBody));
 
       const response = await fetch(url, {
         method: "PATCH",
@@ -66,23 +54,13 @@ class EventoService {
         body: JSON.stringify(requestBody),
       });
 
-      console.log("Response status:", response.status);
-      console.log("Response statusText:", response.statusText);
-      console.log("Response ok:", response.ok);
-      console.log("Response status:", response.status);
-      console.log("Response statusText:", response.statusText);
-      console.log("Response ok:", response.ok);
-
       if (!response.ok) {
-        console.log("Response no ok, obteniendo error data...");
         const responseText = await response.text();
-        console.log("Response text:", responseText);
 
         let errorData;
         try {
           errorData = JSON.parse(responseText);
         } catch (parseError) {
-          console.log("Error al parsear JSON de respuesta:", parseError);
           throw new Error(
             `Error ${response.status}: Respuesta no JSON - ${responseText}`
           );
@@ -93,17 +71,10 @@ class EventoService {
         );
       }
 
-      console.log("Respuesta exitosa, parseando JSON...");
       const result = await response.json();
-      console.log("Resultado:", result);
-      console.log("=== FIN FRONTEND TOGGLE ===");
       return result;
     } catch (error) {
-      console.error("=== ERROR FRONTEND TOGGLE ===");
-      console.error("Error completo:", error);
-      console.error("Mensaje:", error.message);
-      console.error("Stack:", error.stack);
-      console.error("=== FIN ERROR FRONTEND ===");
+      console.error("Error al cambiar estado destacado:", error.message);
       throw error;
     }
   }

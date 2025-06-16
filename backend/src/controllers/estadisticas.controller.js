@@ -55,9 +55,7 @@ const obtenerEstadisticasHome = async (req, res) => {
     let tasaParticipacion = 0;
     if (totalEventos > 0) {
       tasaParticipacion = Math.round((totalInscripciones / totalEventos) * 100);
-    }
-
-    // Formatear los números para mostrarlos más atractivos
+    } // Formatear los números para mostrarlos más atractivos
     const estadisticas = {
       carreras: totalCarreras,
       eventosActivos: eventosActivos,
@@ -65,7 +63,6 @@ const obtenerEstadisticasHome = async (req, res) => {
       tasaParticipacion: `${tasaParticipacion}%`,
     };
 
-    console.log("📊 Estadísticas finales:", estadisticas);
     res.status(200).json(estadisticas);
   } catch (error) {
     console.error("Error al obtener estadísticas del home:", error);

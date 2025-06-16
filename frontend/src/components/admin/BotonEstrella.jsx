@@ -17,37 +17,23 @@ const BotonEstrella = ({ idEvento, estadoInicial, onToggle, disabled }) => {
    */
   const handleClick = async () => {
     if (disabled || cargando) return;
-
     try {
-      console.log("=== BOTON ESTRELLA - INICIO ===");
-      console.log("ID Evento:", idEvento);
-      console.log("Estado actual:", esDestacado);
-
       setCargando(true);
       const nuevoEstado = !esDestacado;
-      console.log("Nuevo estado a aplicar:", nuevoEstado);
 
       // Llamar al servicio para actualizar
-      console.log("Llamando a EventoService.toggleEventoDestacado...");
       const respuesta = await EventoService.toggleEventoDestacado(
         idEvento,
         nuevoEstado
       );
 
-      console.log("Respuesta del servicio:", respuesta);
-
       if (respuesta && respuesta.ok) {
-        console.log("Respuesta exitosa, actualizando estado local...");
         setEsDestacado(nuevoEstado); // Notificar al componente padre del cambio
         if (onToggle) {
-          console.log("Notificando al componente padre...");
           onToggle(nuevoEstado);
         }
-
-        console.log("=== BOTON ESTRELLA - FIN EXITOSO ===");
       }
     } catch (error) {
-      console.error("=== ERROR EN BOTON ESTRELLA ===");
       console.error("Error completo:", error);
       console.error("Mensaje:", error.message);
       console.error("Stack:", error.stack);

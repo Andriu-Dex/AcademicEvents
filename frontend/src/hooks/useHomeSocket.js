@@ -34,12 +34,9 @@ export const useHomeSocket = (options = {}) => {
   // Estado local para manejar las actualizaciones
   const [hasNewUpdates, setHasNewUpdates] = useState(false);
   const [lastUpdateTime, setLastUpdateTime] = useState(null);
-
   // Manejar actualizaciones de eventos
   useEffect(() => {
     if (eventUpdates && eventUpdates.id) {
-      console.log("🏠 Home detectó cambio en evento:", eventUpdates);
-
       setHasNewUpdates(true);
       setLastUpdateTime(new Date());
 
@@ -62,8 +59,6 @@ export const useHomeSocket = (options = {}) => {
   // Manejar actualizaciones de inscripciones
   useEffect(() => {
     if (inscriptionUpdates && inscriptionUpdates.id) {
-      console.log("🏠 Home detectó cambio en inscripción:", inscriptionUpdates);
-
       setHasNewUpdates(true);
       setLastUpdateTime(new Date());
 
@@ -91,8 +86,6 @@ export const useHomeSocket = (options = {}) => {
   // Manejar actualizaciones de cupos
   useEffect(() => {
     if (cuposUpdates && cuposUpdates.id) {
-      console.log("🏠 Home detectó cambio en cupos:", cuposUpdates);
-
       setHasNewUpdates(true);
       setLastUpdateTime(new Date());
 
@@ -117,10 +110,6 @@ export const useHomeSocket = (options = {}) => {
     if (systemNotifications.length > 0) {
       const latestNotification =
         systemNotifications[systemNotifications.length - 1];
-      console.log(
-        "🏠 Home recibió notificación del sistema:",
-        latestNotification
-      );
 
       // Ejecutar callback si está definido
       if (onSystemNotification && typeof onSystemNotification === "function") {

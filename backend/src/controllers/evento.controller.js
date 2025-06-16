@@ -880,11 +880,6 @@ const verificarYCorregirCupos = async (req, res) => {
       data: { cup_dis_eve: cupoDisponibleCorrecto },
     });
 
-    // 6. Registrar en la consola y devolver respuesta
-    console.log(`✅ Cupos corregidos para evento: ${evento.nom_eve}`);
-    console.log(`   Cupo disponible anterior: ${cupoDisponibleActual}`);
-    console.log(`   Cupo disponible corregido: ${cupoDisponibleCorrecto}`);
-
     return res.status(200).json({
       success: true,
       msg: "Cupos corregidos exitosamente",
@@ -982,10 +977,6 @@ const verificarYCorregirTodosLosCupos = async (req, res) => {
           inscripciones_aceptadas: inscripcionesAceptadas,
           diferencia: cupoDisponibleCorrecto - cupoDisponibleActual,
         });
-
-        console.log(`✅ Cupos corregidos para evento: ${evento.nom_eve}`);
-        console.log(`   Cupo disponible anterior: ${cupoDisponibleActual}`);
-        console.log(`   Cupo disponible corregido: ${cupoDisponibleCorrecto}`);
       } else {
         resultados.correctos++;
       }

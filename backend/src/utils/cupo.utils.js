@@ -21,7 +21,6 @@ const prisma = require("../config/db");
 async function calcularCuposDisponibles(idEvento, tx) {
   try {
     const db = tx || prisma;
-    console.log(`📊 Calculando cupos para evento ID: ${idEvento}`);
 
     // 1. Obtener información del evento
     const evento = await db.evento.findUnique({
@@ -33,10 +32,6 @@ async function calcularCuposDisponibles(idEvento, tx) {
       throw new Error(`No se encontró el evento con ID ${idEvento}`);
     }
 
-    console.log(
-      `📌 Evento: "${evento.nom_eve}", Cupo máximo: ${evento.cup_max_eve}`
-    );
-
     // 2. Contar inscripciones que ocupan cupo - Usamos el nuevo campo cup_ocu
     const inscripcionesOcupandoCupo = await db.inscripcion.count({
       where: {
@@ -44,8 +39,6 @@ async function calcularCuposDisponibles(idEvento, tx) {
         cup_ocu: true,
       },
     });
-
-    console.log(`👥 Inscripciones ocupando cupo: ${inscripcionesOcupandoCupo}`);
 
     // 3. Calcular cupos disponibles
     const cupoMaximo = evento.cup_max_eve;
@@ -55,10 +48,6 @@ async function calcularCuposDisponibles(idEvento, tx) {
       cupoMaximo - inscripcionesOcupandoCupo
     );
 
-    console.log(
-      `🔢 Cupos: Máximos=${cupoMaximo}, Ocupados=${cuposOcupados}, Disponibles=${cuposDisponibles}`
-    );
-
     return {
       disponibles: cuposDisponibles,
       maximos: cupoMaximo,
@@ -66,7 +55,7 @@ async function calcularCuposDisponibles(idEvento, tx) {
     };
   } catch (error) {
     console.error(
-      `❌ Error al calcular cupos disponibles para evento ${idEvento}:`,
+      `Error al calcular cupos disponibles para evento ${idEvento}:`,
       error
     );
     throw error;
@@ -82,7 +71,6 @@ async function calcularCuposDisponibles(idEvento, tx) {
 async function sincronizarCuposDisponibles(idEvento, tx) {
   try {
     const db = tx || prisma;
-    console.log(`🔄 Sincronizando cupos para evento ID: ${idEvento}`);
 
     // 1. Obtener información actual del evento
     const evento = await db.evento.findUnique({
@@ -94,10 +82,6 @@ async function sincronizarCuposDisponibles(idEvento, tx) {
       throw new Error(`No se encontró el evento con ID ${idEvento}`);
     }
 
-    console.log(
-      `📌 Evento: "${evento.nom_eve}", Cupos disponibles actuales: ${evento.cup_dis_eve}`
-    );
-
     const cupoDisponibleAnterior = evento.cup_dis_eve;
 
     // 2. Calcular cupos disponibles
@@ -106,22 +90,10 @@ async function sincronizarCuposDisponibles(idEvento, tx) {
 
     // 3. Actualizar solo si hay discrepancia
     if (cupoDisponibleAnterior !== cupoDisponibleCalculado) {
-      console.log(
-        `⚠️ Detectada discrepancia en cupos disponibles: ${cupoDisponibleAnterior} ≠ ${cupoDisponibleCalculado}`
-      );
-
       await db.evento.update({
         where: { id_eve: idEvento },
         data: { cup_dis_eve: cupoDisponibleCalculado },
       });
-
-      console.log(
-        `✅ Cupo disponible corregido: ${cupoDisponibleAnterior} → ${cupoDisponibleCalculado}`
-      );
-    } else {
-      console.log(
-        `✅ Cupo disponible ya es correcto: ${cupoDisponibleCalculado}`
-      );
     }
 
     return {
@@ -130,7 +102,7 @@ async function sincronizarCuposDisponibles(idEvento, tx) {
     };
   } catch (error) {
     console.error(
-      `❌ Error al sincronizar cupos disponibles para evento ${idEvento}:`,
+      `Error al sincronizar cupos disponibles para evento ${idEvento}:`,
       error
     );
     throw error;
@@ -152,10 +124,6 @@ async function actualizarEstadoYSincronizarCupos(
   datosAdicionales = {},
   idAdministrador = null
 ) {
-  console.log(
-    `⚙️ Iniciando actualización de estado para inscripción ID: ${idInscripcion} → ${nuevoEstado}`
-  );
-
   try {
     // Ejecutamos todo en una transacción atómica para garantizar consistencia
     const resultado = await prisma.$transaction(async (tx) => {
@@ -188,14 +156,6 @@ async function actualizarEstadoYSincronizarCupos(
       const idEvento = inscripcion.id_eve_ins;
       const ocupabaCupo = inscripcion.cup_ocu;
 
-      console.log(
-        `📋 Inscripción: ${idInscripcion}, Evento: "${inscripcion.evento.nom_eve}"`
-      );
-      console.log(
-        `🔄 Transición de estado: ${estadoAnterior} → ${nuevoEstado}`
-      );
-      console.log(`🔢 Ocupaba cupo anteriormente: ${ocupabaCupo}`);
-
       // 2. Determinar si la inscripción debe ocupar cupo con el nuevo estado
       let debeOcuparCupo = ocupabaCupo; // Por defecto, mantener el estado actual
 
@@ -208,30 +168,13 @@ async function actualizarEstadoYSincronizarCupos(
       ];
 
       // NUEVO ENFOQUE SIMPLIFICADO: Basado únicamente en el estado al que se transiciona
-      // Esta lógica es más clara y menos propensa a errores
-
       if (nuevoEstado === "ACEPTADA" || estadosFinales.includes(nuevoEstado)) {
         // Si va a ACEPTADA o cualquier estado final, debe ocupar cupo
         debeOcuparCupo = true;
-        console.log(`🔄 Transición a ${nuevoEstado}: Debe ocupar cupo`);
       } else if (nuevoEstado === "PENDIENTE" || nuevoEstado === "RECHAZADA") {
         // Si va a PENDIENTE o RECHAZADA, no debe ocupar cupo
         debeOcuparCupo = false;
-        console.log(`🔄 Transición a ${nuevoEstado}: No debe ocupar cupo`);
       }
-
-      // Validación adicional para transiciones prohibidas
-      if (
-        estadosFinales.includes(estadoAnterior) &&
-        nuevoEstado === "RECHAZADA"
-      ) {
-        console.warn(
-          `⚠️ ADVERTENCIA: Transición de estado final a RECHAZADA no recomendada`
-        );
-        // La validación real se hace en el controlador, aquí solo advertimos
-      }
-
-      console.log(`🔢 Debe ocupar cupo ahora: ${debeOcuparCupo}`);
 
       // Preparar datos de actualización incluyendo información de validación si corresponde
       let datosActualizacion = {
@@ -245,9 +188,6 @@ async function actualizarEstadoYSincronizarCupos(
       if (estadoAnterior !== nuevoEstado && idAdministrador) {
         datosActualizacion.id_adm_val_ins = idAdministrador;
         datosActualizacion.fec_val_ins = new Date();
-        console.log(
-          `👤 Validación registrada por administrador ID: ${idAdministrador}`
-        );
       }
 
       // 3. Actualizar estado de inscripción y el campo cup_ocu
@@ -255,9 +195,6 @@ async function actualizarEstadoYSincronizarCupos(
         where: { id_ins: idInscripcion },
         data: datosActualizacion,
       });
-
-      console.log(`✅ Estado de inscripción actualizado a: ${nuevoEstado}`);
-      console.log(`✅ Campo cup_ocu actualizado a: ${debeOcuparCupo}`);
 
       // 4. Sincronizar cupos después de la actualización
       const resultadoSincronizacion = await sincronizarCuposDisponibles(
@@ -283,12 +220,9 @@ async function actualizarEstadoYSincronizarCupos(
       };
     });
 
-    console.log(`✅ Transacción completada con éxito`);
-    console.log(`📊 Resultado: ${JSON.stringify(resultado, null, 2)}`);
-
     return resultado;
   } catch (error) {
-    console.error(`❌ Error en la transacción:`, error);
+    console.error(`Error en actualización de estado:`, error);
     throw error;
   }
 }

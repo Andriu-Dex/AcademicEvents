@@ -35,16 +35,14 @@ export const SocketProvider = ({ children }) => {
     const backendUrl =
       import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 
-    console.log("🔌 Intentando conectar a Socket.IO:", backendUrl);
+    console.log("🔌 Conectando a Socket.IO:", backendUrl);
 
     const newSocket = io(backendUrl, {
       withCredentials: true,
       transports: ["websocket", "polling"],
       timeout: 10000,
       forceNew: true,
-    });
-
-    // Eventos de conexión
+    }); // Eventos de conexión
     newSocket.on("connect", () => {
       console.log("✅ Socket.IO conectado:", newSocket.id);
       setIsConnected(true);
@@ -63,7 +61,6 @@ export const SocketProvider = ({ children }) => {
             role: user.rol,
             token: token,
           });
-          console.log("🔐 Usuario autenticado en socket:", user.id);
         } catch (error) {
           console.error("Error al autenticar usuario en socket:", error);
         }
@@ -84,11 +81,8 @@ export const SocketProvider = ({ children }) => {
 
     // ======================================
     // Eventos específicos para el Home
-    // ======================================
-
-    // Cambios en eventos
+    // ======================================    // Cambios en eventos
     newSocket.on("evento-change-hm", (data) => {
-      console.log("📡 Cambio en evento recibido:", data);
       setEventUpdates({
         action: data.action,
         data: data.data,

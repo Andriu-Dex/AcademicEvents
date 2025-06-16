@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useAuth } from "../context/AuthContext";
 import VerificationSuccess from "../components/verification/VerificationSuccess";
 import VerificationError from "../components/verification/VerificationError";
 
@@ -12,6 +13,7 @@ import VerificationError from "../components/verification/VerificationError";
 const VerifyEmail = () => {
   const { token } = useParams();
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [status, setStatus] = useState("verifying"); // verifying, success, error
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -38,27 +40,28 @@ const VerifyEmail = () => {
           `${import.meta.env.VITE_API_URL}/api/verificacion/${token}`
         );
 
-        console.log(`[Frontend] Respuesta recibida:`, response.data);
-
         if (response.data.success) {
-          console.log(`[Frontend] Verificación exitosa para token: ${token}`);
-          setStatus("success");
-          toast.success("¡Correo verificado exitosamente!");
+          // Si hay datos de autenticación, iniciar sesión automáticamente
+          if (response.data.authToken && response.data.usuario) {
+            login(response.data.usuario, response.data.authToken);
+            toast.success("¡Correo verificado! Redirigiendo al inicio...");
+
+            // Redirigir al home después de un breve delay para mostrar el toast
+            setTimeout(() => {
+              navigate("/");
+            }, 1500);
+          } else {
+            // Fallback al comportamiento anterior si no hay datos de auth
+            setStatus("success");
+            toast.success("¡Correo verificado exitosamente!");
+          }
         } else {
-          console.log(
-            `[Frontend] Verificación fallida para token: ${token}`,
-            response.data.message
-          );
           setStatus("error");
           setError(
             response.data.message || "Error al verificar el correo electrónico"
           );
         }
       } catch (error) {
-        console.log(
-          `[Frontend] Error en verificación para token: ${token}`,
-          error.response?.data
-        );
         setStatus("error");
         setError(
           error.response?.data?.message ||
@@ -98,7 +101,8 @@ const VerifyEmail = () => {
       setLoading(false);
     }
   };
-  // Redireccionar al home después de una verificación exitosa
+
+  // Redireccionar al home después de una verificación exitosa (fallback)
   const handleContinue = () => {
     navigate("/");
   };
@@ -114,8 +118,8 @@ const VerifyEmail = () => {
       </div>
     );
   }
-
   if (status === "success") {
+    // Mostrar componente de éxito para casos fallback (sin auto-login)
     return <VerificationSuccess onContinue={handleContinue} />;
   }
 
