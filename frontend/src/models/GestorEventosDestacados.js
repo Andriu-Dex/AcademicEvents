@@ -1,4 +1,5 @@
 import EventoDestacado from "./EventoDestacado";
+import { useSocket } from "../context/SocketContext";
 
 /**
  * @class GestorEventosDestacados
@@ -14,6 +15,15 @@ class GestorEventosDestacados {
     this.eventosDestacados = [];
     this.cargando = false;
     this.error = null;
+    this.onEventoDestacadoChange = null;
+  }
+
+  /**
+   * Configura un callback para cuando cambia un evento destacado
+   * @param {Function} callback - Función a llamar cuando hay cambios
+   */
+  setOnEventoDestacadoChange(callback) {
+    this.onEventoDestacadoChange = callback;
   }
 
   /**
@@ -36,6 +46,40 @@ class GestorEventosDestacados {
       throw error;
     } finally {
       this.cargando = false;
+    }
+  }
+
+  /**
+   * Actualiza la lista de eventos destacados con nuevos datos desde el servidor
+   * @param {Object} eventoData - Datos del evento actualizado
+   */
+  actualizarEventoDestacado(eventoData) {
+    if (!eventoData) return;
+
+    // Determinar acción según si es destacado o no
+    if (eventoData.esDestacado) {
+      // Si es destacado y no existe, lo agregamos
+      const eventoExistente = this.eventosDestacados.find(
+        (evento) => evento.id === eventoData.id
+      );
+
+      if (!eventoExistente && eventoData.evento) {
+        const nuevoEvento = new EventoDestacado(eventoData.evento);
+        this.eventosDestacados.push(nuevoEvento);
+      }
+    } else {
+      // Si ya no es destacado, lo eliminamos de la lista
+      this.eventosDestacados = this.eventosDestacados.filter(
+        (evento) => evento.id !== eventoData.id
+      );
+    }
+
+    // Notificar al componente que hubo un cambio
+    if (
+      this.onEventoDestacadoChange &&
+      typeof this.onEventoDestacadoChange === "function"
+    ) {
+      this.onEventoDestacadoChange(this.eventosDestacados);
     }
   }
 

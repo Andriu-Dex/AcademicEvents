@@ -1107,6 +1107,14 @@ const toggleEventoDestacado = async (req, res) => {
 
     console.log("Evento actualizado exitosamente:", eventoActualizado.nom_eve);
 
+    // Notificar a todos los clientes mediante socket
+    socketService.notifyEventChange("updated", {
+      id: eventoActualizado.id_eve,
+      tipo: "destacado",
+      esDestacado: eve_des,
+      evento: eventoActualizado,
+    });
+
     const response = {
       evento: eventoActualizado,
       msg: eve_des

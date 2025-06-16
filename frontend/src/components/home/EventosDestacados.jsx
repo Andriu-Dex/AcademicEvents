@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useMemo,
+} from "react";
 import { Link } from "react-router-dom";
 import {
   ChevronLeft,
@@ -10,6 +16,9 @@ import {
 } from "lucide-react";
 import EventoService from "../../services/EventoService";
 import GestorEventosDestacados from "../../models/GestorEventosDestacados";
+import GestorModales from "../../models/GestorModales";
+import { useHomeSocket } from "../../hooks/useHomeSocket";
+import ModalRequisitos from "../ModalRequisitos";
 import "./styles/EventosDestacados.css";
 
 /**
@@ -17,22 +26,92 @@ import "./styles/EventosDestacados.css";
  * @description Componente que muestra los eventos destacados en el Home
  */
 const EventosDestacados = () => {
+  // Estados del componente
   const [eventosDestacados, setEventosDestacados] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isHovering, setIsHovering] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [modalEvento, setModalEvento] = useState(null);
 
+  // Referencias para evitar re-creaciones
   const carouselRef = useRef(null);
   const gestorEventos = useRef(
     new GestorEventosDestacados(EventoService)
   ).current;
+  const gestorModales = useRef(new GestorModales(setModalEvento)).current;
 
-  // Determinar si se debe usar carrusel (más de 3 eventos)
-  const shouldUseCarousel = eventosDestacados.length > 3;
+  // Callbacks para evitar re-renderizados
+  const handleEventUpdate = useCallback(
+    (updateData) => {
+      if (
+        updateData.action === "updated" &&
+        updateData.data.tipo === "destacado"
+      ) {
+        console.log("Actualizando evento destacado:", updateData.data);
+        gestorEventos.actualizarEventoDestacado(updateData.data);
+      }
+    },
+    [gestorEventos]
+  );
 
-  // Cargar eventos destacados al montar el componente
+  // Hook para sockets con callback estable
+  const { eventUpdates } = useHomeSocket({
+    onEventUpdate: handleEventUpdate,
+  });
+
+  // Cálculos memorizados para rendimiento
+  const shouldUseCarousel = useMemo(
+    () => eventosDestacados.length > 3,
+    [eventosDestacados.length]
+  );
+
+  // Callbacks para navegación del carrusel
+  const nextSlide = useCallback(() => {
+    if (!shouldUseCarousel) return;
+    setCurrentSlide((prev) => prev + 1);
+  }, [shouldUseCarousel]);
+
+  const prevSlide = useCallback(() => {
+    if (!shouldUseCarousel) return;
+    setCurrentSlide((prev) => prev - 1);
+  }, [shouldUseCarousel]);
+
+  const goToSlide = useCallback(
+    (index) => {
+      if (!shouldUseCarousel) return;
+      setCurrentSlide(index);
+    },
+    [shouldUseCarousel]
+  );
+
+  // Manejador para abrir el modal de detalles
+  const handleVerDetalles = useCallback(
+    (evento) => {
+      // Convertir evento destacado al formato compatible con el modal
+      const eventoParaModal = {
+        id_eve: evento.id,
+        nom_eve: evento.titulo,
+        des_eve: evento.descripcion,
+        fec_ini_eve: evento.fechaInicio.toISOString(),
+        fec_fin_eve: evento.fechaFin.toISOString(),
+        mod_eve: evento.modalidad,
+        val_eve: evento.valor,
+        tip_eve: evento.tipo,
+        dur_hor_eve: evento.duracionHoras,
+        cup_dis_eve: evento.cuposDisponibles,
+        cup_max_eve: evento.cuposMaximos,
+        est_eve: evento.estado,
+        img_por_eve: evento.imagen,
+      };
+
+      gestorModales.abrirModal(eventoParaModal);
+    },
+    [gestorModales]
+  );
+
+  // Efecto para cargar eventos destacados (solo se ejecuta una vez)
   useEffect(() => {
     const cargarEventosDestacados = async () => {
       try {
@@ -53,13 +132,26 @@ const EventosDestacados = () => {
 
     cargarEventosDestacados();
 
-    // Iniciar carrusel automático si hay suficientes eventos
+    // Configurar el callback para actualizaciones en tiempo real (solo una vez)
+    gestorEventos.setOnEventoDestacadoChange((nuevosEventosDestacados) => {
+      console.log(
+        "🔄 Actualizando lista de eventos destacados:",
+        nuevosEventosDestacados
+      );
+      setEventosDestacados([...nuevosEventosDestacados]);
+    });
+  }, []);
+
+  // Efecto separado para el carrusel automático
+  useEffect(() => {
     let carouselInterval;
 
-    if (shouldUseCarousel && !isHovering) {
+    if (shouldUseCarousel && eventosDestacados.length > 1) {
+      const intervalTime = isHovering ? 2000 : 5000;
+
       carouselInterval = setInterval(() => {
         nextSlide();
-      }, 5000); // Cambiar cada 5 segundos
+      }, intervalTime);
     }
 
     return () => {
@@ -67,86 +159,89 @@ const EventosDestacados = () => {
         clearInterval(carouselInterval);
       }
     };
-  }, [isHovering, shouldUseCarousel]);
+  }, [isHovering, shouldUseCarousel, nextSlide, eventosDestacados.length]);
 
-  // Extender eventos para carrusel infinito
-  const extendedEventos = shouldUseCarousel
-    ? [...eventosDestacados, ...eventosDestacados.slice(0, 3)]
-    : eventosDestacados;
+  // Actualizar eventos cuando hay cambios desde el socket
+  useEffect(() => {
+    if (
+      eventUpdates &&
+      eventUpdates.action === "updated" &&
+      eventUpdates.data.tipo === "destacado"
+    ) {
+      console.log(
+        "🔄 EventoDestacado: Procesando actualización de socket:",
+        eventUpdates.data
+      );
+    }
+  }, [eventUpdates]);
 
-  // Funciones para controlar el carrusel
-  const nextSlide = () => {
-    if (!shouldUseCarousel) return;
-
-    const nextIndex = currentSlide + 1;
-
-    // Si llegamos al final, reiniciamos sin animación
-    if (nextIndex >= eventosDestacados.length) {
-      setIsTransitioning(true);
+  // Efecto para reiniciar posición del carrusel cuando cambian los eventos destacados
+  useEffect(() => {
+    if (eventosDestacados.length > 0) {
       setCurrentSlide(0);
-
-      // Restaurar la transición después
-      setTimeout(() => {
-        setIsTransitioning(false);
-      }, 50);
-    } else {
-      setCurrentSlide(nextIndex);
     }
-  };
+  }, [eventosDestacados.length]);
 
-  const prevSlide = () => {
-    if (!shouldUseCarousel) return;
+  // Efecto para manejar el bucle infinito
+  useEffect(() => {
+    if (!shouldUseCarousel || eventosDestacados.length === 0) return;
 
-    if (currentSlide === 0) {
-      // Ir al final sin transición
-      setIsTransitioning(true);
-      setCurrentSlide(eventosDestacados.length - 1);
-
+    if (currentSlide === eventosDestacados.length) {
       setTimeout(() => {
-        setIsTransitioning(false);
-      }, 50);
-    } else {
-      setCurrentSlide(currentSlide - 1);
+        setIsTransitioning(true);
+        setCurrentSlide(0);
+        setTimeout(() => setIsTransitioning(false), 50);
+      }, 500);
+    } else if (currentSlide < 0) {
+      setTimeout(() => {
+        setIsTransitioning(true);
+        setCurrentSlide(eventosDestacados.length - 1);
+        setTimeout(() => setIsTransitioning(false), 50);
+      }, 500);
     }
-  };
+  }, [currentSlide, eventosDestacados.length, shouldUseCarousel]);
 
-  const goToSlide = (index) => {
-    if (!shouldUseCarousel) return;
-    setCurrentSlide(index);
-  };
+  // Extender eventos para carrusel infinito (como valor memorizado)
+  const extendedEventos = useMemo(
+    () =>
+      shouldUseCarousel
+        ? [...eventosDestacados, ...eventosDestacados.slice(0, 3)]
+        : eventosDestacados,
+    [eventosDestacados, shouldUseCarousel]
+  );
 
   // Obtener ícono según modalidad
-  const getModalidadIcon = (modalidad) => {
+  const getModalidadIcon = useCallback((modalidad) => {
     switch (modalidad) {
       case "PRESENCIAL":
-        return <MapPin size={16} className="evento-icon-h" />;
+        return <MapPin size={16} className="evento-icon-ed" />;
       case "VIRTUAL":
-        return <Monitor size={16} className="evento-icon-h" />;
+        return <Monitor size={16} className="evento-icon-ed" />;
       case "SEMIPRESENCIAL":
-        return <Laptop size={16} className="evento-icon-h" />;
+        return <Monitor size={16} className="evento-icon-ed" />;
       default:
-        return <MapPin size={16} className="evento-icon-h" />;
+        return <MapPin size={16} className="evento-icon-ed" />;
     }
-  };
+  }, []);
 
   // Formatear fecha en español
-  const formatFecha = (fechaString) => {
+  const formatFecha = useCallback((fechaString) => {
     const fecha = new Date(fechaString);
     return fecha.toLocaleDateString("es-ES", {
       day: "2-digit",
       month: "long",
       year: "numeric",
     });
-  };
+  }, []);
 
-  // Renderizar el componente
+  // Renderizados condicionales
   if (cargando) {
     return (
-      <section className="eventos-destacados-section-h">
-        <div className="eventos-destacados-header-h">
-          <h2 className="eventos-destacados-title-h">Eventos Destacados</h2>
-          <div className="eventos-destacados-loading-h">
-            <div className="spinner-h"></div>
+      <section className="eventos-destacados-section-ed">
+        <div className="eventos-destacados-header-ed">
+          <h2 className="eventos-destacados-title-ed">Eventos Destacados</h2>
+          <div className="eventos-destacados-loading-ed">
+            <div className="spinner-ed"></div>
             <p>Cargando eventos destacados...</p>
           </div>
         </div>
@@ -156,10 +251,10 @@ const EventosDestacados = () => {
 
   if (error) {
     return (
-      <section className="eventos-destacados-section-h">
-        <div className="eventos-destacados-header-h">
-          <h2 className="eventos-destacados-title-h">Eventos Destacados</h2>
-          <p className="eventos-destacados-error-h">{error}</p>
+      <section className="eventos-destacados-section-ed">
+        <div className="eventos-destacados-header-ed">
+          <h2 className="eventos-destacados-title-ed">Eventos Destacados</h2>
+          <p className="eventos-destacados-error-ed">{error}</p>
         </div>
       </section>
     );
@@ -169,18 +264,19 @@ const EventosDestacados = () => {
     return null; // No mostrar la sección si no hay eventos destacados
   }
 
+  // Renderizado principal
   return (
-    <section className="eventos-destacados-section-h" id="eventos-destacados">
-      <div className="eventos-destacados-header-h">
-        <h2 className="eventos-destacados-title-h">Eventos Destacados</h2>
-        <p className="eventos-destacados-subtitle-h">
+    <section className="eventos-destacados-section-ed" id="eventos-destacados">
+      <div className="eventos-destacados-header-ed">
+        <h2 className="eventos-destacados-title-ed">Eventos Destacados</h2>
+        <p className="eventos-destacados-subtitle-ed">
           Conoce nuestras propuestas más relevantes
         </p>
       </div>
 
       <div
         className={
-          shouldUseCarousel ? "carousel-container-h" : "static-container-h"
+          shouldUseCarousel ? "carousel-container-ed" : "static-container-ed"
         }
         onMouseEnter={shouldUseCarousel ? () => setIsHovering(true) : undefined}
         onMouseLeave={
@@ -189,7 +285,7 @@ const EventosDestacados = () => {
       >
         {shouldUseCarousel && (
           <button
-            className="carousel-btn-h carousel-btn-prev-h"
+            className="carousel-btn-ed carousel-btn-prev-ed"
             onClick={prevSlide}
             aria-label="Anterior evento destacado"
           >
@@ -197,10 +293,10 @@ const EventosDestacados = () => {
           </button>
         )}
 
-        <div className="carousel-window-h">
+        <div className="carousel-window-ed">
           <div
             className={
-              shouldUseCarousel ? "eventos-carousel-h" : "eventos-static-h"
+              shouldUseCarousel ? "eventos-carousel-ed" : "eventos-static-ed"
             }
             ref={carouselRef}
             style={
@@ -215,42 +311,47 @@ const EventosDestacados = () => {
             }
           >
             {extendedEventos.map((evento, index) => (
-              <article className="evento-card-h carousel-item-h" key={index}>
-                <div className="evento-image-container-h">
+              <article
+                className="evento-card-ed carousel-item-ed"
+                key={`evento-${evento.id}-${index}`}
+              >
+                <div className="evento-image-container-ed">
                   <img
                     src={evento.imagen}
                     alt={evento.titulo}
-                    className="evento-image-h"
+                    className="evento-image-ed"
                   />
-                  <span className="evento-badge-destacado-h">⭐ Destacado</span>
+                  <span className="evento-badge-destacado-ed">
+                    ⭐ Destacado
+                  </span>
                 </div>
 
-                <div className="evento-content-h">
-                  <h3 className="evento-titulo-h">{evento.titulo}</h3>
+                <div className="evento-content-ed">
+                  <h3 className="evento-titulo-ed">{evento.titulo}</h3>
 
-                  <div className="evento-detalles-h">
-                    <div className="evento-fecha-h">
-                      <Calendar size={16} className="evento-icon-h" />
+                  <div className="evento-detalles-ed">
+                    <div className="evento-fecha-ed">
+                      <Calendar size={16} className="evento-icon-ed" />
                       <span>{formatFecha(evento.fechaInicio)}</span>
                     </div>
 
-                    <div className="evento-duracion-h">
-                      <Clock size={16} className="evento-icon-h" />
+                    <div className="evento-duracion-ed">
+                      <Clock size={16} className="evento-icon-ed" />
                       <span>{evento.duracionHoras} horas</span>
                     </div>
 
-                    <div className="evento-modalidad-h">
+                    <div className="evento-modalidad-ed">
                       {getModalidadIcon(evento.modalidad)}
                       <span>{evento.modalidad.toLowerCase()}</span>
                     </div>
                   </div>
 
-                  <div className="evento-footer-h">
+                  <div className="evento-footer-ed">
                     <span
-                      className={`evento-valor-h ${
+                      className={`evento-valor-ed ${
                         evento.valor === 0
-                          ? "evento-gratuito-h"
-                          : "evento-pago-h"
+                          ? "evento-gratuito-ed"
+                          : "evento-pago-ed"
                       }`}
                     >
                       {evento.valor === 0
@@ -258,12 +359,12 @@ const EventosDestacados = () => {
                         : `$${evento.valor.toFixed(2)}`}
                     </span>
 
-                    <Link
-                      to={`/eventos/${evento.id}`}
-                      className="evento-ver-mas-h"
+                    <button
+                      onClick={() => handleVerDetalles(evento)}
+                      className="evento-ver-mas-ed"
                     >
                       Ver detalles
-                    </Link>
+                    </button>
                   </div>
                 </div>
               </article>
@@ -273,7 +374,7 @@ const EventosDestacados = () => {
 
         {shouldUseCarousel && (
           <button
-            className="carousel-btn-h carousel-btn-next-h"
+            className="carousel-btn-ed carousel-btn-next-ed"
             onClick={nextSlide}
             aria-label="Siguiente evento destacado"
           >
@@ -283,13 +384,13 @@ const EventosDestacados = () => {
       </div>
 
       {shouldUseCarousel && eventosDestacados.length > 1 && (
-        <div className="carousel-indicators-h">
+        <div className="carousel-indicators-ed">
           {eventosDestacados.map((_, index) => (
             <button
-              key={index}
-              className={`carousel-indicator-h ${
+              key={`indicator-${index}`}
+              className={`carousel-indicator-ed ${
                 index === currentSlide % eventosDestacados.length
-                  ? "active-h"
+                  ? "active-ed"
                   : ""
               }`}
               onClick={() => goToSlide(index)}
@@ -297,6 +398,13 @@ const EventosDestacados = () => {
             />
           ))}
         </div>
+      )}
+
+      {modalEvento && (
+        <ModalRequisitos
+          evento={modalEvento}
+          onClose={() => gestorModales.cerrarModal()}
+        />
       )}
     </section>
   );
