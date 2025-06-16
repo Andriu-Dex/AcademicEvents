@@ -1,4 +1,5 @@
 const { PrismaClient } = require("../src/generated/prisma");
+const bcrypt = require("bcrypt");
 const prisma = new PrismaClient();
 
 async function main() {
@@ -80,19 +81,49 @@ async function main() {
         tit_aut_fac: "Dr.",
         fec_ini_aut_fac: new Date("2023-01-01"),
       },
+      {
+        id_fac_per: facultad.id_fac,
+        tip_aut_fac: "COORDINADOR",
+        nom_aut_fac: "Marco",
+        ape_aut_fac: "Guachimboza",
+        cor_aut_fac: "marcovguachimboza@uta.edu.ec",
+        url_img_aut_fac: "https://i.imgur.com/XDFrTBI.png",
+        tit_aut_fac: "Ing. Mg.",
+        fec_ini_aut_fac: new Date("2023-01-01"),
+      },
+      {
+        id_fac_per: facultad.id_fac,
+        tip_aut_fac: "COORDINADOR",
+        nom_aut_fac: "Freddy",
+        ape_aut_fac: "Robalino",
+        cor_aut_fac: "r.morales@uta.edu.ec",
+        url_img_aut_fac: "https://i.imgur.com/daKWf7d.png",
+        tit_aut_fac: "Ing. Mg.",
+        fec_ini_aut_fac: new Date("2023-01-01"),
+      },
+      {
+        id_fac_per: facultad.id_fac,
+        tip_aut_fac: "COORDINADOR",
+        nom_aut_fac: "César",
+        ape_aut_fac: "Rosero",
+        cor_aut_fac: "cesararosero@uta.edu.ec",
+        url_img_aut_fac: "https://i.imgur.com/d4hRu17.png",
+        tit_aut_fac: "Ing. Mg.",
+        fec_ini_aut_fac: new Date("2023-01-01"),
+      },
     ];
 
     // Creación de autoridades de facultad
     await Promise.all(
-      autoridadesFacultad.map((autoridad) =>
+      autoridadesFacultad.map((autoridad, index) =>
         prisma.autoridad_facultad.upsert({
           where: {
-            id_aut_fac: `${autoridad.id_fac_per}-${autoridad.tip_aut_fac}`,
+            id_aut_fac: `${autoridad.id_fac_per}-${autoridad.tip_aut_fac}-${index}`,
           },
           update: autoridad,
           create: {
             ...autoridad,
-            id_aut_fac: `${autoridad.id_fac_per}-${autoridad.tip_aut_fac}`,
+            id_aut_fac: `${autoridad.id_fac_per}-${autoridad.tip_aut_fac}-${index}`,
           },
         })
       )
@@ -208,23 +239,35 @@ async function main() {
     );
     console.log("Carreras insertadas correctamente");
 
-    // 6. Usuarios de prueba
+    // 6. Usuarios de prueba - Super Admin con correo verificado
+    const superAdminCedula = process.env.SUPER_ADMIN_CEDULA || "9999999999";
+    const superAdminEmail = process.env.SUPER_ADMIN_EMAIL || "admin@uta.edu.ec";
+    const superAdminPassword = process.env.SUPER_ADMIN_PASSWORD || "Admin12345";
+
+    // Hashear la contraseña si viene desde las variables de entorno
+    let hashedPassword =
+      "$2b$10$9rzmh2NncdUMRaZDpRDcpOiv59fwxuafQOvmeYxa4sGwqHhx6KvnW"; // Default hashed Admin12345
+    if (superAdminPassword !== "Admin12345") {
+      hashedPassword = await bcrypt.hash(superAdminPassword, 10);
+    }
+
     await prisma.usuario.upsert({
-      where: { ced_usu: "9999999999" },
+      where: { ced_usu: superAdminCedula },
       update: {},
       create: {
-        ced_usu: "9999999999",
-        nom_usu: "Admin",
-        ape_usu: "Principal",
+        ced_usu: superAdminCedula,
+        nom_usu: "Super",
+        ape_usu: "Administrador",
         cel_usu: "0999999999",
         fec_cre_usu: new Date(),
         cuentas: {
           create: [
             {
-              cor_usu: "admin@uta.edu.ec",
-              con_usu:
-                "$2b$10$9rzmh2NncdUMRaZDpRDcpOiv59fwxuafQOvmeYxa4sGwqHhx6KvnW",
+              cor_usu: superAdminEmail,
+              con_usu: hashedPassword,
               rol_usu: "ADMIN_GLOBAL",
+              est_ver_cor: true, // Correo verificado automáticamente
+              fec_ver_cor: new Date(), // Fecha de verificación
             },
           ],
         },
@@ -245,8 +288,10 @@ async function main() {
             {
               cor_usu: "estudiante@uta.edu.ec",
               con_usu:
-                "$2b$10$9rzmh2NncdUMRaZDpRDcpOiv59fwxuafQOvmeYxa4sGwqHhx6KvnW",
+                "$2b$10$K4pLrJPZVgSq1AUc4klUQujp6m/83oU6ucJuB16udNApjHpg899o2", // 123456
               rol_usu: "ESTUDIANTE",
+              est_ver_cor: true,
+              fec_ver_cor: new Date(),
             },
           ],
         },

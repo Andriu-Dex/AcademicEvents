@@ -1,0 +1,278 @@
+/**
+ * Estilos para el componente AdminGestion
+ * Usa el color institucional #8A1538 como tema principal
+ */
+
+/* Contenedor principal */
+.container-admin-gestion-ag {
+  background-color: #f8f8fa;
+  min-height: calc(100vh - 64px);
+  padding: 25px;
+  border-radius: 12px;
+  width: 75%;
+}
+
+/* Título principal */
+.titulo-principal-ag {
+  color: #8a1538;
+  padding-bottom: 15px;
+  border-bottom: 3px solid #8a1538;
+  margin-bottom: 30px;
+  font-weight: 700;
+  font-size: 28px;
+  letter-spacing: -0.5px;
+}
+
+/* Subtítulos */
+.subtitulo-ag {
+  color: #8a1538;
+  font-weight: 600;
+  margin-bottom: 24px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(138, 21, 56, 0.2);
+  font-size: 22px;
+}
+
+/* Secciones */
+.formulario-section-ag,
+.lista-section-ag {
+  background-color: white;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  padding: 28px;
+  border-top: 4px solid #8a1538;
+}
+
+.formulario-section-ag:hover,
+.lista-section-ag:hover {
+  box-shadow: 0 6px 12px rgba(138, 21, 56, 0.1);
+}
+
+/* Inputs y campos de formulario */
+.campo-form-ag {
+  margin-bottom: 24px;
+  position: relative;
+}
+
+.campo-form-ag label {
+  color: #333;
+  margin-bottom: 8px;
+  font-weight: 500;
+  display: block;
+  font-size: 15px;
+}
+
+.input-ag,
+.select-ag {
+  width: 100%;
+  padding: 13px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 15px;
+  background-color: #fcfcfc;
+  transition: all 0.2s;
+  color: #333;
+}
+
+.input-ag::placeholder {
+  color: #9ca3af;
+  opacity: 0.7;
+}
+
+.input-ag:focus,
+.select-ag:focus {
+  border-color: #8a1538;
+  box-shadow: 0 0 0 3px rgba(138, 21, 56, 0.15);
+  outline: none;
+  background-color: #fff;
+}
+
+/* Botón de crear */
+.boton-container-ag {
+  margin-top: 32px;
+}
+
+.boton-crear-ag {
+  background-color: #8a1538;
+  color: white;
+  font-weight: 600;
+  padding: 14px 20px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  border: none;
+  width: 100%;
+  font-size: 16px;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(138, 21, 56, 0.3);
+}
+
+.boton-crear-ag::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: 0.5s;
+}
+
+.boton-crear-ag:hover {
+  background-color: #6a1029;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(138, 21, 56, 0.4);
+}
+
+.boton-crear-ag:hover::before {
+  left: 100%;
+}
+
+.boton-crear-ag:active {
+  transform: translateY(0);
+}
+
+.boton-crear-ag:disabled {
+  background-color: #c98c9a;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Tabla de administradores */
+.tabla-admins-ag {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.celdas-tabla-ag {
+  padding: 10px 0 10px 10px;
+}
+
+.tabla-admins-ag .thead-ag {
+  background-color: rgba(138, 21, 56, 0.08);
+}
+
+.tabla-admins-ag .th-ag {
+  padding: 16px;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.7px;
+  color: #8a1538;
+  text-align: left;
+  border-bottom: 2px solid rgba(138, 21, 56, 0.1);
+}
+
+.tabla-admins-ag .td-ag {
+  padding: 16px;
+  vertical-align: middle;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.tabla-admins-ag .tr-ag:hover {
+  background-color: rgba(138, 21, 56, 0.03);
+}
+
+.tabla-admins-ag .tr-ag:last-child .td-ag {
+  border-bottom: none;
+}
+
+/* Estado de carga (spinner) */
+.spinner-ag {
+  border: 3px solid rgba(138, 21, 56, 0.1);
+  border-top: 3px solid #8a1538;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin-ag 1s linear infinite;
+  margin: 30px auto;
+}
+
+@keyframes spin-ag {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Estilos para mensajes de error */
+.error-message-ag {
+  color: #e53e3e;
+  font-size: 12px;
+  margin-top: 6px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  position: absolute;
+}
+
+.error-message-ag::before {
+  content: "⚠";
+  margin-right: 4px;
+  font-size: 10px;
+}
+
+/* Estado vacío */
+.estado-vacio-ag {
+  color: #666;
+  padding: 40px 24px;
+  text-align: center;
+  background-color: rgba(138, 21, 56, 0.02);
+  border-radius: 8px;
+  border: 1px dashed rgba(138, 21, 56, 0.2);
+  font-size: 15px;
+}
+
+.estado-vacio-ag::before {
+  content: "📋";
+  display: block;
+  font-size: 24px;
+  margin-bottom: 10px;
+  opacity: 0.6;
+}
+
+/* Estilos para badges de estado */
+.badge-role-ag {
+  padding: 4px 10px;
+  border-radius: 30px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  font-size: 12px;
+  line-height: 1.5;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.badge-role-superadmin-ag {
+  background-color: rgba(138, 21, 56, 0.1);
+  color: #8a1538;
+}
+
+.badge-role-admin-ag {
+  background-color: rgba(37, 99, 235, 0.1);
+  color: #2563eb;
+}
+
+.badge-verified-ag {
+  background-color: rgba(22, 163, 74, 0.1);
+  color: #16a34a;
+}
+
+.badge-pending-ag {
+  background-color: rgba(234, 179, 8, 0.1);
+  color: #ca8a04;
+}

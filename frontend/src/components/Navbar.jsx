@@ -278,6 +278,19 @@ const Navbar = () => {
                 </span>
                 <span>MVA</span>
               </Link>
+              {usuario.rol_usu === "ADMIN_GLOBAL" && (
+                <Link
+                  to="/admin/gestion-admins"
+                  className={`nav-link-item ${isActive(
+                    "/admin/gestion-admins"
+                  )}`}
+                >
+                  <span className="nav-link-icon">
+                    <UserCheck size={18} />
+                  </span>
+                  <span>Gestionar Admins</span>
+                </Link>
+              )}
             </>
           )}
         </div>

@@ -23,6 +23,7 @@ import AdminEvents from "./views/admin/AdminEvents.jsx";
 import AdminCarreras from "./views/admin/AdminCarreras.jsx";
 import AdminConfiguracionMVA from "./views/admin/AdminConfiguracionMVA.jsx";
 import AdminInscripciones from "./views/admin/AdminInscripciones";
+import AdminGestion from "./views/admin/AdminGestion.jsx"; // Nuevo componente de gestión de administradores
 import CreateEvent from "./views/admin/CreateEvent.jsx";
 import EditEvent from "./views/admin/EditEvent.jsx";
 import AdminEventInscription from "./views/admin/AdminEventInscription";
@@ -183,6 +184,16 @@ function App() {
             }
           />
           <Route
+            path="/admin/gestion-admins"
+            element={
+              <PrivateRouteAdmin>
+                <PrivateLayout>
+                  <AdminGestion />
+                </PrivateLayout>
+              </PrivateRouteAdmin>
+            }
+          />
+          <Route
             path="/admin/reportes-evento"
             element={
               <PrivateRouteAdmin>
@@ -269,6 +280,16 @@ function App() {
               <PrivateRouteAdmin>
                 <PrivateLayout>
                   <AdminInscripciones />
+                </PrivateLayout>
+              </PrivateRouteAdmin>
+            }
+          />
+          <Route
+            path="/admin/gestion"
+            element={
+              <PrivateRouteAdmin>
+                <PrivateLayout>
+                  <AdminGestion />
                 </PrivateLayout>
               </PrivateRouteAdmin>
             }
