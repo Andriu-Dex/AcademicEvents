@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { Home } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import VerificationPending from "../components/verification/VerificationPending";
 import ResendVerification from "../components/verification/ResendVerification";
 import axios from "axios";
@@ -74,45 +73,20 @@ const VerificationPendingPage = () => {
       setLoading(false);
     }
   };
-
   // Manejar el éxito del reenvío desde el formulario
   const handleResendSuccess = (email) => {
     setShowResendForm(false);
     setEmail(email);
     localStorage.setItem("verificationPendingEmail", email);
   };
-  // Cambiar entre pantalla de verificación y formulario de reenvío
-  const toggleResendForm = () => {
-    setShowResendForm(!showResendForm);
-    setShowCorrectEmail(false);
-  };
 
   // Navegar a la página de corrección de correo
   const handleCorrectEmail = () => {
     navigate("/corregir-correo", { state: { email } });
   };
-
-  // Limpiar el email almacenado y volver al login
-  const handleGoToLogin = () => {
-    localStorage.removeItem("verificationPendingEmail");
-    navigate("/login");
-  };
-
   return (
     <div className="contenedor-pagina-vp min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
-      {" "}
       <div className="max-w-md mx-auto">
-        <div className="text-center mb-8">
-          <Link
-            to="/"
-            className="inline-flex items-center text-blue-600 hover:text-blue-800"
-          >
-            <span className="sr-only">Volver al inicio</span>
-            <Home className="h-5 w-5 mr-2" />
-            Volver al inicio
-          </Link>
-        </div>
-
         {!showResendForm ? (
           <VerificationPending
             email={email}
@@ -127,25 +101,6 @@ const VerificationPendingPage = () => {
             onSuccess={handleResendSuccess}
           />
         )}
-        <div className="mt-6 text-center">
-          <button
-            onClick={toggleResendForm}
-            className="text-sm text-blue-600 hover:underline"
-          >
-            {showResendForm
-              ? "Volver a la pantalla de verificación"
-              : "¿No recibiste ningún correo? Usar otro correo electrónico"}
-          </button>
-
-          <div className="mt-4">
-            <button
-              onClick={handleGoToLogin}
-              className="text-sm text-gray-600 hover:underline"
-            >
-              Volver al inicio de sesión
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   );

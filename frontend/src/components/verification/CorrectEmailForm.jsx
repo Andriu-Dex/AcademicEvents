@@ -1,8 +1,8 @@
 import React from "react";
-import { Mail, ArrowLeft, AlertTriangle, Loader2 } from "lucide-react";
+import { Mail, ArrowLeft, AlertTriangle, Loader2, School } from "lucide-react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import "../verification/styles/verification-styles.css";
+import "./styles/CorrectEmailForm.css";
 
 /**
  * @class CorrectEmailFormComponent
@@ -197,47 +197,33 @@ class CorrectEmailFormComponent extends React.Component {
   /**
    * Render del componente
    * @returns {JSX.Element} Componente JSX
-   */
-  render() {
+   */ render() {
     const { email, carreraId, loading, error, newIsUTA, typeChanged } =
       this.state;
     const { carreras = [] } = this.props;
 
     return (
-      <div className="container-vs">
-        <div className="header-vs">
-          <button
-            onClick={this.handleCancel}
-            className="link-vs"
-            style={{
-              position: "absolute",
-              left: "20px",
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
-            <ArrowLeft size={16} className="mr-1" />
-            Volver
-          </button>
-          <h2 className="title-vs">Corrección de Correo Electrónico</h2>
+      <div className="container-ce">
+        <button
+          onClick={this.handleCancel}
+          className="back-button-ce"
+          type="button"
+        >
+          <ArrowLeft size={16} />
+          Volver
+        </button>
+        <div className="header-ce">
+          <h2 className="title-ce">Corrección de Correo Electrónico</h2>
         </div>
 
-        <div className="content-vs">
+        <div className="content-ce">
           {typeChanged && (
-            <div className="correction-message-vs">
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  marginBottom: "8px",
-                }}
-              >
-                <AlertTriangle size={18} style={{ marginRight: "8px" }} />
-                <span style={{ fontWeight: "600" }}>
-                  Cambio de tipo de cuenta
-                </span>
+            <div className="alert-message-ce slide-in-ce">
+              <div className="alert-header-ce">
+                <AlertTriangle size={20} color="#ffc107" />
+                <h4 className="alert-title-ce">Cambio de tipo de cuenta</h4>
               </div>
-              <p style={{ fontSize: "14px" }}>
+              <p className="alert-content-ce">
                 {newIsUTA
                   ? "Ha cambiado a un correo institucional. Ahora debe seleccionar su carrera."
                   : "Ha cambiado a un correo no institucional. Su cuenta será de tipo general."}
@@ -245,106 +231,61 @@ class CorrectEmailFormComponent extends React.Component {
             </div>
           )}
 
-          {error && (
-            <div className="error-message-vs" style={{ margin: "15px 0" }}>
-              {error}
-            </div>
-          )}
+          {error && <div className="error-message-ce">{error}</div>}
 
-          <form onSubmit={this.handleSubmit} style={{ width: "100%" }}>
-            <div style={{ marginBottom: "20px" }}>
-              <label
-                htmlFor="email"
-                style={{
-                  display: "block",
-                  marginBottom: "8px",
-                  fontWeight: "500",
-                  color: "#333",
-                }}
-              >
+          <form onSubmit={this.handleSubmit} className="transition-ce">
+            <div className="form-group-ce">
+              <label htmlFor="email" className="form-label-ce">
                 Correo electrónico
               </label>
-              <div style={{ position: "relative" }}>
-                <Mail
-                  size={18}
-                  style={{
-                    position: "absolute",
-                    left: "12px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    color: "#6b7280",
-                  }}
-                />
+              <div className="input-container-ce">
+                <Mail size={18} className="input-icon-ce" />
                 <input
                   type="email"
                   id="email"
                   value={email}
                   onChange={this.handleEmailChange}
-                  style={{
-                    width: "100%",
-                    padding: "10px 10px 10px 40px",
-                    border: "1px solid #d1d5db",
-                    borderRadius: "4px",
-                    fontSize: "16px",
-                  }}
+                  className="input-field-ce"
                   placeholder="Ingrese el correo correcto"
                   disabled={loading}
                 />
               </div>
-              <p
-                style={{ fontSize: "14px", color: "#6b7280", marginTop: "4px" }}
-              >
+              <p className="input-help-ce">
                 Asegúrese de escribir correctamente el correo para recibir la
                 verificación.
               </p>
             </div>
 
             {newIsUTA && (
-              <div style={{ marginBottom: "20px" }}>
-                <label
-                  htmlFor="carrera"
-                  style={{
-                    display: "block",
-                    marginBottom: "8px",
-                    fontWeight: "500",
-                    color: "#333",
-                  }}
-                >
+              <div className="form-group-ce slide-in-ce">
+                <label htmlFor="carrera" className="form-label-ce">
                   Carrera
                 </label>
-                <select
-                  id="carrera"
-                  value={carreraId}
-                  onChange={this.handleCarreraChange}
-                  style={{
-                    width: "100%",
-                    padding: "10px",
-                    border: "1px solid #d1d5db",
-                    borderRadius: "4px",
-                    fontSize: "16px",
-                  }}
-                  disabled={loading || !newIsUTA}
-                >
-                  <option value="">Seleccione su carrera</option>
-                  {carreras.map((carrera) => (
-                    <option key={carrera.id_car} value={carrera.id_car}>
-                      {carrera.nom_car}
-                    </option>
-                  ))}
-                </select>
+                <div className="input-container-ce">
+                  <School size={18} className="input-icon-ce" />
+                  <select
+                    id="carrera"
+                    value={carreraId}
+                    onChange={this.handleCarreraChange}
+                    className="input-field-ce select-field-ce"
+                    disabled={loading || !newIsUTA}
+                  >
+                    <option value="">Seleccione su carrera</option>
+                    {carreras.map((carrera) => (
+                      <option key={carrera.id_car} value={carrera.id_car}>
+                        {carrera.nom_car}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
             )}
 
-            <div className="actions-vs">
-              <button
-                type="submit"
-                disabled={loading}
-                className="button-vs"
-                style={{ width: "100%" }}
-              >
+            <div className="actions-ce">
+              <button type="submit" disabled={loading} className="button-ce">
                 {loading ? (
                   <>
-                    <Loader2 className="spinner-vs" size={16} />
+                    <Loader2 className="spinner-ce" size={18} />
                     Actualizando...
                   </>
                 ) : (

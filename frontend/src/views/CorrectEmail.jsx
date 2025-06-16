@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation, Link } from "react-router-dom";
-import { Home } from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
+import { Loader2 } from "lucide-react";
 import CorrectEmailForm from "../components/verification/CorrectEmailForm";
+import HomeButton from "../components/common/HomeButton";
+import "../components/verification/styles/CorrectEmailForm.css";
 
 /**
  * Página para corregir el correo electrónico antes de verificar
@@ -97,28 +99,32 @@ const CorrectEmail = () => {
   const handleCancel = () => {
     navigate("/verificacion-pendiente");
   };
-
   if (loading) {
     return (
-      <div className="contenedor-cargando-correo-cc flex justify-center items-center min-h-screen">
-        <div className="spinner-cargando-cc animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500 border-solid"></div>
+      <div
+        className="min-h-screen flex justify-center items-center bg-gray-100"
+        style={{
+          background: "linear-gradient(135deg, #f5f7fa 0%, #e8eaed 100%)",
+        }}
+      >
+        <div className="p-8 rounded-lg shadow-lg bg-white flex flex-col items-center">
+          <Loader2 className="animate-spin h-12 w-12 text-[#8a1538] mb-4" />
+          <p className="text-gray-600 font-medium">Cargando información...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="contenedor-pagina-cc min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md mx-auto">
-        <div className="text-center mb-8">
-          <Link
-            to="/"
-            className="inline-flex items-center text-blue-600 hover:text-blue-800"
-          >
-            <Home className="h-5 w-5 mr-2" />
-            <span>Volver al inicio</span>
-          </Link>
-        </div>
+    <div className="contenedor-padre-ce">
+      {/* Botón de inicio */}
+      <HomeButton
+        position={{ top: "20px", right: "20px" }}
+        redirectTo="/home"
+        useNavigate={true}
+      />
 
+      <div className="max-w-md mx-auto">
         <CorrectEmailForm
           currentEmail={email}
           isUTA={isUTA}
@@ -133,3 +139,4 @@ const CorrectEmail = () => {
 };
 
 export default CorrectEmail;
+// Andriu Dex
