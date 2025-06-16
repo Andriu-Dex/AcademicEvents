@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axiosInstance from "../api/axiosConfig";
 import {
@@ -27,7 +27,9 @@ import { useAuth } from "../hooks/useAuth";
 import Navbar from "../components/Navbar";
 import { toast } from "react-toastify";
 import ModalRequisitos from "../components/ModalRequisitos";
+import GestorModales from "../models/GestorModales";
 import "./styles/EventosPublicos.css";
+import "./styles/ModalEventosPublicos.css";
 import "./styles/animaciones.css";
 
 // Función para formatear fechas correctamente usando UTC
@@ -70,6 +72,9 @@ const EventosPublicos = () => {
   const [filtro, setFiltro] = useState("");
   const [cargando, setCargando] = useState(true);
   const [modalEvento, setModalEvento] = useState(null);
+
+  // Crear instancia del gestor de modales
+  const gestorModales = useRef(new GestorModales(setModalEvento)).current;
 
   // Estados para los filtros
   const [filtros, setFiltros] = useState({
@@ -599,7 +604,7 @@ const EventosPublicos = () => {
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        setModalEvento(evento);
+                        gestorModales.abrirModal(evento);
                       }}
                     >
                       <Info size={16} /> Ver Requisitos
@@ -617,7 +622,8 @@ const EventosPublicos = () => {
       {modalEvento && (
         <ModalRequisitos
           evento={modalEvento}
-          onClose={() => setModalEvento(null)}
+          onClose={() => gestorModales.cerrarModal()}
+          overlayClassName="modal-requisitos-overlay-ep"
         />
       )}
     </>

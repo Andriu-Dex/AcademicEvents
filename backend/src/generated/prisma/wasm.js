@@ -167,7 +167,9 @@ exports.Prisma.CuentaScalarFieldEnum = {
   cor_usu: 'cor_usu',
   con_usu: 'con_usu',
   fec_cre_cue: 'fec_cre_cue',
-  rol_usu: 'rol_usu'
+  rol_usu: 'rol_usu',
+  est_ver_cor: 'est_ver_cor',
+  fec_ver_cor: 'fec_ver_cor'
 };
 
 exports.Prisma.CarreraScalarFieldEnum = {
@@ -270,6 +272,19 @@ exports.Prisma.FacultadScalarFieldEnum = {
   url_img_sub_dec_fac: 'url_img_sub_dec_fac'
 };
 
+exports.Prisma.Token_cuentaScalarFieldEnum = {
+  id_tok: 'id_tok',
+  id_cue_per: 'id_cue_per',
+  tok_val: 'tok_val',
+  tip_tok: 'tip_tok',
+  fec_exp_tok: 'fec_exp_tok',
+  est_uso: 'est_uso',
+  fec_uso: 'fec_uso',
+  fec_cre_tok: 'fec_cre_tok',
+  ip_sol: 'ip_sol',
+  ip_uso: 'ip_uso'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -335,6 +350,13 @@ exports.tipo_certificado = exports.$Enums.tipo_certificado = {
   APROBACION: 'APROBACION'
 };
 
+exports.tipo_token = exports.$Enums.tipo_token = {
+  VERIFICAR_CORREO: 'VERIFICAR_CORREO',
+  RECUPERAR_PASSWORD: 'RECUPERAR_PASSWORD',
+  CAMBIAR_CORREO: 'CAMBIAR_CORREO',
+  ELIMINAR_CUENTA: 'ELIMINAR_CUENTA'
+};
+
 exports.Prisma.ModelName = {
   usuario: 'usuario',
   comprobante_pago: 'comprobante_pago',
@@ -349,7 +371,8 @@ exports.Prisma.ModelName = {
   inscripcion: 'inscripcion',
   inscripcion_curso: 'inscripcion_curso',
   certificado: 'certificado',
-  facultad: 'facultad'
+  facultad: 'facultad',
+  token_cuenta: 'token_cuenta'
 };
 
 /**

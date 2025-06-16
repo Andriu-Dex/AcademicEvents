@@ -83,6 +83,11 @@ export type certificado = $Result.DefaultSelection<Prisma.$certificadoPayload>
  * 
  */
 export type facultad = $Result.DefaultSelection<Prisma.$facultadPayload>
+/**
+ * Model token_cuenta
+ * 
+ */
+export type token_cuenta = $Result.DefaultSelection<Prisma.$token_cuentaPayload>
 
 /**
  * Enums
@@ -159,6 +164,16 @@ export const modalidad_evento: {
 
 export type modalidad_evento = (typeof modalidad_evento)[keyof typeof modalidad_evento]
 
+
+export const tipo_token: {
+  VERIFICAR_CORREO: 'VERIFICAR_CORREO',
+  RECUPERAR_PASSWORD: 'RECUPERAR_PASSWORD',
+  CAMBIAR_CORREO: 'CAMBIAR_CORREO',
+  ELIMINAR_CUENTA: 'ELIMINAR_CUENTA'
+};
+
+export type tipo_token = (typeof tipo_token)[keyof typeof tipo_token]
+
 }
 
 export type rol_usuario = $Enums.rol_usuario
@@ -188,6 +203,10 @@ export const tipo_certificado: typeof $Enums.tipo_certificado
 export type modalidad_evento = $Enums.modalidad_evento
 
 export const modalidad_evento: typeof $Enums.modalidad_evento
+
+export type tipo_token = $Enums.tipo_token
+
+export const tipo_token: typeof $Enums.tipo_token
 
 /**
  * ##  Prisma Client ʲˢ
@@ -453,6 +472,16 @@ export class PrismaClient<
     * ```
     */
   get facultad(): Prisma.facultadDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.token_cuenta`: Exposes CRUD operations for the **token_cuenta** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Token_cuentas
+    * const token_cuentas = await prisma.token_cuenta.findMany()
+    * ```
+    */
+  get token_cuenta(): Prisma.token_cuentaDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -906,7 +935,8 @@ export namespace Prisma {
     inscripcion: 'inscripcion',
     inscripcion_curso: 'inscripcion_curso',
     certificado: 'certificado',
-    facultad: 'facultad'
+    facultad: 'facultad',
+    token_cuenta: 'token_cuenta'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -925,7 +955,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "usuario" | "comprobante_pago" | "carta_motivacion" | "observacion_inscripcion" | "cuenta" | "carrera" | "coordinador" | "evento" | "evento_curso" | "evento_carrera" | "inscripcion" | "inscripcion_curso" | "certificado" | "facultad"
+      modelProps: "usuario" | "comprobante_pago" | "carta_motivacion" | "observacion_inscripcion" | "cuenta" | "carrera" | "coordinador" | "evento" | "evento_curso" | "evento_carrera" | "inscripcion" | "inscripcion_curso" | "certificado" | "facultad" | "token_cuenta"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1965,6 +1995,80 @@ export namespace Prisma {
           }
         }
       }
+      token_cuenta: {
+        payload: Prisma.$token_cuentaPayload<ExtArgs>
+        fields: Prisma.token_cuentaFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.token_cuentaFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$token_cuentaPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.token_cuentaFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$token_cuentaPayload>
+          }
+          findFirst: {
+            args: Prisma.token_cuentaFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$token_cuentaPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.token_cuentaFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$token_cuentaPayload>
+          }
+          findMany: {
+            args: Prisma.token_cuentaFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$token_cuentaPayload>[]
+          }
+          create: {
+            args: Prisma.token_cuentaCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$token_cuentaPayload>
+          }
+          createMany: {
+            args: Prisma.token_cuentaCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.token_cuentaCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$token_cuentaPayload>[]
+          }
+          delete: {
+            args: Prisma.token_cuentaDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$token_cuentaPayload>
+          }
+          update: {
+            args: Prisma.token_cuentaUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$token_cuentaPayload>
+          }
+          deleteMany: {
+            args: Prisma.token_cuentaDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.token_cuentaUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.token_cuentaUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$token_cuentaPayload>[]
+          }
+          upsert: {
+            args: Prisma.token_cuentaUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$token_cuentaPayload>
+          }
+          aggregate: {
+            args: Prisma.Token_cuentaAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateToken_cuenta>
+          }
+          groupBy: {
+            args: Prisma.token_cuentaGroupByArgs<ExtArgs>
+            result: $Utils.Optional<Token_cuentaGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.token_cuentaCountArgs<ExtArgs>
+            result: $Utils.Optional<Token_cuentaCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -2063,6 +2167,7 @@ export namespace Prisma {
     inscripcion_curso?: inscripcion_cursoOmit
     certificado?: certificadoOmit
     facultad?: facultadOmit
+    token_cuenta?: token_cuentaOmit
   }
 
   /* Types for Logging */
@@ -2194,6 +2299,7 @@ export namespace Prisma {
     eventos: number
     observaciones_creadas: number
     inscripciones_validadas: number
+    tokens_cuenta: number
   }
 
   export type CuentaCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2203,6 +2309,7 @@ export namespace Prisma {
     eventos?: boolean | CuentaCountOutputTypeCountEventosArgs
     observaciones_creadas?: boolean | CuentaCountOutputTypeCountObservaciones_creadasArgs
     inscripciones_validadas?: boolean | CuentaCountOutputTypeCountInscripciones_validadasArgs
+    tokens_cuenta?: boolean | CuentaCountOutputTypeCountTokens_cuentaArgs
   }
 
   // Custom InputTypes
@@ -2256,6 +2363,13 @@ export namespace Prisma {
    */
   export type CuentaCountOutputTypeCountInscripciones_validadasArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: inscripcionWhereInput
+  }
+
+  /**
+   * CuentaCountOutputType without action
+   */
+  export type CuentaCountOutputTypeCountTokens_cuentaArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: token_cuentaWhereInput
   }
 
 
@@ -6941,6 +7055,8 @@ export namespace Prisma {
     con_usu: string | null
     fec_cre_cue: Date | null
     rol_usu: $Enums.rol_usuario | null
+    est_ver_cor: boolean | null
+    fec_ver_cor: Date | null
   }
 
   export type CuentaMaxAggregateOutputType = {
@@ -6950,6 +7066,8 @@ export namespace Prisma {
     con_usu: string | null
     fec_cre_cue: Date | null
     rol_usu: $Enums.rol_usuario | null
+    est_ver_cor: boolean | null
+    fec_ver_cor: Date | null
   }
 
   export type CuentaCountAggregateOutputType = {
@@ -6959,6 +7077,8 @@ export namespace Prisma {
     con_usu: number
     fec_cre_cue: number
     rol_usu: number
+    est_ver_cor: number
+    fec_ver_cor: number
     _all: number
   }
 
@@ -6970,6 +7090,8 @@ export namespace Prisma {
     con_usu?: true
     fec_cre_cue?: true
     rol_usu?: true
+    est_ver_cor?: true
+    fec_ver_cor?: true
   }
 
   export type CuentaMaxAggregateInputType = {
@@ -6979,6 +7101,8 @@ export namespace Prisma {
     con_usu?: true
     fec_cre_cue?: true
     rol_usu?: true
+    est_ver_cor?: true
+    fec_ver_cor?: true
   }
 
   export type CuentaCountAggregateInputType = {
@@ -6988,6 +7112,8 @@ export namespace Prisma {
     con_usu?: true
     fec_cre_cue?: true
     rol_usu?: true
+    est_ver_cor?: true
+    fec_ver_cor?: true
     _all?: true
   }
 
@@ -7070,6 +7196,8 @@ export namespace Prisma {
     con_usu: string
     fec_cre_cue: Date
     rol_usu: $Enums.rol_usuario
+    est_ver_cor: boolean
+    fec_ver_cor: Date | null
     _count: CuentaCountAggregateOutputType | null
     _min: CuentaMinAggregateOutputType | null
     _max: CuentaMaxAggregateOutputType | null
@@ -7096,6 +7224,8 @@ export namespace Prisma {
     con_usu?: boolean
     fec_cre_cue?: boolean
     rol_usu?: boolean
+    est_ver_cor?: boolean
+    fec_ver_cor?: boolean
     usuario?: boolean | usuarioDefaultArgs<ExtArgs>
     inscripciones?: boolean | cuenta$inscripcionesArgs<ExtArgs>
     cartas_motivacion?: boolean | cuenta$cartas_motivacionArgs<ExtArgs>
@@ -7103,6 +7233,7 @@ export namespace Prisma {
     eventos?: boolean | cuenta$eventosArgs<ExtArgs>
     observaciones_creadas?: boolean | cuenta$observaciones_creadasArgs<ExtArgs>
     inscripciones_validadas?: boolean | cuenta$inscripciones_validadasArgs<ExtArgs>
+    tokens_cuenta?: boolean | cuenta$tokens_cuentaArgs<ExtArgs>
     _count?: boolean | CuentaCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["cuenta"]>
 
@@ -7113,6 +7244,8 @@ export namespace Prisma {
     con_usu?: boolean
     fec_cre_cue?: boolean
     rol_usu?: boolean
+    est_ver_cor?: boolean
+    fec_ver_cor?: boolean
     usuario?: boolean | usuarioDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["cuenta"]>
 
@@ -7123,6 +7256,8 @@ export namespace Prisma {
     con_usu?: boolean
     fec_cre_cue?: boolean
     rol_usu?: boolean
+    est_ver_cor?: boolean
+    fec_ver_cor?: boolean
     usuario?: boolean | usuarioDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["cuenta"]>
 
@@ -7133,9 +7268,11 @@ export namespace Prisma {
     con_usu?: boolean
     fec_cre_cue?: boolean
     rol_usu?: boolean
+    est_ver_cor?: boolean
+    fec_ver_cor?: boolean
   }
 
-  export type cuentaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_cue" | "id_usu_per" | "cor_usu" | "con_usu" | "fec_cre_cue" | "rol_usu", ExtArgs["result"]["cuenta"]>
+  export type cuentaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_cue" | "id_usu_per" | "cor_usu" | "con_usu" | "fec_cre_cue" | "rol_usu" | "est_ver_cor" | "fec_ver_cor", ExtArgs["result"]["cuenta"]>
   export type cuentaInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     usuario?: boolean | usuarioDefaultArgs<ExtArgs>
     inscripciones?: boolean | cuenta$inscripcionesArgs<ExtArgs>
@@ -7144,6 +7281,7 @@ export namespace Prisma {
     eventos?: boolean | cuenta$eventosArgs<ExtArgs>
     observaciones_creadas?: boolean | cuenta$observaciones_creadasArgs<ExtArgs>
     inscripciones_validadas?: boolean | cuenta$inscripciones_validadasArgs<ExtArgs>
+    tokens_cuenta?: boolean | cuenta$tokens_cuentaArgs<ExtArgs>
     _count?: boolean | CuentaCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type cuentaIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -7163,6 +7301,7 @@ export namespace Prisma {
       eventos: Prisma.$eventoPayload<ExtArgs>[]
       observaciones_creadas: Prisma.$observacion_inscripcionPayload<ExtArgs>[]
       inscripciones_validadas: Prisma.$inscripcionPayload<ExtArgs>[]
+      tokens_cuenta: Prisma.$token_cuentaPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id_cue: string
@@ -7171,6 +7310,8 @@ export namespace Prisma {
       con_usu: string
       fec_cre_cue: Date
       rol_usu: $Enums.rol_usuario
+      est_ver_cor: boolean
+      fec_ver_cor: Date | null
     }, ExtArgs["result"]["cuenta"]>
     composites: {}
   }
@@ -7572,6 +7713,7 @@ export namespace Prisma {
     eventos<T extends cuenta$eventosArgs<ExtArgs> = {}>(args?: Subset<T, cuenta$eventosArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$eventoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     observaciones_creadas<T extends cuenta$observaciones_creadasArgs<ExtArgs> = {}>(args?: Subset<T, cuenta$observaciones_creadasArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$observacion_inscripcionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     inscripciones_validadas<T extends cuenta$inscripciones_validadasArgs<ExtArgs> = {}>(args?: Subset<T, cuenta$inscripciones_validadasArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$inscripcionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    tokens_cuenta<T extends cuenta$tokens_cuentaArgs<ExtArgs> = {}>(args?: Subset<T, cuenta$tokens_cuentaArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$token_cuentaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7607,6 +7749,8 @@ export namespace Prisma {
     readonly con_usu: FieldRef<"cuenta", 'String'>
     readonly fec_cre_cue: FieldRef<"cuenta", 'DateTime'>
     readonly rol_usu: FieldRef<"cuenta", 'rol_usuario'>
+    readonly est_ver_cor: FieldRef<"cuenta", 'Boolean'>
+    readonly fec_ver_cor: FieldRef<"cuenta", 'DateTime'>
   }
     
 
@@ -8144,6 +8288,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: InscripcionScalarFieldEnum | InscripcionScalarFieldEnum[]
+  }
+
+  /**
+   * cuenta.tokens_cuenta
+   */
+  export type cuenta$tokens_cuentaArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the token_cuenta
+     */
+    select?: token_cuentaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the token_cuenta
+     */
+    omit?: token_cuentaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: token_cuentaInclude<ExtArgs> | null
+    where?: token_cuentaWhereInput
+    orderBy?: token_cuentaOrderByWithRelationInput | token_cuentaOrderByWithRelationInput[]
+    cursor?: token_cuentaWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Token_cuentaScalarFieldEnum | Token_cuentaScalarFieldEnum[]
   }
 
   /**
@@ -18598,6 +18766,1129 @@ export namespace Prisma {
 
 
   /**
+   * Model token_cuenta
+   */
+
+  export type AggregateToken_cuenta = {
+    _count: Token_cuentaCountAggregateOutputType | null
+    _min: Token_cuentaMinAggregateOutputType | null
+    _max: Token_cuentaMaxAggregateOutputType | null
+  }
+
+  export type Token_cuentaMinAggregateOutputType = {
+    id_tok: string | null
+    id_cue_per: string | null
+    tok_val: string | null
+    tip_tok: $Enums.tipo_token | null
+    fec_exp_tok: Date | null
+    est_uso: boolean | null
+    fec_uso: Date | null
+    fec_cre_tok: Date | null
+    ip_sol: string | null
+    ip_uso: string | null
+  }
+
+  export type Token_cuentaMaxAggregateOutputType = {
+    id_tok: string | null
+    id_cue_per: string | null
+    tok_val: string | null
+    tip_tok: $Enums.tipo_token | null
+    fec_exp_tok: Date | null
+    est_uso: boolean | null
+    fec_uso: Date | null
+    fec_cre_tok: Date | null
+    ip_sol: string | null
+    ip_uso: string | null
+  }
+
+  export type Token_cuentaCountAggregateOutputType = {
+    id_tok: number
+    id_cue_per: number
+    tok_val: number
+    tip_tok: number
+    fec_exp_tok: number
+    est_uso: number
+    fec_uso: number
+    fec_cre_tok: number
+    ip_sol: number
+    ip_uso: number
+    _all: number
+  }
+
+
+  export type Token_cuentaMinAggregateInputType = {
+    id_tok?: true
+    id_cue_per?: true
+    tok_val?: true
+    tip_tok?: true
+    fec_exp_tok?: true
+    est_uso?: true
+    fec_uso?: true
+    fec_cre_tok?: true
+    ip_sol?: true
+    ip_uso?: true
+  }
+
+  export type Token_cuentaMaxAggregateInputType = {
+    id_tok?: true
+    id_cue_per?: true
+    tok_val?: true
+    tip_tok?: true
+    fec_exp_tok?: true
+    est_uso?: true
+    fec_uso?: true
+    fec_cre_tok?: true
+    ip_sol?: true
+    ip_uso?: true
+  }
+
+  export type Token_cuentaCountAggregateInputType = {
+    id_tok?: true
+    id_cue_per?: true
+    tok_val?: true
+    tip_tok?: true
+    fec_exp_tok?: true
+    est_uso?: true
+    fec_uso?: true
+    fec_cre_tok?: true
+    ip_sol?: true
+    ip_uso?: true
+    _all?: true
+  }
+
+  export type Token_cuentaAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which token_cuenta to aggregate.
+     */
+    where?: token_cuentaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of token_cuentas to fetch.
+     */
+    orderBy?: token_cuentaOrderByWithRelationInput | token_cuentaOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: token_cuentaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` token_cuentas from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` token_cuentas.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned token_cuentas
+    **/
+    _count?: true | Token_cuentaCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: Token_cuentaMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: Token_cuentaMaxAggregateInputType
+  }
+
+  export type GetToken_cuentaAggregateType<T extends Token_cuentaAggregateArgs> = {
+        [P in keyof T & keyof AggregateToken_cuenta]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateToken_cuenta[P]>
+      : GetScalarType<T[P], AggregateToken_cuenta[P]>
+  }
+
+
+
+
+  export type token_cuentaGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: token_cuentaWhereInput
+    orderBy?: token_cuentaOrderByWithAggregationInput | token_cuentaOrderByWithAggregationInput[]
+    by: Token_cuentaScalarFieldEnum[] | Token_cuentaScalarFieldEnum
+    having?: token_cuentaScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: Token_cuentaCountAggregateInputType | true
+    _min?: Token_cuentaMinAggregateInputType
+    _max?: Token_cuentaMaxAggregateInputType
+  }
+
+  export type Token_cuentaGroupByOutputType = {
+    id_tok: string
+    id_cue_per: string
+    tok_val: string
+    tip_tok: $Enums.tipo_token
+    fec_exp_tok: Date
+    est_uso: boolean
+    fec_uso: Date | null
+    fec_cre_tok: Date
+    ip_sol: string | null
+    ip_uso: string | null
+    _count: Token_cuentaCountAggregateOutputType | null
+    _min: Token_cuentaMinAggregateOutputType | null
+    _max: Token_cuentaMaxAggregateOutputType | null
+  }
+
+  type GetToken_cuentaGroupByPayload<T extends token_cuentaGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<Token_cuentaGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof Token_cuentaGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], Token_cuentaGroupByOutputType[P]>
+            : GetScalarType<T[P], Token_cuentaGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type token_cuentaSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_tok?: boolean
+    id_cue_per?: boolean
+    tok_val?: boolean
+    tip_tok?: boolean
+    fec_exp_tok?: boolean
+    est_uso?: boolean
+    fec_uso?: boolean
+    fec_cre_tok?: boolean
+    ip_sol?: boolean
+    ip_uso?: boolean
+    cuenta?: boolean | cuentaDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["token_cuenta"]>
+
+  export type token_cuentaSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_tok?: boolean
+    id_cue_per?: boolean
+    tok_val?: boolean
+    tip_tok?: boolean
+    fec_exp_tok?: boolean
+    est_uso?: boolean
+    fec_uso?: boolean
+    fec_cre_tok?: boolean
+    ip_sol?: boolean
+    ip_uso?: boolean
+    cuenta?: boolean | cuentaDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["token_cuenta"]>
+
+  export type token_cuentaSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id_tok?: boolean
+    id_cue_per?: boolean
+    tok_val?: boolean
+    tip_tok?: boolean
+    fec_exp_tok?: boolean
+    est_uso?: boolean
+    fec_uso?: boolean
+    fec_cre_tok?: boolean
+    ip_sol?: boolean
+    ip_uso?: boolean
+    cuenta?: boolean | cuentaDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["token_cuenta"]>
+
+  export type token_cuentaSelectScalar = {
+    id_tok?: boolean
+    id_cue_per?: boolean
+    tok_val?: boolean
+    tip_tok?: boolean
+    fec_exp_tok?: boolean
+    est_uso?: boolean
+    fec_uso?: boolean
+    fec_cre_tok?: boolean
+    ip_sol?: boolean
+    ip_uso?: boolean
+  }
+
+  export type token_cuentaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id_tok" | "id_cue_per" | "tok_val" | "tip_tok" | "fec_exp_tok" | "est_uso" | "fec_uso" | "fec_cre_tok" | "ip_sol" | "ip_uso", ExtArgs["result"]["token_cuenta"]>
+  export type token_cuentaInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    cuenta?: boolean | cuentaDefaultArgs<ExtArgs>
+  }
+  export type token_cuentaIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    cuenta?: boolean | cuentaDefaultArgs<ExtArgs>
+  }
+  export type token_cuentaIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    cuenta?: boolean | cuentaDefaultArgs<ExtArgs>
+  }
+
+  export type $token_cuentaPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "token_cuenta"
+    objects: {
+      cuenta: Prisma.$cuentaPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id_tok: string
+      id_cue_per: string
+      tok_val: string
+      tip_tok: $Enums.tipo_token
+      fec_exp_tok: Date
+      est_uso: boolean
+      fec_uso: Date | null
+      fec_cre_tok: Date
+      ip_sol: string | null
+      ip_uso: string | null
+    }, ExtArgs["result"]["token_cuenta"]>
+    composites: {}
+  }
+
+  type token_cuentaGetPayload<S extends boolean | null | undefined | token_cuentaDefaultArgs> = $Result.GetResult<Prisma.$token_cuentaPayload, S>
+
+  type token_cuentaCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<token_cuentaFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: Token_cuentaCountAggregateInputType | true
+    }
+
+  export interface token_cuentaDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['token_cuenta'], meta: { name: 'token_cuenta' } }
+    /**
+     * Find zero or one Token_cuenta that matches the filter.
+     * @param {token_cuentaFindUniqueArgs} args - Arguments to find a Token_cuenta
+     * @example
+     * // Get one Token_cuenta
+     * const token_cuenta = await prisma.token_cuenta.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends token_cuentaFindUniqueArgs>(args: SelectSubset<T, token_cuentaFindUniqueArgs<ExtArgs>>): Prisma__token_cuentaClient<$Result.GetResult<Prisma.$token_cuentaPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Token_cuenta that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {token_cuentaFindUniqueOrThrowArgs} args - Arguments to find a Token_cuenta
+     * @example
+     * // Get one Token_cuenta
+     * const token_cuenta = await prisma.token_cuenta.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends token_cuentaFindUniqueOrThrowArgs>(args: SelectSubset<T, token_cuentaFindUniqueOrThrowArgs<ExtArgs>>): Prisma__token_cuentaClient<$Result.GetResult<Prisma.$token_cuentaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Token_cuenta that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {token_cuentaFindFirstArgs} args - Arguments to find a Token_cuenta
+     * @example
+     * // Get one Token_cuenta
+     * const token_cuenta = await prisma.token_cuenta.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends token_cuentaFindFirstArgs>(args?: SelectSubset<T, token_cuentaFindFirstArgs<ExtArgs>>): Prisma__token_cuentaClient<$Result.GetResult<Prisma.$token_cuentaPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Token_cuenta that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {token_cuentaFindFirstOrThrowArgs} args - Arguments to find a Token_cuenta
+     * @example
+     * // Get one Token_cuenta
+     * const token_cuenta = await prisma.token_cuenta.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends token_cuentaFindFirstOrThrowArgs>(args?: SelectSubset<T, token_cuentaFindFirstOrThrowArgs<ExtArgs>>): Prisma__token_cuentaClient<$Result.GetResult<Prisma.$token_cuentaPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Token_cuentas that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {token_cuentaFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Token_cuentas
+     * const token_cuentas = await prisma.token_cuenta.findMany()
+     * 
+     * // Get first 10 Token_cuentas
+     * const token_cuentas = await prisma.token_cuenta.findMany({ take: 10 })
+     * 
+     * // Only select the `id_tok`
+     * const token_cuentaWithId_tokOnly = await prisma.token_cuenta.findMany({ select: { id_tok: true } })
+     * 
+     */
+    findMany<T extends token_cuentaFindManyArgs>(args?: SelectSubset<T, token_cuentaFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$token_cuentaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Token_cuenta.
+     * @param {token_cuentaCreateArgs} args - Arguments to create a Token_cuenta.
+     * @example
+     * // Create one Token_cuenta
+     * const Token_cuenta = await prisma.token_cuenta.create({
+     *   data: {
+     *     // ... data to create a Token_cuenta
+     *   }
+     * })
+     * 
+     */
+    create<T extends token_cuentaCreateArgs>(args: SelectSubset<T, token_cuentaCreateArgs<ExtArgs>>): Prisma__token_cuentaClient<$Result.GetResult<Prisma.$token_cuentaPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Token_cuentas.
+     * @param {token_cuentaCreateManyArgs} args - Arguments to create many Token_cuentas.
+     * @example
+     * // Create many Token_cuentas
+     * const token_cuenta = await prisma.token_cuenta.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends token_cuentaCreateManyArgs>(args?: SelectSubset<T, token_cuentaCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Token_cuentas and returns the data saved in the database.
+     * @param {token_cuentaCreateManyAndReturnArgs} args - Arguments to create many Token_cuentas.
+     * @example
+     * // Create many Token_cuentas
+     * const token_cuenta = await prisma.token_cuenta.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Token_cuentas and only return the `id_tok`
+     * const token_cuentaWithId_tokOnly = await prisma.token_cuenta.createManyAndReturn({
+     *   select: { id_tok: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends token_cuentaCreateManyAndReturnArgs>(args?: SelectSubset<T, token_cuentaCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$token_cuentaPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Token_cuenta.
+     * @param {token_cuentaDeleteArgs} args - Arguments to delete one Token_cuenta.
+     * @example
+     * // Delete one Token_cuenta
+     * const Token_cuenta = await prisma.token_cuenta.delete({
+     *   where: {
+     *     // ... filter to delete one Token_cuenta
+     *   }
+     * })
+     * 
+     */
+    delete<T extends token_cuentaDeleteArgs>(args: SelectSubset<T, token_cuentaDeleteArgs<ExtArgs>>): Prisma__token_cuentaClient<$Result.GetResult<Prisma.$token_cuentaPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Token_cuenta.
+     * @param {token_cuentaUpdateArgs} args - Arguments to update one Token_cuenta.
+     * @example
+     * // Update one Token_cuenta
+     * const token_cuenta = await prisma.token_cuenta.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends token_cuentaUpdateArgs>(args: SelectSubset<T, token_cuentaUpdateArgs<ExtArgs>>): Prisma__token_cuentaClient<$Result.GetResult<Prisma.$token_cuentaPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Token_cuentas.
+     * @param {token_cuentaDeleteManyArgs} args - Arguments to filter Token_cuentas to delete.
+     * @example
+     * // Delete a few Token_cuentas
+     * const { count } = await prisma.token_cuenta.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends token_cuentaDeleteManyArgs>(args?: SelectSubset<T, token_cuentaDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Token_cuentas.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {token_cuentaUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Token_cuentas
+     * const token_cuenta = await prisma.token_cuenta.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends token_cuentaUpdateManyArgs>(args: SelectSubset<T, token_cuentaUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Token_cuentas and returns the data updated in the database.
+     * @param {token_cuentaUpdateManyAndReturnArgs} args - Arguments to update many Token_cuentas.
+     * @example
+     * // Update many Token_cuentas
+     * const token_cuenta = await prisma.token_cuenta.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Token_cuentas and only return the `id_tok`
+     * const token_cuentaWithId_tokOnly = await prisma.token_cuenta.updateManyAndReturn({
+     *   select: { id_tok: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends token_cuentaUpdateManyAndReturnArgs>(args: SelectSubset<T, token_cuentaUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$token_cuentaPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Token_cuenta.
+     * @param {token_cuentaUpsertArgs} args - Arguments to update or create a Token_cuenta.
+     * @example
+     * // Update or create a Token_cuenta
+     * const token_cuenta = await prisma.token_cuenta.upsert({
+     *   create: {
+     *     // ... data to create a Token_cuenta
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Token_cuenta we want to update
+     *   }
+     * })
+     */
+    upsert<T extends token_cuentaUpsertArgs>(args: SelectSubset<T, token_cuentaUpsertArgs<ExtArgs>>): Prisma__token_cuentaClient<$Result.GetResult<Prisma.$token_cuentaPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Token_cuentas.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {token_cuentaCountArgs} args - Arguments to filter Token_cuentas to count.
+     * @example
+     * // Count the number of Token_cuentas
+     * const count = await prisma.token_cuenta.count({
+     *   where: {
+     *     // ... the filter for the Token_cuentas we want to count
+     *   }
+     * })
+    **/
+    count<T extends token_cuentaCountArgs>(
+      args?: Subset<T, token_cuentaCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], Token_cuentaCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Token_cuenta.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Token_cuentaAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends Token_cuentaAggregateArgs>(args: Subset<T, Token_cuentaAggregateArgs>): Prisma.PrismaPromise<GetToken_cuentaAggregateType<T>>
+
+    /**
+     * Group by Token_cuenta.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {token_cuentaGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends token_cuentaGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: token_cuentaGroupByArgs['orderBy'] }
+        : { orderBy?: token_cuentaGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, token_cuentaGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetToken_cuentaGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the token_cuenta model
+   */
+  readonly fields: token_cuentaFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for token_cuenta.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__token_cuentaClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    cuenta<T extends cuentaDefaultArgs<ExtArgs> = {}>(args?: Subset<T, cuentaDefaultArgs<ExtArgs>>): Prisma__cuentaClient<$Result.GetResult<Prisma.$cuentaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the token_cuenta model
+   */
+  interface token_cuentaFieldRefs {
+    readonly id_tok: FieldRef<"token_cuenta", 'String'>
+    readonly id_cue_per: FieldRef<"token_cuenta", 'String'>
+    readonly tok_val: FieldRef<"token_cuenta", 'String'>
+    readonly tip_tok: FieldRef<"token_cuenta", 'tipo_token'>
+    readonly fec_exp_tok: FieldRef<"token_cuenta", 'DateTime'>
+    readonly est_uso: FieldRef<"token_cuenta", 'Boolean'>
+    readonly fec_uso: FieldRef<"token_cuenta", 'DateTime'>
+    readonly fec_cre_tok: FieldRef<"token_cuenta", 'DateTime'>
+    readonly ip_sol: FieldRef<"token_cuenta", 'String'>
+    readonly ip_uso: FieldRef<"token_cuenta", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * token_cuenta findUnique
+   */
+  export type token_cuentaFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the token_cuenta
+     */
+    select?: token_cuentaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the token_cuenta
+     */
+    omit?: token_cuentaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: token_cuentaInclude<ExtArgs> | null
+    /**
+     * Filter, which token_cuenta to fetch.
+     */
+    where: token_cuentaWhereUniqueInput
+  }
+
+  /**
+   * token_cuenta findUniqueOrThrow
+   */
+  export type token_cuentaFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the token_cuenta
+     */
+    select?: token_cuentaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the token_cuenta
+     */
+    omit?: token_cuentaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: token_cuentaInclude<ExtArgs> | null
+    /**
+     * Filter, which token_cuenta to fetch.
+     */
+    where: token_cuentaWhereUniqueInput
+  }
+
+  /**
+   * token_cuenta findFirst
+   */
+  export type token_cuentaFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the token_cuenta
+     */
+    select?: token_cuentaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the token_cuenta
+     */
+    omit?: token_cuentaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: token_cuentaInclude<ExtArgs> | null
+    /**
+     * Filter, which token_cuenta to fetch.
+     */
+    where?: token_cuentaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of token_cuentas to fetch.
+     */
+    orderBy?: token_cuentaOrderByWithRelationInput | token_cuentaOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for token_cuentas.
+     */
+    cursor?: token_cuentaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` token_cuentas from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` token_cuentas.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of token_cuentas.
+     */
+    distinct?: Token_cuentaScalarFieldEnum | Token_cuentaScalarFieldEnum[]
+  }
+
+  /**
+   * token_cuenta findFirstOrThrow
+   */
+  export type token_cuentaFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the token_cuenta
+     */
+    select?: token_cuentaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the token_cuenta
+     */
+    omit?: token_cuentaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: token_cuentaInclude<ExtArgs> | null
+    /**
+     * Filter, which token_cuenta to fetch.
+     */
+    where?: token_cuentaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of token_cuentas to fetch.
+     */
+    orderBy?: token_cuentaOrderByWithRelationInput | token_cuentaOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for token_cuentas.
+     */
+    cursor?: token_cuentaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` token_cuentas from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` token_cuentas.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of token_cuentas.
+     */
+    distinct?: Token_cuentaScalarFieldEnum | Token_cuentaScalarFieldEnum[]
+  }
+
+  /**
+   * token_cuenta findMany
+   */
+  export type token_cuentaFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the token_cuenta
+     */
+    select?: token_cuentaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the token_cuenta
+     */
+    omit?: token_cuentaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: token_cuentaInclude<ExtArgs> | null
+    /**
+     * Filter, which token_cuentas to fetch.
+     */
+    where?: token_cuentaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of token_cuentas to fetch.
+     */
+    orderBy?: token_cuentaOrderByWithRelationInput | token_cuentaOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing token_cuentas.
+     */
+    cursor?: token_cuentaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` token_cuentas from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` token_cuentas.
+     */
+    skip?: number
+    distinct?: Token_cuentaScalarFieldEnum | Token_cuentaScalarFieldEnum[]
+  }
+
+  /**
+   * token_cuenta create
+   */
+  export type token_cuentaCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the token_cuenta
+     */
+    select?: token_cuentaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the token_cuenta
+     */
+    omit?: token_cuentaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: token_cuentaInclude<ExtArgs> | null
+    /**
+     * The data needed to create a token_cuenta.
+     */
+    data: XOR<token_cuentaCreateInput, token_cuentaUncheckedCreateInput>
+  }
+
+  /**
+   * token_cuenta createMany
+   */
+  export type token_cuentaCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many token_cuentas.
+     */
+    data: token_cuentaCreateManyInput | token_cuentaCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * token_cuenta createManyAndReturn
+   */
+  export type token_cuentaCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the token_cuenta
+     */
+    select?: token_cuentaSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the token_cuenta
+     */
+    omit?: token_cuentaOmit<ExtArgs> | null
+    /**
+     * The data used to create many token_cuentas.
+     */
+    data: token_cuentaCreateManyInput | token_cuentaCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: token_cuentaIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * token_cuenta update
+   */
+  export type token_cuentaUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the token_cuenta
+     */
+    select?: token_cuentaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the token_cuenta
+     */
+    omit?: token_cuentaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: token_cuentaInclude<ExtArgs> | null
+    /**
+     * The data needed to update a token_cuenta.
+     */
+    data: XOR<token_cuentaUpdateInput, token_cuentaUncheckedUpdateInput>
+    /**
+     * Choose, which token_cuenta to update.
+     */
+    where: token_cuentaWhereUniqueInput
+  }
+
+  /**
+   * token_cuenta updateMany
+   */
+  export type token_cuentaUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update token_cuentas.
+     */
+    data: XOR<token_cuentaUpdateManyMutationInput, token_cuentaUncheckedUpdateManyInput>
+    /**
+     * Filter which token_cuentas to update
+     */
+    where?: token_cuentaWhereInput
+    /**
+     * Limit how many token_cuentas to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * token_cuenta updateManyAndReturn
+   */
+  export type token_cuentaUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the token_cuenta
+     */
+    select?: token_cuentaSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the token_cuenta
+     */
+    omit?: token_cuentaOmit<ExtArgs> | null
+    /**
+     * The data used to update token_cuentas.
+     */
+    data: XOR<token_cuentaUpdateManyMutationInput, token_cuentaUncheckedUpdateManyInput>
+    /**
+     * Filter which token_cuentas to update
+     */
+    where?: token_cuentaWhereInput
+    /**
+     * Limit how many token_cuentas to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: token_cuentaIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * token_cuenta upsert
+   */
+  export type token_cuentaUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the token_cuenta
+     */
+    select?: token_cuentaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the token_cuenta
+     */
+    omit?: token_cuentaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: token_cuentaInclude<ExtArgs> | null
+    /**
+     * The filter to search for the token_cuenta to update in case it exists.
+     */
+    where: token_cuentaWhereUniqueInput
+    /**
+     * In case the token_cuenta found by the `where` argument doesn't exist, create a new token_cuenta with this data.
+     */
+    create: XOR<token_cuentaCreateInput, token_cuentaUncheckedCreateInput>
+    /**
+     * In case the token_cuenta was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<token_cuentaUpdateInput, token_cuentaUncheckedUpdateInput>
+  }
+
+  /**
+   * token_cuenta delete
+   */
+  export type token_cuentaDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the token_cuenta
+     */
+    select?: token_cuentaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the token_cuenta
+     */
+    omit?: token_cuentaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: token_cuentaInclude<ExtArgs> | null
+    /**
+     * Filter which token_cuenta to delete.
+     */
+    where: token_cuentaWhereUniqueInput
+  }
+
+  /**
+   * token_cuenta deleteMany
+   */
+  export type token_cuentaDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which token_cuentas to delete
+     */
+    where?: token_cuentaWhereInput
+    /**
+     * Limit how many token_cuentas to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * token_cuenta without action
+   */
+  export type token_cuentaDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the token_cuenta
+     */
+    select?: token_cuentaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the token_cuenta
+     */
+    omit?: token_cuentaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: token_cuentaInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -18670,7 +19961,9 @@ export namespace Prisma {
     cor_usu: 'cor_usu',
     con_usu: 'con_usu',
     fec_cre_cue: 'fec_cre_cue',
-    rol_usu: 'rol_usu'
+    rol_usu: 'rol_usu',
+    est_ver_cor: 'est_ver_cor',
+    fec_ver_cor: 'fec_ver_cor'
   };
 
   export type CuentaScalarFieldEnum = (typeof CuentaScalarFieldEnum)[keyof typeof CuentaScalarFieldEnum]
@@ -18803,6 +20096,22 @@ export namespace Prisma {
   export type FacultadScalarFieldEnum = (typeof FacultadScalarFieldEnum)[keyof typeof FacultadScalarFieldEnum]
 
 
+  export const Token_cuentaScalarFieldEnum: {
+    id_tok: 'id_tok',
+    id_cue_per: 'id_cue_per',
+    tok_val: 'tok_val',
+    tip_tok: 'tip_tok',
+    fec_exp_tok: 'fec_exp_tok',
+    est_uso: 'est_uso',
+    fec_uso: 'fec_uso',
+    fec_cre_tok: 'fec_cre_tok',
+    ip_sol: 'ip_sol',
+    ip_uso: 'ip_uso'
+  };
+
+  export type Token_cuentaScalarFieldEnum = (typeof Token_cuentaScalarFieldEnum)[keyof typeof Token_cuentaScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -18889,6 +20198,13 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Boolean'
+   */
+  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+  /**
    * Reference to a field of type 'Int'
    */
   export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
@@ -18899,13 +20215,6 @@ export namespace Prisma {
    * Reference to a field of type 'Int[]'
    */
   export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'Boolean'
-   */
-  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
 
@@ -18990,6 +20299,20 @@ export namespace Prisma {
    * Reference to a field of type 'tipo_certificado[]'
    */
   export type ListEnumtipo_certificadoFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'tipo_certificado[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'tipo_token'
+   */
+  export type Enumtipo_tokenFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'tipo_token'>
+    
+
+
+  /**
+   * Reference to a field of type 'tipo_token[]'
+   */
+  export type ListEnumtipo_tokenFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'tipo_token[]'>
     
   /**
    * Deep Input Types
@@ -19283,6 +20606,8 @@ export namespace Prisma {
     con_usu?: StringFilter<"cuenta"> | string
     fec_cre_cue?: DateTimeFilter<"cuenta"> | Date | string
     rol_usu?: Enumrol_usuarioFilter<"cuenta"> | $Enums.rol_usuario
+    est_ver_cor?: BoolFilter<"cuenta"> | boolean
+    fec_ver_cor?: DateTimeNullableFilter<"cuenta"> | Date | string | null
     usuario?: XOR<UsuarioScalarRelationFilter, usuarioWhereInput>
     inscripciones?: InscripcionListRelationFilter
     cartas_motivacion?: Carta_motivacionListRelationFilter
@@ -19290,6 +20615,7 @@ export namespace Prisma {
     eventos?: EventoListRelationFilter
     observaciones_creadas?: Observacion_inscripcionListRelationFilter
     inscripciones_validadas?: InscripcionListRelationFilter
+    tokens_cuenta?: Token_cuentaListRelationFilter
   }
 
   export type cuentaOrderByWithRelationInput = {
@@ -19299,6 +20625,8 @@ export namespace Prisma {
     con_usu?: SortOrder
     fec_cre_cue?: SortOrder
     rol_usu?: SortOrder
+    est_ver_cor?: SortOrder
+    fec_ver_cor?: SortOrderInput | SortOrder
     usuario?: usuarioOrderByWithRelationInput
     inscripciones?: inscripcionOrderByRelationAggregateInput
     cartas_motivacion?: carta_motivacionOrderByRelationAggregateInput
@@ -19306,6 +20634,7 @@ export namespace Prisma {
     eventos?: eventoOrderByRelationAggregateInput
     observaciones_creadas?: observacion_inscripcionOrderByRelationAggregateInput
     inscripciones_validadas?: inscripcionOrderByRelationAggregateInput
+    tokens_cuenta?: token_cuentaOrderByRelationAggregateInput
   }
 
   export type cuentaWhereUniqueInput = Prisma.AtLeast<{
@@ -19318,6 +20647,8 @@ export namespace Prisma {
     con_usu?: StringFilter<"cuenta"> | string
     fec_cre_cue?: DateTimeFilter<"cuenta"> | Date | string
     rol_usu?: Enumrol_usuarioFilter<"cuenta"> | $Enums.rol_usuario
+    est_ver_cor?: BoolFilter<"cuenta"> | boolean
+    fec_ver_cor?: DateTimeNullableFilter<"cuenta"> | Date | string | null
     usuario?: XOR<UsuarioScalarRelationFilter, usuarioWhereInput>
     inscripciones?: InscripcionListRelationFilter
     cartas_motivacion?: Carta_motivacionListRelationFilter
@@ -19325,6 +20656,7 @@ export namespace Prisma {
     eventos?: EventoListRelationFilter
     observaciones_creadas?: Observacion_inscripcionListRelationFilter
     inscripciones_validadas?: InscripcionListRelationFilter
+    tokens_cuenta?: Token_cuentaListRelationFilter
   }, "id_cue" | "cor_usu">
 
   export type cuentaOrderByWithAggregationInput = {
@@ -19334,6 +20666,8 @@ export namespace Prisma {
     con_usu?: SortOrder
     fec_cre_cue?: SortOrder
     rol_usu?: SortOrder
+    est_ver_cor?: SortOrder
+    fec_ver_cor?: SortOrderInput | SortOrder
     _count?: cuentaCountOrderByAggregateInput
     _max?: cuentaMaxOrderByAggregateInput
     _min?: cuentaMinOrderByAggregateInput
@@ -19349,6 +20683,8 @@ export namespace Prisma {
     con_usu?: StringWithAggregatesFilter<"cuenta"> | string
     fec_cre_cue?: DateTimeWithAggregatesFilter<"cuenta"> | Date | string
     rol_usu?: Enumrol_usuarioWithAggregatesFilter<"cuenta"> | $Enums.rol_usuario
+    est_ver_cor?: BoolWithAggregatesFilter<"cuenta"> | boolean
+    fec_ver_cor?: DateTimeNullableWithAggregatesFilter<"cuenta"> | Date | string | null
   }
 
   export type carreraWhereInput = {
@@ -20038,6 +21374,86 @@ export namespace Prisma {
     url_img_sub_dec_fac?: StringWithAggregatesFilter<"facultad"> | string
   }
 
+  export type token_cuentaWhereInput = {
+    AND?: token_cuentaWhereInput | token_cuentaWhereInput[]
+    OR?: token_cuentaWhereInput[]
+    NOT?: token_cuentaWhereInput | token_cuentaWhereInput[]
+    id_tok?: StringFilter<"token_cuenta"> | string
+    id_cue_per?: StringFilter<"token_cuenta"> | string
+    tok_val?: StringFilter<"token_cuenta"> | string
+    tip_tok?: Enumtipo_tokenFilter<"token_cuenta"> | $Enums.tipo_token
+    fec_exp_tok?: DateTimeFilter<"token_cuenta"> | Date | string
+    est_uso?: BoolFilter<"token_cuenta"> | boolean
+    fec_uso?: DateTimeNullableFilter<"token_cuenta"> | Date | string | null
+    fec_cre_tok?: DateTimeFilter<"token_cuenta"> | Date | string
+    ip_sol?: StringNullableFilter<"token_cuenta"> | string | null
+    ip_uso?: StringNullableFilter<"token_cuenta"> | string | null
+    cuenta?: XOR<CuentaScalarRelationFilter, cuentaWhereInput>
+  }
+
+  export type token_cuentaOrderByWithRelationInput = {
+    id_tok?: SortOrder
+    id_cue_per?: SortOrder
+    tok_val?: SortOrder
+    tip_tok?: SortOrder
+    fec_exp_tok?: SortOrder
+    est_uso?: SortOrder
+    fec_uso?: SortOrderInput | SortOrder
+    fec_cre_tok?: SortOrder
+    ip_sol?: SortOrderInput | SortOrder
+    ip_uso?: SortOrderInput | SortOrder
+    cuenta?: cuentaOrderByWithRelationInput
+  }
+
+  export type token_cuentaWhereUniqueInput = Prisma.AtLeast<{
+    id_tok?: string
+    tok_val?: string
+    AND?: token_cuentaWhereInput | token_cuentaWhereInput[]
+    OR?: token_cuentaWhereInput[]
+    NOT?: token_cuentaWhereInput | token_cuentaWhereInput[]
+    id_cue_per?: StringFilter<"token_cuenta"> | string
+    tip_tok?: Enumtipo_tokenFilter<"token_cuenta"> | $Enums.tipo_token
+    fec_exp_tok?: DateTimeFilter<"token_cuenta"> | Date | string
+    est_uso?: BoolFilter<"token_cuenta"> | boolean
+    fec_uso?: DateTimeNullableFilter<"token_cuenta"> | Date | string | null
+    fec_cre_tok?: DateTimeFilter<"token_cuenta"> | Date | string
+    ip_sol?: StringNullableFilter<"token_cuenta"> | string | null
+    ip_uso?: StringNullableFilter<"token_cuenta"> | string | null
+    cuenta?: XOR<CuentaScalarRelationFilter, cuentaWhereInput>
+  }, "id_tok" | "tok_val">
+
+  export type token_cuentaOrderByWithAggregationInput = {
+    id_tok?: SortOrder
+    id_cue_per?: SortOrder
+    tok_val?: SortOrder
+    tip_tok?: SortOrder
+    fec_exp_tok?: SortOrder
+    est_uso?: SortOrder
+    fec_uso?: SortOrderInput | SortOrder
+    fec_cre_tok?: SortOrder
+    ip_sol?: SortOrderInput | SortOrder
+    ip_uso?: SortOrderInput | SortOrder
+    _count?: token_cuentaCountOrderByAggregateInput
+    _max?: token_cuentaMaxOrderByAggregateInput
+    _min?: token_cuentaMinOrderByAggregateInput
+  }
+
+  export type token_cuentaScalarWhereWithAggregatesInput = {
+    AND?: token_cuentaScalarWhereWithAggregatesInput | token_cuentaScalarWhereWithAggregatesInput[]
+    OR?: token_cuentaScalarWhereWithAggregatesInput[]
+    NOT?: token_cuentaScalarWhereWithAggregatesInput | token_cuentaScalarWhereWithAggregatesInput[]
+    id_tok?: StringWithAggregatesFilter<"token_cuenta"> | string
+    id_cue_per?: StringWithAggregatesFilter<"token_cuenta"> | string
+    tok_val?: StringWithAggregatesFilter<"token_cuenta"> | string
+    tip_tok?: Enumtipo_tokenWithAggregatesFilter<"token_cuenta"> | $Enums.tipo_token
+    fec_exp_tok?: DateTimeWithAggregatesFilter<"token_cuenta"> | Date | string
+    est_uso?: BoolWithAggregatesFilter<"token_cuenta"> | boolean
+    fec_uso?: DateTimeNullableWithAggregatesFilter<"token_cuenta"> | Date | string | null
+    fec_cre_tok?: DateTimeWithAggregatesFilter<"token_cuenta"> | Date | string
+    ip_sol?: StringNullableWithAggregatesFilter<"token_cuenta"> | string | null
+    ip_uso?: StringNullableWithAggregatesFilter<"token_cuenta"> | string | null
+  }
+
   export type usuarioCreateInput = {
     id_usu?: string
     ced_usu: string
@@ -20328,6 +21744,8 @@ export namespace Prisma {
     con_usu: string
     fec_cre_cue?: Date | string
     rol_usu: $Enums.rol_usuario
+    est_ver_cor?: boolean
+    fec_ver_cor?: Date | string | null
     usuario: usuarioCreateNestedOneWithoutCuentasInput
     inscripciones?: inscripcionCreateNestedManyWithoutCuentaInput
     cartas_motivacion?: carta_motivacionCreateNestedManyWithoutAdminInput
@@ -20335,6 +21753,7 @@ export namespace Prisma {
     eventos?: eventoCreateNestedManyWithoutCuentaInput
     observaciones_creadas?: observacion_inscripcionCreateNestedManyWithoutAdmin_creadorInput
     inscripciones_validadas?: inscripcionCreateNestedManyWithoutAdmin_validadorInput
+    tokens_cuenta?: token_cuentaCreateNestedManyWithoutCuentaInput
   }
 
   export type cuentaUncheckedCreateInput = {
@@ -20344,12 +21763,15 @@ export namespace Prisma {
     con_usu: string
     fec_cre_cue?: Date | string
     rol_usu: $Enums.rol_usuario
+    est_ver_cor?: boolean
+    fec_ver_cor?: Date | string | null
     inscripciones?: inscripcionUncheckedCreateNestedManyWithoutCuentaInput
     cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutAdminInput
     comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutAdminInput
     eventos?: eventoUncheckedCreateNestedManyWithoutCuentaInput
     observaciones_creadas?: observacion_inscripcionUncheckedCreateNestedManyWithoutAdmin_creadorInput
     inscripciones_validadas?: inscripcionUncheckedCreateNestedManyWithoutAdmin_validadorInput
+    tokens_cuenta?: token_cuentaUncheckedCreateNestedManyWithoutCuentaInput
   }
 
   export type cuentaUpdateInput = {
@@ -20358,6 +21780,8 @@ export namespace Prisma {
     con_usu?: StringFieldUpdateOperationsInput | string
     fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
     rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    est_ver_cor?: BoolFieldUpdateOperationsInput | boolean
+    fec_ver_cor?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     usuario?: usuarioUpdateOneRequiredWithoutCuentasNestedInput
     inscripciones?: inscripcionUpdateManyWithoutCuentaNestedInput
     cartas_motivacion?: carta_motivacionUpdateManyWithoutAdminNestedInput
@@ -20365,6 +21789,7 @@ export namespace Prisma {
     eventos?: eventoUpdateManyWithoutCuentaNestedInput
     observaciones_creadas?: observacion_inscripcionUpdateManyWithoutAdmin_creadorNestedInput
     inscripciones_validadas?: inscripcionUpdateManyWithoutAdmin_validadorNestedInput
+    tokens_cuenta?: token_cuentaUpdateManyWithoutCuentaNestedInput
   }
 
   export type cuentaUncheckedUpdateInput = {
@@ -20374,12 +21799,15 @@ export namespace Prisma {
     con_usu?: StringFieldUpdateOperationsInput | string
     fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
     rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    est_ver_cor?: BoolFieldUpdateOperationsInput | boolean
+    fec_ver_cor?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     inscripciones?: inscripcionUncheckedUpdateManyWithoutCuentaNestedInput
     cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutAdminNestedInput
     comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutAdminNestedInput
     eventos?: eventoUncheckedUpdateManyWithoutCuentaNestedInput
     observaciones_creadas?: observacion_inscripcionUncheckedUpdateManyWithoutAdmin_creadorNestedInput
     inscripciones_validadas?: inscripcionUncheckedUpdateManyWithoutAdmin_validadorNestedInput
+    tokens_cuenta?: token_cuentaUncheckedUpdateManyWithoutCuentaNestedInput
   }
 
   export type cuentaCreateManyInput = {
@@ -20389,6 +21817,8 @@ export namespace Prisma {
     con_usu: string
     fec_cre_cue?: Date | string
     rol_usu: $Enums.rol_usuario
+    est_ver_cor?: boolean
+    fec_ver_cor?: Date | string | null
   }
 
   export type cuentaUpdateManyMutationInput = {
@@ -20397,6 +21827,8 @@ export namespace Prisma {
     con_usu?: StringFieldUpdateOperationsInput | string
     fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
     rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    est_ver_cor?: BoolFieldUpdateOperationsInput | boolean
+    fec_ver_cor?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type cuentaUncheckedUpdateManyInput = {
@@ -20406,6 +21838,8 @@ export namespace Prisma {
     con_usu?: StringFieldUpdateOperationsInput | string
     fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
     rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    est_ver_cor?: BoolFieldUpdateOperationsInput | boolean
+    fec_ver_cor?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type carreraCreateInput = {
@@ -21145,6 +22579,96 @@ export namespace Prisma {
     url_img_sub_dec_fac?: StringFieldUpdateOperationsInput | string
   }
 
+  export type token_cuentaCreateInput = {
+    id_tok?: string
+    tok_val: string
+    tip_tok: $Enums.tipo_token
+    fec_exp_tok: Date | string
+    est_uso?: boolean
+    fec_uso?: Date | string | null
+    fec_cre_tok?: Date | string
+    ip_sol?: string | null
+    ip_uso?: string | null
+    cuenta: cuentaCreateNestedOneWithoutTokens_cuentaInput
+  }
+
+  export type token_cuentaUncheckedCreateInput = {
+    id_tok?: string
+    id_cue_per: string
+    tok_val: string
+    tip_tok: $Enums.tipo_token
+    fec_exp_tok: Date | string
+    est_uso?: boolean
+    fec_uso?: Date | string | null
+    fec_cre_tok?: Date | string
+    ip_sol?: string | null
+    ip_uso?: string | null
+  }
+
+  export type token_cuentaUpdateInput = {
+    id_tok?: StringFieldUpdateOperationsInput | string
+    tok_val?: StringFieldUpdateOperationsInput | string
+    tip_tok?: Enumtipo_tokenFieldUpdateOperationsInput | $Enums.tipo_token
+    fec_exp_tok?: DateTimeFieldUpdateOperationsInput | Date | string
+    est_uso?: BoolFieldUpdateOperationsInput | boolean
+    fec_uso?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fec_cre_tok?: DateTimeFieldUpdateOperationsInput | Date | string
+    ip_sol?: NullableStringFieldUpdateOperationsInput | string | null
+    ip_uso?: NullableStringFieldUpdateOperationsInput | string | null
+    cuenta?: cuentaUpdateOneRequiredWithoutTokens_cuentaNestedInput
+  }
+
+  export type token_cuentaUncheckedUpdateInput = {
+    id_tok?: StringFieldUpdateOperationsInput | string
+    id_cue_per?: StringFieldUpdateOperationsInput | string
+    tok_val?: StringFieldUpdateOperationsInput | string
+    tip_tok?: Enumtipo_tokenFieldUpdateOperationsInput | $Enums.tipo_token
+    fec_exp_tok?: DateTimeFieldUpdateOperationsInput | Date | string
+    est_uso?: BoolFieldUpdateOperationsInput | boolean
+    fec_uso?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fec_cre_tok?: DateTimeFieldUpdateOperationsInput | Date | string
+    ip_sol?: NullableStringFieldUpdateOperationsInput | string | null
+    ip_uso?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type token_cuentaCreateManyInput = {
+    id_tok?: string
+    id_cue_per: string
+    tok_val: string
+    tip_tok: $Enums.tipo_token
+    fec_exp_tok: Date | string
+    est_uso?: boolean
+    fec_uso?: Date | string | null
+    fec_cre_tok?: Date | string
+    ip_sol?: string | null
+    ip_uso?: string | null
+  }
+
+  export type token_cuentaUpdateManyMutationInput = {
+    id_tok?: StringFieldUpdateOperationsInput | string
+    tok_val?: StringFieldUpdateOperationsInput | string
+    tip_tok?: Enumtipo_tokenFieldUpdateOperationsInput | $Enums.tipo_token
+    fec_exp_tok?: DateTimeFieldUpdateOperationsInput | Date | string
+    est_uso?: BoolFieldUpdateOperationsInput | boolean
+    fec_uso?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fec_cre_tok?: DateTimeFieldUpdateOperationsInput | Date | string
+    ip_sol?: NullableStringFieldUpdateOperationsInput | string | null
+    ip_uso?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type token_cuentaUncheckedUpdateManyInput = {
+    id_tok?: StringFieldUpdateOperationsInput | string
+    id_cue_per?: StringFieldUpdateOperationsInput | string
+    tok_val?: StringFieldUpdateOperationsInput | string
+    tip_tok?: Enumtipo_tokenFieldUpdateOperationsInput | $Enums.tipo_token
+    fec_exp_tok?: DateTimeFieldUpdateOperationsInput | Date | string
+    est_uso?: BoolFieldUpdateOperationsInput | boolean
+    fec_uso?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fec_cre_tok?: DateTimeFieldUpdateOperationsInput | Date | string
+    ip_sol?: NullableStringFieldUpdateOperationsInput | string | null
+    ip_uso?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -21438,6 +22962,11 @@ export namespace Prisma {
     not?: NestedEnumrol_usuarioFilter<$PrismaModel> | $Enums.rol_usuario
   }
 
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
   export type UsuarioScalarRelationFilter = {
     is?: usuarioWhereInput
     isNot?: usuarioWhereInput
@@ -21473,6 +23002,12 @@ export namespace Prisma {
     none?: observacion_inscripcionWhereInput
   }
 
+  export type Token_cuentaListRelationFilter = {
+    every?: token_cuentaWhereInput
+    some?: token_cuentaWhereInput
+    none?: token_cuentaWhereInput
+  }
+
   export type inscripcionOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -21493,6 +23028,10 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
+  export type token_cuentaOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type cuentaCountOrderByAggregateInput = {
     id_cue?: SortOrder
     id_usu_per?: SortOrder
@@ -21500,6 +23039,8 @@ export namespace Prisma {
     con_usu?: SortOrder
     fec_cre_cue?: SortOrder
     rol_usu?: SortOrder
+    est_ver_cor?: SortOrder
+    fec_ver_cor?: SortOrder
   }
 
   export type cuentaMaxOrderByAggregateInput = {
@@ -21509,6 +23050,8 @@ export namespace Prisma {
     con_usu?: SortOrder
     fec_cre_cue?: SortOrder
     rol_usu?: SortOrder
+    est_ver_cor?: SortOrder
+    fec_ver_cor?: SortOrder
   }
 
   export type cuentaMinOrderByAggregateInput = {
@@ -21518,6 +23061,8 @@ export namespace Prisma {
     con_usu?: SortOrder
     fec_cre_cue?: SortOrder
     rol_usu?: SortOrder
+    est_ver_cor?: SortOrder
+    fec_ver_cor?: SortOrder
   }
 
   export type Enumrol_usuarioWithAggregatesFilter<$PrismaModel = never> = {
@@ -21530,6 +23075,14 @@ export namespace Prisma {
     _max?: NestedEnumrol_usuarioFilter<$PrismaModel>
   }
 
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
   export type IntFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -21539,11 +23092,6 @@ export namespace Prisma {
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
     not?: NestedIntFilter<$PrismaModel> | number
-  }
-
-  export type BoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
   export type FacultadScalarRelationFilter = {
@@ -21637,14 +23185,6 @@ export namespace Prisma {
     _sum?: NestedIntFilter<$PrismaModel>
     _min?: NestedIntFilter<$PrismaModel>
     _max?: NestedIntFilter<$PrismaModel>
-  }
-
-  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type CarreraListRelationFilter = {
@@ -22132,6 +23672,62 @@ export namespace Prisma {
     url_img_sub_dec_fac?: SortOrder
   }
 
+  export type Enumtipo_tokenFilter<$PrismaModel = never> = {
+    equals?: $Enums.tipo_token | Enumtipo_tokenFieldRefInput<$PrismaModel>
+    in?: $Enums.tipo_token[] | ListEnumtipo_tokenFieldRefInput<$PrismaModel>
+    notIn?: $Enums.tipo_token[] | ListEnumtipo_tokenFieldRefInput<$PrismaModel>
+    not?: NestedEnumtipo_tokenFilter<$PrismaModel> | $Enums.tipo_token
+  }
+
+  export type token_cuentaCountOrderByAggregateInput = {
+    id_tok?: SortOrder
+    id_cue_per?: SortOrder
+    tok_val?: SortOrder
+    tip_tok?: SortOrder
+    fec_exp_tok?: SortOrder
+    est_uso?: SortOrder
+    fec_uso?: SortOrder
+    fec_cre_tok?: SortOrder
+    ip_sol?: SortOrder
+    ip_uso?: SortOrder
+  }
+
+  export type token_cuentaMaxOrderByAggregateInput = {
+    id_tok?: SortOrder
+    id_cue_per?: SortOrder
+    tok_val?: SortOrder
+    tip_tok?: SortOrder
+    fec_exp_tok?: SortOrder
+    est_uso?: SortOrder
+    fec_uso?: SortOrder
+    fec_cre_tok?: SortOrder
+    ip_sol?: SortOrder
+    ip_uso?: SortOrder
+  }
+
+  export type token_cuentaMinOrderByAggregateInput = {
+    id_tok?: SortOrder
+    id_cue_per?: SortOrder
+    tok_val?: SortOrder
+    tip_tok?: SortOrder
+    fec_exp_tok?: SortOrder
+    est_uso?: SortOrder
+    fec_uso?: SortOrder
+    fec_cre_tok?: SortOrder
+    ip_sol?: SortOrder
+    ip_uso?: SortOrder
+  }
+
+  export type Enumtipo_tokenWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.tipo_token | Enumtipo_tokenFieldRefInput<$PrismaModel>
+    in?: $Enums.tipo_token[] | ListEnumtipo_tokenFieldRefInput<$PrismaModel>
+    notIn?: $Enums.tipo_token[] | ListEnumtipo_tokenFieldRefInput<$PrismaModel>
+    not?: NestedEnumtipo_tokenWithAggregatesFilter<$PrismaModel> | $Enums.tipo_token
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumtipo_tokenFilter<$PrismaModel>
+    _max?: NestedEnumtipo_tokenFilter<$PrismaModel>
+  }
+
   export type carreraCreateNestedOneWithoutUsuarioInput = {
     create?: XOR<carreraCreateWithoutUsuarioInput, carreraUncheckedCreateWithoutUsuarioInput>
     connectOrCreate?: carreraCreateOrConnectWithoutUsuarioInput
@@ -22348,6 +23944,13 @@ export namespace Prisma {
     connect?: inscripcionWhereUniqueInput | inscripcionWhereUniqueInput[]
   }
 
+  export type token_cuentaCreateNestedManyWithoutCuentaInput = {
+    create?: XOR<token_cuentaCreateWithoutCuentaInput, token_cuentaUncheckedCreateWithoutCuentaInput> | token_cuentaCreateWithoutCuentaInput[] | token_cuentaUncheckedCreateWithoutCuentaInput[]
+    connectOrCreate?: token_cuentaCreateOrConnectWithoutCuentaInput | token_cuentaCreateOrConnectWithoutCuentaInput[]
+    createMany?: token_cuentaCreateManyCuentaInputEnvelope
+    connect?: token_cuentaWhereUniqueInput | token_cuentaWhereUniqueInput[]
+  }
+
   export type inscripcionUncheckedCreateNestedManyWithoutCuentaInput = {
     create?: XOR<inscripcionCreateWithoutCuentaInput, inscripcionUncheckedCreateWithoutCuentaInput> | inscripcionCreateWithoutCuentaInput[] | inscripcionUncheckedCreateWithoutCuentaInput[]
     connectOrCreate?: inscripcionCreateOrConnectWithoutCuentaInput | inscripcionCreateOrConnectWithoutCuentaInput[]
@@ -22390,8 +23993,19 @@ export namespace Prisma {
     connect?: inscripcionWhereUniqueInput | inscripcionWhereUniqueInput[]
   }
 
+  export type token_cuentaUncheckedCreateNestedManyWithoutCuentaInput = {
+    create?: XOR<token_cuentaCreateWithoutCuentaInput, token_cuentaUncheckedCreateWithoutCuentaInput> | token_cuentaCreateWithoutCuentaInput[] | token_cuentaUncheckedCreateWithoutCuentaInput[]
+    connectOrCreate?: token_cuentaCreateOrConnectWithoutCuentaInput | token_cuentaCreateOrConnectWithoutCuentaInput[]
+    createMany?: token_cuentaCreateManyCuentaInputEnvelope
+    connect?: token_cuentaWhereUniqueInput | token_cuentaWhereUniqueInput[]
+  }
+
   export type Enumrol_usuarioFieldUpdateOperationsInput = {
     set?: $Enums.rol_usuario
+  }
+
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
   }
 
   export type usuarioUpdateOneRequiredWithoutCuentasNestedInput = {
@@ -22486,6 +24100,20 @@ export namespace Prisma {
     deleteMany?: inscripcionScalarWhereInput | inscripcionScalarWhereInput[]
   }
 
+  export type token_cuentaUpdateManyWithoutCuentaNestedInput = {
+    create?: XOR<token_cuentaCreateWithoutCuentaInput, token_cuentaUncheckedCreateWithoutCuentaInput> | token_cuentaCreateWithoutCuentaInput[] | token_cuentaUncheckedCreateWithoutCuentaInput[]
+    connectOrCreate?: token_cuentaCreateOrConnectWithoutCuentaInput | token_cuentaCreateOrConnectWithoutCuentaInput[]
+    upsert?: token_cuentaUpsertWithWhereUniqueWithoutCuentaInput | token_cuentaUpsertWithWhereUniqueWithoutCuentaInput[]
+    createMany?: token_cuentaCreateManyCuentaInputEnvelope
+    set?: token_cuentaWhereUniqueInput | token_cuentaWhereUniqueInput[]
+    disconnect?: token_cuentaWhereUniqueInput | token_cuentaWhereUniqueInput[]
+    delete?: token_cuentaWhereUniqueInput | token_cuentaWhereUniqueInput[]
+    connect?: token_cuentaWhereUniqueInput | token_cuentaWhereUniqueInput[]
+    update?: token_cuentaUpdateWithWhereUniqueWithoutCuentaInput | token_cuentaUpdateWithWhereUniqueWithoutCuentaInput[]
+    updateMany?: token_cuentaUpdateManyWithWhereWithoutCuentaInput | token_cuentaUpdateManyWithWhereWithoutCuentaInput[]
+    deleteMany?: token_cuentaScalarWhereInput | token_cuentaScalarWhereInput[]
+  }
+
   export type inscripcionUncheckedUpdateManyWithoutCuentaNestedInput = {
     create?: XOR<inscripcionCreateWithoutCuentaInput, inscripcionUncheckedCreateWithoutCuentaInput> | inscripcionCreateWithoutCuentaInput[] | inscripcionUncheckedCreateWithoutCuentaInput[]
     connectOrCreate?: inscripcionCreateOrConnectWithoutCuentaInput | inscripcionCreateOrConnectWithoutCuentaInput[]
@@ -22570,6 +24198,20 @@ export namespace Prisma {
     deleteMany?: inscripcionScalarWhereInput | inscripcionScalarWhereInput[]
   }
 
+  export type token_cuentaUncheckedUpdateManyWithoutCuentaNestedInput = {
+    create?: XOR<token_cuentaCreateWithoutCuentaInput, token_cuentaUncheckedCreateWithoutCuentaInput> | token_cuentaCreateWithoutCuentaInput[] | token_cuentaUncheckedCreateWithoutCuentaInput[]
+    connectOrCreate?: token_cuentaCreateOrConnectWithoutCuentaInput | token_cuentaCreateOrConnectWithoutCuentaInput[]
+    upsert?: token_cuentaUpsertWithWhereUniqueWithoutCuentaInput | token_cuentaUpsertWithWhereUniqueWithoutCuentaInput[]
+    createMany?: token_cuentaCreateManyCuentaInputEnvelope
+    set?: token_cuentaWhereUniqueInput | token_cuentaWhereUniqueInput[]
+    disconnect?: token_cuentaWhereUniqueInput | token_cuentaWhereUniqueInput[]
+    delete?: token_cuentaWhereUniqueInput | token_cuentaWhereUniqueInput[]
+    connect?: token_cuentaWhereUniqueInput | token_cuentaWhereUniqueInput[]
+    update?: token_cuentaUpdateWithWhereUniqueWithoutCuentaInput | token_cuentaUpdateWithWhereUniqueWithoutCuentaInput[]
+    updateMany?: token_cuentaUpdateManyWithWhereWithoutCuentaInput | token_cuentaUpdateManyWithWhereWithoutCuentaInput[]
+    deleteMany?: token_cuentaScalarWhereInput | token_cuentaScalarWhereInput[]
+  }
+
   export type facultadCreateNestedOneWithoutCarrerasInput = {
     create?: XOR<facultadCreateWithoutCarrerasInput, facultadUncheckedCreateWithoutCarrerasInput>
     connectOrCreate?: facultadCreateOrConnectWithoutCarrerasInput
@@ -22616,10 +24258,6 @@ export namespace Prisma {
     decrement?: number
     multiply?: number
     divide?: number
-  }
-
-  export type BoolFieldUpdateOperationsInput = {
-    set?: boolean
   }
 
   export type facultadUpdateOneRequiredWithoutCarrerasNestedInput = {
@@ -23240,6 +24878,24 @@ export namespace Prisma {
     deleteMany?: carreraScalarWhereInput | carreraScalarWhereInput[]
   }
 
+  export type cuentaCreateNestedOneWithoutTokens_cuentaInput = {
+    create?: XOR<cuentaCreateWithoutTokens_cuentaInput, cuentaUncheckedCreateWithoutTokens_cuentaInput>
+    connectOrCreate?: cuentaCreateOrConnectWithoutTokens_cuentaInput
+    connect?: cuentaWhereUniqueInput
+  }
+
+  export type Enumtipo_tokenFieldUpdateOperationsInput = {
+    set?: $Enums.tipo_token
+  }
+
+  export type cuentaUpdateOneRequiredWithoutTokens_cuentaNestedInput = {
+    create?: XOR<cuentaCreateWithoutTokens_cuentaInput, cuentaUncheckedCreateWithoutTokens_cuentaInput>
+    connectOrCreate?: cuentaCreateOrConnectWithoutTokens_cuentaInput
+    upsert?: cuentaUpsertWithoutTokens_cuentaInput
+    connect?: cuentaWhereUniqueInput
+    update?: XOR<XOR<cuentaUpdateToOneWithWhereWithoutTokens_cuentaInput, cuentaUpdateWithoutTokens_cuentaInput>, cuentaUncheckedUpdateWithoutTokens_cuentaInput>
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -23398,6 +25054,11 @@ export namespace Prisma {
     not?: NestedEnumrol_usuarioFilter<$PrismaModel> | $Enums.rol_usuario
   }
 
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
   export type NestedEnumrol_usuarioWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.rol_usuario | Enumrol_usuarioFieldRefInput<$PrismaModel>
     in?: $Enums.rol_usuario[] | ListEnumrol_usuarioFieldRefInput<$PrismaModel>
@@ -23408,9 +25069,12 @@ export namespace Prisma {
     _max?: NestedEnumrol_usuarioFilter<$PrismaModel>
   }
 
-  export type NestedBoolFilter<$PrismaModel = never> = {
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
@@ -23438,14 +25102,6 @@ export namespace Prisma {
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatFilter<$PrismaModel> | number
-  }
-
-  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type NestedEnumtipo_eventoFilter<$PrismaModel = never> = {
@@ -23576,6 +25232,23 @@ export namespace Prisma {
     _max?: NestedEnumtipo_certificadoFilter<$PrismaModel>
   }
 
+  export type NestedEnumtipo_tokenFilter<$PrismaModel = never> = {
+    equals?: $Enums.tipo_token | Enumtipo_tokenFieldRefInput<$PrismaModel>
+    in?: $Enums.tipo_token[] | ListEnumtipo_tokenFieldRefInput<$PrismaModel>
+    notIn?: $Enums.tipo_token[] | ListEnumtipo_tokenFieldRefInput<$PrismaModel>
+    not?: NestedEnumtipo_tokenFilter<$PrismaModel> | $Enums.tipo_token
+  }
+
+  export type NestedEnumtipo_tokenWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.tipo_token | Enumtipo_tokenFieldRefInput<$PrismaModel>
+    in?: $Enums.tipo_token[] | ListEnumtipo_tokenFieldRefInput<$PrismaModel>
+    notIn?: $Enums.tipo_token[] | ListEnumtipo_tokenFieldRefInput<$PrismaModel>
+    not?: NestedEnumtipo_tokenWithAggregatesFilter<$PrismaModel> | $Enums.tipo_token
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumtipo_tokenFilter<$PrismaModel>
+    _max?: NestedEnumtipo_tokenFilter<$PrismaModel>
+  }
+
   export type carreraCreateWithoutUsuarioInput = {
     id_car?: string
     nom_car: string
@@ -23615,12 +25288,15 @@ export namespace Prisma {
     con_usu: string
     fec_cre_cue?: Date | string
     rol_usu: $Enums.rol_usuario
+    est_ver_cor?: boolean
+    fec_ver_cor?: Date | string | null
     inscripciones?: inscripcionCreateNestedManyWithoutCuentaInput
     cartas_motivacion?: carta_motivacionCreateNestedManyWithoutAdminInput
     comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutAdminInput
     eventos?: eventoCreateNestedManyWithoutCuentaInput
     observaciones_creadas?: observacion_inscripcionCreateNestedManyWithoutAdmin_creadorInput
     inscripciones_validadas?: inscripcionCreateNestedManyWithoutAdmin_validadorInput
+    tokens_cuenta?: token_cuentaCreateNestedManyWithoutCuentaInput
   }
 
   export type cuentaUncheckedCreateWithoutUsuarioInput = {
@@ -23629,12 +25305,15 @@ export namespace Prisma {
     con_usu: string
     fec_cre_cue?: Date | string
     rol_usu: $Enums.rol_usuario
+    est_ver_cor?: boolean
+    fec_ver_cor?: Date | string | null
     inscripciones?: inscripcionUncheckedCreateNestedManyWithoutCuentaInput
     cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutAdminInput
     comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutAdminInput
     eventos?: eventoUncheckedCreateNestedManyWithoutCuentaInput
     observaciones_creadas?: observacion_inscripcionUncheckedCreateNestedManyWithoutAdmin_creadorInput
     inscripciones_validadas?: inscripcionUncheckedCreateNestedManyWithoutAdmin_validadorInput
+    tokens_cuenta?: token_cuentaUncheckedCreateNestedManyWithoutCuentaInput
   }
 
   export type cuentaCreateOrConnectWithoutUsuarioInput = {
@@ -23712,6 +25391,8 @@ export namespace Prisma {
     con_usu?: StringFilter<"cuenta"> | string
     fec_cre_cue?: DateTimeFilter<"cuenta"> | Date | string
     rol_usu?: Enumrol_usuarioFilter<"cuenta"> | $Enums.rol_usuario
+    est_ver_cor?: BoolFilter<"cuenta"> | boolean
+    fec_ver_cor?: DateTimeNullableFilter<"cuenta"> | Date | string | null
   }
 
   export type cuentaCreateWithoutComprobantes_pagoInput = {
@@ -23720,12 +25401,15 @@ export namespace Prisma {
     con_usu: string
     fec_cre_cue?: Date | string
     rol_usu: $Enums.rol_usuario
+    est_ver_cor?: boolean
+    fec_ver_cor?: Date | string | null
     usuario: usuarioCreateNestedOneWithoutCuentasInput
     inscripciones?: inscripcionCreateNestedManyWithoutCuentaInput
     cartas_motivacion?: carta_motivacionCreateNestedManyWithoutAdminInput
     eventos?: eventoCreateNestedManyWithoutCuentaInput
     observaciones_creadas?: observacion_inscripcionCreateNestedManyWithoutAdmin_creadorInput
     inscripciones_validadas?: inscripcionCreateNestedManyWithoutAdmin_validadorInput
+    tokens_cuenta?: token_cuentaCreateNestedManyWithoutCuentaInput
   }
 
   export type cuentaUncheckedCreateWithoutComprobantes_pagoInput = {
@@ -23735,11 +25419,14 @@ export namespace Prisma {
     con_usu: string
     fec_cre_cue?: Date | string
     rol_usu: $Enums.rol_usuario
+    est_ver_cor?: boolean
+    fec_ver_cor?: Date | string | null
     inscripciones?: inscripcionUncheckedCreateNestedManyWithoutCuentaInput
     cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutAdminInput
     eventos?: eventoUncheckedCreateNestedManyWithoutCuentaInput
     observaciones_creadas?: observacion_inscripcionUncheckedCreateNestedManyWithoutAdmin_creadorInput
     inscripciones_validadas?: inscripcionUncheckedCreateNestedManyWithoutAdmin_validadorInput
+    tokens_cuenta?: token_cuentaUncheckedCreateNestedManyWithoutCuentaInput
   }
 
   export type cuentaCreateOrConnectWithoutComprobantes_pagoInput = {
@@ -23803,12 +25490,15 @@ export namespace Prisma {
     con_usu?: StringFieldUpdateOperationsInput | string
     fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
     rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    est_ver_cor?: BoolFieldUpdateOperationsInput | boolean
+    fec_ver_cor?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     usuario?: usuarioUpdateOneRequiredWithoutCuentasNestedInput
     inscripciones?: inscripcionUpdateManyWithoutCuentaNestedInput
     cartas_motivacion?: carta_motivacionUpdateManyWithoutAdminNestedInput
     eventos?: eventoUpdateManyWithoutCuentaNestedInput
     observaciones_creadas?: observacion_inscripcionUpdateManyWithoutAdmin_creadorNestedInput
     inscripciones_validadas?: inscripcionUpdateManyWithoutAdmin_validadorNestedInput
+    tokens_cuenta?: token_cuentaUpdateManyWithoutCuentaNestedInput
   }
 
   export type cuentaUncheckedUpdateWithoutComprobantes_pagoInput = {
@@ -23818,11 +25508,14 @@ export namespace Prisma {
     con_usu?: StringFieldUpdateOperationsInput | string
     fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
     rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    est_ver_cor?: BoolFieldUpdateOperationsInput | boolean
+    fec_ver_cor?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     inscripciones?: inscripcionUncheckedUpdateManyWithoutCuentaNestedInput
     cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutAdminNestedInput
     eventos?: eventoUncheckedUpdateManyWithoutCuentaNestedInput
     observaciones_creadas?: observacion_inscripcionUncheckedUpdateManyWithoutAdmin_creadorNestedInput
     inscripciones_validadas?: inscripcionUncheckedUpdateManyWithoutAdmin_validadorNestedInput
+    tokens_cuenta?: token_cuentaUncheckedUpdateManyWithoutCuentaNestedInput
   }
 
   export type inscripcionUpsertWithoutComprobantes_pagoInput = {
@@ -23876,12 +25569,15 @@ export namespace Prisma {
     con_usu: string
     fec_cre_cue?: Date | string
     rol_usu: $Enums.rol_usuario
+    est_ver_cor?: boolean
+    fec_ver_cor?: Date | string | null
     usuario: usuarioCreateNestedOneWithoutCuentasInput
     inscripciones?: inscripcionCreateNestedManyWithoutCuentaInput
     comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutAdminInput
     eventos?: eventoCreateNestedManyWithoutCuentaInput
     observaciones_creadas?: observacion_inscripcionCreateNestedManyWithoutAdmin_creadorInput
     inscripciones_validadas?: inscripcionCreateNestedManyWithoutAdmin_validadorInput
+    tokens_cuenta?: token_cuentaCreateNestedManyWithoutCuentaInput
   }
 
   export type cuentaUncheckedCreateWithoutCartas_motivacionInput = {
@@ -23891,11 +25587,14 @@ export namespace Prisma {
     con_usu: string
     fec_cre_cue?: Date | string
     rol_usu: $Enums.rol_usuario
+    est_ver_cor?: boolean
+    fec_ver_cor?: Date | string | null
     inscripciones?: inscripcionUncheckedCreateNestedManyWithoutCuentaInput
     comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutAdminInput
     eventos?: eventoUncheckedCreateNestedManyWithoutCuentaInput
     observaciones_creadas?: observacion_inscripcionUncheckedCreateNestedManyWithoutAdmin_creadorInput
     inscripciones_validadas?: inscripcionUncheckedCreateNestedManyWithoutAdmin_validadorInput
+    tokens_cuenta?: token_cuentaUncheckedCreateNestedManyWithoutCuentaInput
   }
 
   export type cuentaCreateOrConnectWithoutCartas_motivacionInput = {
@@ -23959,12 +25658,15 @@ export namespace Prisma {
     con_usu?: StringFieldUpdateOperationsInput | string
     fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
     rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    est_ver_cor?: BoolFieldUpdateOperationsInput | boolean
+    fec_ver_cor?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     usuario?: usuarioUpdateOneRequiredWithoutCuentasNestedInput
     inscripciones?: inscripcionUpdateManyWithoutCuentaNestedInput
     comprobantes_pago?: comprobante_pagoUpdateManyWithoutAdminNestedInput
     eventos?: eventoUpdateManyWithoutCuentaNestedInput
     observaciones_creadas?: observacion_inscripcionUpdateManyWithoutAdmin_creadorNestedInput
     inscripciones_validadas?: inscripcionUpdateManyWithoutAdmin_validadorNestedInput
+    tokens_cuenta?: token_cuentaUpdateManyWithoutCuentaNestedInput
   }
 
   export type cuentaUncheckedUpdateWithoutCartas_motivacionInput = {
@@ -23974,11 +25676,14 @@ export namespace Prisma {
     con_usu?: StringFieldUpdateOperationsInput | string
     fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
     rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    est_ver_cor?: BoolFieldUpdateOperationsInput | boolean
+    fec_ver_cor?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     inscripciones?: inscripcionUncheckedUpdateManyWithoutCuentaNestedInput
     comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutAdminNestedInput
     eventos?: eventoUncheckedUpdateManyWithoutCuentaNestedInput
     observaciones_creadas?: observacion_inscripcionUncheckedUpdateManyWithoutAdmin_creadorNestedInput
     inscripciones_validadas?: inscripcionUncheckedUpdateManyWithoutAdmin_validadorNestedInput
+    tokens_cuenta?: token_cuentaUncheckedUpdateManyWithoutCuentaNestedInput
   }
 
   export type inscripcionUpsertWithoutCartas_motivacionInput = {
@@ -24071,12 +25776,15 @@ export namespace Prisma {
     con_usu: string
     fec_cre_cue?: Date | string
     rol_usu: $Enums.rol_usuario
+    est_ver_cor?: boolean
+    fec_ver_cor?: Date | string | null
     usuario: usuarioCreateNestedOneWithoutCuentasInput
     inscripciones?: inscripcionCreateNestedManyWithoutCuentaInput
     cartas_motivacion?: carta_motivacionCreateNestedManyWithoutAdminInput
     comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutAdminInput
     eventos?: eventoCreateNestedManyWithoutCuentaInput
     inscripciones_validadas?: inscripcionCreateNestedManyWithoutAdmin_validadorInput
+    tokens_cuenta?: token_cuentaCreateNestedManyWithoutCuentaInput
   }
 
   export type cuentaUncheckedCreateWithoutObservaciones_creadasInput = {
@@ -24086,11 +25794,14 @@ export namespace Prisma {
     con_usu: string
     fec_cre_cue?: Date | string
     rol_usu: $Enums.rol_usuario
+    est_ver_cor?: boolean
+    fec_ver_cor?: Date | string | null
     inscripciones?: inscripcionUncheckedCreateNestedManyWithoutCuentaInput
     cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutAdminInput
     comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutAdminInput
     eventos?: eventoUncheckedCreateNestedManyWithoutCuentaInput
     inscripciones_validadas?: inscripcionUncheckedCreateNestedManyWithoutAdmin_validadorInput
+    tokens_cuenta?: token_cuentaUncheckedCreateNestedManyWithoutCuentaInput
   }
 
   export type cuentaCreateOrConnectWithoutObservaciones_creadasInput = {
@@ -24160,12 +25871,15 @@ export namespace Prisma {
     con_usu?: StringFieldUpdateOperationsInput | string
     fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
     rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    est_ver_cor?: BoolFieldUpdateOperationsInput | boolean
+    fec_ver_cor?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     usuario?: usuarioUpdateOneRequiredWithoutCuentasNestedInput
     inscripciones?: inscripcionUpdateManyWithoutCuentaNestedInput
     cartas_motivacion?: carta_motivacionUpdateManyWithoutAdminNestedInput
     comprobantes_pago?: comprobante_pagoUpdateManyWithoutAdminNestedInput
     eventos?: eventoUpdateManyWithoutCuentaNestedInput
     inscripciones_validadas?: inscripcionUpdateManyWithoutAdmin_validadorNestedInput
+    tokens_cuenta?: token_cuentaUpdateManyWithoutCuentaNestedInput
   }
 
   export type cuentaUncheckedUpdateWithoutObservaciones_creadasInput = {
@@ -24175,11 +25889,14 @@ export namespace Prisma {
     con_usu?: StringFieldUpdateOperationsInput | string
     fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
     rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    est_ver_cor?: BoolFieldUpdateOperationsInput | boolean
+    fec_ver_cor?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     inscripciones?: inscripcionUncheckedUpdateManyWithoutCuentaNestedInput
     cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutAdminNestedInput
     comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutAdminNestedInput
     eventos?: eventoUncheckedUpdateManyWithoutCuentaNestedInput
     inscripciones_validadas?: inscripcionUncheckedUpdateManyWithoutAdmin_validadorNestedInput
+    tokens_cuenta?: token_cuentaUncheckedUpdateManyWithoutCuentaNestedInput
   }
 
   export type usuarioCreateWithoutCuentasInput = {
@@ -24435,6 +26152,40 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type token_cuentaCreateWithoutCuentaInput = {
+    id_tok?: string
+    tok_val: string
+    tip_tok: $Enums.tipo_token
+    fec_exp_tok: Date | string
+    est_uso?: boolean
+    fec_uso?: Date | string | null
+    fec_cre_tok?: Date | string
+    ip_sol?: string | null
+    ip_uso?: string | null
+  }
+
+  export type token_cuentaUncheckedCreateWithoutCuentaInput = {
+    id_tok?: string
+    tok_val: string
+    tip_tok: $Enums.tipo_token
+    fec_exp_tok: Date | string
+    est_uso?: boolean
+    fec_uso?: Date | string | null
+    fec_cre_tok?: Date | string
+    ip_sol?: string | null
+    ip_uso?: string | null
+  }
+
+  export type token_cuentaCreateOrConnectWithoutCuentaInput = {
+    where: token_cuentaWhereUniqueInput
+    create: XOR<token_cuentaCreateWithoutCuentaInput, token_cuentaUncheckedCreateWithoutCuentaInput>
+  }
+
+  export type token_cuentaCreateManyCuentaInputEnvelope = {
+    data: token_cuentaCreateManyCuentaInput | token_cuentaCreateManyCuentaInput[]
+    skipDuplicates?: boolean
+  }
+
   export type usuarioUpsertWithoutCuentasInput = {
     update: XOR<usuarioUpdateWithoutCuentasInput, usuarioUncheckedUpdateWithoutCuentasInput>
     create: XOR<usuarioCreateWithoutCuentasInput, usuarioUncheckedCreateWithoutCuentasInput>
@@ -24641,6 +26392,38 @@ export namespace Prisma {
   export type inscripcionUpdateManyWithWhereWithoutAdmin_validadorInput = {
     where: inscripcionScalarWhereInput
     data: XOR<inscripcionUpdateManyMutationInput, inscripcionUncheckedUpdateManyWithoutAdmin_validadorInput>
+  }
+
+  export type token_cuentaUpsertWithWhereUniqueWithoutCuentaInput = {
+    where: token_cuentaWhereUniqueInput
+    update: XOR<token_cuentaUpdateWithoutCuentaInput, token_cuentaUncheckedUpdateWithoutCuentaInput>
+    create: XOR<token_cuentaCreateWithoutCuentaInput, token_cuentaUncheckedCreateWithoutCuentaInput>
+  }
+
+  export type token_cuentaUpdateWithWhereUniqueWithoutCuentaInput = {
+    where: token_cuentaWhereUniqueInput
+    data: XOR<token_cuentaUpdateWithoutCuentaInput, token_cuentaUncheckedUpdateWithoutCuentaInput>
+  }
+
+  export type token_cuentaUpdateManyWithWhereWithoutCuentaInput = {
+    where: token_cuentaScalarWhereInput
+    data: XOR<token_cuentaUpdateManyMutationInput, token_cuentaUncheckedUpdateManyWithoutCuentaInput>
+  }
+
+  export type token_cuentaScalarWhereInput = {
+    AND?: token_cuentaScalarWhereInput | token_cuentaScalarWhereInput[]
+    OR?: token_cuentaScalarWhereInput[]
+    NOT?: token_cuentaScalarWhereInput | token_cuentaScalarWhereInput[]
+    id_tok?: StringFilter<"token_cuenta"> | string
+    id_cue_per?: StringFilter<"token_cuenta"> | string
+    tok_val?: StringFilter<"token_cuenta"> | string
+    tip_tok?: Enumtipo_tokenFilter<"token_cuenta"> | $Enums.tipo_token
+    fec_exp_tok?: DateTimeFilter<"token_cuenta"> | Date | string
+    est_uso?: BoolFilter<"token_cuenta"> | boolean
+    fec_uso?: DateTimeNullableFilter<"token_cuenta"> | Date | string | null
+    fec_cre_tok?: DateTimeFilter<"token_cuenta"> | Date | string
+    ip_sol?: StringNullableFilter<"token_cuenta"> | string | null
+    ip_uso?: StringNullableFilter<"token_cuenta"> | string | null
   }
 
   export type facultadCreateWithoutCarrerasInput = {
@@ -25055,12 +26838,15 @@ export namespace Prisma {
     con_usu: string
     fec_cre_cue?: Date | string
     rol_usu: $Enums.rol_usuario
+    est_ver_cor?: boolean
+    fec_ver_cor?: Date | string | null
     usuario: usuarioCreateNestedOneWithoutCuentasInput
     inscripciones?: inscripcionCreateNestedManyWithoutCuentaInput
     cartas_motivacion?: carta_motivacionCreateNestedManyWithoutAdminInput
     comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutAdminInput
     observaciones_creadas?: observacion_inscripcionCreateNestedManyWithoutAdmin_creadorInput
     inscripciones_validadas?: inscripcionCreateNestedManyWithoutAdmin_validadorInput
+    tokens_cuenta?: token_cuentaCreateNestedManyWithoutCuentaInput
   }
 
   export type cuentaUncheckedCreateWithoutEventosInput = {
@@ -25070,11 +26856,14 @@ export namespace Prisma {
     con_usu: string
     fec_cre_cue?: Date | string
     rol_usu: $Enums.rol_usuario
+    est_ver_cor?: boolean
+    fec_ver_cor?: Date | string | null
     inscripciones?: inscripcionUncheckedCreateNestedManyWithoutCuentaInput
     cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutAdminInput
     comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutAdminInput
     observaciones_creadas?: observacion_inscripcionUncheckedCreateNestedManyWithoutAdmin_creadorInput
     inscripciones_validadas?: inscripcionUncheckedCreateNestedManyWithoutAdmin_validadorInput
+    tokens_cuenta?: token_cuentaUncheckedCreateNestedManyWithoutCuentaInput
   }
 
   export type cuentaCreateOrConnectWithoutEventosInput = {
@@ -25150,12 +26939,15 @@ export namespace Prisma {
     con_usu?: StringFieldUpdateOperationsInput | string
     fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
     rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    est_ver_cor?: BoolFieldUpdateOperationsInput | boolean
+    fec_ver_cor?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     usuario?: usuarioUpdateOneRequiredWithoutCuentasNestedInput
     inscripciones?: inscripcionUpdateManyWithoutCuentaNestedInput
     cartas_motivacion?: carta_motivacionUpdateManyWithoutAdminNestedInput
     comprobantes_pago?: comprobante_pagoUpdateManyWithoutAdminNestedInput
     observaciones_creadas?: observacion_inscripcionUpdateManyWithoutAdmin_creadorNestedInput
     inscripciones_validadas?: inscripcionUpdateManyWithoutAdmin_validadorNestedInput
+    tokens_cuenta?: token_cuentaUpdateManyWithoutCuentaNestedInput
   }
 
   export type cuentaUncheckedUpdateWithoutEventosInput = {
@@ -25165,11 +26957,14 @@ export namespace Prisma {
     con_usu?: StringFieldUpdateOperationsInput | string
     fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
     rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    est_ver_cor?: BoolFieldUpdateOperationsInput | boolean
+    fec_ver_cor?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     inscripciones?: inscripcionUncheckedUpdateManyWithoutCuentaNestedInput
     cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutAdminNestedInput
     comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutAdminNestedInput
     observaciones_creadas?: observacion_inscripcionUncheckedUpdateManyWithoutAdmin_creadorNestedInput
     inscripciones_validadas?: inscripcionUncheckedUpdateManyWithoutAdmin_validadorNestedInput
+    tokens_cuenta?: token_cuentaUncheckedUpdateManyWithoutCuentaNestedInput
   }
 
   export type eventoCreateWithoutEventos_cursoInput = {
@@ -25458,12 +27253,15 @@ export namespace Prisma {
     con_usu: string
     fec_cre_cue?: Date | string
     rol_usu: $Enums.rol_usuario
+    est_ver_cor?: boolean
+    fec_ver_cor?: Date | string | null
     usuario: usuarioCreateNestedOneWithoutCuentasInput
     cartas_motivacion?: carta_motivacionCreateNestedManyWithoutAdminInput
     comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutAdminInput
     eventos?: eventoCreateNestedManyWithoutCuentaInput
     observaciones_creadas?: observacion_inscripcionCreateNestedManyWithoutAdmin_creadorInput
     inscripciones_validadas?: inscripcionCreateNestedManyWithoutAdmin_validadorInput
+    tokens_cuenta?: token_cuentaCreateNestedManyWithoutCuentaInput
   }
 
   export type cuentaUncheckedCreateWithoutInscripcionesInput = {
@@ -25473,11 +27271,14 @@ export namespace Prisma {
     con_usu: string
     fec_cre_cue?: Date | string
     rol_usu: $Enums.rol_usuario
+    est_ver_cor?: boolean
+    fec_ver_cor?: Date | string | null
     cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutAdminInput
     comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutAdminInput
     eventos?: eventoUncheckedCreateNestedManyWithoutCuentaInput
     observaciones_creadas?: observacion_inscripcionUncheckedCreateNestedManyWithoutAdmin_creadorInput
     inscripciones_validadas?: inscripcionUncheckedCreateNestedManyWithoutAdmin_validadorInput
+    tokens_cuenta?: token_cuentaUncheckedCreateNestedManyWithoutCuentaInput
   }
 
   export type cuentaCreateOrConnectWithoutInscripcionesInput = {
@@ -25651,12 +27452,15 @@ export namespace Prisma {
     con_usu: string
     fec_cre_cue?: Date | string
     rol_usu: $Enums.rol_usuario
+    est_ver_cor?: boolean
+    fec_ver_cor?: Date | string | null
     usuario: usuarioCreateNestedOneWithoutCuentasInput
     inscripciones?: inscripcionCreateNestedManyWithoutCuentaInput
     cartas_motivacion?: carta_motivacionCreateNestedManyWithoutAdminInput
     comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutAdminInput
     eventos?: eventoCreateNestedManyWithoutCuentaInput
     observaciones_creadas?: observacion_inscripcionCreateNestedManyWithoutAdmin_creadorInput
+    tokens_cuenta?: token_cuentaCreateNestedManyWithoutCuentaInput
   }
 
   export type cuentaUncheckedCreateWithoutInscripciones_validadasInput = {
@@ -25666,11 +27470,14 @@ export namespace Prisma {
     con_usu: string
     fec_cre_cue?: Date | string
     rol_usu: $Enums.rol_usuario
+    est_ver_cor?: boolean
+    fec_ver_cor?: Date | string | null
     inscripciones?: inscripcionUncheckedCreateNestedManyWithoutCuentaInput
     cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutAdminInput
     comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutAdminInput
     eventos?: eventoUncheckedCreateNestedManyWithoutCuentaInput
     observaciones_creadas?: observacion_inscripcionUncheckedCreateNestedManyWithoutAdmin_creadorInput
+    tokens_cuenta?: token_cuentaUncheckedCreateNestedManyWithoutCuentaInput
   }
 
   export type cuentaCreateOrConnectWithoutInscripciones_validadasInput = {
@@ -25695,12 +27502,15 @@ export namespace Prisma {
     con_usu?: StringFieldUpdateOperationsInput | string
     fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
     rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    est_ver_cor?: BoolFieldUpdateOperationsInput | boolean
+    fec_ver_cor?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     usuario?: usuarioUpdateOneRequiredWithoutCuentasNestedInput
     cartas_motivacion?: carta_motivacionUpdateManyWithoutAdminNestedInput
     comprobantes_pago?: comprobante_pagoUpdateManyWithoutAdminNestedInput
     eventos?: eventoUpdateManyWithoutCuentaNestedInput
     observaciones_creadas?: observacion_inscripcionUpdateManyWithoutAdmin_creadorNestedInput
     inscripciones_validadas?: inscripcionUpdateManyWithoutAdmin_validadorNestedInput
+    tokens_cuenta?: token_cuentaUpdateManyWithoutCuentaNestedInput
   }
 
   export type cuentaUncheckedUpdateWithoutInscripcionesInput = {
@@ -25710,11 +27520,14 @@ export namespace Prisma {
     con_usu?: StringFieldUpdateOperationsInput | string
     fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
     rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    est_ver_cor?: BoolFieldUpdateOperationsInput | boolean
+    fec_ver_cor?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutAdminNestedInput
     comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutAdminNestedInput
     eventos?: eventoUncheckedUpdateManyWithoutCuentaNestedInput
     observaciones_creadas?: observacion_inscripcionUncheckedUpdateManyWithoutAdmin_creadorNestedInput
     inscripciones_validadas?: inscripcionUncheckedUpdateManyWithoutAdmin_validadorNestedInput
+    tokens_cuenta?: token_cuentaUncheckedUpdateManyWithoutCuentaNestedInput
   }
 
   export type eventoUpsertWithoutInscritosInput = {
@@ -25892,12 +27705,15 @@ export namespace Prisma {
     con_usu?: StringFieldUpdateOperationsInput | string
     fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
     rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    est_ver_cor?: BoolFieldUpdateOperationsInput | boolean
+    fec_ver_cor?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     usuario?: usuarioUpdateOneRequiredWithoutCuentasNestedInput
     inscripciones?: inscripcionUpdateManyWithoutCuentaNestedInput
     cartas_motivacion?: carta_motivacionUpdateManyWithoutAdminNestedInput
     comprobantes_pago?: comprobante_pagoUpdateManyWithoutAdminNestedInput
     eventos?: eventoUpdateManyWithoutCuentaNestedInput
     observaciones_creadas?: observacion_inscripcionUpdateManyWithoutAdmin_creadorNestedInput
+    tokens_cuenta?: token_cuentaUpdateManyWithoutCuentaNestedInput
   }
 
   export type cuentaUncheckedUpdateWithoutInscripciones_validadasInput = {
@@ -25907,11 +27723,14 @@ export namespace Prisma {
     con_usu?: StringFieldUpdateOperationsInput | string
     fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
     rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    est_ver_cor?: BoolFieldUpdateOperationsInput | boolean
+    fec_ver_cor?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     inscripciones?: inscripcionUncheckedUpdateManyWithoutCuentaNestedInput
     cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutAdminNestedInput
     comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutAdminNestedInput
     eventos?: eventoUncheckedUpdateManyWithoutCuentaNestedInput
     observaciones_creadas?: observacion_inscripcionUncheckedUpdateManyWithoutAdmin_creadorNestedInput
+    tokens_cuenta?: token_cuentaUncheckedUpdateManyWithoutCuentaNestedInput
   }
 
   export type inscripcionCreateWithoutInscripcion_cursoInput = {
@@ -26136,20 +27955,65 @@ export namespace Prisma {
     data: XOR<carreraUpdateManyMutationInput, carreraUncheckedUpdateManyWithoutFacultadInput>
   }
 
-  export type cuentaCreateManyUsuarioInput = {
+  export type cuentaCreateWithoutTokens_cuentaInput = {
     id_cue?: string
     cor_usu: string
     con_usu: string
     fec_cre_cue?: Date | string
     rol_usu: $Enums.rol_usuario
+    est_ver_cor?: boolean
+    fec_ver_cor?: Date | string | null
+    usuario: usuarioCreateNestedOneWithoutCuentasInput
+    inscripciones?: inscripcionCreateNestedManyWithoutCuentaInput
+    cartas_motivacion?: carta_motivacionCreateNestedManyWithoutAdminInput
+    comprobantes_pago?: comprobante_pagoCreateNestedManyWithoutAdminInput
+    eventos?: eventoCreateNestedManyWithoutCuentaInput
+    observaciones_creadas?: observacion_inscripcionCreateNestedManyWithoutAdmin_creadorInput
+    inscripciones_validadas?: inscripcionCreateNestedManyWithoutAdmin_validadorInput
   }
 
-  export type cuentaUpdateWithoutUsuarioInput = {
+  export type cuentaUncheckedCreateWithoutTokens_cuentaInput = {
+    id_cue?: string
+    id_usu_per: string
+    cor_usu: string
+    con_usu: string
+    fec_cre_cue?: Date | string
+    rol_usu: $Enums.rol_usuario
+    est_ver_cor?: boolean
+    fec_ver_cor?: Date | string | null
+    inscripciones?: inscripcionUncheckedCreateNestedManyWithoutCuentaInput
+    cartas_motivacion?: carta_motivacionUncheckedCreateNestedManyWithoutAdminInput
+    comprobantes_pago?: comprobante_pagoUncheckedCreateNestedManyWithoutAdminInput
+    eventos?: eventoUncheckedCreateNestedManyWithoutCuentaInput
+    observaciones_creadas?: observacion_inscripcionUncheckedCreateNestedManyWithoutAdmin_creadorInput
+    inscripciones_validadas?: inscripcionUncheckedCreateNestedManyWithoutAdmin_validadorInput
+  }
+
+  export type cuentaCreateOrConnectWithoutTokens_cuentaInput = {
+    where: cuentaWhereUniqueInput
+    create: XOR<cuentaCreateWithoutTokens_cuentaInput, cuentaUncheckedCreateWithoutTokens_cuentaInput>
+  }
+
+  export type cuentaUpsertWithoutTokens_cuentaInput = {
+    update: XOR<cuentaUpdateWithoutTokens_cuentaInput, cuentaUncheckedUpdateWithoutTokens_cuentaInput>
+    create: XOR<cuentaCreateWithoutTokens_cuentaInput, cuentaUncheckedCreateWithoutTokens_cuentaInput>
+    where?: cuentaWhereInput
+  }
+
+  export type cuentaUpdateToOneWithWhereWithoutTokens_cuentaInput = {
+    where?: cuentaWhereInput
+    data: XOR<cuentaUpdateWithoutTokens_cuentaInput, cuentaUncheckedUpdateWithoutTokens_cuentaInput>
+  }
+
+  export type cuentaUpdateWithoutTokens_cuentaInput = {
     id_cue?: StringFieldUpdateOperationsInput | string
     cor_usu?: StringFieldUpdateOperationsInput | string
     con_usu?: StringFieldUpdateOperationsInput | string
     fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
     rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    est_ver_cor?: BoolFieldUpdateOperationsInput | boolean
+    fec_ver_cor?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    usuario?: usuarioUpdateOneRequiredWithoutCuentasNestedInput
     inscripciones?: inscripcionUpdateManyWithoutCuentaNestedInput
     cartas_motivacion?: carta_motivacionUpdateManyWithoutAdminNestedInput
     comprobantes_pago?: comprobante_pagoUpdateManyWithoutAdminNestedInput
@@ -26158,12 +28022,15 @@ export namespace Prisma {
     inscripciones_validadas?: inscripcionUpdateManyWithoutAdmin_validadorNestedInput
   }
 
-  export type cuentaUncheckedUpdateWithoutUsuarioInput = {
+  export type cuentaUncheckedUpdateWithoutTokens_cuentaInput = {
     id_cue?: StringFieldUpdateOperationsInput | string
+    id_usu_per?: StringFieldUpdateOperationsInput | string
     cor_usu?: StringFieldUpdateOperationsInput | string
     con_usu?: StringFieldUpdateOperationsInput | string
     fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
     rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    est_ver_cor?: BoolFieldUpdateOperationsInput | boolean
+    fec_ver_cor?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     inscripciones?: inscripcionUncheckedUpdateManyWithoutCuentaNestedInput
     cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutAdminNestedInput
     comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutAdminNestedInput
@@ -26172,12 +28039,58 @@ export namespace Prisma {
     inscripciones_validadas?: inscripcionUncheckedUpdateManyWithoutAdmin_validadorNestedInput
   }
 
+  export type cuentaCreateManyUsuarioInput = {
+    id_cue?: string
+    cor_usu: string
+    con_usu: string
+    fec_cre_cue?: Date | string
+    rol_usu: $Enums.rol_usuario
+    est_ver_cor?: boolean
+    fec_ver_cor?: Date | string | null
+  }
+
+  export type cuentaUpdateWithoutUsuarioInput = {
+    id_cue?: StringFieldUpdateOperationsInput | string
+    cor_usu?: StringFieldUpdateOperationsInput | string
+    con_usu?: StringFieldUpdateOperationsInput | string
+    fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
+    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    est_ver_cor?: BoolFieldUpdateOperationsInput | boolean
+    fec_ver_cor?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    inscripciones?: inscripcionUpdateManyWithoutCuentaNestedInput
+    cartas_motivacion?: carta_motivacionUpdateManyWithoutAdminNestedInput
+    comprobantes_pago?: comprobante_pagoUpdateManyWithoutAdminNestedInput
+    eventos?: eventoUpdateManyWithoutCuentaNestedInput
+    observaciones_creadas?: observacion_inscripcionUpdateManyWithoutAdmin_creadorNestedInput
+    inscripciones_validadas?: inscripcionUpdateManyWithoutAdmin_validadorNestedInput
+    tokens_cuenta?: token_cuentaUpdateManyWithoutCuentaNestedInput
+  }
+
+  export type cuentaUncheckedUpdateWithoutUsuarioInput = {
+    id_cue?: StringFieldUpdateOperationsInput | string
+    cor_usu?: StringFieldUpdateOperationsInput | string
+    con_usu?: StringFieldUpdateOperationsInput | string
+    fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
+    rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    est_ver_cor?: BoolFieldUpdateOperationsInput | boolean
+    fec_ver_cor?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    inscripciones?: inscripcionUncheckedUpdateManyWithoutCuentaNestedInput
+    cartas_motivacion?: carta_motivacionUncheckedUpdateManyWithoutAdminNestedInput
+    comprobantes_pago?: comprobante_pagoUncheckedUpdateManyWithoutAdminNestedInput
+    eventos?: eventoUncheckedUpdateManyWithoutCuentaNestedInput
+    observaciones_creadas?: observacion_inscripcionUncheckedUpdateManyWithoutAdmin_creadorNestedInput
+    inscripciones_validadas?: inscripcionUncheckedUpdateManyWithoutAdmin_validadorNestedInput
+    tokens_cuenta?: token_cuentaUncheckedUpdateManyWithoutCuentaNestedInput
+  }
+
   export type cuentaUncheckedUpdateManyWithoutUsuarioInput = {
     id_cue?: StringFieldUpdateOperationsInput | string
     cor_usu?: StringFieldUpdateOperationsInput | string
     con_usu?: StringFieldUpdateOperationsInput | string
     fec_cre_cue?: DateTimeFieldUpdateOperationsInput | Date | string
     rol_usu?: Enumrol_usuarioFieldUpdateOperationsInput | $Enums.rol_usuario
+    est_ver_cor?: BoolFieldUpdateOperationsInput | boolean
+    fec_ver_cor?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type inscripcionCreateManyCuentaInput = {
@@ -26247,6 +28160,18 @@ export namespace Prisma {
     fec_val_ins?: Date | string | null
     por_asi_fin_usu?: number | null
     cup_ocu?: boolean
+  }
+
+  export type token_cuentaCreateManyCuentaInput = {
+    id_tok?: string
+    tok_val: string
+    tip_tok: $Enums.tipo_token
+    fec_exp_tok: Date | string
+    est_uso?: boolean
+    fec_uso?: Date | string | null
+    fec_cre_tok?: Date | string
+    ip_sol?: string | null
+    ip_uso?: string | null
   }
 
   export type inscripcionUpdateWithoutCuentaInput = {
@@ -26480,6 +28405,42 @@ export namespace Prisma {
     fec_val_ins?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     por_asi_fin_usu?: NullableFloatFieldUpdateOperationsInput | number | null
     cup_ocu?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type token_cuentaUpdateWithoutCuentaInput = {
+    id_tok?: StringFieldUpdateOperationsInput | string
+    tok_val?: StringFieldUpdateOperationsInput | string
+    tip_tok?: Enumtipo_tokenFieldUpdateOperationsInput | $Enums.tipo_token
+    fec_exp_tok?: DateTimeFieldUpdateOperationsInput | Date | string
+    est_uso?: BoolFieldUpdateOperationsInput | boolean
+    fec_uso?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fec_cre_tok?: DateTimeFieldUpdateOperationsInput | Date | string
+    ip_sol?: NullableStringFieldUpdateOperationsInput | string | null
+    ip_uso?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type token_cuentaUncheckedUpdateWithoutCuentaInput = {
+    id_tok?: StringFieldUpdateOperationsInput | string
+    tok_val?: StringFieldUpdateOperationsInput | string
+    tip_tok?: Enumtipo_tokenFieldUpdateOperationsInput | $Enums.tipo_token
+    fec_exp_tok?: DateTimeFieldUpdateOperationsInput | Date | string
+    est_uso?: BoolFieldUpdateOperationsInput | boolean
+    fec_uso?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fec_cre_tok?: DateTimeFieldUpdateOperationsInput | Date | string
+    ip_sol?: NullableStringFieldUpdateOperationsInput | string | null
+    ip_uso?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type token_cuentaUncheckedUpdateManyWithoutCuentaInput = {
+    id_tok?: StringFieldUpdateOperationsInput | string
+    tok_val?: StringFieldUpdateOperationsInput | string
+    tip_tok?: Enumtipo_tokenFieldUpdateOperationsInput | $Enums.tipo_token
+    fec_exp_tok?: DateTimeFieldUpdateOperationsInput | Date | string
+    est_uso?: BoolFieldUpdateOperationsInput | boolean
+    fec_uso?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fec_cre_tok?: DateTimeFieldUpdateOperationsInput | Date | string
+    ip_sol?: NullableStringFieldUpdateOperationsInput | string | null
+    ip_uso?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type usuarioCreateManyCarreraInput = {

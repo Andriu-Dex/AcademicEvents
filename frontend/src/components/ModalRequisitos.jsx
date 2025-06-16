@@ -46,11 +46,23 @@ const formatearFechaUTC = (fechaStr) => {
   }
 };
 
-const ModalRequisitos = ({ evento, onClose }) => {
+/**
+ * @component ModalRequisitos
+ * @description Muestra los detalles y requisitos de un evento en un modal
+ * @param {Object} props - Propiedades del componente
+ * @param {Object} props.evento - Datos del evento a mostrar
+ * @param {Function} props.onClose - Función para cerrar el modal
+ * @param {string} [props.overlayClassName="modal-requisitos-overlay-mr"] - Clase CSS para el overlay del modal
+ */
+const ModalRequisitos = ({
+  evento,
+  onClose,
+  overlayClassName = "modal-requisitos-overlay-mr",
+}) => {
   if (!evento) return null;
 
   return (
-    <div className="modal-requisitos-overlay-mr" onClick={onClose}>
+    <div className={overlayClassName} onClick={onClose}>
       <div
         className="modal-requisitos-contenido-mr"
         onClick={(e) => e.stopPropagation()}

@@ -74,6 +74,8 @@ model cuenta {
   con_usu       String        // Contraseña de la cuenta
   fec_cre_cue   DateTime      @default(now()) // Fecha de creación de la cuenta
   rol_usu       rol_usuario   // Rol del usuario (ADMIN_GLOBAL, ADMIN_GENERAL, ESTUDIANTE, GENERAL)
+  est_ver_cor   Boolean   @default(false)     // Estado actual de verificación
+  fec_ver_cor   DateTime?                     // Fecha cuando se verificó
 
   usuario           usuario       @relation(fields: [id_usu_per], references: [id_usu]) // Relación 1:1 (cuenta pertenece a un usuario)
   inscripciones     inscripcion[] // Relación 1:N (usuario puede tener muchas inscripciones)
@@ -82,6 +84,7 @@ model cuenta {
   eventos           evento[]      // Relación 1:N (usuario puede crear muchos eventos)
   observaciones_creadas  observacion_inscripcion[]  // Relación 1:N
   inscripciones_validadas inscripcion[] @relation("admin_validador") // Relación 1:N (administrador puede validar muchas inscripciones)
+  tokens_cuenta token_cuenta[] // Relación 1:N (cuenta puede tener muchos tokens)
 }
 
 model carrera {
@@ -216,6 +219,24 @@ model facultad {
   carreras carrera[] // Relación 1:N (facultad puede tener muchas carreras)
 }
 
+model token_cuenta {
+  id_tok        String    @id @default(uuid())
+  id_cue_per    String                         // FK a cuenta (1:N)
+  tok_val       String    @unique              // Token único
+  tip_tok       tipo_token                    // Tipo de token
+  fec_exp_tok   DateTime                       // Fecha expiración
+  est_uso       Boolean   @default(false)      // Si el token fue usado
+  fec_uso       DateTime?                      // Fecha cuando se usó
+  fec_cre_tok   DateTime  @default(now())      // Fecha creación
+  ip_sol        String?                        // IP desde donde se solicitó
+  ip_uso        String?                        // IP desde donde se usó
+  
+  cuenta        cuenta    @relation(fields: [id_cue_per], references: [id_cue])
+  
+  @@index([tok_val])
+  @@index([id_cue_per, tip_tok, fec_cre_tok])
+}
+
 
 // ============================
 // ENUMS
@@ -270,4 +291,11 @@ enum modalidad_evento {
   PRESENCIAL
   VIRTUAL
   SEMIPRESENCIAL
+}
+
+enum tipo_token {
+  VERIFICAR_CORREO      // Verificar correo en registro
+  RECUPERAR_PASSWORD    // Recuperar contraseña
+  CAMBIAR_CORREO        // Cambiar correo (requiere verificar el nuevo)
+  ELIMINAR_CUENTA       // Confirmar eliminación de cuenta
 }

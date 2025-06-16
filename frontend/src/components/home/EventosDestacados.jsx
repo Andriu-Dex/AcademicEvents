@@ -20,6 +20,7 @@ import GestorModales from "../../models/GestorModales";
 import { useHomeSocket } from "../../hooks/useHomeSocket";
 import ModalRequisitos from "../ModalRequisitos";
 import "./styles/EventosDestacados.css";
+import "./styles/ModalEventosDestacados.css";
 
 /**
  * @component EventosDestacados
@@ -273,7 +274,6 @@ const EventosDestacados = () => {
           Conoce nuestras propuestas más relevantes
         </p>
       </div>
-
       <div
         className={
           shouldUseCarousel ? "carousel-container-ed" : "static-container-ed"
@@ -382,7 +382,6 @@ const EventosDestacados = () => {
           </button>
         )}
       </div>
-
       {shouldUseCarousel && eventosDestacados.length > 1 && (
         <div className="carousel-indicators-ed">
           {eventosDestacados.map((_, index) => (
@@ -398,12 +397,12 @@ const EventosDestacados = () => {
             />
           ))}
         </div>
-      )}
-
+      )}{" "}
       {modalEvento && (
         <ModalRequisitos
           evento={modalEvento}
           onClose={() => gestorModales.cerrarModal()}
+          overlayClassName="modal-requisitos-overlay-ed"
         />
       )}
     </section>
