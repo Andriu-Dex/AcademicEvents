@@ -17,7 +17,6 @@ class RegistroService {
     }
     return RegistroService.instance;
   }
-
   /**
    * Registra un nuevo usuario en el sistema
    * @param {Object} datos - Datos del usuario a registrar
@@ -26,6 +25,20 @@ class RegistroService {
   async registrarUsuario(datos) {
     try {
       const response = await axiosInstance.post("/registro", datos);
+
+      // Verificar si la respuesta indica que se requiere verificación de correo
+      if (response.data.requireVerification) {
+        return {
+          success: true,
+          data: response.data,
+          message:
+            response.data.msg ||
+            "Cuenta creada. Revisa tu correo para activarla",
+          requireVerification: true,
+          email: response.data.email || datos.cor_usu,
+        };
+      }
+
       return {
         success: true,
         data: response.data,

@@ -74,6 +74,14 @@ app.get("/", (req, res) => {
 const authRoutes = require("./routes/auth.routes");
 app.use("/api", authRoutes);
 
+// Rutas de verificación de correo
+const verificationRoutes = require("./routes/verification.routes");
+app.use("/api/verificacion", verificationRoutes);
+
+// Rutas de corrección de correo
+const emailCorrectionRoutes = require("./routes/email-correction.routes");
+app.use("/api/cuenta", emailCorrectionRoutes);
+
 const comprobanteRoutes = require("./routes/comprobante.routes");
 app.use("/api", comprobanteRoutes);
 

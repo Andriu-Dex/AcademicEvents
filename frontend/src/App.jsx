@@ -5,6 +5,9 @@ import Login from "./views/Login.jsx";
 import Register from "./views/Register.jsx";
 import Home from "./views/Home.jsx"; // Ruta temporal de prueba
 import EventosPublicos from "./routes/EventosPublicos";
+import VerifyEmail from "./views/VerifyEmail.jsx";
+import VerificationPending from "./views/VerificationPending.jsx";
+import CorrectEmail from "./views/CorrectEmail.jsx";
 
 // Vistas privadas (usuario autenticado)
 import EventsRoute from "./routes/EventsRoute";
@@ -56,6 +59,13 @@ function App() {
           {/* Rutas públicas */}
           <Route path="/login" element={<Login />} />
           <Route path="/registro" element={<Register />} />
+          {/* Rutas de verificación de correo */}
+          <Route path="/verificar-correo/:token" element={<VerifyEmail />} />
+          <Route
+            path="/verificacion-pendiente"
+            element={<VerificationPending />}
+          />
+          <Route path="/corregir-correo" element={<CorrectEmail />} />
           {/* ✅ Ruta temporal para probar Home con diferentes roles */}
           <Route path="/home" element={<Home />} />
           {/* Ruta pública para eventos públicos */}

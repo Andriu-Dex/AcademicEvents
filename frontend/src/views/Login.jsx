@@ -90,6 +90,19 @@ const Login = () => {
         correo: email,
         contrasena: password,
       });
+
+      // Verificar si la cuenta requiere verificación
+      if (res.data.requireVerification) {
+        toast.warning(
+          "Debes verificar tu correo electrónico antes de iniciar sesión"
+        );
+        // Guardar el email para la página de verificación
+        localStorage.setItem("verificationPendingEmail", email);
+        navigate("/verificacion-pendiente");
+        setIsLoading(false);
+        return;
+      }
+
       const { usuario: usu, token } = res.data;
       const usuarioFinal = usu ?? res.data;
       login(usuarioFinal, token);

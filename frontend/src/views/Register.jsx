@@ -139,8 +139,16 @@ const Register = () => {
       const resultado = await registroService.registrarUsuario(datos);
 
       if (resultado.success) {
-        toast.success("Registro exitoso.");
-        navigate("/login");
+        if (resultado.requireVerification) {
+          // Si se requiere verificación, guardamos el email y redirigimos
+          toast.success(resultado.message);
+          localStorage.setItem("verificationPendingEmail", resultado.email);
+          navigate("/verificacion-pendiente");
+        } else {
+          // Comportamiento normal sin verificación
+          toast.success("Registro exitoso.");
+          navigate("/login");
+        }
       } else {
         toast.error(resultado.message);
       }
