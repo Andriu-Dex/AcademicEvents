@@ -262,7 +262,6 @@ class CorrectEmailFormComponent extends React.Component {
                   Carrera
                 </label>
                 <div className="input-container-ce">
-                  <School size={18} className="input-icon-ce" />
                   <select
                     id="carrera"
                     value={carreraId}

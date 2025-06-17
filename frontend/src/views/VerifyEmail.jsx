@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { useAuth } from "../context/AuthContext";
 import VerificationSuccess from "../components/verification/VerificationSuccess";
 import VerificationError from "../components/verification/VerificationError";
+import RedirectingVerification from "../components/verification/RedirectingVerification";
 
 /**
  * Página para verificar el correo electrónico
@@ -14,7 +15,7 @@ const VerifyEmail = () => {
   const { token } = useParams();
   const navigate = useNavigate();
   const { login } = useAuth();
-  const [status, setStatus] = useState("verifying"); // verifying, success, error
+  const [status, setStatus] = useState("verifying"); // verifying, success, error, redirecting
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const hasExecutedRef = useRef(false);
@@ -39,17 +40,19 @@ const VerifyEmail = () => {
         const response = await axios.get(
           `${import.meta.env.VITE_API_URL}/api/verificacion/${token}`
         );
-
         if (response.data.success) {
           // Si hay datos de autenticación, iniciar sesión automáticamente
           if (response.data.authToken && response.data.usuario) {
             login(response.data.usuario, response.data.authToken);
             toast.success("¡Correo verificado! Redirigiendo al inicio...");
 
-            // Redirigir al home después de un breve delay para mostrar el toast
+            // Cambiar al estado de redirección con pantalla elegante
+            setStatus("redirecting");
+
+            // Redirigir al home después del delay con feedback visual
             setTimeout(() => {
               navigate("/");
-            }, 1500);
+            }, 3000); // 3 segundos para mostrar la pantalla de redirección
           } else {
             // Fallback al comportamiento anterior si no hay datos de auth
             setStatus("success");
@@ -106,7 +109,6 @@ const VerifyEmail = () => {
   const handleContinue = () => {
     navigate("/");
   };
-
   // Renderizar el componente según el estado
   if (status === "verifying") {
     return (
@@ -118,6 +120,11 @@ const VerifyEmail = () => {
       </div>
     );
   }
+
+  if (status === "redirecting") {
+    return <RedirectingVerification />;
+  }
+
   if (status === "success") {
     // Mostrar componente de éxito para casos fallback (sin auto-login)
     return <VerificationSuccess onContinue={handleContinue} />;

@@ -36,6 +36,15 @@ La implementación del frontend utiliza React con componentes modulares y CSS mo
   - Validación de rate limiting
   - Generación y validación de tokens
   - Integración con servicio de email
+  - Manejo robusto de transacciones para garantizar consistencia
+  - Invalidación automática de tokens antiguos por seguridad
+
+- `backend/src/services/TokenService.js`
+
+  - Servicio centralizado para gestión de tokens
+  - Función `invalidarTokensOtros` para invalidación selectiva de tokens
+  - Métodos auxiliares para verificación de existencia de funciones
+  - Validación avanzada de tokens con información detallada de estado
 
 - `backend/src/services/EmailTemplateService.js`
   - Plantillas HTML para correos de recuperación
@@ -49,6 +58,9 @@ La implementación del frontend utiliza React con componentes modulares y CSS mo
   - `validateRecoveryToken`: Validar token
   - `resetPassword`: Restablecer contraseña
   - Validaciones de entrada y manejo de errores
+  - Respuestas estructuradas con códigos de razón (reason) para mejor debugging
+  - Manejo inteligente de errores parciales sin afectar funcionalidad principal
+  - Información detallada del estado del token en respuestas de error
 
 #### Rutas
 
@@ -70,6 +82,8 @@ La implementación del frontend utiliza React con componentes modulares y CSS mo
   - Clase para comunicación con la API
   - Métodos para todas las operaciones de recuperación
   - Manejo de errores y logging
+  - Preservación de contexto de error para mejor diagnóstico
+  - Adjuntar información de respuesta completa a errores personalizados
 
 #### Componentes
 
@@ -90,6 +104,10 @@ La implementación del frontend utiliza React con componentes modulares y CSS mo
   - Validación de fortaleza de contraseña
   - Confirmación de contraseña
   - Estados de error, carga y éxito
+  - Integración del componente HomeButton para navegación
+  - Detección y manejo específico de tokens ya utilizados
+  - Mensajes contextuales según el tipo de error del token
+  - Extracción inteligente de información de error desde la API
 
 #### Vistas
 
@@ -127,6 +145,9 @@ Todos los estilos utilizan prefijos únicos (`pw-recovery-*`, `pw-reset-*`) para
 - **Expiración de tokens**: Tokens válidos por 2 horas
 - **Validación de IP**: Registro de IP para auditoría
 - **Validación de contraseña**: Requisitos de complejidad estrictos
+- **Invalidación automática de tokens**: Los tokens antiguos se invalidan automáticamente tras cambio exitoso de contraseña
+- **Manejo robusto de errores**: Sistema tolerante a fallos que garantiza la seguridad incluso en casos de errores parciales
+- **Detección inteligente de tokens usados**: Identificación y manejo específico de enlaces ya utilizados
 
 ### Validaciones de Contraseña
 
@@ -143,6 +164,9 @@ Todos los estilos utilizan prefijos únicos (`pw-recovery-*`, `pw-reset-*`) para
 - **Mensajes claros**: Instrucciones paso a paso
 - **Responsive**: Funciona en dispositivos móviles y desktop
 - **Accesibilidad**: Labels apropiadas y navegación por teclado
+- **Navegación intuitiva**: Botón HomeButton integrado en todas las vistas para fácil retorno al inicio
+- **Manejo inteligente de estados**: Diferenciación clara entre tokens expirados, inválidos y ya utilizados
+- **Mensajes contextuales**: Información específica según el tipo de error o estado del token
 
 ### Funcionalidades
 
@@ -162,6 +186,9 @@ Todos los estilos utilizan prefijos únicos (`pw-recovery-*`, `pw-reset-*`) para
    - Validación de token antes del cambio
    - Encriptación segura de nueva contraseña
    - Invalidación de token después del uso
+   - Invalidación automática de otros tokens de recuperación por seguridad
+   - Transacciones atómicas para garantizar consistencia de datos
+   - Envío de email de confirmación tras cambio exitoso
 
 ## Integración con el Sistema
 
@@ -192,6 +219,9 @@ Todos los estilos utilizan prefijos únicos (`pw-recovery-*`, `pw-reset-*`) para
 - **Manejo de errores**: Try-catch comprehensivo
 - **Logging detallado**: Para debugging y monitoreo
 - **Validaciones exhaustivas**: Tanto frontend como backend
+- **Tolerancia a fallos**: Sistema robusto que continúa funcionando incluso con errores parciales
+- **Identificadores únicos CSS**: Clases con prefijos específicos (rpf-) para evitar conflictos de estilos
+- **Componentes modulares**: Integración del HomeButton en todas las vistas del flujo de recuperación
 
 ### Seguridad
 
@@ -199,6 +229,8 @@ Todos los estilos utilizan prefijos únicos (`pw-recovery-*`, `pw-reset-*`) para
 - **Sanitización de entrada**: Validación estricta de datos
 - **Rate limiting**: Prevención de abuse
 - **Audit trail**: Registro de actividad para seguridad
+- **Gestión avanzada de tokens**: Invalidación automática y selectiva de tokens antiguos
+- **Transacciones atómicas**: Garantizan consistencia de datos durante operaciones críticas
 
 ### UI/UX
 
@@ -206,6 +238,9 @@ Todos los estilos utilizan prefijos únicos (`pw-recovery-*`, `pw-reset-*`) para
 - **Componentes reutilizables**: Arquitectura escalable
 - **Estados de la aplicación**: Feedback claro al usuario
 - **Iconografía consistente**: Uso de lucide-react
+- **Navegación intuitiva**: HomeButton integrado en todas las vistas
+- **Identificadores únicos**: Clases CSS con prefijos específicos del componente
+- **Manejo contextual de errores**: Mensajes específicos según el tipo de problema del token
 
 ## Configuración de Desarrollo
 
@@ -230,21 +265,24 @@ backend/
 │   │   └── password-recovery.routes.js
 │   └── services/
 │       ├── PasswordRecoveryService.js
+│       ├── TokenService.js (con funciones extendidas)
 │       └── EmailTemplateService.js
 
 frontend/
 ├── src/
 │   ├── components/
+│   │   ├── common/
+│   │   │   └── HomeButton.jsx (integrado en recovery)
 │   │   └── recovery/
 │   │       ├── RequestRecoveryForm.jsx
 │   │       ├── RecoveryInstructions.jsx
-│   │       ├── ResetPasswordForm.jsx
+│   │       ├── ResetPasswordForm.jsx (con HomeButton)
 │   │       └── styles/
 │   │           ├── RequestRecoveryForm.module.css
 │   │           ├── RecoveryInstructions.module.css
 │   │           └── ResetPasswordForm.module.css
 │   ├── services/
-│   │   └── PasswordRecoveryService.js
+│   │   └── PasswordRecoveryService.js (con manejo mejorado de errores)
 │   └── views/
 │       ├── ForgotPassword.jsx
 │       ├── RecoveryInstructions.jsx
@@ -275,8 +313,11 @@ frontend/
 4. **Usuario establece nueva contraseña**:
    - Hace clic en enlace del email
    - Sistema valida token automáticamente
+   - Ve botón de navegación al home en caso de querer cancelar
    - Completa formulario con nueva contraseña
+   - Sistema invalida automáticamente otros tokens de recuperación por seguridad
    - Recibe confirmación y redirección a login
+   - Obtiene email de confirmación del cambio exitoso
 
 ## Estado del Proyecto
 
@@ -284,5 +325,8 @@ frontend/
 ✅ **Seguro**: Implementa mejores prácticas de seguridad
 ✅ **Escalable**: Arquitectura modular y mantenible
 ✅ **User-friendly**: Interfaz intuitiva y accesible
+✅ **Robusto**: Manejo inteligente de errores y tolerancia a fallos
+✅ **Navegación integrada**: HomeButton disponible en todas las vistas del flujo
+✅ **Experiencia mejorada**: Mensajes contextuales y manejo específico de diferentes estados de token
 
-La implementación está lista para producción y cumple con los estándares de seguridad modernos para sistemas de recuperación de contraseña.
+La implementación está lista para producción y cumple con los estándares de seguridad modernos para sistemas de recuperación de contraseña. El sistema incluye características avanzadas como invalidación automática de tokens, manejo robusto de errores, y una experiencia de usuario optimizada con navegación intuitiva.
