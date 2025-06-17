@@ -61,8 +61,12 @@ class SocketService {
       if (clientInfo) {
         clientInfo.userId = userData.userId;
         clientInfo.userRole = userData.role;
-        console.log(`🔐 Usuario autenticado en socket: ${userData.userId}`);
+        console.log(
+          `🔐 Usuario autenticado en socket: ${userData.userId} (Rol: ${userData.role})`
+        );
       }
+    } else {
+      console.log(`⚠️ Intento de autenticación fallido:`, userData);
     }
   }
 
@@ -102,6 +106,84 @@ class SocketService {
     });
 
     console.log(`📡 Inscripción ${action} notificada a todos los clientes`);
+  }
+
+  /**
+   * Notificar específicamente a la vista de validación de inscripciones
+   * @param {string} action - Tipo de acción ('new_inscription', 'status_changed', 'validation_required')
+   * @param {Object} inscriptionData - Datos completos de la inscripción
+   */
+  notifyInscriptionValidation(action, inscriptionData) {
+    if (!this.io) return;
+
+    const validationData = {
+      action,
+      data: inscriptionData,
+      timestamp: new Date(),
+      priority: action === "validation_required" ? "high" : "normal",
+    };
+
+    // Enviar a vista específica de validación
+    this.io.emit("inscription-validation-change", validationData);
+
+    // También enviar al dashboard general de admin
+    this.io.emit("admin-dashboard-update", {
+      type: "inscription_update",
+      ...validationData,
+    });
+
+    console.log(
+      `📡 [VALIDATION] ${action} para inscripción ID: ${inscriptionData.id}`
+    );
+  }
+
+  /**
+   * Notificar alerta de capacidad de eventos
+   * @param {Object} eventData - Datos del evento con información de cupos
+   */
+  notifyCapacityAlert(eventData) {
+    if (!this.io) return;
+
+    const alertData = {
+      type: "capacity_alert",
+      eventId: eventData.id,
+      eventTitle: eventData.titulo,
+      remainingSlots: eventData.cupos_disponibles,
+      totalSlots: eventData.cupos_totales,
+      percentage: (
+        (eventData.cupos_disponibles / eventData.cupos_totales) *
+        100
+      ).toFixed(1),
+      timestamp: new Date(),
+    };
+
+    this.io.emit("capacity-alert", alertData);
+
+    console.log(
+      `📡 [CAPACITY ALERT] Evento "${eventData.titulo}" - ${eventData.cupos_disponibles} cupos restantes`
+    );
+  }
+
+  /**
+   * Enviar notificación específica a administradores
+   * @param {string} message - Mensaje de la notificación
+   * @param {string} type - Tipo de notificación
+   * @param {Object} additionalData - Datos adicionales
+   */
+  notifyAdmins(message, type = "info", additionalData = {}) {
+    if (!this.io) return;
+
+    const notificationData = {
+      message,
+      type,
+      timestamp: new Date(),
+      targetAudience: "admin",
+      ...additionalData,
+    };
+
+    this.io.emit("admin-notification", notificationData);
+
+    console.log(`📡 [ADMIN NOTIFICATION] ${type.toUpperCase()}: ${message}`);
   }
 
   /**
@@ -152,6 +234,29 @@ class SocketService {
       ).length,
       connections: Array.from(this.connectedClients.values()),
     };
+  }
+
+  /**
+   * Notificar cambio de estado de inscripción al usuario propietario
+   * @param {string} userId - ID del usuario propietario de la inscripción
+   * @param {Object} inscriptionData - Datos de la inscripción actualizada
+   */
+  notifyUserInscriptionChange(userId, inscriptionData) {
+    if (!this.io) return;
+
+    const notificationData = {
+      action: "status_changed",
+      data: inscriptionData,
+      timestamp: new Date(),
+      userId: userId,
+    };
+
+    // Emitir evento a todos los clientes, pero solo los que tengan el userId correcto lo procesarán
+    this.io.emit("user-inscription-update", notificationData);
+
+    console.log(
+      `📡 [USER NOTIFICATION] Cambio de estado de inscripción notificado para usuario: ${userId}`
+    );
   }
 }
 

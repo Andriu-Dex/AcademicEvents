@@ -1,4 +1,5 @@
 import React from "react";
+import { Link, useNavigate } from "react-router-dom";
 import {
   X,
   Calendar,
@@ -13,6 +14,7 @@ import {
   Monitor,
   Laptop,
 } from "lucide-react";
+import { useAuth } from "../hooks/useAuth";
 import "./styles/ModalRequisitos.css";
 
 // Función para formatear fechas correctamente usando UTC
@@ -59,6 +61,23 @@ const ModalRequisitos = ({
   onClose,
   overlayClassName = "modal-requisitos-overlay-mr",
 }) => {
+  // Obtener información de autenticación
+  const { usuario } = useAuth();
+  const navigate = useNavigate();
+
+  // Verificar si el usuario está autenticado
+  const isAuthenticated = !!usuario;
+
+  const handleInscripcion = () => {
+    onClose(); // Primero cerramos el modal
+    // Redirigir al usuario a la página correspondiente
+    if (isAuthenticated) {
+      navigate("/eventos"); // Si está autenticado, va a EventsRoute
+    } else {
+      navigate("/eventos-publicos"); // Si no está autenticado, va a EventosPublicos
+    }
+  };
+
   if (!evento) return null;
 
   return (
@@ -270,25 +289,38 @@ const ModalRequisitos = ({
           )}
 
           <div
+            className="seccion-inscripcion-mr"
             style={{ marginTop: "1rem", textAlign: "center", color: "#6b7280" }}
           >
-            <p>
-              Para inscribirse en este evento,{" "}
-              <a
-                href="/login"
-                style={{ color: "#8a1538", textDecoration: "underline" }}
-              >
-                inicie sesión
-              </a>{" "}
-              o{" "}
-              <a
-                href="/registro"
-                style={{ color: "#8a1538", textDecoration: "underline" }}
-              >
-                regístrese
-              </a>{" "}
-              en la plataforma.
-            </p>
+            {isAuthenticated ? (
+              <div>
+                <p>¿Quieres inscribirte en este evento?</p>
+                <button
+                  onClick={handleInscripcion}
+                  className="btn-inscripcion-mr"
+                >
+                  Ver en eventos
+                </button>
+              </div>
+            ) : (
+              <p>
+                Para inscribirse en este evento,{" "}
+                <Link
+                  to="/login"
+                  style={{ color: "#8a1538", textDecoration: "underline" }}
+                >
+                  inicie sesión
+                </Link>{" "}
+                o{" "}
+                <Link
+                  to="/registro"
+                  style={{ color: "#8a1538", textDecoration: "underline" }}
+                >
+                  regístrese
+                </Link>{" "}
+                en la plataforma.
+              </p>
+            )}
           </div>
         </div>
       </div>

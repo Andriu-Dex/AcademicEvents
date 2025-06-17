@@ -32,8 +32,7 @@ export const SocketProvider = ({ children }) => {
 
   useEffect(() => {
     // Configurar conexión con el backend
-    const backendUrl =
-      import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+    const backendUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
     console.log("🔌 Conectando a Socket.IO:", backendUrl);
 
@@ -152,9 +151,16 @@ export const SocketProvider = ({ children }) => {
       ]);
     });
 
+    // Evento específico para actualizaciones de inscripciones de usuario
+    newSocket.on("user-inscription-update", (data) => {
+      console.log("📡 Actualización de inscripción de usuario recibida:", data);
+    });
+
     // Limpiar al desmontar
     return () => {
-      console.log("🔌 Desconectando Socket.IO");
+      if (import.meta.env.DEV) {
+        console.log("🔌 Desconectando Socket.IO (dev mode)");
+      }
       newSocket.disconnect();
     };
   }, []);

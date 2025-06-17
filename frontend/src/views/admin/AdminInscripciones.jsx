@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axiosInstance from "../../api/axiosConfig";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/AuthContext";
+import { useSocket } from "../../context/SocketContext";
 import { Search } from "lucide-react";
 import InscripcionCard from "../../components/InscripcionCard";
 import ModalCartaMotivacion from "../../components/ModalCartaMotivacion";
@@ -9,6 +10,7 @@ import "./styles/AdminInscripciones.css";
 
 const AdminInscripciones = () => {
   const { token } = useAuth();
+  const { socket, isConnected } = useSocket();
   const [inscripciones, setInscripciones] = useState([]);
   const [eventos, setEventos] = useState([]);
   const [eventoFiltrado, setEventoFiltrado] = useState("");
@@ -78,6 +80,73 @@ const AdminInscripciones = () => {
   useEffect(() => {
     cargarInscripciones();
   }, [eventoFiltrado]);
+
+  // Efecto para escuchar eventos de socket y actualizar estado local
+  useEffect(() => {
+    if (!socket || !isConnected) return;
+
+    // Configurar listeners para eventos de inscripciones
+    const handleInscriptionChange = (data) => {
+      console.log("📡 Cambio en inscripción recibido:", data);
+
+      // Solo actualizar si la inscripción pertenece al evento filtrado o no hay filtro
+      if (data.action === "updated" && data.inscripcion) {
+        setInscripciones((prevInscripciones) => {
+          return prevInscripciones.map((inscripcion) => {
+            if (inscripcion.id_ins === data.id_ins) {
+              // Actualizar solo la inscripción específica
+              return {
+                ...inscripcion,
+                ...data.inscripcion,
+                onVerCarta: (carta) => setCartaSeleccionada(carta),
+              };
+            }
+            return inscripcion;
+          });
+        });
+      } else if (data.action === "created") {
+        // Solo recargar para nuevas inscripciones para asegurar datos completos
+        setTimeout(() => {
+          cargarInscripciones();
+        }, 500);
+      }
+    };
+
+    const handleValidationChange = (data) => {
+      console.log("📡 Cambio en validación recibido:", data);
+
+      // Actualizar estado local para cambios de validación
+      if (data.action === "status_changed" && data.data) {
+        setInscripciones((prevInscripciones) => {
+          return prevInscripciones.map((inscripcion) => {
+            if (inscripcion.id_ins === data.data.id) {
+              return {
+                ...inscripcion,
+                est_ins: data.data.estadoNuevo,
+                onVerCarta: (carta) => setCartaSeleccionada(carta),
+              };
+            }
+            return inscripcion;
+          });
+        });
+      } else if (data.action === "new_inscription") {
+        // Solo recargar para nuevas inscripciones
+        setTimeout(() => {
+          cargarInscripciones();
+        }, 500);
+      }
+    };
+
+    // Registrar listeners
+    socket.on("inscripcion-change-hm", handleInscriptionChange);
+    socket.on("inscription-validation-change", handleValidationChange);
+
+    // Cleanup
+    return () => {
+      socket.off("inscripcion-change-hm", handleInscriptionChange);
+      socket.off("inscription-validation-change", handleValidationChange);
+    };
+  }, [socket, isConnected]);
 
   // Filtro de inscripciones basado en búsqueda
   const inscripcionesFiltradas = inscripciones.filter((i) => {
