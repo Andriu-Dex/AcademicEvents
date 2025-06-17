@@ -20,6 +20,10 @@ import {
   Briefcase,
   Image,
   AlignLeft,
+  Globe,
+  Phone,
+  MapPin,
+  School,
 } from "lucide-react";
 import ImageUpload from "../../components/ImageUploadMVA";
 import "./styles/AdminConfiguracionMVA.css";
@@ -43,8 +47,10 @@ const AdminConfiguracionMVA = () => {
   const [previewMode, setPreviewMode] = useState(false);
   const [loading, setLoading] = useState(false);
   const [loadingFacultad, setLoadingFacultad] = useState(false);
+  const [loadingUniversidad, setLoadingUniversidad] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [saveFacultadSuccess, setSaveFacultadSuccess] = useState(false);
+  const [saveUniversidadSuccess, setSaveUniversidadSuccess] = useState(false);
   const [validationErrors, setValidationErrors] = useState({
     mision: false,
     vision: false,
@@ -52,8 +58,25 @@ const AdminConfiguracionMVA = () => {
   const [validationFacultadErrors, setValidationFacultadErrors] = useState({
     nom_fac: false,
   });
+  const [validationUniversidadErrors, setValidationUniversidadErrors] =
+    useState({
+      nom_uni: false,
+      dir_uni: false,
+    });
   const [mvaExpanded, setMvaExpanded] = useState(false);
   const [facultadExpanded, setFacultadExpanded] = useState(false);
+  const [universidadExpanded, setUniversidadExpanded] = useState(false);
+
+  const [universidad, setUniversidad] = useState({
+    id_uni: "",
+    nom_uni: "",
+    acr_uni: "",
+    url_log_uni: "",
+    url_web_uni: "",
+    dir_uni: "",
+    tel_uni: "",
+    cor_uni: "",
+  });
 
   const defaultAutoridad = {
     cargo: "",
@@ -116,6 +139,32 @@ const AdminConfiguracionMVA = () => {
       toast.error("Error al cargar la información de la Facultad");
     } finally {
       setLoadingFacultad(false);
+    }
+  };
+
+  // Cargar datos de la universidad
+  const cargarUniversidad = async () => {
+    try {
+      setLoadingUniversidad(true);
+      const res = await axiosInstance.get("/universidad-principal");
+      if (res.data) {
+        const data = res.data;
+        setUniversidad({
+          id_uni: data.id_uni || "",
+          nom_uni: data.nom_uni || "",
+          acr_uni: data.acr_uni || "",
+          url_log_uni: data.url_log_uni || "",
+          url_web_uni: data.url_web_uni || "",
+          dir_uni: data.dir_uni || "",
+          tel_uni: data.tel_uni || "",
+          cor_uni: data.cor_uni || "",
+        });
+      }
+    } catch (error) {
+      console.error("Error al cargar información de la Universidad:", error);
+      toast.error("Error al cargar la información de la Universidad");
+    } finally {
+      setLoadingUniversidad(false);
     }
   };
 
@@ -204,6 +253,53 @@ const AdminConfiguracionMVA = () => {
     }
   };
 
+  // Guardar datos de la universidad
+  const guardarUniversidad = async () => {
+    try {
+      // Validar que nombre y dirección no estén vacíos
+      const errors = {
+        nom_uni: !universidad.nom_uni.trim(),
+        dir_uni: !universidad.dir_uni.trim(),
+      };
+
+      setValidationUniversidadErrors(errors);
+
+      // Si hay errores, mostrar mensaje y detener el guardado
+      if (errors.nom_uni || errors.dir_uni) {
+        toast.error(
+          "El nombre y la dirección de la universidad no pueden estar vacíos"
+        );
+        return;
+      }
+
+      setLoadingUniversidad(true);
+      setSaveUniversidadSuccess(false);
+
+      await axiosInstance.put(`/universidad/${universidad.id_uni}`, {
+        nom_uni: universidad.nom_uni,
+        acr_uni: universidad.acr_uni,
+        url_log_uni: universidad.url_log_uni,
+        url_web_uni: universidad.url_web_uni,
+        dir_uni: universidad.dir_uni,
+        tel_uni: universidad.tel_uni,
+        cor_uni: universidad.cor_uni,
+      });
+
+      toast.success("Datos de la Universidad actualizados correctamente");
+
+      setSaveUniversidadSuccess(true);
+      setTimeout(() => setSaveUniversidadSuccess(false), 3000);
+
+      // Recargar la información para mostrar los cambios actualizados
+      cargarUniversidad();
+    } catch (error) {
+      console.error("Error al guardar información de la Universidad:", error);
+      toast.error("Error al guardar la información de la Universidad");
+    } finally {
+      setLoadingUniversidad(false);
+    }
+  };
+
   const agregarAutoridad = () => {
     setAutoridadesArray([...autoridadesArray, { ...defaultAutoridad }]);
   };
@@ -225,6 +321,7 @@ const AdminConfiguracionMVA = () => {
   useEffect(() => {
     cargar();
     cargarFacultad();
+    cargarUniversidad();
   }, []);
 
   const togglePreviewMode = () => {
@@ -239,6 +336,10 @@ const AdminConfiguracionMVA = () => {
     setFacultadExpanded(!facultadExpanded);
   };
 
+  const toggleUniversidadSection = () => {
+    setUniversidadExpanded(!universidadExpanded);
+  };
+
   return (
     <>
       {/* Botón para volver al home */}
@@ -247,6 +348,227 @@ const AdminConfiguracionMVA = () => {
       </Link>
 
       <div className="adminconfig-container-acmva">
+        {/* Sección Datos Universidad */}
+        <div
+          className="adminconfig-collapsible-header-acmva"
+          onClick={toggleUniversidadSection}
+        >
+          <h2 className="adminconfig-title-acmva">Datos Universidad</h2>
+          <button
+            className="adminconfig-collapse-btn-acmva"
+            aria-label={
+              universidadExpanded ? "Colapsar sección" : "Expandir sección"
+            }
+          >
+            {universidadExpanded ? (
+              <ChevronUp size={20} />
+            ) : (
+              <ChevronDown size={20} />
+            )}
+          </button>
+        </div>
+
+        {universidadExpanded && (
+          <>
+            <p className="adminconfig-description-acmva">
+              Desde aquí puedes editar la información básica de la universidad,
+              como su nombre, logo, dirección y datos de contacto. Esta
+              información aparecerá en todas las secciones del sistema.
+            </p>
+
+            <div className="adminconfig-section-acmva">
+              <div className="adminconfig-form-acmva">
+                <div className="adminconfig-form-group-acmva">
+                  <label>
+                    <span>
+                      <Image size={14} /> Logo de la Universidad:
+                    </span>
+                    <ImageUpload
+                      currentImage={universidad.url_log_uni}
+                      onImageChange={(url) =>
+                        setUniversidad({ ...universidad, url_log_uni: url })
+                      }
+                      placeholder="Subir logo de la universidad"
+                    />
+                  </label>
+                </div>
+
+                <div className="adminconfig-form-group-acmva">
+                  <label>
+                    <span>
+                      <School size={14} /> Nombre de la Universidad *:
+                    </span>
+                    <input
+                      type="text"
+                      className={`adminconfig-input-acmva ${
+                        validationUniversidadErrors.nom_uni
+                          ? "error-input-acmva"
+                          : ""
+                      }`}
+                      value={universidad.nom_uni}
+                      onChange={(e) => {
+                        setUniversidad({
+                          ...universidad,
+                          nom_uni: e.target.value,
+                        });
+                        if (e.target.value.trim()) {
+                          setValidationUniversidadErrors({
+                            ...validationUniversidadErrors,
+                            nom_uni: false,
+                          });
+                        }
+                      }}
+                      placeholder="Nombre completo de la universidad"
+                    />
+                    {validationUniversidadErrors.nom_uni && (
+                      <p className="validation-error-message-acmva">
+                        Este campo es obligatorio
+                      </p>
+                    )}
+                  </label>
+                </div>
+
+                <div className="adminconfig-form-group-acmva">
+                  <label>
+                    <span>
+                      <Building size={14} /> Acrónimo de la Universidad:
+                    </span>
+                    <input
+                      type="text"
+                      className="adminconfig-input-acmva"
+                      value={universidad.acr_uni || ""}
+                      onChange={(e) =>
+                        setUniversidad({
+                          ...universidad,
+                          acr_uni: e.target.value,
+                        })
+                      }
+                      placeholder="Ejemplo: UTA"
+                    />
+                  </label>
+                </div>
+
+                <div className="adminconfig-form-group-acmva">
+                  <label>
+                    <span>
+                      <Globe size={14} /> Sitio Web:
+                    </span>
+                    <input
+                      type="text"
+                      className="adminconfig-input-acmva"
+                      value={universidad.url_web_uni || ""}
+                      onChange={(e) =>
+                        setUniversidad({
+                          ...universidad,
+                          url_web_uni: e.target.value,
+                        })
+                      }
+                      placeholder="https://ejemplo.com"
+                    />
+                  </label>
+                </div>
+
+                <div className="adminconfig-form-group-acmva">
+                  <label>
+                    <span>
+                      <MapPin size={14} /> Dirección *:
+                    </span>
+                    <input
+                      type="text"
+                      className={`adminconfig-input-acmva ${
+                        validationUniversidadErrors.dir_uni
+                          ? "error-input-acmva"
+                          : ""
+                      }`}
+                      value={universidad.dir_uni}
+                      onChange={(e) => {
+                        setUniversidad({
+                          ...universidad,
+                          dir_uni: e.target.value,
+                        });
+                        if (e.target.value.trim()) {
+                          setValidationUniversidadErrors({
+                            ...validationUniversidadErrors,
+                            dir_uni: false,
+                          });
+                        }
+                      }}
+                      placeholder="Dirección completa de la universidad"
+                    />
+                    {validationUniversidadErrors.dir_uni && (
+                      <p className="validation-error-message-acmva">
+                        Este campo es obligatorio
+                      </p>
+                    )}
+                  </label>
+                </div>
+
+                <div className="adminconfig-form-group-acmva">
+                  <label>
+                    <span>
+                      <Phone size={14} /> Teléfono:
+                    </span>
+                    <input
+                      type="text"
+                      className="adminconfig-input-acmva"
+                      value={universidad.tel_uni || ""}
+                      onChange={(e) =>
+                        setUniversidad({
+                          ...universidad,
+                          tel_uni: e.target.value,
+                        })
+                      }
+                      placeholder="Número de teléfono"
+                    />
+                  </label>
+                </div>
+
+                <div className="adminconfig-form-group-acmva">
+                  <label>
+                    <span>
+                      <Mail size={14} /> Correo Electrónico:
+                    </span>
+                    <input
+                      type="email"
+                      className="adminconfig-input-acmva"
+                      value={universidad.cor_uni || ""}
+                      onChange={(e) =>
+                        setUniversidad({
+                          ...universidad,
+                          cor_uni: e.target.value,
+                        })
+                      }
+                      placeholder="correo@universidad.edu.ec"
+                    />
+                  </label>
+                </div>
+              </div>
+
+              <div className="adminconfig-actions-acmva">
+                <button
+                  onClick={guardarUniversidad}
+                  className={`adminconfig-btn-acmva ${
+                    loadingUniversidad ? "loading-acmva" : ""
+                  } ${saveUniversidadSuccess ? "success-acmva" : ""}`}
+                  disabled={loadingUniversidad}
+                >
+                  {loadingUniversidad ? (
+                    <>Guardando...</>
+                  ) : saveUniversidadSuccess ? (
+                    <>
+                      <CheckCircle size={18} /> Guardado
+                    </>
+                  ) : (
+                    <>
+                      <Save size={18} /> Guardar Cambios
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </>
+        )}
+
         {/* Sección Datos de la Facultad */}
         <div
           className="adminconfig-collapsible-header-acmva"

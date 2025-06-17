@@ -1,6 +1,7 @@
 const nodemailer = require("nodemailer");
 const { PrismaClient } = require("../generated/prisma");
 const emailConfig = require("../config/emailConfig");
+const UniversidadService = require("./universidad.service");
 
 /**
  * @class EmailTemplateService
@@ -22,12 +23,12 @@ class EmailTemplateService {
     // Inicializar cliente de Prisma
     this.prisma = new PrismaClient();
   }
-
   /**
    * Obtiene información de la facultad por ID de carrera
    * @param {string} carreraId - ID de la carrera
    * @returns {Promise<Object|null>} Información de la facultad o null
-   */ async obtenerFacultadPorCarrera(carreraId) {
+   */
+  async obtenerFacultadPorCarrera(carreraId) {
     try {
       if (!carreraId) return null;
 
@@ -49,12 +50,12 @@ class EmailTemplateService {
       return null;
     }
   }
-
   /**
    * Obtiene información de la facultad por correo electrónico del usuario
    * @param {string} correo - Correo electrónico del usuario
    * @returns {Promise<Object|null>} Información de la facultad o null
-   */ async obtenerFacultadPorCorreo(correo) {
+   */
+  async obtenerFacultadPorCorreo(correo) {
     try {
       const cuenta = await this.prisma.cuenta.findUnique({
         where: { cor_usu: correo },
@@ -82,6 +83,7 @@ class EmailTemplateService {
       return null;
     }
   }
+
   /**
    * Genera una plantilla de correo para verificación de email
    * @param {Object} options - Opciones para la plantilla
@@ -92,7 +94,8 @@ class EmailTemplateService {
    * @param {string} options.facultad.nom_fac - Nombre de la facultad
    * @param {string} options.facultad.acr_fac - Acrónimo de la facultad
    * @returns {Object} Asunto y cuerpo HTML del correo
-   */ obtenerPlantillaVerificacion({
+   */
+  obtenerPlantillaVerificacion({
     nombre,
     urlVerificacion,
     token,
@@ -374,7 +377,6 @@ class EmailTemplateService {
 
     return { asunto, cuerpoHtml };
   }
-
   /**
    * Genera una plantilla de correo para recuperación de contraseña
    * @param {Object} options - Opciones para la plantilla
@@ -382,11 +384,8 @@ class EmailTemplateService {
    * @param {string} options.urlRecuperacion - URL para recuperar contraseña
    * @param {Object} options.facultad - Información de la facultad (opcional)
    * @returns {Object} Asunto y cuerpo HTML del correo
-   */ obtenerPlantillaRecuperacion({
-    nombre,
-    urlRecuperacion,
-    facultad = null,
-  }) {
+   */
+  obtenerPlantillaRecuperacion({ nombre, urlRecuperacion, facultad = null }) {
     const asunto = "Recuperación de Contraseña - AcademicEvents UTA";
     const config = emailConfig;
 
@@ -870,6 +869,24 @@ class EmailTemplateService {
       throw error;
     }
   }
+
+  /**
+   * Obtiene los datos dinámicos de la universidad
+   * @returns {Promise<Object>} Datos de la universidad
+   */
+  async obtenerDatosUniversidad() {
+    try {
+      return await UniversidadService.getUniversidadData();
+    } catch (error) {
+      console.error("Error al obtener datos de la universidad:", error);
+      // Si hay un error, devolvemos los valores predeterminados de la configuración
+      return {
+        nom_uni: emailConfig.universidad.nombre,
+        acr_uni: emailConfig.universidad.acronimo,
+      };
+    }
+  }
 }
 
 module.exports = EmailTemplateService;
+// Andriu Dex

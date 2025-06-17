@@ -484,6 +484,56 @@
   padding: 0.375rem 0.75rem;
 }
 
+/* Estilos para universidad */
+.adminconfig-form-acmva {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.adminconfig-form-group-acmva {
+  margin-bottom: 0.5rem;
+}
+
+.adminconfig-form-group-acmva label {
+  display: block;
+  width: 100%;
+}
+
+.adminconfig-form-group-acmva span {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.adminconfig-input-acmva {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #d1d5db;
+  color: rgb(52, 47, 47);
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  transition: all 0.2s;
+  background: #f9fafb;
+}
+
+.adminconfig-input-acmva:focus {
+  outline: none;
+  border-color: #8a1538;
+  box-shadow: 0 0 0 2px rgba(138, 21, 56, 0.2);
+  background: #fff;
+}
+
+.adminconfig-input-acmva.error-input-acmva {
+  border-color: #ef4444 !important;
+  background-color: #fef2f2 !important;
+}
+
 /* Estilos para facultad */
 .facultad-form-acmva {
   display: flex;

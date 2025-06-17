@@ -14,6 +14,16 @@ const Footer = ({ isAuthenticated }) => {
     acronimo: "FISEI",
     logo: "https://imgur.com/fch1iy6.png",
   });
+
+  const [universidad, setUniversidad] = useState({
+    nombre: "Universidad Técnica de Ambato",
+    acronimo: "UTA",
+    logo: "",
+    direccion: "Av. de los Chasquis, Ambato",
+    email: "info@uta.edu.ec",
+    telefono: "(03) 252-1081",
+  });
+
   /**
    * Carga los datos de la facultad desde la API
    */
@@ -32,9 +42,31 @@ const Footer = ({ isAuthenticated }) => {
     }
   };
 
+  /**
+   * Carga los datos de la universidad desde la API
+   */
+  const cargarDatosUniversidad = async () => {
+    try {
+      const response = await axiosInstance.get("/universidad-principal");
+      if (response.data) {
+        setUniversidad({
+          nombre: response.data.nom_uni || universidad.nombre,
+          acronimo: response.data.acr_uni || universidad.acronimo,
+          logo: response.data.url_log_uni || universidad.logo,
+          direccion: response.data.dir_uni || universidad.direccion,
+          email: response.data.cor_uni || universidad.email,
+          telefono: response.data.tel_uni || universidad.telefono,
+        });
+      }
+    } catch (error) {
+      console.error("Error al cargar datos de la universidad:", error);
+    }
+  };
+
   // Equivalente a componentDidMount
   useEffect(() => {
     cargarDatosFacultad();
+    cargarDatosUniversidad();
   }, []); // El array vacío hace que se ejecute solo al montar el componente
 
   return (
@@ -50,9 +82,9 @@ const Footer = ({ isAuthenticated }) => {
                 style={{ width: "40px", height: "40px" }}
               />
               <h5 className="mb-0 footer-title-fc">{facultad.acronimo}</h5>
-            </div>
+            </div>{" "}
             <p className="small mb-0 footer-subtitle-fc">
-              Universidad Técnica de Ambato
+              {universidad.nombre}
             </p>
             <p className="small text-muted footer-slogan-fc">
               Formando el futuro tecnológico del Ecuador
@@ -113,15 +145,15 @@ const Footer = ({ isAuthenticated }) => {
           <div className="col-md-3">
             <h6 className="mb-3 footer-section-title-fc">Contacto</h6>
             <ul className="list-unstyled mb-0">
+              {" "}
               <li className="mb-2 small footer-contact-item-fc">
-                <MapPin size={14} className="me-2" /> Av. de los Chasquis,
-                Ambato
+                <MapPin size={14} className="me-2" /> {universidad.direccion}
               </li>
               <li className="mb-2 small footer-contact-item-fc">
-                <Mail size={14} className="me-2" /> info@uta.edu.ec
+                <Mail size={14} className="me-2" /> {universidad.email}
               </li>
               <li className="mb-2 small footer-contact-item-fc">
-                <Phone size={14} className="me-2" /> (03) 252-1081
+                <Phone size={14} className="me-2" /> {universidad.telefono}
               </li>
             </ul>
           </div>
@@ -133,8 +165,9 @@ const Footer = ({ isAuthenticated }) => {
         <div className="row align-items-center">
           <div className="col-md-6 text-center text-md-start">
             <small className="footer-copyright-fc">
+              {" "}
               &copy; {new Date().getFullYear()} {facultad.acronimo} -
-              Universidad Técnica de Ambato
+              {universidad.nombre}
             </small>
           </div>
           <div className="col-md-6 text-center text-md-end mt-3 mt-md-0">
