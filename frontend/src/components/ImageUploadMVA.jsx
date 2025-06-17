@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import { Upload, X, Edit3, AlertCircle, CheckCircle } from "lucide-react";
 import axiosInstance from "../api/axiosConfig";
 import { toast } from "react-toastify";
-import "./styles/ImageUpload-mva.css";
+import "./styles/ImageUploadMVA.css";
 
 const ImageUpload = ({
   currentImage,

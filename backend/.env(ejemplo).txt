@@ -5,7 +5,7 @@ DATABASE_URL=postgresql://postgres:tu_contraseña@localhost:5432/academicevents
 PORT_BACKEND=3000
 
 #HOST
-HOST=coloca_IP
+HOST=coloca_IP o localhost
 
 # JWT y Email
 JWT_SECRET=clave_secreta_segura
@@ -21,5 +21,15 @@ SMTP_USER=correo@gmail.com
 
 #Contraseña de aplicación Gmail
 #Entrar a ese link: https://www.youtube.com/redirect?event=video_description&redir_token=QUFFLUhqbWktbWpqYy01Q2FWVlF5eS1Tb1o0b0tWUU1lUXxBQ3Jtc0tsTE5IMjh1MmtjZ24zbzYwdGRRbUVzdDFzTkVZYjZkX1BQc0ZiRVhZVDc1Z3JzVzZrUmJSamVGSW9ocDBSZFVORTc5eVZiSnVIVkc2STdKRk1iVks2QmFZUHFnY3hZVHJlc2kzZHJNMXJuT0pqeHdLTQ&q=https%3A%2F%2Fmyaccount.google.com%2Fapppasswords&v=h4eVrDSf8Eg
-
 SMTP_PASS=contraseña_aplicacion
+
+# Id de cliente generada (https://api.imgur.com/oauth2/addclient)
+IMGUR_CLIENT_ID=tu_pass_client_generada
+
+# Client Secret de Imgur
+IMGUR_CLIENT_SECRET=colocar_tu_secret_imgur
+
+#Credenciales de Super Admin
+SUPER_ADMIN_EMAIL=admin@uta.edu.ec
+SUPER_ADMIN_PASSWORD=Admin12345
+SUPER_ADMIN_CEDULA=9999999999

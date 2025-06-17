@@ -21,7 +21,7 @@ import {
   Image,
   AlignLeft,
 } from "lucide-react";
-import ImageUpload from "../../components/ImageUpload-mva";
+import ImageUpload from "../../components/ImageUploadMVA";
 import "./styles/AdminConfiguracionMVA.css";
 
 const AdminConfiguracionMVA = () => {

@@ -5,7 +5,7 @@ import axios from "axios";
 import { Loader2 } from "lucide-react";
 import CorrectEmailForm from "../components/verification/CorrectEmailForm";
 import HomeButton from "../components/common/HomeButton";
-import "../components/verification/styles/CorrectEmailForm.css";
+import "../components/verification/styles/VerificationCorrectEmail.css";
 
 /**
  * Página para corregir el correo electrónico antes de verificar

@@ -147,7 +147,7 @@ const perfilRoutes = require("./routes/perfil.routes");
 app.use("/api", perfilRoutes);
 
 // Rutas de subida de imágenes
-const uploadRoutes = require("./routes/upload.routes-mva");
+const uploadRoutes = require("./routes/upload-mva.routes");
 app.use("/api/upload", uploadRoutes);
 
 // Rutas de reportes (solo admins)

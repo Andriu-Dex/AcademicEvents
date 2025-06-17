@@ -9,7 +9,7 @@ import ResetPassword from "./views/ResetPassword.jsx";
 import Home from "./views/Home.jsx"; // Ruta temporal de prueba
 import EventosPublicos from "./routes/EventosPublicos";
 import VerifyEmail from "./views/VerifyEmail.jsx";
-import VerificationPending from "./views/VerificationPending.jsx";
+import VerificationPending from "./views/VerificationPendingPage.jsx";
 import CorrectEmail from "./views/CorrectEmail.jsx";
 
 // Vistas privadas (usuario autenticado)

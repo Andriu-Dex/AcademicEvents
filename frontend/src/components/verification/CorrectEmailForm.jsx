@@ -2,7 +2,7 @@ import React from "react";
 import { Mail, ArrowLeft, AlertTriangle, Loader2, School } from "lucide-react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import "./styles/CorrectEmailForm.css";
+import "./styles/VerificationCorrectEmail.css";
 
 /**
  * @class CorrectEmailFormComponent

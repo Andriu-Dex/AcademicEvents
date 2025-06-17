@@ -3,7 +3,7 @@ const router = express.Router();
 const verificarToken = require("../middlewares/auth");
 const onlyAdmin = require("../middlewares/autorizacion/onlyAdmin");
 const { upload } = require("../middlewares/upload");
-const { subirImagen } = require("../controllers/upload.controller-mva");
+const { subirImagen } = require("../controllers/upload-mva.controller");
 
 // Middleware para manejar errores de multer
 const manejarErroresMulter = (error, req, res, next) => {

@@ -1,6 +1,6 @@
 import React from "react";
 import { CheckCircle } from "lucide-react";
-import "../verification/styles/verification-styles.css";
+import "../verification/styles/VerificationStyles.css";
 
 /**
  * @class RedirectingVerificationComponent

@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { CheckCircle } from "lucide-react";
-import "../verification/styles/verification-styles.css";
+import "../verification/styles/VerificationStyles.css";
 
 /**
  * @class VerificationSuccessComponent

@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { AlertTriangle, Loader2, RefreshCw, Mail } from "lucide-react";
-import "../verification/styles/verification-styles.css";
+import "../verification/styles/VerificationStyles.css";
 
 /**
  * @class VerificationErrorComponent

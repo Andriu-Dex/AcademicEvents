@@ -2,7 +2,7 @@ import React from "react";
 import { Send, Loader2 } from "lucide-react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import "../verification/styles/verification-styles.css";
+import "../verification/styles/VerificationStyles.css";
 
 /**
  * @class ResendVerificationComponent
