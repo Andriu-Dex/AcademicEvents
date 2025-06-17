@@ -1,0 +1,32 @@
+/* ============================
+   Estilos para BotonEstrella
+   ========================== */
+
+.estrella-activa-be {
+  color: #ffd700; /* Amarillo dorado */
+  filter: drop-shadow(0 0 2px rgba(255, 215, 0, 0.5));
+  transform: scale(1.1);
+}
+
+.estrella-inactiva-be {
+  color: #cccccc;
+  opacity: 0.7;
+}
+
+.boton-estrella-be {
+  background: transparent;
+  border: none;
+  padding: 4px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.boton-estrella-be:hover {
+  transform: scale(1.2);
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.boton-estrella-be:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.5);
+}

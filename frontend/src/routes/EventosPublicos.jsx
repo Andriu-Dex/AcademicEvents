@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axiosInstance from "../api/axiosConfig";
 import {
@@ -27,7 +27,9 @@ import { useAuth } from "../hooks/useAuth";
 import Navbar from "../components/Navbar";
 import { toast } from "react-toastify";
 import ModalRequisitos from "../components/ModalRequisitos";
+import GestorModales from "../models/GestorModales";
 import "./styles/EventosPublicos.css";
+import "./styles/ModalEventosPublicos.css";
 import "./styles/animaciones.css";
 
 // Función para formatear fechas correctamente usando UTC
@@ -70,6 +72,9 @@ const EventosPublicos = () => {
   const [filtro, setFiltro] = useState("");
   const [cargando, setCargando] = useState(true);
   const [modalEvento, setModalEvento] = useState(null);
+
+  // Crear instancia del gestor de modales
+  const gestorModales = useRef(new GestorModales(setModalEvento)).current;
 
   // Estados para los filtros
   const [filtros, setFiltros] = useState({
@@ -164,7 +169,7 @@ const EventosPublicos = () => {
     }));
 
     // Añadir efecto de filtrado al grid
-    const eventosGrid = document.querySelector(".eventos-grid");
+    const eventosGrid = document.querySelector(".eventos-grid-ep");
     if (eventosGrid) {
       eventosGrid.classList.add("filtering");
       setTimeout(() => {
@@ -254,7 +259,7 @@ const EventosPublicos = () => {
     return (
       <>
         <Navbar />
-        <div className="eventos-container">
+        <div className="eventos-container-ep">
           <div className="eventos-cargando">
             <div className="spinner"></div>
             <p>Cargando eventos públicos disponibles...</p>
@@ -278,7 +283,7 @@ const EventosPublicos = () => {
   return (
     <>
       <Navbar />
-      <div className="eventos-container">
+      <div className="eventos-container-ep">
         <h1 className="eventos-titulo">
           <CalendarDays size={24} />
           Eventos Públicos
@@ -293,7 +298,7 @@ const EventosPublicos = () => {
               value={filtro}
               onChange={(e) => {
                 // Añadir clase de filtrado al grid
-                const eventosGrid = document.querySelector(".eventos-grid");
+                const eventosGrid = document.querySelector(".eventos-grid-ep");
                 if (eventosGrid) {
                   eventosGrid.classList.add("filtering");
                   // Quitar la clase después de la animación
@@ -494,7 +499,7 @@ const EventosPublicos = () => {
               </p>
             </div>
 
-            <div className="eventos-grid">
+            <div className="eventos-grid-ep">
               {eventos.filter(aplicarFiltros).map((evento, index) => (
                 <div
                   key={evento.id_eve}
@@ -523,24 +528,16 @@ const EventosPublicos = () => {
                       ? "Gratuito"
                       : `Precio: $${evento.val_eve.toFixed(2)}`}
                   </p>
-                  {evento.des_eve && (
-                    <div className="descripcion-evento">
-                      <p>
-                        {evento.des_eve.length > 150
-                          ? `${evento.des_eve.substring(0, 150)}...`
-                          : evento.des_eve}
-                      </p>
-                    </div>
-                  )}
-                  <p className="fecha-evento-ep">
-                    <Calendar size={16} className="inline-icon" /> Fecha:{" "}
-                    {formatearFechaUTC(evento.fec_ini_eve)} a{" "}
-                    {formatearFechaUTC(evento.fec_fin_eve)}
-                  </p>{" "}
-                  <p className="duracion-evento-ep">
-                    <Clock size={16} className="inline-icon" /> Duración:{" "}
-                    {evento.dur_hor_eve} horas
-                  </p>
+                  <div className="fechas-contenedor-ep">
+                    <p className="fecha-inicio-ep">
+                      <Calendar size={16} className="inline-icon-ep" /> Inicio:{" "}
+                      {formatearFechaUTC(evento.fec_ini_eve)}
+                    </p>
+                    <p className="fecha-fin-ep">
+                      <Calendar size={16} className="inline-icon-ep" /> Fin:{" "}
+                      {formatearFechaUTC(evento.fec_fin_eve)}
+                    </p>
+                  </div>{" "}
                   <p
                     className={
                       evento.cup_dis_eve === 0
@@ -550,106 +547,69 @@ const EventosPublicos = () => {
                   >
                     {evento.cup_dis_eve === 0 ? (
                       <>
-                        <AlertCircle size={16} className="inline-icon" /> Sin
+                        <AlertCircle size={16} className="inline-icon-ep" /> Sin
                         cupos disponibles
                       </>
                     ) : (
                       <>
-                        <CheckCircle size={16} className="inline-icon" /> Cupos
-                        disponibles: {evento.cup_dis_eve || 0}
+                        <CheckCircle size={16} className="inline-icon-ep" />{" "}
+                        Cupos disponibles: {evento.cup_dis_eve || 0}
                       </>
                     )}
                   </p>{" "}
-                  <p className="modalidad-evento">
+                  <p className="modalidad-evento-ep">
                     {evento.mod_eve === "PRESENCIAL" && (
                       <>
-                        <MapPin size={16} className="inline-icon" /> Modalidad:
-                        Presencial
+                        <MapPin size={16} className="inline-icon-ep" />{" "}
+                        Modalidad: Presencial
                       </>
                     )}
                     {evento.mod_eve === "VIRTUAL" && (
                       <>
-                        <Monitor size={16} className="inline-icon" /> Modalidad:
-                        Virtual
+                        <Monitor size={16} className="inline-icon-ep" />{" "}
+                        Modalidad: Virtual
                       </>
                     )}
                     {evento.mod_eve === "SEMIPRESENCIAL" && (
                       <>
-                        <Laptop size={16} className="inline-icon" /> Modalidad:
-                        Semipresencial
+                        <Laptop size={16} className="inline-icon-ep" />{" "}
+                        Modalidad: Semipresencial
                       </>
                     )}
                     {!evento.mod_eve && (
                       <>
-                        <Users size={16} className="inline-icon" /> Modalidad:
-                        No especificada
+                        <Users size={16} className="inline-icon-ep" />{" "}
+                        Modalidad: No especificada
                       </>
                     )}
                   </p>
-                  <div className="evento-footer">
+                  <div className="evento-footer-ep">
                     {" "}
                     <div
-                      className={`estado-evento ${evento.est_eve?.toLowerCase()}`}
+                      className={`estado-evento-ep ${evento.est_eve?.toLowerCase()}`}
                     >
                       {evento.est_eve === "ACTIVO" ? (
                         <>
-                          <Zap size={14} className="inline-icon" /> ACTIVO
+                          <Zap size={14} className="inline-icon-ep" /> ACTIVO
                         </>
                       ) : (
                         <>
-                          <Pause size={14} className="inline-icon" /> INACTIVO
+                          <Pause size={14} className="inline-icon-ep" />{" "}
+                          INACTIVO
                         </>
                       )}
                     </div>{" "}
                     <button
-                      className="btn-requisitos"
+                      className="btn-requisitos-ep"
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        setModalEvento(evento);
-
-                        // Añadir efecto ripple al botón
-                        const rect = e.currentTarget.getBoundingClientRect();
-                        const x = e.clientX - rect.left;
-                        const y = e.clientY - rect.top;
-
-                        const ripple = document.createElement("span");
-                        ripple.className = "ripple-effect";
-                        ripple.style.left = `${x}px`;
-                        ripple.style.top = `${y}px`;
-
-                        e.currentTarget.appendChild(ripple);
-
-                        setTimeout(() => {
-                          if (ripple && ripple.parentNode) {
-                            ripple.remove();
-                          }
-                        }, 600);
+                        gestorModales.abrirModal(evento);
                       }}
                     >
                       <Info size={16} /> Ver Requisitos
                     </button>
-                    <Link
-                      to="/login"
-                      className="btn-inscribirme"
-                      onClick={(e) => {
-                        // Añadir efecto ripple al botón
-                        const rect = e.currentTarget.getBoundingClientRect();
-                        const x = e.clientX - rect.left;
-                        const y = e.clientY - rect.top;
-
-                        const ripple = document.createElement("span");
-                        ripple.className = "ripple-effect";
-                        ripple.style.left = `${x}px`;
-                        ripple.style.top = `${y}px`;
-
-                        e.currentTarget.appendChild(ripple);
-
-                        setTimeout(() => {
-                          ripple.remove();
-                        }, 600);
-                      }}
-                    >
+                    <Link to="/login" className="btn-inscribirme-ep">
                       <LogIn size={16} /> Inscribirme
                     </Link>
                   </div>
@@ -662,7 +622,8 @@ const EventosPublicos = () => {
       {modalEvento && (
         <ModalRequisitos
           evento={modalEvento}
-          onClose={() => setModalEvento(null)}
+          onClose={() => gestorModales.cerrarModal()}
+          overlayClassName="modal-requisitos-overlay-ep"
         />
       )}
     </>

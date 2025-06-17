@@ -1,0 +1,184 @@
+/* ============================================
+   ESTILOS PARA EL COMPONENTE HOME BUTTON
+   ============================================ */
+
+/* Clase base del botón home con identificador único */
+.home-button-hb {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 45px;
+  height: 45px;
+  background-color: var(--color-UTA, #8a1538);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 2px 8px rgba(138, 21, 56, 0.3);
+  transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  z-index: 1000;
+  backdrop-filter: blur(3px);
+  animation: pulse-hb 2s infinite;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  outline: none;
+}
+
+/* Estado hover del botón */
+.home-button-hb:hover {
+  background-color: var(--color-UTA, #8a1538);
+  transform: rotate(360deg) scale(1.1);
+  box-shadow: 0 5px 15px rgba(138, 21, 56, 0.5);
+  color: white;
+  text-decoration: none;
+}
+
+/* Estado focus para accesibilidad */
+.home-button-hb:focus {
+  outline: 2px solid rgba(138, 21, 56, 0.8);
+  outline-offset: 2px;
+}
+
+/* Estado active */
+.home-button-hb:active {
+  transform: rotate(360deg) scale(0.95);
+}
+
+/* Animación de pulso personalizada */
+@keyframes pulse-hb {
+  0% {
+    box-shadow: 0 0 0 0 rgba(138, 21, 56, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(138, 21, 56, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(138, 21, 56, 0);
+  }
+}
+
+/* Variantes de posición */
+.home-button-hb.position-top-left-hb {
+  top: 20px;
+  left: 20px;
+  right: auto;
+}
+
+.home-button-hb.position-top-right-hb {
+  top: 20px;
+  right: 20px;
+}
+
+.home-button-hb.position-bottom-left-hb {
+  bottom: 20px;
+  left: 20px;
+  top: auto;
+  right: auto;
+}
+
+.home-button-hb.position-bottom-right-hb {
+  bottom: 20px;
+  right: 20px;
+  top: auto;
+}
+
+/* Variantes de tamaño */
+.home-button-hb.size-small-hb {
+  width: 35px;
+  height: 35px;
+}
+
+.home-button-hb.size-large-hb {
+  width: 55px;
+  height: 55px;
+}
+
+/* Variante sin animación */
+.home-button-hb.no-animation-hb {
+  animation: none;
+}
+
+/* Variante transparente */
+.home-button-hb.transparent-hb {
+  background-color: rgba(138, 21, 56, 0.5);
+  backdrop-filter: blur(5px);
+}
+
+.home-button-hb.transparent-hb:hover {
+  background-color: rgba(138, 21, 56, 0.8);
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .home-button-hb {
+    width: 40px;
+    height: 40px;
+    top: 15px;
+    right: 15px;
+  }
+
+  .home-button-hb.position-top-left-hb {
+    top: 15px;
+    left: 15px;
+  }
+
+  .home-button-hb.position-bottom-left-hb {
+    bottom: 15px;
+    left: 15px;
+  }
+
+  .home-button-hb.position-bottom-right-hb {
+    bottom: 15px;
+    right: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .home-button-hb {
+    width: 35px;
+    height: 35px;
+    top: 10px;
+    right: 10px;
+  }
+
+  .home-button-hb.position-top-left-hb {
+    top: 10px;
+    left: 10px;
+  }
+
+  .home-button-hb.position-bottom-left-hb {
+    bottom: 10px;
+    left: 10px;
+  }
+
+  .home-button-hb.position-bottom-right-hb {
+    bottom: 10px;
+    right: 10px;
+  }
+}
+
+/* Mejoras de accesibilidad */
+@media (prefers-reduced-motion: reduce) {
+  .home-button-hb {
+    animation: none;
+    transition: none;
+  }
+
+  .home-button-hb:hover {
+    transform: scale(1.05);
+  }
+}
+
+/* Modo alto contraste */
+@media (prefers-contrast: high) {
+  .home-button-hb {
+    border: 2px solid white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+  }
+
+  .home-button-hb:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.9);
+  }
+}

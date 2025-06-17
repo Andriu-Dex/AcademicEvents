@@ -1,6 +1,17 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const prisma = require("../config/db");
+const TokenService = require("../services/TokenService");
+const EmailTemplateService = require("../services/EmailTemplateService");
+const EmailVerificationService = require("../services/EmailVerificationService");
+
+// Instanciar servicios
+const tokenService = new TokenService();
+const emailTemplateService = new EmailTemplateService();
+const emailVerificationService = new EmailVerificationService(
+  tokenService,
+  emailTemplateService
+);
 
 // ===============================
 // Login de estudiante
@@ -26,6 +37,15 @@ const login = async (req, res) => {
       return res.status(401).json({ msg: "Credenciales inválidas" });
     }
 
+    // Verificar si la cuenta está verificada
+    if (!cuenta.est_ver_cor) {
+      return res.status(403).json({
+        msg: "Debes verificar tu correo antes de iniciar sesión",
+        requireVerification: true,
+        email: cuenta.cor_usu,
+      });
+    }
+
     const passwordValid = await bcrypt.compare(contrasena, cuenta.con_usu);
 
     if (!passwordValid) {
@@ -36,7 +56,8 @@ const login = async (req, res) => {
       { id: cuenta.id_cue, rol_usu: cuenta.rol_usu },
       process.env.JWT_SECRET,
       { expiresIn: "2h" }
-    );    return res.status(200).json({
+    );
+    return res.status(200).json({
       token,
       usuario: {
         id: cuenta.id_cue,
@@ -107,6 +128,9 @@ const registrarEstudiante = async (req, res) => {
     // Determinar el rol según el tipo de correo
     const rol = esUTA ? "ESTUDIANTE" : "GENERAL";
 
+    // Obtener IP del cliente
+    const ip = req.ip || req.connection.remoteAddress;
+
     // Crear el usuario y la cuenta en una transacción
     const resultado = await prisma.$transaction(async (prisma) => {
       // 1. Crear el usuario
@@ -127,18 +151,30 @@ const registrarEstudiante = async (req, res) => {
           cor_usu,
           con_usu: hashedPassword,
           rol_usu: rol, // Asignar el rol según el tipo de correo
+          // est_ver_cor ya es false por defecto
         },
       });
 
       return { usuario: nuevoUsuario, cuenta: nuevaCuenta };
     });
 
+    // 3. Enviar correo de verificación
+    await emailVerificationService.enviarVerificacion(
+      {
+        id_cue: resultado.cuenta.id_cue,
+        cor_usu: resultado.cuenta.cor_usu,
+        usuario: resultado.usuario,
+      },
+      ip
+    );
+
     return res.status(201).json({
-      msg: "Usuario creado exitosamente",
-      usuario: resultado.usuario,
-      cuenta: resultado.cuenta,
+      msg: "Cuenta creada. Revisa tu correo para activarla",
+      requireVerification: true,
+      email: resultado.cuenta.cor_usu,
     });
   } catch (error) {
+    console.error("Error al registrar usuario:", error);
     res
       .status(500)
       .json({ msg: "Error al registrar usuario", error: error.message });

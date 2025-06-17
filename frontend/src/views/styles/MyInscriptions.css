@@ -385,7 +385,7 @@ body::after {
 /* =======================
    Botón descargar certificado
    ======================= */
-.btn-descargar {
+.btn-descargar-mi {
   font-size: 0.875rem;
   font-weight: 600;
   display: inline-flex;
@@ -400,7 +400,7 @@ body::after {
   border-radius: 0.375rem;
 }
 
-.btn-descargar:hover {
+.btn-descargar-mi:hover {
   background-color: #dbeafe;
   color: #1e3a8a;
   transition: all 0.2s ease-in-out;

@@ -1,4 +1,4 @@
-.eventos-container {
+.eventos-container-er {
   padding: 1.5rem;
   background-color: #f9f9f9;
   min-height: 100vh;
@@ -195,7 +195,7 @@
   box-shadow: none;
 }
 
-.eventos-grid {
+.eventos-grid-er {
   display: grid;
   gap: 1.5rem;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -204,7 +204,7 @@
 
 /* Ajuste para cuando hay pocos eventos, que no se vean demasiado anchos */
 @media (min-width: 768px) {
-  .eventos-grid {
+  .eventos-grid-er {
     grid-template-columns: repeat(auto-fill, minmax(280px, 350px));
     justify-content: center;
   }

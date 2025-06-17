@@ -1,0 +1,854 @@
+.reporte-inscripciones-container-ri {
+  padding: 2rem;
+  background: #f8f9fa;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  max-width: 1200px;
+  margin: 2rem auto;
+}
+
+.reporte-header-ri {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e3e3e3;
+}
+
+.reporte-header-ri h2 {
+  color: #8a1538;
+  font-size: 1.8rem;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.icon-header-ri {
+  color: #8a1538;
+}
+
+.reporte-descripcion-ri {
+  color: #6c757d;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.btn-volver-ri {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.btn-volver-ri:hover {
+  background-color: #e0e0e0;
+}
+
+.filtros-container-ri {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid #f0f0f0;
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0rem;
+}
+
+.filtros-row-ri {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.filtros-row-ri:first-child {
+  justify-content: center;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.filtros-row-ri:last-child {
+  justify-content: space-between;
+  align-items: center;
+}
+
+.periodo-grupo-ri {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.periodo-grupo-ri label {
+  font-weight: 600;
+  color: #333;
+  font-size: 18px;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.filtro-grupo-ri {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-width: 200px;
+}
+
+.filtro-grupo-ri label {
+  font-weight: 600;
+  color: #333;
+  font-size: 16px;
+  margin-bottom: 0.5rem;
+}
+
+.fecha-inputs-ri {
+  display: flex;
+  gap: 10rem;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.fecha-input-wrapper-ri {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 200px;
+}
+
+.fecha-input-wrapper-ri span {
+  font-size: 14px;
+  color: #5f6972;
+  font-weight: 500;
+  margin-bottom: 4px;
+  text-align: center;
+}
+
+.filtro-grupo-ri select {
+  padding: 0.75rem 2.5rem 0.75rem 0.75rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  background: white;
+  font-size: 0.95rem;
+  min-width: 180px;
+  height: 45px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath fill='%238a1538' d='M0 0l6 8 6-8z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 12px 8px;
+}
+
+.filtro-grupo-ri select:hover {
+  border-color: #8a1538;
+  background-color: #fafafa;
+}
+
+.filtro-grupo-ri select:focus {
+  border-color: #8a1538;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(138, 21, 56, 0.15);
+  background-color: white;
+}
+
+.btn-descargar-ri {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  background: linear-gradient(135deg, #8a1538 0%, #a91d42 100%);
+  color: white;
+  font-size: 0.95rem;
+  height: 45px;
+  min-width: 200px;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(138, 21, 56, 0.3);
+}
+
+.btn-descargar-ri:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(138, 21, 56, 0.4);
+  background: linear-gradient(135deg, #761230 0%, #921a3a 100%);
+}
+
+.btn-descargar-ri:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Estilos para los calendarios */
+
+/* .fecha-inputs-ri input:focus {
+  border-color: #8a1538;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(138, 21, 56, 0.2);
+} */
+
+/* Estilos para DatePicker React */
+.input-with-icon-ri {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 45px;
+}
+
+.input-with-icon-ri svg {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  color: #8a1538;
+  pointer-events: none;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.date-picker-container-ri {
+  position: relative;
+  width: 100%;
+  flex: 1;
+}
+
+.date-picker-input-ri {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 3rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  background: white;
+  font-size: 0.95rem;
+  min-width: 180px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #333;
+  height: 45px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+}
+
+.date-picker-input-ri:hover {
+  border-color: #8a1538;
+  background: #fafafa;
+}
+
+.date-picker-input-ri:focus {
+  border-color: #8a1538;
+  box-shadow: 0 0 0 3px rgba(138, 21, 56, 0.15);
+  outline: none;
+  background: white;
+}
+
+/* Estilos para el calendario emergente de DatePicker */
+.reporte-inscripciones-container-ri .react-datepicker {
+  font-family: inherit;
+  border: 2px solid #8a1538;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(138, 21, 56, 0.2);
+  z-index: 1000;
+  background: white;
+}
+
+.reporte-inscripciones-container-ri .react-datepicker-wrapper {
+  display: block;
+  position: relative;
+  width: 40px;
+}
+
+.reporte-inscripciones-container-ri .react-datepicker__input-container {
+  position: relative;
+}
+
+.reporte-inscripciones-container-ri .react-datepicker__header {
+  background-color: #8a1538;
+  border-bottom: none;
+  border-radius: 10px 10px 0 0;
+  padding: 1rem 0;
+}
+
+.reporte-inscripciones-container-ri .react-datepicker__current-month {
+  color: white;
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.reporte-inscripciones-container-ri .react-datepicker__day-names {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 0.5rem;
+}
+
+.reporte-inscripciones-container-ri .react-datepicker__day-name {
+  color: white;
+  font-weight: 500;
+  width: 2.2rem;
+  height: 2.2rem;
+  line-height: 2.2rem;
+  margin: 0.1rem;
+  font-size: 0.85rem;
+}
+
+.reporte-inscripciones-container-ri .react-datepicker__month {
+  padding: 0.5rem;
+}
+
+.reporte-inscripciones-container-ri .react-datepicker__week {
+  display: flex;
+  justify-content: space-around;
+}
+
+.reporte-inscripciones-container-ri .react-datepicker__day {
+  width: 2.2rem;
+  height: 2.2rem;
+  line-height: 2.2rem;
+  margin: 0.1rem;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.reporte-inscripciones-container-ri .react-datepicker__day--selected,
+.reporte-inscripciones-container-ri .react-datepicker__day--keyboard-selected {
+  background-color: #8a1538;
+  color: white;
+  font-weight: bold;
+}
+
+.reporte-inscripciones-container-ri .react-datepicker__day:hover {
+  background-color: rgba(138, 21, 56, 0.15);
+  color: #8a1538;
+  font-weight: 500;
+}
+
+.reporte-inscripciones-container-ri .react-datepicker__day--outside-month {
+  color: #ccc;
+}
+
+.reporte-inscripciones-container-ri .react-datepicker__day--disabled {
+  color: #ccc;
+  cursor: not-allowed;
+}
+
+.reporte-inscripciones-container-ri .react-datepicker__day--disabled:hover {
+  background-color: transparent;
+  color: #ccc;
+}
+
+.reporte-inscripciones-container-ri .react-datepicker__triangle {
+  border-bottom-color: #8a1538;
+}
+
+.reporte-inscripciones-container-ri .react-datepicker__navigation {
+  top: 1.2rem;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transition: background 0.2s ease;
+}
+
+.reporte-inscripciones-container-ri .react-datepicker__navigation:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.reporte-inscripciones-container-ri .react-datepicker__navigation-icon::before {
+  border-color: white;
+  border-width: 2px 2px 0 0;
+  height: 8px;
+  width: 8px;
+}
+
+.reporte-inscripciones-container-ri
+  .react-datepicker__navigation:hover
+  .react-datepicker__navigation-icon::before {
+  border-color: #f0f0f0;
+}
+
+.reporte-inscripciones-container-ri .react-datepicker {
+  font-family: inherit;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 10px rgba(138, 21, 56, 0.15);
+}
+
+.reporte-inscripciones-container-ri .react-datepicker__header {
+  background-color: #8a1538;
+  border-bottom: none;
+  border-radius: 0.5rem 0.5rem 0 0;
+  padding: 0.75rem 0;
+}
+
+.reporte-inscripciones-container-ri .react-datepicker__current-month {
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.reporte-inscripciones-container-ri .react-datepicker__day-name {
+  color: white;
+  font-weight: 500;
+  width: 2rem;
+  margin: 0.2rem;
+}
+
+.reporte-inscripciones-container-ri .react-datepicker__day {
+  width: 2rem;
+  height: 2rem;
+  line-height: 2rem;
+  margin: 0.2rem;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.reporte-inscripciones-container-ri .react-datepicker__day--selected,
+.reporte-inscripciones-container-ri .react-datepicker__day--keyboard-selected {
+  background-color: #8a1538;
+  color: white;
+  font-weight: bold;
+}
+
+.reporte-inscripciones-container-ri .react-datepicker__day:hover {
+  background-color: rgba(138, 21, 56, 0.1);
+  color: #8a1538;
+}
+
+.reporte-inscripciones-container-ri .react-datepicker__triangle {
+  border-bottom-color: #8a1538;
+}
+
+.reporte-inscripciones-container-ri .react-datepicker__navigation {
+  top: 1rem;
+}
+
+.reporte-inscripciones-container-ri .react-datepicker__navigation-icon::before {
+  border-color: white;
+}
+
+/* Estilos adicionales para el DatePicker personalizado */
+.custom-calendar {
+  font-family: inherit;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 10px rgba(138, 21, 56, 0.15);
+}
+
+.custom-calendar .react-datepicker__month-container {
+  background-color: white;
+}
+
+.custom-calendar .react-datepicker__header {
+  background-color: #8a1538;
+  border-bottom: none;
+  border-radius: 0.5rem 0.5rem 0 0;
+  padding: 0.75rem 0;
+}
+
+.custom-calendar .react-datepicker__current-month {
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.custom-calendar .react-datepicker__day-name {
+  color: white;
+  font-weight: 500;
+  width: 2rem;
+  margin: 0.2rem;
+}
+
+.custom-calendar .react-datepicker__day {
+  width: 2rem;
+  height: 2rem;
+  line-height: 2rem;
+  margin: 0.2rem;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.custom-calendar .react-datepicker__day--selected,
+.custom-calendar .react-datepicker__day--keyboard-selected,
+.custom-calendar .react-datepicker__day--in-range,
+.custom-calendar .react-datepicker__day--in-selecting-range {
+  background-color: #8a1538;
+  color: white;
+  font-weight: bold;
+}
+
+.custom-calendar .react-datepicker__day:hover {
+  background-color: rgba(138, 21, 56, 0.2);
+  color: #8a1538;
+}
+
+.custom-calendar .react-datepicker__triangle {
+  border-bottom-color: #8a1538;
+}
+
+.custom-calendar .react-datepicker__navigation {
+  top: 1rem;
+}
+
+.custom-calendar .react-datepicker__navigation-icon::before {
+  border-color: white;
+  border-width: 2px 2px 0 0;
+  height: 8px;
+  width: 8px;
+}
+
+.custom-calendar .react-datepicker__navigation:hover *::before {
+  border-color: #f0f0f0;
+}
+
+.reporte-inscripciones-container-ri .react-datepicker__year-dropdown-container,
+.reporte-inscripciones-container-ri
+  .react-datepicker__month-dropdown-container {
+  font-weight: 500;
+}
+
+.reporte-inscripciones-container-ri .react-datepicker__month-select,
+.reporte-inscripciones-container-ri .react-datepicker__year-select {
+  padding: 0.3rem;
+  border-radius: 4px;
+  border: 1px solid #e2e8f0;
+}
+
+.reporte-inscripciones-container-ri .react-datepicker__month-select:focus,
+.reporte-inscripciones-container-ri .react-datepicker__year-select:focus {
+  border-color: #8a1538;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(138, 21, 56, 0.2);
+}
+
+.loading-container-ri {
+  text-align: center;
+  padding: 2rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.estadisticas-container-ri,
+.tendencias-container-ri,
+.validaciones-container-ri {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.estadisticas-container-ri h3,
+.tendencias-container-ri h3,
+.validaciones-container-ri h3 {
+  color: #8a1538;
+  margin-bottom: 1.5rem;
+  font-size: 1.25rem;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 0.5rem;
+}
+
+.stats-grid-ri {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.5rem;
+}
+
+.stat-card-ri {
+  background: linear-gradient(to bottom, #f8f9fa, #ffffff);
+  border: 1px solid #eaeaea;
+  border-radius: 8px;
+  padding: 1.25rem;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card-ri:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card-ri h4 {
+  color: #495057;
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+}
+
+.stat-value-ri {
+  color: #8a1538;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.stat-percentage-ri {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.stat-card-ri.pendientes-ri .stat-value-ri,
+.stat-card-ri.pendientes-ri .stat-percentage-ri {
+  color: #ffc107;
+}
+
+.stat-card-ri.aceptadas-ri .stat-value-ri,
+.stat-card-ri.aceptadas-ri .stat-percentage-ri {
+  color: #17a2b8; /* Color azul para aceptadas */
+}
+
+.stat-card-ri.aprobadas-ri .stat-value-ri,
+.stat-card-ri.aprobadas-ri .stat-percentage-ri {
+  color: #28a745; /* Color verde para aprobadas */
+}
+
+.stat-card-ri.reprobadas-ri .stat-value-ri,
+.stat-card-ri.reprobadas-ri .stat-percentage-ri {
+  color: #fd7e14; /* Color naranja para reprobadas */
+}
+
+.tendencias-tabla-ri {
+  overflow-x: auto;
+}
+
+.tendencias-tabla-ri table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tendencias-tabla-ri th,
+.tendencias-tabla-ri td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.tendencias-tabla-ri th {
+  background-color: #f8f9fa;
+  color: #495057;
+  font-weight: 600;
+}
+
+.tendencias-tabla-ri tr:hover {
+  background-color: #f8f9fa;
+}
+
+.tendencias-tabla-ri .aumento-ri {
+  color: #28a745;
+  font-weight: 600;
+}
+
+.tendencias-tabla-ri .disminucion-ri {
+  color: #dc3545;
+  font-weight: 600;
+}
+
+.validaciones-grid-ri {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.validacion-card-ri {
+  background: #f8f9fa;
+  border: 1px solid #eaeaea;
+  border-radius: 8px;
+  padding: 1.25rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.validacion-card-ri:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+}
+
+.validacion-card-ri h4 {
+  color: #8a1538;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #eaeaea;
+  padding-bottom: 0.5rem;
+}
+
+.validacion-stats-ri {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.validacion-stat-ri {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.validacion-stat-ri span {
+  color: #6c757d;
+}
+
+.validacion-stat-ri strong {
+  color: #495057;
+}
+
+.validador-title-ri {
+  font-weight: normal;
+  color: #8a1538;
+  font-size: 0.9rem;
+  margin-right: 5px;
+}
+
+/* Mejorar el aspecto de los selectores */
+.filtro-grupo-ri select {
+  background-color: #f8f9fa;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 0.5rem;
+  font-size: 0.9rem;
+  color: #333;
+  cursor: pointer;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath fill='%238a1538' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 10px 6px;
+  padding-right: 2rem;
+}
+
+.filtro-grupo-ri select:focus {
+  border-color: #8a1538;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(138, 21, 56, 0.2);
+}
+
+.filtro-grupo-ri select option {
+  padding: 10px;
+}
+
+/* Mejora adicional para el posicionamiento del calendario */
+.reporte-inscripciones-container-ri .react-datepicker-popper {
+  z-index: 1000;
+}
+
+.reporte-inscripciones-container-ri
+  .react-datepicker-popper[data-placement^="bottom"] {
+  margin-top: 8px;
+}
+
+.reporte-inscripciones-container-ri
+  .react-datepicker-popper[data-placement^="top"] {
+  margin-bottom: 8px;
+}
+
+/* Sobrescribir estilos por defecto del DatePicker que puedan causar problemas */
+.reporte-inscripciones-container-ri
+  .react-datepicker__input-container
+  input:focus {
+  outline: none !important;
+  border-color: #8a1538 !important;
+  box-shadow: 0 0 0 3px rgba(138, 21, 56, 0.15) !important;
+}
+
+.reporte-inscripciones-container-ri
+  .react-datepicker__input-container
+  input:hover {
+  border-color: #8a1538 !important;
+  background-color: #fafafa !important;
+}
+
+@media (max-width: 768px) {
+  .filtros-container-ri {
+    padding: 1.5rem;
+    gap: 1rem;
+  }
+
+  .filtros-row-ri {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .filtros-row-ri:first-child {
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .filtros-row-ri:last-child {
+    justify-content: stretch;
+    gap: 1rem;
+  }
+
+  .periodo-grupo-ri {
+    align-items: stretch;
+  }
+
+  .filtro-grupo-ri {
+    min-width: unset;
+    width: 100%;
+  }
+
+  .fecha-inputs-ri {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .fecha-input-wrapper-ri {
+    min-width: unset;
+    width: 100%;
+  }
+
+  .fecha-input-wrapper-ri span {
+    text-align: left;
+  }
+
+  .input-with-icon-ri,
+  .date-picker-input-ri,
+  .filtro-grupo-ri select,
+  .btn-descargar-ri {
+    min-width: unset;
+    width: 100%;
+  }
+
+  .stats-grid-ri {
+    grid-template-columns: 1fr;
+  }
+
+  .validaciones-grid-ri {
+    grid-template-columns: 1fr;
+  }
+
+  .reporte-inscripciones-container-ri .react-datepicker__day,
+  .reporte-inscripciones-container-ri .react-datepicker__day-name {
+    width: 1.8rem;
+    height: 1.8rem;
+    line-height: 1.8rem;
+    margin: 0.1rem;
+  }
+
+  .reporte-inscripciones-container-ri .react-datepicker {
+    transform: scale(0.9);
+    transform-origin: top center;
+  }
+}

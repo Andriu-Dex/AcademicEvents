@@ -1,6 +1,7 @@
 const prisma = require("../config/db");
 const DEFAULT_IMAGE_URL = "https://i.imgur.com/f8adUbZ.png";
 const axios = require("axios");
+const socketService = require("../services/socket.service");
 require("dotenv").config();
 
 /**
@@ -244,6 +245,12 @@ const crearEvento = async (req, res) => {
     }
 
     res.status(201).json({
+      ...nuevoEvento,
+      eventos_curso: datosCurso,
+    });
+
+    // 🔌 Notificar a todos los clientes sobre el nuevo evento
+    socketService.notifyEventChange("created", {
       ...nuevoEvento,
       eventos_curso: datosCurso,
     });
@@ -549,6 +556,12 @@ const actualizarEvento = async (req, res) => {
       ...eventoActualizado,
       eventos_curso: cursoActualizado,
     });
+
+    // 🔌 Notificar a todos los clientes sobre la actualización del evento
+    socketService.notifyEventChange("updated", {
+      ...eventoActualizado,
+      eventos_curso: cursoActualizado,
+    });
   } catch (error) {
     res.status(500).json({
       // 10. Si hay un error no controlado, devuelve 500 y el mensaje de error
@@ -580,6 +593,12 @@ const eliminarEvento = async (req, res) => {
     await prisma.evento.delete({ where: { id_eve: id } });
 
     res.status(200).json({ msg: "Evento eliminado correctamente" });
+
+    // 🔌 Notificar a todos los clientes sobre la eliminación del evento
+    socketService.notifyEventChange("deleted", {
+      id_eve: id,
+      nom_eve: evento.nom_eve,
+    });
   } catch (error) {
     res.status(500).json({
       msg: "Error al eliminar evento",
@@ -704,54 +723,98 @@ const obtenerEventosPorTipo = async (req, res) => {
 /**
  * Procesa una fecha manteniendo la hora local sin ajustes de zona horaria
  */
-function parseUTCDate(dateString) {
-  console.log("📅 parseUTCDate - Input dateString:", dateString);
+/**
+ * Analiza una fecha en cualquier formato y la convierte a objeto Date
+ * Maneja múltiples formatos de entrada: objeto Date, string ISO, string con formato personalizado
+ * @param {string|Date} dateInput - Fecha a analizar
+ * @returns {Date|null} - Objeto Date o null si la fecha es inválida
+ */
+function parseUTCDate(dateInput) {
+  console.log("📅 parseUTCDate - Input:", dateInput);
 
-  if (!dateString) return null;
+  // Si no hay entrada, devolver null
+  if (!dateInput) return null;
 
   try {
-    // La fecha puede venir en formato ISO (YYYY-MM-DDTHH:mm:ss) o solo fecha (YYYY-MM-DD)
-    const [datePart, timePart] = dateString.split("T");
-    console.log("📅 Partes de la fecha:", { datePart, timePart });
-
-    const [year, month, day] = datePart.split("-");
-    let hours = 0,
-      minutes = 0;
-
-    if (timePart) {
-      [hours, minutes] = timePart.split(":").map((n) => parseInt(n));
+    // Si ya es un objeto Date, devolverlo directamente
+    if (dateInput instanceof Date) {
+      console.log("📅 La entrada ya es un objeto Date");
+      return dateInput;
     }
 
-    console.log("📅 Componentes desglosados:", {
-      year,
-      month,
-      day,
-      hours,
-      minutes,
-    });
+    // Si es un string, intentar procesarlo
+    if (typeof dateInput === "string") {
+      // Si es formato ISO completo (con Z al final)
+      if (dateInput.endsWith("Z")) {
+        console.log("📅 Procesando fecha en formato ISO completo con Z");
+        const date = new Date(dateInput);
+        return isNaN(date) ? null : date;
+      }
 
-    // Crear la fecha usando UTC para mantener la hora exacta sin offset
-    const date = new Date(
-      Date.UTC(
-        parseInt(year),
-        parseInt(month) - 1,
-        parseInt(day),
-        hours || 0,
-        minutes || 0
-      )
-    );
+      // Si tiene formato ISO pero sin Z (YYYY-MM-DDTHH:mm:ss)
+      if (dateInput.includes("T")) {
+        const [datePart, timePart] = dateInput.split("T");
+        console.log("📅 Partes de la fecha ISO sin Z:", { datePart, timePart });
 
-    console.log("📅 Fecha resultante:", {
-      localDate: date.toLocaleString(),
-      isoString: date.toISOString(),
-      localHours: new Date(date.toLocaleString()).getHours(),
-      utcHours: date.getUTCHours(),
-      offset: date.getTimezoneOffset() / 60,
-    });
+        const [year, month, day] = datePart
+          .split("-")
+          .map((num) => parseInt(num));
+        let hours = 0,
+          minutes = 0,
+          seconds = 0;
 
-    return date;
+        if (timePart) {
+          const timeParts = timePart.split(":");
+          hours = parseInt(timeParts[0] || 0);
+          minutes = parseInt(timeParts[1] || 0);
+          seconds = parseInt(timeParts[2] || 0);
+        }
+
+        console.log("📅 Componentes desglosados:", {
+          year,
+          month,
+          day,
+          hours,
+          minutes,
+          seconds,
+        });
+
+        // Crear fecha en UTC para mantener consistencia
+        const date = new Date(
+          Date.UTC(year, month - 1, day, hours, minutes, seconds)
+        );
+        return isNaN(date) ? null : date;
+      }
+
+      // Si solo tiene formato de fecha (YYYY-MM-DD)
+      if (dateInput.includes("-") && !dateInput.includes("T")) {
+        console.log("📅 Procesando fecha simple sin hora");
+        const [year, month, day] = dateInput
+          .split("-")
+          .map((num) => parseInt(num));
+        const date = new Date(Date.UTC(year, month - 1, day));
+        return isNaN(date) ? null : date;
+      }
+    }
+
+    // En cualquier otro caso, intentar crear un objeto Date estándar
+    console.log("📅 Intentando parsear con constructor Date estándar");
+    const date = new Date(dateInput);
+
+    // Registrar resultado
+    if (!isNaN(date)) {
+      console.log("📅 Fecha resultante:", {
+        localDate: date.toLocaleString(),
+        isoString: date.toISOString(),
+        utcHours: date.getUTCHours(),
+      });
+      return date;
+    }
+
+    console.log("📅 No se pudo parsear la fecha");
+    return null;
   } catch (error) {
-    console.error("Error parsing date:", error);
+    console.error("Error al parsear fecha:", error);
     return null;
   }
 }
@@ -816,11 +879,6 @@ const verificarYCorregirCupos = async (req, res) => {
       where: { id_eve: id },
       data: { cup_dis_eve: cupoDisponibleCorrecto },
     });
-
-    // 6. Registrar en la consola y devolver respuesta
-    console.log(`✅ Cupos corregidos para evento: ${evento.nom_eve}`);
-    console.log(`   Cupo disponible anterior: ${cupoDisponibleActual}`);
-    console.log(`   Cupo disponible corregido: ${cupoDisponibleCorrecto}`);
 
     return res.status(200).json({
       success: true,
@@ -919,10 +977,6 @@ const verificarYCorregirTodosLosCupos = async (req, res) => {
           inscripciones_aceptadas: inscripcionesAceptadas,
           diferencia: cupoDisponibleCorrecto - cupoDisponibleActual,
         });
-
-        console.log(`✅ Cupos corregidos para evento: ${evento.nom_eve}`);
-        console.log(`   Cupo disponible anterior: ${cupoDisponibleActual}`);
-        console.log(`   Cupo disponible corregido: ${cupoDisponibleCorrecto}`);
       } else {
         resultados.correctos++;
       }
@@ -944,6 +998,170 @@ const verificarYCorregirTodosLosCupos = async (req, res) => {
   }
 };
 
+/**
+ * Obtiene todos los eventos destacados activos (máximo 8)
+ * @param {Object} req - La solicitud HTTP
+ * @param {Object} res - La respuesta HTTP
+ * @returns {Promise<void>}
+ */
+const obtenerEventosDestacados = async (req, res) => {
+  try {
+    // Verificar eventos pasados para desmarcarlos automáticamente
+    await desmarcadoAutomaticoEventosPasados();
+
+    // Obtener eventos destacados (máximo 8)
+    const eventosDestacados = await prisma.evento.findMany({
+      where: {
+        eve_des: true,
+        est_eve: "ACTIVO",
+      },
+      orderBy: {
+        fec_ini_eve: "asc",
+      },
+      take: 8,
+    });
+
+    return res.status(200).json({
+      eventosDestacados,
+      total: eventosDestacados.length,
+      ok: true,
+    });
+  } catch (error) {
+    console.error("Error al obtener eventos destacados:", error);
+    return res.status(500).json({
+      msg: "Error al obtener eventos destacados",
+      error: error.message,
+      ok: false,
+    });
+  }
+};
+
+/**
+ * Marca o desmarca un evento como destacado
+ * @param {Object} req - La solicitud HTTP con id del evento y estado destacado
+ * @param {Object} res - La respuesta HTTP
+ * @returns {Promise<void>}
+ */
+const toggleEventoDestacado = async (req, res) => {
+  try {
+    console.log("=== TOGGLE EVENTO DESTACADO - INICIO ===");
+    const { id } = req.params;
+    const { eve_des } = req.body;
+
+    console.log("ID recibido:", id);
+    console.log("Estado destacado recibido:", eve_des);
+    console.log("Params completos:", req.params);
+    console.log("Body completo:", req.body);
+
+    // Verificar si el evento existe
+    console.log("Buscando evento con ID:", id);
+    const eventoExistente = await prisma.evento.findUnique({
+      where: { id_eve: id },
+    });
+
+    console.log("Evento encontrado:", eventoExistente ? "SÍ" : "NO");
+
+    if (!eventoExistente) {
+      console.log("ERROR: Evento no encontrado, retornando 404");
+      return res.status(404).json({
+        msg: "Evento no encontrado",
+        ok: false,
+      });
+    }
+
+    console.log("Evento existente encontrado:", eventoExistente.nom_eve);
+
+    // Si vamos a marcar como destacado, verificar límite de 8
+    if (eve_des) {
+      console.log("Verificando límite de eventos destacados...");
+      const totalDestacados = await prisma.evento.count({
+        where: { eve_des: true },
+      });
+
+      console.log("Total eventos destacados actuales:", totalDestacados);
+
+      if (totalDestacados >= 8) {
+        console.log("ERROR: Límite de eventos destacados alcanzado");
+        return res.status(400).json({
+          msg: "Ya existen 8 eventos destacados. Debe desmarcar alguno antes de agregar otro.",
+          ok: false,
+        });
+      }
+    }
+
+    // Actualizar el evento
+    console.log("Actualizando evento con:", { id_eve: id, eve_des });
+    const eventoActualizado = await prisma.evento.update({
+      where: { id_eve: id },
+      data: { eve_des },
+    });
+
+    console.log("Evento actualizado exitosamente:", eventoActualizado.nom_eve);
+
+    // Notificar a todos los clientes mediante socket
+    socketService.notifyEventChange("updated", {
+      id: eventoActualizado.id_eve,
+      tipo: "destacado",
+      esDestacado: eve_des,
+      evento: eventoActualizado,
+    });
+
+    const response = {
+      evento: eventoActualizado,
+      msg: eve_des
+        ? "Evento marcado como destacado"
+        : "Evento desmarcado como destacado",
+      ok: true,
+    };
+
+    console.log("Enviando respuesta:", response);
+    console.log("=== TOGGLE EVENTO DESTACADO - FIN EXITOSO ===");
+    return res.status(200).json(response);
+  } catch (error) {
+    console.error("=== ERROR EN TOGGLE EVENTO DESTACADO ===");
+    console.error("Error completo:", error);
+    console.error("Stack trace:", error.stack);
+    console.error("Mensaje:", error.message);
+    console.error("=== FIN ERROR ===");
+    return res.status(500).json({
+      msg: "Error al actualizar evento destacado",
+      error: error.message,
+      ok: false,
+    });
+  }
+};
+
+/**
+ * Desmarca automáticamente eventos pasados (finalizados)
+ * @returns {Promise<void>}
+ */
+const desmarcadoAutomaticoEventosPasados = async () => {
+  try {
+    const fechaActual = new Date();
+
+    // Buscar eventos destacados que ya finalizaron
+    const eventosFinalizados = await prisma.evento.updateMany({
+      where: {
+        eve_des: true,
+        fec_fin_eve: {
+          lt: fechaActual,
+        },
+      },
+      data: {
+        eve_des: false,
+      },
+    });
+
+    if (eventosFinalizados.count > 0) {
+      console.log(
+        `Se desmarcaron automáticamente ${eventosFinalizados.count} eventos destacados que ya finalizaron.`
+      );
+    }
+  } catch (error) {
+    console.error("Error en desmarcado automático de eventos:", error);
+  }
+};
+
 module.exports = {
   crearEvento,
   obtenerEventos,
@@ -953,4 +1171,6 @@ module.exports = {
   obtenerEventosPorTipo,
   verificarYCorregirCupos,
   verificarYCorregirTodosLosCupos,
+  obtenerEventosDestacados,
+  toggleEventoDestacado,
 };

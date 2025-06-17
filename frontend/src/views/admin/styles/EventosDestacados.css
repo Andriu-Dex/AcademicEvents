@@ -1,0 +1,28 @@
+.admin-event-title-container-ae {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.contenedor-estrella-ae {
+  margin-left: 18px;
+}
+
+.admin-event-card {
+  position: relative;
+}
+
+.card-evento-destacado-ae::after {
+  content: "⭐ Destacado";
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: rgba(255, 215, 0, 0.9);
+  color: #333;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  z-index: 2;
+}

@@ -9,16 +9,6 @@ require("dotenv").config();
  */
 async function subirImagenAImgur(archivo) {
   try {
-    console.log(
-      "Intentando subir imagen a Imgur. Archivo:",
-      JSON.stringify({
-        nombre: archivo.originalname,
-        mimetype: archivo.mimetype,
-        size: archivo.size,
-        path: archivo.path,
-      })
-    );
-
     // Verificar que el archivo existe antes de leerlo
     if (!fs.existsSync(archivo.path)) {
       console.error(`El archivo no existe en la ruta: ${archivo.path}`);
@@ -27,14 +17,9 @@ async function subirImagenAImgur(archivo) {
 
     // Leer el archivo del disco
     const imagenBuffer = fs.readFileSync(archivo.path);
-    console.log(
-      `Archivo leído correctamente. Tamaño: ${imagenBuffer.length} bytes`
-    );
-
     const imagenBase64 = imagenBuffer.toString("base64"); // Convierte buffer a base64
 
     // Enviar a Imgur
-    console.log("Enviando imagen a Imgur...");
     const res = await axios.post(
       "https://api.imgur.com/3/image",
       {
@@ -48,7 +33,6 @@ async function subirImagenAImgur(archivo) {
       }
     );
 
-    console.log("Imagen subida correctamente a Imgur");
     return res.data.data.link;
   } catch (error) {
     console.error("Error al subir imagen a Imgur:", error);

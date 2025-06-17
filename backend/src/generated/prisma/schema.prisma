@@ -12,77 +12,91 @@ datasource db {
 // MODELOS PRINCIPALES
 // ============================
 
-model usuario {
-  id_usu      String   @id @default(uuid()) // UUID como ID del usuario
-  ced_usu     String   @unique // Cédula única del usuario
-  nom_usu     String // Nombre del usuario
-  ape_usu     String // Apellido del usuario
-  cel_usu     String   @db.Char(10) // Solo 10 caracteres exactos
-  fec_cre_usu DateTime @default(now()) // Fecha de creación del usuario
-  com_usu     String? // url de la cedula, papeleta de votacion o matricula
-  id_car_est  String? // FK opcional a carrera
-  img_per_usu String? // URL de la imagen de perfil del usuario en imgur
+// Modelo para la universidad
+model universidad {
+  id_uni      String    @id @default(uuid()) // UUID de la universidad
+  nom_uni     String    @unique // Nombre único de la universidad
+  acr_uni     String?   @unique // Acrónimo único
+  url_log_uni String? // URL del logo de la universidad
+  url_web_uni String? // Sitio web oficial
+  dir_uni     String // Dirección física principal
+  tel_uni     String? // Teléfono principal
+  cor_uni     String? // Correo institucional
+  fec_fun_uni DateTime? // Fecha de fundación
+  fec_cre_uni DateTime  @default(now()) // Fecha de creación en el sistema
+  est_uni     Boolean   @default(true) // Estado activo/inactivo
 
-  carrera carrera? @relation(fields: [id_car_est], references: [id_car]) // Relación 1:N (usuario puede estar en una o ningua carrera)
-  cuentas cuenta[] // Relación 1:N (usuario puede tener muchas cuentas)
+  facultades  facultad[] // Relación 1:N (universidad tiene muchas facultades)
+  autoridades autoridad_universidad[] // Relación 1:N (universidad tiene muchas autoridades)
 }
 
-model comprobante_pago {
-  id_com_pag         String            @id @default(uuid()) // UUID como ID del documento
-  id_ins_per         String // FK a inscripción
-  url_com_pag        String // URL del documento
-  est_com_pag        estado_validacion @default(PENDIENTE) // Estado del documento (PENDIENTE, ACEPTADO, RECHAZADO)
-  fec_sub_com_pag    DateTime          @default(now()) // Fecha de subida del documento
-  fec_val_com_pag    DateTime? // Fecha de validación del documento
-  id_adm_val_com_pag String? // FK opcional a administrador que valida el documento
-  fec_pag_ins        DateTime? // Fecha de pago de la inscripción
+// Modelo para autoridades universitarias
+// Permite flexibilidad en tipos y cantidad de autoridades
+model autoridad_universidad {
+  id_aut_uni      String                     @id @default(uuid()) // UUID de la autoridad
+  id_uni_per      String // FK a universidad
+  tip_aut_uni     tipo_autoridad_universidad // Tipo de autoridad (RECTOR, VICERRECTOR_ACADEMICO, etc.)
+  nom_aut_uni     String // Nombre de la autoridad
+  ape_aut_uni     String // Apellido de la autoridad
+  cor_aut_uni     String? // Correo de la autoridad
+  tel_aut_uni     String? // Teléfono de la autoridad
+  url_img_aut_uni String? // URL imagen de la autoridad
+  tit_aut_uni     String? // Título académico (Dr., Msc., etc.)
+  fec_ini_aut_uni DateTime // Fecha inicio en el cargo
+  fec_fin_aut_uni DateTime? // Fecha fin en el cargo (null si está activo)
+  est_aut_uni     Boolean                    @default(true) // Estado activo/inactivo
+  fec_cre_aut_uni DateTime                   @default(now()) // Fecha de creación en el sistema
 
-  admin       cuenta?     @relation(fields: [id_adm_val_com_pag], references: [id_cue]) // Relación 1:1 (documento puede ser validado por un administrador)
-  inscripcion inscripcion @relation(fields: [id_ins_per], references: [id_ins]) // Relación 1:N (documento pertenece a una inscripción)
-  // observaciones  observacion_comprobante[]   // Relación 1:N (documento puede tener muchas observaciones)
+  universidad universidad @relation(fields: [id_uni_per], references: [id_uni])
+
+  // Índices para búsquedas eficientes
+  @@index([id_uni_per, tip_aut_uni])
+  @@index([id_uni_per, est_aut_uni])
 }
 
-model carta_motivacion {
-  id_car_mot         String            @id @default(uuid()) // UUID como ID del documento
-  id_ins_per         String // FK a inscripción
-  con_car_mot        String // contenido de la carta de motivación
-  est_car_mot        estado_validacion @default(PENDIENTE) // Estado del documento (PENDIENTE, ACEPTADO, RECHAZADO)
-  fec_sub_car_mot    DateTime          @default(now()) // Fecha de subida del documento
-  fec_val_car_mot    DateTime? // Fecha de validación del documento
-  id_adm_val_car_mot String? // FK opcional a administrador que valida el documento
+// Modelo para las facultades universitarias
+model facultad {
+  id_fac      String   @id @default(uuid()) // UUID como ID de la facultad
+  nom_fac     String   @unique // Nombre único de la facultad
+  acr_fac     String? // Acrónimo de la facultad (ya no tiene valor por defecto)
+  url_log_fac String? // URL del logo de la facultad (ya no tiene valor por defecto)
+  des_fac     String // Descripción de la facultad
+  mis_fac     String // Misión de la facultad
+  vis_fac     String // Visión de la facultad
+  fec_cre_fac DateTime @default(now()) // Fecha de creación de la facultad
+  id_uni_per  String // Nueva FK a universidad
 
-  admin       cuenta?     @relation(fields: [id_adm_val_car_mot], references: [id_cue]) // Relación 1:1 (documento puede ser validado por un administrador)
-  inscripcion inscripcion @relation(fields: [id_ins_per], references: [id_ins]) // Relación 1:N (documento pertenece a una inscripción)
-  // observaciones  observacion_motivacion[]   // Relación 1:N (documento puede tener muchas observaciones)
+  universidad universidad          @relation(fields: [id_uni_per], references: [id_uni])
+  carreras    carrera[] // Relación 1:N (facultad puede tener muchas carreras)
+  autoridades autoridad_facultad[] // Relación 1:N (facultad puede tener muchas autoridades)
 }
 
-model observacion_inscripcion {
-  id_obs_ins     String   @id @default(uuid()) // UUID como ID de la observación
-  id_ins_per     String   @unique // FK única a inscripción
-  obs_ins        String // Observación general de la inscripción
-  fec_cre_obs    DateTime @default(now()) // Fecha de creación de la observación
-  id_adm_cre_obs String? // FK opcional a administrador que crea la observación
+// Modelo para autoridades de facultades
+// Permite flexibilidad en tipos y cantidad de autoridades
+model autoridad_facultad {
+  id_aut_fac      String                  @id @default(uuid()) // UUID de la autoridad
+  id_fac_per      String // FK a facultad
+  tip_aut_fac     tipo_autoridad_facultad // Tipo de autoridad
+  nom_aut_fac     String // Nombre de la autoridad
+  ape_aut_fac     String // Apellido de la autoridad
+  cor_aut_fac     String? // Correo de la autoridad
+  tel_aut_fac     String? // Teléfono de la autoridad
+  url_img_aut_fac String? // URL imagen de la autoridad
+  tit_aut_fac     String? // Título académico
+  fec_ini_aut_fac DateTime // Fecha inicio en el cargo
+  fec_fin_aut_fac DateTime? // Fecha fin en el cargo (null si está activo)
+  est_aut_fac     Boolean                 @default(true) // Estado activo/inactivo
+  fec_cre_aut_fac DateTime                @default(now()) // Fecha de creación en el sistema
 
-  inscripcion   inscripcion @relation(fields: [id_ins_per], references: [id_ins]) // Relación 1:1 (observación pertenece a una inscripción)
-  admin_creador cuenta?     @relation(fields: [id_adm_cre_obs], references: [id_cue]) // Relación 1:N (administrador puede crear muchas observaciones)
+  facultad facultad @relation(fields: [id_fac_per], references: [id_fac])
+
+  // Índices para búsquedas eficientes
+  @@index([id_fac_per, tip_aut_fac])
+  @@index([id_fac_per, est_aut_fac])
 }
 
-model cuenta {
-  id_cue      String      @id @default(uuid()) // UUID como ID de la cuenta
-  id_usu_per  String // Reutiliza el uuid del usuario
-  cor_usu     String      @unique // Correo electrónico único de la cuenta
-  con_usu     String // Contraseña de la cuenta
-  fec_cre_cue DateTime    @default(now()) // Fecha de creación de la cuenta
-  rol_usu     rol_usuario // Rol del usuario (ADMIN_GLOBAL, ADMIN_GENERAL, ESTUDIANTE, GENERAL)
-
-  usuario               usuario                   @relation(fields: [id_usu_per], references: [id_usu]) // Relación 1:1 (cuenta pertenece a un usuario)
-  inscripciones         inscripcion[] // Relación 1:N (usuario puede tener muchas inscripciones)
-  cartas_motivacion     carta_motivacion[] // Relación 1:N (usuario puede validar muchas cartas de motivación)
-  comprobantes_pago     comprobante_pago[] // Relación 1:N (usuario puede validar muchos comprobantes de pago)
-  eventos               evento[] // Relación 1:N (usuario puede crear muchos eventos)
-  observaciones_creadas observacion_inscripcion[] // Relación 1:N
-}
-
+// Modelo para las carreras universitarias
+// Pertenecen a facultades y pueden tener coordinador asignado
 model carrera {
   id_car      String   @id @default(uuid()) // UUID como ID de la carrera
   nom_car     String   @unique // Nombre único de la carrera
@@ -101,6 +115,8 @@ model carrera {
   eventos     evento_carrera[] // Relación 1:N (carrera puede tener muchos eventos)
 }
 
+// Modelo para los coordinadores de carrera
+// Información del personal académico a cargo de las carreras
 model coordinador {
   id_coo      String @id @default(uuid()) // UUID como ID del coordinador
   nom_coo     String // Nombre del coordinador
@@ -109,9 +125,95 @@ model coordinador {
   url_img_coo String // URL de la imagen del coordinador
   tit_coo     String // Título del coordinador
 
-  carreras carrera[]
+  carreras carrera[] // Relación 1:N (coordinador puede gestionar varias carreras)
 }
 
+// Modelo que representa a los usuarios del sistema
+// Contiene información personal básica y puede estar asociado a una carrera
+model usuario {
+  id_usu      String   @id @default(uuid()) // UUID como ID del usuario
+  ced_usu     String   @unique // Cédula única del usuario
+  nom_usu     String // Nombre del usuario
+  ape_usu     String // Apellido del usuario
+  cel_usu     String   @db.Char(10) // Solo 10 caracteres exactos
+  fec_cre_usu DateTime @default(now()) // Fecha de creación del usuario
+  com_usu     String? // url de la cedula, papeleta de votacion o matricula
+  id_car_est  String? // FK opcional a carrera
+  img_per_usu String? // URL de la imagen de perfil del usuario en imgur
+
+  carrera carrera? @relation(fields: [id_car_est], references: [id_car]) // Relación 1:N (usuario puede estar en una o ningua carrera)
+  cuentas cuenta[] // Relación 1:N (usuario puede tener muchas cuentas)
+}
+
+// Modelo principal de cuentas de usuario
+// Maneja autenticación, roles y verificación de correo
+model cuenta {
+  id_cue      String      @id @default(uuid()) // UUID como ID de la cuenta
+  id_usu_per  String // Reutiliza el uuid del usuario
+  cor_usu     String      @unique // Correo electrónico único de la cuenta
+  con_usu     String // Contraseña de la cuenta
+  fec_cre_cue DateTime    @default(now()) // Fecha de creación de la cuenta
+  rol_usu     rol_usuario // Rol del usuario (ADMIN_GLOBAL, ADMIN_GENERAL, ESTUDIANTE, GENERAL)
+  est_ver_cor Boolean     @default(false) // Estado actual de verificación
+  fec_ver_cor DateTime? // Fecha cuando se verificó
+
+  usuario                 usuario                   @relation(fields: [id_usu_per], references: [id_usu]) // Relación 1:1 (cuenta pertenece a un usuario)
+  inscripciones           inscripcion[] // Relación 1:N (usuario puede tener muchas inscripciones)
+  cartas_motivacion       carta_motivacion[] // Relación 1:N (usuario puede validar muchas cartas de motivación)
+  comprobantes_pago       comprobante_pago[] // Relación 1:N (usuario puede validar muchos comprobantes de pago)
+  eventos                 evento[] // Relación 1:N (usuario puede crear muchos eventos)
+  observaciones_creadas   observacion_inscripcion[] // Relación 1:N
+  inscripciones_validadas inscripcion[]             @relation("admin_validador") // Relación 1:N (administrador puede validar muchas inscripciones)
+  tokens_cuenta           token_cuenta[] // Relación 1:N (cuenta puede tener muchos tokens)
+  tokens_invalidados      invalidacion_token[] // Relación 1:N (admin puede invalidar tokens)
+}
+
+// Modelo para almacenar comprobantes de pago subidos por usuarios
+// Requiere validación por parte de un administrador
+model comprobante_pago {
+  id_com_pag         String            @id @default(uuid()) // UUID como ID del documento
+  id_ins_per         String // FK a inscripción
+  url_com_pag        String // URL del documento
+  est_com_pag        estado_validacion @default(PENDIENTE) // Estado del documento (PENDIENTE, ACEPTADO, RECHAZADO)
+  fec_sub_com_pag    DateTime          @default(now()) // Fecha de subida del documento
+  fec_val_com_pag    DateTime? // Fecha de validación del documento
+  id_adm_val_com_pag String? // FK opcional a administrador que valida el documento
+  fec_pag_ins        DateTime? // Fecha de pago de la inscripción
+
+  admin       cuenta?     @relation(fields: [id_adm_val_com_pag], references: [id_cue]) // Relación 1:1 (documento puede ser validado por un administrador)
+  inscripcion inscripcion @relation(fields: [id_ins_per], references: [id_ins]) // Relación 1:N (documento pertenece a una inscripción)
+}
+
+// Modelo para almacenar cartas de motivación enviadas por usuarios
+// Requeridas para ciertos eventos y necesitan validación administrativa
+model carta_motivacion {
+  id_car_mot         String            @id @default(uuid()) // UUID como ID del documento
+  id_ins_per         String // FK a inscripción
+  con_car_mot        String // contenido de la carta de motivación
+  est_car_mot        estado_validacion @default(PENDIENTE) // Estado del documento (PENDIENTE, ACEPTADO, RECHAZADO)
+  fec_sub_car_mot    DateTime          @default(now()) // Fecha de subida del documento
+  fec_val_car_mot    DateTime? // Fecha de validación del documento
+  id_adm_val_car_mot String? // FK opcional a administrador que valida el documento
+
+  admin       cuenta?     @relation(fields: [id_adm_val_car_mot], references: [id_cue]) // Relación 1:1 (documento puede ser validado por un administrador)
+  inscripcion inscripcion @relation(fields: [id_ins_per], references: [id_ins]) // Relación 1:N (documento pertenece a una inscripción)
+}
+
+// Modelo para almacenar observaciones administrativas sobre inscripciones
+// Permite a los administradores dejar notas sobre el proceso de inscripción
+model observacion_inscripcion {
+  id_obs_ins     String   @id @default(uuid()) // UUID como ID de la observación
+  id_ins_per     String   @unique // FK única a inscripción
+  obs_ins        String // Observación general de la inscripción
+  fec_cre_obs    DateTime @default(now()) // Fecha de creación de la observación
+  id_adm_cre_obs String? // FK opcional a administrador que crea la observación
+
+  inscripcion   inscripcion @relation(fields: [id_ins_per], references: [id_ins]) // Relación 1:1 (observación pertenece a una inscripción)
+  admin_creador cuenta?     @relation(fields: [id_adm_cre_obs], references: [id_cue]) // Relación 1:N (administrador puede crear muchas observaciones)
+}
+
+// Modelo principal para eventos educativos
+// Incluye cursos, congresos, webinars, charlas, etc.
 model evento {
   id_eve          String           @id @default(uuid()) // UUID como ID del evento
   nom_eve         String // Nombre del evento
@@ -128,6 +230,7 @@ model evento {
   por_min_asi_eve Float // Porcentaje mínimo de asistencia del evento
   cup_max_eve     Int // Número máximo de cupos disponibles para el evento
   cup_dis_eve     Int // Número de cupos disponibles actualmente
+  eve_des         Boolean          @default(false) // Indica si el evento es detastacado
   id_cue_cre_eve  String // FK a cuenta creadora del evento
 
   inscritos       inscripcion[] // Relación 1:N (evento puede tener muchas inscripciones)
@@ -136,6 +239,8 @@ model evento {
   cuenta          cuenta           @relation(fields: [id_cue_cre_eve], references: [id_cue]) // Relación 1:N (evento puede ser creado por una cuenta)
 }
 
+// Modelo para información adicional de eventos tipo curso
+// Extiende la información de evento cuando es un curso con evaluación
 model evento_curso {
   id_eve_cur  String @id // Reutiliza el uuid del evento
   not_min_cur Float // Nota mínima del curso 
@@ -143,6 +248,8 @@ model evento_curso {
   evento evento @relation(fields: [id_eve_cur], references: [id_eve]) // Relación 1:1 (evento puede tener un curso)
 }
 
+// Modelo para asociar eventos con carreras específicas
+// Permite que un evento esté disponible para múltiples carreras
 model evento_carrera {
   id_eve_car String   @id @default(uuid()) // UUID como ID del evento carrera (general)
   id_car_aso String // FK a carrera
@@ -153,6 +260,8 @@ model evento_carrera {
   evento  evento  @relation(fields: [id_eve_aso], references: [id_eve]) // Relación 1:N (evento puede tener muchas carreras)
 }
 
+// Modelo principal para inscripciones a eventos
+// Maneja todo el proceso desde solicitud hasta certificación
 model inscripcion {
   id_ins          String             @id @default(uuid()) // UUID como ID de la inscripción
   id_cor_ins      String // FK a usuario
@@ -160,6 +269,8 @@ model inscripcion {
   est_ins         estado_inscripcion @default(PENDIENTE) // Estado de la inscripción (PENDIENTE, ACEPTADA, RECHAZADA, FINALIZADA)
   fec_ins         DateTime           @default(now()) // Fecha de inscripción
   usu_apr_cer     Boolean            @default(false) // Usuario aprueba el evento y el envio del certificado
+  id_adm_val_ins  String? // FK opcional a cuenta de administrador que validó la inscripción
+  fec_val_ins     DateTime? // Fecha de validación de la inscripción
   por_asi_fin_usu Float? // Porcentaje de asistencia del usuario al evento
   cup_ocu         Boolean            @default(false) // Indica si esta inscripción está ocupando un cupo
 
@@ -170,8 +281,11 @@ model inscripcion {
   cartas_motivacion carta_motivacion[] // Relación 1:N (inscripción puede tener muchas cartas de motivación)
   observacion       observacion_inscripcion? // Relación 1:1
   certificado       certificado? // Relación 1:1 (inscripción puede tener un certificado)
+  admin_validador   cuenta?                  @relation("admin_validador", fields: [id_adm_val_ins], references: [id_cue])
 }
 
+// Modelo para información adicional de inscripciones a cursos
+// Almacena la nota final obtenida en cursos con evaluación
 model inscripcion_curso {
   id_ins_cur  String @id // Reutiliza el uuid de inscripcion
   not_fin_usu Float? // Nota final (solo para cursos)
@@ -179,6 +293,8 @@ model inscripcion_curso {
   inscripcion inscripcion @relation(fields: [id_ins_cur], references: [id_ins]) // Relación 1:1 (inscripción puede tener un curso)
 }
 
+// Modelo para certificados generados al completar eventos
+// Incluye código de validación único para verificación externa
 model certificado {
   id_cer      String           @id @default(uuid()) // UUID como ID del certificado
   id_ins_per  String           @unique // FK única a inscripción
@@ -190,23 +306,78 @@ model certificado {
   inscripcion inscripcion @relation(fields: [id_ins_per], references: [id_ins]) // Relación 1:1 (certificado pertenece a una inscripción)
 }
 
-model facultad {
-  id_fac              String   @id @default(uuid()) // UUID como ID de la facultad
-  nom_fac             String   @unique // Nombre único de la facultad
-  des_fac             String // Descripción de la facultad
-  mis_fac             String // Misión de la facultad
-  vis_fac             String // Visión de la facultad
-  fec_cre_fac         DateTime @default(now()) // Fecha de creación de la facultad
-  nom_dec_fac         String // Nombre del decano de la facultad
-  ape_dec_fac         String // Apellido del decano de la facultad
-  cor_dec_fac         String // Correo del decano de la facultad
-  url_img_dec_fac     String // URL de la imagen del decano de la facultad
-  nom_sub_dec_fac     String // Nombre del subdecano de la facultad
-  ape_sub_dec_fac     String // Apellido del subdecano de la facultad
-  cor_sub_dec_fac     String // Correo del subdecano de la facultad
-  url_img_sub_dec_fac String // URL de la imagen del subdecano de la facultad
+// Modelo principal para tokens de autenticación y verificación
+// Maneja verificación de correo, recuperación de contraseña, etc.
+model token_cuenta {
+  id_tok      String       @id @default(uuid()) // UUID único del token
+  id_cue_per  String // FK a cuenta (1:N)
+  tok_val     String       @unique // Token único
+  tip_tok     tipo_token // Tipo de token
+  fec_exp_tok DateTime // Fecha expiración
+  est_tok     estado_token @default(ACTIVO) // Estado del token
+  fec_cre_tok DateTime     @default(now()) // Fecha creación
+  ip_sol      String? // IP desde donde se solicitó
 
-  carreras carrera[] // Relación 1:N (facultad puede tener muchas carreras)
+  cuenta cuenta @relation(fields: [id_cue_per], references: [id_cue]) // Relación con la cuenta propietaria
+
+  // Relaciones para invalidación y metadata
+  invalidacion invalidacion_token? // 1:1 con invalidación
+  uso_token    uso_token? // 1:1 con uso
+  metadata     metadata_token[] // 1:N con metadata
+
+  // Relación de reemplazo (autorreferencial)
+  token_reemplazado    token_cuenta?  @relation("TokenReemplazo", fields: [id_tok_ree], references: [id_tok])
+  id_tok_ree           String?        @unique
+  tokens_que_reemplaza token_cuenta[] @relation("TokenReemplazo")
+
+  @@index([tok_val]) // Índice para búsqueda rápida por valor
+  @@index([id_cue_per, tip_tok, est_tok]) // Índice compuesto para búsquedas frecuentes
+  @@index([fec_exp_tok]) // Para limpiar tokens expirados
+  @@index([id_cue_per, fec_cre_tok]) // Para buscar tokens recientes de un usuario
+}
+
+// Modelo para registrar invalidaciones de tokens
+// Mantiene trazabilidad de por qué y cuándo se invalidó un token
+model invalidacion_token {
+  id_inv_tok String             @id @default(uuid()) // UUID de la invalidación
+  id_tok_per String             @unique // FK a token (1:1)
+  raz_inv    razon_invalidacion // Razón de invalidación
+  des_inv    String? // Descripción adicional
+  fec_inv    DateTime           @default(now()) // Fecha de invalidación
+  ip_inv     String? // IP desde donde se invalidó
+  id_adm_inv String? // FK a admin que invalidó (si aplica)
+
+  token token_cuenta @relation(fields: [id_tok_per], references: [id_tok]) // Relación con el token invalidado
+  admin cuenta?      @relation(fields: [id_adm_inv], references: [id_cue]) // Admin que realizó la invalidación
+}
+
+// Modelo para registrar el uso de tokens
+// Auditoría de cuándo y desde dónde se usó un token
+model uso_token {
+  id_uso_tok String   @id @default(uuid()) // UUID del uso
+  id_tok_per String   @unique // FK a token (1:1)
+  fec_uso    DateTime @default(now()) // Fecha de uso
+  ip_uso     String // IP desde donde se usó
+  exi_uso    Boolean  @default(true) // Si el uso fue exitoso
+  obs_uso    String? // Observaciones del uso
+
+  token token_cuenta @relation(fields: [id_tok_per], references: [id_tok]) // Relación con el token usado
+}
+
+// Modelo para metadata adicional de tokens
+// Sistema clave-valor flexible para información adicional
+model metadata_token {
+  id_met_tok  String         @id @default(uuid()) // UUID de la metadata
+  id_tok_per  String // FK a token (1:N)
+  cla_met     clave_metadata // Clave de metadata
+  val_met     String // Valor de metadata
+  fec_cre_met DateTime       @default(now()) // Fecha creación
+
+  token token_cuenta @relation(fields: [id_tok_per], references: [id_tok]) // Relación con el token
+
+  @@unique([id_tok_per, cla_met]) // Una clave por token
+  @@index([id_tok_per]) // Índice para búsqueda por token
+  @@index([cla_met, val_met]) // Para buscar por correo original/nuevo
 }
 
 // ============================
@@ -262,4 +433,55 @@ enum modalidad_evento {
   PRESENCIAL
   VIRTUAL
   SEMIPRESENCIAL
+}
+
+enum tipo_token {
+  VERIFICAR_CORREO
+  RECUPERAR_PASSWORD
+  CAMBIAR_CORREO
+  ELIMINAR_CUENTA
+}
+
+enum estado_token {
+  ACTIVO
+  USADO
+  EXPIRADO
+  INVALIDADO
+  REEMPLAZADO
+}
+
+enum razon_invalidacion {
+  CORREO_INCORRECTO
+  SOLICITUD_USUARIO
+  SEGURIDAD
+  ADMIN_MANUAL
+  REEMPLAZO
+  ERROR_SISTEMA
+}
+
+enum clave_metadata {
+  CORREO_ORIGINAL
+  CORREO_NUEVO
+  INTENTOS_FALLIDOS
+  DISPOSITIVO
+  NAVEGADOR
+  REFERENCIA_SOPORTE
+}
+
+enum tipo_autoridad_universidad {
+  RECTOR
+  VICERRECTOR_ACADEMICO
+  VICERRECTOR_INVESTIGACION
+  VICERRECTOR_ADMINISTRATIVO
+  VICERRECTOR_VINCULACION
+  SECRETARIO_GENERAL
+  PROCURADOR
+  DIRECTOR_FINANCIERO
+}
+
+enum tipo_autoridad_facultad {
+  DECANO
+  SUBDECANO
+  SECRETARIO
+  COORDINADOR
 }

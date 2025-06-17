@@ -1,0 +1,133 @@
+/* Estilos para las opciones de reportes */
+.reportes-options {
+  background: var(--white);
+  border-radius: 1.5rem;
+  box-shadow: var(--shadow-soft);
+  padding: 2rem;
+  margin-bottom: 3rem;
+  text-align: center;
+  width: 100%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.reportes-options h3 {
+  color: var(--primary-color);
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  position: relative;
+  display: inline-block;
+  font-weight: 600;
+}
+
+.reportes-options h3::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -10px;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: var(--primary-color);
+  border-radius: 1.5px;
+}
+
+.reportes-cards {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+
+.reporte-card {
+  background: var(--white);
+  border-radius: 1rem;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
+  width: 280px;
+  text-align: center;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(138, 21, 56, 0.1);
+  cursor: pointer;
+}
+
+.reporte-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 10px 25px rgba(138, 21, 56, 0.15);
+  border-color: var(--primary-color);
+}
+
+.reporte-icon {
+  background-color: rgba(138, 21, 56, 0.1);
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  color: var(--primary-color);
+}
+
+.reporte-card h4 {
+  color: var(--primary-color);
+  font-size: 1.25rem;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+}
+
+.reporte-card p {
+  color: var(--text-light);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+/* Estilos para la sección de eventos recientes */
+.eventos-recent {
+  width: 100%;
+  text-align: center;
+}
+
+.eventos-recent h3 {
+  color: var(--primary-color);
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  position: relative;
+  display: inline-block;
+  font-weight: 600;
+}
+
+.eventos-recent h3::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -10px;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: var(--primary-color);
+  border-radius: 1.5px;
+}
+
+.eventos-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+  .reportes-cards {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .reporte-card {
+    width: 100%;
+    max-width: 320px;
+  }
+}

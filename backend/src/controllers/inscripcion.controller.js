@@ -1,6 +1,7 @@
 const prisma = require("../config/db");
 const { estado_inscripcion } = require("../generated/prisma");
 const { subirImagenAImgur } = require("../utils/imgur.utils");
+const socketService = require("../services/socket.service");
 const {
   calcularCuposDisponibles,
   sincronizarCuposDisponibles,
@@ -346,6 +347,64 @@ const crearInscripcion = async (req, res) => {
           await sincronizarCuposDisponibles(id_eve);
 
           res.status(201).json(nuevaInscripcion);
+
+          // 🔌 Notificar nueva inscripción por socket
+          try {
+            // Obtener datos completos del evento para la notificación
+            const eventoCompleto = await prisma.evento.findUnique({
+              where: { id_eve: id_eve },
+              select: {
+                id_eve: true,
+                nom_eve: true,
+                cup_max_eve: true,
+                cup_dis_eve: true,
+                fec_ini_eve: true,
+                est_eve: true,
+              },
+            });
+
+            // Notificación general
+            socketService.notifyInscriptionChange("created", {
+              inscripcion: nuevaInscripcion,
+              evento: eventoCompleto,
+            });
+
+            // Notificación específica para validación de inscripciones
+            socketService.notifyInscriptionValidation("new_inscription", {
+              id: nuevaInscripcion.id,
+              correo: nuevaInscripcion.correo,
+              estado: nuevaInscripcion.estado,
+              evento: eventoCompleto,
+              fechaCreacion: nuevaInscripcion.fecha_inscripcion,
+              requiresValidation: nuevaInscripcion.estado === "P", // Pendiente
+            });
+
+            // Verificar si necesita alerta de capacidad (menos del 20% de cupos)
+            const porcentajeDisponible =
+              (eventoCompleto.cup_dis_eve / eventoCompleto.cup_max_eve) * 100;
+            if (porcentajeDisponible <= 20 && porcentajeDisponible > 0) {
+              socketService.notifyCapacityAlert(eventoCompleto);
+            }
+
+            // Notificación a administradores si es inscripción pendiente
+            if (nuevaInscripcion.estado === "P") {
+              socketService.notifyAdmins(
+                `Nueva inscripción pendiente de validación para "${eventoCompleto.nom_eve}"`,
+                "info",
+                {
+                  inscriptionId: nuevaInscripcion.id,
+                  eventId: id_eve,
+                  actionRequired: true,
+                }
+              );
+            }
+          } catch (socketError) {
+            console.error(
+              "Error al enviar notificación por socket:",
+              socketError
+            );
+            // No interferir con la operación principal
+          }
         });
     } catch (error) {
       console.error(`Error en el bloque de creación de inscripción:`, error);
@@ -516,7 +575,8 @@ const validarInscripcion = async (req, res) => {
         const resultado = await actualizarEstadoYSincronizarCupos(
           id,
           nuevoEstado,
-          { por_asi_fin_usu: asistenciaNum }
+          { por_asi_fin_usu: asistenciaNum },
+          req.usuario.id // Pasar ID del administrador que valida
         );
 
         console.log(
@@ -590,7 +650,8 @@ const validarInscripcion = async (req, res) => {
       const resultado = await actualizarEstadoYSincronizarCupos(
         id,
         estadoNuevo,
-        { por_asi_fin_usu: asistenciaNum } // Datos adicionales para la actualización
+        { por_asi_fin_usu: asistenciaNum }, // Datos adicionales para la actualización
+        req.usuario.id // Pasar ID del administrador que valida
       );
 
       console.log(
@@ -669,15 +730,159 @@ const validarInscripcion = async (req, res) => {
       }
     }
 
-    // Obtener los datos actualizados de la inscripción para devolverlos en la respuesta
-    const actualizada = await prisma.inscripcion.findUnique({
-      where: { id_ins: id },
-    });
+    // 🔌 Notificar cambios por socket
+    try {
+      // Obtener los datos actualizados de la inscripción para devolverlos en la respuesta
+      const actualizada = await prisma.inscripcion.findUnique({
+        where: { id_ins: id },
+      });
 
-    res.status(200).json({
-      msg: "Inscripción actualizada correctamente",
-      inscripcion: actualizada,
-    });
+      // Enviar respuesta al cliente ANTES de las notificaciones
+      res.status(200).json({
+        msg: "Inscripción actualizada correctamente",
+        inscripcion: actualizada,
+      });
+
+      // Obtener datos completos del evento
+      const eventoCompleto = await prisma.evento.findUnique({
+        where: { id_eve: idEvento },
+        select: {
+          id_eve: true,
+          nom_eve: true,
+          cup_max_eve: true,
+          cup_dis_eve: true,
+          fec_ini_eve: true,
+          est_eve: true,
+        },
+      });
+
+      // Obtener ID del usuario propietario de la inscripción
+      const inscripcionConUsuario = await prisma.inscripcion.findUnique({
+        where: { id_ins: id },
+        select: {
+          id_ins: true,
+          id_cor_ins: true,
+        },
+      });
+
+      // Notificar específicamente al usuario propietario de la inscripción
+      if (inscripcionConUsuario && inscripcionConUsuario.id_cor_ins) {
+        const inscripcionCompleta = await prisma.inscripcion.findUnique({
+          where: { id_ins: id },
+          include: {
+            evento: true,
+            observacion: true,
+          },
+        });
+
+        // Formatear datos para el usuario
+        const datosParaUsuario = {
+          id_ins: inscripcionCompleta.id_ins,
+          est_ins: nuevoEstado,
+          estadoAnterior: estadoAnterior,
+          estadoNuevo: nuevoEstado,
+          evento: {
+            id_eve: inscripcionCompleta.evento.id_eve,
+            nom_eve: inscripcionCompleta.evento.nom_eve,
+            fec_ini_eve: inscripcionCompleta.evento.fec_ini_eve,
+            fec_fin_eve: inscripcionCompleta.evento.fec_fin_eve,
+            tip_eve: inscripcionCompleta.evento.tip_eve,
+          },
+          observacion: inscripcionCompleta.observacion?.obs_ins,
+          fecha_validacion: new Date(),
+        };
+
+        // Notificar al usuario propietario
+        console.log(
+          `🔌 Enviando notificación de socket al usuario: ${inscripcionConUsuario.id_cor_ins}`
+        );
+        socketService.notifyUserInscriptionChange(
+          inscripcionConUsuario.id_cor_ins,
+          datosParaUsuario
+        );
+      }
+
+      // Notificar cambio en inscripción (general)
+      socketService.notifyInscriptionChange("updated", {
+        id_ins: id,
+        estado_anterior: estadoAnterior,
+        estado_nuevo: nuevoEstado,
+        id_evento: idEvento,
+        evento: eventoCompleto,
+      });
+
+      // Notificar específicamente a la vista de validación
+      socketService.notifyInscriptionValidation("status_changed", {
+        id: id,
+        estadoAnterior: estadoAnterior,
+        estadoNuevo: nuevoEstado,
+        correo: inscripcionConUsuario.id_cor_ins,
+        evento: {
+          id: eventoCompleto.id_eve,
+          titulo: eventoCompleto.nom_eve,
+          cupos_totales: eventoCompleto.cup_max_eve,
+          cupos_disponibles: eventoCompleto.cup_dis_eve,
+          fecha_inicio: eventoCompleto.fec_ini_eve,
+          estado: eventoCompleto.est_eve,
+        },
+        fechaValidacion: new Date(),
+        validadoPor: req.usuario?.id || null,
+        requiresAction: nuevoEstado === "P", // Si vuelve a pendiente
+      });
+
+      // Notificar a administradores sobre el cambio de estado
+      const estadoTexto = {
+        A: "Aprobada",
+        R: "Rechazada",
+        P: "Pendiente",
+      };
+
+      socketService.notifyAdmins(
+        `Inscripción ${estadoTexto[nuevoEstado]} para "${eventoCompleto.nom_eve}"`,
+        nuevoEstado === "A"
+          ? "success"
+          : nuevoEstado === "R"
+          ? "warning"
+          : "info",
+        {
+          inscriptionId: id,
+          eventId: idEvento,
+          previousState: estadoAnterior,
+          newState: nuevoEstado,
+          validatedBy: req.usuario?.id || null,
+        }
+      );
+
+      // Si hay cambio en cupos, notificar también
+      if (
+        typeof resultado !== "undefined" &&
+        resultado.evento &&
+        resultado.evento.cuposCambiaron
+      ) {
+        socketService.notifyCuposChange(
+          idEvento,
+          resultado.evento.cuposDespues
+        );
+
+        // Verificar alerta de capacidad
+        const porcentajeDisponible =
+          (resultado.evento.cuposDespues / eventoCompleto.cup_max_eve) * 100;
+        if (porcentajeDisponible <= 20 && porcentajeDisponible > 0) {
+          socketService.notifyCapacityAlert({
+            id: eventoCompleto.id_eve,
+            titulo: eventoCompleto.nom_eve,
+            cupos_totales: eventoCompleto.cup_max_eve,
+            cupos_disponibles: resultado.evento.cuposDespues,
+            fecha_inicio: eventoCompleto.fec_ini_eve,
+            estado: eventoCompleto.est_eve,
+          });
+        }
+      }
+    } catch (socketError) {
+      console.error("Error al enviar notificaciones por socket:", socketError);
+      // No interferir con la operación principal
+    }
+
     console.log("============ FIN VALIDAR INSCRIPCIÓN: ÉXITO ============");
   } catch (error) {
     console.error("============ ERROR EN VALIDAR INSCRIPCIÓN ============");

@@ -1,0 +1,17 @@
+.contenedor-superior-ri {
+  background-color: rgb(252, 249, 249);
+  height: 60px;
+}
+
+.contenedor-logo-ri {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  padding: auto;
+}
+
+.img-logo-ri {
+  width: 100px;
+  filter: drop-shadow(0 0 2px rgb(0, 0, 0)) drop-shadow(0 0 2px rgb(0, 0, 0));
+}

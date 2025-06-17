@@ -99,19 +99,6 @@
   }
 }
 
-/* Efecto de ripple para botones */
-@keyframes ripple {
-  0% {
-    transform: scale(0);
-    opacity: 1;
-  }
-
-  100% {
-    transform: scale(2.5);
-    opacity: 0;
-  }
-}
-
 /* Animación de aparición para el modal */
 @keyframes modalFadeIn {
   from {

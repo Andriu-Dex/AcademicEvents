@@ -1,7 +1,18 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../api/axiosConfig";
-import "./styles/AdminDashboardNew.css";
+import {
+  Calendar,
+  FileText,
+  BarChart,
+  GraduationCap,
+  ClipboardList,
+  CheckSquare,
+  Award,
+  Users,
+} from "lucide-react";
+import "./styles/AdminDashboard.css";
+import "./styles/reportes-options.css";
 
 const AdminDashboard = () => {
   const [eventos, setEventos] = useState([]);
@@ -27,61 +38,139 @@ const AdminDashboard = () => {
   return (
     <div className="admin-dashboard">
       <div className="dashboard-header">
-        <h2>Eventos</h2>
+        <h2>Panel de Administración</h2>
       </div>
+
+      {/* Sección de opciones de reportes */}
+      <div className="reportes-options">
+        <h3>Seleccione un tipo de reporte</h3>
+        <div className="reportes-cards">
+          <div
+            className="reporte-card"
+            onClick={() => navigate("/admin/reportes/carrera")}
+          >
+            <div className="reporte-icon">
+              <GraduationCap size={32} />
+            </div>
+            <h4>Reportes por Carrera</h4>
+            <p>Estadísticas de participación por carrera académica</p>
+          </div>
+          <div
+            className="reporte-card"
+            onClick={() => navigate("/admin/reportes/inscripciones")}
+          >
+            <div className="reporte-icon">
+              <ClipboardList size={32} />
+            </div>
+            <h4>Reportes de Inscripciones</h4>
+            <p>Estado y tendencias de inscripciones en eventos</p>
+          </div>
+          <div
+            className="reporte-card"
+            onClick={() => navigate("/admin/reportes/asistencia")}
+          >
+            <div className="reporte-icon">
+              <CheckSquare size={32} />
+            </div>
+            <h4>Reportes de Asistencia</h4>
+            <p>Análisis de asistencia vs inscripciones</p>
+          </div>
+          <div
+            className="reporte-card"
+            onClick={() => navigate("/admin/reportes/certificados")}
+          >
+            <div className="reporte-icon">
+              <Award size={32} />
+            </div>
+            <h4>Reportes de Certificados</h4>
+            <p>Estadísticas de emisión y descarga de certificados</p>
+          </div>
+          <div
+            className="reporte-card"
+            onClick={() => navigate("/admin/reportes/cupos")}
+          >
+            <div className="reporte-icon">
+              <Users size={32} />
+            </div>
+            <h4>Reportes de Cupos</h4>
+            <p>Análisis de ocupación y demanda de cupos</p>
+          </div>
+          <div
+            className="reporte-card"
+            onClick={() => navigate("/admin/reportes-mes")}
+          >
+            <div className="reporte-icon">
+              <BarChart size={32} />
+            </div>
+            <h4>Reportes por Mes</h4>
+            <p>Estadísticas y datos agrupados por mes</p>
+          </div>
+        </div>
+      </div>
+
       <div className="dashboard-content">
         {loading ? (
           <div className="dashboard-loading">Cargando eventos...</div>
         ) : (
-          <div className="eventos-grid">
-            {eventos.length === 0 ? (
-              <p>No hay eventos disponibles.</p>
-            ) : (
-              eventos.map((evento) => (
-                <div
-                  className="evento-card"
-                  key={evento.id_eve}
-                  onClick={() => navigate(`/admin/reportes-evento/${evento.id_eve}`)}
-                  style={{
-                    cursor: "pointer",
-                    border: "1px solid #ececec",
-                    borderRadius: "16px",
-                    padding: "1.5rem 1rem",
-                    background: "#fff",
-                    boxShadow: "0 2px 8px #00000012",
-                    textAlign: "center",
-                    width: "320px",            // <-- Más ancho
-                    height: "180px",           // <-- Más bajo
-                    transition: "box-shadow .2s, transform .2s",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center"
-                  }}
-                >
-                  <img
-                    src={evento.img_por_eve}
-                    alt={evento.nom_eve}
+          <div className="eventos-recent">
+            <h3>Eventos Recientes</h3>
+            <div className="eventos-grid">
+              {eventos.length === 0 ? (
+                <p>No hay eventos disponibles.</p>
+              ) : (
+                eventos.map((evento) => (
+                  <div
+                    className="evento-card"
+                    key={evento.id_eve}
+                    onClick={() =>
+                      navigate(`/admin/reportes-evento/${evento.id_eve}`)
+                    }
                     style={{
-                      width: "100%",
-                      height: "90px",          // <-- Más bajo
-                      objectFit: "contain",    // <-- Mejor para logos rectangulares
-                      borderRadius: "10px",
-                      marginBottom: "0.5rem",
-                      background: "#f9f9f9",
+                      cursor: "pointer",
+                      border: "1px solid #ececec",
+                      borderRadius: "16px",
+                      padding: "1.5rem 1rem",
+                      background: "#fff",
+                      boxShadow: "0 2px 8px #00000012",
+                      textAlign: "center",
+                      width: "320px", // <-- Más ancho
+                      height: "180px", // <-- Más bajo
+                      transition: "box-shadow .2s, transform .2s",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
                     }}
-                    onError={e => e.target.src = "https://via.placeholder.com/320x90?text=Sin+Imagen"}
-                  />
-                  <h4 style={{
-                    margin: "0 0 0.5rem 0",
-                    color: "#8a1538",
-                    fontWeight: "bold"
-                  }}>
-                    {evento.nom_eve}
-                  </h4>
-                </div>
-              ))
-            )}
+                  >
+                    <img
+                      src={evento.img_por_eve}
+                      alt={evento.nom_eve}
+                      style={{
+                        width: "100%",
+                        height: "90px", // <-- Más bajo
+                        objectFit: "contain", // <-- Mejor para logos rectangulares
+                        borderRadius: "10px",
+                        marginBottom: "0.5rem",
+                        background: "#f9f9f9",
+                      }}
+                      onError={(e) =>
+                        (e.target.src =
+                          "https://via.placeholder.com/320x90?text=Sin+Imagen")
+                      }
+                    />
+                    <h4
+                      style={{
+                        margin: "0 0 0.5rem 0",
+                        color: "#8a1538",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {evento.nom_eve}
+                    </h4>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
         )}
       </div>

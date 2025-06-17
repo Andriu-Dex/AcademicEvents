@@ -38,6 +38,13 @@ backend/prisma/dev.db
 # Migraciones pueden generarse nuevamente a partir del schema y por convención suelen ignorarse en algunos flujos.
 backend/prisma/migrations/
 
+# Archivos generados por Prisma (se regeneran automáticamente)
+backend/src/generated/
+
+# Archivos de debug y desarrollo
+debug_reporte.html
+backend/debug_reporte.html
+
 ##################################
 # Ignorar archivos temporales y de log
 ##################################

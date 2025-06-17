@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axiosInstance from "../api/axiosConfig";
 import { useAuth } from "../hooks/useAuth";
+import { useSocket } from "../context/SocketContext";
 import { toast } from "react-toastify";
 import { lanzarConfetti } from "../utils/confetti";
 import "./styles/MyInscriptions.css";
@@ -64,6 +65,7 @@ const estadoLabel = {
 
 const MyInscriptions = () => {
   const { usuario, token } = useAuth();
+  const { socket, isConnected } = useSocket();
 
   const [inscripciones, setInscripciones] = useState([]);
   const [mostrarModal, setMostrarModal] = useState(false);
@@ -91,6 +93,36 @@ const MyInscriptions = () => {
   useEffect(() => {
     if (usuario) obtenerInscripciones();
   }, [usuario]);
+
+  // Escuchar cambios de inscripciones en tiempo real
+  useEffect(() => {
+    if (!socket || !isConnected || !usuario) return;
+
+    // Escuchar actualizaciones de inscripciones específicas para este usuario
+    socket.on("user-inscription-update", (data) => {
+      // Verificar que la actualización es para este usuario
+      if (data.userId === usuario.id) {
+        console.log("📡 Actualización de inscripción recibida:", data);
+
+        // Actualizar la inscripción específica en el estado local
+        setInscripciones((prevInscripciones) =>
+          prevInscripciones.map((ins) =>
+            ins.id_ins === data.data.id_ins
+              ? {
+                  ...ins,
+                  est_ins: data.data.estadoNuevo,
+                  observacion: data.data.observacion,
+                }
+              : ins
+          )
+        );
+      }
+    });
+
+    return () => {
+      socket.off("user-inscription-update");
+    };
+  }, [socket, isConnected, usuario]);
 
   const reenviarComprobante = async () => {
     if (!nuevoArchivo) {
@@ -240,7 +272,7 @@ const MyInscriptions = () => {
                         }
                       }
                     }}
-                    className="btn-descargar"
+                    className="btn-descargar-mi"
                   >
                     <Download size={16} />
                     Descargar certificado
