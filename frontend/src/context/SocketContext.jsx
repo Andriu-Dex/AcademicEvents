@@ -83,16 +83,32 @@ export const SocketProvider = ({ children }) => {
     // Eventos específicos para el Home
     // ======================================    // Cambios en eventos
     newSocket.on("evento-change-hm", (data) => {
+      // Validar que los datos estén completos
+      if (!data || !data.action || !data.data) {
+        console.warn(
+          "SocketContext: Datos de evento incompletos recibidos",
+          data
+        );
+        return;
+      }
+
       setEventUpdates({
         action: data.action,
         data: data.data,
         timestamp: data.timestamp,
         id: Date.now(), // ID único para forzar re-render
       });
-    });
-
-    // Cambios en inscripciones
+    }); // Cambios en inscripciones
     newSocket.on("inscripcion-change-hm", (data) => {
+      // Validar que los datos estén completos
+      if (!data || !data.action || !data.data) {
+        console.warn(
+          "SocketContext: Datos de inscripción incompletos recibidos",
+          data
+        );
+        return;
+      }
+
       console.log("📡 Cambio en inscripción recibido:", data);
       setInscriptionUpdates({
         action: data.action,
@@ -100,10 +116,21 @@ export const SocketProvider = ({ children }) => {
         timestamp: data.timestamp,
         id: Date.now(),
       });
-    });
-
-    // Cambios en cupos
+    }); // Cambios en cupos
     newSocket.on("cupos-change-hm", (data) => {
+      // Validar que los datos estén completos
+      if (
+        !data ||
+        typeof data.eventoId === "undefined" ||
+        typeof data.cuposDisponibles === "undefined"
+      ) {
+        console.warn(
+          "SocketContext: Datos de cupos incompletos recibidos",
+          data
+        );
+        return;
+      }
+
       console.log("📡 Cambio en cupos recibido:", data);
       setCuposUpdates({
         eventoId: data.eventoId,

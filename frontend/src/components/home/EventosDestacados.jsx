@@ -42,10 +42,18 @@ const EventosDestacados = () => {
     new GestorEventosDestacados(EventoService)
   ).current;
   const gestorModales = useRef(new GestorModales(setModalEvento)).current;
-
   // Callbacks para evitar re-renderizados
   const handleEventUpdate = useCallback(
     (updateData) => {
+      // Validar que los datos estén completos
+      if (!updateData || !updateData.data || !updateData.action) {
+        console.warn(
+          "EventosDestacados: Datos de actualización inválidos",
+          updateData
+        );
+        return;
+      }
+
       if (
         updateData.action === "updated" &&
         updateData.data.tipo === "destacado"

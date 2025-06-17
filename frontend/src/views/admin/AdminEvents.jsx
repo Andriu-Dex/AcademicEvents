@@ -963,11 +963,11 @@ const AdminEvents = () => {
                         idEvento={eve.id_eve}
                         estadoInicial={eve.eve_des || false}
                         onToggle={(esDestacado) => {
+                          const nombreEvento = eve.nom_eve || "Evento";
                           toast.success(
                             esDestacado
-                              ? `Evento marcado como destacado`
-                              : `"${eve.nom_eve}" ya no se mostrará en destacados`
-                            // ? `"${eve.nom_eve}" se mostrará en la sección de destacados del Home`
+                              ? `"${nombreEvento}" marcado como destacado`
+                              : `"${nombreEvento}" ya no se mostrará en destacados`
                           );
                           // Opcional: Recargar datos si es necesario
                           // cargarEventos();

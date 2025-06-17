@@ -48,13 +48,18 @@ class GestorEventosDestacados {
       this.cargando = false;
     }
   }
-
   /**
    * Actualiza la lista de eventos destacados con nuevos datos desde el servidor
    * @param {Object} eventoData - Datos del evento actualizado
    */
   actualizarEventoDestacado(eventoData) {
-    if (!eventoData) return;
+    if (!eventoData || typeof eventoData.id === "undefined") {
+      console.warn(
+        "GestorEventosDestacados: Datos de evento inválidos recibidos",
+        eventoData
+      );
+      return;
+    }
 
     // Determinar acción según si es destacado o no
     if (eventoData.esDestacado) {

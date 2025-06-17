@@ -39,7 +39,9 @@ const BotonEstrella = ({ idEvento, estadoInicial, onToggle, disabled }) => {
       console.error("Stack:", error.stack);
       console.error("=== FIN ERROR BOTON ESTRELLA ===");
 
-      toast.error(error.message || "Error al actualizar evento destacado");
+      const errorMessage =
+        error.message || "Error al actualizar evento destacado";
+      toast.error(errorMessage);
     } finally {
       setCargando(false);
     }

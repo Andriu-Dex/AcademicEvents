@@ -101,13 +101,19 @@ function Home() {
         events: prev.events + 1,
       }));
 
-      // Mostrar notificación temporal
+      // No mostrar notificación para cambios de eventos destacados
+      // ya que se maneja con toast en AdminEvents
+      if (eventUpdate.data && eventUpdate.data.tipo === "destacado") {
+        return;
+      }
+
+      // Mostrar notificación temporal solo para otros tipos de cambios
       const message =
         eventUpdate.action === "created"
-          ? `Nuevo evento: ${eventUpdate.data.nom_eve}`
+          ? `Nuevo evento: ${eventUpdate.data.nom_eve || "Sin nombre"}`
           : eventUpdate.action === "updated"
-          ? `Evento actualizado: ${eventUpdate.data.nom_eve}`
-          : `Evento eliminado: ${eventUpdate.data.nom_eve}`;
+          ? `Evento actualizado: ${eventUpdate.data.nom_eve || "Sin nombre"}`
+          : `Evento eliminado: ${eventUpdate.data.nom_eve || "Sin nombre"}`;
 
       showTemporaryNotification(message, "info");
     },
@@ -566,12 +572,6 @@ function Home() {
           >
             {isConnected ? "🟢" : "🔴"} Socket
           </span>
-          {hasNewUpdates && (
-            <span className="updates-indicator-hm">
-              📡 Actualizaciones: E:{realtimeUpdates.events} I:
-              {realtimeUpdates.inscriptions} C:{realtimeUpdates.cupos}
-            </span>
-          )}
         </div>
       )}
 

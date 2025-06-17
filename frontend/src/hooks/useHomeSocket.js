@@ -33,10 +33,9 @@ export const useHomeSocket = (options = {}) => {
 
   // Estado local para manejar las actualizaciones
   const [hasNewUpdates, setHasNewUpdates] = useState(false);
-  const [lastUpdateTime, setLastUpdateTime] = useState(null);
-  // Manejar actualizaciones de eventos
+  const [lastUpdateTime, setLastUpdateTime] = useState(null); // Manejar actualizaciones de eventos
   useEffect(() => {
-    if (eventUpdates && eventUpdates.id) {
+    if (eventUpdates && eventUpdates.id && eventUpdates.data) {
       setHasNewUpdates(true);
       setLastUpdateTime(new Date());
 
@@ -55,10 +54,13 @@ export const useHomeSocket = (options = {}) => {
       }
     }
   }, [eventUpdates, onEventUpdate, autoRefresh, clearEventUpdates]);
-
   // Manejar actualizaciones de inscripciones
   useEffect(() => {
-    if (inscriptionUpdates && inscriptionUpdates.id) {
+    if (
+      inscriptionUpdates &&
+      inscriptionUpdates.id &&
+      inscriptionUpdates.data
+    ) {
       setHasNewUpdates(true);
       setLastUpdateTime(new Date());
 
@@ -82,10 +84,9 @@ export const useHomeSocket = (options = {}) => {
     autoRefresh,
     clearInscriptionUpdates,
   ]);
-
   // Manejar actualizaciones de cupos
   useEffect(() => {
-    if (cuposUpdates && cuposUpdates.id) {
+    if (cuposUpdates && cuposUpdates.id && cuposUpdates.eventoId) {
       setHasNewUpdates(true);
       setLastUpdateTime(new Date());
 
