@@ -24,7 +24,7 @@ import "./styles/CarreraCheckboxes.css";
 import {
   formatDateForBackend,
   formatDateForPicker,
-  isTomorrowOrLater,
+  isDateTodayOrLater,
 } from "../utils/dateUtils";
 
 // Registrar el idioma
@@ -302,9 +302,9 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
         );
       }
 
-      // Verificar que la fecha de inicio sea a partir de mañana
-      if (!isTomorrowOrLater(fechaInicio)) {
-        errores.push("La fecha de inicio debe ser a partir de mañana");
+      // Verificar que la fecha de inicio sea a partir de hoy
+      if (!isDateTodayOrLater(fechaInicio)) {
+        errores.push("La fecha de inicio debe ser a partir de hoy");
       }
     }
 

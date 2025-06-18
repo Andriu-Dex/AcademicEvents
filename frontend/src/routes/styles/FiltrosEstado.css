@@ -1,0 +1,66 @@
+.filtro-estado-er {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  align-items: center;
+}
+
+.filtro-estado-opcion-er {
+  padding: 0.5rem 1rem;
+  background-color: #f1f1f1;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.filtro-estado-opcion-er:hover {
+  background-color: #e6e6e6;
+}
+
+.filtro-estado-opcion-er.activo-er {
+  background-color: #8a1538;
+  color: white;
+}
+
+.filtro-categoria-er {
+  margin-bottom: 1rem;
+}
+
+.filtro-categoria-er h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #444;
+}
+
+/* Indicador de estado en las tarjetas de eventos */
+.evento-estado-badge-er {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.evento-estado-finalizado-er {
+  background-color: #757575;
+  color: white;
+}
+
+.evento-estado-cancelado-er {
+  background-color: #e53935;
+  color: white;
+}
+
+.evento-estado-suspendido-er {
+  background-color: #ff9800;
+  color: white;
+}

@@ -13,8 +13,12 @@ import {
   Filter,
   ChevronDown,
   X,
+  Clock,
+  AlertCircle,
+  AlertTriangle,
 } from "lucide-react";
 import "./styles/EventsRoute.css";
+import "./styles/FiltrosEstado.css";
 
 // Función para formatear fechas correctamente usando UTC
 const formatearFechaUTC = (fechaStr) => {
@@ -63,6 +67,9 @@ const EventsRoute = () => {
     pagado: false,
     completo: false,
     modalidad: "",
+    finalizado: false,
+    cancelado: false,
+    suspendido: false,
   });
   const [mostrarFiltros, setMostrarFiltros] = useState(false);
   const [eventoSeleccionado, setEventoSeleccionado] = useState(null);
@@ -300,6 +307,38 @@ const EventsRoute = () => {
     }
   };
   const eventosDisponibles = eventos.filter((evento) => {
+    // Si algún filtro de estado está activo, mostrar solo eventos con esos estados
+    const filtrosEstadoActivos =
+      filtros.finalizado || filtros.cancelado || filtros.suspendido;
+
+    if (filtrosEstadoActivos) {
+      let cumpleEstado = false;
+
+      if (filtros.finalizado && evento.est_eve === "FINALIZADO") {
+        cumpleEstado = true;
+      }
+      if (filtros.cancelado && evento.est_eve === "CANCELADO") {
+        cumpleEstado = true;
+      }
+      if (filtros.suspendido && evento.est_eve === "SUSPENDIDO") {
+        cumpleEstado = true;
+      }
+
+      // Si no cumple con ningún estado filtrado, no mostrar
+      if (!cumpleEstado) {
+        return false;
+      }
+    } else {
+      // Por defecto, no mostrar eventos finalizados, cancelados, suspendidos
+      if (
+        evento.est_eve === "FINALIZADO" ||
+        evento.est_eve === "CANCELADO" ||
+        evento.est_eve === "SUSPENDIDO"
+      ) {
+        return false;
+      }
+    }
+
     // Si el evento es de tipo PUBLICO, está disponible para todos
     if (evento.tip_eve === "PUBLICO") {
       return true;
@@ -341,9 +380,9 @@ const EventsRoute = () => {
     const hayFiltrosActivos = Object.values(filtros).some((f) => f);
 
     if (hayFiltrosActivos) {
-      // Si el filtro "completo" está activo, mostrar solo eventos con cupos === 0
+      // Si el filtro "completo" está activo, mostrar eventos con cupos === 0
       if (filtros.completo) {
-        if (cuposDisponibles !== 0) return false;
+        // No aplicar filtro adicional por cupos si está marcado
       } else {
         // Para todos los otros filtros, mostrar solo eventos con cupos > 0
         if (cuposDisponibles <= 0) return false;
@@ -401,6 +440,9 @@ const EventsRoute = () => {
       pagado: false,
       completo: false,
       modalidad: "",
+      finalizado: false,
+      cancelado: false,
+      suspendido: false,
     });
     setFiltro("");
   };
@@ -521,6 +563,39 @@ const EventsRoute = () => {
             </div>
 
             <div className="filtro-categoria">
+              <h4>Por Estado</h4>
+              <div className="filtros-opciones">
+                <label className="filtro-opcion">
+                  <input
+                    type="checkbox"
+                    checked={filtros.finalizado}
+                    onChange={() => manejarCambioFiltro("finalizado")}
+                  />
+                  <span className="checkmark"></span>
+                  Eventos Finalizados
+                </label>
+                <label className="filtro-opcion">
+                  <input
+                    type="checkbox"
+                    checked={filtros.cancelado}
+                    onChange={() => manejarCambioFiltro("cancelado")}
+                  />
+                  <span className="checkmark"></span>
+                  Eventos Cancelados
+                </label>
+                <label className="filtro-opcion">
+                  <input
+                    type="checkbox"
+                    checked={filtros.suspendido}
+                    onChange={() => manejarCambioFiltro("suspendido")}
+                  />
+                  <span className="checkmark"></span>
+                  Eventos Suspendidos
+                </label>
+              </div>
+            </div>
+
+            <div className="filtro-categoria">
               <h4>Por Modalidad</h4>
               <div className="filtros-opciones">
                 <select
@@ -578,7 +653,26 @@ const EventsRoute = () => {
                   borderRadius: "8px 8px 0 0",
                   marginBottom: "0.5rem",
                 }}
-              />{" "}
+              />
+              {/* Indicador de estado para eventos filtrados */}
+              {evento.est_eve === "FINALIZADO" && (
+                <div className="evento-estado-badge-er evento-estado-finalizado-er">
+                  <Clock size={14} />
+                  Finalizado
+                </div>
+              )}
+              {evento.est_eve === "CANCELADO" && (
+                <div className="evento-estado-badge-er evento-estado-cancelado-er">
+                  <AlertCircle size={14} />
+                  Cancelado
+                </div>
+              )}
+              {evento.est_eve === "SUSPENDIDO" && (
+                <div className="evento-estado-badge-er evento-estado-suspendido-er">
+                  <AlertTriangle size={14} />
+                  Suspendido
+                </div>
+              )}
               <h2 className="nombre-evento-er">{evento.nom_eve}</h2>
               <p className="tipo">{evento.tip_eve}</p>
               {/* Precio del evento */}

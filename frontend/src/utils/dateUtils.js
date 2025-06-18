@@ -55,21 +55,25 @@ export const formatDateForDisplay = (date, options = {}) => {
 };
 
 /**
- * Verifica si una fecha es mayor o igual que mañana
+ * Verifica si una fecha es mayor o igual que hoy
  * @param {Date} date - Fecha a verificar
- * @returns {boolean} - true si la fecha es mañana o posterior
+ * @returns {boolean} - true si la fecha es hoy o posterior
  */
-export const isTomorrowOrLater = (date) => {
+export const isDateTodayOrLater = (date) => {
   if (!date || !(date instanceof Date) || isNaN(date)) {
     return false;
   }
 
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  tomorrow.setHours(0, 0, 0, 0);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
-  return date >= tomorrow;
+  return date >= today;
 };
+
+/**
+ * @deprecated Use isDateTodayOrLater instead. Kept for backwards compatibility.
+ */
+export const isTomorrowOrLater = isDateTodayOrLater;
 
 /**
  * Formatea la fecha en el formato esperado por el componente DatePicker
