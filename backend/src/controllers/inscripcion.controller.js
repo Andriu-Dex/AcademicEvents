@@ -526,6 +526,9 @@ const validarInscripcion = async (req, res) => {
 
     // Si no se proporciona asistencia, no se entra en la lógica de validación de asistencia y nota
     if (asistenciaNum !== -1 || notaFinalNum !== null) {
+      // Inicializar el nuevo estado como APROBADO (cambiará según validaciones)
+      nuevoEstado = "APROBADO";
+
       // Validación de asistencia
       if (asistenciaNum !== -1) {
         const asistenciaMinima = inscripcion.evento.por_min_asi_eve;
@@ -533,6 +536,7 @@ const validarInscripcion = async (req, res) => {
           return res.status(400).json({ msg: "Asistencia inválida (0–100)" });
         }
 
+        // Si la asistencia es baja, reprobar por asistencia independientemente de la nota
         if (asistenciaNum < asistenciaMinima) {
           nuevoEstado = "REPROBADO_ASISTENCIA";
         }
@@ -556,9 +560,8 @@ const validarInscripcion = async (req, res) => {
           } else {
             nuevoEstado = "REPROBADO_NOTA";
           }
-        } else {
-          nuevoEstado = "APROBADO";
         }
+        // NOTA: Ya no establecemos APROBADO aquí, porque podría sobreescribir REPROBADO_ASISTENCIA
       }
     }
 
@@ -590,6 +593,50 @@ const validarInscripcion = async (req, res) => {
         } else {
           console.log(
             `📊 Cupos disponibles sin cambios: ${resultado.evento.cuposDespues}`
+          );
+        }
+
+        // 🔌 Notificar al usuario del cambio a estado final (APROBADO/REPROBADO)
+        const inscripcionUsuario = await prisma.inscripcion.findUnique({
+          where: { id_ins: id },
+          select: {
+            id_ins: true,
+            id_cor_ins: true,
+            est_ins: true,
+            evento: {
+              select: {
+                id_eve: true,
+                nom_eve: true,
+                fec_ini_eve: true,
+                fec_fin_eve: true,
+                tip_eve: true,
+              },
+            },
+            observacion: {
+              select: {
+                obs_ins: true,
+              },
+            },
+          },
+        });
+
+        if (inscripcionUsuario && inscripcionUsuario.id_cor_ins) {
+          const datosParaUsuario = {
+            id_ins: inscripcionUsuario.id_ins,
+            est_ins: nuevoEstado,
+            estadoAnterior: resultado.inscripcion.estadoAnterior,
+            estadoNuevo: nuevoEstado,
+            evento: inscripcionUsuario.evento,
+            observacion: inscripcionUsuario.observacion?.obs_ins,
+            fecha_validacion: new Date(),
+          };
+
+          console.log(
+            `🔌 Notificando cambio a estado final (${nuevoEstado}) al usuario: ${inscripcionUsuario.id_cor_ins}`
+          );
+          socketService.notifyUserInscriptionChange(
+            inscripcionUsuario.id_cor_ins,
+            datosParaUsuario
           );
         }
 

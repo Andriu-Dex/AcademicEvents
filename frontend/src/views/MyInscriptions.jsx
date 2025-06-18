@@ -100,8 +100,8 @@ const MyInscriptions = () => {
 
     // Escuchar actualizaciones de inscripciones específicas para este usuario
     socket.on("user-inscription-update", (data) => {
-      // Verificar que la actualización es para este usuario
-      if (data.userId === usuario.id) {
+      // Verificar que la actualización es para este usuario (por ID o por email)
+      if (data.userId === usuario.id || data.userId === usuario.email) {
         console.log("📡 Actualización de inscripción recibida:", data);
 
         // Actualizar la inscripción específica en el estado local
@@ -116,6 +116,23 @@ const MyInscriptions = () => {
               : ins
           )
         );
+
+        // Mostrar notificación al usuario sobre el cambio de estado
+        const nuevoEstado = data.data.estadoNuevo;
+        const mensaje = `Tu inscripción ha sido ${
+          estadoLabel[nuevoEstado]?.text.toLowerCase() ||
+          nuevoEstado.toLowerCase()
+        }`;
+
+        toast.info(mensaje, {
+          icon: estadoLabel[nuevoEstado]?.icon,
+          className: `toast-${estadoLabel[nuevoEstado]?.color || "default"}-mi`,
+        });
+
+        // Mostrar confeti para estados positivos
+        if (nuevoEstado === "ACEPTADA" || nuevoEstado === "APROBADO") {
+          lanzarConfetti();
+        }
       }
     });
 

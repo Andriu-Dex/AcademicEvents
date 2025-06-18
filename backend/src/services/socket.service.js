@@ -257,6 +257,9 @@ class SocketService {
     console.log(
       `📡 [USER NOTIFICATION] Cambio de estado de inscripción notificado para usuario: ${userId}`
     );
+    console.log(
+      `📡 Estado de inscripción actualizado a: ${inscriptionData.estadoNuevo}`
+    );
   }
 }
 
