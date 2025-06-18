@@ -15,9 +15,11 @@ import {
   Zap,
 } from "lucide-react";
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import axiosInstance from "../api/axiosConfig";
 import { toast } from "react-toastify";
 import ZoomableImage from "./ZoomableImage";
+import DocumentViewer from "./DocumentViewer";
 import "./styles/InscripcionCard.css";
 import "./styles/InscripcionCard-estados.css";
 
@@ -32,6 +34,9 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
   );
   const [observacion, setObservacion] = useState(inscripcion.observacion || "");
   const [mostrarComprobante, setMostrarComprobante] = useState(false);
+  const [mostrarDocumento, setMostrarDocumento] = useState(false);
+  const [documentoUrl, setDocumentoUrl] = useState("");
+  const [documentoTitulo, setDocumentoTitulo] = useState("");
 
   // Verificar si el evento está en un estado que no permite validación
   const estadosNoValidables = ["FINALIZADO", "CANCELADO", "SUSPENDIDO"];
@@ -46,6 +51,19 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
   const handleToggleComprobante = (e) => {
     e.preventDefault();
     setMostrarComprobante(!mostrarComprobante);
+  };
+
+  const handleVerDocumento = (e) => {
+    e.preventDefault();
+    const url = inscripcion.usuario.com_usu.startsWith("http")
+      ? inscripcion.usuario.com_usu
+      : `${import.meta.env.VITE_API_URL}${inscripcion.usuario.com_usu}`;
+
+    setDocumentoUrl(url);
+    setDocumentoTitulo(
+      `Documentos de ${inscripcion.usuario.nom_usu} ${inscripcion.usuario.ape_usu}`
+    );
+    setMostrarDocumento(true);
   };
 
   const cambiarEstado = async (nuevoEstado) => {
@@ -264,21 +282,13 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
             <div className="inscripcion-doc-item">
               <span>Documentos personales:</span>
               {inscripcion.usuario?.com_usu ? (
-                <a
-                  href={
-                    inscripcion.usuario.com_usu.startsWith("http")
-                      ? inscripcion.usuario.com_usu
-                      : `${import.meta.env.VITE_API_URL}${
-                          inscripcion.usuario.com_usu
-                        }`
-                  }
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button
+                  onClick={handleVerDocumento}
                   className="doc-link"
                   title="Ver documentos del perfil"
                 >
                   <FileText size={18} /> Ver documentos
-                </a>
+                </button>
               ) : (
                 <span className="doc-missing">
                   <XCircle size={18} /> No enviado
@@ -462,6 +472,17 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
           </div>
         </div>
       </div>
+
+      {/* Modal para ver documentos - Renderizado en document.body */}
+      {mostrarDocumento &&
+        createPortal(
+          <DocumentViewer
+            documentUrl={documentoUrl}
+            title={documentoTitulo}
+            onClose={() => setMostrarDocumento(false)}
+          />,
+          document.body
+        )}
     </div>
   );
 };

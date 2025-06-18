@@ -5,6 +5,7 @@ import { useSocket } from "../context/SocketContext";
 import { toast } from "react-toastify";
 import { lanzarConfetti } from "../utils/confetti";
 import "./styles/MyInscriptions.css";
+import CertificateViewer from "../components/CertificateViewer";
 
 import {
   BadgeCheck,
@@ -72,6 +73,9 @@ const MyInscriptions = () => {
   const [inscripcionSeleccionada, setInscripcionSeleccionada] = useState(null);
   const [nuevoArchivo, setNuevoArchivo] = useState(null);
   const [reenviando, setReenviando] = useState(false);
+  const [mostrarCertificado, setMostrarCertificado] = useState(false);
+  const [certificadoUrl, setCertificadoUrl] = useState("");
+  const [certificadoFileName, setCertificadoFileName] = useState("");
   const obtenerInscripciones = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -263,8 +267,14 @@ const MyInscriptions = () => {
                         });
                         const url = window.URL.createObjectURL(blob);
 
-                        // Abrir en una nueva pestaña
-                        window.open(url, "_blank");
+                        // Guardar la URL y mostrar el modal
+                        setCertificadoUrl(url);
+                        setCertificadoFileName(
+                          `certificado_${ins.evento.nom_eve
+                            .replace(/\s+/g, "_")
+                            .toLowerCase()}.pdf`
+                        );
+                        setMostrarCertificado(true);
                       } catch (error) {
                         console.error("Error al descargar certificado:", error);
                         if (error.response?.status === 401) {
@@ -413,6 +423,20 @@ const MyInscriptions = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Modal de visualización de certificado */}
+      {mostrarCertificado && (
+        <CertificateViewer
+          pdfUrl={certificadoUrl}
+          fileName={certificadoFileName}
+          onClose={() => {
+            setMostrarCertificado(false);
+            // Revocar la URL del blob cuando ya no se necesita para liberar memoria
+            URL.revokeObjectURL(certificadoUrl);
+            setCertificadoUrl("");
+          }}
+        />
       )}
     </div>
   );
