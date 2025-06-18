@@ -958,7 +958,7 @@ const AdminEvents = () => {
                 <div className="admin-event-header">
                   <div className="admin-event-title-container-ae">
                     <h3 className="admin-event-name">{eve.nom_eve}</h3>
-                    <div className="contenedor-estrella-ae">
+                    {/* <div className="contenedor-estrella-ae">
                       <BotonEstrella
                         idEvento={eve.id_eve}
                         estadoInicial={eve.eve_des || false}
@@ -969,11 +969,9 @@ const AdminEvents = () => {
                               ? `"${nombreEvento}" marcado como destacado`
                               : `"${nombreEvento}" ya no se mostrará en destacados`
                           );
-                          // Opcional: Recargar datos si es necesario
-                          // cargarEventos();
                         }}
                       />
-                    </div>
+                    </div> */}
                   </div>
                   <span
                     className={`admin-event-label ${
@@ -985,10 +983,25 @@ const AdminEvents = () => {
                       : `$${eve.val_eve.toFixed(2)}`}
                   </span>
                 </div>
-
-                <div className="admin-event-type-badge">
-                  {getTipoEventoIcon(eve.tip_eve)}
-                  {eve.tip_eve}
+                <div className="contenedor-tipo-estrella-ae">
+                  <div className="admin-event-type-badge">
+                    {getTipoEventoIcon(eve.tip_eve)}
+                    {eve.tip_eve}
+                  </div>
+                  <div className="contenedor-estrella-ae">
+                    <BotonEstrella
+                      idEvento={eve.id_eve}
+                      estadoInicial={eve.eve_des || false}
+                      onToggle={(esDestacado) => {
+                        const nombreEvento = eve.nom_eve || "Evento";
+                        toast.success(
+                          esDestacado
+                            ? `"${nombreEvento}" marcado como destacado`
+                            : `"${nombreEvento}" ya no se mostrará en destacados`
+                        );
+                      }}
+                    />
+                  </div>
                 </div>
 
                 {/* Descripción del evento */}

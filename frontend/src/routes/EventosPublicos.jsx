@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axiosInstance from "../api/axiosConfig";
+import { useSocket } from "../context/SocketContext";
 import {
   CalendarDays,
   Search,
@@ -70,6 +71,7 @@ const formatearFechaUTC = (fechaStr) => {
 const EventosPublicos = () => {
   const { usuario } = useAuth();
   const navigate = useNavigate();
+  const { socket, isConnected } = useSocket();
   const [eventos, setEventos] = useState([]);
   const [filtro, setFiltro] = useState("");
   const [cargando, setCargando] = useState(true);
@@ -227,6 +229,95 @@ const EventosPublicos = () => {
       suspendido: false,
     });
   };
+
+  // Manejar actualizaciones de eventos en tiempo real
+  const handleEventUpdate = useCallback((eventUpdate) => {
+    console.log(
+      "🔄 EventosPublicos: Evento actualizado via socket:",
+      eventUpdate
+    );
+    if (!eventUpdate || !eventUpdate.action || !eventUpdate.data) return;
+
+    const { action, data } = eventUpdate;
+
+    // Asegurar que el evento tenga la estructura correcta
+    const eventoConEstructura = {
+      ...data,
+      eventos_carrera: data.eventos_carrera || [],
+      eventos_curso: data.eventos_curso || null,
+    };
+
+    // Manejar diferentes tipos de actualizaciones
+    if (action === "created") {
+      // Verificar que el evento no exista ya para evitar duplicados
+      setEventos((prevEventos) => {
+        const existeEvento = prevEventos.some(
+          (e) => e.id_eve === eventoConEstructura.id_eve
+        );
+        if (existeEvento) {
+          console.log(
+            "🚫 Evento ya existe en EventosPublicos, no se agrega duplicado"
+          );
+          return prevEventos;
+        }
+        return [eventoConEstructura, ...prevEventos];
+      });
+    } else if (action === "updated") {
+      // Actualizar evento existente
+      setEventos((prevEventos) =>
+        prevEventos.map((evento) =>
+          evento.id_eve === eventoConEstructura.id_eve
+            ? { ...evento, ...eventoConEstructura }
+            : evento
+        )
+      );
+    } else if (action === "deleted") {
+      // Eliminar evento
+      setEventos((prevEventos) =>
+        prevEventos.filter(
+          (evento) => evento.id_eve !== eventoConEstructura.id_eve
+        )
+      );
+    }
+  }, []);
+
+  // Effect para manejar socket events de manera controlada
+  useEffect(() => {
+    if (!isConnected || !socket) return;
+
+    // Listener para cambios de eventos
+    socket.on("evento-change-hm", handleEventUpdate);
+
+    // Socket listener for cupos changes
+    const handleCuposChange = (data) => {
+      if (
+        !data ||
+        typeof data.eventoId === "undefined" ||
+        typeof data.cuposDisponibles === "undefined"
+      ) {
+        return;
+      }
+
+      console.log("🔄 EventosPublicos: Cupos actualizados via socket:", data);
+
+      // Update the specific event with new cupos disponibles
+      setEventos((prevEventos) =>
+        prevEventos.map((evento) =>
+          evento.id_eve === data.eventoId
+            ? { ...evento, cup_dis_eve: data.cuposDisponibles }
+            : evento
+        )
+      );
+    };
+
+    socket.on("cupos-change-hm", handleCuposChange);
+
+    // Cleanup function
+    return () => {
+      socket.off("evento-change-hm", handleEventUpdate);
+      socket.off("cupos-change-hm", handleCuposChange);
+    };
+  }, [isConnected, socket, handleEventUpdate]);
 
   useEffect(() => {
     if (usuario) {

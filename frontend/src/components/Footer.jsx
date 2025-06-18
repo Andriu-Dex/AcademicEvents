@@ -86,9 +86,6 @@ const Footer = ({ isAuthenticated }) => {
             <p className="small mb-0 footer-subtitle-fc">
               {universidad.nombre}
             </p>
-            <p className="small text-muted footer-slogan-fc">
-              Formando el futuro tecnológico del Ecuador
-            </p>
           </div>
           <div className="col-md-2 mb-3 mb-md-0">
             <h6 className="mb-3 footer-section-title-fc">Académico</h6>

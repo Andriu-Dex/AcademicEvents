@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import axiosInstance from "../api/axiosConfig";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useSocket } from "../context/SocketContext";
 import {
   CalendarDays,
   Search,
@@ -59,6 +60,7 @@ const formatearFechaUTC = (fechaStr) => {
 const EventsRoute = () => {
   const { usuario, token, loading } = useAuth();
   const navigate = useNavigate();
+  const { socket, isConnected } = useSocket();
   const [eventos, setEventos] = useState([]);
   const [filtro, setFiltro] = useState("");
   const [filtroModalidad, setFiltroModalidad] = useState("");
@@ -345,7 +347,7 @@ const EventsRoute = () => {
     }
 
     // Si el evento no tiene carreras asociadas, significa que es un evento general
-    if (evento.eventos_carrera.length === 0) {
+    if (!evento.eventos_carrera || evento.eventos_carrera.length === 0) {
       return true;
     }
 
@@ -355,7 +357,7 @@ const EventsRoute = () => {
       // Si el usuario tiene una carrera asignada
       if (usuarioFinal.carrera) {
         // Verificar si el evento está asociado a la carrera del usuario
-        const tieneCarrera = evento.eventos_carrera.some(
+        const tieneCarrera = evento.eventos_carrera?.some(
           (ec) => ec.id_car_aso === usuarioFinal.carrera.id_car
         );
         return tieneCarrera;
@@ -446,6 +448,90 @@ const EventsRoute = () => {
     });
     setFiltro("");
   };
+
+  // Manejar actualizaciones de eventos en tiempo real
+  const handleEventUpdate = useCallback((eventUpdate) => {
+    console.log("🔄 Evento actualizado via socket:", eventUpdate);
+    if (!eventUpdate || !eventUpdate.action || !eventUpdate.data) return;
+
+    const { action, data } = eventUpdate;
+
+    // Asegurar que el evento tenga la estructura correcta
+    const eventoConEstructura = {
+      ...data,
+      eventos_carrera: data.eventos_carrera || [],
+      eventos_curso: data.eventos_curso || null,
+    };
+
+    // Manejar diferentes tipos de actualizaciones
+    if (action === "created") {
+      // Verificar que el evento no exista ya para evitar duplicados
+      setEventos((prevEventos) => {
+        const existeEvento = prevEventos.some(
+          (e) => e.id_eve === eventoConEstructura.id_eve
+        );
+        if (existeEvento) {
+          console.log("🚫 Evento ya existe, no se agrega duplicado");
+          return prevEventos;
+        }
+        return [eventoConEstructura, ...prevEventos];
+      });
+    } else if (action === "updated") {
+      // Actualizar evento existente
+      setEventos((prevEventos) =>
+        prevEventos.map((evento) =>
+          evento.id_eve === eventoConEstructura.id_eve
+            ? { ...evento, ...eventoConEstructura }
+            : evento
+        )
+      );
+    } else if (action === "deleted") {
+      // Eliminar evento
+      setEventos((prevEventos) =>
+        prevEventos.filter(
+          (evento) => evento.id_eve !== eventoConEstructura.id_eve
+        )
+      );
+    }
+  }, []);
+
+  // Effect para manejar socket events de manera controlada
+  useEffect(() => {
+    if (!isConnected || !socket) return;
+
+    // Listener para cambios de eventos
+    socket.on("evento-change-hm", handleEventUpdate);
+
+    // Socket listener for cupos changes
+    const handleCuposChange = (data) => {
+      if (
+        !data ||
+        typeof data.eventoId === "undefined" ||
+        typeof data.cuposDisponibles === "undefined"
+      ) {
+        return;
+      }
+
+      console.log("🔄 EventsRoute: Cupos actualizados via socket:", data);
+
+      // Update the specific event with new cupos disponibles
+      setEventos((prevEventos) =>
+        prevEventos.map((evento) =>
+          evento.id_eve === data.eventoId
+            ? { ...evento, cup_dis_eve: data.cuposDisponibles }
+            : evento
+        )
+      );
+    };
+
+    socket.on("cupos-change-hm", handleCuposChange);
+
+    // Cleanup function
+    return () => {
+      socket.off("evento-change-hm", handleEventUpdate);
+      socket.off("cupos-change-hm", handleCuposChange);
+    };
+  }, [isConnected, socket, handleEventUpdate]);
 
   if (loading) return <p className="p-6">Cargando sesión...</p>;
 
