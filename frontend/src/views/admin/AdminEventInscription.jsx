@@ -3,6 +3,7 @@ import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { BadgeCheck, Clock, Ban, Eye, Download, Loader } from "lucide-react";
 import { toast } from "react-toastify";
+import InscripcionService from "../../services/InscripcionService";
 import "./styles/AdminEventInscription.css";
 
 const colores = {
@@ -57,31 +58,50 @@ const AdminEventInscription = () => {
 
   const obtenerInscripciones = useCallback(async () => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/admin/inscripciones/evento/${id}`,
-        { headers: { Authorization: `Bearer ${token}` } }
+      const datosCompletos = await InscripcionService.obtenerDatosEventoDirecto(
+        id
       );
-      setInscripciones(res.data);
+      setInscripciones(datosCompletos.inscripciones);
     } catch (err) {
-      console.error(err);
-      toast.error("Error al cargar las inscripciones");
+      console.error("Error al cargar las inscripciones:", err);
+      // Fallback al método original
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axios.get(
+          `${
+            import.meta.env.VITE_API_URL
+          }/api/admin/inscripciones/evento/${id}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setInscripciones(res.data);
+      } catch (fallbackErr) {
+        console.error("Error en método fallback:", fallbackErr);
+        toast.error("Error al cargar las inscripciones");
+      }
     } finally {
       setLoading(false);
     }
   }, [id]);
   const obtenerNombreEvento = useCallback(async () => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/eventos/${id}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setNombreEvento(res.data.nom_eve);
-      setEventoInfo(res.data); // Guardar información completa del evento
+      const eventoData = await InscripcionService.obtenerEvento(id);
+      setNombreEvento(eventoData.nom_eve);
+      setEventoInfo(eventoData);
     } catch (err) {
-      console.error("Error al obtener nombre del evento", err);
-      toast.error("Error al obtener nombre del evento");
+      console.error("Error al obtener evento:", err);
+      // Fallback al método original
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/eventos/${id}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setNombreEvento(res.data.nom_eve);
+        setEventoInfo(res.data);
+      } catch (fallbackErr) {
+        console.error("Error al obtener evento en fallback:", fallbackErr);
+        toast.error("Error al obtener nombre del evento");
+      }
     }
   }, [id]);
   const cambiarEstado = async (id_ins, estado) => {
@@ -257,11 +277,6 @@ const AdminEventInscription = () => {
         `${import.meta.env.VITE_API_URL}/api/eventos/verificar-todos-cupos`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      console.log(
-        "Respuesta de verificación de todos los cupos:",
-        response.data
       );
 
       if (response.data.success) {
@@ -526,7 +541,9 @@ const AdminEventInscription = () => {
               {inscripcionFinalizar?.usuario?.ape_usu}
             </h2>
 
-            <label className="modal-label">Asistencia (%)</label>
+            <label className="modal-label">
+              Asistencia (mín: {eventoInfo?.por_min_asi_eve || 0}%)
+            </label>
             <input
               type="number"
               value={asistencia}
@@ -536,16 +553,23 @@ const AdminEventInscription = () => {
               max={100}
             />
 
-            <label className="modal-label">Nota final (0–10)</label>
-            <input
-              type="number"
-              value={notaFinal}
-              onChange={(e) => setNotaFinal(e.target.value)}
-              className="modal-input-ae"
-              min={0}
-              max={10}
-              step="0.1"
-            />
+            {eventoInfo?.tip_eve === "CURSO" && (
+              <>
+                <label className="modal-label">
+                  Nota final (mín: {eventoInfo?.eventos_curso?.not_min_cur || 0}
+                  )
+                </label>
+                <input
+                  type="number"
+                  value={notaFinal}
+                  onChange={(e) => setNotaFinal(e.target.value)}
+                  className="modal-input-ae"
+                  min={0}
+                  max={10}
+                  step="0.1"
+                />
+              </>
+            )}
 
             <div className="modal-actions">
               <button
@@ -569,23 +593,6 @@ const AdminEventInscription = () => {
                       return;
                     }
                     const token = localStorage.getItem("token");
-                    console.log(
-                      "Finalizando inscripción con los siguientes datos:"
-                    );
-                    console.log("ID:", inscripcionFinalizar.id_ins);
-                    console.log(
-                      "URL:",
-                      `${
-                        import.meta.env.VITE_API_URL
-                      }/api/admin/inscripciones/validar/${
-                        inscripcionFinalizar.id_ins
-                      }`
-                    );
-                    console.log("Datos:", {
-                      est_ins: "APROBADO",
-                      asistencia: Number(asistencia),
-                      nota_final: Number(notaFinal),
-                    });
 
                     const response = await axios.put(
                       `${
@@ -607,7 +614,6 @@ const AdminEventInscription = () => {
                       { headers: { Authorization: `Bearer ${token}` } }
                     );
 
-                    console.log("Respuesta del servidor:", response.data);
                     toast.success("Inscripción finalizada correctamente");
                     setMostrarFinalizarModal(false);
                     // Actualizar tanto las inscripciones como la información del evento
@@ -616,16 +622,7 @@ const AdminEventInscription = () => {
                       obtenerNombreEvento(), // Esto actualizará los cupos disponibles
                     ]);
                   } catch (err) {
-                    console.error(
-                      "Error detallado al finalizar inscripción:",
-                      err
-                    );
-                    console.error("Mensaje de error:", err.message);
-                    console.error(
-                      "Respuesta del servidor:",
-                      err.response?.data
-                    );
-                    console.error("Estado HTTP:", err.response?.status);
+                    console.error("Error al finalizar inscripción:", err);
                     toast.error(
                       `Error al finalizar: ${
                         err.response?.data?.msg ||

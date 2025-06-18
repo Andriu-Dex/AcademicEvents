@@ -58,6 +58,7 @@ const AdminInscripciones = () => {
             evento: {
               ...inscripcion.evento,
               val_eve: eventoInfo.val_eve, // Agregar el valor/costo del evento
+              est_eve: eventoInfo.est_eve, // Agregar el estado del evento
             },
             onVerCarta: (carta) => setCartaSeleccionada(carta),
           })
@@ -87,8 +88,6 @@ const AdminInscripciones = () => {
 
     // Configurar listeners para eventos de inscripciones
     const handleInscriptionChange = (data) => {
-      console.log("📡 Cambio en inscripción recibido:", data);
-
       // Solo actualizar si la inscripción pertenece al evento filtrado o no hay filtro
       if (data.action === "updated" && data.inscripcion) {
         setInscripciones((prevInscripciones) => {
@@ -113,8 +112,6 @@ const AdminInscripciones = () => {
     };
 
     const handleValidationChange = (data) => {
-      console.log("📡 Cambio en validación recibido:", data);
-
       // Actualizar estado local para cambios de validación
       if (data.action === "status_changed" && data.data) {
         setInscripciones((prevInscripciones) => {

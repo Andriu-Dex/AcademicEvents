@@ -4,9 +4,6 @@ import axios from "axios";
 const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 const API_URL = BASE_URL.endsWith("/api") ? BASE_URL : `${BASE_URL}/api`;
 
-console.log("🔧 [PASSWORD-RECOVERY-SERVICE] Base URL:", BASE_URL);
-console.log("🔧 [PASSWORD-RECOVERY-SERVICE] API URL final:", API_URL);
-
 /**
  * Servicio para gestionar la recuperación de contraseña
  */
@@ -19,12 +16,9 @@ class PasswordRecoveryService {
   async requestPasswordRecovery(email) {
     try {
       const url = `${API_URL}/password-recovery/request`;
-      console.log("📧 [REQUEST-RECOVERY] Enviando solicitud a:", url);
-      console.log("📧 [REQUEST-RECOVERY] Email:", email);
 
       const response = await axios.post(url, { email });
 
-      console.log("✅ [REQUEST-RECOVERY] Respuesta exitosa:", response.data);
       return response.data;
     } catch (error) {
       console.error("❌ [REQUEST-RECOVERY] Error completo:", error);

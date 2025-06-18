@@ -9,11 +9,16 @@ import {
   XOctagon,
   ChevronDown,
   ChevronUp,
+  AlertTriangle,
+  AlertCircle,
+  Ban,
+  Zap,
 } from "lucide-react";
 import { useState } from "react";
 import axiosInstance from "../api/axiosConfig";
 import { toast } from "react-toastify";
 import "./styles/InscripcionCard.css";
+import "./styles/InscripcionCard-estados.css";
 
 const InscripcionCard = ({ inscripcion, onUpdate }) => {
   const [expanded, setExpanded] = useState(false);
@@ -27,6 +32,12 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
   const [observacion, setObservacion] = useState(inscripcion.observacion || "");
   const [mostrarComprobante, setMostrarComprobante] = useState(false);
 
+  // Verificar si el evento está en un estado que no permite validación
+  const estadosNoValidables = ["FINALIZADO", "CANCELADO", "SUSPENDIDO"];
+  const eventoNoValidable = estadosNoValidables.includes(
+    inscripcion.evento?.est_eve
+  );
+
   const handleToggleExpand = () => {
     setExpanded(!expanded);
   };
@@ -37,6 +48,14 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
   };
 
   const cambiarEstado = async (nuevoEstado) => {
+    // Verificar si el evento está en un estado que no permite validación
+    if (eventoNoValidable) {
+      toast.error(
+        `No se puede validar inscripciones de un evento ${inscripcion.evento?.est_eve.toLowerCase()}`
+      );
+      return;
+    }
+
     setLoading(true);
     try {
       await axiosInstance.put(
@@ -56,6 +75,14 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
   };
   const handleFinalizar = async (e) => {
     e.preventDefault();
+
+    // Verificar si el evento está en un estado que no permite validación
+    if (eventoNoValidable) {
+      toast.error(
+        `No se puede finalizar inscripciones de un evento ${inscripcion.evento?.est_eve.toLowerCase()}`
+      );
+      return;
+    }
 
     if (isNaN(asistencia) || asistencia < 0 || asistencia > 100) {
       toast.error("Asistencia inválida (0–100)");
@@ -112,6 +139,24 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
     }
   };
 
+  // Función para renderizar el icono correcto según el estado del evento
+  const getEventoEstadoIcono = () => {
+    switch (inscripcion.evento?.est_eve) {
+      case "FINALIZADO":
+        return <CheckCircle size={14} />;
+      case "CANCELADO":
+        return <Ban size={14} />;
+      case "SUSPENDIDO":
+        return <AlertTriangle size={14} />;
+      case "ACTIVO":
+        return <Zap size={14} />;
+      case "INACTIVO":
+        return <AlertCircle size={14} />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className={`inscripcion-card ${getEstadoClase()}`}>
       <div className="inscripcion-card-header" onClick={handleToggleExpand}>
@@ -127,6 +172,15 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
           <div className="inscripcion-info-item">
             <User size={14} />
             <span>{inscripcion.evento?.nom_eve}</span>
+            {inscripcion.evento?.est_eve &&
+              inscripcion.evento.est_eve !== "ACTIVO" && (
+                <span
+                  className={`evento-estado-badge-ic evento-estado-${inscripcion.evento.est_eve.toLowerCase()}-ic`}
+                >
+                  {getEventoEstadoIcono()}
+                  {inscripcion.evento.est_eve}
+                </span>
+              )}
           </div>
           <div className="inscripcion-info-item">
             <Mail size={14} />
@@ -310,7 +364,8 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
                 disabled={
                   inscripcion.estado === "ACEPTADA" ||
                   inscripcion.estado === "FINALIZADA" ||
-                  loading
+                  loading ||
+                  eventoNoValidable
                 }
               >
                 <CheckCircle size={16} /> Aceptar
@@ -321,7 +376,8 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
                 disabled={
                   inscripcion.estado === "RECHAZADA" ||
                   inscripcion.estado === "FINALIZADA" ||
-                  loading
+                  loading ||
+                  eventoNoValidable
                 }
               >
                 <XOctagon size={16} /> Rechazar
@@ -331,7 +387,7 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
               className="inscripcion-finalizar-form"
               onSubmit={handleFinalizar}
             >
-              {inscripcion.estado === "ACEPTADA" && (
+              {inscripcion.estado === "ACEPTADA" && !eventoNoValidable && (
                 <div className="inscripcion-form-row">
                   {inscripcion.evento?.tip_eve === "CURSO" && (
                     <div className="inscripcion-form-group">
@@ -380,10 +436,21 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
                   </div>
                 </div>
               )}{" "}
+              {eventoNoValidable && inscripcion.estado === "ACEPTADA" && (
+                <div className="inscripcion-evento-no-validable-mensaje-ic">
+                  <AlertTriangle size={16} />
+                  No se puede finalizar inscripciones de un evento{" "}
+                  {inscripcion.evento?.est_eve.toLowerCase()}
+                </div>
+              )}
               <button
                 type="submit"
                 className="btn btn-finalizar"
-                disabled={inscripcion.estado !== "ACEPTADA" || loading}
+                disabled={
+                  inscripcion.estado !== "ACEPTADA" ||
+                  loading ||
+                  eventoNoValidable
+                }
                 style={{
                   display: inscripcion.estado === "ACEPTADA" ? "flex" : "none",
                 }}

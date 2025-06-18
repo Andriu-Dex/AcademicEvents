@@ -102,8 +102,6 @@ const MyInscriptions = () => {
     socket.on("user-inscription-update", (data) => {
       // Verificar que la actualización es para este usuario (por ID o por email)
       if (data.userId === usuario.id || data.userId === usuario.email) {
-        console.log("📡 Actualización de inscripción recibida:", data);
-
         // Actualizar la inscripción específica en el estado local
         setInscripciones((prevInscripciones) =>
           prevInscripciones.map((ins) =>
@@ -162,13 +160,6 @@ const MyInscriptions = () => {
     formData.append("archivo", nuevoArchivo);
     try {
       setReenviando(true);
-      console.log(
-        `Enviando comprobante para inscripción ID: ${inscripcionSeleccionada.id_ins}`
-      );
-      console.log(
-        "Estado actual de la inscripción:",
-        inscripcionSeleccionada.est_ins
-      );
 
       const response = await axiosInstance.put(
         `/reenviar/${inscripcionSeleccionada.id_ins}`,
@@ -180,7 +171,6 @@ const MyInscriptions = () => {
         }
       );
 
-      console.log("Respuesta del servidor:", response.data);
       toast.success("Comprobante reenviado correctamente");
       await obtenerInscripciones();
       setMostrarModal(false);

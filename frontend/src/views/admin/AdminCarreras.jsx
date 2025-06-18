@@ -131,11 +131,6 @@ const AdminCarreras = () => {
   // Hook para socket y actualizaciones en tiempo real
   const { carreraUpdates, clearCarreraUpdates, isConnected } = useSocket();
 
-  console.log("🔌 [AdminCarreras] Estado del socket:", {
-    isConnected,
-    carreraUpdates,
-  });
-
   // Instancia de la clase CarreraManager
   const carreraManager = new CarreraManager();
 
@@ -348,32 +343,13 @@ const AdminCarreras = () => {
     cargarCoordinadores();
   }, []);
 
-  // Log cada vez que cambia el estado de conexión del socket
-  useEffect(() => {
-    console.log(
-      "🔌 [AdminCarreras] Estado de conexión del socket cambió:",
-      isConnected
-    );
-  }, [isConnected]);
-
   // useEffect para manejar actualizaciones de socket en tiempo real
   useEffect(() => {
-    console.log(
-      "🔌 [AdminCarreras] useEffect de socket ejecutado, carreraUpdates:",
-      carreraUpdates
-    );
-
     if (carreraUpdates) {
-      console.log(
-        "📡 [AdminCarreras] Procesando actualización de carrera:",
-        carreraUpdates
-      );
-
       const { action, data } = carreraUpdates;
 
       switch (action) {
         case "created":
-          console.log("🆕 [AdminCarreras] Añadiendo nueva carrera:", data);
           // Añadir nueva carrera a la lista
           setCarreras((prev) => {
             const carreraFormateada = {
@@ -381,16 +357,11 @@ const AdminCarreras = () => {
               dur_sem_car: data.dur_sem_car || 0,
             };
             const nuevaLista = [...prev, carreraFormateada];
-            console.log(
-              "📝 [AdminCarreras] Lista actualizada después de crear:",
-              nuevaLista
-            );
             return nuevaLista;
           });
           break;
 
         case "updated":
-          console.log("🔄 [AdminCarreras] Actualizando carrera:", data);
           // Actualizar carrera existente (incluyendo cambios de estado activo/inactivo)
           setCarreras((prev) => {
             const nuevaLista = prev.map((carrera) =>
@@ -407,10 +378,6 @@ const AdminCarreras = () => {
           break;
 
         case "deleted":
-          console.log(
-            "❌ [AdminCarreras] Marcando carrera como inactiva:",
-            data
-          );
           // Para compatibilidad hacia atrás
           setCarreras((prev) => {
             const nuevaLista = prev.map((carrera) =>
@@ -418,41 +385,26 @@ const AdminCarreras = () => {
                 ? { ...carrera, est_car: false }
                 : carrera
             );
-            console.log(
-              "📝 [AdminCarreras] Lista actualizada después de delete:",
-              nuevaLista
-            );
             return nuevaLista;
           });
           break;
 
         case "permanentlyDeleted":
-          console.log(
-            "🗑️ [AdminCarreras] Eliminando carrera permanentemente:",
-            data
-          );
           // Eliminar carrera de la lista permanentemente
           setCarreras((prev) => {
             const nuevaLista = prev.filter(
               (carrera) => carrera.id_car !== data.id_car
-            );
-            console.log(
-              "📝 [AdminCarreras] Lista actualizada después de eliminación permanente:",
-              nuevaLista
             );
             return nuevaLista;
           });
           break;
 
         default:
-          console.warn(
-            "⚠️ [AdminCarreras] Acción de carrera no reconocida:",
-            action
-          );
+          // Acción de carrera no reconocida
+          break;
       }
 
       // Limpiar la actualización para evitar procesamientos duplicados
-      console.log("🧹 [AdminCarreras] Limpiando carreraUpdates");
       clearCarreraUpdates();
     }
   }, [carreraUpdates, clearCarreraUpdates]);

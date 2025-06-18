@@ -22,8 +22,6 @@ class SocketService {
    */
   setupEventHandlers() {
     this.io.on("connection", (socket) => {
-      console.log(`✅ Cliente conectado: ${socket.id}`);
-
       // Almacenar información del cliente
       this.connectedClients.set(socket.id, {
         id: socket.id,

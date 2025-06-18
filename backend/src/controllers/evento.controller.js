@@ -626,7 +626,28 @@ const obtenerEventoPorId = async (req, res) => {
       return res.status(404).json({ msg: "Evento no encontrado" });
     }
 
-    // 🔧 AUTO-CORRECCIÓN DE CUPOS INCONSISTENTES
+    // � SUPER DEBUG: Verificar datos del evento específico
+    console.log(`🔥 [EVENTO CONTROLLER DEBUG] Evento obtenido por ID:`);
+    console.log(`  - nom_eve: "${evento.nom_eve}"`);
+    console.log(`  - tip_eve: "${evento.tip_eve}"`);
+    console.log(
+      `  - por_min_asi_eve: "${
+        evento.por_min_asi_eve
+      }" (${typeof evento.por_min_asi_eve})`
+    );
+    console.log(`  - eventos_curso: ${JSON.stringify(evento.eventos_curso)}`);
+
+    if (evento.por_min_asi_eve === undefined) {
+      console.log(`❌ [EVENTO CONTROLLER DEBUG] por_min_asi_eve es UNDEFINED!`);
+    } else if (evento.por_min_asi_eve === null) {
+      console.log(`❌ [EVENTO CONTROLLER DEBUG] por_min_asi_eve es NULL!`);
+    } else {
+      console.log(
+        `✅ [EVENTO CONTROLLER DEBUG] por_min_asi_eve tiene valor: ${evento.por_min_asi_eve}`
+      );
+    }
+
+    // �🔧 AUTO-CORRECCIÓN DE CUPOS INCONSISTENTES
     // Verificar y corregir cupos disponibles si están mal calculados
     try {
       console.log(`🔄 Verificando cupos para evento ID: ${id}`);
@@ -667,6 +688,12 @@ const obtenerEventoPorId = async (req, res) => {
         });
 
         // Retornar el evento con los cupos corregidos
+        console.log(`🔥 [EVENTO FINAL DEBUG] Enviando evento corregido:`);
+        console.log(
+          `  - por_min_asi_eve: "${
+            eventoCorregido.por_min_asi_eve
+          }" (${typeof eventoCorregido.por_min_asi_eve})`
+        );
         return res.status(200).json(eventoCorregido);
       }
     } catch (correccionError) {
@@ -674,6 +701,12 @@ const obtenerEventoPorId = async (req, res) => {
       // Si falla la corrección, continuar con el evento original
     }
 
+    console.log(`🔥 [EVENTO FINAL DEBUG] Enviando evento original:`);
+    console.log(
+      `  - por_min_asi_eve: "${
+        evento.por_min_asi_eve
+      }" (${typeof evento.por_min_asi_eve})`
+    );
     res.status(200).json(evento);
   } catch (error) {
     res.status(500).json({

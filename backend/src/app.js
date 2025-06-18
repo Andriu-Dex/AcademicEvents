@@ -47,21 +47,6 @@ setupDirectories();
 app.use(cors()); // Habilita CORS para todas las rutas
 app.use(express.json()); // Habilita el parseo de JSON en las peticiones
 
-// Middleware de logging de todas las peticiones
-app.use((req, res, next) => {
-  console.log(
-    `📥 [REQUEST] ${req.method} ${req.url} - ${new Date().toISOString()}`
-  );
-  console.log(`📥 [REQUEST] Original URL: ${req.originalUrl}`);
-  console.log(`📥 [REQUEST] Base URL: ${req.baseUrl}`);
-  console.log(`📥 [REQUEST] Path: ${req.path}`);
-  console.log(`📥 [REQUEST] Headers:`, req.headers);
-  if (req.body && Object.keys(req.body).length > 0) {
-    console.log(`📥 [REQUEST] Body:`, req.body);
-  }
-  next();
-});
-
 // Servir archivos subidos (comprobantes, PDF, etc.)
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
@@ -79,22 +64,8 @@ const authRoutes = require("./routes/auth.routes");
 app.use("/api", authRoutes);
 
 // Rutas de recuperación de contraseña
-console.log("🔧 [APP] Registrando rutas de recuperación de contraseña...");
-
-// Middleware específico para debugging de rutas de recuperación
-app.use("/api/password-recovery", (req, res, next) => {
-  console.log("🎯 [DEBUG] Petición interceptada en /api/password-recovery");
-  console.log("🎯 [DEBUG] Método:", req.method);
-  console.log("🎯 [DEBUG] URL completa:", req.originalUrl);
-  console.log("🎯 [DEBUG] Path específico:", req.path);
-  next();
-});
-
 const passwordRecoveryRoutes = require("./routes/password-recovery.routes");
 app.use("/api/password-recovery", passwordRecoveryRoutes);
-console.log(
-  "✅ [APP] Rutas de recuperación de contraseña registradas en /api/password-recovery"
-);
 
 // Rutas de verificación de correo
 const verificationRoutes = require("./routes/verification.routes");

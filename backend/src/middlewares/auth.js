@@ -14,12 +14,10 @@ const verificarToken = (req, res, next) => {
   }
 
   const token = authHeader.split(" ")[1];
-  console.log("🔑 Token encontrado:", token.substring(0, 15) + "...");
 
   try {
     // Verificación del token con la clave secreta
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("✅ Token válido para usuario:", decoded.id, decoded.rol_usu);
 
     // Se guarda el payload en el request para uso posterior
     req.usuario = decoded;
