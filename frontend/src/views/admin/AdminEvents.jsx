@@ -1064,6 +1064,16 @@ const AdminEvents = () => {
                       </div>
                     </>
                   )}
+                  {/* Información para eventos que NO son cursos */}
+                  {!esCurso && (
+                    <div className="detail-item">
+                      <Users size={16} className="icon-inline" />
+                      <span>
+                        <strong>Asistencia mínima:</strong>{" "}
+                        {eve.por_min_asi_eve ? `${eve.por_min_asi_eve}%` : "-"}
+                      </span>
+                    </div>
+                  )}
                   {/* Carreras asociadas */}
                   <div className="detail-item">
                     <GraduationCap size={16} className="icon-inline" />

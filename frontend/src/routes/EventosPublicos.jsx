@@ -583,7 +583,7 @@ const EventosPublicos = () => {
                         evento.img_por_eve || "https://i.imgur.com/c6Ry30Z.jpeg"
                       }
                       alt={`Portada de ${evento.nom_eve}`}
-                      className="evento-portada-ep"
+                      className="evento-portada"
                     />
 
                     {/* Indicador de estado para eventos filtrados */}

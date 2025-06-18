@@ -115,7 +115,7 @@ function Home() {
           ? `Evento actualizado: ${eventUpdate.data.nom_eve || "Sin nombre"}`
           : `Evento eliminado: ${eventUpdate.data.nom_eve || "Sin nombre"}`;
 
-      showTemporaryNotification(message, "info");
+      // showTemporaryNotification(message, "info"); // Comentado para evitar notificaciones repetidas
     },
 
     onInscriptionUpdate: (inscriptionUpdate) => {
@@ -136,7 +136,7 @@ function Home() {
 
     onSystemNotification: (notification) => {
       console.log("🏠 Home: Notificación del sistema", notification);
-      showTemporaryNotification(notification.message, notification.type);
+      // showTemporaryNotification(notification.message, notification.type); // Comentado para evitar notificaciones de socket
     },
   });
 
@@ -214,10 +214,10 @@ function Home() {
         }
       } catch (error) {
         console.error("Error al cargar datos:", error);
-        showTemporaryNotification(
-          "Error al cargar datos del sistema. Por favor, inténtalo de nuevo más tarde.",
-          "error"
-        );
+        // showTemporaryNotification(
+        //   "Error al cargar datos del sistema. Por favor, inténtalo de nuevo más tarde.",
+        //   "error"
+        // ); // Comentado para evitar notificaciones automáticas
       }
     };
 

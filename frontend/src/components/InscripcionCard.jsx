@@ -336,7 +336,9 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
                   {inscripcion.evento?.tip_eve === "CURSO" && (
                     <div className="inscripcion-form-group">
                       <label htmlFor={`nota-${inscripcion.id_ins}`}>
-                        Nota (0-10):
+                        Nota (mín:{" "}
+                        {inscripcion.evento?.eventos_curso?.not_min_cur || "0"}
+                        ):
                       </label>
                       <input
                         id={`nota-${inscripcion.id_ins}`}
@@ -357,7 +359,8 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
                   )}
                   <div className="inscripcion-form-group">
                     <label htmlFor={`asistencia-${inscripcion.id_ins}`}>
-                      Asistencia (%):
+                      Asistencia (mín:{" "}
+                      {inscripcion.evento?.por_min_asi_eve || "0"}%):
                     </label>
                     <input
                       id={`asistencia-${inscripcion.id_ins}`}

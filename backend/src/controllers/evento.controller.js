@@ -11,8 +11,8 @@ require("dotenv").config();
 function validarCurso(not_min_cur) {
   if (not_min_cur === undefined)
     throw new Error("La nota mínima es obligatoria");
-  if (not_min_cur < 8 || not_min_cur > 10)
-    throw new Error("La nota mínima debe estar entre 8 y 10");
+  if (not_min_cur < 0 || not_min_cur > 10)
+    throw new Error("La nota mínima debe estar entre 0 y 10");
 }
 /**
  * Valida los campos obligatorios y restricciones de un evento en general
@@ -44,12 +44,12 @@ function validarEventoGeneral({
   if (dur_hor_eve === undefined || dur_hor_eve <= 0)
     throw new Error(
       "La duración del evento es obligatoria y debe ser mayor a 0"
-    ); // Validar que el porcentaje mínimo de asistencia esté dentro del rango 80-100
+    ); // Validar que el porcentaje mínimo de asistencia esté dentro del rango 0-100
   if (por_min_asi_eve === undefined)
     throw new Error("El porcentaje mínimo de asistencia es obligatorio");
-  if (por_min_asi_eve < 80 || por_min_asi_eve > 100)
+  if (por_min_asi_eve < 0 || por_min_asi_eve > 100)
     throw new Error(
-      "El porcentaje mínimo de asistencia debe estar entre 80% y 100%"
+      "El porcentaje mínimo de asistencia debe estar entre 0% y 100%"
     ); // Validar que la fecha de fin esté presente
   if (!fec_fin_eve) throw new Error("La fecha de fin es obligatoria");
 

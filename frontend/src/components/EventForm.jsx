@@ -312,10 +312,10 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
     if (formData.tip_eve === "CURSO") {
       if (
         !formData.not_min_cur ||
-        formData.not_min_cur < 8 ||
+        formData.not_min_cur < 0 ||
         formData.not_min_cur > 10
       )
-        errores.push("Para cursos, la nota mínima debe estar entre 8 y 10");
+        errores.push("Para cursos, la nota mínima debe estar entre 0 y 10");
     }
 
     return errores;
@@ -675,7 +675,7 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
                   min="0"
                   max="100"
                   step="0.1"
-                  placeholder="80"
+                  placeholder="Ej: 50, 70, 80"
                   required
                 />
               </div>
