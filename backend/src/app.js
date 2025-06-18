@@ -10,6 +10,7 @@ const { Server } = require("socket.io");
 const { scheduledCleanup } = require("./services/cleanupService");
 const { setupDirectories } = require("./utils/directory.utils");
 const socketService = require("./services/socket.service");
+const eventStatusService = require("./services/eventStatusService");
 
 // ============================
 //  Configuración inicial
@@ -33,6 +34,9 @@ socketService.init(io);
 
 // Iniciar el servicio de limpieza programada
 scheduledCleanup();
+
+// Iniciar el servicio de estados automáticos de eventos
+eventStatusService.inicializarServicio();
 
 // Configurar directorios necesarios
 setupDirectories();

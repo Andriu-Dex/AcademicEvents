@@ -1162,6 +1162,35 @@ const desmarcadoAutomaticoEventosPasados = async () => {
   }
 };
 
+/**
+ * Endpoint para verificar manualmente el servicio de estados automáticos
+ * Solo para administradores en desarrollo
+ */
+const verificarEstadosAutomaticos = async (req, res) => {
+  try {
+    const eventStatusService = require("../services/eventStatusService");
+
+    // Verificar si el servicio está activo
+    const estaActivo = eventStatusService.estaActivo;
+
+    // Ejecutar manualmente una actualización
+    await eventStatusService.ejecutarActualizacionEstados();
+
+    // Devolver estado de la operación
+    res.status(200).json({
+      mensaje: "Verificación de estados automáticos completada",
+      servicioActivo: estaActivo,
+      fechaEjecucion: new Date(),
+    });
+  } catch (error) {
+    console.error("Error al verificar estados automáticos:", error);
+    res.status(500).json({
+      mensaje: "Error al verificar estados automáticos",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   crearEvento,
   obtenerEventos,
@@ -1173,4 +1202,5 @@ module.exports = {
   verificarYCorregirTodosLosCupos,
   obtenerEventosDestacados,
   toggleEventoDestacado,
+  verificarEstadosAutomaticos,
 };
