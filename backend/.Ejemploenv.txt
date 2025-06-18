@@ -33,3 +33,10 @@ IMGUR_CLIENT_SECRET=colocar_tu_secret_imgur
 SUPER_ADMIN_EMAIL=admin@uta.edu.ec
 SUPER_ADMIN_PASSWORD=Admin12345
 SUPER_ADMIN_CEDULA=9999999999
+
+# Configuración para estados automáticos de eventos
+EVENT_STATUS_CRON_ENABLED=true
+# Cada 5 minutos se ejecutará el cron
+EVENT_STATUS_CRON_SCHEDULE="*/5 * * * *"
+# Zona horaria para el cron
+EVENT_STATUS_TIMEZONE="America/Guayaquil"

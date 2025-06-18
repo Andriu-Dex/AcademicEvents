@@ -758,7 +758,8 @@ const EventsRoute = () => {
                     eventosAprobados.includes(evento.id_eve)) ||
                   (eventosReprobados &&
                     eventosReprobados.includes(evento.id_eve)) ||
-                  evento.cup_dis_eve === 0
+                  evento.cup_dis_eve === 0 ||
+                  evento.est_eve === "INACTIVO"
                 }
               >
                 {eventosAprobados && eventosAprobados.includes(evento.id_eve)
@@ -770,6 +771,8 @@ const EventsRoute = () => {
                   ? "Ya inscrito"
                   : evento.cup_dis_eve === 0
                   ? "Sin cupos"
+                  : evento.est_eve === "INACTIVO"
+                  ? "Evento inactivo"
                   : "Inscribirme"}
               </button>
             </div>

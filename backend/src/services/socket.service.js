@@ -261,6 +261,25 @@ class SocketService {
       `📡 Estado de inscripción actualizado a: ${inscriptionData.estadoNuevo}`
     );
   }
+
+  /**
+   * Notificar cambios masivos en inscripciones
+   * @param {string} action - Tipo de acción
+   * @param {Object} data - Datos del cambio masivo
+   */
+  notifyRegistrationChange(action, data) {
+    if (!this.io) return;
+
+    this.io.emit("registrations-bulk-change", {
+      action,
+      data: data,
+      timestamp: new Date(),
+    });
+
+    console.log(
+      `📡 Cambio masivo de inscripciones (${action}) notificado a todos los clientes`
+    );
+  }
 }
 
 // Exportar una instancia única (patrón Singleton)

@@ -234,10 +234,9 @@ class EventStatusManager {
       return [];
     }
   }
-
   /**
    * Procesa inscripciones de eventos recién finalizados
-   * Cambia ACEPTADAS → REPROBADO_TOTAL
+   * Cambia ACEPTADAS → REPROBADO_TOTAL y PENDIENTES → RECHAZADA
    * @param {Array} eventosFinalizados Lista de eventos que se finalizaron
    * @returns {Promise<Array>} Lista de inscripciones procesadas
    */
@@ -257,12 +256,10 @@ class EventStatusManager {
       // Obtener IDs de eventos finalizados
       const idsEventosFinalizados = eventosFinalizados.map(
         (evento) => evento.id_eve
-      );
-
-      // Buscar inscripciones ACEPTADAS de esos eventos
+      ); // Buscar inscripciones ACEPTADAS de esos eventos
       const inscripcionesAceptadas = await prisma.inscripcion.findMany({
         where: {
-          id_eve_per: {
+          id_eve_ins: {
             in: idsEventosFinalizados,
           },
           est_ins: "ACEPTADA",
@@ -277,18 +274,30 @@ class EventStatusManager {
         },
       });
 
-      if (inscripcionesAceptadas.length === 0) {
-        console.log("ℹ️ No hay inscripciones ACEPTADAS para procesar");
-        return [];
-      }
+      // Buscar inscripciones PENDIENTES de esos eventos
+      const inscripcionesPendientes = await prisma.inscripcion.findMany({
+        where: {
+          id_eve_ins: {
+            in: idsEventosFinalizados,
+          },
+          est_ins: "PENDIENTE",
+        },
+        include: {
+          evento: true,
+          cuenta: {
+            include: {
+              usuario: true,
+            },
+          },
+        },
+      });
 
       console.log(
-        `🔍 Encontradas ${inscripcionesAceptadas.length} inscripciones ACEPTADAS para reprobación`
+        `🔍 Encontradas ${inscripcionesAceptadas.length} inscripciones ACEPTADAS para reprobación y ${inscripcionesPendientes.length} inscripciones PENDIENTES para rechazo`
       );
 
-      // Actualizar estado de inscripciones a REPROBADO_TOTAL
-      const inscripcionesProcesadas = [];
-
+      // Actualizar estado de inscripciones
+      const inscripcionesProcesadas = []; // Procesar inscripciones ACEPTADAS → REPROBADO_TOTAL
       for (const inscripcion of inscripcionesAceptadas) {
         try {
           const inscripcionActualizada = await prisma.inscripcion.update({
@@ -297,9 +306,6 @@ class EventStatusManager {
             },
             data: {
               est_ins: "REPROBADO_TOTAL",
-              fec_cam_est_ins: new Date(),
-              obs_cam_est_ins:
-                "Reprobación automática por finalización de evento",
             },
             include: {
               evento: true,
@@ -311,21 +317,75 @@ class EventStatusManager {
             },
           });
 
-          inscripcionesProcesadas.push(inscripcionActualizada);
-
-          // Crear observación automática
-          await prisma.observacion_inscripcion.create({
-            data: {
+          inscripcionesProcesadas.push(inscripcionActualizada); // Crear observación automática
+          await prisma.observacion_inscripcion.upsert({
+            where: {
               id_ins_per: inscripcion.id_ins,
-              id_cue_per: null, // No hay cuenta de administrador asociada (es automático)
-              tex_obs_ins:
+            },
+            update: {
+              obs_ins:
                 "Reprobación automática al finalizar el evento sin registro de asistencia o aprobación",
-              fec_cre_obs_ins: new Date(),
+              fec_cre_obs: new Date(),
+            },
+            create: {
+              id_ins_per: inscripcion.id_ins,
+              obs_ins:
+                "Reprobación automática al finalizar el evento sin registro de asistencia o aprobación",
+              fec_cre_obs: new Date(),
             },
           });
 
           console.log(
             `✅ Inscripción de ${inscripcion.cuenta.usuario.nom_usu} ${inscripcion.cuenta.usuario.ape_usu} cambiada a REPROBADO_TOTAL`
+          );
+        } catch (error) {
+          console.error(
+            `❌ Error al procesar inscripción ${inscripcion.id_ins}:`,
+            error
+          );
+        }
+      }
+
+      // Procesar inscripciones PENDIENTES → RECHAZADA
+      for (const inscripcion of inscripcionesPendientes) {
+        try {
+          const inscripcionActualizada = await prisma.inscripcion.update({
+            where: {
+              id_ins: inscripcion.id_ins,
+            },
+            data: {
+              est_ins: "RECHAZADA",
+            },
+            include: {
+              evento: true,
+              cuenta: {
+                include: {
+                  usuario: true,
+                },
+              },
+            },
+          });
+
+          inscripcionesProcesadas.push(inscripcionActualizada); // Crear observación automática
+          await prisma.observacion_inscripcion.upsert({
+            where: {
+              id_ins_per: inscripcion.id_ins,
+            },
+            update: {
+              obs_ins:
+                "Rechazo automático al finalizar el evento sin haber sido aceptada",
+              fec_cre_obs: new Date(),
+            },
+            create: {
+              id_ins_per: inscripcion.id_ins,
+              obs_ins:
+                "Rechazo automático al finalizar el evento sin haber sido aceptada",
+              fec_cre_obs: new Date(),
+            },
+          });
+
+          console.log(
+            `✅ Inscripción de ${inscripcion.cuenta.usuario.nom_usu} ${inscripcion.cuenta.usuario.ape_usu} cambiada a RECHAZADA`
           );
         } catch (error) {
           console.error(
@@ -374,7 +434,6 @@ class EventStatusNotifier {
       );
     }
   }
-
   /**
    * Notifica cambios masivos de inscripciones
    */
@@ -383,34 +442,69 @@ class EventStatusNotifier {
       // Agrupar inscripciones por evento para notificaciones más eficientes
       const inscripcionesPorEvento = inscripcionesProcesadas.reduce(
         (acc, inscripcion) => {
-          const idEvento = inscripcion.id_eve_per;
+          const idEvento = inscripcion.id_eve_ins;
+          const estado = inscripcion.est_ins;
+
           if (!acc[idEvento]) {
-            acc[idEvento] = [];
+            acc[idEvento] = {
+              REPROBADO_TOTAL: [],
+              RECHAZADA: [],
+            };
           }
-          acc[idEvento].push(inscripcion);
+
+          if (estado === "REPROBADO_TOTAL") {
+            acc[idEvento].REPROBADO_TOTAL.push(inscripcion);
+          } else if (estado === "RECHAZADA") {
+            acc[idEvento].RECHAZADA.push(inscripcion);
+          }
+
           return acc;
         },
         {}
       );
 
       // Enviar notificación por cada evento con sus inscripciones
-      for (const [idEvento, inscripciones] of Object.entries(
+      for (const [idEvento, estados] of Object.entries(
         inscripcionesPorEvento
       )) {
-        const evento = inscripciones[0].evento; // Todos tienen el mismo evento
+        const inscripcionesReprobadas = estados.REPROBADO_TOTAL;
+        const inscripcionesRechazadas = estados.RECHAZADA;
 
-        socketService.notifyRegistrationChange("bulk-status-change", {
-          eventId: idEvento,
-          eventName: evento.nom_eve,
-          registrationsCount: inscripciones.length,
-          newStatus: "REPROBADO_TOTAL",
-          reason: "Finalización automática del evento",
-          timestamp: new Date(),
-        });
+        // Si hay inscripciones reprobadas, notificar
+        if (inscripcionesReprobadas.length > 0) {
+          const evento = inscripcionesReprobadas[0].evento;
 
-        console.log(
-          `🔔 Notificación enviada: cambio masivo de ${inscripciones.length} inscripciones a REPROBADO_TOTAL para evento ${evento.nom_eve}`
-        );
+          socketService.notifyRegistrationChange("bulk-status-change", {
+            eventId: idEvento,
+            eventName: evento.nom_eve,
+            registrationsCount: inscripcionesReprobadas.length,
+            newStatus: "REPROBADO_TOTAL",
+            reason: "Finalización automática del evento",
+            timestamp: new Date(),
+          });
+
+          console.log(
+            `🔔 Notificación enviada: cambio masivo de ${inscripcionesReprobadas.length} inscripciones a REPROBADO_TOTAL para evento ${evento.nom_eve}`
+          );
+        }
+
+        // Si hay inscripciones rechazadas, notificar
+        if (inscripcionesRechazadas.length > 0) {
+          const evento = inscripcionesRechazadas[0].evento;
+
+          socketService.notifyRegistrationChange("bulk-status-change", {
+            eventId: idEvento,
+            eventName: evento.nom_eve,
+            registrationsCount: inscripcionesRechazadas.length,
+            newStatus: "RECHAZADA",
+            reason: "Rechazo automático por finalización de evento",
+            timestamp: new Date(),
+          });
+
+          console.log(
+            `🔔 Notificación enviada: cambio masivo de ${inscripcionesRechazadas.length} inscripciones a RECHAZADA para evento ${evento.nom_eve}`
+          );
+        }
       }
     } catch (error) {
       console.error(

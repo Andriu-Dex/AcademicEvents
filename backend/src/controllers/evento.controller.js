@@ -1170,16 +1170,20 @@ const verificarEstadosAutomaticos = async (req, res) => {
   try {
     const eventStatusService = require("../services/eventStatusService");
 
-    // Verificar si el servicio está activo
-    const estaActivo = eventStatusService.estaActivo;
+    // Obtener configuración actual del servicio
+    const configuracion = eventStatusService.obtenerConfiguracion();
 
-    // Ejecutar manualmente una actualización
-    await eventStatusService.ejecutarActualizacionEstados();
+    // Ejecutar manualmente una actualización solo si está habilitado
+    if (configuracion.habilitado) {
+      await eventStatusService.ejecutarActualizacionEstados();
+    }
 
-    // Devolver estado de la operación
+    // Devolver estado completo de la operación
     res.status(200).json({
-      mensaje: "Verificación de estados automáticos completada",
-      servicioActivo: estaActivo,
+      mensaje: configuracion.habilitado
+        ? "Verificación de estados automáticos completada"
+        : "Servicio deshabilitado - no se ejecutó actualización",
+      configuracion: configuracion,
       fechaEjecucion: new Date(),
     });
   } catch (error) {

@@ -23,9 +23,16 @@ class EventStatusService {
   }
   /**
    * Inicializa el servicio cron para actualización automática de estados
-   * Ejecuta cada 5 minutos usando expresión cron
+   * Usa variables de entorno para configuración flexible
    */
   inicializarServicio() {
+    // Verificar si el servicio está habilitado
+    const isEnabled = process.env.EVENT_STATUS_CRON_ENABLED === "true";
+    if (!isEnabled) {
+      console.log("⚠️ EventStatusService deshabilitado por configuración");
+      return;
+    }
+
     if (this.isActive) {
       console.log("⚠️ EventStatusService ya está activo");
       return;
@@ -33,17 +40,24 @@ class EventStatusService {
 
     console.log("🚀 Iniciando EventStatusService...");
 
+    // Obtener configuración desde variables de entorno
+    const cronSchedule =
+      process.env.EVENT_STATUS_CRON_SCHEDULE || "*/5 * * * *";
+    const timezone = process.env.EVENT_STATUS_TIMEZONE || "America/Guayaquil";
+
+    console.log(`⚙️ Configuración cron: ${cronSchedule} (${timezone})`);
+
     // Ejecutar una vez al iniciar
     this.ejecutarActualizacionEstados();
 
-    // Programar ejecución cada 5 minutos
+    // Programar ejecución según configuración
     this.cronJob = cron.schedule(
-      "*/5 * * * *",
+      cronSchedule,
       async () => {
         await this.ejecutarActualizacionEstados();
       },
       {
-        timezone: "America/Guayaquil", // Ajustar según tu zona horaria
+        timezone: timezone,
       }
     );
 
@@ -149,6 +163,22 @@ class EventStatusService {
    */
   get estaActivo() {
     return this.isActive;
+  }
+
+  /**
+   * Obtiene la configuración actual del servicio
+   * Útil para debugging y monitoreo
+   */
+  obtenerConfiguracion() {
+    return {
+      habilitado: process.env.EVENT_STATUS_CRON_ENABLED === "true",
+      cronSchedule: process.env.EVENT_STATUS_CRON_SCHEDULE || "*/5 * * * *",
+      timezone: process.env.EVENT_STATUS_TIMEZONE || "America/Guayaquil",
+      estaActivo: this.isActive,
+      proximaEjecucion: this.cronJob
+        ? this.cronJob.nextDate().toISOString()
+        : null,
+    };
   }
 }
 
