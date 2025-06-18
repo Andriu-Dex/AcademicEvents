@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import axiosInstance from "../api/axiosConfig";
 import { useAuth } from "../hooks/useAuth";
+import { useSocket } from "../context/SocketContext";
 import { toast } from "react-toastify";
 import { lanzarConfetti } from "../utils/confetti";
 import "./styles/MyInscriptions.css";
+import CertificateViewer from "../components/CertificateViewer";
 
 import {
   BadgeCheck,
@@ -64,12 +66,16 @@ const estadoLabel = {
 
 const MyInscriptions = () => {
   const { usuario, token } = useAuth();
+  const { socket, isConnected } = useSocket();
 
   const [inscripciones, setInscripciones] = useState([]);
   const [mostrarModal, setMostrarModal] = useState(false);
   const [inscripcionSeleccionada, setInscripcionSeleccionada] = useState(null);
   const [nuevoArchivo, setNuevoArchivo] = useState(null);
   const [reenviando, setReenviando] = useState(false);
+  const [mostrarCertificado, setMostrarCertificado] = useState(false);
+  const [certificadoUrl, setCertificadoUrl] = useState("");
+  const [certificadoFileName, setCertificadoFileName] = useState("");
   const obtenerInscripciones = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -92,6 +98,51 @@ const MyInscriptions = () => {
     if (usuario) obtenerInscripciones();
   }, [usuario]);
 
+  // Escuchar cambios de inscripciones en tiempo real
+  useEffect(() => {
+    if (!socket || !isConnected || !usuario) return;
+
+    // Escuchar actualizaciones de inscripciones específicas para este usuario
+    socket.on("user-inscription-update", (data) => {
+      // Verificar que la actualización es para este usuario (por ID o por email)
+      if (data.userId === usuario.id || data.userId === usuario.email) {
+        // Actualizar la inscripción específica en el estado local
+        setInscripciones((prevInscripciones) =>
+          prevInscripciones.map((ins) =>
+            ins.id_ins === data.data.id_ins
+              ? {
+                  ...ins,
+                  est_ins: data.data.estadoNuevo,
+                  observacion: data.data.observacion,
+                }
+              : ins
+          )
+        );
+
+        // Mostrar notificación al usuario sobre el cambio de estado
+        const nuevoEstado = data.data.estadoNuevo;
+        const mensaje = `Tu inscripción ha sido ${
+          estadoLabel[nuevoEstado]?.text.toLowerCase() ||
+          nuevoEstado.toLowerCase()
+        }`;
+
+        toast.info(mensaje, {
+          icon: estadoLabel[nuevoEstado]?.icon,
+          className: `toast-${estadoLabel[nuevoEstado]?.color || "default"}-mi`,
+        });
+
+        // Mostrar confeti para estados positivos
+        if (nuevoEstado === "ACEPTADA" || nuevoEstado === "APROBADO") {
+          lanzarConfetti();
+        }
+      }
+    });
+
+    return () => {
+      socket.off("user-inscription-update");
+    };
+  }, [socket, isConnected, usuario]);
+
   const reenviarComprobante = async () => {
     if (!nuevoArchivo) {
       toast.error("Debes seleccionar un archivo para reenviar.");
@@ -113,13 +164,6 @@ const MyInscriptions = () => {
     formData.append("archivo", nuevoArchivo);
     try {
       setReenviando(true);
-      console.log(
-        `Enviando comprobante para inscripción ID: ${inscripcionSeleccionada.id_ins}`
-      );
-      console.log(
-        "Estado actual de la inscripción:",
-        inscripcionSeleccionada.est_ins
-      );
 
       const response = await axiosInstance.put(
         `/reenviar/${inscripcionSeleccionada.id_ins}`,
@@ -131,7 +175,6 @@ const MyInscriptions = () => {
         }
       );
 
-      console.log("Respuesta del servidor:", response.data);
       toast.success("Comprobante reenviado correctamente");
       await obtenerInscripciones();
       setMostrarModal(false);
@@ -224,8 +267,14 @@ const MyInscriptions = () => {
                         });
                         const url = window.URL.createObjectURL(blob);
 
-                        // Abrir en una nueva pestaña
-                        window.open(url, "_blank");
+                        // Guardar la URL y mostrar el modal
+                        setCertificadoUrl(url);
+                        setCertificadoFileName(
+                          `certificado_${ins.evento.nom_eve
+                            .replace(/\s+/g, "_")
+                            .toLowerCase()}.pdf`
+                        );
+                        setMostrarCertificado(true);
                       } catch (error) {
                         console.error("Error al descargar certificado:", error);
                         if (error.response?.status === 401) {
@@ -240,7 +289,7 @@ const MyInscriptions = () => {
                         }
                       }
                     }}
-                    className="btn-descargar"
+                    className="btn-descargar-mi"
                   >
                     <Download size={16} />
                     Descargar certificado
@@ -374,6 +423,20 @@ const MyInscriptions = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Modal de visualización de certificado */}
+      {mostrarCertificado && (
+        <CertificateViewer
+          pdfUrl={certificadoUrl}
+          fileName={certificadoFileName}
+          onClose={() => {
+            setMostrarCertificado(false);
+            // Revocar la URL del blob cuando ya no se necesita para liberar memoria
+            URL.revokeObjectURL(certificadoUrl);
+            setCertificadoUrl("");
+          }}
+        />
       )}
     </div>
   );

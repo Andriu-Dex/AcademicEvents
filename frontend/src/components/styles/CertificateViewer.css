@@ -1,0 +1,189 @@
+/* =======================
+   Estilos para el visor de certificados
+   ======================= */
+
+/* Overlay del modal */
+.modal-overlay-cv {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  backdrop-filter: blur(3px);
+}
+
+/* Contenido del modal */
+.modal-content-cv {
+  background-color: white;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 900px;
+  height: 90vh;
+  max-height: 800px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  animation: modal-appear-cv 0.3s ease-out;
+}
+
+@keyframes modal-appear-cv {
+  from {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Cabecera del modal */
+.modal-header-cv {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-title-cv {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+}
+
+.close-button-cv {
+  background: none;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  transition: all 0.2s ease;
+}
+
+.close-button-cv:hover {
+  background-color: #f3f4f6;
+  color: #111827;
+}
+
+/* Contenedor del PDF */
+.pdf-container-cv {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  background-color: #f9fafb;
+}
+
+.pdf-iframe-cv {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* Acciones del modal */
+.modal-actions-cv {
+  padding: 16px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.cancel-button-cv {
+  background-color: #6b7280;
+  color: white;
+  font-weight: 600;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cancel-button-cv:hover {
+  background-color: #4b5563;
+}
+
+.download-button-cv {
+  background-color: #8a1538;
+  color: white;
+  font-weight: 600;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.download-button-cv:hover {
+  background-color: #6e102c;
+}
+
+/* Loader */
+.loading-cv {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.9);
+  z-index: 1;
+}
+
+.spinner-cv {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(138, 21, 56, 0.3);
+  border-radius: 50%;
+  border-top-color: #8a1538;
+  animation: spin-cv 1s ease-in-out infinite;
+  margin-bottom: 12px;
+}
+
+@keyframes spin-cv {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsividad */
+@media (max-width: 640px) {
+  .modal-content-cv {
+    width: 95%;
+    height: 95vh;
+  }
+  .modal-title-cv {
+    font-size: 1rem;
+  }
+
+  .modal-actions-cv {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .cancel-button-cv,
+  .download-button-cv {
+    width: 100%;
+    justify-content: center;
+  }
+}

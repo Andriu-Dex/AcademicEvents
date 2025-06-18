@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import axiosInstance from "../api/axiosConfig";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useSocket } from "../context/SocketContext";
 import {
   CalendarDays,
   Search,
@@ -13,8 +14,12 @@ import {
   Filter,
   ChevronDown,
   X,
+  Clock,
+  AlertCircle,
+  AlertTriangle,
 } from "lucide-react";
 import "./styles/EventsRoute.css";
+import "./styles/FiltrosEstado.css";
 
 // Función para formatear fechas correctamente usando UTC
 const formatearFechaUTC = (fechaStr) => {
@@ -55,6 +60,7 @@ const formatearFechaUTC = (fechaStr) => {
 const EventsRoute = () => {
   const { usuario, token, loading } = useAuth();
   const navigate = useNavigate();
+  const { socket, isConnected } = useSocket();
   const [eventos, setEventos] = useState([]);
   const [filtro, setFiltro] = useState("");
   const [filtroModalidad, setFiltroModalidad] = useState("");
@@ -63,6 +69,9 @@ const EventsRoute = () => {
     pagado: false,
     completo: false,
     modalidad: "",
+    finalizado: false,
+    cancelado: false,
+    suspendido: false,
   });
   const [mostrarFiltros, setMostrarFiltros] = useState(false);
   const [eventoSeleccionado, setEventoSeleccionado] = useState(null);
@@ -300,13 +309,45 @@ const EventsRoute = () => {
     }
   };
   const eventosDisponibles = eventos.filter((evento) => {
+    // Si algún filtro de estado está activo, mostrar solo eventos con esos estados
+    const filtrosEstadoActivos =
+      filtros.finalizado || filtros.cancelado || filtros.suspendido;
+
+    if (filtrosEstadoActivos) {
+      let cumpleEstado = false;
+
+      if (filtros.finalizado && evento.est_eve === "FINALIZADO") {
+        cumpleEstado = true;
+      }
+      if (filtros.cancelado && evento.est_eve === "CANCELADO") {
+        cumpleEstado = true;
+      }
+      if (filtros.suspendido && evento.est_eve === "SUSPENDIDO") {
+        cumpleEstado = true;
+      }
+
+      // Si no cumple con ningún estado filtrado, no mostrar
+      if (!cumpleEstado) {
+        return false;
+      }
+    } else {
+      // Por defecto, no mostrar eventos finalizados, cancelados, suspendidos
+      if (
+        evento.est_eve === "FINALIZADO" ||
+        evento.est_eve === "CANCELADO" ||
+        evento.est_eve === "SUSPENDIDO"
+      ) {
+        return false;
+      }
+    }
+
     // Si el evento es de tipo PUBLICO, está disponible para todos
     if (evento.tip_eve === "PUBLICO") {
       return true;
     }
 
     // Si el evento no tiene carreras asociadas, significa que es un evento general
-    if (evento.eventos_carrera.length === 0) {
+    if (!evento.eventos_carrera || evento.eventos_carrera.length === 0) {
       return true;
     }
 
@@ -316,7 +357,7 @@ const EventsRoute = () => {
       // Si el usuario tiene una carrera asignada
       if (usuarioFinal.carrera) {
         // Verificar si el evento está asociado a la carrera del usuario
-        const tieneCarrera = evento.eventos_carrera.some(
+        const tieneCarrera = evento.eventos_carrera?.some(
           (ec) => ec.id_car_aso === usuarioFinal.carrera.id_car
         );
         return tieneCarrera;
@@ -341,9 +382,9 @@ const EventsRoute = () => {
     const hayFiltrosActivos = Object.values(filtros).some((f) => f);
 
     if (hayFiltrosActivos) {
-      // Si el filtro "completo" está activo, mostrar solo eventos con cupos === 0
+      // Si el filtro "completo" está activo, mostrar eventos con cupos === 0
       if (filtros.completo) {
-        if (cuposDisponibles !== 0) return false;
+        // No aplicar filtro adicional por cupos si está marcado
       } else {
         // Para todos los otros filtros, mostrar solo eventos con cupos > 0
         if (cuposDisponibles <= 0) return false;
@@ -385,7 +426,7 @@ const EventsRoute = () => {
     }));
 
     // Añadir efecto de filtrado al grid
-    const eventosGrid = document.querySelector(".eventos-grid");
+    const eventosGrid = document.querySelector(".eventos-grid-er");
     if (eventosGrid) {
       eventosGrid.classList.add("filtering");
       setTimeout(() => {
@@ -401,14 +442,101 @@ const EventsRoute = () => {
       pagado: false,
       completo: false,
       modalidad: "",
+      finalizado: false,
+      cancelado: false,
+      suspendido: false,
     });
     setFiltro("");
   };
 
+  // Manejar actualizaciones de eventos en tiempo real
+  const handleEventUpdate = useCallback((eventUpdate) => {
+    console.log("🔄 Evento actualizado via socket:", eventUpdate);
+    if (!eventUpdate || !eventUpdate.action || !eventUpdate.data) return;
+
+    const { action, data } = eventUpdate;
+
+    // Asegurar que el evento tenga la estructura correcta
+    const eventoConEstructura = {
+      ...data,
+      eventos_carrera: data.eventos_carrera || [],
+      eventos_curso: data.eventos_curso || null,
+    };
+
+    // Manejar diferentes tipos de actualizaciones
+    if (action === "created") {
+      // Verificar que el evento no exista ya para evitar duplicados
+      setEventos((prevEventos) => {
+        const existeEvento = prevEventos.some(
+          (e) => e.id_eve === eventoConEstructura.id_eve
+        );
+        if (existeEvento) {
+          console.log("🚫 Evento ya existe, no se agrega duplicado");
+          return prevEventos;
+        }
+        return [eventoConEstructura, ...prevEventos];
+      });
+    } else if (action === "updated") {
+      // Actualizar evento existente
+      setEventos((prevEventos) =>
+        prevEventos.map((evento) =>
+          evento.id_eve === eventoConEstructura.id_eve
+            ? { ...evento, ...eventoConEstructura }
+            : evento
+        )
+      );
+    } else if (action === "deleted") {
+      // Eliminar evento
+      setEventos((prevEventos) =>
+        prevEventos.filter(
+          (evento) => evento.id_eve !== eventoConEstructura.id_eve
+        )
+      );
+    }
+  }, []);
+
+  // Effect para manejar socket events de manera controlada
+  useEffect(() => {
+    if (!isConnected || !socket) return;
+
+    // Listener para cambios de eventos
+    socket.on("evento-change-hm", handleEventUpdate);
+
+    // Socket listener for cupos changes
+    const handleCuposChange = (data) => {
+      if (
+        !data ||
+        typeof data.eventoId === "undefined" ||
+        typeof data.cuposDisponibles === "undefined"
+      ) {
+        return;
+      }
+
+      console.log("🔄 EventsRoute: Cupos actualizados via socket:", data);
+
+      // Update the specific event with new cupos disponibles
+      setEventos((prevEventos) =>
+        prevEventos.map((evento) =>
+          evento.id_eve === data.eventoId
+            ? { ...evento, cup_dis_eve: data.cuposDisponibles }
+            : evento
+        )
+      );
+    };
+
+    socket.on("cupos-change-hm", handleCuposChange);
+
+    // Cleanup function
+    return () => {
+      socket.off("evento-change-hm", handleEventUpdate);
+      socket.off("cupos-change-hm", handleCuposChange);
+    };
+  }, [isConnected, socket, handleEventUpdate]);
+
   if (loading) return <p className="p-6">Cargando sesión...</p>;
 
   return (
-    <div className="eventos-container">
+    <div className="eventos-container-er">
       <h1 className="eventos-titulo">
         <CalendarDays size={24} />
         Eventos disponibles
@@ -421,7 +549,7 @@ const EventsRoute = () => {
             placeholder="Buscar por nombre del evento..."
             value={filtro}
             onChange={(e) => {
-              const eventosGrid = document.querySelector(".eventos-grid");
+              const eventosGrid = document.querySelector(".eventos-grid-er");
               if (eventosGrid) {
                 eventosGrid.classList.add("filtering");
                 setTimeout(() => {
@@ -436,7 +564,7 @@ const EventsRoute = () => {
             <button
               onClick={() => {
                 setFiltro("");
-                const eventosGrid = document.querySelector(".eventos-grid");
+                const eventosGrid = document.querySelector(".eventos-grid-er");
                 if (eventosGrid) {
                   eventosGrid.classList.add("filtering");
                   setTimeout(() => {
@@ -521,6 +649,39 @@ const EventsRoute = () => {
             </div>
 
             <div className="filtro-categoria">
+              <h4>Por Estado</h4>
+              <div className="filtros-opciones">
+                <label className="filtro-opcion">
+                  <input
+                    type="checkbox"
+                    checked={filtros.finalizado}
+                    onChange={() => manejarCambioFiltro("finalizado")}
+                  />
+                  <span className="checkmark"></span>
+                  Eventos Finalizados
+                </label>
+                <label className="filtro-opcion">
+                  <input
+                    type="checkbox"
+                    checked={filtros.cancelado}
+                    onChange={() => manejarCambioFiltro("cancelado")}
+                  />
+                  <span className="checkmark"></span>
+                  Eventos Cancelados
+                </label>
+                <label className="filtro-opcion">
+                  <input
+                    type="checkbox"
+                    checked={filtros.suspendido}
+                    onChange={() => manejarCambioFiltro("suspendido")}
+                  />
+                  <span className="checkmark"></span>
+                  Eventos Suspendidos
+                </label>
+              </div>
+            </div>
+
+            <div className="filtro-categoria">
               <h4>Por Modalidad</h4>
               <div className="filtros-opciones">
                 <select
@@ -563,7 +724,7 @@ const EventsRoute = () => {
       {eventosDisponibles.length === 0 ? (
         <p className="text-gray-600">No hay eventos disponibles para ti.</p>
       ) : (
-        <div className="eventos-grid">
+        <div className="eventos-grid-er">
           {eventosDisponibles.filter(aplicarFiltros).map((evento) => (
             <div key={evento.id_eve} className="evento-card">
               {/* Imagen de portada (real o placeholder) */}
@@ -578,7 +739,26 @@ const EventsRoute = () => {
                   borderRadius: "8px 8px 0 0",
                   marginBottom: "0.5rem",
                 }}
-              />{" "}
+              />
+              {/* Indicador de estado para eventos filtrados */}
+              {evento.est_eve === "FINALIZADO" && (
+                <div className="evento-estado-badge-er evento-estado-finalizado-er">
+                  <Clock size={14} />
+                  Finalizado
+                </div>
+              )}
+              {evento.est_eve === "CANCELADO" && (
+                <div className="evento-estado-badge-er evento-estado-cancelado-er">
+                  <AlertCircle size={14} />
+                  Cancelado
+                </div>
+              )}
+              {evento.est_eve === "SUSPENDIDO" && (
+                <div className="evento-estado-badge-er evento-estado-suspendido-er">
+                  <AlertTriangle size={14} />
+                  Suspendido
+                </div>
+              )}
               <h2 className="nombre-evento-er">{evento.nom_eve}</h2>
               <p className="tipo">{evento.tip_eve}</p>
               {/* Precio del evento */}
@@ -664,7 +844,11 @@ const EventsRoute = () => {
                     eventosAprobados.includes(evento.id_eve)) ||
                   (eventosReprobados &&
                     eventosReprobados.includes(evento.id_eve)) ||
-                  evento.cup_dis_eve === 0
+                  evento.cup_dis_eve === 0 ||
+                  evento.est_eve === "INACTIVO" ||
+                  evento.est_eve === "FINALIZADO" ||
+                  evento.est_eve === "SUSPENDIDO" ||
+                  evento.est_eve === "CANCELADO"
                 }
               >
                 {eventosAprobados && eventosAprobados.includes(evento.id_eve)
@@ -676,6 +860,14 @@ const EventsRoute = () => {
                   ? "Ya inscrito"
                   : evento.cup_dis_eve === 0
                   ? "Sin cupos"
+                  : evento.est_eve === "INACTIVO"
+                  ? "Evento inactivo"
+                  : evento.est_eve === "FINALIZADO"
+                  ? "Evento finalizado"
+                  : evento.est_eve === "SUSPENDIDO"
+                  ? "Evento suspendido"
+                  : evento.est_eve === "CANCELADO"
+                  ? "Evento cancelado"
                   : "Inscribirme"}
               </button>
             </div>

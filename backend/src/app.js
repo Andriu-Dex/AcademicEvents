@@ -5,8 +5,12 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const path = require("path");
+const http = require("http");
+const { Server } = require("socket.io");
 const { scheduledCleanup } = require("./services/cleanupService");
 const { setupDirectories } = require("./utils/directory.utils");
+const socketService = require("./services/socket.service");
+const eventStatusService = require("./services/eventStatusService");
 
 // ============================
 //  Configuración inicial
@@ -14,9 +18,25 @@ const { setupDirectories } = require("./utils/directory.utils");
 dotenv.config(); // Cargar variables de entorno desde .env
 
 const app = express(); // Crear instancia de la aplicación
+const server = http.createServer(app); // Crear servidor HTTP
+
+// Configurar Socket.IO con CORS
+const io = new Server(server, {
+  cors: {
+    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+});
+
+// Inicializar el servicio de Socket.IO
+socketService.init(io);
 
 // Iniciar el servicio de limpieza programada
 scheduledCleanup();
+
+// Iniciar el servicio de estados automáticos de eventos
+eventStatusService.inicializarServicio();
 
 // Configurar directorios necesarios
 setupDirectories();
@@ -42,6 +62,18 @@ app.get("/", (req, res) => {
 // Rutas no protegidas
 const authRoutes = require("./routes/auth.routes");
 app.use("/api", authRoutes);
+
+// Rutas de recuperación de contraseña
+const passwordRecoveryRoutes = require("./routes/password-recovery.routes");
+app.use("/api/password-recovery", passwordRecoveryRoutes);
+
+// Rutas de verificación de correo
+const verificationRoutes = require("./routes/verification.routes");
+app.use("/api/verificacion", verificationRoutes);
+
+// Rutas de corrección de correo
+const emailCorrectionRoutes = require("./routes/email-correction.routes");
+app.use("/api/cuenta", emailCorrectionRoutes);
 
 const comprobanteRoutes = require("./routes/comprobante.routes");
 app.use("/api", comprobanteRoutes);
@@ -81,12 +113,20 @@ app.use("/api", coordinadorRoutes);
 // Rutas de gestión de MVA (Misión, Visión, Autoridades)
 app.use("/api/mva", require("./routes/mva.routes"));
 
+// Rutas de gestión de la universidad
+const universidadRoutes = require("./routes/universidad.routes");
+app.use("/api", universidadRoutes);
+
+// Rutas de estadísticas
+const estadisticasRoutes = require("./routes/estadisticas.routes");
+app.use("/api/estadisticas", estadisticasRoutes);
+
 // Rutas de perfil de usuario
 const perfilRoutes = require("./routes/perfil.routes");
 app.use("/api", perfilRoutes);
 
 // Rutas de subida de imágenes
-const uploadRoutes = require("./routes/upload.routes-mva");
+const uploadRoutes = require("./routes/upload-mva.routes");
 app.use("/api/upload", uploadRoutes);
 
 // Rutas de reportes (solo admins)
@@ -99,6 +139,10 @@ app.use("/api/admin", reporteRoutes);
 const HOST = process.env.HOST || "localhost";
 const PORT = process.env.PORT_BACKEND || 3000;
 
-app.listen(PORT, HOST, () => {
+server.listen(PORT, HOST, () => {
   console.log(`✅ Servidor corriendo en http://${HOST}:${PORT} ✅`);
+  console.log(`🔌 Socket.IO configurado y funcionando`);
 });
+
+// Exportar socketService para uso en otros módulos
+module.exports = { app, server, io, socketService };

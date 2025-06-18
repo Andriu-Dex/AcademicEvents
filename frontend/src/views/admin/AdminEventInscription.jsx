@@ -3,17 +3,19 @@ import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { BadgeCheck, Clock, Ban, Eye, Download, Loader } from "lucide-react";
 import { toast } from "react-toastify";
+import InscripcionService from "../../services/InscripcionService";
+import ZoomableImage from "../../components/ZoomableImage";
 import "./styles/AdminEventInscription.css";
 
 const colores = {
-  PENDIENTE: "estado-pendiente",
-  ACEPTADA: "estado-aceptada",
-  RECHAZADA: "estado-rechazada",
-  FINALIZADA: "estado-finalizada",
-  APROBADO: "estado-aprobado",
-  REPROBADO_NOTA: "estado-reprobado-nota",
-  REPROBADO_ASISTENCIA: "estado-reprobado-asistencia",
-  REPROBADO_TOTAL: "estado-reprobado-total",
+  PENDIENTE: "estado-pendiente-aei",
+  ACEPTADA: "estado-aceptada-aei",
+  RECHAZADA: "estado-rechazada-aei",
+  FINALIZADA: "estado-finalizada-aei",
+  APROBADO: "estado-aprobado-aei",
+  REPROBADO_NOTA: "estado-reprobado-nota-aei",
+  REPROBADO_ASISTENCIA: "estado-reprobado-asistencia-aei",
+  REPROBADO_TOTAL: "estado-reprobado-total-aei",
 };
 
 const AdminEventInscription = () => {
@@ -31,6 +33,7 @@ const AdminEventInscription = () => {
   const [enviandoFinalizacion, setEnviandoFinalizacion] = useState(false);
   const [eventoInfo, setEventoInfo] = useState(null);
   const [corrigiendoCupos, setCorrigiendoCupos] = useState(false);
+  const [comprobanteSeleccionado, setComprobanteSeleccionado] = useState(null);
 
   // Función para determinar el estado final al finalizar una inscripción
   const determinarEstadoFinal = (asistencia, notaFinal, porcentajeMinimo) => {
@@ -57,31 +60,50 @@ const AdminEventInscription = () => {
 
   const obtenerInscripciones = useCallback(async () => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/admin/inscripciones/evento/${id}`,
-        { headers: { Authorization: `Bearer ${token}` } }
+      const datosCompletos = await InscripcionService.obtenerDatosEventoDirecto(
+        id
       );
-      setInscripciones(res.data);
+      setInscripciones(datosCompletos.inscripciones);
     } catch (err) {
-      console.error(err);
-      toast.error("Error al cargar las inscripciones");
+      console.error("Error al cargar las inscripciones:", err);
+      // Fallback al método original
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axios.get(
+          `${
+            import.meta.env.VITE_API_URL
+          }/api/admin/inscripciones/evento/${id}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setInscripciones(res.data);
+      } catch (fallbackErr) {
+        console.error("Error en método fallback:", fallbackErr);
+        toast.error("Error al cargar las inscripciones");
+      }
     } finally {
       setLoading(false);
     }
   }, [id]);
   const obtenerNombreEvento = useCallback(async () => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/eventos/${id}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setNombreEvento(res.data.nom_eve);
-      setEventoInfo(res.data); // Guardar información completa del evento
+      const eventoData = await InscripcionService.obtenerEvento(id);
+      setNombreEvento(eventoData.nom_eve);
+      setEventoInfo(eventoData);
     } catch (err) {
-      console.error("Error al obtener nombre del evento", err);
-      toast.error("Error al obtener nombre del evento");
+      console.error("Error al obtener evento:", err);
+      // Fallback al método original
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/eventos/${id}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setNombreEvento(res.data.nom_eve);
+        setEventoInfo(res.data);
+      } catch (fallbackErr) {
+        console.error("Error al obtener evento en fallback:", fallbackErr);
+        toast.error("Error al obtener nombre del evento");
+      }
     }
   }, [id]);
   const cambiarEstado = async (id_ins, estado) => {
@@ -117,17 +139,6 @@ const AdminEventInscription = () => {
         (estadosFinales.includes(inscripcionActual.estado) &&
           estado === "ACEPTADA");
 
-      console.log("Cambiando estado con los siguientes datos:");
-      console.log("ID:", id_ins);
-      console.log("Estado:", estado);
-      console.log("Es flujo de finalización:", esFlujoDeFinalizacion);
-      console.log(
-        "URL:",
-        `${
-          import.meta.env.VITE_API_URL
-        }/api/admin/inscripciones/validar/${id_ins}`
-      );
-
       const token = localStorage.getItem("token");
       const response = await axios.put(
         `${
@@ -139,8 +150,6 @@ const AdminEventInscription = () => {
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
-      console.log("Respuesta del servidor:", response.data);
 
       // Actualizar tanto las inscripciones como la información del evento
       await Promise.all([
@@ -229,8 +238,6 @@ const AdminEventInscription = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      console.log("Respuesta de verificación de cupos:", response.data);
-
       if (response.data.success) {
         // Si no se requirió corrección
         if (response.data.msg.includes("no se requiere corrección")) {
@@ -272,11 +279,6 @@ const AdminEventInscription = () => {
         `${import.meta.env.VITE_API_URL}/api/eventos/verificar-todos-cupos`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      console.log(
-        "Respuesta de verificación de todos los cupos:",
-        response.data
       );
 
       if (response.data.success) {
@@ -432,17 +434,15 @@ const AdminEventInscription = () => {
 
                 {inscripcion.comprobante && (
                   <div className="mt-2">
-                    <a
-                      href={`${import.meta.env.VITE_API_URL}/uploads/${
-                        inscripcion.comprobante
-                      }`}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <button
+                      onClick={() =>
+                        setComprobanteSeleccionado(inscripcion.comprobante)
+                      }
                       className="link-comprobante"
                     >
                       <Eye size={14} />
                       Ver comprobante
-                    </a>
+                    </button>
                   </div>
                 )}
 
@@ -541,7 +541,9 @@ const AdminEventInscription = () => {
               {inscripcionFinalizar?.usuario?.ape_usu}
             </h2>
 
-            <label className="modal-label">Asistencia (%)</label>
+            <label className="modal-label">
+              Asistencia (mín: {eventoInfo?.por_min_asi_eve || 0}%)
+            </label>
             <input
               type="number"
               value={asistencia}
@@ -551,16 +553,23 @@ const AdminEventInscription = () => {
               max={100}
             />
 
-            <label className="modal-label">Nota final (0–10)</label>
-            <input
-              type="number"
-              value={notaFinal}
-              onChange={(e) => setNotaFinal(e.target.value)}
-              className="modal-input-ae"
-              min={0}
-              max={10}
-              step="0.1"
-            />
+            {eventoInfo?.tip_eve === "CURSO" && (
+              <>
+                <label className="modal-label">
+                  Nota final (mín: {eventoInfo?.eventos_curso?.not_min_cur || 0}
+                  )
+                </label>
+                <input
+                  type="number"
+                  value={notaFinal}
+                  onChange={(e) => setNotaFinal(e.target.value)}
+                  className="modal-input-ae"
+                  min={0}
+                  max={10}
+                  step="0.1"
+                />
+              </>
+            )}
 
             <div className="modal-actions">
               <button
@@ -584,23 +593,6 @@ const AdminEventInscription = () => {
                       return;
                     }
                     const token = localStorage.getItem("token");
-                    console.log(
-                      "Finalizando inscripción con los siguientes datos:"
-                    );
-                    console.log("ID:", inscripcionFinalizar.id_ins);
-                    console.log(
-                      "URL:",
-                      `${
-                        import.meta.env.VITE_API_URL
-                      }/api/admin/inscripciones/validar/${
-                        inscripcionFinalizar.id_ins
-                      }`
-                    );
-                    console.log("Datos:", {
-                      est_ins: "APROBADO",
-                      asistencia: Number(asistencia),
-                      nota_final: Number(notaFinal),
-                    });
 
                     const response = await axios.put(
                       `${
@@ -622,7 +614,6 @@ const AdminEventInscription = () => {
                       { headers: { Authorization: `Bearer ${token}` } }
                     );
 
-                    console.log("Respuesta del servidor:", response.data);
                     toast.success("Inscripción finalizada correctamente");
                     setMostrarFinalizarModal(false);
                     // Actualizar tanto las inscripciones como la información del evento
@@ -631,16 +622,7 @@ const AdminEventInscription = () => {
                       obtenerNombreEvento(), // Esto actualizará los cupos disponibles
                     ]);
                   } catch (err) {
-                    console.error(
-                      "Error detallado al finalizar inscripción:",
-                      err
-                    );
-                    console.error("Mensaje de error:", err.message);
-                    console.error(
-                      "Respuesta del servidor:",
-                      err.response?.data
-                    );
-                    console.error("Estado HTTP:", err.response?.status);
+                    console.error("Error al finalizar inscripción:", err);
                     toast.error(
                       `Error al finalizar: ${
                         err.response?.data?.msg ||
@@ -657,6 +639,55 @@ const AdminEventInscription = () => {
               >
                 {enviandoFinalizacion ? "Enviando..." : "Finalizar"}
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal para mostrar el comprobante con zoom */}
+      {comprobanteSeleccionado && (
+        <div className="comprobante-modal-overlay-aei">
+          <div className="comprobante-modal-content-aei">
+            <button
+              className="cerrar-modal-aei"
+              onClick={() => setComprobanteSeleccionado(null)}
+            >
+              ×
+            </button>
+            <h3 className="comprobante-modal-title-aei">Comprobante de Pago</h3>
+            <div className="comprobante-contenedor-aei">
+              {comprobanteSeleccionado.startsWith("http") ? (
+                <ZoomableImage
+                  src={comprobanteSeleccionado}
+                  alt="Comprobante de pago"
+                  className="comprobante-zoom-aei"
+                />
+              ) : (
+                <ZoomableImage
+                  src={`${
+                    import.meta.env.VITE_API_URL
+                  }/uploads/${comprobanteSeleccionado}`}
+                  alt="Comprobante de pago"
+                  className="comprobante-zoom-aei"
+                />
+              )}
+              <div className="comprobante-instrucciones-aei">
+                Pase el cursor sobre la imagen para hacer zoom
+              </div>
+              <a
+                href={
+                  comprobanteSeleccionado.startsWith("http")
+                    ? comprobanteSeleccionado
+                    : `${
+                        import.meta.env.VITE_API_URL
+                      }/uploads/${comprobanteSeleccionado}`
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+                className="abrir-comprobante-aei"
+              >
+                Abrir en nueva ventana
+              </a>
             </div>
           </div>
         </div>

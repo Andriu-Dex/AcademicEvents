@@ -1,0 +1,325 @@
+/* Sección de Eventos Destacados */
+.eventos-destacados-section-ed {
+  padding: 4rem 2rem;
+  background-color: #f8f9fa;
+  margin-bottom: 2rem;
+}
+
+.eventos-destacados-header-ed {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.eventos-destacados-title-ed {
+  font-weight: 700;
+  color: #8a1538;
+  margin-bottom: 0.5rem;
+  font-size: 2.25rem;
+}
+
+.eventos-destacados-subtitle-ed {
+  color: #6c757d;
+  font-size: 1.1rem;
+  max-width: 600px;
+  margin: 0 auto 1.5rem auto;
+}
+
+/* Card de Evento Destacado */
+.evento-card-ed {
+  width: 330px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  flex-shrink: 0;
+  margin: 0 0.75rem;
+}
+
+.evento-card-ed:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* Contenedor de imagen con badge */
+.evento-image-container-ed {
+  position: relative;
+  height: 180px;
+  overflow: hidden;
+}
+
+.evento-image-ed {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.evento-card-ed:hover .evento-image-ed {
+  transform: scale(1.05);
+}
+
+.evento-badge-destacado-ed {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background-color: rgba(255, 215, 0, 0.9);
+  color: #333;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Contenido del evento */
+.evento-content-ed {
+  padding: 1.25rem;
+}
+
+.evento-titulo-ed {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0rem;
+  color: #333;
+  line-height: 1.3;
+  height: 3.25rem;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+/* Detalles del evento */
+.evento-detalles-ed {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.evento-fecha-ed,
+.evento-duracion-ed,
+.evento-modalidad-ed {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #6c757d;
+}
+
+.evento-icon-ed {
+  color: #8a1538;
+}
+
+/* Footer de evento */
+.evento-footer-ed {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.evento-valor-ed {
+  font-weight: 700;
+}
+
+.evento-gratuito-ed {
+  color: #28a745;
+}
+
+.evento-pago-ed {
+  color: #007bff;
+}
+
+.evento-ver-mas-ed {
+  background-color: #8a1538;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.evento-ver-mas-ed:hover {
+  background-color: #6a1028;
+  color: rgb(247, 247, 247);
+  transform: scale(1.05);
+}
+
+/* Carrusel */
+.carousel-container-ed {
+  position: relative;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.static-container-ed {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.carousel-window-ed {
+  overflow: hidden;
+  margin: 0 auto;
+}
+
+.eventos-carousel-ed {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+}
+
+.eventos-static-ed {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.carousel-btn-ed {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #8a1538;
+  border: none;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+
+.carousel-btn-ed:hover {
+  background-color: #8a1538;
+  color: white;
+}
+
+.carousel-btn-prev-ed {
+  left: -1rem;
+}
+
+.carousel-btn-next-ed {
+  right: -1rem;
+}
+
+/* Indicadores de carrusel */
+.carousel-indicators-ed {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 2rem;
+}
+
+.carousel-indicator-ed {
+  width: 28px;
+  height: 6px;
+  border-radius: 8px;
+  border: none;
+  background: #ddd;
+  cursor: pointer;
+  padding: 0;
+  margin: 0 2px 0 2px;
+  transition: all 0.3s ease;
+}
+
+.carousel-indicator-ed.active-ed {
+  background-color: #8a1538;
+  transform: scale(1.2);
+}
+
+/* Loader */
+.eventos-destacados-loading-ed {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  min-height: 200px;
+}
+
+.spinner-ed {
+  width: 3rem;
+  height: 3rem;
+  border: 4px solid rgba(138, 21, 56, 0.1);
+  border-left-color: #8a1538;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.eventos-destacados-error-ed {
+  padding: 1rem;
+  background-color: #f8d7da;
+  color: #721c24;
+  border-radius: 4px;
+  text-align: center;
+  max-width: 600px;
+  margin: 2rem auto;
+}
+
+/* Diseño responsivo */
+@media (max-width: 768px) {
+  .eventos-destacados-section-ed {
+    padding: 3rem 1rem;
+  }
+
+  .carousel-container-ed {
+    padding: 0 1rem;
+  }
+
+  .evento-card-ed {
+    width: 300px;
+  }
+
+  .carousel-btn-ed {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .carousel-btn-prev-ed {
+    left: -0.75rem;
+  }
+
+  .carousel-btn-next-ed {
+    right: -0.75rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .eventos-destacados-title-ed {
+    font-size: 1.75rem;
+  }
+
+  .eventos-destacados-subtitle-ed {
+    font-size: 1rem;
+  }
+
+  .evento-card-ed {
+    width: 280px;
+  }
+
+  .evento-titulo-ed {
+    font-size: 1.1rem;
+  }
+}

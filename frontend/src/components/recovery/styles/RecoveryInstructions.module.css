@@ -1,0 +1,135 @@
+/* Estilos para las instrucciones de recuperación */
+.pw-recovery-instructions {
+  max-width: 32rem;
+  margin: 2.5rem auto;
+  background-color: #ffffff;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  padding: 2rem;
+  border: 1px solid #e5e7eb;
+}
+
+.pw-recovery-icon-container {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.pw-recovery-icon-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 9999px;
+  background-color: #f0fdf4;
+  margin-bottom: 1rem;
+}
+
+.pw-recovery-icon {
+  color: #8a1538;
+  font-size: 1.25rem;
+}
+
+.pw-recovery-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  text-align: center;
+  color: #8a1538;
+}
+
+.pw-recovery-subtitle {
+  color: #6b7280;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.pw-recovery-email {
+  font-weight: 500;
+  color: #1f2937;
+  padding: 0.5rem;
+  background-color: #f9fafb;
+  border-radius: 0.25rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.pw-recovery-step-container {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.pw-recovery-step {
+  display: flex;
+  align-items: flex-start;
+  padding: 1rem;
+  background-color: #f9fafb;
+  border-radius: 0.25rem;
+}
+
+.pw-recovery-step-icon {
+  margin-right: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.pw-recovery-step-content h3 {
+  font-weight: 500;
+  color: #1f2937;
+}
+
+.pw-recovery-step-text {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.pw-recovery-steps {
+  background-color: #f0fdf4;
+}
+
+.pw-recovery-warning {
+  background-color: #fffbeb;
+}
+
+.pw-recovery-step-icon-success {
+  color: #10b981;
+}
+
+.pw-recovery-step-icon-warning {
+  color: #f59e0b;
+}
+
+.pw-recovery-footer {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.pw-recovery-back-link {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #8a1538;
+  text-decoration: none;
+}
+
+.pw-recovery-back-link:hover {
+  text-decoration: underline;
+}
+
+/* Media queries para responsive */
+@media (max-width: 640px) {
+  .pw-recovery-instructions {
+    padding: 1.5rem;
+    margin: 1.5rem auto;
+  }
+
+  .pw-recovery-icon-wrapper {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .pw-recovery-title {
+    font-size: 1.25rem;
+  }
+}

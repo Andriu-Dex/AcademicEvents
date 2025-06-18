@@ -1,6 +1,7 @@
 const prisma = require("../config/db");
 const { estado_inscripcion } = require("../generated/prisma");
 const { subirImagenAImgur } = require("../utils/imgur.utils");
+const socketService = require("../services/socket.service");
 const {
   calcularCuposDisponibles,
   sincronizarCuposDisponibles,
@@ -14,21 +15,14 @@ const {
  * @param {string} idAdmin - ID del administrador que crea la observación
  */
 async function guardarObservacion(idInscripcion, observacion, idAdmin) {
-  console.log(`Procesando observación para inscripción ${idInscripcion}`);
-
   // Verificar si ya existe una observación para esta inscripción
   const observacionExistente = await prisma.observacion_inscripcion.findUnique({
     where: { id_ins_per: idInscripcion },
   });
 
-  console.log(
-    "¿Existe observación previa?",
-    observacionExistente ? "Sí" : "No"
-  );
-
   if (observacionExistente) {
     // Actualizar observación existente
-    console.log("Actualizando observación existente");
+
     await prisma.observacion_inscripcion.update({
       where: { id_ins_per: idInscripcion },
       data: {
@@ -38,7 +32,7 @@ async function guardarObservacion(idInscripcion, observacion, idAdmin) {
     });
   } else {
     // Crear nueva observación
-    console.log("Creando nueva observación");
+
     await prisma.observacion_inscripcion.create({
       data: {
         id_ins_per: idInscripcion,
@@ -47,8 +41,6 @@ async function guardarObservacion(idInscripcion, observacion, idAdmin) {
       },
     });
   }
-
-  console.log("✅ Observación guardada correctamente");
 }
 
 // Manejo de errores de multer
@@ -76,20 +68,10 @@ const manejarErroresDeMulter = (err, req, res, next) => {
 // ==========================================
 const crearInscripcion = async (req, res) => {
   try {
-    console.log("Iniciando proceso de inscripción...");
     const { id_eve, carta_motivacion } = req.body;
     const id_cue = req.usuario.id; // Ahora trabajamos con ID de cuenta
 
     const archivo = req.file;
-
-    console.log(
-      `Datos recibidos: id_eve=${id_eve}, id_cue=${id_cue}, archivo=${
-        archivo ? "Sí" : "No"
-      }`
-    );
-    console.log(
-      `Carta motivación: ${carta_motivacion ? "Recibida" : "No recibida"}`
-    );
 
     if (!id_cue || !id_eve) {
       return res
@@ -104,15 +86,11 @@ const crearInscripcion = async (req, res) => {
     }
 
     // Obtenemos el evento para verificar si tiene costo
-    console.log(`Buscando evento con ID: ${id_eve}`);
+
     const evento = await prisma.evento.findUnique({ where: { id_eve } });
     if (!evento) {
       return res.status(404).json({ msg: "Evento no encontrado" });
     }
-
-    console.log(
-      `Evento encontrado: ${evento.nom_eve}, costo: ${evento.val_eve}, cupos: ${evento.cup_dis_eve}`
-    );
 
     // Verificar cupos disponibles
     if (evento.cup_dis_eve <= 0) {
@@ -149,7 +127,7 @@ const crearInscripcion = async (req, res) => {
     }
 
     // Verificar que la cuenta existe
-    console.log(`Verificando cuenta de usuario con ID: ${id_cue}`);
+
     const cuenta = await prisma.cuenta.findUnique({
       where: { id_cue },
       include: { usuario: true },
@@ -162,16 +140,10 @@ const crearInscripcion = async (req, res) => {
     );
 
     // Verificar si el usuario ya está inscrito
-    console.log(`Verificando si el usuario ya está inscrito en el evento`);
+
     const yaInscrito = await prisma.inscripcion.findFirst({
       where: { id_cor_ins: id_cue, id_eve_ins: id_eve },
     });
-
-    console.log(
-      `Inscripción existente: ${yaInscrito ? "Sí" : "No"}, Estado: ${
-        yaInscrito?.est_ins || "N/A"
-      }`
-    );
 
     // Permitir reinscripción solo si la inscripción anterior fue rechazada
     if (yaInscrito && yaInscrito.est_ins !== "RECHAZADA") {
@@ -185,8 +157,6 @@ const crearInscripcion = async (req, res) => {
     } // Si la inscripción estaba RECHAZADA, la actualizamos en lugar de crear una nueva
     if (yaInscrito && yaInscrito.est_ins === "RECHAZADA") {
       try {
-        console.log(`Actualizando inscripción rechazada: ${yaInscrito.id_ins}`);
-
         // Usamos nuestra función centralizada para actualizar el estado
         const resultado = await actualizarEstadoYSincronizarCupos(
           yaInscrito.id_ins,
@@ -194,23 +164,12 @@ const crearInscripcion = async (req, res) => {
           { fec_ins: new Date() } // Actualizar fecha de inscripción
         );
 
-        console.log(
-          `✅ Estado actualizado de ${resultado.inscripcion.estadoAnterior} a PENDIENTE`
-        );
-        console.log(`📊 Cupos disponibles: ${resultado.evento.cuposDespues}`);
-
         // Si hay un archivo, lo procesamos
         let urlComprobante = null;
         if (archivo) {
           try {
-            console.log(
-              `Procesando archivo de comprobante para inscripción rechazada`
-            );
             // Subir la imagen a Imgur
             urlComprobante = await subirImagenAImgur(archivo);
-            console.log(
-              `Imagen subida correctamente a Imgur: ${urlComprobante}`
-            );
 
             // Guardar el comprobante
             await prisma.comprobante_pago.create({
@@ -219,7 +178,6 @@ const crearInscripcion = async (req, res) => {
                 url_com_pag: urlComprobante,
               },
             });
-            console.log(`Comprobante guardado correctamente`);
           } catch (imgurError) {
             console.error(`Error al subir imagen a Imgur:`, imgurError);
             return res
@@ -266,8 +224,6 @@ const crearInscripcion = async (req, res) => {
       // Realizamos todo el proceso en una transacción para garantizar consistencia
       await prisma
         .$transaction(async (tx) => {
-          console.log(`🔄 Iniciando transacción para crear inscripción`);
-
           // 1. Recalcular cupos disponibles antes de crear la inscripción para verificar
           const { disponibles } = await calcularCuposDisponibles(id_eve, tx);
           console.log(
@@ -287,10 +243,6 @@ const crearInscripcion = async (req, res) => {
               cup_ocu: false, // Las inscripciones PENDIENTES no ocupan cupo
             },
           });
-          console.log(
-            `✅ Inscripción creada con ID: ${nuevaInscripcion.id_ins}`
-          );
-
           // 3. Crear la carta de motivación
           await tx.carta_motivacion.create({
             data: {
@@ -299,7 +251,6 @@ const crearInscripcion = async (req, res) => {
               est_car_mot: "PENDIENTE",
             },
           });
-          console.log(`✅ Carta de motivación guardada correctamente`);
 
           // 4. No es necesario sincronizar cupos aquí ya que el estado es PENDIENTE
           // y solo las inscripciones ACEPTADAS afectan los cupos disponibles
@@ -314,10 +265,8 @@ const crearInscripcion = async (req, res) => {
           // para no bloquear la creación de la inscripción si hay problemas con la imagen
           if (archivo) {
             try {
-              console.log(`Procesando comprobante de pago`);
               // Subir la imagen a Imgur
               const imgurUrl = await subirImagenAImgur(archivo);
-              console.log(`Imagen subida a Imgur: ${imgurUrl}`);
 
               // Crear el comprobante de pago con la URL de Imgur
               await prisma.comprobante_pago.create({
@@ -327,7 +276,6 @@ const crearInscripcion = async (req, res) => {
                   est_com_pag: "PENDIENTE",
                 },
               });
-              console.log(`Comprobante guardado correctamente`);
             } catch (imgurError) {
               console.error(`Error al subir imagen a Imgur:`, imgurError);
               // Si falla la subida a Imgur, registramos el error pero continuamos con la inscripción
@@ -338,7 +286,6 @@ const crearInscripcion = async (req, res) => {
                   est_com_pag: "ERROR",
                 },
               });
-              console.log(`Se registró el error con el comprobante`);
             }
           }
 
@@ -346,6 +293,64 @@ const crearInscripcion = async (req, res) => {
           await sincronizarCuposDisponibles(id_eve);
 
           res.status(201).json(nuevaInscripcion);
+
+          // 🔌 Notificar nueva inscripción por socket
+          try {
+            // Obtener datos completos del evento para la notificación
+            const eventoCompleto = await prisma.evento.findUnique({
+              where: { id_eve: id_eve },
+              select: {
+                id_eve: true,
+                nom_eve: true,
+                cup_max_eve: true,
+                cup_dis_eve: true,
+                fec_ini_eve: true,
+                est_eve: true,
+              },
+            });
+
+            // Notificación general
+            socketService.notifyInscriptionChange("created", {
+              inscripcion: nuevaInscripcion,
+              evento: eventoCompleto,
+            });
+
+            // Notificación específica para validación de inscripciones
+            socketService.notifyInscriptionValidation("new_inscription", {
+              id: nuevaInscripcion.id,
+              correo: nuevaInscripcion.correo,
+              estado: nuevaInscripcion.estado,
+              evento: eventoCompleto,
+              fechaCreacion: nuevaInscripcion.fecha_inscripcion,
+              requiresValidation: nuevaInscripcion.estado === "P", // Pendiente
+            });
+
+            // Verificar si necesita alerta de capacidad (menos del 20% de cupos)
+            const porcentajeDisponible =
+              (eventoCompleto.cup_dis_eve / eventoCompleto.cup_max_eve) * 100;
+            if (porcentajeDisponible <= 20 && porcentajeDisponible > 0) {
+              socketService.notifyCapacityAlert(eventoCompleto);
+            }
+
+            // Notificación a administradores si es inscripción pendiente
+            if (nuevaInscripcion.estado === "P") {
+              socketService.notifyAdmins(
+                `Nueva inscripción pendiente de validación para "${eventoCompleto.nom_eve}"`,
+                "info",
+                {
+                  inscriptionId: nuevaInscripcion.id,
+                  eventId: id_eve,
+                  actionRequired: true,
+                }
+              );
+            }
+          } catch (socketError) {
+            console.error(
+              "Error al enviar notificación por socket:",
+              socketError
+            );
+            // No interferir con la operación principal
+          }
         });
     } catch (error) {
       console.error(`Error en el bloque de creación de inscripción:`, error);
@@ -384,11 +389,9 @@ const crearInscripcion = async (req, res) => {
 // ==============================
 const validarInscripcion = async (req, res) => {
   try {
-    console.log("============ INICIO VALIDAR INSCRIPCIÓN ============");
     const { id } = req.params;
     const { est_ins, asistencia, nota_final, observacion } = req.body;
 
-    console.log("ID de inscripción:", id);
     console.log("Datos recibidos:", {
       est_ins,
       asistencia,
@@ -467,6 +470,9 @@ const validarInscripcion = async (req, res) => {
 
     // Si no se proporciona asistencia, no se entra en la lógica de validación de asistencia y nota
     if (asistenciaNum !== -1 || notaFinalNum !== null) {
+      // Inicializar el nuevo estado como APROBADO (cambiará según validaciones)
+      nuevoEstado = "APROBADO";
+
       // Validación de asistencia
       if (asistenciaNum !== -1) {
         const asistenciaMinima = inscripcion.evento.por_min_asi_eve;
@@ -474,6 +480,7 @@ const validarInscripcion = async (req, res) => {
           return res.status(400).json({ msg: "Asistencia inválida (0–100)" });
         }
 
+        // Si la asistencia es baja, reprobar por asistencia independientemente de la nota
         if (asistenciaNum < asistenciaMinima) {
           nuevoEstado = "REPROBADO_ASISTENCIA";
         }
@@ -497,9 +504,8 @@ const validarInscripcion = async (req, res) => {
           } else {
             nuevoEstado = "REPROBADO_NOTA";
           }
-        } else {
-          nuevoEstado = "APROBADO";
         }
+        // NOTA: Ya no establecemos APROBADO aquí, porque podría sobreescribir REPROBADO_ASISTENCIA
       }
     }
 
@@ -509,14 +515,13 @@ const validarInscripcion = async (req, res) => {
       nuevoEstado === "REPROBADO_ASISTENCIA" ||
       nuevoEstado === "REPROBADO_TOTAL"
     ) {
-      console.log(`⚠️ Inscripción finalizando con estado: ${nuevoEstado}`);
-
       try {
         // Usamos nuestra función centralizada para actualizar el estado
         const resultado = await actualizarEstadoYSincronizarCupos(
           id,
           nuevoEstado,
-          { por_asi_fin_usu: asistenciaNum }
+          { por_asi_fin_usu: asistenciaNum },
+          req.usuario.id // Pasar ID del administrador que valida
         );
 
         console.log(
@@ -533,6 +538,47 @@ const validarInscripcion = async (req, res) => {
           );
         }
 
+        // 🔌 Notificar al usuario del cambio a estado final (APROBADO/REPROBADO)
+        const inscripcionUsuario = await prisma.inscripcion.findUnique({
+          where: { id_ins: id },
+          select: {
+            id_ins: true,
+            id_cor_ins: true,
+            est_ins: true,
+            evento: {
+              select: {
+                id_eve: true,
+                nom_eve: true,
+                fec_ini_eve: true,
+                fec_fin_eve: true,
+                tip_eve: true,
+              },
+            },
+            observacion: {
+              select: {
+                obs_ins: true,
+              },
+            },
+          },
+        });
+
+        if (inscripcionUsuario && inscripcionUsuario.id_cor_ins) {
+          const datosParaUsuario = {
+            id_ins: inscripcionUsuario.id_ins,
+            est_ins: nuevoEstado,
+            estadoAnterior: resultado.inscripcion.estadoAnterior,
+            estadoNuevo: nuevoEstado,
+            evento: inscripcionUsuario.evento,
+            observacion: inscripcionUsuario.observacion?.obs_ins,
+            fecha_validacion: new Date(),
+          };
+
+          socketService.notifyUserInscriptionChange(
+            inscripcionUsuario.id_cor_ins,
+            datosParaUsuario
+          );
+        }
+
         // Actualizar la nota si es un curso
         if (inscripcion.evento.tip_eve === "CURSO") {
           const inscripcionCurso = await prisma.inscripcion_curso.findUnique({
@@ -544,7 +590,6 @@ const validarInscripcion = async (req, res) => {
               where: { id_ins_cur: id },
               data: { not_fin_usu: notaFinalNum },
             });
-            console.log(`✅ Nota actualizada a: ${notaFinalNum}`);
           } else {
             await prisma.inscripcion_curso.create({
               data: {
@@ -552,7 +597,6 @@ const validarInscripcion = async (req, res) => {
                 not_fin_usu: notaFinalNum,
               },
             });
-            console.log(`✅ Nota registrada: ${notaFinalNum}`);
           }
         }
 
@@ -581,16 +625,14 @@ const validarInscripcion = async (req, res) => {
     }
 
     // ENFOQUE MEJORADO: UTILIZANDO LA FUNCIÓN CENTRALIZADA DE ACTUALIZACIÓN DE ESTADO
-    console.log(`📊 MÉTODO ROBUSTO: Actualización atómica de estado y cupos`);
-    console.log(`Cambio de estado: ${estadoAnterior} → ${estadoNuevo}`);
-    console.log(`ID Evento: ${idEvento}, ID Inscripción: ${id}`);
 
     try {
       // Utilizamos la función centralizada que maneja todo en una transacción atómica
       const resultado = await actualizarEstadoYSincronizarCupos(
         id,
         estadoNuevo,
-        { por_asi_fin_usu: asistenciaNum } // Datos adicionales para la actualización
+        { por_asi_fin_usu: asistenciaNum }, // Datos adicionales para la actualización
+        req.usuario.id // Pasar ID del administrador que valida
       );
 
       console.log(
@@ -600,7 +642,7 @@ const validarInscripcion = async (req, res) => {
         `📊 Resultado: Estado cambiado de ${resultado.inscripcion.estadoAnterior} a ${resultado.inscripcion.estadoNuevo}`
       );
 
-      if (resultado.evento.cuposCambiados) {
+      if (resultado.evento.cuposCambiaron) {
         console.log(
           `📈 Cupos disponibles actualizados de ${resultado.evento.cuposAntes} a ${resultado.evento.cuposDespues}`
         );
@@ -612,7 +654,6 @@ const validarInscripcion = async (req, res) => {
 
       // BLOQUEO AUTOMÁTICO: Si cupos llegan a 0, registrar alerta
       if (resultado.evento.cuposDespues === 0) {
-        console.log("🚫 ALERTA: Cupos agotados para este evento");
         // Nota: El bloqueo se maneja en la función crearInscripcion al verificar cup_dis_eve > 0
       }
     } catch (error) {
@@ -639,15 +680,12 @@ const validarInscripcion = async (req, res) => {
 
     // Si es un curso, actualizar la nota final en inscripcion_curso
     if (inscripcion.evento.tip_eve === "CURSO") {
-      console.log("Es un curso, actualizando nota final:", notaFinalNum);
       // Buscar si ya existe inscripcion_curso
       const inscripcionCurso = await prisma.inscripcion_curso.findUnique({
         where: { id_ins_cur: id },
       });
-      console.log("Inscripción curso existente:", inscripcionCurso);
 
       if (inscripcionCurso) {
-        console.log("Actualizando inscripción curso existente");
         // Actualizar inscripcion_curso existente
         await prisma.inscripcion_curso.update({
           where: { id_ins_cur: id },
@@ -655,9 +693,7 @@ const validarInscripcion = async (req, res) => {
             not_fin_usu: notaFinalNum,
           },
         });
-        console.log("Inscripción curso actualizada correctamente");
       } else {
-        console.log("Creando nueva inscripción curso");
         // Crear inscripcion_curso si no existe
         await prisma.inscripcion_curso.create({
           data: {
@@ -665,20 +701,152 @@ const validarInscripcion = async (req, res) => {
             not_fin_usu: notaFinalNum,
           },
         });
-        console.log("Nueva inscripción curso creada correctamente");
       }
     }
 
-    // Obtener los datos actualizados de la inscripción para devolverlos en la respuesta
-    const actualizada = await prisma.inscripcion.findUnique({
-      where: { id_ins: id },
-    });
+    // 🔌 Notificar cambios por socket
+    try {
+      // Obtener los datos actualizados de la inscripción para devolverlos en la respuesta
+      const actualizada = await prisma.inscripcion.findUnique({
+        where: { id_ins: id },
+      });
 
-    res.status(200).json({
-      msg: "Inscripción actualizada correctamente",
-      inscripcion: actualizada,
-    });
-    console.log("============ FIN VALIDAR INSCRIPCIÓN: ÉXITO ============");
+      // Enviar respuesta al cliente ANTES de las notificaciones
+      res.status(200).json({
+        msg: "Inscripción actualizada correctamente",
+        inscripcion: actualizada,
+      });
+
+      // Obtener datos completos del evento
+      const eventoCompleto = await prisma.evento.findUnique({
+        where: { id_eve: idEvento },
+        select: {
+          id_eve: true,
+          nom_eve: true,
+          cup_max_eve: true,
+          cup_dis_eve: true,
+          fec_ini_eve: true,
+          est_eve: true,
+        },
+      });
+
+      // Obtener ID del usuario propietario de la inscripción
+      const inscripcionConUsuario = await prisma.inscripcion.findUnique({
+        where: { id_ins: id },
+        select: {
+          id_ins: true,
+          id_cor_ins: true,
+        },
+      });
+
+      // Notificar específicamente al usuario propietario de la inscripción
+      if (inscripcionConUsuario && inscripcionConUsuario.id_cor_ins) {
+        const inscripcionCompleta = await prisma.inscripcion.findUnique({
+          where: { id_ins: id },
+          include: {
+            evento: true,
+            observacion: true,
+          },
+        });
+
+        // Formatear datos para el usuario
+        const datosParaUsuario = {
+          id_ins: inscripcionCompleta.id_ins,
+          est_ins: nuevoEstado,
+          estadoAnterior: resultado.inscripcion.estadoAnterior,
+          estadoNuevo: nuevoEstado,
+          evento: inscripcionCompleta.evento,
+          observacion: inscripcionCompleta.observacion?.obs_ins,
+          fecha_validacion: new Date(),
+        };
+
+        // Notificar al usuario propietario
+        socketService.notifyUserInscriptionChange(
+          inscripcionConUsuario.id_cor_ins,
+          datosParaUsuario
+        );
+      }
+
+      // Notificar cambio en inscripción (general)
+      socketService.notifyInscriptionChange("updated", {
+        id_ins: id,
+        estado_anterior: estadoAnterior,
+        estado_nuevo: nuevoEstado,
+        id_evento: idEvento,
+        evento: eventoCompleto,
+      });
+
+      // Notificar específicamente a la vista de validación
+      socketService.notifyInscriptionValidation("status_changed", {
+        id: id,
+        estadoAnterior: estadoAnterior,
+        estadoNuevo: nuevoEstado,
+        correo: inscripcionConUsuario.id_cor_ins,
+        evento: {
+          id: eventoCompleto.id_eve,
+          titulo: eventoCompleto.nom_eve,
+          cupos_totales: eventoCompleto.cup_max_eve,
+          cupos_disponibles: eventoCompleto.cup_dis_eve,
+          fecha_inicio: eventoCompleto.fec_ini_eve,
+          estado: eventoCompleto.est_eve,
+        },
+        fechaValidacion: new Date(),
+        validadoPor: req.usuario?.id || null,
+        requiresAction: nuevoEstado === "P", // Si vuelve a pendiente
+      });
+
+      // Notificar a administradores sobre el cambio de estado
+      const estadoTexto = {
+        A: "Aprobada",
+        R: "Rechazada",
+        P: "Pendiente",
+      };
+
+      socketService.notifyAdmins(
+        `Inscripción ${estadoTexto[nuevoEstado]} para "${eventoCompleto.nom_eve}"`,
+        nuevoEstado === "A"
+          ? "success"
+          : nuevoEstado === "R"
+          ? "warning"
+          : "info",
+        {
+          inscriptionId: id,
+          eventId: idEvento,
+          previousState: estadoAnterior,
+          newState: nuevoEstado,
+          validatedBy: req.usuario?.id || null,
+        }
+      );
+
+      // Si hay cambio en cupos, notificar también
+      if (
+        typeof resultado !== "undefined" &&
+        resultado.evento &&
+        resultado.evento.cuposCambiaron
+      ) {
+        socketService.notifyCuposChange(
+          idEvento,
+          resultado.evento.cuposDespues
+        );
+
+        // Verificar alerta de capacidad
+        const porcentajeDisponible =
+          (resultado.evento.cuposDespues / eventoCompleto.cup_max_eve) * 100;
+        if (porcentajeDisponible <= 20 && porcentajeDisponible > 0) {
+          socketService.notifyCapacityAlert({
+            id: eventoCompleto.id_eve,
+            titulo: eventoCompleto.nom_eve,
+            cupos_totales: eventoCompleto.cup_max_eve,
+            cupos_disponibles: resultado.evento.cuposDespues,
+            fecha_inicio: eventoCompleto.fec_ini_eve,
+            estado: eventoCompleto.est_eve,
+          });
+        }
+      }
+    } catch (socketError) {
+      console.error("Error al enviar notificaciones por socket:", socketError);
+      // No interferir con la operación principal
+    }
   } catch (error) {
     console.error("============ ERROR EN VALIDAR INSCRIPCIÓN ============");
     console.error("Mensaje de error:", error.message);
@@ -798,11 +966,8 @@ const path = require("path");
 
 const reenviarComprobante = async (req, res) => {
   try {
-    console.log("========== INICIO REENVIAR COMPROBANTE ==========");
     const { id } = req.params;
     const archivo = req.file;
-
-    console.log(`Iniciando reenvío de comprobante para inscripción ID: ${id}`);
 
     if (!archivo) {
       return res.status(400).json({ msg: "Debes subir un archivo" });
@@ -844,7 +1009,7 @@ const reenviarComprobante = async (req, res) => {
     console.log(
       `Inscripción encontrada: ${inscripcion.id_ins}, Usuario: ${inscripcion.id_cor_ins}, Solicitante: ${req.usuario.id}`
     );
-    console.log(`Estado actual de la inscripción: ${inscripcion.est_ins}`);
+
     console.log(`ID del evento: ${inscripcion.id_eve_ins}`);
 
     // Verificar cupos antes de cualquier operación
@@ -914,7 +1079,7 @@ const reenviarComprobante = async (req, res) => {
         `📊 Resultado: Estado cambiado de ${resultado.inscripcion.estadoAnterior} a ${resultado.inscripcion.estadoNuevo}`
       );
 
-      if (resultado.evento.cuposCambiados) {
+      if (resultado.evento.cuposCambiaron) {
         console.log(
           `📈 Cupos disponibles actualizados de ${resultado.evento.cuposAntes} a ${resultado.evento.cuposDespues}`
         );
@@ -983,6 +1148,38 @@ const reenviarComprobante = async (req, res) => {
 const obtenerInscripcionesPorEvento = async (req, res) => {
   try {
     const { id } = req.params;
+
+    // Verificación específica del evento
+    const eventoRaw = await prisma.evento.findUnique({
+      where: { id_eve: id },
+    });
+
+    if (eventoRaw) {
+      // Evento encontrado
+    } else {
+      console.log(`No se encontró el evento con ID: ${id}`);
+    }
+
+    // Verificar si existe información de curso
+    if (eventoRaw?.tip_eve === "CURSO") {
+      const eventoCurso = await prisma.evento_curso.findUnique({
+        where: { id_eve_cur: id },
+      });
+
+      if (eventoCurso) {
+        console.log(`📊 [DEBUG] Datos del curso encontrados:`);
+        console.log(
+          `  - not_min_cur: "${
+            eventoCurso.not_min_cur
+          }" (tipo: ${typeof eventoCurso.not_min_cur})`
+        );
+      } else {
+        console.log(
+          `⚠️ [DEBUG] No se encontró información de curso para este evento tipo CURSO`
+        );
+      }
+    }
+
     const inscripciones = await prisma.inscripcion.findMany({
       where: { id_eve_ins: id },
       include: {
@@ -993,7 +1190,7 @@ const obtenerInscripcionesPorEvento = async (req, res) => {
         },
         evento: {
           include: {
-            eventos_curso: true, // Incluir información del curso si existe
+            eventos_curso: true, // Incluir toda la información del curso
           },
         },
         inscripcion_curso: true,
@@ -1010,21 +1207,140 @@ const obtenerInscripcionesPorEvento = async (req, res) => {
       orderBy: { fec_ins: "desc" },
     });
 
+    // Verificar directamente los datos del evento
+    console.log(`🔍 Verificando datos del evento directamente desde DB...`);
+    const eventoDirecto = await prisma.evento.findUnique({
+      where: { id_eve: id },
+      include: {
+        eventos_curso: true,
+      },
+    });
+
+    if (eventoDirecto) {
+      console.log(`📊 Datos directos del evento "${eventoDirecto.nom_eve}":`);
+      console.log(`  - por_min_asi_eve: ${eventoDirecto.por_min_asi_eve}`);
+      console.log(`  - tip_eve: ${eventoDirecto.tip_eve}`);
+      console.log(`  - eventos_curso:`, eventoDirecto.eventos_curso);
+    } else {
+      console.log(`❌ No se encontró el evento con ID: ${id}`);
+    }
+
     try {
+      console.log(`📋 Obteniendo inscripciones para evento ID: ${id}`);
+      console.log(
+        `📊 Total inscripciones encontradas: ${inscripciones.length}`
+      );
+
+      // Log detallado del primer evento para debugging
+      if (inscripciones.length > 0) {
+        const primeraInscripcion = inscripciones[0];
+        console.log(`🔍 Debugging datos del evento desde inscripción:`);
+        console.log(
+          `  - Evento object:`,
+          JSON.stringify(primeraInscripcion.evento, null, 2)
+        );
+        console.log(
+          `  - por_min_asi_eve:`,
+          primeraInscripcion.evento.por_min_asi_eve
+        );
+        console.log(
+          `  - por_min_asi_eve (tipo):`,
+          typeof primeraInscripcion.evento.por_min_asi_eve
+        );
+        console.log(
+          `  - por_min_asi_eve === null:`,
+          primeraInscripcion.evento.por_min_asi_eve === null
+        );
+        console.log(
+          `  - por_min_asi_eve === undefined:`,
+          primeraInscripcion.evento.por_min_asi_eve === undefined
+        );
+        console.log(
+          `  - eventos_curso:`,
+          primeraInscripcion.evento.eventos_curso
+        );
+        console.log(`  - tip_eve:`, primeraInscripcion.evento.tip_eve);
+
+        // 🔧 DEBUGGING ADICIONAL: Verificar todas las propiedades del objeto evento
+        console.log(`🔧 [DEBUGGING] Todas las propiedades del objeto evento:`);
+        Object.keys(primeraInscripcion.evento).forEach((key) => {
+          console.log(
+            `    ${key}: ${
+              primeraInscripcion.evento[key]
+            } (${typeof primeraInscripcion.evento[key]})`
+          );
+        });
+      }
+
       // Mapear los resultados para tener una estructura más limpia
-      const inscripcionesMapeadas = inscripciones.map((inscripcion) => {
+      const inscripcionesMapeadas = inscripciones.map((inscripcion, index) => {
+        // Log para verificar los valores mínimos del evento
+        console.log(
+          `🔍 [${index + 1}] Verificando valores mínimos para evento "${
+            inscripcion.evento.nom_eve
+          }"`
+        );
+        console.log(
+          `  - Asistencia mínima: ${
+            inscripcion.evento.por_min_asi_eve
+          }% (tipo: ${typeof inscripcion.evento.por_min_asi_eve})`
+        );
+        console.log(`  - Tipo de evento: ${inscripcion.evento.tip_eve}`);
+
+        // 🔧 DEBUGGING ESPECÍFICO: Verificar el valor antes del mapeo
+        console.log(
+          `🔧 [MAPPING DEBUG] Valor original por_min_asi_eve:`,
+          inscripcion.evento.por_min_asi_eve
+        );
+        console.log(
+          `🔧 [MAPPING DEBUG] ¿Es null?:`,
+          inscripcion.evento.por_min_asi_eve === null
+        );
+        console.log(
+          `🔧 [MAPPING DEBUG] ¿Es undefined?:`,
+          inscripcion.evento.por_min_asi_eve === undefined
+        );
+        console.log(
+          `🔧 [MAPPING DEBUG] ¿Es NaN?:`,
+          isNaN(inscripcion.evento.por_min_asi_eve)
+        );
+
+        // eventos_curso es un objeto, no un array
+        if (
+          inscripcion.evento.tip_eve === "CURSO" &&
+          inscripcion.evento.eventos_curso
+        ) {
+          console.log(
+            `  - Nota mínima del curso: ${inscripcion.evento.eventos_curso.not_min_cur}`
+          );
+        } else if (inscripcion.evento.tip_eve === "CURSO") {
+          console.log(
+            `  - ⚠️ ADVERTENCIA: Es un CURSO pero no tiene información de eventos_curso`
+          );
+        }
+
+        const eventoMapeado = {
+          nom_eve: inscripcion.evento.nom_eve,
+          tip_eve: inscripcion.evento.tip_eve,
+          val_eve: inscripcion.evento.val_eve,
+          id_eve: inscripcion.evento.id_eve,
+          por_min_asi_eve: inscripcion.evento.por_min_asi_eve, // Asistencia mínima requerida
+          eventos_curso: inscripcion.evento.eventos_curso, // Información del curso si existe (objeto, no array)
+        };
+
+        // 🔧 DEBUGGING: Verificar el objeto final mapeado
+        console.log(
+          `🔧 [FINAL MAPPING] Evento final mapeado:`,
+          JSON.stringify(eventoMapeado, null, 2)
+        );
+
         return {
           id_ins: inscripcion.id_ins,
           estado: inscripcion.est_ins,
           asistencia: inscripcion.por_asi_fin_usu,
           nota_final: inscripcion.inscripcion_curso?.not_fin_usu || null,
           fec_ins: inscripcion.fec_ins,
-          evento: {
-            nom_eve: inscripcion.evento.nom_eve,
-            tip_eve: inscripcion.evento.tip_eve,
-            val_eve: inscripcion.evento.val_eve,
-            id_eve: inscripcion.evento.id_eve,
-          },
+          evento: eventoMapeado,
           comprobante: inscripcion.comprobantes_pago[0]?.url_com_pag || null,
           carta_motivacion:
             inscripcion.cartas_motivacion[0]?.con_car_mot || null,
@@ -1037,6 +1353,23 @@ const obtenerInscripcionesPorEvento = async (req, res) => {
           },
         };
       });
+
+      console.log(
+        `✅ Enviando ${inscripcionesMapeadas.length} inscripciones al frontend`
+      );
+      if (inscripcionesMapeadas.length > 0) {
+        const eventoEjemplo = inscripcionesMapeadas[0].evento;
+        console.log(`📊 Ejemplo de datos del evento enviados:`);
+        console.log(`  - Nombre: ${eventoEjemplo.nom_eve}`);
+        console.log(`  - Tipo: ${eventoEjemplo.tip_eve}`);
+        console.log(`  - Asistencia mínima: ${eventoEjemplo.por_min_asi_eve}%`);
+        console.log(
+          `  - Datos del curso:`,
+          eventoEjemplo.eventos_curso
+            ? `Nota mín: ${eventoEjemplo.eventos_curso.not_min_cur}`
+            : "No es curso"
+        );
+      }
 
       res.status(200).json(inscripcionesMapeadas);
     } catch (mapError) {
@@ -1156,7 +1489,11 @@ const obtenerTodasLasInscripciones = async (req, res) => {
             usuario: true,
           },
         },
-        evento: true,
+        evento: {
+          include: {
+            eventos_curso: true, // ✅ Incluir datos del curso
+          },
+        },
         inscripcion_curso: true,
         comprobantes_pago: {
           orderBy: { fec_sub_com_pag: "desc" },
@@ -1185,6 +1522,9 @@ const obtenerTodasLasInscripciones = async (req, res) => {
             tip_eve: inscripcion.evento.tip_eve,
             val_eve: inscripcion.evento.val_eve,
             id_eve: inscripcion.evento.id_eve,
+            est_eve: inscripcion.evento.est_eve,
+            por_min_asi_eve: inscripcion.evento.por_min_asi_eve, // ✅ AGREGAR este campo
+            eventos_curso: inscripcion.evento.eventos_curso, // ✅ AGREGAR este campo
           },
           comprobante: inscripcion.comprobantes_pago[0]?.url_com_pag || null,
           carta_motivacion:
@@ -1198,6 +1538,23 @@ const obtenerTodasLasInscripciones = async (req, res) => {
           },
         };
       });
+
+      console.log(
+        `✅ Enviando ${inscripcionesMapeadas.length} inscripciones al frontend`
+      );
+      if (inscripcionesMapeadas.length > 0) {
+        const eventoEjemplo = inscripcionesMapeadas[0].evento;
+        console.log(`📊 Ejemplo de datos del evento enviados:`);
+        console.log(`  - Nombre: ${eventoEjemplo.nom_eve}`);
+        console.log(`  - Tipo: ${eventoEjemplo.tip_eve}`);
+        console.log(`  - Asistencia mínima: ${eventoEjemplo.por_min_asi_eve}%`);
+        console.log(
+          `  - Datos del curso:`,
+          eventoEjemplo.eventos_curso
+            ? `Nota mín: ${eventoEjemplo.eventos_curso.not_min_cur}`
+            : "No es curso"
+        );
+      }
 
       res.status(200).json(inscripcionesMapeadas);
     } catch (mapError) {

@@ -1,0 +1,65 @@
+/* Estilos para el componente Footer */
+.footer-component-fc {
+  font-family: "Poppins", sans-serif;
+}
+
+.footer-logo-fc {
+  transition: transform 0.2s;
+}
+
+.footer-logo-fc:hover {
+  transform: scale(1.1);
+}
+
+.footer-title-fc {
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.footer-subtitle-fc {
+  color: #f0f0f0;
+}
+
+.footer-slogan-fc {
+  font-style: italic;
+}
+
+.footer-section-title-fc {
+  font-weight: 600;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 5px;
+  display: inline-block;
+}
+
+.footer-link-fc {
+  transition: color 0.2s, transform 0.2s;
+  display: inline-block;
+}
+
+.footer-link-fc:hover {
+  color: #f0f0f0 !important;
+  transform: translateX(3px);
+}
+
+.footer-contact-item-fc {
+  display: flex;
+  align-items: center;
+}
+
+.footer-divider-fc {
+  margin: 20px 0;
+  opacity: 0.1;
+}
+
+.footer-copyright-fc {
+  opacity: 0.8;
+}
+
+.footer-social-link-fc {
+  transition: transform 0.2s, opacity 0.2s;
+}
+
+.footer-social-link-fc:hover {
+  transform: translateY(-3px);
+  opacity: 0.8;
+}

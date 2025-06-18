@@ -9,6 +9,12 @@ const {
   obtenerTodasLasInscripciones,
 } = require("../controllers/inscripcion.controller");
 
+const { obtenerCarreras } = require("../controllers/carrera.controller");
+const adminController = require("../controllers/admin.controller");
+
+// Ruta para obtener todas las carreras (necesaria para reportes)
+router.get("/carreras", verificarToken, onlyAdmin, obtenerCarreras);
+
 // Ruta para obtener todas las inscripciones
 router.get(
   "/inscripciones",
@@ -29,6 +35,55 @@ router.put(
   verificarToken,
   onlyAdmin,
   validarInscripcion
+);
+
+// Nuevas rutas para gestión de administradores
+// Solo usuarios con rol ADMIN_GLOBAL pueden acceder
+
+/**
+ * @route POST /api/admin/create-admin
+ * @desc Crea un nuevo administrador con correo verificado
+ * @access Privado - Solo ADMIN_GLOBAL
+ */
+router.post(
+  "/create-admin",
+  verificarToken,
+  onlyAdmin,
+  (req, res, next) => {
+    // Verificar que el usuario sea ADMIN_GLOBAL
+    if (req.usuario.rol_usu !== "ADMIN_GLOBAL") {
+      return res.status(403).json({
+        error: "No autorizado",
+        mensaje:
+          "Solo los Super Administradores pueden crear otros administradores",
+      });
+    }
+    next();
+  },
+  adminController.crearAdmin
+);
+
+/**
+ * @route GET /api/admin/list-admins
+ * @desc Obtiene la lista de todos los administradores
+ * @access Privado - Solo ADMIN_GLOBAL
+ */
+router.get(
+  "/list-admins",
+  verificarToken,
+  onlyAdmin,
+  (req, res, next) => {
+    // Verificar que el usuario sea ADMIN_GLOBAL
+    if (req.usuario.rol_usu !== "ADMIN_GLOBAL") {
+      return res.status(403).json({
+        error: "No autorizado",
+        mensaje:
+          "Solo los Super Administradores pueden ver la lista de administradores",
+      });
+    }
+    next();
+  },
+  adminController.listarAdmins
 );
 
 module.exports = router;

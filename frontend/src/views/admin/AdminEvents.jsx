@@ -33,6 +33,8 @@ import {
   Percent,
 } from "lucide-react";
 import "./styles/AdminEvents.css";
+import "./styles/EventosDestacados.css";
+import BotonEstrella from "../../components/admin/BotonEstrella";
 
 const getEstadoEventoUI = (estado) => {
   switch (estado) {
@@ -930,7 +932,7 @@ const AdminEvents = () => {
           )}
         </div>
       ) : (
-        <div className="admin-events-grid">
+        <div className="admin-events-grid-ae">
           {eventosFiltrados.map((eve) => {
             const esCurso = eve.tip_eve === "CURSO";
             const estadoEvento = esEventoFinalizado(eve)
@@ -940,7 +942,12 @@ const AdminEvents = () => {
             const modalidadUI = getModalidadUI(eve.mod_eve);
 
             return (
-              <div key={eve.id_eve} className="admin-event-card">
+              <div
+                key={eve.id_eve}
+                className={`admin-event-card ${
+                  eve.eve_des ? "card-evento-destacado-ge" : ""
+                }`}
+              >
                 {/* Imagen de portada */}
                 {eve.img_por_eve && (
                   <div className="admin-event-image">
@@ -949,7 +956,23 @@ const AdminEvents = () => {
                 )}
 
                 <div className="admin-event-header">
-                  <h3 className="admin-event-name">{eve.nom_eve}</h3>
+                  <div className="admin-event-title-container-ae">
+                    <h3 className="admin-event-name">{eve.nom_eve}</h3>
+                    {/* <div className="contenedor-estrella-ae">
+                      <BotonEstrella
+                        idEvento={eve.id_eve}
+                        estadoInicial={eve.eve_des || false}
+                        onToggle={(esDestacado) => {
+                          const nombreEvento = eve.nom_eve || "Evento";
+                          toast.success(
+                            esDestacado
+                              ? `"${nombreEvento}" marcado como destacado`
+                              : `"${nombreEvento}" ya no se mostrará en destacados`
+                          );
+                        }}
+                      />
+                    </div> */}
+                  </div>
                   <span
                     className={`admin-event-label ${
                       eve.val_eve === 0 ? "valor-gratuito-ae" : "valor-pago-ae"
@@ -960,10 +983,25 @@ const AdminEvents = () => {
                       : `$${eve.val_eve.toFixed(2)}`}
                   </span>
                 </div>
-
-                <div className="admin-event-type-badge">
-                  {getTipoEventoIcon(eve.tip_eve)}
-                  {eve.tip_eve}
+                <div className="contenedor-tipo-estrella-ae">
+                  <div className="admin-event-type-badge">
+                    {getTipoEventoIcon(eve.tip_eve)}
+                    {eve.tip_eve}
+                  </div>
+                  <div className="contenedor-estrella-ae">
+                    <BotonEstrella
+                      idEvento={eve.id_eve}
+                      estadoInicial={eve.eve_des || false}
+                      onToggle={(esDestacado) => {
+                        const nombreEvento = eve.nom_eve || "Evento";
+                        toast.success(
+                          esDestacado
+                            ? `"${nombreEvento}" marcado como destacado`
+                            : `"${nombreEvento}" ya no se mostrará en destacados`
+                        );
+                      }}
+                    />
+                  </div>
                 </div>
 
                 {/* Descripción del evento */}
@@ -1038,6 +1076,16 @@ const AdminEvents = () => {
                         </span>
                       </div>
                     </>
+                  )}
+                  {/* Información para eventos que NO son cursos */}
+                  {!esCurso && (
+                    <div className="detail-item">
+                      <Users size={16} className="icon-inline" />
+                      <span>
+                        <strong>Asistencia mínima:</strong>{" "}
+                        {eve.por_min_asi_eve ? `${eve.por_min_asi_eve}%` : "-"}
+                      </span>
+                    </div>
                   )}
                   {/* Carreras asociadas */}
                   <div className="detail-item">
