@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axiosInstance from "../api/axiosConfig";
+import { useSocket } from "../context/SocketContext";
 import {
   CalendarDays,
   Search,
@@ -13,6 +14,7 @@ import {
   Users,
   CheckCircle,
   AlertCircle,
+  AlertTriangle,
   Zap,
   Pause,
   Star,
@@ -31,6 +33,7 @@ import GestorModales from "../models/GestorModales";
 import "./styles/EventosPublicos.css";
 import "./styles/ModalEventosPublicos.css";
 import "./styles/animaciones.css";
+import "./styles/FiltrosEstado.css";
 
 // Función para formatear fechas correctamente usando UTC
 const formatearFechaUTC = (fechaStr) => {
@@ -68,6 +71,7 @@ const formatearFechaUTC = (fechaStr) => {
 const EventosPublicos = () => {
   const { usuario } = useAuth();
   const navigate = useNavigate();
+  const { socket, isConnected } = useSocket();
   const [eventos, setEventos] = useState([]);
   const [filtro, setFiltro] = useState("");
   const [cargando, setCargando] = useState(true);
@@ -84,7 +88,10 @@ const EventosPublicos = () => {
     gratuito: false,
     pagado: false,
     completo: false,
-    modalidad: "", // Nuevo filtro de modalidad
+    modalidad: "",
+    finalizado: false,
+    cancelado: false,
+    suspendido: false,
   });
   const [mostrarFiltros, setMostrarFiltros] = useState(false);
 
@@ -93,10 +100,39 @@ const EventosPublicos = () => {
     // Convertir cupos a número para comparaciones
     const cuposDisponibles = parseInt(evento.cup_dis_eve) || 0;
 
+    // Si algún filtro de estado está activo, mostrar solo eventos con esos estados
+    const filtrosEstadoActivos =
+      filtros.finalizado || filtros.cancelado || filtros.suspendido;
+
+    if (filtrosEstadoActivos) {
+      let cumpleEstado = false;
+
+      if (filtros.finalizado && evento.est_eve === "FINALIZADO") {
+        cumpleEstado = true;
+      }
+      if (filtros.cancelado && evento.est_eve === "CANCELADO") {
+        cumpleEstado = true;
+      }
+      if (filtros.suspendido && evento.est_eve === "SUSPENDIDO") {
+        cumpleEstado = true;
+      }
+
+      // Si no cumple con ningún estado filtrado, no mostrar
+      if (!cumpleEstado) {
+        return false;
+      }
+    } else {
+      // Por defecto, no mostrar eventos finalizados, cancelados, suspendidos
+      if (
+        evento.est_eve === "FINALIZADO" ||
+        evento.est_eve === "CANCELADO" ||
+        evento.est_eve === "SUSPENDIDO"
+      ) {
+        return false;
+      }
+    }
+
     // CONTROL DE VISIBILIDAD POR CUPOS:
-    // - Si filtro "Eventos Llenos" está activo: mostrar solo eventos con cupos === 0
-    // - Para todos los otros filtros: mostrar solo eventos con cupos > 0
-    // - Sin filtros activos: mostrar solo eventos con cupos > 0 (comportamiento por defecto)
     const hayFiltrosActivos = Object.values(filtros).some((f) => f);
 
     if (hayFiltrosActivos) {
@@ -188,8 +224,100 @@ const EventosPublicos = () => {
       pagado: false,
       completo: false,
       modalidad: "", // Incluir modalidad
+      finalizado: false,
+      cancelado: false,
+      suspendido: false,
     });
   };
+
+  // Manejar actualizaciones de eventos en tiempo real
+  const handleEventUpdate = useCallback((eventUpdate) => {
+    console.log(
+      "🔄 EventosPublicos: Evento actualizado via socket:",
+      eventUpdate
+    );
+    if (!eventUpdate || !eventUpdate.action || !eventUpdate.data) return;
+
+    const { action, data } = eventUpdate;
+
+    // Asegurar que el evento tenga la estructura correcta
+    const eventoConEstructura = {
+      ...data,
+      eventos_carrera: data.eventos_carrera || [],
+      eventos_curso: data.eventos_curso || null,
+    };
+
+    // Manejar diferentes tipos de actualizaciones
+    if (action === "created") {
+      // Verificar que el evento no exista ya para evitar duplicados
+      setEventos((prevEventos) => {
+        const existeEvento = prevEventos.some(
+          (e) => e.id_eve === eventoConEstructura.id_eve
+        );
+        if (existeEvento) {
+          console.log(
+            "🚫 Evento ya existe en EventosPublicos, no se agrega duplicado"
+          );
+          return prevEventos;
+        }
+        return [eventoConEstructura, ...prevEventos];
+      });
+    } else if (action === "updated") {
+      // Actualizar evento existente
+      setEventos((prevEventos) =>
+        prevEventos.map((evento) =>
+          evento.id_eve === eventoConEstructura.id_eve
+            ? { ...evento, ...eventoConEstructura }
+            : evento
+        )
+      );
+    } else if (action === "deleted") {
+      // Eliminar evento
+      setEventos((prevEventos) =>
+        prevEventos.filter(
+          (evento) => evento.id_eve !== eventoConEstructura.id_eve
+        )
+      );
+    }
+  }, []);
+
+  // Effect para manejar socket events de manera controlada
+  useEffect(() => {
+    if (!isConnected || !socket) return;
+
+    // Listener para cambios de eventos
+    socket.on("evento-change-hm", handleEventUpdate);
+
+    // Socket listener for cupos changes
+    const handleCuposChange = (data) => {
+      if (
+        !data ||
+        typeof data.eventoId === "undefined" ||
+        typeof data.cuposDisponibles === "undefined"
+      ) {
+        return;
+      }
+
+      console.log("🔄 EventosPublicos: Cupos actualizados via socket:", data);
+
+      // Update the specific event with new cupos disponibles
+      setEventos((prevEventos) =>
+        prevEventos.map((evento) =>
+          evento.id_eve === data.eventoId
+            ? { ...evento, cup_dis_eve: data.cuposDisponibles }
+            : evento
+        )
+      );
+    };
+
+    socket.on("cupos-change-hm", handleCuposChange);
+
+    // Cleanup function
+    return () => {
+      socket.off("evento-change-hm", handleEventUpdate);
+      socket.off("cupos-change-hm", handleCuposChange);
+    };
+  }, [isConnected, socket, handleEventUpdate]);
 
   useEffect(() => {
     if (usuario) {
@@ -421,6 +549,39 @@ const EventosPublicos = () => {
               </div>
 
               <div className="filtro-categoria">
+                <h4>Por Estado</h4>
+                <div className="filtros-opciones">
+                  <label className="filtro-opcion">
+                    <input
+                      type="checkbox"
+                      checked={filtros.finalizado}
+                      onChange={() => manejarCambioFiltro("finalizado")}
+                    />
+                    <span className="checkmark"></span>
+                    Eventos Finalizados
+                  </label>
+                  <label className="filtro-opcion">
+                    <input
+                      type="checkbox"
+                      checked={filtros.cancelado}
+                      onChange={() => manejarCambioFiltro("cancelado")}
+                    />
+                    <span className="checkmark"></span>
+                    Eventos Cancelados
+                  </label>
+                  <label className="filtro-opcion">
+                    <input
+                      type="checkbox"
+                      checked={filtros.suspendido}
+                      onChange={() => manejarCambioFiltro("suspendido")}
+                    />
+                    <span className="checkmark"></span>
+                    Eventos Suspendidos
+                  </label>
+                </div>
+              </div>
+
+              <div className="filtro-categoria">
                 <h4>Por Modalidad</h4>
                 <div className="filtros-opciones">
                   <select
@@ -514,10 +675,30 @@ const EventosPublicos = () => {
                       }
                       alt={`Portada de ${evento.nom_eve}`}
                       className="evento-portada"
-                      onLoad={(e) => {
-                        e.target.classList.add("loaded");
-                      }}
                     />
+
+                    {/* Indicador de estado para eventos filtrados */}
+                    {evento.est_eve === "FINALIZADO" && (
+                      <div className="evento-estado-badge-er evento-estado-finalizado-er">
+                        <Clock size={14} />
+                        Finalizado
+                      </div>
+                    )}
+
+                    {evento.est_eve === "CANCELADO" && (
+                      <div className="evento-estado-badge-er evento-estado-cancelado-er">
+                        <AlertCircle size={14} />
+                        Cancelado
+                      </div>
+                    )}
+
+                    {evento.est_eve === "SUSPENDIDO" && (
+                      <div className="evento-estado-badge-er evento-estado-suspendido-er">
+                        <AlertTriangle size={14} />
+                        Suspendido
+                      </div>
+                    )}
+
                     <div className="portada-overlay"></div>
                   </div>
                   <h2 className="nombre-evento-ep">{evento.nom_eve}</h2>

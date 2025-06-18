@@ -174,7 +174,7 @@ async function main() {
           "Carrera enfocada en el desarrollo de habilidades para gestionar tecnologías de información empresarial.",
         dur_sem_car: 9,
         mod_car: "PRESENCIAL",
-        ico_car: "https://i.imgur.com/aqDLXJ5.png",
+        ico_car: "monitor",
         id_fac_per: facultad.id_fac,
         id_coo_per: coordinadoresCreados[0].id_coo, // Marco Guachimboza
       },
@@ -184,7 +184,7 @@ async function main() {
           "Formación en redes y sistemas de comunicación con enfoque en infraestructura tecnológica.",
         dur_sem_car: 10,
         mod_car: "PRESENCIAL",
-        ico_car: "https://i.imgur.com/wCcBd1j.png",
+        ico_car: "zap",
         id_fac_per: facultad.id_fac,
         id_coo_per: coordinadoresCreados[1].id_coo, // Freddy Robalino
       },
@@ -194,7 +194,7 @@ async function main() {
           "Carrera que optimiza procesos de producción y sistemas organizacionales.",
         dur_sem_car: 10,
         mod_car: "PRESENCIAL",
-        ico_car: "https://i.imgur.com/FeH6kXA.png",
+        ico_car: "factory",
         id_fac_per: facultad.id_fac,
         id_coo_per: coordinadoresCreados[2].id_coo, // César Rosero
       },
@@ -204,7 +204,7 @@ async function main() {
           "Especialización en desarrollo de aplicaciones y sistemas informáticos modernos.",
         dur_sem_car: 8,
         mod_car: "SEMIPRESENCIAL",
-        ico_car: "https://i.imgur.com/UdwSGn9.png",
+        ico_car: "laptop",
         id_fac_per: facultad.id_fac,
         id_coo_per: coordinadoresCreados[0].id_coo, // Marco Guachimboza
       },
@@ -214,7 +214,7 @@ async function main() {
           "Enfocada en sistemas automatizados, control industrial y robótica aplicada.",
         dur_sem_car: 9,
         mod_car: "PRESENCIAL",
-        ico_car: "https://i.imgur.com/Z6w3jgc.png",
+        ico_car: "wrench",
         id_fac_per: facultad.id_fac,
         id_coo_per: coordinadoresCreados[1].id_coo, // Freddy Robalino
       },

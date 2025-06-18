@@ -9,11 +9,19 @@ import {
   XOctagon,
   ChevronDown,
   ChevronUp,
+  AlertTriangle,
+  AlertCircle,
+  Ban,
+  Zap,
 } from "lucide-react";
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import axiosInstance from "../api/axiosConfig";
 import { toast } from "react-toastify";
+import ZoomableImage from "./ZoomableImage";
+import DocumentViewer from "./DocumentViewer";
 import "./styles/InscripcionCard.css";
+import "./styles/InscripcionCard-estados.css";
 
 const InscripcionCard = ({ inscripcion, onUpdate }) => {
   const [expanded, setExpanded] = useState(false);
@@ -26,6 +34,15 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
   );
   const [observacion, setObservacion] = useState(inscripcion.observacion || "");
   const [mostrarComprobante, setMostrarComprobante] = useState(false);
+  const [mostrarDocumento, setMostrarDocumento] = useState(false);
+  const [documentoUrl, setDocumentoUrl] = useState("");
+  const [documentoTitulo, setDocumentoTitulo] = useState("");
+
+  // Verificar si el evento está en un estado que no permite validación
+  const estadosNoValidables = ["FINALIZADO", "CANCELADO", "SUSPENDIDO"];
+  const eventoNoValidable = estadosNoValidables.includes(
+    inscripcion.evento?.est_eve
+  );
 
   const handleToggleExpand = () => {
     setExpanded(!expanded);
@@ -36,7 +53,28 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
     setMostrarComprobante(!mostrarComprobante);
   };
 
+  const handleVerDocumento = (e) => {
+    e.preventDefault();
+    const url = inscripcion.usuario.com_usu.startsWith("http")
+      ? inscripcion.usuario.com_usu
+      : `${import.meta.env.VITE_API_URL}${inscripcion.usuario.com_usu}`;
+
+    setDocumentoUrl(url);
+    setDocumentoTitulo(
+      `Documentos de ${inscripcion.usuario.nom_usu} ${inscripcion.usuario.ape_usu}`
+    );
+    setMostrarDocumento(true);
+  };
+
   const cambiarEstado = async (nuevoEstado) => {
+    // Verificar si el evento está en un estado que no permite validación
+    if (eventoNoValidable) {
+      toast.error(
+        `No se puede validar inscripciones de un evento ${inscripcion.evento?.est_eve.toLowerCase()}`
+      );
+      return;
+    }
+
     setLoading(true);
     try {
       await axiosInstance.put(
@@ -56,6 +94,14 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
   };
   const handleFinalizar = async (e) => {
     e.preventDefault();
+
+    // Verificar si el evento está en un estado que no permite validación
+    if (eventoNoValidable) {
+      toast.error(
+        `No se puede finalizar inscripciones de un evento ${inscripcion.evento?.est_eve.toLowerCase()}`
+      );
+      return;
+    }
 
     if (isNaN(asistencia) || asistencia < 0 || asistencia > 100) {
       toast.error("Asistencia inválida (0–100)");
@@ -92,23 +138,41 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
   const getEstadoClase = () => {
     switch (inscripcion.estado) {
       case "PENDIENTE":
-        return "estado-pendiente";
+        return "estado-pendiente-ic";
       case "ACEPTADA":
-        return "estado-aceptada";
+        return "estado-aceptada-ic";
       case "RECHAZADA":
-        return "estado-rechazada";
+        return "estado-rechazada-ic";
       case "FINALIZADA":
-        return "estado-finalizada";
+        return "estado-finalizada-ic";
       case "APROBADO":
-        return "estado-aprobado";
+        return "estado-aprobado-ic";
       case "REPROBADO_NOTA":
-        return "estado-reprobado-nota";
+        return "estado-reprobado-nota-ic";
       case "REPROBADO_ASISTENCIA":
-        return "estado-reprobado-asistencia";
+        return "estado-reprobado-asistencia-ic";
       case "REPROBADO_TOTAL":
-        return "estado-reprobado-total";
+        return "estado-reprobado-total-ic";
       default:
         return "";
+    }
+  };
+
+  // Función para renderizar el icono correcto según el estado del evento
+  const getEventoEstadoIcono = () => {
+    switch (inscripcion.evento?.est_eve) {
+      case "FINALIZADO":
+        return <CheckCircle size={14} />;
+      case "CANCELADO":
+        return <Ban size={14} />;
+      case "SUSPENDIDO":
+        return <AlertTriangle size={14} />;
+      case "ACTIVO":
+        return <Zap size={14} />;
+      case "INACTIVO":
+        return <AlertCircle size={14} />;
+      default:
+        return null;
     }
   };
 
@@ -127,6 +191,15 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
           <div className="inscripcion-info-item">
             <User size={14} />
             <span>{inscripcion.evento?.nom_eve}</span>
+            {inscripcion.evento?.est_eve &&
+              inscripcion.evento.est_eve !== "ACTIVO" && (
+                <span
+                  className={`evento-estado-badge-ic evento-estado-${inscripcion.evento.est_eve.toLowerCase()}-ic`}
+                >
+                  {getEventoEstadoIcono()}
+                  {inscripcion.evento.est_eve}
+                </span>
+              )}
           </div>
           <div className="inscripcion-info-item">
             <Mail size={14} />
@@ -166,13 +239,13 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
                     {mostrarComprobante && (
                       <div className="doc-preview">
                         {inscripcion.comprobante.startsWith("http") ? (
-                          <img
+                          <ZoomableImage
                             src={inscripcion.comprobante}
                             alt="Comprobante de pago"
                             className="comprobante-imagen"
                           />
                         ) : (
-                          <img
+                          <ZoomableImage
                             src={`${import.meta.env.VITE_API_URL}/uploads/${
                               inscripcion.comprobante
                             }`}
@@ -209,21 +282,13 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
             <div className="inscripcion-doc-item">
               <span>Documentos personales:</span>
               {inscripcion.usuario?.com_usu ? (
-                <a
-                  href={
-                    inscripcion.usuario.com_usu.startsWith("http")
-                      ? inscripcion.usuario.com_usu
-                      : `${import.meta.env.VITE_API_URL}${
-                          inscripcion.usuario.com_usu
-                        }`
-                  }
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button
+                  onClick={handleVerDocumento}
                   className="doc-link"
                   title="Ver documentos del perfil"
                 >
                   <FileText size={18} /> Ver documentos
-                </a>
+                </button>
               ) : (
                 <span className="doc-missing">
                   <XCircle size={18} /> No enviado
@@ -310,7 +375,8 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
                 disabled={
                   inscripcion.estado === "ACEPTADA" ||
                   inscripcion.estado === "FINALIZADA" ||
-                  loading
+                  loading ||
+                  eventoNoValidable
                 }
               >
                 <CheckCircle size={16} /> Aceptar
@@ -321,7 +387,8 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
                 disabled={
                   inscripcion.estado === "RECHAZADA" ||
                   inscripcion.estado === "FINALIZADA" ||
-                  loading
+                  loading ||
+                  eventoNoValidable
                 }
               >
                 <XOctagon size={16} /> Rechazar
@@ -331,12 +398,14 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
               className="inscripcion-finalizar-form"
               onSubmit={handleFinalizar}
             >
-              {inscripcion.estado === "ACEPTADA" && (
+              {inscripcion.estado === "ACEPTADA" && !eventoNoValidable && (
                 <div className="inscripcion-form-row">
                   {inscripcion.evento?.tip_eve === "CURSO" && (
                     <div className="inscripcion-form-group">
                       <label htmlFor={`nota-${inscripcion.id_ins}`}>
-                        Nota (0-10):
+                        Nota (mín:{" "}
+                        {inscripcion.evento?.eventos_curso?.not_min_cur || "0"}
+                        ):
                       </label>
                       <input
                         id={`nota-${inscripcion.id_ins}`}
@@ -357,7 +426,8 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
                   )}
                   <div className="inscripcion-form-group">
                     <label htmlFor={`asistencia-${inscripcion.id_ins}`}>
-                      Asistencia (%):
+                      Asistencia (mín:{" "}
+                      {inscripcion.evento?.por_min_asi_eve || "0"}%):
                     </label>
                     <input
                       id={`asistencia-${inscripcion.id_ins}`}
@@ -377,10 +447,21 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
                   </div>
                 </div>
               )}{" "}
+              {eventoNoValidable && inscripcion.estado === "ACEPTADA" && (
+                <div className="inscripcion-evento-no-validable-mensaje-ic">
+                  <AlertTriangle size={16} />
+                  No se puede finalizar inscripciones de un evento{" "}
+                  {inscripcion.evento?.est_eve.toLowerCase()}
+                </div>
+              )}
               <button
                 type="submit"
                 className="btn btn-finalizar"
-                disabled={inscripcion.estado !== "ACEPTADA" || loading}
+                disabled={
+                  inscripcion.estado !== "ACEPTADA" ||
+                  loading ||
+                  eventoNoValidable
+                }
                 style={{
                   display: inscripcion.estado === "ACEPTADA" ? "flex" : "none",
                 }}
@@ -391,6 +472,17 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
           </div>
         </div>
       </div>
+
+      {/* Modal para ver documentos - Renderizado en document.body */}
+      {mostrarDocumento &&
+        createPortal(
+          <DocumentViewer
+            documentUrl={documentoUrl}
+            title={documentoTitulo}
+            onClose={() => setMostrarDocumento(false)}
+          />,
+          document.body
+        )}
     </div>
   );
 };

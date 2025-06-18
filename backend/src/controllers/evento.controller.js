@@ -11,8 +11,8 @@ require("dotenv").config();
 function validarCurso(not_min_cur) {
   if (not_min_cur === undefined)
     throw new Error("La nota mínima es obligatoria");
-  if (not_min_cur < 8 || not_min_cur > 10)
-    throw new Error("La nota mínima debe estar entre 8 y 10");
+  if (not_min_cur < 0 || not_min_cur > 10)
+    throw new Error("La nota mínima debe estar entre 0 y 10");
 }
 /**
  * Valida los campos obligatorios y restricciones de un evento en general
@@ -44,12 +44,12 @@ function validarEventoGeneral({
   if (dur_hor_eve === undefined || dur_hor_eve <= 0)
     throw new Error(
       "La duración del evento es obligatoria y debe ser mayor a 0"
-    ); // Validar que el porcentaje mínimo de asistencia esté dentro del rango 80-100
+    ); // Validar que el porcentaje mínimo de asistencia esté dentro del rango 0-100
   if (por_min_asi_eve === undefined)
     throw new Error("El porcentaje mínimo de asistencia es obligatorio");
-  if (por_min_asi_eve < 80 || por_min_asi_eve > 100)
+  if (por_min_asi_eve < 0 || por_min_asi_eve > 100)
     throw new Error(
-      "El porcentaje mínimo de asistencia debe estar entre 80% y 100%"
+      "El porcentaje mínimo de asistencia debe estar entre 0% y 100%"
     ); // Validar que la fecha de fin esté presente
   if (!fec_fin_eve) throw new Error("La fecha de fin es obligatoria");
 
@@ -626,7 +626,28 @@ const obtenerEventoPorId = async (req, res) => {
       return res.status(404).json({ msg: "Evento no encontrado" });
     }
 
-    // 🔧 AUTO-CORRECCIÓN DE CUPOS INCONSISTENTES
+    // � SUPER DEBUG: Verificar datos del evento específico
+    console.log(`🔥 [EVENTO CONTROLLER DEBUG] Evento obtenido por ID:`);
+    console.log(`  - nom_eve: "${evento.nom_eve}"`);
+    console.log(`  - tip_eve: "${evento.tip_eve}"`);
+    console.log(
+      `  - por_min_asi_eve: "${
+        evento.por_min_asi_eve
+      }" (${typeof evento.por_min_asi_eve})`
+    );
+    console.log(`  - eventos_curso: ${JSON.stringify(evento.eventos_curso)}`);
+
+    if (evento.por_min_asi_eve === undefined) {
+      console.log(`❌ [EVENTO CONTROLLER DEBUG] por_min_asi_eve es UNDEFINED!`);
+    } else if (evento.por_min_asi_eve === null) {
+      console.log(`❌ [EVENTO CONTROLLER DEBUG] por_min_asi_eve es NULL!`);
+    } else {
+      console.log(
+        `✅ [EVENTO CONTROLLER DEBUG] por_min_asi_eve tiene valor: ${evento.por_min_asi_eve}`
+      );
+    }
+
+    // �🔧 AUTO-CORRECCIÓN DE CUPOS INCONSISTENTES
     // Verificar y corregir cupos disponibles si están mal calculados
     try {
       console.log(`🔄 Verificando cupos para evento ID: ${id}`);
@@ -667,6 +688,12 @@ const obtenerEventoPorId = async (req, res) => {
         });
 
         // Retornar el evento con los cupos corregidos
+        console.log(`🔥 [EVENTO FINAL DEBUG] Enviando evento corregido:`);
+        console.log(
+          `  - por_min_asi_eve: "${
+            eventoCorregido.por_min_asi_eve
+          }" (${typeof eventoCorregido.por_min_asi_eve})`
+        );
         return res.status(200).json(eventoCorregido);
       }
     } catch (correccionError) {
@@ -674,6 +701,12 @@ const obtenerEventoPorId = async (req, res) => {
       // Si falla la corrección, continuar con el evento original
     }
 
+    console.log(`🔥 [EVENTO FINAL DEBUG] Enviando evento original:`);
+    console.log(
+      `  - por_min_asi_eve: "${
+        evento.por_min_asi_eve
+      }" (${typeof evento.por_min_asi_eve})`
+    );
     res.status(200).json(evento);
   } catch (error) {
     res.status(500).json({
@@ -1162,6 +1195,39 @@ const desmarcadoAutomaticoEventosPasados = async () => {
   }
 };
 
+/**
+ * Endpoint para verificar manualmente el servicio de estados automáticos
+ * Solo para administradores en desarrollo
+ */
+const verificarEstadosAutomaticos = async (req, res) => {
+  try {
+    const eventStatusService = require("../services/eventStatusService");
+
+    // Obtener configuración actual del servicio
+    const configuracion = eventStatusService.obtenerConfiguracion();
+
+    // Ejecutar manualmente una actualización solo si está habilitado
+    if (configuracion.habilitado) {
+      await eventStatusService.ejecutarActualizacionEstados();
+    }
+
+    // Devolver estado completo de la operación
+    res.status(200).json({
+      mensaje: configuracion.habilitado
+        ? "Verificación de estados automáticos completada"
+        : "Servicio deshabilitado - no se ejecutó actualización",
+      configuracion: configuracion,
+      fechaEjecucion: new Date(),
+    });
+  } catch (error) {
+    console.error("Error al verificar estados automáticos:", error);
+    res.status(500).json({
+      mensaje: "Error al verificar estados automáticos",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   crearEvento,
   obtenerEventos,
@@ -1173,4 +1239,5 @@ module.exports = {
   verificarYCorregirTodosLosCupos,
   obtenerEventosDestacados,
   toggleEventoDestacado,
+  verificarEstadosAutomaticos,
 };

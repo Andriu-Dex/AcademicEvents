@@ -86,19 +86,24 @@ const Footer = ({ isAuthenticated }) => {
             <p className="small mb-0 footer-subtitle-fc">
               {universidad.nombre}
             </p>
-            <p className="small text-muted footer-slogan-fc">
-              Formando el futuro tecnológico del Ecuador
-            </p>
           </div>
           <div className="col-md-2 mb-3 mb-md-0">
             <h6 className="mb-3 footer-section-title-fc">Académico</h6>
             <ul className="list-unstyled mb-0">
               <li className="mb-2">
                 <Link
-                  to="/carreras"
+                  to="/home#inicio"
                   className="text-white text-decoration-none small footer-link-fc"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    // Navegar al home y luego hacer scroll al inicio
+                    window.location.href = "/home";
+                    setTimeout(() => {
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }, 100);
+                  }}
                 >
-                  Carreras
+                  Facultad
                 </Link>
               </li>
               {isAuthenticated && (

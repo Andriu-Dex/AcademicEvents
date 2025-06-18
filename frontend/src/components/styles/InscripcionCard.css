@@ -14,20 +14,44 @@
 }
 
 /* Trasfondos de las cards */
-.inscripcion-card.estado-pendiente {
+.inscripcion-card.estado-pendiente-ic {
   border-left-color: #fbbf24;
+  background-color: #fef9c3;
 }
 
-.inscripcion-card.estado-aceptada {
-  border-left-color: #10b981;
+.inscripcion-card.estado-aceptada-ic {
+  border-left-color: #1e40af;
+  background-color: #dbeafe;
 }
 
-.inscripcion-card.estado-rechazada {
+.inscripcion-card.estado-rechazada-ic {
   border-left-color: #ef4444;
+  background-color: #fecaca;
 }
 
-.inscripcion-card.estado-finalizada {
-  border-left-color: #6366f1;
+.inscripcion-card.estado-finalizada-ic {
+  border-left-color: #5b21b6;
+  background-color: #e0e7ff;
+}
+
+.inscripcion-card.estado-aprobado-ic {
+  border-left-color: #047857;
+  background-color: #d1fae5;
+}
+
+.inscripcion-card.estado-reprobado-nota-ic {
+  border-left-color: #ef4444;
+  background-color: #fee2e2;
+}
+
+.inscripcion-card.estado-reprobado-asistencia-ic {
+  border-left-color: #f97316;
+  background-color: #ffedd5;
+}
+
+.inscripcion-card.estado-reprobado-total-ic {
+  border-left-color: #be185d;
+  background-color: #fdf2f8;
 }
 
 .inscripcion-card-header {
@@ -61,46 +85,46 @@
   border-radius: 0.5rem;
 }
 
-.inscripcion-estado.estado-pendiente {
+.inscripcion-estado.estado-pendiente-ic {
   /* background-color: #fef9c3; */
   background-color: #fee0c3;
   color: #b45309;
 }
 
-.inscripcion-estado.estado-aceptada {
-  background-color: #bbf7d0;
-  color: #15803d;
+.inscripcion-estado.estado-aceptada-ic {
+  background-color: #dbeafe;
+  color: #1e40af;
 }
 
-.inscripcion-estado.estado-rechazada {
+.inscripcion-estado.estado-rechazada-ic {
   background-color: #fecaca;
   color: #b91c1c;
 }
 
-.inscripcion-estado.estado-finalizada {
+.inscripcion-estado.estado-finalizada-ic {
   background-color: #e0e7ff;
-  color: #4338ca;
+  color: #5b21b6;
 }
 
-.inscripcion-estado.estado-aprobado {
+.inscripcion-estado.estado-aprobado-ic {
   background-color: #d1fae5;
   color: #047857;
   font-weight: 700;
 }
 
-.inscripcion-estado.estado-reprobado-nota {
+.inscripcion-estado.estado-reprobado-nota-ic {
   background-color: #fee2e2;
   color: #ef4444;
 }
 
-.inscripcion-estado.estado-reprobado-asistencia {
+.inscripcion-estado.estado-reprobado-asistencia-ic {
   background-color: #ffedd5;
   color: #f97316;
 }
 
-.inscripcion-estado.estado-reprobado-total {
-  background-color: #fee2e2;
-  color: #7f1d1d;
+.inscripcion-estado.estado-reprobado-total-ic {
+  background-color: #fdf2f8;
+  color: #be185d;
   font-weight: 700;
 }
 
@@ -228,12 +252,12 @@
 }
 
 .comprobante-imagen {
-  max-width: 100%;
+  width: 100%;
   max-height: 350px;
   border-radius: 0.4rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  object-fit: contain;
   margin-bottom: 0.8rem;
+  position: relative;
 }
 
 .abrir-nueva-ventana {

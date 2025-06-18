@@ -711,3 +711,36 @@ body::after {
   color: #0369a1;
   font-size: 0.875rem;
 }
+
+/* Estilos para los toasts específicos de MyInscriptions */
+.toast-estado-aceptada-mi {
+  background-color: #e6f7e9 !important;
+  color: #1e7e34 !important;
+  border-left: 4px solid #28a745 !important;
+}
+
+.toast-estado-aprobado-mi {
+  background-color: #e0f7fa !important;
+  color: #0277bd !important;
+  border-left: 4px solid #00b0ff !important;
+}
+
+.toast-estado-pendiente-mi {
+  background-color: #fff9e6 !important;
+  color: #856404 !important;
+  border-left: 4px solid #ffc107 !important;
+}
+
+.toast-estado-rechazada-mi {
+  background-color: #ffeaea !important;
+  color: #721c24 !important;
+  border-left: 4px solid #dc3545 !important;
+}
+
+.toast-estado-reprobado-nota-mi,
+.toast-estado-reprobado-asistencia-mi,
+.toast-estado-reprobado-total-mi {
+  background-color: #f8d7da !important;
+  color: #721c24 !important;
+  border-left: 4px solid #dc3545 !important;
+}

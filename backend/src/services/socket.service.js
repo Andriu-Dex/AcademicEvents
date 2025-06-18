@@ -22,8 +22,6 @@ class SocketService {
    */
   setupEventHandlers() {
     this.io.on("connection", (socket) => {
-      console.log(`✅ Cliente conectado: ${socket.id}`);
-
       // Almacenar información del cliente
       this.connectedClients.set(socket.id, {
         id: socket.id,
@@ -256,6 +254,64 @@ class SocketService {
 
     console.log(
       `📡 [USER NOTIFICATION] Cambio de estado de inscripción notificado para usuario: ${userId}`
+    );
+    console.log(
+      `📡 Estado de inscripción actualizado a: ${inscriptionData.estadoNuevo}`
+    );
+  }
+
+  /**
+   * Notificar cambios masivos en inscripciones
+   * @param {string} action - Tipo de acción
+   * @param {Object} data - Datos del cambio masivo
+   */
+  notifyRegistrationChange(action, data) {
+    if (!this.io) return;
+
+    this.io.emit("registrations-bulk-change", {
+      action,
+      data: data,
+      timestamp: new Date(),
+    });
+
+    console.log(
+      `📡 Cambio masivo de inscripciones (${action}) notificado a todos los clientes`
+    );
+  }
+
+  /**
+   * Notificar cambios en carreras (creación, actualización, eliminación)
+   * @param {string} action - Tipo de acción ('created', 'updated', 'deleted')
+   * @param {Object} carreraData - Datos de la carrera
+   */
+  notifyCarreraChange(action, carreraData) {
+    if (!this.io) return;
+
+    this.io.emit("carrera-change-hm", {
+      action,
+      data: carreraData,
+      timestamp: new Date(),
+    });
+
+    console.log(`📡 Carrera ${action} notificada a todos los clientes`);
+  }
+
+  /**
+   * Notificar cambios en eventos de carreras
+   * @param {string} action - Tipo de acción ('created', 'updated', 'deleted')
+   * @param {Object} eventoCarreraData - Datos del evento de carrera
+   */
+  notifyEventoCarreraChange(action, eventoCarreraData) {
+    if (!this.io) return;
+
+    this.io.emit("evento-carrera-change-hm", {
+      action,
+      data: eventoCarreraData,
+      timestamp: new Date(),
+    });
+
+    console.log(
+      `📡 Evento de carrera ${action} notificado a todos los clientes`
     );
   }
 }

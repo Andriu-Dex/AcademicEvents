@@ -1,5 +1,6 @@
 // Importamos la instancia de Prisma desde el archivo de configuración de la base de datos
 const prisma = require("../config/db");
+const socketService = require("../services/socket.service");
 
 // =====================
 // Crear nueva carrera
@@ -84,6 +85,9 @@ const crearCarrera = async (req, res) => {
         id_coo_per: id_coo_per || null,
       },
     });
+
+    // 🔌 Notificar a todos los clientes sobre la nueva carrera
+    socketService.notifyCarreraChange("created", nuevaCarrera);
 
     res.status(201).json(nuevaCarrera);
   } catch (error) {
@@ -256,6 +260,9 @@ const actualizarCarrera = async (req, res) => {
       data: datosActualizacion,
     });
 
+    // 🔌 Notificar a todos los clientes sobre la carrera actualizada
+    socketService.notifyCarreraChange("updated", actualizada);
+
     res.json(actualizada);
   } catch (error) {
     res.status(500).json({
@@ -288,10 +295,13 @@ const eliminarCarrera = async (req, res) => {
     }
 
     // Marcamos la carrera como inactiva en lugar de eliminarla
-    await prisma.carrera.update({
+    const carreraDesactivada = await prisma.carrera.update({
       where: { id_car: id },
       data: { est_car: false },
     });
+
+    // 🔌 Notificar a todos los clientes sobre la carrera eliminada/desactivada
+    socketService.notifyCarreraChange("updated", carreraDesactivada);
 
     // Respondemos con un mensaje de éxito
     res.status(200).json({ msg: "Carrera desactivada correctamente" });
@@ -304,10 +314,160 @@ const eliminarCarrera = async (req, res) => {
   }
 };
 
+// ======================
+// Activar una carrera (marcar como activa)
+// ======================
+const activarCarrera = async (req, res) => {
+  try {
+    // Obtenemos el ID de la carrera a activar desde los parámetros
+    const { id } = req.params;
+
+    // Verificamos que la carrera exista y esté inactiva
+    const carrera = await prisma.carrera.findUnique({
+      where: { id_car: id },
+    });
+
+    if (!carrera) {
+      return res.status(404).json({ msg: "Carrera no encontrada" });
+    }
+
+    if (carrera.est_car) {
+      return res.status(400).json({ msg: "La carrera ya está activa" });
+    }
+
+    // Marcamos la carrera como activa
+    const carreraActivada = await prisma.carrera.update({
+      where: { id_car: id },
+      data: { est_car: true },
+    });
+
+    // 🔌 Notificar a todos los clientes sobre la carrera activada
+    socketService.notifyCarreraChange("updated", carreraActivada);
+
+    // Respondemos con un mensaje de éxito
+    res.status(200).json({ msg: "Carrera activada correctamente" });
+  } catch (error) {
+    // Si ocurre un error, respondemos con estado 500
+    res.status(500).json({
+      msg: "Error al activar carrera",
+      error: error.message || error,
+    });
+  }
+};
+
+// ======================
+// Eliminar permanentemente una carrera
+// ======================
+const eliminarCarreraPermanentemente = async (req, res) => {
+  try {
+    // Obtenemos el ID de la carrera a eliminar desde los parámetros
+    const { id } = req.params;
+
+    // Verificamos que la carrera exista
+    const carrera = await prisma.carrera.findUnique({
+      where: { id_car: id },
+    });
+
+    if (!carrera) {
+      return res.status(404).json({ msg: "Carrera no encontrada" });
+    }
+
+    // Verificar si hay eventos o usuarios asociados a esta carrera
+    const eventosAsociados = await prisma.evento_carrera.findMany({
+      where: { id_car_aso: id },
+    });
+
+    const usuariosAsociados = await prisma.usuario.findMany({
+      where: { id_car_est: id },
+    });
+
+    if (eventosAsociados.length > 0 || usuariosAsociados.length > 0) {
+      return res.status(400).json({
+        msg: "No se puede eliminar la carrera porque tiene eventos o usuarios asociados",
+        eventosAsociados: eventosAsociados.length,
+        usuariosAsociados: usuariosAsociados.length,
+      });
+    }
+
+    // Eliminamos permanentemente la carrera
+    await prisma.carrera.delete({
+      where: { id_car: id },
+    });
+
+    // 🔌 Notificar a todos los clientes sobre la carrera eliminada permanentemente
+    socketService.notifyCarreraChange("permanentlyDeleted", {
+      id_car: id,
+    });
+
+    // Respondemos con un mensaje de éxito
+    res.status(200).json({ msg: "Carrera eliminada permanentemente" });
+  } catch (error) {
+    // Si ocurre un error, respondemos con estado 500
+    res.status(500).json({
+      msg: "Error al eliminar carrera permanentemente",
+      error: error.message || error,
+    });
+  }
+};
+
+// ==============================
+// Obtener todas las carreras (activas e inactivas)
+// ==============================
+const obtenerTodasCarreras = async (req, res) => {
+  try {
+    // Consultamos todas las carreras en la base de datos con relaciones
+    const carreras = await prisma.carrera.findMany({
+      orderBy: { nom_car: "asc" },
+      include: {
+        coordinador: true,
+        facultad: true,
+      },
+    });
+
+    // Formatear respuesta para el frontend
+    const carrerasFormateadas = carreras.map((carrera) => ({
+      id: carrera.id_car,
+      nombre: carrera.nom_car,
+      descripcion: carrera.des_car,
+      duracion: `${carrera.dur_sem_car} semestres`,
+      modalidad: carrera.mod_car,
+      icon: carrera.ico_car,
+      facultad: carrera.facultad?.nom_fac || null,
+      coordinador: carrera.coordinador
+        ? `${carrera.coordinador.nom_coo} ${carrera.coordinador.ape_coo}`
+        : null,
+      // Incluimos los campos originales también para compatibilidad
+      id_car: carrera.id_car,
+      nom_car: carrera.nom_car,
+      des_car: carrera.des_car,
+      dur_sem_car: carrera.dur_sem_car,
+      mod_car: carrera.mod_car,
+      ico_car: carrera.ico_car,
+      est_car: carrera.est_car,
+      fec_cre_car: carrera.fec_cre_car,
+      id_fac_per: carrera.id_fac_per,
+      id_coo_per: carrera.id_coo_per,
+    }));
+
+    // Respondemos con las carreras formateadas
+    res.status(200).json(carrerasFormateadas);
+  } catch (error) {
+    console.error("Error al obtener todas las carreras:", error);
+    // En caso de error, enviamos respuesta con estado 500
+    res.status(500).json({
+      msg: "Error al obtener todas las carreras",
+      error: error.message || error,
+    });
+  }
+};
+
 // Exportamos los métodos para que puedan ser usados en las rutas
 module.exports = {
   crearCarrera,
   obtenerCarreras,
   actualizarCarrera,
   eliminarCarrera,
+  activarCarrera,
+  eliminarCarreraPermanentemente,
+  obtenerTodasCarreras,
 };
