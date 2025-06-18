@@ -90,45 +90,45 @@
   letter-spacing: 0.2px;
 }
 
-.estado-pendiente {
+.estado-pendiente-aei {
   background-color: #fef9c3;
   color: #b45309;
 }
 
-.estado-aceptada {
-  background-color: #bbf7d0;
-  color: #15803d;
+.estado-aceptada-aei {
+  background-color: #dbeafe;
+  color: #1e40af;
 }
 
-.estado-rechazada {
+.estado-rechazada-aei {
   background-color: #fecaca;
   color: #b91c1c;
 }
 
-.estado-finalizada {
-  background-color: #dbeafe;
-  color: #1e3a8a;
+.estado-finalizada-aei {
+  background-color: #e0e7ff;
+  color: #5b21b6;
 }
 
-.estado-aprobado {
+.estado-aprobado-aei {
   background-color: #d1fae5;
   color: #047857;
   font-weight: 700;
 }
 
-.estado-reprobado-nota {
+.estado-reprobado-nota-aei {
   background-color: #fee2e2;
   color: #ef4444;
 }
 
-.estado-reprobado-asistencia {
+.estado-reprobado-asistencia-aei {
   background-color: #ffedd5;
   color: #f97316;
 }
 
-.estado-reprobado-total {
-  background-color: #fee2e2;
-  color: #7f1d1d;
+.estado-reprobado-total-aei {
+  background-color: #fdf2f8;
+  color: #be185d;
   font-weight: 700;
 }
 

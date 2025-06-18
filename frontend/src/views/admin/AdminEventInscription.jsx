@@ -6,14 +6,14 @@ import { toast } from "react-toastify";
 import "./styles/AdminEventInscription.css";
 
 const colores = {
-  PENDIENTE: "estado-pendiente",
-  ACEPTADA: "estado-aceptada",
-  RECHAZADA: "estado-rechazada",
-  FINALIZADA: "estado-finalizada",
-  APROBADO: "estado-aprobado",
-  REPROBADO_NOTA: "estado-reprobado-nota",
-  REPROBADO_ASISTENCIA: "estado-reprobado-asistencia",
-  REPROBADO_TOTAL: "estado-reprobado-total",
+  PENDIENTE: "estado-pendiente-aei",
+  ACEPTADA: "estado-aceptada-aei",
+  RECHAZADA: "estado-rechazada-aei",
+  FINALIZADA: "estado-finalizada-aei",
+  APROBADO: "estado-aprobado-aei",
+  REPROBADO_NOTA: "estado-reprobado-nota-aei",
+  REPROBADO_ASISTENCIA: "estado-reprobado-asistencia-aei",
+  REPROBADO_TOTAL: "estado-reprobado-total-aei",
 };
 
 const AdminEventInscription = () => {

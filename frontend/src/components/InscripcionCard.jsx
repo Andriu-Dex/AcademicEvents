@@ -92,21 +92,21 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
   const getEstadoClase = () => {
     switch (inscripcion.estado) {
       case "PENDIENTE":
-        return "estado-pendiente";
+        return "estado-pendiente-ic";
       case "ACEPTADA":
-        return "estado-aceptada";
+        return "estado-aceptada-ic";
       case "RECHAZADA":
-        return "estado-rechazada";
+        return "estado-rechazada-ic";
       case "FINALIZADA":
-        return "estado-finalizada";
+        return "estado-finalizada-ic";
       case "APROBADO":
-        return "estado-aprobado";
+        return "estado-aprobado-ic";
       case "REPROBADO_NOTA":
-        return "estado-reprobado-nota";
+        return "estado-reprobado-nota-ic";
       case "REPROBADO_ASISTENCIA":
-        return "estado-reprobado-asistencia";
+        return "estado-reprobado-asistencia-ic";
       case "REPROBADO_TOTAL":
-        return "estado-reprobado-total";
+        return "estado-reprobado-total-ic";
       default:
         return "";
     }
