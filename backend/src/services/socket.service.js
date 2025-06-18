@@ -280,6 +280,42 @@ class SocketService {
       `📡 Cambio masivo de inscripciones (${action}) notificado a todos los clientes`
     );
   }
+
+  /**
+   * Notificar cambios en carreras (creación, actualización, eliminación)
+   * @param {string} action - Tipo de acción ('created', 'updated', 'deleted')
+   * @param {Object} carreraData - Datos de la carrera
+   */
+  notifyCarreraChange(action, carreraData) {
+    if (!this.io) return;
+
+    this.io.emit("carrera-change-hm", {
+      action,
+      data: carreraData,
+      timestamp: new Date(),
+    });
+
+    console.log(`📡 Carrera ${action} notificada a todos los clientes`);
+  }
+
+  /**
+   * Notificar cambios en eventos de carreras
+   * @param {string} action - Tipo de acción ('created', 'updated', 'deleted')
+   * @param {Object} eventoCarreraData - Datos del evento de carrera
+   */
+  notifyEventoCarreraChange(action, eventoCarreraData) {
+    if (!this.io) return;
+
+    this.io.emit("evento-carrera-change-hm", {
+      action,
+      data: eventoCarreraData,
+      timestamp: new Date(),
+    });
+
+    console.log(
+      `📡 Evento de carrera ${action} notificado a todos los clientes`
+    );
+  }
 }
 
 // Exportar una instancia única (patrón Singleton)

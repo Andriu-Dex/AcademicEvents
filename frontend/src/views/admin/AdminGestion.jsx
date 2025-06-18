@@ -88,9 +88,10 @@ const AdminGestion = () => {
     }
 
     // Validar celular
-    // if (!Validator.validarCelularEcuatoriano(formData.celular)) {
-    //   errors.celular = "Ingrese un número de celular válido (10 dígitos)";
-    // }
+    if (!Validator.validarCelularEcuatoriano(formData.celular)) {
+      errors.celular =
+        "El número de celular debe empezar con 09 y tener 10 dígitos";
+    }
 
     // Validar correo
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correo)) {

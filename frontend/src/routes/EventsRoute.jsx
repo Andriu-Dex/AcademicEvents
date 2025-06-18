@@ -759,7 +759,10 @@ const EventsRoute = () => {
                   (eventosReprobados &&
                     eventosReprobados.includes(evento.id_eve)) ||
                   evento.cup_dis_eve === 0 ||
-                  evento.est_eve === "INACTIVO"
+                  evento.est_eve === "INACTIVO" ||
+                  evento.est_eve === "FINALIZADO" ||
+                  evento.est_eve === "SUSPENDIDO" ||
+                  evento.est_eve === "CANCELADO"
                 }
               >
                 {eventosAprobados && eventosAprobados.includes(evento.id_eve)
@@ -773,6 +776,12 @@ const EventsRoute = () => {
                   ? "Sin cupos"
                   : evento.est_eve === "INACTIVO"
                   ? "Evento inactivo"
+                  : evento.est_eve === "FINALIZADO"
+                  ? "Evento finalizado"
+                  : evento.est_eve === "SUSPENDIDO"
+                  ? "Evento suspendido"
+                  : evento.est_eve === "CANCELADO"
+                  ? "Evento cancelado"
                   : "Inscribirme"}
               </button>
             </div>

@@ -134,6 +134,39 @@ function Home() {
       }));
     },
 
+    onCarreraUpdate: (carreraUpdate) => {
+      console.log("🏠 Home: Carrera actualizada", carreraUpdate);
+
+      // Actualizar la lista de carreras según la acción
+      if (carreraUpdate.action === "created") {
+        // Agregar nueva carrera
+        setCarreras((prev) => [...prev, carreraUpdate.data]);
+      } else if (carreraUpdate.action === "updated") {
+        // Actualizar carrera existente
+        setCarreras((prev) =>
+          prev.map((carrera) =>
+            carrera.id === carreraUpdate.data.id ? carreraUpdate.data : carrera
+          )
+        );
+      } else if (carreraUpdate.action === "deleted") {
+        // Eliminar carrera
+        setCarreras((prev) =>
+          prev.filter((carrera) => carrera.id !== carreraUpdate.data.id)
+        );
+      }
+
+      // Actualizar estadísticas de carreras
+      setEstadisticasHome((prev) => ({
+        ...prev,
+        carreras:
+          carreraUpdate.action === "created"
+            ? prev.carreras + 1
+            : carreraUpdate.action === "deleted"
+            ? prev.carreras - 1
+            : prev.carreras,
+      }));
+    },
+
     onSystemNotification: (notification) => {
       console.log("🏠 Home: Notificación del sistema", notification);
       // showTemporaryNotification(notification.message, notification.type); // Comentado para evitar notificaciones de socket

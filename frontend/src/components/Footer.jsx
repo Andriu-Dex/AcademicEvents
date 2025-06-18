@@ -95,10 +95,18 @@ const Footer = ({ isAuthenticated }) => {
             <ul className="list-unstyled mb-0">
               <li className="mb-2">
                 <Link
-                  to="/carreras"
+                  to="/home#inicio"
                   className="text-white text-decoration-none small footer-link-fc"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    // Navegar al home y luego hacer scroll al inicio
+                    window.location.href = "/home";
+                    setTimeout(() => {
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }, 100);
+                  }}
                 >
-                  Carreras
+                  Facultad
                 </Link>
               </li>
               {isAuthenticated && (

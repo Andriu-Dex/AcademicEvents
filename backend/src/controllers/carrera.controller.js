@@ -1,5 +1,6 @@
 // Importamos la instancia de Prisma desde el archivo de configuración de la base de datos
 const prisma = require("../config/db");
+const socketService = require("../services/socket.service");
 
 // =====================
 // Crear nueva carrera
@@ -84,6 +85,9 @@ const crearCarrera = async (req, res) => {
         id_coo_per: id_coo_per || null,
       },
     });
+
+    // 🔌 Notificar a todos los clientes sobre la nueva carrera
+    socketService.notifyCarreraChange("created", nuevaCarrera);
 
     res.status(201).json(nuevaCarrera);
   } catch (error) {
@@ -256,6 +260,9 @@ const actualizarCarrera = async (req, res) => {
       data: datosActualizacion,
     });
 
+    // 🔌 Notificar a todos los clientes sobre la carrera actualizada
+    socketService.notifyCarreraChange("updated", actualizada);
+
     res.json(actualizada);
   } catch (error) {
     res.status(500).json({
@@ -288,9 +295,15 @@ const eliminarCarrera = async (req, res) => {
     }
 
     // Marcamos la carrera como inactiva en lugar de eliminarla
-    await prisma.carrera.update({
+    const carreraDesactivada = await prisma.carrera.update({
       where: { id_car: id },
       data: { est_car: false },
+    });
+
+    // 🔌 Notificar a todos los clientes sobre la carrera eliminada/desactivada
+    socketService.notifyCarreraChange("deleted", {
+      id_car: id,
+      est_car: false,
     });
 
     // Respondemos con un mensaje de éxito

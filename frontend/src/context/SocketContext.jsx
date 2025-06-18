@@ -28,6 +28,7 @@ export const SocketProvider = ({ children }) => {
   const [eventUpdates, setEventUpdates] = useState(null);
   const [inscriptionUpdates, setInscriptionUpdates] = useState(null);
   const [cuposUpdates, setCuposUpdates] = useState(null);
+  const [carreraUpdates, setCarreraUpdates] = useState(null);
   const [systemNotifications, setSystemNotifications] = useState([]);
 
   useEffect(() => {
@@ -137,6 +138,24 @@ export const SocketProvider = ({ children }) => {
         timestamp: data.timestamp,
         id: Date.now(),
       });
+    }); // Cambios en carreras
+    newSocket.on("carrera-change-hm", (data) => {
+      // Validar que los datos estén completos
+      if (!data || !data.action || !data.data) {
+        console.warn(
+          "SocketContext: Datos de carrera incompletos recibidos",
+          data
+        );
+        return;
+      }
+
+      console.log("📡 Cambio en carrera recibido:", data);
+      setCarreraUpdates({
+        action: data.action,
+        data: data.data,
+        timestamp: data.timestamp,
+        id: Date.now(),
+      });
     });
 
     // Notificaciones del sistema
@@ -169,6 +188,7 @@ export const SocketProvider = ({ children }) => {
   const clearEventUpdates = () => setEventUpdates(null);
   const clearInscriptionUpdates = () => setInscriptionUpdates(null);
   const clearCuposUpdates = () => setCuposUpdates(null);
+  const clearCarreraUpdates = () => setCarreraUpdates(null);
   const clearSystemNotifications = () => setSystemNotifications([]);
 
   const removeSystemNotification = (id) => {
@@ -193,12 +213,14 @@ export const SocketProvider = ({ children }) => {
     eventUpdates,
     inscriptionUpdates,
     cuposUpdates,
+    carreraUpdates,
     systemNotifications,
 
     // Funciones de limpieza
     clearEventUpdates,
     clearInscriptionUpdates,
     clearCuposUpdates,
+    clearCarreraUpdates,
     clearSystemNotifications,
     removeSystemNotification,
 
