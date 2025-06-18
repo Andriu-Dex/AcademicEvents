@@ -136,35 +136,109 @@ function Home() {
 
     onCarreraUpdate: (carreraUpdate) => {
       console.log("🏠 Home: Carrera actualizada", carreraUpdate);
+      console.log("🏠 Home: Datos de la carrera:", carreraUpdate.data);
+      console.log(
+        "🏠 Home: Estado de la carrera (est_car):",
+        carreraUpdate.data?.est_car
+      );
 
       // Actualizar la lista de carreras según la acción
       if (carreraUpdate.action === "created") {
-        // Agregar nueva carrera
-        setCarreras((prev) => [...prev, carreraUpdate.data]);
+        // Agregar nueva carrera solo si está activa
+        if (carreraUpdate.data.est_car) {
+          console.log("🏠 Home: Agregando nueva carrera activa");
+          setCarreras((prev) => [...prev, carreraUpdate.data]);
+          // Actualizar contador de estadísticas
+          setEstadisticasHome((prev) => ({
+            ...prev,
+            carreras: prev.carreras + 1,
+          }));
+        } else {
+          console.log(
+            "🏠 Home: Nueva carrera creada pero está inactiva, no se agrega al Home"
+          );
+        }
       } else if (carreraUpdate.action === "updated") {
-        // Actualizar carrera existente
-        setCarreras((prev) =>
-          prev.map((carrera) =>
-            carrera.id === carreraUpdate.data.id ? carreraUpdate.data : carrera
-          )
-        );
-      } else if (carreraUpdate.action === "deleted") {
-        // Eliminar carrera
-        setCarreras((prev) =>
-          prev.filter((carrera) => carrera.id !== carreraUpdate.data.id)
-        );
-      }
+        // Manejar actualización de carrera
+        const carreraActualizada = carreraUpdate.data;
 
-      // Actualizar estadísticas de carreras
-      setEstadisticasHome((prev) => ({
-        ...prev,
-        carreras:
-          carreraUpdate.action === "created"
-            ? prev.carreras + 1
-            : carreraUpdate.action === "deleted"
-            ? prev.carreras - 1
-            : prev.carreras,
-      }));
+        console.log(
+          "🏠 Home: Procesando actualización de carrera:",
+          carreraActualizada.nom_car
+        );
+
+        setCarreras((prev) => {
+          const carreraExiste = prev.find(
+            (c) => c.id_car === carreraActualizada.id_car
+          );
+          console.log(
+            "🏠 Home: ¿Carrera existe en lista actual?",
+            !!carreraExiste
+          );
+
+          if (carreraActualizada.est_car) {
+            // Carrera está activa
+            console.log("🏠 Home: Carrera está activa");
+            if (carreraExiste) {
+              // Actualizar carrera existente
+              console.log("🏠 Home: Actualizando carrera existente");
+              return prev.map((carrera) =>
+                carrera.id_car === carreraActualizada.id_car
+                  ? carreraActualizada
+                  : carrera
+              );
+            } else {
+              // Agregar carrera que se acaba de activar
+              console.log("🏠 Home: Agregando carrera recién activada");
+              setEstadisticasHome((prevStats) => ({
+                ...prevStats,
+                carreras: prevStats.carreras + 1,
+              }));
+              return [...prev, carreraActualizada];
+            }
+          } else {
+            // Carrera está inactiva
+            console.log("🏠 Home: Carrera está inactiva");
+            if (carreraExiste) {
+              // Remover carrera que se desactivó
+              console.log("🏠 Home: Removiendo carrera desactivada");
+              setEstadisticasHome((prevStats) => ({
+                ...prevStats,
+                carreras: prevStats.carreras - 1,
+              }));
+              return prev.filter(
+                (carrera) => carrera.id_car !== carreraActualizada.id_car
+              );
+            } else {
+              // La carrera ya no estaba en la lista
+              console.log("🏠 Home: Carrera inactiva no estaba en la lista");
+              return prev;
+            }
+          }
+        });
+      } else if (carreraUpdate.action === "deleted") {
+        // Manejar desactivación temporal (marcada como inactiva)
+        console.log("🏠 Home: Removiendo carrera marcada como eliminada");
+        setCarreras((prev) =>
+          prev.filter((carrera) => carrera.id_car !== carreraUpdate.data.id_car)
+        );
+        // Actualizar contador de estadísticas
+        setEstadisticasHome((prev) => ({
+          ...prev,
+          carreras: prev.carreras - 1,
+        }));
+      } else if (carreraUpdate.action === "permanentlyDeleted") {
+        // Manejar eliminación permanente
+        console.log("🏠 Home: Removiendo carrera eliminada permanentemente");
+        setCarreras((prev) =>
+          prev.filter((carrera) => carrera.id_car !== carreraUpdate.data.id_car)
+        );
+        // Actualizar contador de estadísticas
+        setEstadisticasHome((prev) => ({
+          ...prev,
+          carreras: prev.carreras - 1,
+        }));
+      }
     },
 
     onSystemNotification: (notification) => {
@@ -195,9 +269,13 @@ function Home() {
   useEffect(() => {
     const cargarDatos = async () => {
       try {
-        // Cargar carreras
+        // Cargar carreras activas únicamente
         const resCarreras = await axiosInstance.get("/carreras");
-        setCarreras(resCarreras.data);
+        // Filtrar solo carreras activas como medida de seguridad adicional
+        const carrerasActivas = resCarreras.data.filter(
+          (carrera) => carrera.est_car
+        );
+        setCarreras(carrerasActivas);
 
         // Cargar información MVA
         const resMVA = await axiosInstance.get("/mva");

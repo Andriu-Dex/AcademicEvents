@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axiosInstance from "../../api/axiosConfig";
 import { toast } from "react-toastify";
 import { Dialog } from "@headlessui/react";
+import { useSocket } from "../../context/SocketContext";
 import "./styles/AdminCarreras.css";
 import "./styles/modalStyles.css";
 import {
@@ -14,7 +15,89 @@ import {
   ChevronDown,
   ChevronUp,
   Plus,
+  AlertTriangle,
+  Trash2,
+  CheckCircle,
+  XCircle,
 } from "lucide-react";
+
+// Clase para manejar las carreras
+class CarreraManager {
+  constructor() {
+    this.axiosInstance = axiosInstance;
+  }
+
+  async obtenerTodasLasCarreras() {
+    try {
+      const res = await this.axiosInstance.get("/carreras/todas");
+      return res.data.map((carrera) => ({
+        ...carrera,
+        dur_sem_car: carrera.dur_sem_car || 0,
+      }));
+    } catch (error) {
+      console.error("Error al cargar carreras:", error);
+      throw error;
+    }
+  }
+
+  async crearCarrera(formData) {
+    try {
+      const response = await this.axiosInstance.post("/carreras", {
+        ...formData,
+        dur_sem_car: parseInt(formData.dur_sem_car),
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error al crear carrera:", error);
+      throw error;
+    }
+  }
+
+  async actualizarCarrera(id, editFormData) {
+    try {
+      const response = await this.axiosInstance.put(`/carreras/${id}`, {
+        ...editFormData,
+        dur_sem_car: parseInt(editFormData.dur_sem_car),
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error al actualizar carrera:", error);
+      throw error;
+    }
+  }
+
+  async desactivarCarrera(id) {
+    try {
+      const response = await this.axiosInstance.delete(`/carreras/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error("Error al desactivar carrera:", error);
+      throw error;
+    }
+  }
+
+  async activarCarrera(id) {
+    try {
+      const response = await this.axiosInstance.put(`/carreras/${id}/activar`);
+      return response.data;
+    } catch (error) {
+      console.error("Error al activar carrera:", error);
+      throw error;
+    }
+  }
+
+  async eliminarCarreraPermanentemente(id) {
+    try {
+      const response = await this.axiosInstance.delete(
+        `/carreras/${id}/permanente`
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error al eliminar carrera permanentemente:", error);
+      throw error;
+    }
+  }
+}
 
 const AdminCarreras = () => {
   const [carreras, setCarreras] = useState([]);
@@ -35,11 +118,26 @@ const AdminCarreras = () => {
     abierto: false,
     id: null,
   });
+  const [modalEliminarPermanente, setModalEliminarPermanente] = useState({
+    abierto: false,
+    id: null,
+  });
   const [isFormExpanded, setIsFormExpanded] = useState(false);
   const [modalEdicion, setModalEdicion] = useState({
     abierto: false,
     carrera: null,
   });
+
+  // Hook para socket y actualizaciones en tiempo real
+  const { carreraUpdates, clearCarreraUpdates, isConnected } = useSocket();
+
+  console.log("🔌 [AdminCarreras] Estado del socket:", {
+    isConnected,
+    carreraUpdates,
+  });
+
+  // Instancia de la clase CarreraManager
+  const carreraManager = new CarreraManager();
 
   // Iconos disponibles para carreras
   const iconOptions = [
@@ -53,17 +151,13 @@ const AdminCarreras = () => {
 
   // Modalidades disponibles
   const modalidades = ["PRESENCIAL", "VIRTUAL", "SEMIPRESENCIAL"];
+
   const cargarCarreras = async () => {
     try {
-      const res = await axiosInstance.get("/carreras");
-      // Asegúrate de que cada carrera tenga todos los campos necesarios
-      const carrerasConValidacion = res.data.map((carrera) => ({
-        ...carrera,
-        dur_sem_car: carrera.dur_sem_car || 0, // Proporciona un valor predeterminado si es nulo o indefinido
-      }));
+      const carrerasConValidacion =
+        await carreraManager.obtenerTodasLasCarreras();
       setCarreras(carrerasConValidacion);
     } catch (error) {
-      console.error("Error al cargar carreras:", error);
       toast.error("Error al cargar las carreras");
     }
   };
@@ -120,12 +214,7 @@ const AdminCarreras = () => {
     if (!formData.id_fac_per) return toast.warning("Seleccione una facultad");
 
     try {
-
-      await axiosInstance.post("/carreras", {
-        ...formData,
-        dur_sem_car: parseInt(formData.dur_sem_car),
-      });
-
+      await carreraManager.crearCarrera(formData);
       toast.success("Carrera creada exitosamente");
       setFormData({
         nom_car: "",
@@ -136,9 +225,8 @@ const AdminCarreras = () => {
         id_fac_per: formData.id_fac_per,
         id_coo_per: "",
       });
-      cargarCarreras();
+      // No llamamos cargarCarreras() aquí porque el socket se encargará de la actualización
     } catch (error) {
-      console.error("Error al crear carrera:", error);
       toast.error(
         "Error al crear carrera: " +
           (error.response?.data?.msg || error.message)
@@ -146,16 +234,24 @@ const AdminCarreras = () => {
     }
   };
 
-  const confirmarEliminar = (id) => {
-    setModalEliminar({ abierto: true, id });
+  const confirmarDesactivar = (id, estaActiva) => {
+    if (estaActiva) {
+      setModalEliminar({ abierto: true, id });
+    } else {
+      activarCarrera(id);
+    }
   };
 
-  const eliminarCarrera = async () => {
+  const confirmarEliminarPermanente = (id) => {
+    setModalEliminarPermanente({ abierto: true, id });
+  };
+
+  const desactivarCarrera = async () => {
     const id = modalEliminar.id;
     try {
-      await axiosInstance.delete(`/carreras/${id}`);
+      await carreraManager.desactivarCarrera(id);
       toast.success("Carrera desactivada correctamente");
-      cargarCarreras();
+      // No llamamos cargarCarreras() aquí porque el socket se encargará de la actualización
     } catch (error) {
       console.error(error);
       toast.error("Error al desactivar la carrera");
@@ -163,14 +259,37 @@ const AdminCarreras = () => {
       setModalEliminar({ abierto: false, id: null });
     }
   };
-  const iniciarEdicion = (carrera) => {
-    console.log(
-      "Duración de la carrera:",
-      carrera.dur_sem_car,
-      "Tipo:",
-      typeof carrera.dur_sem_car
-    );
 
+  const activarCarrera = async (id) => {
+    try {
+      await carreraManager.activarCarrera(id);
+      toast.success("Carrera activada correctamente");
+      // No llamamos cargarCarreras() aquí porque el socket se encargará de la actualización
+    } catch (error) {
+      console.error(error);
+      toast.error("Error al activar la carrera");
+    }
+  };
+
+  const eliminarCarreraPermanente = async () => {
+    const id = modalEliminarPermanente.id;
+    try {
+      await carreraManager.eliminarCarreraPermanentemente(id);
+      toast.success("Carrera eliminada permanentemente");
+      // No llamamos cargarCarreras() aquí porque el socket se encargará de la actualización
+    } catch (error) {
+      console.error(error);
+      if (error.response?.data?.msg) {
+        toast.error(error.response.data.msg);
+      } else {
+        toast.error("Error al eliminar la carrera permanentemente");
+      }
+    } finally {
+      setModalEliminarPermanente({ abierto: false, id: null });
+    }
+  };
+
+  const iniciarEdicion = (carrera) => {
     try {
       // Validamos y verificamos los datos antes de asignarlos
       const duracionStr =
@@ -192,16 +311,12 @@ const AdminCarreras = () => {
         abierto: true,
         carrera: carrera,
       });
-
-      console.log("Modal de edición debería estar abierto ahora:", {
-        abierto: true,
-        carrera,
-      });
     } catch (error) {
       console.error("Error al iniciar la edición:", error);
       toast.error("Error al abrir el formulario de edición");
     }
   };
+
   const actualizarCarrera = async (id) => {
     if (!editFormData.nom_car.trim())
       return toast.warning("El nombre no puede estar vacío");
@@ -211,24 +326,11 @@ const AdminCarreras = () => {
       return toast.warning("La duración debe ser un número válido");
 
     try {
-      console.log("Enviando datos de actualización:", {
-        ...editFormData,
-        dur_sem_car: parseInt(editFormData.dur_sem_car),
-      });
-
-      const response = await axiosInstance.put(`/carreras/${id}`, {
-        ...editFormData,
-        dur_sem_car: parseInt(editFormData.dur_sem_car),
-      });
-
+      await carreraManager.actualizarCarrera(id, editFormData);
       toast.success("Carrera actualizada");
       setModalEdicion({ abierto: false, carrera: null });
-      cargarCarreras();
+      // No llamamos cargarCarreras() aquí porque el socket se encargará de la actualización
     } catch (error) {
-      console.error(
-        "Error detallado al actualizar carrera:",
-        error.response?.data || error
-      );
       toast.error(
         `Error al actualizar carrera: ${
           error.response?.data?.msg || error.message
@@ -238,10 +340,122 @@ const AdminCarreras = () => {
   };
 
   useEffect(() => {
+    console.log(
+      "🚀 [AdminCarreras] Componente montado, iniciando carga de datos"
+    );
     cargarCarreras();
     cargarFacultades();
     cargarCoordinadores();
   }, []);
+
+  // Log cada vez que cambia el estado de conexión del socket
+  useEffect(() => {
+    console.log(
+      "🔌 [AdminCarreras] Estado de conexión del socket cambió:",
+      isConnected
+    );
+  }, [isConnected]);
+
+  // useEffect para manejar actualizaciones de socket en tiempo real
+  useEffect(() => {
+    console.log(
+      "🔌 [AdminCarreras] useEffect de socket ejecutado, carreraUpdates:",
+      carreraUpdates
+    );
+
+    if (carreraUpdates) {
+      console.log(
+        "📡 [AdminCarreras] Procesando actualización de carrera:",
+        carreraUpdates
+      );
+
+      const { action, data } = carreraUpdates;
+
+      switch (action) {
+        case "created":
+          console.log("🆕 [AdminCarreras] Añadiendo nueva carrera:", data);
+          // Añadir nueva carrera a la lista
+          setCarreras((prev) => {
+            const carreraFormateada = {
+              ...data,
+              dur_sem_car: data.dur_sem_car || 0,
+            };
+            const nuevaLista = [...prev, carreraFormateada];
+            console.log(
+              "📝 [AdminCarreras] Lista actualizada después de crear:",
+              nuevaLista
+            );
+            return nuevaLista;
+          });
+          break;
+
+        case "updated":
+          console.log("🔄 [AdminCarreras] Actualizando carrera:", data);
+          // Actualizar carrera existente (incluyendo cambios de estado activo/inactivo)
+          setCarreras((prev) => {
+            const nuevaLista = prev.map((carrera) =>
+              carrera.id_car === data.id_car
+                ? { ...carrera, ...data, dur_sem_car: data.dur_sem_car || 0 }
+                : carrera
+            );
+            console.log(
+              "📝 [AdminCarreras] Lista actualizada después de update:",
+              nuevaLista
+            );
+            return nuevaLista;
+          });
+          break;
+
+        case "deleted":
+          console.log(
+            "❌ [AdminCarreras] Marcando carrera como inactiva:",
+            data
+          );
+          // Para compatibilidad hacia atrás
+          setCarreras((prev) => {
+            const nuevaLista = prev.map((carrera) =>
+              carrera.id_car === data.id_car
+                ? { ...carrera, est_car: false }
+                : carrera
+            );
+            console.log(
+              "📝 [AdminCarreras] Lista actualizada después de delete:",
+              nuevaLista
+            );
+            return nuevaLista;
+          });
+          break;
+
+        case "permanentlyDeleted":
+          console.log(
+            "🗑️ [AdminCarreras] Eliminando carrera permanentemente:",
+            data
+          );
+          // Eliminar carrera de la lista permanentemente
+          setCarreras((prev) => {
+            const nuevaLista = prev.filter(
+              (carrera) => carrera.id_car !== data.id_car
+            );
+            console.log(
+              "📝 [AdminCarreras] Lista actualizada después de eliminación permanente:",
+              nuevaLista
+            );
+            return nuevaLista;
+          });
+          break;
+
+        default:
+          console.warn(
+            "⚠️ [AdminCarreras] Acción de carrera no reconocida:",
+            action
+          );
+      }
+
+      // Limpiar la actualización para evitar procesamientos duplicados
+      console.log("🧹 [AdminCarreras] Limpiando carreraUpdates");
+      clearCarreraUpdates();
+    }
+  }, [carreraUpdates, clearCarreraUpdates]);
 
   // Función para renderizar el icono según el valor
   const renderIcono = (iconoValue) => {
@@ -250,10 +464,10 @@ const AdminCarreras = () => {
   };
 
   return (
-    <div className="admincarreras-container">
-      <h2 className="admincarreras-title">Gestión de Carreras</h2>
+    <div className="admincarreras-container-ac">
+      <h2 className="admincarreras-title-ac">Gestión de Carreras</h2>
       <button
-        className="form-toggle-button"
+        className="form-toggle-button-ac"
         onClick={() => setIsFormExpanded(!isFormExpanded)}
       >
         {isFormExpanded ? (
@@ -266,53 +480,57 @@ const AdminCarreras = () => {
           </>
         )}
       </button>
-      <div className={`admincarreras-form ${isFormExpanded ? "expanded" : ""}`}>
+      <div
+        className={`admincarreras-form-ac ${
+          isFormExpanded ? "expanded-ac" : ""
+        }`}
+      >
         <h3>Nueva Carrera</h3>
-        <div className="form-group">
+        <div className="form-group-ac">
           <label htmlFor="nom_car">Nombre:</label>
           <input
             type="text"
             id="nom_car"
             name="nom_car"
             placeholder="Nombre de la carrera"
-            className="admincarreras-input"
+            className="admincarreras-input-ac"
             value={formData.nom_car}
             onChange={handleInputChange}
           />
         </div>
 
-        <div className="form-group">
+        <div className="form-group-ac">
           <label htmlFor="des_car">Descripción:</label>
           <textarea
             id="des_car"
             name="des_car"
             placeholder="Descripción de la carrera"
-            className="admincarreras-textarea"
+            className="admincarreras-textarea-ac"
             value={formData.des_car}
             onChange={handleInputChange}
           />
         </div>
 
-        <div className="form-group">
+        <div className="form-group-ac">
           <label htmlFor="dur_sem_car">Duración (semestres):</label>
           <input
             type="number"
             id="dur_sem_car"
             name="dur_sem_car"
             placeholder="Semestres"
-            className="admincarreras-input"
+            className="admincarreras-input-ac"
             value={formData.dur_sem_car}
             onChange={handleInputChange}
             min="1"
           />
         </div>
 
-        <div className="form-group">
+        <div className="form-group-ac">
           <label htmlFor="mod_car">Modalidad:</label>
           <select
             id="mod_car"
             name="mod_car"
-            className="admincarreras-select"
+            className="admincarreras-select-ac"
             value={formData.mod_car}
             onChange={handleInputChange}
           >
@@ -324,13 +542,13 @@ const AdminCarreras = () => {
           </select>
         </div>
 
-        <div className="form-row">
-          <div className="form-group">
+        <div className="form-row-ac">
+          <div className="form-group-ac">
             <label htmlFor="ico_car">Icono:</label>
             <select
               id="ico_car"
               name="ico_car"
-              className="admincarreras-select"
+              className="admincarreras-select-ac"
               value={formData.ico_car}
               onChange={handleInputChange}
             >
@@ -342,12 +560,12 @@ const AdminCarreras = () => {
             </select>
           </div>
 
-          <div className="form-group">
+          <div className="form-group-ac">
             <label htmlFor="id_fac_per">Facultad:</label>
             <select
               id="id_fac_per"
               name="id_fac_per"
-              className="admincarreras-select"
+              className="admincarreras-select-ac"
               value={formData.id_fac_per}
               onChange={handleInputChange}
             >
@@ -361,12 +579,12 @@ const AdminCarreras = () => {
           </div>
         </div>
 
-        <div className="form-group">
+        <div className="form-group-ac">
           <label htmlFor="id_coo_per">Coordinador (opcional):</label>
           <select
             id="id_coo_per"
             name="id_coo_per"
-            className="admincarreras-select"
+            className="admincarreras-select-ac"
             value={formData.id_coo_per}
             onChange={handleInputChange}
           >
@@ -379,45 +597,54 @@ const AdminCarreras = () => {
           </select>
         </div>
 
-        <div className="crear-carrera">
-          <button onClick={crearCarrera} className="btn-crear-ad">
+        <div className="crear-carrera-ac">
+          <button onClick={crearCarrera} className="btn-crear-ad-ac">
             Crear Carrera
           </button>
         </div>
       </div>
-      <h3 className="admincarreras-subtitle">Carreras Existentes</h3>{" "}
-      <div className="admincarreras-lista-container">
+      <h3 className="admincarreras-subtitle-ac">Carreras Existentes</h3>{" "}
+      <div className="admincarreras-lista-container-ac">
         {carreras.length === 0 ? (
-          <p className="no-carreras">No hay carreras registradas</p>
+          <p className="no-carreras-ac">No hay carreras registradas</p>
         ) : (
-          <ul className="admincarreras-lista">
+          <ul className="admincarreras-lista-ac">
             {carreras.map((carrera) => (
-              <li key={carrera.id_car} className="admincarreras-item">
-                <div className="carrera-display">
-                  <div className="carrera-header">
-                    <div className="carrera-icon">
+              <li key={carrera.id_car} className="admincarreras-item-ac">
+                <div
+                  className={`carrera-display-ac ${
+                    !carrera.est_car ? "carrera-inactiva-ac" : ""
+                  }`}
+                >
+                  <div className="carrera-header-ac">
+                    <div className="carrera-icon-ac">
                       {renderIcono(carrera.ico_car)}
                     </div>
-                    <h4 className="carrera-nombre">{carrera.nom_car}</h4>
+                    <h4 className="carrera-nombre-ac">{carrera.nom_car}</h4>
+                    {!carrera.est_car && (
+                      <span className="carrera-badge-inactiva-ac">
+                        <AlertTriangle size={16} /> INACTIVA
+                      </span>
+                    )}
                   </div>
 
-                  <p className="carrera-descripcion">{carrera.des_car}</p>
+                  <p className="carrera-descripcion-ac">{carrera.des_car}</p>
 
-                  <div className="carrera-detalles-duracion">
+                  <div className="carrera-detalles-duracion-ac">
                     <span>Duración: {carrera.dur_sem_car} semestres</span>
                   </div>
 
-                  <div className="carrera-detalles-modalidad">
+                  <div className="carrera-detalles-modalidad-ac">
                     <span>Modalidad: {carrera.mod_car}</span>
                   </div>
 
-                  <div className="carrera-facultad">
+                  <div className="carrera-facultad-ac">
                     Facultad:{" "}
                     {facultades.find((f) => f.id_fac === carrera.id_fac_per)
                       ?.nom_fac || "No asignada"}
                   </div>
 
-                  <div className="carrera-coordinador">
+                  <div className="carrera-coordinador-ac">
                     Coordinador:{" "}
                     {carrera.id_coo_per
                       ? coordinadores.find(
@@ -430,18 +657,38 @@ const AdminCarreras = () => {
                       : "No asignado"}
                   </div>
 
-                  <div className="carrera-buttons">
+                  <div className="carrera-buttons-ac">
                     <button
                       onClick={() => iniciarEdicion(carrera)}
-                      className="btn-editar"
+                      className="btn-editar-ac"
                     >
                       Editar
                     </button>
                     <button
-                      onClick={() => confirmarEliminar(carrera.id_car)}
-                      className="btn-eliminar"
+                      onClick={() =>
+                        confirmarDesactivar(carrera.id_car, carrera.est_car)
+                      }
+                      className={
+                        carrera.est_car ? "btn-desactivar-ac" : "btn-activar-ac"
+                      }
                     >
-                      Desactivar
+                      {carrera.est_car ? (
+                        <>
+                          <XCircle size={16} /> Desactivar
+                        </>
+                      ) : (
+                        <>
+                          <CheckCircle size={16} /> Activar
+                        </>
+                      )}
+                    </button>
+                    <button
+                      onClick={() =>
+                        confirmarEliminarPermanente(carrera.id_car)
+                      }
+                      className="btn-eliminar-permanente-ac"
+                    >
+                      <Trash2 size={16} /> Eliminar
                     </button>
                   </div>
                 </div>
@@ -454,56 +701,56 @@ const AdminCarreras = () => {
       <Dialog
         open={modalEdicion.abierto}
         onClose={() => setModalEdicion({ abierto: false, carrera: null })}
-        className="modal-container"
+        className="modal-container-ac"
       >
-        <div className="modal-overlay">
-          <Dialog.Panel className="edicion-modal-content">
-            <Dialog.Title className="edicion-modal-title">
+        <div className="modal-overlay-ac">
+          <Dialog.Panel className="edicion-modal-content-ac">
+            <Dialog.Title className="edicion-modal-title-ac">
               Editar Carrera
             </Dialog.Title>
 
             {modalEdicion.carrera && (
               <>
-                <div className="form-group">
+                <div className="form-group-ac">
                   <label>Nombre:</label>
                   <input
                     type="text"
                     name="nom_car"
                     value={editFormData.nom_car || ""}
                     onChange={handleEditInputChange}
-                    className="admincarreras-input"
+                    className="admincarreras-input-ac"
                   />
                 </div>
 
-                <div className="form-group">
+                <div className="form-group-ac">
                   <label>Descripción:</label>
                   <textarea
                     name="des_car"
                     value={editFormData.des_car || ""}
                     onChange={handleEditInputChange}
-                    className="admincarreras-textarea"
+                    className="admincarreras-textarea-ac"
                   />
                 </div>
 
-                <div className="form-group">
+                <div className="form-group-ac">
                   <label>Duración (semestres):</label>
                   <input
                     type="number"
                     name="dur_sem_car"
                     value={editFormData.dur_sem_car || ""}
                     onChange={handleEditInputChange}
-                    className="admincarreras-input"
+                    className="admincarreras-input-ac"
                     min="1"
                   />
                 </div>
 
-                <div className="form-group">
+                <div className="form-group-ac">
                   <label>Modalidad:</label>
                   <select
                     name="mod_car"
                     value={editFormData.mod_car || "PRESENCIAL"}
                     onChange={handleEditInputChange}
-                    className="admincarreras-select"
+                    className="admincarreras-select-ac"
                   >
                     {modalidades.map((modalidad) => (
                       <option key={modalidad} value={modalidad}>
@@ -513,14 +760,14 @@ const AdminCarreras = () => {
                   </select>
                 </div>
 
-                <div className="form-row">
-                  <div className="form-group">
+                <div className="form-row-ac">
+                  <div className="form-group-ac">
                     <label>Icono:</label>
                     <select
                       name="ico_car"
                       value={editFormData.ico_car || "laptop"}
                       onChange={handleEditInputChange}
-                      className="admincarreras-select"
+                      className="admincarreras-select-ac"
                     >
                       {iconOptions.map((option) => (
                         <option key={option.value} value={option.value}>
@@ -530,13 +777,13 @@ const AdminCarreras = () => {
                     </select>
                   </div>
 
-                  <div className="form-group">
+                  <div className="form-group-ac">
                     <label>Facultad:</label>
                     <select
                       name="id_fac_per"
                       value={editFormData.id_fac_per || ""}
                       onChange={handleEditInputChange}
-                      className="admincarreras-select"
+                      className="admincarreras-select-ac"
                     >
                       {facultades.map((facultad) => (
                         <option key={facultad.id_fac} value={facultad.id_fac}>
@@ -547,13 +794,13 @@ const AdminCarreras = () => {
                   </div>
                 </div>
 
-                <div className="form-group">
+                <div className="form-group-ac">
                   <label>Coordinador:</label>
                   <select
                     name="id_coo_per"
                     value={editFormData.id_coo_per || ""}
                     onChange={handleEditInputChange}
-                    className="admincarreras-select"
+                    className="admincarreras-select-ac"
                   >
                     <option value="">Sin coordinador asignado</option>
                     {coordinadores.map((coordinador) => (
@@ -567,12 +814,12 @@ const AdminCarreras = () => {
                   </select>
                 </div>
 
-                <div className="edicion-buttons">
+                <div className="edicion-buttons-ac">
                   <button
                     onClick={() =>
                       actualizarCarrera(modalEdicion.carrera.id_car)
                     }
-                    className="btn-guardar"
+                    className="btn-guardar-ac"
                   >
                     Guardar Cambios
                   </button>
@@ -590,32 +837,77 @@ const AdminCarreras = () => {
           </Dialog.Panel>
         </div>
       </Dialog>
-      {/* Modal de confirmación para eliminar */}
+      {/* Modal de confirmación para desactivar */}
       {modalEliminar.abierto && (
         <Dialog
           open={modalEliminar.abierto}
           onClose={() => setModalEliminar({ abierto: false, id: null })}
-          className="modal-container"
+          className="modal-container-ac"
         >
-          <div className="modal-overlay">
-            <Dialog.Panel className="modal-content">
-              <Dialog.Title className="modal-title">
+          <div className="modal-overlay-ac">
+            <Dialog.Panel className="modal-content-ac">
+              <Dialog.Title className="modal-title-ac">
                 Confirmar desactivación
               </Dialog.Title>
-              <p className="modal-message">
-                ¿Estás seguro de que deseas desactivar esta carrera? Esto no
-                eliminará la carrera permanentemente, solo la marcará como
-                inactiva.
+              <p className="modal-message-ac">
+                ¿Estás seguro de que deseas desactivar esta carrera? Esto la
+                marcará como inactiva y no se mostrará en el Home.
               </p>
-              <div className="modal-buttons">
+              <div className="modal-buttons-ac">
                 <button
                   onClick={() => setModalEliminar({ abierto: false, id: null })}
-                  className="btn-cancelar"
+                  className="btn-cancelar-ac"
                 >
                   Cancelar
                 </button>
-                <button onClick={eliminarCarrera} className="btn-confirmar">
+                <button
+                  onClick={desactivarCarrera}
+                  className="btn-confirmar-ac"
+                >
                   Confirmar
+                </button>
+              </div>
+            </Dialog.Panel>
+          </div>
+        </Dialog>
+      )}
+      {/* Modal de confirmación para eliminar permanentemente */}
+      {modalEliminarPermanente.abierto && (
+        <Dialog
+          open={modalEliminarPermanente.abierto}
+          onClose={() =>
+            setModalEliminarPermanente({ abierto: false, id: null })
+          }
+          className="modal-container-ac"
+        >
+          <div className="modal-overlay-ac">
+            <Dialog.Panel className="modal-content-ac">
+              <Dialog.Title className="modal-title-eliminacion-ac">
+                Confirmar eliminación permanente
+              </Dialog.Title>
+              <div className="modal-warning-ac">
+                <AlertTriangle size={84} color="#dc2626" />
+                <p className="modal-message-ac">
+                  ¿Estás seguro de que deseas eliminar permanentemente esta
+                  carrera? Esta acción no se puede deshacer y la carrera se
+                  eliminará de la base de datos.
+                </p>
+                <AlertTriangle size={84} color="#dc2626" />
+              </div>
+              <div className="modal-buttons-ac">
+                <button
+                  onClick={() =>
+                    setModalEliminarPermanente({ abierto: false, id: null })
+                  }
+                  className="btn-cancelar-ac"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={eliminarCarreraPermanente}
+                  className="btn-eliminar-confirmar-ac"
+                >
+                  Eliminar permanentemente
                 </button>
               </div>
             </Dialog.Panel>

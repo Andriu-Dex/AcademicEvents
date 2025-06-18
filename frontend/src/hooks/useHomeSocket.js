@@ -112,7 +112,11 @@ export const useHomeSocket = (options = {}) => {
 
   // Manejar actualizaciones de carreras
   useEffect(() => {
-    if (carreraUpdates && carreraUpdates.id && carreraUpdates.data) {
+    if (carreraUpdates && carreraUpdates.data) {
+      console.log(
+        "🏠 useHomeSocket: Procesando actualización de carrera:",
+        carreraUpdates
+      );
       setHasNewUpdates(true);
       setLastUpdateTime(new Date());
 
