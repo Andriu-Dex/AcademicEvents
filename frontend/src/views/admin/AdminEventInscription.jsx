@@ -4,6 +4,7 @@ import axios from "axios";
 import { BadgeCheck, Clock, Ban, Eye, Download, Loader } from "lucide-react";
 import { toast } from "react-toastify";
 import InscripcionService from "../../services/InscripcionService";
+import ZoomableImage from "../../components/ZoomableImage";
 import "./styles/AdminEventInscription.css";
 
 const colores = {
@@ -32,6 +33,7 @@ const AdminEventInscription = () => {
   const [enviandoFinalizacion, setEnviandoFinalizacion] = useState(false);
   const [eventoInfo, setEventoInfo] = useState(null);
   const [corrigiendoCupos, setCorrigiendoCupos] = useState(false);
+  const [comprobanteSeleccionado, setComprobanteSeleccionado] = useState(null);
 
   // Función para determinar el estado final al finalizar una inscripción
   const determinarEstadoFinal = (asistencia, notaFinal, porcentajeMinimo) => {
@@ -432,17 +434,15 @@ const AdminEventInscription = () => {
 
                 {inscripcion.comprobante && (
                   <div className="mt-2">
-                    <a
-                      href={`${import.meta.env.VITE_API_URL}/uploads/${
-                        inscripcion.comprobante
-                      }`}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <button
+                      onClick={() =>
+                        setComprobanteSeleccionado(inscripcion.comprobante)
+                      }
                       className="link-comprobante"
                     >
                       <Eye size={14} />
                       Ver comprobante
-                    </a>
+                    </button>
                   </div>
                 )}
 
@@ -639,6 +639,55 @@ const AdminEventInscription = () => {
               >
                 {enviandoFinalizacion ? "Enviando..." : "Finalizar"}
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal para mostrar el comprobante con zoom */}
+      {comprobanteSeleccionado && (
+        <div className="comprobante-modal-overlay-aei">
+          <div className="comprobante-modal-content-aei">
+            <button
+              className="cerrar-modal-aei"
+              onClick={() => setComprobanteSeleccionado(null)}
+            >
+              ×
+            </button>
+            <h3 className="comprobante-modal-title-aei">Comprobante de Pago</h3>
+            <div className="comprobante-contenedor-aei">
+              {comprobanteSeleccionado.startsWith("http") ? (
+                <ZoomableImage
+                  src={comprobanteSeleccionado}
+                  alt="Comprobante de pago"
+                  className="comprobante-zoom-aei"
+                />
+              ) : (
+                <ZoomableImage
+                  src={`${
+                    import.meta.env.VITE_API_URL
+                  }/uploads/${comprobanteSeleccionado}`}
+                  alt="Comprobante de pago"
+                  className="comprobante-zoom-aei"
+                />
+              )}
+              <div className="comprobante-instrucciones-aei">
+                Pase el cursor sobre la imagen para hacer zoom
+              </div>
+              <a
+                href={
+                  comprobanteSeleccionado.startsWith("http")
+                    ? comprobanteSeleccionado
+                    : `${
+                        import.meta.env.VITE_API_URL
+                      }/uploads/${comprobanteSeleccionado}`
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+                className="abrir-comprobante-aei"
+              >
+                Abrir en nueva ventana
+              </a>
             </div>
           </div>
         </div>

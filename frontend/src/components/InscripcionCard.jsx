@@ -17,6 +17,7 @@ import {
 import { useState } from "react";
 import axiosInstance from "../api/axiosConfig";
 import { toast } from "react-toastify";
+import ZoomableImage from "./ZoomableImage";
 import "./styles/InscripcionCard.css";
 import "./styles/InscripcionCard-estados.css";
 
@@ -220,13 +221,13 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
                     {mostrarComprobante && (
                       <div className="doc-preview">
                         {inscripcion.comprobante.startsWith("http") ? (
-                          <img
+                          <ZoomableImage
                             src={inscripcion.comprobante}
                             alt="Comprobante de pago"
                             className="comprobante-imagen"
                           />
                         ) : (
-                          <img
+                          <ZoomableImage
                             src={`${import.meta.env.VITE_API_URL}/uploads/${
                               inscripcion.comprobante
                             }`}

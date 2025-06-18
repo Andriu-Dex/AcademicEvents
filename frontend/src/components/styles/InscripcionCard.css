@@ -252,12 +252,12 @@
 }
 
 .comprobante-imagen {
-  max-width: 100%;
+  width: 100%;
   max-height: 350px;
   border-radius: 0.4rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  object-fit: contain;
   margin-bottom: 0.8rem;
+  position: relative;
 }
 
 .abrir-nueva-ventana {
