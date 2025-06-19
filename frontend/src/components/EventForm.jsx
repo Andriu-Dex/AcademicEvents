@@ -14,7 +14,9 @@ import {
   BookOpen,
   DollarSign,
   GraduationCap,
-  Star,
+  ListChecks,
+  Percent,
+  NotepadText,
   Target,
   Save,
   X,
@@ -656,7 +658,7 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
             <div className="form-group">
               <label>Porcentaje Mínimo de Asistencia % *</label>
               <div className="input-with-icon">
-                <Star size={18} />{" "}
+                <Percent size={18} />{" "}
                 <input
                   type="number"
                   name="por_min_asi_eve"
@@ -710,7 +712,8 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
               <div className="form-group">
                 <label>Nota Mínima para Aprobar *</label>
                 <div className="input-with-icon">
-                  <Star size={18} />{" "}
+                  {/* <NotepadText size={18} />{" "} */}
+                  <ListChecks size={18} />{" "}
                   <input
                     type="number"
                     name="not_min_cur"
