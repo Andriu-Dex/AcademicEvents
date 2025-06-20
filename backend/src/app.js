@@ -47,6 +47,16 @@ setupDirectories();
 app.use(cors()); // Habilita CORS para todas las rutas
 app.use(express.json()); // Habilita el parseo de JSON en las peticiones
 
+// Middleware de logging para debugging
+app.use((req, res, next) => {
+  console.log(`🔍 [${new Date().toISOString()}] ${req.method} ${req.url}`);
+  console.log(
+    `📋 Headers:`,
+    req.headers.authorization ? "TOKEN PRESENT" : "NO TOKEN"
+  );
+  next();
+});
+
 // Servir archivos subidos (comprobantes, PDF, etc.)
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
@@ -62,6 +72,15 @@ app.get("/", (req, res) => {
 // Rutas no protegidas
 const authRoutes = require("./routes/auth.routes");
 app.use("/api", authRoutes);
+
+// Rutas de perfil de usuario
+const perfilRoutes = require("./routes/perfil.routes");
+app.use("/api", perfilRoutes);
+console.log("✅ Rutas de perfil registradas en /api");
+
+// Rutas de gestión de usuarios (solo admins)
+const adminRoutes = require("./routes/admin.routes");
+app.use("/api/admin", adminRoutes);
 
 // Rutas de recuperación de contraseña
 const passwordRecoveryRoutes = require("./routes/password-recovery.routes");
@@ -86,25 +105,17 @@ app.use("/api", protectedRoutes);
 const eventoRoutes = require("./routes/evento.routes");
 app.use("/api", eventoRoutes);
 
+// Rutas de gestión de facultades
+const facultadRoutes = require("./routes/facultad.routes");
+app.use("/api", facultadRoutes);
+
 // Rutas para generación y descarga de certificados
 const certificadoRoutes = require("./routes/certificado.routes");
 app.use("/api", certificadoRoutes);
 
-// Rutas de gestión de usuarios (solo admins)
-const adminRoutes = require("./routes/admin.routes");
-app.use("/api/admin", adminRoutes);
-
-// Rutas de gestión de inscripciones para eventos (solo admins)
-const inscripcionRoutes = require("./routes/inscripcion.routes");
-app.use("/api/inscripciones", inscripcionRoutes);
-
 // Rutas de gestión de carreras
 const carreraRoutes = require("./routes/carrera.routes");
 app.use("/api", carreraRoutes);
-
-// Rutas de gestión de facultades
-const facultadRoutes = require("./routes/facultad.routes");
-app.use("/api", facultadRoutes);
 
 // Rutas de gestión de coordinadores
 const coordinadorRoutes = require("./routes/coordinador.routes");
@@ -121,10 +132,6 @@ app.use("/api", universidadRoutes);
 const estadisticasRoutes = require("./routes/estadisticas.routes");
 app.use("/api/estadisticas", estadisticasRoutes);
 
-// Rutas de perfil de usuario
-const perfilRoutes = require("./routes/perfil.routes");
-app.use("/api", perfilRoutes);
-
 // Rutas de subida de imágenes
 const uploadRoutes = require("./routes/upload-mva.routes");
 app.use("/api/upload", uploadRoutes);
@@ -136,6 +143,20 @@ app.use("/api/admin", reporteRoutes);
 // Rutas de paginación
 const paginacionRoutes = require("./routes/paginacion.routes");
 app.use("/api", paginacionRoutes);
+
+// Rutas de gestión de inscripciones para eventos (solo admins)
+const inscripcionRoutes = require("./routes/inscripcion.routes");
+app.use("/api/inscripciones", inscripcionRoutes);
+
+// Middleware para manejar rutas no encontradas (404)
+app.use((req, res) => {
+  console.log(`❌ [404] Ruta no encontrada: ${req.method} ${req.originalUrl}`);
+  res.status(404).json({
+    error: "Ruta no encontrada",
+    method: req.method,
+    url: req.originalUrl,
+  });
+});
 
 // ============================
 //  Iniciar el servidor

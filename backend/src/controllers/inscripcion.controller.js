@@ -389,10 +389,14 @@ const crearInscripcion = async (req, res) => {
 // ==============================
 const validarInscripcion = async (req, res) => {
   try {
+    console.log("🎯 [VALIDAR] Iniciando validación de inscripción");
+    console.log("🔑 [VALIDAR] Usuario en request:", req.usuario);
+
     const { id } = req.params;
     const { est_ins, asistencia, nota_final, observacion } = req.body;
 
-    console.log("Datos recibidos:", {
+    console.log("📋 [VALIDAR] Datos recibidos:", {
+      id_inscripcion: id,
       est_ins,
       asistencia,
       nota_final,
@@ -492,6 +496,21 @@ const validarInscripcion = async (req, res) => {
           where: { id_eve_cur: inscripcion.evento.id_eve },
         });
 
+        // Verificar que el evento_curso existe
+        if (!eventoCurso) {
+          console.error(
+            `❌ No se encontró configuración de curso para el evento ID: ${inscripcion.evento.id_eve}`
+          );
+          console.error(
+            `❌ Evento: "${inscripcion.evento.nom_eve}" es de tipo CURSO pero no tiene registro en evento_curso`
+          );
+          return res.status(400).json({
+            msg: "Error: Este evento de tipo CURSO no tiene configuración de nota mínima. Contacte al administrador.",
+            evento: inscripcion.evento.nom_eve,
+            eventoId: inscripcion.evento.id_eve,
+          });
+        }
+
         const notaMinima = eventoCurso.not_min_cur;
         if (isNaN(notaFinalNum) || notaFinalNum < 0 || notaFinalNum > 10) {
           return res.status(400).json({ msg: "Nota inválida (0–10)" });
@@ -516,11 +535,17 @@ const validarInscripcion = async (req, res) => {
       nuevoEstado === "REPROBADO_TOTAL"
     ) {
       try {
+        // Preparar datos adicionales solo si se proporcionan valores válidos
+        const datosAdicionales = {};
+        if (asistenciaNum !== -1) {
+          datosAdicionales.por_asi_fin_usu = asistenciaNum;
+        }
+
         // Usamos nuestra función centralizada para actualizar el estado
         const resultado = await actualizarEstadoYSincronizarCupos(
           id,
           nuevoEstado,
-          { por_asi_fin_usu: asistenciaNum },
+          datosAdicionales,
           req.usuario.id // Pasar ID del administrador que valida
         );
 
@@ -627,11 +652,17 @@ const validarInscripcion = async (req, res) => {
     // ENFOQUE MEJORADO: UTILIZANDO LA FUNCIÓN CENTRALIZADA DE ACTUALIZACIÓN DE ESTADO
 
     try {
+      // Preparar datos adicionales solo si se proporcionan valores válidos
+      const datosAdicionales = {};
+      if (asistenciaNum !== -1) {
+        datosAdicionales.por_asi_fin_usu = asistenciaNum;
+      }
+
       // Utilizamos la función centralizada que maneja todo en una transacción atómica
       const resultado = await actualizarEstadoYSincronizarCupos(
         id,
         estadoNuevo,
-        { por_asi_fin_usu: asistenciaNum }, // Datos adicionales para la actualización
+        datosAdicionales, // Datos adicionales para la actualización
         req.usuario.id // Pasar ID del administrador que valida
       );
 
@@ -879,15 +910,23 @@ const obtenerInscripcionesPorUsuario = async (req, res) => {
           orderBy: { fec_sub_com_pag: "desc" },
           take: 1,
         },
+        cartas_motivacion: {
+          orderBy: { fec_sub_car_mot: "desc" },
+          take: 1,
+        },
+        observacion: true,
       },
       orderBy: { fec_ins: "desc" },
     }); // Mapear los resultados para tener una estructura más limpia
     const inscripcionesMapeadas = inscripciones.map((inscripcion) => ({
       id_ins: inscripcion.id_ins,
       est_ins: inscripcion.est_ins,
-      por_asi_fin_usu: inscripcion.por_asi_fin_usu,
+      por_asi_fin_usu:
+        inscripcion.por_asi_fin_usu === -1 ? null : inscripcion.por_asi_fin_usu,
       nota_final: inscripcion.inscripcion_curso?.not_fin_usu || null,
       comprobante: inscripcion.comprobantes_pago[0]?.url_com_pag || null,
+      carta_motivacion: inscripcion.cartas_motivacion[0]?.con_car_mot || null,
+      observacion: inscripcion.observacion?.obs_ins || null,
       usuario: {
         nom_usu: inscripcion.cuenta.usuario.nom_usu,
         ape_usu: inscripcion.cuenta.usuario.ape_usu,
@@ -1348,7 +1387,10 @@ const obtenerInscripcionesPorEvento = async (req, res) => {
         return {
           id_ins: inscripcion.id_ins,
           estado: inscripcion.est_ins,
-          asistencia: inscripcion.por_asi_fin_usu,
+          asistencia:
+            inscripcion.por_asi_fin_usu === -1
+              ? null
+              : inscripcion.por_asi_fin_usu,
           nota_final: inscripcion.inscripcion_curso?.not_fin_usu || null,
           fec_ins: inscripcion.fec_ins,
           evento: eventoMapeado,

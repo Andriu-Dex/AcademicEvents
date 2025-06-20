@@ -266,7 +266,7 @@ model inscripcion {
   id_ins          String             @id @default(uuid()) // UUID como ID de la inscripción
   id_cor_ins      String // FK a usuario
   id_eve_ins      String // FK a evento
-  est_ins         estado_inscripcion @default(PENDIENTE) // Estado de la inscripción (PENDIENTE, ACEPTADA, RECHAZADA, FINALIZADA)
+  est_ins         estado_inscripcion @default(PENDIENTE) // Estado de la inscripción
   fec_ins         DateTime           @default(now()) // Fecha de inscripción
   usu_apr_cer     Boolean            @default(false) // Usuario aprueba el evento y el envio del certificado
   id_adm_val_ins  String? // FK opcional a cuenta de administrador que validó la inscripción

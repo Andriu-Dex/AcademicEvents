@@ -112,19 +112,19 @@ router.post(
 );
 
 // Reporte de Asistencia
-router.post(
+router.get(
   "/reportes-asistencia/evento/:id_evento",
   verificarToken,
   onlyAdmin,
   getReporteAsistencia
 );
-router.post(
+router.get(
   "/reportes-asistencia/comparativa",
   verificarToken,
   onlyAdmin,
   getReporteAsistencia
 );
-router.post(
+router.get(
   "/reportes-asistencia/no-shows",
   verificarToken,
   onlyAdmin,

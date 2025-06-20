@@ -7,6 +7,11 @@ import {
   Filter,
   ArrowLeft,
   PieChart,
+  Users,
+  Calendar,
+  TrendingUp,
+  AlertCircle,
+  Lightbulb,
 } from "lucide-react";
 import { toast } from "react-toastify";
 import "./styles/ReporteCarrera.css";
@@ -19,6 +24,33 @@ const ReporteCarrera = () => {
   const [loading, setLoading] = useState(false);
   const [loadingPDF, setLoadingPDF] = useState(false);
   const navigate = useNavigate();
+
+  // Función para verificar si hay datos significativos
+  const tieneDataSignificativa = () => {
+    if (!datosEstadisticos) return false;
+
+    return (
+      datosEstadisticos.totalEstudiantes > 0 ||
+      datosEstadisticos.totalInscripciones > 0 ||
+      datosEstadisticos.eventosParticipados > 0
+    );
+  };
+
+  // Función para generar mensaje personalizado cuando no hay datos
+  const getMensajeSinDatos = () => {
+    if (!datosEstadisticos)
+      return "No hay datos disponibles para esta carrera.";
+
+    if (datosEstadisticos.totalEstudiantes === 0) {
+      return "Esta carrera no tiene estudiantes registrados en el sistema.";
+    }
+
+    if (datosEstadisticos.totalInscripciones === 0) {
+      return "Los estudiantes de esta carrera aún no se han inscrito a ningún evento.";
+    }
+
+    return "No hay datos de participación disponibles para esta carrera.";
+  };
 
   // Cargar la lista de carreras disponibles
   useEffect(() => {
@@ -163,35 +195,65 @@ const ReporteCarrera = () => {
             <h3>Estadísticas de Participación</h3>
 
             {datosEstadisticos ? (
-              <div className="stats-grid">
-                <div className="stat-card">
-                  <h4>Total Estudiantes</h4>{" "}
-                  <div className="stat-value">
-                    {datosEstadisticos.totalEstudiantes || 0}
+              tieneDataSignificativa() ? (
+                <div className="stats-grid">
+                  <div className="stat-card">
+                    <h4>Total Estudiantes</h4>{" "}
+                    <div className="stat-value">
+                      {datosEstadisticos.totalEstudiantes || 0}
+                    </div>
+                  </div>
+                  <div className="stat-card">
+                    <h4>Inscripciones Totales</h4>{" "}
+                    <div className="stat-value">
+                      {datosEstadisticos.totalInscripciones || 0}{" "}
+                    </div>
+                  </div>
+                  <div className="stat-card">
+                    <h4>Eventos Participados</h4>
+                    <div className="stat-value">
+                      {datosEstadisticos.eventosParticipados || 0}
+                    </div>
+                  </div>
+                  <div className="stat-card">
+                    <h4>% de Participación</h4>{" "}
+                    <div className="stat-value">
+                      {Math.round(datosEstadisticos.porcentajeParticipacion) ||
+                        0}
+                      %
+                    </div>
                   </div>
                 </div>
-                <div className="stat-card">
-                  <h4>Inscripciones Totales</h4>{" "}
-                  <div className="stat-value">
-                    {datosEstadisticos.totalInscripciones || 0}{" "}
+              ) : (
+                <div className="sin-datos-mensaje-rc">
+                  <div className="sin-datos-icono-rc">
+                    <Users size={48} />
+                  </div>
+                  <h4>Sin Datos de Participación</h4>
+                  <p>{getMensajeSinDatos()}</p>
+                  <div className="sin-datos-sugerencias-rc">
+                    <p>
+                      <strong>Sugerencias:</strong>
+                    </p>
+                    <ul>
+                      <li>
+                        Verifica que la carrera tenga estudiantes registrados
+                      </li>
+                      <li>
+                        Asegúrate de que existan eventos disponibles para
+                        inscripción
+                      </li>
+                      <li>
+                        Revisa que los estudiantes estén activos en el sistema
+                      </li>
+                    </ul>
                   </div>
                 </div>
-                <div className="stat-card">
-                  <h4>Eventos Participados</h4>
-                  <div className="stat-value">
-                    {datosEstadisticos.eventosParticipados || 0}
-                  </div>
-                </div>
-                <div className="stat-card">
-                  <h4>% de Participación</h4>{" "}
-                  <div className="stat-value">
-                    {Math.round(datosEstadisticos.porcentajeParticipacion) || 0}
-                    %
-                  </div>
-                </div>
-              </div>
+              )
             ) : (
-              <p>No hay estadísticas disponibles para esta carrera.</p>
+              <div className="loading-estadisticas-rc">
+                <p>No hay estadísticas disponibles para esta carrera.</p>
+              </div>
             )}
           </div>
           {/* Sección de eventos populares */}
@@ -228,7 +290,29 @@ const ReporteCarrera = () => {
                 </table>
               </div>
             ) : (
-              <p>No hay eventos registrados para esta carrera.</p>
+              <div className="sin-eventos-mensaje-rc">
+                <div className="sin-eventos-icono-rc">
+                  <Calendar size={48} />
+                </div>
+                <h4>Sin Eventos Registrados</h4>
+                <p>
+                  Los estudiantes de esta carrera aún no han participado en
+                  eventos.
+                </p>
+                <div className="sin-eventos-acciones-rc">
+                  <p>
+                    <strong>¿Qué hacer?</strong>
+                  </p>
+                  <ul>
+                    <li>Crear eventos específicos para esta carrera</li>
+                    <li>Promover la participación entre los estudiantes</li>
+                    <li>
+                      Verificar que los eventos estén disponibles para esta
+                      carrera
+                    </li>
+                  </ul>
+                </div>
+              </div>
             )}
           </div>{" "}
           {/* Sección de comparativa con otras carreras */}
@@ -236,32 +320,54 @@ const ReporteCarrera = () => {
             <h3>Comparativa con otras carreras</h3>
 
             {datosEstadisticos && datosEstadisticos.comparativaCarreras ? (
-              <div className="comparativa-grid">
-                {datosEstadisticos.comparativaCarreras.map((carrera) => (
-                  <div
-                    className={`comparativa-card ${
-                      carrera.id_car === carreraSeleccionada ? "selected" : ""
-                    }`}
-                    key={carrera.id_car}
-                  >
-                    <h4>{carrera.nom_car}</h4>
-                    <div className="comparativa-stats">
-                      <div>
-                        <span>Estudiantes:</span> {carrera.totalEstudiantes}
-                      </div>
-                      <div>
-                        <span>Inscripciones:</span> {carrera.totalInscripciones}
-                      </div>
-                      <div>
-                        <span>Participación:</span>{" "}
-                        {carrera.porcentajeParticipacion}%
+              datosEstadisticos.comparativaCarreras.length > 1 ? (
+                <div className="comparativa-grid">
+                  {datosEstadisticos.comparativaCarreras.map((carrera) => (
+                    <div
+                      className={`comparativa-card ${
+                        carrera.id_car === carreraSeleccionada ? "selected" : ""
+                      }`}
+                      key={carrera.id_car}
+                    >
+                      <h4>{carrera.nom_car}</h4>
+                      <div className="comparativa-stats">
+                        <div>
+                          <span>Estudiantes:</span> {carrera.totalEstudiantes}
+                        </div>
+                        <div>
+                          <span>Inscripciones:</span>{" "}
+                          {carrera.totalInscripciones}
+                        </div>
+                        <div>
+                          <span>Participación:</span>{" "}
+                          {carrera.porcentajeParticipacion}%
+                        </div>
                       </div>
                     </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="sin-comparativas-mensaje-rc">
+                  <div className="sin-comparativas-icono-rc">
+                    <TrendingUp size={48} />
                   </div>
-                ))}
-              </div>
+                  <h4>Sin Datos Comparativos</h4>
+                  <p>
+                    No hay suficientes carreras con datos para realizar una
+                    comparación.
+                  </p>
+                  <div className="sin-comparativas-nota-rc">
+                    <p>
+                      <strong>Nota:</strong> Se necesitan al menos 2 carreras
+                      con participación en eventos para mostrar comparativas.
+                    </p>
+                  </div>
+                </div>
+              )
             ) : (
-              <p>No hay datos comparativos disponibles con otras carreras.</p>
+              <div className="loading-comparativas-rc">
+                <p>No hay datos comparativos disponibles con otras carreras.</p>
+              </div>
             )}
           </div>
         </>

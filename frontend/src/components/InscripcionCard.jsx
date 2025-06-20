@@ -36,9 +36,11 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
   });
   const [asistencia, setAsistencia] = useState(() => {
     // Manejo de ambas estructuras: mapeada (asistencia) y directa de Prisma (por_asi_fin_usu)
-    return inscripcion.asistencia !== undefined
-      ? inscripcion.asistencia
-      : inscripcion.por_asi_fin_usu || "";
+    const asistenciaValue =
+      inscripcion.asistencia !== undefined
+        ? inscripcion.asistencia
+        : inscripcion.por_asi_fin_usu;
+    return asistenciaValue === -1 ? "" : asistenciaValue || "";
   });
   const [observacion, setObservacion] = useState(
     inscripcion.observacion?.obs_ins || ""

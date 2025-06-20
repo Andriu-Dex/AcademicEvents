@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axiosInstance from "../../../api/axiosConfig";
-import { CheckSquare, Download } from "lucide-react";
+import { CheckSquare, Download, BarChart } from "lucide-react";
 import { toast } from "react-toastify";
 import "./styles/ReporteAsistencia.css";
 
@@ -19,15 +19,19 @@ const ReporteAsistencia = () => {
     const cargarEventos = async () => {
       try {
         setLoading(true);
-        const res = await axiosInstance.get("/admin/eventos");
-        setEventos(res.data);
+        const res = await axiosInstance.get("/admin/reportes-evento");
+
+        // Asegurar que res.data sea un array
+        const eventosData = Array.isArray(res.data) ? res.data : [];
+        setEventos(eventosData);
 
         // Seleccionar el primer evento por defecto si existe
-        if (res.data && res.data.length > 0) {
-          setEventoSeleccionado(res.data[0].id_eve);
+        if (eventosData.length > 0) {
+          setEventoSeleccionado(eventosData[0].id_eve);
         }
       } catch (error) {
         console.error("Error al cargar eventos:", error);
+        toast.error("Error al cargar la lista de eventos");
         setEventos([]);
       } finally {
         setLoading(false);
@@ -60,7 +64,10 @@ const ReporteAsistencia = () => {
             params: { tipo: tipoEvento },
           }
         );
-        setComparativaEventos(resComparativa.data);
+        const comparativaData = Array.isArray(resComparativa.data)
+          ? resComparativa.data
+          : [];
+        setComparativaEventos(comparativaData);
 
         // Cargar análisis de no-shows
         const resNoShows = await axiosInstance.get(
@@ -69,9 +76,13 @@ const ReporteAsistencia = () => {
             params: { tipo: tipoEvento },
           }
         );
-        setNoShowsAnalisis(resNoShows.data);
+        const noShowsData = Array.isArray(resNoShows.data)
+          ? resNoShows.data
+          : [];
+        setNoShowsAnalisis(noShowsData);
       } catch (error) {
         console.error("Error al cargar datos de asistencia:", error);
+        toast.error("Error al cargar datos de asistencia");
         setDatosAsistencia(null);
         setComparativaEventos([]);
         setNoShowsAnalisis([]);
@@ -139,42 +150,47 @@ const ReporteAsistencia = () => {
       <p className="reporte-descripcion-ra">
         Análisis comparativo de asistencia vs inscripciones en eventos
       </p>
-      <p>
+      <p className="reporte-subdescripcion-ra">
         Análisis de asistencia, comparativas entre eventos y análisis de
         no-shows
       </p>
-      {/* Filtros */}{" "}
+      {/* Filtros */}
       <div className="filtros-container-ra">
-        <div className="filtro-grupo-ra">
-          <label>Evento:</label>
-          <select
-            value={eventoSeleccionado}
-            onChange={(e) => setEventoSeleccionado(e.target.value)}
-            disabled={loading}
-          >
-            <option value="">Todos los eventos</option>
-            {eventos.map((evento) => (
-              <option key={evento.id_eve} value={evento.id_eve}>
-                {evento.nom_eve}
-              </option>
-            ))}
-          </select>
-        </div>
+        <div className="filtros-grupo-ra">
+          <div className="filtro-grupo-ra">
+            <label>Evento:</label>
+            <select
+              value={eventoSeleccionado}
+              onChange={(e) => setEventoSeleccionado(e.target.value)}
+              disabled={loading}
+              className="select-control-ra"
+            >
+              <option value="">Todos los eventos</option>
+              {Array.isArray(eventos) &&
+                eventos.map((evento) => (
+                  <option key={evento.id_eve} value={evento.id_eve}>
+                    {evento.nom_eve}
+                  </option>
+                ))}
+            </select>
+          </div>
 
-        <div className="filtro-grupo-ra">
-          <label>Tipo de Evento:</label>
-          <select
-            value={tipoEvento}
-            onChange={(e) => setTipoEvento(e.target.value)}
-            disabled={loading || eventoSeleccionado !== ""}
-          >
-            <option value="todos">Todos los tipos</option>
-            <option value="CONGRESO">Congreso</option>
-            <option value="SEMINARIO">Seminario</option>
-            <option value="TALLER">Taller</option>
-            <option value="CONFERENCIA">Conferencia</option>
-            <option value="CURSO">Curso</option>
-          </select>
+          <div className="filtro-grupo-ra">
+            <label>Tipo de Evento:</label>
+            <select
+              value={tipoEvento}
+              onChange={(e) => setTipoEvento(e.target.value)}
+              disabled={loading || eventoSeleccionado !== ""}
+              className="select-control-ra"
+            >
+              <option value="todos">Todos los tipos</option>
+              <option value="CURSO">Curso</option>
+              <option value="CONGRESO">Congreso</option>
+              <option value="WEBINAR">Webinar</option>
+              <option value="CHARLA">Charla</option>
+              <option value="SOCIALIZACION">Socialización</option>
+            </select>
+          </div>
         </div>
 
         <button
@@ -182,61 +198,66 @@ const ReporteAsistencia = () => {
           onClick={descargarPDF}
           disabled={loadingPDF}
         >
+          <Download size={16} className="icon-btn-ra" />
           {loadingPDF ? "Generando PDF..." : "Descargar Reporte PDF"}
         </button>
       </div>
       {loading ? (
         <div className="loading-container-ra">
-          <p>Cargando datos de asistencia...</p>
+          <div className="spinner-ra"></div>
+          <p className="loading-text-ra">Cargando datos de asistencia...</p>
         </div>
       ) : (
         <>
           {/* Sección de porcentajes de asistencia */}
           {eventoSeleccionado && datosAsistencia && (
-            <div className="asistencia-container">
-              <h3>Porcentaje de Asistencia vs Inscripciones</h3>
+            <div className="asistencia-container-ra">
+              <h3 className="seccion-titulo-ra">
+                <CheckSquare size={18} className="icon-seccion-ra" />
+                Porcentaje de Asistencia vs Inscripciones
+              </h3>
 
-              <div className="evento-info">
+              <div className="evento-info-ra">
                 <h4>{datosAsistencia.nombreEvento}</h4>
-                <p className="evento-fecha">
+                <p className="evento-fecha-ra">
                   {new Date(datosAsistencia.fechaEvento).toLocaleDateString(
                     "es-ES"
                   )}
                 </p>
               </div>
 
-              <div className="stats-grid">
-                <div className="stat-card">
+              <div className="stats-grid-ra">
+                <div className="stat-card-ra">
                   <h4>Total Inscripciones</h4>
-                  <div className="stat-value">
+                  <div className="stat-value-ra">
                     {datosAsistencia.totalInscritos}
                   </div>
                 </div>
-                <div className="stat-card">
+                <div className="stat-card-ra">
                   <h4>Total Asistencias</h4>
-                  <div className="stat-value">
+                  <div className="stat-value-ra">
                     {datosAsistencia.totalAsistencias}
                   </div>
                 </div>
-                <div className="stat-card">
+                <div className="stat-card-ra">
                   <h4>No Asistieron</h4>
-                  <div className="stat-value">
+                  <div className="stat-value-ra">
                     {datosAsistencia.totalNoAsistieron}
                   </div>
                 </div>
-                <div className="stat-card">
+                <div className="stat-card-ra">
                   <h4>% Asistencia</h4>
-                  <div className="stat-value asistencia-porcentaje">
+                  <div className="stat-value-ra asistencia-porcentaje-ra">
                     {formatearPorcentaje(datosAsistencia.porcentajeAsistencia)}
                   </div>
                 </div>
               </div>
 
-              <div className="barra-asistencia-container">
-                <div className="barra-label">Proporción de Asistencia</div>
-                <div className="barra-asistencia">
+              <div className="barra-asistencia-container-ra">
+                <div className="barra-label-ra">Proporción de Asistencia</div>
+                <div className="barra-asistencia-ra">
                   <div
-                    className="barra-asistencia-fill"
+                    className="barra-asistencia-fill-ra"
                     style={{
                       width: formatearPorcentaje(
                         datosAsistencia.porcentajeAsistencia
@@ -251,12 +272,15 @@ const ReporteAsistencia = () => {
           )}
 
           {/* Sección de comparativa entre eventos */}
-          <div className="comparativa-container">
-            <h3>Comparativa de Asistencia entre Eventos</h3>
+          <div className="comparativa-container-ra">
+            <h3 className="seccion-titulo-ra">
+              <BarChart size={18} className="icon-seccion-ra" />
+              Comparativa de Asistencia entre Eventos
+            </h3>
 
             {comparativaEventos.length > 0 ? (
-              <div className="comparativa-tabla">
-                <table>
+              <div className="comparativa-tabla-ra">
+                <table className="tabla-datos-ra">
                   <thead>
                     <tr>
                       <th>Evento</th>
@@ -268,65 +292,92 @@ const ReporteAsistencia = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {comparativaEventos.map((evento) => (
-                      <tr key={evento.id_eve}>
-                        <td>{evento.nombreEvento}</td>
-                        <td>{evento.tipoEvento}</td>
-                        <td>
-                          {new Date(evento.fechaEvento).toLocaleDateString(
-                            "es-ES"
-                          )}
-                        </td>
-                        <td>{evento.totalInscritos}</td>
-                        <td>{evento.totalAsistencias}</td>
-                        <td
-                          className={
-                            evento.porcentajeAsistencia >= 0.8
-                              ? "alta-asistencia"
-                              : evento.porcentajeAsistencia >= 0.5
-                              ? "media-asistencia"
-                              : "baja-asistencia"
-                          }
-                        >
-                          {formatearPorcentaje(evento.porcentajeAsistencia)}
-                        </td>
-                      </tr>
-                    ))}
+                    {Array.isArray(comparativaEventos) &&
+                      comparativaEventos.map((evento) => (
+                        <tr key={evento.id_eve}>
+                          <td className="nombre-evento-ra">
+                            {evento.nombreEvento}
+                          </td>
+                          <td className="tipo-evento-ra">
+                            {evento.tipoEvento}
+                          </td>
+                          <td className="fecha-evento-ra">
+                            {new Date(evento.fechaEvento).toLocaleDateString(
+                              "es-ES"
+                            )}
+                          </td>
+                          <td className="valor-numerico-ra">
+                            {evento.totalInscritos}
+                          </td>
+                          <td className="valor-numerico-ra">
+                            {evento.totalAsistencias}
+                          </td>
+                          <td
+                            className={
+                              evento.porcentajeAsistencia >= 0.8
+                                ? "alta-asistencia-ra"
+                                : evento.porcentajeAsistencia >= 0.5
+                                ? "media-asistencia-ra"
+                                : "baja-asistencia-ra"
+                            }
+                          >
+                            {formatearPorcentaje(evento.porcentajeAsistencia)}
+                          </td>
+                        </tr>
+                      ))}
                   </tbody>
                 </table>
               </div>
             ) : (
-              <p>No hay datos comparativos disponibles.</p>
+              <p className="mensaje-sin-datos-ra">
+                No hay datos comparativos disponibles.
+              </p>
             )}
           </div>
 
           {/* Sección de análisis de no-shows */}
-          <div className="noshows-container">
-            <h3>Análisis de No-Shows por Tipo de Evento</h3>
+          <div className="noshows-container-ra">
+            <h3 className="seccion-titulo-ra">
+              <CheckSquare size={18} className="icon-seccion-ra" />
+              Análisis de No-Shows por Tipo de Evento
+            </h3>
 
-            {noShowsAnalisis.length > 0 ? (
-              <div className="noshows-grid">
+            {Array.isArray(noShowsAnalisis) && noShowsAnalisis.length > 0 ? (
+              <div className="noshows-grid-ra">
                 {noShowsAnalisis.map((tipo, index) => (
-                  <div className="noshow-card" key={index}>
-                    <h4>{tipo.tipoEvento}</h4>
-                    <div className="noshow-stats">
-                      <div>
-                        <span>Eventos:</span> {tipo.cantidadEventos}
+                  <div className="noshow-card-ra" key={index}>
+                    <h4 className="tipo-evento-titulo-ra">{tipo.tipoEvento}</h4>
+                    <div className="noshow-stats-ra">
+                      <div className="stat-item-ra">
+                        <span className="stat-label-ra">Eventos:</span>
+                        <span className="stat-valor-ra">
+                          {tipo.cantidadEventos}
+                        </span>
                       </div>
-                      <div>
-                        <span>Total Inscripciones:</span> {tipo.totalInscritos}
+                      <div className="stat-item-ra">
+                        <span className="stat-label-ra">
+                          Total Inscripciones:
+                        </span>
+                        <span className="stat-valor-ra">
+                          {tipo.totalInscritos}
+                        </span>
                       </div>
-                      <div>
-                        <span>No-Shows:</span> {tipo.totalNoShows}
+                      <div className="stat-item-ra">
+                        <span className="stat-label-ra">No-Shows:</span>
+                        <span className="stat-valor-ra">
+                          {tipo.totalNoShows}
+                        </span>
                       </div>
-                      <div>
-                        <span>% No-Shows:</span>{" "}
-                        {formatearPorcentaje(tipo.porcentajeNoShows)}
+                      <div className="stat-item-ra">
+                        <span className="stat-label-ra">% No-Shows:</span>
+                        <span className="stat-valor-destacado-ra">
+                          {formatearPorcentaje(tipo.porcentajeNoShows)}
+                        </span>
                       </div>
                     </div>
-                    <div className="barra-noshow">
+                    <div className="barra-noshow-ra">
                       <div
-                        className="barra-noshow-fill"
+                        className="barra-noshow-fill-ra"
                         style={{
                           width: formatearPorcentaje(tipo.porcentajeNoShows),
                         }}
@@ -338,7 +389,9 @@ const ReporteAsistencia = () => {
                 ))}
               </div>
             ) : (
-              <p>No hay datos de análisis de no-shows disponibles.</p>
+              <p className="mensaje-sin-datos-ra">
+                No hay datos de análisis de no-shows disponibles.
+              </p>
             )}
           </div>
         </>

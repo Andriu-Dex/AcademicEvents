@@ -982,12 +982,12 @@ function agruparInscripcionesPorMes(inscripciones, fechaInicio, fechaFin) {
 async function getReporteAsistencia(req, res) {
   try {
     const { id_evento } = req.params;
-    const { tipoEvento, eventoSeleccionado } = req.body;
+    const { tipo } = req.query;
 
     if (req.path.includes("/evento/") && id_evento) {
       // Obtener datos de asistencia de un evento específico
       const evento = await prisma.evento.findUnique({
-        where: { id_eve: parseInt(id_evento) },
+        where: { id_eve: id_evento },
         select: {
           id_eve: true,
           nom_eve: true,
@@ -999,10 +999,14 @@ async function getReporteAsistencia(req, res) {
               id_ins: true,
               est_ins: true,
               por_asi_fin_usu: true,
-              usuario: {
+              cuenta: {
                 select: {
-                  nom_usu: true,
-                  ape_usu: true,
+                  usuario: {
+                    select: {
+                      nom_usu: true,
+                      ape_usu: true,
+                    },
+                  },
                 },
               },
             },
@@ -1019,32 +1023,25 @@ async function getReporteAsistencia(req, res) {
         return res.status(404).json({ msg: "Evento no encontrado" });
       }
 
-      const totalInscripciones = evento.inscritos.length;
+      const totalInscritos = evento.inscritos.length;
       const asistentes = evento.inscritos.filter(
-        (ins) => ins.por_asi_fin_usu >= 80
+        (ins) => ins.por_asi_fin_usu && ins.por_asi_fin_usu >= 80
       );
+      const totalAsistencias = asistentes.length;
+      const totalNoAsistieron = totalInscritos - totalAsistencias;
       const porcentajeAsistencia =
-        totalInscripciones > 0
-          ? (asistentes.length / totalInscripciones) * 100
-          : 0;
+        totalInscritos > 0 ? totalAsistencias / totalInscritos : 0;
 
       return res.json({
-        evento: {
-          id_eve: evento.id_eve,
-          nom_eve: evento.nom_eve,
-          fec_ini_eve: evento.fec_ini_eve,
-          fec_fin_eve: evento.fec_fin_eve,
-          capacidad: evento.cup_max_eve,
-        },
-        estadisticas: {
-          totalInscripciones,
-          totalAsistentes: asistentes.length,
-          porcentajeAsistencia,
-          noShows: totalInscripciones - asistentes.length,
-        },
+        nombreEvento: evento.nom_eve,
+        fechaEvento: evento.fec_ini_eve,
+        totalInscritos,
+        totalAsistencias,
+        totalNoAsistieron,
+        porcentajeAsistencia,
         detalles: evento.inscritos.map((ins) => ({
-          usuario: `${ins.usuario.nom_usu} ${ins.usuario.ape_usu}`,
-          porcentajeAsistencia: ins.por_asi_fin_usu,
+          usuario: `${ins.cuenta.usuario.nom_usu} ${ins.cuenta.usuario.ape_usu}`,
+          porcentajeAsistencia: ins.por_asi_fin_usu || 0,
           estado: ins.est_ins,
         })),
       });
@@ -1053,8 +1050,8 @@ async function getReporteAsistencia(req, res) {
     if (req.path.includes("/comparativa")) {
       // Comparativa entre eventos
       const filtro = {};
-      if (tipoEvento && tipoEvento !== "todos") {
-        filtro.tip_eve = tipoEvento;
+      if (tipo && tipo !== "todos") {
+        filtro.tip_eve = tipo;
       }
 
       const eventos = await prisma.evento.findMany({
@@ -1084,7 +1081,7 @@ async function getReporteAsistencia(req, res) {
       const comparativa = eventos.map((evento) => {
         const totalInscritos = evento.inscritos.length;
         const asistentes = evento.inscritos.filter(
-          (ins) => ins.por_asi_fin_usu >= 80
+          (ins) => ins.por_asi_fin_usu && ins.por_asi_fin_usu >= 80
         ).length;
         const porcentajeAsistencia =
           totalInscritos > 0 ? asistentes / totalInscritos : 0;
@@ -1105,17 +1102,23 @@ async function getReporteAsistencia(req, res) {
 
     if (req.path.includes("/no-shows")) {
       // Análisis de no-shows por tipo de evento
+      const filtroTipo = {};
+      if (tipo && tipo !== "todos") {
+        filtroTipo.tip_eve = tipo;
+      }
+
       const tiposEventos = await prisma.evento.groupBy({
         by: ["tip_eve"],
+        where: filtroTipo,
         _count: {
           id_eve: true,
         },
       });
 
       const noShowsAnalisis = await Promise.all(
-        tiposEventos.map(async (tipo) => {
+        tiposEventos.map(async (tipoGrupo) => {
           const eventos = await prisma.evento.findMany({
-            where: { tip_eve: tipo.tip_eve },
+            where: { tip_eve: tipoGrupo.tip_eve },
             select: {
               inscritos: {
                 select: {
@@ -1137,8 +1140,9 @@ async function getReporteAsistencia(req, res) {
           const totalAsistentes = eventos.reduce(
             (sum, evento) =>
               sum +
-              evento.inscritos.filter((ins) => ins.por_asi_fin_usu >= 80)
-                .length,
+              evento.inscritos.filter(
+                (ins) => ins.por_asi_fin_usu && ins.por_asi_fin_usu >= 80
+              ).length,
             0
           );
           const totalNoShows = totalInscritos - totalAsistentes;
@@ -1146,8 +1150,8 @@ async function getReporteAsistencia(req, res) {
             totalInscritos > 0 ? totalNoShows / totalInscritos : 0;
 
           return {
-            tipoEvento: tipo.tip_eve,
-            cantidadEventos: tipo._count.id_eve,
+            tipoEvento: tipoGrupo.tip_eve,
+            cantidadEventos: tipoGrupo._count.id_eve,
             totalInscritos,
             totalNoShows,
             porcentajeNoShows,
