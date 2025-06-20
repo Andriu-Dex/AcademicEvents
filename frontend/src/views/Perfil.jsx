@@ -3,6 +3,7 @@ import { useAuth } from "../hooks/useAuth";
 import axiosInstance from "../api/axiosConfig";
 import { toast } from "react-toastify";
 import AvatarEditor from "react-avatar-editor";
+import ProfileImageService from "../services/ProfileImageService";
 import {
   User,
   Mail,
@@ -31,7 +32,7 @@ import {
 import "./styles/Perfil.css";
 
 const Perfil = () => {
-  const { usuario, updateProfileImage } = useAuth();
+  const { usuario, updateProfileImage, syncUserData } = useAuth();
   const [perfilData, setPerfilData] = useState(null);
   const [cargando, setCargando] = useState(true);
   const [mostrarModal, setMostrarModal] = useState(false);
@@ -263,6 +264,11 @@ const Perfil = () => {
         if (response.data && response.data.imagenUrl) {
           updateProfileImage(response.data.imagenUrl);
         }
+
+        // Sincronizar datos del usuario para asegurar persistencia
+        if (syncUserData) {
+          await syncUserData();
+        }
       }, imagenPerfil.type);
     } catch (error) {
       toast.error(
@@ -323,9 +329,13 @@ const Perfil = () => {
           >
             {perfilData.img_per_usu ? (
               <img
-                src={perfilData.img_per_usu}
+                src={ProfileImageService.getProfileImageUrl(
+                  perfilData.img_per_usu,
+                  true
+                )}
                 alt="Foto de perfil"
                 className="perfil-imagen"
+                key={perfilData.img_per_usu} // Forzar re-render cuando cambie la imagen
               />
             ) : (
               <User size={48} />
@@ -479,9 +489,7 @@ const Perfil = () => {
                     <CheckCircle size={14} />
                   )}
                   {inscripcion.est_ins === "RECHAZADA" && <XCircle size={14} />}
-                  {inscripcion.est_ins === "FINALIZADA" && (
-                    <FileText size={14} />
-                  )}
+                  {inscripcion.est_ins === "APROBADO" && <FileText size={14} />}
                   {inscripcion.est_ins === "APROBADO" && (
                     <BadgeCheck size={14} />
                   )}

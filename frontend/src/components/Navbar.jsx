@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { toast } from "react-toastify";
 import axiosInstance from "../api/axiosConfig";
+import ProfileImageService from "../services/ProfileImageService";
 import "./styles/Navbar.css";
 
 /**
@@ -25,7 +26,7 @@ import "./styles/Navbar.css";
  * @returns {JSX.Element} El componente Navbar
  */
 const Navbar = () => {
-  const { usuario, logout } = useAuth();
+  const { usuario, logout, syncUserData } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -162,6 +163,13 @@ const Navbar = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []); // El array vacío hace que se ejecute solo al montar y desmontar
+
+  // Sincronizar datos del usuario cuando el componente se monte
+  useEffect(() => {
+    if (usuario && syncUserData) {
+      syncUserData();
+    }
+  }, []); // Solo ejecutar una vez al montar el componente
 
   if (!usuario) {
     return (
@@ -332,9 +340,13 @@ const Navbar = () => {
         <div className="profile-button" onClick={toggleProfileMenu}>
           {usuario?.img_per_usu ? (
             <img
-              src={usuario.img_per_usu}
+              src={ProfileImageService.getProfileImageUrl(
+                usuario.img_per_usu,
+                true
+              )}
               alt="Foto de perfil"
               className="profile-avatar-img-nb"
+              key={usuario.img_per_usu} // Forzar re-render cuando cambie la imagen
             />
           ) : (
             <User size={18} className="profile-icon" />

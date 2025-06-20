@@ -117,12 +117,10 @@ async function obtenerEventosPublicosPaginados(req, res) {
           { des_eve: { contains: search, mode: "insensitive" } },
         ];
       }
-    }
-
-    // Ordenamiento (por defecto por fecha de inicio descendente)
+    } // Ordenamiento (por defecto por fecha de inicio ascendente - eventos más próximos primero)
     const orderBy = extractSortParams(
       req,
-      { field: "fec_ini_eve", direction: "desc" },
+      { field: "fec_ini_eve", direction: "asc" },
       ["fec_ini_eve", "fec_fin_eve", "nom_eve", "val_eve"]
     );
 
@@ -376,12 +374,10 @@ async function obtenerEventosUsuarioPaginados(req, res) {
       console.log("  - ADMIN: Puede ver todos los eventos");
     }
     console.log("📊 [EVENTOS USUARIO PAGINADOS] Condición WHERE:");
-    console.log(JSON.stringify(whereCondition, null, 2));
-
-    // Ordenamiento (por defecto por fecha de inicio descendente)
+    console.log(JSON.stringify(whereCondition, null, 2)); // Ordenamiento (por defecto por fecha de inicio ascendente - eventos más próximos primero)
     const orderBy = extractSortParams(
       req,
-      { field: "fec_ini_eve", direction: "desc" },
+      { field: "fec_ini_eve", direction: "asc" },
       ["fec_ini_eve", "fec_fin_eve", "nom_eve", "val_eve", "fec_cre_eve"]
     );
 

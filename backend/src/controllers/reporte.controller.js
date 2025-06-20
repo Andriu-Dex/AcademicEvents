@@ -994,7 +994,7 @@ async function getReporteAsistencia(req, res) {
           fec_ini_eve: true,
           fec_fin_eve: true,
           cup_max_eve: true,
-          inscripciones: {
+          inscritos: {
             select: {
               id_ins: true,
               est_ins: true,
@@ -1019,8 +1019,8 @@ async function getReporteAsistencia(req, res) {
         return res.status(404).json({ msg: "Evento no encontrado" });
       }
 
-      const totalInscripciones = evento.inscripciones.length;
-      const asistentes = evento.inscripciones.filter(
+      const totalInscripciones = evento.inscritos.length;
+      const asistentes = evento.inscritos.filter(
         (ins) => ins.por_asi_fin_usu >= 80
       );
       const porcentajeAsistencia =
@@ -1042,7 +1042,7 @@ async function getReporteAsistencia(req, res) {
           porcentajeAsistencia,
           noShows: totalInscripciones - asistentes.length,
         },
-        detalles: evento.inscripciones.map((ins) => ({
+        detalles: evento.inscritos.map((ins) => ({
           usuario: `${ins.usuario.nom_usu} ${ins.usuario.ape_usu}`,
           porcentajeAsistencia: ins.por_asi_fin_usu,
           estado: ins.est_ins,
@@ -1064,7 +1064,7 @@ async function getReporteAsistencia(req, res) {
           nom_eve: true,
           tip_eve: true,
           fec_ini_eve: true,
-          inscripciones: {
+          inscritos: {
             select: {
               id_ins: true,
               por_asi_fin_usu: true,
@@ -1082,8 +1082,8 @@ async function getReporteAsistencia(req, res) {
       });
 
       const comparativa = eventos.map((evento) => {
-        const totalInscritos = evento.inscripciones.length;
-        const asistentes = evento.inscripciones.filter(
+        const totalInscritos = evento.inscritos.length;
+        const asistentes = evento.inscritos.filter(
           (ins) => ins.por_asi_fin_usu >= 80
         ).length;
         const porcentajeAsistencia =
@@ -1117,7 +1117,7 @@ async function getReporteAsistencia(req, res) {
           const eventos = await prisma.evento.findMany({
             where: { tip_eve: tipo.tip_eve },
             select: {
-              inscripciones: {
+              inscritos: {
                 select: {
                   por_asi_fin_usu: true,
                 },
@@ -1131,13 +1131,13 @@ async function getReporteAsistencia(req, res) {
           });
 
           const totalInscritos = eventos.reduce(
-            (sum, evento) => sum + evento.inscripciones.length,
+            (sum, evento) => sum + evento.inscritos.length,
             0
           );
           const totalAsistentes = eventos.reduce(
             (sum, evento) =>
               sum +
-              evento.inscripciones.filter((ins) => ins.por_asi_fin_usu >= 80)
+              evento.inscritos.filter((ins) => ins.por_asi_fin_usu >= 80)
                 .length,
             0
           );
@@ -1287,7 +1287,7 @@ async function getReporteCertificados(req, res) {
           id_eve: true,
           nom_eve: true,
           tip_eve: true,
-          inscripciones: {
+          inscritos: {
             select: {
               id_ins: true,
               not_fin_usu: true,
@@ -1296,7 +1296,7 @@ async function getReporteCertificados(req, res) {
           },
         },
         where: {
-          inscripciones: {
+          inscritos: {
             some: filtro,
           },
         },
@@ -1306,17 +1306,17 @@ async function getReporteCertificados(req, res) {
         id_eve: evento.id_eve,
         nombreEvento: evento.nom_eve,
         tipoEvento: evento.tip_eve,
-        totalCertificados: evento.inscripciones.length,
-        aprobados: evento.inscripciones.filter((ins) => ins.not_fin_usu >= 7)
+        totalCertificados: evento.inscritos.length,
+        aprobados: evento.inscritos.filter((ins) => ins.not_fin_usu >= 7)
           .length,
-        reprobados: evento.inscripciones.filter((ins) => ins.not_fin_usu < 7)
+        reprobados: evento.inscritos.filter((ins) => ins.not_fin_usu < 7)
           .length,
         promedioNota:
-          evento.inscripciones.length > 0
-            ? evento.inscripciones.reduce(
+          evento.inscritos.length > 0
+            ? evento.inscritos.reduce(
                 (sum, ins) => sum + (ins.not_fin_usu || 0),
                 0
-              ) / evento.inscripciones.length
+              ) / evento.inscritos.length
             : 0,
       }));
 
@@ -1360,7 +1360,7 @@ async function getReporteCupos(req, res) {
           cup_max_eve: true,
           cup_dis_eve: true,
           cup_ocu_eve: true,
-          inscripciones: {
+          inscritos: {
             select: {
               id_ins: true,
               est_ins: true,
@@ -1390,7 +1390,7 @@ async function getReporteCupos(req, res) {
 
       // Distribución por carrera
       const distribucionCarrera = {};
-      evento.inscripciones.forEach((ins) => {
+      evento.inscritos.forEach((ins) => {
         const carrera = ins.usuario.carrera?.nom_car || "Sin carrera";
         distribucionCarrera[carrera] = (distribucionCarrera[carrera] || 0) + 1;
       });
@@ -1424,7 +1424,7 @@ async function getReporteCupos(req, res) {
           nom_eve: true,
           tip_eve: true,
           cup_max_eve: true,
-          inscripciones: {
+          inscritos: {
             select: {
               id_ins: true,
               est_ins: true,
@@ -1435,7 +1435,7 @@ async function getReporteCupos(req, res) {
 
       const eventosDemanda = eventos
         .map((evento) => {
-          const totalInscripciones = evento.inscripciones.length;
+          const totalInscripciones = evento.inscritos.length;
           const capacidadTotal = evento.cup_max_eve;
           const porcentajeDemanda =
             capacidadTotal > 0 ? totalInscripciones / capacidadTotal : 0;
@@ -1465,7 +1465,7 @@ async function getReporteCupos(req, res) {
           tip_eve: true,
           cup_max_eve: true,
           cup_ocu_eve: true,
-          inscripciones: {
+          inscritos: {
             select: {
               id_ins: true,
             },
@@ -1476,7 +1476,7 @@ async function getReporteCupos(req, res) {
       const optimizacion = eventos.map((evento) => {
         const capacidadTotal = evento.cup_max_eve;
         const cuposOcupados = evento.cup_ocu_eve;
-        const totalInscripciones = evento.inscripciones.length;
+        const totalInscripciones = evento.inscritos.length;
         const porcentajeOcupacion =
           capacidadTotal > 0 ? (cuposOcupados / capacidadTotal) * 100 : 0;
 

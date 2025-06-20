@@ -317,12 +317,12 @@ const crearInscripcion = async (req, res) => {
 
             // Notificación específica para validación de inscripciones
             socketService.notifyInscriptionValidation("new_inscription", {
-              id: nuevaInscripcion.id,
-              correo: nuevaInscripcion.correo,
-              estado: nuevaInscripcion.estado,
+              id: nuevaInscripcion.id_ins,
+              correo: nuevaInscripcion.cuenta?.cor_usu || "N/A",
+              estado: nuevaInscripcion.est_ins,
               evento: eventoCompleto,
-              fechaCreacion: nuevaInscripcion.fecha_inscripcion,
-              requiresValidation: nuevaInscripcion.estado === "P", // Pendiente
+              fechaCreacion: nuevaInscripcion.fec_ins,
+              requiresValidation: nuevaInscripcion.est_ins === "PENDIENTE",
             });
 
             // Verificar si necesita alerta de capacidad (menos del 20% de cupos)
@@ -333,7 +333,7 @@ const crearInscripcion = async (req, res) => {
             }
 
             // Notificación a administradores si es inscripción pendiente
-            if (nuevaInscripcion.estado === "P") {
+            if (nuevaInscripcion.est_ins === "PENDIENTE") {
               socketService.notifyAdmins(
                 `Nueva inscripción pendiente de validación para "${eventoCompleto.nom_eve}"`,
                 "info",
@@ -874,6 +874,7 @@ const obtenerInscripcionesPorUsuario = async (req, res) => {
           },
         },
         inscripcion_curso: true,
+        certificado: true,
         comprobantes_pago: {
           orderBy: { fec_sub_com_pag: "desc" },
           take: 1,
@@ -915,6 +916,7 @@ const puedeGenerarCertificado = async (req, res) => {
       include: {
         evento: true,
         inscripcion_curso: true,
+        certificado: true,
       },
     });
 
@@ -922,8 +924,16 @@ const puedeGenerarCertificado = async (req, res) => {
       return res.status(404).json({ msg: "Inscripción no encontrada" });
     }
 
-    if (inscripcion.est_ins !== "FINALIZADA") {
-      return res.status(400).json({ msg: "Inscripción no está finalizada" });
+    // Verificar si ya tiene certificado
+    if (inscripcion.certificado) {
+      return res.status(400).json({
+        msg: "Ya existe un certificado para esta inscripción",
+        certificado: inscripcion.certificado,
+      });
+    }
+
+    if (inscripcion.est_ins !== "APROBADO") {
+      return res.status(400).json({ msg: "Inscripción no está aprobada" });
     }
 
     if (inscripcion.evento.tip_eve === "CURSO") {
@@ -1481,6 +1491,7 @@ const obtenerInscripcionesPorEventoPaginadas = async (req, res) => {
           },
           observacion: true,
           inscripcion_curso: true,
+          certificado: true,
           comprobantes_pago: {
             orderBy: {
               fec_sub_com_pag: "desc",
@@ -1627,6 +1638,7 @@ const obtenerInscripcionesPaginadas = async (req, res) => {
           },
           observacion: true,
           inscripcion_curso: true,
+          certificado: true,
           comprobantes_pago: {
             orderBy: {
               fec_sub_com_pag: "desc",

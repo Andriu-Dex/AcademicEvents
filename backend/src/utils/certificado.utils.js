@@ -102,13 +102,15 @@ const generarCertificadoPDF = (datos) => {
     .fontSize(16)
     .text("DE RECONOCIMIENTO", 0, currentY, { align: "center" });
 
-  currentY += 30;
+  currentY += 25;
 
   doc
-    .fillColor("#999999")
-    .font("Helvetica")
-    .fontSize(10)
-    .text("Otorgado a", 0, currentY, { align: "center" });
+    .fillColor("#888888")
+    .font("Helvetica-Oblique")
+    .fontSize(12)
+    .text("Se otorga el presente certificado a", 0, currentY, {
+      align: "center",
+    });
 
   // 🧑‍🎓 Nombre
   currentY += 30;
@@ -121,73 +123,62 @@ const generarCertificadoPDF = (datos) => {
       align: "center",
     });
 
-  currentY += 55;
+  currentY += 45;
 
-  // Cédula y carrera
-  doc
-    .font("Helvetica")
-    .fontSize(12)
-    .fillColor("#555555")
-    .text(`Cédula: ${usuario.ced_usu}`, 0, currentY, { align: "center" });
-
+  // Mostrar carrera si existe
   if (usuario.carrera) {
-    currentY += 18;
-    doc.text(`Carrera: ${usuario.carrera.nom_car}`, 0, currentY, {
-      align: "center",
-    });
+    doc
+      .font("Helvetica")
+      .fontSize(12)
+      .fillColor("#666666")
+      .text(`${usuario.carrera.nom_car}`, 0, currentY, {
+        align: "center",
+      });
+    currentY += 25;
   }
 
-  currentY += 35;
+  currentY += 15;
 
-  // 📄 Descripción
-  doc
-    .font("Helvetica")
-    .fontSize(14)
-    .fillColor("#333333")
-    .text(
-      `Ha ${
-        tipoCertificado === "APROBACION" ? "APROBADO" : "PARTICIPADO"
-      } satisfactoriamente en el evento académico:`,
-      0,
-      currentY,
-      { align: "center" }
-    );
+  // 📄 Descripción elegante en párrafo
+  let descripcionTexto = "";
 
-  currentY += 35;
-
-  doc
-    .font("Helvetica-Bold")
-    .fontSize(16)
-    .fillColor("#e0b747")
-    .text(`"${evento.nom_eve}"`, 0, currentY, { align: "center" });
-
-  currentY += 40;
-
-  // 📚 Datos del evento
-  doc
-    .font("Helvetica")
-    .fontSize(12)
-    .fillColor("#000000")
-    .text(`Tipo: ${evento.tip_eve}`, 0, currentY, { align: "center" });
-
-  currentY += 18;
-  doc.text(`Duración: ${evento.dur_hor_eve} horas`, { align: "center" });
-
-  currentY += 18;
-  doc.text(
-    `Fecha: ${new Date(evento.fec_ini_eve).toLocaleDateString(
+  if (tipoCertificado === "APROBACION") {
+    descripcionTexto = `Por haber completado satisfactoriamente el ${evento.tip_eve.toLowerCase()} "${
+      evento.nom_eve
+    }", con una duración de ${
+      evento.dur_hor_eve
+    } horas académicas, realizado del ${new Date(
+      evento.fec_ini_eve
+    ).toLocaleDateString("es-EC")} al ${new Date(
+      evento.fec_fin_eve
+    ).toLocaleDateString(
       "es-EC"
-    )} - ${new Date(evento.fec_fin_eve).toLocaleDateString("es-EC")}`,
-    { align: "center" }
-  );
-
-  currentY += 18;
-  doc.text(`Asistencia: ${asistencia}%`, { align: "center" });
-
-  if (evento.tip_eve === "CURSO" && notaFinal !== null) {
-    currentY += 18;
-    doc.text(`Nota final: ${notaFinal}/10`, { align: "center" });
+    )}, obteniendo una calificación de ${notaFinal}/10 puntos y manteniendo un ${asistencia}% de asistencia.`;
+  } else {
+    descripcionTexto = `Por su destacada participación en el ${evento.tip_eve.toLowerCase()} "${
+      evento.nom_eve
+    }", con una duración de ${
+      evento.dur_hor_eve
+    } horas académicas, realizado del ${new Date(
+      evento.fec_ini_eve
+    ).toLocaleDateString("es-EC")} al ${new Date(
+      evento.fec_fin_eve
+    ).toLocaleDateString(
+      "es-EC"
+    )}, cumpliendo con un ${asistencia}% de asistencia y demostrando compromiso académico.`;
   }
+
+  doc
+    .font("Helvetica")
+    .fontSize(13)
+    .fillColor("#333333")
+    .text(descripcionTexto, 80, currentY, {
+      align: "justify",
+      width: doc.page.width - 160,
+      lineGap: 4,
+    });
+
+  currentY += 80;
 
   // 🖼 Borde decorativo
   doc
@@ -206,14 +197,26 @@ const generarCertificadoPDF = (datos) => {
     console.warn("⚠️ Imagen de sello no encontrada");
   }
 
-  // ✒️ Firma y fecha de emisión
-  const yFirma = doc.page.height - 130; // Ajustado para dar espacio a la fecha
+  // ✒️ Firma y fecha de emisión con estilo más elegante
+  const yFirma = doc.page.height - 140;
 
-  // Fecha de emisión más visible
+  // Reconocimiento institucional
+  doc
+    .font("Helvetica-Oblique")
+    .fontSize(11)
+    .fillColor("#666666")
+    .text(
+      "En reconocimiento a su dedicación y excelencia académica.",
+      0,
+      yFirma - 25,
+      { align: "center" }
+    );
+
+  // Fecha de emisión con mejor formato
   doc
     .font("Helvetica")
-    .fontSize(12)
-    .fillColor("#333333")
+    .fontSize(11)
+    .fillColor("#444444")
     .text(
       `Emitido el ${new Date().toLocaleDateString("es-EC", {
         day: "numeric",
@@ -221,28 +224,29 @@ const generarCertificadoPDF = (datos) => {
         year: "numeric",
       })}`,
       0,
-      yFirma - 10,
+      yFirma + 5,
       { align: "center" }
     );
 
+  // Línea de firma más elegante
   doc
-    .moveTo(doc.page.width / 2 - 100, yFirma + 20)
-    .lineTo(doc.page.width / 2 + 100, yFirma + 20)
-    .strokeColor("#000000")
-    .lineWidth(1)
+    .moveTo(doc.page.width / 2 - 120, yFirma + 35)
+    .lineTo(doc.page.width / 2 + 120, yFirma + 35)
+    .strokeColor("#8a1538")
+    .lineWidth(1.5)
     .stroke();
 
   doc
-    .font("Helvetica")
-    .fontSize(10)
+    .font("Helvetica-Bold")
+    .fontSize(11)
     .fillColor("#333333")
-    .text("Firma del Director", 0, yFirma + 25, { align: "center" });
+    .text("Dirección Académica", 0, yFirma + 42, { align: "center" });
 
-  // 🔐 Código
+  // 🔐 Código de validación más discreto
   doc
-    .fontSize(10)
-    .fillColor("#777777")
-    .text(`Código de validación: ${codigoValidacion}`, 0, yFirma + 45, {
+    .fontSize(9)
+    .fillColor("#888888")
+    .text(`Código de validación: ${codigoValidacion}`, 0, yFirma + 65, {
       align: "center",
     });
 

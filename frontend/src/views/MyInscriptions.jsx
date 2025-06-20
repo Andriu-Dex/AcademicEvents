@@ -37,11 +37,6 @@ const estadoLabel = {
     icon: <Ban size={16} />,
     color: "estado-rechazada",
   },
-  FINALIZADA: {
-    text: "Finalizada",
-    icon: <FileText size={16} />,
-    color: "estado-finalizada",
-  },
   APROBADO: {
     text: "Aprobado",
     icon: <BadgeCheck size={16} />,
@@ -243,7 +238,7 @@ const MyInscriptions = () => {
                     <AlertCircle size={16} />
                     <span>Observación del administrador:</span>
                   </div>
-                  <p className="observacion-texto">{ins.observacion}</p>
+                  <p className="observacion-texto">{ins.observacion.obs_ins}</p>
                 </div>
               )}{" "}
               {ins.est_ins === "APROBADO" && (
