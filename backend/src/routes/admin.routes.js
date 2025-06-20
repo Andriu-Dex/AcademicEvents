@@ -104,4 +104,27 @@ router.get(
   adminController.listarAdmins
 );
 
+/**
+ * @route GET /api/admin/list-admins-paginados
+ * @desc Obtiene la lista de administradores con paginación
+ * @access Privado - Solo ADMIN_GLOBAL
+ */
+router.get(
+  "/list-admins-paginados",
+  verificarToken,
+  onlyAdmin,
+  (req, res, next) => {
+    // Verificar que el usuario sea ADMIN_GLOBAL
+    if (req.usuario.rol_usu !== "ADMIN_GLOBAL") {
+      return res.status(403).json({
+        error: "No autorizado",
+        mensaje:
+          "Solo los Super Administradores pueden ver la lista de administradores",
+      });
+    }
+    next();
+  },
+  adminController.listarAdminsPaginados
+);
+
 module.exports = router;

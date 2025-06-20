@@ -6,6 +6,7 @@ const onlyAdmin = require("../middlewares/autorizacion/onlyAdmin");
 
 const {
   getEventosParaReportes,
+  getEventosParaReportesPaginados,
   getReporteEventoPorId,
   getEventosPorMes,
   descargarReporteEventoPDF,
@@ -186,6 +187,14 @@ router.post(
   verificarToken,
   onlyAdmin,
   descargarReporteCuposPDF
+);
+
+// Obtener eventos paginados para reportes (solo admin)
+router.get(
+  "/reportes-evento-paginados",
+  verificarToken,
+  onlyAdmin,
+  getEventosParaReportesPaginados
 );
 
 module.exports = router;

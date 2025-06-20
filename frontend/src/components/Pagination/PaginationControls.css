@@ -157,12 +157,11 @@
 
 /* Variantes de color */
 .pagination-controls-pc.variant-admin {
-  --primary-color: #af1e1e;
-  --primary-light: #ffefef;
+  --primary-color: #8a1538;
+  --primary-light: rgba(138, 21, 56, 0.1);
 }
 
 .pagination-controls-pc.variant-public {
-  /* --primary-color: #059669; */
-  --primary-color: #9b1818;
-  --primary-light: #fdecec;
+  --primary-color: #8a1538;
+  --primary-light: rgba(138, 21, 56, 0.1);
 }

@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../api/axiosConfig";
+import { usePagination } from "../../hooks/usePagination";
+import PaginationControls from "../../components/Pagination/PaginationControls";
 import {
   Calendar,
   FileText,
@@ -10,30 +12,32 @@ import {
   CheckSquare,
   Award,
   Users,
+  ChevronRight,
 } from "lucide-react";
 import "./styles/AdminDashboard.css";
 import "./styles/reportes-options.css";
 
 const AdminDashboard = () => {
-  const [eventos, setEventos] = useState([]);
-  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const cargarEventos = async () => {
-      try {
-        setLoading(true);
-        const res = await axiosInstance.get("/admin/reportes-evento");
-        setEventos(res.data.eve);
-      } catch (error) {
-        setEventos([]);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Usar el hook de paginación para los eventos recientes
+  const {
+    data: eventos,
+    loading,
+    currentPage,
+    totalPages,
+    totalItems,
+    itemsPerPage,
+    fetchData,
+    goToPage,
+    hasNextPage,
+    hasPrevPage,
+  } = usePagination("/admin/reportes-evento-paginados", 10);
 
-    cargarEventos();
-  }, []);
+  // Cargar eventos al montar el componente
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   return (
     <div className="admin-dashboard">
@@ -120,57 +124,44 @@ const AdminDashboard = () => {
               ) : (
                 eventos.map((evento) => (
                   <div
-                    className="evento-card"
+                    className="evento-card-ad"
                     key={evento.id_eve}
                     onClick={() =>
                       navigate(`/admin/reportes-evento/${evento.id_eve}`)
                     }
-                    style={{
-                      cursor: "pointer",
-                      border: "1px solid #ececec",
-                      borderRadius: "16px",
-                      padding: "1.5rem 1rem",
-                      background: "#fff",
-                      boxShadow: "0 2px 8px #00000012",
-                      textAlign: "center",
-                      width: "320px", // <-- Más ancho
-                      height: "180px", // <-- Más bajo
-                      transition: "box-shadow .2s, transform .2s",
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
                   >
                     <img
                       src={evento.img_por_eve}
                       alt={evento.nom_eve}
-                      style={{
-                        width: "100%",
-                        height: "90px", // <-- Más bajo
-                        objectFit: "contain", // <-- Mejor para logos rectangulares
-                        borderRadius: "10px",
-                        marginBottom: "0.5rem",
-                        background: "#f9f9f9",
-                      }}
+                      className="evento-imagen-ad"
                       onError={(e) =>
                         (e.target.src =
                           "https://via.placeholder.com/320x90?text=Sin+Imagen")
                       }
                     />
-                    <h4
-                      style={{
-                        margin: "0 0 0.5rem 0",
-                        color: "#8a1538",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      {evento.nom_eve}
-                    </h4>
+                    <h4 className="evento-titulo-ad">{evento.nom_eve}</h4>
                   </div>
                 ))
               )}
             </div>
+
+            {/* Controles de paginación estándar */}
+            {totalPages > 1 && (
+              <div className="pagination-controls-wrapper-ad">
+                <PaginationControls
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={goToPage}
+                  hasNextPage={hasNextPage}
+                  hasPrevPage={hasPrevPage}
+                  totalItems={totalItems}
+                  itemsPerPage={itemsPerPage}
+                  loading={loading}
+                  className="variant-admin"
+                  showInfo={true}
+                />
+              </div>
+            )}
           </div>
         )}
       </div>

@@ -125,6 +125,53 @@ async function getEventosParaReportes(req, res) {
   }
 }
 
+async function getEventosParaReportesPaginados(req, res) {
+  try {
+    // Extraer parámetros de paginación
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
+
+    // Ejecutar consultas en paralelo
+    const [eventos, totalCount] = await Promise.all([
+      prisma.evento.findMany({
+        select: {
+          id_eve: true,
+          nom_eve: true,
+          img_por_eve: true,
+        },
+        orderBy: {
+          fec_ini_eve: "desc", // En orden descendente por fecha de inicio
+        },
+        skip: offset,
+        take: limit,
+      }),
+      prisma.evento.count(),
+    ]);
+
+    // Calcular metadatos de paginación
+    const totalPages = Math.ceil(totalCount / limit);
+
+    return res.json({
+      data: eventos,
+      pagination: {
+        currentPage: page,
+        totalPages,
+        totalItems: totalCount,
+        itemsPerPage: limit,
+        hasNextPage: page < totalPages,
+        hasPrevPage: page > 1,
+      },
+    });
+  } catch (error) {
+    console.error("Error en paginación de eventos para reportes:", error);
+    res.status(500).json({
+      error: "Error interno del servidor",
+      message: error.message,
+    });
+  }
+}
+
 async function getReporteEventoPorId(req, res) {
   const { id_eve } = req.params;
 
@@ -1481,6 +1528,7 @@ async function descargarReporteCuposPDF(req, res) {
 
 module.exports = {
   getEventosParaReportes,
+  getEventosParaReportesPaginados,
   getReporteEventoPorId,
   getEventosPorMes,
   descargarReporteEventoPDF,
