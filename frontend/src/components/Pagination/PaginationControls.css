@@ -31,7 +31,7 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1rem;
-  border: 1px solid var(--border-light, #e5e7eb);
+  border: 1px solid var(--border-light, #ebe5e5);
   background: var(--white, #ffffff);
   color: var(--text-primary, #374151);
   border-radius: 8px;
@@ -43,7 +43,7 @@
 }
 
 .pagination-btn-pc:hover:not(:disabled) {
-  background: var(--primary-light, #f3f4f6);
+  background: var(--primary-light, #f6f3f3);
   border-color: var(--primary-color, #8a1538);
   color: var(--primary-color, #8a1538);
 }
@@ -51,7 +51,7 @@
 .pagination-btn-pc:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-  background: var(--gray-50, #f9fafb);
+  background: var(--gray-50, #fbf9f9);
   border: #08080800 1px solid;
 }
 
@@ -65,7 +65,7 @@
   min-width: 2.5rem;
   height: 2.5rem;
   padding: 0;
-  border: 1px solid var(--border-light, #e5e7eb);
+  border: 1px solid var(--border-light, #ebe5e5);
   background: var(--white, #ffffff);
   color: var(--text-primary, #374151);
   border-radius: 6px;
@@ -79,7 +79,7 @@
 }
 
 .pagination-number-pc:hover:not(:disabled) {
-  background: var(--primary-light, #f3f4f6);
+  background: var(--primary-light, #f6f3f3);
   border-color: var(--primary-color, #8a1538);
   color: var(--primary-color, #8a1538);
 }
@@ -157,8 +157,8 @@
 
 /* Variantes de color */
 .pagination-controls-pc.variant-admin {
-  --primary-color: #1e40af;
-  --primary-light: #eff6ff;
+  --primary-color: #af1e1e;
+  --primary-light: #ffefef;
 }
 
 .pagination-controls-pc.variant-public {

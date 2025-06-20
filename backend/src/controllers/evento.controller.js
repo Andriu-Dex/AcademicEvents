@@ -1249,6 +1249,205 @@ const verificarEstadosAutomaticos = async (req, res) => {
   }
 };
 
+/**
+ * Obtiene eventos para el panel de administración con paginación
+ * @param {Object} req - Solicitud HTTP con parámetros de paginación y filtros
+ * @param {Object} res - Respuesta HTTP
+ */
+const obtenerEventosAdminPaginados = async (req, res) => {
+  try {
+    // Extraer parámetros de paginación
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 15;
+    const offset = (page - 1) * limit;
+
+    // Extraer filtros
+    const {
+      search,
+      tipoEvento,
+      estado,
+      fechaInicio,
+      fechaFin,
+      carrera,
+      modalidad,
+      capacidadMin,
+      capacidadMax,
+      valorMin,
+      valorMax,
+      asistenciaMin,
+      esGratuito,
+      esPago,
+      eventosLlenos,
+      sortBy = "fec_cre_eve",
+      sortOrder = "desc",
+    } = req.query;
+
+    // Construir condición WHERE
+    const whereCondition = {};
+
+    // Filtro por búsqueda (nombre)
+    if (search) {
+      whereCondition.nom_eve = {
+        contains: search,
+        mode: "insensitive",
+      };
+    }
+
+    // Filtro por tipo de evento
+    if (tipoEvento) {
+      whereCondition.tip_eve = tipoEvento;
+    }
+
+    // Filtro por estado
+    if (estado) {
+      whereCondition.est_eve = estado;
+    }
+
+    // Filtro por fecha de inicio
+    if (fechaInicio) {
+      whereCondition.fec_ini_eve = {
+        gte: new Date(fechaInicio),
+      };
+    }
+
+    // Filtro por fecha de fin
+    if (fechaFin) {
+      whereCondition.fec_fin_eve = {
+        lte: new Date(fechaFin),
+      };
+    }
+
+    // Filtro por modalidad
+    if (modalidad) {
+      whereCondition.mod_eve = modalidad;
+    }
+
+    // Filtro por capacidad mínima
+    if (capacidadMin) {
+      whereCondition.cup_max_eve = {
+        gte: parseInt(capacidadMin),
+      };
+    }
+
+    // Filtro por capacidad máxima
+    if (capacidadMax) {
+      whereCondition.cup_max_eve = {
+        lte: parseInt(capacidadMax),
+      };
+    }
+
+    // Filtro por valor mínimo
+    if (valorMin) {
+      whereCondition.val_eve = {
+        gte: parseFloat(valorMin),
+      };
+    }
+
+    // Filtro por valor máximo
+    if (valorMax) {
+      whereCondition.val_eve = {
+        lte: parseFloat(valorMax),
+      };
+    }
+
+    // Filtro por asistencia mínima
+    if (asistenciaMin) {
+      whereCondition.por_min_asi_eve = {
+        gte: parseInt(asistenciaMin),
+      };
+    }
+
+    // Filtro por eventos gratuitos
+    if (esGratuito === "true") {
+      whereCondition.val_eve = 0;
+    }
+
+    // Filtro por eventos de pago
+    if (esPago === "true") {
+      whereCondition.val_eve = {
+        gt: 0,
+      };
+    }
+
+    // Filtro por eventos llenos o con cupos disponibles
+    if (eventosLlenos === "true") {
+      whereCondition.cup_dis_eve = 0;
+    } else {
+      whereCondition.cup_dis_eve = {
+        gt: 0,
+      };
+    }
+
+    // Filtro por carrera (manejo especial por relación)
+    let carreraFilter = undefined;
+    if (carrera) {
+      if (carrera === "GENERAL") {
+        carreraFilter = {
+          none: {},
+        };
+      } else {
+        carreraFilter = {
+          some: {
+            id_car_aso: carrera,
+          },
+        };
+      }
+    }
+
+    // Configurar ordenamiento
+    const orderBy = {};
+    orderBy[sortBy || "fec_cre_eve"] = sortOrder || "desc";
+
+    // Ejecutar consultas en paralelo
+    const [eventos, totalCount] = await Promise.all([
+      prisma.evento.findMany({
+        where: {
+          ...whereCondition,
+          ...(carreraFilter && { eventos_carrera: carreraFilter }),
+        },
+        skip: offset,
+        take: limit,
+        orderBy,
+        include: {
+          eventos_curso: true,
+          eventos_carrera: {
+            include: {
+              carrera: true,
+            },
+          },
+        },
+      }),
+      prisma.evento.count({
+        where: {
+          ...whereCondition,
+          ...(carreraFilter && { eventos_carrera: carreraFilter }),
+        },
+      }),
+    ]);
+
+    // Calcular metadatos de paginación
+    const totalPages = Math.ceil(totalCount / limit);
+
+    return res.json({
+      data: eventos,
+      pagination: {
+        currentPage: page,
+        totalPages,
+        totalItems: totalCount,
+        itemsPerPage: limit,
+        hasNextPage: page < totalPages,
+        hasPrevPage: page > 1,
+      },
+    });
+  } catch (error) {
+    console.error("Error en paginación de eventos admin:", error);
+    res.status(500).json({
+      error: "Error interno del servidor",
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   crearEvento,
   obtenerEventos,
@@ -1261,4 +1460,5 @@ module.exports = {
   obtenerEventosDestacados,
   toggleEventoDestacado,
   verificarEstadosAutomaticos,
+  obtenerEventosAdminPaginados,
 };

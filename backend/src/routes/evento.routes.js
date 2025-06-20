@@ -16,6 +16,7 @@ const {
   obtenerEventosDestacados,
   toggleEventoDestacado,
   verificarEstadosAutomaticos,
+  obtenerEventosAdminPaginados,
 } = require("../controllers/evento.controller");
 
 // ============================
@@ -100,6 +101,14 @@ router.get(
   verificarToken,
   onlyAdmin,
   verificarEstadosAutomaticos
+);
+
+// Obtener eventos paginados (admin)
+router.get(
+  "/admin/eventos",
+  verificarToken,
+  onlyAdmin,
+  obtenerEventosAdminPaginados
 );
 
 module.exports = router;

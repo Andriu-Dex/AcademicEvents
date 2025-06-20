@@ -7,6 +7,8 @@ const {
   obtenerInscripcionesPorEvento,
   validarInscripcion,
   obtenerTodasLasInscripciones,
+  obtenerInscripcionesPaginadas,
+  obtenerInscripcionesPorEventoPaginadas,
 } = require("../controllers/inscripcion.controller");
 
 const { obtenerCarreras } = require("../controllers/carrera.controller");
@@ -23,11 +25,27 @@ router.get(
   obtenerTodasLasInscripciones
 );
 
+// Ruta para obtener inscripciones paginadas
+router.get(
+  "/inscripciones-paginadas",
+  verificarToken,
+  onlyAdmin,
+  obtenerInscripcionesPaginadas
+);
+
 router.get(
   "/inscripciones/evento/:id",
   verificarToken,
   onlyAdmin,
   obtenerInscripcionesPorEvento
+);
+
+// Ruta para obtener inscripciones por evento paginadas
+router.get(
+  "/inscripciones-paginadas/evento/:id",
+  verificarToken,
+  onlyAdmin,
+  obtenerInscripcionesPorEventoPaginadas
 );
 
 router.put(

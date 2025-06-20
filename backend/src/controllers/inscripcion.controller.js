@@ -1203,6 +1203,7 @@ const obtenerInscripcionesPorEvento = async (req, res) => {
           take: 1,
         },
         observacion: true,
+        certificado: true,
       },
       orderBy: { fec_ins: "desc" },
     });
@@ -1384,102 +1385,412 @@ const obtenerInscripcionesPorEvento = async (req, res) => {
   }
 };
 
+// ===================================================
+// Obtener inscripciones de un evento específico con paginación
+// ===================================================
+const obtenerInscripcionesPorEventoPaginadas = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Extraer parámetros de paginación
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 25;
+    const offset = (page - 1) * limit;
+
+    // Extraer filtros
+    const {
+      search,
+      estado,
+      fechaInicio,
+      fechaFin,
+      sortBy = "fec_ins",
+      sortOrder = "desc",
+    } = req.query;
+
+    // Construir condición WHERE base con el ID del evento
+    const whereCondition = {
+      id_eve_ins: id,
+    };
+
+    // Filtro por búsqueda (usuario)
+    if (search) {
+      whereCondition.OR = [
+        // Búsqueda por nombre/apellido de usuario
+        {
+          cuenta: {
+            usuario: {
+              OR: [
+                { nom_usu: { contains: search, mode: "insensitive" } },
+                { ape_usu: { contains: search, mode: "insensitive" } },
+                { ced_usu: { contains: search, mode: "insensitive" } },
+              ],
+            },
+          },
+        },
+        // Búsqueda por correo de usuario
+        {
+          cuenta: {
+            cor_usu: { contains: search, mode: "insensitive" },
+          },
+        },
+      ];
+    }
+
+    // Filtro por estado de inscripción
+    if (estado) {
+      whereCondition.est_ins = estado;
+    }
+
+    // Filtro por fecha de inscripción (inicio)
+    if (fechaInicio) {
+      whereCondition.fec_ins = {
+        ...(whereCondition.fec_ins || {}),
+        gte: new Date(fechaInicio),
+      };
+    }
+
+    // Filtro por fecha de inscripción (fin)
+    if (fechaFin) {
+      whereCondition.fec_ins = {
+        ...(whereCondition.fec_ins || {}),
+        lte: new Date(fechaFin),
+      };
+    }
+
+    // Configurar ordenamiento
+    const orderBy = {};
+    orderBy[sortBy || "fec_ins"] = sortOrder || "desc";
+
+    // Ejecutar consultas en paralelo
+    const [inscripciones, totalCount] = await Promise.all([
+      prisma.inscripcion.findMany({
+        where: whereCondition,
+        skip: offset,
+        take: limit,
+        orderBy,
+        include: {
+          cuenta: {
+            include: {
+              usuario: true,
+            },
+          },
+          evento: {
+            include: {
+              eventos_curso: true,
+            },
+          },
+          observacion: true,
+          inscripcion_curso: true,
+          comprobantes_pago: {
+            orderBy: {
+              fec_sub_com_pag: "desc",
+            },
+            take: 1,
+          },
+          cartas_motivacion: {
+            orderBy: {
+              fec_sub_car_mot: "desc",
+            },
+            take: 1,
+          },
+        },
+      }),
+      prisma.inscripcion.count({
+        where: whereCondition,
+      }),
+    ]);
+
+    // Calcular metadatos de paginación
+    const totalPages = Math.ceil(totalCount / limit);
+
+    return res.json({
+      data: inscripciones,
+      pagination: {
+        currentPage: page,
+        totalPages,
+        totalItems: totalCount,
+        itemsPerPage: limit,
+        hasNextPage: page < totalPages,
+        hasPrevPage: page > 1,
+      },
+    });
+  } catch (error) {
+    console.error("Error en paginación de inscripciones por evento:", error);
+    res.status(500).json({
+      error: "Error interno del servidor",
+      message: error.message,
+    });
+  }
+};
+
+// ===================================================
+// Obtener todas las inscripciones con paginación y filtros
+// ===================================================
+const obtenerInscripcionesPaginadas = async (req, res) => {
+  try {
+    // Extraer parámetros de paginación
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 25;
+    const offset = (page - 1) * limit;
+
+    // Extraer filtros
+    const {
+      search,
+      estado,
+      evento,
+      fechaInicio,
+      fechaFin,
+      sortBy = "fec_ins",
+      sortOrder = "desc",
+    } = req.query;
+
+    // Construir condición WHERE base
+    const whereCondition = {};
+
+    // Filtro por evento específico
+    if (evento) {
+      whereCondition.id_eve_ins = evento;
+    }
+
+    // Filtro por búsqueda (usuario)
+    if (search) {
+      whereCondition.OR = [
+        // Búsqueda por nombre/apellido de usuario
+        {
+          cuenta: {
+            usuario: {
+              OR: [
+                { nom_usu: { contains: search, mode: "insensitive" } },
+                { ape_usu: { contains: search, mode: "insensitive" } },
+                { ced_usu: { contains: search, mode: "insensitive" } },
+              ],
+            },
+          },
+        },
+        // Búsqueda por correo de usuario
+        {
+          cuenta: {
+            cor_usu: { contains: search, mode: "insensitive" },
+          },
+        },
+        // Búsqueda por nombre de evento
+        {
+          evento: {
+            nom_eve: { contains: search, mode: "insensitive" },
+          },
+        },
+      ];
+    }
+
+    // Filtro por estado de inscripción
+    if (estado) {
+      whereCondition.est_ins = estado;
+    }
+
+    // Filtro por fecha de inscripción (inicio)
+    if (fechaInicio) {
+      whereCondition.fec_ins = {
+        ...(whereCondition.fec_ins || {}),
+        gte: new Date(fechaInicio),
+      };
+    }
+
+    // Filtro por fecha de inscripción (fin)
+    if (fechaFin) {
+      whereCondition.fec_ins = {
+        ...(whereCondition.fec_ins || {}),
+        lte: new Date(fechaFin),
+      };
+    }
+
+    // Configurar ordenamiento
+    const orderBy = {};
+    orderBy[sortBy || "fec_ins"] = sortOrder || "desc";
+
+    // Ejecutar consultas en paralelo
+    const [inscripciones, totalCount] = await Promise.all([
+      prisma.inscripcion.findMany({
+        where: whereCondition,
+        skip: offset,
+        take: limit,
+        orderBy,
+        include: {
+          cuenta: {
+            include: {
+              usuario: true,
+            },
+          },
+          evento: {
+            include: {
+              eventos_curso: true,
+            },
+          },
+          observacion: true,
+          inscripcion_curso: true,
+          comprobantes_pago: {
+            orderBy: {
+              fec_sub_com_pag: "desc",
+            },
+            take: 1,
+          },
+          cartas_motivacion: {
+            orderBy: {
+              fec_sub_car_mot: "desc",
+            },
+            take: 1,
+          },
+        },
+      }),
+      prisma.inscripcion.count({
+        where: whereCondition,
+      }),
+    ]);
+
+    // Calcular metadatos de paginación
+    const totalPages = Math.ceil(totalCount / limit);
+
+    return res.json({
+      data: inscripciones,
+      pagination: {
+        currentPage: page,
+        totalPages,
+        totalItems: totalCount,
+        itemsPerPage: limit,
+        hasNextPage: page < totalPages,
+        hasPrevPage: page > 1,
+      },
+    });
+  } catch (error) {
+    console.error("Error en paginación de inscripciones:", error);
+    res.status(500).json({
+      error: "Error interno del servidor",
+      message: error.message,
+    });
+  }
+};
+
+// ===================================================
+// Obtener inscripción específica de un usuario en un evento
+// ===================================================
 const obtenerInscripcionUsuarioEnEvento = async (req, res) => {
   try {
     const { idEvento } = req.params;
-    const id_cue = req.usuario.id; // Ahora usamos ID de cuenta
+    const id_cue = req.usuario.id; // ID de la cuenta del usuario autenticado
 
+    if (!idEvento) {
+      return res.status(400).json({
+        msg: "El ID del evento es requerido",
+      });
+    }
+
+    // Buscar la inscripción del usuario en el evento específico
     const inscripcion = await prisma.inscripcion.findFirst({
       where: {
         id_cor_ins: id_cue,
         id_eve_ins: idEvento,
       },
       include: {
+        evento: {
+          include: {
+            eventos_curso: true,
+          },
+        },
+        cuenta: {
+          include: {
+            usuario: true,
+          },
+        },
         inscripcion_curso: true,
         comprobantes_pago: {
-          orderBy: { fec_sub_com_pag: "desc" },
+          orderBy: {
+            fec_sub_com_pag: "desc",
+          },
           take: 1,
         },
+        cartas_motivacion: {
+          orderBy: {
+            fec_sub_car_mot: "desc",
+          },
+          take: 1,
+        },
+        observacion: true,
+        certificado: true,
       },
     });
 
     if (!inscripcion) {
-      return res.status(404).json({ msg: "No estás inscrito en este evento" });
-    }
-
-    // Crear una respuesta más organizada
-    const respuesta = {
-      id_ins: inscripcion.id_ins,
-      est_ins: inscripcion.est_ins,
-      fec_ins: inscripcion.fec_ins,
-      por_asi_fin_usu: inscripcion.por_asi_fin_usu,
-      nota_final: inscripcion.inscripcion_curso?.not_fin_usu || null,
-      comprobante: inscripcion.comprobantes_pago[0]?.url_com_pag || null,
-    };
-
-    res.status(200).json(respuesta);
-  } catch (error) {
-    res.status(500).json({
-      msg: "Error al obtener tu inscripción",
-      error: error.message,
-    });
-  }
-};
-
-// ==============================
-// Inscripciones propias (usuario autenticado)
-// ==============================
-const obtenerInscripcionesDelUsuarioActual = async (req, res) => {
-  try {
-    // Verificar si req.usuario está definido
-    if (!req.usuario) {
-      return res.status(401).json({
-        msg: "Usuario no autenticado",
-        error: "No hay información de usuario en la solicitud",
+      return res.status(404).json({
+        msg: "No se encontró inscripción para este evento",
+        inscrito: false,
       });
     }
 
-    const id_cue = req.usuario.id; // Ahora usamos ID de cuenta
-
-    // Log antes de la consulta a Prisma
-    const inscripciones = await prisma.inscripcion.findMany({
-      where: { id_cor_ins: id_cue },
-      include: {
-        evento: true,
-        inscripcion_curso: true,
-        comprobantes_pago: {
-          orderBy: { fec_sub_com_pag: "desc" },
-          take: 1,
-        },
-        observacion: true, // Incluimos la observación
-      },
-      orderBy: { fec_ins: "desc" },
+    return res.json({
+      inscripcion,
+      inscrito: true,
+      estado: inscripcion.est_ins,
     });
-
-    const inscripcionesMapeadas = inscripciones.map((inscripcion) => ({
-      id_ins: inscripcion.id_ins,
-      est_ins: inscripcion.est_ins,
-      fec_ins: inscripcion.fec_ins,
-      por_asi_fin_usu: inscripcion.por_asi_fin_usu,
-      nota_final: inscripcion.inscripcion_curso?.not_fin_usu || null,
-      comprobante: inscripcion.comprobantes_pago[0]?.url_com_pag || null,
-      observacion: inscripcion.observacion?.obs_ins || null, // Incluimos la observación en la respuesta
-      evento: inscripcion.evento,
-    }));
-
-    res.status(200).json(inscripcionesMapeadas);
   } catch (error) {
-    res.status(500).json({
-      msg: "Error al obtener inscripciones",
+    console.error("Error al obtener inscripción del usuario:", error);
+    return res.status(500).json({
+      msg: "Error interno del servidor",
       error: error.message,
-      stack: process.env.NODE_ENV === "development" ? error.stack : undefined,
     });
   }
 };
 
-// ==============================
+// ===================================================
+// Obtener todas las inscripciones del usuario autenticado
+// ===================================================
+const obtenerInscripcionesDelUsuarioActual = async (req, res) => {
+  try {
+    const id_cue = req.usuario.id; // ID de la cuenta del usuario autenticado
+
+    // Buscar todas las inscripciones del usuario
+    const inscripciones = await prisma.inscripcion.findMany({
+      where: {
+        id_cor_ins: id_cue,
+      },
+      include: {
+        evento: {
+          include: {
+            eventos_curso: true,
+          },
+        },
+        inscripcion_curso: true,
+        comprobantes_pago: {
+          orderBy: {
+            fec_sub_com_pag: "desc",
+          },
+          take: 1,
+        },
+        cartas_motivacion: {
+          orderBy: {
+            fec_sub_car_mot: "desc",
+          },
+          take: 1,
+        },
+        observacion: true,
+        certificado: true,
+      },
+      orderBy: {
+        fec_ins: "desc",
+      },
+    });
+
+    return res.json(inscripciones);
+  } catch (error) {
+    console.error("Error al obtener inscripciones del usuario actual:", error);
+    return res.status(500).json({
+      msg: "Error interno del servidor",
+      error: error.message,
+    });
+  }
+};
+
+// ===================================================
 // Obtener todas las inscripciones (admin)
-// ==============================
+// ===================================================
 const obtenerTodasLasInscripciones = async (req, res) => {
   try {
     const inscripciones = await prisma.inscripcion.findMany({
@@ -1491,80 +1802,36 @@ const obtenerTodasLasInscripciones = async (req, res) => {
         },
         evento: {
           include: {
-            eventos_curso: true, // ✅ Incluir datos del curso
+            eventos_curso: true,
           },
         },
         inscripcion_curso: true,
         comprobantes_pago: {
-          orderBy: { fec_sub_com_pag: "desc" },
+          orderBy: {
+            fec_sub_com_pag: "desc",
+          },
           take: 1,
         },
         cartas_motivacion: {
-          orderBy: { fec_sub_car_mot: "desc" },
+          orderBy: {
+            fec_sub_car_mot: "desc",
+          },
           take: 1,
         },
         observacion: true,
+        certificado: true,
       },
-      orderBy: { fec_ins: "desc" },
+      orderBy: {
+        fec_ins: "desc",
+      },
     });
 
-    try {
-      // Mapear los resultados para tener una estructura más limpia
-      const inscripcionesMapeadas = inscripciones.map((inscripcion) => {
-        return {
-          id_ins: inscripcion.id_ins,
-          estado: inscripcion.est_ins,
-          asistencia: inscripcion.por_asi_fin_usu,
-          nota_final: inscripcion.inscripcion_curso?.not_fin_usu || null,
-          fec_ins: inscripcion.fec_ins,
-          evento: {
-            nom_eve: inscripcion.evento.nom_eve,
-            tip_eve: inscripcion.evento.tip_eve,
-            val_eve: inscripcion.evento.val_eve,
-            id_eve: inscripcion.evento.id_eve,
-            est_eve: inscripcion.evento.est_eve,
-            por_min_asi_eve: inscripcion.evento.por_min_asi_eve, // ✅ AGREGAR este campo
-            eventos_curso: inscripcion.evento.eventos_curso, // ✅ AGREGAR este campo
-          },
-          comprobante: inscripcion.comprobantes_pago[0]?.url_com_pag || null,
-          carta_motivacion:
-            inscripcion.cartas_motivacion[0]?.con_car_mot || null,
-          observacion: inscripcion.observacion?.obs_ins || null,
-          usuario: {
-            nom_usu: inscripcion.cuenta.usuario.nom_usu,
-            ape_usu: inscripcion.cuenta.usuario.ape_usu,
-            cor_usu: inscripcion.cuenta.cor_usu,
-            com_usu: inscripcion.cuenta.usuario.com_usu || null,
-          },
-        };
-      });
-
-      console.log(
-        `✅ Enviando ${inscripcionesMapeadas.length} inscripciones al frontend`
-      );
-      if (inscripcionesMapeadas.length > 0) {
-        const eventoEjemplo = inscripcionesMapeadas[0].evento;
-        console.log(`📊 Ejemplo de datos del evento enviados:`);
-        console.log(`  - Nombre: ${eventoEjemplo.nom_eve}`);
-        console.log(`  - Tipo: ${eventoEjemplo.tip_eve}`);
-        console.log(`  - Asistencia mínima: ${eventoEjemplo.por_min_asi_eve}%`);
-        console.log(
-          `  - Datos del curso:`,
-          eventoEjemplo.eventos_curso
-            ? `Nota mín: ${eventoEjemplo.eventos_curso.not_min_cur}`
-            : "No es curso"
-        );
-      }
-
-      res.status(200).json(inscripcionesMapeadas);
-    } catch (mapError) {
-      throw mapError;
-    }
+    return res.json(inscripciones);
   } catch (error) {
-    res.status(500).json({
-      msg: "Error al obtener todas las inscripciones",
+    console.error("Error al obtener todas las inscripciones:", error);
+    return res.status(500).json({
+      msg: "Error interno del servidor",
       error: error.message,
-      stack: process.env.NODE_ENV === "development" ? error.stack : undefined,
     });
   }
 };
@@ -1580,4 +1847,6 @@ module.exports = {
   manejarErroresDeMulter,
   obtenerInscripcionesDelUsuarioActual,
   obtenerTodasLasInscripciones,
+  obtenerInscripcionesPaginadas,
+  obtenerInscripcionesPorEventoPaginadas,
 };
