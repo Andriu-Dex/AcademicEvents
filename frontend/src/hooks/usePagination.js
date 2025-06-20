@@ -20,7 +20,6 @@ export const usePagination = (
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
   const fetchData = useCallback(
     async (filters = {}, page = currentPage) => {
       setLoading(true);
@@ -54,7 +53,7 @@ export const usePagination = (
         setLoading(false);
       }
     },
-    [endpoint, currentPage, itemsPerPage]
+    [endpoint, itemsPerPage] // Eliminar currentPage de dependencias para evitar bucles
   );
 
   const goToPage = useCallback(
@@ -80,6 +79,17 @@ export const usePagination = (
     setTotalItems(0);
     setTotalPages(0);
   }, []);
+  // Estado para mantener los últimos filtros aplicados
+  const [lastFilters, setLastFilters] = useState({});
+
+  // Wrapper para fetchData que guarda los filtros
+  const fetchDataWithFilters = useCallback(
+    (filters = {}) => {
+      setLastFilters(filters);
+      return fetchData(filters, currentPage);
+    },
+    [fetchData, currentPage]
+  );
 
   // Efecto para re-fetch cuando cambian las dependencias
   useEffect(() => {
@@ -88,10 +98,12 @@ export const usePagination = (
     }
   }, dependencies);
 
-  // Efecto para cargar datos cuando cambia la página
+  // Efecto para cargar datos cuando cambia la página (usando últimos filtros)
   useEffect(() => {
-    fetchData();
-  }, [currentPage, fetchData]);
+    if (Object.keys(lastFilters).length > 0) {
+      fetchData(lastFilters, currentPage);
+    }
+  }, [currentPage, fetchData, lastFilters]);
 
   return {
     // Datos
@@ -103,10 +115,8 @@ export const usePagination = (
     currentPage,
     totalPages,
     totalItems,
-    itemsPerPage,
-
-    // Métodos
-    fetchData,
+    itemsPerPage, // Métodos
+    fetchData: fetchDataWithFilters, // Usar wrapper que guarda filtros
     goToPage,
     nextPage,
     prevPage,

@@ -195,11 +195,8 @@ const EventsRoute = () => {
     obtenerPerfilUsuario();
   }, [usuario, token, loading, navigate]);
 
-  // Efecto para cargar datos con paginación
-  useEffect(() => {
-    if (loading || !usuario) return;
-
-    // Construir objeto de filtros para la API
+  // Función para construir filtros API de forma consistente
+  const construirFiltrosAPI = useCallback(() => {
     const filtrosAPI = {};
 
     if (filtros.gratuito) filtrosAPI.gratuito = true;
@@ -216,10 +213,21 @@ const EventsRoute = () => {
       filtrosAPI.search = filtro;
     }
 
-    // Añadir filtro de carrera si existe
-    if (usuarioConCarrera && usuarioConCarrera.carrera) {
-      filtrosAPI.carrera = usuarioConCarrera.carrera.id_car;
-    }
+    // NO enviar automáticamente la carrera del usuario
+    // El backend determina qué eventos mostrar basado en el token/rol del usuario
+
+    return filtrosAPI;
+  }, [filtros, filtroModalidad, filtro]);
+
+  // Efecto para cargar datos con paginación
+  useEffect(() => {
+    if (loading || !usuario) return;
+
+    // Construir objeto de filtros para la API usando la función centralizada
+    const filtrosAPI = construirFiltrosAPI();
+
+    // 🐛 DEBUG: Log de filtros que se envían al backend
+    console.log("🔍 [FRONTEND] Filtros enviados al backend:", filtrosAPI);
 
     // Llamar a fetchData con los filtros
     fetchData(filtrosAPI);
@@ -231,7 +239,7 @@ const EventsRoute = () => {
     fetchData,
     loading,
     usuario,
-    usuarioConCarrera,
+    construirFiltrosAPI,
   ]);
   useEffect(() => {
     const obtenerInscripciones = async () => {
@@ -411,115 +419,8 @@ const EventsRoute = () => {
       setSubiendo(false);
     }
   };
-  const eventosDisponibles = eventos.filter((evento) => {
-    // Si algún filtro de estado está activo, mostrar solo eventos con esos estados
-    const filtrosEstadoActivos =
-      filtros.finalizado || filtros.cancelado || filtros.suspendido;
-
-    if (filtrosEstadoActivos) {
-      let cumpleEstado = false;
-
-      if (filtros.finalizado && evento.est_eve === "FINALIZADO") {
-        cumpleEstado = true;
-      }
-      if (filtros.cancelado && evento.est_eve === "CANCELADO") {
-        cumpleEstado = true;
-      }
-      if (filtros.suspendido && evento.est_eve === "SUSPENDIDO") {
-        cumpleEstado = true;
-      }
-
-      // Si no cumple con ningún estado filtrado, no mostrar
-      if (!cumpleEstado) {
-        return false;
-      }
-    } else {
-      // Por defecto, no mostrar eventos finalizados, cancelados, suspendidos
-      if (
-        evento.est_eve === "FINALIZADO" ||
-        evento.est_eve === "CANCELADO" ||
-        evento.est_eve === "SUSPENDIDO"
-      ) {
-        return false;
-      }
-    }
-
-    // Si el evento es de tipo PUBLICO, está disponible para todos
-    if (evento.tip_eve === "PUBLICO") {
-      return true;
-    }
-
-    // Si el evento no tiene carreras asociadas, significa que es un evento general
-    if (!evento.eventos_carrera || evento.eventos_carrera.length === 0) {
-      return true;
-    }
-
-    // Para estudiantes, filtrar por su carrera
-    const usuarioFinal = usuarioConCarrera || usuario;
-    if (usuarioFinal?.rol_usu === "ESTUDIANTE") {
-      // Si el usuario tiene una carrera asignada
-      if (usuarioFinal.carrera) {
-        // Verificar si el evento está asociado a la carrera del usuario
-        const tieneCarrera = evento.eventos_carrera?.some(
-          (ec) => ec.id_car_aso === usuarioFinal.carrera.id_car
-        );
-        return tieneCarrera;
-      } else {
-        return false;
-      }
-    }
-
-    // Para administradores, docentes y coordinadores, mostrar todos los eventos
-    const tieneRolPermitido = ["ADMIN", "DOCENTE", "COORDINADOR"].includes(
-      usuarioFinal?.rol_usu
-    );
-    return tieneRolPermitido;
-  });
-
-  // Función para aplicar filtros
-  const aplicarFiltros = (evento) => {
-    // Convertir cupos a número para comparaciones
-    const cuposDisponibles = parseInt(evento.cup_dis_eve) || 0;
-
-    // CONTROL DE VISIBILIDAD POR CUPOS:
-    const hayFiltrosActivos = Object.values(filtros).some((f) => f);
-
-    if (hayFiltrosActivos) {
-      // Si el filtro "completo" está activo, mostrar eventos con cupos === 0
-      if (filtros.completo) {
-        // No aplicar filtro adicional por cupos si está marcado
-      } else {
-        // Para todos los otros filtros, mostrar solo eventos con cupos > 0
-        if (cuposDisponibles <= 0) return false;
-      }
-    } else {
-      // Si no hay filtros activos, mostrar solo eventos con cupos > 0 (comportamiento por defecto)
-      if (cuposDisponibles <= 0) return false;
-    }
-
-    // Filtro por nombre
-    const coincideNombre = evento.nom_eve
-      .toLowerCase()
-      .includes(filtro.toLowerCase());
-
-    if (!coincideNombre) return false;
-
-    // Filtro por precio
-    if (filtros.gratuito) {
-      if (evento.val_eve !== 0) return false;
-    }
-
-    if (filtros.pagado) {
-      if (evento.val_eve === 0) return false;
-    }
-
-    // Filtro por modalidad
-    if (filtros.modalidad) {
-      if (evento.mod_eve !== filtros.modalidad) return false;
-    }
-
-    return true;
-  };
+  // Los eventos ya vienen filtrados del backend según el rol y permisos del usuario
+  // No necesitamos filtrado adicional en el frontend
 
   // Función para manejar cambios en filtros
   const manejarCambioFiltro = (tipoFiltro) => {
@@ -564,27 +465,8 @@ const EventsRoute = () => {
       console.log("🔄 Evento actualizado via socket:", eventUpdate);
       if (!eventUpdate || !eventUpdate.action || !eventUpdate.data) return;
 
-      // 🔧 RECONSTRUIR FILTROS PARA MANTENER LA CONSISTENCIA
-      const filtrosAPI = {};
-
-      if (filtros.gratuito) filtrosAPI.gratuito = true;
-      if (filtros.pagado) filtrosAPI.pagado = true;
-      if (filtros.completo) filtrosAPI.completo = true;
-      if (filtros.modalidad || filtroModalidad)
-        filtrosAPI.modalidad = filtros.modalidad || filtroModalidad;
-      if (filtros.finalizado) filtrosAPI.finalizado = true;
-      if (filtros.cancelado) filtrosAPI.cancelado = true;
-      if (filtros.suspendido) filtrosAPI.suspendido = true;
-
-      // Añadir filtro de búsqueda
-      if (filtro.trim() !== "") {
-        filtrosAPI.search = filtro;
-      }
-
-      // Añadir filtro de carrera si existe
-      if (usuarioConCarrera && usuarioConCarrera.carrera) {
-        filtrosAPI.carrera = usuarioConCarrera.carrera.id_car;
-      }
+      // 🔧 USAR FUNCIÓN CENTRALIZADA PARA CONSTRUIR FILTROS
+      const filtrosAPI = construirFiltrosAPI();
 
       // Recargar datos con los filtros aplicados
       console.log("🔄 Recargando datos con filtros:", filtrosAPI);
@@ -600,7 +482,7 @@ const EventsRoute = () => {
         toast.info(`El evento "${data.nom_eve}" ha sido eliminado.`);
       }
     },
-    [fetchData, filtros, filtro, filtroModalidad, usuarioConCarrera]
+    [fetchData, construirFiltrosAPI]
   );
 
   // Effect para manejar socket events de manera controlada
@@ -841,13 +723,13 @@ const EventsRoute = () => {
             Reintentar
           </button>
         </div>
-      ) : eventosDisponibles.length === 0 ? (
+      ) : eventos.length === 0 ? (
         <div className="no-eventos-mensaje-er">
           <AlertTriangle size={40} />
           <h3>No hay eventos disponibles</h3>
           <p>No se encontraron eventos para tu perfil de usuario.</p>
         </div>
-      ) : eventosDisponibles.filter(aplicarFiltros).length === 0 ? (
+      ) : eventos.length === 0 ? (
         <div className="no-eventos-mensaje-er">
           <AlertTriangle size={40} />
           <h3>No hay eventos que coincidan</h3>
@@ -864,7 +746,7 @@ const EventsRoute = () => {
       ) : (
         <>
           <div className="eventos-grid-er">
-            {eventosDisponibles.filter(aplicarFiltros).map((evento) => (
+            {eventos.map((evento) => (
               <div key={evento.id_eve} className="evento-card">
                 {/* Imagen de portada (real o placeholder) */}
                 <img
@@ -1016,11 +898,11 @@ const EventsRoute = () => {
           </div>
 
           {/* Controles de paginación */}
-          {eventosDisponibles.filter(aplicarFiltros).length > 0 && (
+          {totalItems > 0 && (
             <PaginationControls
               currentPage={currentPage}
               totalPages={totalPages}
-              goToPage={goToPage}
+              onPageChange={goToPage}
               hasNextPage={hasNextPage}
               hasPrevPage={hasPrevPage}
               totalItems={totalItems}

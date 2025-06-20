@@ -173,10 +173,19 @@ async function obtenerEventosPublicosPaginados(req, res) {
 async function obtenerEventosUsuarioPaginados(req, res) {
   try {
     // Extraer parámetros de paginación
-    const { page, limit, offset } = extractPaginationParams(req);
-
-    // Extraer filtros
-    const { carrera, modalidad, estado, gratuito, pagado, search } = req.query;
+    const { page, limit, offset } = extractPaginationParams(req); // Extraer filtros
+    const {
+      carrera,
+      modalidad,
+      estado,
+      gratuito,
+      pagado,
+      search,
+      completo, // Filtro para eventos sin cupos
+      finalizado,
+      cancelado,
+      suspendido,
+    } = req.query;
 
     // 🔍 OBTENER INFORMACIÓN DEL USUARIO AUTENTICADO
     const userId = req.usuario.id; // ID de la cuenta
@@ -265,16 +274,39 @@ async function obtenerEventosUsuarioPaginados(req, res) {
           },
         };
       }
-    }
-
-    // Filtro por modalidad
+    } // Filtro por modalidad
     if (modalidad && modalidad !== "") {
       whereCondition.mod_eve = modalidad;
-    }
-
-    // Filtro por estado
+    } // Filtro por estado específico (más granular que el filtro general)
     if (estado && estado !== "") {
       whereCondition.est_eve = estado;
+    } else {
+      // Filtros específicos por estado booleano
+      const estadosSeleccionados = [];
+
+      // Solo agregar estados específicos si están seleccionados
+      if (finalizado === "true") {
+        estadosSeleccionados.push("FINALIZADO");
+      }
+      if (cancelado === "true") {
+        estadosSeleccionados.push("CANCELADO");
+      }
+      if (suspendido === "true") {
+        estadosSeleccionados.push("SUSPENDIDO");
+      }
+
+      // Si NO hay filtros de estado específicos, mostrar solo ACTIVO por defecto
+      if (estadosSeleccionados.length === 0) {
+        whereCondition.est_eve = "ACTIVO";
+      } else if (estadosSeleccionados.length === 1) {
+        // Solo un estado específico seleccionado
+        whereCondition.est_eve = estadosSeleccionados[0];
+      } else {
+        // Múltiples estados específicos seleccionados
+        whereCondition.est_eve = {
+          in: estadosSeleccionados,
+        };
+      }
     } // Filtros por precio
     if (gratuito === "true") {
       whereCondition.val_eve = 0;
@@ -282,7 +314,13 @@ async function obtenerEventosUsuarioPaginados(req, res) {
       whereCondition.val_eve = {
         gt: 0,
       };
+    } // Filtro por cupos disponibles (solo aplicar si se solicita específicamente)
+    if (completo === "true") {
+      // Mostrar solo eventos con cupos agotados
+      whereCondition.cup_dis_eve = 0;
     }
+    // NOTA: No aplicar filtro de cupos por defecto
+    // Los eventos cancelados, finalizados, etc. pueden tener cupos = 0 y deben mostrarse
 
     // Búsqueda por nombre o descripción
     if (search && search.trim() !== "") {
@@ -310,6 +348,15 @@ async function obtenerEventosUsuarioPaginados(req, res) {
         `  - Carrera: ${userAccount.usuario.carrera.nom_car} (ID: ${userAccount.usuario.carrera.id_car})`
       );
     }
+    console.log("📊 [EVENTOS USUARIO PAGINADOS] Filtros recibidos:");
+    console.log(`  - search: "${search || "ninguno"}"`);
+    console.log(`  - gratuito: ${gratuito}`);
+    console.log(`  - pagado: ${pagado}`);
+    console.log(`  - completo: ${completo}`);
+    console.log(`  - modalidad: "${modalidad || "ninguna"}"`);
+    console.log(`  - finalizado: ${finalizado}`);
+    console.log(`  - cancelado: ${cancelado}`);
+    console.log(`  - suspendido: ${suspendido}`);
     console.log("📊 [EVENTOS USUARIO PAGINADOS] Reglas aplicadas:");
     if (userAccount.rol_usu === "ESTUDIANTE") {
       if (userAccount.usuario.carrera) {
