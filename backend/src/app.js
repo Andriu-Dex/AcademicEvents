@@ -133,6 +133,10 @@ app.use("/api/upload", uploadRoutes);
 const reporteRoutes = require("./routes/reporte.routes");
 app.use("/api/admin", reporteRoutes);
 
+// Rutas de paginación
+const paginacionRoutes = require("./routes/paginacion.routes");
+app.use("/api", paginacionRoutes);
+
 // ============================
 //  Iniciar el servidor
 // ============================

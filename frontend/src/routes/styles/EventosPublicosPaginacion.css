@@ -1,0 +1,155 @@
+/* Estilos específicos para paginación en EventosPublicos - Identificador único: epp */
+
+/* Estilos para el estado de carga mientras se navega entre páginas */
+.loading-overlay-epp {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.loading-overlay-epp .spinner {
+  margin-bottom: 1rem;
+}
+
+.loading-overlay-epp p {
+  color: #4b5563;
+  font-weight: 500;
+}
+
+/* Mensaje cuando no hay eventos */
+.no-eventos-mensaje-epp {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  gap: 1rem;
+  text-align: center;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.no-eventos-mensaje-epp svg {
+  color: #8a1538;
+  margin-bottom: 1rem;
+}
+
+.no-eventos-mensaje-epp p {
+  font-size: 1.1rem;
+  color: #4b5563;
+  margin-bottom: 1.5rem;
+}
+
+.no-eventos-mensaje-epp .btn-limpiar-epp {
+  padding: 0.75rem 1.5rem;
+  background-color: #8a1538;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.no-eventos-mensaje-epp .btn-limpiar-epp:hover {
+  background-color: #6e102c;
+  transform: translateY(-1px);
+}
+
+.no-eventos-mensaje-epp .btn-limpiar-epp:active {
+  transform: translateY(0);
+}
+
+/* Estilo para la sección de paginación específica de EventosPublicos */
+.pagination-controls-wrapper-epp {
+  margin: 2rem 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Contador de resultados mejorado */
+.resultados-contador-epp {
+  margin: 1rem 0;
+  text-align: center;
+  color: #4b5563;
+  font-size: 0.9rem;
+}
+
+.resultados-contador-epp p {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.filtros-activos-badge-epp {
+  background-color: #8a1538;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-left: 0.5rem;
+}
+
+/* Responsive design para paginación */
+@media (max-width: 768px) {
+  .loading-overlay-epp {
+    padding: 1.5rem;
+  }
+
+  .no-eventos-mensaje-epp {
+    padding: 2rem 1rem;
+  }
+
+  .no-eventos-mensaje-epp p {
+    font-size: 1rem;
+  }
+
+  .resultados-contador-epp {
+    font-size: 0.8rem;
+  }
+
+  .filtros-activos-badge-epp {
+    font-size: 0.7rem;
+    margin-left: 0;
+    margin-top: 0.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .loading-overlay-epp {
+    padding: 1rem;
+  }
+
+  .loading-overlay-epp p {
+    font-size: 0.9rem;
+  }
+
+  .no-eventos-mensaje-epp {
+    padding: 1.5rem 0.75rem;
+  }
+
+  .no-eventos-mensaje-epp p {
+    font-size: 0.9rem;
+  }
+
+  .btn-limpiar-epp {
+    padding: 0.5rem 1rem !important;
+    font-size: 0.9rem;
+  }
+}

@@ -1,4 +1,3 @@
-// Importamos la instancia de Prisma desde el archivo de configuración de la base de datos
 const prisma = require("../config/db");
 
 // ============================
@@ -6,8 +5,6 @@ const prisma = require("../config/db");
 // ============================
 const obtenerEstadisticasHome = async (req, res) => {
   try {
-    console.log("📊 Calculando estadísticas del home...");
-
     // 1. Número total de carreras activas (est_car es Boolean, no String)
     const totalCarreras = await prisma.carrera.count({
       where: {
@@ -40,27 +37,33 @@ const obtenerEstadisticasHome = async (req, res) => {
     });
     console.log("👥 Usuarios ESTUDIANTE/GENERAL:", totalUsuarios);
 
-    // 4. Tasa de participación (inscripciones / eventos totales * 100)
-    const totalEventos = await prisma.evento.count({
-      where: {
-        est_eve: "ACTIVO",
+    // 4. Tasa de participación real (porcentaje de usuarios que han participado en eventos)
+    // Obtener usuarios únicos que tienen al menos una inscripción
+    const usuariosConInscripciones = await prisma.inscripcion.groupBy({
+      by: ["id_cor_ins"],
+      _count: {
+        id_cor_ins: true,
       },
     });
 
-    const totalInscripciones = await prisma.inscripcion.count();
-    console.log("📊 Total eventos:", totalEventos);
-    console.log("📊 Total inscripciones:", totalInscripciones);
+    const totalUsuariosParticipantes = usuariosConInscripciones.length;
+    console.log("� Usuarios participantes:", totalUsuariosParticipantes);
+    console.log("� Total usuarios registrados:", totalUsuarios);
 
-    // Calcular tasa de participación
+    // Calcular tasa de participación real
     let tasaParticipacion = 0;
-    if (totalEventos > 0) {
-      tasaParticipacion = Math.round((totalInscripciones / totalEventos) * 100);
-    } // Formatear los números para mostrarlos más atractivos
+    if (totalUsuarios > 0) {
+      tasaParticipacion = Math.round(
+        (totalUsuariosParticipantes / totalUsuarios) * 100
+      );
+    }
+
+    // Formatear los números para mostrarlos más atractivos
     const estadisticas = {
       carreras: totalCarreras,
       eventosActivos: eventosActivos,
       usuariosRegistrados: totalUsuarios,
-      tasaParticipacion: `${tasaParticipacion}%`,
+      tasaParticipacion: `${tasaParticipacion}%`, // Porcentaje de usuarios que han participado en eventos
     };
 
     res.status(200).json(estadisticas);

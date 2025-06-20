@@ -335,7 +335,7 @@ function Home() {
     },
     {
       number: estadisticasHome.tasaParticipacion,
-      label: "Tasa de Participación",
+      label: "Participación de Usuarios",
       icon: <TrendingUp size={36} />,
     },
   ];

@@ -958,20 +958,6 @@ const AdminEvents = () => {
                 <div className="admin-event-header">
                   <div className="admin-event-title-container-ae">
                     <h3 className="admin-event-name">{eve.nom_eve}</h3>
-                    {/* <div className="contenedor-estrella-ae">
-                      <BotonEstrella
-                        idEvento={eve.id_eve}
-                        estadoInicial={eve.eve_des || false}
-                        onToggle={(esDestacado) => {
-                          const nombreEvento = eve.nom_eve || "Evento";
-                          toast.success(
-                            esDestacado
-                              ? `"${nombreEvento}" marcado como destacado`
-                              : `"${nombreEvento}" ya no se mostrará en destacados`
-                          );
-                        }}
-                      />
-                    </div> */}
                   </div>
                   <span
                     className={`admin-event-label ${
