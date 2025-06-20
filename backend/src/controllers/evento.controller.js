@@ -195,6 +195,23 @@ const crearEvento = async (req, res) => {
       );
     }
 
+    // Procesar carreras asociadas y validar lógica de eventos
+    const esEventoGeneral = req.body.esEventoGeneral === "true";
+    const carrerasIds = req.body.carrerasIds
+      ? JSON.parse(req.body.carrerasIds)
+      : [];
+
+    // 🔍 VALIDACIÓN: Debe seleccionar carreras O marcar como evento general
+    if (!esEventoGeneral && (!carrerasIds || carrerasIds.length === 0)) {
+      return res.status(400).json({
+        msg: "Debe seleccionar al menos una carrera o marcar el evento como público para todas las carreras",
+      });
+    }
+
+    // 🎯 LÓGICA ACTUALIZADA: El tipo de evento define QUÉ es (CURSO, CONGRESO, etc.)
+    // Las carreras asociadas definen QUIÉN puede acceder (con carreras = específico, sin carreras = público)
+    let tipoEventoFinal = tip_eve; // Mantener el tipo original seleccionado
+
     // Procesar las fechas para mantener las horas exactas
     const fechaInicial = parseUTCDate(fec_ini_eve);
     const fechaFinal = parseUTCDate(fec_fin_eve);
@@ -203,7 +220,7 @@ const crearEvento = async (req, res) => {
       data: {
         nom_eve,
         des_eve,
-        tip_eve,
+        tip_eve: tipoEventoFinal, // Usar tipo corregido
         fec_ini_eve: fechaInicial,
         val_eve: valNum,
         dur_hor_eve: durHor,
@@ -220,17 +237,11 @@ const crearEvento = async (req, res) => {
 
     // Si es CURSO, crear registro en evento_curso con la nota mínima
     let datosCurso = null;
-    if (tip_eve === "CURSO" && notaMin !== undefined) {
+    if (tipoEventoFinal === "CURSO" && notaMin !== undefined) {
       datosCurso = await crearEventoCurso(nuevoEvento.id_eve, notaMin);
     }
 
-    // Procesar carreras asociadas
-    const esEventoGeneral = req.body.esEventoGeneral === "true";
-    const carrerasIds = req.body.carrerasIds
-      ? JSON.parse(req.body.carrerasIds)
-      : [];
-
-    // Si no es evento general y hay carreras seleccionadas, crear las asociaciones
+    // 🎯 ASOCIAR CARRERAS: Solo si NO es evento general (público)
     if (!esEventoGeneral && carrerasIds.length > 0) {
       await Promise.all(
         carrerasIds.map(async (carreraId) => {
@@ -436,13 +447,30 @@ const actualizarEvento = async (req, res) => {
       cupoDisponibleActualizado = Math.max(0, nuevoCupoMax - cuposOcupados);
     }
 
+    // Procesar carreras asociadas y validar lógica de eventos
+    const esEventoGeneral = req.body.esEventoGeneral === "true";
+    const carrerasIds = req.body.carrerasIds
+      ? JSON.parse(req.body.carrerasIds)
+      : [];
+
+    // 🔍 VALIDACIÓN: Debe seleccionar carreras O marcar como evento general
+    if (!esEventoGeneral && (!carrerasIds || carrerasIds.length === 0)) {
+      return res.status(400).json({
+        msg: "Debe seleccionar al menos una carrera o marcar el evento como público para todas las carreras",
+      });
+    }
+
+    // 🎯 LÓGICA ACTUALIZADA: El tipo de evento define QUÉ es (CURSO, CONGRESO, etc.)
+    // Las carreras asociadas definen QUIÉN puede acceder (con carreras = específico, sin carreras = público)
+    let tipoEventoFinal = dataEvento.tip_eve || eventoExistente.tip_eve; // Mantener el tipo original
+
     const eventoActualizado = await prisma.evento.update({
       where: { id_eve: id },
       data: {
         ...dataEvento,
         nom_eve: dataEvento.nom_eve || eventoExistente.nom_eve,
         des_eve: dataEvento.des_eve || eventoExistente.des_eve,
-        tip_eve: dataEvento.tip_eve || eventoExistente.tip_eve,
+        tip_eve: tipoEventoFinal, // Usar tipo corregido
         val_eve:
           dataEvento.val_eve !== undefined
             ? Number(dataEvento.val_eve)
@@ -526,18 +554,12 @@ const actualizarEvento = async (req, res) => {
       }
     }
 
-    // Actualizar carreras asociadas
-    const esEventoGeneral = req.body.esEventoGeneral === "true";
-    const carrerasIds = req.body.carrerasIds
-      ? JSON.parse(req.body.carrerasIds)
-      : [];
-
     // Eliminar todas las asociaciones existentes
     await prisma.evento_carrera.deleteMany({
       where: { id_eve_aso: id },
     });
 
-    // Si no es evento general y hay carreras seleccionadas, crear nuevas asociaciones
+    // 🎯 ASOCIAR CARRERAS: Solo si NO es evento general (público)
     if (!esEventoGeneral && carrerasIds.length > 0) {
       await Promise.all(
         carrerasIds.map(async (carreraId) => {
@@ -728,7 +750,6 @@ const obtenerEventosPorTipo = async (req, res) => {
       "WEBINAR",
       "CHARLA",
       "SOCIALIZACION",
-      "PUBLICO",
     ];
     if (!tiposValidos.includes(tipo.toUpperCase())) {
       return res.status(400).json({ msg: "Tipo de evento no válido" });

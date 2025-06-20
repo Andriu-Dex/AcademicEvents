@@ -400,8 +400,7 @@ exports.tipo_evento = exports.$Enums.tipo_evento = {
   CONGRESO: 'CONGRESO',
   WEBINAR: 'WEBINAR',
   CHARLA: 'CHARLA',
-  SOCIALIZACION: 'SOCIALIZACION',
-  PUBLICO: 'PUBLICO'
+  SOCIALIZACION: 'SOCIALIZACION'
 };
 
 exports.modalidad_evento = exports.$Enums.modalidad_evento = {

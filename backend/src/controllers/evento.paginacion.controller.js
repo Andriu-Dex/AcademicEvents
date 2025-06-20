@@ -31,41 +31,57 @@ async function obtenerEventosPublicosPaginados(req, res) {
       pagado,
       modalidad,
       search,
-    } = req.query;
-
-    // Construir condición WHERE para filtros
+    } = req.query; // Construir condición WHERE para filtros
     const whereCondition = {
       est_eve: "ACTIVO", // Solo eventos activos según el enum estado_evento
     };
 
-    // Filtros por tipo de carrera a través de eventos_carrera
+    // Construir filtros de carreras usando OR para combinar múltiples criterios
+    const carreraFilters = [];
+
+    // Filtros por tipo de carrera específica
     if (software === "true") {
-      whereCondition.eventos_carrera = {
-        some: {
-          carrera: {
-            nom_car: {
-              contains: "Software",
-              mode: "insensitive",
+      carreraFilters.push({
+        eventos_carrera: {
+          some: {
+            carrera: {
+              nom_car: {
+                contains: "Software",
+                mode: "insensitive",
+              },
             },
           },
         },
-      };
-    } else if (industrial === "true") {
-      whereCondition.eventos_carrera = {
-        some: {
-          carrera: {
-            nom_car: {
-              contains: "Industrial",
-              mode: "insensitive",
-            },
-          },
-        },
-      };
+      });
     }
 
-    // Filtro por público - usando tip_eve PUBLICO
+    if (industrial === "true") {
+      carreraFilters.push({
+        eventos_carrera: {
+          some: {
+            carrera: {
+              nom_car: {
+                contains: "Industrial",
+                mode: "insensitive",
+              },
+            },
+          },
+        },
+      });
+    }
+
+    // Filtro por público - eventos sin carreras específicas asociadas
     if (publico === "true") {
-      whereCondition.tip_eve = "PUBLICO";
+      carreraFilters.push({
+        eventos_carrera: {
+          none: {}, // Sin carreras asociadas = público
+        },
+      });
+    }
+
+    // Si hay filtros de carrera, aplicarlos con OR
+    if (carreraFilters.length > 0) {
+      whereCondition.OR = carreraFilters;
     }
 
     // Filtros por precio
@@ -75,19 +91,32 @@ async function obtenerEventosPublicosPaginados(req, res) {
       whereCondition.val_eve = {
         gt: 0,
       };
-    }
-
-    // Filtro por modalidad
+    } // Filtro por modalidad
     if (modalidad && modalidad !== "") {
       whereCondition.mod_eve = modalidad;
     }
 
     // Búsqueda por nombre o descripción
     if (search && search.trim() !== "") {
-      whereCondition.OR = [
-        { nom_eve: { contains: search, mode: "insensitive" } },
-        { des_eve: { contains: search, mode: "insensitive" } },
-      ];
+      // Si ya hay condiciones OR (filtros de carrera), combinarlas con AND
+      if (whereCondition.OR) {
+        whereCondition.AND = [
+          { OR: whereCondition.OR }, // Filtros de carrera existentes
+          {
+            OR: [
+              { nom_eve: { contains: search, mode: "insensitive" } },
+              { des_eve: { contains: search, mode: "insensitive" } },
+            ],
+          }, // Filtro de búsqueda
+        ];
+        delete whereCondition.OR; // Limpiar el OR original
+      } else {
+        // Si no hay filtros de carrera previos, aplicar búsqueda directamente
+        whereCondition.OR = [
+          { nom_eve: { contains: search, mode: "insensitive" } },
+          { des_eve: { contains: search, mode: "insensitive" } },
+        ];
+      }
     }
 
     // Ordenamiento (por defecto por fecha de inicio descendente)
@@ -149,16 +178,93 @@ async function obtenerEventosUsuarioPaginados(req, res) {
     // Extraer filtros
     const { carrera, modalidad, estado, gratuito, pagado, search } = req.query;
 
-    // Construir condición WHERE para filtros
-    const whereCondition = {};
+    // 🔍 OBTENER INFORMACIÓN DEL USUARIO AUTENTICADO
+    const userId = req.usuario.id; // ID de la cuenta
 
-    // Filtro por carrera a través de eventos_carrera
-    if (carrera && carrera !== "") {
-      whereCondition.eventos_carrera = {
-        some: {
-          id_car_aso: carrera,
+    // Obtener información del usuario con su carrera
+    const userAccount = await prisma.cuenta.findUnique({
+      where: { id_cue: userId },
+      include: {
+        usuario: {
+          include: {
+            carrera: true,
+          },
         },
+      },
+    });
+
+    if (!userAccount) {
+      return res.status(404).json({ error: "Usuario no encontrado" });
+    }
+
+    // Construir condición WHERE para filtros
+    const whereCondition = {}; // 🎯 LÓGICA DE FILTRADO POR ROL Y CARRERA
+    if (userAccount.rol_usu === "ESTUDIANTE") {
+      if (userAccount.usuario.carrera) {
+        // Estudiante con carrera asignada puede ver:
+        // 1. Eventos específicos de su carrera
+        // 2. Eventos públicos (sin carreras asociadas)
+        const userCarreraId = userAccount.usuario.carrera.id_car;
+
+        whereCondition.OR = [
+          // Eventos específicos de su carrera
+          {
+            eventos_carrera: {
+              some: {
+                id_car_aso: userCarreraId,
+              },
+            },
+          },
+          // Eventos públicos (sin carreras asociadas)
+          {
+            eventos_carrera: {
+              none: {},
+            },
+          },
+        ];
+      } else {
+        // Estudiante sin carrera asignada
+        // Solo puede ver eventos públicos hasta que se le asigne carrera
+        whereCondition.eventos_carrera = {
+          none: {}, // Solo eventos sin carreras asociadas (públicos)
+        };
+      }
+    } else if (userAccount.rol_usu === "GENERAL") {
+      // Usuario GENERAL puede ver SOLO eventos públicos (sin carreras asociadas)
+      whereCondition.eventos_carrera = {
+        none: {}, // Solo eventos sin carreras asociadas
       };
+    }
+    // Para administradores (ADMIN_GLOBAL, ADMIN_GENERAL), no aplicar filtro automático    // Filtro adicional por carrera específica (si se proporciona en query)
+    if (carrera && carrera !== "") {
+      // Si ya hay condición OR (caso estudiante con carrera), modificar la condición OR existente
+      if (whereCondition.OR) {
+        // Para estudiantes con carrera: reemplazar la condición OR
+        // para que solo muestre eventos de la carrera específica seleccionada + eventos públicos
+        whereCondition.OR = [
+          // Eventos específicos de la carrera seleccionada
+          {
+            eventos_carrera: {
+              some: {
+                id_car_aso: carrera,
+              },
+            },
+          },
+          // Eventos públicos (sin carreras asociadas) - mantener acceso
+          {
+            eventos_carrera: {
+              none: {},
+            },
+          },
+        ];
+      } else {
+        // Si no hay condición OR previa, simplemente filtrar por carrera
+        whereCondition.eventos_carrera = {
+          some: {
+            id_car_aso: carrera,
+          },
+        };
+      }
     }
 
     // Filtro por modalidad
@@ -169,9 +275,7 @@ async function obtenerEventosUsuarioPaginados(req, res) {
     // Filtro por estado
     if (estado && estado !== "") {
       whereCondition.est_eve = estado;
-    }
-
-    // Filtros por precio
+    } // Filtros por precio
     if (gratuito === "true") {
       whereCondition.val_eve = 0;
     } else if (pagado === "true") {
@@ -182,11 +286,50 @@ async function obtenerEventosUsuarioPaginados(req, res) {
 
     // Búsqueda por nombre o descripción
     if (search && search.trim() !== "") {
-      whereCondition.OR = [
-        { nom_eve: { contains: search, mode: "insensitive" } },
-        { des_eve: { contains: search, mode: "insensitive" } },
-      ];
+      // Si ya hay condición OR, combinarla con AND
+      if (whereCondition.OR) {
+        whereCondition.AND = whereCondition.AND || [];
+        whereCondition.AND.push({
+          OR: [
+            { nom_eve: { contains: search, mode: "insensitive" } },
+            { des_eve: { contains: search, mode: "insensitive" } },
+          ],
+        });
+      } else {
+        whereCondition.OR = [
+          { nom_eve: { contains: search, mode: "insensitive" } },
+          { des_eve: { contains: search, mode: "insensitive" } },
+        ];
+      }
+    } // 🐛 DEBUG: Log de la condición WHERE construida
+    console.log("📊 [EVENTOS USUARIO PAGINADOS] Información de usuario:");
+    console.log(`  - Rol: ${userAccount.rol_usu}`);
+    console.log(`  - Tiene carrera: ${!!userAccount.usuario.carrera}`);
+    if (userAccount.usuario.carrera) {
+      console.log(
+        `  - Carrera: ${userAccount.usuario.carrera.nom_car} (ID: ${userAccount.usuario.carrera.id_car})`
+      );
     }
+    console.log("📊 [EVENTOS USUARIO PAGINADOS] Reglas aplicadas:");
+    if (userAccount.rol_usu === "ESTUDIANTE") {
+      if (userAccount.usuario.carrera) {
+        console.log(
+          "  - ESTUDIANTE con carrera: Puede ver eventos de su carrera + eventos públicos (sin carreras)"
+        );
+      } else {
+        console.log(
+          "  - ESTUDIANTE sin carrera: Solo eventos públicos (sin carreras) hasta asignación"
+        );
+      }
+    } else if (userAccount.rol_usu === "GENERAL") {
+      console.log(
+        "  - GENERAL: Solo puede ver eventos públicos (sin carreras asociadas)"
+      );
+    } else {
+      console.log("  - ADMIN: Puede ver todos los eventos");
+    }
+    console.log("📊 [EVENTOS USUARIO PAGINADOS] Condición WHERE:");
+    console.log(JSON.stringify(whereCondition, null, 2));
 
     // Ordenamiento (por defecto por fecha de inicio descendente)
     const orderBy = extractSortParams(
@@ -223,6 +366,24 @@ async function obtenerEventosUsuarioPaginados(req, res) {
       page,
       limit,
     });
+
+    // 🐛 DEBUG: Log de los eventos devueltos
+    console.log(`📊 [EVENTOS USUARIO PAGINADOS] Resultados:`);
+    console.log(`  - Total eventos encontrados: ${totalItems}`);
+    console.log(`  - Eventos en esta página: ${eventos.length}`);
+    if (eventos.length > 0) {
+      console.log(`  - Eventos devueltos:`);
+      eventos.forEach((evento, index) => {
+        const carreras = evento.eventos_carrera
+          .map((ec) => ec.carrera.nom_car)
+          .join(", ");
+        console.log(
+          `    ${index + 1}. ${evento.nom_eve} (Tipo: ${evento.tip_eve}) ${
+            carreras ? `[${carreras}]` : "[Público - Sin carreras]"
+          }`
+        );
+      });
+    }
 
     return res.json(response);
   } catch (error) {

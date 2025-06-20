@@ -26,11 +26,12 @@ import {
   ZoomIn,
   ZoomOut,
   RotateCw,
+  AlertCircle,
 } from "lucide-react";
 import "./styles/Perfil.css";
 
 const Perfil = () => {
-  const { usuario } = useAuth();
+  const { usuario, updateProfileImage } = useAuth();
   const [perfilData, setPerfilData] = useState(null);
   const [cargando, setCargando] = useState(true);
   const [mostrarModal, setMostrarModal] = useState(false);
@@ -257,6 +258,11 @@ const Perfil = () => {
 
         // Actualizar los datos del perfil para mostrar la nueva imagen
         await cargarPerfil();
+
+        // Actualizar la imagen de perfil en el contexto de autenticación
+        if (response.data && response.data.imagenUrl) {
+          updateProfileImage(response.data.imagenUrl);
+        }
       }, imagenPerfil.type);
     } catch (error) {
       toast.error(

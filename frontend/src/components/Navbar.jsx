@@ -328,9 +328,17 @@ const Navbar = () => {
         </div>
       </div>{" "}
       <div className="navbar-profile" ref={profileMenuRef}>
+        <span className="profile-name">{usuario?.nom_usu || "Usuario"}</span>
         <div className="profile-button" onClick={toggleProfileMenu}>
-          <User size={18} className="profile-icon" />
-          <span className="profile-name">{usuario?.nom_usu || "Usuario"}</span>
+          {usuario?.img_per_usu ? (
+            <img
+              src={usuario.img_per_usu}
+              alt="Foto de perfil"
+              className="profile-avatar-img-nb"
+            />
+          ) : (
+            <User size={18} className="profile-icon" />
+          )}
         </div>
         {showProfileMenu && (
           <div className="profile-dropdown">

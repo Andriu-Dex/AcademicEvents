@@ -615,7 +615,6 @@ const AdminEvents = () => {
                 <option value="WEBINAR">Webinar</option>
                 <option value="CHARLA">Charla</option>
                 <option value="SOCIALIZACION">Socialización</option>
-                <option value="PUBLICO">Público</option>
               </select>
             </div>
 

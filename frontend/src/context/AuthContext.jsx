@@ -55,6 +55,38 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem("authData", JSON.stringify({ usuario, token }));
     localStorage.setItem("token", token);
   };
+
+  // Actualizar la imagen de perfil del usuario
+  const updateProfileImage = (imageUrl) => {
+    if (!usuario) return;
+
+    // Crear una copia actualizada del usuario
+    const updatedUser = {
+      ...usuario,
+      img_per_usu: imageUrl,
+    };
+
+    // Actualizar el estado y localStorage
+    setUsuario(updatedUser);
+
+    // Actualizar localStorage solo si hay datos guardados
+    const authDataStr = localStorage.getItem("authData");
+    if (authDataStr) {
+      try {
+        const authData = JSON.parse(authDataStr);
+        localStorage.setItem(
+          "authData",
+          JSON.stringify({
+            ...authData,
+            usuario: updatedUser,
+          })
+        );
+      } catch (error) {
+        console.error("Error al actualizar la imagen en localStorage:", error);
+      }
+    }
+  };
+
   // Cerrar sesión y limpiar localStorage
   const logout = () => {
     setUsuario(null);
@@ -110,7 +142,9 @@ export const AuthProvider = ({ children }) => {
   }, [token]);
 
   return (
-    <AuthContext.Provider value={{ usuario, token, login, logout, loading }}>
+    <AuthContext.Provider
+      value={{ usuario, token, login, logout, loading, updateProfileImage }}
+    >
       {children}
     </AuthContext.Provider>
   );

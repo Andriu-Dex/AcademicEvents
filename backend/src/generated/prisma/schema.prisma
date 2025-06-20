@@ -218,7 +218,7 @@ model evento {
   id_eve          String           @id @default(uuid()) // UUID como ID del evento
   nom_eve         String // Nombre del evento
   des_eve         String? // Descripción del evento
-  tip_eve         tipo_evento // Tipo de evento (CURSO, CONGRESO, WEBINAR, CHARLA, SOCIALIZACION, PUBLICO)
+  tip_eve         tipo_evento // Tipo de evento (CURSO, CONGRESO, WEBINAR, CHARLA, SOCIALIZACION)
   fec_ini_eve     DateTime // Fecha de inicio del evento
   fec_cre_eve     DateTime         @default(now()) // Fecha de creación del evento
   fec_fin_eve     DateTime // Fecha de finalización del evento
@@ -403,7 +403,6 @@ enum tipo_evento {
   WEBINAR
   CHARLA
   SOCIALIZACION
-  PUBLICO
 }
 
 enum estado_inscripcion {

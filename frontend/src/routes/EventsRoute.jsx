@@ -564,9 +564,31 @@ const EventsRoute = () => {
       console.log("🔄 Evento actualizado via socket:", eventUpdate);
       if (!eventUpdate || !eventUpdate.action || !eventUpdate.data) return;
 
-      // Cuando se recibe una actualización de evento, recargar los datos
-      // para mantener la consistencia con la paginación
-      fetchData();
+      // 🔧 RECONSTRUIR FILTROS PARA MANTENER LA CONSISTENCIA
+      const filtrosAPI = {};
+
+      if (filtros.gratuito) filtrosAPI.gratuito = true;
+      if (filtros.pagado) filtrosAPI.pagado = true;
+      if (filtros.completo) filtrosAPI.completo = true;
+      if (filtros.modalidad || filtroModalidad)
+        filtrosAPI.modalidad = filtros.modalidad || filtroModalidad;
+      if (filtros.finalizado) filtrosAPI.finalizado = true;
+      if (filtros.cancelado) filtrosAPI.cancelado = true;
+      if (filtros.suspendido) filtrosAPI.suspendido = true;
+
+      // Añadir filtro de búsqueda
+      if (filtro.trim() !== "") {
+        filtrosAPI.search = filtro;
+      }
+
+      // Añadir filtro de carrera si existe
+      if (usuarioConCarrera && usuarioConCarrera.carrera) {
+        filtrosAPI.carrera = usuarioConCarrera.carrera.id_car;
+      }
+
+      // Recargar datos con los filtros aplicados
+      console.log("🔄 Recargando datos con filtros:", filtrosAPI);
+      fetchData(filtrosAPI);
 
       // Mostrar notificación
       const { action, data } = eventUpdate;
@@ -578,7 +600,7 @@ const EventsRoute = () => {
         toast.info(`El evento "${data.nom_eve}" ha sido eliminado.`);
       }
     },
-    [fetchData]
+    [fetchData, filtros, filtro, filtroModalidad, usuarioConCarrera]
   );
 
   // Effect para manejar socket events de manera controlada
