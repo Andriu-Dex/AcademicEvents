@@ -921,17 +921,49 @@ const obtenerInscripcionesPorUsuario = async (req, res) => {
     const inscripcionesMapeadas = inscripciones.map((inscripcion) => ({
       id_ins: inscripcion.id_ins,
       est_ins: inscripcion.est_ins,
+      fec_ins: inscripcion.fec_ins,
       por_asi_fin_usu:
         inscripcion.por_asi_fin_usu === -1 ? null : inscripcion.por_asi_fin_usu,
       nota_final: inscripcion.inscripcion_curso?.not_fin_usu || null,
       comprobante: inscripcion.comprobantes_pago[0]?.url_com_pag || null,
       carta_motivacion: inscripcion.cartas_motivacion[0]?.con_car_mot || null,
       observacion: inscripcion.observacion?.obs_ins || null,
-      usuario: {
-        nom_usu: inscripcion.cuenta.usuario.nom_usu,
-        ape_usu: inscripcion.cuenta.usuario.ape_usu,
-        cor_usu: inscripcion.cuenta.cor_usu,
+      // Mapear datos del usuario (compatibilidad con frontend)
+      usuario: inscripcion.cuenta?.usuario
+        ? {
+            nom_usu: inscripcion.cuenta.usuario.nom_usu,
+            ape_usu: inscripcion.cuenta.usuario.ape_usu,
+            cor_usu: inscripcion.cuenta.cor_usu,
+            com_usu: inscripcion.cuenta.usuario.com_usu || null,
+          }
+        : null,
+      // Mantener estructura de cuenta para compatibilidad
+      cuenta: {
+        cor_usu: inscripcion.cuenta?.cor_usu,
+        usuario: inscripcion.cuenta?.usuario
+          ? {
+              nom_usu: inscripcion.cuenta.usuario.nom_usu,
+              ape_usu: inscripcion.cuenta.usuario.ape_usu,
+              com_usu: inscripcion.cuenta.usuario.com_usu || null,
+            }
+          : null,
       },
+      // Mapear datos del evento
+      evento: inscripcion.evento
+        ? {
+            id_eve: inscripcion.evento.id_eve,
+            nom_eve: inscripcion.evento.nom_eve,
+            tip_eve: inscripcion.evento.tip_eve,
+            val_eve: inscripcion.evento.val_eve,
+            est_eve: inscripcion.evento.est_eve,
+            por_min_asi_eve: inscripcion.evento.por_min_asi_eve,
+            eventos_curso: inscripcion.evento.eventos_curso,
+          }
+        : null,
+      // Mapear datos de certificado si existe
+      certificado: inscripcion.certificado,
+      // Función onVerCarta para compatibilidad (se define en el frontend)
+      onVerCarta: null,
     }));
 
     res.status(200).json(inscripcionesMapeadas);
@@ -1322,90 +1354,56 @@ const obtenerInscripcionesPorEvento = async (req, res) => {
         });
       }
 
-      // Mapear los resultados para tener una estructura más limpia
-      const inscripcionesMapeadas = inscripciones.map((inscripcion, index) => {
-        // Log para verificar los valores mínimos del evento
-        console.log(
-          `🔍 [${index + 1}] Verificando valores mínimos para evento "${
-            inscripcion.evento.nom_eve
-          }"`
-        );
-        console.log(
-          `  - Asistencia mínima: ${
-            inscripcion.evento.por_min_asi_eve
-          }% (tipo: ${typeof inscripcion.evento.por_min_asi_eve})`
-        );
-        console.log(`  - Tipo de evento: ${inscripcion.evento.tip_eve}`);
-
-        // 🔧 DEBUGGING ESPECÍFICO: Verificar el valor antes del mapeo
-        console.log(
-          `🔧 [MAPPING DEBUG] Valor original por_min_asi_eve:`,
-          inscripcion.evento.por_min_asi_eve
-        );
-        console.log(
-          `🔧 [MAPPING DEBUG] ¿Es null?:`,
-          inscripcion.evento.por_min_asi_eve === null
-        );
-        console.log(
-          `🔧 [MAPPING DEBUG] ¿Es undefined?:`,
-          inscripcion.evento.por_min_asi_eve === undefined
-        );
-        console.log(
-          `🔧 [MAPPING DEBUG] ¿Es NaN?:`,
-          isNaN(inscripcion.evento.por_min_asi_eve)
-        );
-
-        // eventos_curso es un objeto, no un array
-        if (
-          inscripcion.evento.tip_eve === "CURSO" &&
-          inscripcion.evento.eventos_curso
-        ) {
-          console.log(
-            `  - Nota mínima del curso: ${inscripcion.evento.eventos_curso.not_min_cur}`
-          );
-        } else if (inscripcion.evento.tip_eve === "CURSO") {
-          console.log(
-            `  - ⚠️ ADVERTENCIA: Es un CURSO pero no tiene información de eventos_curso`
-          );
-        }
-
-        const eventoMapeado = {
-          nom_eve: inscripcion.evento.nom_eve,
-          tip_eve: inscripcion.evento.tip_eve,
-          val_eve: inscripcion.evento.val_eve,
-          id_eve: inscripcion.evento.id_eve,
-          por_min_asi_eve: inscripcion.evento.por_min_asi_eve, // Asistencia mínima requerida
-          eventos_curso: inscripcion.evento.eventos_curso, // Información del curso si existe (objeto, no array)
-        };
-
-        // 🔧 DEBUGGING: Verificar el objeto final mapeado
-        console.log(
-          `🔧 [FINAL MAPPING] Evento final mapeado:`,
-          JSON.stringify(eventoMapeado, null, 2)
-        );
-
-        return {
-          id_ins: inscripcion.id_ins,
-          estado: inscripcion.est_ins,
-          asistencia:
-            inscripcion.por_asi_fin_usu === -1
-              ? null
-              : inscripcion.por_asi_fin_usu,
-          nota_final: inscripcion.inscripcion_curso?.not_fin_usu || null,
-          fec_ins: inscripcion.fec_ins,
-          evento: eventoMapeado,
-          comprobante: inscripcion.comprobantes_pago[0]?.url_com_pag || null,
-          carta_motivacion:
-            inscripcion.cartas_motivacion[0]?.con_car_mot || null,
-          observacion: inscripcion.observacion?.obs_ins || null,
-          usuario: {
-            nom_usu: inscripcion.cuenta.usuario.nom_usu,
-            ape_usu: inscripcion.cuenta.usuario.ape_usu,
-            cor_usu: inscripcion.cuenta.cor_usu,
-            com_usu: inscripcion.cuenta.usuario.com_usu || null,
-          },
-        };
-      });
+      // Mapear los resultados para tener una estructura consistente con el frontend
+      const inscripcionesMapeadas = inscripciones.map((inscripcion) => ({
+        id_ins: inscripcion.id_ins,
+        est_ins: inscripcion.est_ins,
+        fec_ins: inscripcion.fec_ins,
+        por_asi_fin_usu:
+          inscripcion.por_asi_fin_usu === -1
+            ? null
+            : inscripcion.por_asi_fin_usu,
+        nota_final: inscripcion.inscripcion_curso?.not_fin_usu || null,
+        comprobante: inscripcion.comprobantes_pago[0]?.url_com_pag || null,
+        carta_motivacion: inscripcion.cartas_motivacion[0]?.con_car_mot || null,
+        observacion: inscripcion.observacion?.obs_ins || null,
+        // Mapear datos del usuario (compatibilidad con frontend)
+        usuario: inscripcion.cuenta?.usuario
+          ? {
+              nom_usu: inscripcion.cuenta.usuario.nom_usu,
+              ape_usu: inscripcion.cuenta.usuario.ape_usu,
+              cor_usu: inscripcion.cuenta.cor_usu,
+              com_usu: inscripcion.cuenta.usuario.com_usu || null,
+            }
+          : null,
+        // Mantener estructura de cuenta para compatibilidad
+        cuenta: {
+          cor_usu: inscripcion.cuenta?.cor_usu,
+          usuario: inscripcion.cuenta?.usuario
+            ? {
+                nom_usu: inscripcion.cuenta.usuario.nom_usu,
+                ape_usu: inscripcion.cuenta.usuario.ape_usu,
+                com_usu: inscripcion.cuenta.usuario.com_usu || null,
+              }
+            : null,
+        },
+        // Mapear datos del evento
+        evento: inscripcion.evento
+          ? {
+              id_eve: inscripcion.evento.id_eve,
+              nom_eve: inscripcion.evento.nom_eve,
+              tip_eve: inscripcion.evento.tip_eve,
+              val_eve: inscripcion.evento.val_eve,
+              est_eve: inscripcion.evento.est_eve,
+              por_min_asi_eve: inscripcion.evento.por_min_asi_eve,
+              eventos_curso: inscripcion.evento.eventos_curso,
+            }
+          : null,
+        // Mapear datos de certificado si existe
+        certificado: inscripcion.certificado,
+        // Función onVerCarta para compatibilidad (se define en el frontend)
+        onVerCarta: null,
+      }));
 
       console.log(
         `✅ Enviando ${inscripcionesMapeadas.length} inscripciones al frontend`
@@ -1553,11 +1551,60 @@ const obtenerInscripcionesPorEventoPaginadas = async (req, res) => {
       }),
     ]);
 
+    // Mapear los resultados para tener una estructura consistente con el frontend
+    const inscripcionesMapeadas = inscripciones.map((inscripcion) => ({
+      id_ins: inscripcion.id_ins,
+      est_ins: inscripcion.est_ins,
+      fec_ins: inscripcion.fec_ins,
+      por_asi_fin_usu:
+        inscripcion.por_asi_fin_usu === -1 ? null : inscripcion.por_asi_fin_usu,
+      nota_final: inscripcion.inscripcion_curso?.not_fin_usu || null,
+      comprobante: inscripcion.comprobantes_pago[0]?.url_com_pag || null,
+      carta_motivacion: inscripcion.cartas_motivacion[0]?.con_car_mot || null,
+      observacion: inscripcion.observacion?.obs_ins || null,
+      // Mapear datos del usuario (compatibilidad con frontend)
+      usuario: inscripcion.cuenta?.usuario
+        ? {
+            nom_usu: inscripcion.cuenta.usuario.nom_usu,
+            ape_usu: inscripcion.cuenta.usuario.ape_usu,
+            cor_usu: inscripcion.cuenta.cor_usu,
+            com_usu: inscripcion.cuenta.usuario.com_usu || null,
+          }
+        : null,
+      // Mantener estructura de cuenta para compatibilidad
+      cuenta: {
+        cor_usu: inscripcion.cuenta?.cor_usu,
+        usuario: inscripcion.cuenta?.usuario
+          ? {
+              nom_usu: inscripcion.cuenta.usuario.nom_usu,
+              ape_usu: inscripcion.cuenta.usuario.ape_usu,
+              com_usu: inscripcion.cuenta.usuario.com_usu || null,
+            }
+          : null,
+      },
+      // Mapear datos del evento
+      evento: inscripcion.evento
+        ? {
+            id_eve: inscripcion.evento.id_eve,
+            nom_eve: inscripcion.evento.nom_eve,
+            tip_eve: inscripcion.evento.tip_eve,
+            val_eve: inscripcion.evento.val_eve,
+            est_eve: inscripcion.evento.est_eve,
+            por_min_asi_eve: inscripcion.evento.por_min_asi_eve,
+            eventos_curso: inscripcion.evento.eventos_curso,
+          }
+        : null,
+      // Mapear datos de certificado si existe
+      certificado: inscripcion.certificado,
+      // Función onVerCarta para compatibilidad (se define en el frontend)
+      onVerCarta: null,
+    }));
+
     // Calcular metadatos de paginación
     const totalPages = Math.ceil(totalCount / limit);
 
     return res.json({
-      data: inscripciones,
+      data: inscripcionesMapeadas,
       pagination: {
         currentPage: page,
         totalPages,
@@ -1700,11 +1747,60 @@ const obtenerInscripcionesPaginadas = async (req, res) => {
       }),
     ]);
 
+    // Mapear los resultados para tener una estructura consistente con el frontend
+    const inscripcionesMapeadas = inscripciones.map((inscripcion) => ({
+      id_ins: inscripcion.id_ins,
+      est_ins: inscripcion.est_ins,
+      fec_ins: inscripcion.fec_ins,
+      por_asi_fin_usu:
+        inscripcion.por_asi_fin_usu === -1 ? null : inscripcion.por_asi_fin_usu,
+      nota_final: inscripcion.inscripcion_curso?.not_fin_usu || null,
+      comprobante: inscripcion.comprobantes_pago[0]?.url_com_pag || null,
+      carta_motivacion: inscripcion.cartas_motivacion[0]?.con_car_mot || null,
+      observacion: inscripcion.observacion?.obs_ins || null,
+      // Mapear datos del usuario (compatibilidad con frontend)
+      usuario: inscripcion.cuenta?.usuario
+        ? {
+            nom_usu: inscripcion.cuenta.usuario.nom_usu,
+            ape_usu: inscripcion.cuenta.usuario.ape_usu,
+            cor_usu: inscripcion.cuenta.cor_usu,
+            com_usu: inscripcion.cuenta.usuario.com_usu || null,
+          }
+        : null,
+      // Mantener estructura de cuenta para compatibilidad
+      cuenta: {
+        cor_usu: inscripcion.cuenta?.cor_usu,
+        usuario: inscripcion.cuenta?.usuario
+          ? {
+              nom_usu: inscripcion.cuenta.usuario.nom_usu,
+              ape_usu: inscripcion.cuenta.usuario.ape_usu,
+              com_usu: inscripcion.cuenta.usuario.com_usu || null,
+            }
+          : null,
+      },
+      // Mapear datos del evento
+      evento: inscripcion.evento
+        ? {
+            id_eve: inscripcion.evento.id_eve,
+            nom_eve: inscripcion.evento.nom_eve,
+            tip_eve: inscripcion.evento.tip_eve,
+            val_eve: inscripcion.evento.val_eve,
+            est_eve: inscripcion.evento.est_eve,
+            por_min_asi_eve: inscripcion.evento.por_min_asi_eve,
+            eventos_curso: inscripcion.evento.eventos_curso,
+          }
+        : null,
+      // Mapear datos de certificado si existe
+      certificado: inscripcion.certificado,
+      // Función onVerCarta para compatibilidad (se define en el frontend)
+      onVerCarta: null,
+    }));
+
     // Calcular metadatos de paginación
     const totalPages = Math.ceil(totalCount / limit);
 
     return res.json({
-      data: inscripciones,
+      data: inscripcionesMapeadas,
       pagination: {
         currentPage: page,
         totalPages,

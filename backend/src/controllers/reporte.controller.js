@@ -994,6 +994,7 @@ async function getReporteAsistencia(req, res) {
           fec_ini_eve: true,
           fec_fin_eve: true,
           cup_max_eve: true,
+          por_min_asi_eve: true,
           inscritos: {
             select: {
               id_ins: true,
@@ -1012,7 +1013,13 @@ async function getReporteAsistencia(req, res) {
             },
             where: {
               est_ins: {
-                in: ["APROBADO", "ACEPTADA"],
+                in: [
+                  "APROBADO",
+                  "ACEPTADA",
+                  "REPROBADO_NOTA",
+                  "REPROBADO_ASISTENCIA",
+                  "REPROBADO_TOTAL",
+                ],
               },
             },
           },
@@ -1024,8 +1031,11 @@ async function getReporteAsistencia(req, res) {
       }
 
       const totalInscritos = evento.inscritos.length;
+      const porcentajeMinimoAsistencia = evento.por_min_asi_eve || 80; // Usar el mínimo del evento o 80% por defecto
       const asistentes = evento.inscritos.filter(
-        (ins) => ins.por_asi_fin_usu && ins.por_asi_fin_usu >= 80
+        (ins) =>
+          ins.por_asi_fin_usu &&
+          ins.por_asi_fin_usu >= porcentajeMinimoAsistencia
       );
       const totalAsistencias = asistentes.length;
       const totalNoAsistieron = totalInscritos - totalAsistencias;
@@ -1061,6 +1071,7 @@ async function getReporteAsistencia(req, res) {
           nom_eve: true,
           tip_eve: true,
           fec_ini_eve: true,
+          por_min_asi_eve: true,
           inscritos: {
             select: {
               id_ins: true,
@@ -1068,7 +1079,13 @@ async function getReporteAsistencia(req, res) {
             },
             where: {
               est_ins: {
-                in: ["APROBADO", "ACEPTADA"],
+                in: [
+                  "APROBADO",
+                  "ACEPTADA",
+                  "REPROBADO_NOTA",
+                  "REPROBADO_ASISTENCIA",
+                  "REPROBADO_TOTAL",
+                ],
               },
             },
           },
@@ -1080,8 +1097,11 @@ async function getReporteAsistencia(req, res) {
 
       const comparativa = eventos.map((evento) => {
         const totalInscritos = evento.inscritos.length;
+        const porcentajeMinimoAsistencia = evento.por_min_asi_eve || 80; // Usar el mínimo del evento o 80% por defecto
         const asistentes = evento.inscritos.filter(
-          (ins) => ins.por_asi_fin_usu && ins.por_asi_fin_usu >= 80
+          (ins) =>
+            ins.por_asi_fin_usu &&
+            ins.por_asi_fin_usu >= porcentajeMinimoAsistencia
         ).length;
         const porcentajeAsistencia =
           totalInscritos > 0 ? asistentes / totalInscritos : 0;
@@ -1120,13 +1140,20 @@ async function getReporteAsistencia(req, res) {
           const eventos = await prisma.evento.findMany({
             where: { tip_eve: tipoGrupo.tip_eve },
             select: {
+              por_min_asi_eve: true,
               inscritos: {
                 select: {
                   por_asi_fin_usu: true,
                 },
                 where: {
                   est_ins: {
-                    in: ["APROBADO", "ACEPTADA"],
+                    in: [
+                      "APROBADO",
+                      "ACEPTADA",
+                      "REPROBADO_NOTA",
+                      "REPROBADO_ASISTENCIA",
+                      "REPROBADO_TOTAL",
+                    ],
                   },
                 },
               },
@@ -1137,14 +1164,17 @@ async function getReporteAsistencia(req, res) {
             (sum, evento) => sum + evento.inscritos.length,
             0
           );
-          const totalAsistentes = eventos.reduce(
-            (sum, evento) =>
+          const totalAsistentes = eventos.reduce((sum, evento) => {
+            const porcentajeMinimoAsistencia = evento.por_min_asi_eve || 80; // Usar el mínimo del evento o 80% por defecto
+            return (
               sum +
               evento.inscritos.filter(
-                (ins) => ins.por_asi_fin_usu && ins.por_asi_fin_usu >= 80
-              ).length,
-            0
-          );
+                (ins) =>
+                  ins.por_asi_fin_usu &&
+                  ins.por_asi_fin_usu >= porcentajeMinimoAsistencia
+              ).length
+            );
+          }, 0);
           const totalNoShows = totalInscritos - totalAsistentes;
           const porcentajeNoShows =
             totalInscritos > 0 ? totalNoShows / totalInscritos : 0;

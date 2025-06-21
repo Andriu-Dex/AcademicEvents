@@ -23,7 +23,7 @@ import DocumentViewer from "./DocumentViewer";
 import "./styles/InscripcionCard.css";
 import "./styles/InscripcionCard-estados.css";
 
-const InscripcionCard = ({ inscripcion, onUpdate }) => {
+const InscripcionCard = ({ inscripcion, onUpdate, onVerCarta }) => {
   const [expanded, setExpanded] = useState(false);
   const [loading, setLoading] = useState(false);
   const [nota, setNota] = useState(() => {
@@ -323,15 +323,19 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
             <div className="inscripcion-doc-item">
               <span>Carta de motivación:</span>
               {inscripcion.carta_motivacion ? (
-                <button
-                  onClick={() =>
-                    inscripcion.onVerCarta(inscripcion.carta_motivacion)
-                  }
-                  className="btn-ver-carta"
-                  title="Ver carta de motivación"
-                >
-                  <FileText size={18} /> Ver carta
-                </button>
+                onVerCarta ? (
+                  <button
+                    onClick={() => onVerCarta(inscripcion.carta_motivacion)}
+                    className="btn-ver-carta"
+                    title="Ver carta de motivación"
+                  >
+                    <FileText size={18} /> Ver carta
+                  </button>
+                ) : (
+                  <span className="doc-available">
+                    <FileText size={18} /> Enviada
+                  </span>
+                )
               ) : (
                 <span className="doc-missing">
                   <XCircle size={18} /> No enviada

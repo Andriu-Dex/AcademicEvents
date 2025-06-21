@@ -405,14 +405,14 @@ const AdminGestion = () => {
               onSubmit={aplicarFiltros}
               className="flex flex-col sm:flex-row gap-2 mb-3"
             >
-              <div className="search-box-ag flex-grow relative">
+              <div className="search-box-ag">
                 <input
                   type="text"
                   name="search"
                   value={filtros.search}
                   onChange={handleFiltroChange}
                   placeholder="Buscar por nombre, cédula o correo"
-                  className="search-input-ag w-full p-2 pl-9 border border-gray-300 rounded-md"
+                  className="search-input-ag"
                 />
                 <Search
                   size={18}
@@ -420,12 +420,12 @@ const AdminGestion = () => {
                 />
               </div>
 
-              <div className="filter-controls-ag flex flex-wrap gap-2">
+              <div className="filter-controls-ag">
                 <select
                   name="rol"
                   value={filtros.rol}
                   onChange={handleFiltroChange}
-                  className="select-filter-ag p-2 border border-gray-300 rounded-md"
+                  className="select-filter-ag"
                 >
                   <option value="">Todos los roles</option>
                   <option value="ADMIN_GENERAL">Admin General</option>
@@ -433,16 +433,9 @@ const AdminGestion = () => {
                 </select>
 
                 <button
-                  type="submit"
-                  className="btn-filter-apply-ag bg-blue-600 text-white px-4 py-2 rounded-md"
-                >
-                  Filtrar
-                </button>
-
-                <button
                   type="button"
                   onClick={limpiarFiltros}
-                  className="btn-filter-clear-ag bg-gray-200 text-gray-700 px-4 py-2 rounded-md"
+                  className="btn-filter-clear-ag"
                 >
                   Limpiar
                 </button>
