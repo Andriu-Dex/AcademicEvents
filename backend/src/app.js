@@ -47,16 +47,6 @@ setupDirectories();
 app.use(cors()); // Habilita CORS para todas las rutas
 app.use(express.json()); // Habilita el parseo de JSON en las peticiones
 
-// Middleware de logging para debugging
-app.use((req, res, next) => {
-  console.log(`🔍 [${new Date().toISOString()}] ${req.method} ${req.url}`);
-  console.log(
-    `📋 Headers:`,
-    req.headers.authorization ? "TOKEN PRESENT" : "NO TOKEN"
-  );
-  next();
-});
-
 // Servir archivos subidos (comprobantes, PDF, etc.)
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 

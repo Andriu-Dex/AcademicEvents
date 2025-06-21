@@ -4,7 +4,6 @@ const jwt = require("jsonwebtoken");
  * Middleware que valida el token JWT en la cabecera Authorization
  */
 const verificarToken = (req, res, next) => {
-  console.log("🔍 Verificando token para ruta:", req.originalUrl);
   const authHeader = req.headers.authorization;
 
   // Validación básica del header

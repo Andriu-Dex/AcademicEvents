@@ -63,32 +63,71 @@ const AdminInscripciones = () => {
 
   // Efecto para escuchar eventos de socket y actualizar estado local
   useEffect(() => {
-    if (!socket || !isConnected) return;
+    console.log(`🔌 [ADMIN_INSCRIPCIONES] Estado de socket:`, {
+      socket: !!socket,
+      isConnected,
+      socketId: socket?.id,
+    });
+
+    if (!socket || !isConnected) {
+      console.log(
+        `❌ [ADMIN_INSCRIPCIONES] Socket no disponible o no conectado`
+      );
+      return;
+    }
+
+    console.log(`✅ [ADMIN_INSCRIPCIONES] Configurando listeners de socket`);
 
     // Configurar listeners para eventos de inscripciones
     const handleInscriptionChange = (data) => {
+      console.log(
+        `📡 [ADMIN_INSCRIPCIONES] Evento "inscripcion-change-hm" recibido:`,
+        data
+      );
+
       if (data.action === "updated" || data.action === "created") {
+        console.log(
+          `🔄 [ADMIN_INSCRIPCIONES] Recargando datos debido a acción: ${data.action}`
+        );
         // Recargar datos para obtener los cambios más recientes
         fetchData();
+      } else {
+        console.log(
+          `ℹ️ [ADMIN_INSCRIPCIONES] Acción no procesada: ${data.action}`
+        );
       }
     };
 
     const handleValidationChange = (data) => {
+      console.log(
+        `📡 [ADMIN_INSCRIPCIONES] Evento "inscription-validation-change" recibido:`,
+        data
+      );
+
       if (
         data.action === "status_changed" ||
         data.action === "new_inscription"
       ) {
+        console.log(
+          `🔄 [ADMIN_INSCRIPCIONES] Recargando datos debido a acción de validación: ${data.action}`
+        );
         // Recargar datos para obtener los cambios más recientes
         fetchData();
+      } else {
+        console.log(
+          `ℹ️ [ADMIN_INSCRIPCIONES] Acción de validación no procesada: ${data.action}`
+        );
       }
     };
 
     // Registrar listeners
+    console.log(`📝 [ADMIN_INSCRIPCIONES] Registrando listeners de socket`);
     socket.on("inscripcion-change-hm", handleInscriptionChange);
     socket.on("inscription-validation-change", handleValidationChange);
 
     // Cleanup
     return () => {
+      console.log(`🧹 [ADMIN_INSCRIPCIONES] Limpiando listeners de socket`);
       socket.off("inscripcion-change-hm", handleInscriptionChange);
       socket.off("inscription-validation-change", handleValidationChange);
     };

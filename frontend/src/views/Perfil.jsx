@@ -28,6 +28,7 @@ import {
   ZoomOut,
   RotateCw,
   AlertCircle,
+  BadgeCheck,
 } from "lucide-react";
 import "./styles/Perfil.css";
 

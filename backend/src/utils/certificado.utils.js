@@ -388,21 +388,17 @@ const generarCertificadoPDF = async (datos) => {
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
 
-    const page = await browser.newPage();
-
-    // Configurar viewport más grande para capturar la imagen completa
+    const page = await browser.newPage(); // Configurar viewport más grande para capturar la imagen completa
     await page.setViewport({
       width: 1200,
       height: 850,
-    });
-
-    // Cargar el HTML
+    }); // Cargar el HTML
     await page.setContent(htmlContent, {
       waitUntil: "networkidle0",
     });
 
     // Esperar un poco más para que la imagen de fondo cargue completamente
-    await page.waitForTimeout(2000);
+    await new Promise((resolve) => setTimeout(resolve, 2000));
 
     // Generar PDF con tamaño automático basado en el contenido
     const pdfBuffer = await page.pdf({

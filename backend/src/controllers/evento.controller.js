@@ -5,6 +5,18 @@ const socketService = require("../services/socket.service");
 require("dotenv").config();
 
 /**
+ * Función helper para logs condicionales del sistema de verificación de cupos
+ * @param {string} message - Mensaje a mostrar
+ * @param {boolean} forceShow - Forzar mostrar el mensaje (para errores críticos)
+ */
+const conditionalCuposLog = (message, forceShow = false) => {
+  const logsEnabled = process.env.CUPOS_VERIFICATION_LOGS_ENABLED === "true";
+  if (logsEnabled || forceShow) {
+    console.log(message);
+  }
+};
+
+/**
  * Valida los campos obligatorios y restricciones de un CURSO
  * Lanza un error si hay algún problema, de lo contrario no hace nada.
  */
@@ -299,7 +311,9 @@ const obtenerEventos = async (req, res) => {
 
     // 🔧 AUTO-CORRECCIÓN MASIVA DE CUPOS INCONSISTENTES
     // Verificar y corregir cupos disponibles para todos los eventos si están mal calculados
-    console.log("🔄 Verificando cupos disponibles para todos los eventos...");
+    conditionalCuposLog(
+      "🔄 Verificando cupos disponibles para todos los eventos..."
+    );
 
     const eventosCorregidos = await Promise.allSettled(
       eventos.map(async (evento) => {
@@ -319,13 +333,15 @@ const obtenerEventos = async (req, res) => {
             cupoMaximo - inscripcionesOcupandoCupo
           );
 
-          console.log(
+          conditionalCuposLog(
             `Evento ${evento.nom_eve}: Cupo actual=${cupoDisponibleActual}, Cupo calculado=${cupoDisponibleCorrecto}`
           );
 
           // Si hay inconsistencia, corregir automáticamente
           if (cupoDisponibleActual !== cupoDisponibleCorrecto) {
-            console.log(`⚠️ Corrigiendo cupo para evento ${evento.nom_eve}...`);
+            conditionalCuposLog(
+              `⚠️ Corrigiendo cupo para evento ${evento.nom_eve}...`
+            );
 
             // Actualizar en la base de datos
             const eventoCorregido = await prisma.evento.update({
@@ -960,11 +976,13 @@ const verificarYCorregirCupos = async (req, res) => {
 // Función para verificar y corregir cupos de todos los eventos
 const verificarYCorregirTodosLosCupos = async (req, res) => {
   try {
-    console.log("🔄 Iniciando verificación de cupos para todos los eventos");
+    conditionalCuposLog(
+      "🔄 Iniciando verificación de cupos para todos los eventos"
+    );
 
     // 1. Obtener todos los eventos
     const eventos = await prisma.evento.findMany();
-    console.log(`Total de eventos encontrados: ${eventos.length}`);
+    conditionalCuposLog(`Total de eventos encontrados: ${eventos.length}`);
 
     // 2. Preparar para almacenar resultados
     const resultados = {
@@ -1000,16 +1018,18 @@ const verificarYCorregirTodosLosCupos = async (req, res) => {
         cupoMaximo - inscripcionesOcupandoCupo
       );
 
-      console.log(`Evento ${evento.nom_eve}:`);
-      console.log(`- Cupo máximo: ${cupoMaximo}`);
-      console.log(`- Cupo disponible actual: ${cupoDisponibleActual}`);
-      console.log(
+      conditionalCuposLog(`Evento ${evento.nom_eve}:`);
+      conditionalCuposLog(`- Cupo máximo: ${cupoMaximo}`);
+      conditionalCuposLog(`- Cupo disponible actual: ${cupoDisponibleActual}`);
+      conditionalCuposLog(
         `- Inscripciones ocupando cupo: ${inscripcionesOcupandoCupo}`
       );
-      console.log(
+      conditionalCuposLog(
         `- Inscripciones en estado ACEPTADA: ${inscripcionesAceptadas}`
       );
-      console.log(`- Cupo disponible correcto: ${cupoDisponibleCorrecto}`);
+      conditionalCuposLog(
+        `- Cupo disponible correcto: ${cupoDisponibleCorrecto}`
+      );
 
       // Verificar si hay inconsistencia
       if (cupoDisponibleActual !== cupoDisponibleCorrecto) {

@@ -210,7 +210,26 @@ module.exports = {
 
 ---
 
-## 🚨 **Notas Importantes**
+## � **Fixes Post-Migración**
+
+### **📅 21 de junio de 2025 - Fix Puppeteer waitForTimeout**
+
+**❌ Problema detectado:**
+
+```
+Error generando certificado PDF: TypeError: page.waitForTimeout is not a function
+```
+
+**✅ Solución aplicada:**
+
+- **Archivo afectado**: `certificado.utils.js` línea 405
+- **Cambio**: `page.waitForTimeout(2000)` → `page.waitForDelay(2000)`
+- **Causa**: Puppeteer v24.10.0 deprecó `waitForTimeout` en favor de `waitForDelay`
+- **Estado**: ✅ Resuelto
+
+---
+
+## �🚨 **Notas Importantes**
 
 ### **⚠️ Cambios de API**
 

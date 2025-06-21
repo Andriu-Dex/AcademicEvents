@@ -79,8 +79,20 @@ const InscripcionCard = ({ inscripcion, onUpdate, onVerCarta }) => {
   };
 
   const cambiarEstado = async (nuevoEstado) => {
+    console.log(`🔄 [INSCRIPCION_CARD] Iniciando cambio de estado:`, {
+      inscripcionId: inscripcion.id_ins,
+      estadoActual: inscripcion.est_ins,
+      nuevoEstado,
+      eventoEstado: inscripcion.evento?.est_eve,
+      observacion,
+    });
+
     // Verificar si el evento está en un estado que no permite validación
     if (eventoNoValidable) {
+      console.log(`❌ [INSCRIPCION_CARD] Evento no validable:`, {
+        estadoEvento: inscripcion.evento?.est_eve,
+        eventoNoValidable,
+      });
       toast.error(
         `No se puede validar inscripciones de un evento ${inscripcion.evento?.est_eve.toLowerCase()}`
       );
@@ -89,16 +101,32 @@ const InscripcionCard = ({ inscripcion, onUpdate, onVerCarta }) => {
 
     setLoading(true);
     try {
-      await axiosInstance.put(
+      console.log(`📤 [INSCRIPCION_CARD] Enviando petición de validación...`);
+
+      const response = await axiosInstance.put(
         `/admin/inscripciones/validar/${inscripcion.id_ins}`,
         {
           est_ins: nuevoEstado,
           observacion: observacion,
         }
       );
+
+      console.log(
+        `✅ [INSCRIPCION_CARD] Respuesta del servidor:`,
+        response.data
+      );
       toast.success(`Inscripción ${nuevoEstado.toLowerCase()}`);
-      if (onUpdate) onUpdate();
+
+      if (onUpdate) {
+        console.log(`🔄 [INSCRIPCION_CARD] Ejecutando callback onUpdate`);
+        onUpdate();
+      }
     } catch (error) {
+      console.error(`❌ [INSCRIPCION_CARD] Error al cambiar estado:`, {
+        error: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+      });
       toast.error(error.response?.data?.msg || "Error al actualizar estado");
     } finally {
       setLoading(false);

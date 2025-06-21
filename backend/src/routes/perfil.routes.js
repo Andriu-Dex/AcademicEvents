@@ -12,15 +12,7 @@ const {
 } = require("../controllers/imagen-perfil.controller");
 
 // Obtener perfil del usuario autenticado
-router.get(
-  "/perfil",
-  verificarToken,
-  (req, res, next) => {
-    console.log("🎯 [RUTA] Llegó petición a /api/perfil");
-    next();
-  },
-  obtenerPerfil
-);
+router.get("/perfil", verificarToken, obtenerPerfil);
 
 // Actualizar documento PDF del usuario (método original - un solo archivo)
 router.put(

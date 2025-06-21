@@ -12,6 +12,20 @@ const {
   extractSortParams,
 } = require("../utils/paginationUtils");
 
+require("dotenv").config();
+
+/**
+ * Función helper para logs condicionales del sistema de paginación de eventos
+ * @param {string} message - Mensaje a mostrar
+ * @param {boolean} forceShow - Forzar mostrar el mensaje (para errores críticos)
+ */
+const conditionalPaginationLog = (message, forceShow = false) => {
+  const logsEnabled = process.env.EVENT_PAGINATION_LOGS_ENABLED === "true";
+  if (logsEnabled || forceShow) {
+    console.log(message);
+  }
+};
+
 /**
  * Obtiene eventos públicos con paginación
  * @param {Object} req - Objeto de solicitud Express
@@ -338,43 +352,51 @@ async function obtenerEventosUsuarioPaginados(req, res) {
         ];
       }
     } // 🐛 DEBUG: Log de la condición WHERE construida
-    console.log("📊 [EVENTOS USUARIO PAGINADOS] Información de usuario:");
-    console.log(`  - Rol: ${userAccount.rol_usu}`);
-    console.log(`  - Tiene carrera: ${!!userAccount.usuario.carrera}`);
+    conditionalPaginationLog(
+      "📊 [EVENTOS USUARIO PAGINADOS] Información de usuario:"
+    );
+    conditionalPaginationLog(`  - Rol: ${userAccount.rol_usu}`);
+    conditionalPaginationLog(
+      `  - Tiene carrera: ${!!userAccount.usuario.carrera}`
+    );
     if (userAccount.usuario.carrera) {
-      console.log(
+      conditionalPaginationLog(
         `  - Carrera: ${userAccount.usuario.carrera.nom_car} (ID: ${userAccount.usuario.carrera.id_car})`
       );
     }
-    console.log("📊 [EVENTOS USUARIO PAGINADOS] Filtros recibidos:");
-    console.log(`  - search: "${search || "ninguno"}"`);
-    console.log(`  - gratuito: ${gratuito}`);
-    console.log(`  - pagado: ${pagado}`);
-    console.log(`  - completo: ${completo}`);
-    console.log(`  - modalidad: "${modalidad || "ninguna"}"`);
-    console.log(`  - finalizado: ${finalizado}`);
-    console.log(`  - cancelado: ${cancelado}`);
-    console.log(`  - suspendido: ${suspendido}`);
-    console.log("📊 [EVENTOS USUARIO PAGINADOS] Reglas aplicadas:");
+    conditionalPaginationLog(
+      "📊 [EVENTOS USUARIO PAGINADOS] Filtros recibidos:"
+    );
+    conditionalPaginationLog(`  - search: "${search || "ninguno"}"`);
+    conditionalPaginationLog(`  - gratuito: ${gratuito}`);
+    conditionalPaginationLog(`  - pagado: ${pagado}`);
+    conditionalPaginationLog(`  - completo: ${completo}`);
+    conditionalPaginationLog(`  - modalidad: "${modalidad || "ninguna"}"`);
+    conditionalPaginationLog(`  - finalizado: ${finalizado}`);
+    conditionalPaginationLog(`  - cancelado: ${cancelado}`);
+    conditionalPaginationLog(`  - suspendido: ${suspendido}`);
+    conditionalPaginationLog(
+      "📊 [EVENTOS USUARIO PAGINADOS] Reglas aplicadas:"
+    );
     if (userAccount.rol_usu === "ESTUDIANTE") {
       if (userAccount.usuario.carrera) {
-        console.log(
+        conditionalPaginationLog(
           "  - ESTUDIANTE con carrera: Puede ver eventos de su carrera + eventos públicos (sin carreras)"
         );
       } else {
-        console.log(
+        conditionalPaginationLog(
           "  - ESTUDIANTE sin carrera: Solo eventos públicos (sin carreras) hasta asignación"
         );
       }
     } else if (userAccount.rol_usu === "GENERAL") {
-      console.log(
+      conditionalPaginationLog(
         "  - GENERAL: Solo puede ver eventos públicos (sin carreras asociadas)"
       );
     } else {
-      console.log("  - ADMIN: Puede ver todos los eventos");
+      conditionalPaginationLog("  - ADMIN: Puede ver todos los eventos");
     }
-    console.log("📊 [EVENTOS USUARIO PAGINADOS] Condición WHERE:");
-    console.log(JSON.stringify(whereCondition, null, 2)); // Ordenamiento (por defecto por fecha de inicio ascendente - eventos más próximos primero)
+    conditionalPaginationLog("📊 [EVENTOS USUARIO PAGINADOS] Condición WHERE:");
+    conditionalPaginationLog(JSON.stringify(whereCondition, null, 2)); // Ordenamiento (por defecto por fecha de inicio ascendente - eventos más próximos primero)
     const orderBy = extractSortParams(
       req,
       { field: "fec_ini_eve", direction: "asc" },
@@ -408,19 +430,17 @@ async function obtenerEventosUsuarioPaginados(req, res) {
     const response = buildPaginatedResponse(eventos, totalItems, {
       page,
       limit,
-    });
-
-    // 🐛 DEBUG: Log de los eventos devueltos
-    console.log(`📊 [EVENTOS USUARIO PAGINADOS] Resultados:`);
-    console.log(`  - Total eventos encontrados: ${totalItems}`);
-    console.log(`  - Eventos en esta página: ${eventos.length}`);
+    }); // 🐛 DEBUG: Log de los eventos devueltos
+    conditionalPaginationLog(`📊 [EVENTOS USUARIO PAGINADOS] Resultados:`);
+    conditionalPaginationLog(`  - Total eventos encontrados: ${totalItems}`);
+    conditionalPaginationLog(`  - Eventos en esta página: ${eventos.length}`);
     if (eventos.length > 0) {
-      console.log(`  - Eventos devueltos:`);
+      conditionalPaginationLog(`  - Eventos devueltos:`);
       eventos.forEach((evento, index) => {
         const carreras = evento.eventos_carrera
           .map((ec) => ec.carrera.nom_car)
           .join(", ");
-        console.log(
+        conditionalPaginationLog(
           `    ${index + 1}. ${evento.nom_eve} (Tipo: ${evento.tip_eve}) ${
             carreras ? `[${carreras}]` : "[Público - Sin carreras]"
           }`
@@ -609,4 +629,5 @@ module.exports = {
   obtenerEventosPublicosPaginados,
   obtenerEventosUsuarioPaginados,
   obtenerEventosAdminPaginados,
+  conditionalPaginationLog,
 };
