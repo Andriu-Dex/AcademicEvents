@@ -5,6 +5,7 @@ import Footer from "../components/Footer";
 import EventosDestacados from "../components/home/EventosDestacados";
 import { useAuth } from "../hooks/useAuth";
 import { useHomeSocket } from "../hooks/useHomeSocket";
+import { useConfigurableStats } from "../hooks/useConfigurableStats";
 import axiosInstance from "../api/axiosConfig";
 import {
   Users,
@@ -27,6 +28,14 @@ import {
   Monitor,
   ChevronLeft,
   ChevronRight,
+  CalendarX,
+  CalendarCheck,
+  Award,
+  ClipboardCheck,
+  UserPlus,
+  Star,
+  Info,
+  BarChart,
 } from "lucide-react";
 import "./styles/Home.css";
 
@@ -62,6 +71,12 @@ function Home() {
     usuariosRegistrados: 0,
     tasaParticipacion: "0%",
   });
+
+  // Hook para estadísticas configurables
+  const { activeStatsData, loading: loadingStats } = useConfigurableStats();
+
+  // Verificar si hay estadísticas configuradas
+  const hasConfiguredStats = Object.keys(activeStatsData).length > 0;
 
   // Estados y referencias para carruseles
   const [currentAutoridad, setCurrentAutoridad] = useState(0);
@@ -316,29 +331,87 @@ function Home() {
     descripcion: facultadInfo.descripcion,
   };
 
-  // Estadísticas dinámicas de la facultad
-  const stats = [
-    {
-      number: estadisticasHome.carreras.toString(),
+  // Mapeo de estadísticas a sus componentes UI
+  const statsMapping = {
+    carreras: {
       label: "Carreras",
       icon: <GraduationCap size={36} />,
+      value: (data) => data.toString(),
     },
-    {
-      number: estadisticasHome.eventosActivos.toString(),
+    eventosActivos: {
       label: "Eventos Activos",
       icon: <Calendar size={36} />,
+      value: (data) => data.toString(),
     },
-    {
-      number: estadisticasHome.usuariosRegistrados.toString(),
+    usuariosRegistrados: {
       label: "Usuarios Registrados",
       icon: <Users size={36} />,
+      value: (data) => data.toString(),
     },
-    {
-      number: estadisticasHome.tasaParticipacion,
-      label: "Tasa de Participación",
+    tasaParticipacion: {
+      label: "Participación de Usuarios",
       icon: <TrendingUp size={36} />,
+      value: (data) => data,
     },
-  ];
+    eventosCancelados: {
+      label: "Eventos Cancelados",
+      icon: <CalendarX size={36} />,
+      value: (data) => data.toString(),
+    },
+    eventosFinalizados: {
+      label: "Eventos Finalizados",
+      icon: <CalendarCheck size={36} />,
+      value: (data) => data.toString(),
+    },
+    certificadosEmitidos: {
+      label: "Certificados Emitidos",
+      icon: <Award size={36} />,
+      value: (data) => data.toString(),
+    },
+    inscripcionesActivas: {
+      label: "Inscripciones Activas",
+      icon: <ClipboardCheck size={36} />,
+      value: (data) => data.toString(),
+    },
+    cuposDisponibles: {
+      label: "Cupos Disponibles",
+      icon: <UserPlus size={36} />,
+      value: (data) => data.toString(),
+    },
+    eventosPresenciales: {
+      label: "Eventos Presenciales",
+      icon: <MapPin size={36} />,
+      value: (data) => data.toString(),
+    },
+    eventosVirtuales: {
+      label: "Eventos Virtuales",
+      icon: <Laptop size={36} />,
+      value: (data) => data.toString(),
+    },
+    eventosDestacados: {
+      label: "Eventos Destacados",
+      icon: <Star size={36} />,
+      value: (data) => data.toString(),
+    },
+  };
+
+  // Construir el array de estadísticas a mostrar basado en la configuración
+  // Si no hay estadísticas configuradas, no mostrar nada
+  const stats = hasConfiguredStats
+    ? Object.entries(activeStatsData).map(([key, value]) => {
+        const statConfig = statsMapping[key] || {
+          label: key,
+          icon: <Info size={36} />,
+          value: (data) => data.toString(),
+        };
+
+        return {
+          number: statConfig.value(value),
+          label: statConfig.label,
+          icon: statConfig.icon,
+        };
+      })
+    : [];
 
   // Usar las autoridades de la API, o las autoridades predeterminadas si no hay datos
   const autoridades =
@@ -711,19 +784,37 @@ function Home() {
             </div>
             <div className="col-lg-6">
               {/* Estadísticas en el hero */}
-              <div className="row g-3">
-                {stats.map((stat, index) => (
-                  <div className="col-6" key={index}>
-                    <div className="card bg-white bg-opacity-90 text-center p-3 h-100">
-                      <div className="display-6">{stat.icon}</div>
-                      <h3 className="fw-bold mb-1" style={{ color: "#8A1538" }}>
-                        {stat.number}
-                      </h3>
-                      <small className="text-muted">{stat.label}</small>
+              {hasConfiguredStats ? (
+                <div className="row g-3">
+                  {stats.map((stat, index) => (
+                    <div className="col-6" key={index}>
+                      <div className="card bg-white bg-opacity-90 text-center p-3 h-100">
+                        <div className="display-6">{stat.icon}</div>
+                        <h3
+                          className="fw-bold mb-1"
+                          style={{ color: "#8A1538" }}
+                        >
+                          {stat.number}
+                        </h3>
+                        <small className="text-muted">{stat.label}</small>
+                      </div>
                     </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="card bg-white bg-opacity-90 text-center p-4 h-100">
+                  <div className="display-6 text-muted mb-3">
+                    <BarChart size={48} />
                   </div>
-                ))}
-              </div>
+                  <h5 className="text-muted mb-2">
+                    Estadísticas no configuradas
+                  </h5>
+                  <p className="text-muted small mb-0">
+                    El administrador puede configurar las estadísticas a mostrar
+                    desde el panel de administración.
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>

@@ -1,12 +1,19 @@
 import { useEffect, useState } from "react";
 import axiosInstance from "../../../api/axiosConfig";
-import { Award, Download } from "lucide-react";
+import { Award, Download, Calendar } from "lucide-react";
 import { toast } from "react-toastify";
+import DatePicker, { registerLocale } from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import es from "date-fns/locale/es";
+import { formatDateForReports } from "../../../utils/dateUtils";
 import "./styles/ReporteCertificados.css";
 
+// Registrar el idioma
+registerLocale("es", es);
+
 const ReporteCertificados = () => {
-  const [fechaInicio, setFechaInicio] = useState("");
-  const [fechaFin, setFechaFin] = useState("");
+  const [fechaInicio, setFechaInicio] = useState(null);
+  const [fechaFin, setFechaFin] = useState(null);
   const [resumenCertificados, setResumenCertificados] = useState(null);
   const [descargasPorPeriodo, setDescargasPorPeriodo] = useState([]);
   const [eventosCertificados, setEventosCertificados] = useState([]);
@@ -16,13 +23,13 @@ const ReporteCertificados = () => {
   useEffect(() => {
     // Establecer fechas por defecto (último mes)
     const fechaActual = new Date();
-    const fechaFinStr = fechaActual.toISOString().split("T")[0];
+    const fechaFinDate = new Date(fechaActual);
 
-    fechaActual.setMonth(fechaActual.getMonth() - 1);
-    const fechaInicioStr = fechaActual.toISOString().split("T")[0];
+    const fechaInicioDate = new Date(fechaActual);
+    fechaInicioDate.setMonth(fechaInicioDate.getMonth() - 1);
 
-    setFechaInicio(fechaInicioStr);
-    setFechaFin(fechaFinStr);
+    setFechaInicio(fechaInicioDate);
+    setFechaFin(fechaFinDate);
   }, []);
 
   // Cargar datos cuando cambian las fechas
@@ -33,11 +40,15 @@ const ReporteCertificados = () => {
       try {
         setLoading(true);
 
+        // Formatear fechas para el backend usando la función específica para reportes
+        const fechaInicioStr = formatDateForReports(fechaInicio);
+        const fechaFinStr = formatDateForReports(fechaFin);
+
         // Cargar resumen de certificados
         const resResumen = await axiosInstance.get(
           `/admin/reportes-certificados/resumen`,
           {
-            params: { fechaInicio, fechaFin },
+            params: { fechaInicio: fechaInicioStr, fechaFin: fechaFinStr },
           }
         );
         setResumenCertificados(resResumen.data);
@@ -46,7 +57,7 @@ const ReporteCertificados = () => {
         const resDescargas = await axiosInstance.get(
           `/admin/reportes-certificados/descargas`,
           {
-            params: { fechaInicio, fechaFin },
+            params: { fechaInicio: fechaInicioStr, fechaFin: fechaFinStr },
           }
         );
         setDescargasPorPeriodo(resDescargas.data);
@@ -55,12 +66,13 @@ const ReporteCertificados = () => {
         const resEventos = await axiosInstance.get(
           `/admin/reportes-certificados/eventos`,
           {
-            params: { fechaInicio, fechaFin },
+            params: { fechaInicio: fechaInicioStr, fechaFin: fechaFinStr },
           }
         );
         setEventosCertificados(resEventos.data);
       } catch (error) {
         console.error("Error al cargar datos de certificados:", error);
+        toast.error("Error al cargar los datos de certificados");
         setResumenCertificados(null);
         setDescargasPorPeriodo([]);
         setEventosCertificados([]);
@@ -80,17 +92,21 @@ const ReporteCertificados = () => {
       setLoadingPDF(true);
       document.body.style.cursor = "wait";
 
+      // Formatear fechas para el backend usando la función específica para reportes
+      const fechaInicioStr = formatDateForReports(fechaInicio);
+      const fechaFinStr = formatDateForReports(fechaFin);
+
       const res = await axiosInstance.post(
         `/admin/reportes-certificados/pdf`,
         {
-          fechaInicio,
-          fechaFin,
+          fechaInicio: fechaInicioStr,
+          fechaFin: fechaFinStr,
         },
         { responseType: "blob" }
       );
 
       // Nombre del archivo
-      const nombreArchivo = `Reporte_Certificados_${fechaInicio}_al_${fechaFin}.pdf`;
+      const nombreArchivo = `Reporte_Certificados_${fechaInicioStr}_al_${fechaFinStr}.pdf`;
 
       // Descargar el archivo
       const url = window.URL.createObjectURL(new Blob([res.data]));
@@ -101,9 +117,11 @@ const ReporteCertificados = () => {
       link.click();
       link.remove();
       window.URL.revokeObjectURL(url);
+
+      toast.success("Reporte PDF descargado exitosamente");
     } catch (error) {
       console.error("Error al descargar el PDF:", error);
-      alert("No se pudo descargar el reporte. Intente nuevamente.");
+      toast.error("No se pudo descargar el reporte. Intente nuevamente.");
     } finally {
       setLoadingPDF(false);
       document.body.style.cursor = "default";
@@ -116,6 +134,7 @@ const ReporteCertificados = () => {
     const fecha = new Date(fechaStr);
     return fecha.toLocaleDateString("es-ES");
   };
+
   return (
     <div className="reporte-certificados-container-rc">
       <div className="reporte-header-rc">
@@ -131,26 +150,48 @@ const ReporteCertificados = () => {
 
       {/* Filtros */}
       <div className="filtros-container-rc">
-        <div className="filtro-grupo-rc">
+        <div className="periodo-grupo-rc">
           <label>Período:</label>
           <div className="fecha-inputs-rc">
-            <div>
+            <div className="fecha-input-wrapper-rc">
               <span>Desde:</span>
-              <input
-                type="date"
-                value={fechaInicio}
-                onChange={(e) => setFechaInicio(e.target.value)}
-                max={fechaFin}
-              />
+              <div className="input-with-icon-rc date-picker-container-rc">
+                <Calendar size={18} />
+                <DatePicker
+                  selected={fechaInicio}
+                  onChange={(date) => {
+                    if (date) {
+                      date.setHours(0, 0, 0, 0);
+                      setFechaInicio(date);
+                    }
+                  }}
+                  dateFormat="dd/MM/yyyy"
+                  locale="es"
+                  placeholderText="Seleccionar fecha"
+                  className="date-picker-input-rc"
+                  maxDate={fechaFin}
+                />
+              </div>
             </div>
-            <div>
+            <div className="fecha-input-wrapper-rc">
               <span>Hasta:</span>
-              <input
-                type="date"
-                value={fechaFin}
-                onChange={(e) => setFechaFin(e.target.value)}
-                min={fechaInicio}
-              />
+              <div className="input-with-icon-rc date-picker-container-rc">
+                <Calendar size={18} />
+                <DatePicker
+                  selected={fechaFin}
+                  onChange={(date) => {
+                    if (date) {
+                      date.setHours(23, 59, 59, 999);
+                      setFechaFin(date);
+                    }
+                  }}
+                  dateFormat="dd/MM/yyyy"
+                  locale="es"
+                  placeholderText="Seleccionar fecha"
+                  className="date-picker-input-rc"
+                  minDate={fechaInicio}
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -165,48 +206,48 @@ const ReporteCertificados = () => {
       </div>
 
       {loading ? (
-        <div className="loading-container">
+        <div className="loading-container-rc">
           <p>Cargando datos de certificados...</p>
         </div>
       ) : (
         <>
           {/* Sección de resumen de certificados */}
-          <div className="resumen-container">
+          <div className="resumen-container-rc">
             <h3>Certificados Emitidos por Período</h3>
 
             {resumenCertificados ? (
-              <div className="stats-grid">
-                <div className="stat-card">
+              <div className="stats-grid-rc">
+                <div className="stat-card-rc">
                   <h4>Total Certificados</h4>
-                  <div className="stat-value">
+                  <div className="stat-value-rc">
                     {resumenCertificados.totalCertificados}
                   </div>
                 </div>
-                <div className="stat-card">
+                <div className="stat-card-rc">
                   <h4>Certificados Descargados</h4>
-                  <div className="stat-value">
+                  <div className="stat-value-rc">
                     {resumenCertificados.certificadosDescargados}
                   </div>
-                  <div className="stat-percentage">
+                  <div className="stat-percentage-rc">
                     {Math.round(
                       (resumenCertificados.certificadosDescargados /
                         resumenCertificados.totalCertificados) *
-                        100
+                        100 || 0
                     )}
                     %
                   </div>
                 </div>
-                <div className="stat-card">
+                <div className="stat-card-rc">
                   <h4>Eventos con Certificados</h4>
-                  <div className="stat-value">
+                  <div className="stat-value-rc">
                     {resumenCertificados.eventosConCertificados}
                   </div>
                 </div>
-                <div className="stat-card">
+                <div className="stat-card-rc">
                   <h4>Promedio por Evento</h4>
-                  <div className="stat-value">
+                  <div className="stat-value-rc">
                     {Math.round(
-                      resumenCertificados.promedioCertificadosPorEvento
+                      resumenCertificados.promedioCertificadosPorEvento || 0
                     )}
                   </div>
                 </div>
@@ -217,33 +258,33 @@ const ReporteCertificados = () => {
           </div>
 
           {/* Sección de estadísticas de descarga */}
-          <div className="descargas-container">
+          <div className="descargas-container-rc">
             <h3>Estadísticas de Descarga de Certificados</h3>
 
             {descargasPorPeriodo.length > 0 ? (
-              <div className="descargas-grid">
+              <div className="descargas-grid-rc">
                 {descargasPorPeriodo.map((periodo, index) => (
-                  <div className="descarga-card" key={index}>
+                  <div className="descarga-card-rc" key={index}>
                     <h4>{periodo.periodo}</h4>
-                    <div className="descarga-stats">
-                      <div className="descarga-stat">
+                    <div className="descarga-stats-rc">
+                      <div className="descarga-stat-rc">
                         <span>Certificados Emitidos:</span>
                         <strong>{periodo.certificadosEmitidos}</strong>
                       </div>
-                      <div className="descarga-stat">
+                      <div className="descarga-stat-rc">
                         <span>Certificados Descargados:</span>
                         <strong>{periodo.certificadosDescargados}</strong>
                       </div>
-                      <div className="descarga-stat">
+                      <div className="descarga-stat-rc">
                         <span>Porcentaje de Descarga:</span>
                         <strong>
                           {Math.round(periodo.porcentajeDescarga * 100)}%
                         </strong>
                       </div>
                     </div>
-                    <div className="barra-descarga">
+                    <div className="barra-descarga-rc">
                       <div
-                        className="barra-descarga-fill"
+                        className="barra-descarga-fill-rc"
                         style={{
                           width: `${Math.round(
                             periodo.porcentajeDescarga * 100
@@ -262,11 +303,11 @@ const ReporteCertificados = () => {
           </div>
 
           {/* Sección de eventos con mayor emisión */}
-          <div className="eventos-certificados-container">
+          <div className="eventos-certificados-container-rc">
             <h3>Eventos con Mayor Emisión de Certificados</h3>
 
             {eventosCertificados.length > 0 ? (
-              <div className="eventos-tabla">
+              <div className="eventos-tabla-rc">
                 <table>
                   <thead>
                     <tr>
@@ -290,7 +331,7 @@ const ReporteCertificados = () => {
                           {Math.round(
                             (evento.certificadosDescargados /
                               evento.certificadosEmitidos) *
-                              100
+                              100 || 0
                           )}
                           %
                         </td>

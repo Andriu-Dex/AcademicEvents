@@ -147,8 +147,7 @@ export const tipo_evento: {
   CONGRESO: 'CONGRESO',
   WEBINAR: 'WEBINAR',
   CHARLA: 'CHARLA',
-  SOCIALIZACION: 'SOCIALIZACION',
-  PUBLICO: 'PUBLICO'
+  SOCIALIZACION: 'SOCIALIZACION'
 };
 
 export type tipo_evento = (typeof tipo_evento)[keyof typeof tipo_evento]

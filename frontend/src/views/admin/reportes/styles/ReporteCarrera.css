@@ -292,6 +292,106 @@
   color: #495057;
 }
 
+/* Estilos para mensajes sin datos - ReporteCarrera (rc) */
+.sin-datos-mensaje-rc,
+.sin-eventos-mensaje-rc,
+.sin-comparativas-mensaje-rc {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  margin: 1.5rem 0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.sin-datos-icono-rc,
+.sin-eventos-icono-rc,
+.sin-comparativas-icono-rc {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1rem;
+  opacity: 0.7;
+  color: #8a1538;
+}
+
+.sin-datos-mensaje-rc h4,
+.sin-eventos-mensaje-rc h4,
+.sin-comparativas-mensaje-rc h4 {
+  color: #8a1538;
+  font-size: 1.4rem;
+  margin-bottom: 0.8rem;
+  font-weight: 600;
+}
+
+.sin-datos-mensaje-rc p,
+.sin-eventos-mensaje-rc p,
+.sin-comparativas-mensaje-rc p {
+  color: #6c757d;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.sin-datos-sugerencias-rc,
+.sin-eventos-acciones-rc,
+.sin-comparativas-nota-rc {
+  background: rgba(138, 21, 56, 0.05);
+  border-radius: 8px;
+  padding: 1.2rem;
+  margin-top: 1.5rem;
+  text-align: left;
+}
+
+.sin-datos-sugerencias-rc p,
+.sin-eventos-acciones-rc p,
+.sin-comparativas-nota-rc p {
+  color: #8a1538;
+  font-weight: 600;
+  margin-bottom: 0.8rem;
+  font-size: 0.95rem;
+}
+
+.sin-datos-sugerencias-rc ul,
+.sin-eventos-acciones-rc ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sin-datos-sugerencias-rc li,
+.sin-eventos-acciones-rc li {
+  color: #495057;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  padding-left: 1.2rem;
+  position: relative;
+  line-height: 1.4;
+}
+
+.sin-datos-sugerencias-rc li::before,
+.sin-eventos-acciones-rc li::before {
+  content: "→";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: #8a1538;
+  font-weight: bold;
+}
+
+.loading-estadisticas-rc,
+.loading-comparativas-rc {
+  text-align: center;
+  padding: 2rem;
+  color: #6c757d;
+  font-style: italic;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+/* Responsive design para mensajes sin datos */
 @media (max-width: 768px) {
   .filtro-container {
     flex-direction: column;
@@ -308,5 +408,38 @@
 
   .comparativa-grid {
     grid-template-columns: 1fr;
+  }
+
+  .sin-datos-mensaje-rc,
+  .sin-eventos-mensaje-rc,
+  .sin-comparativas-mensaje-rc {
+    padding: 1.5rem;
+    margin: 1rem 0;
+  }
+
+  .sin-datos-icono-rc,
+  .sin-eventos-icono-rc,
+  .sin-comparativas-icono-rc {
+    margin-bottom: 0.8rem;
+  }
+
+  .sin-datos-icono-rc svg,
+  .sin-eventos-icono-rc svg,
+  .sin-comparativas-icono-rc svg {
+    width: 36px;
+    height: 36px;
+  }
+
+  .sin-datos-mensaje-rc h4,
+  .sin-eventos-mensaje-rc h4,
+  .sin-comparativas-mensaje-rc h4 {
+    font-size: 1.2rem;
+  }
+
+  .sin-datos-sugerencias-rc,
+  .sin-eventos-acciones-rc,
+  .sin-comparativas-nota-rc {
+    padding: 1rem;
+    margin-top: 1rem;
   }
 }

@@ -95,7 +95,14 @@
   margin: 0;
   padding-bottom: 0.5rem;
   border-bottom: 3px solid #8a1538;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.adminconfig-title-acmva svg {
+  color: #8a1538;
+  flex-shrink: 0;
 }
 
 .adminconfig-preview-btn-acmva {

@@ -577,6 +577,47 @@
   background-color: #e0e7ff;
 }
 
+/* Estilos de búsqueda */
+.busqueda-container {
+  margin-top: 0.5rem;
+  width: 100%;
+  max-width: 380px;
+  position: relative;
+}
+
+.busqueda-input {
+  width: 100%;
+  padding: 0.6rem 1rem;
+  border: 1.5px solid #d1d5db;
+  border-radius: 0.6rem;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.busqueda-input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+/* Estilos de paginación */
+.paginacion-container {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  animation: fadeInUp 0.4s ease-out;
+}
+
+/* Filtros con búsqueda */
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  justify-content: space-between;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .admininscription-container {

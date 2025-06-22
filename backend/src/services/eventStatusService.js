@@ -5,6 +5,18 @@ const {
 } = require("../utils/eventStatus.utils");
 
 /**
+ * Función helper para logs condicionales del sistema de estados automáticos
+ * @param {string} message - Mensaje a mostrar
+ * @param {boolean} forceShow - Forzar mostrar el mensaje (para errores críticos)
+ */
+const conditionalLog = (message, forceShow = false) => {
+  const logsEnabled = process.env.EVENT_STATUS_LOGS_ENABLED !== "false";
+  if (logsEnabled || forceShow) {
+    console.log(message);
+  }
+};
+
+/**
  * Servicio principal para gestión automática de estados de eventos
  * Patrón Singleton para garantizar una sola instancia
  */
@@ -21,6 +33,7 @@ class EventStatusService {
 
     EventStatusService.instance = this;
   }
+
   /**
    * Inicializa el servicio cron para actualización automática de estados
    * Usa variables de entorno para configuración flexible
@@ -29,23 +42,23 @@ class EventStatusService {
     // Verificar si el servicio está habilitado
     const isEnabled = process.env.EVENT_STATUS_CRON_ENABLED === "true";
     if (!isEnabled) {
-      console.log("⚠️ EventStatusService deshabilitado por configuración");
+      conditionalLog("⚠️ EventStatusService deshabilitado por configuración");
       return;
     }
 
     if (this.isActive) {
-      console.log("⚠️ EventStatusService ya está activo");
+      conditionalLog("⚠️ EventStatusService ya está activo");
       return;
     }
 
-    console.log("🚀 Iniciando EventStatusService...");
+    conditionalLog("🚀 Iniciando EventStatusService...");
 
     // Obtener configuración desde variables de entorno
     const cronSchedule =
       process.env.EVENT_STATUS_CRON_SCHEDULE || "*/5 * * * *";
     const timezone = process.env.EVENT_STATUS_TIMEZONE || "America/Guayaquil";
 
-    console.log(`⚙️ Configuración cron: ${cronSchedule} (${timezone})`);
+    conditionalLog(`⚙️ Configuración cron: ${cronSchedule} (${timezone})`);
 
     // Ejecutar una vez al iniciar
     this.ejecutarActualizacionEstados();
@@ -62,7 +75,7 @@ class EventStatusService {
     );
 
     this.isActive = true;
-    console.log("✅ EventStatusService iniciado correctamente");
+    conditionalLog("✅ EventStatusService iniciado correctamente");
   }
 
   /**
@@ -71,7 +84,7 @@ class EventStatusService {
    */
   async ejecutarActualizacionEstados() {
     try {
-      console.log("🔄 Iniciando actualización automática de estados...");
+      conditionalLog("🔄 Iniciando actualización automática de estados...");
 
       // Medir tiempo de ejecución
       const startTime = Date.now();
@@ -100,10 +113,10 @@ class EventStatusService {
       // Calcular tiempo total de ejecución
       const executionTime = Date.now() - startTime;
 
-      console.log(
+      conditionalLog(
         `✅ Actualización automática completada en ${executionTime}ms`
       );
-      console.log(
+      conditionalLog(
         `📊 Resumen: ${eventosActivados.length} activados, ${eventosFinalizados.length} finalizados, ${inscripcionesProcesadas.length} inscripciones actualizadas`
       );
     } catch (error) {

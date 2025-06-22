@@ -2,6 +2,8 @@ import { createContext, useContext, useState, useEffect } from "react";
 import { setLogoutFunction } from "../api/axiosConfig";
 import * as jwt_decode from "jwt-decode";
 import { toast } from "react-toastify";
+import ProfileImageService from "../services/ProfileImageService";
+import UserDataSyncService from "../services/UserDataSyncService";
 
 // Crea el contexto de autenticación
 export const AuthContext = createContext();
@@ -55,6 +57,75 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem("authData", JSON.stringify({ usuario, token }));
     localStorage.setItem("token", token);
   };
+
+  // Actualizar la imagen de perfil del usuario
+  const updateProfileImage = (imageUrl) => {
+    if (!usuario) return;
+
+    // Crear una copia actualizada del usuario con URL con cache buster
+    const updatedUser = {
+      ...usuario,
+      img_per_usu: ProfileImageService.addCacheBuster(imageUrl),
+    };
+
+    // Actualizar el estado y localStorage
+    setUsuario(updatedUser);
+
+    // Actualizar localStorage solo si hay datos guardados
+    const authDataStr = localStorage.getItem("authData");
+    if (authDataStr) {
+      try {
+        const authData = JSON.parse(authDataStr);
+        localStorage.setItem(
+          "authData",
+          JSON.stringify({
+            ...authData,
+            usuario: updatedUser,
+          })
+        );
+      } catch (error) {
+        console.error("Error al actualizar la imagen en localStorage:", error);
+      }
+    }
+
+    // Actualizar imagen en el DOM
+    ProfileImageService.updateProfileImageInDOM(imageUrl);
+
+    // Precargar la nueva imagen
+    ProfileImageService.preloadImage(imageUrl).catch((error) => {
+      console.warn("Error al precargar imagen de perfil:", error);
+    });
+  };
+
+  // Función para sincronizar datos del usuario con el servidor
+  const syncUserData = async () => {
+    if (!token || !usuario || !UserDataSyncService.shouldSync()) {
+      return;
+    }
+
+    try {
+      // Importar axiosInstance dinámicamente para evitar circular dependencies
+      const { default: axiosInstance } = await import("../api/axiosConfig");
+      const serverData = await UserDataSyncService.fetchUserData(axiosInstance);
+
+      if (serverData) {
+        const updatedUserData = UserDataSyncService.transformUserData(
+          serverData,
+          usuario
+        );
+
+        // Actualizar estado
+        setUsuario(updatedUserData);
+        UserDataSyncService.updateSyncTime();
+
+        // Actualizar localStorage
+        UserDataSyncService.updateLocalStorage(updatedUserData);
+      }
+    } catch (error) {
+      console.error("Error al sincronizar datos del usuario:", error);
+    }
+  };
+
   // Cerrar sesión y limpiar localStorage
   const logout = () => {
     setUsuario(null);
@@ -110,7 +181,17 @@ export const AuthProvider = ({ children }) => {
   }, [token]);
 
   return (
-    <AuthContext.Provider value={{ usuario, token, login, logout, loading }}>
+    <AuthContext.Provider
+      value={{
+        usuario,
+        token,
+        login,
+        logout,
+        loading,
+        updateProfileImage,
+        syncUserData,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

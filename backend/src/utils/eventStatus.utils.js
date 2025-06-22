@@ -2,6 +2,18 @@ const prisma = require("../config/db");
 const socketService = require("../services/socket.service");
 
 /**
+ * Función helper para logs condicionales del sistema de estados automáticos
+ * @param {string} message - Mensaje a mostrar
+ * @param {boolean} forceShow - Forzar mostrar el mensaje (para errores críticos)
+ */
+const conditionalLog = (message, forceShow = false) => {
+  const logsEnabled = process.env.EVENT_STATUS_LOGS_ENABLED !== "false";
+  if (logsEnabled || forceShow) {
+    console.log(message);
+  }
+};
+
+/**
  * Validador para reglas de negocio de estados de eventos
  * Patrón Validator
  */
@@ -98,18 +110,18 @@ class EventStatusManager {
    */
   async actualizarEventosAActivoAsync() {
     try {
-      console.log("🔄 Buscando eventos para activar...");
+      conditionalLog("🔄 Buscando eventos para activar...");
 
       // Obtener eventos candidatos
       const eventosCandidatos =
         await EventStatusValidator.obtenerEventosCandidatosActivacion();
 
       if (eventosCandidatos.length === 0) {
-        console.log("ℹ️ No hay eventos para activar en este momento");
+        conditionalLog("ℹ️ No hay eventos para activar en este momento");
         return [];
       }
 
-      console.log(
+      conditionalLog(
         `🔍 Encontrados ${eventosCandidatos.length} eventos candidatos para activar`
       );
 
@@ -119,7 +131,7 @@ class EventStatusManager {
       );
 
       if (eventosParaActivar.length === 0) {
-        console.log(
+        conditionalLog(
           "ℹ️ Ningún evento cumple las condiciones para ser activado"
         );
         return [];
@@ -148,7 +160,7 @@ class EventStatusManager {
           });
 
           eventosActivados.push(eventoActualizado);
-          console.log(
+          conditionalLog(
             `✅ Evento activado: ${evento.nom_eve} (ID: ${evento.id_eve})`
           );
         } catch (error) {
@@ -169,18 +181,18 @@ class EventStatusManager {
    */
   async actualizarEventosAFinalizadoAsync() {
     try {
-      console.log("🔄 Buscando eventos para finalizar...");
+      conditionalLog("🔄 Buscando eventos para finalizar...");
 
       // Obtener eventos candidatos
       const eventosCandidatos =
         await EventStatusValidator.obtenerEventosCandidatosFinalizacion();
 
       if (eventosCandidatos.length === 0) {
-        console.log("ℹ️ No hay eventos para finalizar en este momento");
+        conditionalLog("ℹ️ No hay eventos para finalizar en este momento");
         return [];
       }
 
-      console.log(
+      conditionalLog(
         `🔍 Encontrados ${eventosCandidatos.length} eventos candidatos para finalizar`
       );
 
@@ -190,7 +202,7 @@ class EventStatusManager {
       );
 
       if (eventosParaFinalizar.length === 0) {
-        console.log(
+        conditionalLog(
           "ℹ️ Ningún evento cumple las condiciones para ser finalizado"
         );
         return [];
@@ -217,7 +229,7 @@ class EventStatusManager {
           });
 
           eventosFinalizados.push(eventoActualizado);
-          console.log(
+          conditionalLog(
             `✅ Evento finalizado: ${evento.nom_eve} (ID: ${evento.id_eve})`
           );
         } catch (error) {
@@ -243,13 +255,13 @@ class EventStatusManager {
   async procesarInscripcionesEventosFinalizadosAsync(eventosFinalizados) {
     try {
       if (eventosFinalizados.length === 0) {
-        console.log(
+        conditionalLog(
           "ℹ️ No hay inscripciones para procesar (sin eventos finalizados)"
         );
         return [];
       }
 
-      console.log(
+      conditionalLog(
         `🔄 Procesando inscripciones de ${eventosFinalizados.length} eventos finalizados...`
       );
 
@@ -292,7 +304,7 @@ class EventStatusManager {
         },
       });
 
-      console.log(
+      conditionalLog(
         `🔍 Encontradas ${inscripcionesAceptadas.length} inscripciones ACEPTADAS para reprobación y ${inscripcionesPendientes.length} inscripciones PENDIENTES para rechazo`
       );
 
@@ -335,7 +347,7 @@ class EventStatusManager {
             },
           });
 
-          console.log(
+          conditionalLog(
             `✅ Inscripción de ${inscripcion.cuenta.usuario.nom_usu} ${inscripcion.cuenta.usuario.ape_usu} cambiada a REPROBADO_TOTAL`
           );
         } catch (error) {
@@ -384,7 +396,7 @@ class EventStatusManager {
             },
           });
 
-          console.log(
+          conditionalLog(
             `✅ Inscripción de ${inscripcion.cuenta.usuario.nom_usu} ${inscripcion.cuenta.usuario.ape_usu} cambiada a RECHAZADA`
           );
         } catch (error) {

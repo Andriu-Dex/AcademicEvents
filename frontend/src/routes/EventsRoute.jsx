@@ -4,6 +4,8 @@ import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useSocket } from "../context/SocketContext";
+import usePagination from "../hooks/usePagination";
+import PaginationControls from "../components/Pagination/PaginationControls";
 import {
   CalendarDays,
   Search,
@@ -20,6 +22,67 @@ import {
 } from "lucide-react";
 import "./styles/EventsRoute.css";
 import "./styles/FiltrosEstado.css";
+
+// Estilos adicionales para paginación
+const estilosCss = `
+/* Estilos para el estado de carga mientras se navega entre páginas */
+.loading-overlay-er {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.no-eventos-mensaje-er {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  gap: 1rem;
+  text-align: center;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.no-eventos-mensaje-er svg {
+  color: #1e40af;
+  margin-bottom: 1rem;
+}
+
+.no-eventos-mensaje-er p {
+  font-size: 1.1rem;
+  color: #4b5563;
+  margin-bottom: 1.5rem;
+}
+
+.no-eventos-mensaje-er .btn-limpiar-er {
+  padding: 0.75rem 1.5rem;
+  background-color: #1e40af;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.no-eventos-mensaje-er .btn-limpiar-er:hover {
+  background-color: #1c366b;
+}
+
+/* Estilo para la sección de paginación */
+.pagination-controls-pc {
+  margin: 2rem 0;
+}
+`;
 
 // Función para formatear fechas correctamente usando UTC
 const formatearFechaUTC = (fechaStr) => {
@@ -61,7 +124,6 @@ const EventsRoute = () => {
   const { usuario, token, loading } = useAuth();
   const navigate = useNavigate();
   const { socket, isConnected } = useSocket();
-  const [eventos, setEventos] = useState([]);
   const [filtro, setFiltro] = useState("");
   const [filtroModalidad, setFiltroModalidad] = useState("");
   const [filtros, setFiltros] = useState({
@@ -84,24 +146,34 @@ const EventsRoute = () => {
   const [subiendo, setSubiendo] = useState(false);
   const [exitoVisible, setExitoVisible] = useState(false);
   const [usuarioConCarrera, setUsuarioConCarrera] = useState(null);
+
+  // Implementación de paginación
+  const {
+    data: eventos,
+    loading: cargando,
+    error,
+    currentPage,
+    totalPages,
+    totalItems,
+    itemsPerPage,
+    fetchData,
+    goToPage,
+    hasNextPage,
+    hasPrevPage,
+  } = usePagination("/eventos-paginados", 12);
   useEffect(() => {
     if (loading) return;
     if (!usuario) return navigate("/login");
 
-    const obtenerEventos = async () => {
+    const obtenerPerfilUsuario = async () => {
       try {
-        // Primero obtenemos el perfil completo con información de carrera
+        // Obtener el perfil completo con información de carrera
         console.log("🔍 Obteniendo perfil de usuario...");
         const perfilRes = await axiosInstance.get("/perfil");
         const perfilCompleto = perfilRes.data;
         console.log("✅ Perfil obtenido:", perfilCompleto);
 
-        // Luego obtenemos los eventos con un parámetro para evitar caché
-        const timestamp = new Date().getTime();
-        console.log("🔍 Obteniendo eventos...");
-        const eventosRes = await axiosInstance.get(`/eventos?_t=${timestamp}`);
-
-        // Verificar si hay discrepancias entre el cupo calculado y el almacenado
+        // Verificar cupos disponibles
         console.log("Verificando cupos disponibles...");
         try {
           await axiosInstance.get("/eventos-verificar-cupos");
@@ -110,26 +182,65 @@ const EventsRoute = () => {
           // Continuar con la carga normal aunque falle la verificación
         }
 
-        // Volver a obtener eventos después de verificar cupos
-        const eventosActualizadosRes = await axiosInstance.get(
-          `/eventos?_t=${new Date().getTime()}`
-        );
-        setEventos(eventosActualizadosRes.data);
-
-        // Actualizamos el contexto de usuario con la información completa
+        // Actualizar el contexto de usuario con la información completa
         if (perfilCompleto && perfilCompleto.carrera) {
-          // Aquí deberíamos actualizar el contexto global, pero como no podemos,
-          // usaremos el estado local para el filtrado
           setUsuarioConCarrera(perfilCompleto);
         }
       } catch (error) {
-        console.error("Error:", error);
-        toast.error("Error al obtener datos");
+        console.error("Error al obtener perfil:", error);
+        toast.error("Error al obtener datos de perfil");
       }
     };
 
-    obtenerEventos();
+    obtenerPerfilUsuario();
   }, [usuario, token, loading, navigate]);
+
+  // Función para construir filtros API de forma consistente
+  const construirFiltrosAPI = useCallback(() => {
+    const filtrosAPI = {};
+
+    if (filtros.gratuito) filtrosAPI.gratuito = true;
+    if (filtros.pagado) filtrosAPI.pagado = true;
+    if (filtros.completo) filtrosAPI.completo = true;
+    if (filtros.modalidad || filtroModalidad)
+      filtrosAPI.modalidad = filtros.modalidad || filtroModalidad;
+    if (filtros.finalizado) filtrosAPI.finalizado = true;
+    if (filtros.cancelado) filtrosAPI.cancelado = true;
+    if (filtros.suspendido) filtrosAPI.suspendido = true;
+
+    // Añadir filtro de búsqueda
+    if (filtro.trim() !== "") {
+      filtrosAPI.search = filtro;
+    }
+
+    // NO enviar automáticamente la carrera del usuario
+    // El backend determina qué eventos mostrar basado en el token/rol del usuario
+
+    return filtrosAPI;
+  }, [filtros, filtroModalidad, filtro]);
+
+  // Efecto para cargar datos con paginación
+  useEffect(() => {
+    if (loading || !usuario) return;
+
+    // Construir objeto de filtros para la API usando la función centralizada
+    const filtrosAPI = construirFiltrosAPI();
+
+    // 🐛 DEBUG: Log de filtros que se envían al backend
+    console.log("🔍 [FRONTEND] Filtros enviados al backend:", filtrosAPI);
+
+    // Llamar a fetchData con los filtros
+    fetchData(filtrosAPI);
+  }, [
+    filtros,
+    filtro,
+    filtroModalidad,
+    currentPage,
+    fetchData,
+    loading,
+    usuario,
+    construirFiltrosAPI,
+  ]);
   useEffect(() => {
     const obtenerInscripciones = async () => {
       try {
@@ -308,115 +419,8 @@ const EventsRoute = () => {
       setSubiendo(false);
     }
   };
-  const eventosDisponibles = eventos.filter((evento) => {
-    // Si algún filtro de estado está activo, mostrar solo eventos con esos estados
-    const filtrosEstadoActivos =
-      filtros.finalizado || filtros.cancelado || filtros.suspendido;
-
-    if (filtrosEstadoActivos) {
-      let cumpleEstado = false;
-
-      if (filtros.finalizado && evento.est_eve === "FINALIZADO") {
-        cumpleEstado = true;
-      }
-      if (filtros.cancelado && evento.est_eve === "CANCELADO") {
-        cumpleEstado = true;
-      }
-      if (filtros.suspendido && evento.est_eve === "SUSPENDIDO") {
-        cumpleEstado = true;
-      }
-
-      // Si no cumple con ningún estado filtrado, no mostrar
-      if (!cumpleEstado) {
-        return false;
-      }
-    } else {
-      // Por defecto, no mostrar eventos finalizados, cancelados, suspendidos
-      if (
-        evento.est_eve === "FINALIZADO" ||
-        evento.est_eve === "CANCELADO" ||
-        evento.est_eve === "SUSPENDIDO"
-      ) {
-        return false;
-      }
-    }
-
-    // Si el evento es de tipo PUBLICO, está disponible para todos
-    if (evento.tip_eve === "PUBLICO") {
-      return true;
-    }
-
-    // Si el evento no tiene carreras asociadas, significa que es un evento general
-    if (!evento.eventos_carrera || evento.eventos_carrera.length === 0) {
-      return true;
-    }
-
-    // Para estudiantes, filtrar por su carrera
-    const usuarioFinal = usuarioConCarrera || usuario;
-    if (usuarioFinal?.rol_usu === "ESTUDIANTE") {
-      // Si el usuario tiene una carrera asignada
-      if (usuarioFinal.carrera) {
-        // Verificar si el evento está asociado a la carrera del usuario
-        const tieneCarrera = evento.eventos_carrera?.some(
-          (ec) => ec.id_car_aso === usuarioFinal.carrera.id_car
-        );
-        return tieneCarrera;
-      } else {
-        return false;
-      }
-    }
-
-    // Para administradores, docentes y coordinadores, mostrar todos los eventos
-    const tieneRolPermitido = ["ADMIN", "DOCENTE", "COORDINADOR"].includes(
-      usuarioFinal?.rol_usu
-    );
-    return tieneRolPermitido;
-  });
-
-  // Función para aplicar filtros
-  const aplicarFiltros = (evento) => {
-    // Convertir cupos a número para comparaciones
-    const cuposDisponibles = parseInt(evento.cup_dis_eve) || 0;
-
-    // CONTROL DE VISIBILIDAD POR CUPOS:
-    const hayFiltrosActivos = Object.values(filtros).some((f) => f);
-
-    if (hayFiltrosActivos) {
-      // Si el filtro "completo" está activo, mostrar eventos con cupos === 0
-      if (filtros.completo) {
-        // No aplicar filtro adicional por cupos si está marcado
-      } else {
-        // Para todos los otros filtros, mostrar solo eventos con cupos > 0
-        if (cuposDisponibles <= 0) return false;
-      }
-    } else {
-      // Si no hay filtros activos, mostrar solo eventos con cupos > 0 (comportamiento por defecto)
-      if (cuposDisponibles <= 0) return false;
-    }
-
-    // Filtro por nombre
-    const coincideNombre = evento.nom_eve
-      .toLowerCase()
-      .includes(filtro.toLowerCase());
-
-    if (!coincideNombre) return false;
-
-    // Filtro por precio
-    if (filtros.gratuito) {
-      if (evento.val_eve !== 0) return false;
-    }
-
-    if (filtros.pagado) {
-      if (evento.val_eve === 0) return false;
-    }
-
-    // Filtro por modalidad
-    if (filtros.modalidad) {
-      if (evento.mod_eve !== filtros.modalidad) return false;
-    }
-
-    return true;
-  };
+  // Los eventos ya vienen filtrados del backend según el rol y permisos del usuario
+  // No necesitamos filtrado adicional en el frontend
 
   // Función para manejar cambios en filtros
   const manejarCambioFiltro = (tipoFiltro) => {
@@ -433,6 +437,9 @@ const EventsRoute = () => {
         eventosGrid.classList.remove("filtering");
       }, 300);
     }
+
+    // Reiniciar a la primera página cuando cambian los filtros
+    goToPage(1);
   };
 
   // Función para limpiar filtros
@@ -447,53 +454,36 @@ const EventsRoute = () => {
       suspendido: false,
     });
     setFiltro("");
+
+    // Reiniciar a la primera página cuando se limpian los filtros
+    goToPage(1);
   };
 
   // Manejar actualizaciones de eventos en tiempo real
-  const handleEventUpdate = useCallback((eventUpdate) => {
-    console.log("🔄 Evento actualizado via socket:", eventUpdate);
-    if (!eventUpdate || !eventUpdate.action || !eventUpdate.data) return;
+  const handleEventUpdate = useCallback(
+    (eventUpdate) => {
+      console.log("🔄 Evento actualizado via socket:", eventUpdate);
+      if (!eventUpdate || !eventUpdate.action || !eventUpdate.data) return;
 
-    const { action, data } = eventUpdate;
+      // 🔧 USAR FUNCIÓN CENTRALIZADA PARA CONSTRUIR FILTROS
+      const filtrosAPI = construirFiltrosAPI();
 
-    // Asegurar que el evento tenga la estructura correcta
-    const eventoConEstructura = {
-      ...data,
-      eventos_carrera: data.eventos_carrera || [],
-      eventos_curso: data.eventos_curso || null,
-    };
+      // Recargar datos con los filtros aplicados
+      console.log("🔄 Recargando datos con filtros:", filtrosAPI);
+      fetchData(filtrosAPI);
 
-    // Manejar diferentes tipos de actualizaciones
-    if (action === "created") {
-      // Verificar que el evento no exista ya para evitar duplicados
-      setEventos((prevEventos) => {
-        const existeEvento = prevEventos.some(
-          (e) => e.id_eve === eventoConEstructura.id_eve
-        );
-        if (existeEvento) {
-          console.log("🚫 Evento ya existe, no se agrega duplicado");
-          return prevEventos;
-        }
-        return [eventoConEstructura, ...prevEventos];
-      });
-    } else if (action === "updated") {
-      // Actualizar evento existente
-      setEventos((prevEventos) =>
-        prevEventos.map((evento) =>
-          evento.id_eve === eventoConEstructura.id_eve
-            ? { ...evento, ...eventoConEstructura }
-            : evento
-        )
-      );
-    } else if (action === "deleted") {
-      // Eliminar evento
-      setEventos((prevEventos) =>
-        prevEventos.filter(
-          (evento) => evento.id_eve !== eventoConEstructura.id_eve
-        )
-      );
-    }
-  }, []);
+      // Mostrar notificación
+      const { action, data } = eventUpdate;
+      if (action === "created") {
+        toast.info(`¡Nuevo evento disponible: ${data.nom_eve}!`);
+      } else if (action === "updated") {
+        toast.info(`El evento "${data.nom_eve}" ha sido actualizado.`);
+      } else if (action === "deleted") {
+        toast.info(`El evento "${data.nom_eve}" ha sido eliminado.`);
+      }
+    },
+    [fetchData, construirFiltrosAPI]
+  );
 
   // Effect para manejar socket events de manera controlada
   useEffect(() => {
@@ -514,14 +504,8 @@ const EventsRoute = () => {
 
       console.log("🔄 EventsRoute: Cupos actualizados via socket:", data);
 
-      // Update the specific event with new cupos disponibles
-      setEventos((prevEventos) =>
-        prevEventos.map((evento) =>
-          evento.id_eve === data.eventoId
-            ? { ...evento, cup_dis_eve: data.cuposDisponibles }
-            : evento
-        )
-      );
+      // Recargar los datos para mantener la consistencia con la paginación
+      fetchData();
     };
 
     socket.on("cupos-change-hm", handleCuposChange);
@@ -531,7 +515,7 @@ const EventsRoute = () => {
       socket.off("evento-change-hm", handleEventUpdate);
       socket.off("cupos-change-hm", handleCuposChange);
     };
-  }, [isConnected, socket, handleEventUpdate]);
+  }, [isConnected, socket, handleEventUpdate, fetchData]);
 
   if (loading) return <p className="p-6">Cargando sesión...</p>;
 
@@ -557,6 +541,8 @@ const EventsRoute = () => {
                 }, 300);
               }
               setFiltro(e.target.value);
+              // Reiniciar a la primera página cuando se realiza una búsqueda
+              goToPage(1);
             }}
             className="eventos-buscador-er"
           />
@@ -571,6 +557,8 @@ const EventsRoute = () => {
                     eventosGrid.classList.remove("filtering");
                   }, 300);
                 }
+                // Reiniciar a la primera página cuando se limpia la búsqueda
+                goToPage(1);
               }}
               className="limpiar-buscador-er"
               title="Limpiar búsqueda"
@@ -707,8 +695,9 @@ const EventsRoute = () => {
       {/* Contador de resultados */}
       <div className="resultados-contador-er">
         <p>
-          Mostrando {eventosDisponibles.filter(aplicarFiltros).length} de{" "}
-          {eventosDisponibles.length} eventos
+          Mostrando {eventos.length}{" "}
+          {cargando && currentPage > 1 ? "(cargando...)" : ""} de {totalItems}{" "}
+          eventos
           {Object.values(filtros).some((f) => f) && (
             <span className="filtros-activos-badge-er">
               ({Object.values(filtros).filter((f) => f).length} filtro
@@ -721,159 +710,208 @@ const EventsRoute = () => {
           )}
         </p>
       </div>
-      {eventosDisponibles.length === 0 ? (
-        <p className="text-gray-600">No hay eventos disponibles para ti.</p>
-      ) : (
-        <div className="eventos-grid-er">
-          {eventosDisponibles.filter(aplicarFiltros).map((evento) => (
-            <div key={evento.id_eve} className="evento-card">
-              {/* Imagen de portada (real o placeholder) */}
-              <img
-                src={evento.img_por_eve || "https://i.imgur.com/c6Ry30Z.jpeg"}
-                alt={`Portada de ${evento.nom_eve}`}
-                className="evento-portada-er"
-                style={{
-                  width: "100%",
-                  height: "180px",
-                  objectFit: "cover",
-                  borderRadius: "8px 8px 0 0",
-                  marginBottom: "0.5rem",
-                }}
-              />
-              {/* Indicador de estado para eventos filtrados */}
-              {evento.est_eve === "FINALIZADO" && (
-                <div className="evento-estado-badge-er evento-estado-finalizado-er">
-                  <Clock size={14} />
-                  Finalizado
-                </div>
-              )}
-              {evento.est_eve === "CANCELADO" && (
-                <div className="evento-estado-badge-er evento-estado-cancelado-er">
-                  <AlertCircle size={14} />
-                  Cancelado
-                </div>
-              )}
-              {evento.est_eve === "SUSPENDIDO" && (
-                <div className="evento-estado-badge-er evento-estado-suspendido-er">
-                  <AlertTriangle size={14} />
-                  Suspendido
-                </div>
-              )}
-              <h2 className="nombre-evento-er">{evento.nom_eve}</h2>
-              <p className="tipo">{evento.tip_eve}</p>
-              {/* Precio del evento */}
-              <p className="precio-evento">
-                {evento.val_eve === 0
-                  ? "Gratuito"
-                  : `Precio: $${evento.val_eve.toFixed(2)}`}
-              </p>
-              {/* Descripción del evento */}
-              {evento.des_eve && (
-                <div className="descripcion-evento">
-                  <p>
-                    {evento.des_eve.length > 150
-                      ? `${evento.des_eve.substring(0, 150)}...`
-                      : evento.des_eve}
-                  </p>
-                </div>
-              )}{" "}
-              <p className="fecha-evento-er">
-                Fecha: {formatearFechaUTC(evento.fec_ini_eve)} a{" "}
-                {formatearFechaUTC(evento.fec_fin_eve)}
-              </p>{" "}
-              <p className="duracion-evento-er">
-                Duración: {evento.dur_hor_eve} horas
-              </p>
-              {/* Cupos disponibles */}
-              <p
-                className={
-                  evento.cup_dis_eve === 0
-                    ? "cupos-agotados"
-                    : "cupos-disponibles"
-                }
-              >
-                {evento.cup_dis_eve === 0
-                  ? "🚫 Sin cupos disponibles"
-                  : `Cupos disponibles: ${evento.cup_dis_eve || 0}`}
-              </p>
-              {/* Modalidad con ícono */}
-              {evento.mod_eve && (
-                <p className="modalidad-evento">
-                  {evento.mod_eve === "PRESENCIAL" && (
-                    <>
-                      <MapPin size={16} className="inline-icon" /> Modalidad:
-                      Presencial
-                    </>
-                  )}
-                  {evento.mod_eve === "VIRTUAL" && (
-                    <>
-                      <Monitor size={16} className="inline-icon" /> Modalidad:
-                      Virtual
-                    </>
-                  )}
-                  {evento.mod_eve === "SEMIPRESENCIAL" && (
-                    <>
-                      <Laptop size={16} className="inline-icon" /> Modalidad:
-                      Semipresencial
-                    </>
-                  )}
-                </p>
-              )}
-              {/* Público objetivo si existe */}
-              {evento.publico_objetivo && (
-                <p className="publico">Dirigido a: {evento.publico_objetivo}</p>
-              )}{" "}
-              {evento.pagado_eve && <p className="pago">Pagado</p>}{" "}
-              <button
-                onClick={() => {
-                  // Para reinscripción, marcamos como tal
-                  if (
-                    inscripcionesRechazadas &&
-                    inscripcionesRechazadas.includes(evento.id_eve)
-                  ) {
-                    const eventoConMarca = { ...evento, reinscripcion: true };
-                    setEventoSeleccionado(eventoConMarca);
-                  } else {
-                    setEventoSeleccionado(evento);
-                  }
-                }}
-                className="btn-inscribirme"
-                disabled={
-                  inscripciones.includes(evento.id_eve) ||
-                  (eventosAprobados &&
-                    eventosAprobados.includes(evento.id_eve)) ||
-                  (eventosReprobados &&
-                    eventosReprobados.includes(evento.id_eve)) ||
-                  evento.cup_dis_eve === 0 ||
-                  evento.est_eve === "INACTIVO" ||
-                  evento.est_eve === "FINALIZADO" ||
-                  evento.est_eve === "SUSPENDIDO" ||
-                  evento.est_eve === "CANCELADO"
-                }
-              >
-                {eventosAprobados && eventosAprobados.includes(evento.id_eve)
-                  ? "Evento aprobado"
-                  : eventosReprobados &&
-                    eventosReprobados.includes(evento.id_eve)
-                  ? "Evento reprobado"
-                  : inscripciones.includes(evento.id_eve)
-                  ? "Ya inscrito"
-                  : evento.cup_dis_eve === 0
-                  ? "Sin cupos"
-                  : evento.est_eve === "INACTIVO"
-                  ? "Evento inactivo"
-                  : evento.est_eve === "FINALIZADO"
-                  ? "Evento finalizado"
-                  : evento.est_eve === "SUSPENDIDO"
-                  ? "Evento suspendido"
-                  : evento.est_eve === "CANCELADO"
-                  ? "Evento cancelado"
-                  : "Inscribirme"}
-              </button>
-            </div>
-          ))}
+      {cargando ? (
+        <div className="loading-overlay-er">
+          <p>Cargando eventos...</p>
         </div>
-      )}{" "}
+      ) : error ? (
+        <div className="no-eventos-mensaje-er">
+          <AlertCircle size={40} />
+          <h3>Error al cargar eventos</h3>
+          <p>{error}</p>
+          <button onClick={fetchData} className="btn-limpiar-er">
+            Reintentar
+          </button>
+        </div>
+      ) : eventos.length === 0 ? (
+        <div className="no-eventos-mensaje-er">
+          <AlertTriangle size={40} />
+          <h3>No hay eventos disponibles</h3>
+          <p>No se encontraron eventos para tu perfil de usuario.</p>
+        </div>
+      ) : eventos.length === 0 ? (
+        <div className="no-eventos-mensaje-er">
+          <AlertTriangle size={40} />
+          <h3>No hay eventos que coincidan</h3>
+          <p>
+            No se encontraron eventos que coincidan con los criterios de
+            búsqueda.
+          </p>
+          {(filtro || Object.values(filtros).some((f) => f)) && (
+            <button onClick={limpiarFiltros} className="btn-limpiar-er">
+              Limpiar filtros
+            </button>
+          )}
+        </div>
+      ) : (
+        <>
+          <div className="eventos-grid-er">
+            {eventos.map((evento) => (
+              <div key={evento.id_eve} className="evento-card">
+                {/* Imagen de portada (real o placeholder) */}
+                <img
+                  src={evento.img_por_eve || "https://i.imgur.com/c6Ry30Z.jpeg"}
+                  alt={`Portada de ${evento.nom_eve}`}
+                  className="evento-portada-er"
+                  style={{
+                    width: "100%",
+                    height: "180px",
+                    objectFit: "cover",
+                    borderRadius: "8px 8px 0 0",
+                    marginBottom: "0.5rem",
+                  }}
+                />
+                {/* Indicador de estado para eventos filtrados */}
+                {evento.est_eve === "FINALIZADO" && (
+                  <div className="evento-estado-badge-er evento-estado-finalizado-er">
+                    <Clock size={14} />
+                    Finalizado
+                  </div>
+                )}
+                {evento.est_eve === "CANCELADO" && (
+                  <div className="evento-estado-badge-er evento-estado-cancelado-er">
+                    <AlertCircle size={14} />
+                    Cancelado
+                  </div>
+                )}
+                {evento.est_eve === "SUSPENDIDO" && (
+                  <div className="evento-estado-badge-er evento-estado-suspendido-er">
+                    <AlertTriangle size={14} />
+                    Suspendido
+                  </div>
+                )}
+                <h2 className="nombre-evento-er">{evento.nom_eve}</h2>
+                <p className="tipo">{evento.tip_eve}</p>
+                {/* Precio del evento */}
+                <p className="precio-evento">
+                  {evento.val_eve === 0
+                    ? "Gratuito"
+                    : `Precio: $${evento.val_eve.toFixed(2)}`}
+                </p>
+                {/* Descripción del evento */}
+                {evento.des_eve && (
+                  <div className="descripcion-evento">
+                    <p>
+                      {evento.des_eve.length > 150
+                        ? `${evento.des_eve.substring(0, 150)}...`
+                        : evento.des_eve}
+                    </p>
+                  </div>
+                )}{" "}
+                <p className="fecha-evento-er">
+                  Fecha: {formatearFechaUTC(evento.fec_ini_eve)} a{" "}
+                  {formatearFechaUTC(evento.fec_fin_eve)}
+                </p>{" "}
+                <p className="duracion-evento-er">
+                  Duración: {evento.dur_hor_eve} horas
+                </p>
+                {/* Cupos disponibles */}
+                <p
+                  className={
+                    evento.cup_dis_eve === 0
+                      ? "cupos-agotados"
+                      : "cupos-disponibles"
+                  }
+                >
+                  {evento.cup_dis_eve === 0
+                    ? "🚫 Sin cupos disponibles"
+                    : `Cupos disponibles: ${evento.cup_dis_eve || 0}`}
+                </p>
+                {/* Modalidad con ícono */}
+                {evento.mod_eve && (
+                  <p className="modalidad-evento">
+                    {evento.mod_eve === "PRESENCIAL" && (
+                      <>
+                        <MapPin size={16} className="inline-icon" /> Modalidad:
+                        Presencial
+                      </>
+                    )}
+                    {evento.mod_eve === "VIRTUAL" && (
+                      <>
+                        <Monitor size={16} className="inline-icon" /> Modalidad:
+                        Virtual
+                      </>
+                    )}
+                    {evento.mod_eve === "SEMIPRESENCIAL" && (
+                      <>
+                        <Laptop size={16} className="inline-icon" /> Modalidad:
+                        Semipresencial
+                      </>
+                    )}
+                  </p>
+                )}
+                {/* Público objetivo si existe */}
+                {evento.publico_objetivo && (
+                  <p className="publico">
+                    Dirigido a: {evento.publico_objetivo}
+                  </p>
+                )}{" "}
+                {evento.pagado_eve && <p className="pago">Pagado</p>}{" "}
+                <button
+                  onClick={() => {
+                    // Para reinscripción, marcamos como tal
+                    if (
+                      inscripcionesRechazadas &&
+                      inscripcionesRechazadas.includes(evento.id_eve)
+                    ) {
+                      const eventoConMarca = { ...evento, reinscripcion: true };
+                      setEventoSeleccionado(eventoConMarca);
+                    } else {
+                      setEventoSeleccionado(evento);
+                    }
+                  }}
+                  className="btn-inscribirme"
+                  disabled={
+                    inscripciones.includes(evento.id_eve) ||
+                    (eventosAprobados &&
+                      eventosAprobados.includes(evento.id_eve)) ||
+                    (eventosReprobados &&
+                      eventosReprobados.includes(evento.id_eve)) ||
+                    evento.cup_dis_eve === 0 ||
+                    evento.est_eve === "INACTIVO" ||
+                    evento.est_eve === "FINALIZADO" ||
+                    evento.est_eve === "SUSPENDIDO" ||
+                    evento.est_eve === "CANCELADO"
+                  }
+                >
+                  {eventosAprobados && eventosAprobados.includes(evento.id_eve)
+                    ? "Evento aprobado"
+                    : eventosReprobados &&
+                      eventosReprobados.includes(evento.id_eve)
+                    ? "Evento reprobado"
+                    : inscripciones.includes(evento.id_eve)
+                    ? "Ya inscrito"
+                    : evento.cup_dis_eve === 0
+                    ? "Sin cupos"
+                    : evento.est_eve === "INACTIVO"
+                    ? "Evento inactivo"
+                    : evento.est_eve === "FINALIZADO"
+                    ? "Evento finalizado"
+                    : evento.est_eve === "SUSPENDIDO"
+                    ? "Evento suspendido"
+                    : evento.est_eve === "CANCELADO"
+                    ? "Evento cancelado"
+                    : "Inscribirme"}
+                </button>
+              </div>
+            ))}
+          </div>
+
+          {/* Controles de paginación */}
+          {totalItems > 0 && (
+            <PaginationControls
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={goToPage}
+              hasNextPage={hasNextPage}
+              hasPrevPage={hasPrevPage}
+              totalItems={totalItems}
+              itemsPerPage={itemsPerPage}
+            />
+          )}
+        </>
+      )}
+
       {eventoSeleccionado && (
         <div className="modal-overlay">
           <div className="modal-contenido">
