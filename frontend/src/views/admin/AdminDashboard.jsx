@@ -13,6 +13,7 @@ import {
   Award,
   Users,
   ChevronRight,
+  DollarSign,
 } from "lucide-react";
 import "./styles/AdminDashboard.css";
 import "./styles/reportes-options.css";
@@ -91,13 +92,13 @@ const AdminDashboard = () => {
           </div>
           <div
             className="reporte-card"
-            onClick={() => navigate("/admin/reportes/cupos")}
+            onClick={() => navigate("/admin/reportes/ingresos")}
           >
             <div className="reporte-icon">
-              <Users size={32} />
+              <DollarSign size={32} />
             </div>
-            <h4>Reportes de Cupos</h4>
-            <p>Análisis de ocupación y demanda de cupos</p>
+            <h4>Reportes de Ingresos y Pagos</h4>
+            <p>Análisis de ingresos, pagos y eventos rentables</p>
           </div>
           <div
             className="reporte-card"

@@ -130,6 +130,10 @@ app.use("/api/upload", uploadRoutes);
 const reporteRoutes = require("./routes/reporte.routes");
 app.use("/api/admin", reporteRoutes);
 
+// Rutas de reportes de ingresos (solo admins)
+const reporteIngresosRoutes = require("./routes/reporte-ingresos.routes");
+app.use("/api/admin/reportes-ingresos", reporteIngresosRoutes);
+
 // Rutas de paginación
 const paginacionRoutes = require("./routes/paginacion.routes");
 app.use("/api", paginacionRoutes);

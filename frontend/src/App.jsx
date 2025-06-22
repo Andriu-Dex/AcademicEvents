@@ -39,7 +39,7 @@ import ReporteCarrera from "./views/admin/reportes/ReporteCarrera.jsx";
 import ReporteInscripciones from "./views/admin/reportes/ReporteInscripciones.jsx";
 import ReporteAsistencia from "./views/admin/reportes/ReporteAsistencia.jsx";
 import ReporteCertificados from "./views/admin/reportes/ReporteCertificados.jsx";
-import ReporteCupos from "./views/admin/reportes/ReporteCupos.jsx";
+import ReporteIngresosPagos from "./views/admin/reportes/ReporteIngresosPagos.jsx";
 
 // Rutas protegidas
 import PrivateRouteAdmin from "./components/PrivateRouteAdmin";
@@ -284,11 +284,11 @@ function App() {
             }
           />
           <Route
-            path="/admin/reportes/cupos"
+            path="/admin/reportes/ingresos"
             element={
               <PrivateRouteAdmin>
                 <PrivateLayout>
-                  <ReporteCupos />
+                  <ReporteIngresosPagos />
                 </PrivateLayout>
               </PrivateRouteAdmin>
             }
