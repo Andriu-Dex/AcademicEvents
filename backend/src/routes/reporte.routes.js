@@ -138,19 +138,19 @@ router.post(
 );
 
 // Reporte de Certificados
-router.post(
+router.get(
   "/reportes-certificados/resumen",
   verificarToken,
   onlyAdmin,
   getReporteCertificados
 );
-router.post(
+router.get(
   "/reportes-certificados/descargas",
   verificarToken,
   onlyAdmin,
   getReporteCertificados
 );
-router.post(
+router.get(
   "/reportes-certificados/eventos",
   verificarToken,
   onlyAdmin,

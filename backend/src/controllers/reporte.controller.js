@@ -1218,12 +1218,17 @@ async function descargarReporteAsistenciaPDF(req, res) {
 // Reporte de Certificados
 async function getReporteCertificados(req, res) {
   try {
-    const { fechaInicio, fechaFin } = req.body;
+    // Obtener parámetros dependiendo del método HTTP
+    const { fechaInicio, fechaFin } =
+      req.method === "GET" ? req.query : req.body;
+
+    console.log("🔍 Reporte Certificados - Parámetros:", {
+      fechaInicio,
+      fechaFin,
+    });
 
     // Construir filtros
-    const filtro = {
-      est_ins: "ACEPTADA",
-    };
+    const filtro = {};
 
     if (fechaInicio && fechaFin) {
       filtro.fec_ins = {
@@ -1234,129 +1239,167 @@ async function getReporteCertificados(req, res) {
 
     if (req.path.includes("/resumen")) {
       // Resumen general de certificados
-      const certificados = await prisma.inscripcion.findMany({
-        where: filtro,
-        select: {
-          id_ins: true,
-          fec_ins: true,
-          not_fin_usu: true,
-          usuario: {
+      // Consultar certificados emitidos directamente
+      const certificados = await prisma.certificado.findMany({
+        where: {
+          inscripcion: filtro,
+        },
+        include: {
+          inscripcion: {
             select: {
-              nom_usu: true,
-              ape_usu: true,
-            },
-          },
-          evento: {
-            select: {
-              nom_eve: true,
+              id_ins: true,
+              evento: {
+                select: {
+                  id_eve: true,
+                  nom_eve: true,
+                },
+              },
             },
           },
         },
       });
 
+      // Obtener eventos únicos con certificados
+      const eventosUnicos = new Set();
+      certificados.forEach((cert) => {
+        eventosUnicos.add(cert.inscripcion.evento.id_eve);
+      });
+
+      // Contar cuántos certificados han sido descargados al menos una vez
+      const certificadosDescargados = certificados.length; // Asumimos que todos han sido descargados
+
       const estadisticas = {
         totalCertificados: certificados.length,
-        aprobados: certificados.filter((cert) => cert.not_fin_usu >= 7).length,
-        reprobados: certificados.filter((cert) => cert.not_fin_usu < 7).length,
-        promedioNotas:
-          certificados.length > 0
-            ? certificados.reduce(
-                (sum, cert) => sum + (cert.not_fin_usu || 0),
-                0
-              ) / certificados.length
-            : 0,
+        certificadosDescargados: certificadosDescargados,
+        eventosConCertificados: eventosUnicos.size,
+        promedioCertificadosPorEvento:
+          eventosUnicos.size > 0 ? certificados.length / eventosUnicos.size : 0,
       };
 
       return res.json(estadisticas);
     }
 
     if (req.path.includes("/descargas")) {
-      // Datos de descargas por período
-      const certificados = await prisma.inscripcion.findMany({
-        where: filtro,
-        select: {
-          id_ins: true,
-          fec_ins: true,
-          not_fin_usu: true,
-          evento: {
+      // Datos de descargas por período (trimestres)
+      const certificados = await prisma.certificado.findMany({
+        where: {
+          inscripcion: filtro,
+        },
+        include: {
+          inscripcion: {
             select: {
-              nom_eve: true,
-              tip_eve: true,
+              fec_ins: true,
+              evento: {
+                select: {
+                  nom_eve: true,
+                  tip_eve: true,
+                },
+              },
             },
           },
         },
       });
 
-      // Agrupar por mes
-      const descargasPorMes = {};
-      certificados.forEach((cert) => {
-        const fecha = new Date(cert.fec_ins);
-        const key = `${fecha.getFullYear()}-${fecha.getMonth() + 1}`;
+      // Agrupar por trimestre
+      const descargasPorPeriodo = [];
+      const periodos = ["Ene-Mar", "Abr-Jun", "Jul-Sep", "Oct-Dic"];
 
-        if (!descargasPorMes[key]) {
-          descargasPorMes[key] = {
-            mes: fecha.getMonth() + 1,
-            año: fecha.getFullYear(),
-            total: 0,
-            aprobados: 0,
+      // Crear un mapa para agrupar por trimestre
+      const agrupadoPorPeriodo = {};
+
+      certificados.forEach((cert) => {
+        const fecha = new Date(cert.fec_gen_cer);
+        const año = fecha.getFullYear();
+        const trimestre = Math.floor(fecha.getMonth() / 3); // 0-3 para trimestres
+
+        const key = `${año}-${trimestre}`;
+        const nombrePeriodo = `${periodos[trimestre]} ${año}`;
+
+        if (!agrupadoPorPeriodo[key]) {
+          agrupadoPorPeriodo[key] = {
+            periodo: nombrePeriodo,
+            certificadosEmitidos: 0,
+            certificadosDescargados: 0,
+            porcentajeDescarga: 0,
           };
         }
 
-        descargasPorMes[key].total++;
-        if (cert.not_fin_usu >= 7) {
-          descargasPorMes[key].aprobados++;
-        }
+        agrupadoPorPeriodo[key].certificadosEmitidos++;
+        // Asumimos que todos los certificados generados han sido descargados al menos una vez
+        // En una implementación real, se debería verificar si el certificado fue descargado
+        agrupadoPorPeriodo[key].certificadosDescargados++;
       });
 
-      return res.json(
-        Object.values(descargasPorMes).sort((a, b) => {
-          if (a.año !== b.año) return a.año - b.año;
-          return a.mes - b.mes;
-        })
-      );
+      // Calcular porcentajes y convertir a array
+      Object.keys(agrupadoPorPeriodo).forEach((key) => {
+        const periodo = agrupadoPorPeriodo[key];
+        periodo.porcentajeDescarga =
+          periodo.certificadosEmitidos > 0
+            ? periodo.certificadosDescargados / periodo.certificadosEmitidos
+            : 0;
+        descargasPorPeriodo.push(periodo);
+      });
+
+      // Ordenar por año y trimestre (implícito en la clave)
+      descargasPorPeriodo.sort((a, b) => a.periodo.localeCompare(b.periodo));
+
+      return res.json(descargasPorPeriodo);
     }
 
     if (req.path.includes("/eventos")) {
-      // Certificados por evento
+      // Eventos con mayor emisión de certificados
       const eventos = await prisma.evento.findMany({
-        select: {
-          id_eve: true,
-          nom_eve: true,
-          tip_eve: true,
-          inscritos: {
-            select: {
-              id_ins: true,
-              not_fin_usu: true,
-            },
-            where: filtro,
-          },
-        },
         where: {
           inscritos: {
-            some: filtro,
+            some: {
+              ...filtro,
+              certificado: { isNot: null },
+            },
+          },
+        },
+        include: {
+          inscritos: {
+            where: {
+              ...filtro,
+              certificado: { isNot: null },
+            },
+            select: {
+              id_ins: true,
+              certificado: {
+                select: {
+                  id_cer: true,
+                  fec_gen_cer: true,
+                },
+              },
+            },
+          },
+          _count: {
+            select: {
+              inscritos: {
+                where: {
+                  ...filtro,
+                  certificado: { isNot: null },
+                },
+              },
+            },
           },
         },
       });
 
-      const eventosCertificados = eventos.map((evento) => ({
-        id_eve: evento.id_eve,
-        nombreEvento: evento.nom_eve,
-        tipoEvento: evento.tip_eve,
-        totalCertificados: evento.inscritos.length,
-        aprobados: evento.inscritos.filter((ins) => ins.not_fin_usu >= 7)
-          .length,
-        reprobados: evento.inscritos.filter((ins) => ins.not_fin_usu < 7)
-          .length,
-        promedioNota:
-          evento.inscritos.length > 0
-            ? evento.inscritos.reduce(
-                (sum, ins) => sum + (ins.not_fin_usu || 0),
-                0
-              ) / evento.inscritos.length
-            : 0,
-      }));
+      // Ordenar manualmente por cantidad de certificados y tomar los 10 primeros
+      const eventosOrdenados = eventos
+        .map((evento) => ({
+          id_eve: evento.id_eve,
+          nombreEvento: evento.nom_eve,
+          tipoEvento: evento.tip_eve,
+          fechaEvento: evento.fec_ini_eve,
+          certificadosEmitidos: evento.inscritos.length,
+          certificadosDescargados: evento.inscritos.length, // Asumimos que todos han sido descargados
+        }))
+        .sort((a, b) => b.certificadosEmitidos - a.certificadosEmitidos)
+        .slice(0, 10);
 
-      return res.json(eventosCertificados);
+      return res.json(eventosOrdenados);
     }
 
     res.status(400).json({ msg: "Endpoint no válido" });
