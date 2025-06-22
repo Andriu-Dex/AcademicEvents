@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reporte por Carrera - {{nombre_carrera}}</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Arial", sans-serif;
+        font-size: 12px;
+        line-height: 1.4;
+        color: #333;
+        background-color: #fff;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 30px;
+        padding: 20px;
+        background: linear-gradient(135deg, #8a1538, #a91d42);
+        color: white;
+        border-radius: 8px;
+      }
+
+      .header h1 {
+        font-size: 24px;
+        margin-bottom: 10px;
+        font-weight: bold;
+      }
+
+      .header h2 {
+        font-size: 18px;
+        margin-bottom: 5px;
+        font-weight: normal;
+      }
+
+      .header p {
+        font-size: 14px;
+        opacity: 0.9;
+      }
+
+      .section {
+        margin-bottom: 25px;
+        page-break-inside: avoid;
+      }
+
+      .section-title {
+        font-size: 16px;
+        font-weight: bold;
+        color: #8a1538;
+        margin-bottom: 15px;
+        padding-bottom: 5px;
+        border-bottom: 2px solid #8a1538;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      .stat-card {
+        background: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 6px;
+        padding: 15px;
+        text-align: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .stat-card h4 {
+        font-size: 12px;
+        color: #666;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+      }
+
+      .stat-value {
+        font-size: 20px;
+        font-weight: bold;
+        color: #8a1538;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        border-radius: 6px;
+        overflow: hidden;
+      }
+
+      th {
+        background: #8a1538;
+        color: white;
+        font-weight: bold;
+        padding: 12px 8px;
+        text-align: left;
+        font-size: 11px;
+        text-transform: uppercase;
+      }
+
+      td {
+        padding: 10px 8px;
+        border-bottom: 1px solid #e9ecef;
+        font-size: 11px;
+      }
+
+      tr:nth-child(even) {
+        background-color: #f8f9fa;
+      }
+
+      tr:hover {
+        background-color: #e9ecef;
+      }
+
+      .carrera-actual {
+        background-color: #fff3cd !important;
+        font-weight: bold;
+      }
+
+      .no-data {
+        text-align: center;
+        padding: 30px;
+        color: #666;
+        font-style: italic;
+        background: #f8f9fa;
+        border-radius: 6px;
+      }
+
+      .footer {
+        margin-top: 30px;
+        text-align: center;
+        font-size: 10px;
+        color: #666;
+        border-top: 1px solid #e9ecef;
+        padding-top: 15px;
+      }
+
+      .description {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 6px;
+        margin-bottom: 20px;
+        border-left: 4px solid #8a1538;
+      }
+
+      .description p {
+        margin: 0;
+        font-size: 13px;
+        color: #555;
+      }
+
+      @media print {
+        .section {
+          page-break-inside: avoid;
+        }
+
+        .stats-grid {
+          page-break-inside: avoid;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>Reporte de Participación por Carrera</h1>
+      <h2>{{nombre_carrera}}</h2>
+      <p>Generado el {{fecha_generacion}}</p>
+    </div>
+
+    <!-- Descripción de la carrera -->
+    <div class="section">
+      <div class="description">
+        <p><strong>Descripción:</strong> {{descripcion_carrera}}</p>
+      </div>
+    </div>
+
+    <!-- Estadísticas de participación -->
+    <div class="section">
+      <h3 class="section-title">Estadísticas de Participación</h3>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <h4>Total Estudiantes</h4>
+          <div class="stat-value">{{total_estudiantes}}</div>
+        </div>
+        <div class="stat-card">
+          <h4>Inscripciones Totales</h4>
+          <div class="stat-value">{{total_inscripciones}}</div>
+        </div>
+        <div class="stat-card">
+          <h4>Eventos Participados</h4>
+          <div class="stat-value">{{eventos_participados}}</div>
+        </div>
+        <div class="stat-card">
+          <h4>% de Participación</h4>
+          <div class="stat-value">{{porcentaje_participacion}}%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Eventos más populares -->
+    <div class="section">
+      <h3 class="section-title">Eventos Más Populares</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nombre del Evento</th>
+            <th>Fecha</th>
+            <th>Inscripciones</th>
+            <th>Asistencias</th>
+            <th>% Asistencia</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{tabla_eventos}}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Comparativa con otras carreras -->
+    <div class="section">
+      <h3 class="section-title">Comparativa con Otras Carreras</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Carrera</th>
+            <th>Estudiantes</th>
+            <th>Inscripciones</th>
+            <th>Eventos</th>
+            <th>% Participación</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{tabla_comparativa}}
+        </tbody>
+      </table>
+    </div>
+    <div class="footer">
+      <p>
+        Reporte generado automáticamente por el Sistema de Gestión de Eventos
+        Académicos
+      </p>
+      <p>{{nombre_universidad}} • {{nombre_facultad}}</p>
+    </div>
+  </body>
+</html>

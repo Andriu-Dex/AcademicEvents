@@ -4,15 +4,11 @@ import axiosInstance from "../../api/axiosConfig";
 import { usePagination } from "../../hooks/usePagination";
 import PaginationControls from "../../components/Pagination/PaginationControls";
 import {
-  Calendar,
-  FileText,
-  BarChart,
   GraduationCap,
   ClipboardList,
   CheckSquare,
   Award,
-  Users,
-  ChevronRight,
+  CalendarDays,
   DollarSign,
 } from "lucide-react";
 import "./styles/AdminDashboard.css";
@@ -105,7 +101,7 @@ const AdminDashboard = () => {
             onClick={() => navigate("/admin/reportes-mes")}
           >
             <div className="reporte-icon">
-              <BarChart size={32} />
+              <CalendarDays size={32} />
             </div>
             <h4>Reportes por Mes</h4>
             <p>Estadísticas y datos agrupados por mes</p>

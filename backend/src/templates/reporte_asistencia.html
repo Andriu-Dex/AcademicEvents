@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>{{titulo}}</title>
+    <style>
+      body {
+        background: #f6f7fa;
+        padding: 0;
+        margin: 0;
+        margin-top: 1rem;
+        font-family: Arial, sans-serif;
+        color: #222;
+      }
+      .reporte-container {
+        background: #f6f7fa;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 0;
+        margin: 0;
+      }
+
+      h1 {
+        font-size: 2.2rem;
+        font-weight: bold;
+        color: #8a1538;
+        margin: 0.5rem 0;
+        letter-spacing: 1px;
+        text-align: center;
+      }
+
+      h2 {
+        font-size: 1.6rem;
+        font-weight: bold;
+        color: #8a1538;
+        margin: 1.5rem 0 1rem 0;
+        letter-spacing: 0.5px;
+        text-align: center;
+      }
+
+      h3 {
+        font-size: 1.3rem;
+        font-weight: bold;
+        color: #8a1538;
+        margin: 1.2rem 0 0.8rem 0;
+        text-align: center;
+      }
+
+      .evento-info {
+        text-align: center;
+        margin: 1rem 0;
+        padding: 1rem;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px #0001;
+        width: 98%;
+      }
+
+      .evento-fecha,
+      .evento-tipo {
+        font-size: 1.1rem;
+        color: #7e294c;
+        margin: 0.5rem 0;
+      }
+
+      .stats-container {
+        display: flex;
+        justify-content: space-around;
+        width: 98%;
+        margin: 1.5rem 0;
+        flex-wrap: wrap;
+      }
+
+      .stat-card {
+        background: #fff;
+        border-radius: 12px;
+        padding: 1rem;
+        text-align: center;
+        box-shadow: 0 2px 8px #0001;
+        min-width: 150px;
+        margin: 0.5rem;
+      }
+
+      .stat-card.destacado {
+        background: linear-gradient(135deg, #8a1538, #a91d42);
+        color: white;
+      }
+
+      .stat-card h3 {
+        font-size: 1rem;
+        margin: 0 0 0.5rem 0;
+        color: inherit;
+      }
+
+      .stat-value {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #8a1538;
+      }
+
+      .stat-card.destacado .stat-value {
+        color: white;
+      }
+
+      .seccion {
+        width: 98%;
+        margin-bottom: 1.5rem;
+        display: block;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 2px 8px #0001;
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+        table-layout: fixed;
+      }
+
+      th,
+      td {
+        padding: 0.6rem 0.4rem;
+        text-align: center;
+        font-size: 0.9rem;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+      }
+
+      th {
+        background: #f5e9ec;
+        color: #8a1538;
+        font-size: 1rem;
+        font-weight: bold;
+        border-bottom: 2px solid #e8cbd2;
+      }
+
+      /* Estilos específicos para tabla de detalles */
+      .tabla-detalles th:nth-child(1) {
+        width: 50%;
+      }
+      .tabla-detalles th:nth-child(2) {
+        width: 25%;
+      }
+      .tabla-detalles th:nth-child(3) {
+        width: 25%;
+      }
+
+      /* Estilos específicos para tabla comparativa */
+      .tabla-comparativa th:nth-child(1) {
+        width: 30%;
+      }
+      .tabla-comparativa th:nth-child(2) {
+        width: 15%;
+      }
+      .tabla-comparativa th:nth-child(3) {
+        width: 15%;
+      }
+      .tabla-comparativa th:nth-child(4) {
+        width: 12%;
+      }
+      .tabla-comparativa th:nth-child(5) {
+        width: 12%;
+      }
+      .tabla-comparativa th:nth-child(6) {
+        width: 16%;
+      }
+
+      /* Estilos específicos para tabla de no-shows */
+      .tabla-noshows th:nth-child(1) {
+        width: 30%;
+      }
+      .tabla-noshows th:nth-child(2) {
+        width: 15%;
+      }
+      .tabla-noshows th:nth-child(3) {
+        width: 20%;
+      }
+      .tabla-noshows th:nth-child(4) {
+        width: 15%;
+      }
+      .tabla-noshows th:nth-child(5) {
+        width: 20%;
+      }
+
+      tbody tr {
+        transition: background 0.17s;
+      }
+
+      tbody tr:hover {
+        background: #fff3f6;
+      }
+
+      td {
+        color: #222;
+        border-bottom: 1px solid #f0e4e6;
+      }
+
+      .numero {
+        font-weight: 600;
+        color: #8a1538;
+      }
+
+      .porcentaje {
+        font-weight: 600;
+      }
+
+      .porcentaje.alta {
+        color: #059669;
+      }
+
+      .porcentaje.media {
+        color: #d97706;
+      }
+
+      .porcentaje.baja {
+        color: #dc2626;
+      }
+
+      .estado {
+        font-weight: 500;
+        padding: 4px 8px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+      }
+
+      .estado.aprobado {
+        background: #dcfce7;
+        color: #166534;
+      }
+
+      .estado.aceptada {
+        background: #dbeafe;
+        color: #1e40af;
+      }
+
+      .estado.reprobado_nota,
+      .estado.reprobado_asistencia,
+      .estado.reprobado_total {
+        background: #fee2e2;
+        color: #dc2626;
+      }
+
+      .nombre-evento {
+        text-align: left;
+        font-weight: 500;
+      }
+
+      .tipo-evento {
+        font-weight: 500;
+        color: #7e294c;
+      }
+
+      .fecha-generacion {
+        text-align: center;
+        margin-top: 2rem;
+        font-size: 0.9rem;
+        color: #6b7280;
+        font-style: italic;
+      }
+
+      .sin-datos {
+        text-align: center;
+        padding: 2rem;
+        color: #6b7280;
+        font-style: italic;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="reporte-container">
+      <h1>{{titulo}}</h1>
+
+      {{contenido}}
+
+      <div class="fecha-generacion">
+        Reporte generado el: {{fecha_generacion}}
+      </div>
+    </div>
+  </body>
+</html>

@@ -141,9 +141,11 @@ const ReporteInscripciones = () => {
       link.click();
       link.remove();
       window.URL.revokeObjectURL(url);
+
+      toast.success("Reporte PDF descargado exitosamente");
     } catch (error) {
       console.error("Error al descargar el PDF:", error);
-      alert("No se pudo descargar el reporte. Intente nuevamente.");
+      toast.error("No se pudo descargar el reporte. Intente nuevamente.");
     } finally {
       setLoadingPDF(false);
       document.body.style.cursor = "default";

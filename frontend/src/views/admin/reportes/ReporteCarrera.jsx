@@ -134,9 +134,11 @@ const ReporteCarrera = () => {
       link.click();
       link.remove();
       window.URL.revokeObjectURL(url);
+
+      toast.success("Reporte PDF descargado exitosamente");
     } catch (error) {
       console.error("Error al descargar el PDF:", error);
-      alert("No se pudo descargar el reporte. Intente nuevamente.");
+      toast.error("No se pudo descargar el reporte. Intente nuevamente.");
     } finally {
       setLoadingPDF(false);
       document.body.style.cursor = "default";
@@ -179,6 +181,10 @@ const ReporteCarrera = () => {
           className="btn-descargar"
           onClick={descargarPDF}
           disabled={loadingPDF || !carreraSeleccionada}
+          style={{
+            opacity: loadingPDF ? 0.7 : 1,
+            pointerEvents: loadingPDF ? "none" : "auto",
+          }}
         >
           {loadingPDF ? "Generando PDF..." : "Descargar Reporte PDF"}
         </button>
@@ -198,15 +204,15 @@ const ReporteCarrera = () => {
               tieneDataSignificativa() ? (
                 <div className="stats-grid">
                   <div className="stat-card">
-                    <h4>Total Estudiantes</h4>{" "}
+                    <h4>Total Estudiantes</h4>
                     <div className="stat-value">
                       {datosEstadisticos.totalEstudiantes || 0}
                     </div>
                   </div>
                   <div className="stat-card">
-                    <h4>Inscripciones Totales</h4>{" "}
+                    <h4>Inscripciones Totales</h4>
                     <div className="stat-value">
-                      {datosEstadisticos.totalInscripciones || 0}{" "}
+                      {datosEstadisticos.totalInscripciones || 0}
                     </div>
                   </div>
                   <div className="stat-card">
@@ -216,10 +222,13 @@ const ReporteCarrera = () => {
                     </div>
                   </div>
                   <div className="stat-card">
-                    <h4>% de Participación</h4>{" "}
+                    <h4>% de Participación</h4>
                     <div className="stat-value">
-                      {Math.round(datosEstadisticos.porcentajeParticipacion) ||
-                        0}
+                      {Math.min(
+                        Math.round(datosEstadisticos.porcentajeParticipacion) ||
+                          0,
+                        100
+                      )}
                       %
                     </div>
                   </div>
@@ -275,12 +284,12 @@ const ReporteCarrera = () => {
                   <tbody>
                     {eventosPorCarrera.map((evento) => (
                       <tr key={evento.id_eve}>
-                        <td>{evento.nom_eve}</td>{" "}
+                        <td>{evento.nom_eve}</td>
                         <td>
                           {new Date(evento.fec_ini_eve).toLocaleDateString(
                             "es-ES"
                           )}
-                        </td>{" "}
+                        </td>
                         <td>{evento.totalInscritos || 0}</td>
                         <td>{evento.totalAsistieron || 0}</td>
                         <td>{evento.porcentajeAsistencia || 0}%</td>
@@ -340,7 +349,7 @@ const ReporteCarrera = () => {
                         </div>
                         <div>
                           <span>Participación:</span>{" "}
-                          {carrera.porcentajeParticipacion}%
+                          {Math.min(carrera.porcentajeParticipacion || 0, 100)}%
                         </div>
                       </div>
                     </div>

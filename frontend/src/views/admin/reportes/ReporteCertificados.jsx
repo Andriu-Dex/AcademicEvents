@@ -117,6 +117,8 @@ const ReporteCertificados = () => {
       link.click();
       link.remove();
       window.URL.revokeObjectURL(url);
+
+      toast.success("Reporte PDF descargado exitosamente");
     } catch (error) {
       console.error("Error al descargar el PDF:", error);
       toast.error("No se pudo descargar el reporte. Intente nuevamente.");

@@ -149,18 +149,47 @@ const ReporteIngresosPagos = () => {
   const formatearPorcentaje = (valor) => {
     return `${Math.round(valor * 100)}%`;
   };
-
-  // Función para descargar PDF (placeholder para funcionalidad futura)
+  // Función para descargar el reporte en PDF
   const descargarPDF = async () => {
+    if (!fechaInicio || !fechaFin) return;
+
     try {
       setLoadingPDF(true);
-      toast.info("Función de descarga en desarrollo. Próximamente disponible.");
-      // TODO: Implementar descarga de PDF
+      document.body.style.cursor = "wait";
+
+      // Formatear fechas para el backend
+      const fechaInicioStr = formatDateForReports(fechaInicio);
+      const fechaFinStr = formatDateForReports(fechaFin);
+
+      // Petición al endpoint del PDF
+      const res = await axiosInstance.post(
+        "/admin/reportes-ingresos/pdf",
+        {
+          ...filtros,
+          fechaDesde: fechaInicioStr,
+          fechaHasta: fechaFinStr,
+        },
+        { responseType: "blob" }
+      );
+
+      // Nombre personalizado para el archivo
+      const nombreArchivo = `Reporte_Ingresos_${fechaInicioStr}_al_${fechaFinStr}.pdf`;
+
+      // Descargar el blob como archivo
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", nombreArchivo);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error("Error al generar PDF:", error);
-      toast.error("Error al generar el reporte PDF");
+      console.error("Error al descargar el PDF:", error);
+      toast.error("No se pudo descargar el reporte. Intente nuevamente.");
     } finally {
       setLoadingPDF(false);
+      document.body.style.cursor = "default";
     }
   };
 
@@ -259,11 +288,15 @@ const ReporteIngresosPagos = () => {
               <option value="PENDIENTE">Pagos Pendientes</option>
               <option value="RECHAZADO">Pagos Rechazados</option>
             </select>
-          </div>
+          </div>{" "}
           <button
             className="btn-descargar-rip"
             onClick={descargarPDF}
-            disabled={loadingPDF || loading}
+            disabled={loadingPDF || loading || !fechaInicio || !fechaFin}
+            style={{
+              opacity: loadingPDF ? 0.7 : 1,
+              pointerEvents: loadingPDF ? "none" : "auto",
+            }}
           >
             <Download size={16} />
             {loadingPDF ? "Generando PDF..." : "Descargar Reporte PDF"}

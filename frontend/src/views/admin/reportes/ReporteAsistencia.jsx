@@ -171,44 +171,27 @@ const ReporteAsistencia = () => {
         { responseType: "blob" }
       );
 
-      // Comprobar si la respuesta es un blob o un error
-      const contentType = res.headers["content-type"];
-      if (contentType && contentType.indexOf("application/json") !== -1) {
-        // Es una respuesta JSON con un error
-        const reader = new FileReader();
-        reader.onload = () => {
-          const error = JSON.parse(reader.result);
-          toast.error(error.msg || "Error al generar el PDF");
-        };
-        reader.readAsText(res.data);
-      } else {
-        // Es un PDF, proceder con la descarga
-        // Nombre del archivo
-        const nombreArchivo = eventoSeleccionado
-          ? `Reporte_Asistencia_Evento_${eventoSeleccionado}.pdf`
-          : `Reporte_Asistencia_${
-              tipoEvento !== "todos" ? tipoEvento : "General"
-            }.pdf`;
+      // Nombre del archivo
+      const nombreArchivo = eventoSeleccionado
+        ? `Reporte_Asistencia_Evento_${eventoSeleccionado}.pdf`
+        : `Reporte_Asistencia_${
+            tipoEvento !== "todos" ? tipoEvento : "General"
+          }.pdf`;
 
-        // Descargar el archivo
-        const url = window.URL.createObjectURL(new Blob([res.data]));
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", nombreArchivo);
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-        window.URL.revokeObjectURL(url);
+      // Descargar el archivo
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", nombreArchivo);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
 
-        toast.success("Reporte PDF descargado exitosamente");
-      }
+      toast.success("Reporte PDF descargado exitosamente");
     } catch (error) {
       console.error("Error al descargar el PDF:", error);
-      if (error.response?.status === 501) {
-        toast.error("La funcionalidad de generar PDF aún no está implementada");
-      } else {
-        toast.error("No se pudo descargar el reporte. Inténtalo de nuevo.");
-      }
+      toast.error("No se pudo descargar el reporte. Inténtalo de nuevo.");
     } finally {
       setLoadingPDF(false);
       document.body.style.cursor = "default";

@@ -31,4 +31,7 @@ router.get(
   reporteIngresosController.getComprobantesRechazados
 );
 
+// Ruta para generar PDF del reporte de ingresos
+router.post("/pdf", reporteIngresosController.generarReporteIngresosPDF);
+
 module.exports = router;

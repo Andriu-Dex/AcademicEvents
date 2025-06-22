@@ -374,7 +374,7 @@
 .ingresos-tabla-rip th,
 .rentables-tabla-rip th,
 .tendencias-tabla-rip th {
-  text-align: left;
+  text-align: center;
   padding: 1rem 0.8rem;
   background: linear-gradient(135deg, #8a1538 0%, #a91d42 100%);
   color: white;
@@ -403,6 +403,7 @@
   padding: 0.8rem;
   border-bottom: 1px solid #e9ecef;
   color: #495057;
+  text-align: center;
 }
 
 .ingresos-tabla-rip tr:hover,

@@ -1,5 +1,7 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
+const path = require("path");
+const fs = require("fs");
 
 // Función para obtener métricas generales de ingresos y pagos
 async function getMetricasGenerales(req, res) {
@@ -653,85 +655,98 @@ async function generarReporteIngresosPDF(req, res) {
   try {
     const { fechaDesde, fechaHasta, tipoEvento, estadoPago } = req.body;
 
-    // Obtener todos los datos necesarios
-    const metricas = await obtenerMetricasParaPDF(
+    console.log("💰 [CONTROLLER] Iniciando generación de PDF de ingresos...");
+    console.log("💰 [CONTROLLER] Parámetros recibidos:", {
       fechaDesde,
       fechaHasta,
       tipoEvento,
-      estadoPago
-    );
-    const ingresosPorTipo = await obtenerIngresosPorTipoParaPDF(
-      fechaDesde,
-      fechaHasta,
-      tipoEvento,
-      estadoPago
-    );
-    const eventosRentables = await obtenerEventosRentablesParaPDF(
-      fechaDesde,
-      fechaHasta,
-      tipoEvento,
-      estadoPago
-    );
-    const tendencias = await obtenerTendenciasParaPDF(
-      fechaDesde,
-      fechaHasta,
-      tipoEvento,
-      estadoPago
-    );
-
-    // Crear el documento PDF
-    const doc = new PDFDocument({ margin: 50 });
-
-    // Stream del archivo temporal
-    const tempFilePath = path.join(
-      __dirname,
-      "../../uploads/temp",
-      `reporte_ingresos_${Date.now()}.pdf`
-    );
-    const writeStream = fs.createWriteStream(tempFilePath);
-
-    // Pipe el PDF a un archivo temporal
-    doc.pipe(writeStream);
-
-    // Configurar metadatos del documento
-    doc.info.Title = "Reporte de Ingresos y Pagos";
-    doc.info.Author = "Sistema AcademicEvents";
-
-    // Añadir contenido al PDF
-    generarEncabezadoPDF(doc, fechaDesde, fechaHasta, tipoEvento, estadoPago);
-    generarMetricasPDF(doc, metricas);
-    generarIngresosPorTipoPDF(doc, ingresosPorTipo);
-    generarEventosRentablesPDF(doc, eventosRentables);
-    generarTendenciasPDF(doc, tendencias);
-
-    // Finalizar el documento
-    doc.end();
-
-    // Cuando el archivo se haya escrito completamente
-    writeStream.on("finish", () => {
-      // Leer el archivo y enviarlo como respuesta
-      const fileContent = fs.readFileSync(tempFilePath);
-
-      // Configurar headers
-      res.setHeader("Content-Type", "application/pdf");
-      res.setHeader(
-        "Content-Disposition",
-        `attachment; filename=Reporte_Ingresos_${
-          new Date().toISOString().split("T")[0]
-        }.pdf`
-      );
-
-      // Enviar el archivo
-      res.send(fileContent);
-
-      // Eliminar el archivo temporal
-      fs.unlinkSync(tempFilePath);
+      estadoPago,
     });
+
+    // Obtener todos los datos necesarios para el PDF
+    const [
+      metricas,
+      ingresosPorTipo,
+      eventosRentables,
+      tendencias,
+      comprobantesRechazados,
+    ] = await Promise.all([
+      obtenerMetricasParaPDF(fechaDesde, fechaHasta, tipoEvento, estadoPago),
+      obtenerIngresosPorTipoParaPDF(
+        fechaDesde,
+        fechaHasta,
+        tipoEvento,
+        estadoPago
+      ),
+      obtenerEventosRentablesParaPDF(
+        fechaDesde,
+        fechaHasta,
+        tipoEvento,
+        estadoPago
+      ),
+      obtenerTendenciasParaPDF(fechaDesde, fechaHasta, tipoEvento, estadoPago),
+      obtenerComprobantesRechazadosParaPDF(
+        fechaDesde,
+        fechaHasta,
+        tipoEvento,
+        estadoPago
+      ),
+    ]);
+
+    console.log("💰 [CONTROLLER] Datos obtenidos correctamente");
+
+    // Preparar la carpeta de reportes
+    const reportesDir = path.join(process.cwd(), "uploads", "reportes");
+    if (!fs.existsSync(reportesDir)) {
+      fs.mkdirSync(reportesDir, { recursive: true });
+    }
+
+    // Definir el path del archivo PDF temporal
+    const nombreArchivo = `Reporte_Ingresos_${fechaDesde}_al_${fechaHasta}.pdf`;
+    const filePath = path.join(reportesDir, nombreArchivo);
+
+    // Preparar los datos para la función de generación de PDF
+    const datosParaPDF = {
+      metricas,
+      ingresosPorTipo,
+      eventosRentables,
+      tendencias,
+      comprobantesRechazados,
+      fechaInicio: fechaDesde,
+      fechaFin: fechaHasta,
+      tipoEvento: tipoEvento || "todos",
+      estadoPago: estadoPago || "todos",
+    };
+
+    // Importar la función de generación de PDF
+    const {
+      generarReporteIngresosPagosPDF,
+    } = require("../utils/reporte.utils");
+
+    // Generar el PDF
+    await generarReporteIngresosPagosPDF(datosParaPDF, filePath);
+
+    console.log("💰 [CONTROLLER] PDF generado exitosamente");
+
+    // Leer el PDF como buffer
+    const pdfBuffer = fs.readFileSync(filePath);
+
+    // Eliminar el archivo temporal
+    fs.unlink(filePath, () => {});
+
+    // Configurar headers y enviar respuesta
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="${nombreArchivo}"`
+    );
+    res.send(pdfBuffer);
   } catch (error) {
-    console.error("Error al generar PDF:", error);
-    res
-      .status(500)
-      .json({ msg: "Error al generar el PDF", error: error.message });
+    console.error("💰 [CONTROLLER] Error al generar PDF:", error);
+    res.status(500).json({
+      msg: "Error al generar el PDF",
+      error: error.message,
+    });
   }
 }
 
@@ -742,16 +757,107 @@ async function obtenerMetricasParaPDF(
   tipoEvento,
   estadoPago
 ) {
-  // Implementación similar a getMetricasGenerales pero sin enviar respuesta
-  // Retornar los datos necesarios para el PDF
-  return {
-    revenueTotal: 50000.0, // Simulado
-    pagosConfirmados: 45000.0,
-    pagosPendientes: 5000.0,
-    totalInscripciones: 500,
-    comprobantesRechazados: 15,
-    tasaConversion: 0.9,
-  };
+  try {
+    // Construir los filtros (similar a getMetricasGenerales)
+    const filtroEvento = {};
+    const filtroInscripcion = {};
+
+    // Filtro por fecha
+    if (fechaDesde && fechaHasta) {
+      filtroEvento.fec_ini_eve = {
+        gte: new Date(fechaDesde),
+        lte: new Date(fechaHasta),
+      };
+    }
+
+    // Filtro por tipo de evento
+    if (tipoEvento && tipoEvento !== "todos") {
+      filtroEvento.tip_eve = tipoEvento;
+    }
+
+    // Definir estados según el flujo de pagos
+    const estadosConfirmados = [
+      "ACEPTADA",
+      "APROBADO",
+      "REPROBADO_NOTA",
+      "REPROBADO_ASISTENCIA",
+      "REPROBADO_TOTAL",
+    ];
+    const estadosPendientes = ["PENDIENTE"];
+    const estadosRechazados = ["RECHAZADA"];
+
+    // Filtro por estado de pago
+    if (estadoPago && estadoPago !== "todos") {
+      if (estadoPago === "CONFIRMADO") {
+        filtroInscripcion.est_ins = { in: estadosConfirmados };
+      } else if (estadoPago === "PENDIENTE") {
+        filtroInscripcion.est_ins = { in: estadosPendientes };
+      } else if (estadoPago === "RECHAZADO") {
+        filtroInscripcion.est_ins = { in: estadosRechazados };
+      }
+    }
+
+    // Obtener total de inscripciones
+    const totalInscripciones = await prisma.inscripcion.count({
+      where: {
+        ...filtroInscripcion,
+        evento: filtroEvento,
+      },
+    });
+
+    // Obtener inscripciones con pagos confirmados
+    const pagosConfirmados = await prisma.inscripcion.count({
+      where: {
+        est_ins: { in: estadosConfirmados },
+        evento: filtroEvento,
+      },
+    });
+
+    // Calcular ingresos totales
+    const inscripcionesConIngresos = await prisma.inscripcion.findMany({
+      where: {
+        est_ins: { in: estadosConfirmados },
+        evento: filtroEvento,
+      },
+      select: {
+        evento: {
+          select: {
+            val_eve: true,
+          },
+        },
+      },
+    });
+
+    const totalIngresos = inscripcionesConIngresos.reduce(
+      (suma, ins) => suma + (ins.evento.val_eve || 0),
+      0
+    );
+
+    // Calcular tasa de conversión
+    const tasaConversion =
+      totalInscripciones > 0 ? pagosConfirmados / totalInscripciones : 0;
+
+    // Calcular ingreso promedio
+    const ingresoPromedio =
+      pagosConfirmados > 0 ? totalIngresos / pagosConfirmados : 0;
+
+    return {
+      totalIngresos,
+      totalInscripciones,
+      pagosConfirmados,
+      tasaConversion,
+      ingresoPromedio,
+    };
+  } catch (error) {
+    console.error("Error en obtenerMetricasParaPDF:", error);
+    return {
+      totalIngresos: 0,
+      totalInscripciones: 0,
+      pagosConfirmados: 0,
+      tasaConversion: 0,
+      ingresoPromedio: 0,
+    };
+  }
 }
 
 async function obtenerIngresosPorTipoParaPDF(
@@ -760,18 +866,92 @@ async function obtenerIngresosPorTipoParaPDF(
   tipoEvento,
   estadoPago
 ) {
-  // Implementación similar a getIngresosPorTipo pero sin enviar respuesta
-  return [
-    {
-      tipoEvento: "CURSO",
-      cantidadEventos: 10,
-      inscripcionesTotales: 200,
-      revenueTotal: 20000.0,
-      revenueConfirmado: 18000.0,
-      revenuePendiente: 2000.0,
-      promedioRevenuePorEvento: 2000.0,
-    },
-  ];
+  try {
+    // Construir filtros base
+    const filtroEvento = {};
+    if (fechaDesde && fechaHasta) {
+      filtroEvento.fec_ini_eve = {
+        gte: new Date(fechaDesde),
+        lte: new Date(fechaHasta),
+      };
+    }
+
+    // Estados de pagos confirmados
+    const estadosConfirmados = [
+      "ACEPTADA",
+      "APROBADO",
+      "REPROBADO_NOTA",
+      "REPROBADO_ASISTENCIA",
+      "REPROBADO_TOTAL",
+    ];
+
+    // Obtener tipos de eventos únicos
+    const tiposEventos = await prisma.evento.findMany({
+      where: filtroEvento,
+      select: { tip_eve: true },
+      distinct: ["tip_eve"],
+    });
+
+    const resultado = [];
+
+    for (const tipo of tiposEventos) {
+      const tipoEventoActual = tipo.tip_eve;
+
+      // Filtro específico para este tipo
+      const filtroTipo = { ...filtroEvento, tip_eve: tipoEventoActual };
+
+      // Total de inscripciones para este tipo
+      const totalInscripciones = await prisma.inscripcion.count({
+        where: { evento: filtroTipo },
+      });
+
+      // Pagos confirmados para este tipo
+      const pagosConfirmados = await prisma.inscripcion.count({
+        where: {
+          est_ins: { in: estadosConfirmados },
+          evento: filtroTipo,
+        },
+      });
+
+      // Calcular ingresos totales
+      const inscripcionesConIngresos = await prisma.inscripcion.findMany({
+        where: {
+          est_ins: { in: estadosConfirmados },
+          evento: filtroTipo,
+        },
+        select: {
+          evento: { select: { val_eve: true } },
+        },
+      });
+
+      const ingresosTotales = inscripcionesConIngresos.reduce(
+        (suma, ins) => suma + (ins.evento.val_eve || 0),
+        0
+      );
+
+      // Calcular métricas
+      const tasaConversion =
+        totalInscripciones > 0 ? pagosConfirmados / totalInscripciones : 0;
+
+      const ingresoPromedio =
+        pagosConfirmados > 0 ? ingresosTotales / pagosConfirmados : 0;
+
+      resultado.push({
+        tipoEvento: tipoEventoActual,
+        totalInscripciones,
+        pagosConfirmados,
+        ingresosTotales,
+        tasaConversion,
+        ingresoPromedio,
+      });
+    }
+
+    // Ordenar por ingresos totales descendente
+    return resultado.sort((a, b) => b.ingresosTotales - a.ingresosTotales);
+  } catch (error) {
+    console.error("Error en obtenerIngresosPorTipoParaPDF:", error);
+    return [];
+  }
 }
 
 async function obtenerEventosRentablesParaPDF(
@@ -780,21 +960,122 @@ async function obtenerEventosRentablesParaPDF(
   tipoEvento,
   estadoPago
 ) {
-  // Implementación similar a getEventosRentables pero sin enviar respuesta
-  return [
-    {
-      id_eve: "uuid1",
-      nombreEvento: "Curso de React",
-      tipoEvento: "CURSO",
-      valorEvento: 50.0,
-      fechaEvento: new Date(),
-      inscripcionesTotales: 100,
-      inscripcionesConfirmadas: 90,
-      revenueTotal: 5000.0,
-      revenueConfirmado: 4500.0,
-      tasaConversion: 0.9,
-    },
-  ];
+  try {
+    console.log(
+      "🏆 [EVENTOS RENTABLES] Iniciando obtenerEventosRentablesParaPDF"
+    );
+    console.log("🏆 [EVENTOS RENTABLES] Parámetros:", {
+      fechaDesde,
+      fechaHasta,
+      tipoEvento,
+      estadoPago,
+    });
+
+    // Construir filtros base
+    const filtroEvento = {};
+    if (fechaDesde && fechaHasta) {
+      filtroEvento.fec_ini_eve = {
+        gte: new Date(fechaDesde),
+        lte: new Date(fechaHasta),
+      };
+    }
+
+    if (tipoEvento && tipoEvento !== "todos") {
+      filtroEvento.tip_eve = tipoEvento;
+    }
+
+    console.log("🏆 [EVENTOS RENTABLES] Filtros aplicados:", filtroEvento);
+
+    // Estados de pagos confirmados
+    const estadosConfirmados = [
+      "ACEPTADA",
+      "APROBADO",
+      "REPROBADO_NOTA",
+      "REPROBADO_ASISTENCIA",
+      "REPROBADO_TOTAL",
+    ]; // Obtener eventos con sus inscripciones
+    const eventos = await prisma.evento.findMany({
+      where: filtroEvento,
+      select: {
+        id_eve: true,
+        nom_eve: true,
+        tip_eve: true,
+        val_eve: true,
+        fec_ini_eve: true,
+        inscritos: {
+          select: {
+            est_ins: true,
+          },
+        },
+      },
+    });
+
+    console.log(
+      "🏆 [EVENTOS RENTABLES] Total de eventos encontrados:",
+      eventos.length
+    );
+    console.log(
+      "🏆 [EVENTOS RENTABLES] Primeros 3 eventos:",
+      eventos.slice(0, 3).map((e) => ({
+        nom_eve: e.nom_eve,
+        tip_eve: e.tip_eve,
+        val_eve: e.val_eve,
+        inscripciones_count: e.inscritos.length,
+      }))
+    );
+
+    const eventosRentables = [];
+    for (const evento of eventos) {
+      // Contar inscripciones
+      const totalInscripciones = evento.inscritos.length;
+      const pagosConfirmados = evento.inscritos.filter((ins) =>
+        estadosConfirmados.includes(ins.est_ins)
+      ).length;
+
+      // Calcular ingresos
+      const valorEvento = evento.val_eve || 0;
+      const ingresosTotales = pagosConfirmados * valorEvento;
+
+      // Calcular tasa de conversión
+      const tasaConversion =
+        totalInscripciones > 0 ? pagosConfirmados / totalInscripciones : 0; // Solo incluir eventos con ingresos
+      if (ingresosTotales > 0) {
+        eventosRentables.push({
+          nombreEvento: evento.nom_eve,
+          tipoEvento: evento.tip_eve,
+          valorEvento,
+          totalInscripciones,
+          pagosConfirmados,
+          ingresosTotales,
+          tasaConversion,
+        });
+      }
+    }
+
+    console.log(
+      "🏆 [EVENTOS RENTABLES] Eventos con ingresos:",
+      eventosRentables.length
+    );
+    console.log(
+      "🏆 [EVENTOS RENTABLES] Eventos rentables encontrados:",
+      eventosRentables.slice(0, 3)
+    );
+
+    // Ordenar por ingresos totales descendente y tomar los top 10
+    const resultado = eventosRentables
+      .sort((a, b) => b.ingresosTotales - a.ingresosTotales)
+      .slice(0, 10);
+
+    console.log(
+      "🏆 [EVENTOS RENTABLES] Resultado final:",
+      resultado.length,
+      "eventos"
+    );
+    return resultado;
+  } catch (error) {
+    console.error("Error en obtenerEventosRentablesParaPDF:", error);
+    return [];
+  }
 }
 
 async function obtenerTendenciasParaPDF(
@@ -803,18 +1084,135 @@ async function obtenerTendenciasParaPDF(
   tipoEvento,
   estadoPago
 ) {
-  // Implementación similar a getTendenciasPeriodo pero sin enviar respuesta
-  return [
-    {
-      periodo: "Ene 2025",
-      cantidadEventos: 5,
-      inscripcionesTotales: 150,
-      revenueTotal: 7500.0,
-      revenueConfirmado: 6750.0,
-      revenuePendiente: 750.0,
-      tasaConversion: 0.9,
-    },
-  ];
+  try {
+    // Construir filtros base
+    const filtroEvento = {};
+    if (fechaDesde && fechaHasta) {
+      filtroEvento.fec_ini_eve = {
+        gte: new Date(fechaDesde),
+        lte: new Date(fechaHasta),
+      };
+    }
+
+    if (tipoEvento && tipoEvento !== "todos") {
+      filtroEvento.tip_eve = tipoEvento;
+    }
+
+    // Estados de pagos confirmados
+    const estadosConfirmados = [
+      "ACEPTADA",
+      "APROBADO",
+      "REPROBADO_NOTA",
+      "REPROBADO_ASISTENCIA",
+      "REPROBADO_TOTAL",
+    ];
+
+    // Obtener inscripciones con fecha
+    const inscripciones = await prisma.inscripcion.findMany({
+      where: {
+        evento: filtroEvento,
+      },
+      select: {
+        fec_ins: true,
+        est_ins: true,
+        evento: {
+          select: {
+            val_eve: true,
+          },
+        },
+      },
+      orderBy: {
+        fec_ins: "asc",
+      },
+    });
+
+    // Agrupar por mes
+    const mesesData = {};
+    const nombresM = [
+      "Ene",
+      "Feb",
+      "Mar",
+      "Abr",
+      "May",
+      "Jun",
+      "Jul",
+      "Ago",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dic",
+    ];
+
+    inscripciones.forEach((ins) => {
+      const fecha = new Date(ins.fec_ins);
+      const año = fecha.getFullYear();
+      const mes = fecha.getMonth();
+      const periodo = `${nombresM[mes]} ${año}`;
+
+      if (!mesesData[periodo]) {
+        mesesData[periodo] = {
+          periodo,
+          totalInscripciones: 0,
+          pagosConfirmados: 0,
+          ingresosTotales: 0,
+          fechaOrden: new Date(año, mes, 1),
+        };
+      }
+
+      mesesData[periodo].totalInscripciones++;
+
+      if (estadosConfirmados.includes(ins.est_ins)) {
+        mesesData[periodo].pagosConfirmados++;
+        mesesData[periodo].ingresosTotales += ins.evento.val_eve || 0;
+      }
+    });
+
+    // Convertir a array y calcular métricas adicionales
+    const resultado = Object.values(mesesData)
+      .sort((a, b) => a.fechaOrden - b.fechaOrden)
+      .map((mes, index, array) => {
+        // Calcular tasa de conversión
+        mes.tasaConversion =
+          mes.totalInscripciones > 0
+            ? mes.pagosConfirmados / mes.totalInscripciones
+            : 0;
+
+        // Calcular ingreso promedio
+        mes.ingresoPromedio =
+          mes.pagosConfirmados > 0
+            ? mes.ingresosTotales / mes.pagosConfirmados
+            : 0;
+
+        // Calcular variaciones respecto al mes anterior
+        if (index > 0) {
+          const mesAnterior = array[index - 1];
+          mes.variacionIngresos =
+            mesAnterior.ingresosTotales > 0
+              ? ((mes.ingresosTotales - mesAnterior.ingresosTotales) /
+                  mesAnterior.ingresosTotales) *
+                100
+              : 0;
+          mes.variacionConversion =
+            mesAnterior.tasaConversion > 0
+              ? ((mes.tasaConversion - mesAnterior.tasaConversion) /
+                  mesAnterior.tasaConversion) *
+                100
+              : 0;
+        } else {
+          mes.variacionIngresos = 0;
+          mes.variacionConversion = 0;
+        }
+
+        // Remover campo auxiliar
+        delete mes.fechaOrden;
+        return mes;
+      });
+
+    return resultado;
+  } catch (error) {
+    console.error("Error en obtenerTendenciasParaPDF:", error);
+    return [];
+  }
 }
 
 function generarEncabezadoPDF(
@@ -1128,6 +1526,92 @@ function generarTendenciasPDF(doc, tendencias) {
       doc.page.height - 50,
       { align: "center" }
     );
+}
+
+// Función auxiliar para obtener datos de comprobantes rechazados para PDF
+async function obtenerComprobantesRechazadosParaPDF(
+  fechaDesde,
+  fechaHasta,
+  tipoEvento,
+  estadoPago
+) {
+  try {
+    // Construir los filtros
+    const filtroEvento = {};
+    const filtroInscripcion = {};
+
+    // Filtro por fecha
+    if (fechaDesde && fechaHasta) {
+      filtroEvento.fec_ini_eve = {
+        gte: new Date(fechaDesde),
+        lte: new Date(fechaHasta),
+      };
+    }
+
+    // Filtro por tipo de evento
+    if (tipoEvento && tipoEvento !== "todos") {
+      filtroEvento.tip_eve = tipoEvento;
+    }
+
+    // Filtrar inscripciones rechazadas
+    filtroInscripcion.est_ins = "RECHAZADA";
+
+    // Obtener inscripciones rechazadas agrupadas por evento
+    const inscripcionesRechazadas = await prisma.inscripcion.findMany({
+      where: {
+        ...filtroInscripcion,
+        evento: filtroEvento,
+      },
+      select: {
+        id_ins: true,
+        evento: {
+          select: {
+            id_eve: true,
+            nom_eve: true,
+            val_eve: true,
+          },
+        },
+      },
+    });
+
+    // Agrupar por evento
+    const eventosPorId = {};
+    inscripcionesRechazadas.forEach((ins) => {
+      const eventoId = ins.evento.id_eve;
+      if (!eventosPorId[eventoId]) {
+        eventosPorId[eventoId] = {
+          nombreEvento: ins.evento.nom_eve,
+          valorEvento: ins.evento.val_eve || 0,
+          comprobantesRechazados: 0,
+          totalInscripciones: 0,
+        };
+      }
+      eventosPorId[eventoId].comprobantesRechazados++;
+    }); // Obtener total de inscripciones por evento para calcular porcentaje
+    for (const eventoId in eventosPorId) {
+      const totalInscripciones = await prisma.inscripcion.count({
+        where: {
+          id_eve_ins: eventoId, // Mantener como String
+          evento: filtroEvento,
+        },
+      });
+      eventosPorId[eventoId].totalInscripciones = totalInscripciones;
+      eventosPorId[eventoId].porcentajeRechazo =
+        totalInscripciones > 0
+          ? eventosPorId[eventoId].comprobantesRechazados / totalInscripciones
+          : 0;
+    }
+
+    // Convertir a array y ordenar por mayor cantidad de rechazos
+    const resultado = Object.values(eventosPorId)
+      .sort((a, b) => b.comprobantesRechazados - a.comprobantesRechazados)
+      .slice(0, 10); // Máximo 10 eventos
+
+    return resultado;
+  } catch (error) {
+    console.error("Error en obtenerComprobantesRechazadosParaPDF:", error);
+    return [];
+  }
 }
 
 module.exports = {
