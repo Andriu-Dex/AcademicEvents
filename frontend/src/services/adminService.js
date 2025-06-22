@@ -45,6 +45,27 @@ class AdminService {
       throw error;
     }
   }
+
+  /**
+   * Obtiene la lista de administradores con paginación
+   * @param {Object} params - Parámetros de paginación y filtros
+   * @param {number} params.page - Número de página actual
+   * @param {number} params.limit - Número de elementos por página
+   * @param {string} params.search - Término de búsqueda (opcional)
+   * @param {string} params.rol - Filtro por rol (opcional)
+   * @returns {Promise<Object>} Datos paginados y metadatos
+   */
+  async obtenerAdminsPaginados(params = {}) {
+    try {
+      const response = await axiosInstance.get("/admin/list-admins-paginados", {
+        params,
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error al obtener administradores paginados:", error);
+      throw error;
+    }
+  }
 }
 
 export default new AdminService();

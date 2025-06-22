@@ -42,9 +42,11 @@ export const SocketProvider = ({ children }) => {
       transports: ["websocket", "polling"],
       timeout: 10000,
       forceNew: true,
-    }); // Eventos de conexión
+    });
+
+    // Eventos de conexión
     newSocket.on("connect", () => {
-      console.log("✅ Socket.IO conectado:", newSocket.id);
+      console.log("✅ [SOCKET_CONTEXT] Socket.IO conectado:", newSocket.id);
       setIsConnected(true);
       setConnectionError(null);
       setSocket(newSocket);
@@ -53,28 +55,46 @@ export const SocketProvider = ({ children }) => {
       const token = localStorage.getItem("token");
       const userData = localStorage.getItem("usuario");
 
+      console.log("🔐 [SOCKET_CONTEXT] Verificando autenticación:", {
+        hasToken: !!token,
+        hasUserData: !!userData,
+      });
+
       if (token && userData) {
         try {
           const user = JSON.parse(userData);
+          console.log("📤 [SOCKET_CONTEXT] Enviando datos de autenticación:", {
+            userId: user.id,
+            role: user.rol,
+            email: user.email,
+          });
+
           newSocket.emit("authenticate", {
             userId: user.id,
             role: user.rol,
             token: token,
           });
         } catch (error) {
-          console.error("Error al autenticar usuario en socket:", error);
+          console.error(
+            "❌ [SOCKET_CONTEXT] Error al autenticar usuario en socket:",
+            error
+          );
         }
+      } else {
+        console.log(
+          "⚠️ [SOCKET_CONTEXT] No hay datos de autenticación disponibles"
+        );
       }
     });
 
     newSocket.on("disconnect", (reason) => {
-      console.log("❌ Socket.IO desconectado:", reason);
+      console.log("❌ [SOCKET_CONTEXT] Socket.IO desconectado:", reason);
       setIsConnected(false);
       setSocket(null);
     });
 
     newSocket.on("connect_error", (error) => {
-      console.error("❌ Error de conexión Socket.IO:", error);
+      console.error("❌ [SOCKET_CONTEXT] Error de conexión Socket.IO:", error);
       setConnectionError(error.message);
       setIsConnected(false);
     });
@@ -86,11 +106,18 @@ export const SocketProvider = ({ children }) => {
       // Validar que los datos estén completos
       if (!data || !data.action || !data.data) {
         console.warn(
-          "SocketContext: Datos de evento incompletos recibidos",
+          "📡 [SOCKET_CONTEXT] Datos de evento incompletos recibidos",
           data
         );
         return;
       }
+
+      console.log("✅ [SOCKET_CONTEXT] Evento recibido:", {
+        action: data.action,
+        eventoId: data.data?.id_eve,
+        nombreEvento: data.data?.nom_eve,
+        timestamp: data.timestamp,
+      });
 
       setEventUpdates({
         action: data.action,
@@ -98,25 +125,48 @@ export const SocketProvider = ({ children }) => {
         timestamp: data.timestamp,
         id: Date.now(), // ID único para forzar re-render
       });
-    }); // Cambios en inscripciones
+    });
+
+    // Cambios en inscripciones
     newSocket.on("inscripcion-change-hm", (data) => {
       // Validar que los datos estén completos
       if (!data || !data.action || !data.data) {
         console.warn(
-          "SocketContext: Datos de inscripción incompletos recibidos",
+          "📡 [SOCKET_CONTEXT] Datos de inscripción incompletos recibidos",
           data
         );
         return;
       }
 
-      console.log("📡 Cambio en inscripción recibido:", data);
+      console.log("✅ [SOCKET_CONTEXT] Cambio en inscripción recibido:", {
+        action: data.action,
+        inscripcionId: data.data?.inscripcion?.id_ins,
+        eventoNombre: data.data?.evento?.nom_eve,
+        timestamp: data.timestamp,
+      });
+
       setInscriptionUpdates({
         action: data.action,
         data: data.data,
         timestamp: data.timestamp,
         id: Date.now(),
       });
-    }); // Cambios en cupos
+    });
+
+    // Evento específico para validación de inscripciones (AdminInscripciones)
+    newSocket.on("inscription-validation-change", (data) => {
+      console.log(
+        "✅ [SOCKET_CONTEXT] Evento de validación de inscripción recibido:",
+        {
+          action: data.action,
+          inscripcionId: data.data?.id,
+          priority: data.priority,
+          timestamp: data.timestamp,
+        }
+      );
+    });
+
+    // Cambios en cupos
     newSocket.on("cupos-change-hm", (data) => {
       // Validar que los datos estén completos
       if (
@@ -125,13 +175,18 @@ export const SocketProvider = ({ children }) => {
         typeof data.cuposDisponibles === "undefined"
       ) {
         console.warn(
-          "SocketContext: Datos de cupos incompletos recibidos",
+          "📡 [SOCKET_CONTEXT] Datos de cupos incompletos recibidos",
           data
         );
         return;
       }
 
-      console.log("📡 Cambio en cupos recibido:", data);
+      console.log("✅ [SOCKET_CONTEXT] Cambio en cupos recibido:", {
+        eventoId: data.eventoId,
+        cuposDisponibles: data.cuposDisponibles,
+        timestamp: data.timestamp,
+      });
+
       setCuposUpdates({
         eventoId: data.eventoId,
         cuposDisponibles: data.cuposDisponibles,

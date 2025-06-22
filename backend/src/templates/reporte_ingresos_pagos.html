@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Reporte de Ingresos y Pagos</title>
+    <style>
+      body {
+        background: #f6f7fa;
+        padding: 0;
+        margin: 0;
+        margin-top: 2.5rem;
+        font-family: Arial, sans-serif;
+        color: #222;
+      }
+      .reporte-container {
+        background: #f6f7fa;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 0;
+        margin: 0;
+      }
+
+      h1 {
+        font-size: 2.2rem;
+        font-weight: bold;
+        color: #8a1538;
+        margin: 0.5rem 0;
+        letter-spacing: 1px;
+        text-align: center;
+      }
+
+      h2 {
+        font-size: 1.6rem;
+        font-weight: bold;
+        color: #8a1538;
+        margin: 1.5rem 0 1rem 0;
+        letter-spacing: 0.5px;
+        text-align: center;
+      }
+
+      h3 {
+        font-size: 1.3rem;
+        font-weight: bold;
+        color: #8a1538;
+        margin: 1rem 0 0.5rem 0;
+        text-align: center;
+      }
+
+      .resumen-periodo {
+        text-align: center;
+        margin: 1rem 0;
+        font-size: 1.14rem;
+        color: #7e294c;
+        font-weight: 500;
+      }
+
+      .seccion {
+        width: 98%;
+        margin-bottom: 1.5rem;
+        display: block;
+      }
+
+      /* Métricas generales en cards */
+      .metricas-container {
+        display: flex;
+        justify-content: space-around;
+        margin: 1.5rem 0;
+        gap: 1rem;
+      }
+
+      .metrica-card {
+        background: #fff;
+        border-radius: 12px;
+        padding: 1rem;
+        text-align: center;
+        box-shadow: 0 2px 8px #0001;
+        min-width: 140px;
+        flex: 1;
+      }
+
+      .metrica-valor {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: #8a1538;
+        margin-bottom: 0.5rem;
+      }
+
+      .metrica-label {
+        font-size: 0.9rem;
+        color: #666;
+        font-weight: 500;
+      }
+
+      /* Tablas */
+      table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px #0001;
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+        table-layout: fixed;
+        font-size: 0.85rem;
+      }
+
+      th,
+      td {
+        padding: 0.5rem 0.3rem;
+        text-align: center;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+      }
+
+      th {
+        background: #f5e9ec;
+        color: #8a1538;
+        font-size: 0.9rem;
+        font-weight: bold;
+        border-bottom: 2px solid #e8cbd2;
+      }
+
+      /* Estilos específicos para tabla de ingresos por tipo */
+      .tabla-ingresos-tipo th:nth-child(1) {
+        width: 25%;
+      }
+      .tabla-ingresos-tipo th:nth-child(2) {
+        width: 15%;
+      }
+      .tabla-ingresos-tipo th:nth-child(3) {
+        width: 15%;
+      }
+      .tabla-ingresos-tipo th:nth-child(4) {
+        width: 15%;
+      }
+      .tabla-ingresos-tipo th:nth-child(5) {
+        width: 15%;
+      }
+      .tabla-ingresos-tipo th:nth-child(6) {
+        width: 15%;
+      }
+
+      /* Estilos específicos para tabla de eventos rentables */
+      .tabla-eventos-rentables th:nth-child(1) {
+        width: 30%;
+      }
+      .tabla-eventos-rentables th:nth-child(2) {
+        width: 12%;
+      }
+      .tabla-eventos-rentables th:nth-child(3) {
+        width: 12%;
+      }
+      .tabla-eventos-rentables th:nth-child(4) {
+        width: 12%;
+      }
+      .tabla-eventos-rentables th:nth-child(5) {
+        width: 12%;
+      }
+      .tabla-eventos-rentables th:nth-child(6) {
+        width: 12%;
+      }
+      .tabla-eventos-rentables th:nth-child(7) {
+        width: 10%;
+      }
+
+      /* Estilos específicos para tabla de tendencias */
+      .tabla-tendencias th:nth-child(1) {
+        width: 15%;
+      }
+      .tabla-tendencias th:nth-child(2) {
+        width: 12%;
+      }
+      .tabla-tendencias th:nth-child(3) {
+        width: 12%;
+      }
+      .tabla-tendencias th:nth-child(4) {
+        width: 12%;
+      }
+      .tabla-tendencias th:nth-child(5) {
+        width: 12%;
+      }
+      .tabla-tendencias th:nth-child(6) {
+        width: 12%;
+      }
+      .tabla-tendencias th:nth-child(7) {
+        width: 12%;
+      }
+      .tabla-tendencias th:nth-child(8) {
+        width: 13%;
+      }
+
+      /* Estilos específicos para tabla de comprobantes rechazados */
+      .tabla-comprobantes th:nth-child(1) {
+        width: 35%;
+      }
+      .tabla-comprobantes th:nth-child(2) {
+        width: 20%;
+      }
+      .tabla-comprobantes th:nth-child(3) {
+        width: 15%;
+      }
+      .tabla-comprobantes th:nth-child(4) {
+        width: 15%;
+      }
+      .tabla-comprobantes th:nth-child(5) {
+        width: 15%;
+      }
+
+      tbody tr {
+        transition: background 0.17s;
+      }
+
+      tbody tr:hover {
+        background: #fff3f6;
+      }
+
+      td {
+        color: #222;
+        border-bottom: 1px solid #f0e4e6;
+      }
+
+      .numero {
+        font-weight: 600;
+        color: #8a1538;
+      }
+
+      .porcentaje {
+        font-weight: 500;
+        color: #7e294c;
+        font-style: italic;
+      }
+
+      .moneda {
+        font-weight: 600;
+        color: #059669;
+      }
+
+      .variacion {
+        font-weight: 600;
+      }
+
+      .variacion.positiva {
+        color: #059669;
+      }
+
+      .variacion.negativa {
+        color: #dc2626;
+      }
+
+      .tasa-conversion {
+        font-weight: 600;
+        color: #7c3aed;
+      }
+
+      .total-destacado {
+        background: #f9d5e0 !important;
+        color: #8a1538 !important;
+        font-size: 1.05rem !important;
+        font-weight: bold !important;
+      }
+
+      .fecha-generacion {
+        text-align: center;
+        margin-top: 2rem;
+        font-size: 0.9rem;
+        color: #6b7280;
+        font-style: italic;
+      }
+
+      .sin-datos {
+        text-align: center;
+        padding: 2rem;
+        color: #6b7280;
+        font-style: italic;
+      }
+
+      .filtros-aplicados {
+        background: #e0f2fe;
+        padding: 0.8rem;
+        border-radius: 8px;
+        margin: 1rem 0;
+        font-size: 0.9rem;
+        color: #0277bd;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="reporte-container">
+      <h1>Reporte de Ingresos y Pagos</h1>
+
+      <div class="resumen-periodo">
+        <span><b>Período:</b> {{fecha_inicio}} al {{fecha_fin}}</span><br />
+        <span><b>Tipo de Evento:</b> {{tipo_evento_filtro}}</span><br />
+        <span><b>Estado de Pago:</b> {{estado_pago_filtro}}</span>
+      </div>
+
+      <!-- Filtros aplicados -->
+      <div class="filtros-aplicados">{{filtros_aplicados}}</div>
+
+      <!-- Métricas Generales -->
+      <div class="seccion">
+        <h2>Métricas Generales</h2>
+        <div class="metricas-container">
+          <div class="metrica-card">
+            <div class="metrica-valor">{{total_ingresos}}</div>
+            <div class="metrica-label">Ingresos Totales</div>
+          </div>
+          <div class="metrica-card">
+            <div class="metrica-valor">{{total_inscripciones}}</div>
+            <div class="metrica-label">Total Inscripciones</div>
+          </div>
+          <div class="metrica-card">
+            <div class="metrica-valor">{{pagos_confirmados}}</div>
+            <div class="metrica-label">Pagos Confirmados</div>
+          </div>
+          <div class="metrica-card">
+            <div class="metrica-valor">{{tasa_conversion}}</div>
+            <div class="metrica-label">Tasa de Conversión</div>
+          </div>
+          <div class="metrica-card">
+            <div class="metrica-valor">{{ingreso_promedio}}</div>
+            <div class="metrica-label">Ingreso Promedio</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ingresos por Tipo de Evento -->
+      <div class="seccion">
+        <h2>Ingresos por Tipo de Evento</h2>
+        <table class="tabla-ingresos-tipo">
+          <thead>
+            <tr>
+              <th>Tipo de Evento</th>
+              <th>Inscripciones</th>
+              <th>Pagos Confirmados</th>
+              <th>Ingresos Totales</th>
+              <th>Tasa Conversión</th>
+              <th>Ingreso Promedio</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{tabla_ingresos_tipo}}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Eventos Más Rentables -->
+      <div class="seccion">
+        <h2>Eventos Más Rentables</h2>
+        <table class="tabla-eventos-rentables">
+          <thead>
+            <tr>
+              <th>Evento</th>
+              <th>Tipo</th>
+              <th>Valor</th>
+              <th>Inscripciones</th>
+              <th>Pagos</th>
+              <th>Ingresos</th>
+              <th>Conversión</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{tabla_eventos_rentables}}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Tendencias por Período -->
+      <div class="seccion">
+        <h2>Tendencias por Período</h2>
+        <table class="tabla-tendencias">
+          <thead>
+            <tr>
+              <th>Período</th>
+              <th>Inscripciones</th>
+              <th>Pagos</th>
+              <th>Ingresos</th>
+              <th>Tasa Conv.</th>
+              <th>Ing. Promedio</th>
+              <th>Var. Ingresos</th>
+              <th>Var. Conversión</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{tabla_tendencias}}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Comprobantes Rechazados -->
+      <div class="seccion">
+        <h2>Análisis de Comprobantes Rechazados</h2>
+        <table class="tabla-comprobantes">
+          <thead>
+            <tr>
+              <th>Evento</th>
+              <th>Valor Evento</th>
+              <th>Rechazados</th>
+              <th>Total Inscripciones</th>
+              <th>% Rechazo</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{tabla_comprobantes_rechazados}}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="fecha-generacion">
+        Reporte generado el: {{fecha_generacion}}
+      </div>
+    </div>
+  </body>
+</html>

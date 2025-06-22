@@ -211,12 +211,20 @@
   position: relative;
   box-shadow: 0 2px 8px rgba(138, 21, 56, 0.12);
   z-index: 2;
+  overflow: hidden; /* Para asegurarnos que la imagen redonda no sobresalga */
 }
 
 .profile-button:hover {
   background-color: rgba(138, 21, 56, 0.15);
   transform: translateY(-2px);
   box-shadow: 0 5px 12px rgba(138, 21, 56, 0.15);
+}
+
+.profile-avatar-img-nb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
 }
 
 .profile-icon {

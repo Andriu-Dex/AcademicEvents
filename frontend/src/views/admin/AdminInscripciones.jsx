@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import axiosInstance from "../../api/axiosConfig";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/AuthContext";
@@ -7,16 +7,35 @@ import { Search } from "lucide-react";
 import InscripcionCard from "../../components/InscripcionCard";
 import ModalCartaMotivacion from "../../components/ModalCartaMotivacion";
 import "./styles/AdminInscripciones.css";
+import { usePagination } from "../../hooks/usePagination";
+import PaginationControls from "../../components/Pagination/PaginationControls";
 
 const AdminInscripciones = () => {
   const { token } = useAuth();
   const { socket, isConnected } = useSocket();
-  const [inscripciones, setInscripciones] = useState([]);
   const [eventos, setEventos] = useState([]);
   const [eventoFiltrado, setEventoFiltrado] = useState("");
   const [cartaSeleccionada, setCartaSeleccionada] = useState(null);
   const [busqueda, setBusqueda] = useState("");
-  const [cargando, setCargando] = useState(false);
+
+  // Hook de paginación
+  const {
+    data: inscripciones,
+    loading: cargando,
+    currentPage,
+    totalPages,
+    totalItems,
+    itemsPerPage,
+    fetchData,
+    goToPage,
+    hasNextPage,
+    hasPrevPage,
+  } = usePagination(
+    eventoFiltrado
+      ? `/admin/inscripciones-paginadas/evento/${eventoFiltrado}`
+      : "/admin/inscripciones-paginadas",
+    20
+  );
 
   const cargarEventos = async () => {
     try {
@@ -26,141 +45,118 @@ const AdminInscripciones = () => {
       toast.error("Error al cargar eventos");
     }
   };
-  const cargarInscripciones = async () => {
-    setCargando(true);
-    try {
-      // Si no hay evento seleccionado, cargamos todas las inscripciones
-      if (!eventoFiltrado) {
-        const inscripcionesRes = await axiosInstance.get(
-          "/admin/inscripciones"
-        );
-        const inscripcionesEnriquecidas = inscripcionesRes.data.map(
-          (inscripcion) => ({
-            ...inscripcion,
-            onVerCarta: (carta) => setCartaSeleccionada(carta),
-          })
-        );
-        setInscripciones(inscripcionesEnriquecidas);
-      } else {
-        // Obtener primero la información completa del evento seleccionado
-        const eventoRes = await axiosInstance.get(`/eventos/${eventoFiltrado}`);
-        const eventoInfo = eventoRes.data;
-
-        // Ahora obtener las inscripciones
-        const inscripcionesRes = await axiosInstance.get(
-          `/admin/inscripciones/evento/${eventoFiltrado}`
-        );
-
-        // Enriquecer las inscripciones con la información completa del evento
-        const inscripcionesEnriquecidas = inscripcionesRes.data.map(
-          (inscripcion) => ({
-            ...inscripcion,
-            evento: {
-              ...inscripcion.evento,
-              val_eve: eventoInfo.val_eve, // Agregar el valor/costo del evento
-              est_eve: eventoInfo.est_eve, // Agregar el estado del evento
-            },
-            onVerCarta: (carta) => setCartaSeleccionada(carta),
-          })
-        );
-
-        setInscripciones(inscripcionesEnriquecidas);
-      }
-    } catch (error) {
-      toast.error("Error al cargar inscripciones");
-      setInscripciones([]);
-    } finally {
-      setCargando(false);
-    }
-  };
 
   useEffect(() => {
     cargarEventos();
   }, []);
 
+  // Cargar inscripciones cuando cambia el evento filtrado
   useEffect(() => {
-    cargarInscripciones();
-  }, [eventoFiltrado]);
+    const filtrosActivos = {};
+
+    if (busqueda) {
+      filtrosActivos.search = busqueda;
+    }
+
+    fetchData(filtrosActivos);
+  }, [eventoFiltrado, fetchData, busqueda]);
 
   // Efecto para escuchar eventos de socket y actualizar estado local
   useEffect(() => {
-    if (!socket || !isConnected) return;
+    console.log(`🔌 [ADMIN_INSCRIPCIONES] Estado de socket:`, {
+      socket: !!socket,
+      isConnected,
+      socketId: socket?.id,
+    });
+
+    if (!socket || !isConnected) {
+      console.log(
+        `❌ [ADMIN_INSCRIPCIONES] Socket no disponible o no conectado`
+      );
+      return;
+    }
+
+    console.log(`✅ [ADMIN_INSCRIPCIONES] Configurando listeners de socket`);
 
     // Configurar listeners para eventos de inscripciones
     const handleInscriptionChange = (data) => {
-      // Solo actualizar si la inscripción pertenece al evento filtrado o no hay filtro
-      if (data.action === "updated" && data.inscripcion) {
-        setInscripciones((prevInscripciones) => {
-          return prevInscripciones.map((inscripcion) => {
-            if (inscripcion.id_ins === data.id_ins) {
-              // Actualizar solo la inscripción específica
-              return {
-                ...inscripcion,
-                ...data.inscripcion,
-                onVerCarta: (carta) => setCartaSeleccionada(carta),
-              };
-            }
-            return inscripcion;
-          });
-        });
-      } else if (data.action === "created") {
-        // Solo recargar para nuevas inscripciones para asegurar datos completos
-        setTimeout(() => {
-          cargarInscripciones();
-        }, 500);
+      console.log(
+        `📡 [ADMIN_INSCRIPCIONES] Evento "inscripcion-change-hm" recibido:`,
+        data
+      );
+
+      if (data.action === "updated" || data.action === "created") {
+        console.log(
+          `🔄 [ADMIN_INSCRIPCIONES] Recargando datos debido a acción: ${data.action}`
+        );
+        // Recargar datos para obtener los cambios más recientes
+        fetchData();
+      } else {
+        console.log(
+          `ℹ️ [ADMIN_INSCRIPCIONES] Acción no procesada: ${data.action}`
+        );
       }
     };
 
     const handleValidationChange = (data) => {
-      // Actualizar estado local para cambios de validación
-      if (data.action === "status_changed" && data.data) {
-        setInscripciones((prevInscripciones) => {
-          return prevInscripciones.map((inscripcion) => {
-            if (inscripcion.id_ins === data.data.id) {
-              return {
-                ...inscripcion,
-                est_ins: data.data.estadoNuevo,
-                onVerCarta: (carta) => setCartaSeleccionada(carta),
-              };
-            }
-            return inscripcion;
-          });
-        });
-      } else if (data.action === "new_inscription") {
-        // Solo recargar para nuevas inscripciones
-        setTimeout(() => {
-          cargarInscripciones();
-        }, 500);
+      console.log(
+        `📡 [ADMIN_INSCRIPCIONES] Evento "inscription-validation-change" recibido:`,
+        data
+      );
+
+      if (
+        data.action === "status_changed" ||
+        data.action === "new_inscription"
+      ) {
+        console.log(
+          `🔄 [ADMIN_INSCRIPCIONES] Recargando datos debido a acción de validación: ${data.action}`
+        );
+        // Recargar datos para obtener los cambios más recientes
+        fetchData();
+      } else {
+        console.log(
+          `ℹ️ [ADMIN_INSCRIPCIONES] Acción de validación no procesada: ${data.action}`
+        );
       }
     };
 
     // Registrar listeners
+    console.log(`📝 [ADMIN_INSCRIPCIONES] Registrando listeners de socket`);
     socket.on("inscripcion-change-hm", handleInscriptionChange);
     socket.on("inscription-validation-change", handleValidationChange);
 
     // Cleanup
     return () => {
+      console.log(`🧹 [ADMIN_INSCRIPCIONES] Limpiando listeners de socket`);
       socket.off("inscripcion-change-hm", handleInscriptionChange);
       socket.off("inscription-validation-change", handleValidationChange);
     };
-  }, [socket, isConnected]);
+  }, [socket, isConnected, fetchData]);
 
-  // Filtro de inscripciones basado en búsqueda
-  const inscripcionesFiltradas = inscripciones.filter((i) => {
-    if (!busqueda.trim()) return true;
+  // Aplicar el filtro de búsqueda por el lado del cliente para la búsqueda en tiempo real
+  const inscripcionesFiltradas = busqueda.trim()
+    ? inscripciones.filter((i) => {
+        const busquedaLower = busqueda.toLowerCase();
+        const nombreCompleto = i.cuenta?.usuario
+          ? `${i.cuenta.usuario.nom_usu} ${i.cuenta.usuario.ape_usu}`.toLowerCase()
+          : "";
+        const correo = i.cuenta?.cor_usu?.toLowerCase() || "";
+        const evento = i.evento?.nom_eve?.toLowerCase() || "";
+        const cedula = i.cuenta?.usuario?.ced_usu?.toLowerCase() || "";
 
-    const busquedaLower = busqueda.toLowerCase();
-    const nombreCompleto =
-      `${i.usuario?.nom_usu} ${i.usuario?.ape_usu}`.toLowerCase();
-    const correo = i.usuario?.cor_usu?.toLowerCase() || "";
-    const evento = i.evento?.nom_eve?.toLowerCase() || "";
+        return (
+          nombreCompleto.includes(busquedaLower) ||
+          correo.includes(busquedaLower) ||
+          evento.includes(busquedaLower) ||
+          cedula.includes(busquedaLower)
+        );
+      })
+    : inscripciones;
 
-    return (
-      nombreCompleto.includes(busquedaLower) ||
-      correo.includes(busquedaLower) ||
-      evento.includes(busquedaLower)
-    );
-  });
+  const handleBusquedaChange = useCallback((valor) => {
+    setBusqueda(valor);
+    // No necesitamos resetear la página aquí porque el effect se encargará de recargar los datos
+  }, []);
 
   return (
     <div className="adminins-container">
@@ -185,7 +181,7 @@ const AdminInscripciones = () => {
             type="text"
             placeholder="Buscar por nombre, correo o evento..."
             value={busqueda}
-            onChange={(e) => setBusqueda(e.target.value)}
+            onChange={(e) => handleBusquedaChange(e.target.value)}
             className="adminins-busqueda-input"
           />
           <Search size={18} className="adminins-busqueda-icono" />
@@ -196,15 +192,13 @@ const AdminInscripciones = () => {
         <div className="adminins-cargando">Cargando inscripciones...</div>
       ) : (
         <>
-          {inscripciones.length === 0 ? (
+          {inscripcionesFiltradas.length === 0 ? (
             <div className="adminins-sin-datos">
               {eventoFiltrado
-                ? "No hay inscripciones para este evento"
+                ? busqueda
+                  ? "No se encontraron resultados para la búsqueda"
+                  : "No hay inscripciones para este evento"
                 : "Selecciona un evento para ver las inscripciones"}
-            </div>
-          ) : inscripcionesFiltradas.length === 0 ? (
-            <div className="adminins-sin-datos">
-              No se encontraron resultados para la búsqueda
             </div>
           ) : (
             <div className="adminins-cards-container">
@@ -212,12 +206,29 @@ const AdminInscripciones = () => {
                 <InscripcionCard
                   key={inscripcion.id_ins}
                   inscripcion={inscripcion}
-                  onUpdate={cargarInscripciones}
+                  onUpdate={() => fetchData()}
+                  onVerCarta={(carta) => setCartaSeleccionada(carta)}
                 />
               ))}
             </div>
           )}
         </>
+      )}
+
+      {totalPages > 1 && (
+        <PaginationControls
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={goToPage}
+          hasNextPage={hasNextPage}
+          hasPrevPage={hasPrevPage}
+          totalItems={totalItems}
+          itemsPerPage={itemsPerPage}
+          loading={cargando}
+          className="variant-admin"
+          showInfo={true}
+          showNumbers={true}
+        />
       )}
 
       {cartaSeleccionada && (

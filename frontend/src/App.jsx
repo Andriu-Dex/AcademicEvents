@@ -1,5 +1,8 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
+// Hook para sincronización de datos de usuario
+import useUserSync from "./hooks/useUserSync.js";
+
 // Vistas públicas
 import Login from "./views/Login.jsx";
 import Register from "./views/Register.jsx";
@@ -36,7 +39,7 @@ import ReporteCarrera from "./views/admin/reportes/ReporteCarrera.jsx";
 import ReporteInscripciones from "./views/admin/reportes/ReporteInscripciones.jsx";
 import ReporteAsistencia from "./views/admin/reportes/ReporteAsistencia.jsx";
 import ReporteCertificados from "./views/admin/reportes/ReporteCertificados.jsx";
-import ReporteCupos from "./views/admin/reportes/ReporteCupos.jsx";
+import ReporteIngresosPagos from "./views/admin/reportes/ReporteIngresosPagos.jsx";
 
 // Rutas protegidas
 import PrivateRouteAdmin from "./components/PrivateRouteAdmin";
@@ -51,6 +54,9 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 function App() {
+  // Usar el hook para sincronizar datos del usuario automáticamente
+  useUserSync();
+
   return (
     <BrowserRouter>
       <>
@@ -278,11 +284,11 @@ function App() {
             }
           />
           <Route
-            path="/admin/reportes/cupos"
+            path="/admin/reportes/ingresos"
             element={
               <PrivateRouteAdmin>
                 <PrivateLayout>
-                  <ReporteCupos />
+                  <ReporteIngresosPagos />
                 </PrivateLayout>
               </PrivateRouteAdmin>
             }

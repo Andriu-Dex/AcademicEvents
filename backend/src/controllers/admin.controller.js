@@ -178,6 +178,104 @@ class AdminController {
       });
     }
   }
+
+  /**
+   * Obtiene la lista de administradores con paginación
+   * @param {Object} req - Objeto de solicitud HTTP
+   * @param {Object} res - Objeto de respuesta HTTP
+   */
+  async listarAdminsPaginados(req, res) {
+    try {
+      // Extraer parámetros de paginación
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 15;
+      const offset = (page - 1) * limit;
+
+      // Extraer filtros
+      const { search, rol } = req.query;
+
+      // Construir condición WHERE base
+      const whereCondition = {
+        AND: [
+          {
+            OR: [{ rol_usu: "ADMIN_GLOBAL" }, { rol_usu: "ADMIN_GENERAL" }],
+          },
+        ],
+      };
+
+      // Filtro por rol específico
+      if (rol) {
+        whereCondition.AND.push({ rol_usu: rol });
+      }
+
+      // Filtro de búsqueda
+      if (search) {
+        whereCondition.AND.push({
+          OR: [
+            {
+              usuario: {
+                OR: [
+                  { nom_usu: { contains: search, mode: "insensitive" } },
+                  { ape_usu: { contains: search, mode: "insensitive" } },
+                  { ced_usu: { contains: search, mode: "insensitive" } },
+                ],
+              },
+            },
+            { cor_usu: { contains: search, mode: "insensitive" } },
+          ],
+        });
+      }
+
+      // Ejecutar consultas en paralelo
+      const [administradores, totalCount] = await Promise.all([
+        prisma.cuenta.findMany({
+          where: whereCondition,
+          select: {
+            id_cue: true,
+            cor_usu: true,
+            rol_usu: true,
+            fec_cre_cue: true,
+            est_ver_cor: true,
+            fec_ver_cor: true,
+            usuario: {
+              select: {
+                ced_usu: true,
+                nom_usu: true,
+                ape_usu: true,
+                cel_usu: true,
+                img_per_usu: true,
+              },
+            },
+          },
+          skip: offset,
+          take: limit,
+          orderBy: { fec_cre_cue: "desc" },
+        }),
+        prisma.cuenta.count({ where: whereCondition }),
+      ]);
+
+      // Calcular metadatos de paginación
+      const totalPages = Math.ceil(totalCount / limit);
+
+      return res.json({
+        data: administradores,
+        pagination: {
+          currentPage: page,
+          totalPages,
+          totalItems: totalCount,
+          itemsPerPage: limit,
+          hasNextPage: page < totalPages,
+          hasPrevPage: page > 1,
+        },
+      });
+    } catch (error) {
+      console.error("Error en paginación de administradores:", error);
+      res.status(500).json({
+        error: "Error interno del servidor",
+        message: error.message,
+      });
+    }
+  }
 }
 
 module.exports = AdminController.getInstance();

@@ -193,7 +193,7 @@ const AdminReporteMes = () => {
             pointerEvents: loading ? "none" : "auto",
           }}
         >
-          {loading ? "Generando PDF..." : "Descargar PDF"}
+          {loading ? "Generando PDF..." : "Descargar Reporte PDF"}
         </button>
       )}
     </div>

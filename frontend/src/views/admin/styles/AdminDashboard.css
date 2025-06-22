@@ -3,7 +3,8 @@
   --primary-color: #8a1538;
   /* Color granate de la UTA */
   --secondary-color: #2c3e50;
-  --accent-color: #3498db;
+  --accent-color: #741230;
+  /* Variante más oscura del color institucional */
   --light-bg: #f4f6fb;
   --white: #ffffff;
   --text-dark: #2c3e50;
@@ -129,6 +130,46 @@
   z-index: 1;
 }
 
+/* Estilos para las tarjetas de eventos */
+.evento-card-ad {
+  cursor: pointer;
+  border: 1px solid #ececec;
+  border-radius: 16px;
+  padding: 1.5rem 1rem;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  width: 320px;
+  height: 180px;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.evento-card-ad:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+  border-color: #8a1538;
+}
+
+.evento-imagen-ad {
+  width: 100%;
+  height: 90px;
+  object-fit: contain;
+  border-radius: 10px;
+  margin-bottom: 0.5rem;
+  background: #f9f9f9;
+}
+
+.evento-titulo-ad {
+  margin: 0 0 0.5rem 0;
+  color: #8a1538;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
 /* Botones de acción */
 .admin-btn {
   display: inline-block;
@@ -189,6 +230,11 @@
 
 .config-icon {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%238A1538' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='3'%3E%3C/circle%3E%3Cpath d='M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z'%3E%3C/path%3E%3C/svg%3E");
+}
+
+/* Estilos para los controles de paginación estándar */
+.pagination-controls-wrapper-ad {
+  margin-top: 2rem;
 }
 
 /* Responsive Design */

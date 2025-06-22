@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axiosInstance from "../../api/axiosConfig";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
+import { useConfigurableStats } from "../../hooks/useConfigurableStats";
 import {
   Save,
   Plus,
@@ -24,11 +25,18 @@ import {
   Phone,
   MapPin,
   School,
+  BarChart,
+  University,
+  Users,
 } from "lucide-react";
 import ImageUpload from "../../components/ImageUploadMVA";
+import StatisticsConfig from "../../components/admin/StatisticsConfig";
 import "./styles/AdminConfiguracionMVA.css";
 
 const AdminConfiguracionMVA = () => {
+  // Hook para manejar estadísticas configurables
+  const { updateActiveStats } = useConfigurableStats();
+
   const [form, setForm] = useState({
     mision: "",
     vision: "",
@@ -66,6 +74,7 @@ const AdminConfiguracionMVA = () => {
   const [mvaExpanded, setMvaExpanded] = useState(false);
   const [facultadExpanded, setFacultadExpanded] = useState(false);
   const [universidadExpanded, setUniversidadExpanded] = useState(false);
+  const [statisticsExpanded, setStatisticsExpanded] = useState(false);
 
   const [universidad, setUniversidad] = useState({
     id_uni: "",
@@ -340,6 +349,10 @@ const AdminConfiguracionMVA = () => {
     setUniversidadExpanded(!universidadExpanded);
   };
 
+  const toggleStatisticsSection = () => {
+    setStatisticsExpanded(!statisticsExpanded);
+  };
+
   return (
     <>
       {/* Botón para volver al home */}
@@ -353,7 +366,9 @@ const AdminConfiguracionMVA = () => {
           className="adminconfig-collapsible-header-acmva"
           onClick={toggleUniversidadSection}
         >
-          <h2 className="adminconfig-title-acmva">Datos Universidad</h2>
+          <h2 className="adminconfig-title-acmva">
+            <University size={20} /> Datos Universidad
+          </h2>
           <button
             className="adminconfig-collapse-btn-acmva"
             aria-label={
@@ -574,7 +589,9 @@ const AdminConfiguracionMVA = () => {
           className="adminconfig-collapsible-header-acmva"
           onClick={toggleFacultadSection}
         >
-          <h2 className="adminconfig-title-acmva">Datos de la Facultad</h2>
+          <h2 className="adminconfig-title-acmva">
+            <Building size={20} /> Datos de la Facultad
+          </h2>
           <button
             className="adminconfig-collapse-btn-acmva"
             aria-label={
@@ -712,7 +729,7 @@ const AdminConfiguracionMVA = () => {
           onClick={toggleMvaSection}
         >
           <h2 className="adminconfig-title-acmva">
-            Misión, Visión y Autoridades
+            <Users size={20} /> Misión, Visión y Autoridades
           </h2>
           <button
             className="adminconfig-collapse-btn-acmva"
@@ -1006,6 +1023,46 @@ const AdminConfiguracionMVA = () => {
                   </>
                 )}
               </button>
+            </div>
+          </>
+        )}
+
+        {/* Sección de Estadísticas */}
+        <div
+          className="adminconfig-collapsible-header-acmva"
+          onClick={toggleStatisticsSection}
+        >
+          <h2 className="adminconfig-title-acmva">
+            <BarChart size={20} /> Estadísticas del Home
+          </h2>
+          <button
+            className="adminconfig-collapse-btn-acmva"
+            aria-label={
+              statisticsExpanded ? "Colapsar sección" : "Expandir sección"
+            }
+          >
+            {statisticsExpanded ? (
+              <ChevronUp size={20} />
+            ) : (
+              <ChevronDown size={20} />
+            )}
+          </button>
+        </div>
+
+        {statisticsExpanded && (
+          <>
+            <div className="adminconfig-section-acmva">
+              <StatisticsConfig
+                loading={loading}
+                onSave={(selectedStats) => {
+                  console.log("Estadísticas seleccionadas:", selectedStats);
+                  // Cuando se implemente el backend, aquí se manejará el guardado
+                }}
+                onStatsUpdate={(selectedStats) => {
+                  // Actualizar las estadísticas en tiempo real
+                  updateActiveStats(selectedStats);
+                }}
+              />
             </div>
           </>
         )}
