@@ -476,53 +476,58 @@ const MyInscriptions = () => {
             ))}
           </div>
 
-          {/* Controles de paginación */}
-          {totalPaginas > 1 && (
-            <div className="myins-pagination">
-              <button
-                className="myins-pagination-btn"
-                onClick={() => cambiarPagina(paginaActual - 1)}
-                disabled={paginaActual === 1}
-              >
-                &laquo; Anterior
-              </button>
+          <div className="myins-pagination-container">
+            {/* Controles de paginación */}
+            {totalPaginas > 1 && (
+              <div className="myins-pagination">
+                <button
+                  className="myins-pagination-btn"
+                  onClick={() => cambiarPagina(paginaActual - 1)}
+                  disabled={paginaActual === 1}
+                >
+                  &laquo; Anterior
+                </button>
 
-              <div className="myins-pagination-numbers">
-                {Array.from({ length: totalPaginas }, (_, i) => (
-                  <button
-                    key={i + 1}
-                    className={`myins-pagination-number ${
-                      paginaActual === i + 1 ? "active" : ""
-                    }`}
-                    onClick={() => cambiarPagina(i + 1)}
-                  >
-                    {i + 1}
-                  </button>
-                ))}
+                <div className="myins-pagination-numbers">
+                  {Array.from({ length: totalPaginas }, (_, i) => (
+                    <button
+                      key={i + 1}
+                      className={`myins-pagination-number ${
+                        paginaActual === i + 1 ? "active" : ""
+                      }`}
+                      onClick={() => cambiarPagina(i + 1)}
+                    >
+                      {i + 1}
+                    </button>
+                  ))}
+                </div>
+
+                <button
+                  className="myins-pagination-btn"
+                  onClick={() => cambiarPagina(paginaActual + 1)}
+                  disabled={paginaActual === totalPaginas}
+                >
+                  Siguiente &raquo;
+                </button>
               </div>
+            )}
 
-              <button
-                className="myins-pagination-btn"
-                onClick={() => cambiarPagina(paginaActual + 1)}
-                disabled={paginaActual === totalPaginas}
-              >
-                Siguiente &raquo;
-              </button>
-            </div>
-          )}
-
-          {/* Contador de inscripciones */}
-          {inscripcionesFiltradas.length > 0 && (
-            <div className="myins-counter">
-              Mostrando {indexPrimeraInscripcion + 1} -{" "}
-              {Math.min(indexUltimaInscripcion, inscripcionesFiltradas.length)}{" "}
-              de {inscripcionesFiltradas.length} inscripciones
-              {filtroEstado !== "TODOS" &&
-                ` (filtrado por: ${
-                  estadoLabel[filtroEstado]?.text || filtroEstado
-                })`}
-            </div>
-          )}
+            {/* Contador de inscripciones */}
+            {inscripcionesFiltradas.length > 0 && (
+              <div className="myins-counter">
+                Mostrando {indexPrimeraInscripcion + 1} -{" "}
+                {Math.min(
+                  indexUltimaInscripcion,
+                  inscripcionesFiltradas.length
+                )}{" "}
+                de {inscripcionesFiltradas.length} inscripciones
+                {filtroEstado !== "TODOS" &&
+                  ` (filtrado por: ${
+                    estadoLabel[filtroEstado]?.text || filtroEstado
+                  })`}
+              </div>
+            )}
+          </div>
         </>
       )}
 
