@@ -522,11 +522,6 @@ const Perfil = () => {
                 ? "Actualizar documentos"
                 : "Subir documentos"}
             </h2>
-            <p className="modal-descripcion">
-              {perfilData.rol_usu === "ESTUDIANTE"
-                ? "Como estudiante, debes proporcionar los siguientes documentos en formato PDF o imagen (JPG, PNG, GIF):"
-                : "Por favor, sube los siguientes documentos en formato PDF o imagen (JPG, PNG, GIF):"}
-            </p>
             <div className="documentos-container">
               {getDocumentosRequeridos().map((tipo) => (
                 <div key={tipo} className="documento-item">
@@ -582,9 +577,6 @@ const Perfil = () => {
               <p>
                 <strong>Nota:</strong> Los documentos no deben superar los 5MB
                 cada uno.{" "}
-                {perfilData.rol_usu === "ESTUDIANTE"
-                  ? "Como estudiante, debes subir tu cédula, papeleta de votación y certificado de matrícula."
-                  : "Como usuario general, solo necesitas subir tu cédula y papeleta de votación."}
                 {!todosDocumentosRequeridosSeleccionados() && (
                   <span className="documentos-faltantes">
                     {" "}
@@ -596,7 +588,7 @@ const Perfil = () => {
             </div>
             <div className="modal-botones">
               <button
-                className="btn-guardar"
+                className="btn-guardar-p"
                 onClick={actualizarDocumentos}
                 disabled={enviandoArchivo || !hayDocumentosSeleccionados()}
               >
@@ -695,7 +687,7 @@ const Perfil = () => {
 
             <div className="modal-botones">
               <button
-                className="btn-guardar"
+                className="btn-guardar-p"
                 onClick={guardarImagenPerfil}
                 disabled={subiendoImagen}
               >
