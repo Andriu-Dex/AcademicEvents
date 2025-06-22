@@ -41,13 +41,6 @@
   font-weight: 500;
 }
 
-.reporte-subdescripcion-ra {
-  color: #6c757d;
-  margin-bottom: 2rem;
-  text-align: center;
-  font-size: 0.95rem;
-}
-
 .btn-volver-ra,
 .btn-descargar-ra {
   display: flex;

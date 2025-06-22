@@ -991,6 +991,7 @@ async function getReporteAsistencia(req, res) {
         select: {
           id_eve: true,
           nom_eve: true,
+          tip_eve: true, // Añadimos el tipo de evento a la consulta
           fec_ini_eve: true,
           fec_fin_eve: true,
           cup_max_eve: true,
@@ -1045,6 +1046,7 @@ async function getReporteAsistencia(req, res) {
       return res.json({
         nombreEvento: evento.nom_eve,
         fechaEvento: evento.fec_ini_eve,
+        tipoEvento: evento.tip_eve, // Añadimos el tipo de evento a la respuesta
         totalInscritos,
         totalAsistencias,
         totalNoAsistieron,
