@@ -7,6 +7,7 @@ import { useSocket } from "../context/SocketContext";
  * @param {Function} options.onEventUpdate - Callback cuando hay cambios en eventos
  * @param {Function} options.onInscriptionUpdate - Callback cuando hay cambios en inscripciones
  * @param {Function} options.onCuposUpdate - Callback cuando hay cambios en cupos
+ * @param {Function} options.onCarreraUpdate - Callback cuando hay cambios en carreras
  * @param {Function} options.onSystemNotification - Callback para notificaciones del sistema
  * @param {boolean} options.autoRefresh - Si debe refrescar automáticamente los datos
  */
@@ -15,6 +16,7 @@ export const useHomeSocket = (options = {}) => {
     onEventUpdate,
     onInscriptionUpdate,
     onCuposUpdate,
+    onCarreraUpdate,
     onSystemNotification,
     autoRefresh = true,
   } = options;
@@ -24,10 +26,12 @@ export const useHomeSocket = (options = {}) => {
     eventUpdates,
     inscriptionUpdates,
     cuposUpdates,
+    carreraUpdates,
     systemNotifications,
     clearEventUpdates,
     clearInscriptionUpdates,
     clearCuposUpdates,
+    clearCarreraUpdates,
     removeSystemNotification,
   } = useSocket();
 
@@ -106,6 +110,32 @@ export const useHomeSocket = (options = {}) => {
     }
   }, [cuposUpdates, onCuposUpdate, autoRefresh, clearCuposUpdates]);
 
+  // Manejar actualizaciones de carreras
+  useEffect(() => {
+    if (carreraUpdates && carreraUpdates.data) {
+      console.log(
+        "🏠 useHomeSocket: Procesando actualización de carrera:",
+        carreraUpdates
+      );
+      setHasNewUpdates(true);
+      setLastUpdateTime(new Date());
+
+      // Ejecutar callback si está definido
+      if (onCarreraUpdate && typeof onCarreraUpdate === "function") {
+        onCarreraUpdate(carreraUpdates);
+      }
+
+      // Auto-limpiar después de un tiempo
+      if (autoRefresh) {
+        const timer = setTimeout(() => {
+          clearCarreraUpdates();
+        }, 100);
+
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [carreraUpdates, onCarreraUpdate, autoRefresh, clearCarreraUpdates]);
+
   // Manejar notificaciones del sistema
   useEffect(() => {
     if (systemNotifications.length > 0) {
@@ -146,6 +176,7 @@ export const useHomeSocket = (options = {}) => {
       eventUpdates: eventUpdates,
       inscriptionUpdates: inscriptionUpdates,
       cuposUpdates: cuposUpdates,
+      carreraUpdates: carreraUpdates,
       systemNotifications: systemNotifications,
       totalNotifications: systemNotifications.length,
     };
@@ -158,6 +189,7 @@ export const useHomeSocket = (options = {}) => {
     clearEventUpdates();
     clearInscriptionUpdates();
     clearCuposUpdates();
+    clearCarreraUpdates();
     setHasNewUpdates(false);
   };
 
@@ -173,6 +205,7 @@ export const useHomeSocket = (options = {}) => {
     eventUpdates,
     inscriptionUpdates,
     cuposUpdates,
+    carreraUpdates,
     systemNotifications,
 
     // Funciones de control
@@ -184,6 +217,7 @@ export const useHomeSocket = (options = {}) => {
     clearEventUpdates,
     clearInscriptionUpdates,
     clearCuposUpdates,
+    clearCarreraUpdates,
     removeSystemNotification,
   };
 };

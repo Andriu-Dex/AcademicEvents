@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axiosInstance from "../api/axiosConfig";
+import { useSocket } from "../context/SocketContext";
 import {
   CalendarDays,
   Search,
@@ -13,6 +14,7 @@ import {
   Users,
   CheckCircle,
   AlertCircle,
+  AlertTriangle,
   Zap,
   Pause,
   Star,
@@ -28,9 +30,13 @@ import Navbar from "../components/Navbar";
 import { toast } from "react-toastify";
 import ModalRequisitos from "../components/ModalRequisitos";
 import GestorModales from "../models/GestorModales";
+import usePagination from "../hooks/usePagination";
+import PaginationControls from "../components/Pagination/PaginationControls";
 import "./styles/EventosPublicos.css";
 import "./styles/ModalEventosPublicos.css";
-import "./styles/animaciones.css";
+import "./styles/Animaciones.css";
+import "./styles/FiltrosEstado.css";
+import "./styles/EventosPublicosPaginacion.css";
 
 // Función para formatear fechas correctamente usando UTC
 const formatearFechaUTC = (fechaStr) => {
@@ -68,13 +74,14 @@ const formatearFechaUTC = (fechaStr) => {
 const EventosPublicos = () => {
   const { usuario } = useAuth();
   const navigate = useNavigate();
-  const [eventos, setEventos] = useState([]);
-  const [filtro, setFiltro] = useState("");
-  const [cargando, setCargando] = useState(true);
+  const { socket, isConnected } = useSocket();
   const [modalEvento, setModalEvento] = useState(null);
 
   // Crear instancia del gestor de modales
   const gestorModales = useRef(new GestorModales(setModalEvento)).current;
+
+  // Estados para filtros y búsqueda
+  const [filtro, setFiltro] = useState("");
 
   // Estados para los filtros
   const [filtros, setFiltros] = useState({
@@ -84,19 +91,92 @@ const EventosPublicos = () => {
     gratuito: false,
     pagado: false,
     completo: false,
-    modalidad: "", // Nuevo filtro de modalidad
+    modalidad: "",
+    finalizado: false,
+    cancelado: false,
+    suspendido: false,
   });
+
   const [mostrarFiltros, setMostrarFiltros] = useState(false);
+
+  // Implementación de paginación
+  const {
+    data: eventos,
+    loading: cargando,
+    error,
+    currentPage,
+    totalPages,
+    totalItems,
+    itemsPerPage,
+    fetchData,
+    goToPage,
+    hasNextPage,
+    hasPrevPage,
+  } = usePagination("/eventos-publicos", 12);
+
+  // Efecto para cargar datos con paginación
+  useEffect(() => {
+    // Construir objeto de filtros para la API
+    const filtrosAPI = {};
+
+    if (filtros.software) filtrosAPI.software = true;
+    if (filtros.industrial) filtrosAPI.industrial = true;
+    if (filtros.publico) filtrosAPI.publico = true;
+    if (filtros.gratuito) filtrosAPI.gratuito = true;
+    if (filtros.pagado) filtrosAPI.pagado = true;
+    if (filtros.completo) filtrosAPI.completo = true;
+    if (filtros.modalidad) filtrosAPI.modalidad = filtros.modalidad;
+    if (filtros.finalizado) filtrosAPI.finalizado = true;
+    if (filtros.cancelado) filtrosAPI.cancelado = true;
+    if (filtros.suspendido) filtrosAPI.suspendido = true;
+
+    // Añadir filtro de búsqueda
+    if (filtro.trim() !== "") {
+      filtrosAPI.search = filtro;
+    }
+
+    // Llamar a fetchData con los filtros
+    fetchData(filtrosAPI);
+  }, [filtros, filtro, currentPage, fetchData]);
 
   // Función para aplicar filtros
   const aplicarFiltros = (evento) => {
     // Convertir cupos a número para comparaciones
     const cuposDisponibles = parseInt(evento.cup_dis_eve) || 0;
 
+    // Si algún filtro de estado está activo, mostrar solo eventos con esos estados
+    const filtrosEstadoActivos =
+      filtros.finalizado || filtros.cancelado || filtros.suspendido;
+
+    if (filtrosEstadoActivos) {
+      let cumpleEstado = false;
+
+      if (filtros.finalizado && evento.est_eve === "FINALIZADO") {
+        cumpleEstado = true;
+      }
+      if (filtros.cancelado && evento.est_eve === "CANCELADO") {
+        cumpleEstado = true;
+      }
+      if (filtros.suspendido && evento.est_eve === "SUSPENDIDO") {
+        cumpleEstado = true;
+      }
+
+      // Si no cumple con ningún estado filtrado, no mostrar
+      if (!cumpleEstado) {
+        return false;
+      }
+    } else {
+      // Por defecto, no mostrar eventos finalizados, cancelados, suspendidos
+      if (
+        evento.est_eve === "FINALIZADO" ||
+        evento.est_eve === "CANCELADO" ||
+        evento.est_eve === "SUSPENDIDO"
+      ) {
+        return false;
+      }
+    }
+
     // CONTROL DE VISIBILIDAD POR CUPOS:
-    // - Si filtro "Eventos Llenos" está activo: mostrar solo eventos con cupos === 0
-    // - Para todos los otros filtros: mostrar solo eventos con cupos > 0
-    // - Sin filtros activos: mostrar solo eventos con cupos > 0 (comportamiento por defecto)
     const hayFiltrosActivos = Object.values(filtros).some((f) => f);
 
     if (hayFiltrosActivos) {
@@ -176,6 +256,9 @@ const EventosPublicos = () => {
         eventosGrid.classList.remove("filtering");
       }, 300);
     }
+
+    // Reiniciar a la primera página cuando cambian los filtros
+    goToPage(1);
   };
 
   // Función para limpiar filtros
@@ -188,74 +271,80 @@ const EventosPublicos = () => {
       pagado: false,
       completo: false,
       modalidad: "", // Incluir modalidad
+      finalizado: false,
+      cancelado: false,
+      suspendido: false,
     });
+
+    // Reiniciar a la primera página cuando se limpian los filtros
+    goToPage(1);
   };
 
+  // Manejar actualizaciones de eventos en tiempo real
+  const handleEventUpdate = useCallback(
+    (eventUpdate) => {
+      console.log(
+        "🔄 EventosPublicos: Evento actualizado via socket:",
+        eventUpdate
+      );
+      if (!eventUpdate || !eventUpdate.action || !eventUpdate.data) return;
+
+      // Cuando se recibe una actualización de evento, recargar los datos
+      // para mantener la consistencia con la paginación
+      fetchData();
+
+      // Mostrar notificación
+      const { action, data } = eventUpdate;
+      if (action === "created") {
+        toast.info(`¡Nuevo evento disponible: ${data.nom_eve}!`);
+      } else if (action === "updated") {
+        toast.info(`El evento "${data.nom_eve}" ha sido actualizado.`);
+      } else if (action === "deleted") {
+        toast.info(`El evento "${data.nom_eve}" ha sido eliminado.`);
+      }
+    },
+    [fetchData]
+  );
+
+  // Effect para manejar socket events de manera controlada
+  useEffect(() => {
+    if (!isConnected || !socket) return;
+
+    // Listener para cambios de eventos
+    socket.on("evento-change-hm", handleEventUpdate);
+
+    // Socket listener for cupos changes
+    const handleCuposChange = (data) => {
+      if (
+        !data ||
+        typeof data.eventoId === "undefined" ||
+        typeof data.cuposDisponibles === "undefined"
+      ) {
+        return;
+      }
+
+      console.log("🔄 EventosPublicos: Cupos actualizados via socket:", data);
+
+      // Recargar los datos para mantener la consistencia con la paginación
+      fetchData();
+    };
+
+    socket.on("cupos-change-hm", handleCuposChange);
+
+    // Cleanup function
+    return () => {
+      socket.off("evento-change-hm", handleEventUpdate);
+      socket.off("cupos-change-hm", handleCuposChange);
+    };
+  }, [isConnected, socket, handleEventUpdate, fetchData]);
+
+  // Redirigir a usuarios autenticados a la vista de eventos para usuarios
   useEffect(() => {
     if (usuario) {
       navigate("/eventos");
-      return;
     }
-
-    const obtenerEventos = async () => {
-      try {
-        // Agregamos un timestamp para evitar caché
-        const timestamp = new Date().getTime();
-
-        // Verificar cupos antes de obtener eventos
-        try {
-          await axiosInstance.get("/eventos-verificar-cupos");
-        } catch (verifyError) {
-          console.warn("Error al verificar cupos:", verifyError);
-          // Continuar con la carga normal aunque falle la verificación
-        }
-
-        // Utilizamos el endpoint que incluye las relaciones con carreras y cursos
-        const eventosRes = await axiosInstance.get(`/eventos?_t=${timestamp}`);
-
-        // Obtenemos todos los eventos sin filtrar por cupos aquí
-        // El filtrado por cupos se hará en tiempo real según los filtros activos
-        const eventosPublicos = eventosRes.data;
-
-        // Para cada evento, cargamos sus detalles completos incluyendo carreras asociadas
-        const eventosConDetalles = await Promise.all(
-          eventosPublicos.map(async (evento) => {
-            try {
-              const detallesEvento = await axiosInstance.get(
-                `/eventos/${evento.id_eve}`
-              );
-              return detallesEvento.data;
-            } catch (err) {
-              console.error(
-                `Error al cargar detalles del evento ${evento.id_eve}:`,
-                err
-              );
-              return evento; // Devolvemos el evento original si falla la carga de detalles
-            }
-          })
-        );
-
-        // Ordenar por fecha de inicio
-        const eventosOrdenados = eventosConDetalles.sort((a, b) => {
-          const fechaA = new Date(a.fec_ini_eve);
-          const fechaB = new Date(b.fec_ini_eve);
-          return fechaA - fechaB;
-        });
-
-        setEventos(eventosOrdenados);
-      } catch (error) {
-        console.error("Error al cargar eventos:", error);
-        toast.error(
-          "Error al cargar los eventos. Por favor, intente más tarde."
-        );
-      } finally {
-        setCargando(false);
-      }
-    };
-
-    obtenerEventos();
   }, [usuario, navigate]);
-  if (cargando) {
+  if (cargando && currentPage === 1) {
     return (
       <>
         <Navbar />
@@ -421,6 +510,39 @@ const EventosPublicos = () => {
               </div>
 
               <div className="filtro-categoria">
+                <h4>Por Estado</h4>
+                <div className="filtros-opciones">
+                  <label className="filtro-opcion">
+                    <input
+                      type="checkbox"
+                      checked={filtros.finalizado}
+                      onChange={() => manejarCambioFiltro("finalizado")}
+                    />
+                    <span className="checkmark"></span>
+                    Eventos Finalizados
+                  </label>
+                  <label className="filtro-opcion">
+                    <input
+                      type="checkbox"
+                      checked={filtros.cancelado}
+                      onChange={() => manejarCambioFiltro("cancelado")}
+                    />
+                    <span className="checkmark"></span>
+                    Eventos Cancelados
+                  </label>
+                  <label className="filtro-opcion">
+                    <input
+                      type="checkbox"
+                      checked={filtros.suspendido}
+                      onChange={() => manejarCambioFiltro("suspendido")}
+                    />
+                    <span className="checkmark"></span>
+                    Eventos Suspendidos
+                  </label>
+                </div>
+              </div>
+
+              <div className="filtro-categoria">
                 <h4>Por Modalidad</h4>
                 <div className="filtros-opciones">
                   <select
@@ -479,12 +601,13 @@ const EventosPublicos = () => {
         ) : (
           <>
             {/* Contador de resultados */}
-            <div className="resultados-contador">
+            <div className="resultados-contador-epp">
               <p>
-                Mostrando {eventos.filter(aplicarFiltros).length} de{" "}
-                {eventos.length} eventos
+                Mostrando {eventos.length}{" "}
+                {cargando && currentPage > 1 ? "(cargando...)" : ""} de{" "}
+                {totalItems} eventos
                 {Object.values(filtros).some((f) => f) && (
-                  <span className="filtros-activos-badge">
+                  <span className="filtros-activos-badge-epp">
                     ({Object.values(filtros).filter((f) => f).length} filtro
                     {Object.values(filtros).filter((f) => f).length !== 1
                       ? "s"
@@ -500,122 +623,179 @@ const EventosPublicos = () => {
             </div>
 
             <div className="eventos-grid-ep">
-              {eventos.filter(aplicarFiltros).map((evento, index) => (
-                <div
-                  key={evento.id_eve}
-                  className="evento-card"
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                >
-                  {" "}
-                  <div className="evento-portada-wrapper">
-                    <img
-                      src={
-                        evento.img_por_eve || "https://i.imgur.com/c6Ry30Z.jpeg"
-                      }
-                      alt={`Portada de ${evento.nom_eve}`}
-                      className="evento-portada"
-                      onLoad={(e) => {
-                        e.target.classList.add("loaded");
-                      }}
-                    />
-                    <div className="portada-overlay"></div>
-                  </div>
-                  <h2 className="nombre-evento-ep">{evento.nom_eve}</h2>
-                  <p className="tipo-ep">{evento.tip_eve}</p>
-                  <p className="precio-evento">
-                    <BadgeDollarSign size={16} />
-                    {evento.val_eve === 0
-                      ? "Gratuito"
-                      : `Precio: $${evento.val_eve.toFixed(2)}`}
-                  </p>
-                  <div className="fechas-contenedor-ep">
-                    <p className="fecha-inicio-ep">
-                      <Calendar size={16} className="inline-icon-ep" /> Inicio:{" "}
-                      {formatearFechaUTC(evento.fec_ini_eve)}
-                    </p>
-                    <p className="fecha-fin-ep">
-                      <Calendar size={16} className="inline-icon-ep" /> Fin:{" "}
-                      {formatearFechaUTC(evento.fec_fin_eve)}
-                    </p>
-                  </div>{" "}
-                  <p
-                    className={
-                      evento.cup_dis_eve === 0
-                        ? "cupos-agotados"
-                        : "cupos-disponibles"
-                    }
+              {cargando && currentPage > 1 ? (
+                // Mostrar indicador de carga cuando se navega entre páginas
+                <div className="loading-overlay-epp">
+                  <div className="spinner"></div>
+                  <p>Cargando más eventos...</p>
+                </div>
+              ) : eventos.length === 0 ? (
+                // Mostrar mensaje cuando no hay eventos
+                <div className="no-eventos-mensaje-epp">
+                  <AlertCircle size={36} />
+                  <p>No se encontraron eventos con los filtros seleccionados</p>
+                  <button onClick={limpiarFiltros} className="btn-limpiar-epp">
+                    Limpiar filtros
+                  </button>
+                </div>
+              ) : (
+                // Mostrar la lista de eventos
+                eventos.map((evento, index) => (
+                  <div
+                    key={evento.id_eve}
+                    className="evento-card"
+                    style={{ animationDelay: `${index * 0.1}s` }}
                   >
-                    {evento.cup_dis_eve === 0 ? (
-                      <>
-                        <AlertCircle size={16} className="inline-icon-ep" /> Sin
-                        cupos disponibles
-                      </>
-                    ) : (
-                      <>
-                        <CheckCircle size={16} className="inline-icon-ep" />{" "}
-                        Cupos disponibles: {evento.cup_dis_eve || 0}
-                      </>
-                    )}
-                  </p>{" "}
-                  <p className="modalidad-evento-ep">
-                    {evento.mod_eve === "PRESENCIAL" && (
-                      <>
-                        <MapPin size={16} className="inline-icon-ep" />{" "}
-                        Modalidad: Presencial
-                      </>
-                    )}
-                    {evento.mod_eve === "VIRTUAL" && (
-                      <>
-                        <Monitor size={16} className="inline-icon-ep" />{" "}
-                        Modalidad: Virtual
-                      </>
-                    )}
-                    {evento.mod_eve === "SEMIPRESENCIAL" && (
-                      <>
-                        <Laptop size={16} className="inline-icon-ep" />{" "}
-                        Modalidad: Semipresencial
-                      </>
-                    )}
-                    {!evento.mod_eve && (
-                      <>
-                        <Users size={16} className="inline-icon-ep" />{" "}
-                        Modalidad: No especificada
-                      </>
-                    )}
-                  </p>
-                  <div className="evento-footer-ep">
                     {" "}
-                    <div
-                      className={`estado-evento-ep ${evento.est_eve?.toLowerCase()}`}
+                    <div className="evento-portada-wrapper">
+                      <img
+                        src={
+                          evento.img_por_eve ||
+                          "https://i.imgur.com/c6Ry30Z.jpeg"
+                        }
+                        alt={`Portada de ${evento.nom_eve}`}
+                        className="evento-portada"
+                      />
+
+                      {/* Indicador de estado para eventos filtrados */}
+                      {evento.est_eve === "FINALIZADO" && (
+                        <div className="evento-estado-badge-er evento-estado-finalizado-er">
+                          <Clock size={14} />
+                          Finalizado
+                        </div>
+                      )}
+
+                      {evento.est_eve === "CANCELADO" && (
+                        <div className="evento-estado-badge-er evento-estado-cancelado-er">
+                          <AlertCircle size={14} />
+                          Cancelado
+                        </div>
+                      )}
+
+                      {evento.est_eve === "SUSPENDIDO" && (
+                        <div className="evento-estado-badge-er evento-estado-suspendido-er">
+                          <AlertTriangle size={14} />
+                          Suspendido
+                        </div>
+                      )}
+
+                      <div className="portada-overlay"></div>
+                    </div>
+                    <h2 className="nombre-evento-ep">{evento.nom_eve}</h2>
+                    <p className="tipo-ep">{evento.tip_eve}</p>
+                    <p className="precio-evento">
+                      <BadgeDollarSign size={16} />
+                      {evento.val_eve === 0
+                        ? "Gratuito"
+                        : `Precio: $${evento.val_eve.toFixed(2)}`}
+                    </p>
+                    <div className="fechas-contenedor-ep">
+                      <p className="fecha-inicio-ep">
+                        <Calendar size={16} className="inline-icon-ep" />{" "}
+                        Inicio: {formatearFechaUTC(evento.fec_ini_eve)}
+                      </p>
+                      <p className="fecha-fin-ep">
+                        <Calendar size={16} className="inline-icon-ep" /> Fin:{" "}
+                        {formatearFechaUTC(evento.fec_fin_eve)}
+                      </p>
+                    </div>{" "}
+                    <p
+                      className={
+                        evento.cup_dis_eve === 0
+                          ? "cupos-agotados"
+                          : "cupos-disponibles"
+                      }
                     >
-                      {evento.est_eve === "ACTIVO" ? (
+                      {evento.cup_dis_eve === 0 ? (
                         <>
-                          <Zap size={14} className="inline-icon-ep" /> ACTIVO
+                          <AlertCircle size={16} className="inline-icon-ep" />{" "}
+                          Sin cupos disponibles
                         </>
                       ) : (
                         <>
-                          <Pause size={14} className="inline-icon-ep" />{" "}
-                          INACTIVO
+                          <CheckCircle size={16} className="inline-icon-ep" />{" "}
+                          Cupos disponibles: {evento.cup_dis_eve || 0}
                         </>
                       )}
-                    </div>{" "}
-                    <button
-                      className="btn-requisitos-ep"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        gestorModales.abrirModal(evento);
-                      }}
-                    >
-                      <Info size={16} /> Ver Requisitos
-                    </button>
-                    <Link to="/login" className="btn-inscribirme-ep">
-                      <LogIn size={16} /> Inscribirme
-                    </Link>
+                    </p>{" "}
+                    <p className="modalidad-evento-ep">
+                      {evento.mod_eve === "PRESENCIAL" && (
+                        <>
+                          <MapPin size={16} className="inline-icon-ep" />{" "}
+                          Modalidad: Presencial
+                        </>
+                      )}
+                      {evento.mod_eve === "VIRTUAL" && (
+                        <>
+                          <Monitor size={16} className="inline-icon-ep" />{" "}
+                          Modalidad: Virtual
+                        </>
+                      )}
+                      {evento.mod_eve === "SEMIPRESENCIAL" && (
+                        <>
+                          <Laptop size={16} className="inline-icon-ep" />{" "}
+                          Modalidad: Semipresencial
+                        </>
+                      )}
+                      {!evento.mod_eve && (
+                        <>
+                          <Users size={16} className="inline-icon-ep" />{" "}
+                          Modalidad: No especificada
+                        </>
+                      )}
+                    </p>
+                    <div className="evento-footer-ep">
+                      {" "}
+                      <div
+                        className={`estado-evento-ep ${evento.est_eve?.toLowerCase()}`}
+                      >
+                        {evento.est_eve === "ACTIVO" ? (
+                          <>
+                            <Zap size={14} className="inline-icon-ep" /> ACTIVO
+                          </>
+                        ) : (
+                          <>
+                            <Pause size={14} className="inline-icon-ep" />{" "}
+                            INACTIVO
+                          </>
+                        )}
+                      </div>{" "}
+                      <button
+                        className="btn-requisitos-ep"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          gestorModales.abrirModal(evento);
+                        }}
+                      >
+                        <Info size={16} /> Ver Requisitos
+                      </button>
+                      <Link to="/login" className="btn-inscribirme-ep">
+                        <LogIn size={16} /> Inscribirme
+                      </Link>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
+
+            {/* Controles de paginación */}
+            {totalPages > 1 && (
+              <div className="pagination-controls-wrapper-epp">
+                <PaginationControls
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={goToPage}
+                  hasNextPage={hasNextPage}
+                  hasPrevPage={hasPrevPage}
+                  totalItems={totalItems}
+                  itemsPerPage={itemsPerPage}
+                  loading={cargando}
+                  className="variant-public"
+                  showInfo={true}
+                />
+              </div>
+            )}
           </>
         )}
       </div>

@@ -65,6 +65,7 @@ const login = async (req, res) => {
         rol_usu: cuenta.rol_usu,
         nom_usu: cuenta.usuario.nom_usu,
         ape_usu: cuenta.usuario.ape_usu,
+        img_per_usu: cuenta.usuario.img_per_usu,
       },
     });
   } catch (error) {

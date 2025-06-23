@@ -7,6 +7,7 @@ const {
   cumpleRequisitosCertificado,
   determinarTipoCertificado,
   generarCodigoValidacion,
+  generarHTMLCertificado, // 👈 Agregamos esta función
 } = require("../utils/certificado.utils");
 
 // Crear directorio para almacenar los certificados si no existe
@@ -82,29 +83,28 @@ const generarCertificado = async (req, res) => {
         }_${Date.now()}.pdf`;
         const rutaArchivo = path.join(certificadosDir, nombreArchivo);
 
-        const doc = await generarCertificadoPDF(datosCertificado);
-        const stream = fs.createWriteStream(rutaArchivo);
-        doc.pipe(stream);
+        const pdfBuffer = await generarCertificadoPDF(datosCertificado);
 
-        stream.on("finish", async () => {
-          await prisma.certificado.update({
-            where: { id_ins_per: id },
-            data: {
-              url_cer: rutaArchivo,
-              tip_cer: tipoCertificado,
-              cod_val_cer: codigoValidacion,
-            },
-          });
+        // Guardar el PDF en disco
+        fs.writeFileSync(rutaArchivo, pdfBuffer);
 
-          res.setHeader("Content-Type", "application/pdf");
-          res.setHeader(
-            "Content-Disposition",
-            `attachment; filename=${nombreArchivo}`
-          );
-          fs.createReadStream(rutaArchivo).pipe(res);
+        await prisma.certificado.update({
+          where: { id_ins_per: id },
+          data: {
+            url_cer: rutaArchivo,
+            tip_cer: tipoCertificado,
+            cod_val_cer: codigoValidacion,
+          },
         });
 
-        doc.end();
+        res.setHeader("Content-Type", "application/pdf");
+        res.setHeader(
+          "Content-Disposition",
+          `attachment; filename=${nombreArchivo}`
+        );
+
+        // Enviar el buffer directamente
+        res.send(pdfBuffer);
         return;
       }
     }
@@ -177,39 +177,38 @@ const generarCertificado = async (req, res) => {
     const urlPublica = `/uploads/certificados/${nombreArchivo}`;
 
     // Generar el PDF
-    const doc = generarCertificadoPDF(datosCertificado);
+    const pdfBuffer = await generarCertificadoPDF(datosCertificado);
 
     // Guardar el PDF en disco
-    const stream = fs.createWriteStream(rutaArchivo);
-    doc.pipe(stream);
+    fs.writeFileSync(rutaArchivo, pdfBuffer);
 
-    stream.on("finish", async () => {
-      try {
-        // Guardar el certificado en la base de datos
-        certificadoExistente = await prisma.certificado.create({
-          data: {
-            id_ins_per: id,
-            url_cer: rutaArchivo, // Ruta del archivo en el sistema
-            tip_cer: tipoCertificado,
-            cod_val_cer: codigoValidacion,
-          },
-        }); // Si todo ha ido bien, enviamos el archivo al cliente
-        res.setHeader("Content-Type", "application/pdf");
-        res.setHeader(
-          "Content-Disposition",
-          `attachment; filename=${nombreArchivo}`
-        );
-        fs.createReadStream(rutaArchivo).pipe(res);
-      } catch (error) {
-        console.error("Error al guardar certificado en DB:", error);
-        res.status(500).json({
-          msg: "Error al guardar el certificado en la base de datos",
-          error: error.message,
-        });
-      }
-    });
+    try {
+      // Guardar el certificado en la base de datos
+      certificadoExistente = await prisma.certificado.create({
+        data: {
+          id_ins_per: id,
+          url_cer: rutaArchivo, // Ruta del archivo en el sistema
+          tip_cer: tipoCertificado,
+          cod_val_cer: codigoValidacion,
+        },
+      });
 
-    doc.end();
+      // Si todo ha ido bien, enviamos el archivo al cliente
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename=${nombreArchivo}`
+      );
+
+      // Enviar el buffer directamente
+      res.send(pdfBuffer);
+    } catch (error) {
+      console.error("Error al guardar certificado en DB:", error);
+      res.status(500).json({
+        msg: "Error al guardar el certificado en la base de datos",
+        error: error.message,
+      });
+    }
   } catch (error) {
     console.error("Error al generar certificado:", error);
     res.status(500).json({
@@ -366,8 +365,85 @@ const validarCertificado = async (req, res) => {
   }
 };
 
+// Previsualizar certificado como HTML (para desarrollo)
+const previsualizarCertificado = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Buscar la inscripción
+    const inscripcion = await prisma.inscripcion.findUnique({
+      where: { id_ins: id },
+      include: {
+        cuenta: {
+          include: {
+            usuario: {
+              include: { carrera: true },
+            },
+          },
+        },
+        evento: {
+          include: { eventos_curso: true },
+        },
+        inscripcion_curso: true,
+      },
+    });
+
+    if (!inscripcion) {
+      return res.status(404).json({ msg: "Inscripción no encontrada" });
+    }
+
+    // Verificar si cumple requisitos para certificado
+    if (
+      !cumpleRequisitosCertificado(
+        inscripcion,
+        inscripcion.evento,
+        inscripcion.inscripcion_curso
+      )
+    ) {
+      return res.status(403).json({
+        msg: "No cumple requisitos para certificado",
+        detalles: {
+          asistenciaActual: inscripcion.por_asi_fin_usu || 0,
+          asistenciaRequerida: inscripcion.evento.por_min_asi_eve || 80,
+          notaActual: inscripcion.inscripcion_curso?.not_fin_usu || 0,
+          notaRequerida: inscripcion.evento.eventos_curso?.not_min_cur || 7,
+        },
+      });
+    }
+
+    // Determinar tipo de certificado
+    const tipoCertificado = determinarTipoCertificado(inscripcion.evento);
+    const codigoValidacion = generarCodigoValidacion();
+
+    // Preparar datos para el certificado
+    const datosCertificado = {
+      usuario: inscripcion.cuenta.usuario,
+      evento: inscripcion.evento,
+      inscripcion: inscripcion,
+      asistencia: inscripcion.por_asi_fin_usu || 0,
+      notaFinal: inscripcion.inscripcion_curso?.not_fin_usu || null,
+      tipoCertificado: tipoCertificado,
+      codigoValidacion: codigoValidacion,
+    };
+
+    // 🎨 Generar HTML del certificado
+    const htmlContent = generarHTMLCertificado(datosCertificado);
+
+    // Enviar como HTML para previsualización
+    res.setHeader("Content-Type", "text/html; charset=utf-8");
+    res.send(htmlContent);
+  } catch (error) {
+    console.error("Error al previsualizar certificado:", error);
+    res.status(500).json({
+      msg: "Error al previsualizar certificado",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   generarCertificado,
   enviarCertificadoPorCorreo,
   validarCertificado,
+  previsualizarCertificado, // 👈 Exportamos la nueva función
 };

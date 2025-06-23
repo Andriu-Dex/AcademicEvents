@@ -14,7 +14,9 @@ import {
   BookOpen,
   DollarSign,
   GraduationCap,
-  Star,
+  ListChecks,
+  Percent,
+  NotepadText,
   Target,
   Save,
   X,
@@ -24,7 +26,7 @@ import "./styles/CarreraCheckboxes.css";
 import {
   formatDateForBackend,
   formatDateForPicker,
-  isTomorrowOrLater,
+  isDateTodayOrLater,
 } from "../utils/dateUtils";
 
 // Registrar el idioma
@@ -59,7 +61,6 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
     { value: "WEBINAR", label: "Webinar", icon: BookOpen },
     { value: "CHARLA", label: "Charla", icon: FileText },
     { value: "SOCIALIZACION", label: "Socialización", icon: Users },
-    { value: "PUBLICO", label: "Evento Público", icon: Target },
   ];
 
   useEffect(() => {
@@ -221,14 +222,9 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
     const file = e.target.files[0];
     if (file) {
       // Validar tipo y tamaño
-      const tiposPermitidos = [
-        "image/jpeg",
-        "image/jpg",
-        "image/png",
-        "image/webp",
-      ];
+      const tiposPermitidos = ["image/jpeg", "image/jpg", "image/png"];
       if (!tiposPermitidos.includes(file.type)) {
-        toast.error("Solo se permiten imágenes JPG, PNG o WEBP");
+        toast.error("Solo se permiten imágenes JPG o PNG");
         return;
       }
 
@@ -302,9 +298,9 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
         );
       }
 
-      // Verificar que la fecha de inicio sea a partir de mañana
-      if (!isTomorrowOrLater(fechaInicio)) {
-        errores.push("La fecha de inicio debe ser a partir de mañana");
+      // Verificar que la fecha de inicio sea a partir de hoy
+      if (!isDateTodayOrLater(fechaInicio)) {
+        errores.push("La fecha de inicio debe ser a partir de hoy");
       }
     }
 
@@ -312,10 +308,10 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
     if (formData.tip_eve === "CURSO") {
       if (
         !formData.not_min_cur ||
-        formData.not_min_cur < 8 ||
+        formData.not_min_cur < 0 ||
         formData.not_min_cur > 10
       )
-        errores.push("Para cursos, la nota mínima debe estar entre 8 y 10");
+        errores.push("Para cursos, la nota mínima debe estar entre 0 y 10");
     }
 
     return errores;
@@ -656,7 +652,7 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
             <div className="form-group">
               <label>Porcentaje Mínimo de Asistencia % *</label>
               <div className="input-with-icon">
-                <Star size={18} />{" "}
+                <Percent size={18} />{" "}
                 <input
                   type="number"
                   name="por_min_asi_eve"
@@ -675,7 +671,7 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
                   min="0"
                   max="100"
                   step="0.1"
-                  placeholder="80"
+                  placeholder="Ej: 50, 70, 80"
                   required
                 />
               </div>
@@ -710,7 +706,8 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
               <div className="form-group">
                 <label>Nota Mínima para Aprobar *</label>
                 <div className="input-with-icon">
-                  <Star size={18} />{" "}
+                  {/* <NotepadText size={18} />{" "} */}
+                  <ListChecks size={18} />{" "}
                   <input
                     type="number"
                     name="not_min_cur"
@@ -845,7 +842,7 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
                   <div className="image-placeholder">
                     <Image size={48} />
                     <span>Seleccionar imagen de portada</span>
-                    <small>JPG, PNG o WEBP - Máximo 5MB</small>
+                    <small>JPG, PNG - Máximo 5MB</small>
                   </div>
                 )}
               </label>

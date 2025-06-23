@@ -1,0 +1,49 @@
+/* Contenedor principal de la imagen con zoom */
+.zoomable-image-container-zi {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  cursor: zoom-in;
+  border-radius: 0.4rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Imagen base que se muestra */
+.zoomable-image-zi {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 350px;
+  object-fit: contain;
+  transition: opacity 0.2s ease;
+}
+
+/* Efecto de zoom que aparece al hacer hover */
+.zoom-effect-zi {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: 10;
+}
+
+/* Animación para la aparición suave del zoom */
+.zoomable-image-container-zi:hover .zoom-effect-zi {
+  opacity: 1;
+}
+
+/* Ajustes para dispositivos móviles */
+@media (max-width: 768px) {
+  .zoomable-image-container-zi {
+    cursor: default; /* Desactivar el cursor de zoom en móviles */
+  }
+
+  .zoom-effect-zi {
+    display: none; /* Desactivar el efecto de zoom en móviles */
+  }
+}

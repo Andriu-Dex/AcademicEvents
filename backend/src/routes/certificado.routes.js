@@ -6,6 +6,7 @@ const {
   generarCertificado,
   enviarCertificadoPorCorreo,
   validarCertificado,
+  previsualizarCertificado, // 👈 Agregamos la nueva función
 } = require("../controllers/certificado.controller");
 
 // Middlewares
@@ -39,5 +40,18 @@ router.post(
 // Validar certificado por código (público, no requiere autenticación)
 // Endpoint: GET /api/certificados/validar/:codigo
 router.get("/certificados/validar/:codigo", validarCertificado);
+
+// 🎨 Previsualizar certificado como HTML (para desarrollo)
+// Endpoint: GET /api/certificados/preview/:id
+// Requiere token válido y que el usuario sea dueño de la inscripción
+router.get(
+  "/certificados/preview/:id",
+  verificarToken,
+  verificarPropietario,
+  previsualizarCertificado
+);
+
+// SOLO PARA DESARROLLO - Ruta temporal
+router.get("/certificados/preview-dev/:id", previsualizarCertificado);
 
 module.exports = router;

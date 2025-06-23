@@ -9,23 +9,52 @@ import {
   XOctagon,
   ChevronDown,
   ChevronUp,
+  AlertTriangle,
+  AlertCircle,
+  Ban,
+  Zap,
 } from "lucide-react";
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import axiosInstance from "../api/axiosConfig";
 import { toast } from "react-toastify";
+import ZoomableImage from "./ZoomableImage";
+import DocumentViewer from "./DocumentViewer";
 import "./styles/InscripcionCard.css";
+import "./styles/InscripcionCard-estados.css";
 
-const InscripcionCard = ({ inscripcion, onUpdate }) => {
+const InscripcionCard = ({ inscripcion, onUpdate, onVerCarta }) => {
   const [expanded, setExpanded] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [nota, setNota] = useState(
-    inscripcion.nota_final === -1 ? "" : inscripcion.nota_final || ""
+  const [nota, setNota] = useState(() => {
+    // Manejo de ambas estructuras: mapeada (nota_final) y directa de Prisma (inscripcion_curso.not_fin_usu)
+    const notaValue =
+      inscripcion.nota_final !== undefined
+        ? inscripcion.nota_final
+        : inscripcion.inscripcion_curso?.not_fin_usu;
+    return notaValue === -1 ? "" : notaValue || "";
+  });
+  const [asistencia, setAsistencia] = useState(() => {
+    // Manejo de ambas estructuras: mapeada (asistencia) y directa de Prisma (por_asi_fin_usu)
+    const asistenciaValue =
+      inscripcion.asistencia !== undefined
+        ? inscripcion.asistencia
+        : inscripcion.por_asi_fin_usu;
+    return asistenciaValue === -1 ? "" : asistenciaValue || "";
+  });
+  const [observacion, setObservacion] = useState(
+    inscripcion.observacion?.obs_ins || ""
   );
-  const [asistencia, setAsistencia] = useState(
-    inscripcion.por_asi_fin_usu || ""
-  );
-  const [observacion, setObservacion] = useState(inscripcion.observacion || "");
   const [mostrarComprobante, setMostrarComprobante] = useState(false);
+  const [mostrarDocumento, setMostrarDocumento] = useState(false);
+  const [documentoUrl, setDocumentoUrl] = useState("");
+  const [documentoTitulo, setDocumentoTitulo] = useState("");
+
+  // Verificar si el evento está en un estado que no permite validación
+  const estadosNoValidables = ["FINALIZADO", "CANCELADO", "SUSPENDIDO"];
+  const eventoNoValidable = estadosNoValidables.includes(
+    inscripcion.evento?.est_eve
+  );
 
   const handleToggleExpand = () => {
     setExpanded(!expanded);
@@ -36,19 +65,68 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
     setMostrarComprobante(!mostrarComprobante);
   };
 
+  const handleVerDocumento = (e) => {
+    e.preventDefault();
+    // Manejo de ambas estructuras: mapeada (usuario) y directa de Prisma (cuenta.usuario)
+    const usuario = inscripcion.usuario || inscripcion.cuenta?.usuario;
+    const url = usuario.com_usu.startsWith("http")
+      ? usuario.com_usu
+      : `${import.meta.env.VITE_API_URL}${usuario.com_usu}`;
+
+    setDocumentoUrl(url);
+    setDocumentoTitulo(`Documentos de ${usuario.nom_usu} ${usuario.ape_usu}`);
+    setMostrarDocumento(true);
+  };
+
   const cambiarEstado = async (nuevoEstado) => {
+    console.log(`🔄 [INSCRIPCION_CARD] Iniciando cambio de estado:`, {
+      inscripcionId: inscripcion.id_ins,
+      estadoActual: inscripcion.est_ins,
+      nuevoEstado,
+      eventoEstado: inscripcion.evento?.est_eve,
+      observacion,
+    });
+
+    // Verificar si el evento está en un estado que no permite validación
+    if (eventoNoValidable) {
+      console.log(`❌ [INSCRIPCION_CARD] Evento no validable:`, {
+        estadoEvento: inscripcion.evento?.est_eve,
+        eventoNoValidable,
+      });
+      toast.error(
+        `No se puede validar inscripciones de un evento ${inscripcion.evento?.est_eve.toLowerCase()}`
+      );
+      return;
+    }
+
     setLoading(true);
     try {
-      await axiosInstance.put(
+      console.log(`📤 [INSCRIPCION_CARD] Enviando petición de validación...`);
+
+      const response = await axiosInstance.put(
         `/admin/inscripciones/validar/${inscripcion.id_ins}`,
         {
           est_ins: nuevoEstado,
           observacion: observacion,
         }
       );
+
+      console.log(
+        `✅ [INSCRIPCION_CARD] Respuesta del servidor:`,
+        response.data
+      );
       toast.success(`Inscripción ${nuevoEstado.toLowerCase()}`);
-      if (onUpdate) onUpdate();
+
+      if (onUpdate) {
+        console.log(`🔄 [INSCRIPCION_CARD] Ejecutando callback onUpdate`);
+        onUpdate();
+      }
     } catch (error) {
+      console.error(`❌ [INSCRIPCION_CARD] Error al cambiar estado:`, {
+        error: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+      });
       toast.error(error.response?.data?.msg || "Error al actualizar estado");
     } finally {
       setLoading(false);
@@ -56,6 +134,14 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
   };
   const handleFinalizar = async (e) => {
     e.preventDefault();
+
+    // Verificar si el evento está en un estado que no permite validación
+    if (eventoNoValidable) {
+      toast.error(
+        `No se puede finalizar inscripciones de un evento ${inscripcion.evento?.est_eve.toLowerCase()}`
+      );
+      return;
+    }
 
     if (isNaN(asistencia) || asistencia < 0 || asistencia > 100) {
       toast.error("Asistencia inválida (0–100)");
@@ -90,25 +176,41 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
   };
 
   const getEstadoClase = () => {
-    switch (inscripcion.estado) {
+    switch (inscripcion.est_ins) {
       case "PENDIENTE":
-        return "estado-pendiente";
+        return "estado-pendiente-ic";
       case "ACEPTADA":
-        return "estado-aceptada";
+        return "estado-aceptada-ic";
       case "RECHAZADA":
-        return "estado-rechazada";
-      case "FINALIZADA":
-        return "estado-finalizada";
+        return "estado-rechazada-ic";
       case "APROBADO":
-        return "estado-aprobado";
+        return "estado-aprobado-ic";
       case "REPROBADO_NOTA":
-        return "estado-reprobado-nota";
+        return "estado-reprobado-nota-ic";
       case "REPROBADO_ASISTENCIA":
-        return "estado-reprobado-asistencia";
+        return "estado-reprobado-asistencia-ic";
       case "REPROBADO_TOTAL":
-        return "estado-reprobado-total";
+        return "estado-reprobado-total-ic";
       default:
         return "";
+    }
+  };
+
+  // Función para renderizar el icono correcto según el estado del evento
+  const getEventoEstadoIcono = () => {
+    switch (inscripcion.evento?.est_eve) {
+      case "FINALIZADO":
+        return <CheckCircle size={14} />;
+      case "CANCELADO":
+        return <Ban size={14} />;
+      case "SUSPENDIDO":
+        return <AlertTriangle size={14} />;
+      case "ACTIVO":
+        return <Zap size={14} />;
+      case "INACTIVO":
+        return <AlertCircle size={14} />;
+      default:
+        return null;
     }
   };
 
@@ -117,20 +219,40 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
       <div className="inscripcion-card-header" onClick={handleToggleExpand}>
         <div className="inscripcion-card-title">
           <h3>
-            {inscripcion.usuario?.nom_usu} {inscripcion.usuario?.ape_usu}
+            {(() => {
+              const usuario =
+                inscripcion.usuario || inscripcion.cuenta?.usuario;
+              return `${usuario?.nom_usu} ${usuario?.ape_usu}`;
+            })()}
           </h3>
           <span className={`inscripcion-estado ${getEstadoClase()}`}>
-            {inscripcion.estado}
+            {inscripcion.est_ins}
           </span>
         </div>
         <div className="inscripcion-card-subtitle">
           <div className="inscripcion-info-item">
             <User size={14} />
             <span>{inscripcion.evento?.nom_eve}</span>
+            {inscripcion.evento?.est_eve &&
+              inscripcion.evento.est_eve !== "ACTIVO" && (
+                <span
+                  className={`evento-estado-badge-ic evento-estado-${inscripcion.evento.est_eve.toLowerCase()}-ic`}
+                >
+                  {getEventoEstadoIcono()}
+                  {inscripcion.evento.est_eve}
+                </span>
+              )}
           </div>
           <div className="inscripcion-info-item">
             <Mail size={14} />
-            <span>{inscripcion.usuario?.cor_usu}</span>
+            <span>
+              {(() => {
+                const usuario =
+                  inscripcion.usuario || inscripcion.cuenta?.usuario;
+                const correo = usuario?.cor_usu || inscripcion.cuenta?.cor_usu;
+                return correo;
+              })()}
+            </span>
           </div>
         </div>
       </div>
@@ -166,13 +288,13 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
                     {mostrarComprobante && (
                       <div className="doc-preview">
                         {inscripcion.comprobante.startsWith("http") ? (
-                          <img
+                          <ZoomableImage
                             src={inscripcion.comprobante}
                             alt="Comprobante de pago"
                             className="comprobante-imagen"
                           />
                         ) : (
-                          <img
+                          <ZoomableImage
                             src={`${import.meta.env.VITE_API_URL}/uploads/${
                               inscripcion.comprobante
                             }`}
@@ -208,40 +330,40 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
             </div>{" "}
             <div className="inscripcion-doc-item">
               <span>Documentos personales:</span>
-              {inscripcion.usuario?.com_usu ? (
-                <a
-                  href={
-                    inscripcion.usuario.com_usu.startsWith("http")
-                      ? inscripcion.usuario.com_usu
-                      : `${import.meta.env.VITE_API_URL}${
-                          inscripcion.usuario.com_usu
-                        }`
-                  }
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="doc-link"
-                  title="Ver documentos del perfil"
-                >
-                  <FileText size={18} /> Ver documentos
-                </a>
-              ) : (
-                <span className="doc-missing">
-                  <XCircle size={18} /> No enviado
-                </span>
-              )}
+              {(() => {
+                const usuario =
+                  inscripcion.usuario || inscripcion.cuenta?.usuario;
+                return usuario?.com_usu ? (
+                  <button
+                    onClick={handleVerDocumento}
+                    className="doc-link"
+                    title="Ver documentos del perfil"
+                  >
+                    <FileText size={18} /> Ver documentos
+                  </button>
+                ) : (
+                  <span className="doc-missing">
+                    <XCircle size={18} /> No enviado
+                  </span>
+                );
+              })()}
             </div>
             <div className="inscripcion-doc-item">
               <span>Carta de motivación:</span>
               {inscripcion.carta_motivacion ? (
-                <button
-                  onClick={() =>
-                    inscripcion.onVerCarta(inscripcion.carta_motivacion)
-                  }
-                  className="btn-ver-carta"
-                  title="Ver carta de motivación"
-                >
-                  <FileText size={18} /> Ver carta
-                </button>
+                onVerCarta ? (
+                  <button
+                    onClick={() => onVerCarta(inscripcion.carta_motivacion)}
+                    className="btn-ver-carta"
+                    title="Ver carta de motivación"
+                  >
+                    <FileText size={18} /> Ver carta
+                  </button>
+                ) : (
+                  <span className="doc-available">
+                    <FileText size={18} /> Enviada
+                  </span>
+                )
               ) : (
                 <span className="doc-missing">
                   <XCircle size={18} /> No enviada
@@ -253,30 +375,43 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
         <div className="inscripcion-section">
           <h4>Calificaciones</h4>
           <div className="inscripcion-stats">
-            {inscripcion.estado === "FINALIZADA" ? (
+            {inscripcion.est_ins === "APROBADO" ? (
               <>
                 <div className="inscripcion-stat-item">
                   <span>Asistencia:</span>
                   <span className="stat-value">
-                    {inscripcion.asistencia !== null
-                      ? `${inscripcion.asistencia}%`
-                      : "—"}
+                    {(() => {
+                      const asistenciaValue =
+                        inscripcion.asistencia !== undefined
+                          ? inscripcion.asistencia
+                          : inscripcion.por_asi_fin_usu;
+                      return asistenciaValue !== null &&
+                        asistenciaValue !== undefined
+                        ? `${asistenciaValue}%`
+                        : "—";
+                    })()}
                   </span>
                 </div>
                 <div className="inscripcion-stat-item">
                   <span>Nota Final:</span>
                   <span className="stat-value">
-                    {inscripcion.nota_final !== null
-                      ? inscripcion.nota_final.toFixed(1)
-                      : "—"}
+                    {(() => {
+                      const notaValue =
+                        inscripcion.nota_final !== undefined
+                          ? inscripcion.nota_final
+                          : inscripcion.inscripcion_curso?.not_fin_usu;
+                      return notaValue !== null && notaValue !== undefined
+                        ? notaValue.toFixed(1)
+                        : "—";
+                    })()}
                   </span>
                 </div>
               </>
-            ) : inscripcion.estado === "ACEPTADA" ? (
+            ) : inscripcion.est_ins === "ACEPTADA" ? (
               <div className="inscripcion-mensaje-info">
                 Ingrese las notas y asistencia para finalizar esta inscripción.
               </div>
-            ) : inscripcion.estado === "RECHAZADA" ? (
+            ) : inscripcion.est_ins === "RECHAZADA" ? (
               <div className="inscripcion-mensaje-rechazado">
                 Inscripción rechazada. No se pueden ingresar calificaciones.
               </div>
@@ -308,9 +443,10 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
                 onClick={() => cambiarEstado("ACEPTADA")}
                 className="btn btn-aceptar"
                 disabled={
-                  inscripcion.estado === "ACEPTADA" ||
-                  inscripcion.estado === "FINALIZADA" ||
-                  loading
+                  inscripcion.est_ins === "ACEPTADA" ||
+                  inscripcion.est_ins === "APROBADO" ||
+                  loading ||
+                  eventoNoValidable
                 }
               >
                 <CheckCircle size={16} /> Aceptar
@@ -319,9 +455,10 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
                 onClick={() => cambiarEstado("RECHAZADA")}
                 className="btn btn-rechazar"
                 disabled={
-                  inscripcion.estado === "RECHAZADA" ||
-                  inscripcion.estado === "FINALIZADA" ||
-                  loading
+                  inscripcion.est_ins === "RECHAZADA" ||
+                  inscripcion.est_ins === "APROBADO" ||
+                  loading ||
+                  eventoNoValidable
                 }
               >
                 <XOctagon size={16} /> Rechazar
@@ -331,12 +468,14 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
               className="inscripcion-finalizar-form"
               onSubmit={handleFinalizar}
             >
-              {inscripcion.estado === "ACEPTADA" && (
+              {inscripcion.est_ins === "ACEPTADA" && !eventoNoValidable && (
                 <div className="inscripcion-form-row">
                   {inscripcion.evento?.tip_eve === "CURSO" && (
                     <div className="inscripcion-form-group">
                       <label htmlFor={`nota-${inscripcion.id_ins}`}>
-                        Nota (0-10):
+                        Nota (mín:{" "}
+                        {inscripcion.evento?.eventos_curso?.not_min_cur || "0"}
+                        ):
                       </label>
                       <input
                         id={`nota-${inscripcion.id_ins}`}
@@ -357,7 +496,8 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
                   )}
                   <div className="inscripcion-form-group">
                     <label htmlFor={`asistencia-${inscripcion.id_ins}`}>
-                      Asistencia (%):
+                      Asistencia (mín:{" "}
+                      {inscripcion.evento?.por_min_asi_eve || "0"}%):
                     </label>
                     <input
                       id={`asistencia-${inscripcion.id_ins}`}
@@ -377,12 +517,23 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
                   </div>
                 </div>
               )}{" "}
+              {eventoNoValidable && inscripcion.est_ins === "ACEPTADA" && (
+                <div className="inscripcion-evento-no-validable-mensaje-ic">
+                  <AlertTriangle size={16} />
+                  No se puede finalizar inscripciones de un evento{" "}
+                  {inscripcion.evento?.est_eve.toLowerCase()}
+                </div>
+              )}
               <button
                 type="submit"
                 className="btn btn-finalizar"
-                disabled={inscripcion.estado !== "ACEPTADA" || loading}
+                disabled={
+                  inscripcion.est_ins !== "ACEPTADA" ||
+                  loading ||
+                  eventoNoValidable
+                }
                 style={{
-                  display: inscripcion.estado === "ACEPTADA" ? "flex" : "none",
+                  display: inscripcion.est_ins === "ACEPTADA" ? "flex" : "none",
                 }}
               >
                 <Clock size={16} /> Finalizar
@@ -391,6 +542,17 @@ const InscripcionCard = ({ inscripcion, onUpdate }) => {
           </div>
         </div>
       </div>
+
+      {/* Modal para ver documentos - Renderizado en document.body */}
+      {mostrarDocumento &&
+        createPortal(
+          <DocumentViewer
+            documentUrl={documentoUrl}
+            title={documentoTitulo}
+            onClose={() => setMostrarDocumento(false)}
+          />,
+          document.body
+        )}
     </div>
   );
 };

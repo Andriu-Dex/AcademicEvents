@@ -5,8 +5,15 @@
   width: 100%;
 }
 
+.contenedor-tipo-estrella-ae {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .contenedor-estrella-ae {
-  margin-left: 18px;
+  margin-bottom: 18px;
+  margin-right: 3%;
 }
 
 .admin-event-card {

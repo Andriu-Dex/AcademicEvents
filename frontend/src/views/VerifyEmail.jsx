@@ -52,7 +52,7 @@ const VerifyEmail = () => {
             // Redirigir al home después del delay con feedback visual
             setTimeout(() => {
               navigate("/");
-            }, 3000); // 3 segundos para mostrar la pantalla de redirección
+            }, 5000); // 3 segundos para mostrar la pantalla de redirección
           } else {
             // Fallback al comportamiento anterior si no hay datos de auth
             setStatus("success");

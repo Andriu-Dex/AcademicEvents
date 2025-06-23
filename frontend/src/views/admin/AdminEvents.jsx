@@ -35,6 +35,8 @@ import {
 import "./styles/AdminEvents.css";
 import "./styles/EventosDestacados.css";
 import BotonEstrella from "../../components/admin/BotonEstrella";
+import { usePagination } from "../../hooks/usePagination";
+import PaginationControls from "../../components/Pagination/PaginationControls";
 
 const getEstadoEventoUI = (estado) => {
   switch (estado) {
@@ -129,7 +131,6 @@ const getModalidadUI = (modalidad) => {
 
 const AdminEvents = () => {
   const [eventos, setEventos] = useState([]);
-  const [eventosFiltrados, setEventosFiltrados] = useState([]);
   const [loading, setLoading] = useState(true);
   const [carreras, setCarreras] = useState([]);
   const navigate = useNavigate();
@@ -159,23 +160,22 @@ const AdminEvents = () => {
     direccion: "asc",
   });
 
+  // Hook de paginación
+  const {
+    data: eventosFiltrados,
+    loading: cargandoPaginacion,
+    currentPage,
+    totalPages,
+    totalItems,
+    itemsPerPage,
+    fetchData,
+    goToPage,
+    hasNextPage,
+    hasPrevPage,
+  } = usePagination("/admin/eventos", 15);
+
   // Fecha actual para calcular estados de eventos (useMemo para evitar recreación en cada render)
   const fechaActual = useMemo(() => new Date(), []);
-
-  // Usar axiosInstance para la API con interceptores de token
-  const cargarEventos = useCallback(async () => {
-    try {
-      setLoading(true);
-      const res = await axiosInstance.get("/eventos");
-      setEventos(res.data);
-      setEventosFiltrados(res.data);
-    } catch (error) {
-      console.error("Error al cargar eventos:", error);
-      toast.error("No se pudieron cargar los eventos");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
 
   // Cargar carreras para el filtro
   const cargarCarreras = useCallback(async () => {
@@ -187,10 +187,45 @@ const AdminEvents = () => {
     }
   }, []);
 
+  // Cargar eventos con filtros
+  const cargarEventosConFiltros = useCallback(() => {
+    // Convertir filtros a formato adecuado para API
+    const filtrosParaAPI = {
+      search: filtros.busqueda || undefined,
+      tipoEvento: filtros.tipoEvento || undefined,
+      estado: filtros.estado || undefined,
+      fechaInicio: filtros.fechaInicio || undefined,
+      fechaFin: filtros.fechaFin || undefined,
+      carrera: filtros.carrera || undefined,
+      modalidad: filtros.modalidad || undefined,
+      capacidadMin: filtros.capacidadMin || undefined,
+      capacidadMax: filtros.capacidadMax || undefined,
+      valorMin: filtros.valorMin || undefined,
+      valorMax: filtros.valorMax || undefined,
+      asistenciaMin: filtros.asistenciaMin || undefined,
+      esGratuito: filtros.esGratuito || undefined,
+      esPago: filtros.esPago || undefined,
+      eventosLlenos: filtros.eventosLlenos || undefined,
+      sortBy: ordenamiento.campo || "fec_cre_eve",
+      sortOrder: ordenamiento.direccion || "desc",
+    };
+
+    // Eliminar propiedades undefined
+    Object.keys(filtrosParaAPI).forEach(
+      (key) => filtrosParaAPI[key] === undefined && delete filtrosParaAPI[key]
+    );
+
+    fetchData(filtrosParaAPI);
+  }, [filtros, ordenamiento, fetchData]);
+
   useEffect(() => {
-    cargarEventos();
     cargarCarreras();
-  }, [cargarEventos, cargarCarreras]);
+  }, [cargarCarreras]);
+
+  // Efecto para aplicar filtros
+  useEffect(() => {
+    cargarEventosConFiltros();
+  }, [filtros, ordenamiento, cargarEventosConFiltros]);
 
   // Eliminar evento con confirmación y alertas
   const eliminarEvento = async (eventoId) => {
@@ -199,197 +234,12 @@ const AdminEvents = () => {
     try {
       await axiosInstance.delete(`/eventos/${eventoId}`);
       toast.success("Evento eliminado correctamente");
-      cargarEventos();
+      cargarEventosConFiltros(); // Recargar eventos con paginación
     } catch (error) {
       console.error("Error al eliminar evento:", error);
       toast.error(error.response?.data?.msg || "No se pudo eliminar el evento");
     }
   };
-
-  // Función para aplicar filtros
-  const aplicarFiltros = useCallback(() => {
-    let eventosFiltrados = [...eventos];
-
-    // Filtro por búsqueda (nombre)
-    if (filtros.busqueda) {
-      eventosFiltrados = eventosFiltrados.filter((evento) =>
-        evento.nom_eve.toLowerCase().includes(filtros.busqueda.toLowerCase())
-      );
-    }
-
-    // Filtro por tipo de evento
-    if (filtros.tipoEvento) {
-      eventosFiltrados = eventosFiltrados.filter(
-        (evento) => evento.tip_eve === filtros.tipoEvento
-      );
-    }
-
-    // Filtro por estado
-    if (filtros.estado) {
-      eventosFiltrados = eventosFiltrados.filter((evento) => {
-        const esEventoFinalizado = (evento) => {
-          const esCurso = evento.tip_eve === "CURSO";
-          if (esCurso && evento.eventos_curso?.fec_fin_cur) {
-            return new Date(evento.eventos_curso.fec_fin_cur) < fechaActual;
-          } else if (evento.fec_fin_eve) {
-            return new Date(evento.fec_fin_eve) < fechaActual;
-          }
-          return (
-            evento.est_eve === "FINALIZADO" || evento.est_eve === "CANCELADO"
-          );
-        };
-
-        const estadoCalculado = esEventoFinalizado(evento)
-          ? "FINALIZADO"
-          : evento.est_eve;
-        return estadoCalculado === filtros.estado;
-      });
-    }
-
-    // Filtro por fecha de inicio
-    if (filtros.fechaInicio) {
-      eventosFiltrados = eventosFiltrados.filter(
-        (evento) =>
-          new Date(evento.fec_ini_eve) >= new Date(filtros.fechaInicio)
-      );
-    }
-
-    // Filtro por fecha de fin
-    if (filtros.fechaFin) {
-      eventosFiltrados = eventosFiltrados.filter(
-        (evento) => new Date(evento.fec_ini_eve) <= new Date(filtros.fechaFin)
-      );
-    }
-
-    // Filtro por carrera
-    if (filtros.carrera) {
-      eventosFiltrados = eventosFiltrados.filter((evento) => {
-        if (filtros.carrera === "GENERAL") {
-          return !evento.eventos_carrera || evento.eventos_carrera.length === 0;
-        }
-        return evento.eventos_carrera?.some(
-          (ec) => ec.carrera.id_car === filtros.carrera
-        );
-      });
-    }
-
-    // Filtro por modalidad
-    if (filtros.modalidad) {
-      eventosFiltrados = eventosFiltrados.filter(
-        (evento) => evento.mod_eve === filtros.modalidad
-      );
-    }
-
-    // Filtro por capacidad mínima
-    if (filtros.capacidadMin) {
-      eventosFiltrados = eventosFiltrados.filter(
-        (evento) => evento.cup_max_eve >= parseInt(filtros.capacidadMin)
-      );
-    }
-
-    // Filtro por capacidad máxima
-    if (filtros.capacidadMax) {
-      eventosFiltrados = eventosFiltrados.filter(
-        (evento) => evento.cup_max_eve <= parseInt(filtros.capacidadMax)
-      );
-    }
-
-    // Filtro por valor mínimo
-    if (filtros.valorMin) {
-      eventosFiltrados = eventosFiltrados.filter(
-        (evento) => evento.val_eve >= parseFloat(filtros.valorMin)
-      );
-    }
-
-    // Filtro por valor máximo
-    if (filtros.valorMax) {
-      eventosFiltrados = eventosFiltrados.filter(
-        (evento) => evento.val_eve <= parseFloat(filtros.valorMax)
-      );
-    }
-
-    // Filtro por asistencia mínima
-    if (filtros.asistenciaMin) {
-      eventosFiltrados = eventosFiltrados.filter(
-        (evento) => evento.por_min_asi_eve >= parseInt(filtros.asistenciaMin)
-      );
-    }
-
-    // Filtro por eventos gratuitos
-    if (filtros.esGratuito) {
-      eventosFiltrados = eventosFiltrados.filter(
-        (evento) => evento.val_eve === 0
-      );
-    }
-
-    // Filtro por eventos de pago
-    if (filtros.esPago) {
-      eventosFiltrados = eventosFiltrados.filter(
-        (evento) => evento.val_eve > 0
-      );
-    }
-
-    // ✨ CONTROL DE VISIBILIDAD POR CUPOS:
-    // - Si filtro "Eventos Llenos" está activo: mostrar solo eventos con cupos === 0
-    // - Para todos los otros filtros: mostrar solo eventos con cupos > 0
-    // - Sin filtros activos: mostrar solo eventos con cupos > 0 (comportamiento por defecto)
-
-    if (filtros.eventosLlenos) {
-      // Si el filtro "Eventos llenos" está activo, mostrar solo eventos con cupos === 0
-      eventosFiltrados = eventosFiltrados.filter(
-        (evento) => evento.cup_dis_eve === 0
-      );
-    } else {
-      // Para todos los otros casos, ocultar eventos sin cupos disponibles
-      eventosFiltrados = eventosFiltrados.filter(
-        (evento) => evento.cup_dis_eve > 0
-      );
-    }
-
-    // Aplicar ordenamiento
-    eventosFiltrados.sort((a, b) => {
-      let valorA, valorB;
-
-      switch (ordenamiento.campo) {
-        case "nom_eve":
-          valorA = a.nom_eve.toLowerCase();
-          valorB = b.nom_eve.toLowerCase();
-          break;
-        case "fec_ini_eve":
-          valorA = new Date(a.fec_ini_eve);
-          valorB = new Date(b.fec_ini_eve);
-          break;
-        case "val_eve":
-          valorA = a.val_eve;
-          valorB = b.val_eve;
-          break;
-        case "cup_max_eve":
-          valorA = a.cup_max_eve;
-          valorB = b.cup_max_eve;
-          break;
-        case "cup_dis_eve":
-          valorA = a.cup_dis_eve;
-          valorB = b.cup_dis_eve;
-          break;
-        default:
-          valorA = a[ordenamiento.campo];
-          valorB = b[ordenamiento.campo];
-      }
-
-      if (ordenamiento.direccion === "asc") {
-        return valorA > valorB ? 1 : -1;
-      } else {
-        return valorA < valorB ? 1 : -1;
-      }
-    });
-
-    setEventosFiltrados(eventosFiltrados);
-  }, [eventos, filtros, ordenamiento, fechaActual]);
-
-  // Aplicar filtros automáticamente cuando cambien las dependencias
-  useEffect(() => {
-    aplicarFiltros();
-  }, [eventos, filtros, ordenamiento]);
 
   // Manejar cambios en filtros
   const handleFiltroChange = (campo, valor) => {
@@ -615,7 +465,6 @@ const AdminEvents = () => {
                 <option value="WEBINAR">Webinar</option>
                 <option value="CHARLA">Charla</option>
                 <option value="SOCIALIZACION">Socialización</option>
-                <option value="PUBLICO">Público</option>
               </select>
             </div>
 
@@ -893,13 +742,15 @@ const AdminEvents = () => {
           {/* Contador de resultados */}
           <div className="results-count">
             <span>
-              Mostrando {eventosFiltrados.length} de {eventos.length} eventos
+              Mostrando{" "}
+              {totalItems > 0 ? `1-${Math.min(itemsPerPage, totalItems)}` : "0"}{" "}
+              de {totalItems} eventos
             </span>
           </div>
         </div>
       )}
 
-      {loading ? (
+      {cargandoPaginacion ? (
         <div className="admin-events-loading">
           <div className="spinner"></div>
           <p>Cargando eventos...</p>
@@ -958,22 +809,6 @@ const AdminEvents = () => {
                 <div className="admin-event-header">
                   <div className="admin-event-title-container-ae">
                     <h3 className="admin-event-name">{eve.nom_eve}</h3>
-                    <div className="contenedor-estrella-ae">
-                      <BotonEstrella
-                        idEvento={eve.id_eve}
-                        estadoInicial={eve.eve_des || false}
-                        onToggle={(esDestacado) => {
-                          const nombreEvento = eve.nom_eve || "Evento";
-                          toast.success(
-                            esDestacado
-                              ? `"${nombreEvento}" marcado como destacado`
-                              : `"${nombreEvento}" ya no se mostrará en destacados`
-                          );
-                          // Opcional: Recargar datos si es necesario
-                          // cargarEventos();
-                        }}
-                      />
-                    </div>
                   </div>
                   <span
                     className={`admin-event-label ${
@@ -985,10 +820,25 @@ const AdminEvents = () => {
                       : `$${eve.val_eve.toFixed(2)}`}
                   </span>
                 </div>
-
-                <div className="admin-event-type-badge">
-                  {getTipoEventoIcon(eve.tip_eve)}
-                  {eve.tip_eve}
+                <div className="contenedor-tipo-estrella-ae">
+                  <div className="admin-event-type-badge">
+                    {getTipoEventoIcon(eve.tip_eve)}
+                    {eve.tip_eve}
+                  </div>
+                  <div className="contenedor-estrella-ae">
+                    <BotonEstrella
+                      idEvento={eve.id_eve}
+                      estadoInicial={eve.eve_des || false}
+                      onToggle={(esDestacado) => {
+                        const nombreEvento = eve.nom_eve || "Evento";
+                        toast.success(
+                          esDestacado
+                            ? `"${nombreEvento}" marcado como destacado`
+                            : `"${nombreEvento}" ya no se mostrará en destacados`
+                        );
+                      }}
+                    />
+                  </div>
                 </div>
 
                 {/* Descripción del evento */}
@@ -1064,6 +914,16 @@ const AdminEvents = () => {
                       </div>
                     </>
                   )}
+                  {/* Información para eventos que NO son cursos */}
+                  {!esCurso && (
+                    <div className="detail-item">
+                      <Users size={16} className="icon-inline" />
+                      <span>
+                        <strong>Asistencia mínima:</strong>{" "}
+                        {eve.por_min_asi_eve ? `${eve.por_min_asi_eve}%` : "-"}
+                      </span>
+                    </div>
+                  )}
                   {/* Carreras asociadas */}
                   <div className="detail-item">
                     <GraduationCap size={16} className="icon-inline" />
@@ -1132,6 +992,23 @@ const AdminEvents = () => {
             );
           })}
         </div>
+      )}
+
+      {/* Paginación */}
+      {totalPages > 1 && (
+        <PaginationControls
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={goToPage}
+          hasNextPage={hasNextPage}
+          hasPrevPage={hasPrevPage}
+          totalItems={totalItems}
+          itemsPerPage={itemsPerPage}
+          loading={cargandoPaginacion}
+          className="variant-admin"
+          showInfo={true}
+          showNumbers={true}
+        />
       )}
     </div>
   );

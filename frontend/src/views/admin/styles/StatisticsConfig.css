@@ -1,0 +1,130 @@
+/* Estilos para el acordeón de configuración de estadísticas del Home */
+
+.statistics-section-acmva {
+  margin-bottom: 2rem;
+}
+
+.statistics-title-acmva {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #8a1538;
+}
+
+.statistics-description-acmva {
+  margin-bottom: 1.5rem;
+  color: #64748b;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.statistics-container-acmva {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.statistic-item-acmva {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1rem;
+  transition: all 0.2s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.statistic-item-acmva:hover {
+  border-color: #8a1538;
+  box-shadow: 0 2px 8px rgba(138, 21, 56, 0.1);
+}
+
+.statistic-item-acmva.selected {
+  border-color: #8a1538;
+  background-color: rgba(138, 21, 56, 0.05);
+}
+
+.statistic-item-acmva.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.statistic-checkbox-acmva {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 1.2rem;
+  height: 1.2rem;
+  cursor: pointer;
+  accent-color: #8a1538;
+}
+
+.statistic-icon-acmva {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(138, 21, 56, 0.1);
+  color: #8a1538;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  margin-bottom: 1rem;
+}
+
+.statistic-name-acmva {
+  font-weight: 600;
+  color: #8a1538;
+  margin-bottom: 0.5rem;
+}
+
+.statistic-description-acmva {
+  font-size: 0.8rem;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+.statistics-info-acmva {
+  background-color: rgba(138, 21, 56, 0.05);
+  border-left: 4px solid #8a1538;
+  padding: 1rem;
+  border-radius: 0 4px 4px 0;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  color: #8a1538;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.statistics-count-acmva {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.statistics-count-badge-acmva {
+  background-color: rgba(138, 21, 56, 0.1);
+  color: #8a1538;
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
+  font-weight: 600;
+  margin-left: 0.5rem;
+}
+
+.statistics-warning-acmva {
+  background-color: #fff7ed;
+  border-left: 4px solid #f97316;
+  padding: 1rem;
+  border-radius: 0 4px 4px 0;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  color: #7c2d12;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}

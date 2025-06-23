@@ -3,6 +3,7 @@ import { useAuth } from "../hooks/useAuth";
 import axiosInstance from "../api/axiosConfig";
 import { toast } from "react-toastify";
 import AvatarEditor from "react-avatar-editor";
+import ProfileImageService from "../services/ProfileImageService";
 import {
   User,
   Mail,
@@ -26,11 +27,13 @@ import {
   ZoomIn,
   ZoomOut,
   RotateCw,
+  AlertCircle,
+  BadgeCheck,
 } from "lucide-react";
 import "./styles/Perfil.css";
 
 const Perfil = () => {
-  const { usuario } = useAuth();
+  const { usuario, updateProfileImage, syncUserData } = useAuth();
   const [perfilData, setPerfilData] = useState(null);
   const [cargando, setCargando] = useState(true);
   const [mostrarModal, setMostrarModal] = useState(false);
@@ -257,6 +260,16 @@ const Perfil = () => {
 
         // Actualizar los datos del perfil para mostrar la nueva imagen
         await cargarPerfil();
+
+        // Actualizar la imagen de perfil en el contexto de autenticación
+        if (response.data && response.data.imagenUrl) {
+          updateProfileImage(response.data.imagenUrl);
+        }
+
+        // Sincronizar datos del usuario para asegurar persistencia
+        if (syncUserData) {
+          await syncUserData();
+        }
       }, imagenPerfil.type);
     } catch (error) {
       toast.error(
@@ -317,9 +330,13 @@ const Perfil = () => {
           >
             {perfilData.img_per_usu ? (
               <img
-                src={perfilData.img_per_usu}
+                src={ProfileImageService.getProfileImageUrl(
+                  perfilData.img_per_usu,
+                  true
+                )}
                 alt="Foto de perfil"
                 className="perfil-imagen"
+                key={perfilData.img_per_usu} // Forzar re-render cuando cambie la imagen
               />
             ) : (
               <User size={48} />
@@ -473,9 +490,7 @@ const Perfil = () => {
                     <CheckCircle size={14} />
                   )}
                   {inscripcion.est_ins === "RECHAZADA" && <XCircle size={14} />}
-                  {inscripcion.est_ins === "FINALIZADA" && (
-                    <FileText size={14} />
-                  )}
+                  {inscripcion.est_ins === "APROBADO" && <FileText size={14} />}
                   {inscripcion.est_ins === "APROBADO" && (
                     <BadgeCheck size={14} />
                   )}
@@ -507,11 +522,6 @@ const Perfil = () => {
                 ? "Actualizar documentos"
                 : "Subir documentos"}
             </h2>
-            <p className="modal-descripcion">
-              {perfilData.rol_usu === "ESTUDIANTE"
-                ? "Como estudiante, debes proporcionar los siguientes documentos en formato PDF o imagen (JPG, PNG, GIF):"
-                : "Por favor, sube los siguientes documentos en formato PDF o imagen (JPG, PNG, GIF):"}
-            </p>
             <div className="documentos-container">
               {getDocumentosRequeridos().map((tipo) => (
                 <div key={tipo} className="documento-item">
@@ -567,9 +577,6 @@ const Perfil = () => {
               <p>
                 <strong>Nota:</strong> Los documentos no deben superar los 5MB
                 cada uno.{" "}
-                {perfilData.rol_usu === "ESTUDIANTE"
-                  ? "Como estudiante, debes subir tu cédula, papeleta de votación y certificado de matrícula."
-                  : "Como usuario general, solo necesitas subir tu cédula y papeleta de votación."}
                 {!todosDocumentosRequeridosSeleccionados() && (
                   <span className="documentos-faltantes">
                     {" "}
@@ -581,7 +588,7 @@ const Perfil = () => {
             </div>
             <div className="modal-botones">
               <button
-                className="btn-guardar"
+                className="btn-guardar-p"
                 onClick={actualizarDocumentos}
                 disabled={enviandoArchivo || !hayDocumentosSeleccionados()}
               >
@@ -680,7 +687,7 @@ const Perfil = () => {
 
             <div className="modal-botones">
               <button
-                className="btn-guardar"
+                className="btn-guardar-p"
                 onClick={guardarImagenPerfil}
                 disabled={subiendoImagen}
               >

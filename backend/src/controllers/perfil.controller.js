@@ -9,9 +9,7 @@ const { limpiarArchivosTemporales } = require("../middlewares/upload");
 // Obtener perfil de usuario autenticado
 const obtenerPerfil = async (req, res) => {
   try {
-    console.log("📌 Entrando a obtenerPerfil");
     const { id } = req.usuario; // Ahora id es el ID de la cuenta (id_cue)
-    console.log(`📌 ID de usuario: ${id}`);
 
     // Primero buscamos la cuenta
     const cuenta = await prisma.cuenta.findUnique({
@@ -26,6 +24,7 @@ const obtenerPerfil = async (req, res) => {
     });
 
     if (!cuenta) {
+      console.log("❌ [PERFIL] Cuenta no encontrada");
       return res.status(404).json({ msg: "Cuenta no encontrada" });
     }
 
@@ -35,6 +34,16 @@ const obtenerPerfil = async (req, res) => {
       include: {
         evento: true,
         inscripcion_curso: true,
+        comprobantes_pago: {
+          orderBy: { fec_sub_com_pag: "desc" },
+          take: 1,
+        },
+        cartas_motivacion: {
+          orderBy: { fec_sub_car_mot: "desc" },
+          take: 1,
+        },
+        observacion: true,
+        certificado: true,
       },
       orderBy: {
         fec_ins: "desc",

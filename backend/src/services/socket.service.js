@@ -6,6 +6,23 @@ class SocketService {
   constructor() {
     this.io = null;
     this.connectedClients = new Map(); // Almacenar información de clientes conectados
+    // Configuración de logs desde variables de entorno
+    this.logsEnabled = process.env.SOCKET_LOGS_ENABLED === "true";
+  }
+
+  /**
+   * Método helper para logs condicionales de sockets
+   * @param {string} message - Mensaje a loggear
+   * @param {Object} data - Datos adicionales (opcional)
+   */
+  log(message, data = null) {
+    if (!this.logsEnabled) return;
+
+    if (data) {
+      console.log(message, data);
+    } else {
+      console.log(message);
+    }
   }
 
   /**
@@ -22,7 +39,7 @@ class SocketService {
    */
   setupEventHandlers() {
     this.io.on("connection", (socket) => {
-      console.log(`✅ Cliente conectado: ${socket.id}`);
+      this.log(`✅ [SOCKET] Nuevo cliente conectado: ${socket.id}`);
 
       // Almacenar información del cliente
       this.connectedClients.set(socket.id, {
@@ -30,6 +47,10 @@ class SocketService {
         connectedAt: new Date(),
         userId: null, // Se actualizará cuando el usuario se autentique
       });
+
+      this.log(
+        `📊 [SOCKET] Total de clientes conectados: ${this.connectedClients.size}`
+      );
 
       // Manejar autenticación del usuario
       socket.on("authenticate", (userData) => {
@@ -39,13 +60,18 @@ class SocketService {
       // Unirse a salas específicas (opcional para futuras implementaciones)
       socket.on("join-room", (roomName) => {
         socket.join(roomName);
-        console.log(`Cliente ${socket.id} se unió a la sala: ${roomName}`);
+        this.log(
+          `🏠 [SOCKET] Cliente ${socket.id} se unió a la sala: ${roomName}`
+        );
       });
 
       // Manejar desconexión
       socket.on("disconnect", () => {
-        console.log(`❌ Cliente desconectado: ${socket.id}`);
+        this.log(`❌ [SOCKET] Cliente desconectado: ${socket.id}`);
         this.connectedClients.delete(socket.id);
+        this.log(
+          `📊 [SOCKET] Total de clientes conectados: ${this.connectedClients.size}`
+        );
       });
     });
   }
@@ -61,12 +87,12 @@ class SocketService {
       if (clientInfo) {
         clientInfo.userId = userData.userId;
         clientInfo.userRole = userData.role;
-        console.log(
-          `🔐 Usuario autenticado en socket: ${userData.userId} (Rol: ${userData.role})`
+        this.log(
+          `🔐 [SOCKET] Usuario autenticado en socket: ${userData.userId} (Rol: ${userData.role})`
         );
       }
     } else {
-      console.log(`⚠️ Intento de autenticación fallido:`, userData);
+      this.log(`⚠️ [SOCKET] Intento de autenticación fallido:`, userData);
     }
   }
 
@@ -80,32 +106,91 @@ class SocketService {
    * @param {Object} eventoData - Datos del evento
    */
   notifyEventChange(action, eventoData) {
-    if (!this.io) return;
+    if (!this.io) {
+      this.log(
+        `❌ [SOCKET] No hay instancia de io disponible para notifyEventChange`
+      );
+      return;
+    }
 
-    this.io.emit("evento-change-hm", {
+    const eventData = {
       action,
       data: eventoData,
       timestamp: new Date(),
-    });
+    };
 
-    console.log(`📡 Evento ${action} notificado a todos los clientes`);
+    this.log(
+      `📡 [SOCKET] Enviando evento "evento-change-hm" para acción "${action}":`,
+      {
+        clientes_conectados: this.connectedClients.size,
+        id_evento: eventoData.id_eve,
+        nombre_evento: eventoData.nom_eve,
+      }
+    );
+
+    this.io.emit("evento-change-hm", eventData);
+
+    this.log(
+      `✅ [SOCKET] Evento ${action} notificado a ${this.connectedClients.size} clientes`
+    );
   }
 
   /**
    * Notificar cambios en inscripciones
-   * @param {string} action - Tipo de acción
+   * @param {string} action - Tipo de acción (created, updated, deleted)
    * @param {Object} inscripcionData - Datos de la inscripción
    */
   notifyInscriptionChange(action, inscripcionData) {
-    if (!this.io) return;
+    if (!this.io) {
+      this.log(
+        `❌ [SOCKET] No hay instancia de io disponible para notifyInscriptionChange`
+      );
+      return;
+    }
 
-    this.io.emit("inscripcion-change-hm", {
+    // Validar que los datos mínimos estén presentes
+    if (
+      !inscripcionData ||
+      (!inscripcionData.inscripcion && !inscripcionData.evento)
+    ) {
+      this.log(
+        `⚠️ [SOCKET] Datos incompletos para notifyInscriptionChange:`,
+        inscripcionData
+      );
+      return;
+    }
+
+    const eventData = {
       action,
       data: inscripcionData,
       timestamp: new Date(),
-    });
+    };
 
-    console.log(`📡 Inscripción ${action} notificada a todos los clientes`);
+    this.log(
+      `📡 [SOCKET] Enviando evento "inscripcion-change-hm" para acción "${action}":`,
+      {
+        clientes_conectados: this.connectedClients.size,
+        id_inscripcion: inscripcionData.inscripcion?.id_ins,
+        nombre_evento: inscripcionData.evento?.nom_eve,
+        estado_inscripcion: inscripcionData.inscripcion?.est_ins,
+        datos_completos: {
+          tiene_inscripcion: !!inscripcionData.inscripcion,
+          tiene_evento: !!inscripcionData.evento,
+          inscripcion_keys: inscripcionData.inscripcion
+            ? Object.keys(inscripcionData.inscripcion)
+            : [],
+          evento_keys: inscripcionData.evento
+            ? Object.keys(inscripcionData.evento)
+            : [],
+        },
+      }
+    );
+
+    this.io.emit("inscripcion-change-hm", eventData);
+
+    this.log(
+      `✅ [SOCKET] Inscripción ${action} notificada a ${this.connectedClients.size} clientes`
+    );
   }
 
   /**
@@ -114,7 +199,21 @@ class SocketService {
    * @param {Object} inscriptionData - Datos completos de la inscripción
    */
   notifyInscriptionValidation(action, inscriptionData) {
-    if (!this.io) return;
+    if (!this.io) {
+      this.log(
+        `❌ [SOCKET] No hay instancia de io disponible para notifyInscriptionValidation`
+      );
+      return;
+    }
+
+    // Validar que los datos mínimos estén presentes
+    if (!inscriptionData || !inscriptionData.id) {
+      this.log(
+        `⚠️ [SOCKET] Datos incompletos para notifyInscriptionValidation:`,
+        inscriptionData
+      );
+      return;
+    }
 
     const validationData = {
       action,
@@ -122,6 +221,19 @@ class SocketService {
       timestamp: new Date(),
       priority: action === "validation_required" ? "high" : "normal",
     };
+
+    this.log(
+      `📡 [SOCKET] Enviando eventos de validación para acción "${action}":`,
+      {
+        clientes_conectados: this.connectedClients.size,
+        id_inscripcion: inscriptionData.id,
+        priority: validationData.priority,
+        correo: inscriptionData.correo,
+        evento: inscriptionData.evento?.nom_eve,
+        estado: inscriptionData.estado,
+        requiere_validacion: inscriptionData.requiresValidation,
+      }
+    );
 
     // Enviar a vista específica de validación
     this.io.emit("inscription-validation-change", validationData);
@@ -132,8 +244,8 @@ class SocketService {
       ...validationData,
     });
 
-    console.log(
-      `📡 [VALIDATION] ${action} para inscripción ID: ${inscriptionData.id}`
+    this.log(
+      `✅ [SOCKET] [VALIDATION] ${action} para inscripción ID: ${inscriptionData.id} enviada a ${this.connectedClients.size} clientes`
     );
   }
 
@@ -142,25 +254,37 @@ class SocketService {
    * @param {Object} eventData - Datos del evento con información de cupos
    */
   notifyCapacityAlert(eventData) {
-    if (!this.io) return;
+    if (!this.io) {
+      this.log(
+        `❌ [SOCKET] No hay instancia de io disponible para notifyCapacityAlert`
+      );
+      return;
+    }
 
     const alertData = {
       type: "capacity_alert",
-      eventId: eventData.id,
-      eventTitle: eventData.titulo,
-      remainingSlots: eventData.cupos_disponibles,
-      totalSlots: eventData.cupos_totales,
+      eventId: eventData.id_eve,
+      eventTitle: eventData.nom_eve,
+      remainingSlots: eventData.cup_dis_eve,
+      totalSlots: eventData.cup_max_eve,
       percentage: (
-        (eventData.cupos_disponibles / eventData.cupos_totales) *
+        (eventData.cup_dis_eve / eventData.cup_max_eve) *
         100
       ).toFixed(1),
       timestamp: new Date(),
     };
 
+    this.log(`📡 [SOCKET] Enviando alerta de capacidad:`, {
+      evento: eventData.nom_eve,
+      cupos_disponibles: eventData.cup_dis_eve,
+      porcentaje: alertData.percentage,
+      clientes_conectados: this.connectedClients.size,
+    });
+
     this.io.emit("capacity-alert", alertData);
 
-    console.log(
-      `📡 [CAPACITY ALERT] Evento "${eventData.titulo}" - ${eventData.cupos_disponibles} cupos restantes`
+    this.log(
+      `✅ [SOCKET] [CAPACITY ALERT] Evento "${eventData.nom_eve}" - ${eventData.cup_dis_eve} cupos restantes enviado a ${this.connectedClients.size} clientes`
     );
   }
 
@@ -171,7 +295,12 @@ class SocketService {
    * @param {Object} additionalData - Datos adicionales
    */
   notifyAdmins(message, type = "info", additionalData = {}) {
-    if (!this.io) return;
+    if (!this.io) {
+      this.log(
+        `❌ [SOCKET] No hay instancia de io disponible para notifyAdmins`
+      );
+      return;
+    }
 
     const notificationData = {
       message,
@@ -181,9 +310,20 @@ class SocketService {
       ...additionalData,
     };
 
+    this.log(`📡 [SOCKET] Enviando notificación a administradores:`, {
+      mensaje: message,
+      tipo: type,
+      clientes_conectados: this.connectedClients.size,
+      datos_adicionales: Object.keys(additionalData),
+    });
+
     this.io.emit("admin-notification", notificationData);
 
-    console.log(`📡 [ADMIN NOTIFICATION] ${type.toUpperCase()}: ${message}`);
+    this.log(
+      `✅ [SOCKET] [ADMIN NOTIFICATION] ${type.toUpperCase()}: ${message} enviado a ${
+        this.connectedClients.size
+      } clientes`
+    );
   }
 
   /**
@@ -192,16 +332,29 @@ class SocketService {
    * @param {number} cuposDisponibles - Cupos disponibles actuales
    */
   notifyCuposChange(eventoId, cuposDisponibles) {
-    if (!this.io) return;
+    if (!this.io) {
+      this.log(
+        `❌ [SOCKET] No hay instancia de io disponible para notifyCuposChange`
+      );
+      return;
+    }
 
-    this.io.emit("cupos-change-hm", {
+    const eventData = {
       eventoId,
       cuposDisponibles,
       timestamp: new Date(),
+    };
+
+    this.log(`📡 [SOCKET] Enviando actualización de cupos:`, {
+      evento_id: eventoId,
+      cupos_disponibles: cuposDisponibles,
+      clientes_conectados: this.connectedClients.size,
     });
 
-    console.log(
-      `📡 Cupos actualizados para evento ${eventoId}: ${cuposDisponibles}`
+    this.io.emit("cupos-change-hm", eventData);
+
+    this.log(
+      `✅ [SOCKET] Cupos actualizados para evento ${eventoId}: ${cuposDisponibles} enviado a ${this.connectedClients.size} clientes`
     );
   }
 
@@ -211,15 +364,30 @@ class SocketService {
    * @param {string} type - Tipo de notificación ('info', 'warning', 'error', 'success')
    */
   notifySystemUpdate(message, type = "info") {
-    if (!this.io) return;
+    if (!this.io) {
+      this.log(
+        `❌ [SOCKET] No hay instancia de io disponible para notifySystemUpdate`
+      );
+      return;
+    }
 
-    this.io.emit("system-notification-hm", {
+    const eventData = {
       message,
       type,
       timestamp: new Date(),
+    };
+
+    this.log(`📡 [SOCKET] Enviando notificación del sistema:`, {
+      mensaje: message,
+      tipo: type,
+      clientes_conectados: this.connectedClients.size,
     });
 
-    console.log(`📡 Notificación del sistema: ${message}`);
+    this.io.emit("system-notification-hm", eventData);
+
+    this.log(
+      `✅ [SOCKET] Notificación del sistema enviada a ${this.connectedClients.size} clientes: ${message}`
+    );
   }
 
   /**
@@ -227,13 +395,16 @@ class SocketService {
    * @returns {Object} Estadísticas de conexiones activas
    */
   getConnectionStats() {
-    return {
+    const stats = {
       totalConnections: this.connectedClients.size,
       authenticatedUsers: Array.from(this.connectedClients.values()).filter(
         (client) => client.userId !== null
       ).length,
       connections: Array.from(this.connectedClients.values()),
     };
+
+    this.log(`📊 [SOCKET] Estadísticas de conexiones:`, stats);
+    return stats;
   }
 
   /**
@@ -242,7 +413,12 @@ class SocketService {
    * @param {Object} inscriptionData - Datos de la inscripción actualizada
    */
   notifyUserInscriptionChange(userId, inscriptionData) {
-    if (!this.io) return;
+    if (!this.io) {
+      this.log(
+        `❌ [SOCKET] No hay instancia de io disponible para notifyUserInscriptionChange`
+      );
+      return;
+    }
 
     const notificationData = {
       action: "status_changed",
@@ -251,11 +427,118 @@ class SocketService {
       userId: userId,
     };
 
+    this.log(
+      `📡 [SOCKET] Enviando notificación de cambio de inscripción a usuario:`,
+      {
+        usuario_id: userId,
+        estado_nuevo: inscriptionData.estadoNuevo,
+        clientes_conectados: this.connectedClients.size,
+      }
+    );
+
     // Emitir evento a todos los clientes, pero solo los que tengan el userId correcto lo procesarán
     this.io.emit("user-inscription-update", notificationData);
 
-    console.log(
-      `📡 [USER NOTIFICATION] Cambio de estado de inscripción notificado para usuario: ${userId}`
+    this.log(
+      `✅ [SOCKET] [USER NOTIFICATION] Cambio de estado de inscripción notificado para usuario: ${userId} enviado a ${this.connectedClients.size} clientes`
+    );
+    this.log(
+      `📡 Estado de inscripción actualizado a: ${inscriptionData.estadoNuevo}`
+    );
+  }
+
+  /**
+   * Notificar cambios masivos en inscripciones
+   * @param {string} action - Tipo de acción
+   * @param {Object} data - Datos del cambio masivo
+   */
+  notifyRegistrationChange(action, data) {
+    if (!this.io) {
+      this.log(
+        `❌ [SOCKET] No hay instancia de io disponible para notifyRegistrationChange`
+      );
+      return;
+    }
+
+    const eventData = {
+      action,
+      data: data,
+      timestamp: new Date(),
+    };
+
+    this.log(`📡 [SOCKET] Enviando cambio masivo de inscripciones:`, {
+      accion: action,
+      clientes_conectados: this.connectedClients.size,
+      datos: typeof data === "object" ? Object.keys(data) : "primitive",
+    });
+
+    this.io.emit("registrations-bulk-change", eventData);
+
+    this.log(
+      `✅ [SOCKET] Cambio masivo de inscripciones (${action}) notificado a ${this.connectedClients.size} clientes`
+    );
+  }
+
+  /**
+   * Notificar cambios en carreras (creación, actualización, eliminación)
+   * @param {string} action - Tipo de acción ('created', 'updated', 'deleted')
+   * @param {Object} carreraData - Datos de la carrera
+   */
+  notifyCarreraChange(action, carreraData) {
+    if (!this.io) {
+      this.log(
+        `❌ [SOCKET] No hay instancia de io disponible para notifyCarreraChange`
+      );
+      return;
+    }
+
+    const eventData = {
+      action,
+      data: carreraData,
+      timestamp: new Date(),
+    };
+
+    this.log(`📡 [SOCKET] Enviando cambio de carrera:`, {
+      accion: action,
+      carrera: carreraData.nom_car,
+      clientes_conectados: this.connectedClients.size,
+    });
+
+    this.io.emit("carrera-change-hm", eventData);
+
+    this.log(
+      `✅ [SOCKET] Carrera ${action} notificada a ${this.connectedClients.size} clientes`
+    );
+  }
+
+  /**
+   * Notificar cambios en eventos de carreras
+   * @param {string} action - Tipo de acción ('created', 'updated', 'deleted')
+   * @param {Object} eventoCarreraData - Datos del evento de carrera
+   */
+  notifyEventoCarreraChange(action, eventoCarreraData) {
+    if (!this.io) {
+      this.log(
+        `❌ [SOCKET] No hay instancia de io disponible para notifyEventoCarreraChange`
+      );
+      return;
+    }
+
+    const eventData = {
+      action,
+      data: eventoCarreraData,
+      timestamp: new Date(),
+    };
+
+    this.log(`📡 [SOCKET] Enviando cambio de evento-carrera:`, {
+      accion: action,
+      clientes_conectados: this.connectedClients.size,
+    });
+
+    this.io.emit("evento-carrera-change-hm", eventData);
+
+    this.log(
+      `✅ [SOCKET] Evento de carrera ${action} notificado a ${this.connectedClients.size} clientes`
     );
   }
 }

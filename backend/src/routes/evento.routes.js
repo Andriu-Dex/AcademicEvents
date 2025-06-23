@@ -15,6 +15,8 @@ const {
   verificarYCorregirTodosLosCupos,
   obtenerEventosDestacados,
   toggleEventoDestacado,
+  verificarEstadosAutomaticos,
+  obtenerEventosAdminPaginados,
 } = require("../controllers/evento.controller");
 
 // ============================
@@ -91,6 +93,22 @@ router.post(
   verificarToken,
   onlyAdmin,
   verificarYCorregirTodosLosCupos
+);
+
+// Verificar servicio de estados automáticos (solo admin)
+router.get(
+  "/eventos/verificar-estados-automaticos",
+  verificarToken,
+  onlyAdmin,
+  verificarEstadosAutomaticos
+);
+
+// Obtener eventos paginados (admin)
+router.get(
+  "/admin/eventos",
+  verificarToken,
+  onlyAdmin,
+  obtenerEventosAdminPaginados
 );
 
 module.exports = router;

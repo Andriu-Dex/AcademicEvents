@@ -5,14 +5,26 @@ const socketService = require("../services/socket.service");
 require("dotenv").config();
 
 /**
+ * Función helper para logs condicionales del sistema de verificación de cupos
+ * @param {string} message - Mensaje a mostrar
+ * @param {boolean} forceShow - Forzar mostrar el mensaje (para errores críticos)
+ */
+const conditionalCuposLog = (message, forceShow = false) => {
+  const logsEnabled = process.env.CUPOS_VERIFICATION_LOGS_ENABLED === "true";
+  if (logsEnabled || forceShow) {
+    console.log(message);
+  }
+};
+
+/**
  * Valida los campos obligatorios y restricciones de un CURSO
  * Lanza un error si hay algún problema, de lo contrario no hace nada.
  */
 function validarCurso(not_min_cur) {
   if (not_min_cur === undefined)
     throw new Error("La nota mínima es obligatoria");
-  if (not_min_cur < 8 || not_min_cur > 10)
-    throw new Error("La nota mínima debe estar entre 8 y 10");
+  if (not_min_cur < 0 || not_min_cur > 10)
+    throw new Error("La nota mínima debe estar entre 0 y 10");
 }
 /**
  * Valida los campos obligatorios y restricciones de un evento en general
@@ -44,12 +56,12 @@ function validarEventoGeneral({
   if (dur_hor_eve === undefined || dur_hor_eve <= 0)
     throw new Error(
       "La duración del evento es obligatoria y debe ser mayor a 0"
-    ); // Validar que el porcentaje mínimo de asistencia esté dentro del rango 80-100
+    ); // Validar que el porcentaje mínimo de asistencia esté dentro del rango 0-100
   if (por_min_asi_eve === undefined)
     throw new Error("El porcentaje mínimo de asistencia es obligatorio");
-  if (por_min_asi_eve < 80 || por_min_asi_eve > 100)
+  if (por_min_asi_eve < 0 || por_min_asi_eve > 100)
     throw new Error(
-      "El porcentaje mínimo de asistencia debe estar entre 80% y 100%"
+      "El porcentaje mínimo de asistencia debe estar entre 0% y 100%"
     ); // Validar que la fecha de fin esté presente
   if (!fec_fin_eve) throw new Error("La fecha de fin es obligatoria");
 
@@ -195,6 +207,23 @@ const crearEvento = async (req, res) => {
       );
     }
 
+    // Procesar carreras asociadas y validar lógica de eventos
+    const esEventoGeneral = req.body.esEventoGeneral === "true";
+    const carrerasIds = req.body.carrerasIds
+      ? JSON.parse(req.body.carrerasIds)
+      : [];
+
+    // 🔍 VALIDACIÓN: Debe seleccionar carreras O marcar como evento general
+    if (!esEventoGeneral && (!carrerasIds || carrerasIds.length === 0)) {
+      return res.status(400).json({
+        msg: "Debe seleccionar al menos una carrera o marcar el evento como público para todas las carreras",
+      });
+    }
+
+    // 🎯 LÓGICA ACTUALIZADA: El tipo de evento define QUÉ es (CURSO, CONGRESO, etc.)
+    // Las carreras asociadas definen QUIÉN puede acceder (con carreras = específico, sin carreras = público)
+    let tipoEventoFinal = tip_eve; // Mantener el tipo original seleccionado
+
     // Procesar las fechas para mantener las horas exactas
     const fechaInicial = parseUTCDate(fec_ini_eve);
     const fechaFinal = parseUTCDate(fec_fin_eve);
@@ -203,7 +232,7 @@ const crearEvento = async (req, res) => {
       data: {
         nom_eve,
         des_eve,
-        tip_eve,
+        tip_eve: tipoEventoFinal, // Usar tipo corregido
         fec_ini_eve: fechaInicial,
         val_eve: valNum,
         dur_hor_eve: durHor,
@@ -220,17 +249,11 @@ const crearEvento = async (req, res) => {
 
     // Si es CURSO, crear registro en evento_curso con la nota mínima
     let datosCurso = null;
-    if (tip_eve === "CURSO" && notaMin !== undefined) {
+    if (tipoEventoFinal === "CURSO" && notaMin !== undefined) {
       datosCurso = await crearEventoCurso(nuevoEvento.id_eve, notaMin);
     }
 
-    // Procesar carreras asociadas
-    const esEventoGeneral = req.body.esEventoGeneral === "true";
-    const carrerasIds = req.body.carrerasIds
-      ? JSON.parse(req.body.carrerasIds)
-      : [];
-
-    // Si no es evento general y hay carreras seleccionadas, crear las asociaciones
+    // 🎯 ASOCIAR CARRERAS: Solo si NO es evento general (público)
     if (!esEventoGeneral && carrerasIds.length > 0) {
       await Promise.all(
         carrerasIds.map(async (carreraId) => {
@@ -288,7 +311,9 @@ const obtenerEventos = async (req, res) => {
 
     // 🔧 AUTO-CORRECCIÓN MASIVA DE CUPOS INCONSISTENTES
     // Verificar y corregir cupos disponibles para todos los eventos si están mal calculados
-    console.log("🔄 Verificando cupos disponibles para todos los eventos...");
+    conditionalCuposLog(
+      "🔄 Verificando cupos disponibles para todos los eventos..."
+    );
 
     const eventosCorregidos = await Promise.allSettled(
       eventos.map(async (evento) => {
@@ -308,13 +333,15 @@ const obtenerEventos = async (req, res) => {
             cupoMaximo - inscripcionesOcupandoCupo
           );
 
-          console.log(
+          conditionalCuposLog(
             `Evento ${evento.nom_eve}: Cupo actual=${cupoDisponibleActual}, Cupo calculado=${cupoDisponibleCorrecto}`
           );
 
           // Si hay inconsistencia, corregir automáticamente
           if (cupoDisponibleActual !== cupoDisponibleCorrecto) {
-            console.log(`⚠️ Corrigiendo cupo para evento ${evento.nom_eve}...`);
+            conditionalCuposLog(
+              `⚠️ Corrigiendo cupo para evento ${evento.nom_eve}...`
+            );
 
             // Actualizar en la base de datos
             const eventoCorregido = await prisma.evento.update({
@@ -436,13 +463,30 @@ const actualizarEvento = async (req, res) => {
       cupoDisponibleActualizado = Math.max(0, nuevoCupoMax - cuposOcupados);
     }
 
+    // Procesar carreras asociadas y validar lógica de eventos
+    const esEventoGeneral = req.body.esEventoGeneral === "true";
+    const carrerasIds = req.body.carrerasIds
+      ? JSON.parse(req.body.carrerasIds)
+      : [];
+
+    // 🔍 VALIDACIÓN: Debe seleccionar carreras O marcar como evento general
+    if (!esEventoGeneral && (!carrerasIds || carrerasIds.length === 0)) {
+      return res.status(400).json({
+        msg: "Debe seleccionar al menos una carrera o marcar el evento como público para todas las carreras",
+      });
+    }
+
+    // 🎯 LÓGICA ACTUALIZADA: El tipo de evento define QUÉ es (CURSO, CONGRESO, etc.)
+    // Las carreras asociadas definen QUIÉN puede acceder (con carreras = específico, sin carreras = público)
+    let tipoEventoFinal = dataEvento.tip_eve || eventoExistente.tip_eve; // Mantener el tipo original
+
     const eventoActualizado = await prisma.evento.update({
       where: { id_eve: id },
       data: {
         ...dataEvento,
         nom_eve: dataEvento.nom_eve || eventoExistente.nom_eve,
         des_eve: dataEvento.des_eve || eventoExistente.des_eve,
-        tip_eve: dataEvento.tip_eve || eventoExistente.tip_eve,
+        tip_eve: tipoEventoFinal, // Usar tipo corregido
         val_eve:
           dataEvento.val_eve !== undefined
             ? Number(dataEvento.val_eve)
@@ -526,18 +570,12 @@ const actualizarEvento = async (req, res) => {
       }
     }
 
-    // Actualizar carreras asociadas
-    const esEventoGeneral = req.body.esEventoGeneral === "true";
-    const carrerasIds = req.body.carrerasIds
-      ? JSON.parse(req.body.carrerasIds)
-      : [];
-
     // Eliminar todas las asociaciones existentes
     await prisma.evento_carrera.deleteMany({
       where: { id_eve_aso: id },
     });
 
-    // Si no es evento general y hay carreras seleccionadas, crear nuevas asociaciones
+    // 🎯 ASOCIAR CARRERAS: Solo si NO es evento general (público)
     if (!esEventoGeneral && carrerasIds.length > 0) {
       await Promise.all(
         carrerasIds.map(async (carreraId) => {
@@ -626,7 +664,28 @@ const obtenerEventoPorId = async (req, res) => {
       return res.status(404).json({ msg: "Evento no encontrado" });
     }
 
-    // 🔧 AUTO-CORRECCIÓN DE CUPOS INCONSISTENTES
+    // � SUPER DEBUG: Verificar datos del evento específico
+    console.log(`🔥 [EVENTO CONTROLLER DEBUG] Evento obtenido por ID:`);
+    console.log(`  - nom_eve: "${evento.nom_eve}"`);
+    console.log(`  - tip_eve: "${evento.tip_eve}"`);
+    console.log(
+      `  - por_min_asi_eve: "${
+        evento.por_min_asi_eve
+      }" (${typeof evento.por_min_asi_eve})`
+    );
+    console.log(`  - eventos_curso: ${JSON.stringify(evento.eventos_curso)}`);
+
+    if (evento.por_min_asi_eve === undefined) {
+      console.log(`❌ [EVENTO CONTROLLER DEBUG] por_min_asi_eve es UNDEFINED!`);
+    } else if (evento.por_min_asi_eve === null) {
+      console.log(`❌ [EVENTO CONTROLLER DEBUG] por_min_asi_eve es NULL!`);
+    } else {
+      console.log(
+        `✅ [EVENTO CONTROLLER DEBUG] por_min_asi_eve tiene valor: ${evento.por_min_asi_eve}`
+      );
+    }
+
+    // �🔧 AUTO-CORRECCIÓN DE CUPOS INCONSISTENTES
     // Verificar y corregir cupos disponibles si están mal calculados
     try {
       console.log(`🔄 Verificando cupos para evento ID: ${id}`);
@@ -667,6 +726,12 @@ const obtenerEventoPorId = async (req, res) => {
         });
 
         // Retornar el evento con los cupos corregidos
+        console.log(`🔥 [EVENTO FINAL DEBUG] Enviando evento corregido:`);
+        console.log(
+          `  - por_min_asi_eve: "${
+            eventoCorregido.por_min_asi_eve
+          }" (${typeof eventoCorregido.por_min_asi_eve})`
+        );
         return res.status(200).json(eventoCorregido);
       }
     } catch (correccionError) {
@@ -674,6 +739,12 @@ const obtenerEventoPorId = async (req, res) => {
       // Si falla la corrección, continuar con el evento original
     }
 
+    console.log(`🔥 [EVENTO FINAL DEBUG] Enviando evento original:`);
+    console.log(
+      `  - por_min_asi_eve: "${
+        evento.por_min_asi_eve
+      }" (${typeof evento.por_min_asi_eve})`
+    );
     res.status(200).json(evento);
   } catch (error) {
     res.status(500).json({
@@ -695,7 +766,6 @@ const obtenerEventosPorTipo = async (req, res) => {
       "WEBINAR",
       "CHARLA",
       "SOCIALIZACION",
-      "PUBLICO",
     ];
     if (!tiposValidos.includes(tipo.toUpperCase())) {
       return res.status(400).json({ msg: "Tipo de evento no válido" });
@@ -906,11 +976,13 @@ const verificarYCorregirCupos = async (req, res) => {
 // Función para verificar y corregir cupos de todos los eventos
 const verificarYCorregirTodosLosCupos = async (req, res) => {
   try {
-    console.log("🔄 Iniciando verificación de cupos para todos los eventos");
+    conditionalCuposLog(
+      "🔄 Iniciando verificación de cupos para todos los eventos"
+    );
 
     // 1. Obtener todos los eventos
     const eventos = await prisma.evento.findMany();
-    console.log(`Total de eventos encontrados: ${eventos.length}`);
+    conditionalCuposLog(`Total de eventos encontrados: ${eventos.length}`);
 
     // 2. Preparar para almacenar resultados
     const resultados = {
@@ -946,16 +1018,18 @@ const verificarYCorregirTodosLosCupos = async (req, res) => {
         cupoMaximo - inscripcionesOcupandoCupo
       );
 
-      console.log(`Evento ${evento.nom_eve}:`);
-      console.log(`- Cupo máximo: ${cupoMaximo}`);
-      console.log(`- Cupo disponible actual: ${cupoDisponibleActual}`);
-      console.log(
+      conditionalCuposLog(`Evento ${evento.nom_eve}:`);
+      conditionalCuposLog(`- Cupo máximo: ${cupoMaximo}`);
+      conditionalCuposLog(`- Cupo disponible actual: ${cupoDisponibleActual}`);
+      conditionalCuposLog(
         `- Inscripciones ocupando cupo: ${inscripcionesOcupandoCupo}`
       );
-      console.log(
+      conditionalCuposLog(
         `- Inscripciones en estado ACEPTADA: ${inscripcionesAceptadas}`
       );
-      console.log(`- Cupo disponible correcto: ${cupoDisponibleCorrecto}`);
+      conditionalCuposLog(
+        `- Cupo disponible correcto: ${cupoDisponibleCorrecto}`
+      );
 
       // Verificar si hay inconsistencia
       if (cupoDisponibleActual !== cupoDisponibleCorrecto) {
@@ -1162,6 +1236,238 @@ const desmarcadoAutomaticoEventosPasados = async () => {
   }
 };
 
+/**
+ * Endpoint para verificar manualmente el servicio de estados automáticos
+ * Solo para administradores en desarrollo
+ */
+const verificarEstadosAutomaticos = async (req, res) => {
+  try {
+    const eventStatusService = require("../services/eventStatusService");
+
+    // Obtener configuración actual del servicio
+    const configuracion = eventStatusService.obtenerConfiguracion();
+
+    // Ejecutar manualmente una actualización solo si está habilitado
+    if (configuracion.habilitado) {
+      await eventStatusService.ejecutarActualizacionEstados();
+    }
+
+    // Devolver estado completo de la operación
+    res.status(200).json({
+      mensaje: configuracion.habilitado
+        ? "Verificación de estados automáticos completada"
+        : "Servicio deshabilitado - no se ejecutó actualización",
+      configuracion: configuracion,
+      fechaEjecucion: new Date(),
+    });
+  } catch (error) {
+    console.error("Error al verificar estados automáticos:", error);
+    res.status(500).json({
+      mensaje: "Error al verificar estados automáticos",
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * Obtiene eventos para el panel de administración con paginación
+ * @param {Object} req - Solicitud HTTP con parámetros de paginación y filtros
+ * @param {Object} res - Respuesta HTTP
+ */
+const obtenerEventosAdminPaginados = async (req, res) => {
+  try {
+    // Extraer parámetros de paginación
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 15;
+    const offset = (page - 1) * limit;
+
+    // Extraer filtros
+    const {
+      search,
+      tipoEvento,
+      estado,
+      fechaInicio,
+      fechaFin,
+      carrera,
+      modalidad,
+      capacidadMin,
+      capacidadMax,
+      valorMin,
+      valorMax,
+      asistenciaMin,
+      esGratuito,
+      esPago,
+      eventosLlenos,
+      sortBy = "fec_cre_eve",
+      sortOrder = "desc",
+    } = req.query;
+
+    // Construir condición WHERE
+    const whereCondition = {};
+
+    // Filtro por búsqueda (nombre)
+    if (search) {
+      whereCondition.nom_eve = {
+        contains: search,
+        mode: "insensitive",
+      };
+    }
+
+    // Filtro por tipo de evento
+    if (tipoEvento) {
+      whereCondition.tip_eve = tipoEvento;
+    }
+
+    // Filtro por estado
+    if (estado) {
+      whereCondition.est_eve = estado;
+    }
+
+    // Filtro por fecha de inicio
+    if (fechaInicio) {
+      whereCondition.fec_ini_eve = {
+        gte: new Date(fechaInicio),
+      };
+    }
+
+    // Filtro por fecha de fin
+    if (fechaFin) {
+      whereCondition.fec_fin_eve = {
+        lte: new Date(fechaFin),
+      };
+    }
+
+    // Filtro por modalidad
+    if (modalidad) {
+      whereCondition.mod_eve = modalidad;
+    }
+
+    // Filtro por capacidad mínima
+    if (capacidadMin) {
+      whereCondition.cup_max_eve = {
+        gte: parseInt(capacidadMin),
+      };
+    }
+
+    // Filtro por capacidad máxima
+    if (capacidadMax) {
+      whereCondition.cup_max_eve = {
+        lte: parseInt(capacidadMax),
+      };
+    }
+
+    // Filtro por valor mínimo
+    if (valorMin) {
+      whereCondition.val_eve = {
+        gte: parseFloat(valorMin),
+      };
+    }
+
+    // Filtro por valor máximo
+    if (valorMax) {
+      whereCondition.val_eve = {
+        lte: parseFloat(valorMax),
+      };
+    }
+
+    // Filtro por asistencia mínima
+    if (asistenciaMin) {
+      whereCondition.por_min_asi_eve = {
+        gte: parseInt(asistenciaMin),
+      };
+    }
+
+    // Filtro por eventos gratuitos
+    if (esGratuito === "true") {
+      whereCondition.val_eve = 0;
+    }
+
+    // Filtro por eventos de pago
+    if (esPago === "true") {
+      whereCondition.val_eve = {
+        gt: 0,
+      };
+    }
+
+    // Filtro por eventos llenos o con cupos disponibles
+    if (eventosLlenos === "true") {
+      whereCondition.cup_dis_eve = 0;
+    } else {
+      whereCondition.cup_dis_eve = {
+        gt: 0,
+      };
+    }
+
+    // Filtro por carrera (manejo especial por relación)
+    let carreraFilter = undefined;
+    if (carrera) {
+      if (carrera === "GENERAL") {
+        carreraFilter = {
+          none: {},
+        };
+      } else {
+        carreraFilter = {
+          some: {
+            id_car_aso: carrera,
+          },
+        };
+      }
+    }
+
+    // Configurar ordenamiento
+    const orderBy = {};
+    orderBy[sortBy || "fec_cre_eve"] = sortOrder || "desc";
+
+    // Ejecutar consultas en paralelo
+    const [eventos, totalCount] = await Promise.all([
+      prisma.evento.findMany({
+        where: {
+          ...whereCondition,
+          ...(carreraFilter && { eventos_carrera: carreraFilter }),
+        },
+        skip: offset,
+        take: limit,
+        orderBy,
+        include: {
+          eventos_curso: true,
+          eventos_carrera: {
+            include: {
+              carrera: true,
+            },
+          },
+        },
+      }),
+      prisma.evento.count({
+        where: {
+          ...whereCondition,
+          ...(carreraFilter && { eventos_carrera: carreraFilter }),
+        },
+      }),
+    ]);
+
+    // Calcular metadatos de paginación
+    const totalPages = Math.ceil(totalCount / limit);
+
+    return res.json({
+      data: eventos,
+      pagination: {
+        currentPage: page,
+        totalPages,
+        totalItems: totalCount,
+        itemsPerPage: limit,
+        hasNextPage: page < totalPages,
+        hasPrevPage: page > 1,
+      },
+    });
+  } catch (error) {
+    console.error("Error en paginación de eventos admin:", error);
+    res.status(500).json({
+      error: "Error interno del servidor",
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   crearEvento,
   obtenerEventos,
@@ -1173,4 +1479,6 @@ module.exports = {
   verificarYCorregirTodosLosCupos,
   obtenerEventosDestacados,
   toggleEventoDestacado,
+  verificarEstadosAutomaticos,
+  obtenerEventosAdminPaginados,
 };

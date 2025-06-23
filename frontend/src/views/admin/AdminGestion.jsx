@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
+import { Search } from "lucide-react";
 import adminService from "../../services/adminService";
 import Validator from "../../utils/Validator";
+import { usePagination } from "../../hooks/usePagination";
+import PaginationControls from "../../components/Pagination/PaginationControls";
 import "./styles/AdminGestion.css";
 
 /**
@@ -21,30 +24,72 @@ const AdminGestion = () => {
     rol: "ADMIN_GENERAL",
   });
 
-  // Estado para la lista de administradores
-  const [administradores, setAdministradores] = useState([]);
-  const [loading, setLoading] = useState(false);
+  // Estado para filtros
+  const [filtros, setFiltros] = useState({
+    search: "",
+    rol: "",
+  });
+
+  // Hook de paginación para administradores
+  const {
+    data: administradores,
+    loading,
+    currentPage,
+    totalPages,
+    totalItems,
+    itemsPerPage,
+    fetchData,
+    goToPage,
+    hasNextPage,
+    hasPrevPage,
+  } = usePagination("/admin/list-admins-paginados", 15);
+
   const [formErrors, setFormErrors] = useState({});
 
-  // Cargar la lista de administradores al montar el componente
+  // Cargar la lista de administradores al montar el componente y cuando cambien los filtros
   useEffect(() => {
+    const cargarAdministradores = async () => {
+      try {
+        await fetchData(filtros);
+      } catch (error) {
+        console.error("Error al cargar administradores:", error);
+        toast.error("No se pudieron cargar los administradores");
+      }
+    };
+
     cargarAdministradores();
-  }, []);
+  }, [fetchData, filtros]);
 
   /**
-   * Carga la lista de administradores desde el servidor
+   * Maneja cambios en los filtros
+   * @param {Object} e - Evento del input
    */
-  const cargarAdministradores = async () => {
-    try {
-      setLoading(true);
-      const data = await adminService.obtenerAdmins();
-      setAdministradores(data);
-    } catch (error) {
-      console.error("Error al cargar administradores:", error);
-      toast.error("No se pudieron cargar los administradores");
-    } finally {
-      setLoading(false);
-    }
+  const handleFiltroChange = (e) => {
+    const { name, value } = e.target;
+    setFiltros({
+      ...filtros,
+      [name]: value,
+    });
+  };
+
+  /**
+   * Aplica los filtros y resetea la paginación
+   */
+  const aplicarFiltros = (e) => {
+    e.preventDefault();
+    goToPage(1); // Volver a la primera página al aplicar filtros
+    fetchData(filtros);
+  };
+
+  /**
+   * Limpia todos los filtros
+   */
+  const limpiarFiltros = () => {
+    setFiltros({
+      search: "",
+      rol: "",
+    });
+    goToPage(1);
   };
 
   /**
@@ -88,9 +133,10 @@ const AdminGestion = () => {
     }
 
     // Validar celular
-    // if (!Validator.validarCelularEcuatoriano(formData.celular)) {
-    //   errors.celular = "Ingrese un número de celular válido (10 dígitos)";
-    // }
+    if (!Validator.validarCelularEcuatoriano(formData.celular)) {
+      errors.celular =
+        "El número de celular debe empezar con 09 y tener 10 dígitos";
+    }
 
     // Validar correo
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correo)) {
@@ -151,7 +197,7 @@ const AdminGestion = () => {
       });
 
       // Recargar lista de administradores
-      cargarAdministradores();
+      await fetchData(filtros);
     } catch (error) {
       console.error("Error al crear administrador:", error);
 
@@ -169,7 +215,6 @@ const AdminGestion = () => {
       <h1 className="titulo-principal-ag">Gestión de Administradores</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {" "}
         {/* Formulario de creación */}
         <div className="formulario-section-ag">
           <h2 className="subtitulo-ag">Crear Nuevo Administrador</h2>
@@ -353,11 +398,56 @@ const AdminGestion = () => {
         {/* Lista de administradores */}
         <div className="lista-section-ag">
           <h2 className="subtitulo-ag">Administradores Existentes</h2>
+
+          {/* Filtros para buscar administradores */}
+          <div className="filtros-container-ag mb-4">
+            <form
+              onSubmit={aplicarFiltros}
+              className="flex flex-col sm:flex-row gap-2 mb-3"
+            >
+              <div className="search-box-ag">
+                <input
+                  type="text"
+                  name="search"
+                  value={filtros.search}
+                  onChange={handleFiltroChange}
+                  placeholder="Buscar por nombre, cédula o correo"
+                  className="search-input-ag"
+                />
+                <Search
+                  size={18}
+                  className="search-icon-ag absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                />
+              </div>
+
+              <div className="filter-controls-ag">
+                <select
+                  name="rol"
+                  value={filtros.rol}
+                  onChange={handleFiltroChange}
+                  className="select-filter-ag"
+                >
+                  <option value="">Todos los roles</option>
+                  <option value="ADMIN_GENERAL">Admin General</option>
+                  <option value="ADMIN_GLOBAL">Super Admin</option>
+                </select>
+
+                <button
+                  type="button"
+                  onClick={limpiarFiltros}
+                  className="btn-filter-clear-ag"
+                >
+                  Limpiar
+                </button>
+              </div>
+            </form>
+          </div>
+
           {loading ? (
             <div className="flex justify-center p-8">
               <div className="spinner-ag"></div>
             </div>
-          ) : administradores.length > 0 ? (
+          ) : administradores && administradores.length > 0 ? (
             <div className="overflow-x-auto">
               <table className="tabla-admins-ag min-w-full divide-y divide-gray-200">
                 <thead className="thead-ag bg-gray-50">
@@ -382,7 +472,7 @@ const AdminGestion = () => {
                       <td className="celdas-tabla-ag">
                         <div className="text-sm font-medium text-gray-900">
                           {admin.usuario.nom_usu} {admin.usuario.ape_usu}
-                        </div>{" "}
+                        </div>
                         <div className="text-sm text-gray-500">
                           {admin.usuario.ced_usu}
                         </div>
@@ -420,6 +510,20 @@ const AdminGestion = () => {
                   ))}
                 </tbody>
               </table>
+
+              {/* Controles de paginación */}
+              <PaginationControls
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={goToPage}
+                hasNextPage={hasNextPage}
+                hasPrevPage={hasPrevPage}
+                totalItems={totalItems}
+                itemsPerPage={itemsPerPage}
+                loading={loading}
+                className="variant-admin"
+                showInfo={true}
+              />
             </div>
           ) : (
             <div className="estado-vacio-ag text-center p-8 text-gray-500">

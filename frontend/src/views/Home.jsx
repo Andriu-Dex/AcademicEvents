@@ -5,6 +5,7 @@ import Footer from "../components/Footer";
 import EventosDestacados from "../components/home/EventosDestacados";
 import { useAuth } from "../hooks/useAuth";
 import { useHomeSocket } from "../hooks/useHomeSocket";
+import { useConfigurableStats } from "../hooks/useConfigurableStats";
 import axiosInstance from "../api/axiosConfig";
 import {
   Users,
@@ -27,6 +28,14 @@ import {
   Monitor,
   ChevronLeft,
   ChevronRight,
+  CalendarX,
+  CalendarCheck,
+  Award,
+  ClipboardCheck,
+  UserPlus,
+  Star,
+  Info,
+  BarChart,
 } from "lucide-react";
 import "./styles/Home.css";
 
@@ -63,6 +72,12 @@ function Home() {
     tasaParticipacion: "0%",
   });
 
+  // Hook para estadísticas configurables
+  const { activeStatsData, loading: loadingStats } = useConfigurableStats();
+
+  // Verificar si hay estadísticas configuradas
+  const hasConfiguredStats = Object.keys(activeStatsData).length > 0;
+
   // Estados y referencias para carruseles
   const [currentAutoridad, setCurrentAutoridad] = useState(0);
   const [currentCarrera, setCurrentCarrera] = useState(0);
@@ -94,7 +109,6 @@ function Home() {
     removeSystemNotification,
   } = useHomeSocket({
     onEventUpdate: (eventUpdate) => {
-      console.log("🏠 Home: Evento actualizado", eventUpdate);
       // Incrementar contador de actualizaciones de eventos
       setRealtimeUpdates((prev) => ({
         ...prev,
@@ -115,11 +129,10 @@ function Home() {
           ? `Evento actualizado: ${eventUpdate.data.nom_eve || "Sin nombre"}`
           : `Evento eliminado: ${eventUpdate.data.nom_eve || "Sin nombre"}`;
 
-      showTemporaryNotification(message, "info");
+      // showTemporaryNotification(message, "info"); // Comentado para evitar notificaciones repetidas
     },
 
     onInscriptionUpdate: (inscriptionUpdate) => {
-      console.log("🏠 Home: Inscripción actualizada", inscriptionUpdate);
       setRealtimeUpdates((prev) => ({
         ...prev,
         inscriptions: prev.inscriptions + 1,
@@ -127,16 +140,98 @@ function Home() {
     },
 
     onCuposUpdate: (cuposUpdate) => {
-      console.log("🏠 Home: Cupos actualizados", cuposUpdate);
       setRealtimeUpdates((prev) => ({
         ...prev,
         cupos: prev.cupos + 1,
       }));
     },
 
+    onCarreraUpdate: (carreraUpdate) => {
+      // Actualizar la lista de carreras según la acción
+      if (carreraUpdate.action === "created") {
+        // Agregar nueva carrera solo si está activa
+        if (carreraUpdate.data.est_car) {
+          console.log("🏠 Home: Agregando nueva carrera activa");
+          setCarreras((prev) => [...prev, carreraUpdate.data]);
+          // Actualizar contador de estadísticas
+          setEstadisticasHome((prev) => ({
+            ...prev,
+            carreras: prev.carreras + 1,
+          }));
+        } else {
+          // Nueva carrera creada pero está inactiva, no se agrega al Home
+        }
+      } else if (carreraUpdate.action === "updated") {
+        // Manejar actualización de carrera
+        const carreraActualizada = carreraUpdate.data;
+
+        setCarreras((prev) => {
+          const carreraExiste = prev.find(
+            (c) => c.id_car === carreraActualizada.id_car
+          );
+
+          if (carreraActualizada.est_car) {
+            // Carrera está activa
+            if (carreraExiste) {
+              // Actualizar carrera existente
+              return prev.map((carrera) =>
+                carrera.id_car === carreraActualizada.id_car
+                  ? carreraActualizada
+                  : carrera
+              );
+            } else {
+              // Agregar carrera que se acaba de activar
+              console.log("🏠 Home: Agregando carrera recién activada");
+              setEstadisticasHome((prevStats) => ({
+                ...prevStats,
+                carreras: prevStats.carreras + 1,
+              }));
+              return [...prev, carreraActualizada];
+            }
+          } else {
+            // Carrera está inactiva
+            console.log("🏠 Home: Carrera está inactiva");
+            if (carreraExiste) {
+              // Remover carrera que se desactivó
+              setEstadisticasHome((prevStats) => ({
+                ...prevStats,
+                carreras: prevStats.carreras - 1,
+              }));
+              return prev.filter(
+                (carrera) => carrera.id_car !== carreraActualizada.id_car
+              );
+            } else {
+              // La carrera ya no estaba en la lista
+              return prev;
+            }
+          }
+        });
+      } else if (carreraUpdate.action === "deleted") {
+        // Manejar desactivación temporal (marcada como inactiva)
+        setCarreras((prev) =>
+          prev.filter((carrera) => carrera.id_car !== carreraUpdate.data.id_car)
+        );
+        // Actualizar contador de estadísticas
+        setEstadisticasHome((prev) => ({
+          ...prev,
+          carreras: prev.carreras - 1,
+        }));
+      } else if (carreraUpdate.action === "permanentlyDeleted") {
+        // Manejar eliminación permanente
+        setCarreras((prev) =>
+          prev.filter((carrera) => carrera.id_car !== carreraUpdate.data.id_car)
+        );
+        // Actualizar contador de estadísticas
+        setEstadisticasHome((prev) => ({
+          ...prev,
+          carreras: prev.carreras - 1,
+        }));
+      }
+    },
+
     onSystemNotification: (notification) => {
       console.log("🏠 Home: Notificación del sistema", notification);
-      showTemporaryNotification(notification.message, notification.type);
+      // showTemporaryNotification(notification.message, notification.type); // Comentado para evitar notificaciones de socket
     },
   });
 
@@ -162,9 +257,13 @@ function Home() {
   useEffect(() => {
     const cargarDatos = async () => {
       try {
-        // Cargar carreras
+        // Cargar carreras activas únicamente
         const resCarreras = await axiosInstance.get("/carreras");
-        setCarreras(resCarreras.data);
+        // Filtrar solo carreras activas como medida de seguridad adicional
+        const carrerasActivas = resCarreras.data.filter(
+          (carrera) => carrera.est_car
+        );
+        setCarreras(carrerasActivas);
 
         // Cargar información MVA
         const resMVA = await axiosInstance.get("/mva");
@@ -214,10 +313,10 @@ function Home() {
         }
       } catch (error) {
         console.error("Error al cargar datos:", error);
-        showTemporaryNotification(
-          "Error al cargar datos del sistema. Por favor, inténtalo de nuevo más tarde.",
-          "error"
-        );
+        // showTemporaryNotification(
+        //   "Error al cargar datos del sistema. Por favor, inténtalo de nuevo más tarde.",
+        //   "error"
+        // ); // Comentado para evitar notificaciones automáticas
       }
     };
 
@@ -232,29 +331,87 @@ function Home() {
     descripcion: facultadInfo.descripcion,
   };
 
-  // Estadísticas dinámicas de la facultad
-  const stats = [
-    {
-      number: estadisticasHome.carreras.toString(),
+  // Mapeo de estadísticas a sus componentes UI
+  const statsMapping = {
+    carreras: {
       label: "Carreras",
       icon: <GraduationCap size={36} />,
+      value: (data) => data.toString(),
     },
-    {
-      number: estadisticasHome.eventosActivos.toString(),
+    eventosActivos: {
       label: "Eventos Activos",
       icon: <Calendar size={36} />,
+      value: (data) => data.toString(),
     },
-    {
-      number: estadisticasHome.usuariosRegistrados.toString(),
+    usuariosRegistrados: {
       label: "Usuarios Registrados",
       icon: <Users size={36} />,
+      value: (data) => data.toString(),
     },
-    {
-      number: estadisticasHome.tasaParticipacion,
-      label: "Tasa de Participación",
+    tasaParticipacion: {
+      label: "Participación de Usuarios",
       icon: <TrendingUp size={36} />,
+      value: (data) => data,
     },
-  ];
+    eventosCancelados: {
+      label: "Eventos Cancelados",
+      icon: <CalendarX size={36} />,
+      value: (data) => data.toString(),
+    },
+    eventosFinalizados: {
+      label: "Eventos Finalizados",
+      icon: <CalendarCheck size={36} />,
+      value: (data) => data.toString(),
+    },
+    certificadosEmitidos: {
+      label: "Certificados Emitidos",
+      icon: <Award size={36} />,
+      value: (data) => data.toString(),
+    },
+    inscripcionesActivas: {
+      label: "Inscripciones Activas",
+      icon: <ClipboardCheck size={36} />,
+      value: (data) => data.toString(),
+    },
+    cuposDisponibles: {
+      label: "Cupos Disponibles",
+      icon: <UserPlus size={36} />,
+      value: (data) => data.toString(),
+    },
+    eventosPresenciales: {
+      label: "Eventos Presenciales",
+      icon: <MapPin size={36} />,
+      value: (data) => data.toString(),
+    },
+    eventosVirtuales: {
+      label: "Eventos Virtuales",
+      icon: <Laptop size={36} />,
+      value: (data) => data.toString(),
+    },
+    eventosDestacados: {
+      label: "Eventos Destacados",
+      icon: <Star size={36} />,
+      value: (data) => data.toString(),
+    },
+  };
+
+  // Construir el array de estadísticas a mostrar basado en la configuración
+  // Si no hay estadísticas configuradas, no mostrar nada
+  const stats = hasConfiguredStats
+    ? Object.entries(activeStatsData).map(([key, value]) => {
+        const statConfig = statsMapping[key] || {
+          label: key,
+          icon: <Info size={36} />,
+          value: (data) => data.toString(),
+        };
+
+        return {
+          number: statConfig.value(value),
+          label: statConfig.label,
+          icon: statConfig.icon,
+        };
+      })
+    : [];
 
   // Usar las autoridades de la API, o las autoridades predeterminadas si no hay datos
   const autoridades =
@@ -627,19 +784,37 @@ function Home() {
             </div>
             <div className="col-lg-6">
               {/* Estadísticas en el hero */}
-              <div className="row g-3">
-                {stats.map((stat, index) => (
-                  <div className="col-6" key={index}>
-                    <div className="card bg-white bg-opacity-90 text-center p-3 h-100">
-                      <div className="display-6">{stat.icon}</div>
-                      <h3 className="fw-bold mb-1" style={{ color: "#8A1538" }}>
-                        {stat.number}
-                      </h3>
-                      <small className="text-muted">{stat.label}</small>
+              {hasConfiguredStats ? (
+                <div className="row g-3">
+                  {stats.map((stat, index) => (
+                    <div className="col-6" key={index}>
+                      <div className="card bg-white bg-opacity-90 text-center p-3 h-100">
+                        <div className="display-6">{stat.icon}</div>
+                        <h3
+                          className="fw-bold mb-1"
+                          style={{ color: "#8A1538" }}
+                        >
+                          {stat.number}
+                        </h3>
+                        <small className="text-muted">{stat.label}</small>
+                      </div>
                     </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="card bg-white bg-opacity-90 text-center p-4 h-100">
+                  <div className="display-6 text-muted mb-3">
+                    <BarChart size={48} />
                   </div>
-                ))}
-              </div>
+                  <h5 className="text-muted mb-2">
+                    Estadísticas no configuradas
+                  </h5>
+                  <p className="text-muted small mb-0">
+                    El administrador puede configurar las estadísticas a mostrar
+                    desde el panel de administración.
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>
