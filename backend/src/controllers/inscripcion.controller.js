@@ -1,5 +1,5 @@
-const prisma = require("../config/db");
-const { estado_inscripcion } = require("../generated/prisma");
+const { prisma } = require("../config/db");
+const { estado_inscripcion } = require("@prisma/client");
 const { subirImagenAImgur } = require("../utils/imgur.utils");
 const socketService = require("../services/socket.service");
 const {

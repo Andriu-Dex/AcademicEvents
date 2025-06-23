@@ -3,9 +3,7 @@
  * Permite a los super administradores crear otros administradores
  * @module controllers/admin.controller
  */
-
-const { PrismaClient } = require("../generated/prisma");
-const prisma = new PrismaClient();
+const { prisma } = require("../config/db");
 const bcrypt = require("bcrypt");
 const { validateCedula } = require("../utils/validations");
 

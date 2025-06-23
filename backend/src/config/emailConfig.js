@@ -38,9 +38,9 @@ const emailConfig = {
 
   // Rutas base para enlaces
   rutas: {
-    frontend: process.env.FRONTEND_URL || "http://localhost:5173",
+    frontend: process.env.FRONTEND_URL || "http://localhost",
     backend: process.env.BACKEND_URL || "http://localhost:3000",
-    verificacion: "/verificar-email",
+    verificacion: "/verificar-correo",
     recuperacion: "/recuperar-password",
     cambioCorreo: "/cambiar-correo",
   },

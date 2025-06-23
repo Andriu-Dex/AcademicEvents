@@ -246,7 +246,7 @@ Socket Event → useHomeSocket → Estado Local → UI Update
 
 ```
 HOST=localhost
-PORT_BACKEND=3000
+PORT=3000
 FRONTEND_URL=http://localhost:5173
 ```
 

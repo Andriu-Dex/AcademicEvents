@@ -1,5 +1,5 @@
 // Importamos la instancia centralizada de Prisma
-const prisma = require("../config/db");
+const { prisma } = require("../config/db");
 
 /**
  * Clase controladora para gestionar información de Misión, Visión y Autoridades

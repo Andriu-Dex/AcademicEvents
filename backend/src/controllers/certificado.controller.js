@@ -1,4 +1,4 @@
-const prisma = require("../config/db");
+const { prisma } = require("../config/db");
 const { enviarCorreoConCertificado } = require("../services/mailer");
 const fs = require("fs");
 const path = require("path");

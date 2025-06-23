@@ -1,0 +1,172 @@
+services:
+  # ============================
+  # BASE DE DATOS POSTGRESQL
+  # ============================
+  postgres:
+    image: postgres:15-alpine
+    container_name: academic-events-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      # Configuraciones de seguridad
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256 --auth-local=scram-sha-256"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d
+    networks:
+      - academic-events-network
+    # Configuración de salud
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    # Configuración de seguridad del contenedor
+    security_opt:
+      - no-new-privileges:true
+    # Limitar recursos
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
+
+  # ============================
+  # BACKEND API
+  # ============================
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: academic-events-backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      PORT: ${PORT}
+      HOST: ${HOST}
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      JWT_SECRET: ${JWT_SECRET}
+      FRONTEND_URL: ${FRONTEND_URL}
+      # Variables SMTP corregidas
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASS: ${SMTP_PASS}
+      # Variables adicionales de tu .env
+      IMGUR_CLIENT_ID: ${IMGUR_CLIENT_ID}
+      IMGUR_CLIENT_SECRET: ${IMGUR_CLIENT_SECRET}
+      SUPER_ADMIN_EMAIL: ${SUPER_ADMIN_EMAIL}
+      SUPER_ADMIN_PASSWORD: ${SUPER_ADMIN_PASSWORD}
+      SUPER_ADMIN_CEDULA: ${SUPER_ADMIN_CEDULA}
+      EVENT_STATUS_LOGS_ENABLED: ${EVENT_STATUS_LOGS_ENABLED}
+      EVENT_STATUS_CRON_ENABLED: ${EVENT_STATUS_CRON_ENABLED}
+      EVENT_STATUS_CRON_SCHEDULE: ${EVENT_STATUS_CRON_SCHEDULE}
+      EVENT_STATUS_TIMEZONE: ${EVENT_STATUS_TIMEZONE}
+      SOCKET_LOGS_ENABLED: ${SOCKET_LOGS_ENABLED}
+      CUPOS_VERIFICATION_LOGS_ENABLED: ${CUPOS_VERIFICATION_LOGS_ENABLED}
+      EVENT_PAGINATION_LOGS_ENABLED: ${EVENT_PAGINATION_LOGS_ENABLED}
+    ports:
+      - "${PORT}:${PORT}"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      # Montar uploads como volumen con permisos específicos
+      - uploads_data:/app/uploads
+      - ./backend/assets:/app/assets:ro
+    networks:
+      - academic-events-network
+    # Configuración de salud
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--no-verbose",
+          "--tries=1",
+          "--spider",
+          "http://localhost:${PORT}/health",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    # Configuración de seguridad del contenedor
+    security_opt:
+      - no-new-privileges:true
+    # Limitar recursos
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 512M
+    # IMPORTANTE: Usar el entrypoint del Dockerfile, no sobrescribirlo
+    # Si quieres usar el entrypoint personalizado, comenta la línea command:
+    # command: ["npm", "start"]
+
+  # ============================
+  # FRONTEND REACT
+  # ============================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ${FRONTEND_URL}
+    container_name: academic-events-frontend
+    restart: unless-stopped
+    ports:
+      - "80:8080"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - academic-events-network
+    # Configuración de salud
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--no-verbose",
+          "--tries=1",
+          "--spider",
+          "http://localhost:8080/",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    # Configuración de seguridad del contenedor
+    security_opt:
+      - no-new-privileges:true
+    # Limitar recursos
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 64M
+
+# ============================
+# VOLÚMENES PERSISTENTES
+# ============================
+volumes:
+  postgres_data:
+    driver: local
+  uploads_data:
+    driver: local
+
+# ============================
+# REDES
+# ============================
+networks:
+  academic-events-network:
+    driver: bridge

@@ -10,7 +10,7 @@
  *    y actualiza el campo 'cup_ocu' automáticamente
  * 5. Los cupos disponibles siempre se calculan como: cup_max_eve - (número de inscripciones con cup_ocu = true)
  */
-const prisma = require("../config/db");
+const { prisma } = require("../config/db");
 
 /**
  * Calcula los cupos disponibles de un evento basado en las inscripciones que ocupan cupo

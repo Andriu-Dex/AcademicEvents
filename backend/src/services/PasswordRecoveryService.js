@@ -1,6 +1,6 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const prisma = require("../config/db");
+const { prisma } = require("../config/db");
 
 /**
  * @class PasswordRecoveryService
@@ -107,11 +107,8 @@ class PasswordRecoveryService {
       );
 
       // Generar URL para el frontend
-      const recoveryUrl = `${
-        process.env.HOST === "localhost" ? "http" : "https"
-      }://${process.env.HOST}${
-        process.env.HOST === "localhost" ? ":5173" : ""
-      }/restablecer-contrasena/${token.tok_val}`;
+      const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+      const recoveryUrl = `${frontendUrl}/restablecer-contrasena/${token.tok_val}`;
       console.log(
         "🔹 [PASSWORD-RECOVERY-SERVICE] URL de recuperación generada:",
         recoveryUrl

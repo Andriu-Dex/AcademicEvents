@@ -1,6 +1,5 @@
-const { PrismaClient } = require("../src/generated/prisma");
 const bcrypt = require("bcrypt");
-const prisma = new PrismaClient();
+const { prisma } = require("../src/config/db");
 
 async function main() {
   console.log("URL de conexión:", process.env.DATABASE_URL);

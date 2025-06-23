@@ -30,4 +30,3 @@
 *.eot binary
 
 # Archivos específicos del proyecto que requieren finales de línea específicos
-# backend/src/generated/prisma/** text eol=lf

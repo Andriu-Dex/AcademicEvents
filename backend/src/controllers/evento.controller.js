@@ -1,4 +1,4 @@
-const prisma = require("../config/db");
+const { prisma } = require("../config/db");
 const DEFAULT_IMAGE_URL = "https://i.imgur.com/f8adUbZ.png";
 const axios = require("axios");
 const socketService = require("../services/socket.service");

@@ -1,5 +1,5 @@
 const nodemailer = require("nodemailer");
-const { PrismaClient } = require("../generated/prisma");
+const { prisma } = require("../config/db");
 const emailConfig = require("../config/emailConfig");
 const UniversidadService = require("./universidad.service");
 
@@ -21,7 +21,7 @@ class EmailTemplateService {
     });
 
     // Inicializar cliente de Prisma
-    this.prisma = new PrismaClient();
+    this.prisma = prisma;
   }
   /**
    * Obtiene información de la facultad por ID de carrera

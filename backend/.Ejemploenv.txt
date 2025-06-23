@@ -2,7 +2,7 @@
 DATABASE_URL=postgresql://postgres:tu_contraseña@localhost:5432/academicevents
 
 # Configuración del servidor
-PORT_BACKEND=3000
+PORT=3000
 
 #HOST
 HOST=coloca_IP o localhost

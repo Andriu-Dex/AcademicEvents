@@ -1,4 +1,4 @@
-const prisma = require("../config/db");
+const { prisma } = require("../config/db");
 
 // Middleware para verificar si el usuario autenticado es el dueño del certificado
 const verificarPropietarioCertificado = async (req, res, next) => {

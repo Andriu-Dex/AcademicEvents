@@ -1,5 +1,5 @@
 // Importamos la instancia de Prisma desde el archivo de configuración de la base de datos
-const prisma = require("../config/db");
+const { prisma } = require("../config/db");
 
 // ============================
 // Obtener todas las facultades

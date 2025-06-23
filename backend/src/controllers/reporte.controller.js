@@ -1,4 +1,4 @@
-const prisma = require("../config/db");
+const { prisma } = require("../config/db");
 // const { get } = require("../routes/reporte.routes");
 const {
   generarReporteEventoPDF,

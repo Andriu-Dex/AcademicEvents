@@ -22,7 +22,11 @@ const server = http.createServer(app); // Crear servidor HTTP
 // Configurar Socket.IO con CORS
 const io = new Server(server, {
   cors: {
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    origin: [
+      process.env.FRONTEND_URL || "http://localhost:5173",
+      "http://localhost",
+      "http://frontend",
+    ],
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -40,7 +44,16 @@ setupDirectories();
 // ============================
 //  Middlewares globales
 // ============================
-app.use(cors()); // Habilita CORS para todas las rutas
+app.use(
+  cors({
+    origin: [
+      process.env.FRONTEND_URL || "http://localhost:5173",
+      "http://localhost",
+      "http://frontend",
+    ],
+    credentials: true,
+  })
+); // Habilita CORS para todas las rutas
 app.use(express.json()); // Habilita el parseo de JSON en las peticiones
 
 // Middleware de logging de todas las peticiones
@@ -64,6 +77,41 @@ app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 // ============================
 //  Rutas de la aplicación
 // ============================
+
+// Health check endpoint para Docker y monitoreo
+app.get("/health", async (req, res) => {
+  try {
+    // Verificar conexión a la base de datos
+    await require("./config/db").testConnection();
+
+    // Obtener versión de forma segura
+    let version = "1.0.0";
+    try {
+      // Primero intentar la ruta relativa normal
+      version = require("../package.json").version || "1.0.0";
+    } catch (packageError) {
+      console.log(
+        "⚠️ [HEALTH] No se pudo leer package.json desde ruta relativa, usando versión por defecto"
+      );
+      // En caso de error, usar versión por defecto sin intentar otras rutas
+    }
+
+    res.status(200).json({
+      status: "healthy",
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      version: version,
+      environment: process.env.NODE_ENV || "development",
+    });
+  } catch (error) {
+    console.error("❌ [HEALTH] Health check failed:", error);
+    res.status(503).json({
+      status: "unhealthy",
+      timestamp: new Date().toISOString(),
+      error: "Database connection failed",
+    });
+  }
+});
 
 // Ruta de prueba para verificar funcionamiento del backend
 app.get("/", (req, res) => {
@@ -162,7 +210,7 @@ app.use("/api/admin", reporteRoutes);
 //  Iniciar el servidor
 // ============================
 const HOST = process.env.HOST || "localhost";
-const PORT = process.env.PORT_BACKEND || 3000;
+const PORT = process.env.PORT || 3000;
 
 server.listen(PORT, HOST, () => {
   console.log(`✅ Servidor corriendo en http://${HOST}:${PORT} ✅`);
