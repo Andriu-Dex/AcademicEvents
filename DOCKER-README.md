@@ -15,26 +15,23 @@ Este proyecto incluye configuración completa de Docker para despliegue local.
 
 ## 🚀 Despliegue Rápido
 
-### ⚠️ IMPORTANTE - Configuración de Seguridad PRIMERO
+### ⚠️ IMPORTANTE - Configuración de Variables de Entorno PRIMERO
 
 **Antes del primer despliegue, DEBES configurar las variables de entorno:**
 
-1. **Copia el archivo de ejemplo:**
+1. **El archivo `.env` ya existe en el proyecto** con una configuración base funcional.
 
-   ```powershell
-   Copy-Item .env.example .env
-   ```
-
-2. **Genera un JWT Secret seguro:**
+2. **Genera un JWT Secret seguro (recomendado para producción):**
 
    ```powershell
    .\generate-jwt-secret.ps1
    ```
 
-3. **Edita el archivo .env con tus valores reales:**
-   - Cambia `POSTGRES_PASSWORD` por una contraseña segura
-   - Usa el JWT_SECRET generado en el paso anterior
-   - Configura tus credenciales de email reales
+3. **Configura las variables críticas en el archivo `.env`:**
+   - `POSTGRES_PASSWORD`: Cambia por una contraseña segura para producción
+   - `JWT_SECRET`: Usa el generado en el paso anterior (para producción)
+   - `SMTP_USER` y `SMTP_PASS`: Configura con tus credenciales de email reales
+   - `IMGUR_CLIENT_ID` y `IMGUR_CLIENT_SECRET`: Para subida de imágenes (opcional)
 
 ### Opción 1: Script Automático (Recomendado)
 
@@ -64,23 +61,66 @@ Una vez desplegado, podrás acceder a:
 - **Backend API**: http://localhost:3000
 - **Base de Datos**: localhost:5432
 
+### 🔄 Características del Despliegue Actual
+
+- **Frontend con Nginx**: Incluye proxy reverso que dirige las llamadas `/api/` al backend automáticamente
+- **Backend con Prisma**: Configuración automática de migraciones y generación del cliente
+- **Socket.IO**: Configurado para comunicación en tiempo real a través del proxy de nginx
+- **Health Checks**: Todos los servicios incluyen verificaciones de salud
+- **Seguridad**: Configuración de headers de seguridad en nginx y usuarios no-root en contenedores
+
 ## 🗄️ Configuración de Base de Datos
 
 La base de datos PostgreSQL se configura automáticamente con:
 
 - **Host**: localhost:5432
-- **Database**: Configurado desde `.env` (por defecto: academic_events)
-- **Usuario**: Configurado desde `.env` (por defecto: postgres)
-- **Contraseña**: Configurada desde `.env` (DEBES cambiarla)
+- **Database**: academicevents (configurado desde `.env`)
+- **Usuario**: postgres (configurado desde `.env`)
+- **Contraseña**: Configurada desde `.env` (por defecto: Andriu3Dex)
+
+### 🔧 Migraciones Automáticas
+
+El backend incluye un script de inicialización (`docker-entrypoint.sh`) que:
+
+1. **Espera** a que PostgreSQL esté completamente listo
+2. **Genera** el cliente de Prisma automáticamente
+3. **Ejecuta** todas las migraciones pendientes
+4. **Inicia** la aplicación Node.js
+
+Esto significa que **no necesitas ejecutar comandos manuales** para configurar la base de datos.
 
 ## 📁 Estructura de Servicios
 
 ```
 academic-events/
-├── postgres        # Base de datos PostgreSQL
-├── backend         # API Node.js + Express + Prisma
-└── frontend        # React + Vite + Nginx
+├── postgres        # Base de datos PostgreSQL 15-alpine
+├── backend         # API Node.js + Express + Prisma + Socket.IO
+└── frontend        # React + Vite servido por Nginx con proxy reverso
 ```
+
+### 🔧 Características Técnicas
+
+**Backend (Node.js 20-alpine):**
+
+- Entrypoint personalizado para manejo automático de Prisma
+- Usuario no-root para seguridad
+- Health check en `/health`
+- Socket.IO para comunicación en tiempo real
+- Manejo automático de uploads y certificados
+
+**Frontend (Nginx 1.27-alpine):**
+
+- Proxy reverso para `/api/` hacia el backend
+- Proxy para Socket.IO en `/socket.io/`
+- Headers de seguridad configurados
+- Compresión gzip habilitada
+- Cache optimizado para archivos estáticos
+
+**PostgreSQL (15-alpine):**
+
+- Configuración de seguridad con scram-sha-256
+- Health checks automáticos
+- Datos persistentes en volumen Docker
 
 ## 🔧 Comandos Útiles
 
@@ -154,8 +194,34 @@ docker-compose restart postgres
 # Verificar logs del frontend
 docker-compose logs frontend
 
-# Verificar que el backend esté funcionando
-curl http://localhost:3000
+# Verificar que nginx esté funcionando y el proxy esté configurado
+docker-compose exec frontend nginx -t
+
+# Verificar conectividad con el backend desde el frontend
+docker-compose exec frontend wget -qO- http://backend:3000/health
+```
+
+### Problema: API no responde desde el frontend
+
+```powershell
+# El frontend usa proxy reverso, las llamadas deben ser a:
+# http://localhost/api/endpoint (NO http://localhost:3000/api/endpoint)
+
+# Verificar configuración del proxy en nginx
+docker-compose exec frontend cat /etc/nginx/nginx.conf | grep -A 10 "location /api"
+
+# Verificar que el backend esté accesible desde el contenedor frontend
+docker-compose exec frontend nc -z backend 3000
+```
+
+### Problema: Socket.IO no funciona
+
+```powershell
+# Verificar que el proxy de Socket.IO esté configurado
+docker-compose exec frontend cat /etc/nginx/nginx.conf | grep -A 10 "location /socket.io"
+
+# Verificar logs del backend para conexiones Socket.IO
+docker-compose logs backend | grep -i socket
 ```
 
 ### ❌ Error: "ERESOLVE could not resolve" o conflictos de dependencias de React
@@ -268,25 +334,26 @@ docker --version
 docker-compose --version
 ```
 
-### **Paso 2: Configurar variables de entorno**
+### **Paso 2: Configurar variables de entorno (si es necesario)**
+
+El proyecto ya incluye un archivo `.env` con configuración funcional. Para uso en desarrollo local, puedes usar la configuración actual.
+
+**Para producción o personalización:**
 
 ```powershell
-# Copiar archivo de ejemplo
-Copy-Item .env.example .env
-
-# Generar JWT Secret seguro
+# Generar JWT Secret seguro (opcional, recomendado para producción)
 .\generate-jwt-secret.ps1
 
 # Editar archivo .env (abrir con tu editor favorito)
 notepad .env
 ```
 
-**Variables críticas que DEBES configurar:**
+**Variables críticas que puedes personalizar:**
 
-- `POSTGRES_PASSWORD`: Una contraseña segura para la base de datos
-- `JWT_SECRET`: El generado por el script (64+ caracteres)
-- `SMTP_USER`: Tu email real para envío de correos
-- `SMTP_PASS`: Tu contraseña de aplicación de email
+- `POSTGRES_PASSWORD`: Cambiar para mayor seguridad en producción
+- `JWT_SECRET`: Usar el generado por el script para producción
+- `SMTP_USER` y `SMTP_PASS`: Configurar para envío de emails reales
+- `IMGUR_CLIENT_ID` y `IMGUR_CLIENT_SECRET`: Para subida de imágenes (opcional)
 
 ### **Paso 3: Despliegue automático**
 
@@ -301,21 +368,40 @@ notepad .env
 # Verificar que todos los servicios estén corriendo
 docker-compose ps
 
+# Deberías ver 3 servicios: postgres, backend, frontend (todos "healthy")
+# Si el frontend aparece como "unhealthy", es normal al inicio - dale unos minutos
+
 # Ver logs en tiempo real (Ctrl+C para salir)
 docker-compose logs -f
 
 # Probar endpoints
 # Frontend: http://localhost
-# Backend: http://localhost:3000
-# Health check: http://localhost:3000/health
+# Backend API: http://localhost:3000/health
+# API a través del proxy: http://localhost/api/test (si existe)
 ```
 
-### **Paso 5: Primer acceso**
+### **Paso 5: Primer acceso y configuración**
 
-1. Abre tu navegador en http://localhost
-2. La aplicación debe cargar correctamente
-3. Si hay un seed de datos, se ejecutará automáticamente
-4. Verifica que puedes navegar por la aplicación
+1. **Abre tu navegador en http://localhost**
+2. **La aplicación debe cargar correctamente**
+3. **Configuración automática:**
+   - Las migraciones de base de datos se ejecutan automáticamente
+   - El super admin se crea automáticamente con las credenciales del `.env`
+   - Los uploads y certificados se configuran automáticamente
+4. **Verificar funcionalidades:**
+   - Navegación por la aplicación
+   - Registro/Login de usuarios
+   - Creación de eventos (si tienes permisos)
+
+### 🔐 Credenciales de Super Admin
+
+Por defecto, se crea un super admin con:
+
+- **Email**: admin@uta.edu.ec
+- **Contraseña**: Admin12345
+- **Cédula**: 9999999999
+
+**⚠️ IMPORTANTE**: Cambia estas credenciales en producción editando las variables `SUPER_ADMIN_*` en el archivo `.env`.
 
 ## ⚡ Comandos de Desarrollo Rápido
 
@@ -366,25 +452,45 @@ docker system prune
 
 ```powershell
 # 1. Hacer cambios en el código
+
 # 2. Si cambios en backend:
-docker-compose restart backend
+docker-compose build backend
+docker-compose up -d backend
 
 # 3. Si cambios en frontend:
 docker-compose build frontend
 docker-compose up -d frontend
 
-# 4. Si cambios en base de datos/migraciones:
-docker-compose exec backend npx prisma migrate deploy
+# 4. Si cambios en base de datos/schema de Prisma:
+docker-compose exec backend npx prisma migrate dev --name "nombre_descriptivo"
+# O si solo necesitas regenerar el cliente:
+docker-compose exec backend npx prisma generate
+docker-compose restart backend
+
+# NOTA: El docker-entrypoint.sh maneja automáticamente:
+# - Generación del cliente Prisma
+# - Ejecución de migraciones pendientes
+# Por eso normalmente solo necesitas rebuild + restart
 ```
 
 ### Para cambios en dependencias:
 
 ```powershell
-# 1. Si agregaste nuevas dependencias npm:
+# 1. Si agregaste nuevas dependencias npm al backend:
+# Edita package.json, luego:
 docker-compose build --no-cache backend
 docker-compose up -d backend
 
-# 2. Si cambiaste el schema de Prisma:
+# 2. Si agregaste nuevas dependencias npm al frontend:
+# Edita package.json, luego:
+docker-compose build --no-cache frontend
+docker-compose up -d frontend
+
+# 3. Si cambiaste el schema de Prisma:
+# El docker-entrypoint.sh maneja esto automáticamente al reiniciar el backend
+docker-compose restart backend
+
+# O manualmente:
 docker-compose exec backend npx prisma generate
 docker-compose restart backend
 ```
@@ -434,11 +540,40 @@ docker-compose up -d frontend
 ### ❌ Error: "Prisma migrations fail"
 
 ```powershell
-# Reset de migraciones (¡CUIDADO! Borra datos)
+# Verificar logs detallados del backend
+docker-compose logs backend
+
+# Verificar que la base de datos esté accesible
+docker-compose exec backend npx prisma db pull
+
+# Si hay problemas con migraciones, reset completo (¡CUIDADO! Borra datos)
 docker-compose exec backend npx prisma migrate reset --force
 
 # O aplicar migraciones manualmente
 docker-compose exec backend npx prisma migrate deploy
+
+# Regenerar cliente si es necesario
+docker-compose exec backend npx prisma generate
+docker-compose restart backend
+```
+
+### ❌ Error: "EADDRINUSE: puerto ya en uso"
+
+```powershell
+# Encontrar qué proceso usa el puerto
+netstat -ano | findstr :80
+netstat -ano | findstr :3000
+
+# Detener servicios Docker que puedan estar ejecutándose
+docker-compose down
+
+# Limpiar procesos Docker huérfanos
+docker system prune -f
+
+# Verificar que no haya otros contenedores ejecutándose
+docker ps -a
+
+# Reiniciar Docker Desktop si es necesario
 ```
 
 ### ❌ Error de dependencias de React
@@ -523,3 +658,111 @@ notepad .env  # Configurar variables
 ---
 
 ¿Necesitas ayuda? Revisa la sección de **🛠️ Troubleshooting** o los **🔄 Comandos Útiles** en esta documentación.
+
+## ✨ Mejoras Implementadas en el Despliegue
+
+### 🚀 Automatización Completa
+
+**Backend con Entrypoint Inteligente:**
+
+- El archivo `docker-entrypoint.sh` automatiza completamente la configuración de Prisma
+- Espera automáticamente a que PostgreSQL esté listo antes de continuar
+- Genera el cliente de Prisma automáticamente en cada inicio
+- Ejecuta migraciones pendientes automáticamente
+- No requiere comandos manuales después del despliegue
+
+**Proxy Reverso Integrado:**
+
+- Nginx configurado como proxy reverso para el backend
+- Las llamadas del frontend van a `/api/` y se redirigen automáticamente al backend
+- Socket.IO configurado para funcionar a través del proxy
+- Eliminados problemas de CORS entre frontend y backend
+
+### 🔒 Seguridad Mejorada
+
+**Contenedores con Usuarios No-Root:**
+
+- Todos los servicios ejecutan con usuarios no privilegiados
+- Configuración de security_opt para mayor protección
+- Headers de seguridad configurados en nginx (CSP, X-Frame-Options, etc.)
+
+**Validaciones en el Script de Despliegue:**
+
+- `deploy.ps1` incluye validaciones de seguridad antes del despliegue
+- Verifica que las variables críticas no tengan valores por defecto
+- Advierte sobre configuraciones inseguras
+- Opción de generar JWT_SECRET automáticamente
+
+### ⚡ Optimizaciones de Rendimiento
+
+**Nginx Optimizado:**
+
+- Compresión gzip habilitada
+- Cache optimizado para archivos estáticos
+- Configuración de timeouts apropiada
+- Health checks en todos los servicios
+
+**Docker Multi-Etapa:**
+
+- Frontend construido en etapa separada para optimizar imagen final
+- Imágenes Alpine para menor tamaño
+- Límites de recursos configurados para cada servicio
+
+### 🔧 Configuración Robusta
+
+**Health Checks Configurados:**
+
+- PostgreSQL: Verificación de disponibilidad de la base de datos
+- Backend: Health check endpoint `/health`
+- Frontend: Verificación de nginx y disponibilidad del sitio
+
+**Variables de Entorno Organizadas:**
+
+- Archivo `.env` incluido con configuración funcional por defecto
+- Documentación clara de qué variables son críticas
+- Configuración específica para desarrollo y producción
+
+### 📊 Monitoreo y Debug
+
+**Logs Estructurados:**
+
+- Logs centralizados accesibles con `docker-compose logs`
+- Configuración de logs de nginx para debug
+- Logs de Socket.IO configurables via variables de entorno
+
+**Comandos de Debug Incluidos:**
+
+- Verificación de conectividad entre servicios
+- Comandos para probar proxy reverso
+- Herramientas de troubleshooting documentadas
+
+## 🎯 Diferencias con la Configuración Anterior
+
+### ✅ Antes vs. Ahora
+
+**Antes:**
+
+- Configuración manual de Prisma requerida
+- Problemas frecuentes con CORS
+- Configuración básica de nginx
+- Variables de entorno complejas de configurar
+
+**Ahora:**
+
+- ✅ Configuración automática de Prisma
+- ✅ Proxy reverso que elimina problemas de CORS
+- ✅ Nginx optimizado con seguridad mejorada
+- ✅ Variables de entorno pre-configuradas y funcionales
+- ✅ Script de despliegue con validaciones
+- ✅ Health checks en todos los servicios
+- ✅ Documentación actualizada con troubleshooting
+
+### 🎉 Resultado Final
+
+**Un comando para desplegar todo:**
+
+```powershell
+.\deploy.ps1
+```
+
+**Sin configuración manual adicional requerida** - el proyecto funciona inmediatamente después del despliegue con la configuración incluida.

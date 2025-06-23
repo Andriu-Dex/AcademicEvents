@@ -6,8 +6,17 @@ FROM node:20-alpine
 # Actualizar paquetes del sistema
 RUN apk update && apk upgrade --no-cache
 
-# Instalar herramientas necesarias
-RUN apk add --no-cache wget netcat-openbsd
+# Instalar herramientas necesarias y dependencias para Puppeteer/Chrome
+RUN apk add --no-cache \
+    wget \
+    netcat-openbsd \
+    chromium \
+    nss \
+    freetype \
+    freetype-dev \
+    harfbuzz \
+    ca-certificates \
+    ttf-freefont
 
 # Crear usuario no privilegiado
 RUN addgroup -g 1001 -S nodejs && \
@@ -21,6 +30,10 @@ COPY package*.json ./
 
 # Instalar dependencias
 RUN npm ci --no-audit --no-fund
+
+# Configurar Puppeteer para usar Chromium instalado
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
+    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
 # Copiar archivos de Prisma
 COPY prisma ./prisma

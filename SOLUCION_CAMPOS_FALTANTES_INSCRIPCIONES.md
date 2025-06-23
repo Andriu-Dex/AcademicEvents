@@ -164,7 +164,7 @@ curl -H "Authorization: Bearer <token>" http://localhost:3000/api/admin/inscripc
 
 ```javascript
 // debug_consulta.js
-const prisma = require("./src/config/db");
+const { prisma } = require("./src/config/db");
 
 async function debugInscripciones() {
   const id = "cc55aacd-c38f-4c27-8ec1-76edc8d42427";

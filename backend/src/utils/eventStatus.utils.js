@@ -1,4 +1,4 @@
-const prisma = require("../config/db");
+const { prisma } = require("../config/db");
 const socketService = require("../services/socket.service");
 
 /**

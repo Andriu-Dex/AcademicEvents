@@ -17,7 +17,6 @@ import {
 import EventoService from "../../services/EventoService";
 import GestorEventosDestacados from "../../models/GestorEventosDestacados";
 import GestorModales from "../../models/GestorModales";
-import { useHomeSocket } from "../../hooks/useHomeSocket";
 import ModalRequisitos from "../ModalRequisitos";
 import "./styles/EventosDestacados.css";
 import "./styles/ModalEventosDestacados.css";
@@ -42,33 +41,6 @@ const EventosDestacados = () => {
     new GestorEventosDestacados(EventoService)
   ).current;
   const gestorModales = useRef(new GestorModales(setModalEvento)).current;
-  // Callbacks para evitar re-renderizados
-  const handleEventUpdate = useCallback(
-    (updateData) => {
-      // Validar que los datos estén completos
-      if (!updateData || !updateData.data || !updateData.action) {
-        console.warn(
-          "EventosDestacados: Datos de actualización inválidos",
-          updateData
-        );
-        return;
-      }
-
-      if (
-        updateData.action === "updated" &&
-        updateData.data.tipo === "destacado"
-      ) {
-        console.log("Actualizando evento destacado:", updateData.data);
-        gestorEventos.actualizarEventoDestacado(updateData.data);
-      }
-    },
-    [gestorEventos]
-  );
-
-  // Hook para sockets con callback estable
-  const { eventUpdates } = useHomeSocket({
-    onEventUpdate: handleEventUpdate,
-  });
 
   // Cálculos memorizados para rendimiento
   const shouldUseCarousel = useMemo(
@@ -169,20 +141,6 @@ const EventosDestacados = () => {
       }
     };
   }, [isHovering, shouldUseCarousel, nextSlide, eventosDestacados.length]);
-
-  // Actualizar eventos cuando hay cambios desde el socket
-  useEffect(() => {
-    if (
-      eventUpdates &&
-      eventUpdates.action === "updated" &&
-      eventUpdates.data.tipo === "destacado"
-    ) {
-      console.log(
-        "🔄 EventoDestacado: Procesando actualización de socket:",
-        eventUpdates.data
-      );
-    }
-  }, [eventUpdates]);
 
   // Efecto para reiniciar posición del carrusel cuando cambian los eventos destacados
   useEffect(() => {

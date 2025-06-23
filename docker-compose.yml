@@ -78,7 +78,7 @@ services:
         condition: service_healthy
     volumes:
       # Montar uploads como volumen con permisos específicos
-      - uploads_data:/app/uploads
+      - ./uploads:/app/uploads
       - ./backend/assets:/app/assets:ro
     networks:
       - academic-events-network
@@ -160,8 +160,6 @@ services:
 # ============================
 volumes:
   postgres_data:
-    driver: local
-  uploads_data:
     driver: local
 
 # ============================

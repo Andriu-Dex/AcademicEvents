@@ -341,8 +341,7 @@ export default MisCertificados;
 #### Agregar rutas en el controlador: `backend/src/controllers/certificado.controller.js`
 
 ```javascript
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
+const { prisma } = require("../config/db");
 const path = require("path");
 const fs = require("fs");
 const { generarCertificadoPDF } = require("../utils/certificado.utils");

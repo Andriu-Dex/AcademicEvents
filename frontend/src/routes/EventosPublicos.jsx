@@ -34,7 +34,7 @@ import usePagination from "../hooks/usePagination";
 import PaginationControls from "../components/Pagination/PaginationControls";
 import "./styles/EventosPublicos.css";
 import "./styles/ModalEventosPublicos.css";
-import "./styles/Animaciones.css";
+import "./styles/animaciones.css";
 import "./styles/FiltrosEstado.css";
 import "./styles/EventosPublicosPaginacion.css";
 
