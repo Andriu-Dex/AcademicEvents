@@ -1,6 +1,5 @@
-const { PrismaClient } = require("../src/generated/prisma");
 const bcrypt = require("bcrypt");
-const prisma = new PrismaClient();
+const { prisma } = require("../src/config/db");
 
 async function main() {
   console.log("URL de conexión:", process.env.DATABASE_URL);
@@ -684,6 +683,229 @@ async function main() {
         cup_max_eve: 77,
         cup_dis_eve: 76,
       },
+      // Agregar estos 13 eventos adicionales al array 'eventos' existente:
+
+      {
+        id_eve: "b1a2c3d4-e5f6-4789-8012-345678901234",
+        nom_eve: "Machine Learning con Python",
+        des_eve:
+          "Taller intensivo para aprender fundamentos de aprendizaje automático utilizando bibliotecas como scikit-learn y pandas.",
+        tip_eve: "CURSO",
+        fec_ini_eve: new Date("2025-06-25T09:00:00.000Z"),
+        fec_fin_eve: new Date("2025-07-02T17:00:00.000Z"),
+        dur_hor_eve: 40,
+        mod_eve: "SEMIPRESENCIAL",
+        val_eve: 120.0,
+        est_eve: "ACTIVO",
+        img_por_eve: "https://i.imgur.com/uVj7k7q.jpeg",
+        por_min_asi_eve: 80,
+        cup_max_eve: 25,
+        cup_dis_eve: 22,
+      },
+      {
+        id_eve: "c2b3a4d5-f6e7-4890-9123-456789012345",
+        nom_eve: "Ciberseguridad en el Mundo Digital",
+        des_eve:
+          "Conferencia sobre amenazas digitales actuales y estrategias de protección para empresas y usuarios.",
+        tip_eve: "CONGRESO",
+        fec_ini_eve: new Date("2025-06-28T08:00:00.000Z"),
+        fec_fin_eve: new Date("2025-06-30T18:00:00.000Z"),
+        dur_hor_eve: 24,
+        mod_eve: "PRESENCIAL",
+        val_eve: 80.0,
+        est_eve: "ACTIVO",
+        img_por_eve: "https://i.imgur.com/RSz8dqJ.png",
+        por_min_asi_eve: 70,
+        cup_max_eve: 100,
+        cup_dis_eve: 95,
+      },
+      {
+        id_eve: "d3c4b5a6-e7f8-4901-0234-567890123456",
+        nom_eve: "Diseño UX/UI para Aplicaciones Móviles",
+        des_eve:
+          "Webinar sobre principios de diseño centrado en el usuario para crear interfaces intuitivas y atractivas.",
+        tip_eve: "WEBINAR",
+        fec_ini_eve: new Date("2025-07-01T15:00:00.000Z"),
+        fec_fin_eve: new Date("2025-07-01T18:00:00.000Z"),
+        dur_hor_eve: 3,
+        mod_eve: "VIRTUAL",
+        val_eve: 25.0,
+        est_eve: "ACTIVO",
+        img_por_eve: "https://i.imgur.com/OkQKScU.jpeg",
+        por_min_asi_eve: 60,
+        cup_max_eve: 150,
+        cup_dis_eve: 148,
+      },
+      {
+        id_eve: "e4d5c6b7-f8e9-4012-1345-678901234567",
+        nom_eve: "Blockchain y Criptomonedas: Presente y Futuro",
+        des_eve:
+          "Charla informativa sobre tecnología blockchain, su impacto en las finanzas y aplicaciones futuras.",
+        tip_eve: "CHARLA",
+        fec_ini_eve: new Date("2025-07-05T10:00:00.000Z"),
+        fec_fin_eve: new Date("2025-07-05T12:00:00.000Z"),
+        dur_hor_eve: 2,
+        mod_eve: "VIRTUAL",
+        val_eve: 0.0,
+        est_eve: "ACTIVO",
+        img_por_eve: "https://i.imgur.com/f8adUbZ.png",
+        por_min_asi_eve: 50,
+        cup_max_eve: 200,
+        cup_dis_eve: 180,
+      },
+      {
+        id_eve: "f5e6d7c8-e9f0-4123-2456-789012345678",
+        nom_eve: "Desarrollo de Videojuegos con Unity",
+        des_eve:
+          "Curso práctico para crear juegos 2D y 3D utilizando el motor Unity y programación en C#.",
+        tip_eve: "CURSO",
+        fec_ini_eve: new Date("2025-07-07T09:00:00.000Z"),
+        fec_fin_eve: new Date("2025-07-14T17:00:00.000Z"),
+        dur_hor_eve: 35,
+        mod_eve: "PRESENCIAL",
+        val_eve: 150.0,
+        est_eve: "ACTIVO",
+        img_por_eve: "https://i.imgur.com/lEgZ9gI.png",
+        por_min_asi_eve: 75,
+        cup_max_eve: 20,
+        cup_dis_eve: 18,
+      },
+      {
+        id_eve: "a6f7e8d9-f0e1-4234-3567-890123456789",
+        nom_eve: "Marketing Digital y Redes Sociales",
+        des_eve:
+          "Seminario sobre estrategias de marketing digital, gestión de redes sociales y análisis de métricas.",
+        tip_eve: "WEBINAR",
+        fec_ini_eve: new Date("2025-07-10T14:00:00.000Z"),
+        fec_fin_eve: new Date("2025-07-10T17:00:00.000Z"),
+        dur_hor_eve: 3,
+        mod_eve: "VIRTUAL",
+        val_eve: 30.0,
+        est_eve: "ACTIVO",
+        img_por_eve: "https://i.imgur.com/6zpP0N3.jpeg",
+        por_min_asi_eve: 65,
+        cup_max_eve: 80,
+        cup_dis_eve: 75,
+      },
+      {
+        id_eve: "b7a8f9e0-e1f2-4345-4678-901234567890",
+        nom_eve: "Festival de Robótica Estudiantil",
+        des_eve:
+          "Evento de socialización donde estudiantes presentan proyectos de robótica y automatización.",
+        tip_eve: "SOCIALIZACION",
+        fec_ini_eve: new Date("2025-07-12T08:00:00.000Z"),
+        fec_fin_eve: new Date("2025-07-13T18:00:00.000Z"),
+        dur_hor_eve: 16,
+        mod_eve: "PRESENCIAL",
+        val_eve: 10.0,
+        est_eve: "ACTIVO",
+        img_por_eve: "https://i.imgur.com/0XoQJdZ.jpeg",
+        por_min_asi_eve: 40,
+        cup_max_eve: 300,
+        cup_dis_eve: 285,
+      },
+      {
+        id_eve: "c8b9a0f1-f2e3-4456-5789-012345678901",
+        nom_eve: "Cloud Computing con AWS",
+        des_eve:
+          "Curso de introducción a servicios en la nube de Amazon Web Services para desarrolladores.",
+        tip_eve: "CURSO",
+        fec_ini_eve: new Date("2025-07-15T10:00:00.000Z"),
+        fec_fin_eve: new Date("2025-07-22T16:00:00.000Z"),
+        dur_hor_eve: 30,
+        mod_eve: "VIRTUAL",
+        val_eve: 100.0,
+        est_eve: "ACTIVO",
+        img_por_eve: "https://i.imgur.com/4PoqgV7.png",
+        por_min_asi_eve: 70,
+        cup_max_eve: 40,
+        cup_dis_eve: 35,
+      },
+      {
+        id_eve: "d9c0b1a2-e3f4-4567-6890-123456789012",
+        nom_eve: "Liderazgo y Gestión de Equipos",
+        des_eve:
+          "Taller sobre habilidades de liderazgo, comunicación efectiva y gestión de equipos multidisciplinarios.",
+        tip_eve: "CHARLA",
+        fec_ini_eve: new Date("2025-07-18T09:00:00.000Z"),
+        fec_fin_eve: new Date("2025-07-18T13:00:00.000Z"),
+        dur_hor_eve: 4,
+        mod_eve: "SEMIPRESENCIAL",
+        val_eve: 20.0,
+        est_eve: "ACTIVO",
+        img_por_eve: "https://i.imgur.com/nMKcG7Q.jpeg",
+        por_min_asi_eve: 55,
+        cup_max_eve: 60,
+        cup_dis_eve: 58,
+      },
+      {
+        id_eve: "e0d1c2b3-f4e5-4678-7901-234567890123",
+        nom_eve: "Internet de las Cosas (IoT)",
+        des_eve:
+          "Congreso sobre dispositivos conectados, sensores inteligentes y el futuro del IoT en la industria.",
+        tip_eve: "CONGRESO",
+        fec_ini_eve: new Date("2025-07-20T08:00:00.000Z"),
+        fec_fin_eve: new Date("2025-07-22T17:00:00.000Z"),
+        dur_hor_eve: 18,
+        mod_eve: "PRESENCIAL",
+        val_eve: 75.0,
+        est_eve: "ACTIVO",
+        img_por_eve: "https://i.imgur.com/07qfHfh.jpeg",
+        por_min_asi_eve: 65,
+        cup_max_eve: 120,
+        cup_dis_eve: 115,
+      },
+      {
+        id_eve: "f1e2d3c4-e5f6-4789-8012-345678901234",
+        nom_eve: "Programación Competitiva",
+        des_eve:
+          "Webinar sobre técnicas y estrategias para competencias de programación como ACM-ICPC y Codeforces.",
+        tip_eve: "WEBINAR",
+        fec_ini_eve: new Date("2025-07-25T16:00:00.000Z"),
+        fec_fin_eve: new Date("2025-07-25T19:00:00.000Z"),
+        dur_hor_eve: 3,
+        mod_eve: "VIRTUAL",
+        val_eve: 15.0,
+        est_eve: "ACTIVO",
+        img_por_eve: "https://i.imgur.com/eewuw7g.jpeg",
+        por_min_asi_eve: 85,
+        cup_max_eve: 50,
+        cup_dis_eve: 45,
+      },
+      {
+        id_eve: "a2f3e4d5-f6e7-4890-9123-456789012345",
+        nom_eve: "Realidad Virtual y Aumentada",
+        des_eve:
+          "Curso sobre desarrollo de aplicaciones de VR/AR utilizando Unity y herramientas especializadas.",
+        tip_eve: "CURSO",
+        fec_ini_eve: new Date("2025-07-28T09:00:00.000Z"),
+        fec_fin_eve: new Date("2025-08-04T17:00:00.000Z"),
+        dur_hor_eve: 32,
+        mod_eve: "PRESENCIAL",
+        val_eve: 180.0,
+        est_eve: "ACTIVO",
+        img_por_eve: "https://i.imgur.com/APQXht7.png",
+        por_min_asi_eve: 80,
+        cup_max_eve: 15,
+        cup_dis_eve: 12,
+      },
+      {
+        id_eve: "b3a4f5e6-e7f8-4901-0234-567890123456",
+        nom_eve: "Hackathon Universitario 2025",
+        des_eve:
+          "Competencia de programación de 48 horas donde equipos desarrollan soluciones innovadoras a problemas reales.",
+        tip_eve: "SOCIALIZACION",
+        fec_ini_eve: new Date("2025-08-01T18:00:00.000Z"),
+        fec_fin_eve: new Date("2025-08-03T18:00:00.000Z"),
+        dur_hor_eve: 48,
+        mod_eve: "PRESENCIAL",
+        val_eve: 25.0,
+        est_eve: "ACTIVO",
+        img_por_eve: "https://i.imgur.com/sTyFrJw.jpeg",
+        por_min_asi_eve: 90,
+        cup_max_eve: 100,
+        cup_dis_eve: 88,
+      },
     ];
 
     await Promise.all(
@@ -733,6 +955,10 @@ async function main() {
       { id_eve: "fdcf18eb-91e9-44e7-9e2e-cea89d6280f2", not_min_cur: 8.0 }, // Introducción a la Programación en C++
       { id_eve: "4f44a39f-4891-42a4-995b-191fddfa6fc3", not_min_cur: 8.0 }, // Desarrollo de Aplicaciones con .NET 9
       { id_eve: "cc55aacd-c38f-4c27-8ec1-76edc8d42427", not_min_cur: 8.0 }, // Programación en Java desde Cero (segundo)
+      { id_eve: "b1a2c3d4-e5f6-4789-8012-345678901234", not_min_cur: 8.0 }, // Machine Learning con Python
+      { id_eve: "f5e6d7c8-e9f0-4123-2456-789012345678", not_min_cur: 8.0 }, // Desarrollo de Videojuegos con Unity
+      { id_eve: "c8b9a0f1-f2e3-4456-5789-012345678901", not_min_cur: 8.0 }, // Cloud Computing con AWS
+      { id_eve: "a2f3e4d5-f6e7-4890-9123-456789012345", not_min_cur: 8.0 }, // Realidad Virtual y Aumentada
     ];
 
     await Promise.all(

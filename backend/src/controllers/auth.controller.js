@@ -1,6 +1,6 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const prisma = require("../config/db");
+const { prisma } = require("../config/db");
 const TokenService = require("../services/TokenService");
 const EmailTemplateService = require("../services/EmailTemplateService");
 const EmailVerificationService = require("../services/EmailVerificationService");

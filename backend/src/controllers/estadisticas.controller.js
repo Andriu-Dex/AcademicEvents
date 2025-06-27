@@ -1,4 +1,5 @@
-const prisma = require("../config/db");
+// Importamos la instancia de Prisma desde el archivo de configuración de la base de datos
+const { prisma } = require("../config/db");
 
 /**
  * Controlador para manejar estadísticas de la aplicación

@@ -3,8 +3,7 @@
  * Estos métodos se agregarán al controlador de eventos existente
  */
 
-const { PrismaClient } = require("../generated/prisma");
-const prisma = new PrismaClient();
+const { prisma } = require("../config/db");
 
 const {
   extractPaginationParams,

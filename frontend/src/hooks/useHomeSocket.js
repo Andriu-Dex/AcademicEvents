@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useSocket } from "../context/SocketContext";
 
 /**
@@ -37,9 +37,24 @@ export const useHomeSocket = (options = {}) => {
 
   // Estado local para manejar las actualizaciones
   const [hasNewUpdates, setHasNewUpdates] = useState(false);
-  const [lastUpdateTime, setLastUpdateTime] = useState(null); // Manejar actualizaciones de eventos
+  const [lastUpdateTime, setLastUpdateTime] = useState(null);
+
+  // Referencias para evitar bucles infinitos y procesar eventos una sola vez
+  const processedEventIds = useRef(new Set());
+  const processedInscriptionIds = useRef(new Set());
+  const processedCuposIds = useRef(new Set());
+  const processedCarreraIds = useRef(new Set());
+  const processedNotificationIds = useRef(new Set()); // Manejar actualizaciones de eventos
   useEffect(() => {
     if (eventUpdates && eventUpdates.id && eventUpdates.data) {
+      // Verificar si ya procesamos este evento
+      if (processedEventIds.current.has(eventUpdates.id)) {
+        return; // Ya procesado
+      }
+
+      // Marcar como procesado
+      processedEventIds.current.add(eventUpdates.id);
+
       setHasNewUpdates(true);
       setLastUpdateTime(new Date());
 
@@ -52,12 +67,12 @@ export const useHomeSocket = (options = {}) => {
       if (autoRefresh) {
         const timer = setTimeout(() => {
           clearEventUpdates();
-        }, 100); // Limpiar rápidamente para permitir nuevas actualizaciones
+        }, 100);
 
         return () => clearTimeout(timer);
       }
     }
-  }, [eventUpdates, onEventUpdate, autoRefresh, clearEventUpdates]);
+  }, [eventUpdates]); // Solo eventUpdates como dependencia
   // Manejar actualizaciones de inscripciones
   useEffect(() => {
     if (
@@ -65,6 +80,14 @@ export const useHomeSocket = (options = {}) => {
       inscriptionUpdates.id &&
       inscriptionUpdates.data
     ) {
+      // Verificar si ya procesamos este evento
+      if (processedInscriptionIds.current.has(inscriptionUpdates.id)) {
+        return; // Ya procesado
+      }
+
+      // Marcar como procesado
+      processedInscriptionIds.current.add(inscriptionUpdates.id);
+
       setHasNewUpdates(true);
       setLastUpdateTime(new Date());
 
@@ -82,15 +105,18 @@ export const useHomeSocket = (options = {}) => {
         return () => clearTimeout(timer);
       }
     }
-  }, [
-    inscriptionUpdates,
-    onInscriptionUpdate,
-    autoRefresh,
-    clearInscriptionUpdates,
-  ]);
+  }, [inscriptionUpdates]); // Solo inscriptionUpdates como dependencia
   // Manejar actualizaciones de cupos
   useEffect(() => {
     if (cuposUpdates && cuposUpdates.id && cuposUpdates.eventoId) {
+      // Verificar si ya procesamos este evento
+      if (processedCuposIds.current.has(cuposUpdates.id)) {
+        return; // Ya procesado
+      }
+
+      // Marcar como procesado
+      processedCuposIds.current.add(cuposUpdates.id);
+
       setHasNewUpdates(true);
       setLastUpdateTime(new Date());
 
@@ -108,11 +134,19 @@ export const useHomeSocket = (options = {}) => {
         return () => clearTimeout(timer);
       }
     }
-  }, [cuposUpdates, onCuposUpdate, autoRefresh, clearCuposUpdates]);
+  }, [cuposUpdates]); // Solo cuposUpdates como dependencia
 
   // Manejar actualizaciones de carreras
   useEffect(() => {
-    if (carreraUpdates && carreraUpdates.data) {
+    if (carreraUpdates && carreraUpdates.data && carreraUpdates.id) {
+      // Verificar si ya procesamos este evento usando su ID único
+      if (processedCarreraIds.current.has(carreraUpdates.id)) {
+        return; // Ya procesado, no hacer nada
+      }
+
+      // Marcar como procesado
+      processedCarreraIds.current.add(carreraUpdates.id);
+
       console.log(
         "🏠 useHomeSocket: Procesando actualización de carrera:",
         carreraUpdates
@@ -125,7 +159,7 @@ export const useHomeSocket = (options = {}) => {
         onCarreraUpdate(carreraUpdates);
       }
 
-      // Auto-limpiar después de un tiempo
+      // Limpiar después de un tiempo
       if (autoRefresh) {
         const timer = setTimeout(() => {
           clearCarreraUpdates();
@@ -134,7 +168,7 @@ export const useHomeSocket = (options = {}) => {
         return () => clearTimeout(timer);
       }
     }
-  }, [carreraUpdates, onCarreraUpdate, autoRefresh, clearCarreraUpdates]);
+  }, [carreraUpdates]); // Solo carreraUpdates como dependencia
 
   // Manejar notificaciones del sistema
   useEffect(() => {

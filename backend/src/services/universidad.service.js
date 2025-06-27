@@ -1,5 +1,4 @@
-const { PrismaClient } = require("../generated/prisma");
-const prisma = new PrismaClient();
+const { prisma } = require("../config/db");
 const config = require("../config/emailConfig");
 
 /**

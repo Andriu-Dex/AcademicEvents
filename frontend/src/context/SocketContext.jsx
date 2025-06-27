@@ -100,6 +100,16 @@ export const SocketProvider = ({ children }) => {
     });
 
     // ======================================
+    // Limpiar listeners previos para evitar duplicados
+    // ======================================
+    newSocket.off("evento-change-hm");
+    newSocket.off("inscription-change-hm");
+    newSocket.off("cupos-change-hm");
+    newSocket.off("carrera-change-hm");
+    newSocket.off("system-notification-hm");
+    newSocket.off("user-inscription-update");
+
+    // ======================================
     // Eventos específicos para el Home
     // ======================================    // Cambios en eventos
     newSocket.on("evento-change-hm", (data) => {
@@ -235,6 +245,18 @@ export const SocketProvider = ({ children }) => {
       if (import.meta.env.DEV) {
         console.log("🔌 Desconectando Socket.IO (dev mode)");
       }
+
+      // Remover todos los listeners específicos antes de desconectar
+      newSocket.off("connect");
+      newSocket.off("disconnect");
+      newSocket.off("connect_error");
+      newSocket.off("evento-change-hm");
+      newSocket.off("inscription-change-hm");
+      newSocket.off("cupos-change-hm");
+      newSocket.off("carrera-change-hm");
+      newSocket.off("system-notification-hm");
+      newSocket.off("user-inscription-update");
+
       newSocket.disconnect();
     };
   }, []);

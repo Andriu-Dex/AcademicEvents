@@ -1,0 +1,104 @@
+# ============================
+# DEPENDENCIAS Y CACHE
+# ============================
+# Excluir node_modules ya que se instalan dentro del contenedor
+node_modules
+# Logs de npm para debugging local
+npm-debug.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+# Cache de npm y yarn
+.npm
+.yarn
+
+# ============================
+# VARIABLES DE ENTORNO
+# ============================
+# Archivos de configuración sensible (se pasan via docker-compose)
+.env
+.env.*
+.env.local
+.env.development
+.env.development.local
+.env.test
+.env.test.local
+.env.production
+.env.production.local
+
+# ============================
+# CONTROL DE VERSIONES
+# ============================
+# Carpeta de Git y archivos relacionados
+.git
+.gitignore
+.gitattributes
+
+# ============================
+# DOCUMENTACIÓN Y METADATOS
+# ============================
+# Archivos de documentación (no necesarios en producción)
+README.md
+*.md
+LICENSE
+CHANGELOG.md
+
+# ============================
+# ARCHIVOS DE SISTEMA
+# ============================
+# Archivos de sistema macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+# Archivos de sistema Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ============================
+# HERRAMIENTAS DE DESARROLLO
+# ============================
+# Configuración de editores
+.vscode
+.idea
+*.swp
+*.swo
+*~
+# Configuración de ESLint, Prettier, etc.
+.eslintrc*
+.prettierrc*
+# Configuración de testing
+.nyc_output
+coverage
+test
+tests
+__tests__
+
+# ============================
+# ARCHIVOS TEMPORALES Y LOGS
+# ============================
+# Logs de la aplicación
+logs
+*.log
+# Archivos temporales
+temp
+tmp
+
+# ============================
+# UPLOADS Y ASSETS
+# ============================
+# Uploads de usuarios (se montan como volumen)
+uploads/*
+# Mantener estructura de carpetas pero excluir contenido
+!uploads/.gitkeep
+# Assets se incluyen porque son necesarios para la aplicación
+
+# ============================
+# PRISMA
+# ============================
+# Base de datos local de desarrollo
+prisma/dev.db
+prisma/dev.db-journal
+# Migraciones se incluyen para aplicarlas en el contenedor

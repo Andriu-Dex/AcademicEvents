@@ -346,7 +346,7 @@ const generarHTMLCertificado = (datos) => {
             font-size: 20px;
             line-height: 1.6;
             color: #02316a;
-            width: 800px;
+            width: 900px;
             margin: 0 auto;
             text-align: center;
             font-weight: 400;
@@ -427,7 +427,7 @@ const generarHTMLCertificado = (datos) => {
 };
 
 // ============================
-// Generar el certificado PDF con Puppeteer
+// Generar el certificado PDF con Puppeteer - CONFIGURACIÓN MEJORADA
 // ============================
 const generarCertificadoPDF = async (datos) => {
   let browser;
@@ -440,11 +440,45 @@ const generarCertificadoPDF = async (datos) => {
     const tipoCertificado = determinarTipoCertificado(datos.evento);
     const dimensiones = DIMENSIONES_CERTIFICADOS[tipoCertificado];
 
-    // Lanzar Puppeteer
-    browser = await puppeteer.launch({
-      headless: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    // Configuración robusta para Docker
+    const isDocker =
+      process.env.NODE_ENV === "production" ||
+      process.env.PUPPETEER_EXECUTABLE_PATH;
+
+    const browserConfig = {
+      headless: "new", // Usar el nuevo modo headless
+      args: [
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-dev-shm-usage",
+        "--disable-accelerated-2d-canvas",
+        "--no-first-run",
+        "--no-zygote",
+        "--disable-gpu",
+        "--disable-web-security",
+        "--disable-features=VizDisplayCompositor",
+        "--run-all-compositor-stages-before-draw",
+        "--disable-background-timer-throttling",
+        "--disable-renderer-backgrounding",
+        "--disable-backgrounding-occluded-windows",
+        "--disable-ipc-flooding-protection",
+      ],
+    };
+
+    // Solo agregar executablePath si estamos en Docker
+    if (isDocker) {
+      browserConfig.executablePath =
+        process.env.PUPPETEER_EXECUTABLE_PATH || "/usr/bin/chromium-browser";
+    }
+
+    console.log("🔧 Configuración de Puppeteer:", {
+      isDocker,
+      executablePath: browserConfig.executablePath || "default",
+      headless: browserConfig.headless,
     });
+
+    // Lanzar Puppeteer con configuración mejorada
+    browser = await puppeteer.launch(browserConfig);
 
     const page = await browser.newPage();
 
@@ -452,36 +486,75 @@ const generarCertificadoPDF = async (datos) => {
     await page.setViewport({
       width: dimensiones.ancho,
       height: dimensiones.alto,
+      deviceScaleFactor: 1,
     });
 
-    // Cargar el HTML
+    // Configurar timeouts más largos
+    page.setDefaultNavigationTimeout(30000);
+    page.setDefaultTimeout(30000);
+
+    // Cargar el HTML con configuración mejorada
     await page.setContent(htmlContent, {
-      waitUntil: "networkidle0",
+      waitUntil: ["networkidle0", "domcontentloaded"],
+      timeout: 30000,
     });
+
+    // Esperar a que las fuentes y imágenes carguen
+    await page
+      .waitForFunction(
+        () => {
+          return document.fonts.ready;
+        },
+        { timeout: 10000 }
+      )
+      .catch(() => {
+        console.log("⚠️ Timeout esperando fuentes, continuando...");
+      });
 
     // Esperar un poco más para que la imagen de fondo cargue completamente
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+
+    console.log("📄 Generando PDF...");
 
     // Generar PDF con las dimensiones exactas
     const pdfBuffer = await page.pdf({
       width: `${dimensiones.ancho}px`,
       height: `${dimensiones.alto}px`,
       printBackground: true,
+      preferCSSPageSize: true,
       margin: {
         top: "0px",
         right: "0px",
         bottom: "0px",
         left: "0px",
       },
+      timeout: 30000,
     });
 
+    console.log("✅ PDF generado correctamente");
     return pdfBuffer;
   } catch (error) {
-    console.error("Error generando certificado PDF:", error);
+    console.error("❌ Error generando certificado PDF:", error);
+
+    // Log adicional para debugging
+    if (error.message.includes("Target closed")) {
+      console.error(
+        "🔍 Error específico: El navegador se cerró inesperadamente"
+      );
+      console.error(
+        "🛠️ Sugerencia: Verificar configuración de Chromium en Docker"
+      );
+    }
+
     throw error;
   } finally {
     if (browser) {
-      await browser.close();
+      try {
+        await browser.close();
+        console.log("🔒 Navegador cerrado correctamente");
+      } catch (closeError) {
+        console.error("⚠️ Error cerrando navegador:", closeError);
+      }
     }
   }
 };
@@ -525,3 +598,4 @@ module.exports = {
   generarCodigoValidacion,
   generarHTMLCertificado, // Exportamos también el HTML por si lo necesitas
 };
+// Andriu Dex

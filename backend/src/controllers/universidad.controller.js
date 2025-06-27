@@ -1,5 +1,4 @@
-const { PrismaClient } = require("../generated/prisma");
-const prisma = new PrismaClient();
+const { prisma } = require("../config/db");
 
 /**
  * Obtiene los datos de la universidad principal

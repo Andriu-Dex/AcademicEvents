@@ -1,4 +1,4 @@
-const prisma = require("../../config/db");
+const { prisma } = require("../../config/db");
 
 /**
  * Middleware para verificar si la cuenta de un usuario está activada

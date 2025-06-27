@@ -1,5 +1,5 @@
 const { randomBytes } = require("crypto");
-const prisma = require("../config/db");
+const { prisma } = require("../config/db");
 
 /**
  * @class TokenService

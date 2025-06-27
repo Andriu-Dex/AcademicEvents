@@ -17,7 +17,7 @@ import {
 import EventoService from "../../services/EventoService";
 import GestorEventosDestacados from "../../models/GestorEventosDestacados";
 import GestorModales from "../../models/GestorModales";
-import { useHomeSocket } from "../../hooks/useHomeSocket";
+import EventoDestacado from "../../models/EventoDestacado";
 import ModalRequisitos from "../ModalRequisitos";
 import "./styles/EventosDestacados.css";
 import "./styles/ModalEventosDestacados.css";
@@ -25,8 +25,9 @@ import "./styles/ModalEventosDestacados.css";
 /**
  * @component EventosDestacados
  * @description Componente que muestra los eventos destacados en el Home
+ * @param {Object} eventUpdate - Actualización de evento desde socket
  */
-const EventosDestacados = () => {
+const EventosDestacados = ({ eventUpdate }) => {
   // Estados del componente
   const [eventosDestacados, setEventosDestacados] = useState([]);
   const [cargando, setCargando] = useState(true);
@@ -42,33 +43,6 @@ const EventosDestacados = () => {
     new GestorEventosDestacados(EventoService)
   ).current;
   const gestorModales = useRef(new GestorModales(setModalEvento)).current;
-  // Callbacks para evitar re-renderizados
-  const handleEventUpdate = useCallback(
-    (updateData) => {
-      // Validar que los datos estén completos
-      if (!updateData || !updateData.data || !updateData.action) {
-        console.warn(
-          "EventosDestacados: Datos de actualización inválidos",
-          updateData
-        );
-        return;
-      }
-
-      if (
-        updateData.action === "updated" &&
-        updateData.data.tipo === "destacado"
-      ) {
-        console.log("Actualizando evento destacado:", updateData.data);
-        gestorEventos.actualizarEventoDestacado(updateData.data);
-      }
-    },
-    [gestorEventos]
-  );
-
-  // Hook para sockets con callback estable
-  const { eventUpdates } = useHomeSocket({
-    onEventUpdate: handleEventUpdate,
-  });
 
   // Cálculos memorizados para rendimiento
   const shouldUseCarousel = useMemo(
@@ -151,6 +125,43 @@ const EventosDestacados = () => {
     });
   }, []);
 
+  // Efecto para manejar actualizaciones de eventos destacados desde socket
+  useEffect(() => {
+    if (
+      eventUpdate &&
+      eventUpdate.data &&
+      eventUpdate.data.tipo === "destacado"
+    ) {
+      console.log(
+        "🔄 EventosDestacados: Recibida actualización de evento destacado:",
+        eventUpdate
+      );
+
+      const { evento, esDestacado } = eventUpdate.data;
+
+      if (esDestacado) {
+        // Evento marcado como destacado - agregar si no existe
+        setEventosDestacados((prev) => {
+          const exists = prev.find((e) => e.id === evento.id_eve);
+          if (!exists) {
+            console.log("➕ Agregando evento destacado:", evento.nom_eve);
+            // Transformar el evento usando la clase EventoDestacado
+            const eventoTransformado = new EventoDestacado(evento);
+            return [...prev, eventoTransformado];
+          }
+          return prev;
+        });
+      } else {
+        // Evento desmarcado como destacado - remover
+        setEventosDestacados((prev) => {
+          const filtered = prev.filter((e) => e.id !== evento.id_eve);
+          console.log("➖ Removiendo evento destacado:", evento.nom_eve);
+          return filtered;
+        });
+      }
+    }
+  }, [eventUpdate]);
+
   // Efecto separado para el carrusel automático
   useEffect(() => {
     let carouselInterval;
@@ -169,20 +180,6 @@ const EventosDestacados = () => {
       }
     };
   }, [isHovering, shouldUseCarousel, nextSlide, eventosDestacados.length]);
-
-  // Actualizar eventos cuando hay cambios desde el socket
-  useEffect(() => {
-    if (
-      eventUpdates &&
-      eventUpdates.action === "updated" &&
-      eventUpdates.data.tipo === "destacado"
-    ) {
-      console.log(
-        "🔄 EventoDestacado: Procesando actualización de socket:",
-        eventUpdates.data
-      );
-    }
-  }, [eventUpdates]);
 
   // Efecto para reiniciar posición del carrusel cuando cambian los eventos destacados
   useEffect(() => {
@@ -345,26 +342,28 @@ const EventosDestacados = () => {
 
                     <div className="evento-duracion-ed">
                       <Clock size={16} className="evento-icon-ed" />
-                      <span>{evento.duracionHoras} horas</span>
+                      <span>{evento.duracionHoras || 0} horas</span>
                     </div>
 
                     <div className="evento-modalidad-ed">
                       {getModalidadIcon(evento.modalidad)}
-                      <span>{evento.modalidad.toLowerCase()}</span>
+                      <span>
+                        {evento.modalidad?.toLowerCase() || "Sin modalidad"}
+                      </span>
                     </div>
                   </div>
 
                   <div className="evento-footer-ed">
                     <span
                       className={`evento-valor-ed ${
-                        evento.valor === 0
+                        (evento.valor || 0) === 0
                           ? "evento-gratuito-ed"
                           : "evento-pago-ed"
                       }`}
                     >
-                      {evento.valor === 0
+                      {(evento.valor || 0) === 0
                         ? "Gratuito"
-                        : `$${evento.valor.toFixed(2)}`}
+                        : `$${(evento.valor || 0).toFixed(2)}`}
                     </span>
 
                     <button

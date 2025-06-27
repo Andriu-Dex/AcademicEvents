@@ -1,4 +1,4 @@
-const prisma = require("../config/db");
+const { prisma } = require("../config/db");
 const jwt = require("jsonwebtoken");
 
 /**
@@ -27,11 +27,8 @@ class EmailVerificationService {
       });
 
       // Generar URL para el frontend
-      const urlVerificacion = `${
-        process.env.HOST === "localhost" ? "http" : "https"
-      }://${process.env.HOST}${
-        process.env.HOST === "localhost" ? ":5173" : ""
-      }/verificar-correo/${token.tok_val}`;
+      const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+      const urlVerificacion = `${frontendUrl}/verificar-correo/${token.tok_val}`;
 
       // Obtener plantilla de correo
       const { asunto, cuerpoHtml } =

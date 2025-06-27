@@ -1,4 +1,4 @@
-const prisma = require("../config/db");
+const { prisma } = require("../config/db");
 const { subirImagenAImgur } = require("../utils/imgur.utils");
 const fs = require("fs");
 

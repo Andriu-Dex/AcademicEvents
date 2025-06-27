@@ -2,7 +2,7 @@
  * Script para verificar la corrección de los cupos disponibles
  * Ejecutar con: node src/scripts/verificar_cupos.js
  */
-const prisma = require("../config/db");
+const { prisma } = require("../config/db");
 
 async function verificarCupos() {
   console.log("📊 Verificando cupos disponibles en todos los eventos...");

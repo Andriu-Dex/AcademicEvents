@@ -2,7 +2,7 @@
  * Script para actualizar el campo cup_ocu en todas las inscripciones existentes
  * Ejecutar con: node src/scripts/actualizar_cup_ocu.js
  */
-const prisma = require("../config/db");
+const { prisma } = require("../config/db");
 
 async function actualizarOcupaCupo() {
   console.log(
