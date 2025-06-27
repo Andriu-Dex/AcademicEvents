@@ -100,6 +100,7 @@ function Home() {
     inscriptions: 0,
     cupos: 0,
   });
+  const [eventosDestacadosUpdate, setEventosDestacadosUpdate] = useState(null);
 
   // Hook personalizado para manejar actualizaciones del Home
   const {
@@ -115,9 +116,9 @@ function Home() {
         events: prev.events + 1,
       }));
 
-      // No mostrar notificación para cambios de eventos destacados
-      // ya que se maneja con toast en AdminEvents
+      // Manejar específicamente cambios de eventos destacados
       if (eventUpdate.data && eventUpdate.data.tipo === "destacado") {
+        setEventosDestacadosUpdate(eventUpdate);
         return;
       }
 
@@ -821,7 +822,7 @@ function Home() {
       </div>
 
       {/* Eventos Destacados */}
-      <EventosDestacados />
+      <EventosDestacados eventUpdate={eventosDestacadosUpdate} />
 
       {/* Autoridades - Carrusel */}
       <section className="autoridades-section-h" id="autoridades">
