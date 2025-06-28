@@ -13,7 +13,6 @@
 # Ignora archivos que contienen variables de entorno sensibles como claves API, URIs de bases de datos, etc.
 # Incluye tanto el archivo base como posibles variantes como .env.local, .env.development, etc.
 .env
-.env.*
 
 ##################################
 # Ignorar carpetas de construcción
