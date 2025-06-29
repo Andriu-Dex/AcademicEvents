@@ -11,7 +11,6 @@ const { scheduledCleanup } = require("./services/cleanupService");
 const { setupDirectories } = require("./utils/directory.utils");
 const socketService = require("./services/socket.service");
 const eventStatusService = require("./services/eventStatusService");
-
 // ============================
 //  Configuración inicial
 // ============================
@@ -59,7 +58,8 @@ app.use(
   })
 ); // Habilita CORS para todas las rutas
 app.use(express.json()); // Habilita el parseo de JSON en las peticiones
-
+//Coneccion ChatBot
+app.use("/api/ai", require("./routes/ai/chatbotRoutes"));
 // Servir archivos subidos (comprobantes, PDF, etc.)
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 

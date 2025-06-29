@@ -7,27 +7,32 @@ export default function AIChatbot() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
 
-  const sendMessage = async () => {
-    if (!input) return;
+const sendMessage = async () => {
+  if (!input.trim()) return;
 
-    const userMessage = { role: "user", content: input };
-    setMessages((prev) => [...prev, userMessage]);
-    setInput(""); // ✅ Limpiar inmediatamente después de agregar el mensaje del usuario
+  const userMessage = { role: "user", content: input };
+  setMessages((prev) => [...prev, userMessage]);
+  setInput(""); // limpiar campo de entrada
+  
+  try {
+    const response = await fetch(import.meta.env.VITE_API_URL + "/api/ai/chatbot", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ question: input }), // <-- ESTE CAMPO debe llamarse "question"
+    });
 
-    try {
-      const response = await fetch("/api/ai/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: input }),
-      });
+    const data = await response.json();
 
-      const data = await response.json();
-      const botMessage = { role: "assistant", content: data.response };
-      setMessages((prev) => [...prev, botMessage]);
-    } catch (error) {
-      console.error("Error al enviar el mensaje:", error);
-    }
-  };
+    const botMessage = { role: "assistant", content: data.answer }; // <-- RESPUESTA esperada del backend
+    setMessages((prev) => [...prev, botMessage]);
+  } catch (error) {
+    console.error("Error al enviar el mensaje:", error);
+    setMessages((prev) => [
+      ...prev,
+      { role: "assistant", content: "Ocurrió un error al procesar tu pregunta." },
+    ]);
+  }
+};
 
   return (
     <div className={`chatbot-container ${open ? "open" : ""}`}>

@@ -53,6 +53,9 @@ import StyleRefresher from "./components/StyleRefresher";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+//Chatbot
+import AIChatbot from "./components/ai/AIChatbot.jsx";
+
 function App() {
   // Usar el hook para sincronizar datos del usuario automáticamente
   useUserSync();
@@ -314,6 +317,8 @@ function App() {
             }
           />
         </Routes>
+        {/* Chatbot flotante, visible en todas las páginas */}
+        <AIChatbot />
 
         {/* Toast global para notificaciones */}
         <ToastContainer
