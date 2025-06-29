@@ -52,6 +52,10 @@ export default function AIChatbot() {
     }
   };
 
+  const clearMessages = () => {
+    setMessages([]);
+  };
+
   return (
     <div className={`chatbot-container ${open ? "open" : ""}`}>
       <button
@@ -78,6 +82,14 @@ export default function AIChatbot() {
               </div>
             ))}
           </div>
+          <button
+            className="chatbot-clear-icon"
+            onClick={clearMessages}
+            title="Limpiar chat"
+          >
+            🧹
+          </button>
+
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}

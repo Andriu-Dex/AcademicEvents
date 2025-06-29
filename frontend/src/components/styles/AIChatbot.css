@@ -118,7 +118,6 @@
   top: 4px;
   right: 8px;
   background: none;
-  background-color: white;
   border: none;
   font-size: 16px;
   cursor: pointer;
@@ -127,4 +126,40 @@
 
 .chatbot-close:hover {
   color: #d00;
+}
+
+.chatbot-controls {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+}
+
+.chatbot-clear {
+  background-color: #861F41;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background-color 0.2s ease;
+}
+
+.chatbot-clear:hover {
+  background-color: #a72852;
+}
+
+.chatbot-clear-icon {
+  position: absolute;
+  top: 4px;
+  right: 34px; /* justo al lado de la X */
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: #444;
+  cursor: pointer;
+}
+
+.chatbot-clear-icon:hover {
+  color: #861F41;
 }
