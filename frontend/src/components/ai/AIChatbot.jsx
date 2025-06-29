@@ -7,6 +7,7 @@ export default function AIChatbot() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (open && messages.length === 0) {
@@ -32,6 +33,7 @@ export default function AIChatbot() {
     };
     setMessages((prev) => [...prev, userMessage]);
     setInput(""); // limpiar campo de entrada
+    setLoading(true); // <-- INICIA LOADING
 
     try {
       const response = await fetch(
@@ -64,6 +66,7 @@ export default function AIChatbot() {
         },
       ]);
     }
+    setLoading(false); // <-- TERMINA LOADING
   };
 
   const clearMessages = () => {
@@ -107,6 +110,11 @@ export default function AIChatbot() {
                 <div className="timestamp">{msg.timestamp}</div>
               </div>
             ))}
+            {loading && (
+              <div className="msg assistant typing-indicator">
+                AcademicBot está escribiendo...
+              </div>
+            )}
           </div>
           <input
             value={input}
