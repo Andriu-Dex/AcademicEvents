@@ -36,8 +36,8 @@
 /* Caja del chat desplegable */
 .chatbot-box {
   background-color: #ffffff;
-  width: 320px;
-  max-height: 460px;
+  width: 400px;
+  max-height: 500px;
   border-radius: 14px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
   display: flex;
@@ -45,6 +45,7 @@
   padding: 12px;
   margin-left: 10px; /* Espacio al lado del robot */
   border: 1px solid #ccc;
+  position: relative;
 }
 
 /* Mensajes */
@@ -52,7 +53,7 @@
   flex-grow: 1;
   overflow-y: auto;
   margin-bottom: 10px;
-  padding-right: 5px;
+  padding-right: 20px;
 }
 
 .chatbot-messages .msg {
@@ -81,6 +82,7 @@
   border-radius: 8px;
   padding: 8px;
   width: 100%;
+  margin-top: 10px;
   margin-bottom: 6px;
   font-size: 14px;
   color: black;
@@ -113,53 +115,34 @@
   }
 }
 
-.chatbot-close {
+.chatbot-actions {
   position: absolute;
-  top: 4px;
-  right: 8px;
-  background: none;
+  top: 12.5px;
+  right: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 10;
+  margin-right: 30px;
+}
+
+.chatbot-close,
+.chatbot-clear-icon {
+  background: rgba(0, 0, 0, 0.15);
+  color: #fff;
   border: none;
-  font-size: 16px;
+  font-size: 14px;
+  padding: 2px 6px;
+  border-radius: 4px;
   cursor: pointer;
-  color: #444;
+  transition: background 0.2s;
 }
 
 .chatbot-close:hover {
-  color: #d00;
-}
-
-.chatbot-controls {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 8px;
-}
-
-.chatbot-clear {
-  background-color: #861F41;
-  color: white;
-  border: none;
-  padding: 6px 10px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 13px;
-  transition: background-color 0.2s ease;
-}
-
-.chatbot-clear:hover {
-  background-color: #a72852;
-}
-
-.chatbot-clear-icon {
-  position: absolute;
-  top: 4px;
-  right: 34px; /* justo al lado de la X */
-  background: none;
-  border: none;
-  font-size: 16px;
-  color: #444;
-  cursor: pointer;
+  background: #ff4d4d;
 }
 
 .chatbot-clear-icon:hover {
-  color: #861F41;
+  background: #ffcc00;
+  color: black;
 }

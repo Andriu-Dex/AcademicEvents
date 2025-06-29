@@ -68,13 +68,24 @@ export default function AIChatbot() {
 
       {open && (
         <div className="chatbot-box">
-          <button
-            className="chatbot-close"
-            onClick={() => setOpen(false)}
-            title="Cerrar chatbot"
-          >
-            ❌
-          </button>
+          <div className="chatbot-actions">
+            <button
+              className="chatbot-close"
+              onClick={() => setOpen(false)}
+              title="Cerrar chatbot"
+            >
+              ❌
+            </button>
+
+            <button
+              className="chatbot-clear-icon"
+              onClick={clearMessages}
+              title="Limpiar chat"
+            >
+              🧹
+            </button>
+          </div>
+
           <div className="chatbot-messages">
             {messages.map((msg, i) => (
               <div key={i} className={`msg ${msg.role}`}>
@@ -82,14 +93,6 @@ export default function AIChatbot() {
               </div>
             ))}
           </div>
-          <button
-            className="chatbot-clear-icon"
-            onClick={clearMessages}
-            title="Limpiar chat"
-          >
-            🧹
-          </button>
-
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
