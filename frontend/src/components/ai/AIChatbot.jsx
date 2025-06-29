@@ -22,7 +22,14 @@ export default function AIChatbot() {
   const sendMessage = async () => {
     if (!input.trim()) return;
 
-    const userMessage = { role: "user", content: input };
+    const userMessage = {
+      role: "user",
+      content: input,
+      timestamp: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+    };
     setMessages((prev) => [...prev, userMessage]);
     setInput(""); // limpiar campo de entrada
 
@@ -38,7 +45,14 @@ export default function AIChatbot() {
 
       const data = await response.json();
 
-      const botMessage = { role: "assistant", content: data.answer }; // <-- RESPUESTA esperada del backend
+      const botMessage = {
+        role: "assistant",
+        content: data.answer,
+        timestamp: new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+      };
       setMessages((prev) => [...prev, botMessage]);
     } catch (error) {
       console.error("Error al enviar el mensaje:", error);
@@ -89,7 +103,8 @@ export default function AIChatbot() {
           <div className="chatbot-messages">
             {messages.map((msg, i) => (
               <div key={i} className={`msg ${msg.role}`}>
-                {msg.content}
+                <div>{msg.content}</div>
+                <div className="timestamp">{msg.timestamp}</div>
               </div>
             ))}
           </div>
