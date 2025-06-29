@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import "../styles/AIChatbot.css";
 import robotIcon from "../../assets/robot-bot.png";
 import { useEffect } from "react";
+import { useRef } from "react";
 
 export default function AIChatbot() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const endRef = useRef(null);
 
   useEffect(() => {
     if (open && messages.length === 0) {
@@ -17,6 +19,9 @@ export default function AIChatbot() {
           "¡Hola! Soy AcademicBot. ¿En qué puedo ayudarte hoy con los eventos académicos?",
       };
       setMessages([welcome]);
+    }
+    if (endRef.current) {
+      endRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [open, messages.length]);
 
@@ -115,6 +120,7 @@ export default function AIChatbot() {
                 AcademicBot está escribiendo...
               </div>
             )}
+            <div ref={endRef} />
           </div>
           <input
             value={input}
