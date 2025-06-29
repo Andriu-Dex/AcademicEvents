@@ -64,6 +64,13 @@ export default function AIChatbot() {
 
       {open && (
         <div className="chatbot-box">
+          <button
+            className="chatbot-close"
+            onClick={() => setOpen(false)}
+            title="Cerrar chatbot"
+          >
+            ❌
+          </button>
           <div className="chatbot-messages">
             {messages.map((msg, i) => (
               <div key={i} className={`msg ${msg.role}`}>

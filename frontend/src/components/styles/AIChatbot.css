@@ -112,3 +112,19 @@
     transform: translateY(0);
   }
 }
+
+.chatbot-close {
+  position: absolute;
+  top: 4px;
+  right: 8px;
+  background: none;
+  background-color: white;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  color: #444;
+}
+
+.chatbot-close:hover {
+  color: #d00;
+}
