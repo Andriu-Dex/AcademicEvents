@@ -1,11 +1,22 @@
 import React, { useState } from "react";
 import "../styles/AIChatbot.css";
 import robotIcon from "../../assets/robot-bot.png";
+import { useEffect } from "react";
 
 export default function AIChatbot() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
+
+useEffect(() => {
+  if (open && messages.length === 0) {
+    const welcome = {
+      role: "assistant",
+      content: "¡Hola! Soy AcademicBot. ¿En qué puedo ayudarte hoy con los eventos académicos?"
+    };
+    setMessages([welcome]);
+  }
+}, [open, messages.length]);
 
 const sendMessage = async () => {
   if (!input.trim()) return;
