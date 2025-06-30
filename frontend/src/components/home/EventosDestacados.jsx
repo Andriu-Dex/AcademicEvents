@@ -28,6 +28,9 @@ import "./styles/ModalEventosDestacados.css";
  * @param {Object} eventUpdate - Actualización de evento desde socket
  */
 const EventosDestacados = ({ eventUpdate }) => {
+  // Configuración para carrusel infinito (declarar primero)
+  const ELEMENTOS_VISIBLES = 3; // Elementos visibles simultáneamente
+
   // Estados del componente
   const [eventosDestacados, setEventosDestacados] = useState([]);
   const [cargando, setCargando] = useState(true);
@@ -36,6 +39,7 @@ const EventosDestacados = ({ eventUpdate }) => {
   const [isHovering, setIsHovering] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [modalEvento, setModalEvento] = useState(null);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   // Referencias para evitar re-creaciones
   const carouselRef = useRef(null);
@@ -64,9 +68,9 @@ const EventosDestacados = ({ eventUpdate }) => {
   const goToSlide = useCallback(
     (index) => {
       if (!shouldUseCarousel) return;
-      setCurrentSlide(index);
+      setCurrentSlide(index + ELEMENTOS_VISIBLES);
     },
-    [shouldUseCarousel]
+    [shouldUseCarousel, ELEMENTOS_VISIBLES]
   );
 
   // Manejador para abrir el modal de detalles
@@ -166,12 +170,13 @@ const EventosDestacados = ({ eventUpdate }) => {
   useEffect(() => {
     let carouselInterval;
 
-    if (shouldUseCarousel && eventosDestacados.length > 1) {
-      const intervalTime = isHovering ? 2000 : 5000;
-
-      carouselInterval = setInterval(() => {
-        nextSlide();
-      }, intervalTime);
+    if (shouldUseCarousel && eventosDestacados.length > 1 && isInitialized) {
+      // Carrusel siempre en movimiento, pero se detiene cuando hay hover
+      if (!isHovering) {
+        carouselInterval = setInterval(() => {
+          nextSlide();
+        }, 4000); // 4 segundos sin hover
+      }
     }
 
     return () => {
@@ -179,41 +184,77 @@ const EventosDestacados = ({ eventUpdate }) => {
         clearInterval(carouselInterval);
       }
     };
-  }, [isHovering, shouldUseCarousel, nextSlide, eventosDestacados.length]);
+  }, [
+    isHovering,
+    shouldUseCarousel,
+    nextSlide,
+    eventosDestacados.length,
+    isInitialized,
+  ]);
+
+  // Efecto para inicializar la posición del carrusel infinito
+  useEffect(() => {
+    if (!isInitialized && shouldUseCarousel && eventosDestacados.length > 0) {
+      setCurrentSlide(ELEMENTOS_VISIBLES);
+      setIsInitialized(true);
+    }
+  }, [
+    eventosDestacados.length,
+    shouldUseCarousel,
+    isInitialized,
+    ELEMENTOS_VISIBLES,
+  ]);
 
   // Efecto para reiniciar posición del carrusel cuando cambian los eventos destacados
   useEffect(() => {
-    if (eventosDestacados.length > 0) {
+    if (eventosDestacados.length > 0 && shouldUseCarousel) {
+      setCurrentSlide(ELEMENTOS_VISIBLES);
+      setIsInitialized(true);
+    } else if (eventosDestacados.length > 0) {
       setCurrentSlide(0);
     }
-  }, [eventosDestacados.length]);
+  }, [eventosDestacados.length, shouldUseCarousel, ELEMENTOS_VISIBLES]);
 
-  // Efecto para manejar el bucle infinito
+  // Efecto para manejar el bucle infinito suave
   useEffect(() => {
-    if (!shouldUseCarousel || eventosDestacados.length === 0) return;
+    if (!shouldUseCarousel || eventosDestacados.length === 0 || !isInitialized)
+      return;
 
-    if (currentSlide === eventosDestacados.length) {
+    // Reset suave al final del array
+    if (currentSlide >= eventosDestacados.length + ELEMENTOS_VISIBLES) {
       setTimeout(() => {
         setIsTransitioning(true);
-        setCurrentSlide(0);
-        setTimeout(() => setIsTransitioning(false), 50);
-      }, 500);
-    } else if (currentSlide < 0) {
-      setTimeout(() => {
-        setIsTransitioning(true);
-        setCurrentSlide(eventosDestacados.length - 1);
+        setCurrentSlide(ELEMENTOS_VISIBLES);
         setTimeout(() => setIsTransitioning(false), 50);
       }, 500);
     }
-  }, [currentSlide, eventosDestacados.length, shouldUseCarousel]);
+    // Reset suave al inicio del array
+    else if (currentSlide < 0) {
+      setTimeout(() => {
+        setIsTransitioning(true);
+        setCurrentSlide(eventosDestacados.length - 1 + ELEMENTOS_VISIBLES);
+        setTimeout(() => setIsTransitioning(false), 50);
+      }, 500);
+    }
+  }, [
+    currentSlide,
+    eventosDestacados.length,
+    shouldUseCarousel,
+    isInitialized,
+    ELEMENTOS_VISIBLES,
+  ]);
 
-  // Extender eventos para carrusel infinito (como valor memorizado)
+  // Extender eventos para carrusel infinito suave
   const extendedEventos = useMemo(
     () =>
-      shouldUseCarousel
-        ? [...eventosDestacados, ...eventosDestacados.slice(0, 3)]
+      shouldUseCarousel && eventosDestacados.length > 0
+        ? [
+            ...eventosDestacados.slice(-ELEMENTOS_VISIBLES), // Últimos elementos al inicio
+            ...eventosDestacados, // Array original
+            ...eventosDestacados.slice(0, ELEMENTOS_VISIBLES), // Primeros elementos al final
+          ]
         : eventosDestacados,
-    [eventosDestacados, shouldUseCarousel]
+    [eventosDestacados, shouldUseCarousel, ELEMENTOS_VISIBLES]
   );
 
   // Obtener ícono según modalidad
@@ -395,7 +436,8 @@ const EventosDestacados = ({ eventUpdate }) => {
             <button
               key={`indicator-${index}`}
               className={`carousel-indicator-ed ${
-                index === currentSlide % eventosDestacados.length
+                index ===
+                (currentSlide - ELEMENTOS_VISIBLES) % eventosDestacados.length
                   ? "active-ed"
                   : ""
               }`}
@@ -410,6 +452,7 @@ const EventosDestacados = ({ eventUpdate }) => {
           evento={modalEvento}
           onClose={() => gestorModales.cerrarModal()}
           overlayClassName="modal-requisitos-overlay-ed"
+          isFromEventosDestacados={true}
         />
       )}
     </section>
