@@ -389,15 +389,10 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
           `Evento actualizado exitosamente`
         );
 
-        // Registrar evento como editado recientemente usando HistoryEditEvents directamente
+        // Registrar evento como editado recientemente usando HistoryEditEvents
         try {
-          console.log("✅ [EventForm] Registrando evento editado:", eventId);
           const historialManager = HistoryEditEvents.getInstance();
-          const resultado = historialManager.registrarEventoEditado(eventId);
-          console.log(
-            "✅ [EventForm] Resultado del registro directo:",
-            resultado
-          );
+          historialManager.registrarEventoEditado(eventId);
         } catch (error) {
           console.error(
             "❌ [EventForm] Error al registrar evento editado:",

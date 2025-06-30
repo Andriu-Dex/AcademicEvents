@@ -452,6 +452,7 @@ const EventosDestacados = ({ eventUpdate }) => {
           evento={modalEvento}
           onClose={() => gestorModales.cerrarModal()}
           overlayClassName="modal-requisitos-overlay-ed"
+          isFromEventosDestacados={true}
         />
       )}
     </section>

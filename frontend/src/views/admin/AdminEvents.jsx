@@ -197,39 +197,11 @@ const AdminEvents = () => {
   const eventosConOrdenamientoHibrido = useMemo(() => {
     if (!eventosFiltrados || eventosFiltrados.length === 0) return [];
 
-    console.log("🔄 [AdminEvents] Aplicando ordenamiento híbrido:");
-    console.log(
-      "📊 [AdminEvents] Eventos originales:",
-      eventosFiltrados.length
-    );
-    console.log("📊 [AdminEvents] Criterio de ordenamiento:", ordenamiento);
-
-    const eventosOrdenados = historialManager.ordenarEventosConPaginacion(
+    return historialManager.ordenarEventosConPaginacion(
       eventosFiltrados,
       ordenamiento,
       currentPage
     );
-
-    console.log(
-      "📊 [AdminEvents] Eventos después del ordenamiento:",
-      eventosOrdenados.length
-    );
-
-    // Mostrar los primeros 3 eventos para debugging
-    if (eventosOrdenados.length > 0) {
-      console.log(
-        "📊 [AdminEvents] Primeros 3 eventos:",
-        eventosOrdenados.slice(0, 3).map((e) => ({
-          id: e.id_eve,
-          nombre: e.nom_eve,
-          editadoRecientemente: historialManager.esEventoEditadoRecientemente(
-            e.id_eve
-          ),
-        }))
-      );
-    }
-
-    return eventosOrdenados;
   }, [eventosFiltrados, ordenamiento, currentPage, historialManager]);
 
   // Cargar carreras para el filtro
@@ -422,12 +394,9 @@ const AdminEvents = () => {
   // Función para registrar evento editado (se llamará desde la página de edición)
   const registrarEventoEditado = useCallback(
     (eventoId) => {
-      console.log("📝 [AdminEvents] Registrando evento editado:", eventoId);
       const exito = historialManager.registrarEventoEditado(eventoId);
-      console.log("📝 [AdminEvents] Resultado del registro:", exito);
 
       if (exito) {
-        console.log("📝 [AdminEvents] Recargando eventos...");
         // Recargar eventos para mostrar el nuevo ordenamiento
         cargarEventosConFiltros();
       }
@@ -438,9 +407,6 @@ const AdminEvents = () => {
 
   // Exponer la función globalmente para que pueda ser llamada desde otras páginas
   useEffect(() => {
-    console.log(
-      "🌐 [AdminEvents] Registrando función global registrarEventoEditado"
-    );
     window.registrarEventoEditado = registrarEventoEditado;
 
     // Cleanup

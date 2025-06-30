@@ -51,8 +51,6 @@ class HistoryEditEvents {
    * @returns {boolean} - Éxito de la operación
    */
   registrarEventoEditado(eventoId) {
-    console.log("📝 [HistoryEditEvents] Registrando evento:", eventoId);
-
     try {
       // Limpiar historial antes de agregar nuevo
       const eliminados = this.limpiarHistorial();
@@ -63,31 +61,14 @@ class HistoryEditEvents {
 
       // Registrar nuevo evento
       const timestamp = Date.now();
-      const key = `${this.config.PREFIJO}${eventoId}`;
-      localStorage.setItem(key, timestamp);
-
-      console.log("💾 [HistoryEditEvents] Guardado en localStorage:", {
-        key,
-        timestamp,
-        fecha: new Date(timestamp).toLocaleString(),
-      });
+      localStorage.setItem(`${this.config.PREFIJO}${eventoId}`, timestamp);
 
       // Actualizar métricas
       this.actualizarMetricas();
 
-      // Verificar que se guardó correctamente
-      const verificacion = localStorage.getItem(key);
-      console.log("✅ [HistoryEditEvents] Verificación de guardado:", {
-        guardado: !!verificacion,
-        valor: verificacion,
-      });
-
       return true;
     } catch (error) {
-      console.error(
-        "❌ [HistoryEditEvents] Error al registrar evento editado:",
-        error
-      );
+      console.error("Error al registrar evento editado:", error);
       return false;
     }
   }
@@ -189,17 +170,6 @@ class HistoryEditEvents {
   ordenarEventosConHistorial(eventos, criterioOrden) {
     if (!Array.isArray(eventos)) return [];
 
-    console.log("🔄 [HistoryEditEvents] Iniciando ordenamiento híbrido");
-    console.log("📊 [HistoryEditEvents] Eventos a ordenar:", eventos.length);
-    console.log("📊 [HistoryEditEvents] Criterio:", criterioOrden);
-
-    // Verificar eventos editados en localStorage
-    const eventosEditados = this.obtenerEventosEditados();
-    console.log(
-      "📝 [HistoryEditEvents] Eventos editados en localStorage:",
-      eventosEditados
-    );
-
     return eventos.sort((a, b) => {
       // 1. Prioridad: eventos editados recientemente
       const timestampA = localStorage.getItem(
@@ -209,38 +179,15 @@ class HistoryEditEvents {
         `${this.config.PREFIJO}${b.id_eve}`
       );
 
-      console.log(
-        `🔍 [HistoryEditEvents] Comparando eventos ${a.id_eve} vs ${b.id_eve}:`,
-        {
-          timestampA: timestampA
-            ? new Date(parseInt(timestampA)).toLocaleString()
-            : "No editado",
-          timestampB: timestampB
-            ? new Date(parseInt(timestampB)).toLocaleString()
-            : "No editado",
-        }
-      );
-
       // Ambos editados: ordenar por timestamp (más reciente primero)
       if (timestampA && timestampB) {
         const diffTimestamp = parseInt(timestampB) - parseInt(timestampA);
-        if (diffTimestamp !== 0) {
-          console.log(
-            "✅ [HistoryEditEvents] Ambos editados, ordenando por timestamp"
-          );
-          return diffTimestamp;
-        }
+        if (diffTimestamp !== 0) return diffTimestamp;
       }
 
       // Solo uno editado: el editado va primero
-      if (timestampA && !timestampB) {
-        console.log("✅ [HistoryEditEvents] Solo A editado, va primero");
-        return -1;
-      }
-      if (!timestampA && timestampB) {
-        console.log("✅ [HistoryEditEvents] Solo B editado, va primero");
-        return 1;
-      }
+      if (timestampA && !timestampB) return -1;
+      if (!timestampA && timestampB) return 1;
 
       // 2. Ninguno editado o mismo timestamp: aplicar criterio normal
       return this.aplicarCriterioOrdenamiento(a, b, criterioOrden);
