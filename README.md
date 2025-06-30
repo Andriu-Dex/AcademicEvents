@@ -4,6 +4,20 @@
 
 ---
 
+## 🏷️ Badges
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node.js Version](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
+[![React Version](https://img.shields.io/badge/React-19.1-blue.svg)](https://reactjs.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-12%2B-blue.svg)](https://www.postgresql.org/)
+[![Status](https://img.shields.io/badge/Status-Complete-success.svg)](https://github.com/Andriu-Dex/AcademicEvents)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
+[![Contributions Welcome](https://img.shields.io/badge/Contributions-welcome-brightgreen.svg)](CONTRIBUTING.md)
+
+---
+
+![Image](https://i.imgur.com/u6stv4Y.png)
+
 ## Tabla de Contenidos
 
 1. [Introducción](#introducción)
@@ -17,10 +31,11 @@
 9. [API REST](#api-rest)
 10. [Despliegue](#despliegue)
 11. [Control de Versiones y Contribución](#control-de-versiones-y-contribución)
-12. [Equipo de Desarrollo](#equipo-de-desarrollo)
-13. [Conclusión](#conclusión)
-14. [Licencia](#licencia)
-15. [Agradecimientos](#agradecimientos)
+12. [Changelog](#changelog)
+13. [Equipo de Desarrollo](#equipo-de-desarrollo)
+14. [Conclusión](#conclusión)
+15. [Licencia](#licencia)
+16. [Agradecimientos](#agradecimientos)
 
 ---
 
@@ -96,6 +111,7 @@ npm install
 ### Configuración del entorno
 
 #### Backend
+
 Crea un archivo `.env` en la carpeta `backend/` basado en `.env.example`:
 
 ```env
@@ -118,6 +134,7 @@ EMAIL_PASS=tu_contraseña_de_aplicacion
 ```
 
 #### Frontend
+
 Crea un archivo `.env` en la carpeta `frontend/` basado en `Ejemplo.env.txt`:
 
 ```env
@@ -162,11 +179,13 @@ Accede a la aplicación desde:
 Para permitir acceso desde otros dispositivos en la red local:
 
 1. Obtén tu IP local:
+
    ```powershell
    ipconfig
    ```
 
 2. Edita los archivos `.env`:
+
    - **Frontend:** Cambia `VITE_HOST` y `VITE_API_URL` por tu IP local
    - **Backend:** Cambia `HOST` por tu IP local
 
@@ -177,33 +196,37 @@ Para permitir acceso desde otros dispositivos en la red local:
 ## API REST
 
 ### Eventos
-| Método | Ruta                    | Descripción                        | Autenticación |
-|--------|-------------------------|------------------------------------|---------------|
-| GET    | /api/eventos           | Obtener eventos paginados          | No            |
-| POST   | /api/eventos           | Crear nuevo evento                 | Sí (Admin)    |
-| PUT    | /api/eventos/:id       | Actualizar evento                  | Sí (Admin)    |
-| DELETE | /api/eventos/:id       | Eliminar evento                    | Sí (Admin)    |
-| GET    | /api/eventos/:id/stats | Obtener estadísticas del evento    | Sí            |
+
+| Método | Ruta                   | Descripción                     | Autenticación |
+| ------ | ---------------------- | ------------------------------- | ------------- |
+| GET    | /api/eventos           | Obtener eventos paginados       | No            |
+| POST   | /api/eventos           | Crear nuevo evento              | Sí (Admin)    |
+| PUT    | /api/eventos/:id       | Actualizar evento               | Sí (Admin)    |
+| DELETE | /api/eventos/:id       | Eliminar evento                 | Sí (Admin)    |
+| GET    | /api/eventos/:id/stats | Obtener estadísticas del evento | Sí            |
 
 ### Inscripciones
-| Método | Ruta                           | Descripción                     | Autenticación |
-|--------|--------------------------------|---------------------------------|---------------|
-| POST   | /api/inscripciones            | Inscribirse a un evento         | Sí            |
-| GET    | /api/inscripciones/mis        | Obtener mis inscripciones       | Sí            |
-| DELETE | /api/inscripciones/:id        | Cancelar inscripción            | Sí            |
+
+| Método | Ruta                   | Descripción               | Autenticación |
+| ------ | ---------------------- | ------------------------- | ------------- |
+| POST   | /api/inscripciones     | Inscribirse a un evento   | Sí            |
+| GET    | /api/inscripciones/mis | Obtener mis inscripciones | Sí            |
+| DELETE | /api/inscripciones/:id | Cancelar inscripción      | Sí            |
 
 ### Autenticación
-| Método | Ruta                | Descripción           | Autenticación |
-|--------|---------------------|-----------------------|---------------|
-| POST   | /api/auth/login     | Iniciar sesión        | No            |
-| POST   | /api/auth/register  | Registrar usuario     | No            |
-| POST   | /api/auth/refresh   | Refrescar token       | Sí            |
+
+| Método | Ruta               | Descripción       | Autenticación |
+| ------ | ------------------ | ----------------- | ------------- |
+| POST   | /api/auth/login    | Iniciar sesión    | No            |
+| POST   | /api/auth/register | Registrar usuario | No            |
+| POST   | /api/auth/refresh  | Refrescar token   | Sí            |
 
 ### Certificados
-| Método | Ruta                                  | Descripción                    | Autenticación |
-|--------|---------------------------------------|--------------------------------|---------------|
-| GET    | /api/certificados/:eventoId          | Descargar certificado          | Sí            |
-| POST   | /api/certificados/verificar          | Verificar certificado          | No            |
+
+| Método | Ruta                        | Descripción           | Autenticación |
+| ------ | --------------------------- | --------------------- | ------------- |
+| GET    | /api/certificados/:eventoId | Descargar certificado | Sí            |
+| POST   | /api/certificados/verificar | Verificar certificado | No            |
 
 ---
 
@@ -341,36 +364,65 @@ docker-compose exec backend npx prisma generate
 
 ---
 
+## Changelog
+
+Todas las versiones y cambios notables del proyecto están documentados en nuestro [CHANGELOG.md](CHANGELOG.md).
+
+### Versión Actual: v1.0.0 ✨
+
+#### ¿Qué hay de nuevo?
+
+- ✅ Sistema completo de autenticación y autorización
+- ✅ Gestión integral de eventos académicos
+- ✅ Generación automática de certificados PDF
+- ✅ Panel administrativo con estadísticas en tiempo real
+- ✅ Notificaciones push mediante WebSockets
+- ✅ Interfaz responsive y moderna
+
+#### Próximas versiones:
+
+- 🔮 **v1.1.0**: Soporte multiidioma
+
+Para ver el historial completo de cambios, consulta el [CHANGELOG.md](CHANGELOG.md).
+
+---
+
 ## Equipo de Desarrollo
 
 Este proyecto fue desarrollado por un equipo multidisciplinario de profesionales especializados en diferentes áreas del desarrollo de software:
 
-### 👨‍💻 **Erick Aguilar** - *Desarrollador Senior*
+### 👨‍💻 **Erick Aguilar** - _Desarrollador Senior_
+
 - 📧 **Email:** [eaguilar4722@uta.edu.ec](mailto:eaguilar4722@uta.edu.ec)
 - 📱 **Teléfono:** 0983297299
 - 🎯 **Especialización:** Liderazgo técnico y arquitectura de soluciones
 
-### 🔧 **Nixon Hurtado** - *Desarrollador Backend*
+### 🔧 **Nixon Hurtado** - _Desarrollador Backend_
+
 - 📧 **Email:** [nixon2000paul@gmail.com](mailto:nixon2000paul@gmail.com)
 - 📱 **Teléfono:** 0961798049
 - 🎯 **Especialización:** APIs REST, bases de datos y servicios del servidor
 
-### 🏗️ **Gabriel Llerena** - *Arquitecto de Software*
+### 🏗️ **Gabriel Llerena** - _Arquitecto de Software_
+
 - 📧 **Email:** [gabriel0llerena@gmail.com](mailto:gabriel0llerena@gmail.com)
 - 📱 **Teléfono:** 0987482734
 - 🎯 **Especialización:** Diseño de arquitectura y patrones de software
 
-### 🔍 **Maybelline Navarro** - *Analista QA*
+### 🔍 **Maybelline Navarro** - _Analista QA_
+
 - 📧 **Email:** [mnavarro1337@uta.edu.ec](mailto:mnavarro1337@uta.edu.ec)
 - 📱 **Teléfono:** 0998305361
 - 🎯 **Especialización:** Testing, control de calidad y aseguramiento de software
 
-### 🌐 **Steven Paredes** - *Desarrollador Full Stack*
+### 🌐 **Steven Paredes** - _Desarrollador Full Stack_
+
 - 📧 **Email:** [andriudex@gmail.com](mailto:andriudex@gmail.com)
 - 📱 **Teléfono:** 0969008396
 - 🎯 **Especialización:** Desarrollo frontend y backend, integración completa
 
-### 💻 **Carlos Ramas** - *Desarrollador Frontend*
+### 💻 **Carlos Ramas** - _Desarrollador Frontend_
+
 - 📧 **Email:** [cramos6303@uta.edu.ec](mailto:cramos6303@uta.edu.ec)
 - 📱 **Teléfono:** 0967977374
 - 🎯 **Especialización:** Interfaces de usuario, UX/UI y tecnologías del frontend
