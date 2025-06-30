@@ -3,6 +3,7 @@ import axiosInstance from "../../api/axiosConfig";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { formatUTCForLocalDisplay } from "../../utils/dateUtils";
+import HistoryEditEvents from "../../utils/HistoryEditEvents";
 import {
   Pencil,
   Eye,
@@ -32,6 +33,7 @@ import {
   Calendar,
   Hash,
   Percent,
+  Edit3,
 } from "lucide-react";
 import "./styles/AdminEvents.css";
 import "./styles/EventosDestacados.css";
@@ -136,6 +138,16 @@ const AdminEvents = () => {
   const [carreras, setCarreras] = useState([]);
   const navigate = useNavigate();
 
+  // Instanciar HistoryEditEvents (Singleton)
+  const historialManager = useMemo(
+    () =>
+      HistoryEditEvents.getInstance({
+        MAX_EVENTOS: 80, // Máximo eventos en historial
+        DIAS_EXPIRACION: 7, // Días de vida útil
+      }),
+    []
+  );
+
   // Estados para filtros
   const [filtros, setFiltros] = useState({
     busqueda: "",
@@ -157,8 +169,8 @@ const AdminEvents = () => {
 
   const [mostrarFiltros, setMostrarFiltros] = useState(false);
   const [ordenamiento, setOrdenamiento] = useState({
-    campo: "fec_ini_eve",
-    direccion: "asc",
+    campo: "fec_cre_eve", // Cambiar por defecto a fecha de creación
+    direccion: "desc", // Más recientes primero
   });
 
   // Hook de paginación
@@ -177,6 +189,48 @@ const AdminEvents = () => {
 
   // Fecha actual para calcular estados de eventos (useMemo para evitar recreación en cada render)
   const fechaActual = useMemo(() => new Date(), []);
+
+  // Limpiar historial al cargar componente
+  useEffect(() => {
+    historialManager.limpiarHistorial();
+  }, [historialManager]); // Aplicar ordenamiento híbrido con eventos editados recientemente
+  const eventosConOrdenamientoHibrido = useMemo(() => {
+    if (!eventosFiltrados || eventosFiltrados.length === 0) return [];
+
+    console.log("🔄 [AdminEvents] Aplicando ordenamiento híbrido:");
+    console.log(
+      "📊 [AdminEvents] Eventos originales:",
+      eventosFiltrados.length
+    );
+    console.log("📊 [AdminEvents] Criterio de ordenamiento:", ordenamiento);
+
+    const eventosOrdenados = historialManager.ordenarEventosConPaginacion(
+      eventosFiltrados,
+      ordenamiento,
+      currentPage
+    );
+
+    console.log(
+      "📊 [AdminEvents] Eventos después del ordenamiento:",
+      eventosOrdenados.length
+    );
+
+    // Mostrar los primeros 3 eventos para debugging
+    if (eventosOrdenados.length > 0) {
+      console.log(
+        "📊 [AdminEvents] Primeros 3 eventos:",
+        eventosOrdenados.slice(0, 3).map((e) => ({
+          id: e.id_eve,
+          nombre: e.nom_eve,
+          editadoRecientemente: historialManager.esEventoEditadoRecientemente(
+            e.id_eve
+          ),
+        }))
+      );
+    }
+
+    return eventosOrdenados;
+  }, [eventosFiltrados, ordenamiento, currentPage, historialManager]);
 
   // Cargar carreras para el filtro
   const cargarCarreras = useCallback(async () => {
@@ -228,7 +282,7 @@ const AdminEvents = () => {
     cargarEventosConFiltros();
   }, [filtros, ordenamiento, cargarEventosConFiltros]);
 
-  // Eliminar evento con confirmación y alertas
+  // Eliminar evento with confirmación y alertas
   const eliminarEvento = async (eventoId) => {
     if (!window.confirm("¿Estás seguro de que deseas eliminar este evento?"))
       return;
@@ -281,8 +335,8 @@ const AdminEvents = () => {
       eventosLlenos: false,
     });
     setOrdenamiento({
-      campo: "fec_ini_eve",
-      direccion: "asc",
+      campo: "fec_cre_eve", // Fecha de creación por defecto
+      direccion: "desc", // Más recientes primero
     });
   };
 
@@ -361,8 +415,39 @@ const AdminEvents = () => {
   };
 
   const handleEditEvent = (eventoId) => {
+    // Navegar a la página de edición
     navigate(`/admin/eventos/editar/${eventoId}`);
   };
+
+  // Función para registrar evento editado (se llamará desde la página de edición)
+  const registrarEventoEditado = useCallback(
+    (eventoId) => {
+      console.log("📝 [AdminEvents] Registrando evento editado:", eventoId);
+      const exito = historialManager.registrarEventoEditado(eventoId);
+      console.log("📝 [AdminEvents] Resultado del registro:", exito);
+
+      if (exito) {
+        console.log("📝 [AdminEvents] Recargando eventos...");
+        // Recargar eventos para mostrar el nuevo ordenamiento
+        cargarEventosConFiltros();
+      }
+      return exito;
+    },
+    [historialManager, cargarEventosConFiltros]
+  );
+
+  // Exponer la función globalmente para que pueda ser llamada desde otras páginas
+  useEffect(() => {
+    console.log(
+      "🌐 [AdminEvents] Registrando función global registrarEventoEditado"
+    );
+    window.registrarEventoEditado = registrarEventoEditado;
+
+    // Cleanup
+    return () => {
+      delete window.registrarEventoEditado;
+    };
+  }, [registrarEventoEditado]);
 
   return (
     <div className="admin-events-container">
@@ -648,6 +733,17 @@ const AdminEvents = () => {
             <div className="sorting-options">
               <button
                 className={`sort-btn ${
+                  ordenamiento.campo === "fec_cre_eve" ? "active" : ""
+                }`}
+                onClick={() => handleOrdenamientoChange("fec_cre_eve")}
+              >
+                <Calendar size={14} />
+                Fecha de Creación{" "}
+                {ordenamiento.campo === "fec_cre_eve" &&
+                  (ordenamiento.direccion === "asc" ? "↑" : "↓")}
+              </button>
+              <button
+                className={`sort-btn ${
                   ordenamiento.campo === "nom_eve" ? "active" : ""
                 }`}
                 onClick={() => handleOrdenamientoChange("nom_eve")}
@@ -749,7 +845,7 @@ const AdminEvents = () => {
         </div>
       ) : (
         <div className="admin-events-grid-ae">
-          {eventosFiltrados.map((eve) => {
+          {eventosConOrdenamientoHibrido.map((eve) => {
             const esCurso = eve.tip_eve === "CURSO";
             const estadoEvento = esEventoFinalizado(eve)
               ? "FINALIZADO"
@@ -762,8 +858,22 @@ const AdminEvents = () => {
                 key={eve.id_eve}
                 className={`admin-event-card ${
                   eve.eve_des ? "card-evento-destacado-ge" : ""
+                } ${
+                  historialManager.esEventoEditadoRecientemente(eve.id_eve, 24)
+                    ? "card-evento-editado-recientemente"
+                    : ""
                 }`}
               >
+                {/* Badge para eventos editados recientemente */}
+                {historialManager.esEventoEditadoRecientemente(
+                  eve.id_eve,
+                  24
+                ) && (
+                  <div className="badge-editado-recientemente">
+                    <Edit3 size={12} />
+                    Editado recientemente
+                  </div>
+                )}
                 {/* Imagen de portada */}
                 {eve.img_por_eve && (
                   <div className="admin-event-image">

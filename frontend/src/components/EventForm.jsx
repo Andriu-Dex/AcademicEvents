@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import DatePicker, { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import es from "date-fns/locale/es";
+import HistoryEditEvents from "../utils/HistoryEditEvents";
 import {
   Calendar,
   Clock,
@@ -387,6 +388,22 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
           // `✅ Evento actualizado exitosamente. Cupo máximo: ${formData.cup_max_eve} personas`
           `Evento actualizado exitosamente`
         );
+
+        // Registrar evento como editado recientemente usando HistoryEditEvents directamente
+        try {
+          console.log("✅ [EventForm] Registrando evento editado:", eventId);
+          const historialManager = HistoryEditEvents.getInstance();
+          const resultado = historialManager.registrarEventoEditado(eventId);
+          console.log(
+            "✅ [EventForm] Resultado del registro directo:",
+            resultado
+          );
+        } catch (error) {
+          console.error(
+            "❌ [EventForm] Error al registrar evento editado:",
+            error
+          );
+        }
       }
       navigate("/admin/eventos");
     } catch (error) {

@@ -154,6 +154,50 @@
   margin: 0;
 }
 
+/* Badge para eventos editados recientemente */
+.badge-editado-recientemente {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: linear-gradient(135deg, #96161693, #bd1414af);
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(246, 59, 59, 0.3);
+  z-index: 3;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(4px);
+  animation: badge-glow 3s ease-in-out infinite;
+  transition: all 0.3s ease;
+}
+
+.card-evento-editado-recientemente {
+  border: 2px solid #f63b3b;
+  box-shadow: 0 4px 12px rgba(246, 59, 59, 0.15);
+  transition: all 0.3s ease;
+}
+
+.card-evento-editado-recientemente:hover {
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.25);
+  transform: translateY(-2px);
+}
+
+@keyframes badge-glow {
+  0%,
+  100% {
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+  }
+
+  50% {
+    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.5);
+  }
+}
+
 .admin-event-label {
   font-size: 0.75rem;
   padding: 0.35rem 0.75rem;
