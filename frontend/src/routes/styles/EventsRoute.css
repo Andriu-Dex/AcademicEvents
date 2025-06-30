@@ -8,7 +8,7 @@
     0 0px 24px rgb(151, 151, 151, 0.8);
 }
 
-.eventos-titulo {
+.eventos-titulo-er {
   font-size: 1.7rem;
   font-weight: bold;
   color: #8a1538;
@@ -368,7 +368,7 @@
   background-color: #cccccc;
 }
 
-.modal-overlay {
+.modal-overlay-er {
   position: fixed;
   inset: 0;
   background-color: rgba(0, 0, 0, 0.65);
@@ -376,11 +376,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 50;
+  z-index: 10000;
   padding: 1rem;
 }
 
-.modal-contenido {
+.modal-contenido-er {
   background: white;
   padding: 2.5rem;
   border-radius: 1rem;
@@ -392,7 +392,7 @@
   overflow: hidden;
 }
 
-.modal-contenido::before {
+.modal-contenido-er::before {
   content: "";
   position: absolute;
   top: 0;
@@ -411,11 +411,11 @@
   border-bottom: 1px solid #f3f4f6;
 }
 
-.form-group {
+.form-group-er {
   margin-bottom: 1.5rem;
 }
 
-.form-label {
+.form-label-er {
   display: block;
   font-size: 0.95rem;
   font-weight: 600;
@@ -423,7 +423,7 @@
   margin-bottom: 0.5rem;
 }
 
-.form-textarea {
+.form-textarea-er {
   width: 100%;
   min-height: 120px;
   border: 1px solid #e5e7eb;
@@ -441,7 +441,7 @@
   box-shadow: 0 0 0 3px rgba(138, 21, 56, 0.15);
 }
 
-.form-input-file {
+.form-input-file-er {
   width: 100%;
   border: 1px solid #e5e7eb;
   padding: 0.6rem 0.75rem;
@@ -452,18 +452,18 @@
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-.form-input-file:hover {
+.form-input-file-er:hover {
   background-color: #f3f4f6;
 }
 
-.form-help-text {
+.form-help-text-er {
   font-size: 0.8rem;
   color: #6b7280;
   margin-top: 0.5rem;
   display: block;
 }
 
-.file-preview {
+.file-preview-er {
   margin-top: 1rem;
   padding: 0.75rem;
   background-color: #f9fafb;
@@ -474,17 +474,17 @@
   gap: 0.5rem;
 }
 
-.file-preview-name {
+.file-preview-er-name {
   font-weight: 600;
   color: #1f2937;
 }
 
-.file-preview-type {
+.file-preview-er-type {
   color: #6b7280;
   font-size: 0.875rem;
 }
 
-.modal-botones {
+.modal-botones-er {
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
@@ -493,7 +493,7 @@
   border-top: 1px solid #f3f4f6;
 }
 
-.btn-inscribirme-modal {
+.btn-inscribirme-modal-er {
   background-color: #8a1538;
   color: white;
   padding: 0.7rem 1.5rem;
@@ -506,24 +506,24 @@
   box-shadow: 0 2px 4px rgba(138, 21, 56, 0.2);
 }
 
-.btn-inscribirme-modal:hover {
+.btn-inscribirme-modal-er:hover {
   background-color: #6e0e2d;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(138, 21, 56, 0.25);
 }
 
-.btn-inscribirme-modal:active {
+.btn-inscribirme-modal-er:active {
   transform: translateY(0);
 }
 
-.btn-inscribirme-modal:disabled {
+.btn-inscribirme-modal-er:disabled {
   background-color: #d1d5db;
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
 }
 
-.btn-cancelar-modal {
+.btn-cancelar-modal-er {
   background: white;
   border: 1px solid #e5e7eb;
   color: #4b5563;
@@ -535,7 +535,7 @@
   transition: all 0.25s ease;
 }
 
-.btn-cancelar-modal:hover {
+.btn-cancelar-modal-er:hover {
   background-color: #f9fafb;
   color: #1f2937;
   border-color: #d1d5db;
@@ -567,7 +567,7 @@
   text-decoration: none;
 }
 
-.btn-limpiar-filtros {
+.btn-limpiar-filtros-er {
   background: linear-gradient(135deg, #8a1538, #6e0e2d);
   color: white;
   border: none;
@@ -583,7 +583,7 @@
   box-shadow: 0 2px 4px rgba(138, 21, 56, 0.2);
 }
 
-.btn-limpiar-filtros:hover {
+.btn-limpiar-filtros-er:hover {
   background: linear-gradient(135deg, #6e0e2d, #5a0b26);
   transform: translateY(-1px);
   box-shadow: 0 4px 8px rgba(138, 21, 56, 0.3);
@@ -628,7 +628,7 @@
 }
 
 /* Agrega más si hay más tarjetas */
-.exito-animacion {
+.exito-animacion-er {
   position: fixed;
   top: 50%;
   left: 50%;
@@ -646,7 +646,7 @@
   animation: fadeSlideIn 0.4s ease, fadeOut 0.5s ease 1.5s forwards;
 }
 
-.exito-animacion p {
+.exito-animacion-er p {
   font-weight: 600;
   color: #16a34a;
   font-size: 1.1rem;
@@ -696,7 +696,7 @@
 }
 
 /* Estilos para el mensaje de reinscripción */
-.reinscripcion-info {
+.reinscripcion-info-er {
   background-color: #fff8e1;
   border-left: 4px solid #ffb74d;
   padding: 12px 16px;
@@ -704,14 +704,14 @@
   border-radius: 4px;
 }
 
-.reinscripcion-info p {
+.reinscripcion-info-er p {
   margin: 0;
   font-size: 0.95rem;
   line-height: 1.5;
   color: #e65100;
 }
 
-.reinscripcion-info p:first-child {
+.reinscripcion-info-er p:first-child {
   font-weight: 600;
   margin-bottom: 5px;
 }
@@ -798,7 +798,7 @@
 }
 
 /* Botones de filtros */
-.btn-toggle-filtros {
+.HistoryEditEvents-er {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -813,25 +813,25 @@
   font-size: 1rem;
 }
 
-.btn-toggle-filtros:hover {
+.HistoryEditEvents-er:hover {
   border-radius: 8px;
   transform: translateY(-1px) scale(1.03);
 }
 
-.btn-toggle-filtros.activo {
+.HistoryEditEvents-er.activo {
   background: rgba(138, 21, 56, 0.1);
 }
 
-.chevron {
+.chevron-er {
   transition: transform 0.3s ease;
 }
 
-.chevron.rotado {
+.chevron-er.rotado {
   transform: rotate(180deg);
 }
 
 /* Grid de filtros */
-.filtros-grid {
+.filtros-grid-er {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1.5rem;
@@ -840,7 +840,7 @@
 }
 
 /* Categorías de filtros */
-.filtro-categoria h4 {
+.filtro-categoria-er h4 {
   margin: 0 0 1rem 0;
   color: #8a1538;
   font-size: 1rem;
@@ -849,14 +849,14 @@
   padding-bottom: 0.5rem;
 }
 
-.filtros-opciones {
+.filtros-opciones-er {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
 }
 
 /* Opciones de filtro */
-.filtro-opcion {
+.filtro-opcion-er {
   display: flex;
   align-items: center;
   cursor: pointer;
@@ -868,17 +868,17 @@
   transition: color 0.3s ease;
 }
 
-.filtro-opcion:hover {
+.filtro-opcion-er:hover {
   color: #8a1538;
 }
 
-.filtro-opcion input[type="checkbox"] {
+.filtro-opcion-er input[type="checkbox"] {
   position: absolute;
   opacity: 0;
   cursor: pointer;
 }
 
-.checkmark {
+.checkmark-er {
   position: absolute;
   left: 0;
   top: 50%;
@@ -891,16 +891,16 @@
   transition: all 0.3s ease;
 }
 
-.filtro-opcion:hover .checkmark {
+.filtro-opcion-er:hover .checkmark-er {
   border-color: #8a1538;
 }
 
-.filtro-opcion input:checked ~ .checkmark {
+.filtro-opcion-er input:checked ~ .checkmark-er {
   background-color: #8a1538;
   border-color: #8a1538;
 }
 
-.checkmark:after {
+.checkmark-er:after {
   content: "";
   position: absolute;
   display: none;
@@ -913,7 +913,7 @@
   transform: rotate(45deg);
 }
 
-.filtro-opcion input:checked ~ .checkmark:after {
+.filtro-opcion-er input:checked ~ .checkmark-er:after {
   display: block;
 }
 
@@ -987,7 +987,7 @@
 
 /* Responsive */
 @media (max-width: 768px) {
-  .filtros-grid {
+  .filtros-grid-er {
     grid-template-columns: 1fr;
     gap: 1rem;
     padding: 1rem;
@@ -1001,12 +1001,12 @@
     padding: 0.75rem 1rem;
   }
 
-  .btn-toggle-filtros {
+  .HistoryEditEvents-er {
     font-size: 0.9rem;
     padding: 0.4rem 0.8rem;
   }
 
-  .btn-limpiar-filtros {
+  .btn-limpiar-filtros-er {
     font-size: 0.8rem;
     padding: 0.4rem 0.8rem;
   }

@@ -15,38 +15,8 @@ import {
   Laptop,
 } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
+import { formatUTCForLocalDisplay } from "../utils/dateUtils";
 import "./styles/ModalRequisitos.css";
-
-// Función para formatear fechas correctamente usando UTC
-const formatearFechaUTC = (fechaStr) => {
-  if (!fechaStr) return "-";
-  try {
-    const [datePart, timePart] = fechaStr.split("T");
-    const [year, month, day] = datePart.split("-");
-    const [hours, minutes] = timePart ? timePart.split(":") : ["00", "00"];
-
-    const fecha = new Date(
-      Date.UTC(
-        parseInt(year),
-        parseInt(month) - 1,
-        parseInt(day),
-        parseInt(hours),
-        parseInt(minutes)
-      )
-    );
-    return fecha.toLocaleString("es-EC", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      timeZone: "UTC",
-    });
-  } catch (error) {
-    console.error("Error al formatear fecha:", error);
-    return "-";
-  }
-};
 
 /**
  * @component ModalRequisitos
@@ -55,11 +25,15 @@ const formatearFechaUTC = (fechaStr) => {
  * @param {Object} props.evento - Datos del evento a mostrar
  * @param {Function} props.onClose - Función para cerrar el modal
  * @param {string} [props.overlayClassName="modal-requisitos-overlay-mr"] - Clase CSS para el overlay del modal
+ * @param {Function} [props.onOpenInscripcionModal] - Función callback para abrir modal de inscripción directamente
+ * @param {boolean} [props.isFromEventosDestacados=false] - Indica si viene desde eventos destacados
  */
 const ModalRequisitos = ({
   evento,
   onClose,
   overlayClassName = "modal-requisitos-overlay-mr",
+  onOpenInscripcionModal = null,
+  isFromEventosDestacados = false,
 }) => {
   // Obtener información de autenticación
   const { usuario } = useAuth();
@@ -70,11 +44,40 @@ const ModalRequisitos = ({
 
   const handleInscripcion = () => {
     onClose(); // Primero cerramos el modal
-    // Redirigir al usuario a la página correspondiente
-    if (isAuthenticated) {
-      navigate("/eventos"); // Si está autenticado, va a EventsRoute
+
+    // Si viene desde eventos destacados y el usuario está autenticado
+    if (isFromEventosDestacados && isAuthenticated) {
+      // Transformar el evento al formato esperado por EventsRoute
+      const eventoParaInscripcion = {
+        id_eve: evento.id_eve,
+        nom_eve: evento.nom_eve,
+        des_eve: evento.des_eve,
+        val_eve: evento.val_eve,
+        cup_dis_eve: evento.cup_dis_eve,
+        cup_max_eve: evento.cup_max_eve,
+        fec_ini_eve: evento.fec_ini_eve,
+        fec_fin_eve: evento.fec_fin_eve,
+        dur_hor_eve: evento.dur_hor_eve,
+        mod_eve: evento.mod_eve,
+        tip_eve: evento.tip_eve,
+        est_eve: evento.est_eve,
+        img_por_eve: evento.img_por_eve,
+      };
+
+      // Navegar a eventos y abrir modal de inscripción
+      navigate("/eventos", {
+        state: {
+          openInscripcionModal: true,
+          eventoSeleccionado: eventoParaInscripcion,
+        },
+      });
     } else {
-      navigate("/eventos-publicos"); // Si no está autenticado, va a EventosPublicos
+      // Comportamiento original: redirigir a la página correspondiente
+      if (isAuthenticated) {
+        navigate("/eventos"); // Si está autenticado, va a EventsRoute
+      } else {
+        navigate("/eventos-publicos"); // Si no está autenticado, va a EventosPublicos
+      }
     }
   };
 
@@ -124,13 +127,13 @@ const ModalRequisitos = ({
             <div className="info-item-mr">
               <span className="info-label-mr">Inicio:</span>
               <span className="info-value-mr">
-                {formatearFechaUTC(evento.fec_ini_eve)}
+                {formatUTCForLocalDisplay(evento.fec_ini_eve)}
               </span>
             </div>
             <div className="info-item-mr">
               <span className="info-label-mr">Finalización:</span>
               <span className="info-value-mr">
-                {formatearFechaUTC(evento.fec_fin_eve)}
+                {formatUTCForLocalDisplay(evento.fec_fin_eve)}
               </span>
             </div>
             <div className="info-item-mr">
@@ -299,7 +302,9 @@ const ModalRequisitos = ({
                   onClick={handleInscripcion}
                   className="btn-inscripcion-mr"
                 >
-                  Ver en eventos
+                  {isFromEventosDestacados
+                    ? "Inscribirme ahora"
+                    : "Ver en eventos"}
                 </button>
               </div>
             ) : (

@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import axiosInstance from "../api/axiosConfig";
 import { useAuth } from "../hooks/useAuth";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useSocket } from "../context/SocketContext";
 import usePagination from "../hooks/usePagination";
@@ -84,45 +84,12 @@ const estilosCss = `
 }
 `;
 
-// Función para formatear fechas correctamente usando UTC
-const formatearFechaUTC = (fechaStr) => {
-  if (!fechaStr) return "-";
-  try {
-    // Primero aseguramos que la fecha esté en formato UTC para evitar ajustes de zona horaria
-    const [datePart, timePart] = fechaStr.split("T");
-    const [year, month, day] = datePart.split("-");
-    const [hours, minutes] = timePart ? timePart.split(":") : ["00", "00"];
-
-    const fecha = new Date(
-      Date.UTC(
-        parseInt(year),
-        parseInt(month) - 1,
-        parseInt(day),
-        parseInt(hours),
-        parseInt(minutes)
-      )
-    );
-
-    if (isNaN(fecha.getTime())) return "-"; // Verifica si la fecha es válida
-
-    return fecha.toLocaleString("es-EC", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      hourCycle: "h23",
-      timeZone: "UTC", // Importante: usar UTC para evitar desplazamientos
-    });
-  } catch (error) {
-    console.error("Error al formatear fecha:", error);
-    return "-";
-  }
-};
+import { formatUTCForLocalDisplay } from "../utils/dateUtils";
 
 const EventsRoute = () => {
   const { usuario, token, loading } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const { socket, isConnected } = useSocket();
   const [filtro, setFiltro] = useState("");
   const [filtroModalidad, setFiltroModalidad] = useState("");
@@ -194,6 +161,18 @@ const EventsRoute = () => {
 
     obtenerPerfilUsuario();
   }, [usuario, token, loading, navigate]);
+
+  // Efecto para detectar cuando se debe abrir el modal de inscripción directamente
+  useEffect(() => {
+    if (
+      location.state?.openInscripcionModal &&
+      location.state?.eventoSeleccionado
+    ) {
+      setEventoSeleccionado(location.state.eventoSeleccionado);
+      // Limpiar el estado para evitar que se reabra el modal
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location.state, navigate, location.pathname]);
 
   // Función para construir filtros API de forma consistente
   const construirFiltrosAPI = useCallback(() => {
@@ -521,7 +500,7 @@ const EventsRoute = () => {
 
   return (
     <div className="eventos-container-er">
-      <h1 className="eventos-titulo">
+      <h1 className="eventos-titulo-er">
         <CalendarDays size={24} />
         Eventos disponibles
       </h1>
@@ -583,12 +562,12 @@ const EventsRoute = () => {
             Filtros
             <ChevronDown
               size={16}
-              className={`chevron ${mostrarFiltros ? "rotado" : ""}`}
+              className={`chevron-er ${mostrarFiltros ? "rotado" : ""}`}
             />
           </button>
 
           {Object.values(filtros).some((f) => f) && (
-            <button className="btn-limpiar-filtros" onClick={limpiarFiltros}>
+            <button className="btn-limpiar-filtros-er" onClick={limpiarFiltros}>
               <X size={16} />
               Limpiar filtros
             </button>
@@ -596,80 +575,80 @@ const EventsRoute = () => {
         </div>
 
         {mostrarFiltros && (
-          <div className="filtros-grid">
-            <div className="filtro-categoria">
+          <div className="filtros-grid-er">
+            <div className="filtro-categoria-er">
               <h4>Por Precio</h4>
-              <div className="filtros-opciones">
-                <label className="filtro-opcion">
+              <div className="filtros-opciones-er">
+                <label className="filtro-opcion-er">
                   <input
                     type="checkbox"
                     checked={filtros.gratuito}
                     onChange={() => manejarCambioFiltro("gratuito")}
                   />
-                  <span className="checkmark"></span>
+                  <span className="checkmark-er"></span>
                   Eventos Gratuitos
                 </label>
-                <label className="filtro-opcion">
+                <label className="filtro-opcion-er">
                   <input
                     type="checkbox"
                     checked={filtros.pagado}
                     onChange={() => manejarCambioFiltro("pagado")}
                   />
-                  <span className="checkmark"></span>
+                  <span className="checkmark-er"></span>
                   Eventos de Pago
                 </label>
               </div>
             </div>
 
-            <div className="filtro-categoria">
+            <div className="filtro-categoria-er">
               <h4>Por Disponibilidad</h4>
-              <div className="filtros-opciones">
-                <label className="filtro-opcion">
+              <div className="filtros-opciones-er">
+                <label className="filtro-opcion-er">
                   <input
                     type="checkbox"
                     checked={filtros.completo}
                     onChange={() => manejarCambioFiltro("completo")}
                   />
-                  <span className="checkmark"></span>
+                  <span className="checkmark-er"></span>
                   Eventos Llenos (sin cupos)
                 </label>
               </div>
             </div>
 
-            <div className="filtro-categoria">
+            <div className="filtro-categoria-er">
               <h4>Por Estado</h4>
-              <div className="filtros-opciones">
-                <label className="filtro-opcion">
+              <div className="filtros-opciones-er">
+                <label className="filtro-opcion-er">
                   <input
                     type="checkbox"
                     checked={filtros.finalizado}
                     onChange={() => manejarCambioFiltro("finalizado")}
                   />
-                  <span className="checkmark"></span>
+                  <span className="checkmark-er"></span>
                   Eventos Finalizados
                 </label>
-                <label className="filtro-opcion">
+                <label className="filtro-opcion-er">
                   <input
                     type="checkbox"
                     checked={filtros.cancelado}
                     onChange={() => manejarCambioFiltro("cancelado")}
                   />
-                  <span className="checkmark"></span>
+                  <span className="checkmark-er"></span>
                   Eventos Cancelados
                 </label>
-                <label className="filtro-opcion">
+                <label className="filtro-opcion-er">
                   <input
                     type="checkbox"
                     checked={filtros.suspendido}
                     onChange={() => manejarCambioFiltro("suspendido")}
                   />
-                  <span className="checkmark"></span>
+                  <span className="checkmark-er"></span>
                   Eventos Suspendidos
                 </label>
               </div>
             </div>
 
-            <div className="filtro-categoria">
+            <div className="filtro-categoria-er">
               <h4>Por Modalidad</h4>
               <div className="filtros-opciones">
                 <select
@@ -799,8 +778,8 @@ const EventsRoute = () => {
                   </div>
                 )}{" "}
                 <p className="fecha-evento-er">
-                  Fecha: {formatearFechaUTC(evento.fec_ini_eve)} a{" "}
-                  {formatearFechaUTC(evento.fec_fin_eve)}
+                  Fecha: {formatUTCForLocalDisplay(evento.fec_ini_eve)} a{" "}
+                  {formatUTCForLocalDisplay(evento.fec_fin_eve)}
                 </p>{" "}
                 <p className="duracion-evento-er">
                   Duración: {evento.dur_hor_eve} horas
@@ -913,13 +892,13 @@ const EventsRoute = () => {
       )}
 
       {eventoSeleccionado && (
-        <div className="modal-overlay">
-          <div className="modal-contenido">
+        <div className="modal-overlay-er">
+          <div className="modal-contenido-er">
             <h2>Inscripción a: {eventoSeleccionado.nom_eve}</h2>
 
             {/* Mensaje adicional para reinscripciones */}
             {eventoSeleccionado.reinscripcion && (
-              <div className="reinscripcion-info">
+              <div className="reinscripcion-info-er">
                 <p>
                   Tu inscripción anterior fue rechazada. Puedes volver a enviar
                   tu información.
@@ -928,47 +907,47 @@ const EventsRoute = () => {
               </div>
             )}
 
-            <div className="form-group">
-              <label className="form-label">Carta de motivación:</label>
+            <div className="form-group-er">
+              <label className="form-label-er">Carta de motivación:</label>
               <textarea
                 value={cartaMotivacion}
                 onChange={(e) => setCartaMotivacion(e.target.value)}
                 placeholder="Escribe aquí por qué quieres participar en este evento..."
-                className="form-textarea"
+                className="form-textarea-er"
                 required
               />
             </div>
 
             {eventoSeleccionado.val_eve > 0 && (
-              <div className="form-group">
-                <label className="form-label">Comprobante de pago:</label>
+              <div className="form-group-er">
+                <label className="form-label-er">Comprobante de pago:</label>
                 <input
                   type="file"
                   accept=".jpg,.jpeg,.png"
                   onChange={(e) => setArchivo(e.target.files[0])}
-                  className="form-input-file"
+                  className="form-input-file-er"
                 />
-                <span className="form-help-text">
+                <span className="form-help-text-er">
                   Formatos aceptados: JPG, JPEG, PNG (máx. 5MB)
                 </span>
               </div>
             )}
 
             {archivo && (
-              <div className="file-preview">
-                <span className="file-preview-name">{archivo.name}</span>
-                <span className="file-preview-type">({archivo.type})</span>
+              <div className="file-preview-er">
+                <span className="file-preview-name-er">{archivo.name}</span>
+                <span className="file-preview-type-er">({archivo.type})</span>
               </div>
             )}
 
-            <div className="modal-botones">
+            <div className="modal-botones-er">
               <button
                 onClick={() => {
                   setEventoSeleccionado(null);
                   setArchivo(null);
                   setCartaMotivacion("");
                 }}
-                className="btn-cancelar-modal"
+                className="btn-cancelar-modal-er"
               >
                 Cancelar
               </button>
@@ -990,7 +969,7 @@ const EventsRoute = () => {
                   }
                   inscribirse();
                 }}
-                className="btn-inscribirme-modal"
+                className="btn-inscribirme-modal-er"
                 disabled={subiendo}
               >
                 {subiendo ? "Enviando..." : "Enviar inscripción"}
@@ -1000,7 +979,7 @@ const EventsRoute = () => {
         </div>
       )}
       {exitoVisible && (
-        <div className="exito-animacion">
+        <div className="exito-animacion-er">
           <CheckCircle size={64} color="#16a34a" />
           <p>¡Inscripción enviada!</p>
         </div>

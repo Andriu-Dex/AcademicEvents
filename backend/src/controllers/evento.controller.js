@@ -794,8 +794,8 @@ const obtenerEventosPorTipo = async (req, res) => {
  * Procesa una fecha manteniendo la hora local sin ajustes de zona horaria
  */
 /**
- * Analiza una fecha en cualquier formato y la convierte a objeto Date
- * Maneja múltiples formatos de entrada: objeto Date, string ISO, string con formato personalizado
+ * Analiza una fecha ISO y la convierte a objeto Date UTC
+ * Versión simplificada que espera fechas en formato ISO del frontend
  * @param {string|Date} dateInput - Fecha a analizar
  * @returns {Date|null} - Objeto Date o null si la fecha es inválida
  */
@@ -812,79 +812,24 @@ function parseUTCDate(dateInput) {
       return dateInput;
     }
 
-    // Si es un string, intentar procesarlo
+    // Para strings, usar directamente new Date() ya que esperamos formato ISO del frontend
     if (typeof dateInput === "string") {
-      // Si es formato ISO completo (con Z al final)
-      if (dateInput.endsWith("Z")) {
-        console.log("📅 Procesando fecha en formato ISO completo con Z");
-        const date = new Date(dateInput);
-        return isNaN(date) ? null : date;
-      }
+      const date = new Date(dateInput);
 
-      // Si tiene formato ISO pero sin Z (YYYY-MM-DDTHH:mm:ss)
-      if (dateInput.includes("T")) {
-        const [datePart, timePart] = dateInput.split("T");
-        console.log("📅 Partes de la fecha ISO sin Z:", { datePart, timePart });
-
-        const [year, month, day] = datePart
-          .split("-")
-          .map((num) => parseInt(num));
-        let hours = 0,
-          minutes = 0,
-          seconds = 0;
-
-        if (timePart) {
-          const timeParts = timePart.split(":");
-          hours = parseInt(timeParts[0] || 0);
-          minutes = parseInt(timeParts[1] || 0);
-          seconds = parseInt(timeParts[2] || 0);
-        }
-
-        console.log("📅 Componentes desglosados:", {
-          year,
-          month,
-          day,
-          hours,
-          minutes,
-          seconds,
+      if (!isNaN(date)) {
+        console.log("📅 Fecha parseada exitosamente:", {
+          input: dateInput,
+          parsed: date.toISOString(),
+          utcHours: date.getUTCHours(),
         });
-
-        // Crear fecha en UTC para mantener consistencia
-        const date = new Date(
-          Date.UTC(year, month - 1, day, hours, minutes, seconds)
-        );
-        return isNaN(date) ? null : date;
+        return date;
       }
-
-      // Si solo tiene formato de fecha (YYYY-MM-DD)
-      if (dateInput.includes("-") && !dateInput.includes("T")) {
-        console.log("📅 Procesando fecha simple sin hora");
-        const [year, month, day] = dateInput
-          .split("-")
-          .map((num) => parseInt(num));
-        const date = new Date(Date.UTC(year, month - 1, day));
-        return isNaN(date) ? null : date;
-      }
-    }
-
-    // En cualquier otro caso, intentar crear un objeto Date estándar
-    console.log("📅 Intentando parsear con constructor Date estándar");
-    const date = new Date(dateInput);
-
-    // Registrar resultado
-    if (!isNaN(date)) {
-      console.log("📅 Fecha resultante:", {
-        localDate: date.toLocaleString(),
-        isoString: date.toISOString(),
-        utcHours: date.getUTCHours(),
-      });
-      return date;
     }
 
     console.log("📅 No se pudo parsear la fecha");
     return null;
   } catch (error) {
-    console.error("Error al parsear fecha:", error);
+    console.error("📅 Error al parsear fecha:", error);
     return null;
   }
 }

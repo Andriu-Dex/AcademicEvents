@@ -37,39 +37,7 @@ import "./styles/ModalEventosPublicos.css";
 import "./styles/animaciones.css";
 import "./styles/FiltrosEstado.css";
 import "./styles/EventosPublicosPaginacion.css";
-
-// Función para formatear fechas correctamente usando UTC
-const formatearFechaUTC = (fechaStr) => {
-  if (!fechaStr) return "-";
-  try {
-    const [datePart, timePart] = fechaStr.split("T");
-    const [year, month, day] = datePart.split("-");
-    const [hours, minutes] = timePart ? timePart.split(":") : ["00", "00"];
-
-    const fecha = new Date(
-      Date.UTC(
-        parseInt(year),
-        parseInt(month) - 1,
-        parseInt(day),
-        parseInt(hours),
-        parseInt(minutes)
-      )
-    );
-    if (isNaN(fecha.getTime())) return "-";
-
-    return fecha.toLocaleString("es-EC", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      timeZone: "UTC",
-    });
-  } catch (error) {
-    console.error("Error al formatear fecha:", error);
-    return "-";
-  }
-};
+import { formatUTCForLocalDisplay } from "../utils/dateUtils";
 
 const EventosPublicos = () => {
   const { usuario } = useAuth();
@@ -692,11 +660,11 @@ const EventosPublicos = () => {
                     <div className="fechas-contenedor-ep">
                       <p className="fecha-inicio-ep">
                         <Calendar size={16} className="inline-icon-ep" />{" "}
-                        Inicio: {formatearFechaUTC(evento.fec_ini_eve)}
+                        Inicio: {formatUTCForLocalDisplay(evento.fec_ini_eve)}
                       </p>
                       <p className="fecha-fin-ep">
                         <Calendar size={16} className="inline-icon-ep" /> Fin:{" "}
-                        {formatearFechaUTC(evento.fec_fin_eve)}
+                        {formatUTCForLocalDisplay(evento.fec_fin_eve)}
                       </p>
                     </div>{" "}
                     <p
