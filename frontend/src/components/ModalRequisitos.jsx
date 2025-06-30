@@ -15,38 +15,8 @@ import {
   Laptop,
 } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
+import { formatUTCForLocalDisplay } from "../utils/dateUtils";
 import "./styles/ModalRequisitos.css";
-
-// Función para formatear fechas correctamente usando UTC
-const formatearFechaUTC = (fechaStr) => {
-  if (!fechaStr) return "-";
-  try {
-    const [datePart, timePart] = fechaStr.split("T");
-    const [year, month, day] = datePart.split("-");
-    const [hours, minutes] = timePart ? timePart.split(":") : ["00", "00"];
-
-    const fecha = new Date(
-      Date.UTC(
-        parseInt(year),
-        parseInt(month) - 1,
-        parseInt(day),
-        parseInt(hours),
-        parseInt(minutes)
-      )
-    );
-    return fecha.toLocaleString("es-EC", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      timeZone: "UTC",
-    });
-  } catch (error) {
-    console.error("Error al formatear fecha:", error);
-    return "-";
-  }
-};
 
 /**
  * @component ModalRequisitos
@@ -124,13 +94,13 @@ const ModalRequisitos = ({
             <div className="info-item-mr">
               <span className="info-label-mr">Inicio:</span>
               <span className="info-value-mr">
-                {formatearFechaUTC(evento.fec_ini_eve)}
+                {formatUTCForLocalDisplay(evento.fec_ini_eve)}
               </span>
             </div>
             <div className="info-item-mr">
               <span className="info-label-mr">Finalización:</span>
               <span className="info-value-mr">
-                {formatearFechaUTC(evento.fec_fin_eve)}
+                {formatUTCForLocalDisplay(evento.fec_fin_eve)}
               </span>
             </div>
             <div className="info-item-mr">

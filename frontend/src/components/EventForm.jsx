@@ -25,7 +25,7 @@ import "./styles/EventForm.css";
 import "./styles/CarreraCheckboxes.css";
 import {
   formatDateForBackend,
-  formatDateForPicker,
+  formatUTCForDatePicker,
   isDateTodayOrLater,
 } from "../utils/dateUtils";
 
@@ -541,7 +541,7 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
               <div className="input-with-icon date-picker-container">
                 <Calendar size={18} />{" "}
                 <DatePicker
-                  selected={formatDateForPicker(formData.fec_ini_eve)}
+                  selected={formatUTCForDatePicker(formData.fec_ini_eve)}
                   onChange={(date) => {
                     if (!date) return;
 
@@ -549,11 +549,17 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
                     const isTimeSelection =
                       formData.fec_ini_eve &&
                       date.getDate() ===
-                        new Date(formData.fec_ini_eve).getDate() &&
+                        formatUTCForDatePicker(
+                          formData.fec_ini_eve
+                        )?.getDate() &&
                       date.getMonth() ===
-                        new Date(formData.fec_ini_eve).getMonth() &&
+                        formatUTCForDatePicker(
+                          formData.fec_ini_eve
+                        )?.getMonth() &&
                       date.getFullYear() ===
-                        new Date(formData.fec_ini_eve).getFullYear();
+                        formatUTCForDatePicker(
+                          formData.fec_ini_eve
+                        )?.getFullYear();
 
                     if (!isTimeSelection) {
                       // Si es selección de fecha, establecer hora a 00:00
@@ -583,7 +589,7 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
               <div className="input-with-icon date-picker-container">
                 <Calendar size={18} />{" "}
                 <DatePicker
-                  selected={formatDateForPicker(formData.fec_fin_eve)}
+                  selected={formatUTCForDatePicker(formData.fec_fin_eve)}
                   onChange={(date) => {
                     if (!date) return;
 
@@ -591,11 +597,17 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
                     const isTimeSelection =
                       formData.fec_fin_eve &&
                       date.getDate() ===
-                        new Date(formData.fec_fin_eve).getDate() &&
+                        formatUTCForDatePicker(
+                          formData.fec_fin_eve
+                        )?.getDate() &&
                       date.getMonth() ===
-                        new Date(formData.fec_fin_eve).getMonth() &&
+                        formatUTCForDatePicker(
+                          formData.fec_fin_eve
+                        )?.getMonth() &&
                       date.getFullYear() ===
-                        new Date(formData.fec_fin_eve).getFullYear();
+                        formatUTCForDatePicker(
+                          formData.fec_fin_eve
+                        )?.getFullYear();
 
                     if (!isTimeSelection) {
                       // Si es selección de fecha, establecer hora a 00:00
@@ -617,7 +629,9 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
                   placeholderText="Seleccionar fecha y hora"
                   className="date-picker-input"
                   minDate={
-                    formData.fec_ini_eve ? new Date(formData.fec_ini_eve) : null
+                    formData.fec_ini_eve
+                      ? formatUTCForDatePicker(formData.fec_ini_eve)
+                      : null
                   }
                   required
                 />

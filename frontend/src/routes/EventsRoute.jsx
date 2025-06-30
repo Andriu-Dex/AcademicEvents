@@ -84,41 +84,7 @@ const estilosCss = `
 }
 `;
 
-// Función para formatear fechas correctamente usando UTC
-const formatearFechaUTC = (fechaStr) => {
-  if (!fechaStr) return "-";
-  try {
-    // Primero aseguramos que la fecha esté en formato UTC para evitar ajustes de zona horaria
-    const [datePart, timePart] = fechaStr.split("T");
-    const [year, month, day] = datePart.split("-");
-    const [hours, minutes] = timePart ? timePart.split(":") : ["00", "00"];
-
-    const fecha = new Date(
-      Date.UTC(
-        parseInt(year),
-        parseInt(month) - 1,
-        parseInt(day),
-        parseInt(hours),
-        parseInt(minutes)
-      )
-    );
-
-    if (isNaN(fecha.getTime())) return "-"; // Verifica si la fecha es válida
-
-    return fecha.toLocaleString("es-EC", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      hourCycle: "h23",
-      timeZone: "UTC", // Importante: usar UTC para evitar desplazamientos
-    });
-  } catch (error) {
-    console.error("Error al formatear fecha:", error);
-    return "-";
-  }
-};
+import { formatUTCForLocalDisplay } from "../utils/dateUtils";
 
 const EventsRoute = () => {
   const { usuario, token, loading } = useAuth();
@@ -799,8 +765,8 @@ const EventsRoute = () => {
                   </div>
                 )}{" "}
                 <p className="fecha-evento-er">
-                  Fecha: {formatearFechaUTC(evento.fec_ini_eve)} a{" "}
-                  {formatearFechaUTC(evento.fec_fin_eve)}
+                  Fecha: {formatUTCForLocalDisplay(evento.fec_ini_eve)} a{" "}
+                  {formatUTCForLocalDisplay(evento.fec_fin_eve)}
                 </p>{" "}
                 <p className="duracion-evento-er">
                   Duración: {evento.dur_hor_eve} horas

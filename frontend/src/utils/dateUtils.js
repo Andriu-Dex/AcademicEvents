@@ -3,17 +3,30 @@
  */
 
 /**
- * Convierte una fecha de JavaScript a formato ISO compatible con el backend
+ * Convierte una fecha de JavaScript a formato ISO manteniendo la hora local como UTC
+ * Evita la conversión automática de zona horaria
  * @param {Date} date - Objeto Date de JavaScript
- * @returns {string} - Fecha en formato ISO 8601 completo
+ * @returns {string} - Fecha en formato ISO 8601 completo tratando la hora local como UTC
  */
 export const formatDateForBackend = (date) => {
   if (!date || !(date instanceof Date) || isNaN(date)) {
     return null;
   }
 
-  // Siempre devolver el formato ISO completo con 'Z' para indicar UTC
-  return date.toISOString();
+  // Crear fecha UTC usando los componentes locales para evitar conversión de zona horaria
+  const utcDate = new Date(
+    Date.UTC(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate(),
+      date.getHours(),
+      date.getMinutes(),
+      date.getSeconds(),
+      date.getMilliseconds()
+    )
+  );
+
+  return utcDate.toISOString();
 };
 
 /**
@@ -107,4 +120,68 @@ export const formatDateForReports = (date) => {
   const day = date.getDate().toString().padStart(2, "0");
 
   return `${year}-${month}-${day}`;
+};
+
+/**
+ * Convierte una fecha UTC del backend a display local manteniendo la hora exacta
+ * @param {string} utcDateString - Fecha en formato ISO UTC del backend
+ * @param {object} options - Opciones de formato
+ * @returns {string} - Fecha formateada para display local
+ */
+export const formatUTCForLocalDisplay = (utcDateString, options = {}) => {
+  if (!utcDateString) return "";
+
+  try {
+    // Parsear la fecha UTC directamente
+    const date = new Date(utcDateString);
+
+    if (isNaN(date)) return "";
+
+    const defaultOptions = {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hourCycle: "h23",
+      timeZone: "UTC", // Mantener UTC para evitar conversiones automáticas
+    };
+
+    return date.toLocaleString("es-EC", { ...defaultOptions, ...options });
+  } catch (error) {
+    console.error("Error al formatear fecha UTC para display:", error);
+    return "";
+  }
+};
+
+/**
+ * Convierte una fecha UTC del backend a Date local para el DatePicker
+ * sin conversión de zona horaria
+ * @param {string} utcDateString - Fecha en formato ISO UTC del backend
+ * @returns {Date|null} - Objeto Date para DatePicker manteniendo la hora exacta
+ */
+export const formatUTCForDatePicker = (utcDateString) => {
+  if (!utcDateString) return null;
+
+  try {
+    // Parsear la fecha UTC y extraer componentes
+    const date = new Date(utcDateString);
+
+    if (isNaN(date)) return null;
+
+    // Crear nueva fecha usando los componentes UTC como si fueran locales
+    // Esto evita la conversión automática de zona horaria
+    return new Date(
+      date.getUTCFullYear(),
+      date.getUTCMonth(),
+      date.getUTCDate(),
+      date.getUTCHours(),
+      date.getUTCMinutes(),
+      date.getUTCSeconds(),
+      date.getUTCMilliseconds()
+    );
+  } catch (error) {
+    console.error("Error al formatear fecha UTC para DatePicker:", error);
+    return null;
+  }
 };

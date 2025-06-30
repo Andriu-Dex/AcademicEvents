@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback, useMemo } from "react";
 import axiosInstance from "../../api/axiosConfig";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { formatUTCForLocalDisplay } from "../../utils/dateUtils";
 import {
   Pencil,
   Eye,
@@ -292,42 +293,6 @@ const AdminEvents = () => {
       direccion:
         prev.campo === campo && prev.direccion === "asc" ? "desc" : "asc",
     }));
-  }; // Formato de fecha personalizado
-  const formatearFecha = (fechaStr) => {
-    if (!fechaStr) return "-";
-    try {
-      // Separar la fecha y obtener los componentes
-      const [datePart, timePart] = fechaStr.split("T");
-      const [year, month, day] = datePart.split("-");
-      const [hours, minutes] = timePart ? timePart.split(":") : ["00", "00"];
-
-      // Crear la fecha usando UTC para mantener la hora exacta
-      const fecha = new Date(
-        Date.UTC(
-          parseInt(year),
-          parseInt(month) - 1,
-          parseInt(day),
-          parseInt(hours),
-          parseInt(minutes)
-        )
-      );
-
-      if (isNaN(fecha.getTime())) return "-";
-
-      // Formatear usando la zona horaria UTC
-      return fecha.toLocaleString("es-EC", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-        hourCycle: "h23",
-        timeZone: "UTC", // Importante: usar UTC para mantener la hora exacta
-      });
-    } catch (error) {
-      console.error("Error al formatear fecha:", error);
-      return "-";
-    }
   };
 
   // Función para obtener la fecha de fin apropiada según el tipo de evento
@@ -336,12 +301,12 @@ const AdminEvents = () => {
 
     // Para cursos, usar fecha específica de fin de curso
     if (esCurso && evento.fec_fin_eve) {
-      return formatearFecha(evento.fec_fin_eve); // Utiliza fec_fin_eve del evento directamente
+      return formatUTCForLocalDisplay(evento.fec_fin_eve); // Utiliza fec_fin_eve del evento directamente
     }
 
     // Para eventos no-curso, verificar si hay fecha de fin explícita
     if (evento.fec_fin_eve) {
-      return formatearFecha(evento.fec_fin_eve);
+      return formatUTCForLocalDisplay(evento.fec_fin_eve);
     }
 
     // Si no hay fecha de fin, pero hay fecha de inicio y duración
@@ -363,19 +328,19 @@ const AdminEvents = () => {
       if (!isNaN(fechaInicio.getTime())) {
         // Eventos cortos (menos de 24h) terminan el mismo día
         if (evento.dur_hrs_eve <= 24) {
-          return formatearFecha(fechaInicio.toISOString());
+          return formatUTCForLocalDisplay(fechaInicio.toISOString());
         }
 
         // Eventos largos, calcular días (asumiendo 8h por día)
         const diasAdicionales = Math.ceil(evento.dur_hrs_eve / 8);
         const fechaFin = new Date(fechaInicio);
         fechaFin.setUTCDate(fechaFin.getUTCDate() + diasAdicionales - 1);
-        return formatearFecha(fechaFin);
+        return formatUTCForLocalDisplay(fechaFin);
       }
     }
 
     // Si todo falla, mostrar la misma fecha de inicio
-    return formatearFecha(evento.fec_ini_eve);
+    return formatUTCForLocalDisplay(evento.fec_ini_eve);
   };
 
   // Determinar si un evento está finalizado basado en su fecha de fin
@@ -857,7 +822,7 @@ const AdminEvents = () => {
                   <div className="detail-item">
                     <CalendarClock size={16} className="icon-inline" />
                     <span>
-                      {formatearFecha(eve.fec_ini_eve)}
+                      {formatUTCForLocalDisplay(eve.fec_ini_eve)}
                       {" – "}
                       {obtenerFechaFin(eve)}
                     </span>
