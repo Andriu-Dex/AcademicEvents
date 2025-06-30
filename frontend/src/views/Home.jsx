@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -84,6 +84,7 @@ function Home() {
   const [isHoveringAutoridades, setIsHoveringAutoridades] = useState(false);
   const [isHoveringCarreras, setIsHoveringCarreras] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
   const autoridadesRef = useRef(null);
   const carrerasRef = useRef(null);
 
@@ -92,6 +93,92 @@ function Home() {
 
   // Referencia para detectar el área superior
   const topAreaRef = useRef(null);
+
+  // Configuración de elementos visibles y duplicados para carrusel infinito
+  const ELEMENTOS_VISIBLES_AUTORIDADES = 3; // Elementos visibles simultáneamente
+  const ELEMENTOS_VISIBLES_CARRERAS = 3;
+
+  // Usar las autoridades de la API, o las autoridades predeterminadas si no hay datos
+  const autoridades =
+    mvaInfo.autoridades.length > 0
+      ? mvaInfo.autoridades
+      : [
+          {
+            cargo: "Decano",
+            nombre: "Dr. Franklin Mayorga Mogollón",
+            imagen: "https://i.imgur.com/hYBsxIf.png",
+            email: "fmayorga@uta.edu.ec",
+          },
+          {
+            cargo: "Subdecano",
+            nombre: "Dr. Javier Sánchez Torres",
+            imagen: "https://i.imgur.com/JIQy6Fa.png",
+            email: "j.sanchez@uta.edu.ec",
+          },
+          {
+            cargo:
+              "Coordinador de las Carrera de Software y Tecnologías de la Información",
+            nombre: "Ing. Mg. Marco Guachimboza",
+            imagen: "https://i.imgur.com/XDFrTBI.png",
+            email: "marcovguachimboza@uta.edu.ec",
+          },
+          {
+            cargo:
+              "Coordinador de las Carrera de Automatización y Robótica y Telecomunicaciones",
+            nombre: "Ing. Mg. Freddy Robalino",
+            imagen: "https://i.imgur.com/daKWf7d.png",
+            email: "r.morales@uta.edu.ec",
+          },
+          {
+            cargo: "Coordinador de las Carrera Ingeniería Industrial",
+            nombre: "Ing. Mg. César Rosero",
+            imagen: "https://i.imgur.com/d4hRu17.png",
+            email: "cesararosero@uta.edu.ec",
+          },
+        ];
+
+  // Determinar si se debe usar carrusel (solo si hay más de 3 elementos)
+  const shouldUseCarouselAutoridades = autoridades.length > 3;
+  const shouldUseCarouselCarreras = carreras.length > 3;
+
+  // Crear arrays extendidos para carrusel infinito suave
+  const extendedAutoridades =
+    shouldUseCarouselAutoridades && autoridades.length > 0
+      ? [
+          ...autoridades.slice(-ELEMENTOS_VISIBLES_AUTORIDADES), // Últimos elementos al inicio
+          ...autoridades, // Array original
+          ...autoridades.slice(0, ELEMENTOS_VISIBLES_AUTORIDADES), // Primeros elementos al final
+        ]
+      : autoridades;
+
+  const extendedCarreras =
+    shouldUseCarouselCarreras && carreras.length > 0
+      ? [
+          ...carreras.slice(-ELEMENTOS_VISIBLES_CARRERAS), // Últimos elementos al inicio
+          ...carreras, // Array original
+          ...carreras.slice(0, ELEMENTOS_VISIBLES_CARRERAS), // Primeros elementos al final
+        ]
+      : carreras;
+
+  // Función para obtener el icono correspondiente según el nombre del icono
+  const getIconComponent = (iconName, size = 36) => {
+    switch (iconName) {
+      case "laptop":
+        return <Laptop size={size} />;
+      case "wrench":
+        return <Wrench size={size} />;
+      case "zap":
+        return <Zap size={size} />;
+      case "factory":
+        return <Factory size={size} />;
+      case "book":
+        return <BookOpen size={size} />;
+      case "monitor":
+        return <Monitor size={size} />;
+      default:
+        return <GraduationCap size={size} />;
+    }
+  };
 
   // 🔌 Estados y hook para Socket.IO - Actualizaciones en tiempo real
   const [notifications, setNotifications] = useState([]);
@@ -237,7 +324,7 @@ function Home() {
   });
 
   // Función para mostrar notificaciones temporales
-  const showTemporaryNotification = (message, type = "info") => {
+  const showTemporaryNotification = useCallback((message, type = "info") => {
     const id = Date.now();
     const newNotification = { id, message, type, timestamp: new Date() };
 
@@ -247,12 +334,12 @@ function Home() {
     setTimeout(() => {
       setNotifications((prev) => prev.filter((notif) => notif.id !== id));
     }, 5000);
-  };
+  }, []);
 
   // Función para remover notificación manualmente
-  const removeNotification = (id) => {
+  const removeNotification = useCallback((id) => {
     setNotifications((prev) => prev.filter((notif) => notif.id !== id));
-  };
+  }, []);
 
   // Cargar carreras y MVA desde la API
   useEffect(() => {
@@ -323,6 +410,31 @@ function Home() {
 
     cargarDatos();
   }, []);
+
+  // Efecto para inicializar posiciones del carrusel infinito
+  useEffect(() => {
+    if (
+      !isInitialized &&
+      (shouldUseCarouselAutoridades || shouldUseCarouselCarreras)
+    ) {
+      // Establecer posiciones iniciales para que empiecen en el primer elemento real (no duplicado)
+      if (shouldUseCarouselAutoridades && autoridades.length > 0) {
+        setCurrentAutoridad(ELEMENTOS_VISIBLES_AUTORIDADES);
+      }
+      if (shouldUseCarouselCarreras && carreras.length > 0) {
+        setCurrentCarrera(ELEMENTOS_VISIBLES_CARRERAS);
+      }
+      setIsInitialized(true);
+    }
+  }, [
+    autoridades.length,
+    carreras.length,
+    shouldUseCarouselAutoridades,
+    shouldUseCarouselCarreras,
+    isInitialized,
+    ELEMENTOS_VISIBLES_AUTORIDADES,
+    ELEMENTOS_VISIBLES_CARRERAS,
+  ]);
 
   // Facultad actual (ahora usando datos dinámicos)
   const facultadActual = {
@@ -414,161 +526,113 @@ function Home() {
       })
     : [];
 
-  // Usar las autoridades de la API, o las autoridades predeterminadas si no hay datos
-  const autoridades =
-    mvaInfo.autoridades.length > 0
-      ? mvaInfo.autoridades
-      : [
-          {
-            cargo: "Decano",
-            nombre: "Dr. Franklin Mayorga Mogollón",
-            imagen: "https://i.imgur.com/hYBsxIf.png",
-            email: "fmayorga@uta.edu.ec",
-          },
-          {
-            cargo: "Subdecano",
-            nombre: "Dr. Javier Sánchez Torres",
-            imagen: "https://i.imgur.com/JIQy6Fa.png",
-            email: "j.sanchez@uta.edu.ec",
-          },
-          {
-            cargo:
-              "Coordinador de las Carrera de Software y Tecnologías de la Información",
-            nombre: "Ing. Mg. Marco Guachimboza",
-            imagen: "https://i.imgur.com/XDFrTBI.png",
-            email: "marcovguachimboza@uta.edu.ec",
-          },
-          {
-            cargo:
-              "Coordinador de las Carrera de Automatización y Robótica y Telecomunicaciones",
-            nombre: "Ing. Mg. Freddy Robalino",
-            imagen: "https://i.imgur.com/daKWf7d.png",
-            email: "r.morales@uta.edu.ec",
-          },
-          {
-            cargo: "Coordinador de las Carrera Ingeniería Industrial",
-            nombre: "Ing. Mg. César Rosero",
-            imagen: "https://i.imgur.com/d4hRu17.png",
-            email: "cesararosero@uta.edu.ec",
-          },
-        ];
-
-  // Determinar si se debe usar carrusel (solo si hay más de 3 elementos)
-  const shouldUseCarouselAutoridades = autoridades.length > 3;
-  const shouldUseCarouselCarreras = carreras.length > 3;
-
-  // Crear arrays extendidos para carrusel infinito (solo si se usa carrusel)
-  const extendedAutoridades =
-    shouldUseCarouselAutoridades && autoridades.length > 0
-      ? [...autoridades, ...autoridades.slice(0, 2)]
-      : autoridades;
-  const extendedCarreras =
-    shouldUseCarouselCarreras && carreras.length > 0
-      ? [...carreras, ...carreras.slice(0, 3)] // Asegurar que se dupliquen al menos 3 elementos
-      : carreras;
-
-  // Función para obtener el icono correspondiente
-  const getIconComponent = (iconName, size = 36) => {
-    switch (iconName) {
-      case "laptop":
-        return <Laptop size={size} />;
-      case "wrench":
-        return <Wrench size={size} />;
-      case "zap":
-        return <Zap size={size} />;
-      case "factory":
-        return <Factory size={size} />;
-      case "book":
-        return <BookOpen size={size} />;
-      case "monitor":
-        return <Monitor size={size} />;
-      default:
-        return <GraduationCap size={size} />;
-    }
-  };
-
   // Funciones para carrusel infinito (solo activas si hay más de 3 elementos)
-  const nextAutoridad = () => {
+  const nextAutoridad = useCallback(() => {
     if (shouldUseCarouselAutoridades && autoridades.length > 0) {
       setCurrentAutoridad((prev) => prev + 1);
     }
-  };
+  }, [shouldUseCarouselAutoridades, autoridades.length]);
 
-  const prevAutoridad = () => {
+  const prevAutoridad = useCallback(() => {
     if (shouldUseCarouselAutoridades && autoridades.length > 0) {
       setCurrentAutoridad((prev) => prev - 1);
     }
-  };
+  }, [shouldUseCarouselAutoridades, autoridades.length]);
 
-  const nextCarrera = () => {
+  const nextCarrera = useCallback(() => {
     if (shouldUseCarouselCarreras && carreras.length > 0) {
       setCurrentCarrera((prev) => prev + 1);
     }
-  };
+  }, [shouldUseCarouselCarreras, carreras.length]);
 
-  const prevCarrera = () => {
+  const prevCarrera = useCallback(() => {
     if (shouldUseCarouselCarreras && carreras.length > 0) {
       setCurrentCarrera((prev) => prev - 1);
     }
-  };
+  }, [shouldUseCarouselCarreras, carreras.length]);
 
-  // Efectos para manejar el bucle infinito (solo si el carrusel está activo)
+  // Efectos para manejar el bucle infinito suave
   useEffect(() => {
+    if (!shouldUseCarouselAutoridades || !isInitialized) return;
+
+    // Reset suave al final del array
     if (
-      shouldUseCarouselAutoridades &&
-      currentAutoridad === autoridades.length &&
-      autoridades.length > 0
+      currentAutoridad >=
+      autoridades.length + ELEMENTOS_VISIBLES_AUTORIDADES
     ) {
       setTimeout(() => {
         setIsTransitioning(true);
-        setCurrentAutoridad(0);
-        setTimeout(() => setIsTransitioning(false), 20);
-      }, 300); // Reducir tiempo para transición más rápida
-    } else if (
-      shouldUseCarouselAutoridades &&
-      currentAutoridad < 0 &&
-      autoridades.length > 0
-    ) {
-      setTimeout(() => {
-        setIsTransitioning(true);
-        setCurrentAutoridad(autoridades.length - 1);
-        setTimeout(() => setIsTransitioning(false), 20);
-      }, 300);
+        setCurrentAutoridad(ELEMENTOS_VISIBLES_AUTORIDADES);
+        setTimeout(() => setIsTransitioning(false), 50);
+      }, 500); // Esperar a que termine la transición actual
     }
-  }, [currentAutoridad, autoridades.length, shouldUseCarouselAutoridades]);
-
-  useEffect(() => {
-    if (
-      shouldUseCarouselCarreras &&
-      currentCarrera === carreras.length &&
-      carreras.length > 0
-    ) {
+    // Reset suave al inicio del array
+    else if (currentAutoridad < 0) {
       setTimeout(() => {
         setIsTransitioning(true);
-        setCurrentCarrera(0);
-        setTimeout(() => setIsTransitioning(false), 50); // Aumentado el tiempo para que sea más estable
-      }, 500); // Aumentado para dar tiempo a la transición
-    } else if (
-      shouldUseCarouselCarreras &&
-      currentCarrera < 0 &&
-      carreras.length > 0
-    ) {
-      setTimeout(() => {
-        setIsTransitioning(true);
-        setCurrentCarrera(carreras.length - 1);
+        setCurrentAutoridad(
+          autoridades.length - 1 + ELEMENTOS_VISIBLES_AUTORIDADES
+        );
         setTimeout(() => setIsTransitioning(false), 50);
       }, 500);
     }
-  }, [currentCarrera, carreras.length, shouldUseCarouselCarreras]);
+  }, [
+    currentAutoridad,
+    autoridades.length,
+    shouldUseCarouselAutoridades,
+    isInitialized,
+    ELEMENTOS_VISIBLES_AUTORIDADES,
+  ]);
 
-  // Funciones para indicadores
-  const goToAutoridad = (index) => {
-    setCurrentAutoridad(index);
-  };
+  useEffect(() => {
+    if (!shouldUseCarouselCarreras || !isInitialized) return;
 
-  const goToCarrera = (index) => {
-    setCurrentCarrera(index);
-  };
+    // Reset suave al final del array
+    if (currentCarrera >= carreras.length + ELEMENTOS_VISIBLES_CARRERAS) {
+      setTimeout(() => {
+        setIsTransitioning(true);
+        setCurrentCarrera(ELEMENTOS_VISIBLES_CARRERAS);
+        setTimeout(() => setIsTransitioning(false), 50);
+      }, 500); // Esperar a que termine la transición actual
+    }
+    // Reset suave al inicio del array
+    else if (currentCarrera < 0) {
+      setTimeout(() => {
+        setIsTransitioning(true);
+        setCurrentCarrera(carreras.length - 1 + ELEMENTOS_VISIBLES_CARRERAS);
+        setTimeout(() => setIsTransitioning(false), 50);
+      }, 500);
+    }
+  }, [
+    currentCarrera,
+    carreras.length,
+    shouldUseCarouselCarreras,
+    isInitialized,
+    ELEMENTOS_VISIBLES_CARRERAS,
+  ]);
+
+  // Funciones para indicadores (ajustadas para carrusel infinito)
+  const goToAutoridad = useCallback(
+    (index) => {
+      if (shouldUseCarouselAutoridades) {
+        setCurrentAutoridad(index + ELEMENTOS_VISIBLES_AUTORIDADES);
+      } else {
+        setCurrentAutoridad(index);
+      }
+    },
+    [shouldUseCarouselAutoridades, ELEMENTOS_VISIBLES_AUTORIDADES]
+  );
+
+  const goToCarrera = useCallback(
+    (index) => {
+      if (shouldUseCarouselCarreras) {
+        setCurrentCarrera(index + ELEMENTOS_VISIBLES_CARRERAS);
+      } else {
+        setCurrentCarrera(index);
+      }
+    },
+    [shouldUseCarouselCarreras, ELEMENTOS_VISIBLES_CARRERAS]
+  );
 
   // Auto-play para los carruseles (siempre en movimiento, pero se detienen cuando el mouse está sobre ellos)
   useEffect(() => {
@@ -578,21 +642,23 @@ function Home() {
     if (
       !isHoveringAutoridades &&
       shouldUseCarouselAutoridades &&
-      autoridades.length > 1
+      autoridades.length > 1 &&
+      isInitialized
     ) {
       autoridadesInterval = setInterval(() => {
         nextAutoridad();
-      }, 3000); // 3 segundos para movimiento automático
+      }, 3000); // 3 segundos para movimiento automático suave
     }
 
     if (
       !isHoveringCarreras &&
       shouldUseCarouselCarreras &&
-      carreras.length > 1
+      carreras.length > 1 &&
+      isInitialized
     ) {
       carrerasInterval = setInterval(() => {
         nextCarrera();
-      }, 3000); // 3 segundos para movimiento automático
+      }, 3000); // 3 segundos para movimiento automático suave
     }
 
     return () => {
@@ -606,6 +672,9 @@ function Home() {
     isHoveringCarreras,
     shouldUseCarouselAutoridades,
     shouldUseCarouselCarreras,
+    isInitialized,
+    nextAutoridad,
+    nextCarrera,
   ]);
 
   // Info cards para misión y visión obtenidas de la API
@@ -923,7 +992,9 @@ function Home() {
               <button
                 key={index}
                 className={`carousel-indicator-h ${
-                  index === currentAutoridad % autoridades.length
+                  index ===
+                  (currentAutoridad - ELEMENTOS_VISIBLES_AUTORIDADES) %
+                    autoridades.length
                     ? "active-h"
                     : ""
                 }`}
@@ -1054,7 +1125,11 @@ function Home() {
               <button
                 key={index}
                 className={`carousel-indicator-h ${
-                  index === currentCarrera % carreras.length ? "active-h" : ""
+                  index ===
+                  (currentCarrera - ELEMENTOS_VISIBLES_CARRERAS) %
+                    carreras.length
+                    ? "active-h"
+                    : ""
                 }`}
                 onClick={() => goToCarrera(index)}
               />
