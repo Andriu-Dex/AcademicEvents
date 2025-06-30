@@ -10,16 +10,17 @@
 2. [Características Principales](#características-principales)
 3. [Funcionalidades Detalladas](#funcionalidades-detalladas)
 4. [Tecnologías Utilizadas](#tecnologías-utilizadas)
-5. [Requisitos Previos](#requisitos-previos)
-6. [Instalación](#instalación)
-7. [Uso](#uso)
-8. [API REST](#api-rest)
-9. [Control de Versiones y Contribución](#control-de-versiones-y-contribución)
-10. [Arquitectura del Proyecto](#arquitectura-del-proyecto)
-11. [Despliegue](#despliegue)
-12. [Conclusión](#conclusión)
-13. [Licencia](#licencia)
-14. [Agradecimientos](#agradecimientos)
+5. [Arquitectura del Proyecto](#arquitectura-del-proyecto)
+6. [Requisitos Previos](#requisitos-previos)
+7. [Instalación](#instalación)
+8. [Uso](#uso)
+9. [API REST](#api-rest)
+10. [Despliegue](#despliegue)
+11. [Control de Versiones y Contribución](#control-de-versiones-y-contribución)
+12. [Equipo de Desarrollo](#equipo-de-desarrollo)
+13. [Conclusión](#conclusión)
+14. [Licencia](#licencia)
+15. [Agradecimientos](#agradecimientos)
 
 ---
 
@@ -80,7 +81,7 @@
 
 ```powershell
 # Clonar el repositorio
-git clone <url-del-repositorio>
+git clone https://github.com/Andriu-Dex/AcademicEvents.git
 cd AcademicEvents
 
 # Instalar dependencias del backend
@@ -136,6 +137,8 @@ npx prisma migrate dev
 # Poblar la base de datos con datos iniciales
 npx prisma db seed
 ```
+
+**Nota importante**: Si usas Docker para el despliegue, las migraciones se deben ejecutar dentro del contenedor la primera vez. Ver la sección [Despliegue](#despliegue) para comandos específicos de Docker.
 
 ---
 
@@ -265,23 +268,112 @@ AcademicEvents/
 
 ## Despliegue
 
+### Requisitos para Despliegue
+
+- **Docker** y **Docker Compose** instalados y ejecutándose
+- **Codificación UTF-8 con BOM** para máxima compatibilidad con los archivos de configuración
+- Verificar que Docker Desktop esté iniciado antes de ejecutar los comandos
+
 ### Docker
 
-El proyecto incluye configuración Docker para despliegue:
+El proyecto incluye configuración Docker completa para despliegue:
 
 ```powershell
-# Construcción y ejecución con Docker Compose
+# Script automatizado para despliegue completo
+.\deploy.ps1
+
+# Construcción y ejecución manual con Docker Compose
 docker-compose up --build
 
 # Para producción
 docker-compose -f docker-compose.prod.yml up -d
 ```
 
+### Gestión de Migraciones con Docker
+
+#### Primera vez - Configuración inicial:
+
+```powershell
+# 1. Ejecutar el script de despliegue
+.\deploy.ps1
+
+# 2. Verificar estado de las migraciones
+docker-compose exec backend npx prisma migrate status
+
+# 3. Si es necesario, ejecutar migraciones
+docker-compose exec backend npx prisma migrate dev --name agregar_cupos
+
+# 4. Cargar datos iniciales del seed
+docker-compose exec backend npm run seed
+```
+
+#### Comandos útiles para migraciones:
+
+```powershell
+# Estado de las migraciones
+docker-compose exec backend npx prisma migrate status
+
+# Forzar limpieza de la base de datos (¡CUIDADO: Borra todos los datos!)
+docker-compose exec backend npx prisma migrate reset --force
+
+# Crear nueva migración
+docker-compose exec backend npx prisma migrate dev --name nombre_de_la_migracion
+
+# Cargar datos iniciales del seed
+docker-compose exec backend npm run seed
+
+# Regenerar el cliente Prisma
+docker-compose exec backend npx prisma generate
+```
+
 ### Scripts de Despliegue
 
-- `deploy.ps1`: Script automatizado para despliegue en Windows
+- `deploy.ps1`: Script automatizado para despliegue completo en Windows
 - `check-vulnerabilities.ps1`: Análisis de seguridad
 - `generate-jwt-secret.ps1`: Generación segura de claves JWT
+
+### Notas Importantes
+
+- **Codificación**: Asegúrate de que todos los archivos de configuración estén guardados con codificación UTF-8 con BOM
+- **Docker**: Docker Desktop debe estar iniciado antes de ejecutar cualquier comando
+- **Primera ejecución**: Las migraciones se deben ejecutar la primera vez después del despliegue
+- **Datos de prueba**: El comando `npm run seed` carga datos iniciales para pruebas
+
+---
+
+## Equipo de Desarrollo
+
+Este proyecto fue desarrollado por un equipo multidisciplinario de profesionales especializados en diferentes áreas del desarrollo de software:
+
+### 👨‍💻 **Erick Aguilar** - *Desarrollador Senior*
+- 📧 **Email:** [eaguilar4722@uta.edu.ec](mailto:eaguilar4722@uta.edu.ec)
+- 📱 **Teléfono:** 0983297299
+- 🎯 **Especialización:** Liderazgo técnico y arquitectura de soluciones
+
+### 🔧 **Nixon Hurtado** - *Desarrollador Backend*
+- 📧 **Email:** [nixon2000paul@gmail.com](mailto:nixon2000paul@gmail.com)
+- 📱 **Teléfono:** 0961798049
+- 🎯 **Especialización:** APIs REST, bases de datos y servicios del servidor
+
+### 🏗️ **Gabriel Llerena** - *Arquitecto de Software*
+- 📧 **Email:** [gabriel0llerena@gmail.com](mailto:gabriel0llerena@gmail.com)
+- 📱 **Teléfono:** 0987482734
+- 🎯 **Especialización:** Diseño de arquitectura y patrones de software
+
+### 🔍 **Maybelline Navarro** - *Analista QA*
+- 📧 **Email:** [mnavarro1337@uta.edu.ec](mailto:mnavarro1337@uta.edu.ec)
+- 📱 **Teléfono:** 0998305361
+- 🎯 **Especialización:** Testing, control de calidad y aseguramiento de software
+
+### 🌐 **Steven Paredes** - *Desarrollador Full Stack*
+- 📧 **Email:** [andriudex@gmail.com](mailto:andriudex@gmail.com)
+- 📱 **Teléfono:** 0969008396
+- 🎯 **Especialización:** Desarrollo frontend y backend, integración completa
+
+### 💻 **Carlos Ramas** - *Desarrollador Frontend*
+- 📧 **Email:** [cramos6303@uta.edu.ec](mailto:cramos6303@uta.edu.ec)
+- 📱 **Teléfono:** 0967977374
+- 🎯 **Especialización:** Interfaces de usuario, UX/UI y tecnologías del frontend
 
 ---
 
