@@ -407,7 +407,7 @@
   transition: transform 0.5s ease-in-out;
   width: max-content;
   position: relative;
-  padding: 1rem 0;
+  padding: 0 0 1.5rem;
 }
 
 .carousel-item-h {

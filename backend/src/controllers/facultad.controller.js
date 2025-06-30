@@ -61,7 +61,24 @@ const obtenerPrimeraFacultad = async (req, res) => {
       return res.status(404).json({ msg: "No hay facultades registradas" });
     }
 
-    res.status(200).json(facultad);
+    // Mapear los datos al formato esperado por el frontend
+    const facultadFormateada = {
+      id: facultad.id_fac,
+      nombre: facultad.nom_fac,
+      acronimo: facultad.acr_fac,
+      descripcion: facultad.des_fac,
+      logo: facultad.url_log_fac,
+      // Mantener también los campos originales por compatibilidad
+      id_fac: facultad.id_fac,
+      nom_fac: facultad.nom_fac,
+      acr_fac: facultad.acr_fac,
+      des_fac: facultad.des_fac,
+      url_log_fac: facultad.url_log_fac,
+      fec_cre_fac: facultad.fec_cre_fac,
+      fec_act_fac: facultad.fec_act_fac,
+    };
+
+    res.status(200).json(facultadFormateada);
   } catch (error) {
     console.error("Error al obtener la primera facultad:", error);
     res.status(500).json({
