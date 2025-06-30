@@ -570,29 +570,29 @@ function Home() {
     setCurrentCarrera(index);
   };
 
-  // Auto-play para los carruseles (solo cuando el mouse está sobre ellos y hay más de 3 elementos)
+  // Auto-play para los carruseles (siempre en movimiento, pero se detienen cuando el mouse está sobre ellos)
   useEffect(() => {
     let autoridadesInterval;
     let carrerasInterval;
 
     if (
-      isHoveringAutoridades &&
+      !isHoveringAutoridades &&
       shouldUseCarouselAutoridades &&
       autoridades.length > 1
     ) {
       autoridadesInterval = setInterval(() => {
         nextAutoridad();
-      }, 2000);
+      }, 3000); // 3 segundos para movimiento automático
     }
 
     if (
-      isHoveringCarreras &&
+      !isHoveringCarreras &&
       shouldUseCarouselCarreras &&
       carreras.length > 1
     ) {
       carrerasInterval = setInterval(() => {
         nextCarrera();
-      }, 2000);
+      }, 3000); // 3 segundos para movimiento automático
     }
 
     return () => {

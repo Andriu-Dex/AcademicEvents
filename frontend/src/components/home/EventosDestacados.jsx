@@ -167,11 +167,14 @@ const EventosDestacados = ({ eventUpdate }) => {
     let carouselInterval;
 
     if (shouldUseCarousel && eventosDestacados.length > 1) {
-      const intervalTime = isHovering ? 2000 : 5000;
+      // Carrusel siempre en movimiento, pero se detiene cuando hay hover
+      const intervalTime = isHovering ? null : 4000; // 4 segundos sin hover, detenido con hover
 
-      carouselInterval = setInterval(() => {
-        nextSlide();
-      }, intervalTime);
+      if (!isHovering) {
+        carouselInterval = setInterval(() => {
+          nextSlide();
+        }, intervalTime);
+      }
     }
 
     return () => {

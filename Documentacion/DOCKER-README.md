@@ -76,7 +76,7 @@ La base de datos PostgreSQL se configura automáticamente con:
 - **Host**: localhost:5432
 - **Database**: academicevents (configurado desde `.env`)
 - **Usuario**: postgres (configurado desde `.env`)
-- **Contraseña**: Configurada desde `.env` (por defecto: Andriu3Dex)
+- **Contraseña**: Configurada desde `.env`
 
 ### 🔧 Migraciones Automáticas
 
