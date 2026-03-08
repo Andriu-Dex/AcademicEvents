@@ -24,7 +24,16 @@ const ReporteAsistencia = () => {
 
         // Asegurar que res.data sea un array
         const eventosData = Array.isArray(res.data.eve) ? res.data.eve : [];
-        setEventos(eventosData);
+        const eventosNormalizados = eventosData
+          .map((evento, index) => ({
+            ...evento,
+            __eventId: evento?.id_eve || evento?.id || null,
+            __eventName:
+              evento?.nom_eve || evento?.name || `Evento ${index + 1}`,
+          }))
+          .filter((evento) => evento.__eventId);
+
+        setEventos(eventosNormalizados);
 
         // No seleccionar ningún evento por defecto, mantener "Todos los eventos"
       } catch (error) {
@@ -57,29 +66,20 @@ const ReporteAsistencia = () => {
 
         // Si se seleccionó un evento específico
         if (eventoSeleccionado) {
-          console.log(
-            `Cargando datos de asistencia para evento: ${eventoSeleccionado}`
-          );
           const resAsistencia = await axiosInstance.get(
             `/admin/reportes-asistencia/evento/${eventoSeleccionado}`
           );
 
           datosEventoAsistencia = resAsistencia.data;
-          console.log("Datos de asistencia recibidos:", datosEventoAsistencia);
 
           // Verificar compatibilidad con el filtro de tipo
           if (tipoEvento !== "todos") {
             const tipoEventoNormalizado = tipoEvento.trim().toUpperCase();
             const tipoEventoRecibido = obtenerTipoEvento(datosEventoAsistencia);
 
-            console.log("Verificación de tipo:");
-            console.log("Tipo filtro:", tipoEventoNormalizado);
-            console.log("Tipo evento:", tipoEventoRecibido);
-
             hayCompatibilidad = tipoEventoRecibido === tipoEventoNormalizado;
 
             if (!hayCompatibilidad) {
-              console.log(`El evento seleccionado no es de tipo ${tipoEvento}`);
               toast.info(`El evento seleccionado no es de tipo ${tipoEvento}`);
               datosEventoAsistencia = null;
             }
@@ -101,7 +101,6 @@ const ReporteAsistencia = () => {
           hayCompatibilidad
         ) {
           // Cargar comparativa entre eventos (por tipo o todos)
-          console.log(`Cargando comparativa para tipo: ${tipoEvento}`);
           try {
             const resComparativa = await axiosInstance.get(
               `/admin/reportes-asistencia/comparativa`,
@@ -109,7 +108,6 @@ const ReporteAsistencia = () => {
                 params: { tipo: tipoEvento },
               }
             );
-            console.log("Datos comparativos recibidos:", resComparativa.data);
             comparativaData = Array.isArray(resComparativa.data)
               ? resComparativa.data
               : [];
@@ -118,7 +116,6 @@ const ReporteAsistencia = () => {
           }
 
           // Cargar análisis de no-shows
-          console.log(`Cargando no-shows para tipo: ${tipoEvento}`);
           try {
             const resNoShows = await axiosInstance.get(
               `/admin/reportes-asistencia/no-shows`,
@@ -126,7 +123,6 @@ const ReporteAsistencia = () => {
                 params: { tipo: tipoEvento },
               }
             );
-            console.log("Datos de no-shows recibidos:", resNoShows.data);
             noShowsData = Array.isArray(resNoShows.data) ? resNoShows.data : [];
           } catch (error) {
             console.error("Error al cargar datos de no-shows:", error);
@@ -226,9 +222,12 @@ const ReporteAsistencia = () => {
             >
               <option value="">Todos los eventos</option>
               {Array.isArray(eventos) &&
-                eventos.map((evento) => (
-                  <option key={evento.id_eve} value={evento.id_eve}>
-                    {evento.nom_eve}
+                eventos.map((evento, index) => (
+                  <option
+                    key={evento.__eventId || `evento-opcion-${index}`}
+                    value={evento.__eventId || ""}
+                  >
+                    {evento.__eventName}
                   </option>
                 ))}
             </select>
@@ -352,8 +351,14 @@ const ReporteAsistencia = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {comparativaEventos.map((evento) => (
-                      <tr key={evento.id_eve}>
+                    {comparativaEventos.map((evento, index) => (
+                      <tr
+                        key={
+                          evento.id_eve ||
+                          evento.id ||
+                          `${evento.nombreEvento || "evento"}-${index}`
+                        }
+                      >
                         <td className="nombre-evento-ra">
                           {evento.nombreEvento}
                         </td>

@@ -894,6 +894,7 @@ const AdminEvents = () => {
             const estadoEvento = esEventoFinalizado(eve)
               ? "FINALIZADO"
               : eve.est_eve;
+            const estrellaBloqueada = estadoEvento === "FINALIZADO" && !eve.eve_des;
             const estadoUI = getEstadoEventoUI(estadoEvento);
             const modalidadUI = getModalidadUI(eve.mod_eve);
 
@@ -948,6 +949,8 @@ const AdminEvents = () => {
                     <BotonEstrella
                       idEvento={eve.id_eve}
                       estadoInicial={eve.eve_des || false}
+                      disabled={estrellaBloqueada}
+                      disabledReason="No se puede destacar un evento finalizado"
                       onToggle={(esDestacado) => {
                         const nombreEvento = eve.nom_eve || "Evento";
                         toast.success(

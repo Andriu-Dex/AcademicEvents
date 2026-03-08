@@ -87,7 +87,6 @@ class EventoService {
       const result = await response.json();
       return result;
     } catch (error) {
-      console.error("Error al cambiar estado destacado:", error.message);
       throw error;
     }
   }

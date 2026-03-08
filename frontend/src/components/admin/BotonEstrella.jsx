@@ -9,7 +9,13 @@ import "./styles/BotonEstrella.css";
  * @component BotonEstrella
  * @description Botón para marcar/desmarcar eventos como destacados con estrella mejorada
  */
-const BotonEstrella = ({ idEvento, estadoInicial, onToggle, disabled }) => {
+const BotonEstrella = ({
+  idEvento,
+  estadoInicial,
+  onToggle,
+  disabled,
+  disabledReason,
+}) => {
   const [esDestacado, setEsDestacado] = useState(estadoInicial);
   const [cargando, setCargando] = useState(false);
   /**
@@ -34,11 +40,6 @@ const BotonEstrella = ({ idEvento, estadoInicial, onToggle, disabled }) => {
         }
       }
     } catch (error) {
-      console.error("Error completo:", error);
-      console.error("Mensaje:", error.message);
-      console.error("Stack:", error.stack);
-      console.error("=== FIN ERROR BOTON ESTRELLA ===");
-
       const errorMessage =
         error.message || "Error al actualizar evento destacado";
       toast.error(errorMessage);
@@ -56,7 +57,13 @@ const BotonEstrella = ({ idEvento, estadoInicial, onToggle, disabled }) => {
           ? "estrella-activa-be text-amber-500 hover:text-amber-600 drop-shadow-sm"
           : "estrella-inactiva-be text-gray-300 hover:text-amber-400 hover:scale-110"
       } ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
-      title={esDestacado ? "Desmarcar como destacado" : "Marcar como destacado"}
+      title={
+        disabled && disabledReason
+          ? disabledReason
+          : esDestacado
+          ? "Desmarcar como destacado"
+          : "Marcar como destacado"
+      }
       aria-label={
         esDestacado ? "Desmarcar como destacado" : "Marcar como destacado"
       }
@@ -77,11 +84,13 @@ BotonEstrella.propTypes = {
   estadoInicial: PropTypes.bool.isRequired,
   onToggle: PropTypes.func,
   disabled: PropTypes.bool,
+  disabledReason: PropTypes.string,
 };
 
 BotonEstrella.defaultProps = {
   estadoInicial: false,
   disabled: false,
+  disabledReason: "",
 };
 
 export default BotonEstrella;

@@ -103,7 +103,7 @@ export const SocketProvider = ({ children }) => {
     // Limpiar listeners previos para evitar duplicados
     // ======================================
     newSocket.off("evento-change-hm");
-    newSocket.off("inscription-change-hm");
+    newSocket.off("inscripcion-change-hm");
     newSocket.off("cupos-change-hm");
     newSocket.off("carrera-change-hm");
     newSocket.off("system-notification-hm");
@@ -122,10 +122,20 @@ export const SocketProvider = ({ children }) => {
         return;
       }
 
+      const eventoId =
+        data.data?.id_eve ?? data.data?.id ?? data.data?.evento?.id ?? null;
+      const nombreEvento =
+        data.data?.nom_eve ??
+        data.data?.name ??
+        data.data?.title ??
+        data.data?.evento?.nom_eve ??
+        data.data?.evento?.name ??
+        null;
+
       console.log("✅ [SOCKET_CONTEXT] Evento recibido:", {
         action: data.action,
-        eventoId: data.data?.id_eve,
-        nombreEvento: data.data?.nom_eve,
+        eventoId,
+        nombreEvento,
         timestamp: data.timestamp,
       });
 
@@ -251,7 +261,7 @@ export const SocketProvider = ({ children }) => {
       newSocket.off("disconnect");
       newSocket.off("connect_error");
       newSocket.off("evento-change-hm");
-      newSocket.off("inscription-change-hm");
+      newSocket.off("inscripcion-change-hm");
       newSocket.off("cupos-change-hm");
       newSocket.off("carrera-change-hm");
       newSocket.off("system-notification-hm");

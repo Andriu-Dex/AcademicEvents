@@ -203,7 +203,7 @@ const ReporteIngresosPagos = () => {
       </div>
       <p className="reporte-descripcion-rip">
         Análisis financiero de eventos, ingresos por tipo y tendencias de pagos
-      </p>{" "}
+      </p>
       {/* Filtros */}
       <div className="filtros-container-rip">
         {/* Fila 1: Período de fechas */}
@@ -273,7 +273,7 @@ const ReporteIngresosPagos = () => {
               <option value="CHARLA">Charla</option>
               <option value="SOCIALIZACION">Socialización</option>
             </select>
-          </div>{" "}
+          </div>
           <div className="filtro-grupo-rip">
             <label>Estado de Pago:</label>
             <select
@@ -288,7 +288,7 @@ const ReporteIngresosPagos = () => {
               <option value="PENDIENTE">Pagos Pendientes</option>
               <option value="RECHAZADO">Pagos Rechazados</option>
             </select>
-          </div>{" "}
+          </div>
           <button
             className="btn-descargar-rip"
             onClick={descargarPDF}
@@ -312,7 +312,7 @@ const ReporteIngresosPagos = () => {
           {/* Sección de métricas generales */}
           {metricsGenerales && (
             <div className="metricas-container-rip">
-              <h3>Métricas Financieras Generales</h3>{" "}
+              <h3>Métricas Financieras Generales</h3>
               <div className="stats-grid-rip">
                 <div className="stat-card-rip">
                   <h4>Ingresos Totales</h4>
@@ -341,11 +341,11 @@ const ReporteIngresosPagos = () => {
               </div>
               <div className="metricas-adicionales-rip">
                 <div>
-                  <span>Total Inscripciones:</span>{" "}
+                  <span>Total Inscripciones:</span>
                   {metricsGenerales.totalInscripciones}
                 </div>
                 <div>
-                  <span>Comprobantes Rechazados:</span>{" "}
+                  <span>Comprobantes Rechazados:</span>
                   {metricsGenerales.comprobantesRechazados}
                 </div>
               </div>
@@ -359,7 +359,6 @@ const ReporteIngresosPagos = () => {
             {ingresosPorTipo.length > 0 ? (
               <div className="ingresos-tabla-rip">
                 <table>
-                  {" "}
                   <thead>
                     <tr>
                       <th>Tipo de Evento</th>
@@ -373,7 +372,11 @@ const ReporteIngresosPagos = () => {
                   </thead>
                   <tbody>
                     {ingresosPorTipo.map((tipo, index) => (
-                      <tr key={index}>
+                      <tr
+                        key={
+                          tipo.tipoEvento || `tipo-${tipo.cantidadEventos}-${index}`
+                        }
+                      >
                         <td>{tipo.tipoEvento}</td>
                         <td>{tipo.cantidadEventos}</td>
                         <td>{tipo.inscripcionesTotales}</td>
@@ -403,7 +406,8 @@ const ReporteIngresosPagos = () => {
                   <thead>
                     <tr>
                       <th>Evento</th>
-                      <th>Tipo</th> <th>Valor</th>
+                      <th>Tipo</th>
+                      <th>Valor</th>
                       <th>Inscripciones</th>
                       <th>Pagos Confirmados</th>
                       <th>Ingresos Totales</th>
@@ -411,8 +415,14 @@ const ReporteIngresosPagos = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {eventosRentables.map((evento) => (
-                      <tr key={evento.id_eve}>
+                    {eventosRentables.map((evento, index) => (
+                      <tr
+                        key={
+                          evento.id_eve ||
+                          evento.id ||
+                          `${evento.nombreEvento || "evento"}-${index}`
+                        }
+                      >
                         <td>{evento.nombreEvento}</td>
                         <td>{evento.tipoEvento}</td>
                         <td>{formatearMoneda(evento.valorEvento)}</td>
@@ -496,7 +506,6 @@ const ReporteIngresosPagos = () => {
                   <table>
                     <thead>
                       <tr>
-                        {" "}
                         <th>Período</th>
                         <th>Eventos</th>
                         <th>Inscripciones</th>

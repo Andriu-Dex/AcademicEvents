@@ -398,7 +398,7 @@ async function getEventosPorMes(req, res) {
 // Reporte por Carrera
 async function getReporteCarrera(req, res) {
   try {
-    const { id } = req.params;
+    const id = req.params.id || req.params.id_car;
 
     // Validar que id exista
     if (!id) {
@@ -639,7 +639,7 @@ async function getReporteCarrera(req, res) {
 
 async function descargarReporteCarreraPDF(req, res) {
   try {
-    const { id } = req.params;
+    const id = req.params.id || req.params.id_car;
 
     // Validar que id exista
     if (!id) {

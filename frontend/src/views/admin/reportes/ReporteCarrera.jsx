@@ -58,10 +58,20 @@ const ReporteCarrera = () => {
       try {
         setLoading(true);
         const res = await axiosInstance.get("/admin/carreras");
-        setCarreras(res.data);
+        const carrerasData = Array.isArray(res.data) ? res.data : [];
+        const carrerasNormalizadas = carrerasData
+          .map((carrera, index) => ({
+            ...carrera,
+            __careerId: carrera?.id_car || carrera?.id || null,
+            __careerName:
+              carrera?.nom_car || carrera?.name || `Carrera ${index + 1}`,
+          }))
+          .filter((carrera) => carrera.__careerId);
+
+        setCarreras(carrerasNormalizadas);
         // Si hay carreras, seleccionar la primera por defecto
-        if (res.data && res.data.length > 0) {
-          setCarreraSeleccionada(res.data[0].id_car);
+        if (carrerasNormalizadas.length > 0) {
+          setCarreraSeleccionada(carrerasNormalizadas[0].__careerId);
         }
       } catch (error) {
         console.error("Error al cargar carreras:", error);
@@ -118,9 +128,9 @@ const ReporteCarrera = () => {
 
       // Obtener el nombre de la carrera para el archivo
       const carreraActual = carreras.find(
-        (c) => c.id_car === carreraSeleccionada
+        (c) => c.__careerId === carreraSeleccionada
       );
-      const nombreCarrera = carreraActual ? carreraActual.nom_car : "Carrera";
+      const nombreCarrera = carreraActual ? carreraActual.__careerName : "Carrera";
 
       // Crear el nombre del archivo
       const nombreArchivo = `Reporte_${nombreCarrera.replace(/\s+/g, "_")}.pdf`;
@@ -170,8 +180,8 @@ const ReporteCarrera = () => {
             disabled={loading}
           >
             {carreras.map((carrera) => (
-              <option key={carrera.id_car} value={carrera.id_car}>
-                {carrera.nom_car}
+              <option key={carrera.__careerId} value={carrera.__careerId}>
+                {carrera.__careerName}
               </option>
             ))}
           </select>
@@ -283,7 +293,13 @@ const ReporteCarrera = () => {
                   </thead>
                   <tbody>
                     {eventosPorCarrera.map((evento) => (
-                      <tr key={evento.id_eve}>
+                      <tr
+                        key={
+                          evento.id_eve ||
+                          evento.id ||
+                          `${evento.nom_eve || "evento"}-${evento.fec_ini_eve || "sin-fecha"}`
+                        }
+                      >
                         <td>{evento.nom_eve}</td>
                         <td>
                           {new Date(evento.fec_ini_eve).toLocaleDateString(
