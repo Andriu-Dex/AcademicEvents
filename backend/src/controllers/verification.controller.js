@@ -94,7 +94,8 @@ const reenviarVerificacion = async (req, res) => {
     // Reenviar verificación
     const resultado = await emailVerificationService.reenviarVerificacion(
       email,
-      ip
+      ip,
+      req.tenantId
     );
 
     if (!resultado.success) {
@@ -140,7 +141,8 @@ const solicitarReenvio = async (req, res) => {
     // Reenviar verificación
     const resultado = await emailVerificationService.reenviarVerificacion(
       correo,
-      ip
+      ip,
+      req.tenantId
     );
 
     if (!resultado.success) {

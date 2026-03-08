@@ -18,13 +18,14 @@ class PasswordRecoveryService {
    * @param {string} ip - IP de la solicitud
    * @returns {Promise<Object>} Resultado de la operación
    */
-  async requestPasswordRecovery(email, ip) {
+  async requestPasswordRecovery(email, ip, tenantId) {
     try {
       console.log(
         "🔹 [PASSWORD-RECOVERY-SERVICE] Iniciando requestPasswordRecovery"
       );
       console.log("🔹 [PASSWORD-RECOVERY-SERVICE] Email:", email);
       console.log("🔹 [PASSWORD-RECOVERY-SERVICE] IP:", ip);
+      console.log("🔹 [PASSWORD-RECOVERY-SERVICE] Tenant:", tenantId);
 
       // Verificar rate limiting (máximo 3 solicitudes por hora)
       console.log(
@@ -32,9 +33,10 @@ class PasswordRecoveryService {
       );
       const rateLimit = await this.tokenService.verificarRateLimit(
         email,
-        "RECUPERAR_PASSWORD",
+        "RECOVER_PASSWORD",
         3,
-        60
+        60,
+        tenantId
       );
       console.log(
         "🔹 [PASSWORD-RECOVERY-SERVICE] Rate limit resultado:",
@@ -54,7 +56,7 @@ class PasswordRecoveryService {
       console.log(
         "🔹 [PASSWORD-RECOVERY-SERVICE] Buscando cuenta por correo..."
       );
-      const account = await this.tokenService.obtenerCuentaPorCorreo(email);
+      const account = await this.tokenService.obtenerCuentaPorCorreo(email, tenantId);
       console.log(
         "🔹 [PASSWORD-RECOVERY-SERVICE] Cuenta encontrada:",
         account ? "Sí" : "No"
@@ -70,9 +72,9 @@ class PasswordRecoveryService {
 
       console.log(
         "🔹 [PASSWORD-RECOVERY-SERVICE] Estado verificación correo:",
-        account.est_ver_cor
+        account.isEmailVerified
       );
-      if (!account.est_ver_cor) {
+      if (!account.isEmailVerified) {
         console.log("❌ [PASSWORD-RECOVERY-SERVICE] Cuenta no verificada");
         return {
           success: false,
@@ -81,13 +83,14 @@ class PasswordRecoveryService {
         };
       }
 
-      // Invalidar tokens anteriores del tipo RECUPERAR_PASSWORD
+      // Invalidar tokens anteriores del tipo RECOVER_PASSWORD
       console.log(
         "🔹 [PASSWORD-RECOVERY-SERVICE] Invalidando tokens anteriores..."
       );
       await this.tokenService.invalidarTokensAnteriores(
-        account.id_cue,
-        "RECUPERAR_PASSWORD"
+        account.id,
+        "RECOVER_PASSWORD",
+        account.tenantId
       );
       console.log(
         "✅ [PASSWORD-RECOVERY-SERVICE] Tokens anteriores invalidados"
@@ -96,10 +99,11 @@ class PasswordRecoveryService {
       // Crear nuevo token con 2 horas de duración (en segundos)
       console.log("🔹 [PASSWORD-RECOVERY-SERVICE] Creando nuevo token...");
       const token = await this.tokenService.crearToken({
-        idCuenta: account.id_cue,
-        tipoToken: "RECUPERAR_PASSWORD",
+        idCuenta: account.id,
+        tipoToken: "RECOVER_PASSWORD",
         ip,
-        duracionHoras: 2, // Duración más corta que verificación
+        horasValidez: 2,
+        tenantId: account.tenantId,
       });
       console.log(
         "✅ [PASSWORD-RECOVERY-SERVICE] Token creado:",
@@ -108,7 +112,7 @@ class PasswordRecoveryService {
 
       // Generar URL para el frontend
       const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
-      const recoveryUrl = `${frontendUrl}/restablecer-contrasena/${token.tok_val}`;
+      const recoveryUrl = `${frontendUrl}/restablecer-contrasena/${token.value}`;
       console.log(
         "🔹 [PASSWORD-RECOVERY-SERVICE] URL de recuperación generada:",
         recoveryUrl
@@ -120,16 +124,16 @@ class PasswordRecoveryService {
       );
       const { asunto, cuerpoHtml } =
         this.emailTemplateService.obtenerPlantillaRecuperacion({
-          nombre: account.usuario?.nom_usu || "Usuario",
+          nombre: account.user?.firstName || "Usuario",
           urlRecuperacion: recoveryUrl,
-          token: token.tok_val,
+          token: token.value,
         });
       console.log("✅ [PASSWORD-RECOVERY-SERVICE] Plantilla obtenida"); // Enviar correo electrónico
       console.log(
         "🔹 [PASSWORD-RECOVERY-SERVICE] Enviando correo electrónico..."
       );
       await this.emailTemplateService.enviarEmail({
-        destinatario: account.cor_usu,
+        destinatario: account.email,
         asunto,
         cuerpoHtml,
       });
@@ -141,7 +145,7 @@ class PasswordRecoveryService {
         success: true,
         message:
           "Instrucciones de recuperación enviadas correctamente a tu correo electrónico",
-        token: token.tok_val,
+        token: token.value,
       };
     } catch (error) {
       console.error(
@@ -170,7 +174,7 @@ class PasswordRecoveryService {
       // Validar token reutilizando lógica del TokenService
       const validationResult = await this.tokenService.validarToken({
         tokenValue,
-        tipoToken: "RECUPERAR_PASSWORD",
+        tipoToken: "RECOVER_PASSWORD",
         ip,
       });
 
@@ -200,7 +204,7 @@ class PasswordRecoveryService {
 
       // Si el token es válido, obtenemos la cuenta asociada
       const account = await prisma.account.findUnique({
-        where: { id: validationResult.token.id_cue_per },
+        where: { id: validationResult.token.accountId },
         include: {
           user: true,
         },
@@ -217,9 +221,9 @@ class PasswordRecoveryService {
       return {
         success: true,
         message: "Token válido",
-        accountId: validationResult.token.id_cue_per,
-        email: account.cor_usu,
-        userName: account.usuario?.nom_usu || "Usuario",
+        accountId: validationResult.token.accountId,
+        email: account.email,
+        userName: account.user?.firstName || "Usuario",
       };
     } catch (error) {
       console.error(
@@ -272,43 +276,43 @@ class PasswordRecoveryService {
         );
 
         // Verificar nuevamente que el token esté activo dentro de la transacción
-        const currentToken = await tx.token_cuenta.findUnique({
-          where: { tok_val: tokenValue },
+        const currentToken = await tx.accountToken.findUnique({
+          where: { value: tokenValue },
         });
 
-        if (!currentToken || currentToken.est_tok !== "ACTIVO") {
+        if (!currentToken || currentToken.status !== "ACTIVE") {
           console.log(
             `[${new Date().toISOString()}] Token ${tokenValue} ya no válido durante la transacción. Estado: ${
-              currentToken?.est_tok || "NO_EXISTE"
+              currentToken?.status || "NO_EXISTE"
             }`
           );
           throw new Error("Token ya no válido durante la transacción");
         }
 
         // Marcar token como usado
-        await tx.token_cuenta.update({
-          where: { tok_val: tokenValue },
-          data: { est_tok: "USADO" },
+        await tx.accountToken.update({
+          where: { value: tokenValue },
+          data: { status: "USED" },
         });
 
         // Registrar el uso del token
-        await tx.uso_token.create({
+        await tx.tokenUsage.create({
           data: {
-            id_tok_per: currentToken.id_tok,
-            fec_uso: new Date(),
-            ip_uso: ip || "0.0.0.0",
-            exi_uso: true,
+            tenantId: currentToken.tenantId,
+            tokenId: currentToken.id,
+            ip: ip || "0.0.0.0",
+            successful: true,
           },
         });
 
         // Actualizar la contraseña en la cuenta
-        const updatedAccount = await tx.cuenta.update({
-          where: { id_cue: accountId },
+        const updatedAccount = await tx.account.update({
+          where: { id: accountId },
           data: {
-            con_usu: hashedPassword,
+            password: hashedPassword,
           },
           include: {
-            usuario: true,
+            user: true,
           },
         });
 
@@ -320,11 +324,12 @@ class PasswordRecoveryService {
       }); // Opcionalmente, invalidar otros tokens de la misma cuenta por seguridad
       try {
         await this.tokenService.invalidarTokensOtros(
-          result.id_cue,
+          result.id,
           tokenValue,
-          "RECUPERAR_PASSWORD",
-          "SEGURIDAD",
-          "Invalidado automáticamente tras cambio de contraseña exitoso"
+          "RECOVER_PASSWORD",
+          "SECURITY",
+          "Invalidado automáticamente tras cambio de contraseña exitoso",
+          result.tenantId
         );
         console.log(
           `[${new Date().toISOString()}] Otros tokens de recuperación invalidados correctamente`
@@ -340,12 +345,12 @@ class PasswordRecoveryService {
       // Enviar email de confirmación del cambio
       const { asunto, cuerpoHtml } =
         this.emailTemplateService.obtenerPlantillaConfirmacionCambioContrasena({
-          nombre: result.usuario?.nom_usu || "Usuario",
+          nombre: result.user?.firstName || "Usuario",
           fechaCambio: new Date().toLocaleString("es-EC"),
         });
 
       await this.emailTemplateService.enviarEmail({
-        destinatario: result.cor_usu,
+        destinatario: result.email,
         asunto,
         cuerpoHtml,
       });
@@ -353,7 +358,7 @@ class PasswordRecoveryService {
       return {
         success: true,
         message: "Contraseña restablecida con éxito",
-        email: result.cor_usu,
+        email: result.email,
       };
     } catch (error) {
       console.error(

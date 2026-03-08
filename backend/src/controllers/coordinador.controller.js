@@ -35,7 +35,12 @@ const crearCoordinador = async (req, res) => {
 
     // Verificar si ya existe un coordinador con el mismo correo
     const coordinadorExistente = await prisma.coordinator.findUnique({
-      where: { email: cor_coo },
+      where: {
+        tenantId_email: {
+          tenantId: req.tenantId,
+          email: cor_coo,
+        },
+      },
     });
 
     if (coordinadorExistente) {
@@ -47,6 +52,7 @@ const crearCoordinador = async (req, res) => {
     // Crear coordinador
     const nuevoCoordinador = await prisma.coordinator.create({
       data: {
+        tenantId: req.tenantId,
         firstName: nom_coo,
         lastName: ape_coo,
         email: cor_coo,
@@ -71,6 +77,9 @@ const crearCoordinador = async (req, res) => {
 const obtenerCoordinadores = async (req, res) => {
   try {
     const coordinadores = await prisma.coordinator.findMany({
+      where: {
+        tenantId: req.tenantId,
+      },
       orderBy: { firstName: "asc" },
     });
 
@@ -129,7 +138,12 @@ const actualizarCoordinador = async (req, res) => {
     // Verificar que el correo no está ya en uso por otro coordinador
     if (cor_coo !== coordinadorExistente.email) {
       const correoExistente = await prisma.coordinator.findUnique({
-        where: { email: cor_coo },
+        where: {
+          tenantId_email: {
+            tenantId: req.tenantId,
+            email: cor_coo,
+          },
+        },
       });
 
       if (correoExistente) {

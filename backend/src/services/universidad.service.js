@@ -13,35 +13,42 @@ class UniversidadService {
   static async getUniversidadData() {
     try {
       // Intentamos obtener los datos de la universidad desde la base de datos
-      const universidad = await prisma.universidad.findFirst({
+      const universidad = await prisma.university.findFirst({
         where: {
-          est_uni: true,
+          isActive: true,
         },
       });
 
       // Si no hay datos en la BD, devolvemos los valores predeterminados de la configuración
       if (!universidad) {
         return {
-          nom_uni: config.universidad.nombre,
-          acr_uni: config.universidad.acronimo,
-          url_web_uni: config.universidad.sitioWeb,
-          dir_uni: "Av. de los Chasquis, Ambato",
-          tel_uni: "(03) 252-1081",
-          cor_uni: "info@uta.edu.ec",
+          name: config.universidad.nombre,
+          acronym: config.universidad.acronimo,
+          websiteUrl: config.universidad.sitioWeb,
+          address: "Av. de los Chasquis, Ambato",
+          phone: "(03) 252-1081",
+          email: "info@uta.edu.ec",
         };
       }
 
-      return universidad;
+      return {
+        name: universidad.name,
+        acronym: universidad.acronym,
+        websiteUrl: universidad.websiteUrl,
+        address: universidad.address,
+        phone: universidad.phone,
+        email: universidad.email,
+      };
     } catch (error) {
       console.error("Error al obtener datos de la universidad:", error);
       // En caso de error, devolvemos los valores predeterminados
       return {
-        nom_uni: config.universidad.nombre,
-        acr_uni: config.universidad.acronimo,
-        url_web_uni: config.universidad.sitioWeb,
-        dir_uni: "Av. de los Chasquis, Ambato",
-        tel_uni: "(03) 252-1081",
-        cor_uni: "info@uta.edu.ec",
+        name: config.universidad.nombre,
+        acronym: config.universidad.acronimo,
+        websiteUrl: config.universidad.sitioWeb,
+        address: "Av. de los Chasquis, Ambato",
+        phone: "(03) 252-1081",
+        email: "info@uta.edu.ec",
       };
     }
   }

@@ -3,12 +3,12 @@
  * Esta versión incluye una implementación robusta para manejar cualquier transición de estado
  * y garantizar que los cupos disponibles siempre reflejen el número correcto.
  * * ENFOQUE IMPLEMENTADO:
- * 1. Cada inscripción tiene un campo 'cup_ocu' que indica si está ocupando un cupo o no
- * 2. Las inscripciones en estado 'ACEPTADA' y estados finales ocupan cupo (cup_ocu = true)
- * 3. El cálculo de cupos disponibles se basa en el campo 'cup_ocu', no en el estado
+ * 1. Cada inscripción tiene un campo 'occupiesSpot' que indica si está ocupando un cupo o no
+ * 2. Las inscripciones en estado 'ACEPTADA' y estados finales ocupan cupo (occupiesSpot = true)
+ * 3. El cálculo de cupos disponibles se basa en el campo 'occupiesSpot', no en el estado
  * 4. La función 'actualizarEstadoYSincronizarCupos' maneja todos los cambios de estado
- *    y actualiza el campo 'cup_ocu' automáticamente
- * 5. Los cupos disponibles siempre se calculan como: cup_max_eve - (número de inscripciones con cup_ocu = true)
+ *    y actualiza el campo 'occupiesSpot' automáticamente
+ * 5. Los cupos disponibles siempre se calculan como: maxCapacity - (número de inscripciones con occupiesSpot = true)
  */
 const { prisma } = require("../config/db");
 
@@ -23,25 +23,25 @@ async function calcularCuposDisponibles(idEvento, tx) {
     const db = tx || prisma;
 
     // 1. Obtener información del evento
-    const evento = await db.evento.findUnique({
-      where: { id_eve: idEvento },
-      select: { cup_max_eve: true, nom_eve: true },
+    const evento = await db.event.findUnique({
+      where: { id: idEvento },
+      select: { maxCapacity: true, name: true },
     });
 
     if (!evento) {
       throw new Error(`No se encontró el evento con ID ${idEvento}`);
     }
 
-    // 2. Contar inscripciones que ocupan cupo - Usamos el nuevo campo cup_ocu
-    const inscripcionesOcupandoCupo = await db.inscripcion.count({
+    // 2. Contar inscripciones que ocupan cupo
+    const inscripcionesOcupandoCupo = await db.registration.count({
       where: {
-        id_eve_ins: idEvento,
-        cup_ocu: true,
+        eventId: idEvento,
+        occupiesSpot: true,
       },
     });
 
     // 3. Calcular cupos disponibles
-    const cupoMaximo = evento.cup_max_eve;
+    const cupoMaximo = evento.maxCapacity;
     const cuposOcupados = inscripcionesOcupandoCupo;
     const cuposDisponibles = Math.max(
       0,
@@ -63,7 +63,7 @@ async function calcularCuposDisponibles(idEvento, tx) {
 }
 
 /**
- * Actualiza el campo cup_dis_eve en la tabla evento con el valor calculado
+ * Actualiza el campo availableSpots en la tabla event con el valor calculado
  * @param {string} idEvento - ID del evento a actualizar
  * @param {object} tx - Instancia de transacción de Prisma (opcional)
  * @returns {Promise<{anterior: number, nuevo: number}>} Objeto con valores anterior y nuevo
@@ -73,16 +73,16 @@ async function sincronizarCuposDisponibles(idEvento, tx) {
     const db = tx || prisma;
 
     // 1. Obtener información actual del evento
-    const evento = await db.evento.findUnique({
-      where: { id_eve: idEvento },
-      select: { cup_max_eve: true, cup_dis_eve: true, nom_eve: true },
+    const evento = await db.event.findUnique({
+      where: { id: idEvento },
+      select: { maxCapacity: true, availableSpots: true, name: true },
     });
 
     if (!evento) {
       throw new Error(`No se encontró el evento con ID ${idEvento}`);
     }
 
-    const cupoDisponibleAnterior = evento.cup_dis_eve;
+    const cupoDisponibleAnterior = evento.availableSpots;
 
     // 2. Calcular cupos disponibles
     const { disponibles: cupoDisponibleCalculado } =
@@ -90,9 +90,9 @@ async function sincronizarCuposDisponibles(idEvento, tx) {
 
     // 3. Actualizar solo si hay discrepancia
     if (cupoDisponibleAnterior !== cupoDisponibleCalculado) {
-      await db.evento.update({
-        where: { id_eve: idEvento },
-        data: { cup_dis_eve: cupoDisponibleCalculado },
+      await db.event.update({
+        where: { id: idEvento },
+        data: { availableSpots: cupoDisponibleCalculado },
       });
     }
 
@@ -128,19 +128,19 @@ async function actualizarEstadoYSincronizarCupos(
     // Ejecutamos todo en una transacción atómica para garantizar consistencia
     const resultado = await prisma.$transaction(async (tx) => {
       // 1. Obtener inscripción actual con datos del evento
-      const inscripcion = await tx.inscripcion.findUnique({
-        where: { id_ins: idInscripcion },
+      const inscripcion = await tx.registration.findUnique({
+        where: { id: idInscripcion },
         select: {
-          id_ins: true,
-          est_ins: true,
-          id_eve_ins: true,
-          cup_ocu: true,
-          evento: {
+          id: true,
+          status: true,
+          eventId: true,
+          occupiesSpot: true,
+          event: {
             select: {
-              id_eve: true,
-              nom_eve: true,
-              cup_max_eve: true,
-              cup_dis_eve: true,
+              id: true,
+              name: true,
+              maxCapacity: true,
+              availableSpots: true,
             },
           },
         },
@@ -152,9 +152,9 @@ async function actualizarEstadoYSincronizarCupos(
         );
       }
 
-      const estadoAnterior = inscripcion.est_ins;
-      const idEvento = inscripcion.id_eve_ins;
-      const ocupabaCupo = inscripcion.cup_ocu;
+      const estadoAnterior = inscripcion.status;
+      const idEvento = inscripcion.eventId;
+      const ocupabaCupo = inscripcion.occupiesSpot;
 
       // 2. Determinar si la inscripción debe ocupar cupo con el nuevo estado
       let debeOcuparCupo = ocupabaCupo; // Por defecto, mantener el estado actual
@@ -178,21 +178,21 @@ async function actualizarEstadoYSincronizarCupos(
 
       // Preparar datos de actualización incluyendo información de validación si corresponde
       let datosActualizacion = {
-        est_ins: nuevoEstado,
-        cup_ocu: debeOcuparCupo,
+        status: nuevoEstado,
+        occupiesSpot: debeOcuparCupo,
         ...datosAdicionales,
       };
 
       // Si hay un cambio de estado significativo y se proporciona un ID de administrador,
       // registramos quién hizo la validación y cuándo
       if (estadoAnterior !== nuevoEstado && idAdministrador) {
-        datosActualizacion.id_adm_val_ins = idAdministrador;
-        datosActualizacion.fec_val_ins = new Date();
+        datosActualizacion.validatedByAdminId = idAdministrador;
+        datosActualizacion.validatedAt = new Date();
       }
 
-      // 3. Actualizar estado de inscripción y el campo cup_ocu
-      await tx.inscripcion.update({
-        where: { id_ins: idInscripcion },
+      // 3. Actualizar estado de inscripción y el campo occupiesSpot
+      await tx.registration.update({
+        where: { id: idInscripcion },
         data: datosActualizacion,
       });
 
@@ -214,6 +214,8 @@ async function actualizarEstadoYSincronizarCupos(
           id: idEvento,
           cuposAntes: resultadoSincronizacion.anterior,
           cuposDespues: resultadoSincronizacion.nuevo,
+          cuposCambiaron:
+            resultadoSincronizacion.anterior !== resultadoSincronizacion.nuevo,
           cuposCambiados:
             resultadoSincronizacion.anterior !== resultadoSincronizacion.nuevo,
         },

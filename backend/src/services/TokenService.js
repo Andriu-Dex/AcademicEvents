@@ -224,12 +224,18 @@ class TokenService {
   /**
    * Obtiene una cuenta por su correo electrónico
    * @param {string} correo - Correo electrónico
+   * @param {string} tenantId - ID del tenant (requerido por index compuesto)
    * @returns {Promise<Object|null>} Cuenta encontrada o null
    */
-  async obtenerCuentaPorCorreo(correo) {
+  async obtenerCuentaPorCorreo(correo, tenantId) {
     try {
       const account = await prisma.account.findUnique({
-        where: { email: correo },
+        where: {
+          tenantId_email: {
+            tenantId,
+            email: correo,
+          },
+        },
         include: { user: true },
       });
 
@@ -246,11 +252,12 @@ class TokenService {
    * @param {string} tipoToken - Tipo de token a verificar
    * @param {number} limiteHora - Número máximo de solicitudes por hora
    * @param {number} minutos - Minutos para calcular el límite (default: 60)
+   * @param {string} tenantId - ID del tenant
    * @returns {Promise<Object>} Resultado de la verificación
    */
-  async verificarRateLimit(correo, tipoToken, limiteHora = 3, minutos = 60) {
+  async verificarRateLimit(correo, tipoToken, limiteHora = 3, minutos = 60, tenantId) {
     try {
-      const cuenta = await this.obtenerCuentaPorCorreo(correo);
+      const cuenta = await this.obtenerCuentaPorCorreo(correo, tenantId);
       if (!cuenta) {
         return {
           permitido: false,
@@ -363,12 +370,18 @@ class TokenService {
   /**
    * Verifica si ya existe una cuenta con el correo especificado
    * @param {string} correo - Correo electrónico a verificar
+   * @param {string} tenantId - ID del tenant (requerido por index compuesto)
    * @returns {Promise<boolean>} true si existe, false si no
    */
-  async verificarExistenciaCorreo(correo) {
+  async verificarExistenciaCorreo(correo, tenantId) {
     try {
       const account = await prisma.account.findUnique({
-        where: { email: correo },
+        where: {
+          tenantId_email: {
+            tenantId,
+            email: correo,
+          },
+        },
       });
 
       return account !== null;

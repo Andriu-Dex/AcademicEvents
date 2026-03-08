@@ -16,6 +16,35 @@ if (!fs.existsSync(certificadosDir)) {
   fs.mkdirSync(certificadosDir, { recursive: true });
 }
 
+const mapEventToLegacy = (event) => ({
+  id_eve: event.id,
+  nom_eve: event.name,
+  tip_eve: event.type,
+  val_eve: event.price,
+  est_eve: event.status,
+  fec_ini_eve: event.startDate,
+  fec_fin_eve: event.endDate,
+  dur_hor_eve: event.durationHours,
+  por_min_asi_eve: event.minAttendancePercent,
+  eventos_curso: event.eventCourse
+    ? { not_min_cur: event.eventCourse.minPassingGrade }
+    : null,
+});
+
+const mapRegistrationCourseToLegacy = (registrationCourse) =>
+  registrationCourse ? { not_fin_usu: registrationCourse.finalGrade } : null;
+
+const mapUserToLegacy = (user) => ({
+  ...user,
+  nom_usu: user.firstName,
+  ape_usu: user.lastName,
+  ced_usu: user.idNumber,
+  carrera: user.career ? { ...user.career, nom_car: user.career.name } : null,
+});
+
+const mapCertificateTypeToDb = (legacyType) =>
+  legacyType === "APROBACION" ? "APPROVAL" : "PARTICIPATION";
+
 // Generar y descargar certificado PDF
 const generarCertificado = async (req, res) => {
   try {
@@ -27,7 +56,7 @@ const generarCertificado = async (req, res) => {
     }); // Si ya existe un certificado, devolvemos la URL
     if (certificadoExistente) {
       // Enviamos el archivo al cliente
-      const filePath = certificadoExistente.url;
+      const filePath = certificadoExistente.fileUrl;
       if (fs.existsSync(filePath)) {
         // Obtenemos el nombre del archivo de la ruta
         const fileName = path.basename(filePath);
@@ -51,29 +80,37 @@ const generarCertificado = async (req, res) => {
             account: {
               include: {
                 user: {
-                  include: { carrera: true },
+                  include: { career: true },
                 },
               },
             },
-            evento: {
-              include: { eventos_curso: true },
+            event: {
+              include: { eventCourse: true },
             },
-            inscripcion_curso: true,
+            registrationCourse: true,
           },
         });
 
         if (!inscripcion)
           return res.status(404).json({ msg: "Inscripción no encontrada" });
 
-        const tipoCertificado = determinarTipoCertificado(inscripcion.evento);
+        const eventoLegacy = mapEventToLegacy(inscripcion.event);
+        const tipoCertificado = determinarTipoCertificado(eventoLegacy);
+        const tipoCertificadoDb = mapCertificateTypeToDb(tipoCertificado);
         const codigoValidacion = generarCodigoValidacion();
+        const registrationCourseLegacy = mapRegistrationCourseToLegacy(
+          inscripcion.registrationCourse
+        );
 
         const datosCertificado = {
-          usuario: inscripcion.account.user,
-          evento: inscripcion.evento,
-          inscripcion,
-          asistencia: inscripcion.por_asi_fin_usu || 0,
-          notaFinal: inscripcion.inscripcion_curso?.not_fin_usu || null,
+          usuario: mapUserToLegacy(inscripcion.account.user),
+          evento: eventoLegacy,
+          inscripcion: {
+            ...inscripcion,
+            por_asi_fin_usu: inscripcion.finalAttendancePercent,
+          },
+          asistencia: inscripcion.finalAttendancePercent || 0,
+          notaFinal: registrationCourseLegacy?.not_fin_usu || null,
           tipoCertificado,
           codigoValidacion,
         };
@@ -91,8 +128,8 @@ const generarCertificado = async (req, res) => {
         await prisma.certificate.update({
           where: { registrationId: id },
           data: {
-            url: rutaArchivo,
-            type: tipoCertificado,
+            fileUrl: rutaArchivo,
+            type: tipoCertificadoDb,
             validationCode: codigoValidacion,
           },
         });
@@ -117,17 +154,17 @@ const generarCertificado = async (req, res) => {
           include: {
             user: {
               include: {
-                carrera: true,
+                career: true,
               },
             },
           },
         },
-        evento: {
+        event: {
           include: {
-            eventos_curso: true,
+            eventCourse: true,
           },
         },
-        inscripcion_curso: true,
+        registrationCourse: true,
       },
     });
 
@@ -138,35 +175,37 @@ const generarCertificado = async (req, res) => {
     // Verificar si cumple requisitos para certificado
     if (
       !cumpleRequisitosCertificado(
-        inscripcion,
-        inscripcion.evento,
-        inscripcion.inscripcion_curso
+        { ...inscripcion, por_asi_fin_usu: inscripcion.finalAttendancePercent },
+        mapEventToLegacy(inscripcion.event),
+        mapRegistrationCourseToLegacy(inscripcion.registrationCourse)
       )
     ) {
       return res.status(403).json({
         msg: "No cumple requisitos para certificado",
         detalles: {
-          asistenciaActual: inscripcion.por_asi_fin_usu || 0,
-          asistenciaRequerida: inscripcion.evento.por_min_asi_eve || 80,
-          notaActual: inscripcion.inscripcion_curso?.not_fin_usu || 0,
-          notaRequerida: inscripcion.evento.eventos_curso?.not_min_cur || 7,
+          asistenciaActual: inscripcion.finalAttendancePercent || 0,
+          asistenciaRequerida: inscripcion.event.minAttendancePercent || 80,
+          notaActual: inscripcion.registrationCourse?.finalGrade || 0,
+          notaRequerida: inscripcion.event.eventCourse?.minPassingGrade || 7,
         },
       });
     }
 
     // Determinar tipo de certificado
-    const tipoCertificado = determinarTipoCertificado(inscripcion.evento);
+    const eventoLegacy = mapEventToLegacy(inscripcion.event);
+    const tipoCertificado = determinarTipoCertificado(eventoLegacy);
+    const tipoCertificadoDb = mapCertificateTypeToDb(tipoCertificado);
 
     // Generar código de validación único
     const codigoValidacion = generarCodigoValidacion();
 
     // Preparar datos para el certificado
     const datosCertificado = {
-      usuario: inscripcion.account.user,
-      evento: inscripcion.evento,
+      usuario: mapUserToLegacy(inscripcion.account.user),
+      evento: eventoLegacy,
       inscripcion: inscripcion,
-      asistencia: inscripcion.por_asi_fin_usu || 0,
-      notaFinal: inscripcion.inscripcion_curso?.not_fin_usu || null,
+      asistencia: inscripcion.finalAttendancePercent || 0,
+      notaFinal: inscripcion.registrationCourse?.finalGrade || null,
       tipoCertificado: tipoCertificado,
       codigoValidacion: codigoValidacion,
     }; // Generar el nombre del archivo
@@ -186,9 +225,10 @@ const generarCertificado = async (req, res) => {
       // Guardar el certificado en la base de datos
       certificadoExistente = await prisma.certificate.create({
         data: {
+          tenantId: inscripcion.tenantId,
           registrationId: id,
-          url: rutaArchivo, // Ruta del archivo en el sistema
-          type: tipoCertificado,
+          fileUrl: rutaArchivo, // Ruta del archivo en el sistema
+          type: tipoCertificadoDb,
           validationCode: codigoValidacion,
         },
       });
@@ -243,7 +283,7 @@ const enviarCertificadoPorCorreo = async (req, res) => {
             user: true,
           },
         },
-        evento: true,
+        event: true,
       },
     });
 
@@ -252,12 +292,12 @@ const enviarCertificadoPorCorreo = async (req, res) => {
     }
 
     // Leer el archivo PDF
-    const pdfBuffer = fs.readFileSync(certificado.url); // Enviar por correo
+    const pdfBuffer = fs.readFileSync(certificado.fileUrl); // Enviar por correo
     try {
       const enviado = await enviarCorreoConCertificado(
         inscripcion.account.email,
         pdfBuffer,
-        inscripcion.evento.nom_eve,
+        inscripcion.event.name,
         `${inscripcion.account.user.firstName} ${inscripcion.account.user.lastName}`
       );
 
@@ -265,7 +305,7 @@ const enviarCertificadoPorCorreo = async (req, res) => {
         // Actualizar estado en la base de datos
         await prisma.registration.update({
           where: { id: id },
-          data: { usu_apr_cer: true },
+          data: { userApprovedCertificate: true },
         });
 
         res
@@ -309,13 +349,13 @@ const validarCertificado = async (req, res) => {
               include: {
                 user: {
                   include: {
-                    carrera: true,
+                    career: true,
                   },
                 },
               },
             },
-            evento: true,
-            inscripcion_curso: true,
+            event: true,
+            registrationCourse: true,
           },
         },
       },
@@ -335,22 +375,21 @@ const validarCertificado = async (req, res) => {
       fechaEmision: certificado.generatedAt,
       estudiante: {
         nombre: `${certificado.registration.account.user.firstName} ${certificado.registration.account.user.lastName}`,
-        cedula: certificado.registration.account.user.ced_usu,
+        cedula: certificado.registration.account.user.idNumber,
         carrera:
-          certificado.registration.account.user.carrera?.nom_car ||
+          certificado.registration.account.user.career?.name ||
           "No especificada",
       },
       evento: {
-        nombre: certificado.registration.evento.nom_eve,
-        tipo: certificado.registration.evento.tip_eve,
-        fechaInicio: certificado.registration.evento.fec_ini_eve,
-        fechaFin: certificado.registration.evento.fec_fin_eve,
-        duracion: certificado.registration.evento.dur_hor_eve,
+        nombre: certificado.registration.event.name,
+        tipo: certificado.registration.event.type,
+        fechaInicio: certificado.registration.event.startDate,
+        fechaFin: certificado.registration.event.endDate,
+        duracion: certificado.registration.event.durationHours,
       },
       rendimiento: {
-        asistencia: certificado.registration.por_asi_fin_usu || 0,
-        notaFinal:
-          certificado.registration.inscripcion_curso?.not_fin_usu || null,
+        asistencia: certificado.registration.finalAttendancePercent || 0,
+        notaFinal: certificado.registration.registrationCourse?.finalGrade || null,
       },
     };
 
@@ -377,14 +416,14 @@ const previsualizarCertificado = async (req, res) => {
         account: {
           include: {
             user: {
-              include: { carrera: true },
+              include: { career: true },
             },
           },
         },
-        evento: {
-          include: { eventos_curso: true },
+        event: {
+          include: { eventCourse: true },
         },
-        inscripcion_curso: true,
+        registrationCourse: true,
       },
     });
 
@@ -395,33 +434,34 @@ const previsualizarCertificado = async (req, res) => {
     // Verificar si cumple requisitos para certificado
     if (
       !cumpleRequisitosCertificado(
-        inscripcion,
-        inscripcion.evento,
-        inscripcion.inscripcion_curso
+        { ...inscripcion, por_asi_fin_usu: inscripcion.finalAttendancePercent },
+        mapEventToLegacy(inscripcion.event),
+        mapRegistrationCourseToLegacy(inscripcion.registrationCourse)
       )
     ) {
       return res.status(403).json({
         msg: "No cumple requisitos para certificado",
         detalles: {
-          asistenciaActual: inscripcion.por_asi_fin_usu || 0,
-          asistenciaRequerida: inscripcion.evento.por_min_asi_eve || 80,
-          notaActual: inscripcion.inscripcion_curso?.not_fin_usu || 0,
-          notaRequerida: inscripcion.evento.eventos_curso?.not_min_cur || 7,
+          asistenciaActual: inscripcion.finalAttendancePercent || 0,
+          asistenciaRequerida: inscripcion.event.minAttendancePercent || 80,
+          notaActual: inscripcion.registrationCourse?.finalGrade || 0,
+          notaRequerida: inscripcion.event.eventCourse?.minPassingGrade || 7,
         },
       });
     }
 
     // Determinar tipo de certificado
-    const tipoCertificado = determinarTipoCertificado(inscripcion.evento);
+    const eventoLegacy = mapEventToLegacy(inscripcion.event);
+    const tipoCertificado = determinarTipoCertificado(eventoLegacy);
     const codigoValidacion = generarCodigoValidacion();
 
     // Preparar datos para el certificado
     const datosCertificado = {
-      usuario: inscripcion.account.user,
-      evento: inscripcion.evento,
+      usuario: mapUserToLegacy(inscripcion.account.user),
+      evento: eventoLegacy,
       inscripcion: inscripcion,
-      asistencia: inscripcion.por_asi_fin_usu || 0,
-      notaFinal: inscripcion.inscripcion_curso?.not_fin_usu || null,
+      asistencia: inscripcion.finalAttendancePercent || 0,
+      notaFinal: inscripcion.registrationCourse?.finalGrade || null,
       tipoCertificado: tipoCertificado,
       codigoValidacion: codigoValidacion,
     };

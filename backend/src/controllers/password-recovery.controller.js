@@ -67,7 +67,8 @@ const requestPasswordRecovery = async (req, res) => {
     );
     const result = await passwordRecoveryService.requestPasswordRecovery(
       email,
-      ip
+      ip,
+      req.tenantId
     );
 
     console.log(
@@ -139,9 +140,9 @@ const validateRecoveryToken = async (req, res) => {
         // Incluir información adicional si el token existe pero no es válido
         tokenInfo: result.token
           ? {
-              estado: result.token.est_tok,
-              fechaExpiracion: result.token.fec_exp_tok,
-              fechaCreacion: result.token.fec_cre_tok,
+              estado: result.token.status,
+              fechaExpiracion: result.token.expiresAt,
+              fechaCreacion: result.token.createdAt,
             }
           : null,
       });
@@ -253,13 +254,13 @@ const resetPassword = async (req, res) => {
         // Incluir información del token si está disponible
         tokenInfo: result.token
           ? {
-              estado: result.token.est_tok,
-              fechaExpiracion: result.token.fec_exp_tok,
-              fechaCreacion: result.token.fec_cre_tok,
-              uso: result.token.uso_token
+              estado: result.token.status,
+              fechaExpiracion: result.token.expiresAt,
+              fechaCreacion: result.token.createdAt,
+              uso: result.token.usage
                 ? {
-                    fecha: result.token.uso_token.fec_uso,
-                    ip: result.token.uso_token.ip_uso,
+                    fecha: result.token.usage.usedAt,
+                    ip: result.token.usage.ip,
                   }
                 : null,
             }

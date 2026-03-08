@@ -58,7 +58,8 @@ const corregirCorreo = async (req, res) => {
       correoAnterior,
       correoNuevo,
       carreraNueva,
-      ip
+      ip,
+      req.tenantId
     );
     if (!resultado.success) {
       return res.status(400).json(resultado);

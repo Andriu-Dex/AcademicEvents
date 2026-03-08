@@ -249,16 +249,18 @@ class EmailVerificationService {
    * Reenvía un correo de verificación a una cuenta específica
    * @param {string} correo - Correo electrónico de la cuenta
    * @param {string} ip - Dirección IP desde donde se solicita el reenvío
+   * @param {string} tenantId - ID del tenant
    * @returns {Promise<Object>} Resultado de la operación
    */
-  async reenviarVerificacion(correo, ip) {
+  async reenviarVerificacion(correo, ip, tenantId) {
     try {
       // Verificar rate limiting (máximo 3 reenvíos por hora)
       const puedeReenviar = await this.tokenService.verificarRateLimit(
         correo,
         "VERIFY_EMAIL",
         3,
-        60
+        60,
+        tenantId
       );
 
       if (!puedeReenviar.permitido) {
@@ -270,7 +272,7 @@ class EmailVerificationService {
       }
 
       // Obtener cuenta
-      const cuenta = await this.tokenService.obtenerCuentaPorCorreo(correo);
+      const cuenta = await this.tokenService.obtenerCuentaPorCorreo(correo, tenantId);
 
       if (!cuenta) {
         return {
@@ -307,13 +309,15 @@ class EmailVerificationService {
    * @param {string} correoNuevo - Nuevo correo electrónico (correcto)
    * @param {string|null} carreraNueva - ID de la nueva carrera (si aplica)
    * @param {string} ip - Dirección IP desde donde se realiza la corrección
+   * @param {string} tenantId - ID del tenant
    * @returns {Promise<Object>} Resultado de la operación
    */
-  async corregirCorreo(correoAnterior, correoNuevo, carreraNueva, ip) {
+  async corregirCorreo(correoAnterior, correoNuevo, carreraNueva, ip, tenantId) {
     try {
       // 1. Obtener cuenta por correo antiguo
       const cuenta = await this.tokenService.obtenerCuentaPorCorreo(
-        correoAnterior
+        correoAnterior,
+        tenantId
       );
       console.log("=== Corrección de correo - Detalles ===");
       console.log("Cuenta encontrada:", cuenta ? "Sí" : "No");
@@ -348,7 +352,7 @@ class EmailVerificationService {
 
       // 3. Verificar que el nuevo correo no exista ya
       const existeCorreoNuevo =
-        await this.tokenService.verificarExistenciaCorreo(correoNuevo);
+        await this.tokenService.verificarExistenciaCorreo(correoNuevo, tenantId);
       if (existeCorreoNuevo) {
         return {
           success: false,
