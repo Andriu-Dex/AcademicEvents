@@ -15,34 +15,24 @@ const conditionalLog = (message, forceShow = false) => {
 
 /**
  * Validador para reglas de negocio de estados de eventos
- * Patrón Validator
  */
 class EventStatusValidator {
   /**
    * Valida si un evento puede cambiar de estado
    */
-  static validarCambioEstado(evento, estadoDestino) {
-    const ahora = new Date();
-    const fechaInicio = new Date(evento.fec_ini_eve);
-    const fechaFin = new Date(evento.fec_fin_eve);
+  static validarCambioEstado(event, targetStatus) {
+    const now = new Date();
+    const startDate = new Date(event.startDate);
+    const endDate = new Date(event.endDate);
 
-    switch (estadoDestino) {
-      case "ACTIVO":
-        // Para activar un evento:
-        // 1. Debe estar en estado INACTIVO
-        // 2. La fecha actual debe ser >= a la fecha de inicio
-        // 3. La fecha actual debe ser < a la fecha de fin
+    switch (targetStatus) {
+      case "ACTIVE":
         return (
-          evento.est_eve === "INACTIVO" &&
-          ahora >= fechaInicio &&
-          ahora < fechaFin
+          event.status === "INACTIVE" && now >= startDate && now < endDate
         );
 
-      case "FINALIZADO":
-        // Para finalizar un evento:
-        // 1. Debe estar en estado ACTIVO
-        // 2. La fecha actual debe ser >= a la fecha de fin
-        return evento.est_eve === "ACTIVO" && ahora >= fechaFin;
+      case "FINISHED":
+        return event.status === "ACTIVE" && now >= endDate;
 
       default:
         return false;
@@ -53,22 +43,18 @@ class EventStatusValidator {
    * Obtiene eventos candidatos para activación
    */
   static async obtenerEventosCandidatosActivacion() {
-    const ahora = new Date();
+    const now = new Date();
 
-    return await prisma.evento.findMany({
+    return prisma.event.findMany({
       where: {
-        est_eve: "INACTIVO",
-        fec_ini_eve: {
-          lte: ahora, // Fecha de inicio menor o igual a ahora
-        },
-        fec_fin_eve: {
-          gt: ahora, // Fecha de fin mayor a ahora
-        },
+        status: "INACTIVE",
+        startDate: { lte: now },
+        endDate: { gt: now },
       },
       include: {
-        eventos_carrera: {
+        eventCareers: {
           include: {
-            carrera: true,
+            career: true,
           },
         },
       },
@@ -79,19 +65,17 @@ class EventStatusValidator {
    * Obtiene eventos candidatos para finalización
    */
   static async obtenerEventosCandidatosFinalizacion() {
-    const ahora = new Date();
+    const now = new Date();
 
-    return await prisma.evento.findMany({
+    return prisma.event.findMany({
       where: {
-        est_eve: "ACTIVO",
-        fec_fin_eve: {
-          lte: ahora, // Fecha de fin menor o igual a ahora
-        },
+        status: "ACTIVE",
+        endDate: { lte: now },
       },
       include: {
-        eventos_carrera: {
+        eventCareers: {
           include: {
-            carrera: true,
+            career: true,
           },
         },
       },
@@ -101,74 +85,62 @@ class EventStatusValidator {
 
 /**
  * Gestor principal de lógica de negocio para estados de eventos
- * Patrón Strategy + Command
  */
 class EventStatusManager {
   /**
-   * Actualiza eventos de INACTIVO a ACTIVO
-   * @returns {Promise<Array>} Lista de eventos activados
+   * Actualiza eventos de INACTIVE a ACTIVE
    */
   async actualizarEventosAActivoAsync() {
     try {
       conditionalLog("🔄 Buscando eventos para activar...");
 
-      // Obtener eventos candidatos
-      const eventosCandidatos =
+      const candidateEvents =
         await EventStatusValidator.obtenerEventosCandidatosActivacion();
 
-      if (eventosCandidatos.length === 0) {
+      if (candidateEvents.length === 0) {
         conditionalLog("ℹ️ No hay eventos para activar en este momento");
         return [];
       }
 
       conditionalLog(
-        `🔍 Encontrados ${eventosCandidatos.length} eventos candidatos para activar`
+        `🔍 Encontrados ${candidateEvents.length} eventos candidatos para activar`
       );
 
-      // Filtrar eventos que pueden ser activados usando el validador
-      const eventosParaActivar = eventosCandidatos.filter((evento) =>
-        EventStatusValidator.validarCambioEstado(evento, "ACTIVO")
+      const eventsToActivate = candidateEvents.filter((event) =>
+        EventStatusValidator.validarCambioEstado(event, "ACTIVE")
       );
 
-      if (eventosParaActivar.length === 0) {
+      if (eventsToActivate.length === 0) {
         conditionalLog(
           "ℹ️ Ningún evento cumple las condiciones para ser activado"
         );
         return [];
       }
 
-      // Actualizar estado de eventos a ACTIVO
-      const eventosActivados = [];
+      const activatedEvents = [];
 
-      for (const evento of eventosParaActivar) {
+      for (const event of eventsToActivate) {
         try {
-          // Actualizar directamente el estado del evento
-          const eventoActualizado = await prisma.evento.update({
-            where: {
-              id_eve: evento.id_eve,
-            },
-            data: {
-              est_eve: "ACTIVO",
-            },
+          const updatedEvent = await prisma.event.update({
+            where: { id: event.id },
+            data: { status: "ACTIVE" },
             include: {
-              eventos_carrera: {
+              eventCareers: {
                 include: {
-                  carrera: true,
+                  career: true,
                 },
               },
             },
           });
 
-          eventosActivados.push(eventoActualizado);
-          conditionalLog(
-            `✅ Evento activado: ${evento.nom_eve} (ID: ${evento.id_eve})`
-          );
+          activatedEvents.push(updatedEvent);
+          conditionalLog(`✅ Evento activado: ${event.name} (ID: ${event.id})`);
         } catch (error) {
-          console.error(`❌ Error al activar evento ${evento.id_eve}:`, error);
+          console.error(`❌ Error al activar evento ${event.id}:`, error);
         }
       }
 
-      return eventosActivados;
+      return activatedEvents;
     } catch (error) {
       console.error("❌ Error en actualizarEventosAActivoAsync:", error);
       return [];
@@ -176,81 +148,70 @@ class EventStatusManager {
   }
 
   /**
-   * Actualiza eventos de ACTIVO a FINALIZADO
-   * @returns {Promise<Array>} Lista de eventos finalizados
+   * Actualiza eventos de ACTIVE a FINISHED
    */
   async actualizarEventosAFinalizadoAsync() {
     try {
       conditionalLog("🔄 Buscando eventos para finalizar...");
 
-      // Obtener eventos candidatos
-      const eventosCandidatos =
+      const candidateEvents =
         await EventStatusValidator.obtenerEventosCandidatosFinalizacion();
 
-      if (eventosCandidatos.length === 0) {
+      if (candidateEvents.length === 0) {
         conditionalLog("ℹ️ No hay eventos para finalizar en este momento");
         return [];
       }
 
       conditionalLog(
-        `🔍 Encontrados ${eventosCandidatos.length} eventos candidatos para finalizar`
+        `🔍 Encontrados ${candidateEvents.length} eventos candidatos para finalizar`
       );
 
-      // Filtrar eventos que pueden ser finalizados usando el validador
-      const eventosParaFinalizar = eventosCandidatos.filter((evento) =>
-        EventStatusValidator.validarCambioEstado(evento, "FINALIZADO")
+      const eventsToFinish = candidateEvents.filter((event) =>
+        EventStatusValidator.validarCambioEstado(event, "FINISHED")
       );
 
-      if (eventosParaFinalizar.length === 0) {
+      if (eventsToFinish.length === 0) {
         conditionalLog(
           "ℹ️ Ningún evento cumple las condiciones para ser finalizado"
         );
         return [];
-      } // Actualizar estado de eventos a FINALIZADO
-      const eventosFinalizados = [];
+      }
 
-      for (const evento of eventosParaFinalizar) {
+      const finishedEvents = [];
+
+      for (const event of eventsToFinish) {
         try {
-          // Actualizar directamente el estado del evento
-          const eventoActualizado = await prisma.evento.update({
-            where: {
-              id_eve: evento.id_eve,
-            },
-            data: {
-              est_eve: "FINALIZADO",
-            },
+          const updatedEvent = await prisma.event.update({
+            where: { id: event.id },
+            data: { status: "FINISHED" },
             include: {
-              eventos_carrera: {
+              eventCareers: {
                 include: {
-                  carrera: true,
+                  career: true,
                 },
               },
             },
           });
 
-          eventosFinalizados.push(eventoActualizado);
+          finishedEvents.push(updatedEvent);
           conditionalLog(
-            `✅ Evento finalizado: ${evento.nom_eve} (ID: ${evento.id_eve})`
+            `✅ Evento finalizado: ${event.name} (ID: ${event.id})`
           );
         } catch (error) {
-          console.error(
-            `❌ Error al finalizar evento ${evento.id_eve}:`,
-            error
-          );
+          console.error(`❌ Error al finalizar evento ${event.id}:`, error);
         }
       }
 
-      return eventosFinalizados;
+      return finishedEvents;
     } catch (error) {
       console.error("❌ Error en actualizarEventosAFinalizadoAsync:", error);
       return [];
     }
   }
+
   /**
    * Procesa inscripciones de eventos recién finalizados
-   * Cambia ACEPTADAS → REPROBADO_TOTAL y PENDIENTES → RECHAZADA
-   * @param {Array} eventosFinalizados Lista de eventos que se finalizaron
-   * @returns {Promise<Array>} Lista de inscripciones procesadas
+   * Cambia ACCEPTED -> FAILED_TOTAL y PENDING -> REJECTED
    */
   async procesarInscripcionesEventosFinalizadosAsync(eventosFinalizados) {
     try {
@@ -265,149 +226,131 @@ class EventStatusManager {
         `🔄 Procesando inscripciones de ${eventosFinalizados.length} eventos finalizados...`
       );
 
-      // Obtener IDs de eventos finalizados
-      const idsEventosFinalizados = eventosFinalizados.map(
-        (evento) => evento.id_eve
-      ); // Buscar inscripciones ACEPTADAS de esos eventos
-      const inscripcionesAceptadas = await prisma.inscripcion.findMany({
+      const finishedEventIds = eventosFinalizados.map((event) => event.id);
+
+      const acceptedRegistrations = await prisma.registration.findMany({
         where: {
-          id_eve_ins: {
-            in: idsEventosFinalizados,
-          },
-          est_ins: "ACEPTADA",
+          eventId: { in: finishedEventIds },
+          status: "ACCEPTED",
         },
         include: {
-          evento: true,
-          cuenta: {
+          event: true,
+          account: {
             include: {
-              usuario: true,
+              user: true,
             },
           },
         },
       });
 
-      // Buscar inscripciones PENDIENTES de esos eventos
-      const inscripcionesPendientes = await prisma.inscripcion.findMany({
+      const pendingRegistrations = await prisma.registration.findMany({
         where: {
-          id_eve_ins: {
-            in: idsEventosFinalizados,
-          },
-          est_ins: "PENDIENTE",
+          eventId: { in: finishedEventIds },
+          status: "PENDING",
         },
         include: {
-          evento: true,
-          cuenta: {
+          event: true,
+          account: {
             include: {
-              usuario: true,
+              user: true,
             },
           },
         },
       });
 
       conditionalLog(
-        `🔍 Encontradas ${inscripcionesAceptadas.length} inscripciones ACEPTADAS para reprobación y ${inscripcionesPendientes.length} inscripciones PENDIENTES para rechazo`
+        `🔍 Encontradas ${acceptedRegistrations.length} inscripciones ACCEPTED para reprobación y ${pendingRegistrations.length} inscripciones PENDING para rechazo`
       );
 
-      // Actualizar estado de inscripciones
-      const inscripcionesProcesadas = []; // Procesar inscripciones ACEPTADAS → REPROBADO_TOTAL
-      for (const inscripcion of inscripcionesAceptadas) {
+      const processedRegistrations = [];
+
+      for (const registration of acceptedRegistrations) {
         try {
-          const inscripcionActualizada = await prisma.inscripcion.update({
-            where: {
-              id_ins: inscripcion.id_ins,
-            },
-            data: {
-              est_ins: "REPROBADO_TOTAL",
-            },
+          const updatedRegistration = await prisma.registration.update({
+            where: { id: registration.id },
+            data: { status: "FAILED_TOTAL" },
             include: {
-              evento: true,
-              cuenta: {
+              event: true,
+              account: {
                 include: {
-                  usuario: true,
+                  user: true,
                 },
               },
             },
           });
 
-          inscripcionesProcesadas.push(inscripcionActualizada); // Crear observación automática
-          await prisma.observacion_inscripcion.upsert({
-            where: {
-              id_ins_per: inscripcion.id_ins,
-            },
+          processedRegistrations.push(updatedRegistration);
+
+          await prisma.registrationObservation.upsert({
+            where: { registrationId: registration.id },
             update: {
-              obs_ins:
+              observation:
                 "Reprobación automática al finalizar el evento sin registro de asistencia o aprobación",
-              fec_cre_obs: new Date(),
+              createdAt: new Date(),
             },
             create: {
-              id_ins_per: inscripcion.id_ins,
-              obs_ins:
+              tenantId: registration.tenantId,
+              registrationId: registration.id,
+              observation:
                 "Reprobación automática al finalizar el evento sin registro de asistencia o aprobación",
-              fec_cre_obs: new Date(),
             },
           });
 
           conditionalLog(
-            `✅ Inscripción de ${inscripcion.cuenta.usuario.nom_usu} ${inscripcion.cuenta.usuario.ape_usu} cambiada a REPROBADO_TOTAL`
+            `✅ Inscripción de ${registration.account.user.firstName} ${registration.account.user.lastName} cambiada a FAILED_TOTAL`
           );
         } catch (error) {
           console.error(
-            `❌ Error al procesar inscripción ${inscripcion.id_ins}:`,
+            `❌ Error al procesar inscripción ${registration.id}:`,
             error
           );
         }
       }
 
-      // Procesar inscripciones PENDIENTES → RECHAZADA
-      for (const inscripcion of inscripcionesPendientes) {
+      for (const registration of pendingRegistrations) {
         try {
-          const inscripcionActualizada = await prisma.inscripcion.update({
-            where: {
-              id_ins: inscripcion.id_ins,
-            },
-            data: {
-              est_ins: "RECHAZADA",
-            },
+          const updatedRegistration = await prisma.registration.update({
+            where: { id: registration.id },
+            data: { status: "REJECTED" },
             include: {
-              evento: true,
-              cuenta: {
+              event: true,
+              account: {
                 include: {
-                  usuario: true,
+                  user: true,
                 },
               },
             },
           });
 
-          inscripcionesProcesadas.push(inscripcionActualizada); // Crear observación automática
-          await prisma.observacion_inscripcion.upsert({
-            where: {
-              id_ins_per: inscripcion.id_ins,
-            },
+          processedRegistrations.push(updatedRegistration);
+
+          await prisma.registrationObservation.upsert({
+            where: { registrationId: registration.id },
             update: {
-              obs_ins:
+              observation:
                 "Rechazo automático al finalizar el evento sin haber sido aceptada",
-              fec_cre_obs: new Date(),
+              createdAt: new Date(),
             },
             create: {
-              id_ins_per: inscripcion.id_ins,
-              obs_ins:
+              tenantId: registration.tenantId,
+              registrationId: registration.id,
+              observation:
                 "Rechazo automático al finalizar el evento sin haber sido aceptada",
-              fec_cre_obs: new Date(),
             },
           });
 
           conditionalLog(
-            `✅ Inscripción de ${inscripcion.cuenta.usuario.nom_usu} ${inscripcion.cuenta.usuario.ape_usu} cambiada a RECHAZADA`
+            `✅ Inscripción de ${registration.account.user.firstName} ${registration.account.user.lastName} cambiada a REJECTED`
           );
         } catch (error) {
           console.error(
-            `❌ Error al procesar inscripción ${inscripcion.id_ins}:`,
+            `❌ Error al procesar inscripción ${registration.id}:`,
             error
           );
         }
       }
 
-      return inscripcionesProcesadas;
+      return processedRegistrations;
     } catch (error) {
       console.error(
         "❌ Error en procesarInscripcionesEventosFinalizadosAsync:",
@@ -420,54 +363,58 @@ class EventStatusManager {
 
 /**
  * Notificador para cambios de estado
- * Patrón Observer
  */
 class EventStatusNotifier {
   /**
    * Notifica cambio de estado de evento vía socket
    */
-  async notificarCambioEstadoEvento(evento, tipoNotificacion) {
+  async notificarCambioEstadoEvento(event, notificationType) {
     try {
+      // Mantiene campos legacy y nuevos para compatibilidad temporal del frontend.
       socketService.notifyEventChange("updated", {
-        id: evento.id_eve,
-        eventName: evento.nom_eve,
-        eventStatus: evento.est_eve,
-        notificationType: tipoNotificacion,
+        id: event.id,
+        id_eve: event.id,
+        eventName: event.name,
+        nom_eve: event.name,
+        eventStatus: event.status,
+        est_eve: event.status,
+        tenantId: event.tenantId,
+        notificationType,
         timestamp: new Date(),
       });
 
       console.log(
-        `🔔 Notificación enviada: cambio de estado de evento ${evento.id_eve} a ${evento.est_eve}`
+        `🔔 Notificación enviada: cambio de estado de evento ${event.id} a ${event.status}`
       );
     } catch (error) {
       console.error(
-        `❌ Error al notificar cambio de estado de evento ${evento.id_eve}:`,
+        `❌ Error al notificar cambio de estado de evento ${event.id}:`,
         error
       );
     }
   }
+
   /**
    * Notifica cambios masivos de inscripciones
    */
   async notificarCambioMasivoInscripciones(inscripcionesProcesadas) {
     try {
-      // Agrupar inscripciones por evento para notificaciones más eficientes
-      const inscripcionesPorEvento = inscripcionesProcesadas.reduce(
-        (acc, inscripcion) => {
-          const idEvento = inscripcion.id_eve_ins;
-          const estado = inscripcion.est_ins;
+      const groupedByEvent = inscripcionesProcesadas.reduce(
+        (acc, registration) => {
+          const eventId = registration.eventId;
+          const status = registration.status;
 
-          if (!acc[idEvento]) {
-            acc[idEvento] = {
-              REPROBADO_TOTAL: [],
-              RECHAZADA: [],
+          if (!acc[eventId]) {
+            acc[eventId] = {
+              FAILED_TOTAL: [],
+              REJECTED: [],
             };
           }
 
-          if (estado === "REPROBADO_TOTAL") {
-            acc[idEvento].REPROBADO_TOTAL.push(inscripcion);
-          } else if (estado === "RECHAZADA") {
-            acc[idEvento].RECHAZADA.push(inscripcion);
+          if (status === "FAILED_TOTAL") {
+            acc[eventId].FAILED_TOTAL.push(registration);
+          } else if (status === "REJECTED") {
+            acc[eventId].REJECTED.push(registration);
           }
 
           return acc;
@@ -475,46 +422,41 @@ class EventStatusNotifier {
         {}
       );
 
-      // Enviar notificación por cada evento con sus inscripciones
-      for (const [idEvento, estados] of Object.entries(
-        inscripcionesPorEvento
-      )) {
-        const inscripcionesReprobadas = estados.REPROBADO_TOTAL;
-        const inscripcionesRechazadas = estados.RECHAZADA;
+      for (const [eventId, states] of Object.entries(groupedByEvent)) {
+        const failedRegistrations = states.FAILED_TOTAL;
+        const rejectedRegistrations = states.REJECTED;
 
-        // Si hay inscripciones reprobadas, notificar
-        if (inscripcionesReprobadas.length > 0) {
-          const evento = inscripcionesReprobadas[0].evento;
+        if (failedRegistrations.length > 0) {
+          const event = failedRegistrations[0].event;
 
           socketService.notifyRegistrationChange("bulk-status-change", {
-            eventId: idEvento,
-            eventName: evento.nom_eve,
-            registrationsCount: inscripcionesReprobadas.length,
-            newStatus: "REPROBADO_TOTAL",
+            eventId,
+            eventName: event.name,
+            registrationsCount: failedRegistrations.length,
+            newStatus: "FAILED_TOTAL",
             reason: "Finalización automática del evento",
             timestamp: new Date(),
           });
 
           console.log(
-            `🔔 Notificación enviada: cambio masivo de ${inscripcionesReprobadas.length} inscripciones a REPROBADO_TOTAL para evento ${evento.nom_eve}`
+            `🔔 Notificación enviada: cambio masivo de ${failedRegistrations.length} inscripciones a FAILED_TOTAL para evento ${event.name}`
           );
         }
 
-        // Si hay inscripciones rechazadas, notificar
-        if (inscripcionesRechazadas.length > 0) {
-          const evento = inscripcionesRechazadas[0].evento;
+        if (rejectedRegistrations.length > 0) {
+          const event = rejectedRegistrations[0].event;
 
           socketService.notifyRegistrationChange("bulk-status-change", {
-            eventId: idEvento,
-            eventName: evento.nom_eve,
-            registrationsCount: inscripcionesRechazadas.length,
-            newStatus: "RECHAZADA",
+            eventId,
+            eventName: event.name,
+            registrationsCount: rejectedRegistrations.length,
+            newStatus: "REJECTED",
             reason: "Rechazo automático por finalización de evento",
             timestamp: new Date(),
           });
 
           console.log(
-            `🔔 Notificación enviada: cambio masivo de ${inscripcionesRechazadas.length} inscripciones a RECHAZADA para evento ${evento.nom_eve}`
+            `🔔 Notificación enviada: cambio masivo de ${rejectedRegistrations.length} inscripciones a REJECTED para evento ${event.name}`
           );
         }
       }

@@ -19,11 +19,11 @@ const verificarCuentaActivada = async (req, res, next) => {
     }
 
     // Buscar la cuenta
-    const cuenta = await prisma.cuenta.findUnique({
-      where: { id_cue: idCuenta },
+    const account = await prisma.account.findUnique({
+      where: { id: idCuenta },
     });
 
-    if (!cuenta) {
+    if (!account) {
       return res.status(404).json({
         success: false,
         message: "Cuenta no encontrada",
@@ -31,12 +31,12 @@ const verificarCuentaActivada = async (req, res, next) => {
     }
 
     // Verificar si la cuenta está activada
-    if (!cuenta.est_ver_cor) {
+    if (!account.isEmailVerified) {
       return res.status(403).json({
         success: false,
         message: "Debes verificar tu correo electrónico antes de continuar",
         requireVerification: true,
-        email: cuenta.cor_usu,
+        email: account.email,
       });
     }
 

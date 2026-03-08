@@ -1,4 +1,4 @@
-const { prisma } = require("../config/db");
+﻿const { prisma } = require("../config/db");
 const path = require("path");
 const fs = require("fs");
 
@@ -13,7 +13,7 @@ async function getMetricasGenerales(req, res) {
 
     // Filtro por fecha
     if (fechaDesde && fechaHasta) {
-      filtroEvento.fec_ini_eve = {
+      filtroEvento.startDate = {
         gte: new Date(fechaDesde),
         lte: new Date(fechaHasta),
       };
@@ -21,35 +21,35 @@ async function getMetricasGenerales(req, res) {
 
     // Filtro por tipo de evento
     if (tipoEvento && tipoEvento !== "todos") {
-      filtroEvento.tip_eve = tipoEvento;
+      filtroEvento.type = tipoEvento;
     }
 
     // Definir estados según el flujo de pagos correcto
     const estadosConfirmados = [
-      "ACEPTADA",
-      "APROBADO",
-      "REPROBADO_NOTA",
-      "REPROBADO_ASISTENCIA",
-      "REPROBADO_TOTAL",
+      "ACCEPTED",
+      "APPROVED",
+      "FAILED_GRADE",
+      "FAILED_ATTENDANCE",
+      "FAILED_TOTAL",
     ];
-    const estadosPendientes = ["PENDIENTE"];
-    const estadosRechazados = ["RECHAZADA"];
+    const estadosPendientes = ["PENDING"];
+    const estadosRechazados = ["REJECTED"];
 
     // Filtro por estado de pago (mapear parámetros del frontend a estados de inscripción)
     if (estadoPago && estadoPago !== "todos") {
-      if (estadoPago === "CONFIRMADO") {
-        filtroInscripcion.est_ins = { in: estadosConfirmados };
-      } else if (estadoPago === "PENDIENTE") {
-        filtroInscripcion.est_ins = { in: estadosPendientes };
-      } else if (estadoPago === "RECHAZADO") {
-        filtroInscripcion.est_ins = { in: estadosRechazados };
+      if (estadoPago === "CONFIRMED") {
+        filtroInscripcion.status = { in: estadosConfirmados };
+      } else if (estadoPago === "PENDING") {
+        filtroInscripcion.status = { in: estadosPendientes };
+      } else if (estadoPago === "REJECTED") {
+        filtroInscripcion.status = { in: estadosRechazados };
       }
     }
 
     // Obtener total de inscripciones
-    const totalInscripciones = await prisma.inscripcion.count({
+    const totalInscripciones = await prisma.registration.count({
       where: {
-        evento: {
+        event: {
           ...filtroEvento,
         },
         ...filtroInscripcion,
@@ -57,44 +57,44 @@ async function getMetricasGenerales(req, res) {
     });
 
     // Obtener ingresos confirmados (basado en estado de inscripción)
-    const pagosConfirmados = await prisma.evento.findMany({
+    const pagosConfirmados = await prisma.event.findMany({
       where: filtroEvento,
       select: {
-        val_eve: true,
-        inscritos: {
+        price: true,
+        registrations: {
           where: {
-            est_ins: { in: estadosConfirmados },
+            status: { in: estadosConfirmados },
             ...filtroInscripcion,
           },
           select: {
-            id_ins: true,
+            id: true,
           },
         },
       },
     });
 
     // Obtener ingresos pendientes (basado en estado de inscripción)
-    const pagosPendientes = await prisma.evento.findMany({
+    const pagosPendientes = await prisma.event.findMany({
       where: filtroEvento,
       select: {
-        val_eve: true,
-        inscritos: {
+        price: true,
+        registrations: {
           where: {
-            est_ins: { in: estadosPendientes },
+            status: { in: estadosPendientes },
             ...filtroInscripcion,
           },
           select: {
-            id_ins: true,
+            id: true,
           },
         },
       },
     });
 
     // Obtener inscripciones rechazadas (basado en estado de inscripción)
-    const inscripcionesRechazadas = await prisma.inscripcion.count({
+    const inscripcionesRechazadas = await prisma.registration.count({
       where: {
-        est_ins: { in: estadosRechazados },
-        evento: {
+        status: { in: estadosRechazados },
+        event: {
           ...filtroEvento,
         },
         ...filtroInscripcion,
@@ -104,16 +104,16 @@ async function getMetricasGenerales(req, res) {
     let montoPendiente = 0;
 
     pagosConfirmados.forEach((evento) => {
-      montoConfirmado += evento.val_eve * evento.inscritos.length;
+      montoConfirmado += evento.price * evento.registrations.length;
     });
 
     pagosPendientes.forEach((evento) => {
-      montoPendiente += evento.val_eve * evento.inscritos.length;
+      montoPendiente += evento.price * evento.registrations.length;
     });
 
     // Calcular tasa de conversión (pagos confirmados / total inscripciones)
     const totalPagosConfirmados = pagosConfirmados.reduce(
-      (total, evento) => total + evento.inscritos.length,
+      (total, evento) => total + evento.registrations.length,
       0
     );
     const tasaConversion =
@@ -147,7 +147,7 @@ async function getIngresosPorTipo(req, res) {
 
     // Filtro por fecha
     if (fechaDesde && fechaHasta) {
-      filtroEvento.fec_ini_eve = {
+      filtroEvento.startDate = {
         gte: new Date(fechaDesde),
         lte: new Date(fechaHasta),
       };
@@ -155,53 +155,53 @@ async function getIngresosPorTipo(req, res) {
 
     // Filtro por tipo de evento
     if (tipoEvento && tipoEvento !== "todos") {
-      filtroEvento.tip_eve = tipoEvento;
+      filtroEvento.type = tipoEvento;
     }
 
     // Definir estados según el flujo de pagos correcto
     const estadosConfirmados = [
-      "ACEPTADA",
-      "APROBADO",
-      "REPROBADO_NOTA",
-      "REPROBADO_ASISTENCIA",
-      "REPROBADO_TOTAL",
+      "ACCEPTED",
+      "APPROVED",
+      "FAILED_GRADE",
+      "FAILED_ATTENDANCE",
+      "FAILED_TOTAL",
     ];
-    const estadosPendientes = ["PENDIENTE"];
-    const estadosRechazados = ["RECHAZADA"];
+    const estadosPendientes = ["PENDING"];
+    const estadosRechazados = ["REJECTED"];
 
     // Filtro por estado de pago (mapear parámetros del frontend a estados de inscripción)
     if (estadoPago && estadoPago !== "todos") {
-      if (estadoPago === "CONFIRMADO") {
-        filtroInscripcion.est_ins = { in: estadosConfirmados };
-      } else if (estadoPago === "PENDIENTE") {
-        filtroInscripcion.est_ins = { in: estadosPendientes };
-      } else if (estadoPago === "RECHAZADO") {
-        filtroInscripcion.est_ins = { in: estadosRechazados };
+      if (estadoPago === "CONFIRMED") {
+        filtroInscripcion.status = { in: estadosConfirmados };
+      } else if (estadoPago === "PENDING") {
+        filtroInscripcion.status = { in: estadosPendientes };
+      } else if (estadoPago === "REJECTED") {
+        filtroInscripcion.status = { in: estadosRechazados };
       }
     }
 
     // Obtener todos los tipos de eventos disponibles
-    const tiposEvento = await prisma.evento.groupBy({
-      by: ["tip_eve"],
+    const tiposEvento = await prisma.event.groupBy({
+      by: ["type"],
       where: filtroEvento,
     });
 
     // Para cada tipo, obtener los datos necesarios
     const ingresosPorTipo = await Promise.all(
       tiposEvento.map(async (tipo) => {
-        const eventos = await prisma.evento.findMany({
+        const eventos = await prisma.event.findMany({
           where: {
-            tip_eve: tipo.tip_eve,
+            type: tipo.type,
             ...filtroEvento,
           },
           select: {
-            id_eve: true,
-            val_eve: true,
-            inscritos: {
+            id: true,
+            price: true,
+            registrations: {
               where: filtroInscripcion,
               select: {
-                id_ins: true,
-                est_ins: true,
+                id: true,
+                status: true,
               },
             },
           },
@@ -212,19 +212,19 @@ async function getIngresosPorTipo(req, res) {
         let revenuePendiente = 0;
 
         eventos.forEach((evento) => {
-          inscripcionesTotales += evento.inscritos.length;
+          inscripcionesTotales += evento.registrations.length;
 
-          evento.inscritos.forEach((inscripcion) => {
-            if (estadosConfirmados.includes(inscripcion.est_ins)) {
-              revenueConfirmado += evento.val_eve;
-            } else if (estadosPendientes.includes(inscripcion.est_ins)) {
-              revenuePendiente += evento.val_eve;
+          evento.registrations.forEach((inscripcion) => {
+            if (estadosConfirmados.includes(inscripcion.status)) {
+              revenueConfirmado += evento.price;
+            } else if (estadosPendientes.includes(inscripcion.status)) {
+              revenuePendiente += evento.price;
             }
           });
         });
 
         return {
-          tipoEvento: tipo.tip_eve,
+          tipoEvento: tipo.type,
           cantidadEventos: eventos.length,
           inscripcionesTotales,
           revenueTotal: revenueConfirmado + revenuePendiente,
@@ -262,7 +262,7 @@ async function getEventosRentables(req, res) {
 
     // Filtro por fecha
     if (fechaDesde && fechaHasta) {
-      filtroEvento.fec_ini_eve = {
+      filtroEvento.startDate = {
         gte: new Date(fechaDesde),
         lte: new Date(fechaHasta),
       };
@@ -270,45 +270,45 @@ async function getEventosRentables(req, res) {
 
     // Filtro por tipo de evento
     if (tipoEvento && tipoEvento !== "todos") {
-      filtroEvento.tip_eve = tipoEvento;
+      filtroEvento.type = tipoEvento;
     }
 
     // Definir estados según el flujo de pagos correcto
     const estadosConfirmados = [
-      "ACEPTADA",
-      "APROBADO",
-      "REPROBADO_NOTA",
-      "REPROBADO_ASISTENCIA",
-      "REPROBADO_TOTAL",
+      "ACCEPTED",
+      "APPROVED",
+      "FAILED_GRADE",
+      "FAILED_ATTENDANCE",
+      "FAILED_TOTAL",
     ];
-    const estadosPendientes = ["PENDIENTE"];
-    const estadosRechazados = ["RECHAZADA"];
+    const estadosPendientes = ["PENDING"];
+    const estadosRechazados = ["REJECTED"];
 
     // Filtro por estado de pago (mapear parámetros del frontend a estados de inscripción)
     if (estadoPago && estadoPago !== "todos") {
-      if (estadoPago === "CONFIRMADO") {
-        filtroInscripcion.est_ins = { in: estadosConfirmados };
-      } else if (estadoPago === "PENDIENTE") {
-        filtroInscripcion.est_ins = { in: estadosPendientes };
-      } else if (estadoPago === "RECHAZADO") {
-        filtroInscripcion.est_ins = { in: estadosRechazados };
+      if (estadoPago === "CONFIRMED") {
+        filtroInscripcion.status = { in: estadosConfirmados };
+      } else if (estadoPago === "PENDING") {
+        filtroInscripcion.status = { in: estadosPendientes };
+      } else if (estadoPago === "REJECTED") {
+        filtroInscripcion.status = { in: estadosRechazados };
       }
     }
 
     // Obtener todos los eventos con sus inscripciones
-    const eventos = await prisma.evento.findMany({
+    const eventos = await prisma.event.findMany({
       where: filtroEvento,
       select: {
-        id_eve: true,
-        nom_eve: true,
-        tip_eve: true,
-        val_eve: true,
-        fec_ini_eve: true,
-        inscritos: {
+        id: true,
+        name: true,
+        type: true,
+        price: true,
+        startDate: true,
+        registrations: {
           where: filtroInscripcion,
           select: {
-            id_ins: true,
-            est_ins: true,
+            id: true,
+            status: true,
           },
         },
       },
@@ -316,20 +316,20 @@ async function getEventosRentables(req, res) {
 
     // Calcular métricas para cada evento
     const eventosConMetricas = eventos.map((evento) => {
-      const inscripcionesTotales = evento.inscritos.length;
-      const inscripcionesConfirmadas = evento.inscritos.filter((ins) =>
-        estadosConfirmados.includes(ins.est_ins)
+      const inscripcionesTotales = evento.registrations.length;
+      const inscripcionesConfirmadas = evento.registrations.filter((ins) =>
+        estadosConfirmados.includes(ins.status)
       ).length;
 
-      const revenueTotal = inscripcionesTotales * evento.val_eve;
-      const revenueConfirmado = inscripcionesConfirmadas * evento.val_eve;
+      const revenueTotal = inscripcionesTotales * evento.price;
+      const revenueConfirmado = inscripcionesConfirmadas * evento.price;
 
       return {
-        id_eve: evento.id_eve,
-        nombreEvento: evento.nom_eve,
-        tipoEvento: evento.tip_eve,
-        valorEvento: evento.val_eve,
-        fechaEvento: evento.fec_ini_eve,
+        id: evento.id,
+        nombreEvento: evento.name,
+        tipoEvento: evento.type,
+        valorEvento: evento.price,
+        fechaEvento: evento.startDate,
         inscripcionesTotales,
         inscripcionesConfirmadas,
         revenueTotal,
@@ -371,58 +371,58 @@ async function getTendenciasPeriodo(req, res) {
       : new Date(new Date().getFullYear(), 0, 1);
     let fechaFin = fechaHasta ? new Date(fechaHasta) : new Date();
 
-    filtroEvento.fec_ini_eve = {
+    filtroEvento.startDate = {
       gte: fechaInicio,
       lte: fechaFin,
     };
 
     // Filtro por tipo de evento
     if (tipoEvento && tipoEvento !== "todos") {
-      filtroEvento.tip_eve = tipoEvento;
+      filtroEvento.type = tipoEvento;
     }
 
     // Definir estados según el flujo de pagos correcto
     const estadosConfirmados = [
-      "ACEPTADA",
-      "APROBADO",
-      "REPROBADO_NOTA",
-      "REPROBADO_ASISTENCIA",
-      "REPROBADO_TOTAL",
+      "ACCEPTED",
+      "APPROVED",
+      "FAILED_GRADE",
+      "FAILED_ATTENDANCE",
+      "FAILED_TOTAL",
     ];
-    const estadosPendientes = ["PENDIENTE"];
-    const estadosRechazados = ["RECHAZADA"];
+    const estadosPendientes = ["PENDING"];
+    const estadosRechazados = ["REJECTED"];
 
     // Filtro por estado de pago (mapear parámetros del frontend a estados de inscripción)
     if (estadoPago && estadoPago !== "todos") {
-      if (estadoPago === "CONFIRMADO") {
-        filtroInscripcion.est_ins = { in: estadosConfirmados };
-      } else if (estadoPago === "PENDIENTE") {
-        filtroInscripcion.est_ins = { in: estadosPendientes };
-      } else if (estadoPago === "RECHAZADO") {
-        filtroInscripcion.est_ins = { in: estadosRechazados };
+      if (estadoPago === "CONFIRMED") {
+        filtroInscripcion.status = { in: estadosConfirmados };
+      } else if (estadoPago === "PENDING") {
+        filtroInscripcion.status = { in: estadosPendientes };
+      } else if (estadoPago === "REJECTED") {
+        filtroInscripcion.status = { in: estadosRechazados };
       }
     }
 
     // Obtener todos los eventos en el rango de fechas
-    const eventos = await prisma.evento.findMany({
+    const eventos = await prisma.event.findMany({
       where: filtroEvento,
       select: {
-        id_eve: true,
-        nom_eve: true,
-        tip_eve: true,
-        val_eve: true,
-        fec_ini_eve: true,
-        inscritos: {
+        id: true,
+        name: true,
+        type: true,
+        price: true,
+        startDate: true,
+        registrations: {
           where: filtroInscripcion,
           select: {
-            id_ins: true,
-            est_ins: true,
-            fec_ins: true,
+            id: true,
+            status: true,
+            registeredAt: true,
           },
         },
       },
       orderBy: {
-        fec_ini_eve: "asc",
+        startDate: "asc",
       },
     });
 
@@ -430,7 +430,7 @@ async function getTendenciasPeriodo(req, res) {
     const agrupadoPorPeriodo = {};
 
     eventos.forEach((evento) => {
-      const fecha = new Date(evento.fec_ini_eve);
+      const fecha = new Date(evento.startDate);
       const año = fecha.getFullYear();
       const mes = fecha.getMonth();
       const nombresMeses = [
@@ -465,15 +465,15 @@ async function getTendenciasPeriodo(req, res) {
 
       agrupadoPorPeriodo[periodo].cantidadEventos++;
 
-      evento.inscritos.forEach((inscripcion) => {
+      evento.registrations.forEach((inscripcion) => {
         agrupadoPorPeriodo[periodo].inscripcionesTotales++;
 
-        if (estadosConfirmados.includes(inscripcion.est_ins)) {
-          agrupadoPorPeriodo[periodo].revenueConfirmado += evento.val_eve;
-        } else if (estadosPendientes.includes(inscripcion.est_ins)) {
-          agrupadoPorPeriodo[periodo].revenuePendiente += evento.val_eve;
+        if (estadosConfirmados.includes(inscripcion.status)) {
+          agrupadoPorPeriodo[periodo].revenueConfirmado += evento.price;
+        } else if (estadosPendientes.includes(inscripcion.status)) {
+          agrupadoPorPeriodo[periodo].revenuePendiente += evento.price;
         }
-        agrupadoPorPeriodo[periodo].revenueTotal += evento.val_eve;
+        agrupadoPorPeriodo[periodo].revenueTotal += evento.price;
       });
     });
 
@@ -520,39 +520,39 @@ async function getComprobantesRechazados(req, res) {
       : new Date(new Date().getFullYear(), 0, 1);
     let fechaFin = fechaHasta ? new Date(fechaHasta) : new Date();
 
-    filtroEvento.fec_ini_eve = {
+    filtroEvento.startDate = {
       gte: fechaInicio,
       lte: fechaFin,
     };
 
     // Filtro por tipo de evento
     if (tipoEvento && tipoEvento !== "todos") {
-      filtroEvento.tip_eve = tipoEvento;
+      filtroEvento.type = tipoEvento;
     }
 
-    // Filtrar inscripciones rechazadas (estado RECHAZADA)
-    filtroInscripcion.est_ins = "RECHAZADA"; // Obtener todas las inscripciones rechazadas en el rango de fechas
-    const inscripcionesRechazadas = await prisma.inscripcion.findMany({
+    // Filtrar inscripciones rechazadas (estado REJECTED)
+    filtroInscripcion.status = "REJECTED"; // Obtener todas las inscripciones rechazadas en el rango de fechas
+    const inscripcionesRechazadas = await prisma.registration.findMany({
       where: {
         ...filtroInscripcion,
-        evento: filtroEvento,
+        event: filtroEvento,
       },
       select: {
-        id_ins: true,
-        fec_ins: true,
-        evento: {
+        id: true,
+        registeredAt: true,
+        event: {
           select: {
-            id_eve: true,
-            nom_eve: true,
-            val_eve: true,
-            fec_ini_eve: true,
+            id: true,
+            name: true,
+            price: true,
+            startDate: true,
           },
         },
-        comprobantes_pago: {
+        paymentReceipts: {
           select: {
-            id_com_pag: true,
-            fec_val_com_pag: true,
-            est_com_pag: true,
+            id: true,
+            validatedAt: true,
+            status: true,
           },
         },
       },
@@ -569,12 +569,12 @@ async function getComprobantesRechazados(req, res) {
     ];
     inscripcionesRechazadas.forEach((inscripcion) => {
       // Usar la fecha de validación del comprobante si existe, sino la fecha de inscripción
-      let fechaValidacion = inscripcion.fec_ins;
+      let fechaValidacion = inscripcion.registeredAt;
       if (
-        inscripcion.comprobantes_pago.length > 0 &&
-        inscripcion.comprobantes_pago[0].fec_val_com_pag
+        inscripcion.paymentReceipts.length > 0 &&
+        inscripcion.paymentReceipts[0].validatedAt
       ) {
-        fechaValidacion = inscripcion.comprobantes_pago[0].fec_val_com_pag;
+        fechaValidacion = inscripcion.paymentReceipts[0].validatedAt;
       }
 
       const fecha = new Date(fechaValidacion);
@@ -610,7 +610,7 @@ async function getComprobantesRechazados(req, res) {
       }
 
       agrupadoPorPeriodo[periodo].totalRechazados++;
-      agrupadoPorPeriodo[periodo].impactoRevenue += inscripcion.evento.val_eve;
+      agrupadoPorPeriodo[periodo].impactoRevenue += inscripcion.event.price;
 
       // Asignar un motivo aleatorio para esta simulación
       // En una implementación real, se usaría el motivo real registrado en la BD
@@ -763,7 +763,7 @@ async function obtenerMetricasParaPDF(
 
     // Filtro por fecha
     if (fechaDesde && fechaHasta) {
-      filtroEvento.fec_ini_eve = {
+      filtroEvento.startDate = {
         gte: new Date(fechaDesde),
         lte: new Date(fechaHasta),
       };
@@ -771,64 +771,64 @@ async function obtenerMetricasParaPDF(
 
     // Filtro por tipo de evento
     if (tipoEvento && tipoEvento !== "todos") {
-      filtroEvento.tip_eve = tipoEvento;
+      filtroEvento.type = tipoEvento;
     }
 
     // Definir estados según el flujo de pagos
     const estadosConfirmados = [
-      "ACEPTADA",
-      "APROBADO",
-      "REPROBADO_NOTA",
-      "REPROBADO_ASISTENCIA",
-      "REPROBADO_TOTAL",
+      "ACCEPTED",
+      "APPROVED",
+      "FAILED_GRADE",
+      "FAILED_ATTENDANCE",
+      "FAILED_TOTAL",
     ];
-    const estadosPendientes = ["PENDIENTE"];
-    const estadosRechazados = ["RECHAZADA"];
+    const estadosPendientes = ["PENDING"];
+    const estadosRechazados = ["REJECTED"];
 
     // Filtro por estado de pago
     if (estadoPago && estadoPago !== "todos") {
-      if (estadoPago === "CONFIRMADO") {
-        filtroInscripcion.est_ins = { in: estadosConfirmados };
-      } else if (estadoPago === "PENDIENTE") {
-        filtroInscripcion.est_ins = { in: estadosPendientes };
-      } else if (estadoPago === "RECHAZADO") {
-        filtroInscripcion.est_ins = { in: estadosRechazados };
+      if (estadoPago === "CONFIRMED") {
+        filtroInscripcion.status = { in: estadosConfirmados };
+      } else if (estadoPago === "PENDING") {
+        filtroInscripcion.status = { in: estadosPendientes };
+      } else if (estadoPago === "REJECTED") {
+        filtroInscripcion.status = { in: estadosRechazados };
       }
     }
 
     // Obtener total de inscripciones
-    const totalInscripciones = await prisma.inscripcion.count({
+    const totalInscripciones = await prisma.registration.count({
       where: {
         ...filtroInscripcion,
-        evento: filtroEvento,
+        event: filtroEvento,
       },
     });
 
     // Obtener inscripciones con pagos confirmados
-    const pagosConfirmados = await prisma.inscripcion.count({
+    const pagosConfirmados = await prisma.registration.count({
       where: {
-        est_ins: { in: estadosConfirmados },
-        evento: filtroEvento,
+        status: { in: estadosConfirmados },
+        event: filtroEvento,
       },
     });
 
     // Calcular ingresos totales
-    const inscripcionesConIngresos = await prisma.inscripcion.findMany({
+    const inscripcionesConIngresos = await prisma.registration.findMany({
       where: {
-        est_ins: { in: estadosConfirmados },
-        evento: filtroEvento,
+        status: { in: estadosConfirmados },
+        event: filtroEvento,
       },
       select: {
-        evento: {
+        event: {
           select: {
-            val_eve: true,
+            price: true,
           },
         },
       },
     });
 
     const totalIngresos = inscripcionesConIngresos.reduce(
-      (suma, ins) => suma + (ins.evento.val_eve || 0),
+      (suma, ins) => suma + (ins.event.price || 0),
       0
     );
 
@@ -869,7 +869,7 @@ async function obtenerIngresosPorTipoParaPDF(
     // Construir filtros base
     const filtroEvento = {};
     if (fechaDesde && fechaHasta) {
-      filtroEvento.fec_ini_eve = {
+      filtroEvento.startDate = {
         gte: new Date(fechaDesde),
         lte: new Date(fechaHasta),
       };
@@ -877,54 +877,54 @@ async function obtenerIngresosPorTipoParaPDF(
 
     // Estados de pagos confirmados
     const estadosConfirmados = [
-      "ACEPTADA",
-      "APROBADO",
-      "REPROBADO_NOTA",
-      "REPROBADO_ASISTENCIA",
-      "REPROBADO_TOTAL",
+      "ACCEPTED",
+      "APPROVED",
+      "FAILED_GRADE",
+      "FAILED_ATTENDANCE",
+      "FAILED_TOTAL",
     ];
 
     // Obtener tipos de eventos únicos
-    const tiposEventos = await prisma.evento.findMany({
+    const tiposEventos = await prisma.event.findMany({
       where: filtroEvento,
-      select: { tip_eve: true },
-      distinct: ["tip_eve"],
+      select: { type: true },
+      distinct: ["type"],
     });
 
     const resultado = [];
 
     for (const tipo of tiposEventos) {
-      const tipoEventoActual = tipo.tip_eve;
+      const tipoEventoActual = tipo.type;
 
       // Filtro específico para este tipo
-      const filtroTipo = { ...filtroEvento, tip_eve: tipoEventoActual };
+      const filtroTipo = { ...filtroEvento, type: tipoEventoActual };
 
       // Total de inscripciones para este tipo
-      const totalInscripciones = await prisma.inscripcion.count({
-        where: { evento: filtroTipo },
+      const totalInscripciones = await prisma.registration.count({
+        where: { event: filtroTipo },
       });
 
       // Pagos confirmados para este tipo
-      const pagosConfirmados = await prisma.inscripcion.count({
+      const pagosConfirmados = await prisma.registration.count({
         where: {
-          est_ins: { in: estadosConfirmados },
-          evento: filtroTipo,
+          status: { in: estadosConfirmados },
+          event: filtroTipo,
         },
       });
 
       // Calcular ingresos totales
-      const inscripcionesConIngresos = await prisma.inscripcion.findMany({
+      const inscripcionesConIngresos = await prisma.registration.findMany({
         where: {
-          est_ins: { in: estadosConfirmados },
-          evento: filtroTipo,
+          status: { in: estadosConfirmados },
+          event: filtroTipo,
         },
         select: {
-          evento: { select: { val_eve: true } },
+          event: { select: { price: true } },
         },
       });
 
       const ingresosTotales = inscripcionesConIngresos.reduce(
-        (suma, ins) => suma + (ins.evento.val_eve || 0),
+        (suma, ins) => suma + (ins.event.price || 0),
         0
       );
 
@@ -973,37 +973,37 @@ async function obtenerEventosRentablesParaPDF(
     // Construir filtros base
     const filtroEvento = {};
     if (fechaDesde && fechaHasta) {
-      filtroEvento.fec_ini_eve = {
+      filtroEvento.startDate = {
         gte: new Date(fechaDesde),
         lte: new Date(fechaHasta),
       };
     }
 
     if (tipoEvento && tipoEvento !== "todos") {
-      filtroEvento.tip_eve = tipoEvento;
+      filtroEvento.type = tipoEvento;
     }
 
     console.log("🏆 [EVENTOS RENTABLES] Filtros aplicados:", filtroEvento);
 
     // Estados de pagos confirmados
     const estadosConfirmados = [
-      "ACEPTADA",
-      "APROBADO",
-      "REPROBADO_NOTA",
-      "REPROBADO_ASISTENCIA",
-      "REPROBADO_TOTAL",
+      "ACCEPTED",
+      "APPROVED",
+      "FAILED_GRADE",
+      "FAILED_ATTENDANCE",
+      "FAILED_TOTAL",
     ]; // Obtener eventos con sus inscripciones
-    const eventos = await prisma.evento.findMany({
+    const eventos = await prisma.event.findMany({
       where: filtroEvento,
       select: {
-        id_eve: true,
-        nom_eve: true,
-        tip_eve: true,
-        val_eve: true,
-        fec_ini_eve: true,
-        inscritos: {
+        id: true,
+        name: true,
+        type: true,
+        price: true,
+        startDate: true,
+        registrations: {
           select: {
-            est_ins: true,
+            status: true,
           },
         },
       },
@@ -1016,23 +1016,23 @@ async function obtenerEventosRentablesParaPDF(
     console.log(
       "🏆 [EVENTOS RENTABLES] Primeros 3 eventos:",
       eventos.slice(0, 3).map((e) => ({
-        nom_eve: e.nom_eve,
-        tip_eve: e.tip_eve,
-        val_eve: e.val_eve,
-        inscripciones_count: e.inscritos.length,
+        name: e.name,
+        type: e.type,
+        price: e.price,
+        inscripciones_count: e.registrations.length,
       }))
     );
 
     const eventosRentables = [];
     for (const evento of eventos) {
       // Contar inscripciones
-      const totalInscripciones = evento.inscritos.length;
-      const pagosConfirmados = evento.inscritos.filter((ins) =>
-        estadosConfirmados.includes(ins.est_ins)
+      const totalInscripciones = evento.registrations.length;
+      const pagosConfirmados = evento.registrations.filter((ins) =>
+        estadosConfirmados.includes(ins.status)
       ).length;
 
       // Calcular ingresos
-      const valorEvento = evento.val_eve || 0;
+      const valorEvento = evento.price || 0;
       const ingresosTotales = pagosConfirmados * valorEvento;
 
       // Calcular tasa de conversión
@@ -1040,8 +1040,8 @@ async function obtenerEventosRentablesParaPDF(
         totalInscripciones > 0 ? pagosConfirmados / totalInscripciones : 0; // Solo incluir eventos con ingresos
       if (ingresosTotales > 0) {
         eventosRentables.push({
-          nombreEvento: evento.nom_eve,
-          tipoEvento: evento.tip_eve,
+          nombreEvento: evento.name,
+          tipoEvento: evento.type,
           valorEvento,
           totalInscripciones,
           pagosConfirmados,
@@ -1087,41 +1087,41 @@ async function obtenerTendenciasParaPDF(
     // Construir filtros base
     const filtroEvento = {};
     if (fechaDesde && fechaHasta) {
-      filtroEvento.fec_ini_eve = {
+      filtroEvento.startDate = {
         gte: new Date(fechaDesde),
         lte: new Date(fechaHasta),
       };
     }
 
     if (tipoEvento && tipoEvento !== "todos") {
-      filtroEvento.tip_eve = tipoEvento;
+      filtroEvento.type = tipoEvento;
     }
 
     // Estados de pagos confirmados
     const estadosConfirmados = [
-      "ACEPTADA",
-      "APROBADO",
-      "REPROBADO_NOTA",
-      "REPROBADO_ASISTENCIA",
-      "REPROBADO_TOTAL",
+      "ACCEPTED",
+      "APPROVED",
+      "FAILED_GRADE",
+      "FAILED_ATTENDANCE",
+      "FAILED_TOTAL",
     ];
 
     // Obtener inscripciones con fecha
-    const inscripciones = await prisma.inscripcion.findMany({
+    const inscripciones = await prisma.registration.findMany({
       where: {
-        evento: filtroEvento,
+        event: filtroEvento,
       },
       select: {
-        fec_ins: true,
-        est_ins: true,
-        evento: {
+        registeredAt: true,
+        status: true,
+        event: {
           select: {
-            val_eve: true,
+            price: true,
           },
         },
       },
       orderBy: {
-        fec_ins: "asc",
+        registeredAt: "asc",
       },
     });
 
@@ -1143,7 +1143,7 @@ async function obtenerTendenciasParaPDF(
     ];
 
     inscripciones.forEach((ins) => {
-      const fecha = new Date(ins.fec_ins);
+      const fecha = new Date(ins.registeredAt);
       const año = fecha.getFullYear();
       const mes = fecha.getMonth();
       const periodo = `${nombresM[mes]} ${año}`;
@@ -1160,9 +1160,9 @@ async function obtenerTendenciasParaPDF(
 
       mesesData[periodo].totalInscripciones++;
 
-      if (estadosConfirmados.includes(ins.est_ins)) {
+      if (estadosConfirmados.includes(ins.status)) {
         mesesData[periodo].pagosConfirmados++;
-        mesesData[periodo].ingresosTotales += ins.evento.val_eve || 0;
+        mesesData[periodo].ingresosTotales += ins.event.price || 0;
       }
     });
 
@@ -1541,7 +1541,7 @@ async function obtenerComprobantesRechazadosParaPDF(
 
     // Filtro por fecha
     if (fechaDesde && fechaHasta) {
-      filtroEvento.fec_ini_eve = {
+      filtroEvento.startDate = {
         gte: new Date(fechaDesde),
         lte: new Date(fechaHasta),
       };
@@ -1549,25 +1549,25 @@ async function obtenerComprobantesRechazadosParaPDF(
 
     // Filtro por tipo de evento
     if (tipoEvento && tipoEvento !== "todos") {
-      filtroEvento.tip_eve = tipoEvento;
+      filtroEvento.type = tipoEvento;
     }
 
     // Filtrar inscripciones rechazadas
-    filtroInscripcion.est_ins = "RECHAZADA";
+    filtroInscripcion.status = "REJECTED";
 
     // Obtener inscripciones rechazadas agrupadas por evento
-    const inscripcionesRechazadas = await prisma.inscripcion.findMany({
+    const inscripcionesRechazadas = await prisma.registration.findMany({
       where: {
         ...filtroInscripcion,
-        evento: filtroEvento,
+        event: filtroEvento,
       },
       select: {
-        id_ins: true,
-        evento: {
+        id: true,
+        event: {
           select: {
-            id_eve: true,
-            nom_eve: true,
-            val_eve: true,
+            id: true,
+            name: true,
+            price: true,
           },
         },
       },
@@ -1576,11 +1576,11 @@ async function obtenerComprobantesRechazadosParaPDF(
     // Agrupar por evento
     const eventosPorId = {};
     inscripcionesRechazadas.forEach((ins) => {
-      const eventoId = ins.evento.id_eve;
+      const eventoId = ins.event.id;
       if (!eventosPorId[eventoId]) {
         eventosPorId[eventoId] = {
-          nombreEvento: ins.evento.nom_eve,
-          valorEvento: ins.evento.val_eve || 0,
+          nombreEvento: ins.event.name,
+          valorEvento: ins.event.price || 0,
           comprobantesRechazados: 0,
           totalInscripciones: 0,
         };
@@ -1588,10 +1588,10 @@ async function obtenerComprobantesRechazadosParaPDF(
       eventosPorId[eventoId].comprobantesRechazados++;
     }); // Obtener total de inscripciones por evento para calcular porcentaje
     for (const eventoId in eventosPorId) {
-      const totalInscripciones = await prisma.inscripcion.count({
+      const totalInscripciones = await prisma.registration.count({
         where: {
-          id_eve_ins: eventoId, // Mantener como String
-          evento: filtroEvento,
+          eventId: eventoId, // Mantener como String
+          event: filtroEvento,
         },
       });
       eventosPorId[eventoId].totalInscripciones = totalInscripciones;

@@ -46,7 +46,7 @@ async function obtenerEventosPublicosPaginados(req, res) {
       search,
     } = req.query; // Construir condición WHERE para filtros
     const whereCondition = {
-      est_eve: "ACTIVO", // Solo eventos activos según el enum estado_evento
+      status: "ACTIVE", // Solo eventos activos según el enum status
     };
 
     // Construir filtros de carreras usando OR para combinar múltiples criterios
@@ -55,10 +55,10 @@ async function obtenerEventosPublicosPaginados(req, res) {
     // Filtros por tipo de carrera específica
     if (software === "true") {
       carreraFilters.push({
-        eventos_carrera: {
+        eventCareers: {
           some: {
-            carrera: {
-              nom_car: {
+            career: {
+              name: {
                 contains: "Software",
                 mode: "insensitive",
               },
@@ -70,10 +70,10 @@ async function obtenerEventosPublicosPaginados(req, res) {
 
     if (industrial === "true") {
       carreraFilters.push({
-        eventos_carrera: {
+        eventCareers: {
           some: {
-            carrera: {
-              nom_car: {
+            career: {
+              name: {
                 contains: "Industrial",
                 mode: "insensitive",
               },
@@ -86,7 +86,7 @@ async function obtenerEventosPublicosPaginados(req, res) {
     // Filtro por público - eventos sin carreras específicas asociadas
     if (publico === "true") {
       carreraFilters.push({
-        eventos_carrera: {
+        eventCareers: {
           none: {}, // Sin carreras asociadas = público
         },
       });
@@ -99,14 +99,14 @@ async function obtenerEventosPublicosPaginados(req, res) {
 
     // Filtros por precio
     if (gratuito === "true") {
-      whereCondition.val_eve = 0;
+      whereCondition.value = 0;
     } else if (pagado === "true") {
-      whereCondition.val_eve = {
+      whereCondition.value = {
         gt: 0,
       };
     } // Filtro por modalidad
     if (modalidad && modalidad !== "") {
-      whereCondition.mod_eve = modalidad;
+      whereCondition.modality = modalidad;
     }
 
     // Búsqueda por nombre o descripción
@@ -117,8 +117,8 @@ async function obtenerEventosPublicosPaginados(req, res) {
           { OR: whereCondition.OR }, // Filtros de carrera existentes
           {
             OR: [
-              { nom_eve: { contains: search, mode: "insensitive" } },
-              { des_eve: { contains: search, mode: "insensitive" } },
+              { title: { contains: search, mode: "insensitive" } },
+              { description: { contains: search, mode: "insensitive" } },
             ],
           }, // Filtro de búsqueda
         ];
@@ -126,38 +126,38 @@ async function obtenerEventosPublicosPaginados(req, res) {
       } else {
         // Si no hay filtros de carrera previos, aplicar búsqueda directamente
         whereCondition.OR = [
-          { nom_eve: { contains: search, mode: "insensitive" } },
-          { des_eve: { contains: search, mode: "insensitive" } },
+          { title: { contains: search, mode: "insensitive" } },
+          { description: { contains: search, mode: "insensitive" } },
         ];
       }
     } // Ordenamiento (por defecto por fecha de inicio ascendente - eventos más próximos primero)
     const orderBy = extractSortParams(
       req,
-      { field: "fec_ini_eve", direction: "asc" },
-      ["fec_ini_eve", "fec_fin_eve", "nom_eve", "val_eve"]
+      { field: "startDate", direction: "asc" },
+      ["startDate", "endDate", "title", "value"]
     );
 
     // Ejecutar consultas en paralelo para datos y conteo
     const [eventos, totalItems] = await Promise.all([
-      prisma.evento.findMany({
+      prisma.event.findMany({
         where: whereCondition,
         skip: offset,
         take: limit,
         orderBy,
         include: {
-          eventos_carrera: {
+          eventCareers: {
             include: {
-              carrera: true,
+              career: true,
             },
           },
-          cuenta: {
+          createdBy: {
             include: {
-              usuario: true,
+              user: true,
             },
           },
         },
       }),
-      prisma.evento.count({ where: whereCondition }),
+      prisma.event.count({ where: whereCondition }),
     ]);
 
     // Construir respuesta paginada
@@ -202,12 +202,12 @@ async function obtenerEventosUsuarioPaginados(req, res) {
     const userId = req.usuario.id; // ID de la cuenta
 
     // Obtener información del usuario con su carrera
-    const userAccount = await prisma.cuenta.findUnique({
-      where: { id_cue: userId },
+    const userAccount = await prisma.account.findUnique({
+      where: { id: userId },
       include: {
-        usuario: {
+        user: {
           include: {
-            carrera: true,
+            career: true,
           },
         },
       },
@@ -219,25 +219,25 @@ async function obtenerEventosUsuarioPaginados(req, res) {
 
     // Construir condición WHERE para filtros
     const whereCondition = {}; // 🎯 LÓGICA DE FILTRADO POR ROL Y CARRERA
-    if (userAccount.rol_usu === "ESTUDIANTE") {
-      if (userAccount.usuario.carrera) {
+    if (userAccount.role === "ESTUDIANTE") {
+      if (userAccount.user.career) {
         // Estudiante con carrera asignada puede ver:
         // 1. Eventos específicos de su carrera
         // 2. Eventos públicos (sin carreras asociadas)
-        const userCarreraId = userAccount.usuario.carrera.id_car;
+        const userCarreraId = userAccount.user.career.id;
 
         whereCondition.OR = [
           // Eventos específicos de su carrera
           {
-            eventos_carrera: {
+            eventCareers: {
               some: {
-                id_car_aso: userCarreraId,
+                careerId: userCarreraId,
               },
             },
           },
           // Eventos públicos (sin carreras asociadas)
           {
-            eventos_carrera: {
+            eventCareers: {
               none: {},
             },
           },
@@ -245,13 +245,13 @@ async function obtenerEventosUsuarioPaginados(req, res) {
       } else {
         // Estudiante sin carrera asignada
         // Solo puede ver eventos públicos hasta que se le asigne carrera
-        whereCondition.eventos_carrera = {
+        whereCondition.eventCareers = {
           none: {}, // Solo eventos sin carreras asociadas (públicos)
         };
       }
-    } else if (userAccount.rol_usu === "GENERAL") {
+    } else if (userAccount.role === "GENERAL") {
       // Usuario GENERAL puede ver SOLO eventos públicos (sin carreras asociadas)
-      whereCondition.eventos_carrera = {
+      whereCondition.eventCareers = {
         none: {}, // Solo eventos sin carreras asociadas
       };
     }
@@ -264,71 +264,71 @@ async function obtenerEventosUsuarioPaginados(req, res) {
         whereCondition.OR = [
           // Eventos específicos de la carrera seleccionada
           {
-            eventos_carrera: {
+            eventCareers: {
               some: {
-                id_car_aso: carrera,
+                careerId: carrera,
               },
             },
           },
           // Eventos públicos (sin carreras asociadas) - mantener acceso
           {
-            eventos_carrera: {
+            eventCareers: {
               none: {},
             },
           },
         ];
       } else {
         // Si no hay condición OR previa, simplemente filtrar por carrera
-        whereCondition.eventos_carrera = {
+        whereCondition.eventCareers = {
           some: {
-            id_car_aso: carrera,
+            careerId: carrera,
           },
         };
       }
     } // Filtro por modalidad
     if (modalidad && modalidad !== "") {
-      whereCondition.mod_eve = modalidad;
+      whereCondition.modality = modalidad;
     } // Filtro por estado específico (más granular que el filtro general)
     if (estado && estado !== "") {
-      whereCondition.est_eve = estado;
+      whereCondition.status = estado;
     } else {
       // Filtros específicos por estado booleano
       const estadosSeleccionados = [];
 
       // Solo agregar estados específicos si están seleccionados
       if (finalizado === "true") {
-        estadosSeleccionados.push("FINALIZADO");
+        estadosSeleccionados.push("FINISHED");
       }
       if (cancelado === "true") {
-        estadosSeleccionados.push("CANCELADO");
+        estadosSeleccionados.push("CANCELLED");
       }
       if (suspendido === "true") {
-        estadosSeleccionados.push("SUSPENDIDO");
+        estadosSeleccionados.push("SUSPENDED");
       }
 
-      // Si NO hay filtros de estado específicos, mostrar solo ACTIVO por defecto
+      // Si NO hay filtros de estado específicos, mostrar solo ACTIVE por defecto
       if (estadosSeleccionados.length === 0) {
-        whereCondition.est_eve = "ACTIVO";
+        whereCondition.status = "ACTIVE";
       } else if (estadosSeleccionados.length === 1) {
         // Solo un estado específico seleccionado
-        whereCondition.est_eve = estadosSeleccionados[0];
+        whereCondition.status = estadosSeleccionados[0];
       } else {
         // Múltiples estados específicos seleccionados
-        whereCondition.est_eve = {
+        whereCondition.status = {
           in: estadosSeleccionados,
         };
       }
     } // Filtros por precio
     if (gratuito === "true") {
-      whereCondition.val_eve = 0;
+      whereCondition.value = 0;
     } else if (pagado === "true") {
-      whereCondition.val_eve = {
+      whereCondition.value = {
         gt: 0,
       };
     } // Filtro por cupos disponibles (solo aplicar si se solicita específicamente)
     if (completo === "true") {
       // Mostrar solo eventos con cupos agotados
-      whereCondition.cup_dis_eve = 0;
+      whereCondition.availableSpots = 0;
     }
     // NOTA: No aplicar filtro de cupos por defecto
     // Los eventos cancelados, finalizados, etc. pueden tener cupos = 0 y deben mostrarse
@@ -340,27 +340,27 @@ async function obtenerEventosUsuarioPaginados(req, res) {
         whereCondition.AND = whereCondition.AND || [];
         whereCondition.AND.push({
           OR: [
-            { nom_eve: { contains: search, mode: "insensitive" } },
-            { des_eve: { contains: search, mode: "insensitive" } },
+            { title: { contains: search, mode: "insensitive" } },
+            { description: { contains: search, mode: "insensitive" } },
           ],
         });
       } else {
         whereCondition.OR = [
-          { nom_eve: { contains: search, mode: "insensitive" } },
-          { des_eve: { contains: search, mode: "insensitive" } },
+          { title: { contains: search, mode: "insensitive" } },
+          { description: { contains: search, mode: "insensitive" } },
         ];
       }
     } // 🐛 DEBUG: Log de la condición WHERE construida
     conditionalPaginationLog(
       "📊 [EVENTOS USUARIO PAGINADOS] Información de usuario:"
     );
-    conditionalPaginationLog(`  - Rol: ${userAccount.rol_usu}`);
+    conditionalPaginationLog(`  - Rol: ${userAccount.role}`);
     conditionalPaginationLog(
-      `  - Tiene carrera: ${!!userAccount.usuario.carrera}`
+      `  - Tiene carrera: ${!!userAccount.user.career}`
     );
-    if (userAccount.usuario.carrera) {
+    if (userAccount.user.career) {
       conditionalPaginationLog(
-        `  - Carrera: ${userAccount.usuario.carrera.nom_car} (ID: ${userAccount.usuario.carrera.id_car})`
+        `  - Carrera: ${userAccount.user.career.name} (ID: ${userAccount.user.career.id})`
       );
     }
     conditionalPaginationLog(
@@ -377,8 +377,8 @@ async function obtenerEventosUsuarioPaginados(req, res) {
     conditionalPaginationLog(
       "📊 [EVENTOS USUARIO PAGINADOS] Reglas aplicadas:"
     );
-    if (userAccount.rol_usu === "ESTUDIANTE") {
-      if (userAccount.usuario.carrera) {
+    if (userAccount.role === "ESTUDIANTE") {
+      if (userAccount.user.career) {
         conditionalPaginationLog(
           "  - ESTUDIANTE con carrera: Puede ver eventos de su carrera + eventos públicos (sin carreras)"
         );
@@ -387,7 +387,7 @@ async function obtenerEventosUsuarioPaginados(req, res) {
           "  - ESTUDIANTE sin carrera: Solo eventos públicos (sin carreras) hasta asignación"
         );
       }
-    } else if (userAccount.rol_usu === "GENERAL") {
+    } else if (userAccount.role === "GENERAL") {
       conditionalPaginationLog(
         "  - GENERAL: Solo puede ver eventos públicos (sin carreras asociadas)"
       );
@@ -398,31 +398,31 @@ async function obtenerEventosUsuarioPaginados(req, res) {
     conditionalPaginationLog(JSON.stringify(whereCondition, null, 2)); // Ordenamiento (por defecto por fecha de inicio ascendente - eventos más próximos primero)
     const orderBy = extractSortParams(
       req,
-      { field: "fec_ini_eve", direction: "asc" },
-      ["fec_ini_eve", "fec_fin_eve", "nom_eve", "val_eve", "fec_cre_eve"]
+      { field: "startDate", direction: "asc" },
+      ["startDate", "endDate", "title", "value", "createdAt"]
     );
 
     // Ejecutar consultas en paralelo para datos y conteo
     const [eventos, totalItems] = await Promise.all([
-      prisma.evento.findMany({
+      prisma.event.findMany({
         where: whereCondition,
         skip: offset,
         take: limit,
         orderBy,
         include: {
-          eventos_carrera: {
+          eventCareers: {
             include: {
-              carrera: true,
+              career: true,
             },
           },
-          cuenta: {
+          createdBy: {
             include: {
-              usuario: true,
+              user: true,
             },
           },
         },
       }),
-      prisma.evento.count({ where: whereCondition }),
+      prisma.event.count({ where: whereCondition }),
     ]);
 
     // Construir respuesta paginada
@@ -436,11 +436,11 @@ async function obtenerEventosUsuarioPaginados(req, res) {
     if (eventos.length > 0) {
       conditionalPaginationLog(`  - Eventos devueltos:`);
       eventos.forEach((evento, index) => {
-        const carreras = evento.eventos_carrera
-          .map((ec) => ec.carrera.nom_car)
+        const carreras = evento.eventCareers
+          .map((ec) => ec.career.name)
           .join(", ");
         conditionalPaginationLog(
-          `    ${index + 1}. ${evento.nom_eve} (Tipo: ${evento.tip_eve}) ${
+          `    ${index + 1}. ${evento.title} (Tipo: ${evento.type}) ${
             carreras ? `[${carreras}]` : "[Público - Sin carreras]"
           }`
         );
@@ -488,124 +488,124 @@ async function obtenerEventosAdminPaginados(req, res) {
     // Búsqueda por nombre o descripción
     if (search && search.trim() !== "") {
       whereCondition.OR = [
-        { nom_eve: { contains: search, mode: "insensitive" } },
-        { des_eve: { contains: search, mode: "insensitive" } },
+        { title: { contains: search, mode: "insensitive" } },
+        { description: { contains: search, mode: "insensitive" } },
       ];
     }
 
     // Filtro por estado
     if (estado && estado !== "") {
-      whereCondition.est_eve = estado;
+      whereCondition.status = estado;
     }
 
     // Filtro por tipo de evento
     if (tipo && tipo !== "") {
-      whereCondition.tip_eve = tipo;
+      whereCondition.type = tipo;
     }
 
     // Filtro por rango de fechas
     if (fechaDesde && fechaHasta) {
-      whereCondition.fec_ini_eve = {
+      whereCondition.startDate = {
         gte: new Date(fechaDesde),
         lte: new Date(fechaHasta),
       };
     } else if (fechaDesde) {
-      whereCondition.fec_ini_eve = {
+      whereCondition.startDate = {
         gte: new Date(fechaDesde),
       };
     } else if (fechaHasta) {
-      whereCondition.fec_ini_eve = {
+      whereCondition.startDate = {
         lte: new Date(fechaHasta),
       };
     }
 
-    // Filtro por carrera a través de eventos_carrera
+    // Filtro por carrera a través de eventCareers
     if (carrera && carrera !== "") {
-      whereCondition.eventos_carrera = {
+      whereCondition.eventCareers = {
         some: {
-          id_car_aso: carrera,
+          careerId: carrera,
         },
       };
     }
 
     // Filtro por modalidad
     if (modalidad && modalidad !== "") {
-      whereCondition.mod_eve = modalidad;
+      whereCondition.modality = modalidad;
     }
 
     // Filtro por capacidad (cupo máximo)
     if (capacidadMin || capacidadMax) {
-      whereCondition.cup_max_eve = {};
+      whereCondition.maxCapacity = {};
 
       if (capacidadMin) {
-        whereCondition.cup_max_eve.gte = parseInt(capacidadMin);
+        whereCondition.maxCapacity.gte = parseInt(capacidadMin);
       }
 
       if (capacidadMax) {
-        whereCondition.cup_max_eve.lte = parseInt(capacidadMax);
+        whereCondition.maxCapacity.lte = parseInt(capacidadMax);
       }
     }
 
     // Filtro por valor del evento
     if (valorMin || valorMax) {
-      whereCondition.val_eve = {};
+      whereCondition.value = {};
 
       if (valorMin) {
-        whereCondition.val_eve.gte = parseFloat(valorMin);
+        whereCondition.value.gte = parseFloat(valorMin);
       }
 
       if (valorMax) {
-        whereCondition.val_eve.lte = parseFloat(valorMax);
+        whereCondition.value.lte = parseFloat(valorMax);
       }
     }
 
     // Ordenamiento (por defecto por fecha de creación descendente)
     const orderBy = extractSortParams(
       req,
-      { field: "fec_cre_eve", direction: "desc" },
+      { field: "createdAt", direction: "desc" },
       [
-        "fec_cre_eve",
-        "fec_ini_eve",
-        "fec_fin_eve",
-        "nom_eve",
-        "val_eve",
-        "cup_max_eve",
+        "createdAt",
+        "startDate",
+        "endDate",
+        "title",
+        "value",
+        "maxCapacity",
       ]
     );
 
     // Ejecutar consultas en paralelo para datos y conteo
     const [eventos, totalItems] = await Promise.all([
-      prisma.evento.findMany({
+      prisma.event.findMany({
         where: whereCondition,
         skip: offset,
         take: limit,
         orderBy,
         include: {
-          eventos_carrera: {
+          eventCareers: {
             include: {
-              carrera: true,
+              career: true,
             },
           },
-          cuenta: {
+          createdBy: {
             include: {
-              usuario: true,
+              user: true,
             },
           },
-          inscritos: {
+          registrations: {
             select: {
-              id_ins: true,
+              id: true,
             },
           },
         },
       }),
-      prisma.evento.count({ where: whereCondition }),
+      prisma.event.count({ where: whereCondition }),
     ]);
 
     // Añadir conteo de inscripciones a cada evento
     const eventosConMetadata = eventos.map((evento) => ({
       ...evento,
-      inscripcionesCount: evento.inscritos.length,
-      inscritos: undefined, // Remover el array original para no duplicar datos
+      inscripcionesCount: evento.registrations.length,
+      registrations: undefined, // Remover el array original para no duplicar datos
     }));
 
     // Construir respuesta paginada

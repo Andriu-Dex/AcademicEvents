@@ -6,62 +6,123 @@ const fontkit = require("@pdf-lib/fontkit");
 const sharp = require("sharp");
 const { limpiarArchivosTemporales } = require("../middlewares/upload");
 
+const ROLE_TO_LEGACY = {
+  GLOBAL_ADMIN: "ADMIN_GLOBAL",
+  GENERAL_ADMIN: "ADMIN_GENERAL",
+  STUDENT: "ESTUDIANTE",
+  GENERAL: "GENERAL",
+};
+
+const REG_STATUS_TO_LEGACY = {
+  PENDING: "PENDIENTE",
+  ACCEPTED: "ACEPTADA",
+  REJECTED: "RECHAZADA",
+  APPROVED: "APROBADO",
+  FAILED_GRADE: "REPROBADO_NOTA",
+  FAILED_ATTENDANCE: "REPROBADO_ASISTENCIA",
+  FAILED_TOTAL: "REPROBADO_TOTAL",
+};
+
 // Obtener perfil de usuario autenticado
 const obtenerPerfil = async (req, res) => {
   try {
-    const { id } = req.usuario; // Ahora id es el ID de la cuenta (id_cue)
+    const { id } = req.usuario; // Ahora id es el ID de la cuenta
 
     // Primero buscamos la cuenta
-    const cuenta = await prisma.cuenta.findUnique({
-      where: { id_cue: id },
+    const account = await prisma.account.findUnique({
+      where: { id },
       include: {
-        usuario: {
+        user: {
           include: {
-            carrera: true,
+            career: {
+              include: {
+                faculty: true,
+              },
+            },
           },
         },
       },
     });
 
-    if (!cuenta) {
+    if (!account) {
       console.log("❌ [PERFIL] Cuenta no encontrada");
       return res.status(404).json({ msg: "Cuenta no encontrada" });
     }
 
     // Ahora obtenemos las inscripciones asociadas a la cuenta
-    const inscripciones = await prisma.inscripcion.findMany({
-      where: { id_cor_ins: cuenta.id_cue },
+    const registrations = await prisma.registration.findMany({
+      where: { accountId: account.id },
       include: {
-        evento: true,
-        inscripcion_curso: true,
-        comprobantes_pago: {
-          orderBy: { fec_sub_com_pag: "desc" },
+        event: true,
+        registrationCourse: true,
+        paymentReceipts: {
+          orderBy: { uploadedAt: "desc" },
           take: 1,
         },
-        cartas_motivacion: {
-          orderBy: { fec_sub_car_mot: "desc" },
+        motivationLetters: {
+          orderBy: { uploadedAt: "desc" },
           take: 1,
         },
-        observacion: true,
-        certificado: true,
+        observation: true,
+        certificate: true,
       },
       orderBy: {
-        fec_ins: "desc",
+        registeredAt: "desc",
       },
     });
 
     // Combinamos los datos del usuario y sus inscripciones
-    const usuario = cuenta.usuario;
+    const user = account.user;
 
-    if (!usuario) {
+    if (!user) {
       return res.status(404).json({ msg: "Usuario no encontrado" });
     } // Creamos el objeto de respuesta con los datos del usuario y la cuenta
+    const inscripcionesLegacy = registrations.map((registration) => ({
+      id_ins: registration.id,
+      est_ins: REG_STATUS_TO_LEGACY[registration.status] || registration.status,
+      fec_ins: registration.registeredAt,
+      por_asi_fin_usu: registration.finalAttendancePercent,
+      evento: registration.event
+        ? {
+            id_eve: registration.event.id,
+            nom_eve: registration.event.name,
+            tip_eve: registration.event.type,
+            est_eve: registration.event.status,
+            val_eve: registration.event.price,
+          }
+        : null,
+      inscripcion_curso: registration.registrationCourse,
+      comprobantes_pago: registration.paymentReceipts,
+      cartas_motivacion: registration.motivationLetters,
+      observacion: registration.observation,
+      certificado: registration.certificate,
+    }));
+
     const perfilData = {
-      ...usuario,
-      cor_usu: cuenta.cor_usu,
-      rol_usu: cuenta.rol_usu,
-      id_cue: cuenta.id_cue, // Incluimos el ID de la cuenta para referencia
-      inscripciones: inscripciones,
+      id_usu: user.id,
+      id_cue: account.id,
+      ced_usu: user.idNumber,
+      nom_usu: user.firstName,
+      ape_usu: user.lastName,
+      cel_usu: user.phone,
+      cor_usu: account.email,
+      rol_usu: ROLE_TO_LEGACY[account.role] || account.role,
+      img_per_usu: user.profileImageUrl,
+      com_usu: user.documentUrl,
+      fec_cre_usu: user.createdAt,
+      carrera: user.career
+        ? {
+            id_car: user.career.id,
+            nom_car: user.career.name,
+            facultad: user.career.faculty
+              ? {
+                  id_fac: user.career.faculty.id,
+                  nom_fac: user.career.faculty.name,
+                }
+              : null,
+          }
+        : null,
+      inscripciones: inscripcionesLegacy,
     };
 
     return res.status(200).json(perfilData);
@@ -182,52 +243,52 @@ const combinarPDFs = async (archivos, usuario) => {
       color: rgb(0.53, 0.08, 0.22),
     }); // Información del usuario
     const infoUsuario = [
-      { label: "Cédula:", valor: usuario.ced_usu },
-      { label: "Nombres:", valor: usuario.nom_usu },
-      { label: "Apellidos:", valor: usuario.ape_usu },
-      { label: "Teléfono:", valor: usuario.cel_usu },
+      { label: "Cédula:", valor: usuario.idNumber },
+      { label: "Nombres:", valor: usuario.firstName },
+      { label: "Apellidos:", valor: usuario.lastName },
+      { label: "Teléfono:", valor: usuario.phone },
     ];
 
     // Buscar la cuenta principal para obtener el correo
-    const cuentaPrincipal = await prisma.cuenta.findFirst({
-      where: { id_usu_per: usuario.id_usu },
-      orderBy: { fec_cre_cue: "asc" },
+    const cuentaPrincipal = await prisma.account.findFirst({
+      where: { userId: usuario.id },
+      orderBy: { createdAt: "asc" },
     });
 
     if (cuentaPrincipal) {
       infoUsuario.push({
         label: "Correo electrónico:",
-        valor: cuentaPrincipal.cor_usu,
+        valor: cuentaPrincipal.email,
       });
     }
 
     // Si es estudiante, añadir información de carrera
     if (
       cuentaPrincipal &&
-      cuentaPrincipal.rol_usu === "ESTUDIANTE" &&
-      usuario.carrera
+      cuentaPrincipal.role === "STUDENT" &&
+      usuario.career
     ) {
-      infoUsuario.push({ label: "Carrera:", valor: usuario.carrera.nom_car });
+      infoUsuario.push({ label: "Carrera:", valor: usuario.career.name });
       infoUsuario.push({
         label: "Facultad:",
-        valor: usuario.carrera.facultad?.nom_fac || "FISEI",
+        valor: usuario.career.faculty?.name || "FISEI",
       });
     }
     infoUsuario.push({
       label: "Tipo de usuario:",
       valor:
         cuentaPrincipal &&
-        ["ESTUDIANTE", "ADMIN_GLOBAL", "ADMIN_GENERAL"].includes(
-          cuentaPrincipal.rol_usu
+        ["STUDENT", "GLOBAL_ADMIN", "GENERAL_ADMIN"].includes(
+          cuentaPrincipal.role
         )
-          ? cuentaPrincipal.rol_usu === "ESTUDIANTE"
+          ? cuentaPrincipal.role === "STUDENT"
             ? "Estudiante"
             : "Administrador"
           : "Usuario General",
     });
     infoUsuario.push({
       label: "Fecha de registro:",
-      valor: new Date(usuario.fec_cre_usu).toLocaleDateString("es-EC"),
+      valor: new Date(usuario.createdAt).toLocaleDateString("es-EC"),
     });
 
     // Dibujar información
@@ -299,7 +360,7 @@ const combinarPDFs = async (archivos, usuario) => {
     // Generar el PDF combinado
     const pdfBytes = await pdfDoc.save(); // Generar un nombre único para el archivo combinado
     const timestamp = Date.now();
-    const nombreArchivoCombinado = `${timestamp}-documentos-${usuario.ced_usu}.pdf`;
+    const nombreArchivoCombinado = `${timestamp}-documentos-${usuario.idNumber}.pdf`;
     const rutaArchivoCombinado = path.join(
       __dirname,
       "../../uploads",
@@ -355,23 +416,23 @@ const actualizarDocumentos = async (req, res) => {
     }
 
     // Obtener cuenta y usuario asociado
-    const cuenta = await prisma.cuenta.findUnique({
-      where: { id_cue: id },
-      include: { usuario: true },
+    const cuenta = await prisma.account.findUnique({
+      where: { id },
+      include: { user: true },
     });
 
-    if (!cuenta || !cuenta.usuario) {
+    if (!cuenta || !cuenta.user) {
       return res.status(404).json({ msg: "Usuario no encontrado" });
     } // Obtener información completa del usuario para el PDF
-    const usuario = await prisma.usuario.findUnique({
-      where: { id_usu: cuenta.usuario.id_usu },
+    const usuario = await prisma.user.findUnique({
+      where: { id: cuenta.user.id },
       include: {
-        carrera: {
+        career: {
           include: {
-            facultad: true,
+            faculty: true,
           },
         },
-        cuentas: true,
+        accounts: true,
       },
     });
 
@@ -385,11 +446,11 @@ const actualizarDocumentos = async (req, res) => {
     // Construir la ruta del archivo
     const rutaArchivo = `/uploads/${archivoFinal.filename}`;
 
-    // Actualizar el campo com_usu del usuario
-    const usuarioActualizado = await prisma.usuario.update({
-      where: { id_usu: cuenta.usuario.id_usu },
+    // Actualizar el campo company del usuario
+    const usuarioActualizado = await prisma.user.update({
+      where: { id: cuenta.user.id },
       data: {
-        com_usu: rutaArchivo,
+        documentUrl: rutaArchivo,
       },
     });
 
@@ -419,23 +480,23 @@ const actualizarDocumento = async (req, res) => {
     }
 
     // Obtener cuenta y usuario asociado
-    const cuenta = await prisma.cuenta.findUnique({
-      where: { id_cue: id },
-      include: { usuario: true },
+    const cuenta = await prisma.account.findUnique({
+      where: { id },
+      include: { user: true },
     });
 
-    if (!cuenta || !cuenta.usuario) {
+    if (!cuenta || !cuenta.user) {
       return res.status(404).json({ msg: "Usuario no encontrado" });
     }
 
     // Construir la ruta del archivo
     const rutaArchivo = `/uploads/${archivo.filename}`;
 
-    // Actualizar el campo com_usu del usuario
-    const usuarioActualizado = await prisma.usuario.update({
-      where: { id_usu: cuenta.usuario.id_usu },
+    // Actualizar el campo company del usuario
+    const usuarioActualizado = await prisma.user.update({
+      where: { id: cuenta.user.id },
       data: {
-        com_usu: rutaArchivo,
+        documentUrl: rutaArchivo,
       },
     });
 

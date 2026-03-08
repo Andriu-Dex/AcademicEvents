@@ -10,20 +10,20 @@ async function actualizarOcupaCupo() {
   );
 
   try {
-    // 1. Establecer cup_ocu = false para todas las inscripciones
-    await prisma.inscripcion.updateMany({
+    // 1. Establecer occupiesSpot = false para todas las inscripciones
+    await prisma.registration.updateMany({
       data: {
-        cup_ocu: false,
+        occupiesSpot: false,
       },
     });
     console.log(
-      "✅ Campo cup_ocu establecido a FALSE en todas las inscripciones"
-    ); // 2. Establecer cup_ocu = true para inscripciones en estado ACEPTADA y estados finales
-    const resultado = await prisma.inscripcion.updateMany({
+      "✅ Campo occupiesSpot establecido a FALSE en todas las inscripciones"
+    ); // 2. Establecer occupiesSpot = true para inscripciones en estado ACCEPTED y estados finales
+    const resultado = await prisma.registration.updateMany({
       where: {
-        est_ins: {
+        status: {
           in: [
-            "ACEPTADA",
+            "ACCEPTED",
             "APROBADO",
             "REPROBADO_NOTA",
             "REPROBADO_ASISTENCIA",
@@ -32,49 +32,49 @@ async function actualizarOcupaCupo() {
         },
       },
       data: {
-        cup_ocu: true,
+        occupiesSpot: true,
       },
     });
     console.log(
-      `✅ Campo cup_ocu establecido a TRUE en ${resultado.count} inscripciones (ACEPTADA y estados finales)`
+      `✅ Campo occupiesSpot establecido a TRUE en ${resultado.count} inscripciones (ACCEPTED y estados finales)`
     );
 
     // 3. Recalcular los cupos disponibles para todos los eventos
-    const eventos = await prisma.evento.findMany({
+    const eventos = await prisma.event.findMany({
       select: {
-        id_eve: true,
-        nom_eve: true,
-        cup_max_eve: true,
-        cup_dis_eve: true,
+        id: true,
+        name: true,
+        maxCapacity: true,
+        availableSpots: true,
       },
     });
     console.log(`📊 Recalculando cupos para ${eventos.length} eventos...`);
 
-    // 4. Para cada evento, contar inscripciones con cup_ocu = true y actualizar cup_dis_eve
+    // 4. Para cada evento, contar inscripciones con occupiesSpot = true y actualizar availableSpots
     for (const evento of eventos) {
-      const inscripcionesOcupandoCupo = await prisma.inscripcion.count({
+      const inscripcionesOcupandoCupo = await prisma.registration.count({
         where: {
-          id_eve_ins: evento.id_eve,
-          cup_ocu: true,
+          eventId: evento.id,
+          occupiesSpot: true,
         },
       });
 
       const cuposDisponibles = Math.max(
         0,
-        evento.cup_max_eve - inscripcionesOcupandoCupo
+        evento.maxCapacity - inscripcionesOcupandoCupo
       );
 
-      if (evento.cup_dis_eve !== cuposDisponibles) {
-        await prisma.evento.update({
-          where: { id_eve: evento.id_eve },
-          data: { cup_dis_eve: cuposDisponibles },
+      if (evento.availableSpots !== cuposDisponibles) {
+        await prisma.event.update({
+          where: { id: evento.id },
+          data: { availableSpots: cuposDisponibles },
         });
         console.log(
-          `✅ Evento "${evento.nom_eve}": Cupos disponibles actualizados de ${evento.cup_dis_eve} a ${cuposDisponibles}`
+          `✅ Evento "${evento.name}": Cupos disponibles actualizados de ${evento.availableSpots} a ${cuposDisponibles}`
         );
       } else {
         console.log(
-          `✓ Evento "${evento.nom_eve}": Cupos disponibles ya correctos (${cuposDisponibles})`
+          `✓ Evento "${evento.name}": Cupos disponibles ya correctos (${cuposDisponibles})`
         );
       }
     }

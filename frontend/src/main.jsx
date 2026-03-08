@@ -7,6 +7,7 @@ import "./index.css";
 // React core
 import React from "react";
 import ReactDOM from "react-dom/client";
+import axios from "axios";
 
 // App principal
 import App from "./App";
@@ -14,6 +15,10 @@ import App from "./App";
 // Contextos
 import { AuthProvider } from "./context/AuthContext";
 import { SocketProvider } from "./context/SocketContext";
+
+const tenantSlug =
+  localStorage.getItem("tenantSlug") || import.meta.env.VITE_TENANT_ID || "uta";
+axios.defaults.headers.common["X-Tenant-ID"] = tenantSlug;
 
 // Montaje de la aplicación con contextos y modo estricto
 ReactDOM.createRoot(document.getElementById("root")).render(

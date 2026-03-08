@@ -79,11 +79,11 @@ class TokenService {
         // Si el token ya fue usado, verificar si la cuenta está verificada
         let cuentaVerificada = false;
         if (token.est_tok === "USADO" && tipoToken === "VERIFICAR_CORREO") {
-          const cuenta = await prisma.cuenta.findUnique({
-            where: { id_cue: token.id_cue_per },
-            select: { est_ver_cor: true },
+          const account = await prisma.account.findUnique({
+            where: { id: token.id_cue_per },
+            select: { isEmailVerified: true },
           });
-          cuentaVerificada = cuenta?.est_ver_cor || false;
+          cuentaVerificada = account?.isEmailVerified || false;
         }
 
         // Determinar mensaje según el estado
@@ -189,28 +189,28 @@ class TokenService {
       );
 
       // Primero, verificar si la cuenta ya está verificada
-      const cuentaExistente = await prisma.cuenta.findUnique({
-        where: { id_cue: idCuenta },
-        select: { est_ver_cor: true },
+      const accountExists = await prisma.account.findUnique({
+        where: { id: idCuenta },
+        select: { isEmailVerified: true },
       });
 
       console.log(
         `[${new Date().toISOString()}] TokenService: Estado actual de verificación para cuenta ${idCuenta}:`,
-        cuentaExistente
+        accountExists
       );
 
-      const cuentaActualizada = await prisma.cuenta.update({
-        where: { id_cue: idCuenta },
+      const accountUpdated = await prisma.account.update({
+        where: { id: idCuenta },
         data: {
-          est_ver_cor: true,
-          fec_ver_cor: new Date(),
+          isEmailVerified: true,
+          emailVerifiedAt: new Date(),
         },
       });
 
       console.log(
         `[${new Date().toISOString()}] TokenService: Cuenta ${idCuenta} actualizada exitosamente`
       );
-      return cuentaActualizada;
+      return accountUpdated;
     } catch (error) {
       console.error(
         `[${new Date().toISOString()}] TokenService: Error al actualizar estado de verificación para cuenta ${idCuenta}:`,
@@ -227,12 +227,12 @@ class TokenService {
    */
   async obtenerCuentaPorCorreo(correo) {
     try {
-      const cuenta = await prisma.cuenta.findUnique({
-        where: { cor_usu: correo },
-        include: { usuario: true },
+      const account = await prisma.account.findUnique({
+        where: { email: correo },
+        include: { user: true },
       });
 
-      return cuenta;
+      return account;
     } catch (error) {
       console.error("Error al obtener cuenta por correo:", error);
       throw new Error("Error al buscar la cuenta");
@@ -264,7 +264,7 @@ class TokenService {
       // Contar tokens del mismo tipo en la última hora
       const conteoTokens = await prisma.token_cuenta.count({
         where: {
-          id_cue_per: cuenta.id_cue,
+          id_cue_per: account.id,
           tip_tok: tipoToken,
           fec_cre_tok: {
             gte: fechaLimite,
@@ -276,7 +276,7 @@ class TokenService {
         // Obtener el token más reciente para calcular tiempo restante
         const tokenMasReciente = await prisma.token_cuenta.findFirst({
           where: {
-            id_cue_per: cuenta.id_cue,
+            id_cue_per: account.id,
             tip_tok: tipoToken,
           },
           orderBy: {
@@ -366,11 +366,11 @@ class TokenService {
    */
   async verificarExistenciaCorreo(correo) {
     try {
-      const cuenta = await prisma.cuenta.findUnique({
-        where: { cor_usu: correo },
+      const account = await prisma.account.findUnique({
+        where: { email: correo },
       });
 
-      return cuenta !== null;
+      return account !== null;
     } catch (error) {
       console.error("Error al verificar existencia de correo:", error);
       throw new Error("Error al verificar existencia del correo");

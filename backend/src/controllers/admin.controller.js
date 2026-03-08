@@ -7,6 +7,38 @@ const { prisma } = require("../config/db");
 const bcrypt = require("bcrypt");
 const { validateCedula } = require("../utils/validations");
 
+const ROLE_TO_DB = {
+  ADMIN_GLOBAL: "GLOBAL_ADMIN",
+  ADMIN_GENERAL: "GENERAL_ADMIN",
+};
+
+const ROLE_FROM_DB = {
+  GLOBAL_ADMIN: "ADMIN_GLOBAL",
+  GENERAL_ADMIN: "ADMIN_GENERAL",
+};
+
+const ADMIN_DB_ROLES = ["GLOBAL_ADMIN", "GENERAL_ADMIN"];
+
+function toLegacyAdminShape(account) {
+  return {
+    id_cue: account.id,
+    cor_usu: account.email,
+    rol_usu: ROLE_FROM_DB[account.role] || account.role,
+    est_ver_cor: account.isEmailVerified,
+    fec_cre_cue: account.createdAt,
+    usuario: account.user
+      ? {
+          id_usu: account.user.id,
+          ced_usu: account.user.idNumber,
+          nom_usu: account.user.firstName,
+          ape_usu: account.user.lastName,
+          cel_usu: account.user.phone,
+          img_per_usu: account.user.profileImageUrl,
+        }
+      : null,
+  };
+}
+
 /**
  * Clase para la gestión de administradores
  * Implementa el patrón Singleton para asegurar una única instancia
@@ -51,7 +83,7 @@ class AdminController {
         });
       }
 
-      // Validar el rol (solo puede ser ADMIN_GLOBAL o ADMIN_GENERAL)
+      // Validar el rol (solo puede ser GLOBAL_ADMIN o GENERAL_ADMIN)
       if (rol !== "ADMIN_GLOBAL" && rol !== "ADMIN_GENERAL") {
         return res.status(400).json({
           error: "El rol debe ser ADMIN_GLOBAL o ADMIN_GENERAL",
@@ -66,8 +98,13 @@ class AdminController {
       // }
 
       // Verificar si ya existe un usuario con esa cédula
-      const usuarioExistente = await prisma.usuario.findUnique({
-        where: { ced_usu: cedula },
+      const usuarioExistente = await prisma.user.findUnique({
+        where: {
+          tenantId_idNumber: {
+            tenantId: req.tenantId,
+            idNumber: cedula,
+          },
+        },
       });
 
       if (usuarioExistente) {
@@ -77,8 +114,13 @@ class AdminController {
       }
 
       // Verificar si ya existe una cuenta con ese correo
-      const cuentaExistente = await prisma.cuenta.findUnique({
-        where: { cor_usu: correo },
+      const cuentaExistente = await prisma.account.findUnique({
+        where: {
+          tenantId_email: {
+            tenantId: req.tenantId,
+            email: correo,
+          },
+        },
       });
 
       if (cuentaExistente) {
@@ -90,43 +132,41 @@ class AdminController {
       // Cifrar la contraseña
       const hashedPassword = await bcrypt.hash(contrasena, 10);
 
-      // Crear el nuevo admin (usuario + cuenta verificada)
-      const nuevoAdmin = await prisma.usuario.create({
-        data: {
-          ced_usu: cedula,
-          nom_usu: nombres,
-          ape_usu: apellidos,
-          cel_usu: celular,
-          fec_cre_usu: new Date(),
-          cuentas: {
-            create: [
-              {
-                cor_usu: correo,
-                con_usu: hashedPassword,
-                rol_usu: rol,
-                est_ver_cor: true, // Cuenta verificada automáticamente
-                fec_ver_cor: new Date(), // Fecha de verificación
-              },
-            ],
-          },
-        },
-        include: {
-          cuentas: true,
-        },
-      });
+      const roleForDb = ROLE_TO_DB[rol];
 
-      // Omitir la contraseña en la respuesta
-      const adminCreado = {
-        ...nuevoAdmin,
-        cuentas: nuevoAdmin.cuentas.map((cuenta) => ({
-          ...cuenta,
-          con_usu: undefined,
-        })),
-      };
+      // Crear el nuevo admin (usuario + cuenta verificada)
+      const nuevoAdmin = await prisma.$transaction(async (tx) => {
+        const newUser = await tx.user.create({
+          data: {
+            tenantId: req.tenantId,
+            idNumber: cedula,
+            firstName: nombres,
+            lastName: apellidos,
+            phone: celular,
+          },
+        });
+
+        const newAccount = await tx.account.create({
+          data: {
+            tenantId: req.tenantId,
+            userId: newUser.id,
+            email: correo,
+            password: hashedPassword,
+            role: roleForDb,
+            isEmailVerified: true,
+            emailVerifiedAt: new Date(),
+          },
+          include: {
+            user: true,
+          },
+        });
+
+        return newAccount;
+      });
 
       return res.status(201).json({
         mensaje: "Administrador creado correctamente",
-        admin: adminCreado,
+        admin: toLegacyAdminShape(nuevoAdmin),
       });
     } catch (error) {
       console.error("Error al crear administrador:", error);
@@ -144,30 +184,32 @@ class AdminController {
    */
   async listarAdmins(req, res) {
     try {
-      const administradores = await prisma.cuenta.findMany({
+      const administradores = await prisma.account.findMany({
         where: {
-          OR: [{ rol_usu: "ADMIN_GLOBAL" }, { rol_usu: "ADMIN_GENERAL" }],
+          tenantId: req.tenantId,
+          role: { in: ADMIN_DB_ROLES },
         },
         select: {
-          id_cue: true,
-          cor_usu: true,
-          rol_usu: true,
-          fec_cre_cue: true,
-          est_ver_cor: true,
-          fec_ver_cor: true,
-          usuario: {
+          id: true,
+          email: true,
+          role: true,
+          createdAt: true,
+          isEmailVerified: true,
+          emailVerifiedAt: true,
+          user: {
             select: {
-              ced_usu: true,
-              nom_usu: true,
-              ape_usu: true,
-              cel_usu: true,
-              img_per_usu: true,
+              id: true,
+              idNumber: true,
+              firstName: true,
+              lastName: true,
+              phone: true,
+              profileImageUrl: true,
             },
           },
         },
       });
 
-      return res.status(200).json(administradores);
+      return res.status(200).json(administradores.map(toLegacyAdminShape));
     } catch (error) {
       console.error("Error al listar administradores:", error);
       return res.status(500).json({
@@ -194,16 +236,17 @@ class AdminController {
 
       // Construir condición WHERE base
       const whereCondition = {
-        AND: [
-          {
-            OR: [{ rol_usu: "ADMIN_GLOBAL" }, { rol_usu: "ADMIN_GENERAL" }],
-          },
-        ],
+        tenantId: req.tenantId,
+        role: { in: ADMIN_DB_ROLES },
+        AND: [],
       };
 
       // Filtro por rol específico
       if (rol) {
-        whereCondition.AND.push({ rol_usu: rol });
+        const dbRole = ROLE_TO_DB[rol];
+        if (dbRole) {
+          whereCondition.AND.push({ role: dbRole });
+        }
       }
 
       // Filtro de búsqueda
@@ -211,52 +254,53 @@ class AdminController {
         whereCondition.AND.push({
           OR: [
             {
-              usuario: {
+              user: {
                 OR: [
-                  { nom_usu: { contains: search, mode: "insensitive" } },
-                  { ape_usu: { contains: search, mode: "insensitive" } },
-                  { ced_usu: { contains: search, mode: "insensitive" } },
+                  { firstName: { contains: search, mode: "insensitive" } },
+                  { lastName: { contains: search, mode: "insensitive" } },
+                  { idNumber: { contains: search, mode: "insensitive" } },
                 ],
               },
             },
-            { cor_usu: { contains: search, mode: "insensitive" } },
+            { email: { contains: search, mode: "insensitive" } },
           ],
         });
       }
 
       // Ejecutar consultas en paralelo
       const [administradores, totalCount] = await Promise.all([
-        prisma.cuenta.findMany({
+        prisma.account.findMany({
           where: whereCondition,
           select: {
-            id_cue: true,
-            cor_usu: true,
-            rol_usu: true,
-            fec_cre_cue: true,
-            est_ver_cor: true,
-            fec_ver_cor: true,
-            usuario: {
+            id: true,
+            email: true,
+            role: true,
+            createdAt: true,
+            isEmailVerified: true,
+            emailVerifiedAt: true,
+            user: {
               select: {
-                ced_usu: true,
-                nom_usu: true,
-                ape_usu: true,
-                cel_usu: true,
-                img_per_usu: true,
+                id: true,
+                idNumber: true,
+                firstName: true,
+                lastName: true,
+                phone: true,
+                profileImageUrl: true,
               },
             },
           },
           skip: offset,
           take: limit,
-          orderBy: { fec_cre_cue: "desc" },
+          orderBy: { createdAt: "desc" },
         }),
-        prisma.cuenta.count({ where: whereCondition }),
+        prisma.account.count({ where: whereCondition }),
       ]);
 
       // Calcular metadatos de paginación
       const totalPages = Math.ceil(totalCount / limit);
 
       return res.json({
-        data: administradores,
+        data: administradores.map(toLegacyAdminShape),
         pagination: {
           currentPage: page,
           totalPages,

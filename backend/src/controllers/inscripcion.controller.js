@@ -16,28 +16,28 @@ const {
  */
 async function guardarObservacion(idInscripcion, observacion, idAdmin) {
   // Verificar si ya existe una observación para esta inscripción
-  const observacionExistente = await prisma.observacion_inscripcion.findUnique({
-    where: { id_ins_per: idInscripcion },
+  const observacionExistente = await prisma.registration_observation.findUnique({
+    where: { registrationId: idInscripcion },
   });
 
   if (observacionExistente) {
     // Actualizar observación existente
 
-    await prisma.observacion_inscripcion.update({
-      where: { id_ins_per: idInscripcion },
+    await prisma.registration_observation.update({
+      where: { registrationId: idInscripcion },
       data: {
-        obs_ins: observacion,
-        id_adm_cre_obs: idAdmin,
+        observation: observacion,
+        createdByAdminId: idAdmin,
       },
     });
   } else {
     // Crear nueva observación
 
-    await prisma.observacion_inscripcion.create({
+    await prisma.registration_observation.create({
       data: {
-        id_ins_per: idInscripcion,
-        obs_ins: observacion,
-        id_adm_cre_obs: idAdmin,
+        registrationId: idInscripcion,
+        observation: observacion,
+        createdByAdminId: idAdmin,
       },
     });
   }
@@ -101,7 +101,7 @@ const crearInscripcion = async (req, res) => {
     // Obtenemos el evento para verificar si tiene costo
     console.log("🔍 [CREAR_INSCRIPCION] Buscando evento:", id_eve);
 
-    const evento = await prisma.evento.findUnique({ where: { id_eve } });
+    const evento = await prisma.event.findUnique({ where: { id: id_eve } });
     if (!evento) {
       console.log("❌ [CREAR_INSCRIPCION] Evento no encontrado:", id_eve);
       return res.status(404).json({ msg: "Evento no encontrado" });
@@ -164,9 +164,9 @@ const crearInscripcion = async (req, res) => {
     // Verificar que la cuenta existe
     console.log("🔍 [CREAR_INSCRIPCION] Verificando cuenta:", id_cue);
 
-    const cuenta = await prisma.cuenta.findUnique({
-      where: { id_cue },
-      include: { usuario: true },
+    const cuenta = await prisma.account.findUnique({
+      where: { id: id_cue },
+      include: { user: true },
     });
     if (!cuenta) {
       console.log("❌ [CREAR_INSCRIPCION] Cuenta no encontrada:", id_cue);
@@ -179,8 +179,8 @@ const crearInscripcion = async (req, res) => {
     // Verificar si el usuario ya está inscrito
     console.log("🔍 [CREAR_INSCRIPCION] Verificando inscripciones previas");
 
-    const yaInscrito = await prisma.inscripcion.findFirst({
-      where: { id_cor_ins: id_cue, id_eve_ins: id_eve },
+    const yaInscrito = await prisma.registration.findFirst({
+      where: { accountId: id_cue, eventId: id_eve },
     });
 
     console.log(
@@ -255,7 +255,7 @@ const crearInscripcion = async (req, res) => {
         }
 
         // Obtener datos completos del evento para la notificación
-        const eventoCompleto = await prisma.evento.findUnique({
+        const eventoCompleto = await prisma.event.findUnique({
           where: { id_eve: id_eve },
           select: {
             id_eve: true,
@@ -268,7 +268,7 @@ const crearInscripcion = async (req, res) => {
         });
 
         // Obtener datos completos de la inscripción actualizada
-        const inscripcionActualizada = await prisma.inscripcion.findUnique({
+        const inscripcionActualizada = await prisma.registration.findUnique({
           where: { id_ins: yaInscrito.id_ins },
           include: {
             cuenta: {
@@ -457,7 +457,7 @@ const crearInscripcion = async (req, res) => {
           );
           try {
             // Obtener datos completos del evento para la notificación
-            const eventoCompleto = await prisma.evento.findUnique({
+            const eventoCompleto = await prisma.event.findUnique({
               where: { id_eve: id_eve },
               select: {
                 id_eve: true,
@@ -625,7 +625,7 @@ const validarInscripcion = async (req, res) => {
     }
 
     // Obtener la inscripción actual con datos del evento
-    const inscripcion = await prisma.inscripcion.findUnique({
+    const inscripcion = await prisma.registration.findUnique({
       where: { id_ins: id },
       include: {
         evento: {
@@ -697,7 +697,7 @@ const validarInscripcion = async (req, res) => {
 
       // Validación de nota final (solo para eventos tipo CURSO)
       if (inscripcion.evento.tip_eve === "CURSO" && notaFinalNum !== null) {
-        const eventoCurso = await prisma.evento_curso.findUnique({
+        const eventoCurso = await prisma.event_course.findUnique({
           where: { id_eve_cur: inscripcion.evento.id_eve },
         });
 
@@ -769,7 +769,7 @@ const validarInscripcion = async (req, res) => {
         }
 
         // 🔌 Notificar al usuario del cambio a estado final (APROBADO/REPROBADO)
-        const inscripcionUsuario = await prisma.inscripcion.findUnique({
+        const inscripcionUsuario = await prisma.registration.findUnique({
           where: { id_ins: id },
           select: {
             id_ins: true,
@@ -811,17 +811,17 @@ const validarInscripcion = async (req, res) => {
 
         // Actualizar la nota si es un curso
         if (inscripcion.evento.tip_eve === "CURSO") {
-          const inscripcionCurso = await prisma.inscripcion_curso.findUnique({
+          const inscripcionCurso = await prisma.course_registration.findUnique({
             where: { id_ins_cur: id },
           });
 
           if (inscripcionCurso) {
-            await prisma.inscripcion_curso.update({
+            await prisma.course_registration.update({
               where: { id_ins_cur: id },
               data: { not_fin_usu: notaFinalNum },
             });
           } else {
-            await prisma.inscripcion_curso.create({
+            await prisma.course_registration.create({
               data: {
                 id_ins_cur: id,
                 not_fin_usu: notaFinalNum,
@@ -917,13 +917,13 @@ const validarInscripcion = async (req, res) => {
     // Si es un curso, actualizar la nota final en inscripcion_curso
     if (inscripcion.evento.tip_eve === "CURSO") {
       // Buscar si ya existe inscripcion_curso
-      const inscripcionCurso = await prisma.inscripcion_curso.findUnique({
+      const inscripcionCurso = await prisma.course_registration.findUnique({
         where: { id_ins_cur: id },
       });
 
       if (inscripcionCurso) {
         // Actualizar inscripcion_curso existente
-        await prisma.inscripcion_curso.update({
+        await prisma.course_registration.update({
           where: { id_ins_cur: id },
           data: {
             not_fin_usu: notaFinalNum,
@@ -931,7 +931,7 @@ const validarInscripcion = async (req, res) => {
         });
       } else {
         // Crear inscripcion_curso si no existe
-        await prisma.inscripcion_curso.create({
+        await prisma.course_registration.create({
           data: {
             id_ins_cur: id,
             not_fin_usu: notaFinalNum,
@@ -943,7 +943,7 @@ const validarInscripcion = async (req, res) => {
     // 🔌 Notificar cambios por socket
     try {
       // Obtener los datos actualizados de la inscripción para devolverlos en la respuesta
-      const actualizada = await prisma.inscripcion.findUnique({
+      const actualizada = await prisma.registration.findUnique({
         where: { id_ins: id },
       });
 
@@ -954,7 +954,7 @@ const validarInscripcion = async (req, res) => {
       });
 
       // Obtener datos completos del evento
-      const eventoCompleto = await prisma.evento.findUnique({
+      const eventoCompleto = await prisma.event.findUnique({
         where: { id_eve: idEvento },
         select: {
           id_eve: true,
@@ -967,7 +967,7 @@ const validarInscripcion = async (req, res) => {
       });
 
       // Obtener ID del usuario propietario de la inscripción
-      const inscripcionConUsuario = await prisma.inscripcion.findUnique({
+      const inscripcionConUsuario = await prisma.registration.findUnique({
         where: { id_ins: id },
         select: {
           id_ins: true,
@@ -977,7 +977,7 @@ const validarInscripcion = async (req, res) => {
 
       // Notificar específicamente al usuario propietario de la inscripción
       if (inscripcionConUsuario && inscripcionConUsuario.id_cor_ins) {
-        const inscripcionCompleta = await prisma.inscripcion.findUnique({
+        const inscripcionCompleta = await prisma.registration.findUnique({
           where: { id_ins: id },
           include: {
             evento: true,
@@ -1101,7 +1101,7 @@ const validarInscripcion = async (req, res) => {
 const obtenerInscripcionesPorUsuario = async (req, res) => {
   try {
     const { id } = req.params;
-    const inscripciones = await prisma.inscripcion.findMany({
+    const inscripciones = await prisma.registration.findMany({
       where: { id_eve_ins: id },
       include: {
         cuenta: {
@@ -1187,7 +1187,7 @@ const puedeGenerarCertificado = async (req, res) => {
   try {
     const { id } = req.params; // ID de la inscripción
 
-    const inscripcion = await prisma.inscripcion.findUnique({
+    const inscripcion = await prisma.registration.findUnique({
       where: { id_ins: id },
       include: {
         evento: true,
@@ -1214,7 +1214,7 @@ const puedeGenerarCertificado = async (req, res) => {
 
     if (inscripcion.evento.tip_eve === "CURSO") {
       // Buscar la información de nota mínima del curso
-      const eventoCurso = await prisma.evento_curso.findUnique({
+      const eventoCurso = await prisma.event_course.findUnique({
         where: { id_eve_cur: inscripcion.evento.id_eve },
       });
 
@@ -1283,7 +1283,7 @@ const reenviarComprobante = async (req, res) => {
     }
 
     // Buscar la inscripción
-    const inscripcion = await prisma.inscripcion.findUnique({
+    const inscripcion = await prisma.registration.findUnique({
       where: { id_ins: id },
       include: { cuenta: true, evento: true },
     });
@@ -1300,7 +1300,7 @@ const reenviarComprobante = async (req, res) => {
 
     // Verificar cupos antes de cualquier operación
     console.log("Verificando cupos iniciales del evento...");
-    const cuposIniciales = await prisma.evento.findUnique({
+    const cuposIniciales = await prisma.event.findUnique({
       where: { id_eve: inscripcion.id_eve_ins },
       select: { cup_dis_eve: true, cup_max_eve: true, nom_eve: true },
     });
@@ -1376,14 +1376,14 @@ const reenviarComprobante = async (req, res) => {
       }
 
       // Obtener la inscripción actualizada para devolverla en la respuesta
-      const actualizada = await prisma.inscripcion.findUnique({
+      const actualizada = await prisma.registration.findUnique({
         where: { id_ins: id },
       });
       console.log("Transacción completada correctamente");
 
       // Verificar cupos finales para confirmar
       try {
-        const cuposFinales = await prisma.evento.findUnique({
+        const cuposFinales = await prisma.event.findUnique({
           where: { id_eve: inscripcion.id_eve_ins },
           select: { cup_dis_eve: true, cup_max_eve: true, nom_eve: true },
         });
@@ -1436,7 +1436,7 @@ const obtenerInscripcionesPorEvento = async (req, res) => {
     const { id } = req.params;
 
     // Verificación específica del evento
-    const eventoRaw = await prisma.evento.findUnique({
+    const eventoRaw = await prisma.event.findUnique({
       where: { id_eve: id },
     });
 
@@ -1448,7 +1448,7 @@ const obtenerInscripcionesPorEvento = async (req, res) => {
 
     // Verificar si existe información de curso
     if (eventoRaw?.tip_eve === "CURSO") {
-      const eventoCurso = await prisma.evento_curso.findUnique({
+      const eventoCurso = await prisma.event_course.findUnique({
         where: { id_eve_cur: id },
       });
 
@@ -1466,7 +1466,7 @@ const obtenerInscripcionesPorEvento = async (req, res) => {
       }
     }
 
-    const inscripciones = await prisma.inscripcion.findMany({
+    const inscripciones = await prisma.registration.findMany({
       where: { id_eve_ins: id },
       include: {
         cuenta: {
@@ -1496,7 +1496,7 @@ const obtenerInscripcionesPorEvento = async (req, res) => {
 
     // Verificar directamente los datos del evento
     console.log(`🔍 Verificando datos del evento directamente desde DB...`);
-    const eventoDirecto = await prisma.evento.findUnique({
+    const eventoDirecto = await prisma.event.findUnique({
       where: { id_eve: id },
       include: {
         eventos_curso: true,
@@ -1643,6 +1643,172 @@ const obtenerInscripcionesPorEvento = async (req, res) => {
 // ===================================================
 // Obtener inscripciones de un evento específico con paginación
 // ===================================================
+
+const REG_STATUS_TO_LEGACY = {
+  PENDING: "PENDIENTE",
+  ACCEPTED: "ACEPTADA",
+  REJECTED: "RECHAZADA",
+  APPROVED: "APROBADO",
+  FAILED_GRADE: "REPROBADO_NOTA",
+  FAILED_ATTENDANCE: "REPROBADO_ASISTENCIA",
+  FAILED_TOTAL: "REPROBADO_TOTAL",
+};
+
+const LEGACY_TO_REG_STATUS = {
+  PENDIENTE: "PENDING",
+  ACEPTADA: "ACCEPTED",
+  RECHAZADA: "REJECTED",
+  APROBADO: "APPROVED",
+  REPROBADO_NOTA: "FAILED_GRADE",
+  REPROBADO_ASISTENCIA: "FAILED_ATTENDANCE",
+  REPROBADO_TOTAL: "FAILED_TOTAL",
+};
+
+const EVENT_STATUS_TO_LEGACY = {
+  ACTIVE: "ACTIVO",
+  INACTIVE: "INACTIVO",
+  FINISHED: "FINALIZADO",
+  CANCELLED: "CANCELADO",
+  SUSPENDED: "SUSPENDIDO",
+};
+
+const EVENT_TYPE_TO_LEGACY = {
+  COURSE: "CURSO",
+  CONGRESS: "CONGRESO",
+  WEBINAR: "WEBINAR",
+  TALK: "CHARLA",
+  SOCIALIZATION: "SOCIALIZACION",
+};
+
+const REGISTRATION_SORT_FIELD_MAP = {
+  fec_ins: "registeredAt",
+  registeredAt: "registeredAt",
+  est_ins: "status",
+  status: "status",
+  por_asi_fin_usu: "finalAttendancePercent",
+  finalAttendancePercent: "finalAttendancePercent",
+};
+
+const normalizeRegistrationStatus = (status) =>
+  LEGACY_TO_REG_STATUS[status] || status;
+
+const buildRegistrationWhereCondition = ({
+  eventId,
+  search,
+  estado,
+  fechaInicio,
+  fechaFin,
+}) => {
+  const whereCondition = {};
+
+  if (eventId) {
+    whereCondition.eventId = eventId;
+  }
+
+  if (search) {
+    whereCondition.OR = [
+      {
+        account: {
+          user: {
+            OR: [
+              { firstName: { contains: search, mode: "insensitive" } },
+              { lastName: { contains: search, mode: "insensitive" } },
+              { idNumber: { contains: search, mode: "insensitive" } },
+            ],
+          },
+        },
+      },
+      {
+        account: {
+          email: { contains: search, mode: "insensitive" },
+        },
+      },
+      {
+        event: {
+          name: { contains: search, mode: "insensitive" },
+        },
+      },
+    ];
+  }
+
+  if (estado) {
+    whereCondition.status = normalizeRegistrationStatus(estado);
+  }
+
+  if (fechaInicio || fechaFin) {
+    whereCondition.registeredAt = {
+      ...(fechaInicio && { gte: new Date(fechaInicio) }),
+      ...(fechaFin && { lte: new Date(fechaFin) }),
+    };
+  }
+
+  return whereCondition;
+};
+
+const buildRegistrationOrderBy = (sortBy, sortOrder) => {
+  const normalizedSortBy =
+    REGISTRATION_SORT_FIELD_MAP[sortBy] || "registeredAt";
+  const normalizedSortOrder = sortOrder === "asc" ? "asc" : "desc";
+  return { [normalizedSortBy]: normalizedSortOrder };
+};
+
+const mapRegistrationToLegacy = (inscripcion) => {
+  const user = inscripcion.account?.user;
+  const accountEmail = inscripcion.account?.email || null;
+  const event = inscripcion.event;
+
+  return {
+    id_ins: inscripcion.id,
+    est_ins: REG_STATUS_TO_LEGACY[inscripcion.status] || inscripcion.status,
+    fec_ins: inscripcion.registeredAt,
+    por_asi_fin_usu:
+      inscripcion.finalAttendancePercent === -1
+        ? null
+        : inscripcion.finalAttendancePercent,
+    nota_final: inscripcion.registrationCourse?.finalGrade ?? null,
+    comprobante: inscripcion.paymentReceipts?.[0]?.documentUrl || null,
+    carta_motivacion: inscripcion.motivationLetters?.[0]?.content || null,
+    observacion: inscripcion.observation?.observation || null,
+    usuario: user
+      ? {
+          nom_usu: user.firstName,
+          ape_usu: user.lastName,
+          cor_usu: accountEmail,
+          com_usu: user.documentUrl || null,
+          ced_usu: user.idNumber,
+        }
+      : null,
+    cuenta: {
+      cor_usu: accountEmail,
+      usuario: user
+        ? {
+            nom_usu: user.firstName,
+            ape_usu: user.lastName,
+            com_usu: user.documentUrl || null,
+            ced_usu: user.idNumber,
+          }
+        : null,
+    },
+    evento: event
+      ? {
+          id_eve: event.id,
+          nom_eve: event.name,
+          tip_eve: EVENT_TYPE_TO_LEGACY[event.type] || event.type,
+          val_eve: event.price,
+          est_eve: EVENT_STATUS_TO_LEGACY[event.status] || event.status,
+          por_min_asi_eve: event.minAttendancePercent,
+          eventos_curso: event.eventCourse
+            ? {
+                not_min_cur: event.eventCourse.minPassingGrade,
+              }
+            : null,
+        }
+      : null,
+    certificado: inscripcion.certificate || null,
+    onVerCarta: null,
+  };
+};
+
 const obtenerInscripcionesPorEventoPaginadas = async (req, res) => {
   try {
     const { id } = req.params;
@@ -1658,152 +1824,62 @@ const obtenerInscripcionesPorEventoPaginadas = async (req, res) => {
       estado,
       fechaInicio,
       fechaFin,
-      sortBy = "fec_ins",
+      sortBy = "registeredAt",
       sortOrder = "desc",
     } = req.query;
 
-    // Construir condición WHERE base con el ID del evento
-    const whereCondition = {
-      id_eve_ins: id,
-    };
+    const whereCondition = buildRegistrationWhereCondition({
+      eventId: id,
+      search,
+      estado,
+      fechaInicio,
+      fechaFin,
+    });
 
-    // Filtro por búsqueda (usuario)
-    if (search) {
-      whereCondition.OR = [
-        // Búsqueda por nombre/apellido de usuario
-        {
-          cuenta: {
-            usuario: {
-              OR: [
-                { nom_usu: { contains: search, mode: "insensitive" } },
-                { ape_usu: { contains: search, mode: "insensitive" } },
-                { ced_usu: { contains: search, mode: "insensitive" } },
-              ],
-            },
-          },
-        },
-        // Búsqueda por correo de usuario
-        {
-          cuenta: {
-            cor_usu: { contains: search, mode: "insensitive" },
-          },
-        },
-      ];
-    }
-
-    // Filtro por estado de inscripción
-    if (estado) {
-      whereCondition.est_ins = estado;
-    }
-
-    // Filtro por fecha de inscripción (inicio)
-    if (fechaInicio) {
-      whereCondition.fec_ins = {
-        ...(whereCondition.fec_ins || {}),
-        gte: new Date(fechaInicio),
-      };
-    }
-
-    // Filtro por fecha de inscripción (fin)
-    if (fechaFin) {
-      whereCondition.fec_ins = {
-        ...(whereCondition.fec_ins || {}),
-        lte: new Date(fechaFin),
-      };
-    }
-
-    // Configurar ordenamiento
-    const orderBy = {};
-    orderBy[sortBy || "fec_ins"] = sortOrder || "desc";
+    const orderBy = buildRegistrationOrderBy(sortBy, sortOrder);
 
     // Ejecutar consultas en paralelo
     const [inscripciones, totalCount] = await Promise.all([
-      prisma.inscripcion.findMany({
+      prisma.registration.findMany({
         where: whereCondition,
         skip: offset,
         take: limit,
         orderBy,
         include: {
-          cuenta: {
+          account: {
             include: {
-              usuario: true,
+              user: true,
             },
           },
-          evento: {
+          event: {
             include: {
-              eventos_curso: true,
+              eventCourse: true,
             },
           },
-          observacion: true,
-          inscripcion_curso: true,
-          certificado: true,
-          comprobantes_pago: {
+          observation: true,
+          registrationCourse: true,
+          certificate: true,
+          paymentReceipts: {
             orderBy: {
-              fec_sub_com_pag: "desc",
+              uploadedAt: "desc",
             },
             take: 1,
           },
-          cartas_motivacion: {
+          motivationLetters: {
             orderBy: {
-              fec_sub_car_mot: "desc",
+              uploadedAt: "desc",
             },
             take: 1,
           },
         },
       }),
-      prisma.inscripcion.count({
+      prisma.registration.count({
         where: whereCondition,
       }),
     ]);
 
     // Mapear los resultados para tener una estructura consistente con el frontend
-    const inscripcionesMapeadas = inscripciones.map((inscripcion) => ({
-      id_ins: inscripcion.id_ins,
-      est_ins: inscripcion.est_ins,
-      fec_ins: inscripcion.fec_ins,
-      por_asi_fin_usu:
-        inscripcion.por_asi_fin_usu === -1 ? null : inscripcion.por_asi_fin_usu,
-      nota_final: inscripcion.inscripcion_curso?.not_fin_usu || null,
-      comprobante: inscripcion.comprobantes_pago[0]?.url_com_pag || null,
-      carta_motivacion: inscripcion.cartas_motivacion[0]?.con_car_mot || null,
-      observacion: inscripcion.observacion?.obs_ins || null,
-      // Mapear datos del usuario (compatibilidad con frontend)
-      usuario: inscripcion.cuenta?.usuario
-        ? {
-            nom_usu: inscripcion.cuenta.usuario.nom_usu,
-            ape_usu: inscripcion.cuenta.usuario.ape_usu,
-            cor_usu: inscripcion.cuenta.cor_usu,
-            com_usu: inscripcion.cuenta.usuario.com_usu || null,
-          }
-        : null,
-      // Mantener estructura de cuenta para compatibilidad
-      cuenta: {
-        cor_usu: inscripcion.cuenta?.cor_usu,
-        usuario: inscripcion.cuenta?.usuario
-          ? {
-              nom_usu: inscripcion.cuenta.usuario.nom_usu,
-              ape_usu: inscripcion.cuenta.usuario.ape_usu,
-              com_usu: inscripcion.cuenta.usuario.com_usu || null,
-            }
-          : null,
-      },
-      // Mapear datos del evento
-      evento: inscripcion.evento
-        ? {
-            id_eve: inscripcion.evento.id_eve,
-            nom_eve: inscripcion.evento.nom_eve,
-            tip_eve: inscripcion.evento.tip_eve,
-            val_eve: inscripcion.evento.val_eve,
-            est_eve: inscripcion.evento.est_eve,
-            por_min_asi_eve: inscripcion.evento.por_min_asi_eve,
-            eventos_curso: inscripcion.evento.eventos_curso,
-          }
-        : null,
-      // Mapear datos de certificado si existe
-      certificado: inscripcion.certificado,
-      // Función onVerCarta para compatibilidad (se define en el frontend)
-      onVerCarta: null,
-    }));
+    const inscripcionesMapeadas = inscripciones.map(mapRegistrationToLegacy);
 
     // Calcular metadatos de paginación
     const totalPages = Math.ceil(totalCount / limit);
@@ -1845,161 +1921,62 @@ const obtenerInscripcionesPaginadas = async (req, res) => {
       evento,
       fechaInicio,
       fechaFin,
-      sortBy = "fec_ins",
+      sortBy = "registeredAt",
       sortOrder = "desc",
     } = req.query;
 
-    // Construir condición WHERE base
-    const whereCondition = {};
+    const whereCondition = buildRegistrationWhereCondition({
+      eventId: evento,
+      search,
+      estado,
+      fechaInicio,
+      fechaFin,
+    });
 
-    // Filtro por evento específico
-    if (evento) {
-      whereCondition.id_eve_ins = evento;
-    }
-
-    // Filtro por búsqueda (usuario)
-    if (search) {
-      whereCondition.OR = [
-        // Búsqueda por nombre/apellido de usuario
-        {
-          cuenta: {
-            usuario: {
-              OR: [
-                { nom_usu: { contains: search, mode: "insensitive" } },
-                { ape_usu: { contains: search, mode: "insensitive" } },
-                { ced_usu: { contains: search, mode: "insensitive" } },
-              ],
-            },
-          },
-        },
-        // Búsqueda por correo de usuario
-        {
-          cuenta: {
-            cor_usu: { contains: search, mode: "insensitive" },
-          },
-        },
-        // Búsqueda por nombre de evento
-        {
-          evento: {
-            nom_eve: { contains: search, mode: "insensitive" },
-          },
-        },
-      ];
-    }
-
-    // Filtro por estado de inscripción
-    if (estado) {
-      whereCondition.est_ins = estado;
-    }
-
-    // Filtro por fecha de inscripción (inicio)
-    if (fechaInicio) {
-      whereCondition.fec_ins = {
-        ...(whereCondition.fec_ins || {}),
-        gte: new Date(fechaInicio),
-      };
-    }
-
-    // Filtro por fecha de inscripción (fin)
-    if (fechaFin) {
-      whereCondition.fec_ins = {
-        ...(whereCondition.fec_ins || {}),
-        lte: new Date(fechaFin),
-      };
-    }
-
-    // Configurar ordenamiento
-    const orderBy = {};
-    orderBy[sortBy || "fec_ins"] = sortOrder || "desc";
+    const orderBy = buildRegistrationOrderBy(sortBy, sortOrder);
 
     // Ejecutar consultas en paralelo
     const [inscripciones, totalCount] = await Promise.all([
-      prisma.inscripcion.findMany({
+      prisma.registration.findMany({
         where: whereCondition,
         skip: offset,
         take: limit,
         orderBy,
         include: {
-          cuenta: {
+          account: {
             include: {
-              usuario: true,
+              user: true,
             },
           },
-          evento: {
+          event: {
             include: {
-              eventos_curso: true,
+              eventCourse: true,
             },
           },
-          observacion: true,
-          inscripcion_curso: true,
-          certificado: true,
-          comprobantes_pago: {
+          observation: true,
+          registrationCourse: true,
+          certificate: true,
+          paymentReceipts: {
             orderBy: {
-              fec_sub_com_pag: "desc",
+              uploadedAt: "desc",
             },
             take: 1,
           },
-          cartas_motivacion: {
+          motivationLetters: {
             orderBy: {
-              fec_sub_car_mot: "desc",
+              uploadedAt: "desc",
             },
             take: 1,
           },
         },
       }),
-      prisma.inscripcion.count({
+      prisma.registration.count({
         where: whereCondition,
       }),
     ]);
 
     // Mapear los resultados para tener una estructura consistente con el frontend
-    const inscripcionesMapeadas = inscripciones.map((inscripcion) => ({
-      id_ins: inscripcion.id_ins,
-      est_ins: inscripcion.est_ins,
-      fec_ins: inscripcion.fec_ins,
-      por_asi_fin_usu:
-        inscripcion.por_asi_fin_usu === -1 ? null : inscripcion.por_asi_fin_usu,
-      nota_final: inscripcion.inscripcion_curso?.not_fin_usu || null,
-      comprobante: inscripcion.comprobantes_pago[0]?.url_com_pag || null,
-      carta_motivacion: inscripcion.cartas_motivacion[0]?.con_car_mot || null,
-      observacion: inscripcion.observacion?.obs_ins || null,
-      // Mapear datos del usuario (compatibilidad con frontend)
-      usuario: inscripcion.cuenta?.usuario
-        ? {
-            nom_usu: inscripcion.cuenta.usuario.nom_usu,
-            ape_usu: inscripcion.cuenta.usuario.ape_usu,
-            cor_usu: inscripcion.cuenta.cor_usu,
-            com_usu: inscripcion.cuenta.usuario.com_usu || null,
-          }
-        : null,
-      // Mantener estructura de cuenta para compatibilidad
-      cuenta: {
-        cor_usu: inscripcion.cuenta?.cor_usu,
-        usuario: inscripcion.cuenta?.usuario
-          ? {
-              nom_usu: inscripcion.cuenta.usuario.nom_usu,
-              ape_usu: inscripcion.cuenta.usuario.ape_usu,
-              com_usu: inscripcion.cuenta.usuario.com_usu || null,
-            }
-          : null,
-      },
-      // Mapear datos del evento
-      evento: inscripcion.evento
-        ? {
-            id_eve: inscripcion.evento.id_eve,
-            nom_eve: inscripcion.evento.nom_eve,
-            tip_eve: inscripcion.evento.tip_eve,
-            val_eve: inscripcion.evento.val_eve,
-            est_eve: inscripcion.evento.est_eve,
-            por_min_asi_eve: inscripcion.evento.por_min_asi_eve,
-            eventos_curso: inscripcion.evento.eventos_curso,
-          }
-        : null,
-      // Mapear datos de certificado si existe
-      certificado: inscripcion.certificado,
-      // Función onVerCarta para compatibilidad (se define en el frontend)
-      onVerCarta: null,
-    }));
+    const inscripcionesMapeadas = inscripciones.map(mapRegistrationToLegacy);
 
     // Calcular metadatos de paginación
     const totalPages = Math.ceil(totalCount / limit);
@@ -2039,37 +2016,37 @@ const obtenerInscripcionUsuarioEnEvento = async (req, res) => {
     }
 
     // Buscar la inscripción del usuario en el evento específico
-    const inscripcion = await prisma.inscripcion.findFirst({
+    const inscripcion = await prisma.registration.findFirst({
       where: {
-        id_cor_ins: id_cue,
-        id_eve_ins: idEvento,
+        accountId: id_cue,
+        eventId: idEvento,
       },
       include: {
-        evento: {
+        event: {
           include: {
-            eventos_curso: true,
+            eventCourse: true,
           },
         },
-        cuenta: {
+        account: {
           include: {
-            usuario: true,
+            user: true,
           },
         },
-        inscripcion_curso: true,
-        comprobantes_pago: {
+        registrationCourse: true,
+        paymentReceipts: {
           orderBy: {
-            fec_sub_com_pag: "desc",
+            uploadedAt: "desc",
           },
           take: 1,
         },
-        cartas_motivacion: {
+        motivationLetters: {
           orderBy: {
-            fec_sub_car_mot: "desc",
+            uploadedAt: "desc",
           },
           take: 1,
         },
-        observacion: true,
-        certificado: true,
+        observation: true,
+        certificate: true,
       },
     });
 
@@ -2080,10 +2057,12 @@ const obtenerInscripcionUsuarioEnEvento = async (req, res) => {
       });
     }
 
+    const inscripcionLegacy = mapRegistrationToLegacy(inscripcion);
+
     return res.json({
-      inscripcion,
+      inscripcion: inscripcionLegacy,
       inscrito: true,
-      estado: inscripcion.est_ins,
+      estado: inscripcionLegacy.est_ins,
     });
   } catch (error) {
     console.error("Error al obtener inscripción del usuario:", error);
@@ -2102,38 +2081,45 @@ const obtenerInscripcionesDelUsuarioActual = async (req, res) => {
     const id_cue = req.usuario.id; // ID de la cuenta del usuario autenticado
 
     // Buscar todas las inscripciones del usuario
-    const inscripciones = await prisma.inscripcion.findMany({
+    const inscripciones = await prisma.registration.findMany({
       where: {
-        id_cor_ins: id_cue,
+        accountId: id_cue,
       },
       include: {
-        evento: {
+        event: {
           include: {
-            eventos_curso: true,
+            eventCourse: true,
           },
         },
-        inscripcion_curso: true,
-        comprobantes_pago: {
+        account: {
+          include: {
+            user: true,
+          },
+        },
+        registrationCourse: true,
+        paymentReceipts: {
           orderBy: {
-            fec_sub_com_pag: "desc",
+            uploadedAt: "desc",
           },
           take: 1,
         },
-        cartas_motivacion: {
+        motivationLetters: {
           orderBy: {
-            fec_sub_car_mot: "desc",
+            uploadedAt: "desc",
           },
           take: 1,
         },
-        observacion: true,
-        certificado: true,
+        observation: true,
+        certificate: true,
       },
       orderBy: {
-        fec_ins: "desc",
+        registeredAt: "desc",
       },
     });
 
-    return res.json(inscripciones);
+    const inscripcionesLegacy = inscripciones.map(mapRegistrationToLegacy);
+
+    return res.json(inscripcionesLegacy);
   } catch (error) {
     console.error("Error al obtener inscripciones del usuario actual:", error);
     return res.status(500).json({
@@ -2148,40 +2134,40 @@ const obtenerInscripcionesDelUsuarioActual = async (req, res) => {
 // ===================================================
 const obtenerTodasLasInscripciones = async (req, res) => {
   try {
-    const inscripciones = await prisma.inscripcion.findMany({
+    const inscripciones = await prisma.registration.findMany({
       include: {
-        cuenta: {
+        account: {
           include: {
-            usuario: true,
+            user: true,
           },
         },
-        evento: {
+        event: {
           include: {
-            eventos_curso: true,
+            eventCourse: true,
           },
         },
-        inscripcion_curso: true,
-        comprobantes_pago: {
+        registrationCourse: true,
+        paymentReceipts: {
           orderBy: {
-            fec_sub_com_pag: "desc",
+            uploadedAt: "desc",
           },
           take: 1,
         },
-        cartas_motivacion: {
+        motivationLetters: {
           orderBy: {
-            fec_sub_car_mot: "desc",
+            uploadedAt: "desc",
           },
           take: 1,
         },
-        observacion: true,
-        certificado: true,
+        observation: true,
+        certificate: true,
       },
       orderBy: {
-        fec_ins: "desc",
+        registeredAt: "desc",
       },
     });
 
-    return res.json(inscripciones);
+    return res.json(inscripciones.map(mapRegistrationToLegacy));
   } catch (error) {
     console.error("Error al obtener todas las inscripciones:", error);
     return res.status(500).json({
@@ -2205,3 +2191,4 @@ module.exports = {
   obtenerInscripcionesPaginadas,
   obtenerInscripcionesPorEventoPaginadas,
 };
+

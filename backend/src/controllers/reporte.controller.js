@@ -13,9 +13,9 @@ const path = require("path");
 const fs = require("fs");
 
 async function descargarReporteEventoPDF(req, res) {
-  const { id_eve } = req.params;
+  const { id } = req.params;
 
-  const datos = await obtenerDatosReporteEventoPorId(id_eve);
+  const datos = await obtenerDatosReporteEventoPorId(id);
 
   if (!datos) {
     return res.status(404).json({ msg: "Evento no encontrado" });
@@ -28,7 +28,7 @@ async function descargarReporteEventoPDF(req, res) {
   }
 
   // Define el path donde guardar temporalmente el PDF
-  const filePath = path.join(reportesDir, `reporte_evento_${id_eve}.pdf`);
+  const filePath = path.join(reportesDir, `reporte_evento_${id}.pdf`);
   await generarReporteEventoPDF(datos, filePath);
 
   // Lee el PDF como buffer
@@ -39,7 +39,7 @@ async function descargarReporteEventoPDF(req, res) {
 
   // Devuelve el PDF como base64 junto con el nombre del evento
   res.json({
-    nom_eve: datos.cab_eve.nom_eve,
+    nom_eve: datos.cab_eve.name,
     pdf: pdfBuffer.toString("base64"),
   });
 }
@@ -112,18 +112,24 @@ async function descargarReporteMensualPDF(req, res) {
 
 async function getEventosParaReportes(req, res) {
   try {
-    const eve = await prisma.evento.findMany({
+    const eventos = await prisma.event.findMany({
       select: {
-        id_eve: true,
-        nom_eve: true,
-        img_por_eve: true,
+        id: true,
+        name: true,
+        coverImageUrl: true,
       },
       orderBy: {
-        fec_ini_eve: "desc", // En orden descendente por fecha de inicio
+        startDate: "desc", // En orden descendente por fecha de inicio
       },
     });
 
-    res.json({ eve: eve });
+    const eve = eventos.map((evento) => ({
+      id: evento.id,
+      name: evento.name,
+      coverImage: evento.coverImageUrl,
+    }));
+
+    res.json({ eve });
   } catch (error) {
     res.status(500).json({ msg: "Error al obtener los eventos para reportes" });
   }
@@ -138,26 +144,30 @@ async function getEventosParaReportesPaginados(req, res) {
 
     // Ejecutar consultas en paralelo
     const [eventos, totalCount] = await Promise.all([
-      prisma.evento.findMany({
+      prisma.event.findMany({
         select: {
-          id_eve: true,
-          nom_eve: true,
-          img_por_eve: true,
+          id: true,
+          name: true,
+          coverImageUrl: true,
         },
         orderBy: {
-          fec_ini_eve: "desc", // En orden descendente por fecha de inicio
+          startDate: "desc", // En orden descendente por fecha de inicio
         },
         skip: offset,
         take: limit,
       }),
-      prisma.evento.count(),
+      prisma.event.count(),
     ]);
 
     // Calcular metadatos de paginación
     const totalPages = Math.ceil(totalCount / limit);
 
     return res.json({
-      data: eventos,
+      data: eventos.map((evento) => ({
+        id: evento.id,
+        name: evento.name,
+        coverImage: evento.coverImageUrl,
+      })),
       pagination: {
         currentPage: page,
         totalPages,
@@ -177,10 +187,10 @@ async function getEventosParaReportesPaginados(req, res) {
 }
 
 async function getReporteEventoPorId(req, res) {
-  const { id_eve } = req.params;
+  const { id } = req.params;
 
   try {
-    const datos = await obtenerDatosReporteEventoPorId(id_eve);
+    const datos = await obtenerDatosReporteEventoPorId(id);
     if (!datos) {
       return res.status(404).json({ msg: "Evento no encontrado" });
     }
@@ -192,24 +202,24 @@ async function getReporteEventoPorId(req, res) {
   }
 }
 
-async function obtenerDatosReporteEventoPorId(id_eve) {
+async function obtenerDatosReporteEventoPorId(id) {
   // 1. Buscar el evento con sus datos básicos y el creador
-  const evento = await prisma.evento.findUnique({
-    where: { id_eve },
+  const evento = await prisma.event.findUnique({
+    where: { id },
     select: {
-      id_eve: true,
-      nom_eve: true,
-      dur_hor_eve: true,
-      fec_ini_eve: true,
-      fec_fin_eve: true,
-      img_por_eve: true,
-      tip_eve: true,
-      cuenta: {
+      id: true,
+      name: true,
+      durationHours: true,
+      startDate: true,
+      endDate: true,
+      coverImageUrl: true,
+      type: true,
+      createdBy: {
         select: {
-          usuario: {
+          user: {
             select: {
-              nom_usu: true,
-              ape_usu: true,
+              firstName: true,
+              lastName: true,
             },
           },
         },
@@ -221,36 +231,36 @@ async function obtenerDatosReporteEventoPorId(id_eve) {
 
   // Preparar select para inscripciones (condicional si es curso)
   let inscripcionSelect = {
-    id_ins: true,
-    por_asi_fin_usu: true,
-    est_ins: true,
-    cuenta: {
+    id: true,
+    finalAttendancePercent: true,
+    status: true,
+    account: {
       select: {
-        usuario: {
+        user: {
           select: {
-            ced_usu: true,
-            nom_usu: true,
-            ape_usu: true,
+            idNumber: true,
+            firstName: true,
+            lastName: true,
           },
         },
       },
     },
   };
 
-  if (evento.tip_eve === "CURSO") {
-    inscripcionSelect.inscripcion_curso = { select: { not_fin_usu: true } };
+  if (evento.type === "CURSO") {
+    inscripcionSelect.courseRegistration = { select: { finalGrade: true } };
   }
 
   // Buscar las inscripciones
-  const inscripciones = await prisma.inscripcion.findMany({
+  const inscripciones = await prisma.registration.findMany({
     where: {
-      id_eve_ins: id_eve,
-      est_ins: {
+      eventId: id,
+      status: {
         in: [
-          "APROBADO",
-          "REPROBADO_NOTA",
-          "REPROBADO_ASISTENCIA",
-          "REPROBADO_TOTAL",
+          "APPROVED",
+          "FAILED_GRADE",
+          "FAILED_ATTENDANCE",
+          "FAILED_TOTAL",
         ],
       },
     },
@@ -260,14 +270,14 @@ async function obtenerDatosReporteEventoPorId(id_eve) {
   // Formatear detalle
   const det_ins = inscripciones.map((ins) => {
     let detalleBase = {
-      ced_usu: ins.cuenta.usuario.ced_usu,
-      nom_usu: ins.cuenta.usuario.nom_usu,
-      ape_usu: ins.cuenta.usuario.ape_usu,
-      por_asi_fin_usu: ins.por_asi_fin_usu,
-      est_ins: ins.est_ins,
+      ced_usu: ins.account.user.idNumber,
+      nom_usu: ins.account.user.firstName,
+      ape_usu: ins.account.user.lastName,
+      por_asi_fin_usu: ins.finalAttendancePercent,
+      est_ins: ins.status,
     };
-    if (evento.tip_eve === "CURSO") {
-      detalleBase.not_fin_usu = ins.inscripcion_curso?.not_fin_usu ?? null;
+    if (evento.type === "CURSO") {
+      detalleBase.not_fin_usu = ins.courseRegistration?.finalGrade ?? null;
     }
     return detalleBase;
   });
@@ -275,16 +285,16 @@ async function obtenerDatosReporteEventoPorId(id_eve) {
   // Armar respuesta
   return {
     cab_eve: {
-      id_eve: evento.id_eve,
-      nom_eve: evento.nom_eve,
-      dur_hor_eve: evento.dur_hor_eve,
-      fec_ini_eve: evento.fec_ini_eve,
-      fec_fin_eve: evento.fec_fin_eve,
-      img_por_eve: evento.img_por_eve,
-      tip_eve: evento.tip_eve,
+      id_eve: evento.id,
+      name: evento.name,
+      dur_hor_eve: evento.durationHours,
+      fec_ini_eve: evento.startDate,
+      fec_fin_eve: evento.endDate,
+      img_por_eve: evento.coverImageUrl,
+      tip_eve: evento.type,
       cre_eve: {
-        nom_usu: evento.cuenta.usuario.nom_usu,
-        ape_usu: evento.cuenta.usuario.ape_usu,
+        nom_usu: evento.createdBy.user.firstName,
+        ape_usu: evento.createdBy.user.lastName,
       },
     },
     det_ins: det_ins,
@@ -301,62 +311,62 @@ async function obtenerDatosReportePorMes(anio, mes) {
   let totalEventos = 0;
 
   // Trae todos los eventos cuya fecha de inicio esté dentro del mes y año
-  const eventos = await prisma.evento.findMany({
+  const eventos = await prisma.event.findMany({
     where: {
-      fec_ini_eve: {
+      startDate: {
         gte: fechaInicio,
         lt: fechaFin,
       },
     },
     select: {
-      id_eve: true,
-      nom_eve: true,
-      val_eve: true,
-      tip_eve: true,
-      fec_fin_eve: true,
-      cuenta: {
+      id: true,
+      name: true,
+      price: true,
+      type: true,
+      endDate: true,
+      createdBy: {
         select: {
-          usuario: {
+          user: {
             select: {
-              nom_usu: true,
-              ape_usu: true,
+              firstName: true,
+              lastName: true,
             },
           },
         },
       },
     },
     orderBy: {
-      fec_ini_eve: "asc",
+      startDate: "asc",
     },
   });
 
   // Para cada evento, cuenta las inscripciones válidas y calcula total
   const resultados = await Promise.all(
     eventos.map(async (evento) => {
-      const can_ins = await prisma.inscripcion.count({
+      const can_ins = await prisma.registration.count({
         where: {
-          id_eve_ins: evento.id_eve,
-          est_ins: {
+          eventId: evento.id,
+          status: {
             in: [
-              "ACEPTADA",
-              "APROBADO",
-              "REPROBADO_NOTA",
-              "REPROBADO_ASISTENCIA",
-              "REPROBADO_TOTAL",
+              "ACCEPTED",
+              "APPROVED",
+              "FAILED_GRADE",
+              "FAILED_ATTENDANCE",
+              "FAILED_TOTAL",
             ],
           },
         },
       });
-      const nom_cre = evento.cuenta?.usuario?.nom_usu || "";
-      const ape_cre = evento.cuenta?.usuario?.ape_usu || "";
-      const tot_eve = can_ins * (evento.val_eve || 0);
+      const nom_cre = evento.createdBy?.user?.firstName || "";
+      const ape_cre = evento.createdBy?.user?.lastName || "";
+      const tot_eve = can_ins * (evento.price || 0);
       totalEventos += tot_eve;
 
       return {
-        nom_eve: evento.nom_eve,
-        val_eve: evento.val_eve,
-        tip_eve: evento.tip_eve,
-        fec_fin_eve: evento.fec_fin_eve,
+        nom_eve: evento.name,
+        val_eve: evento.price,
+        tip_eve: evento.type,
+        fec_fin_eve: evento.endDate,
         can_ins: can_ins,
         nom_cre,
         ape_cre,
@@ -388,10 +398,10 @@ async function getEventosPorMes(req, res) {
 // Reporte por Carrera
 async function getReporteCarrera(req, res) {
   try {
-    const { id_car } = req.params;
+    const { id } = req.params;
 
-    // Validar que id_car exista
-    if (!id_car) {
+    // Validar que id exista
+    if (!id) {
       return res.status(400).json({
         msg: "El ID de carrera proporcionado no es válido",
       });
@@ -399,32 +409,32 @@ async function getReporteCarrera(req, res) {
 
     if (req.path.includes("/estadisticas/")) {
       // Obtener estadísticas específicas de una carrera
-      const carrera = await prisma.carrera.findUnique({
-        where: { id_car },
+      const carrera = await prisma.career.findUnique({
+        where: { id },
         select: {
-          id_car: true,
-          nom_car: true,
-          des_car: true,
-          usuario: {
+          id: true,
+          name: true,
+          description: true,
+          users: {
             select: {
-              id_usu: true,
-              cuentas: {
+              id: true,
+              accounts: {
                 select: {
-                  inscripciones: {
+                  registrations: {
                     select: {
-                      id_ins: true,
-                      est_ins: true,
-                      evento: {
+                      id: true,
+                      status: true,
+                      event: {
                         select: {
-                          id_eve: true,
-                          nom_eve: true,
-                          tip_eve: true,
+                          id: true,
+                          name: true,
+                          type: true,
                         },
                       },
                     },
                     where: {
-                      est_ins: {
-                        in: ["APROBADO", "ACEPTADA"],
+                      status: {
+                        in: ["APPROVED", "ACCEPTED"],
                       },
                     },
                   },
@@ -439,42 +449,42 @@ async function getReporteCarrera(req, res) {
         return res.status(404).json({ msg: "Carrera no encontrada" });
       }
 
-      const totalEstudiantes = carrera.usuario.length;
+      const totalEstudiantes = carrera.users.length;
 
       let inscripcionesTotales = 0;
       const eventosUnicos = new Set();
 
-      carrera.usuario.forEach((estudiante) => {
-        estudiante.cuentas.forEach((cuenta) => {
-          cuenta.inscripciones.forEach((inscripcion) => {
+      carrera.users.forEach((estudiante) => {
+        estudiante.accounts.forEach((cuenta) => {
+          cuenta.registrations.forEach((inscripcion) => {
             inscripcionesTotales++;
-            eventosUnicos.add(inscripcion.evento.id_eve);
+            eventosUnicos.add(inscripcion.event.id);
           });
         });
       });
 
       // Obtener estadísticas de otras carreras para comparar
-      const otrasCarreras = await prisma.carrera.findMany({
+      const otrasCarreras = await prisma.career.findMany({
         select: {
-          id_car: true,
-          nom_car: true,
-          usuario: {
+          id: true,
+          name: true,
+          users: {
             select: {
-              id_usu: true,
-              cuentas: {
+              id: true,
+              accounts: {
                 select: {
-                  inscripciones: {
+                  registrations: {
                     select: {
-                      id_ins: true,
-                      evento: {
+                      id: true,
+                      event: {
                         select: {
-                          id_eve: true,
+                          id: true,
                         },
                       },
                     },
                     where: {
-                      est_ins: {
-                        in: ["APROBADO", "ACEPTADA"],
+                      status: {
+                        in: ["APPROVED", "ACCEPTED"],
                       },
                     },
                   },
@@ -486,7 +496,7 @@ async function getReporteCarrera(req, res) {
         where: {
           // Excluir la carrera actual de la comparativa
           NOT: {
-            id_car: id_car,
+            id: id,
           },
         },
         // Limitar a 3 carreras para la comparativa
@@ -497,8 +507,8 @@ async function getReporteCarrera(req, res) {
       const comparativaCarreras = [
         // Incluir la carrera actual primero
         {
-          id_car,
-          nom_car: carrera.nom_car,
+          id_car: id,
+          nom_car: carrera.name,
           totalEstudiantes,
           totalInscripciones: inscripcionesTotales,
           porcentajeParticipacion:
@@ -508,23 +518,23 @@ async function getReporteCarrera(req, res) {
         },
         // Añadir las otras carreras
         ...otrasCarreras.map((otraCarrera) => {
-          const estudiantesCarrera = otraCarrera.usuario.length;
+          const estudiantesCarrera = otraCarrera.users.length;
 
           let inscripcionesCarrera = 0;
           const eventosCarrera = new Set();
 
-          otraCarrera.usuario.forEach((estudiante) => {
-            estudiante.cuentas.forEach((cuenta) => {
-              cuenta.inscripciones.forEach((inscripcion) => {
+          otraCarrera.users.forEach((estudiante) => {
+            estudiante.accounts.forEach((cuenta) => {
+              cuenta.registrations.forEach((inscripcion) => {
                 inscripcionesCarrera++;
-                eventosCarrera.add(inscripcion.evento.id_eve);
+                eventosCarrera.add(inscripcion.event.id);
               });
             });
           });
 
           return {
-            id_car: otraCarrera.id_car,
-            nom_car: otraCarrera.nom_car,
+            id_car: otraCarrera.id,
+            nom_car: otraCarrera.name,
             totalEstudiantes: estudiantesCarrera,
             totalInscripciones: inscripcionesCarrera,
             porcentajeParticipacion:
@@ -551,59 +561,59 @@ async function getReporteCarrera(req, res) {
 
     if (req.path.includes("/eventos/")) {
       // Obtener eventos populares por carrera
-      const eventosCarrera = await prisma.evento.findMany({
+      const eventosCarrera = await prisma.event.findMany({
         select: {
-          id_eve: true,
-          nom_eve: true,
-          tip_eve: true,
-          fec_ini_eve: true,
-          inscritos: {
+          id: true,
+          name: true,
+          type: true,
+          startDate: true,
+          registrations: {
             select: {
-              id_ins: true,
-              por_asi_fin_usu: true,
-              cuenta: {
+              id: true,
+              finalAttendancePercent: true,
+              account: {
                 select: {
-                  id_cue: true,
-                  usuario: {
+                  id: true,
+                  user: {
                     select: {
-                      id_car_est: true,
+                      careerId: true,
                     },
                   },
                 },
               },
             },
             where: {
-              cuenta: {
-                usuario: {
-                  id_car_est: id_car,
+              account: {
+                user: {
+                  careerId: id,
                 },
               },
-              est_ins: {
-                in: ["APROBADO", "ACEPTADA"],
+              status: {
+                in: ["APPROVED", "ACCEPTED"],
               },
             },
           },
         },
         orderBy: {
-          fec_ini_eve: "desc",
+          startDate: "desc",
         },
       });
 
       const eventosPopulares = eventosCarrera
         .map((evento) => {
           // Contamos los inscritos de esta carrera
-          const totalInscritos = evento.inscritos.length;
+          const totalInscritos = evento.registrations.length;
 
           // Contamos asistencias: aquellos con porcentaje de asistencia > 0
-          const totalAsistieron = evento.inscritos.filter(
-            (ins) => ins.por_asi_fin_usu && ins.por_asi_fin_usu > 0
+          const totalAsistieron = evento.registrations.filter(
+            (ins) => ins.finalAttendancePercent && ins.finalAttendancePercent > 0
           ).length;
 
           return {
-            id_eve: evento.id_eve,
-            nom_eve: evento.nom_eve,
-            tip_eve: evento.tip_eve,
-            fec_ini_eve: evento.fec_ini_eve,
+            id_eve: evento.id,
+            nom_eve: evento.name,
+            tip_eve: evento.type,
+            fec_ini_eve: evento.startDate,
             totalInscritos: totalInscritos,
             totalAsistieron: totalAsistieron,
             porcentajeAsistencia:
@@ -629,53 +639,53 @@ async function getReporteCarrera(req, res) {
 
 async function descargarReporteCarreraPDF(req, res) {
   try {
-    const { id_car } = req.params;
+    const { id } = req.params;
 
-    // Validar que id_car exista
-    if (!id_car) {
+    // Validar que id exista
+    if (!id) {
       return res.status(400).json({
         msg: "El ID de carrera proporcionado no es válido",
       });
     }
 
     // Obtener datos completos de la carrera
-    const carrera = await prisma.carrera.findUnique({
-      where: { id_car },
+    const carrera = await prisma.career.findUnique({
+      where: { id },
       select: {
-        id_car: true,
-        nom_car: true,
-        des_car: true,
-        facultad: {
+        id: true,
+        name: true,
+        description: true,
+        faculty: {
           select: {
-            nom_fac: true,
-            universidad: {
+            name: true,
+            university: {
               select: {
-                nom_uni: true,
+                name: true,
               },
             },
           },
         },
-        usuario: {
+        users: {
           select: {
-            id_usu: true,
-            cuentas: {
+            id: true,
+            accounts: {
               select: {
-                inscripciones: {
+                registrations: {
                   select: {
-                    id_ins: true,
-                    est_ins: true,
-                    evento: {
+                    id: true,
+                    status: true,
+                    event: {
                       select: {
-                        id_eve: true,
-                        nom_eve: true,
-                        tip_eve: true,
-                        fec_ini_eve: true,
+                        id: true,
+                        name: true,
+                        type: true,
+                        startDate: true,
                       },
                     },
                   },
                   where: {
-                    est_ins: {
-                      in: ["APROBADO", "ACEPTADA"],
+                    status: {
+                      in: ["APPROVED", "ACCEPTED"],
                     },
                   },
                 },
@@ -691,38 +701,38 @@ async function descargarReporteCarreraPDF(req, res) {
     }
 
     // Calcular estadísticas
-    const totalEstudiantes = carrera.usuario.length;
+    const totalEstudiantes = carrera.users.length;
     let inscripcionesTotales = 0;
     const eventosUnicos = new Set();
     const eventoStats = {};
     const estudiantesConParticipacion = new Set();
 
-    carrera.usuario.forEach((estudiante) => {
+    carrera.users.forEach((estudiante) => {
       let tieneInscripciones = false;
-      estudiante.cuentas.forEach((cuenta) => {
-        cuenta.inscripciones.forEach((inscripcion) => {
+      estudiante.accounts.forEach((cuenta) => {
+        cuenta.registrations.forEach((inscripcion) => {
           inscripcionesTotales++;
-          eventosUnicos.add(inscripcion.evento.id_eve);
+          eventosUnicos.add(inscripcion.event.id);
           tieneInscripciones = true;
 
           // Contar estadísticas por evento
-          const eventoId = inscripcion.evento.id_eve;
+          const eventoId = inscripcion.event.id;
           if (!eventoStats[eventoId]) {
             eventoStats[eventoId] = {
-              ...inscripcion.evento,
+              ...inscripcion.event,
               totalInscritos: 0,
               totalAsistieron: 0,
             };
           }
           eventoStats[eventoId].totalInscritos++;
-          if (inscripcion.est_ins === "APROBADO") {
+          if (inscripcion.status === "APPROVED") {
             eventoStats[eventoId].totalAsistieron++;
           }
         });
       });
       // Agregar estudiante al set si tiene al menos una inscripción
       if (tieneInscripciones) {
-        estudiantesConParticipacion.add(estudiante.id_usu);
+        estudiantesConParticipacion.add(estudiante.id);
       }
     });
 
@@ -745,27 +755,27 @@ async function descargarReporteCarreraPDF(req, res) {
         : 0;
 
     // Obtener comparativa con otras carreras
-    const todasLasCarreras = await prisma.carrera.findMany({
+    const todasLasCarreras = await prisma.career.findMany({
       select: {
-        id_car: true,
-        nom_car: true,
-        usuario: {
+        id: true,
+        name: true,
+        users: {
           select: {
-            id_usu: true,
-            cuentas: {
+            id: true,
+            accounts: {
               select: {
-                inscripciones: {
+                registrations: {
                   select: {
-                    est_ins: true,
-                    evento: {
+                    status: true,
+                    event: {
                       select: {
-                        id_eve: true,
+                        id: true,
                       },
                     },
                   },
                   where: {
-                    est_ins: {
-                      in: ["APROBADO", "ACEPTADA"],
+                    status: {
+                      in: ["APPROVED", "ACCEPTED"],
                     },
                   },
                 },
@@ -777,28 +787,28 @@ async function descargarReporteCarreraPDF(req, res) {
     });
 
     const comparativaCarreras = todasLasCarreras.map((carr) => {
-      const totalEst = carr.usuario.length;
+      const totalEst = carr.users.length;
       let inscTotal = 0;
       const eventosUnic = new Set();
       const estudiantesParticipantes = new Set();
 
-      carr.usuario.forEach((est) => {
+      carr.users.forEach((est) => {
         let tieneInscripciones = false;
-        est.cuentas.forEach((cta) => {
-          cta.inscripciones.forEach((ins) => {
+        est.accounts.forEach((cta) => {
+          cta.registrations.forEach((ins) => {
             inscTotal++;
-            eventosUnic.add(ins.evento.id_eve);
+            eventosUnic.add(ins.event.id);
             tieneInscripciones = true;
           });
         });
         if (tieneInscripciones) {
-          estudiantesParticipantes.add(est.id_usu);
+          estudiantesParticipantes.add(est.id);
         }
       });
 
       return {
-        id_car: carr.id_car,
-        nom_car: carr.nom_car,
+        id_car: carr.id,
+        nom_car: carr.name,
         totalEstudiantes: totalEst,
         totalInscripciones: inscTotal,
         eventosParticipados: eventosUnic.size,
@@ -831,7 +841,7 @@ async function descargarReporteCarreraPDF(req, res) {
     }
 
     // Generar nombre del archivo
-    const nombreArchivo = `Reporte_${carrera.nom_car.replace(/\s+/g, "_")}.pdf`;
+    const nombreArchivo = `Reporte_${carrera.name.replace(/\s+/g, "_")}.pdf`;
     const filePath = path.join(reportesDir, nombreArchivo);
 
     // Generar el PDF
@@ -870,64 +880,64 @@ async function getReporteInscripciones(req, res) {
     // Construir filtros
     const filtro = {};
     if (fechaInicio && fechaFin) {
-      filtro.fec_ins = {
+      filtro.registeredAt = {
         gte: new Date(fechaInicio),
         lte: new Date(fechaFin),
       };
     }
 
     if (estado && estado !== "todos") {
-      filtro.est_ins = estado;
+      filtro.status = estado;
     }
 
     // Obtener inscripciones con filtros
-    const inscripciones = await prisma.inscripcion.findMany({
+    const inscripciones = await prisma.registration.findMany({
       where: filtro,
       select: {
-        id_ins: true,
-        fec_ins: true,
-        est_ins: true,
-        fec_val_ins: true,
-        id_adm_val_ins: true,
-        cuenta: {
+        id: true,
+        registeredAt: true,
+        status: true,
+        validatedAt: true,
+        validatedByAdminId: true,
+        account: {
           select: {
-            id_cue: true,
-            usuario: {
+            id: true,
+            user: {
               select: {
-                id_usu: true,
-                nom_usu: true,
-                ape_usu: true,
-                carrera: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                career: {
                   select: {
-                    nom_car: true,
+                    name: true,
                   },
                 },
               },
             },
           },
         },
-        admin_validador: {
+        validatorAdmin: {
           select: {
-            id_cue: true,
-            rol_usu: true, // Agregamos el rol del usuario para poder mostrar información más detallada
-            usuario: {
+            id: true,
+            role: true, // Agregamos el rol del usuario para poder mostrar información más detallada
+            user: {
               select: {
-                nom_usu: true,
-                ape_usu: true,
+                firstName: true,
+                lastName: true,
               },
             },
           },
         },
-        evento: {
+        event: {
           select: {
-            id_eve: true,
-            nom_eve: true,
-            tip_eve: true,
+            id: true,
+            name: true,
+            type: true,
           },
         },
       },
       orderBy: {
-        fec_ins: "desc",
+        registeredAt: "desc",
       },
     });
 
@@ -943,48 +953,48 @@ async function getReporteInscripciones(req, res) {
     const inscripcionesTransformadas = inscripciones.map((ins) => ({
       ...ins,
       // Crear campo "usuario" para compatibilidad con frontend
-      usuario: ins.cuenta?.usuario || null,
+      usuario: ins.account?.user || null,
     }));
 
     if (req.path.includes("/estadisticas")) {
       // Estadísticas generales con categorización detallada
-      const estadosAceptados = ["ACEPTADA"];
-      const estadosAprobados = ["APROBADO"];
-      const estadosRechazados = ["RECHAZADA"];
+      const estadosAceptados = ["ACCEPTED"];
+      const estadosAprobados = ["APPROVED"];
+      const estadosRechazados = ["REJECTED"];
       const estadosReprobados = [
-        "REPROBADO_NOTA",
-        "REPROBADO_ASISTENCIA",
-        "REPROBADO_TOTAL",
+        "FAILED_GRADE",
+        "FAILED_ATTENDANCE",
+        "FAILED_TOTAL",
       ];
 
       const estadisticas = {
         total: inscripcionesTransformadas.length,
         pendientes: inscripcionesTransformadas.filter(
-          (ins) => ins.est_ins === "PENDIENTE"
+          (ins) => ins.status === "PENDING"
         ).length,
         aceptadas: inscripcionesTransformadas.filter((ins) =>
-          estadosAceptados.includes(ins.est_ins)
+          estadosAceptados.includes(ins.status)
         ).length,
         aprobadas: inscripcionesTransformadas.filter((ins) =>
-          estadosAprobados.includes(ins.est_ins)
+          estadosAprobados.includes(ins.status)
         ).length,
         rechazadas: inscripcionesTransformadas.filter((ins) =>
-          estadosRechazados.includes(ins.est_ins)
+          estadosRechazados.includes(ins.status)
         ).length,
         reprobadas: inscripcionesTransformadas.filter((ins) =>
-          estadosReprobados.includes(ins.est_ins)
+          estadosReprobados.includes(ins.status)
         ).length,
         // Mantener compatibilidad con frontend actual
         // Sumar aceptadas + aprobadas para el campo "aprobadas" original del frontend
         aprobadasTotal: inscripcionesTransformadas.filter((ins) =>
-          [...estadosAceptados, ...estadosAprobados].includes(ins.est_ins)
+          [...estadosAceptados, ...estadosAprobados].includes(ins.status)
         ).length,
       };
 
       console.log("📊 Estadísticas detalladas:", estadisticas);
       console.log(
         "📋 Estados encontrados:",
-        inscripcionesTransformadas.map((ins) => ins.est_ins)
+        inscripcionesTransformadas.map((ins) => ins.status)
       );
 
       return res.json(estadisticas);
@@ -1154,13 +1164,13 @@ function agruparInscripcionesPorMes(inscripciones, fechaInicio, fechaFin) {
   ];
 
   // Estados detallados para mejor categorización
-  const estadosAceptados = ["ACEPTADA"]; // Inscripciones aceptadas para participar
-  const estadosAprobados = ["APROBADO"]; // Usuarios que aprobaron el evento
-  const estadosRechazados = ["RECHAZADA"]; // Inscripciones rechazadas
+  const estadosAceptados = ["ACCEPTED"]; // Inscripciones aceptadas para participar
+  const estadosAprobados = ["APPROVED"]; // Usuarios que aprobaron el evento
+  const estadosRechazados = ["REJECTED"]; // Inscripciones rechazadas
   const estadosReprobados = [
-    "REPROBADO_NOTA",
-    "REPROBADO_ASISTENCIA",
-    "REPROBADO_TOTAL",
+    "FAILED_GRADE",
+    "FAILED_ATTENDANCE",
+    "FAILED_TOTAL",
   ]; // Usuarios que reprobaron el evento
 
   // Formatear rango de fechas para mostrar si se usa el rango completo
@@ -1199,7 +1209,7 @@ function agruparInscripcionesPorMes(inscripciones, fechaInicio, fechaFin) {
   }
 
   inscripciones.forEach((ins) => {
-    const fecha = new Date(ins.fec_ins);
+    const fecha = new Date(ins.registeredAt);
 
     // Decidir qué clave usar según el modo (rango completo o por mes)
     let key;
@@ -1227,22 +1237,22 @@ function agruparInscripcionesPorMes(inscripciones, fechaInicio, fechaFin) {
     meses[key].total++;
 
     // Categorizar según el estado con más detalle
-    if (ins.est_ins === "PENDIENTE") {
+    if (ins.status === "PENDING") {
       meses[key].pendientes++;
-    } else if (estadosAceptados.includes(ins.est_ins)) {
+    } else if (estadosAceptados.includes(ins.status)) {
       meses[key].aceptadas++;
-    } else if (estadosAprobados.includes(ins.est_ins)) {
+    } else if (estadosAprobados.includes(ins.status)) {
       meses[key].aprobadas++;
-    } else if (estadosRechazados.includes(ins.est_ins)) {
+    } else if (estadosRechazados.includes(ins.status)) {
       meses[key].rechazadas++;
-    } else if (estadosReprobados.includes(ins.est_ins)) {
+    } else if (estadosReprobados.includes(ins.status)) {
       meses[key].reprobadas++;
     } else {
       // Si es un estado no reconocido, lo contamos como pendiente y registramos el estado
-      console.log(`Estado no categorizado en tendencias: ${ins.est_ins}`, {
-        id_ins: ins.id_ins,
-        estado: ins.est_ins,
-        fecha: ins.fec_ins,
+      console.log(`Estado no categorizado en tendencias: ${ins.status}`, {
+        id_ins: ins.id,
+        estado: ins.status,
+        fecha: ins.registeredAt,
       });
       meses[key].pendientes++;
     }
@@ -1285,40 +1295,40 @@ async function getReporteAsistencia(req, res) {
 
     if (req.path.includes("/evento/") && id_evento) {
       // Obtener datos de asistencia de un evento específico
-      const evento = await prisma.evento.findUnique({
-        where: { id_eve: id_evento },
+      const evento = await prisma.event.findUnique({
+        where: { id: id_evento },
         select: {
-          id_eve: true,
-          nom_eve: true,
-          tip_eve: true, // Añadimos el tipo de evento a la consulta
-          fec_ini_eve: true,
-          fec_fin_eve: true,
-          cup_max_eve: true,
-          por_min_asi_eve: true,
-          inscritos: {
+          id: true,
+          name: true,
+          type: true, // Añadimos el tipo de evento a la consulta
+          startDate: true,
+          endDate: true,
+          maxCapacity: true,
+          minAttendancePercent: true,
+          registrations: {
             select: {
-              id_ins: true,
-              est_ins: true,
-              por_asi_fin_usu: true,
-              cuenta: {
+              id: true,
+              status: true,
+              finalAttendancePercent: true,
+              account: {
                 select: {
-                  usuario: {
+                  user: {
                     select: {
-                      nom_usu: true,
-                      ape_usu: true,
+                      firstName: true,
+                      lastName: true,
                     },
                   },
                 },
               },
             },
             where: {
-              est_ins: {
+              status: {
                 in: [
-                  "APROBADO",
-                  "ACEPTADA",
-                  "REPROBADO_NOTA",
-                  "REPROBADO_ASISTENCIA",
-                  "REPROBADO_TOTAL",
+                  "APPROVED",
+                  "ACCEPTED",
+                  "FAILED_GRADE",
+                  "FAILED_ATTENDANCE",
+                  "FAILED_TOTAL",
                 ],
               },
             },
@@ -1330,12 +1340,12 @@ async function getReporteAsistencia(req, res) {
         return res.status(404).json({ msg: "Evento no encontrado" });
       }
 
-      const totalInscritos = evento.inscritos.length;
-      const porcentajeMinimoAsistencia = evento.por_min_asi_eve || 80; // Usar el mínimo del evento o 80% por defecto
-      const asistentes = evento.inscritos.filter(
+      const totalInscritos = evento.registrations.length;
+      const porcentajeMinimoAsistencia = evento.minAttendancePercent || 80; // Usar el mínimo del evento o 80% por defecto
+      const asistentes = evento.registrations.filter(
         (ins) =>
-          ins.por_asi_fin_usu &&
-          ins.por_asi_fin_usu >= porcentajeMinimoAsistencia
+          ins.finalAttendancePercent &&
+          ins.finalAttendancePercent >= porcentajeMinimoAsistencia
       );
       const totalAsistencias = asistentes.length;
       const totalNoAsistieron = totalInscritos - totalAsistencias;
@@ -1343,17 +1353,17 @@ async function getReporteAsistencia(req, res) {
         totalInscritos > 0 ? totalAsistencias / totalInscritos : 0;
 
       return res.json({
-        nombreEvento: evento.nom_eve,
-        fechaEvento: evento.fec_ini_eve,
-        tipoEvento: evento.tip_eve, // Añadimos el tipo de evento a la respuesta
+        nombreEvento: evento.name,
+        fechaEvento: evento.startDate,
+        tipoEvento: evento.type, // Añadimos el tipo de evento a la respuesta
         totalInscritos,
         totalAsistencias,
         totalNoAsistieron,
         porcentajeAsistencia,
-        detalles: evento.inscritos.map((ins) => ({
-          usuario: `${ins.cuenta.usuario.nom_usu} ${ins.cuenta.usuario.ape_usu}`,
-          porcentajeAsistencia: ins.por_asi_fin_usu || 0,
-          estado: ins.est_ins,
+        detalles: evento.registrations.map((ins) => ({
+          usuario: `${ins.account.user.firstName} ${ins.account.user.lastName}`,
+          porcentajeAsistencia: ins.finalAttendancePercent || 0,
+          estado: ins.status,
         })),
       });
     }
@@ -1362,56 +1372,56 @@ async function getReporteAsistencia(req, res) {
       // Comparativa entre eventos
       const filtro = {};
       if (tipo && tipo !== "todos") {
-        filtro.tip_eve = tipo;
+        filtro.type = tipo;
       }
 
-      const eventos = await prisma.evento.findMany({
+      const eventos = await prisma.event.findMany({
         where: filtro,
         select: {
-          id_eve: true,
-          nom_eve: true,
-          tip_eve: true,
-          fec_ini_eve: true,
-          por_min_asi_eve: true,
-          inscritos: {
+          id: true,
+          name: true,
+          type: true,
+          startDate: true,
+          minAttendancePercent: true,
+          registrations: {
             select: {
-              id_ins: true,
-              por_asi_fin_usu: true,
+              id: true,
+              finalAttendancePercent: true,
             },
             where: {
-              est_ins: {
+              status: {
                 in: [
-                  "APROBADO",
-                  "ACEPTADA",
-                  "REPROBADO_NOTA",
-                  "REPROBADO_ASISTENCIA",
-                  "REPROBADO_TOTAL",
+                  "APPROVED",
+                  "ACCEPTED",
+                  "FAILED_GRADE",
+                  "FAILED_ATTENDANCE",
+                  "FAILED_TOTAL",
                 ],
               },
             },
           },
         },
         orderBy: {
-          fec_ini_eve: "desc",
+          startDate: "desc",
         },
       });
 
       const comparativa = eventos.map((evento) => {
-        const totalInscritos = evento.inscritos.length;
-        const porcentajeMinimoAsistencia = evento.por_min_asi_eve || 80; // Usar el mínimo del evento o 80% por defecto
-        const asistentes = evento.inscritos.filter(
+        const totalInscritos = evento.registrations.length;
+        const porcentajeMinimoAsistencia = evento.minAttendancePercent || 80; // Usar el mínimo del evento o 80% por defecto
+        const asistentes = evento.registrations.filter(
           (ins) =>
-            ins.por_asi_fin_usu &&
-            ins.por_asi_fin_usu >= porcentajeMinimoAsistencia
+            ins.finalAttendancePercent &&
+            ins.finalAttendancePercent >= porcentajeMinimoAsistencia
         ).length;
         const porcentajeAsistencia =
           totalInscritos > 0 ? asistentes / totalInscritos : 0;
 
         return {
-          id_eve: evento.id_eve,
-          nombreEvento: evento.nom_eve,
-          tipoEvento: evento.tip_eve,
-          fechaEvento: evento.fec_ini_eve,
+          id_eve: evento.id,
+          nombreEvento: evento.name,
+          tipoEvento: evento.type,
+          fechaEvento: evento.startDate,
           totalInscritos,
           totalAsistencias: asistentes,
           porcentajeAsistencia,
@@ -1425,35 +1435,35 @@ async function getReporteAsistencia(req, res) {
       // Análisis de no-shows por tipo de evento
       const filtroTipo = {};
       if (tipo && tipo !== "todos") {
-        filtroTipo.tip_eve = tipo;
+        filtroTipo.type = tipo;
       }
 
-      const tiposEventos = await prisma.evento.groupBy({
-        by: ["tip_eve"],
+      const tiposEventos = await prisma.event.groupBy({
+        by: ["type"],
         where: filtroTipo,
         _count: {
-          id_eve: true,
+          id: true,
         },
       });
 
       const noShowsAnalisis = await Promise.all(
         tiposEventos.map(async (tipoGrupo) => {
-          const eventos = await prisma.evento.findMany({
-            where: { tip_eve: tipoGrupo.tip_eve },
+          const eventos = await prisma.event.findMany({
+            where: { type: tipoGrupo.type },
             select: {
-              por_min_asi_eve: true,
-              inscritos: {
+              minAttendancePercent: true,
+              registrations: {
                 select: {
-                  por_asi_fin_usu: true,
+                  finalAttendancePercent: true,
                 },
                 where: {
-                  est_ins: {
+                  status: {
                     in: [
-                      "APROBADO",
-                      "ACEPTADA",
-                      "REPROBADO_NOTA",
-                      "REPROBADO_ASISTENCIA",
-                      "REPROBADO_TOTAL",
+                      "APPROVED",
+                      "ACCEPTED",
+                      "FAILED_GRADE",
+                      "FAILED_ATTENDANCE",
+                      "FAILED_TOTAL",
                     ],
                   },
                 },
@@ -1462,17 +1472,17 @@ async function getReporteAsistencia(req, res) {
           });
 
           const totalInscritos = eventos.reduce(
-            (sum, evento) => sum + evento.inscritos.length,
+            (sum, evento) => sum + evento.registrations.length,
             0
           );
           const totalAsistentes = eventos.reduce((sum, evento) => {
-            const porcentajeMinimoAsistencia = evento.por_min_asi_eve || 80; // Usar el mínimo del evento o 80% por defecto
+            const porcentajeMinimoAsistencia = evento.minAttendancePercent || 80; // Usar el mínimo del evento o 80% por defecto
             return (
               sum +
-              evento.inscritos.filter(
+              evento.registrations.filter(
                 (ins) =>
-                  ins.por_asi_fin_usu &&
-                  ins.por_asi_fin_usu >= porcentajeMinimoAsistencia
+                  ins.finalAttendancePercent &&
+                  ins.finalAttendancePercent >= porcentajeMinimoAsistencia
               ).length
             );
           }, 0);
@@ -1481,8 +1491,8 @@ async function getReporteAsistencia(req, res) {
             totalInscritos > 0 ? totalNoShows / totalInscritos : 0;
 
           return {
-            tipoEvento: tipoGrupo.tip_eve,
-            cantidadEventos: tipoGrupo._count.id_eve,
+            tipoEvento: tipoGrupo.type,
+            cantidadEventos: tipoGrupo._count.id,
             totalInscritos,
             totalNoShows,
             porcentajeNoShows,
@@ -1513,40 +1523,40 @@ async function descargarReporteAsistenciaPDF(req, res) {
 
     if (evento) {
       // Reporte para un evento específico
-      const eventoData = await prisma.evento.findUnique({
-        where: { id_eve: evento },
+      const eventoData = await prisma.event.findUnique({
+        where: { id: evento },
         select: {
-          id_eve: true,
-          nom_eve: true,
-          tip_eve: true,
-          fec_ini_eve: true,
-          fec_fin_eve: true,
-          cup_max_eve: true,
-          por_min_asi_eve: true,
-          inscritos: {
+          id: true,
+          name: true,
+          type: true,
+          startDate: true,
+          endDate: true,
+          maxCapacity: true,
+          minAttendancePercent: true,
+          registrations: {
             select: {
-              id_ins: true,
-              est_ins: true,
-              por_asi_fin_usu: true,
-              cuenta: {
+              id: true,
+              status: true,
+              finalAttendancePercent: true,
+              account: {
                 select: {
-                  usuario: {
+                  user: {
                     select: {
-                      nom_usu: true,
-                      ape_usu: true,
+                      firstName: true,
+                      lastName: true,
                     },
                   },
                 },
               },
             },
             where: {
-              est_ins: {
+              status: {
                 in: [
-                  "APROBADO",
-                  "ACEPTADA",
-                  "REPROBADO_NOTA",
-                  "REPROBADO_ASISTENCIA",
-                  "REPROBADO_TOTAL",
+                  "APPROVED",
+                  "ACCEPTED",
+                  "FAILED_GRADE",
+                  "FAILED_ATTENDANCE",
+                  "FAILED_TOTAL",
                 ],
               },
             },
@@ -1558,12 +1568,12 @@ async function descargarReporteAsistenciaPDF(req, res) {
         return res.status(404).json({ msg: "Evento no encontrado" });
       }
 
-      const totalInscritos = eventoData.inscritos.length;
-      const porcentajeMinimoAsistencia = eventoData.por_min_asi_eve || 80;
-      const asistentes = eventoData.inscritos.filter(
+      const totalInscritos = eventoData.registrations.length;
+      const porcentajeMinimoAsistencia = eventoData.minAttendancePercent || 80;
+      const asistentes = eventoData.registrations.filter(
         (ins) =>
-          ins.por_asi_fin_usu &&
-          ins.por_asi_fin_usu >= porcentajeMinimoAsistencia
+          ins.finalAttendancePercent &&
+          ins.finalAttendancePercent >= porcentajeMinimoAsistencia
       );
       const totalAsistencias = asistentes.length;
       const totalNoAsistieron = totalInscritos - totalAsistencias;
@@ -1572,74 +1582,74 @@ async function descargarReporteAsistenciaPDF(req, res) {
 
       datosReporte = {
         tipoReporte: "evento",
-        nombreEvento: eventoData.nom_eve,
-        fechaEvento: eventoData.fec_ini_eve,
-        tipoEvento: eventoData.tip_eve,
+        nombreEvento: eventoData.name,
+        fechaEvento: eventoData.startDate,
+        tipoEvento: eventoData.type,
         totalInscritos,
         totalAsistencias,
         totalNoAsistieron,
         porcentajeAsistencia,
-        detalles: eventoData.inscritos.map((ins) => ({
-          usuario: `${ins.cuenta.usuario.nom_usu} ${ins.cuenta.usuario.ape_usu}`,
-          porcentajeAsistencia: ins.por_asi_fin_usu || 0,
-          estado: ins.est_ins,
+        detalles: eventoData.registrations.map((ins) => ({
+          usuario: `${ins.account.user.firstName} ${ins.account.user.lastName}`,
+          porcentajeAsistencia: ins.finalAttendancePercent || 0,
+          estado: ins.status,
         })),
       };
     } else {
       // Reporte comparativo por tipo de evento
       const filtro = {};
       if (tipo && tipo !== "todos") {
-        filtro.tip_eve = tipo;
+        filtro.type = tipo;
       }
 
       // Obtener comparativa entre eventos
-      const eventos = await prisma.evento.findMany({
+      const eventos = await prisma.event.findMany({
         where: filtro,
         select: {
-          id_eve: true,
-          nom_eve: true,
-          tip_eve: true,
-          fec_ini_eve: true,
-          por_min_asi_eve: true,
-          inscritos: {
+          id: true,
+          name: true,
+          type: true,
+          startDate: true,
+          minAttendancePercent: true,
+          registrations: {
             select: {
-              id_ins: true,
-              por_asi_fin_usu: true,
+              id: true,
+              finalAttendancePercent: true,
             },
             where: {
-              est_ins: {
+              status: {
                 in: [
-                  "APROBADO",
-                  "ACEPTADA",
-                  "REPROBADO_NOTA",
-                  "REPROBADO_ASISTENCIA",
-                  "REPROBADO_TOTAL",
+                  "APPROVED",
+                  "ACCEPTED",
+                  "FAILED_GRADE",
+                  "FAILED_ATTENDANCE",
+                  "FAILED_TOTAL",
                 ],
               },
             },
           },
         },
         orderBy: {
-          fec_ini_eve: "desc",
+          startDate: "desc",
         },
       });
 
       const comparativa = eventos.map((evento) => {
-        const totalInscritos = evento.inscritos.length;
-        const porcentajeMinimoAsistencia = evento.por_min_asi_eve || 80;
-        const asistentes = evento.inscritos.filter(
+        const totalInscritos = evento.registrations.length;
+        const porcentajeMinimoAsistencia = evento.minAttendancePercent || 80;
+        const asistentes = evento.registrations.filter(
           (ins) =>
-            ins.por_asi_fin_usu &&
-            ins.por_asi_fin_usu >= porcentajeMinimoAsistencia
+            ins.finalAttendancePercent &&
+            ins.finalAttendancePercent >= porcentajeMinimoAsistencia
         ).length;
         const porcentajeAsistencia =
           totalInscritos > 0 ? asistentes / totalInscritos : 0;
 
         return {
-          id_eve: evento.id_eve,
-          nombreEvento: evento.nom_eve,
-          tipoEvento: evento.tip_eve,
-          fechaEvento: evento.fec_ini_eve,
+          id_eve: evento.id,
+          nombreEvento: evento.name,
+          tipoEvento: evento.type,
+          fechaEvento: evento.startDate,
           totalInscritos,
           totalAsistencias: asistentes,
           porcentajeAsistencia,
@@ -1647,32 +1657,32 @@ async function descargarReporteAsistenciaPDF(req, res) {
       });
 
       // Obtener análisis de no-shows
-      const tiposEventos = await prisma.evento.groupBy({
-        by: ["tip_eve"],
+      const tiposEventos = await prisma.event.groupBy({
+        by: ["type"],
         where: filtro,
         _count: {
-          id_eve: true,
+          id: true,
         },
       });
 
       const noShowsAnalisis = await Promise.all(
         tiposEventos.map(async (tipoGrupo) => {
-          const eventosGrupo = await prisma.evento.findMany({
-            where: { tip_eve: tipoGrupo.tip_eve },
+          const eventosGrupo = await prisma.event.findMany({
+            where: { type: tipoGrupo.type },
             select: {
-              por_min_asi_eve: true,
-              inscritos: {
+              minAttendancePercent: true,
+              registrations: {
                 select: {
-                  por_asi_fin_usu: true,
+                  finalAttendancePercent: true,
                 },
                 where: {
-                  est_ins: {
+                  status: {
                     in: [
-                      "APROBADO",
-                      "ACEPTADA",
-                      "REPROBADO_NOTA",
-                      "REPROBADO_ASISTENCIA",
-                      "REPROBADO_TOTAL",
+                      "APPROVED",
+                      "ACCEPTED",
+                      "FAILED_GRADE",
+                      "FAILED_ATTENDANCE",
+                      "FAILED_TOTAL",
                     ],
                   },
                 },
@@ -1681,17 +1691,17 @@ async function descargarReporteAsistenciaPDF(req, res) {
           });
 
           const totalInscritos = eventosGrupo.reduce(
-            (sum, evento) => sum + evento.inscritos.length,
+            (sum, evento) => sum + evento.registrations.length,
             0
           );
           const totalAsistentes = eventosGrupo.reduce((sum, evento) => {
-            const porcentajeMinimoAsistencia = evento.por_min_asi_eve || 80;
+            const porcentajeMinimoAsistencia = evento.minAttendancePercent || 80;
             return (
               sum +
-              evento.inscritos.filter(
+              evento.registrations.filter(
                 (ins) =>
-                  ins.por_asi_fin_usu &&
-                  ins.por_asi_fin_usu >= porcentajeMinimoAsistencia
+                  ins.finalAttendancePercent &&
+                  ins.finalAttendancePercent >= porcentajeMinimoAsistencia
               ).length
             );
           }, 0);
@@ -1700,8 +1710,8 @@ async function descargarReporteAsistenciaPDF(req, res) {
             totalInscritos > 0 ? totalNoShows / totalInscritos : 0;
 
           return {
-            tipoEvento: tipoGrupo.tip_eve,
-            cantidadEventos: tipoGrupo._count.id_eve,
+            tipoEvento: tipoGrupo.type,
+            cantidadEventos: tipoGrupo._count.id,
             totalInscritos,
             totalNoShows,
             porcentajeNoShows,
@@ -1774,7 +1784,7 @@ async function getReporteCertificados(req, res) {
     const filtro = {};
 
     if (fechaInicio && fechaFin) {
-      filtro.fec_ins = {
+      filtro.registeredAt = {
         gte: new Date(fechaInicio),
         lte: new Date(fechaFin),
       };
@@ -1783,18 +1793,18 @@ async function getReporteCertificados(req, res) {
     if (req.path.includes("/resumen")) {
       // Resumen general de certificados
       // Consultar certificados emitidos directamente
-      const certificados = await prisma.certificado.findMany({
+      const certificados = await prisma.certificate.findMany({
         where: {
-          inscripcion: filtro,
+          registration: filtro,
         },
         include: {
-          inscripcion: {
+          registration: {
             select: {
-              id_ins: true,
-              evento: {
+              id: true,
+              event: {
                 select: {
-                  id_eve: true,
-                  nom_eve: true,
+                  id: true,
+                  name: true,
                 },
               },
             },
@@ -1805,7 +1815,7 @@ async function getReporteCertificados(req, res) {
       // Obtener eventos únicos con certificados
       const eventosUnicos = new Set();
       certificados.forEach((cert) => {
-        eventosUnicos.add(cert.inscripcion.evento.id_eve);
+        eventosUnicos.add(cert.registration.event.id);
       });
 
       // Contar cuántos certificados han sido descargados al menos una vez
@@ -1824,18 +1834,18 @@ async function getReporteCertificados(req, res) {
 
     if (req.path.includes("/descargas")) {
       // Datos de descargas por período (trimestres)
-      const certificados = await prisma.certificado.findMany({
+      const certificados = await prisma.certificate.findMany({
         where: {
-          inscripcion: filtro,
+          registration: filtro,
         },
         include: {
-          inscripcion: {
+          registration: {
             select: {
-              fec_ins: true,
-              evento: {
+              registeredAt: true,
+              event: {
                 select: {
-                  nom_eve: true,
-                  tip_eve: true,
+                  name: true,
+                  type: true,
                 },
               },
             },
@@ -1851,7 +1861,7 @@ async function getReporteCertificados(req, res) {
       const agrupadoPorPeriodo = {};
 
       certificados.forEach((cert) => {
-        const fecha = new Date(cert.fec_gen_cer);
+        const fecha = new Date(cert.generatedAt);
         const año = fecha.getFullYear();
         const trimestre = Math.floor(fecha.getMonth() / 3); // 0-3 para trimestres
 
@@ -1891,37 +1901,37 @@ async function getReporteCertificados(req, res) {
 
     if (req.path.includes("/eventos")) {
       // Eventos con mayor emisión de certificados
-      const eventos = await prisma.evento.findMany({
+      const eventos = await prisma.event.findMany({
         where: {
-          inscritos: {
+          registrations: {
             some: {
               ...filtro,
-              certificado: { isNot: null },
+              certificate: { isNot: null },
             },
           },
         },
         include: {
-          inscritos: {
+          registrations: {
             where: {
               ...filtro,
-              certificado: { isNot: null },
+              certificate: { isNot: null },
             },
             select: {
-              id_ins: true,
-              certificado: {
+              id: true,
+              certificate: {
                 select: {
-                  id_cer: true,
-                  fec_gen_cer: true,
+                  id: true,
+                  generatedAt: true,
                 },
               },
             },
           },
           _count: {
             select: {
-              inscritos: {
+              registrations: {
                 where: {
                   ...filtro,
-                  certificado: { isNot: null },
+                  certificate: { isNot: null },
                 },
               },
             },
@@ -1932,12 +1942,12 @@ async function getReporteCertificados(req, res) {
       // Ordenar manualmente por cantidad de certificados y tomar los 10 primeros
       const eventosOrdenados = eventos
         .map((evento) => ({
-          id_eve: evento.id_eve,
-          nombreEvento: evento.nom_eve,
-          tipoEvento: evento.tip_eve,
-          fechaEvento: evento.fec_ini_eve,
-          certificadosEmitidos: evento.inscritos.length,
-          certificadosDescargados: evento.inscritos.length, // Asumimos que todos han sido descargados
+          id_eve: evento.id,
+          nombreEvento: evento.name,
+          tipoEvento: evento.type,
+          fechaEvento: evento.startDate,
+          certificadosEmitidos: evento.registrations.length,
+          certificadosDescargados: evento.registrations.length, // Asumimos que todos han sido descargados
         }))
         .sort((a, b) => b.certificadosEmitidos - a.certificadosEmitidos)
         .slice(0, 10);
@@ -1980,25 +1990,25 @@ async function descargarReporteCertificadosPDF(req, res) {
 
     // Construir filtros
     const filtro = {
-      fec_ins: {
+      registeredAt: {
         gte: fechaInicioDate,
         lte: fechaFinDate,
       },
     };
 
     // Obtener resumen general de certificados
-    const certificados = await prisma.certificado.findMany({
+    const certificados = await prisma.certificate.findMany({
       where: {
-        inscripcion: filtro,
+        registration: filtro,
       },
       include: {
-        inscripcion: {
+        registration: {
           select: {
-            fec_ins: true,
-            evento: {
+            registeredAt: true,
+            event: {
               select: {
-                nom_eve: true,
-                tip_eve: true,
+                name: true,
+                type: true,
               },
             },
           },
@@ -2009,7 +2019,7 @@ async function descargarReporteCertificadosPDF(req, res) {
     // Obtener eventos únicos con certificados
     const eventosUnicos = new Set();
     certificados.forEach((cert) => {
-      eventosUnicos.add(cert.inscripcion.evento.nom_eve);
+      eventosUnicos.add(cert.registration.event.name);
     });
 
     // Contar cuántos certificados han sido descargados al menos una vez
@@ -2031,8 +2041,7 @@ async function descargarReporteCertificadosPDF(req, res) {
     const agrupadoPorPeriodo = {};
 
     certificados.forEach((cert) => {
-      const fecha = new Date(cert.fec_gen_cer);
-      const año = fecha.getFullYear();
+        const fecha = new Date(cert.generatedAt);
       const trimestre = Math.floor(fecha.getMonth() / 3); // 0-3 para trimestres
 
       const key = `${año}-${trimestre}`;
@@ -2066,37 +2075,37 @@ async function descargarReporteCertificadosPDF(req, res) {
     descargasPorPeriodo.sort((a, b) => a.periodo.localeCompare(b.periodo));
 
     // Obtener eventos con mayor emisión de certificados
-    const eventos = await prisma.evento.findMany({
+    const eventos = await prisma.event.findMany({
       where: {
-        inscritos: {
+        registrations: {
           some: {
             ...filtro,
-            certificado: { isNot: null },
+            certificate: { isNot: null },
           },
         },
       },
       include: {
-        inscritos: {
+        registrations: {
           where: {
             ...filtro,
-            certificado: { isNot: null },
+            certificate: { isNot: null },
           },
           select: {
-            id_ins: true,
-            certificado: {
+            id: true,
+            certificate: {
               select: {
-                id_cer: true,
-                fec_gen_cer: true,
+                id: true,
+                generatedAt: true,
               },
             },
           },
         },
         _count: {
           select: {
-            inscritos: {
+            registrations: {
               where: {
                 ...filtro,
-                certificado: { isNot: null },
+                certificate: { isNot: null },
               },
             },
           },
@@ -2107,12 +2116,12 @@ async function descargarReporteCertificadosPDF(req, res) {
     // Ordenar manualmente por cantidad de certificados y tomar los 10 primeros
     const eventosCertificados = eventos
       .map((evento) => ({
-        id_eve: evento.id_eve,
-        nombreEvento: evento.nom_eve,
-        tipoEvento: evento.tip_eve,
-        fechaEvento: evento.fec_ini_eve,
-        certificadosEmitidos: evento.inscritos.length,
-        certificadosDescargados: evento.inscritos.length, // Asumimos que todos han sido descargados
+        id_eve: evento.id,
+        nombreEvento: evento.name,
+        tipoEvento: evento.type,
+        fechaEvento: evento.startDate,
+        certificadosEmitidos: evento.registrations.length,
+        certificadosDescargados: evento.registrations.length, // Asumimos que todos han sido descargados
       }))
       .sort((a, b) => b.certificadosEmitidos - a.certificadosEmitidos)
       .slice(0, 10);
@@ -2171,23 +2180,26 @@ async function getReporteCupos(req, res) {
 
     if (req.path.includes("/ocupacion/") && id_evento) {
       // Análisis de ocupación de un evento específico
-      const evento = await prisma.evento.findUnique({
-        where: { id_eve: parseInt(id_evento) },
+      const evento = await prisma.event.findUnique({
+        where: { id: id_evento },
         select: {
-          id_eve: true,
-          nom_eve: true,
-          cup_max_eve: true,
-          cup_dis_eve: true,
-          cup_ocu_eve: true,
-          inscritos: {
+          id: true,
+          name: true,
+          maxCapacity: true,
+          availableSpots: true,
+          registrations: {
             select: {
-              id_ins: true,
-              est_ins: true,
-              usuario: {
+              id: true,
+              status: true,
+              account: {
                 select: {
-                  carrera: {
+                  user: {
                     select: {
-                      nom_car: true,
+                      career: {
+                        select: {
+                          name: true,
+                        },
+                      },
                     },
                   },
                 },
@@ -2201,23 +2213,23 @@ async function getReporteCupos(req, res) {
         return res.status(404).json({ msg: "Evento no encontrado" });
       }
 
-      const totalCupos = evento.cup_max_eve;
-      const cuposOcupados = evento.cup_ocu_eve;
-      const cuposDisponibles = evento.cup_dis_eve;
+      const totalCupos = evento.maxCapacity;
+      const cuposOcupados = totalCupos - evento.availableSpots;
+      const cuposDisponibles = evento.availableSpots;
       const porcentajeOcupacion =
         totalCupos > 0 ? (cuposOcupados / totalCupos) * 100 : 0;
 
       // Distribución por carrera
       const distribucionCarrera = {};
-      evento.inscritos.forEach((ins) => {
-        const carrera = ins.usuario.carrera?.nom_car || "Sin carrera";
+      evento.registrations.forEach((ins) => {
+        const carrera = ins.account.user.career?.name || "Sin carrera";
         distribucionCarrera[carrera] = (distribucionCarrera[carrera] || 0) + 1;
       });
 
       return res.json({
         evento: {
-          id_eve: evento.id_eve,
-          nom_eve: evento.nom_eve,
+          id_eve: evento.id,
+          nom_eve: evento.name,
         },
         cupos: {
           total: totalCupos,
@@ -2233,20 +2245,20 @@ async function getReporteCupos(req, res) {
       // Eventos con mayor demanda
       const filtro = {};
       if (tipoEvento && tipoEvento !== "todos") {
-        filtro.tip_eve = tipoEvento;
+        filtro.type = tipoEvento;
       }
 
-      const eventos = await prisma.evento.findMany({
+      const eventos = await prisma.event.findMany({
         where: filtro,
         select: {
-          id_eve: true,
-          nom_eve: true,
-          tip_eve: true,
-          cup_max_eve: true,
-          inscritos: {
+          id: true,
+          name: true,
+          type: true,
+          maxCapacity: true,
+          registrations: {
             select: {
-              id_ins: true,
-              est_ins: true,
+              id: true,
+              status: true,
             },
           },
         },
@@ -2254,16 +2266,16 @@ async function getReporteCupos(req, res) {
 
       const eventosDemanda = eventos
         .map((evento) => {
-          const totalInscripciones = evento.inscritos.length;
-          const capacidadTotal = evento.cup_max_eve;
+          const totalInscripciones = evento.registrations.length;
+          const capacidadTotal = evento.maxCapacity;
           const porcentajeDemanda =
             capacidadTotal > 0 ? totalInscripciones / capacidadTotal : 0;
           const listaEspera = Math.max(0, totalInscripciones - capacidadTotal);
 
           return {
-            id_eve: evento.id_eve,
-            nombreEvento: evento.nom_eve,
-            tipoEvento: evento.tip_eve,
+            id_eve: evento.id,
+            nombreEvento: evento.name,
+            tipoEvento: evento.type,
             capacidadTotal,
             totalInscripciones,
             porcentajeDemanda,
@@ -2277,25 +2289,25 @@ async function getReporteCupos(req, res) {
 
     if (req.path.includes("/optimizacion")) {
       // Sugerencias de optimización
-      const eventos = await prisma.evento.findMany({
+      const eventos = await prisma.event.findMany({
         select: {
-          id_eve: true,
-          nom_eve: true,
-          tip_eve: true,
-          cup_max_eve: true,
-          cup_ocu_eve: true,
-          inscritos: {
+          id: true,
+          name: true,
+          type: true,
+          maxCapacity: true,
+          availableSpots: true,
+          registrations: {
             select: {
-              id_ins: true,
+              id: true,
             },
           },
         },
       });
 
       const optimizacion = eventos.map((evento) => {
-        const capacidadTotal = evento.cup_max_eve;
-        const cuposOcupados = evento.cup_ocu_eve;
-        const totalInscripciones = evento.inscritos.length;
+        const capacidadTotal = evento.maxCapacity;
+        const cuposOcupados = capacidadTotal - evento.availableSpots;
+        const totalInscripciones = evento.registrations.length;
         const porcentajeOcupacion =
           capacidadTotal > 0 ? (cuposOcupados / capacidadTotal) * 100 : 0;
 
@@ -2311,9 +2323,9 @@ async function getReporteCupos(req, res) {
         }
 
         return {
-          id_eve: evento.id_eve,
-          nombreEvento: evento.nom_eve,
-          tipoEvento: evento.tip_eve,
+          id_eve: evento.id,
+          nombreEvento: evento.name,
+          tipoEvento: evento.type,
           capacidadActual: capacidadTotal,
           cuposOcupados,
           porcentajeOcupacion,
@@ -2350,48 +2362,48 @@ async function obtenerEstadisticasInscripciones(fechaInicio, fechaFin, estado) {
   const filtro = {};
 
   if (fechaInicio && fechaFin) {
-    filtro.fec_ins = {
+    filtro.registeredAt = {
       gte: fechaInicio,
       lte: fechaFin,
     };
   }
 
   if (estado && estado !== "todos") {
-    filtro.est_ins = estado;
+    filtro.status = estado;
   }
 
-  const inscripciones = await prisma.inscripcion.findMany({
+  const inscripciones = await prisma.registration.findMany({
     where: filtro,
     select: {
-      est_ins: true,
+      status: true,
     },
   });
 
   // Estados detallados para categorización
-  const estadosAceptados = ["ACEPTADA"];
-  const estadosAprobados = ["APROBADO"];
-  const estadosRechazados = ["RECHAZADA"];
+  const estadosAceptados = ["ACCEPTED"];
+  const estadosAprobados = ["APPROVED"];
+  const estadosRechazados = ["REJECTED"];
   const estadosReprobados = [
-    "REPROBADO_NOTA",
-    "REPROBADO_ASISTENCIA",
-    "REPROBADO_TOTAL",
+    "FAILED_GRADE",
+    "FAILED_ATTENDANCE",
+    "FAILED_TOTAL",
   ];
 
   return {
     total: inscripciones.length,
-    pendientes: inscripciones.filter((ins) => ins.est_ins === "PENDIENTE")
+    pendientes: inscripciones.filter((ins) => ins.status === "PENDING")
       .length,
     aceptadas: inscripciones.filter((ins) =>
-      estadosAceptados.includes(ins.est_ins)
+      estadosAceptados.includes(ins.status)
     ).length,
     aprobadas: inscripciones.filter((ins) =>
-      estadosAprobados.includes(ins.est_ins)
+      estadosAprobados.includes(ins.status)
     ).length,
     rechazadas: inscripciones.filter((ins) =>
-      estadosRechazados.includes(ins.est_ins)
+      estadosRechazados.includes(ins.status)
     ).length,
     reprobadas: inscripciones.filter((ins) =>
-      estadosReprobados.includes(ins.est_ins)
+      estadosReprobados.includes(ins.status)
     ).length,
   };
 }
@@ -2400,20 +2412,20 @@ async function obtenerTendenciasInscripciones(fechaInicio, fechaFin) {
   const filtro = {};
 
   if (fechaInicio && fechaFin) {
-    filtro.fec_ins = {
+    filtro.registeredAt = {
       gte: fechaInicio,
       lte: fechaFin,
     };
   }
 
-  const inscripciones = await prisma.inscripcion.findMany({
+  const inscripciones = await prisma.registration.findMany({
     where: filtro,
     select: {
-      fec_ins: true,
-      est_ins: true,
+      registeredAt: true,
+      status: true,
     },
     orderBy: {
-      fec_ins: "asc",
+      registeredAt: "asc",
     },
   });
 
@@ -2434,32 +2446,32 @@ async function obtenerTendenciasInscripciones(fechaInicio, fechaFin) {
       year: "numeric",
     });
 
-    const estadosAceptados = ["ACEPTADA"];
-    const estadosAprobados = ["APROBADO"];
-    const estadosRechazados = ["RECHAZADA"];
+    const estadosAceptados = ["ACCEPTED"];
+    const estadosAprobados = ["APPROVED"];
+    const estadosRechazados = ["REJECTED"];
     const estadosReprobados = [
-      "REPROBADO_NOTA",
-      "REPROBADO_ASISTENCIA",
-      "REPROBADO_TOTAL",
+      "FAILED_GRADE",
+      "FAILED_ATTENDANCE",
+      "FAILED_TOTAL",
     ];
 
     return [
       {
         periodo: `${fechaInicioStr} - ${fechaFinStr}`,
         total: inscripciones.length,
-        pendientes: inscripciones.filter((ins) => ins.est_ins === "PENDIENTE")
+        pendientes: inscripciones.filter((ins) => ins.status === "PENDING")
           .length,
         aceptadas: inscripciones.filter((ins) =>
-          estadosAceptados.includes(ins.est_ins)
+          estadosAceptados.includes(ins.status)
         ).length,
         aprobadas: inscripciones.filter((ins) =>
-          estadosAprobados.includes(ins.est_ins)
+          estadosAprobados.includes(ins.status)
         ).length,
         rechazadas: inscripciones.filter((ins) =>
-          estadosRechazados.includes(ins.est_ins)
+          estadosRechazados.includes(ins.status)
         ).length,
         reprobadas: inscripciones.filter((ins) =>
-          estadosReprobados.includes(ins.est_ins)
+          estadosReprobados.includes(ins.status)
         ).length,
         variacion: 0, // No hay variación cuando solo hay un período
       },
@@ -2474,29 +2486,29 @@ async function obtenerAnalisisValidaciones(fechaInicio, fechaFin) {
   const filtro = {};
 
   if (fechaInicio && fechaFin) {
-    filtro.fec_ins = {
+    filtro.registeredAt = {
       gte: fechaInicio,
       lte: fechaFin,
     };
   }
 
   // Solo incluir inscripciones que han sido validadas
-  filtro.id_adm_val_ins = {
+  filtro.validatedByAdminId = {
     not: null,
   };
 
-  const inscripciones = await prisma.inscripcion.findMany({
+  const inscripciones = await prisma.registration.findMany({
     where: filtro,
     select: {
-      est_ins: true,
-      fec_ins: true,
-      fec_val_ins: true,
-      admin_validador: {
+      status: true,
+      registeredAt: true,
+      validatedAt: true,
+      validatorAdmin: {
         select: {
-          usuario: {
+          user: {
             select: {
-              nom_usu: true,
-              ape_usu: true,
+              firstName: true,
+              lastName: true,
             },
           },
         },
@@ -2508,9 +2520,9 @@ async function obtenerAnalisisValidaciones(fechaInicio, fechaFin) {
   const validadoresPorAdmin = {};
 
   inscripciones.forEach((ins) => {
-    if (!ins.admin_validador) return;
+    if (!ins.validatorAdmin) return;
 
-    const nombreCompleto = `${ins.admin_validador.usuario.nom_usu} ${ins.admin_validador.usuario.ape_usu}`;
+    const nombreCompleto = `${ins.validatorAdmin.user.firstName} ${ins.validatorAdmin.user.lastName}`;
 
     if (!validadoresPorAdmin[nombreCompleto]) {
       validadoresPorAdmin[nombreCompleto] = {
@@ -2528,29 +2540,29 @@ async function obtenerAnalisisValidaciones(fechaInicio, fechaFin) {
     validador.totalValidadas++;
 
     // Categorizar por estado
-    const estadosAceptados = ["ACEPTADA"];
-    const estadosAprobados = ["APROBADO"];
-    const estadosRechazados = ["RECHAZADA"];
+    const estadosAceptados = ["ACCEPTED"];
+    const estadosAprobados = ["APPROVED"];
+    const estadosRechazados = ["REJECTED"];
     const estadosReprobados = [
-      "REPROBADO_NOTA",
-      "REPROBADO_ASISTENCIA",
-      "REPROBADO_TOTAL",
+      "FAILED_GRADE",
+      "FAILED_ATTENDANCE",
+      "FAILED_TOTAL",
     ];
 
-    if (estadosAceptados.includes(ins.est_ins)) {
+    if (estadosAceptados.includes(ins.status)) {
       validador.aceptadas++;
-    } else if (estadosAprobados.includes(ins.est_ins)) {
+    } else if (estadosAprobados.includes(ins.status)) {
       validador.aprobadas++;
-    } else if (estadosRechazados.includes(ins.est_ins)) {
+    } else if (estadosRechazados.includes(ins.status)) {
       validador.rechazadas++;
-    } else if (estadosReprobados.includes(ins.est_ins)) {
+    } else if (estadosReprobados.includes(ins.status)) {
       validador.reprobadas++;
     }
 
     // Calcular tiempo de validación
-    if (ins.fec_ins && ins.fec_val_ins) {
+    if (ins.registeredAt && ins.validatedAt) {
       const tiempoValidacion = Math.abs(
-        new Date(ins.fec_val_ins) - new Date(ins.fec_ins)
+        new Date(ins.validatedAt) - new Date(ins.registeredAt)
       );
       const horasValidacion = tiempoValidacion / (1000 * 60 * 60);
       validador.tiemposValidacion.push(horasValidacion);
@@ -2589,3 +2601,5 @@ module.exports = {
   getReporteCupos,
   descargarReporteCuposPDF,
 };
+
+

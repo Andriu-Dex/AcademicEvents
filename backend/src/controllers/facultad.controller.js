@@ -7,8 +7,8 @@ const { prisma } = require("../config/db");
 const obtenerFacultades = async (req, res) => {
   try {
     // Consultamos todas las facultades en la base de datos
-    const facultades = await prisma.facultad.findMany({
-      orderBy: { nom_fac: "asc" },
+    const facultades = await prisma.faculty.findMany({
+      orderBy: { name: "asc" },
     });
 
     // Respondemos con las facultades obtenidas
@@ -30,8 +30,8 @@ const obtenerFacultad = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const facultad = await prisma.facultad.findUnique({
-      where: { id_fac: id },
+    const facultad = await prisma.faculty.findUnique({
+      where: { id },
     });
 
     if (!facultad) {
@@ -53,8 +53,8 @@ const obtenerFacultad = async (req, res) => {
 // =============================
 const obtenerPrimeraFacultad = async (req, res) => {
   try {
-    const facultad = await prisma.facultad.findFirst({
-      orderBy: { fec_cre_fac: "asc" }, // Obtiene la primera facultad creada
+    const facultad = await prisma.faculty.findFirst({
+      orderBy: { createdAt: "asc" }, // Obtiene la primera facultad creada
     });
 
     if (!facultad) {
@@ -63,19 +63,18 @@ const obtenerPrimeraFacultad = async (req, res) => {
 
     // Mapear los datos al formato esperado por el frontend
     const facultadFormateada = {
-      id: facultad.id_fac,
-      nombre: facultad.nom_fac,
-      acronimo: facultad.acr_fac,
-      descripcion: facultad.des_fac,
-      logo: facultad.url_log_fac,
+      id: facultad.id,
+      nombre: facultad.name,
+      acronimo: facultad.acronym,
+      descripcion: facultad.description,
+      logo: facultad.logoUrl,
       // Mantener también los campos originales por compatibilidad
-      id_fac: facultad.id_fac,
-      nom_fac: facultad.nom_fac,
-      acr_fac: facultad.acr_fac,
-      des_fac: facultad.des_fac,
-      url_log_fac: facultad.url_log_fac,
-      fec_cre_fac: facultad.fec_cre_fac,
-      fec_act_fac: facultad.fec_act_fac,
+      id_fac: facultad.id,
+      nom_fac: facultad.name,
+      acr_fac: facultad.acronym,
+      des_fac: facultad.description,
+      url_log_fac: facultad.logoUrl,
+      fec_cre_fac: facultad.createdAt,
     };
 
     res.status(200).json(facultadFormateada);
@@ -97,8 +96,8 @@ const actualizarDatosFacultad = async (req, res) => {
     const { nom_fac, acr_fac, des_fac, url_log_fac } = req.body;
 
     // Verificar que la facultad existe
-    const facultadExistente = await prisma.facultad.findUnique({
-      where: { id_fac: id },
+    const facultadExistente = await prisma.faculty.findUnique({
+      where: { id },
     });
 
     if (!facultadExistente) {
@@ -113,11 +112,11 @@ const actualizarDatosFacultad = async (req, res) => {
     }
 
     // Verificar si el nombre ya existe y no es el mismo facultad
-    if (nom_fac !== facultadExistente.nom_fac) {
-      const nombreExiste = await prisma.facultad.findFirst({
+    if (nom_fac !== facultadExistente.name) {
+      const nombreExiste = await prisma.faculty.findFirst({
         where: {
-          nom_fac,
-          id_fac: { not: id },
+          name: nom_fac,
+          id: { not: id },
         },
       });
 
@@ -129,13 +128,13 @@ const actualizarDatosFacultad = async (req, res) => {
     }
 
     // Actualizar la facultad
-    const facultadActualizada = await prisma.facultad.update({
-      where: { id_fac: id },
+    const facultadActualizada = await prisma.faculty.update({
+      where: { id },
       data: {
-        nom_fac,
-        acr_fac,
-        des_fac,
-        url_log_fac,
+        name: nom_fac,
+        acronym: acr_fac,
+        description: des_fac,
+        logoUrl: url_log_fac,
       },
     });
 
@@ -183,20 +182,20 @@ const crearFacultad = async (req, res) => {
         .json({ msg: "La visión de la facultad es obligatoria" });
     }
 
-    const facultadExistente = await prisma.facultad.findUnique({
-      where: { nom_fac },
+    const facultadExistente = await prisma.faculty.findFirst({
+      where: { name: nom_fac },
     });
 
     if (facultadExistente) {
       return res.status(400).json({ msg: "La facultad ya existe" });
     }
 
-    const nuevaFacultad = await prisma.facultad.create({
+    const nuevaFacultad = await prisma.faculty.create({
       data: {
-        nom_fac,
-        des_fac,
-        mis_fac,
-        vis_fac,
+        name: nom_fac,
+        description: des_fac,
+        mission: mis_fac,
+        vision: vis_fac,
       },
     });
 

@@ -69,7 +69,7 @@ router.post(
   onlyAdmin,
   (req, res, next) => {
     // Verificar que el usuario sea ADMIN_GLOBAL
-    if (req.usuario.rol_usu !== "ADMIN_GLOBAL") {
+    if (!["ADMIN_GLOBAL", "GLOBAL_ADMIN"].includes(req.usuario.rol_usu)) {
       return res.status(403).json({
         error: "No autorizado",
         mensaje:
@@ -92,7 +92,7 @@ router.get(
   onlyAdmin,
   (req, res, next) => {
     // Verificar que el usuario sea ADMIN_GLOBAL
-    if (req.usuario.rol_usu !== "ADMIN_GLOBAL") {
+    if (!["ADMIN_GLOBAL", "GLOBAL_ADMIN"].includes(req.usuario.rol_usu)) {
       return res.status(403).json({
         error: "No autorizado",
         mensaje:
@@ -115,7 +115,7 @@ router.get(
   onlyAdmin,
   (req, res, next) => {
     // Verificar que el usuario sea ADMIN_GLOBAL
-    if (req.usuario.rol_usu !== "ADMIN_GLOBAL") {
+    if (!["ADMIN_GLOBAL", "GLOBAL_ADMIN"].includes(req.usuario.rol_usu)) {
       return res.status(403).json({
         error: "No autorizado",
         mensaje:

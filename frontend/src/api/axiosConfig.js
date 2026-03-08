@@ -1,6 +1,14 @@
 import axios from "axios";
 import { toast } from "react-toastify"; // Importar toast para notificaciones
 
+const resolveTenantSlug = () => {
+  return (
+    localStorage.getItem("tenantSlug") ||
+    import.meta.env.VITE_TENANT_ID ||
+    "uta"
+  );
+};
+
 // Crear una instancia de axios
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL + "/api", // URL base del backend desde las variables de entorno
@@ -22,6 +30,10 @@ export const setLogoutFunction = (logout) => {
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
+    const tenantSlug = resolveTenantSlug();
+
+    config.headers["X-Tenant-ID"] = tenantSlug;
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

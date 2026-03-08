@@ -40,7 +40,18 @@ const AdminInscripciones = () => {
   const cargarEventos = async () => {
     try {
       const res = await axiosInstance.get("/eventos");
-      setEventos(res.data);
+      const eventosData = Array.isArray(res.data) ? res.data : [];
+
+      // Normalizar para soportar respuestas legacy y nuevas sin romper el select.
+      const eventosNormalizados = eventosData
+        .map((ev, index) => ({
+          ...ev,
+          __eventId: ev?.id_eve || ev?.id || null,
+          __eventName: ev?.nom_eve || ev?.name || `Evento ${index + 1}`,
+        }))
+        .filter((ev) => ev.__eventId);
+
+      setEventos(eventosNormalizados);
     } catch {
       toast.error("Error al cargar eventos");
     }
@@ -169,9 +180,9 @@ const AdminInscripciones = () => {
           onChange={(e) => setEventoFiltrado(e.target.value)}
         >
           <option value="">-- Seleccionar evento --</option>
-          {eventos.map((ev) => (
-            <option key={ev.id_eve} value={ev.id_eve}>
-              {ev.nom_eve}
+          {eventos.map((ev, index) => (
+            <option key={`${ev.__eventId}-${index}`} value={ev.__eventId}>
+              {ev.__eventName}
             </option>
           ))}
         </select>
@@ -202,9 +213,9 @@ const AdminInscripciones = () => {
             </div>
           ) : (
             <div className="adminins-cards-container">
-              {inscripcionesFiltradas.map((inscripcion) => (
+              {inscripcionesFiltradas.map((inscripcion, index) => (
                 <InscripcionCard
-                  key={inscripcion.id_ins}
+                  key={inscripcion.id_ins || `ins-${index}`}
                   inscripcion={inscripcion}
                   onUpdate={() => fetchData()}
                   onVerCarta={(carta) => setCartaSeleccionada(carta)}

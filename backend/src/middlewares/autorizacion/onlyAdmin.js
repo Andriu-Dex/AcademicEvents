@@ -8,8 +8,12 @@ const onlyAdmin = (req, res, next) => {
 
   // Verifica si el rol del usuario no es administrador
   if (
-    req.usuario.rol_usu !== "ADMIN_GLOBAL" &&
-    req.usuario.rol_usu !== "ADMIN_GENERAL"
+    ![
+      "ADMIN_GLOBAL",
+      "ADMIN_GENERAL",
+      "GLOBAL_ADMIN",
+      "GENERAL_ADMIN",
+    ].includes(req.usuario.rol_usu)
   ) {
     // Si el rol no es administrador, responde con un error 403 (Prohibido)
     return res

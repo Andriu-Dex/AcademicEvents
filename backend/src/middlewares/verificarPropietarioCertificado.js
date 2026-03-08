@@ -8,30 +8,32 @@ const verificarPropietarioCertificado = async (req, res, next) => {
     console.log("👤 Usuario autenticado:", req.usuario);
 
     // Buscar la inscripción con el ID recibido en la URL y sus relaciones
-    const inscripcion = await prisma.inscripcion.findUnique({
-      where: { id_ins: idInscripcion },
+    const registration = await prisma.registration.findUnique({
+      where: { id: idInscripcion },
       include: {
-        cuenta: true,
+        account: true,
       },
     });
 
-    console.log("📝 Inscripción encontrada:", inscripcion);
+    console.log("📝 Inscripción encontrada:", registration);
 
     // Si no existe la inscripción, retornar error 404
-    if (!inscripcion) {
+    if (!registration) {
       console.log("❌ Inscripción no encontrada");
       return res.status(404).json({ msg: "Inscripción no encontrada" });
     }
     console.log("🔄 Comparando IDs:");
     console.log("ID Usuario Auth:", req.usuario.id);
-    console.log("ID Cuenta Inscripción:", inscripcion.id_cor_ins);
+    console.log("ID Cuenta Inscripción:", registration.accountId);
     console.log("Rol Usuario:", req.usuario.rol_usu);
 
-    // Validar que el ID del usuario autenticado coincida con el id_cor_ins de la inscripción
+    // Validar que el ID del usuario autenticado coincida con el accountId de la inscripción
     const esAdmin =
+      req.usuario.rol_usu === "GLOBAL_ADMIN" ||
+      req.usuario.rol_usu === "GENERAL_ADMIN" ||
       req.usuario.rol_usu === "ADMIN_GLOBAL" ||
       req.usuario.rol_usu === "ADMIN_GENERAL";
-    const esPropietario = req.usuario.id === inscripcion.id_cor_ins;
+    const esPropietario = req.usuario.id === registration.accountId;
 
     console.log("¿Es admin?", esAdmin);
     console.log("¿Es propietario?", esPropietario);

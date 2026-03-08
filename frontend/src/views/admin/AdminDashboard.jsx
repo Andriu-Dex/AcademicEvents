@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../api/axiosConfig";
 import { usePagination } from "../../hooks/usePagination";
@@ -13,6 +13,16 @@ import {
 } from "lucide-react";
 import "./styles/AdminDashboard.css";
 import "./styles/reportes-options.css";
+
+const normalizeDashboardEvent = (evento, index = 0) => ({
+  id_eve: evento?.id_eve || evento?.id || `evento-${index}`,
+  nom_eve: evento?.nom_eve || evento?.name || `Evento ${index + 1}`,
+  img_por_eve:
+    evento?.img_por_eve ||
+    evento?.coverImage ||
+    evento?.coverImageUrl ||
+    "https://via.placeholder.com/320x90?text=Sin+Imagen",
+});
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -35,6 +45,11 @@ const AdminDashboard = () => {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+  const eventosNormalizados = useMemo(
+    () => (Array.isArray(eventos) ? eventos : []).map(normalizeDashboardEvent),
+    [eventos]
+  );
 
   return (
     <div className="admin-dashboard">
@@ -116,13 +131,13 @@ const AdminDashboard = () => {
           <div className="eventos-recent">
             <h3>Eventos Recientes</h3>
             <div className="eventos-grid">
-              {eventos.length === 0 ? (
+              {eventosNormalizados.length === 0 ? (
                 <p>No hay eventos disponibles.</p>
               ) : (
-                eventos.map((evento) => (
+                eventosNormalizados.map((evento, index) => (
                   <div
                     className="evento-card-ad"
-                    key={evento.id_eve}
+                    key={`${evento.id_eve}-${index}`}
                     onClick={() =>
                       navigate(`/admin/reportes-evento/${evento.id_eve}`)
                     }

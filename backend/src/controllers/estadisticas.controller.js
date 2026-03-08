@@ -6,6 +6,13 @@ const { prisma } = require("../config/db");
  * @class EstadisticasController
  */
 class EstadisticasController {
+  static tenantWhere(req, extra = {}) {
+    if (req.tenantId) {
+      return { tenantId: req.tenantId, ...extra };
+    }
+    return extra;
+  }
+
   /**
    * Obtiene estadísticas para el Home
    * @static
@@ -17,37 +24,36 @@ class EstadisticasController {
   static async obtenerEstadisticasHome(req, res) {
     try {
       // 1. Número total de carreras activas
-      const totalCarreras = await prisma.carrera.count({
-        where: {
-          est_car: true,
-        },
+      const totalCarreras = await prisma.career.count({
+        where: EstadisticasController.tenantWhere(req, { isActive: true }),
       });
 
       // 2. Número de eventos activos (con inscripciones abiertas)
       const fechaActual = new Date();
-      const eventosActivos = await prisma.evento.count({
-        where: {
-          est_eve: "ACTIVO",
-          fec_fin_eve: {
+      const eventosActivos = await prisma.event.count({
+        where: EstadisticasController.tenantWhere(req, {
+          status: "ACTIVE",
+          endDate: {
             gte: fechaActual,
           },
-        },
+        }),
       });
 
       // 3. Número total de usuarios registrados (solo ESTUDIANTE y GENERAL)
-      const totalUsuarios = await prisma.cuenta.count({
-        where: {
-          rol_usu: {
-            in: ["ESTUDIANTE", "GENERAL"],
+      const totalUsuarios = await prisma.account.count({
+        where: EstadisticasController.tenantWhere(req, {
+          role: {
+            in: ["STUDENT", "GENERAL"],
           },
-        },
+        }),
       });
 
       // 4. Tasa de participación real
-      const usuariosConInscripciones = await prisma.inscripcion.groupBy({
-        by: ["id_cor_ins"],
+      const usuariosConInscripciones = await prisma.registration.groupBy({
+        by: ["accountId"],
+        where: EstadisticasController.tenantWhere(req),
         _count: {
-          id_cor_ins: true,
+          accountId: true,
         },
       });
 
@@ -60,86 +66,88 @@ class EstadisticasController {
       }
 
       // 5. Eventos cancelados
-      const eventosCancelados = await prisma.evento.count({
-        where: {
-          est_eve: "CANCELADO",
-        },
+      const eventosCancelados = await prisma.event.count({
+        where: EstadisticasController.tenantWhere(req, {
+          status: "CANCELLED",
+        }),
       });
 
       // 6. Eventos finalizados
-      const eventosFinalizados = await prisma.evento.count({
-        where: {
-          est_eve: "FINALIZADO",
-        },
+      const eventosFinalizados = await prisma.event.count({
+        where: EstadisticasController.tenantWhere(req, {
+          status: "FINISHED",
+        }),
       });
 
       // 7. Certificados emitidos
-      const certificadosEmitidos = await prisma.certificado.count();
+      const certificadosEmitidos = await prisma.certificate.count({
+        where: EstadisticasController.tenantWhere(req),
+      });
 
       // 8. Inscripciones activas
-      const inscripcionesActivas = await prisma.inscripcion.count({
-        where: {
-          est_ins: {
-            in: ["ACEPTADA", "PENDIENTE"],
+      const inscripcionesActivas = await prisma.registration.count({
+        where: EstadisticasController.tenantWhere(req, {
+          status: {
+            in: ["ACCEPTED", "PENDING"],
           },
-          evento: {
-            est_eve: "ACTIVO",
-            fec_fin_eve: {
+          event: {
+            status: "ACTIVE",
+            endDate: {
               gte: fechaActual,
             },
           },
-        },
+        }),
       });
 
       // 9. Cupos disponibles en eventos activos
-      const eventosActivosData = await prisma.evento.findMany({
-        where: {
-          est_eve: "ACTIVO",
-          fec_fin_eve: {
+      const eventosActivosData = await prisma.event.findMany({
+        where: EstadisticasController.tenantWhere(req, {
+          status: "ACTIVE",
+          endDate: {
             gte: fechaActual,
           },
-        },
+        }),
         select: {
-          cup_dis_eve: true,
+          availableSpots: true,
         },
       });
 
       const cuposDisponibles = eventosActivosData.reduce(
-        (acc, evento) => acc + evento.cup_dis_eve,
+        (acc, evento) => acc + evento.availableSpots,
         0
       );
 
       // 10. Eventos presenciales activos
-      const eventosPresenciales = await prisma.evento.count({
-        where: {
-          est_eve: "ACTIVO",
-          mod_eve: "PRESENCIAL",
-          fec_fin_eve: {
+      const eventosPresenciales = await prisma.event.count({
+        where: EstadisticasController.tenantWhere(req, {
+          status: "ACTIVE",
+          modality: "IN_PERSON",
+          endDate: {
             gte: fechaActual,
           },
-        },
+        }),
       });
 
       // 11. Eventos virtuales activos
-      const eventosVirtuales = await prisma.evento.count({
-        where: {
-          est_eve: "ACTIVO",
-          mod_eve: "VIRTUAL",
-          fec_fin_eve: {
+      const eventosVirtuales = await prisma.event.count({
+        where: EstadisticasController.tenantWhere(req, {
+          status: "ACTIVE",
+          modality: "VIRTUAL",
+          endDate: {
             gte: fechaActual,
           },
-        },
+        }),
       });
 
       // 12. Eventos destacados
-      const eventosDestacados = await prisma.evento.count({
-        where: {
-          eve_des: true,
-          est_eve: "ACTIVO",
-          fec_fin_eve: {
+      const eventosDestacados = await prisma.event.count({
+        where: EstadisticasController.tenantWhere(req, {
+          isFeatured: true,
+          status: "ACTIVE",
+          endDate: {
             gte: fechaActual,
           },
-        },
+        }),
       });
 
       // Objeto con todas las estadísticas disponibles

@@ -1,347 +1,280 @@
-// Importamos la instancia centralizada de Prisma
 const { prisma } = require("../config/db");
 
-/**
- * Clase controladora para gestionar información de Misión, Visión y Autoridades
- */
 class MVAController {
-  /**
-   * Obtiene la información de MVA (Misión, Visión, Autoridades)
-   * @param {Request} req - Objeto de solicitud Express
-   * @param {Response} res - Objeto de respuesta Express
-   */
+  static tenantWhere(req, extra = {}) {
+    if (req.tenantId) {
+      return { tenantId: req.tenantId, ...extra };
+    }
+    return extra;
+  }
+
+  static async obtenerFacultadPrincipal(req) {
+    return prisma.faculty.findFirst({
+      where: MVAController.tenantWhere(req),
+      orderBy: { createdAt: "asc" },
+    });
+  }
+
+  static traducirTipoAutoridad(tipoAutoridad) {
+    const traducciones = {
+      DEAN: "Decano",
+      VICE_DEAN: "Subdecano",
+      COORDINATOR: "Coordinador de Carrera",
+      SECRETARY: "Secretario",
+    };
+
+    return traducciones[tipoAutoridad] || "Autoridad";
+  }
+
+  static determinarTipoAutoridad(cargo = "") {
+    const cargoLower = String(cargo).toLowerCase();
+
+    if (
+      cargoLower.includes("subdecano") ||
+      cargoLower.includes("sub-decano") ||
+      cargoLower.includes("sub decano") ||
+      cargoLower.includes("vicedecano") ||
+      cargoLower.includes("vice decano")
+    ) {
+      return "VICE_DEAN";
+    }
+
+    if (cargoLower.includes("decano")) {
+      return "DEAN";
+    }
+
+    if (cargoLower.includes("secretario")) {
+      return "SECRETARY";
+    }
+
+    return "COORDINATOR";
+  }
+
+  static separarNombreYTitulo(nombreCompleto = "") {
+    const partes = String(nombreCompleto)
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean);
+
+    if (partes.length === 0) {
+      return {
+        academicTitle: "",
+        firstName: "",
+        lastName: "",
+      };
+    }
+
+    let academicTitle = "";
+    let firstName = "";
+    let lastName = "";
+
+    if (partes[0].endsWith(".")) {
+      academicTitle = partes[0];
+      firstName = partes[1] || "";
+      lastName = partes.slice(2).join(" ");
+    } else {
+      firstName = partes[0] || "";
+      lastName = partes.slice(1).join(" ");
+    }
+
+    return { academicTitle, firstName, lastName };
+  }
+
+  static mapearAutoridadParaFrontend(autoridad) {
+    return {
+      cargo: MVAController.traducirTipoAutoridad(autoridad.type),
+      nombre: `${autoridad.academicTitle || ""} ${autoridad.firstName || ""} ${
+        autoridad.lastName || ""
+      }`.trim(),
+      imagen: autoridad.imageUrl || "https://i.imgur.com/hYBsxIf.png",
+      email: autoridad.email || "",
+    };
+  }
+
+  static async obtenerMVADatos(req, facultyId) {
+    const facultad = await prisma.faculty.findFirst({
+      where: MVAController.tenantWhere(req, { id: facultyId }),
+    });
+
+    const autoridadesFacultad = await prisma.facultyAuthority.findMany({
+      where: MVAController.tenantWhere(req, {
+        facultyId,
+        isActive: true,
+      }),
+      orderBy: {
+        type: "asc",
+      },
+    });
+
+    const autoridades = autoridadesFacultad.map((autoridad) =>
+      MVAController.mapearAutoridadParaFrontend(autoridad)
+    );
+
+    return {
+      mision: facultad?.mission || "",
+      vision: facultad?.vision || "",
+      autoridades: JSON.stringify(autoridades),
+    };
+  }
+
   static async obtenerMVA(req, res) {
     try {
-      // Obtenemos la primera facultad (asumimos que es la principal)
-      const facultad = await prisma.facultad.findFirst();
+      const facultad = await MVAController.obtenerFacultadPrincipal(req);
 
       if (!facultad) {
         return res.status(404).json({ msg: "Facultad no encontrada" });
       }
 
-      // Obtenemos las autoridades de la facultad según el nuevo modelo
-      const autoridadesFacultad = await prisma.autoridad_facultad.findMany({
-        where: {
-          id_fac_per: facultad.id_fac,
-          est_aut_fac: true, // Solo autoridades activas
-        },
-        orderBy: {
-          tip_aut_fac: "asc", // Ordenar por tipo de autoridad
-        },
-      });
-
-      // Transformamos los datos al formato esperado por el frontend
-      const autoridades = autoridadesFacultad.map((autoridad) => {
-        return {
-          cargo: MVAController.traducirTipoAutoridad(autoridad.tip_aut_fac),
-          nombre: `${autoridad.tit_aut_fac || ""} ${autoridad.nom_aut_fac} ${
-            autoridad.ape_aut_fac
-          }`.trim(),
-          imagen:
-            autoridad.url_img_aut_fac || "https://i.imgur.com/hYBsxIf.png", // Imagen predeterminada
-          email: autoridad.cor_aut_fac || "",
-        };
-      });
-
-      // Creamos el objeto de respuesta
-      const mvaInfo = {
-        mision: facultad.mis_fac,
-        vision: facultad.vis_fac,
-        autoridades: JSON.stringify(autoridades),
-      };
-
-      res.json(mvaInfo);
+      const mvaInfo = await MVAController.obtenerMVADatos(req, facultad.id);
+      return res.json(mvaInfo);
     } catch (error) {
       console.error("Error al obtener información MVA:", error);
-      res.status(500).json({
+      return res.status(500).json({
         msg: "Error al obtener información MVA",
         error: error.message,
       });
     }
   }
 
-  /**
-   * Traduce el tipo de autoridad del enum a un formato más legible
-   * @param {string} tipoAutoridad - Tipo de autoridad del enum
-   * @returns {string} - Descripción legible del cargo
-   */
-  static traducirTipoAutoridad(tipoAutoridad) {
-    const traducciones = {
-      DECANO: "Decano",
-      SUBDECANO: "Subdecano",
-      COORDINADOR_CARRERA: "Coordinador de Carrera",
-      SECRETARIO: "Secretario",
-      DIRECTOR_INVESTIGACION: "Director de Investigación",
-      OTRO: "Autoridad",
-    };
-
-    return traducciones[tipoAutoridad] || tipoAutoridad;
-  }
-
-  /**
-   * Obtiene datos básicos de la facultad
-   * @param {Request} req - Objeto de solicitud Express
-   * @param {Response} res - Objeto de respuesta Express
-   */
   static async obtenerDatosFacultad(req, res) {
     try {
-      // Obtenemos la primera facultad (asumimos que es la principal)
-      const facultad = await prisma.facultad.findFirst();
+      const facultad = await MVAController.obtenerFacultadPrincipal(req);
 
       if (!facultad) {
         return res.status(404).json({ msg: "Facultad no encontrada" });
       }
 
-      // Creamos el objeto de respuesta con los datos necesarios
-      const datosFacultad = {
-        nombre: facultad.nom_fac,
-        acronimo: facultad.acr_fac || "FISEI", // Valor por defecto si es null
-        logo: facultad.url_log_fac || "https://imgur.com/fch1iy6.png", // Valor por defecto si es null
-        descripcion: facultad.des_fac,
-      };
-
-      res.json(datosFacultad);
+      return res.json({
+        nombre: facultad.name,
+        acronimo: facultad.acronym || "FISEI",
+        logo: facultad.logoUrl || "https://imgur.com/fch1iy6.png",
+        descripcion: facultad.description,
+      });
     } catch (error) {
       console.error("Error al obtener datos de la facultad:", error);
-      res.status(500).json({
+      return res.status(500).json({
         msg: "Error al obtener datos de la facultad",
         error: error.message,
       });
     }
   }
 
-  /**
-   * Actualiza la información de MVA
-   * @param {Request} req - Objeto de solicitud Express
-   * @param {Response} res - Objeto de respuesta Express
-   */
   static async actualizarMVA(req, res) {
     try {
       const { mision, vision, autoridades } = req.body;
-
-      // Obtenemos la primera facultad
-      const facultad = await prisma.facultad.findFirst();
+      const facultad = await MVAController.obtenerFacultadPrincipal(req);
 
       if (!facultad) {
         return res.status(404).json({ msg: "Facultad no encontrada" });
       }
 
-      // Actualizamos la misión y visión en la facultad
-      await prisma.facultad.update({
-        where: { id_fac: facultad.id_fac },
-        data: {
-          mis_fac: mision,
-          vis_fac: vision,
-        },
-      });
+      const datosActualizarFacultad = {};
+      if (mision !== undefined) datosActualizarFacultad.mission = mision;
+      if (vision !== undefined) datosActualizarFacultad.vision = vision;
 
-      // Si hay autoridades, procesamos
+      if (Object.keys(datosActualizarFacultad).length > 0) {
+        await prisma.faculty.update({
+          where: { id: facultad.id },
+          data: datosActualizarFacultad,
+        });
+      }
+
       if (autoridades) {
         try {
-          const autoridadesData = JSON.parse(autoridades);
+          const autoridadesData = Array.isArray(autoridades)
+            ? autoridades
+            : JSON.parse(autoridades);
 
-          // Primero, obtenemos las autoridades actuales
-          const autoridadesActuales = await prisma.autoridad_facultad.findMany({
-            where: { id_fac_per: facultad.id_fac },
+          const autoridadesActuales = await prisma.facultyAuthority.findMany({
+            where: MVAController.tenantWhere(req, { facultyId: facultad.id }),
           });
 
-          // Para cada autoridad nueva o actualizada
-          for (let i = 0; i < autoridadesData.length; i++) {
-            const autoridadData = autoridadesData[i];
-
-            // Separamos título, nombre y apellidos
-            const nombreCompleto = autoridadData.nombre.split(" ");
-            let titulo = "";
-            let nombre = "";
-            let apellido = "";
-
-            // Si el primer elemento parece un título (Dr., Ing., etc.)
-            if (nombreCompleto[0].endsWith(".")) {
-              titulo = nombreCompleto[0];
-              nombre = nombreCompleto[1] || "";
-              apellido = nombreCompleto.slice(2).join(" ");
-            } else {
-              nombre = nombreCompleto[0] || "";
-              apellido = nombreCompleto.slice(1).join(" ");
-            }
-
-            // Determinamos el tipo de autoridad basado en el cargo
+          for (const autoridadData of autoridadesData) {
             const tipoAutoridad = MVAController.determinarTipoAutoridad(
               autoridadData.cargo
             );
+            const { academicTitle, firstName, lastName } =
+              MVAController.separarNombreYTitulo(autoridadData.nombre);
 
-            // Si ya existe una autoridad de este tipo, la actualizamos
+            const dataAutoridad = {
+              firstName,
+              lastName,
+              email: autoridadData.email || null,
+              imageUrl: autoridadData.imagen || "https://i.imgur.com/hYBsxIf.png",
+              academicTitle: academicTitle || null,
+              isActive: true,
+            };
+
             const autoridadExistente = autoridadesActuales.find(
-              (a) => a.tip_aut_fac === tipoAutoridad
+              (autoridad) => autoridad.type === tipoAutoridad
             );
 
             if (autoridadExistente) {
-              await prisma.autoridad_facultad.update({
-                where: { id_aut_fac: autoridadExistente.id_aut_fac },
-                data: {
-                  nom_aut_fac: nombre,
-                  ape_aut_fac: apellido,
-                  cor_aut_fac: autoridadData.email,
-                  url_img_aut_fac: autoridadData.imagen,
-                  tit_aut_fac: titulo,
-                  est_aut_fac: true,
-                },
+              await prisma.facultyAuthority.update({
+                where: { id: autoridadExistente.id },
+                data: dataAutoridad,
               });
             } else {
-              // Si no existe, creamos una nueva
-              await prisma.autoridad_facultad.create({
+              await prisma.facultyAuthority.create({
                 data: {
-                  id_fac_per: facultad.id_fac,
-                  tip_aut_fac: tipoAutoridad,
-                  nom_aut_fac: nombre,
-                  ape_aut_fac: apellido,
-                  cor_aut_fac: autoridadData.email,
-                  url_img_aut_fac: autoridadData.imagen,
-                  tit_aut_fac: titulo,
-                  fec_ini_aut_fac: new Date(), // Fecha actual como inicio
-                  est_aut_fac: true,
+                  tenantId: req.tenantId || facultad.tenantId,
+                  facultyId: facultad.id,
+                  type: tipoAutoridad,
+                  startDate: new Date(),
+                  ...dataAutoridad,
                 },
               });
             }
           }
         } catch (jsonError) {
           console.error("Error al procesar JSON de autoridades:", jsonError);
-          // No interrumpimos la operación si hay error en el formato de autoridades
         }
       }
 
-      // Obtenemos la información actualizada mediante el método obtenerMVA
-      const mvaInfo = await MVAController.obtenerMVADatos(facultad.id_fac);
-
-      res.status(200).json(mvaInfo);
+      const mvaInfo = await MVAController.obtenerMVADatos(req, facultad.id);
+      return res.status(200).json(mvaInfo);
     } catch (error) {
       console.error("Error al actualizar información MVA:", error);
-      res.status(500).json({
+      return res.status(500).json({
         msg: "Error al actualizar información MVA",
         error: error.message,
       });
     }
   }
 
-  /**
-   * Determina el tipo de autoridad según el cargo
-   * @param {string} cargo - Descripción del cargo
-   * @returns {string} - Tipo de autoridad del enum
-   */
-  static determinarTipoAutoridad(cargo) {
-    const cargoLower = cargo.toLowerCase();
-
-    if (cargoLower.includes("decano") && !cargoLower.includes("sub")) {
-      return "DECANO";
-    } else if (
-      cargoLower.includes("subdecano") ||
-      cargoLower.includes("sub-decano") ||
-      cargoLower.includes("sub decano")
-    ) {
-      return "SUBDECANO";
-    } else if (cargoLower.includes("coordinador")) {
-      return "COORDINADOR_CARRERA";
-    } else if (cargoLower.includes("secretario")) {
-      return "SECRETARIO";
-    } else if (
-      cargoLower.includes("investigación") ||
-      cargoLower.includes("investigacion")
-    ) {
-      return "DIRECTOR_INVESTIGACION";
-    } else {
-      return "OTRO";
-    }
-  }
-
-  /**
-   * Método auxiliar para obtener datos MVA
-   * @param {string} idFacultad - ID de la facultad
-   * @returns {Object} - Objeto con información MVA
-   */
-  static async obtenerMVADatos(idFacultad) {
-    // Obtenemos la facultad
-    const facultad = await prisma.facultad.findUnique({
-      where: { id_fac: idFacultad },
-    });
-
-    // Obtenemos las autoridades
-    const autoridadesFacultad = await prisma.autoridad_facultad.findMany({
-      where: {
-        id_fac_per: idFacultad,
-        est_aut_fac: true,
-      },
-      orderBy: {
-        tip_aut_fac: "asc",
-      },
-    });
-
-    // Transformamos los datos
-    const autoridades = autoridadesFacultad.map((autoridad) => {
-      return {
-        cargo: MVAController.traducirTipoAutoridad(autoridad.tip_aut_fac),
-        nombre: `${autoridad.tit_aut_fac || ""} ${autoridad.nom_aut_fac} ${
-          autoridad.ape_aut_fac
-        }`.trim(),
-        imagen: autoridad.url_img_aut_fac || "https://i.imgur.com/hYBsxIf.png",
-        email: autoridad.cor_aut_fac || "",
-      };
-    });
-
-    return {
-      mision: facultad.mis_fac,
-      vision: facultad.vis_fac,
-      autoridades: JSON.stringify(autoridades),
-    };
-  }
-
-  /**
-   * Actualiza datos básicos de la facultad
-   * @param {Request} req - Objeto de solicitud Express
-   * @param {Response} res - Objeto de respuesta Express
-   */
   static async actualizarDatosFacultad(req, res) {
     try {
       const { nombre, acronimo, logo } = req.body;
-
-      // Obtenemos la primera facultad
-      const facultad = await prisma.facultad.findFirst();
+      const facultad = await MVAController.obtenerFacultadPrincipal(req);
 
       if (!facultad) {
         return res.status(404).json({ msg: "Facultad no encontrada" });
       }
 
-      // Validamos que al menos uno de los campos no esté vacío
       if (!nombre && !acronimo && !logo) {
         return res.status(400).json({
           msg: "Debe proporcionar al menos un dato para actualizar",
         });
       }
 
-      // Creamos un objeto con los datos a actualizar
       const datosActualizar = {};
+      if (nombre) datosActualizar.name = nombre;
+      if (acronimo) datosActualizar.acronym = acronimo;
+      if (logo) datosActualizar.logoUrl = logo;
 
-      if (nombre) datosActualizar.nom_fac = nombre;
-      if (acronimo) datosActualizar.acr_fac = acronimo;
-      if (logo) datosActualizar.url_log_fac = logo;
-
-      // Actualizamos los datos de la facultad
-      const facultadActualizada = await prisma.facultad.update({
-        where: { id_fac: facultad.id_fac },
+      const facultadActualizada = await prisma.faculty.update({
+        where: { id: facultad.id },
         data: datosActualizar,
       });
 
-      // Preparamos la respuesta
-      const datosFacultad = {
-        nombre: facultadActualizada.nom_fac,
-        acronimo: facultadActualizada.acr_fac || "FISEI", // Valor por defecto si es null
-        logo:
-          facultadActualizada.url_log_fac || "https://imgur.com/fch1iy6.png", // Valor por defecto si es null
-      };
-
-      res.status(200).json(datosFacultad);
+      return res.status(200).json({
+        nombre: facultadActualizada.name,
+        acronimo: facultadActualizada.acronym || "FISEI",
+        logo: facultadActualizada.logoUrl || "https://imgur.com/fch1iy6.png",
+      });
     } catch (error) {
       console.error("Error al actualizar datos de la facultad:", error);
-      res.status(500).json({
+      return res.status(500).json({
         msg: "Error al actualizar datos de la facultad",
         error: error.message,
       });
@@ -349,7 +282,6 @@ class MVAController {
   }
 }
 
-// Exportamos las funciones
 module.exports = {
   obtenerMVA: MVAController.obtenerMVA,
   actualizarMVA: MVAController.actualizarMVA,

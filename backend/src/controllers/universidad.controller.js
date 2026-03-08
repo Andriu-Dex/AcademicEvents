@@ -8,9 +8,9 @@ const { prisma } = require("../config/db");
 const getUniversidadPrincipal = async (req, res) => {
   try {
     // Obtenemos la primera universidad (asumiendo que solo hay una)
-    const universidad = await prisma.universidad.findFirst({
+    const universidad = await prisma.university.findFirst({
       where: {
-        est_uni: true,
+        isActive: true,
       },
     });
 
@@ -56,9 +56,9 @@ const updateUniversidadDatos = async (req, res) => {
     }
 
     // Verificamos que la universidad exista
-    const universidadExistente = await prisma.universidad.findUnique({
+    const universidadExistente = await prisma.university.findUnique({
       where: {
-        id_uni,
+        id: id_uni,
       },
     });
 
@@ -69,18 +69,18 @@ const updateUniversidadDatos = async (req, res) => {
     }
 
     // Actualizamos los datos
-    const universidadActualizada = await prisma.universidad.update({
+    const universidadActualizada = await prisma.university.update({
       where: {
-        id_uni,
+        id: id_uni,
       },
       data: {
-        nom_uni: nom_uni || universidadExistente.nom_uni,
-        acr_uni: acr_uni || universidadExistente.acr_uni,
-        url_log_uni: url_log_uni || universidadExistente.url_log_uni,
-        url_web_uni: url_web_uni || universidadExistente.url_web_uni,
-        dir_uni: dir_uni || universidadExistente.dir_uni,
-        tel_uni: tel_uni || universidadExistente.tel_uni,
-        cor_uni: cor_uni || universidadExistente.cor_uni,
+        name: nom_uni || universidadExistente.name,
+        acronym: acr_uni || universidadExistente.acronym,
+        logoUrl: url_log_uni || universidadExistente.logoUrl,
+        websiteUrl: url_web_uni || universidadExistente.websiteUrl,
+        address: dir_uni || universidadExistente.address,
+        phone: tel_uni || universidadExistente.phone,
+        email: cor_uni || universidadExistente.email,
       },
     });
 

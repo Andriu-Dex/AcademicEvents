@@ -21,7 +21,7 @@ class EmailVerificationService {
     try {
       // Crear token de verificación
       const token = await this.tokenService.crearToken({
-        idCuenta: cuenta.id_cue,
+        idCuenta: cuenta.id,
         tipoToken: "VERIFICAR_CORREO",
         ip,
       });
@@ -33,14 +33,14 @@ class EmailVerificationService {
       // Obtener plantilla de correo
       const { asunto, cuerpoHtml } =
         this.emailTemplateService.obtenerPlantillaVerificacion({
-          nombre: cuenta.usuario?.nom_usu || "Usuario",
+          nombre: cuenta.user?.firstName || "Usuario",
           urlVerificacion,
           token: token.tok_val,
         });
 
       // Enviar correo electrónico
       await this.emailTemplateService.enviarEmail({
-        destinatario: cuenta.cor_usu,
+        destinatario: cuenta.email,
         asunto,
         cuerpoHtml,
       });
@@ -185,18 +185,18 @@ class EmailVerificationService {
       });
 
       // Obtener la información completa de la cuenta para generar el JWT
-      const cuentaCompleta = await prisma.cuenta.findUnique({
-        where: { id_cue: resultadoValidacion.token.id_cue_per },
+      const accountComplete = await prisma.account.findUnique({
+        where: { id: resultadoValidacion.token.id_cue_per },
         include: {
-          usuario: true,
+          user: true,
         },
       });
 
       // Generar token JWT para autenticación automática
       const jwtToken = jwt.sign(
         {
-          id: cuentaCompleta.id_cue,
-          rol_usu: cuentaCompleta.rol_usu,
+          id: accountComplete.id,
+          rol_usu: accountComplete.role,
         },
         process.env.JWT_SECRET,
         { expiresIn: "2h" }
@@ -212,11 +212,11 @@ class EmailVerificationService {
         // Datos de autenticación para login automático
         authToken: jwtToken,
         usuario: {
-          id: cuentaCompleta.id_cue,
-          correo: cuentaCompleta.cor_usu,
-          rol_usu: cuentaCompleta.rol_usu,
-          nom_usu: cuentaCompleta.usuario.nom_usu,
-          ape_usu: cuentaCompleta.usuario.ape_usu,
+          id: accountComplete.id,
+          correo: accountComplete.email,
+          rol_usu: accountComplete.role,
+          nom_usu: accountComplete.user.firstName,
+          ape_usu: accountComplete.user.lastName,
         },
       };
     } catch (error) {
@@ -278,7 +278,7 @@ class EmailVerificationService {
         };
       }
 
-      if (cuenta.est_ver_cor) {
+      if (cuenta.isEmailVerified) {
         return {
           success: false,
           message: "Esta cuenta ya ha sido verificada",
@@ -287,12 +287,12 @@ class EmailVerificationService {
 
       // Invalidar tokens anteriores del mismo tipo
       await this.tokenService.invalidarTokensAnteriores(
-        cuenta.id_cue,
+        account.id,
         "VERIFICAR_CORREO"
       );
 
       // Enviar nueva verificación
-      return await this.enviarVerificacion(cuenta, ip);
+      return await this.enviarVerificacion(account, ip);
     } catch (error) {
       console.error("Error al reenviar verificación:", error);
       throw new Error("Error al reenviar el correo de verificación");
@@ -317,15 +317,15 @@ class EmailVerificationService {
       console.log("Cuenta encontrada:", cuenta ? "Sí" : "No");
 
       if (cuenta) {
-        console.log("ID Cuenta:", cuenta.id_cue);
-        console.log("Correo actual:", cuenta.cor_usu);
-        console.log("Verificada:", cuenta.est_ver_cor);
-        console.log("Usuario relacionado:", cuenta.usuario ? "Sí" : "No");
+        console.log("ID Cuenta:", cuenta.id);
+        console.log("Correo actual:", cuenta.email);
+        console.log("Verificada:", cuenta.isEmailVerified);
+        console.log("Usuario relacionado:", cuenta.user ? "Sí" : "No");
 
-        if (cuenta.usuario) {
-          console.log("ID Usuario:", cuenta.usuario.id_usu);
-          console.log("Nombre:", cuenta.usuario.nom_usu);
-          console.log("Carrera ID:", cuenta.usuario.id_car_est || "No tiene");
+        if (cuenta.user) {
+          console.log("ID Usuario:", cuenta.user.id);
+          console.log("Nombre:", cuenta.user.firstName);
+          console.log("Carrera ID:", cuenta.user.careerId || "No tiene");
         }
       }
 
@@ -337,7 +337,7 @@ class EmailVerificationService {
       }
 
       // 2. Verificar que la cuenta no esté verificada aún
-      if (cuenta.est_ver_cor) {
+      if (cuenta.isEmailVerified) {
         return {
           success: false,
           message: "No se puede corregir el correo de una cuenta ya verificada",
@@ -356,7 +356,7 @@ class EmailVerificationService {
 
       // 4. Determinar el tipo de cuenta basado en el nuevo correo
       const esUTA = correoNuevo.endsWith("@uta.edu.ec");
-      const nuevoRol = esUTA ? "ESTUDIANTE" : "GENERAL"; // 5. Actualizar en transacción para garantizar atomicidad
+      const nuevoRol = esUTA ? "STUDENT" : "GENERAL"; // 5. Actualizar en transacción para garantizar atomicidad
       console.log("=== Iniciando transacción ===");
       console.log("Es correo UTA:", esUTA);
       console.log("Nuevo rol:", nuevoRol);
@@ -366,39 +366,39 @@ class EmailVerificationService {
         // 5.1 Actualizar la carrera del usuario si es necesario
         if (esUTA && carreraNueva) {
           console.log("Actualizando usuario con carrera:", carreraNueva);
-          await prisma.usuario.update({
-            where: { id_usu: cuenta.usuario.id_usu },
-            data: { id_car_est: carreraNueva },
+          await prisma.user.update({
+            where: { id: account.user.id },
+            data: { careerId: carreraNueva },
           });
         } else if (!esUTA) {
           // Si cambia a correo no institucional, quitar la carrera
           console.log("Quitando carrera del usuario (correo no institucional)");
-          await prisma.usuario.update({
-            where: { id_usu: cuenta.usuario.id_usu },
-            data: { id_car_est: null },
+          await prisma.user.update({
+            where: { id: account.user.id },
+            data: { careerId: null },
           });
         }
 
         // 5.2 Actualizar el correo y rol en la cuenta
         console.log("Actualizando correo y rol de la cuenta");
-        const cuentaActualizada = await prisma.cuenta.update({
-          where: { id_cue: cuenta.id_cue },
+        const accountUpdated = await prisma.account.update({
+          where: { id: account.id },
           data: {
-            cor_usu: correoNuevo,
-            rol_usu: nuevoRol,
+            email: correoNuevo,
+            role: nuevoRol,
           },
-          include: { usuario: true },
+          include: { user: true },
         });
 
-        console.log("Cuenta actualizada:", cuentaActualizada.id_cue);
-        return cuentaActualizada;
+        console.log("Cuenta actualizada:", accountUpdated.id);
+        return accountUpdated;
       });
 
       // 6. Invalidar tokens anteriores del mismo tipo
       console.log("=== Invalidando tokens anteriores ===");
       const tokensInvalidados =
         await this.tokenService.invalidarTokensAnteriores(
-          cuenta.id_cue,
+          cuenta.id,
           "VERIFICAR_CORREO"
         );
       console.log("Tokens invalidados:", tokensInvalidados);

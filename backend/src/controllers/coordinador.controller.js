@@ -34,8 +34,8 @@ const crearCoordinador = async (req, res) => {
     }
 
     // Verificar si ya existe un coordinador con el mismo correo
-    const coordinadorExistente = await prisma.coordinador.findUnique({
-      where: { cor_coo },
+    const coordinadorExistente = await prisma.coordinator.findUnique({
+      where: { email: cor_coo },
     });
 
     if (coordinadorExistente) {
@@ -45,13 +45,13 @@ const crearCoordinador = async (req, res) => {
     }
 
     // Crear coordinador
-    const nuevoCoordinador = await prisma.coordinador.create({
+    const nuevoCoordinador = await prisma.coordinator.create({
       data: {
-        nom_coo,
-        ape_coo,
-        cor_coo,
-        url_img_coo: url_img_coo || "https://i.imgur.com/user-default.png", // URL por defecto si no se proporciona
-        tit_coo,
+        firstName: nom_coo,
+        lastName: ape_coo,
+        email: cor_coo,
+        imageUrl: url_img_coo || "https://i.imgur.com/user-default.png", // URL por defecto si no se proporciona
+        title: tit_coo,
       },
     });
 
@@ -70,8 +70,8 @@ const crearCoordinador = async (req, res) => {
 // ==============================
 const obtenerCoordinadores = async (req, res) => {
   try {
-    const coordinadores = await prisma.coordinador.findMany({
-      orderBy: { nom_coo: "asc" },
+    const coordinadores = await prisma.coordinator.findMany({
+      orderBy: { firstName: "asc" },
     });
 
     res.status(200).json(coordinadores);
@@ -118,8 +118,8 @@ const actualizarCoordinador = async (req, res) => {
     }
 
     // Verificar que el coordinador existe
-    const coordinadorExistente = await prisma.coordinador.findUnique({
-      where: { id_coo: id },
+    const coordinadorExistente = await prisma.coordinator.findUnique({
+      where: { id },
     });
 
     if (!coordinadorExistente) {
@@ -127,9 +127,9 @@ const actualizarCoordinador = async (req, res) => {
     }
 
     // Verificar que el correo no está ya en uso por otro coordinador
-    if (cor_coo !== coordinadorExistente.cor_coo) {
-      const correoExistente = await prisma.coordinador.findUnique({
-        where: { cor_coo },
+    if (cor_coo !== coordinadorExistente.email) {
+      const correoExistente = await prisma.coordinator.findUnique({
+        where: { email: cor_coo },
       });
 
       if (correoExistente) {
@@ -140,14 +140,14 @@ const actualizarCoordinador = async (req, res) => {
     }
 
     // Actualizar coordinador
-    const actualizado = await prisma.coordinador.update({
-      where: { id_coo: id },
+    const actualizado = await prisma.coordinator.update({
+      where: { id },
       data: {
-        nom_coo,
-        ape_coo,
-        cor_coo,
-        url_img_coo: url_img_coo || coordinadorExistente.url_img_coo,
-        tit_coo,
+        firstName: nom_coo,
+        lastName: ape_coo,
+        email: cor_coo,
+        imageUrl: url_img_coo || coordinadorExistente.imageUrl,
+        title: tit_coo,
       },
     });
 
@@ -169,10 +169,10 @@ const eliminarCoordinador = async (req, res) => {
     const { id } = req.params;
 
     // Verificar que el coordinador existe
-    const coordinadorExistente = await prisma.coordinador.findUnique({
-      where: { id_coo: id },
+    const coordinadorExistente = await prisma.coordinator.findUnique({
+      where: { id },
       include: {
-        carreras: true,
+        careers: true,
       },
     });
 
@@ -181,15 +181,15 @@ const eliminarCoordinador = async (req, res) => {
     }
 
     // Verificar si tiene carreras asociadas
-    if (coordinadorExistente.carreras.length > 0) {
+    if (coordinadorExistente.careers.length > 0) {
       return res.status(400).json({
         msg: "No se puede eliminar el coordinador porque tiene carreras asociadas. Quite la asignación de las carreras primero.",
       });
     }
 
     // Eliminar coordinador
-    await prisma.coordinador.delete({
-      where: { id_coo: id },
+    await prisma.coordinator.delete({
+      where: { id },
     });
 
     res.status(200).json({ msg: "Coordinador eliminado correctamente" });

@@ -27,12 +27,12 @@ const actualizarImagenPerfil = async (req, res) => {
     }
 
     // Obtener cuenta y usuario asociado
-    const cuenta = await prisma.cuenta.findUnique({
-      where: { id_cue: id },
-      include: { usuario: true },
+    const cuenta = await prisma.account.findUnique({
+      where: { id: id },
+      include: { user: true },
     });
 
-    if (!cuenta || !cuenta.usuario) {
+    if (!cuenta || !cuenta.user) {
       return res.status(404).json({ msg: "Usuario no encontrado" });
     }
 
@@ -40,10 +40,10 @@ const actualizarImagenPerfil = async (req, res) => {
     const imgurUrl = await subirImagenAImgur(archivo);
 
     // Actualizar el campo img_per_usu del usuario
-    const usuarioActualizado = await prisma.usuario.update({
-      where: { id_usu: cuenta.usuario.id_usu },
+    const usuarioActualizado = await prisma.user.update({
+      where: { id: cuenta.user.id },
       data: {
-        img_per_usu: imgurUrl,
+        profileImage: imgurUrl,
       },
     });
 

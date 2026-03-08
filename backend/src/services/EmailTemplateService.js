@@ -32,19 +32,19 @@ class EmailTemplateService {
     try {
       if (!carreraId) return null;
 
-      const carrera = await this.prisma.carrera.findUnique({
-        where: { id_car: carreraId },
+      const career = await this.prisma.career.findUnique({
+        where: { id: carreraId },
         include: {
-          facultad: {
+          faculty: {
             select: {
-              nom_fac: true,
-              acr_fac: true,
+              name: true,
+              acronym: true,
             },
           },
         },
       });
 
-      return carrera?.facultad || null;
+      return career?.faculty || null;
     } catch (error) {
       console.error("Error al obtener información de facultad:", error);
       return null;
@@ -57,17 +57,17 @@ class EmailTemplateService {
    */
   async obtenerFacultadPorCorreo(correo) {
     try {
-      const cuenta = await this.prisma.cuenta.findUnique({
-        where: { cor_usu: correo },
+      const account = await this.prisma.account.findUnique({
+        where: { email: correo },
         include: {
-          usuario: {
+          user: {
             include: {
-              carrera: {
+              career: {
                 include: {
-                  facultad: {
+                  faculty: {
                     select: {
-                      nom_fac: true,
-                      acr_fac: true,
+                      name: true,
+                      acronym: true,
                     },
                   },
                 },
@@ -77,7 +77,7 @@ class EmailTemplateService {
         },
       });
 
-      return cuenta?.usuario?.carrera?.facultad || null;
+      return account?.user?.career?.faculty || null;
     } catch (error) {
       console.error("Error al obtener facultad por correo:", error);
       return null;

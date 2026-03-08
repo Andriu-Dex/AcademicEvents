@@ -13,6 +13,11 @@ const emailVerificationService = new EmailVerificationService(
   emailTemplateService
 );
 
+const ROLE_TO_LEGACY = {
+  GLOBAL_ADMIN: "ADMIN_GLOBAL",
+  GENERAL_ADMIN: "ADMIN_GENERAL",
+};
+
 // ===============================
 // Login de estudiante
 // ===============================
@@ -20,52 +25,59 @@ const login = async (req, res) => {
   const { correo, contrasena } = req.body;
 
   try {
-    // Ahora el correo está en el modelo cuenta, no en usuario
-    const cuenta = await prisma.cuenta.findUnique({
-      where: { cor_usu: correo },
+    // Buscar cuenta usando el índice compuesto tenantId_email
+    const account = await prisma.account.findUnique({
+      where: {
+        tenantId_email: {
+          tenantId: req.tenantId,
+          email: correo,
+        },
+      },
       include: {
-        usuario: true,
+        user: true,
       },
     });
 
     if (
-      !cuenta ||
-      !["ESTUDIANTE", "ADMIN_GLOBAL", "ADMIN_GENERAL", "GENERAL"].includes(
-        cuenta.rol_usu
+      !account ||
+      !["STUDENT", "GLOBAL_ADMIN", "GENERAL_ADMIN", "GENERAL"].includes(
+        account.role
       )
     ) {
       return res.status(401).json({ msg: "Credenciales inválidas" });
     }
 
     // Verificar si la cuenta está verificada
-    if (!cuenta.est_ver_cor) {
+    if (!account.isEmailVerified) {
       return res.status(403).json({
         msg: "Debes verificar tu correo antes de iniciar sesión",
         requireVerification: true,
-        email: cuenta.cor_usu,
+        email: account.email,
       });
     }
 
-    const passwordValid = await bcrypt.compare(contrasena, cuenta.con_usu);
+    const passwordValid = await bcrypt.compare(contrasena, account.password);
 
     if (!passwordValid) {
       return res.status(401).json({ msg: "Contraseña incorrecta" });
     }
 
+    const legacyRole = ROLE_TO_LEGACY[account.role] || account.role;
+
     const token = jwt.sign(
-      { id: cuenta.id_cue, rol_usu: cuenta.rol_usu },
+      { id: account.id, rol_usu: legacyRole },
       process.env.JWT_SECRET,
       { expiresIn: "2h" }
     );
     return res.status(200).json({
       token,
       usuario: {
-        id: cuenta.id_cue,
-        correo: cuenta.cor_usu,
-        rol_usu: cuenta.rol_usu,
-        nom_usu: cuenta.usuario.nom_usu,
-        ape_usu: cuenta.usuario.ape_usu,
-        img_per_usu: cuenta.usuario.img_per_usu,
+        id: account.id,
+        correo: account.email,
+        rol_usu: legacyRole,
+        nom_usu: account.user.firstName,
+        ape_usu: account.user.lastName,
+        img_per_usu: account.user.profileImageUrl,
       },
     });
   } catch (error) {
@@ -102,22 +114,32 @@ const registrarEstudiante = async (req, res) => {
     }
 
     // Validar si ya existe una cuenta con ese correo
-    const cuentaExistente = await prisma.cuenta.findUnique({
-      where: { cor_usu },
+    const accountExists = await prisma.account.findUnique({
+      where: {
+        tenantId_email: {
+          tenantId: req.tenantId,
+          email: cor_usu,
+        },
+      },
     });
 
-    if (cuentaExistente) {
+    if (accountExists) {
       return res
         .status(400)
         .json({ msg: "Ya existe una cuenta con este correo electrónico" });
     }
 
     // Validar si ya existe un usuario con esa cédula
-    const usuarioExistente = await prisma.usuario.findUnique({
-      where: { ced_usu },
+    const userExists = await prisma.user.findUnique({
+      where: {
+        tenantId_idNumber: {
+          tenantId: req.tenantId,
+          idNumber: ced_usu,
+        },
+      },
     });
 
-    if (usuarioExistente) {
+    if (userExists) {
       return res
         .status(400)
         .json({ msg: "Ya existe un usuario con esta cédula" });
@@ -127,7 +149,7 @@ const registrarEstudiante = async (req, res) => {
     const hashedPassword = await bcrypt.hash(con_usu, 10);
 
     // Determinar el rol según el tipo de correo
-    const rol = esUTA ? "ESTUDIANTE" : "GENERAL";
+    const rol = esUTA ? "STUDENT" : "GENERAL";
 
     // Obtener IP del cliente
     const ip = req.ip || req.connection.remoteAddress;
@@ -135,35 +157,37 @@ const registrarEstudiante = async (req, res) => {
     // Crear el usuario y la cuenta en una transacción
     const resultado = await prisma.$transaction(async (prisma) => {
       // 1. Crear el usuario
-      const nuevoUsuario = await prisma.usuario.create({
+      const newUser = await prisma.user.create({
         data: {
-          ced_usu,
-          nom_usu,
-          ape_usu,
-          cel_usu,
-          id_car_est: id_car_est || null, // la FK de carrera (puede ser null si no es institucional)
+          tenantId: req.tenantId,
+          idNumber: ced_usu,
+          firstName: nom_usu,
+          lastName: ape_usu,
+          phone: cel_usu,
+          careerId: id_car_est || null, // la FK de carrera (puede ser null si no es institucional)
         },
       });
 
       // 2. Crear la cuenta asociada al usuario
-      const nuevaCuenta = await prisma.cuenta.create({
+      const newAccount = await prisma.account.create({
         data: {
-          id_usu_per: nuevoUsuario.id_usu,
-          cor_usu,
-          con_usu: hashedPassword,
-          rol_usu: rol, // Asignar el rol según el tipo de correo
-          // est_ver_cor ya es false por defecto
+          tenantId: req.tenantId,
+          userId: newUser.id,
+          email: cor_usu,
+          password: hashedPassword,
+          role: rol, // Asignar el rol según el tipo de correo
+          // isEmailVerified ya es false por defecto
         },
       });
 
-      return { usuario: nuevoUsuario, cuenta: nuevaCuenta };
+      return { usuario: newUser, cuenta: newAccount };
     });
 
     // 3. Enviar correo de verificación
     await emailVerificationService.enviarVerificacion(
       {
-        id_cue: resultado.cuenta.id_cue,
-        cor_usu: resultado.cuenta.cor_usu,
+        id_cue: resultado.cuenta.id,
+        cor_usu: resultado.cuenta.email,
         usuario: resultado.usuario,
       },
       ip
@@ -172,7 +196,7 @@ const registrarEstudiante = async (req, res) => {
     return res.status(201).json({
       msg: "Cuenta creada. Revisa tu correo para activarla",
       requireVerification: true,
-      email: resultado.cuenta.cor_usu,
+      email: resultado.cuenta.email,
     });
   } catch (error) {
     console.error("Error al registrar usuario:", error);

@@ -239,7 +239,6 @@ function Home() {
       if (carreraUpdate.action === "created") {
         // Agregar nueva carrera solo si está activa
         if (carreraUpdate.data.est_car) {
-          console.log("🏠 Home: Agregando nueva carrera activa");
           setCarreras((prev) => [...prev, carreraUpdate.data]);
           // Actualizar contador de estadísticas
           setEstadisticasHome((prev) => ({
@@ -269,7 +268,6 @@ function Home() {
               );
             } else {
               // Agregar carrera que se acaba de activar
-              console.log("🏠 Home: Agregando carrera recién activada");
               setEstadisticasHome((prevStats) => ({
                 ...prevStats,
                 carreras: prevStats.carreras + 1,
@@ -278,7 +276,6 @@ function Home() {
             }
           } else {
             // Carrera está inactiva
-            console.log("🏠 Home: Carrera está inactiva");
             if (carreraExiste) {
               // Remover carrera que se desactivó
               setEstadisticasHome((prevStats) => ({
@@ -317,8 +314,7 @@ function Home() {
       }
     },
 
-    onSystemNotification: (notification) => {
-      console.log("🏠 Home: Notificación del sistema", notification);
+    onSystemNotification: () => {
       // showTemporaryNotification(notification.message, notification.type); // Comentado para evitar notificaciones de socket
     },
   });
@@ -361,7 +357,6 @@ function Home() {
         if (resMVA.data && resMVA.data.autoridades) {
           try {
             autoridades = JSON.parse(resMVA.data.autoridades);
-            console.log("Autoridades cargadas:", autoridades);
           } catch (error) {
             console.error("Error al parsear autoridades:", error);
           }

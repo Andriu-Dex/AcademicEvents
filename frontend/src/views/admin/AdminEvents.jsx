@@ -132,9 +132,76 @@ const getModalidadUI = (modalidad) => {
   }
 };
 
+const EVENT_STATUS_TO_LEGACY = {
+  ACTIVE: "ACTIVO",
+  INACTIVE: "INACTIVO",
+  FINISHED: "FINALIZADO",
+  CANCELLED: "CANCELADO",
+  SUSPENDED: "SUSPENDIDO",
+};
+
+const EVENT_TYPE_TO_LEGACY = {
+  COURSE: "CURSO",
+  CONGRESS: "CONGRESO",
+  WEBINAR: "WEBINAR",
+  TALK: "CHARLA",
+  SOCIALIZATION: "SOCIALIZACION",
+};
+
+const EVENT_MODALITY_TO_LEGACY = {
+  IN_PERSON: "PRESENCIAL",
+  VIRTUAL: "VIRTUAL",
+  HYBRID: "SEMIPRESENCIAL",
+};
+
+const normalizeEventForUI = (eve, index = 0) => {
+  const parsedPrice = Number(eve?.val_eve ?? eve?.price ?? 0);
+
+  return {
+    ...eve,
+    id_eve: eve?.id_eve || eve?.id || `evento-${index}`,
+    nom_eve: eve?.nom_eve || eve?.name || `Evento ${index + 1}`,
+    des_eve: eve?.des_eve ?? eve?.description ?? "",
+    tip_eve: eve?.tip_eve || EVENT_TYPE_TO_LEGACY[eve?.type] || eve?.type,
+    mod_eve:
+      eve?.mod_eve || EVENT_MODALITY_TO_LEGACY[eve?.modality] || eve?.modality,
+    est_eve:
+      eve?.est_eve || EVENT_STATUS_TO_LEGACY[eve?.status] || eve?.status,
+    fec_ini_eve: eve?.fec_ini_eve || eve?.startDate || null,
+    fec_fin_eve: eve?.fec_fin_eve || eve?.endDate || null,
+    fec_cre_eve:
+      eve?.fec_cre_eve || eve?.createdAt || eve?.fec_ini_eve || eve?.startDate,
+    dur_hor_eve:
+      eve?.dur_hor_eve ?? eve?.durationHours ?? eve?.dur_hrs_eve ?? null,
+    val_eve: Number.isFinite(parsedPrice) ? parsedPrice : 0,
+    cup_max_eve: eve?.cup_max_eve ?? eve?.maxCapacity ?? 0,
+    cup_dis_eve: eve?.cup_dis_eve ?? eve?.availableSpots ?? 0,
+    por_min_asi_eve: eve?.por_min_asi_eve ?? eve?.minAttendancePercent ?? null,
+    eve_des: eve?.eve_des ?? eve?.isFeatured ?? false,
+    img_por_eve: eve?.img_por_eve || eve?.coverImageUrl || eve?.coverImage || "",
+    eventos_curso: eve?.eventos_curso ||
+      (eve?.eventCourse
+        ? {
+            not_min_cur:
+              eve.eventCourse?.not_min_cur ?? eve.eventCourse?.minPassingGrade,
+            fec_fin_cur: eve.eventCourse?.fec_fin_cur || null,
+          }
+        : null),
+    eventos_carrera:
+      eve?.eventos_carrera ||
+      (Array.isArray(eve?.eventCareers)
+        ? eve.eventCareers.map((ec) => ({
+            ...ec,
+            carrera: ec?.carrera || ec?.career || null,
+          }))
+        : []),
+  };
+};
+
+const getCareerId = (career) => career?.id_car || career?.id || "";
+const getCareerName = (career) => career?.nom_car || career?.name || "Carrera";
+
 const AdminEvents = () => {
-  const [eventos, setEventos] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [carreras, setCarreras] = useState([]);
   const navigate = useNavigate();
 
@@ -194,15 +261,23 @@ const AdminEvents = () => {
   useEffect(() => {
     historialManager.limpiarHistorial();
   }, [historialManager]); // Aplicar ordenamiento híbrido con eventos editados recientemente
+  const eventosNormalizados = useMemo(
+    () =>
+      (Array.isArray(eventosFiltrados) ? eventosFiltrados : []).map((eve, i) =>
+        normalizeEventForUI(eve, i)
+      ),
+    [eventosFiltrados]
+  );
+
   const eventosConOrdenamientoHibrido = useMemo(() => {
-    if (!eventosFiltrados || eventosFiltrados.length === 0) return [];
+    if (eventosNormalizados.length === 0) return [];
 
     return historialManager.ordenarEventosConPaginacion(
-      eventosFiltrados,
+      eventosNormalizados,
       ordenamiento,
       currentPage
     );
-  }, [eventosFiltrados, ordenamiento, currentPage, historialManager]);
+  }, [eventosNormalizados, ordenamiento, currentPage, historialManager]);
 
   // Cargar carreras para el filtro
   const cargarCarreras = useCallback(async () => {
@@ -543,9 +618,12 @@ const AdminEvents = () => {
               >
                 <option value="">Todas las carreras</option>
                 <option value="GENERAL">Eventos generales</option>
-                {carreras.map((carrera) => (
-                  <option key={carrera.id_car} value={carrera.id_car}>
-                    {carrera.nom_car}
+                {carreras.map((carrera, index) => (
+                  <option
+                    key={`${getCareerId(carrera) || "career"}-${index}`}
+                    value={getCareerId(carrera)}
+                  >
+                    {getCareerName(carrera)}
                   </option>
                 ))}
               </select>
@@ -785,7 +863,7 @@ const AdminEvents = () => {
       ) : eventosFiltrados.length === 0 ? (
         <div className="admin-events-empty">
           <CalendarClock size={48} className="text-muted" />
-          {eventos.length === 0 ? (
+          {totalItems === 0 ? (
             <>
               <p>No hay eventos creados aún.</p>
               <button
@@ -858,7 +936,7 @@ const AdminEvents = () => {
                   >
                     {eve.val_eve === 0
                       ? "Gratuito"
-                      : `$${eve.val_eve.toFixed(2)}`}
+                      : `$${Number(eve.val_eve || 0).toFixed(2)}`}
                   </span>
                 </div>
                 <div className="contenedor-tipo-estrella-ae">

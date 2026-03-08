@@ -8,13 +8,25 @@ class EventoService {
       (import.meta.env.VITE_API_URL || "http://localhost:3000") + "/api";
   }
 
+  getTenantSlug() {
+    return (
+      localStorage.getItem("tenantSlug") ||
+      import.meta.env.VITE_TENANT_ID ||
+      "uta"
+    );
+  }
+
   /**
    * Obtiene los eventos destacados (máximo 8)
    * @returns {Promise<Array>} Lista de eventos destacados
    */
   async getEventosDestacados() {
     try {
-      const response = await fetch(`${this.baseURL}/eventos-destacados`);
+      const response = await fetch(`${this.baseURL}/eventos-destacados`, {
+        headers: {
+          "X-Tenant-ID": this.getTenantSlug(),
+        },
+      });
 
       if (!response.ok) {
         throw new Error(`Error ${response.status}: ${response.statusText}`);
@@ -49,6 +61,7 @@ class EventoService {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
+          "X-Tenant-ID": this.getTenantSlug(),
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(requestBody),
@@ -93,6 +106,7 @@ class EventoService {
 
       const response = await fetch(`${this.baseURL}/eventos`, {
         headers: {
+          "X-Tenant-ID": this.getTenantSlug(),
           Authorization: `Bearer ${token}`,
         },
       });

@@ -228,39 +228,39 @@ const crearEvento = async (req, res) => {
     const fechaInicial = parseUTCDate(fec_ini_eve);
     const fechaFinal = parseUTCDate(fec_fin_eve);
 
-    const nuevoEvento = await prisma.evento.create({
+    const nuevoEvento = await prisma.event.create({
       data: {
-        nom_eve,
-        des_eve,
-        tip_eve: tipoEventoFinal, // Usar tipo corregido
-        fec_ini_eve: fechaInicial,
-        val_eve: valNum,
-        dur_hor_eve: durHor,
-        por_min_asi_eve: porcMinAsi,
-        fec_fin_eve: fechaFinal,
-        mod_eve: mod_eve || "PRESENCIAL", // Usar valor por defecto si no se proporciona
-        cup_max_eve: cupoMax,
-        cup_dis_eve: cupoMax, // ✅ Inicialmente disponible = máximo
-        img_por_eve: imgUrl,
-        est_eve: "ACTIVO", // Estado por defecto según nuevo enum
-        id_cue_cre_eve: req.usuario.id, // ID de la cuenta creadora
+        title: nom_eve,
+        description: des_eve,
+        type: tipoEventoFinal, // Usar tipo corregido
+        startDate: fechaInicial,
+        value: valNum,
+        durationHours: durHor,
+        minAttendancePercentage: porcMinAsi,
+        endDate: fechaFinal,
+        modality: mod_eve || "IN_PERSON", // Usar valor por defecto si no se proporciona
+        maxCapacity: cupoMax,
+        availableSpots: cupoMax, // ✅ Inicialmente disponible = máximo
+        coverImage: imgUrl,
+        status: "ACTIVE", // Estado por defecto según nuevo enum
+        creatorAccountId: req.usuario.id, // ID de la cuenta creadora
       },
     });
 
-    // Si es CURSO, crear registro en evento_curso con la nota mínima
+    // Si es CURSO, crear registro en eventCourse con la nota mínima
     let datosCurso = null;
     if (tipoEventoFinal === "CURSO" && notaMin !== undefined) {
-      datosCurso = await crearEventoCurso(nuevoEvento.id_eve, notaMin);
+      datosCurso = await crearEventoCurso(nuevoEvento.id, notaMin);
     }
 
     // 🎯 ASOCIAR CARRERAS: Solo si NO es evento general (público)
     if (!esEventoGeneral && carrerasIds.length > 0) {
       await Promise.all(
         carrerasIds.map(async (carreraId) => {
-          await prisma.evento_carrera.create({
+          await prisma.eventCareer.create({
             data: {
-              id_car_aso: carreraId,
-              id_eve_aso: nuevoEvento.id_eve,
+              careerId: carreraId,
+              eventId: nuevoEvento.id,
             },
           });
         })
@@ -269,13 +269,13 @@ const crearEvento = async (req, res) => {
 
     res.status(201).json({
       ...nuevoEvento,
-      eventos_curso: datosCurso,
+      eventCourse: datosCurso,
     });
 
     // 🔌 Notificar a todos los clientes sobre el nuevo evento
     socketService.notifyEventChange("created", {
       ...nuevoEvento,
-      eventos_curso: datosCurso,
+      eventCourse: datosCurso,
     });
   } catch (error) {
     console.error("Error al crear evento:", error);
@@ -286,12 +286,12 @@ const crearEvento = async (req, res) => {
   }
 };
 
-//Crea un registro en evento_curso vinculado a un evento
+//Crea un registro en eventCourse vinculado a un evento
 const crearEventoCurso = async (eventoId, not_min_cur) => {
-  return prisma.evento_curso.create({
+  return prisma.eventCourse.create({
     data: {
-      id_eve_cur: eventoId,
-      not_min_cur: Number(not_min_cur),
+      eventId: eventoId,
+      minGrade: Number(not_min_cur),
     },
   });
 };
@@ -299,14 +299,14 @@ const crearEventoCurso = async (eventoId, not_min_cur) => {
 // Obtener todos los eventos
 const obtenerEventos = async (req, res) => {
   try {
-    const eventos = await prisma.evento.findMany({
+    const eventos = await prisma.event.findMany({
       include: {
-        eventos_carrera: {
-          include: { carrera: { select: { nom_car: true, id_car: true } } },
+        eventCareers: {
+          include: { career: { select: { name: true, id: true } } },
         },
-        eventos_curso: true, // esto ya es objeto o null, no array
+        eventCourse: true, // esto ya es objeto o null, no array
       },
-      orderBy: { fec_ini_eve: "asc" },
+      orderBy: { startDate: "asc" },
     });
 
     // 🔧 AUTO-CORRECCIÓN MASIVA DE CUPOS INCONSISTENTES
@@ -319,47 +319,47 @@ const obtenerEventos = async (req, res) => {
       eventos.map(async (evento) => {
         try {
           // Contar inscripciones que ocupan cupo
-          const inscripcionesOcupandoCupo = await prisma.inscripcion.count({
+          const inscripcionesOcupandoCupo = await prisma.registration.count({
             where: {
-              id_eve_ins: evento.id_eve,
-              cup_ocu: true,
+              eventId: evento.id,
+              occupiesSpot: true,
             },
           });
 
-          const cupoMaximo = evento.cup_max_eve;
-          const cupoDisponibleActual = evento.cup_dis_eve;
+          const cupoMaximo = evento.maxCapacity;
+          const cupoDisponibleActual = evento.availableSpots;
           const cupoDisponibleCorrecto = Math.max(
             0,
             cupoMaximo - inscripcionesOcupandoCupo
           );
 
           conditionalCuposLog(
-            `Evento ${evento.nom_eve}: Cupo actual=${cupoDisponibleActual}, Cupo calculado=${cupoDisponibleCorrecto}`
+            `Evento ${evento.title}: Cupo actual=${cupoDisponibleActual}, Cupo calculado=${cupoDisponibleCorrecto}`
           );
 
           // Si hay inconsistencia, corregir automáticamente
           if (cupoDisponibleActual !== cupoDisponibleCorrecto) {
             conditionalCuposLog(
-              `⚠️ Corrigiendo cupo para evento ${evento.nom_eve}...`
+              `⚠️ Corrigiendo cupo para evento ${evento.title}...`
             );
 
             // Actualizar en la base de datos
-            const eventoCorregido = await prisma.evento.update({
-              where: { id_eve: evento.id_eve },
-              data: { cup_dis_eve: cupoDisponibleCorrecto },
+            const eventoCorregido = await prisma.event.update({
+              where: { id: evento.id },
+              data: { availableSpots: cupoDisponibleCorrecto },
             });
 
             // Retornar el evento con los cupos corregidos
             return {
               ...evento,
-              cup_dis_eve: cupoDisponibleCorrecto,
+              availableSpots: cupoDisponibleCorrecto,
             };
           }
 
           return evento;
         } catch (error) {
           console.error(
-            `❌ Error en auto-corrección de cupos para evento ${evento.id_eve}:`,
+            `❌ Error en auto-corrección de cupos para evento ${evento.id}:`,
             error
           );
           return evento; // Retornar el evento original si falla la corrección
@@ -417,13 +417,13 @@ const actualizarEvento = async (req, res) => {
     const { id } = req.params;
 
     // 5. Busca el evento en la base de datos; si no existe, devuelve error 404
-    const eventoExistente = await prisma.evento.findUnique({
-      where: { id_eve: id },
+    const eventoExistente = await prisma.event.findUnique({
+      where: { id: id },
     });
     if (!eventoExistente) {
       return res.status(404).json({ msg: "Evento no encontrado para editar" });
     } // --- GESTIÓN DE IMAGENES --- //
-    let imgUrl = eventoExistente.img_por_eve; // Por defecto, se queda la actual
+    let imgUrl = eventoExistente.coverImage; // Por defecto, se queda la actual
 
     if (req.file) {
       try {
@@ -448,12 +448,12 @@ const actualizarEvento = async (req, res) => {
     } catch (e) {
       return res.status(400).json({ msg: e.message });
     } // 6. Actualiza evento principal
-    // Calcular cup_dis_eve si se actualiza cup_max_eve
-    let cupoDisponibleActualizado = eventoExistente.cup_dis_eve;
+    // Calcular availableSpots si se actualiza maxCapacity
+    let cupoDisponibleActualizado = eventoExistente.availableSpots;
     if (dataEvento.cup_max_eve !== undefined) {
       const nuevoCupoMax = Number(dataEvento.cup_max_eve);
-      const cupoMaxAnterior = eventoExistente.cup_max_eve;
-      const cupoDisponibleAnterior = eventoExistente.cup_dis_eve;
+      const cupoMaxAnterior = eventoExistente.maxCapacity;
+      const cupoDisponibleAnterior = eventoExistente.availableSpots;
 
       // Calcular cuántos cupos están ocupados actualmente
       const cuposOcupados = cupoMaxAnterior - cupoDisponibleAnterior;
@@ -480,68 +480,68 @@ const actualizarEvento = async (req, res) => {
     // Las carreras asociadas definen QUIÉN puede acceder (con carreras = específico, sin carreras = público)
     let tipoEventoFinal = dataEvento.tip_eve || eventoExistente.tip_eve; // Mantener el tipo original
 
-    const eventoActualizado = await prisma.evento.update({
-      where: { id_eve: id },
+    const eventoActualizado = await prisma.event.update({
+      where: { id: id },
       data: {
         ...dataEvento,
-        nom_eve: dataEvento.nom_eve || eventoExistente.nom_eve,
-        des_eve: dataEvento.des_eve || eventoExistente.des_eve,
-        tip_eve: tipoEventoFinal, // Usar tipo corregido
-        val_eve:
+        title: dataEvento.nom_eve || eventoExistente.title,
+        description: dataEvento.des_eve || eventoExistente.description,
+        type: tipoEventoFinal, // Usar tipo corregido
+        value:
           dataEvento.val_eve !== undefined
             ? Number(dataEvento.val_eve)
-            : eventoExistente.val_eve,
-        fec_ini_eve: dataEvento.fec_ini_eve
+            : eventoExistente.value,
+        startDate: dataEvento.fec_ini_eve
           ? parseUTCDate(dataEvento.fec_ini_eve)
-          : eventoExistente.fec_ini_eve,
-        fec_fin_eve: dataEvento.fec_fin_eve
+          : eventoExistente.startDate,
+        endDate: dataEvento.fec_fin_eve
           ? parseUTCDate(dataEvento.fec_fin_eve)
-          : eventoExistente.fec_fin_eve,
-        dur_hor_eve:
+          : eventoExistente.endDate,
+        durationHours:
           dataEvento.dur_hor_eve !== undefined
             ? Number(dataEvento.dur_hor_eve)
-            : eventoExistente.dur_hor_eve,
-        por_min_asi_eve:
+            : eventoExistente.durationHours,
+        minAttendancePercentage:
           dataEvento.por_min_asi_eve !== undefined
             ? Number(dataEvento.por_min_asi_eve)
-            : eventoExistente.por_min_asi_eve,
-        cup_max_eve:
+            : eventoExistente.minAttendancePercentage,
+        maxCapacity:
           dataEvento.cup_max_eve !== undefined
             ? Number(dataEvento.cup_max_eve)
-            : eventoExistente.cup_max_eve,
-        cup_dis_eve: cupoDisponibleActualizado,
-        est_eve: dataEvento.est_eve || eventoExistente.est_eve,
-        img_por_eve: imgUrl,
+            : eventoExistente.maxCapacity,
+        availableSpots: cupoDisponibleActualizado,
+        status: dataEvento.est_eve || eventoExistente.status,
+        coverImage: imgUrl,
       },
     });
 
     // Verifica si el evento ANTES era CURSO y AHORA ya NO lo es
     if (
-      eventoExistente.tip_eve === "CURSO" &&
-      eventoActualizado.tip_eve !== "CURSO"
+      eventoExistente.type === "CURSO" &&
+      eventoActualizado.type !== "CURSO"
     ) {
-      // Elimina el registro de evento_curso si existe
-      await prisma.evento_curso.deleteMany({
-        where: { id_eve_cur: id },
+      // Elimina el registro de eventCourse si existe
+      await prisma.eventCourse.deleteMany({
+        where: { eventId: id },
       });
     }
 
     // 6.1. Si el evento es de tipo CURSO y hay datos de curso para actualizar...
     let cursoActualizado = null; // Inicializa como null para evitar errores si no es CURSO
     if (
-      eventoActualizado.tip_eve === "CURSO" &&
+      eventoActualizado.type === "CURSO" &&
       Object.keys(dataCurso).length > 0
     ) {
-      // 6.1.1. Busca los datos actuales del curso (evento_curso) relacionados a ese evento
+      // 6.1.1. Busca los datos actuales del curso (eventCourse) relacionados a ese evento
 
-      let cursoBD = await prisma.evento_curso.findUnique({
-        where: { id_eve_cur: id },
+      let cursoBD = await prisma.eventCourse.findUnique({
+        where: { eventId: id },
       });
 
       // 7. Valida los datos (los nuevos o los actuales si no vienen en el body)
       try {
         validarCurso(
-          Number(dataCurso.not_min_cur ?? (cursoBD && cursoBD.not_min_cur))
+          Number(dataCurso.not_min_cur ?? (cursoBD && cursoBD.minGrade))
         );
       } catch (e) {
         // 8. Si no pasa la validación, devuelve un error 400 con el mensaje
@@ -550,55 +550,55 @@ const actualizarEvento = async (req, res) => {
 
       if (cursoBD) {
         // Si existe, actualiza
-        cursoActualizado = await prisma.evento_curso.update({
-          where: { id_eve_cur: id },
+        cursoActualizado = await prisma.eventCourse.update({
+          where: { eventId: id },
           data: {
-            not_min_cur:
+            minGrade:
               dataCurso.not_min_cur !== undefined
                 ? Number(dataCurso.not_min_cur)
-                : cursoBD.not_min_cur,
+                : cursoBD.minGrade,
           },
         });
       } else {
-        // Si NO existe, CREA evento_curso
-        cursoActualizado = await prisma.evento_curso.create({
+        // Si NO existe, CREA eventCourse
+        cursoActualizado = await prisma.eventCourse.create({
           data: {
-            id_eve_cur: id,
-            not_min_cur: Number(dataCurso.not_min_cur),
+            eventId: id,
+            minGrade: Number(dataCurso.not_min_cur),
           },
         });
       }
     }
 
     // Eliminar todas las asociaciones existentes
-    await prisma.evento_carrera.deleteMany({
-      where: { id_eve_aso: id },
+    await prisma.eventCareer.deleteMany({
+      where: { eventId: id },
     });
 
     // 🎯 ASOCIAR CARRERAS: Solo si NO es evento general (público)
     if (!esEventoGeneral && carrerasIds.length > 0) {
       await Promise.all(
         carrerasIds.map(async (carreraId) => {
-          await prisma.evento_carrera.create({
+          await prisma.eventCareer.create({
             data: {
-              id_car_aso: carreraId,
-              id_eve_aso: id,
+              careerId: carreraId,
+              eventId: id,
             },
           });
         })
       );
     }
 
-    // 9. Si todo está OK, actualiza los datos del curso en evento_curso
+    // 9. Si todo está OK, actualiza los datos del curso en eventCourse
     res.status(200).json({
       ...eventoActualizado,
-      eventos_curso: cursoActualizado,
+      eventCourse: cursoActualizado,
     });
 
     // 🔌 Notificar a todos los clientes sobre la actualización del evento
     socketService.notifyEventChange("updated", {
       ...eventoActualizado,
-      eventos_curso: cursoActualizado,
+      eventCourse: cursoActualizado,
     });
   } catch (error) {
     res.status(500).json({
@@ -615,27 +615,27 @@ const eliminarEvento = async (req, res) => {
     const { id } = req.params;
 
     // 1. Busca el evento primero
-    const evento = await prisma.evento.findUnique({ where: { id_eve: id } });
+    const evento = await prisma.event.findUnique({ where: { id: id } });
     if (!evento) {
       return res.status(404).json({ msg: "Evento no encontrado" });
-    } // 2. Si el evento es CURSO, elimina primero el registro en evento_curso
-    if (evento.tip_eve === "CURSO") {
-      await prisma.evento_curso.deleteMany({ where: { id_eve_cur: id } });
+    } // 2. Si el evento es CURSO, elimina primero el registro en eventCourse
+    if (evento.type === "CURSO") {
+      await prisma.eventCourse.deleteMany({ where: { eventId: id } });
       // (Usamos deleteMany por si acaso, aunque debería haber solo uno)
     }
 
     // Eliminar todas las relaciones evento-carrera
-    await prisma.evento_carrera.deleteMany({ where: { id_eve_aso: id } });
+    await prisma.eventCareer.deleteMany({ where: { eventId: id } });
 
     // 3. Elimina el evento
-    await prisma.evento.delete({ where: { id_eve: id } });
+    await prisma.event.delete({ where: { id: id } });
 
     res.status(200).json({ msg: "Evento eliminado correctamente" });
 
     // 🔌 Notificar a todos los clientes sobre la eliminación del evento
     socketService.notifyEventChange("deleted", {
-      id_eve: id,
-      nom_eve: evento.nom_eve,
+      id: id,
+      title: evento.title,
     });
   } catch (error) {
     res.status(500).json({
@@ -650,12 +650,12 @@ const obtenerEventoPorId = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const evento = await prisma.evento.findUnique({
-      where: { id_eve: id },
+    const evento = await prisma.event.findUnique({
+      where: { id: id },
       include: {
-        eventos_curso: true,
-        eventos_carrera: {
-          include: { carrera: { select: { nom_car: true, id_car: true } } },
+        eventCourse: true,
+        eventCareers: {
+          include: { career: { select: { name: true, id: true } } },
         },
       },
     });
@@ -666,22 +666,22 @@ const obtenerEventoPorId = async (req, res) => {
 
     // � SUPER DEBUG: Verificar datos del evento específico
     console.log(`🔥 [EVENTO CONTROLLER DEBUG] Evento obtenido por ID:`);
-    console.log(`  - nom_eve: "${evento.nom_eve}"`);
-    console.log(`  - tip_eve: "${evento.tip_eve}"`);
+    console.log(`  - title: "${evento.title}"`);
+    console.log(`  - type: "${evento.type}"`);
     console.log(
-      `  - por_min_asi_eve: "${
-        evento.por_min_asi_eve
-      }" (${typeof evento.por_min_asi_eve})`
+      `  - minAttendancePercentage: "${
+        evento.minAttendancePercentage
+      }" (${typeof evento.minAttendancePercentage})`
     );
-    console.log(`  - eventos_curso: ${JSON.stringify(evento.eventos_curso)}`);
+    console.log(`  - eventCourse: ${JSON.stringify(evento.eventCourse)}`);
 
-    if (evento.por_min_asi_eve === undefined) {
-      console.log(`❌ [EVENTO CONTROLLER DEBUG] por_min_asi_eve es UNDEFINED!`);
-    } else if (evento.por_min_asi_eve === null) {
-      console.log(`❌ [EVENTO CONTROLLER DEBUG] por_min_asi_eve es NULL!`);
+    if (evento.minAttendancePercentage === undefined) {
+      console.log(`❌ [EVENTO CONTROLLER DEBUG] minAttendancePercentage es UNDEFINED!`);
+    } else if (evento.minAttendancePercentage === null) {
+      console.log(`❌ [EVENTO CONTROLLER DEBUG] minAttendancePercentage es NULL!`);
     } else {
       console.log(
-        `✅ [EVENTO CONTROLLER DEBUG] por_min_asi_eve tiene valor: ${evento.por_min_asi_eve}`
+        `✅ [EVENTO CONTROLLER DEBUG] minAttendancePercentage tiene valor: ${evento.minAttendancePercentage}`
       );
     }
 
@@ -691,15 +691,15 @@ const obtenerEventoPorId = async (req, res) => {
       console.log(`🔄 Verificando cupos para evento ID: ${id}`);
 
       // Contar inscripciones que ocupan cupo
-      const inscripcionesOcupandoCupo = await prisma.inscripcion.count({
+      const inscripcionesOcupandoCupo = await prisma.registration.count({
         where: {
-          id_eve_ins: id,
-          cup_ocu: true,
+          eventId: id,
+          occupiesSpot: true,
         },
       });
 
-      const cupoMaximo = evento.cup_max_eve;
-      const cupoDisponibleActual = evento.cup_dis_eve;
+      const cupoMaximo = evento.maxCapacity;
+      const cupoDisponibleActual = evento.availableSpots;
       const cupoDisponibleCorrecto = Math.max(
         0,
         cupoMaximo - inscripcionesOcupandoCupo
@@ -711,16 +711,16 @@ const obtenerEventoPorId = async (req, res) => {
 
       // Si hay inconsistencia, corregir automáticamente
       if (cupoDisponibleActual !== cupoDisponibleCorrecto) {
-        console.log(`⚠️ Corrigiendo cupo para evento ${evento.nom_eve}...`);
+        console.log(`⚠️ Corrigiendo cupo para evento ${evento.title}...`);
 
         // Actualizar en la base de datos
-        const eventoCorregido = await prisma.evento.update({
-          where: { id_eve: id },
-          data: { cup_dis_eve: cupoDisponibleCorrecto },
+        const eventoCorregido = await prisma.event.update({
+          where: { id: id },
+          data: { availableSpots: cupoDisponibleCorrecto },
           include: {
-            eventos_curso: true,
-            eventos_carrera: {
-              include: { carrera: { select: { nom_car: true, id_car: true } } },
+            eventCourse: true,
+            eventCareers: {
+              include: { career: { select: { name: true, id: true } } },
             },
           },
         });
@@ -728,9 +728,9 @@ const obtenerEventoPorId = async (req, res) => {
         // Retornar el evento con los cupos corregidos
         console.log(`🔥 [EVENTO FINAL DEBUG] Enviando evento corregido:`);
         console.log(
-          `  - por_min_asi_eve: "${
-            eventoCorregido.por_min_asi_eve
-          }" (${typeof eventoCorregido.por_min_asi_eve})`
+          `  - minAttendancePercentage: "${
+            eventoCorregido.minAttendancePercentage
+          }" (${typeof eventoCorregido.minAttendancePercentage})`
         );
         return res.status(200).json(eventoCorregido);
       }
@@ -741,9 +741,9 @@ const obtenerEventoPorId = async (req, res) => {
 
     console.log(`🔥 [EVENTO FINAL DEBUG] Enviando evento original:`);
     console.log(
-      `  - por_min_asi_eve: "${
-        evento.por_min_asi_eve
-      }" (${typeof evento.por_min_asi_eve})`
+      `  - minAttendancePercentage: "${
+        evento.minAttendancePercentage
+      }" (${typeof evento.minAttendancePercentage})`
     );
     res.status(200).json(evento);
   } catch (error) {
@@ -770,13 +770,13 @@ const obtenerEventosPorTipo = async (req, res) => {
     if (!tiposValidos.includes(tipo.toUpperCase())) {
       return res.status(400).json({ msg: "Tipo de evento no válido" });
     } // Busca todos los eventos de ese tipo, ordenados por fecha
-    const eventos = await prisma.evento.findMany({
-      where: { tip_eve: tipo.toUpperCase() },
-      orderBy: { fec_ini_eve: "asc" },
+    const eventos = await prisma.event.findMany({
+      where: { type: tipo.toUpperCase() },
+      orderBy: { startDate: "asc" },
       include: {
-        eventos_curso: true, // Si quieres incluir datos de curso (serán null si no es CURSO)
-        eventos_carrera: {
-          include: { carrera: { select: { nom_car: true, id_car: true } } },
+        eventCourse: true, // Si quieres incluir datos de curso (serán null si no es CURSO)
+        eventCareers: {
+          include: { career: { select: { name: true, id: true } } },
         },
       },
     });
@@ -842,31 +842,31 @@ const verificarYCorregirCupos = async (req, res) => {
     console.log(`⚙️ Iniciando verificación de cupos para evento ID: ${id}`);
 
     // 1. Verificar que el evento existe
-    const evento = await prisma.evento.findUnique({
-      where: { id_eve: id },
+    const evento = await prisma.event.findUnique({
+      where: { id: id },
     });
 
     if (!evento) {
       return res.status(404).json({ msg: "Evento no encontrado" });
     }
 
-    console.log(`Evento encontrado: ${evento.nom_eve}`);
-    console.log(`Cupo máximo actual: ${evento.cup_max_eve}`);
-    console.log(`Cupo disponible actual: ${evento.cup_dis_eve}`);
+    console.log(`Evento encontrado: ${evento.title}`);
+    console.log(`Cupo máximo actual: ${evento.maxCapacity}`);
+    console.log(`Cupo disponible actual: ${evento.availableSpots}`);
 
-    // 2. Contar inscripciones en estado ACEPTADA (las que ocupan cupo)
-    const inscripcionesAceptadas = await prisma.inscripcion.count({
+    // 2. Contar inscripciones en estado ACCEPTED (las que ocupan cupo)
+    const inscripcionesAceptadas = await prisma.registration.count({
       where: {
-        id_eve_ins: id,
-        est_ins: "ACEPTADA",
+        eventId: id,
+        status: "ACCEPTED",
       },
     });
 
-    console.log(`Inscripciones ACEPTADAS: ${inscripcionesAceptadas}`);
+    console.log(`Inscripciones ACCEPTED: ${inscripcionesAceptadas}`);
 
     // 3. Calcular el cupo disponible correcto
-    const cupoMaximo = evento.cup_max_eve;
-    const cupoDisponibleActual = evento.cup_dis_eve;
+    const cupoMaximo = evento.maxCapacity;
+    const cupoDisponibleActual = evento.availableSpots;
     const cupoDisponibleCorrecto = Math.max(
       0,
       cupoMaximo - inscripcionesAceptadas
@@ -880,30 +880,30 @@ const verificarYCorregirCupos = async (req, res) => {
         success: true,
         msg: "Los cupos están correctos, no se requiere corrección",
         evento: {
-          id_eve: evento.id_eve,
-          nom_eve: evento.nom_eve,
-          cup_max_eve: cupoMaximo,
-          cup_dis_eve: cupoDisponibleActual,
+          id: evento.id,
+          title: evento.title,
+          maxCapacity: cupoMaximo,
+          availableSpots: cupoDisponibleActual,
           inscripciones_aceptadas: inscripcionesAceptadas,
         },
       });
     }
 
     // 5. Corregir la inconsistencia
-    const eventoCorregido = await prisma.evento.update({
-      where: { id_eve: id },
-      data: { cup_dis_eve: cupoDisponibleCorrecto },
+    const eventoCorregido = await prisma.event.update({
+      where: { id: id },
+      data: { availableSpots: cupoDisponibleCorrecto },
     });
 
     return res.status(200).json({
       success: true,
       msg: "Cupos corregidos exitosamente",
       detalles: {
-        id_eve: evento.id_eve,
-        nom_eve: evento.nom_eve,
-        cup_max_eve: cupoMaximo,
-        cup_dis_eve_anterior: cupoDisponibleActual,
-        cup_dis_eve_corregido: cupoDisponibleCorrecto,
+        id: evento.id,
+        title: evento.title,
+        maxCapacity: cupoMaximo,
+        availableSpots_anterior: cupoDisponibleActual,
+        availableSpots_corregido: cupoDisponibleCorrecto,
         inscripciones_aceptadas: inscripcionesAceptadas,
         diferencia: cupoDisponibleCorrecto - cupoDisponibleActual,
       },
@@ -926,7 +926,7 @@ const verificarYCorregirTodosLosCupos = async (req, res) => {
     );
 
     // 1. Obtener todos los eventos
-    const eventos = await prisma.evento.findMany();
+    const eventos = await prisma.event.findMany();
     conditionalCuposLog(`Total de eventos encontrados: ${eventos.length}`);
 
     // 2. Preparar para almacenar resultados
@@ -940,37 +940,37 @@ const verificarYCorregirTodosLosCupos = async (req, res) => {
     // 3. Procesar cada evento
     for (const evento of eventos) {
       // Contar inscripciones que ocupan cupo
-      const inscripcionesOcupandoCupo = await prisma.inscripcion.count({
+      const inscripcionesOcupandoCupo = await prisma.registration.count({
         where: {
-          id_eve_ins: evento.id_eve,
-          cup_ocu: true,
+          eventId: evento.id,
+          occupiesSpot: true,
         },
       });
 
       // Para comparación, contar también inscripciones aceptadas
-      const inscripcionesAceptadas = await prisma.inscripcion.count({
+      const inscripcionesAceptadas = await prisma.registration.count({
         where: {
-          id_eve_ins: evento.id_eve,
-          est_ins: "ACEPTADA",
+          eventId: evento.id,
+          status: "ACCEPTED",
         },
       });
 
       // Calcular cupo disponible correcto
-      const cupoMaximo = evento.cup_max_eve;
-      const cupoDisponibleActual = evento.cup_dis_eve;
+      const cupoMaximo = evento.maxCapacity;
+      const cupoDisponibleActual = evento.availableSpots;
       const cupoDisponibleCorrecto = Math.max(
         0,
         cupoMaximo - inscripcionesOcupandoCupo
       );
 
-      conditionalCuposLog(`Evento ${evento.nom_eve}:`);
+      conditionalCuposLog(`Evento ${evento.title}:`);
       conditionalCuposLog(`- Cupo máximo: ${cupoMaximo}`);
       conditionalCuposLog(`- Cupo disponible actual: ${cupoDisponibleActual}`);
       conditionalCuposLog(
         `- Inscripciones ocupando cupo: ${inscripcionesOcupandoCupo}`
       );
       conditionalCuposLog(
-        `- Inscripciones en estado ACEPTADA: ${inscripcionesAceptadas}`
+        `- Inscripciones en estado ACCEPTED: ${inscripcionesAceptadas}`
       );
       conditionalCuposLog(
         `- Cupo disponible correcto: ${cupoDisponibleCorrecto}`
@@ -979,19 +979,19 @@ const verificarYCorregirTodosLosCupos = async (req, res) => {
       // Verificar si hay inconsistencia
       if (cupoDisponibleActual !== cupoDisponibleCorrecto) {
         // Corregir la inconsistencia
-        await prisma.evento.update({
-          where: { id_eve: evento.id_eve },
-          data: { cup_dis_eve: cupoDisponibleCorrecto },
+        await prisma.event.update({
+          where: { id: evento.id },
+          data: { availableSpots: cupoDisponibleCorrecto },
         });
 
         // Registrar resultado
         resultados.corregidos++;
         resultados.detalles.push({
-          id_eve: evento.id_eve,
-          nom_eve: evento.nom_eve,
-          cup_max_eve: cupoMaximo,
-          cup_dis_eve_anterior: cupoDisponibleActual,
-          cup_dis_eve_corregido: cupoDisponibleCorrecto,
+          id: evento.id,
+          title: evento.title,
+          maxCapacity: cupoMaximo,
+          availableSpots_anterior: cupoDisponibleActual,
+          availableSpots_corregido: cupoDisponibleCorrecto,
           inscripciones_ocupando_cupo: inscripcionesOcupandoCupo,
           inscripciones_aceptadas: inscripcionesAceptadas,
           diferencia: cupoDisponibleCorrecto - cupoDisponibleActual,
@@ -1029,13 +1029,14 @@ const obtenerEventosDestacados = async (req, res) => {
     await desmarcadoAutomaticoEventosPasados();
 
     // Obtener eventos destacados (máximo 8)
-    const eventosDestacados = await prisma.evento.findMany({
+    const eventosDestacados = await prisma.event.findMany({
       where: {
-        eve_des: true,
-        est_eve: "ACTIVO",
+        tenantId: req.tenantId,
+        isFeatured: true,
+        status: "ACTIVE",
       },
       orderBy: {
-        fec_ini_eve: "asc",
+        startDate: "asc",
       },
       take: 8,
     });
@@ -1074,8 +1075,11 @@ const toggleEventoDestacado = async (req, res) => {
 
     // Verificar si el evento existe
     console.log("Buscando evento con ID:", id);
-    const eventoExistente = await prisma.evento.findUnique({
-      where: { id_eve: id },
+    const eventoExistente = await prisma.event.findFirst({
+      where: {
+        id,
+        tenantId: req.tenantId,
+      },
     });
 
     console.log("Evento encontrado:", eventoExistente ? "SÍ" : "NO");
@@ -1088,13 +1092,32 @@ const toggleEventoDestacado = async (req, res) => {
       });
     }
 
-    console.log("Evento existente encontrado:", eventoExistente.nom_eve);
+    console.log("Evento existente encontrado:", eventoExistente.name);
+
+    // Evita marcar eventos finalizados/pasados que serán desmarcados automáticamente
+    if (eve_des) {
+      const ahora = new Date();
+      const fechaFin = new Date(eventoExistente.endDate);
+      const eventoFinalizado =
+        eventoExistente.status === "FINISHED" || fechaFin < ahora;
+
+      if (eventoFinalizado) {
+        return res.status(400).json({
+          msg: "No se puede destacar un evento finalizado. Selecciona un evento activo o próximo.",
+          ok: false,
+        });
+      }
+    }
 
     // Si vamos a marcar como destacado, verificar límite de 8
     if (eve_des) {
       console.log("Verificando límite de eventos destacados...");
-      const totalDestacados = await prisma.evento.count({
-        where: { eve_des: true },
+      const totalDestacados = await prisma.event.count({
+        where: {
+          tenantId: req.tenantId,
+          isFeatured: true,
+          status: "ACTIVE",
+        },
       });
 
       console.log("Total eventos destacados actuales:", totalDestacados);
@@ -1109,17 +1132,17 @@ const toggleEventoDestacado = async (req, res) => {
     }
 
     // Actualizar el evento
-    console.log("Actualizando evento con:", { id_eve: id, eve_des });
-    const eventoActualizado = await prisma.evento.update({
-      where: { id_eve: id },
-      data: { eve_des },
+    console.log("Actualizando evento con:", { id: id, isFeatured: eve_des });
+    const eventoActualizado = await prisma.event.update({
+      where: { id: id },
+      data: { isFeatured: eve_des },
     });
 
-    console.log("Evento actualizado exitosamente:", eventoActualizado.nom_eve);
+    console.log("Evento actualizado exitosamente:", eventoActualizado.name);
 
     // Notificar a todos los clientes mediante socket
     socketService.notifyEventChange("updated", {
-      id: eventoActualizado.id_eve,
+      id: eventoActualizado.id,
       tipo: "destacado",
       esDestacado: eve_des,
       evento: eventoActualizado,
@@ -1159,15 +1182,15 @@ const desmarcadoAutomaticoEventosPasados = async () => {
     const fechaActual = new Date();
 
     // Buscar eventos destacados que ya finalizaron
-    const eventosFinalizados = await prisma.evento.updateMany({
+    const eventosFinalizados = await prisma.event.updateMany({
       where: {
-        eve_des: true,
-        fec_fin_eve: {
+        isFeatured: true,
+        endDate: {
           lt: fechaActual,
         },
       },
       data: {
-        eve_des: false,
+        isFeatured: false,
       },
     });
 
@@ -1243,7 +1266,7 @@ const obtenerEventosAdminPaginados = async (req, res) => {
       esGratuito,
       esPago,
       eventosLlenos,
-      sortBy = "fec_cre_eve",
+      sortBy = "createdAt",
       sortOrder = "desc",
     } = req.query;
 
@@ -1252,7 +1275,7 @@ const obtenerEventosAdminPaginados = async (req, res) => {
 
     // Filtro por búsqueda (nombre)
     if (search) {
-      whereCondition.nom_eve = {
+      whereCondition.title = {
         contains: search,
         mode: "insensitive",
       };
@@ -1260,85 +1283,85 @@ const obtenerEventosAdminPaginados = async (req, res) => {
 
     // Filtro por tipo de evento
     if (tipoEvento) {
-      whereCondition.tip_eve = tipoEvento;
+      whereCondition.type = tipoEvento;
     }
 
     // Filtro por estado
     if (estado) {
-      whereCondition.est_eve = estado;
+      whereCondition.status = estado;
     }
 
     // Filtro por fecha de inicio
     if (fechaInicio) {
-      whereCondition.fec_ini_eve = {
+      whereCondition.startDate = {
         gte: new Date(fechaInicio),
       };
     }
 
     // Filtro por fecha de fin
     if (fechaFin) {
-      whereCondition.fec_fin_eve = {
+      whereCondition.endDate = {
         lte: new Date(fechaFin),
       };
     }
 
     // Filtro por modalidad
     if (modalidad) {
-      whereCondition.mod_eve = modalidad;
+      whereCondition.modality = modalidad;
     }
 
     // Filtro por capacidad mínima
     if (capacidadMin) {
-      whereCondition.cup_max_eve = {
+      whereCondition.maxCapacity = {
         gte: parseInt(capacidadMin),
       };
     }
 
     // Filtro por capacidad máxima
     if (capacidadMax) {
-      whereCondition.cup_max_eve = {
+      whereCondition.maxCapacity = {
         lte: parseInt(capacidadMax),
       };
     }
 
     // Filtro por valor mínimo
     if (valorMin) {
-      whereCondition.val_eve = {
+      whereCondition.price = {
         gte: parseFloat(valorMin),
       };
     }
 
     // Filtro por valor máximo
     if (valorMax) {
-      whereCondition.val_eve = {
+      whereCondition.price = {
         lte: parseFloat(valorMax),
       };
     }
 
     // Filtro por asistencia mínima
     if (asistenciaMin) {
-      whereCondition.por_min_asi_eve = {
+      whereCondition.minAttendancePercent = {
         gte: parseInt(asistenciaMin),
       };
     }
 
     // Filtro por eventos gratuitos
     if (esGratuito === "true") {
-      whereCondition.val_eve = 0;
+      whereCondition.price = 0;
     }
 
     // Filtro por eventos de pago
     if (esPago === "true") {
-      whereCondition.val_eve = {
+      whereCondition.price = {
         gt: 0,
       };
     }
 
     // Filtro por eventos llenos o con cupos disponibles
     if (eventosLlenos === "true") {
-      whereCondition.cup_dis_eve = 0;
-    } else {
-      whereCondition.cup_dis_eve = {
+      whereCondition.availableSpots = 0;
+    } else if (eventosLlenos === "false") {
+      whereCondition.availableSpots = {
         gt: 0,
       };
     }
@@ -1353,39 +1376,68 @@ const obtenerEventosAdminPaginados = async (req, res) => {
       } else {
         carreraFilter = {
           some: {
-            id_car_aso: carrera,
+            careerId: carrera,
           },
         };
       }
     }
 
+    // Compatibilidad con nombres legacy de columnas de ordenamiento.
+    const sortByMap = {
+      fec_cre_eve: "createdAt",
+      fec_ini_eve: "startDate",
+      fec_fin_eve: "endDate",
+      nom_eve: "name",
+      est_eve: "status",
+      tip_eve: "type",
+      mod_eve: "modality",
+      val_eve: "price",
+      cup_max_eve: "maxCapacity",
+      cup_dis_eve: "availableSpots",
+      por_min_asi_eve: "minAttendancePercent",
+      createdAt: "createdAt",
+      startDate: "startDate",
+      endDate: "endDate",
+      name: "name",
+      status: "status",
+      type: "type",
+      modality: "modality",
+      price: "price",
+      maxCapacity: "maxCapacity",
+      availableSpots: "availableSpots",
+      minAttendancePercent: "minAttendancePercent",
+    };
+
+    const normalizedSortBy = sortByMap[sortBy] || "createdAt";
+    const normalizedSortOrder = sortOrder === "asc" ? "asc" : "desc";
+
     // Configurar ordenamiento
     const orderBy = {};
-    orderBy[sortBy || "fec_cre_eve"] = sortOrder || "desc";
+    orderBy[normalizedSortBy] = normalizedSortOrder;
 
     // Ejecutar consultas en paralelo
     const [eventos, totalCount] = await Promise.all([
-      prisma.evento.findMany({
+      prisma.event.findMany({
         where: {
           ...whereCondition,
-          ...(carreraFilter && { eventos_carrera: carreraFilter }),
+          ...(carreraFilter && { eventCareers: carreraFilter }),
         },
         skip: offset,
         take: limit,
         orderBy,
         include: {
-          eventos_curso: true,
-          eventos_carrera: {
+          eventCourse: true,
+          eventCareers: {
             include: {
-              carrera: true,
+              career: true,
             },
           },
         },
       }),
-      prisma.evento.count({
+      prisma.event.count({
         where: {
           ...whereCondition,
-          ...(carreraFilter && { eventos_carrera: carreraFilter }),
+          ...(carreraFilter && { eventCareers: carreraFilter }),
         },
       }),
     ]);

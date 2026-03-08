@@ -22,12 +22,12 @@ const generarCertificado = async (req, res) => {
     const { id } = req.params;
 
     // Verificar si ya existe un certificado para esta inscripción
-    let certificadoExistente = await prisma.certificado.findUnique({
-      where: { id_ins_per: id },
+    let certificadoExistente = await prisma.certificate.findUnique({
+      where: { registrationId: id },
     }); // Si ya existe un certificado, devolvemos la URL
     if (certificadoExistente) {
       // Enviamos el archivo al cliente
-      const filePath = certificadoExistente.url_cer;
+      const filePath = certificadoExistente.url;
       if (fs.existsSync(filePath)) {
         // Obtenemos el nombre del archivo de la ruta
         const fileName = path.basename(filePath);
@@ -45,12 +45,12 @@ const generarCertificado = async (req, res) => {
         console.log("🔄 Archivo no encontrado, regenerando certificado...");
 
         // 🛠 Regenerar si el archivo fue eliminado
-        const inscripcion = await prisma.inscripcion.findUnique({
-          where: { id_ins: id },
+        const inscripcion = await prisma.registration.findUnique({
+          where: { id: id },
           include: {
-            cuenta: {
+            account: {
               include: {
-                usuario: {
+                user: {
                   include: { carrera: true },
                 },
               },
@@ -69,7 +69,7 @@ const generarCertificado = async (req, res) => {
         const codigoValidacion = generarCodigoValidacion();
 
         const datosCertificado = {
-          usuario: inscripcion.cuenta.usuario,
+          usuario: inscripcion.account.user,
           evento: inscripcion.evento,
           inscripcion,
           asistencia: inscripcion.por_asi_fin_usu || 0,
@@ -79,7 +79,7 @@ const generarCertificado = async (req, res) => {
         };
 
         const nombreArchivo = `certificado_${
-          inscripcion.id_ins
+          inscripcion.id
         }_${Date.now()}.pdf`;
         const rutaArchivo = path.join(certificadosDir, nombreArchivo);
 
@@ -88,12 +88,12 @@ const generarCertificado = async (req, res) => {
         // Guardar el PDF en disco
         fs.writeFileSync(rutaArchivo, pdfBuffer);
 
-        await prisma.certificado.update({
-          where: { id_ins_per: id },
+        await prisma.certificate.update({
+          where: { registrationId: id },
           data: {
-            url_cer: rutaArchivo,
-            tip_cer: tipoCertificado,
-            cod_val_cer: codigoValidacion,
+            url: rutaArchivo,
+            type: tipoCertificado,
+            validationCode: codigoValidacion,
           },
         });
 
@@ -110,12 +110,12 @@ const generarCertificado = async (req, res) => {
     }
 
     // Si no existe, buscamos la información necesaria
-    const inscripcion = await prisma.inscripcion.findUnique({
-      where: { id_ins: id },
+    const inscripcion = await prisma.registration.findUnique({
+      where: { id: id },
       include: {
-        cuenta: {
+        account: {
           include: {
-            usuario: {
+            user: {
               include: {
                 carrera: true,
               },
@@ -162,7 +162,7 @@ const generarCertificado = async (req, res) => {
 
     // Preparar datos para el certificado
     const datosCertificado = {
-      usuario: inscripcion.cuenta.usuario,
+      usuario: inscripcion.account.user,
       evento: inscripcion.evento,
       inscripcion: inscripcion,
       asistencia: inscripcion.por_asi_fin_usu || 0,
@@ -170,7 +170,7 @@ const generarCertificado = async (req, res) => {
       tipoCertificado: tipoCertificado,
       codigoValidacion: codigoValidacion,
     }; // Generar el nombre del archivo
-    const nombreArchivo = `certificado_${inscripcion.id_ins}_${Date.now()}.pdf`;
+    const nombreArchivo = `certificado_${inscripcion.id}_${Date.now()}.pdf`;
     // Guardar en la carpeta uploads/certificados que está expuesta públicamente
     const rutaArchivo = path.join(certificadosDir, nombreArchivo);
     // URL para acceso público al certificado
@@ -184,12 +184,12 @@ const generarCertificado = async (req, res) => {
 
     try {
       // Guardar el certificado en la base de datos
-      certificadoExistente = await prisma.certificado.create({
+      certificadoExistente = await prisma.certificate.create({
         data: {
-          id_ins_per: id,
-          url_cer: rutaArchivo, // Ruta del archivo en el sistema
-          tip_cer: tipoCertificado,
-          cod_val_cer: codigoValidacion,
+          registrationId: id,
+          url: rutaArchivo, // Ruta del archivo en el sistema
+          type: tipoCertificado,
+          validationCode: codigoValidacion,
         },
       });
 
@@ -224,8 +224,8 @@ const enviarCertificadoPorCorreo = async (req, res) => {
     const { id } = req.params;
 
     // Verificar si ya existe un certificado
-    let certificado = await prisma.certificado.findUnique({
-      where: { id_ins_per: id },
+    let certificado = await prisma.certificate.findUnique({
+      where: { registrationId: id },
     });
 
     // Si no existe, primero lo generamos
@@ -235,12 +235,12 @@ const enviarCertificadoPorCorreo = async (req, res) => {
     }
 
     // Obtener datos de la inscripción para el correo
-    const inscripcion = await prisma.inscripcion.findUnique({
-      where: { id_ins: id },
+    const inscripcion = await prisma.registration.findUnique({
+      where: { id: id },
       include: {
-        cuenta: {
+        account: {
           include: {
-            usuario: true,
+            user: true,
           },
         },
         evento: true,
@@ -252,19 +252,19 @@ const enviarCertificadoPorCorreo = async (req, res) => {
     }
 
     // Leer el archivo PDF
-    const pdfBuffer = fs.readFileSync(certificado.url_cer); // Enviar por correo
+    const pdfBuffer = fs.readFileSync(certificado.url); // Enviar por correo
     try {
       const enviado = await enviarCorreoConCertificado(
-        inscripcion.cuenta.cor_usu,
+        inscripcion.account.email,
         pdfBuffer,
         inscripcion.evento.nom_eve,
-        `${inscripcion.cuenta.usuario.nom_usu} ${inscripcion.cuenta.usuario.ape_usu}`
+        `${inscripcion.account.user.firstName} ${inscripcion.account.user.lastName}`
       );
 
       if (enviado) {
         // Actualizar estado en la base de datos
-        await prisma.inscripcion.update({
-          where: { id_ins: id },
+        await prisma.registration.update({
+          where: { id: id },
           data: { usu_apr_cer: true },
         });
 
@@ -274,7 +274,7 @@ const enviarCertificadoPorCorreo = async (req, res) => {
       } else {
         console.error(
           "Falló el envío de certificado a:",
-          inscripcion.cuenta.cor_usu
+          inscripcion.account.email
         );
         res.status(500).json({ msg: "Error al enviar correo con certificado" });
       }
@@ -300,14 +300,14 @@ const validarCertificado = async (req, res) => {
   try {
     const { codigo } = req.params;
 
-    const certificado = await prisma.certificado.findFirst({
-      where: { cod_val_cer: codigo },
+    const certificado = await prisma.certificate.findFirst({
+      where: { validationCode: codigo },
       include: {
-        inscripcion: {
+        registration: {
           include: {
-            cuenta: {
+            account: {
               include: {
-                usuario: {
+                user: {
                   include: {
                     carrera: true,
                   },
@@ -331,26 +331,26 @@ const validarCertificado = async (req, res) => {
     // Datos para mostrar en la validación
     const datosValidacion = {
       valido: true,
-      tipoCertificado: certificado.tip_cer,
-      fechaEmision: certificado.fec_gen_cer,
+      tipoCertificado: certificado.type,
+      fechaEmision: certificado.generatedAt,
       estudiante: {
-        nombre: `${certificado.inscripcion.cuenta.usuario.nom_usu} ${certificado.inscripcion.cuenta.usuario.ape_usu}`,
-        cedula: certificado.inscripcion.cuenta.usuario.ced_usu,
+        nombre: `${certificado.registration.account.user.firstName} ${certificado.registration.account.user.lastName}`,
+        cedula: certificado.registration.account.user.ced_usu,
         carrera:
-          certificado.inscripcion.cuenta.usuario.carrera?.nom_car ||
+          certificado.registration.account.user.carrera?.nom_car ||
           "No especificada",
       },
       evento: {
-        nombre: certificado.inscripcion.evento.nom_eve,
-        tipo: certificado.inscripcion.evento.tip_eve,
-        fechaInicio: certificado.inscripcion.evento.fec_ini_eve,
-        fechaFin: certificado.inscripcion.evento.fec_fin_eve,
-        duracion: certificado.inscripcion.evento.dur_hor_eve,
+        nombre: certificado.registration.evento.nom_eve,
+        tipo: certificado.registration.evento.tip_eve,
+        fechaInicio: certificado.registration.evento.fec_ini_eve,
+        fechaFin: certificado.registration.evento.fec_fin_eve,
+        duracion: certificado.registration.evento.dur_hor_eve,
       },
       rendimiento: {
-        asistencia: certificado.inscripcion.por_asi_fin_usu || 0,
+        asistencia: certificado.registration.por_asi_fin_usu || 0,
         notaFinal:
-          certificado.inscripcion.inscripcion_curso?.not_fin_usu || null,
+          certificado.registration.inscripcion_curso?.not_fin_usu || null,
       },
     };
 
@@ -371,12 +371,12 @@ const previsualizarCertificado = async (req, res) => {
     const { id } = req.params;
 
     // Buscar la inscripción
-    const inscripcion = await prisma.inscripcion.findUnique({
-      where: { id_ins: id },
+    const inscripcion = await prisma.registration.findUnique({
+      where: { id: id },
       include: {
-        cuenta: {
+        account: {
           include: {
-            usuario: {
+            user: {
               include: { carrera: true },
             },
           },
@@ -417,7 +417,7 @@ const previsualizarCertificado = async (req, res) => {
 
     // Preparar datos para el certificado
     const datosCertificado = {
-      usuario: inscripcion.cuenta.usuario,
+      usuario: inscripcion.account.user,
       evento: inscripcion.evento,
       inscripcion: inscripcion,
       asistencia: inscripcion.por_asi_fin_usu || 0,

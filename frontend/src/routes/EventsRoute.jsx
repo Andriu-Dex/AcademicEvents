@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import axiosInstance from "../api/axiosConfig";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -86,6 +86,57 @@ const estilosCss = `
 
 import { formatUTCForLocalDisplay } from "../utils/dateUtils";
 
+const EVENT_STATUS_TO_LEGACY = {
+  ACTIVE: "ACTIVO",
+  INACTIVE: "INACTIVO",
+  FINISHED: "FINALIZADO",
+  CANCELLED: "CANCELADO",
+  SUSPENDED: "SUSPENDIDO",
+};
+
+const EVENT_TYPE_TO_LEGACY = {
+  COURSE: "CURSO",
+  CONGRESS: "CONGRESO",
+  WEBINAR: "WEBINAR",
+  TALK: "CHARLA",
+  SOCIALIZATION: "SOCIALIZACION",
+};
+
+const EVENT_MODALITY_TO_LEGACY = {
+  IN_PERSON: "PRESENCIAL",
+  VIRTUAL: "VIRTUAL",
+  HYBRID: "SEMIPRESENCIAL",
+};
+
+const normalizeEventForUI = (evento, index = 0) => {
+  const parsedPrice = Number(evento?.val_eve ?? evento?.price ?? 0);
+
+  return {
+    ...evento,
+    id_eve: evento?.id_eve || evento?.id || `evento-${index}`,
+    nom_eve: evento?.nom_eve || evento?.name || `Evento ${index + 1}`,
+    des_eve: evento?.des_eve ?? evento?.description ?? "",
+    tip_eve:
+      evento?.tip_eve || EVENT_TYPE_TO_LEGACY[evento?.type] || evento?.type,
+    mod_eve:
+      evento?.mod_eve ||
+      EVENT_MODALITY_TO_LEGACY[evento?.modality] ||
+      evento?.modality,
+    est_eve:
+      evento?.est_eve ||
+      EVENT_STATUS_TO_LEGACY[evento?.status] ||
+      evento?.status,
+    fec_ini_eve: evento?.fec_ini_eve || evento?.startDate || null,
+    fec_fin_eve: evento?.fec_fin_eve || evento?.endDate || null,
+    dur_hor_eve: evento?.dur_hor_eve ?? evento?.durationHours ?? null,
+    val_eve: Number.isFinite(parsedPrice) ? parsedPrice : 0,
+    cup_dis_eve: evento?.cup_dis_eve ?? evento?.availableSpots ?? 0,
+    cup_max_eve: evento?.cup_max_eve ?? evento?.maxCapacity ?? 0,
+    img_por_eve:
+      evento?.img_por_eve || evento?.coverImageUrl || evento?.coverImage || "",
+  };
+};
+
 const EventsRoute = () => {
   const { usuario, token, loading } = useAuth();
   const navigate = useNavigate();
@@ -128,6 +179,11 @@ const EventsRoute = () => {
     hasNextPage,
     hasPrevPage,
   } = usePagination("/eventos-paginados", 12);
+
+  const eventosNormalizados = useMemo(
+    () => (Array.isArray(eventos) ? eventos : []).map(normalizeEventForUI),
+    [eventos]
+  );
   useEffect(() => {
     if (loading) return;
     if (!usuario) return navigate("/login");
@@ -135,13 +191,10 @@ const EventsRoute = () => {
     const obtenerPerfilUsuario = async () => {
       try {
         // Obtener el perfil completo con información de carrera
-        console.log("🔍 Obteniendo perfil de usuario...");
         const perfilRes = await axiosInstance.get("/perfil");
         const perfilCompleto = perfilRes.data;
-        console.log("✅ Perfil obtenido:", perfilCompleto);
 
         // Verificar cupos disponibles
-        console.log("Verificando cupos disponibles...");
         try {
           await axiosInstance.get("/eventos-verificar-cupos");
         } catch (verifyError) {
@@ -204,9 +257,6 @@ const EventsRoute = () => {
 
     // Construir objeto de filtros para la API usando la función centralizada
     const filtrosAPI = construirFiltrosAPI();
-
-    // 🐛 DEBUG: Log de filtros que se envían al backend
-    console.log("🔍 [FRONTEND] Filtros enviados al backend:", filtrosAPI);
 
     // Llamar a fetchData con los filtros
     fetchData(filtrosAPI);
@@ -290,7 +340,7 @@ const EventsRoute = () => {
     };
 
     if (usuario) obtenerInscripciones();
-  }, [usuario, eventos.length]);
+  }, [usuario, eventosNormalizados.length]);
   const inscribirse = async () => {
     // Validación de campos
     if (!cartaMotivacion.trim()) {
@@ -333,18 +383,12 @@ const EventsRoute = () => {
       formData.append("archivo", archivo);
     }
 
-    console.log("Enviando solicitud de inscripción...");
-    console.log(`ID evento: ${eventoSeleccionado.id_eve}`);
-    console.log(`Archivo: ${archivo ? archivo.name : "Ninguno"}`);
-
     try {
       const response = await axiosInstance.post("/inscripciones", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
-
-      console.log("Respuesta del servidor:", response.data);
 
       // Verificar que la respuesta fue exitosa
       if (response.status === 200 || response.status === 201) {
@@ -441,14 +485,12 @@ const EventsRoute = () => {
   // Manejar actualizaciones de eventos en tiempo real
   const handleEventUpdate = useCallback(
     (eventUpdate) => {
-      console.log("🔄 Evento actualizado via socket:", eventUpdate);
       if (!eventUpdate || !eventUpdate.action || !eventUpdate.data) return;
 
       // 🔧 USAR FUNCIÓN CENTRALIZADA PARA CONSTRUIR FILTROS
       const filtrosAPI = construirFiltrosAPI();
 
       // Recargar datos con los filtros aplicados
-      console.log("🔄 Recargando datos con filtros:", filtrosAPI);
       fetchData(filtrosAPI);
 
       // Mostrar notificación
@@ -480,8 +522,6 @@ const EventsRoute = () => {
       ) {
         return;
       }
-
-      console.log("🔄 EventsRoute: Cupos actualizados via socket:", data);
 
       // Recargar los datos para mantener la consistencia con la paginación
       fetchData();
@@ -702,13 +742,13 @@ const EventsRoute = () => {
             Reintentar
           </button>
         </div>
-      ) : eventos.length === 0 ? (
+      ) : eventosNormalizados.length === 0 ? (
         <div className="no-eventos-mensaje-er">
           <AlertTriangle size={40} />
           <h3>No hay eventos disponibles</h3>
           <p>No se encontraron eventos para tu perfil de usuario.</p>
         </div>
-      ) : eventos.length === 0 ? (
+      ) : eventosNormalizados.length === 0 ? (
         <div className="no-eventos-mensaje-er">
           <AlertTriangle size={40} />
           <h3>No hay eventos que coincidan</h3>
@@ -725,7 +765,7 @@ const EventsRoute = () => {
       ) : (
         <>
           <div className="eventos-grid-er">
-            {eventos.map((evento) => (
+            {eventosNormalizados.map((evento) => (
               <div key={evento.id_eve} className="evento-card">
                 {/* Imagen de portada (real o placeholder) */}
                 <img
@@ -765,7 +805,7 @@ const EventsRoute = () => {
                 <p className="precio-evento">
                   {evento.val_eve === 0
                     ? "Gratuito"
-                    : `Precio: $${evento.val_eve.toFixed(2)}`}
+                    : `Precio: $${Number(evento.val_eve || 0).toFixed(2)}`}
                 </p>
                 {/* Descripción del evento */}
                 {evento.des_eve && (

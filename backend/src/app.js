@@ -63,6 +63,10 @@ app.use(express.json()); // Habilita el parseo de JSON en las peticiones
 // Servir archivos subidos (comprobantes, PDF, etc.)
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
+// Middleware para manejo de tenants (multi-tenancy)
+const { tenantMiddleware } = require("./middlewares/tenant");
+app.use("/api", tenantMiddleware); // Aplicar a todas las rutas API
+
 // ============================
 //  Rutas de la aplicación
 // ============================

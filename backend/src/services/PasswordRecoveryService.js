@@ -199,10 +199,10 @@ class PasswordRecoveryService {
       }
 
       // Si el token es válido, obtenemos la cuenta asociada
-      const account = await prisma.cuenta.findUnique({
-        where: { id_cue: validationResult.token.id_cue_per },
+      const account = await prisma.account.findUnique({
+        where: { id: validationResult.token.id_cue_per },
         include: {
-          usuario: true,
+          user: true,
         },
       });
 

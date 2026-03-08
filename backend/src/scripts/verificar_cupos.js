@@ -9,12 +9,12 @@ async function verificarCupos() {
 
   try {
     // Obtener todos los eventos
-    const eventos = await prisma.evento.findMany({
+    const eventos = await prisma.event.findMany({
       select: {
-        id_eve: true,
-        nom_eve: true,
-        cup_max_eve: true,
-        cup_dis_eve: true,
+        id: true,
+        name: true,
+        maxCapacity: true,
+        availableSpots: true,
       },
     });
 
@@ -25,12 +25,12 @@ async function verificarCupos() {
     // Para cada evento, verificar si los cupos disponibles son correctos
     for (const evento of eventos) {
       // Contar inscripciones que deberían ocupar cupo (ACEPTADA y estados finales)
-      const inscripcionesDeberianOcuparCupo = await prisma.inscripcion.count({
+      const inscripcionesDeberianOcuparCupo = await prisma.registration.count({
         where: {
-          id_eve_ins: evento.id_eve,
-          est_ins: {
+          eventId: evento.id,
+          status: {
             in: [
-              "ACEPTADA",
+              "ACCEPTED",
               "APROBADO",
               "REPROBADO_NOTA",
               "REPROBADO_ASISTENCIA",
@@ -40,21 +40,21 @@ async function verificarCupos() {
         },
       });
 
-      const inscripcionesOcupandoCupo = await prisma.inscripcion.count({
+      const inscripcionesOcupandoCupo = await prisma.registration.count({
         where: {
-          id_eve_ins: evento.id_eve,
-          cup_ocu: true,
+          eventId: evento.id,
+          occupiesSpot: true,
         },
       });
 
       // Calcular cupos disponibles correctos
       const cuposDisponiblesCalculados = Math.max(
         0,
-        evento.cup_max_eve - inscripcionesOcupandoCupo
+        evento.maxCapacity - inscripcionesOcupandoCupo
       );
-      console.log(`\n📌 Evento: "${evento.nom_eve}"`);
-      console.log(`- Cupo máximo: ${evento.cup_max_eve}`);
-      console.log(`- Cupo disponible actual: ${evento.cup_dis_eve}`);
+      console.log(`\n📌 Evento: "${evento.name}"`);
+      console.log(`- Cupo máximo: ${evento.maxCapacity}`);
+      console.log(`- Cupo disponible actual: ${evento.availableSpots}`);
       console.log(
         `- Inscripciones que deberían ocupar cupo: ${inscripcionesDeberianOcuparCupo}`
       );
@@ -64,10 +64,10 @@ async function verificarCupos() {
       console.log(`- Cupo disponible calculado: ${cuposDisponiblesCalculados}`);
 
       // Verificar si hay discrepancia
-      if (evento.cup_dis_eve !== cuposDisponiblesCalculados) {
+      if (evento.availableSpots !== cuposDisponiblesCalculados) {
         console.log(`❌ ERROR: Discrepancia en cupos disponibles!`);
         console.log(
-          `   Actual: ${evento.cup_dis_eve}, Correcto: ${cuposDisponiblesCalculados}`
+          `   Actual: ${evento.availableSpots}, Correcto: ${cuposDisponiblesCalculados}`
         );
         erroresEncontrados++;
       } else {

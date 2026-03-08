@@ -76,13 +76,18 @@ const EventosDestacados = ({ eventUpdate }) => {
   // Manejador para abrir el modal de detalles
   const handleVerDetalles = useCallback(
     (evento) => {
+      const fechaInicioIso = evento.fechaInicio
+        ? evento.fechaInicio.toISOString()
+        : null;
+      const fechaFinIso = evento.fechaFin ? evento.fechaFin.toISOString() : null;
+
       // Convertir evento destacado al formato compatible con el modal
       const eventoParaModal = {
         id_eve: evento.id,
         nom_eve: evento.titulo,
         des_eve: evento.descripcion,
-        fec_ini_eve: evento.fechaInicio.toISOString(),
-        fec_fin_eve: evento.fechaFin.toISOString(),
+        fec_ini_eve: fechaInicioIso,
+        fec_fin_eve: fechaFinIso,
         mod_eve: evento.modalidad,
         val_eve: evento.valor,
         tip_eve: evento.tipo,
@@ -142,13 +147,17 @@ const EventosDestacados = ({ eventUpdate }) => {
       );
 
       const { evento, esDestacado } = eventUpdate.data;
+      const eventoId = evento?.id_eve ?? evento?.id;
+      const nombreEvento = evento?.nom_eve ?? evento?.name ?? "Sin nombre";
+
+      if (!eventoId) return;
 
       if (esDestacado) {
         // Evento marcado como destacado - agregar si no existe
         setEventosDestacados((prev) => {
-          const exists = prev.find((e) => e.id === evento.id_eve);
+          const exists = prev.find((e) => e.id === eventoId);
           if (!exists) {
-            console.log("➕ Agregando evento destacado:", evento.nom_eve);
+            console.log("➕ Agregando evento destacado:", nombreEvento);
             // Transformar el evento usando la clase EventoDestacado
             const eventoTransformado = new EventoDestacado(evento);
             return [...prev, eventoTransformado];
@@ -158,8 +167,8 @@ const EventosDestacados = ({ eventUpdate }) => {
       } else {
         // Evento desmarcado como destacado - remover
         setEventosDestacados((prev) => {
-          const filtered = prev.filter((e) => e.id !== evento.id_eve);
-          console.log("➖ Removiendo evento destacado:", evento.nom_eve);
+          const filtered = prev.filter((e) => e.id !== eventoId);
+          console.log("➖ Removiendo evento destacado:", nombreEvento);
           return filtered;
         });
       }
@@ -261,10 +270,12 @@ const EventosDestacados = ({ eventUpdate }) => {
   const getModalidadIcon = useCallback((modalidad) => {
     switch (modalidad) {
       case "PRESENCIAL":
+      case "IN_PERSON":
         return <MapPin size={16} className="evento-icon-ed" />;
       case "VIRTUAL":
         return <Monitor size={16} className="evento-icon-ed" />;
       case "SEMIPRESENCIAL":
+      case "HYBRID":
         return <Monitor size={16} className="evento-icon-ed" />;
       default:
         return <MapPin size={16} className="evento-icon-ed" />;
@@ -273,7 +284,15 @@ const EventosDestacados = ({ eventUpdate }) => {
 
   // Formatear fecha en español
   const formatFecha = useCallback((fechaString) => {
+    if (!fechaString) {
+      return "Fecha por confirmar";
+    }
+
     const fecha = new Date(fechaString);
+    if (Number.isNaN(fecha.getTime())) {
+      return "Fecha por confirmar";
+    }
+
     return fecha.toLocaleDateString("es-ES", {
       day: "2-digit",
       month: "long",

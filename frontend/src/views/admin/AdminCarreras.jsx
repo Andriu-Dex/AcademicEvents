@@ -147,6 +147,17 @@ const AdminCarreras = () => {
   // Modalidades disponibles
   const modalidades = ["PRESENCIAL", "VIRTUAL", "SEMIPRESENCIAL"];
 
+  const getFacultyId = (faculty) => faculty?.id_fac || faculty?.id || "";
+  const getFacultyName = (faculty) =>
+    faculty?.nom_fac || faculty?.name || "Sin nombre";
+  const getCoordinatorId = (coordinator) =>
+    coordinator?.id_coo || coordinator?.id || "";
+  const getCoordinatorName = (coordinator) => {
+    const firstName = coordinator?.nom_coo || coordinator?.firstName || "";
+    const lastName = coordinator?.ape_coo || coordinator?.lastName || "";
+    return `${firstName} ${lastName}`.trim() || "Sin nombre";
+  };
+
   const cargarCarreras = async () => {
     try {
       const carrerasConValidacion =
@@ -164,7 +175,7 @@ const AdminCarreras = () => {
       if (res.data.length > 0) {
         setFormData((prev) => ({
           ...prev,
-          id_fac_per: res.data[0].id_fac,
+          id_fac_per: getFacultyId(res.data[0]),
         }));
       }
     } catch (error) {
@@ -522,11 +533,14 @@ const AdminCarreras = () => {
               onChange={handleInputChange}
             >
               <option value="">Seleccione una facultad</option>
-              {facultades.map((facultad) => (
-                <option key={facultad.id_fac} value={facultad.id_fac}>
-                  {facultad.nom_fac}
+              {facultades.map((facultad, index) => {
+                const facultyId = getFacultyId(facultad);
+                return (
+                <option key={facultyId || `faculty-${index}`} value={facultyId}>
+                  {getFacultyName(facultad)}
                 </option>
-              ))}
+                );
+              })}
             </select>
           </div>
         </div>
@@ -541,11 +555,14 @@ const AdminCarreras = () => {
             onChange={handleInputChange}
           >
             <option value="">Sin coordinador asignado</option>
-            {coordinadores.map((coordinador) => (
-              <option key={coordinador.id_coo} value={coordinador.id_coo}>
-                {coordinador.nom_coo} {coordinador.ape_coo}
+            {coordinadores.map((coordinador, index) => {
+              const coordinatorId = getCoordinatorId(coordinador);
+              return (
+              <option key={coordinatorId || `coord-${index}`} value={coordinatorId}>
+                {getCoordinatorName(coordinador)}
               </option>
-            ))}
+              );
+            })}
           </select>
         </div>
 
@@ -592,20 +609,19 @@ const AdminCarreras = () => {
 
                   <div className="carrera-facultad-ac">
                     Facultad:{" "}
-                    {facultades.find((f) => f.id_fac === carrera.id_fac_per)
-                      ?.nom_fac || "No asignada"}
+                    {getFacultyName(
+                      facultades.find((f) => getFacultyId(f) === carrera.id_fac_per)
+                    ) || "No asignada"}
                   </div>
 
                   <div className="carrera-coordinador-ac">
                     Coordinador:{" "}
                     {carrera.id_coo_per
-                      ? coordinadores.find(
-                          (c) => c.id_coo === carrera.id_coo_per
-                        )?.nom_coo +
-                        " " +
-                        coordinadores.find(
-                          (c) => c.id_coo === carrera.id_coo_per
-                        )?.ape_coo
+                      ? getCoordinatorName(
+                          coordinadores.find(
+                            (c) => getCoordinatorId(c) === carrera.id_coo_per
+                          )
+                        )
                       : "No asignado"}
                   </div>
 
@@ -737,11 +753,14 @@ const AdminCarreras = () => {
                       onChange={handleEditInputChange}
                       className="admincarreras-select-ac"
                     >
-                      {facultades.map((facultad) => (
-                        <option key={facultad.id_fac} value={facultad.id_fac}>
-                          {facultad.nom_fac}
+                      {facultades.map((facultad, index) => {
+                        const facultyId = getFacultyId(facultad);
+                        return (
+                        <option key={facultyId || `faculty-edit-${index}`} value={facultyId}>
+                          {getFacultyName(facultad)}
                         </option>
-                      ))}
+                        );
+                      })}
                     </select>
                   </div>
                 </div>
@@ -755,14 +774,17 @@ const AdminCarreras = () => {
                     className="admincarreras-select-ac"
                   >
                     <option value="">Sin coordinador asignado</option>
-                    {coordinadores.map((coordinador) => (
+                    {coordinadores.map((coordinador, index) => {
+                      const coordinatorId = getCoordinatorId(coordinador);
+                      return (
                       <option
-                        key={coordinador.id_coo}
-                        value={coordinador.id_coo}
+                        key={coordinatorId || `coord-edit-${index}`}
+                        value={coordinatorId}
                       >
-                        {coordinador.nom_coo} {coordinador.ape_coo}
+                        {getCoordinatorName(coordinador)}
                       </option>
-                    ))}
+                      );
+                    })}
                   </select>
                 </div>
 
