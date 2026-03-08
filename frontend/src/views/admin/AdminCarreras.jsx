@@ -147,6 +147,34 @@ const AdminCarreras = () => {
   // Modalidades disponibles
   const modalidades = ["PRESENCIAL", "VIRTUAL", "SEMIPRESENCIAL"];
 
+  const getCareerId = (career) => career?.id_car || career?.id || "";
+
+  const normalizeCarrera = (career) => {
+    if (!career || typeof career !== "object") return null;
+
+    const rawIsActive = career.est_car ?? career.isActive;
+
+    return {
+      ...career,
+      id_car: getCareerId(career),
+      nom_car: career.nom_car ?? career.name ?? career.nombre ?? "",
+      des_car: career.des_car ?? career.description ?? career.descripcion ?? "",
+      dur_sem_car: Number(
+        career.dur_sem_car ?? career.durationSemesters ?? career.duracion ?? 0
+      ),
+      mod_car: career.mod_car ?? career.modality ?? career.modalidad ?? "PRESENCIAL",
+      ico_car: career.ico_car ?? career.iconUrl ?? career.icon ?? "laptop",
+      id_fac_per: career.id_fac_per ?? career.facultyId ?? "",
+      id_coo_per: career.id_coo_per ?? career.coordinatorId ?? "",
+      est_car:
+        typeof rawIsActive === "boolean"
+          ? rawIsActive
+          : rawIsActive === undefined
+          ? true
+          : Boolean(rawIsActive),
+    };
+  };
+
   const getFacultyId = (faculty) => faculty?.id_fac || faculty?.id || "";
   const getFacultyName = (faculty) =>
     faculty?.nom_fac || faculty?.name || "Sin nombre";
@@ -160,9 +188,12 @@ const AdminCarreras = () => {
 
   const cargarCarreras = async () => {
     try {
-      const carrerasConValidacion =
-        await carreraManager.obtenerTodasLasCarreras();
-      setCarreras(carrerasConValidacion);
+      const carrerasConValidacion = await carreraManager.obtenerTodasLasCarreras();
+      setCarreras(
+        carrerasConValidacion
+          .map((carrera) => normalizeCarrera(carrera))
+          .filter(Boolean)
+      );
     } catch (error) {
       toast.error("Error al cargar las carreras");
     }
@@ -358,16 +389,27 @@ const AdminCarreras = () => {
   useEffect(() => {
     if (carreraUpdates) {
       const { action, data } = carreraUpdates;
+      const carreraNormalizada = normalizeCarrera(data);
+      const carreraId = getCareerId(data);
 
       switch (action) {
         case "created":
           // Añadir nueva carrera a la lista
           setCarreras((prev) => {
-            const carreraFormateada = {
-              ...data,
-              dur_sem_car: data.dur_sem_car || 0,
-            };
-            const nuevaLista = [...prev, carreraFormateada];
+            if (!carreraNormalizada) return prev;
+
+            const yaExiste = prev.some(
+              (carrera) => getCareerId(carrera) === carreraNormalizada.id_car
+            );
+
+            const nuevaLista = yaExiste
+              ? prev.map((carrera) =>
+                  getCareerId(carrera) === carreraNormalizada.id_car
+                    ? { ...carrera, ...carreraNormalizada }
+                    : carrera
+                )
+              : [...prev, carreraNormalizada];
+
             return nuevaLista;
           });
           break;
@@ -375,15 +417,14 @@ const AdminCarreras = () => {
         case "updated":
           // Actualizar carrera existente (incluyendo cambios de estado activo/inactivo)
           setCarreras((prev) => {
+            if (!carreraNormalizada) return prev;
+
             const nuevaLista = prev.map((carrera) =>
-              carrera.id_car === data.id_car
-                ? { ...carrera, ...data, dur_sem_car: data.dur_sem_car || 0 }
+              getCareerId(carrera) === carreraNormalizada.id_car
+                ? { ...carrera, ...carreraNormalizada }
                 : carrera
             );
-            console.log(
-              "📝 [AdminCarreras] Lista actualizada después de update:",
-              nuevaLista
-            );
+
             return nuevaLista;
           });
           break;
@@ -392,7 +433,7 @@ const AdminCarreras = () => {
           // Para compatibilidad hacia atrás
           setCarreras((prev) => {
             const nuevaLista = prev.map((carrera) =>
-              carrera.id_car === data.id_car
+              getCareerId(carrera) === carreraId
                 ? { ...carrera, est_car: false }
                 : carrera
             );
@@ -404,7 +445,7 @@ const AdminCarreras = () => {
           // Eliminar carrera de la lista permanentemente
           setCarreras((prev) => {
             const nuevaLista = prev.filter(
-              (carrera) => carrera.id_car !== data.id_car
+              (carrera) => getCareerId(carrera) !== carreraId
             );
             return nuevaLista;
           });
@@ -579,7 +620,10 @@ const AdminCarreras = () => {
         ) : (
           <ul className="admincarreras-lista-ac">
             {carreras.map((carrera) => (
-              <li key={carrera.id_car} className="admincarreras-item-ac">
+              <li
+                key={getCareerId(carrera) || carrera.nom_car}
+                className="admincarreras-item-ac"
+              >
                 <div
                   className={`carrera-display-ac ${
                     !carrera.est_car ? "carrera-inactiva-ac" : ""
@@ -634,7 +678,7 @@ const AdminCarreras = () => {
                     </button>
                     <button
                       onClick={() =>
-                        confirmarDesactivar(carrera.id_car, carrera.est_car)
+                        confirmarDesactivar(getCareerId(carrera), carrera.est_car)
                       }
                       className={
                         carrera.est_car ? "btn-desactivar-ac" : "btn-activar-ac"
@@ -652,7 +696,7 @@ const AdminCarreras = () => {
                     </button>
                     <button
                       onClick={() =>
-                        confirmarEliminarPermanente(carrera.id_car)
+                        confirmarEliminarPermanente(getCareerId(carrera))
                       }
                       className="btn-eliminar-permanente-ac"
                     >
@@ -791,7 +835,7 @@ const AdminCarreras = () => {
                 <div className="edicion-buttons-ac">
                   <button
                     onClick={() =>
-                      actualizarCarrera(modalEdicion.carrera.id_car)
+                      actualizarCarrera(getCareerId(modalEdicion.carrera))
                     }
                     className="btn-guardar-ac"
                   >

@@ -22,20 +22,21 @@ class EmailVerificationService {
       // Crear token de verificación
       const token = await this.tokenService.crearToken({
         idCuenta: cuenta.id,
-        tipoToken: "VERIFICAR_CORREO",
+        tipoToken: "VERIFY_EMAIL",
         ip,
+        tenantId: cuenta.tenantId,
       });
 
       // Generar URL para el frontend
       const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
-      const urlVerificacion = `${frontendUrl}/verificar-correo/${token.tok_val}`;
+      const urlVerificacion = `${frontendUrl}/verificar-correo/${token.value}`;
 
       // Obtener plantilla de correo
       const { asunto, cuerpoHtml } =
         this.emailTemplateService.obtenerPlantillaVerificacion({
           nombre: cuenta.user?.firstName || "Usuario",
           urlVerificacion,
-          token: token.tok_val,
+          token: token.value,
         });
 
       // Enviar correo electrónico
@@ -48,7 +49,7 @@ class EmailVerificationService {
       return {
         success: true,
         message: "Email de verificación enviado correctamente",
-        token: token.tok_val,
+        token: token.value,
       };
     } catch (error) {
       console.error("Error al enviar verificación de correo:", error);
@@ -69,7 +70,7 @@ class EmailVerificationService {
       // Validar token
       const resultadoValidacion = await this.tokenService.validarToken({
         tokenValue,
-        tipoToken: "VERIFICAR_CORREO",
+        tipoToken: "VERIFY_EMAIL",
         ip,
       });
       console.log(
@@ -78,7 +79,7 @@ class EmailVerificationService {
           valido: resultadoValidacion.valido,
           mensaje: resultadoValidacion.mensaje,
           motivo: resultadoValidacion.motivo || "N/A",
-          estadoToken: resultadoValidacion.token?.est_tok || "N/A",
+          estadoToken: resultadoValidacion.token?.status || "N/A",
           cuentaVerificada: resultadoValidacion.cuentaVerificada || false,
         }
       );
@@ -120,22 +121,22 @@ class EmailVerificationService {
       // Usar transacción para asegurar atomicidad
       const resultado = await prisma.$transaction(async (tx) => {
         // Verificar nuevamente que el token esté activo dentro de la transacción
-        const tokenActual = await tx.token_cuenta.findUnique({
-          where: { tok_val: tokenValue },
+        const tokenActual = await tx.accountToken.findUnique({
+          where: { value: tokenValue },
         });
 
         console.log(
           `[${new Date().toISOString()}] Estado del token ${tokenValue} dentro de la transacción:`,
           {
             existe: !!tokenActual,
-            estado: tokenActual?.est_tok,
+            estado: tokenActual?.status,
           }
         );
 
-        if (!tokenActual || tokenActual.est_tok !== "ACTIVO") {
+        if (!tokenActual || tokenActual.status !== "ACTIVE") {
           console.log(
             `[${new Date().toISOString()}] Token ${tokenValue} ya no válido durante la transacción. Estado: ${
-              tokenActual?.est_tok || "NO_EXISTE"
+              tokenActual?.status || "NO_EXISTE"
             }`
           );
           throw new Error("Token ya no válido durante la transacción");
@@ -144,41 +145,41 @@ class EmailVerificationService {
           `[${new Date().toISOString()}] Marcando token ${tokenValue} como usado`
         );
         // Marcar token como usado
-        await tx.token_cuenta.update({
-          where: { tok_val: tokenValue },
-          data: { est_tok: "USADO" },
+        await tx.accountToken.update({
+          where: { value: tokenValue },
+          data: { status: "USED" },
         });
 
         console.log(
           `[${new Date().toISOString()}] Registrando uso del token ${tokenValue}`
         );
         // Registrar el uso del token
-        await tx.uso_token.create({
+        await tx.tokenUsage.create({
           data: {
-            id_tok_per: tokenActual.id_tok,
-            fec_uso: new Date(),
-            ip_uso: ip || "0.0.0.0",
-            exi_uso: true,
+            tenantId: tokenActual.tenantId,
+            tokenId: tokenActual.id,
+            ip: ip || "0.0.0.0",
+            successful: true,
           },
         });
 
         console.log(
           `[${new Date().toISOString()}] Actualizando estado de verificación para la cuenta ${
-            resultadoValidacion.token.id_cue_per
+            resultadoValidacion.token.accountId
           }`
         );
         // Actualizar estado de verificación en la cuenta
-        const cuentaActualizada = await tx.cuenta.update({
-          where: { id_cue: resultadoValidacion.token.id_cue_per },
+        const cuentaActualizada = await tx.account.update({
+          where: { id: resultadoValidacion.token.accountId },
           data: {
-            est_ver_cor: true,
-            fec_ver_cor: new Date(),
+            isEmailVerified: true,
+            emailVerifiedAt: new Date(),
           },
         });
 
         console.log(
           `[${new Date().toISOString()}] Verificación completada con éxito para token ${tokenValue}, cuenta ${
-            resultadoValidacion.token.id_cue_per
+            resultadoValidacion.token.accountId
           }`
         );
         return cuentaActualizada;
@@ -186,7 +187,7 @@ class EmailVerificationService {
 
       // Obtener la información completa de la cuenta para generar el JWT
       const accountComplete = await prisma.account.findUnique({
-        where: { id: resultadoValidacion.token.id_cue_per },
+        where: { id: resultadoValidacion.token.accountId },
         include: {
           user: true,
         },
@@ -208,7 +209,7 @@ class EmailVerificationService {
       return {
         success: true,
         message: "¡Correo verificado exitosamente!",
-        idCuenta: resultadoValidacion.token.id_cue_per,
+        idCuenta: resultadoValidacion.token.accountId,
         // Datos de autenticación para login automático
         authToken: jwtToken,
         usuario: {
@@ -255,7 +256,7 @@ class EmailVerificationService {
       // Verificar rate limiting (máximo 3 reenvíos por hora)
       const puedeReenviar = await this.tokenService.verificarRateLimit(
         correo,
-        "VERIFICAR_CORREO",
+        "VERIFY_EMAIL",
         3,
         60
       );
@@ -287,12 +288,13 @@ class EmailVerificationService {
 
       // Invalidar tokens anteriores del mismo tipo
       await this.tokenService.invalidarTokensAnteriores(
-        account.id,
-        "VERIFICAR_CORREO"
+        cuenta.id,
+        "VERIFY_EMAIL",
+        cuenta.tenantId
       );
 
       // Enviar nueva verificación
-      return await this.enviarVerificacion(account, ip);
+      return await this.enviarVerificacion(cuenta, ip);
     } catch (error) {
       console.error("Error al reenviar verificación:", error);
       throw new Error("Error al reenviar el correo de verificación");

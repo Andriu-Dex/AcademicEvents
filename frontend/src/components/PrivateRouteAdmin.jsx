@@ -1,6 +1,12 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import * as jwt_decode from "jwt-decode";
+
+const ADMIN_ROLES = new Set([
+  "ADMIN_GLOBAL",
+  "ADMIN_GENERAL",
+  "GLOBAL_ADMIN",
+  "GENERAL_ADMIN",
+]);
 
 /**
  * Componente que protege rutas de administración.
@@ -28,10 +34,8 @@ const PrivateRouteAdmin = ({ children }) => {
   }
 
   // Verificar rol de administrador
-  if (
-    usuario.rol_usu !== "ADMIN_GLOBAL" &&
-    usuario.rol_usu !== "ADMIN_GENERAL"
-  ) {
+  const role = usuario?.rol_usu || usuario?.role;
+  if (!ADMIN_ROLES.has(role)) {
     return <Navigate to="/eventos" replace />;
   }
 

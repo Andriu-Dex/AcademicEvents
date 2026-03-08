@@ -16,6 +16,8 @@ const emailVerificationService = new EmailVerificationService(
 const ROLE_TO_LEGACY = {
   GLOBAL_ADMIN: "ADMIN_GLOBAL",
   GENERAL_ADMIN: "ADMIN_GENERAL",
+  STUDENT: "ESTUDIANTE",
+  GENERAL: "GENERAL",
 };
 
 // ===============================
@@ -186,9 +188,8 @@ const registrarEstudiante = async (req, res) => {
     // 3. Enviar correo de verificación
     await emailVerificationService.enviarVerificacion(
       {
-        id_cue: resultado.cuenta.id,
-        cor_usu: resultado.cuenta.email,
-        usuario: resultado.usuario,
+        ...resultado.cuenta,
+        user: resultado.usuario,
       },
       ip
     );

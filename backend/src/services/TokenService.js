@@ -15,7 +15,7 @@ class TokenService {
    * @param {number} options.horasValidez - Horas de validez del token (default: 24)
    * @returns {Promise<Object>} Token creado
    */
-  async crearToken({ idCuenta, tipoToken, ip, horasValidez = 24 }) {
+  async crearToken({ idCuenta, tipoToken, ip, horasValidez = 24, tenantId }) {
     try {
       // Generar token aleatorio de 64 caracteres (32 bytes en hex = 64 caracteres)
       const tokenValue = randomBytes(32).toString("hex");
@@ -25,13 +25,14 @@ class TokenService {
       fechaExpiracion.setHours(fechaExpiracion.getHours() + horasValidez);
 
       // Crear token en la base de datos
-      const token = await prisma.token_cuenta.create({
+      const token = await prisma.accountToken.create({
         data: {
-          id_cue_per: idCuenta,
-          tok_val: tokenValue,
-          tip_tok: tipoToken,
-          fec_exp_tok: fechaExpiracion,
-          ip_sol: ip || null,
+          tenantId,
+          accountId: idCuenta,
+          value: tokenValue,
+          type: tipoToken,
+          expiresAt: fechaExpiracion,
+          requestIp: ip || null,
         },
       });
 
@@ -52,11 +53,11 @@ class TokenService {
    */ async validarToken({ tokenValue, tipoToken, ip }) {
     try {
       // Buscar token en la base de datos con sus relaciones
-      const token = await prisma.token_cuenta.findUnique({
-        where: { tok_val: tokenValue },
+      const token = await prisma.accountToken.findUnique({
+        where: { value: tokenValue },
         include: {
-          invalidacion: true,
-          uso_token: true,
+          invalidation: true,
+          usage: true,
         },
       });
 
@@ -69,18 +70,18 @@ class TokenService {
       }
 
       // Verificar tipo de token
-      if (token.tip_tok !== tipoToken) {
+      if (token.type !== tipoToken) {
         return {
           valido: false,
           mensaje: "El tipo de token no es válido",
         };
       } // Verificar estado del token
-      if (token.est_tok !== "ACTIVO") {
+      if (token.status !== "ACTIVE") {
         // Si el token ya fue usado, verificar si la cuenta está verificada
         let cuentaVerificada = false;
-        if (token.est_tok === "USADO" && tipoToken === "VERIFICAR_CORREO") {
+        if (token.status === "USED" && tipoToken === "VERIFY_EMAIL") {
           const account = await prisma.account.findUnique({
-            where: { id: token.id_cue_per },
+            where: { id: token.accountId },
             select: { isEmailVerified: true },
           });
           cuentaVerificada = account?.isEmailVerified || false;
@@ -90,8 +91,8 @@ class TokenService {
         let motivo = "USO_NORMAL";
         let mensaje = "Este enlace ya ha sido utilizado";
 
-        if (token.est_tok === "INVALIDADO" && token.invalidacion) {
-          if (token.invalidacion.raz_inv === "CORREO_INCORRECTO") {
+        if (token.status === "INVALIDATED" && token.invalidation) {
+          if (token.invalidation.reason === "INCORRECT_EMAIL") {
             motivo = "CORRECCION_CORREO";
             mensaje =
               "Este enlace ya no es válido porque se ha corregido el correo electrónico. Por favor, utilice el enlace enviado al nuevo correo.";
@@ -99,13 +100,13 @@ class TokenService {
             motivo = "INVALIDADO";
             mensaje = "Este enlace ha sido invalidado.";
           }
-        } else if (token.est_tok === "EXPIRADO") {
+        } else if (token.status === "EXPIRED") {
           motivo = "EXPIRADO";
           mensaje = "El enlace ha expirado.";
-        } else if (token.est_tok === "USADO") {
+        } else if (token.status === "USED") {
           motivo = "USO_NORMAL";
           mensaje = "Este enlace ya ha sido utilizado.";
-        } else if (token.est_tok === "REEMPLAZADO") {
+        } else if (token.status === "REPLACED") {
           motivo = "REEMPLAZADO";
           mensaje = "Este enlace ha sido reemplazado por uno nuevo.";
         }
@@ -119,11 +120,11 @@ class TokenService {
       }
 
       // Verificar expiración
-      if (new Date() > token.fec_exp_tok) {
-        // Actualizar estado a EXPIRADO
-        await prisma.token_cuenta.update({
-          where: { id_tok: token.id_tok },
-          data: { est_tok: "EXPIRADO" },
+      if (new Date() > token.expiresAt) {
+        // Actualizar estado a EXPIRED
+        await prisma.accountToken.update({
+          where: { id: token.id },
+          data: { status: "EXPIRED" },
         });
 
         return {
@@ -153,21 +154,21 @@ class TokenService {
    * @returns {Promise<Object>} Token actualizado
    */ async marcarTokenComoUsado(tokenValue, ip) {
     try {
-      // Paso 1: Actualizar el estado del token a USADO
-      const tokenActualizado = await prisma.token_cuenta.update({
-        where: { tok_val: tokenValue },
+      // Paso 1: Actualizar el estado del token a USED
+      const tokenActualizado = await prisma.accountToken.update({
+        where: { value: tokenValue },
         data: {
-          est_tok: "USADO",
+          status: "USED",
         },
       });
 
-      // Paso 2: Registrar el uso del token en la tabla uso_token
-      await prisma.uso_token.create({
+      // Paso 2: Registrar el uso del token en la tabla TokenUsage
+      await prisma.tokenUsage.create({
         data: {
-          id_tok_per: tokenActualizado.id_tok,
-          fec_uso: new Date(),
-          ip_uso: ip || "0.0.0.0",
-          exi_uso: true,
+          tenantId: tokenActualizado.tenantId,
+          tokenId: tokenActualizado.id,
+          ip: ip || "0.0.0.0",
+          successful: true,
         },
       });
 
@@ -262,11 +263,11 @@ class TokenService {
       fechaLimite.setMinutes(fechaLimite.getMinutes() - minutos);
 
       // Contar tokens del mismo tipo en la última hora
-      const conteoTokens = await prisma.token_cuenta.count({
+      const conteoTokens = await prisma.accountToken.count({
         where: {
-          id_cue_per: account.id,
-          tip_tok: tipoToken,
-          fec_cre_tok: {
+          accountId: cuenta.id,
+          type: tipoToken,
+          createdAt: {
             gte: fechaLimite,
           },
         },
@@ -274,19 +275,19 @@ class TokenService {
 
       if (conteoTokens >= limiteHora) {
         // Obtener el token más reciente para calcular tiempo restante
-        const tokenMasReciente = await prisma.token_cuenta.findFirst({
+        const tokenMasReciente = await prisma.accountToken.findFirst({
           where: {
-            id_cue_per: account.id,
-            tip_tok: tipoToken,
+            accountId: cuenta.id,
+            type: tipoToken,
           },
           orderBy: {
-            fec_cre_tok: "desc",
+            createdAt: "desc",
           },
         });
 
         // Calcular tiempo restante en minutos
         const tiempoTranscurrido = Math.floor(
-          (new Date() - tokenMasReciente.fec_cre_tok) / (1000 * 60)
+          (new Date() - tokenMasReciente.createdAt) / (1000 * 60)
         );
         const tiempoRestante = minutos - tiempoTranscurrido;
 
@@ -312,14 +313,14 @@ class TokenService {
    * @param {string} tipoToken - Tipo de token a invalidar
    * @returns {Promise<number>} Número de tokens invalidados
    */
-  async invalidarTokensAnteriores(idCuenta, tipoToken) {
+  async invalidarTokensAnteriores(idCuenta, tipoToken, tenantId) {
     try {
       // Primero, obtener los tokens activos que vamos a invalidar
-      const tokensActivos = await prisma.token_cuenta.findMany({
+      const tokensActivos = await prisma.accountToken.findMany({
         where: {
-          id_cue_per: idCuenta,
-          tip_tok: tipoToken,
-          est_tok: "ACTIVO",
+          accountId: idCuenta,
+          type: tipoToken,
+          status: "ACTIVE",
         },
       });
 
@@ -328,26 +329,26 @@ class TokenService {
         return 0;
       }
 
-      // Actualizar tokens activos a estado INVALIDADO
-      const resultado = await prisma.token_cuenta.updateMany({
+      // Actualizar tokens activos a estado INVALIDATED
+      const resultado = await prisma.accountToken.updateMany({
         where: {
-          id_cue_per: idCuenta,
-          tip_tok: tipoToken,
-          est_tok: "ACTIVO",
+          accountId: idCuenta,
+          type: tipoToken,
+          status: "ACTIVE",
         },
         data: {
-          est_tok: "INVALIDADO",
+          status: "INVALIDATED",
         },
       });
 
       // Registrar razón de invalidación para cada token
       for (const token of tokensActivos) {
-        await prisma.invalidacion_token.create({
+        await prisma.tokenInvalidation.create({
           data: {
-            id_tok_per: token.id_tok,
-            raz_inv: "CORREO_INCORRECTO",
-            des_inv: "Token invalidado por corrección de correo electrónico",
-            fec_inv: new Date(),
+            tenantId,
+            tokenId: token.id,
+            reason: "INCORRECT_EMAIL",
+            description: "Token invalidado por corrección de correo electrónico",
           },
         });
       }
@@ -385,15 +386,15 @@ class TokenService {
   async _determinarMotivoInvalidacion(token) {
     try {
       // Primero, verificar si hay un registro de invalidación para este token
-      const invalidacion = await prisma.invalidacion_token.findFirst({
+      const invalidacion = await prisma.tokenInvalidation.findFirst({
         where: {
-          id_tok_per: token.id_tok,
+          tokenId: token.id,
         },
       });
 
       // Si hay un registro de invalidación, usar la razón registrada
       if (invalidacion) {
-        if (invalidacion.raz_inv === "CORREO_INCORRECTO") {
+        if (invalidacion.reason === "INCORRECT_EMAIL") {
           return {
             motivo: "CORRECCION_CORREO",
             mensaje:
@@ -402,22 +403,22 @@ class TokenService {
         }
 
         return {
-          motivo: invalidacion.raz_inv,
-          mensaje: "Este enlace ha sido invalidado: " + invalidacion.des_inv,
+          motivo: invalidacion.reason,
+          mensaje: "Este enlace ha sido invalidado: " + (invalidacion.description || ""),
         };
       }
 
       // Verificar si hay un token más reciente para el mismo usuario y tipo
-      const tokenMasReciente = await prisma.token_cuenta.findFirst({
+      const tokenMasReciente = await prisma.accountToken.findFirst({
         where: {
-          id_cue_per: token.id_cue_per,
-          tip_tok: token.tip_tok,
-          fec_cre_tok: {
-            gt: token.fec_cre_tok, // Tokens creados después del token actual
+          accountId: token.accountId,
+          type: token.type,
+          createdAt: {
+            gt: token.createdAt, // Tokens creados después del token actual
           },
         },
         orderBy: {
-          fec_cre_tok: "desc",
+          createdAt: "desc",
         },
       });
 
@@ -457,17 +458,18 @@ class TokenService {
     idCuenta,
     tokenExcluido,
     tipoToken,
-    razon = "SEGURIDAD",
-    descripcion = "Invalidado por seguridad"
+    razon = "SECURITY",
+    descripcion = "Invalidado por seguridad",
+    tenantId
   ) {
     try {
       // Primero, obtener los tokens activos que vamos a invalidar (excluyendo el tokenExcluido)
-      const tokensActivos = await prisma.token_cuenta.findMany({
+      const tokensActivos = await prisma.accountToken.findMany({
         where: {
-          id_cue_per: idCuenta,
-          tip_tok: tipoToken,
-          est_tok: "ACTIVO",
-          tok_val: {
+          accountId: idCuenta,
+          type: tipoToken,
+          status: "ACTIVE",
+          value: {
             not: tokenExcluido,
           },
         },
@@ -478,29 +480,29 @@ class TokenService {
         return 0;
       }
 
-      // Actualizar tokens activos a estado INVALIDADO
-      const resultado = await prisma.token_cuenta.updateMany({
+      // Actualizar tokens activos a estado INVALIDATED
+      const resultado = await prisma.accountToken.updateMany({
         where: {
-          id_cue_per: idCuenta,
-          tip_tok: tipoToken,
-          est_tok: "ACTIVO",
-          tok_val: {
+          accountId: idCuenta,
+          type: tipoToken,
+          status: "ACTIVE",
+          value: {
             not: tokenExcluido,
           },
         },
         data: {
-          est_tok: "INVALIDADO",
+          status: "INVALIDATED",
         },
       });
 
       // Registrar razón de invalidación para cada token
       for (const token of tokensActivos) {
-        await prisma.invalidacion_token.create({
+        await prisma.tokenInvalidation.create({
           data: {
-            id_tok_per: token.id_tok,
-            raz_inv: razon,
-            des_inv: descripcion,
-            fec_inv: new Date(),
+            tenantId,
+            tokenId: token.id,
+            reason: razon,
+            description: descripcion,
           },
         });
       }

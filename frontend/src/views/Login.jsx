@@ -7,6 +7,17 @@ import { useAuth } from "../hooks/useAuth";
 import { Eye, EyeOff, Lock, AtSign, X, Home } from "lucide-react";
 import "./styles/Login.css";
 
+const ADMIN_ROLES = new Set([
+  "ADMIN_GLOBAL",
+  "ADMIN_GENERAL",
+  "GLOBAL_ADMIN",
+  "GENERAL_ADMIN",
+]);
+
+const HOME_ROLES = new Set(["ESTUDIANTE", "STUDENT", "GENERAL"]);
+
+const resolveUserRole = (user) => user?.rol_usu || user?.role || "";
+
 // Componente principal de Login
 const Login = () => {
   const { login, usuario } = useAuth();
@@ -21,6 +32,23 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false); // Estado de carga del botón
   const [sugerencias, setSugerencias] = useState([]);
   const [mostrarSugerencias, setMostrarSugerencias] = useState(false);
+
+  const navigateByRole = (user) => {
+    const role = resolveUserRole(user);
+
+    if (ADMIN_ROLES.has(role)) {
+      navigate("/admin");
+      return true;
+    }
+
+    if (HOME_ROLES.has(role)) {
+      navigate("/home");
+      return true;
+    }
+
+    return false;
+  };
+
   // Animación al montar el componente
   useEffect(() => {
     setFadeIn(true);
@@ -30,16 +58,7 @@ const Login = () => {
   useEffect(() => {
     // Solo redirige si estás en /login
     if (location.pathname === "/login" && usuario) {
-      switch (usuario.rol_usu) {
-        case "ADMIN_GLOBAL":
-        case "ADMIN_GENERAL":
-          navigate("/admin"); // ✅ Redirige al panel principal
-          break;
-        case "ESTUDIANTE":
-        case "GENERAL":
-          navigate("/home"); // Tanto estudiantes como usuarios generales van al home
-          break;
-      }
+      navigateByRole(usuario);
     }
   }, [usuario, location.pathname]);
 
@@ -115,18 +134,9 @@ const Login = () => {
       login(usuarioFinal, token);
       toast.success("¡Bienvenido!"); // Redirecciona luego de que todo esté estable
       setTimeout(() => {
-        switch (usuarioFinal.rol_usu) {
-          case "ADMIN_GLOBAL":
-          case "ADMIN_GENERAL":
-            navigate("/admin");
-            break;
-          case "ESTUDIANTE":
-          case "GENERAL":
-            navigate("/home"); // Tanto estudiantes como usuarios generales van al home
-            break;
-          default:
-            toast.error("Rol de usuario no reconocido");
-            break;
+        const roleHandled = navigateByRole(usuarioFinal);
+        if (!roleHandled) {
+          toast.error("Rol de usuario no reconocido");
         }
       }, 500); // pequeña pausa opcional
     } catch (err) {
