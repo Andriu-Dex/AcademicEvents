@@ -25,6 +25,18 @@ const conditionalPaginationLog = (message, forceShow = false) => {
   }
 };
 
+const LEGACY_SORT_FIELD_MAP = {
+  title: "name",
+  value: "price",
+};
+
+const getNormalizedSortReq = (req) => ({
+  query: {
+    ...req.query,
+    sortBy: LEGACY_SORT_FIELD_MAP[req.query.sortBy] || req.query.sortBy,
+  },
+});
+
 /**
  * Obtiene eventos públicos con paginación
  * @param {Object} req - Objeto de solicitud Express
@@ -99,9 +111,9 @@ async function obtenerEventosPublicosPaginados(req, res) {
 
     // Filtros por precio
     if (gratuito === "true") {
-      whereCondition.value = 0;
+      whereCondition.price = 0;
     } else if (pagado === "true") {
-      whereCondition.value = {
+      whereCondition.price = {
         gt: 0,
       };
     } // Filtro por modalidad
@@ -117,7 +129,7 @@ async function obtenerEventosPublicosPaginados(req, res) {
           { OR: whereCondition.OR }, // Filtros de carrera existentes
           {
             OR: [
-              { title: { contains: search, mode: "insensitive" } },
+              { name: { contains: search, mode: "insensitive" } },
               { description: { contains: search, mode: "insensitive" } },
             ],
           }, // Filtro de búsqueda
@@ -126,15 +138,15 @@ async function obtenerEventosPublicosPaginados(req, res) {
       } else {
         // Si no hay filtros de carrera previos, aplicar búsqueda directamente
         whereCondition.OR = [
-          { title: { contains: search, mode: "insensitive" } },
+          { name: { contains: search, mode: "insensitive" } },
           { description: { contains: search, mode: "insensitive" } },
         ];
       }
     } // Ordenamiento (por defecto por fecha de inicio ascendente - eventos más próximos primero)
     const orderBy = extractSortParams(
-      req,
+      getNormalizedSortReq(req),
       { field: "startDate", direction: "asc" },
-      ["startDate", "endDate", "title", "value"]
+      ["startDate", "endDate", "name", "price"]
     );
 
     // Ejecutar consultas en paralelo para datos y conteo
@@ -219,7 +231,7 @@ async function obtenerEventosUsuarioPaginados(req, res) {
 
     // Construir condición WHERE para filtros
     const whereCondition = {}; // 🎯 LÓGICA DE FILTRADO POR ROL Y CARRERA
-    if (userAccount.role === "ESTUDIANTE") {
+    if (userAccount.role === "ESTUDIANTE" || userAccount.role === "STUDENT") {
       if (userAccount.user.career) {
         // Estudiante con carrera asignada puede ver:
         // 1. Eventos específicos de su carrera
@@ -320,9 +332,9 @@ async function obtenerEventosUsuarioPaginados(req, res) {
       }
     } // Filtros por precio
     if (gratuito === "true") {
-      whereCondition.value = 0;
+      whereCondition.price = 0;
     } else if (pagado === "true") {
-      whereCondition.value = {
+      whereCondition.price = {
         gt: 0,
       };
     } // Filtro por cupos disponibles (solo aplicar si se solicita específicamente)
@@ -340,13 +352,13 @@ async function obtenerEventosUsuarioPaginados(req, res) {
         whereCondition.AND = whereCondition.AND || [];
         whereCondition.AND.push({
           OR: [
-            { title: { contains: search, mode: "insensitive" } },
+            { name: { contains: search, mode: "insensitive" } },
             { description: { contains: search, mode: "insensitive" } },
           ],
         });
       } else {
         whereCondition.OR = [
-          { title: { contains: search, mode: "insensitive" } },
+          { name: { contains: search, mode: "insensitive" } },
           { description: { contains: search, mode: "insensitive" } },
         ];
       }
@@ -377,7 +389,7 @@ async function obtenerEventosUsuarioPaginados(req, res) {
     conditionalPaginationLog(
       "📊 [EVENTOS USUARIO PAGINADOS] Reglas aplicadas:"
     );
-    if (userAccount.role === "ESTUDIANTE") {
+    if (userAccount.role === "ESTUDIANTE" || userAccount.role === "STUDENT") {
       if (userAccount.user.career) {
         conditionalPaginationLog(
           "  - ESTUDIANTE con carrera: Puede ver eventos de su carrera + eventos públicos (sin carreras)"
@@ -397,9 +409,9 @@ async function obtenerEventosUsuarioPaginados(req, res) {
     conditionalPaginationLog("📊 [EVENTOS USUARIO PAGINADOS] Condición WHERE:");
     conditionalPaginationLog(JSON.stringify(whereCondition, null, 2)); // Ordenamiento (por defecto por fecha de inicio ascendente - eventos más próximos primero)
     const orderBy = extractSortParams(
-      req,
+      getNormalizedSortReq(req),
       { field: "startDate", direction: "asc" },
-      ["startDate", "endDate", "title", "value", "createdAt"]
+      ["startDate", "endDate", "name", "price", "createdAt"]
     );
 
     // Ejecutar consultas en paralelo para datos y conteo
@@ -440,7 +452,7 @@ async function obtenerEventosUsuarioPaginados(req, res) {
           .map((ec) => ec.career.name)
           .join(", ");
         conditionalPaginationLog(
-          `    ${index + 1}. ${evento.title} (Tipo: ${evento.type}) ${
+          `    ${index + 1}. ${evento.name} (Tipo: ${evento.type}) ${
             carreras ? `[${carreras}]` : "[Público - Sin carreras]"
           }`
         );
@@ -488,7 +500,7 @@ async function obtenerEventosAdminPaginados(req, res) {
     // Búsqueda por nombre o descripción
     if (search && search.trim() !== "") {
       whereCondition.OR = [
-        { title: { contains: search, mode: "insensitive" } },
+        { name: { contains: search, mode: "insensitive" } },
         { description: { contains: search, mode: "insensitive" } },
       ];
     }
@@ -548,27 +560,27 @@ async function obtenerEventosAdminPaginados(req, res) {
 
     // Filtro por valor del evento
     if (valorMin || valorMax) {
-      whereCondition.value = {};
+      whereCondition.price = {};
 
       if (valorMin) {
-        whereCondition.value.gte = parseFloat(valorMin);
+        whereCondition.price.gte = parseFloat(valorMin);
       }
 
       if (valorMax) {
-        whereCondition.value.lte = parseFloat(valorMax);
+        whereCondition.price.lte = parseFloat(valorMax);
       }
     }
 
     // Ordenamiento (por defecto por fecha de creación descendente)
     const orderBy = extractSortParams(
-      req,
+      getNormalizedSortReq(req),
       { field: "createdAt", direction: "desc" },
       [
         "createdAt",
         "startDate",
         "endDate",
-        "title",
-        "value",
+        "name",
+        "price",
         "maxCapacity",
       ]
     );

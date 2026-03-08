@@ -2,51 +2,71 @@ const puppeteer = require("puppeteer");
 const fs = require("fs");
 const path = require("path");
 
+const pick = (...values) => values.find((value) => value !== undefined && value !== null);
+
 async function generarReporteEventoPDF(datos, filePath) {
+  const evento = datos.cab_eve || {};
+  const eventoNombre = pick(evento.name, evento.nom_eve, "Sin nombre");
+  const eventoTipo = pick(evento.type, evento.tip_eve, "N/A");
+  const eventoDuracion = pick(evento.durationHours, evento.dur_hor_eve, "-");
+  const eventoFechaInicio = pick(evento.startDate, evento.fec_ini_eve, new Date());
+  const eventoFechaFin = pick(evento.endDate, evento.fec_fin_eve, new Date());
+  const eventoImagen = pick(evento.coverImageUrl, evento.img_por_eve, "");
+  const creadorNombre = pick(
+    evento.createdBy?.firstName,
+    evento.cre_eve?.nom_usu,
+    ""
+  );
+  const creadorApellido = pick(
+    evento.createdBy?.lastName,
+    evento.cre_eve?.ape_usu,
+    ""
+  );
+
   // 1. Leer plantilla HTML
   const templatePath = path.join(__dirname, "../templates/reporte_evento.html");
   let html = fs.readFileSync(templatePath, "utf8");
   // 2. Armar tabla de inscritos
-  let tabla_inscritos = datos.det_ins
+  let tabla_inscritos = (datos.det_ins || [])
     .map(
       (ins, idx) => `
         <tr>
             <td>${idx + 1}</td>
-            <td>${ins.ced_usu}</td>
-            <td>${ins.nom_usu}</td>
-            <td>${ins.ape_usu}</td>
-            <td>${ins.por_asi_fin_usu ?? "-"}</td>
+            <td>${pick(ins.idNumber, ins.ced_usu, "-")}</td>
+            <td>${pick(ins.firstName, ins.nom_usu, "-")}</td>
+            <td>${pick(ins.lastName, ins.ape_usu, "-")}</td>
+            <td>${pick(ins.finalAttendancePercent, ins.por_asi_fin_usu, "-")}</td>
             ${
-              datos.cab_eve.tip_eve === "CURSO"
-                ? `<td>${ins.not_fin_usu ?? "-"}</td>`
+              eventoTipo === "COURSE" || eventoTipo === "CURSO"
+                ? `<td>${pick(ins.finalGrade, ins.not_fin_usu, "-")}</td>`
                 : ""
             }
-            <td>${ins.est_ins}</td>
+            <td>${pick(ins.status, ins.est_ins, "-")}</td>
         </tr>
     `
     )
     .join("");
   // 3. Reemplazar los placeholders - USAR replaceAll() para reemplazar TODAS las ocurrencias
   html = html
-    .replaceAll("{{nombre_evento}}", datos.cab_eve.nom_eve)
+    .replaceAll("{{nombre_evento}}", eventoNombre)
     .replaceAll(
       "{{creador}}",
-      `${datos.cab_eve.cre_eve.nom_usu} ${datos.cab_eve.cre_eve.ape_usu}`
+      `${creadorNombre} ${creadorApellido}`
     )
-    .replaceAll("{{duracion}}", datos.cab_eve.dur_hor_eve)
+    .replaceAll("{{duracion}}", eventoDuracion)
     .replaceAll(
       "{{fecha_inicio}}",
-      new Date(datos.cab_eve.fec_ini_eve).toLocaleDateString()
+      new Date(eventoFechaInicio).toLocaleDateString()
     )
     .replaceAll(
       "{{fecha_fin}}",
-      new Date(datos.cab_eve.fec_fin_eve).toLocaleDateString()
+      new Date(eventoFechaFin).toLocaleDateString()
     )
-    .replaceAll("{{img_por_eve}}", datos.cab_eve.img_por_eve || "")
+    .replaceAll("{{img_por_eve}}", eventoImagen)
     .replaceAll("{{tabla_inscritos}}", tabla_inscritos)
     .replaceAll(
       "{{columna_nota}}",
-      datos.cab_eve.tip_eve === "CURSO" ? "<th>Nota</th>" : ""
+      eventoTipo === "COURSE" || eventoTipo === "CURSO" ? "<th>Nota</th>" : ""
     );
 
   // 4. Generar el PDF con Puppeteer
@@ -76,22 +96,26 @@ async function generarReporteMensualPDF(datos, filePath) {
   );
   let html = fs.readFileSync(templatePath, "utf8");
   // 2. Armar tabla de eventos
-  let tabla_eventos = datos.eve
+  let tabla_eventos = (datos.eve || [])
     .map(
       (ev, idx) => `
         <tr>
             <td>${idx + 1}</td>
-            <td>${ev.nom_eve}</td>
-            <td>${ev.tip_eve}</td>
-            <td>${ev.val_eve ?? "-"}</td>
+            <td>${pick(ev.name, ev.nom_eve, "-")}</td>
+            <td>${pick(ev.type, ev.tip_eve, "-")}</td>
+            <td>${pick(ev.price, ev.val_eve, "-")}</td>
             <td>${
-              ev.fec_fin_eve
-                ? new Date(ev.fec_fin_eve).toLocaleDateString()
+              pick(ev.endDate, ev.fec_fin_eve)
+                ? new Date(pick(ev.endDate, ev.fec_fin_eve)).toLocaleDateString()
                 : "-"
             }</td>
-            <td>${ev.nom_cre} ${ev.ape_cre}</td>
-            <td>${ev.can_ins}</td>
-            <td>${ev.tot_eve}</td>
+            <td>${pick(ev.creatorFirstName, ev.nom_cre, "")} ${pick(
+              ev.creatorLastName,
+              ev.ape_cre,
+              ""
+            )}</td>
+            <td>${pick(ev.registrationCount, ev.can_ins, 0)}</td>
+            <td>${pick(ev.totalRevenue, ev.tot_eve, 0)}</td>
         </tr>
     `
     )
@@ -149,8 +173,8 @@ async function generarReporteCarreraPDF(datos, filePath) {
         (evento, idx) => `
         <tr>
             <td>${idx + 1}</td>
-            <td>${evento.nom_eve || "Sin nombre"}</td>
-            <td>${new Date(evento.fec_ini_eve).toLocaleDateString("es-ES")}</td>
+            <td>${pick(evento.name, evento.nom_eve, "Sin nombre")}</td>
+            <td>${new Date(pick(evento.startDate, evento.fec_ini_eve)).toLocaleDateString("es-ES")}</td>
             <td>${evento.totalInscritos || 0}</td>
             <td>${evento.totalAsistieron || 0}</td>
             <td>${evento.porcentajeAsistencia || 0}%</td>
@@ -173,10 +197,12 @@ async function generarReporteCarreraPDF(datos, filePath) {
       .map(
         (carrera, idx) => `
             <tr class="${
-              carrera.id_car === datos.carrera.id_car ? "carrera-actual" : ""
+              pick(carrera.id, carrera.id_car) === pick(datos.carrera.id, datos.carrera.id_car)
+                ? "carrera-actual"
+                : ""
             }">
                 <td>${idx + 1}</td>
-                <td>${carrera.nom_car || "Sin nombre"}</td>
+                <td>${pick(carrera.name, carrera.nom_car, "Sin nombre")}</td>
                 <td>${carrera.totalEstudiantes || 0}</td>
                 <td>${carrera.totalInscripciones || 0}</td>
                 <td>${carrera.eventosParticipados || 0}</td>
@@ -195,18 +221,18 @@ async function generarReporteCarreraPDF(datos, filePath) {
 
   // 4. Reemplazar los placeholders - USAR replaceAll() para reemplazar TODAS las ocurrencias
   console.log("🔧 [PDF] Reemplazando placeholders...");
-  console.log("🔧 [PDF] nombre_carrera:", datos.carrera.nom_car);
+  console.log("🔧 [PDF] nombre_carrera:", pick(datos.carrera.name, datos.carrera.nom_car));
   console.log(
     "🔧 [PDF] nombre_universidad:",
-    datos.carrera.facultad?.universidad?.nom_uni
+    pick(datos.carrera.facultad?.universidad?.name, datos.carrera.facultad?.universidad?.nom_uni)
   );
-  console.log("🔧 [PDF] nombre_facultad:", datos.carrera.facultad?.nom_fac);
+  console.log("🔧 [PDF] nombre_facultad:", pick(datos.carrera.facultad?.name, datos.carrera.facultad?.nom_fac));
 
   html = html
-    .replaceAll("{{nombre_carrera}}", datos.carrera.nom_car)
+    .replaceAll("{{nombre_carrera}}", pick(datos.carrera.name, datos.carrera.nom_car, "Sin nombre"))
     .replaceAll(
       "{{descripcion_carrera}}",
-      datos.carrera.des_car || "Sin descripción"
+      pick(datos.carrera.description, datos.carrera.des_car, "Sin descripción")
     )
     .replaceAll(
       "{{total_estudiantes}}",
@@ -232,11 +258,11 @@ async function generarReporteCarreraPDF(datos, filePath) {
     .replaceAll("{{fecha_generacion}}", new Date().toLocaleDateString("es-ES"))
     .replaceAll(
       "{{nombre_universidad}}",
-      datos.carrera.facultad?.universidad?.nom_uni || "Universidad"
+      pick(datos.carrera.facultad?.universidad?.name, datos.carrera.facultad?.universidad?.nom_uni, "Universidad")
     )
     .replaceAll(
       "{{nombre_facultad}}",
-      datos.carrera.facultad?.nom_fac || "Facultad"
+      pick(datos.carrera.facultad?.name, datos.carrera.facultad?.nom_fac, "Facultad")
     );
 
   console.log("✅ [PDF] Placeholders reemplazados correctamente");

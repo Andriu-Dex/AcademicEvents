@@ -26,6 +26,54 @@ class SocketService {
   }
 
   /**
+   * Normaliza payload de evento para soportar claves legacy y nuevas.
+   * @param {Object} eventData
+   * @returns {Object}
+   */
+  normalizeEventPayload(eventData = {}) {
+    return {
+      ...eventData,
+      id: eventData.id ?? eventData.id_eve ?? eventData.eventId ?? null,
+      name:
+        eventData.name ?? eventData.nom_eve ?? eventData.eventTitle ?? null,
+      availableSpots:
+        eventData.availableSpots ??
+        eventData.cup_dis_eve ??
+        eventData.remainingSlots ??
+        null,
+      maxCapacity:
+        eventData.maxCapacity ?? eventData.cup_max_eve ?? eventData.totalSlots ?? null,
+    };
+  }
+
+  /**
+   * Normaliza payload de inscripción para soportar claves legacy y nuevas.
+   * @param {Object} inscriptionData
+   * @returns {{registrationId: string|null, registrationStatus: string|null, eventName: string|null}}
+   */
+  normalizeInscriptionPayload(inscriptionData = {}) {
+    const inscription =
+      inscriptionData.inscription ?? inscriptionData.inscripcion ?? inscriptionData;
+    const event =
+      inscriptionData.event ??
+      inscriptionData.evento ??
+      inscription?.event ??
+      inscription?.evento ??
+      null;
+
+    return {
+      registrationId: inscription?.id ?? inscription?.id_ins ?? null,
+      registrationStatus:
+        inscription?.status ??
+        inscription?.est_ins ??
+        inscriptionData.status ??
+        inscriptionData.est_ins ??
+        null,
+      eventName: event?.name ?? event?.nom_eve ?? null,
+    };
+  }
+
+  /**
    * Inicializar el servicio de Socket.IO
    * @param {Object} io - Instancia de Socket.IO
    */
@@ -113,6 +161,8 @@ class SocketService {
       return;
     }
 
+    const normalizedEvent = this.normalizeEventPayload(eventoData);
+
     const eventData = {
       action,
       data: eventoData,
@@ -123,8 +173,8 @@ class SocketService {
       `📡 [SOCKET] Enviando evento "evento-change-hm" para acción "${action}":`,
       {
         clientes_conectados: this.connectedClients.size,
-        id_evento: eventoData.id_eve,
-        nombre_evento: eventoData.nom_eve,
+        id_evento: normalizedEvent.id,
+        nombre_evento: normalizedEvent.name,
       }
     );
 
@@ -160,6 +210,8 @@ class SocketService {
       return;
     }
 
+    const normalizedInscription = this.normalizeInscriptionPayload(inscripcionData);
+
     const eventData = {
       action,
       data: inscripcionData,
@@ -170,9 +222,9 @@ class SocketService {
       `📡 [SOCKET] Enviando evento "inscripcion-change-hm" para acción "${action}":`,
       {
         clientes_conectados: this.connectedClients.size,
-        id_inscripcion: inscripcionData.inscripcion?.id_ins,
-        nombre_evento: inscripcionData.evento?.nom_eve,
-        estado_inscripcion: inscripcionData.inscripcion?.est_ins,
+        id_inscripcion: normalizedInscription.registrationId,
+        nombre_evento: normalizedInscription.eventName,
+        estado_inscripcion: normalizedInscription.registrationStatus,
         datos_completos: {
           tiene_inscripcion: !!inscripcionData.inscripcion,
           tiene_evento: !!inscripcionData.evento,
@@ -215,6 +267,8 @@ class SocketService {
       return;
     }
 
+    const normalizedInscription = this.normalizeInscriptionPayload(inscriptionData);
+
     const validationData = {
       action,
       data: inscriptionData,
@@ -229,8 +283,8 @@ class SocketService {
         id_inscripcion: inscriptionData.id,
         priority: validationData.priority,
         correo: inscriptionData.correo,
-        evento: inscriptionData.evento?.nom_eve,
-        estado: inscriptionData.estado,
+        evento: normalizedInscription.eventName,
+        estado: inscriptionData.estado ?? normalizedInscription.registrationStatus,
         requiere_validacion: inscriptionData.requiresValidation,
       }
     );
@@ -261,22 +315,23 @@ class SocketService {
       return;
     }
 
+    const normalizedEvent = this.normalizeEventPayload(eventData);
+    const maxCapacity = Number(normalizedEvent.maxCapacity) || 0;
+    const availableSpots = Number(normalizedEvent.availableSpots) || 0;
+
     const alertData = {
       type: "capacity_alert",
-      eventId: eventData.id_eve,
-      eventTitle: eventData.nom_eve,
-      remainingSlots: eventData.cup_dis_eve,
-      totalSlots: eventData.cup_max_eve,
-      percentage: (
-        (eventData.cup_dis_eve / eventData.cup_max_eve) *
-        100
-      ).toFixed(1),
+      eventId: normalizedEvent.id,
+      eventTitle: normalizedEvent.name,
+      remainingSlots: availableSpots,
+      totalSlots: maxCapacity,
+      percentage: maxCapacity > 0 ? ((availableSpots / maxCapacity) * 100).toFixed(1) : "0.0",
       timestamp: new Date(),
     };
 
     this.log(`📡 [SOCKET] Enviando alerta de capacidad:`, {
-      evento: eventData.nom_eve,
-      cupos_disponibles: eventData.cup_dis_eve,
+      evento: normalizedEvent.name,
+      cupos_disponibles: availableSpots,
       porcentaje: alertData.percentage,
       clientes_conectados: this.connectedClients.size,
     });
@@ -284,7 +339,7 @@ class SocketService {
     this.io.emit("capacity-alert", alertData);
 
     this.log(
-      `✅ [SOCKET] [CAPACITY ALERT] Evento "${eventData.nom_eve}" - ${eventData.cup_dis_eve} cupos restantes enviado a ${this.connectedClients.size} clientes`
+      `✅ [SOCKET] [CAPACITY ALERT] Evento "${normalizedEvent.name}" - ${availableSpots} cupos restantes enviado a ${this.connectedClients.size} clientes`
     );
   }
 

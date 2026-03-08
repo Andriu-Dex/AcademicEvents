@@ -39,11 +39,11 @@ const actualizarImagenPerfil = async (req, res) => {
     // Subir imagen a Imgur
     const imgurUrl = await subirImagenAImgur(archivo);
 
-    // Actualizar el campo img_per_usu del usuario
+    // Actualizar la URL de imagen de perfil en el schema actual
     const usuarioActualizado = await prisma.user.update({
       where: { id: cuenta.user.id },
       data: {
-        profileImage: imgurUrl,
+        profileImageUrl: imgurUrl,
       },
     });
 
@@ -54,7 +54,8 @@ const actualizarImagenPerfil = async (req, res) => {
 
     return res.status(200).json({
       msg: "Imagen de perfil actualizada correctamente",
-      imagenUrl: imgurUrl,
+      imagenUrl: usuarioActualizado.profileImageUrl,
+      profileImageUrl: usuarioActualizado.profileImageUrl,
     });
   } catch (error) {
     console.error("Error al actualizar imagen de perfil:", error);

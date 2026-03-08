@@ -13,7 +13,7 @@ const path = require("path");
 const fs = require("fs");
 
 async function descargarReporteEventoPDF(req, res) {
-  const { id } = req.params;
+  const id = req.params.id || req.params.id_eve;
 
   const datos = await obtenerDatosReporteEventoPorId(id);
 
@@ -39,6 +39,7 @@ async function descargarReporteEventoPDF(req, res) {
 
   // Devuelve el PDF como base64 junto con el nombre del evento
   res.json({
+    name: datos.cab_eve.name,
     nom_eve: datos.cab_eve.name,
     pdf: pdfBuffer.toString("base64"),
   });
@@ -187,7 +188,7 @@ async function getEventosParaReportesPaginados(req, res) {
 }
 
 async function getReporteEventoPorId(req, res) {
-  const { id } = req.params;
+  const id = req.params.id || req.params.id_eve;
 
   try {
     const datos = await obtenerDatosReporteEventoPorId(id);
@@ -247,8 +248,8 @@ async function obtenerDatosReporteEventoPorId(id) {
     },
   };
 
-  if (evento.type === "CURSO") {
-    inscripcionSelect.courseRegistration = { select: { finalGrade: true } };
+  if (evento.type === "COURSE") {
+    inscripcionSelect.registrationCourse = { select: { finalGrade: true } };
   }
 
   // Buscar las inscripciones
@@ -270,14 +271,21 @@ async function obtenerDatosReporteEventoPorId(id) {
   // Formatear detalle
   const det_ins = inscripciones.map((ins) => {
     let detalleBase = {
+      idNumber: ins.account.user.idNumber,
+      firstName: ins.account.user.firstName,
+      lastName: ins.account.user.lastName,
+      finalAttendancePercent: ins.finalAttendancePercent,
+      status: ins.status,
+      // Alias legacy para compatibilidad temporal
       ced_usu: ins.account.user.idNumber,
       nom_usu: ins.account.user.firstName,
       ape_usu: ins.account.user.lastName,
       por_asi_fin_usu: ins.finalAttendancePercent,
       est_ins: ins.status,
     };
-    if (evento.type === "CURSO") {
-      detalleBase.not_fin_usu = ins.courseRegistration?.finalGrade ?? null;
+    if (evento.type === "COURSE") {
+      detalleBase.finalGrade = ins.registrationCourse?.finalGrade ?? null;
+      detalleBase.not_fin_usu = ins.registrationCourse?.finalGrade ?? null;
     }
     return detalleBase;
   });
@@ -285,13 +293,23 @@ async function obtenerDatosReporteEventoPorId(id) {
   // Armar respuesta
   return {
     cab_eve: {
+      id: evento.id,
       id_eve: evento.id,
       name: evento.name,
+      durationHours: evento.durationHours,
       dur_hor_eve: evento.durationHours,
+      startDate: evento.startDate,
       fec_ini_eve: evento.startDate,
+      endDate: evento.endDate,
       fec_fin_eve: evento.endDate,
+      coverImageUrl: evento.coverImageUrl,
       img_por_eve: evento.coverImageUrl,
+      type: evento.type,
       tip_eve: evento.type,
+      createdBy: {
+        firstName: evento.createdBy.user.firstName,
+        lastName: evento.createdBy.user.lastName,
+      },
       cre_eve: {
         nom_usu: evento.createdBy.user.firstName,
         ape_usu: evento.createdBy.user.lastName,
@@ -363,13 +381,21 @@ async function obtenerDatosReportePorMes(anio, mes) {
       totalEventos += tot_eve;
 
       return {
+        name: evento.name,
         nom_eve: evento.name,
+        price: evento.price,
         val_eve: evento.price,
+        type: evento.type,
         tip_eve: evento.type,
+        endDate: evento.endDate,
         fec_fin_eve: evento.endDate,
+        registrationCount: can_ins,
         can_ins: can_ins,
+        creatorFirstName: nom_cre,
         nom_cre,
+        creatorLastName: ape_cre,
         ape_cre,
+        totalRevenue: tot_eve,
         tot_eve,
       };
     })
