@@ -42,6 +42,19 @@ const STATUS_OPTIONS = [
   "FAILED_TOTAL",
 ];
 
+const STATUS_LABELS = {
+  TODOS: "Todos",
+  PENDING: "Pendiente",
+  ACCEPTED: "Aceptada",
+  REJECTED: "Rechazada",
+  APPROVED: "Aprobada",
+  FAILED_GRADE: "Reprobada por nota",
+  FAILED_ATTENDANCE: "Reprobada por asistencia",
+  FAILED_TOTAL: "Reprobada total",
+};
+
+const getStatusLabel = (status) => STATUS_LABELS[status] || status;
+
 const AdminEventInscription = () => {
   const { id } = useParams();
   const [filtro, setFiltro] = useState("TODOS");
@@ -144,9 +157,7 @@ const AdminEventInscription = () => {
         inscripcionActual.status || inscripcionActual.est_ins
       );
       if (estadosFinales.includes(estadoActual) && estado === "REJECTED") {
-        toast.error(
-          "No se puede cambiar una inscripción finalizada a REJECTED"
-        );
+        toast.error("No se puede cambiar una inscripción finalizada a rechazada");
         setActualizandoId(null);
         return;
       }
@@ -175,7 +186,7 @@ const AdminEventInscription = () => {
       ]);
 
       // Mensaje de éxito base
-      toast.success(`Inscripción ${estado.toLowerCase()} exitosamente`);
+      toast.success(`Inscripción ${getStatusLabel(estado).toLowerCase()} exitosamente`);
 
       // 🚨 ALERTA ESPECIAL: Si se aceptó una inscripción, verificar cupos restantes
       if (estado === "ACCEPTED") {
@@ -399,7 +410,7 @@ const AdminEventInscription = () => {
             className={`filtro-btn ${filtro === estado ? "filtro-activo" : ""}`}
             onClick={() => setFiltro(estado)}
           >
-            {estado}
+            {getStatusLabel(estado)}
           </button>
         ))}
 
@@ -460,7 +471,7 @@ const AdminEventInscription = () => {
                       status === "FAILED_TOTAL" ? (
                         <Ban size={14} />
                       ) : null}
-                      {status}
+                      {getStatusLabel(status)}
                     </span>
                   </div>
 

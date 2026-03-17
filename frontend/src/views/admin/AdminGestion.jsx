@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import { Search } from "lucide-react";
+import { ChevronDown, Search } from "lucide-react";
 import adminService from "../../services/adminService";
 import Validator from "../../utils/Validator";
 import { usePagination } from "../../hooks/usePagination";
@@ -29,6 +29,8 @@ const AdminGestion = () => {
     search: "",
     rol: "",
   });
+  const [isCreateSectionOpen, setIsCreateSectionOpen] = useState(false);
+  const [isListSectionOpen, setIsListSectionOpen] = useState(true);
 
   // Hook de paginación para administradores
   const {
@@ -217,187 +219,232 @@ const AdminGestion = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Formulario de creación */}
         <div className="formulario-section-ag">
-          <h2 className="subtitulo-ag">Crear Nuevo Administrador</h2>
-
-          <form
-            onSubmit={handleSubmit}
-            className="form-crear-admin-ag space-y-4"
+          <button
+            type="button"
+            className="accordion-header-ag"
+            onClick={() => setIsCreateSectionOpen((prev) => !prev)}
+            aria-expanded={isCreateSectionOpen}
+            aria-controls="crear-admin-accordion-panel"
           >
-            <div className="campo-form-ag">
-              <label className="label-ag block text-sm font-medium text-gray-700">
-                Cédula
-              </label>{" "}
-              <input
-                type="text"
-                name="cedula"
-                value={formData.cedula}
-                onChange={handleChange}
-                className={`input-ag w-full p-2 border rounded-md ${
-                  formErrors.cedula ? "border-red-500" : "border-gray-300"
-                }`}
-                placeholder="Ingrese la cédula"
-                maxLength="10"
-              />
-              {formErrors.cedula && (
-                <p className="error-message-ag text-red-500 text-xs mt-1">
-                  {formErrors.cedula}
-                </p>
-              )}
-            </div>
-            <div className="campo-form-ag">
-              <label className="label-ag block text-sm font-medium text-gray-700">
-                Nombres
-              </label>
-              <input
-                type="text"
-                name="nombres"
-                value={formData.nombres}
-                onChange={handleChange}
-                className={`input-ag w-full p-2 border rounded-md ${
-                  formErrors.nombres ? "border-red-500" : "border-gray-300"
-                }`}
-                placeholder="Ingrese los nombres"
-              />
-              {formErrors.nombres && (
-                <p className="error-message-ag text-red-500 text-xs mt-1">
-                  {formErrors.nombres}
-                </p>
-              )}
-            </div>
-            <div className="campo-form-ag">
-              <label className="label-ag block text-sm font-medium text-gray-700">
-                Apellidos
-              </label>
-              <input
-                type="text"
-                name="apellidos"
-                value={formData.apellidos}
-                onChange={handleChange}
-                className={`input-ag w-full p-2 border rounded-md ${
-                  formErrors.apellidos ? "border-red-500" : "border-gray-300"
-                }`}
-                placeholder="Ingrese los apellidos"
-              />
-              {formErrors.apellidos && (
-                <p className="error-message-ag text-red-500 text-xs mt-1">
-                  {formErrors.apellidos}
-                </p>
-              )}
-            </div>
-            <div className="campo-form-ag">
-              <label className="label-ag block text-sm font-medium text-gray-700">
-                Celular
-              </label>{" "}
-              <input
-                type="text"
-                name="celular"
-                value={formData.celular}
-                onChange={handleChange}
-                className={`input-ag w-full p-2 border rounded-md ${
-                  formErrors.celular ? "border-red-500" : "border-gray-300"
-                }`}
-                placeholder="Ingrese el número de celular"
-                maxLength="10"
-              />
-              {formErrors.celular && (
-                <p className="error-message-ag text-red-500 text-xs mt-1">
-                  {formErrors.celular}
-                </p>
-              )}
-            </div>
-            <div className="campo-form-ag">
-              <label className="label-ag block text-sm font-medium text-gray-700">
-                Correo Electrónico
-              </label>
-              <input
-                type="email"
-                name="correo"
-                value={formData.correo}
-                onChange={handleChange}
-                className={`input-ag w-full p-2 border rounded-md ${
-                  formErrors.correo ? "border-red-500" : "border-gray-300"
-                }`}
-                placeholder="Ingrese el correo electrónico"
-              />
-              {formErrors.correo && (
-                <p className="error-message-ag text-red-500 text-xs mt-1">
-                  {formErrors.correo}
-                </p>
-              )}
-            </div>
-            <div className="campo-form-ag">
-              <label className="label-ag block text-sm font-medium text-gray-700">
-                Contraseña
-              </label>
-              <input
-                type="password"
-                name="contrasena"
-                value={formData.contrasena}
-                onChange={handleChange}
-                className={`input-ag w-full p-2 border rounded-md ${
-                  formErrors.contrasena ? "border-red-500" : "border-gray-300"
-                }`}
-                placeholder="Ingrese la contraseña"
-              />
-              {formErrors.contrasena && (
-                <p className="error-message-ag text-red-500 text-xs mt-1">
-                  {formErrors.contrasena}
-                </p>
-              )}
-            </div>
-            <div className="campo-form-ag">
-              <label className="label-ag block text-sm font-medium text-gray-700">
-                Confirmar Contraseña
-              </label>
-              <input
-                type="password"
-                name="confirmarContrasena"
-                value={formData.confirmarContrasena}
-                onChange={handleChange}
-                className={`input-ag w-full p-2 border rounded-md ${
-                  formErrors.confirmarContrasena
-                    ? "border-red-500"
-                    : "border-gray-300"
-                }`}
-                placeholder="Confirme la contraseña"
-              />
-              {formErrors.confirmarContrasena && (
-                <p className="error-message-ag text-red-500 text-xs mt-1">
-                  {formErrors.confirmarContrasena}
-                </p>
-              )}
-            </div>
-            <div className="campo-form-ag">
-              <label className="label-ag block text-sm font-medium text-gray-700">
-                Rol de Administrador
-              </label>
-              <select
-                name="rol"
-                value={formData.rol}
-                onChange={handleChange}
-                className="select-ag w-full p-2 border border-gray-300 rounded-md"
+            <h2 className="subtitulo-ag subtitulo-acordeon-ag">
+              Crear Nuevo Administrador
+            </h2>
+            <ChevronDown
+              size={22}
+              className={`accordion-icon-ag ${
+                isCreateSectionOpen ? "accordion-icon-open-ag" : ""
+              }`}
+            />
+          </button>
+
+          {isCreateSectionOpen && (
+            <div
+              id="crear-admin-accordion-panel"
+              className="accordion-body-ag"
+            >
+              <form
+                onSubmit={handleSubmit}
+                className="form-crear-admin-ag space-y-4"
               >
-                <option value="ADMIN_GENERAL">Administrador General</option>
-                <option value="ADMIN_GLOBAL">Super Administrador</option>
-              </select>
-              <p className="text-xs text-gray-500 mt-1">
-                * Los Super Administradores pueden crear otros administradores
-              </p>
+                <div className="campo-form-ag">
+                  <label className="label-ag block text-sm font-medium text-gray-700">
+                    Cédula
+                  </label>{" "}
+                  <input
+                    type="text"
+                    name="cedula"
+                    value={formData.cedula}
+                    onChange={handleChange}
+                    className={`input-ag w-full p-2 border rounded-md ${
+                      formErrors.cedula ? "border-red-500" : "border-gray-300"
+                    }`}
+                    placeholder="Ingrese la cédula"
+                    maxLength="10"
+                  />
+                  {formErrors.cedula && (
+                    <p className="error-message-ag text-red-500 text-xs mt-1">
+                      {formErrors.cedula}
+                    </p>
+                  )}
+                </div>
+                <div className="campo-form-ag">
+                  <label className="label-ag block text-sm font-medium text-gray-700">
+                    Nombres
+                  </label>
+                  <input
+                    type="text"
+                    name="nombres"
+                    value={formData.nombres}
+                    onChange={handleChange}
+                    className={`input-ag w-full p-2 border rounded-md ${
+                      formErrors.nombres ? "border-red-500" : "border-gray-300"
+                    }`}
+                    placeholder="Ingrese los nombres"
+                  />
+                  {formErrors.nombres && (
+                    <p className="error-message-ag text-red-500 text-xs mt-1">
+                      {formErrors.nombres}
+                    </p>
+                  )}
+                </div>
+                <div className="campo-form-ag">
+                  <label className="label-ag block text-sm font-medium text-gray-700">
+                    Apellidos
+                  </label>
+                  <input
+                    type="text"
+                    name="apellidos"
+                    value={formData.apellidos}
+                    onChange={handleChange}
+                    className={`input-ag w-full p-2 border rounded-md ${
+                      formErrors.apellidos ? "border-red-500" : "border-gray-300"
+                    }`}
+                    placeholder="Ingrese los apellidos"
+                  />
+                  {formErrors.apellidos && (
+                    <p className="error-message-ag text-red-500 text-xs mt-1">
+                      {formErrors.apellidos}
+                    </p>
+                  )}
+                </div>
+                <div className="campo-form-ag">
+                  <label className="label-ag block text-sm font-medium text-gray-700">
+                    Celular
+                  </label>{" "}
+                  <input
+                    type="text"
+                    name="celular"
+                    value={formData.celular}
+                    onChange={handleChange}
+                    className={`input-ag w-full p-2 border rounded-md ${
+                      formErrors.celular ? "border-red-500" : "border-gray-300"
+                    }`}
+                    placeholder="Ingrese el número de celular"
+                    maxLength="10"
+                  />
+                  {formErrors.celular && (
+                    <p className="error-message-ag text-red-500 text-xs mt-1">
+                      {formErrors.celular}
+                    </p>
+                  )}
+                </div>
+                <div className="campo-form-ag">
+                  <label className="label-ag block text-sm font-medium text-gray-700">
+                    Correo Electrónico
+                  </label>
+                  <input
+                    type="email"
+                    name="correo"
+                    value={formData.correo}
+                    onChange={handleChange}
+                    className={`input-ag w-full p-2 border rounded-md ${
+                      formErrors.correo ? "border-red-500" : "border-gray-300"
+                    }`}
+                    placeholder="Ingrese el correo electrónico"
+                  />
+                  {formErrors.correo && (
+                    <p className="error-message-ag text-red-500 text-xs mt-1">
+                      {formErrors.correo}
+                    </p>
+                  )}
+                </div>
+                <div className="campo-form-ag">
+                  <label className="label-ag block text-sm font-medium text-gray-700">
+                    Contraseña
+                  </label>
+                  <input
+                    type="password"
+                    name="contrasena"
+                    value={formData.contrasena}
+                    onChange={handleChange}
+                    className={`input-ag w-full p-2 border rounded-md ${
+                      formErrors.contrasena ? "border-red-500" : "border-gray-300"
+                    }`}
+                    placeholder="Ingrese la contraseña"
+                  />
+                  {formErrors.contrasena && (
+                    <p className="error-message-ag text-red-500 text-xs mt-1">
+                      {formErrors.contrasena}
+                    </p>
+                  )}
+                </div>
+                <div className="campo-form-ag">
+                  <label className="label-ag block text-sm font-medium text-gray-700">
+                    Confirmar Contraseña
+                  </label>
+                  <input
+                    type="password"
+                    name="confirmarContrasena"
+                    value={formData.confirmarContrasena}
+                    onChange={handleChange}
+                    className={`input-ag w-full p-2 border rounded-md ${
+                      formErrors.confirmarContrasena
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    }`}
+                    placeholder="Confirme la contraseña"
+                  />
+                  {formErrors.confirmarContrasena && (
+                    <p className="error-message-ag text-red-500 text-xs mt-1">
+                      {formErrors.confirmarContrasena}
+                    </p>
+                  )}
+                </div>
+                <div className="campo-form-ag">
+                  <label className="label-ag block text-sm font-medium text-gray-700">
+                    Rol de Administrador
+                  </label>
+                  <select
+                    name="rol"
+                    value={formData.rol}
+                    onChange={handleChange}
+                    className="select-ag w-full p-2 border border-gray-300 rounded-md"
+                  >
+                    <option value="ADMIN_GENERAL">Administrador General</option>
+                    <option value="ADMIN_GLOBAL">Super Administrador</option>
+                  </select>
+                  <p className="text-xs text-gray-500 mt-1">
+                    * Los Super Administradores pueden crear otros administradores
+                  </p>
+                </div>
+                <div className="boton-container-ag mt-6">
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="boton-crear-ag"
+                  >
+                    {loading ? "Creando..." : "Crear Administrador"}
+                  </button>
+                </div>{" "}
+              </form>
             </div>
-            <div className="boton-container-ag mt-6">
-              <button
-                type="submit"
-                disabled={loading}
-                className="boton-crear-ag"
-              >
-                {loading ? "Creando..." : "Crear Administrador"}
-              </button>
-            </div>{" "}
-          </form>
+          )}
         </div>
         {/* Lista de administradores */}
         <div className="lista-section-ag">
-          <h2 className="subtitulo-ag">Administradores Existentes</h2>
+          <button
+            type="button"
+            className="accordion-header-ag"
+            onClick={() => setIsListSectionOpen((prev) => !prev)}
+            aria-expanded={isListSectionOpen}
+            aria-controls="lista-admin-accordion-panel"
+          >
+            <h2 className="subtitulo-ag subtitulo-acordeon-ag">
+              Administradores Existentes
+            </h2>
+            <ChevronDown
+              size={22}
+              className={`accordion-icon-ag ${
+                isListSectionOpen ? "accordion-icon-open-ag" : ""
+              }`}
+            />
+          </button>
+
+          {isListSectionOpen && (
+            <div
+              id="lista-admin-accordion-panel"
+              className="accordion-body-ag"
+            >
 
           {/* Filtros para buscar administradores */}
           <div className="filtros-container-ag mb-4">
@@ -528,6 +575,8 @@ const AdminGestion = () => {
           ) : (
             <div className="estado-vacio-ag text-center p-8 text-gray-500">
               No hay administradores registrados
+            </div>
+          )}
             </div>
           )}
         </div>

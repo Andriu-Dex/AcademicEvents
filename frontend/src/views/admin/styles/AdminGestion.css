@@ -33,6 +33,42 @@
   font-size: 22px;
 }
 
+.accordion-header-ag {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+}
+
+.accordion-header-ag:hover .subtitulo-acordeon-ag {
+  color: #6a1029;
+}
+
+.subtitulo-acordeon-ag {
+  margin-bottom: 0;
+  flex: 1;
+}
+
+.accordion-icon-ag {
+  flex-shrink: 0;
+  color: #8a1538;
+  transition: transform 0.2s ease;
+}
+
+.accordion-icon-open-ag {
+  transform: rotate(180deg);
+}
+
+.accordion-body-ag {
+  padding-top: 24px;
+}
+
 /* Secciones */
 .formulario-section-ag,
 .lista-section-ag {
@@ -42,6 +78,7 @@
   transition: all 0.3s ease;
   padding: 28px;
   border-top: 4px solid #8a1538;
+  margin-bottom: 10px;
 }
 
 .formulario-section-ag:hover,

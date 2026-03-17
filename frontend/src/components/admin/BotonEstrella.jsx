@@ -22,7 +22,15 @@ const BotonEstrella = ({
    * Maneja el clic en la estrella
    */
   const handleClick = async () => {
-    if (disabled || cargando) return;
+    if (cargando) return;
+
+    if (disabled) {
+      toast.warning(
+        disabledReason || "Esta accion no esta disponible para este evento"
+      );
+      return;
+    }
+
     try {
       setCargando(true);
       const nuevoEstado = !esDestacado;
@@ -51,7 +59,8 @@ const BotonEstrella = ({
   return (
     <button
       onClick={handleClick}
-      disabled={disabled || cargando}
+      disabled={cargando}
+      aria-disabled={disabled || cargando}
       className={`boton-estrella-be rounded-full p-2 transition-all duration-200 ${
         esDestacado
           ? "estrella-activa-be text-amber-500 hover:text-amber-600 drop-shadow-sm"
