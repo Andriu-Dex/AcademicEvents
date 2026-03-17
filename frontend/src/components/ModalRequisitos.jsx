@@ -65,7 +65,7 @@ const ModalRequisitos = ({
       };
 
       // Navegar a eventos y abrir modal de inscripción
-      navigate("/eventos", {
+      navigate("/events", {
         state: {
           openInscripcionModal: true,
           eventoSeleccionado: eventoParaInscripcion,
@@ -74,9 +74,9 @@ const ModalRequisitos = ({
     } else {
       // Comportamiento original: redirigir a la página correspondiente
       if (isAuthenticated) {
-        navigate("/eventos"); // Si está autenticado, va a EventsRoute
+        navigate("/events"); // Si está autenticado, va a EventsRoute
       } else {
-        navigate("/eventos-publicos"); // Si no está autenticado, va a EventosPublicos
+        navigate("/public-events"); // Si no está autenticado, va a EventosPublicos
       }
     }
   };
@@ -318,7 +318,7 @@ const ModalRequisitos = ({
                 </Link>{" "}
                 o{" "}
                 <Link
-                  to="/registro"
+                  to="/register"
                   style={{ color: "#8a1538", textDecoration: "underline" }}
                 >
                   regístrese

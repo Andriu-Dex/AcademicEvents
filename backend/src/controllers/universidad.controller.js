@@ -1,4 +1,5 @@
 const { prisma } = require("../config/db");
+const { createTenantScoped } = require("../utils/tenantScope");
 
 /**
  * Obtiene los datos de la universidad principal
@@ -7,8 +8,9 @@ const { prisma } = require("../config/db");
  */
 const getUniversidadPrincipal = async (req, res) => {
   try {
+    const scoped = createTenantScoped(prisma, req.tenantId);
     // Obtenemos la primera universidad (asumiendo que solo hay una)
-    const universidad = await prisma.university.findFirst({
+    const universidad = await scoped.findFirst("university", {
       where: {
         isActive: true,
       },
@@ -37,6 +39,7 @@ const getUniversidadPrincipal = async (req, res) => {
  */
 const updateUniversidadDatos = async (req, res) => {
   try {
+    const scoped = createTenantScoped(prisma, req.tenantId);
     const { id_uni } = req.params;
     const {
       nom_uni,
@@ -56,7 +59,7 @@ const updateUniversidadDatos = async (req, res) => {
     }
 
     // Verificamos que la universidad exista
-    const universidadExistente = await prisma.university.findUnique({
+    const universidadExistente = await scoped.findFirst("university", {
       where: {
         id: id_uni,
       },
@@ -69,7 +72,7 @@ const updateUniversidadDatos = async (req, res) => {
     }
 
     // Actualizamos los datos
-    const universidadActualizada = await prisma.university.update({
+    await scoped.updateMany("university", {
       where: {
         id: id_uni,
       },
@@ -81,6 +84,12 @@ const updateUniversidadDatos = async (req, res) => {
         address: dir_uni || universidadExistente.address,
         phone: tel_uni || universidadExistente.phone,
         email: cor_uni || universidadExistente.email,
+      },
+    });
+
+    const universidadActualizada = await scoped.findFirst("university", {
+      where: {
+        id: id_uni,
       },
     });
 

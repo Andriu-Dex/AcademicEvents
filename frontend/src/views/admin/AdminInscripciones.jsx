@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import axiosInstance from "../../api/axiosConfig";
+import { requestWithEndpointFallback } from "../../api/endpointFallback";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/AuthContext";
 import { useSocket } from "../../context/SocketContext";
@@ -39,7 +40,10 @@ const AdminInscripciones = () => {
 
   const cargarEventos = async () => {
     try {
-      const res = await axiosInstance.get("/eventos");
+      const res = await requestWithEndpointFallback(
+        () => axiosInstance.get("/events"),
+        () => axiosInstance.get("/eventos")
+      );
       const eventosData = Array.isArray(res.data) ? res.data : [];
 
       // Normalizar para soportar respuestas legacy y nuevas sin romper el select.

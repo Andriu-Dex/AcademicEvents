@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axiosInstance from "../api/axiosConfig";
 import { useAuth } from "../hooks/useAuth";
 import { useSocket } from "../context/SocketContext";
@@ -23,38 +24,71 @@ import {
   X,
 } from "lucide-react";
 
+const LEGACY_REG_STATUS_TO_DB = {
+  PENDIENTE: "PENDING",
+  ACEPTADA: "ACCEPTED",
+  RECHAZADA: "REJECTED",
+  APROBADO: "APPROVED",
+  REPROBADO_NOTA: "FAILED_GRADE",
+  REPROBADO_ASISTENCIA: "FAILED_ATTENDANCE",
+  REPROBADO_TOTAL: "FAILED_TOTAL",
+};
+
+const toDbStatus = (status) => LEGACY_REG_STATUS_TO_DB[status] || status;
+
+const normalizeInscripcion = (item) => {
+  const event = item.event || item.evento || {};
+  const rawObservation = item.observation ?? item.observacion ?? null;
+
+  return {
+    id: item.id || item.id_ins,
+    status: toDbStatus(item.status || item.est_ins),
+    event: {
+      id: event.id || event.id_eve,
+      name: event.name || event.nom_eve || "Evento sin nombre",
+      type: event.type || event.tip_eve || "N/A",
+      startDate: event.startDate || event.fec_ini_eve,
+      endDate: event.endDate || event.fec_fin_eve,
+    },
+    observation:
+      typeof rawObservation === "string"
+        ? rawObservation
+        : rawObservation?.observation || rawObservation?.obs_ins || null,
+  };
+};
+
 const estadoLabel = {
-  PENDIENTE: {
+  PENDING: {
     text: "Pendiente",
     icon: <Clock size={16} />,
     color: "estado-pendiente",
   },
-  ACEPTADA: {
+  ACCEPTED: {
     text: "Aceptada",
     icon: <BadgeCheck size={16} />,
     color: "estado-aceptada",
   },
-  RECHAZADA: {
+  REJECTED: {
     text: "Rechazada",
     icon: <Ban size={16} />,
     color: "estado-rechazada",
   },
-  APROBADO: {
+  APPROVED: {
     text: "Aprobado",
     icon: <BadgeCheck size={16} />,
     color: "estado-aprobado",
   },
-  REPROBADO_NOTA: {
+  FAILED_GRADE: {
     text: "Reprobado por nota",
     icon: <AlertCircle size={16} />,
     color: "estado-reprobado-nota",
   },
-  REPROBADO_ASISTENCIA: {
+  FAILED_ATTENDANCE: {
     text: "Reprobado por asistencia",
     icon: <AlertCircle size={16} />,
     color: "estado-reprobado-asistencia",
   },
-  REPROBADO_TOTAL: {
+  FAILED_TOTAL: {
     text: "Reprobado por completo",
     icon: <AlertCircle size={16} />,
     color: "estado-reprobado-total",
@@ -62,6 +96,7 @@ const estadoLabel = {
 };
 
 const MyInscriptions = () => {
+  const navigate = useNavigate();
   const { usuario, token } = useAuth();
   const { socket, isConnected } = useSocket();
 
@@ -85,7 +120,8 @@ const MyInscriptions = () => {
 
       const res = await axiosInstance.get("/inscripciones/propias");
 
-      setInscripciones(res.data);
+      const data = Array.isArray(res.data) ? res.data : [];
+      setInscripciones(data.map(normalizeInscripcion));
       setPaginaActual(1); // Reiniciar a la primera página al obtener nuevas inscripciones
     } catch (error) {
       console.error("Error al obtener inscripciones:", error);
@@ -113,18 +149,23 @@ const MyInscriptions = () => {
         // Actualizar la inscripción específica en el estado local
         setInscripciones((prevInscripciones) =>
           prevInscripciones.map((ins) =>
-            ins.id_ins === data.data.id_ins
+            ins.id === (data.data?.id || data.data?.id_ins)
               ? {
                   ...ins,
-                  est_ins: data.data.estadoNuevo,
-                  observacion: data.data.observacion,
+                  status: toDbStatus(
+                    data.data?.status || data.data?.estadoNuevo
+                  ),
+                  observation:
+                    data.data?.observation || data.data?.observacion || null,
                 }
               : ins
           )
         );
 
         // Mostrar notificación al usuario sobre el cambio de estado
-        const nuevoEstado = data.data.estadoNuevo;
+        const nuevoEstado = toDbStatus(
+          data.data?.status || data.data?.estadoNuevo
+        );
         const mensaje = `Tu inscripción ha sido ${
           estadoLabel[nuevoEstado]?.text.toLowerCase() ||
           nuevoEstado.toLowerCase()
@@ -136,7 +177,7 @@ const MyInscriptions = () => {
         });
 
         // Mostrar confeti para estados positivos
-        if (nuevoEstado === "ACEPTADA" || nuevoEstado === "APROBADO") {
+        if (nuevoEstado === "ACCEPTED" || nuevoEstado === "APPROVED") {
           lanzarConfetti();
         }
       }
@@ -170,7 +211,7 @@ const MyInscriptions = () => {
       setReenviando(true);
 
       const response = await axiosInstance.put(
-        `/reenviar/${inscripcionSeleccionada.id_ins}`,
+        `/reenviar/${inscripcionSeleccionada.id}`,
         formData,
         {
           headers: {
@@ -195,13 +236,13 @@ const MyInscriptions = () => {
   };
 
   const inscripcionesOrdenadas = [...inscripciones].sort(
-    (a, b) => new Date(a.evento.fec_ini_eve) - new Date(b.evento.fec_ini_eve)
+    (a, b) => new Date(a.event.startDate) - new Date(b.event.startDate)
   );
 
   const inscripcionesFiltradas =
     filtroEstado === "TODOS"
       ? inscripcionesOrdenadas
-      : inscripcionesOrdenadas.filter((ins) => ins.est_ins === filtroEstado);
+      : inscripcionesOrdenadas.filter((ins) => ins.status === filtroEstado);
 
   // Cálculos para la paginación
   const indexUltimaInscripcion = paginaActual * inscripcionesPorPagina;
@@ -237,7 +278,7 @@ const MyInscriptions = () => {
           </p>
           <button
             className="myins-empty-button"
-            onClick={() => (window.location.href = "/eventos")}
+            onClick={() => navigate("/events")}
           >
             <Search size={16} />
             Explorar eventos disponibles
@@ -264,10 +305,10 @@ const MyInscriptions = () => {
               </button>
               <button
                 className={`myins-filter-btn estado-pendiente ${
-                  filtroEstado === "PENDIENTE" ? "active" : ""
+                  filtroEstado === "PENDING" ? "active" : ""
                 }`}
                 onClick={() => {
-                  setFiltroEstado("PENDIENTE");
+                  setFiltroEstado("PENDING");
                   setPaginaActual(1); // Reiniciar a la primera página al cambiar el filtro
                 }}
               >
@@ -276,10 +317,10 @@ const MyInscriptions = () => {
               </button>
               <button
                 className={`myins-filter-btn estado-aceptada ${
-                  filtroEstado === "ACEPTADA" ? "active" : ""
+                  filtroEstado === "ACCEPTED" ? "active" : ""
                 }`}
                 onClick={() => {
-                  setFiltroEstado("ACEPTADA");
+                  setFiltroEstado("ACCEPTED");
                   setPaginaActual(1); // Reiniciar a la primera página al cambiar el filtro
                 }}
               >
@@ -288,10 +329,10 @@ const MyInscriptions = () => {
               </button>
               <button
                 className={`myins-filter-btn estado-rechazada ${
-                  filtroEstado === "RECHAZADA" ? "active" : ""
+                  filtroEstado === "REJECTED" ? "active" : ""
                 }`}
                 onClick={() => {
-                  setFiltroEstado("RECHAZADA");
+                  setFiltroEstado("REJECTED");
                   setPaginaActual(1); // Reiniciar a la primera página al cambiar el filtro
                 }}
               >
@@ -300,10 +341,10 @@ const MyInscriptions = () => {
               </button>
               <button
                 className={`myins-filter-btn estado-aprobado ${
-                  filtroEstado === "APROBADO" ? "active" : ""
+                  filtroEstado === "APPROVED" ? "active" : ""
                 }`}
                 onClick={() => {
-                  setFiltroEstado("APROBADO");
+                  setFiltroEstado("APPROVED");
                   setPaginaActual(1); // Reiniciar a la primera página al cambiar el filtro
                 }}
               >
@@ -326,38 +367,35 @@ const MyInscriptions = () => {
 
           <div className="myins-grid">
             {inscripcionesActuales.map((ins) => (
-              <div key={ins.id_ins} className="myins-card">
+              <div key={ins.id} className="myins-card">
                 <div className="myins-header">
-                  {" "}
-                  <h3 className="myins-event-name">{ins.evento.nom_eve}</h3>
+                  <h3 className="myins-event-name">{ins.event.name}</h3>
                 </div>
                 <span
                   className={`myins-estado ${
-                    estadoLabel[ins.est_ins]?.color || "estado-pendiente"
+                    estadoLabel[ins.status]?.color || "estado-pendiente"
                   }`}
                 >
-                  {estadoLabel[ins.est_ins]?.icon || <Clock size={16} />}
-                  {estadoLabel[ins.est_ins]?.text || ins.est_ins}
+                  {estadoLabel[ins.status]?.icon || <Clock size={16} />}
+                  {estadoLabel[ins.status]?.text || ins.status}
                 </span>
                 <p className="myins-datos">
-                  Tipo: {ins.evento.tip_eve} <br /> Fecha:{" "}
-                  {new Date(ins.evento.fec_ini_eve).toLocaleDateString("es-EC")}{" "}
+                  Tipo: {ins.event.type} <br /> Fecha:{" "}
+                  {new Date(ins.event.startDate).toLocaleDateString("es-EC")}{" "}
                   –{" "}
-                  {new Date(ins.evento.fec_fin_eve).toLocaleDateString("es-EC")}
+                  {new Date(ins.event.endDate).toLocaleDateString("es-EC")}
                 </p>{" "}
                 {/* Mostrar observación del administrador si existe */}
-                {ins.observacion && (
+                {ins.observation && (
                   <div className="myins-observacion">
                     <div className="observacion-header">
                       <AlertCircle size={16} />
                       <span>Observación del administrador:</span>
                     </div>
-                    <p className="observacion-texto">
-                      {ins.observacion.obs_ins}
-                    </p>
+                    <p className="observacion-texto">{ins.observation}</p>
                   </div>
                 )}{" "}
-                {ins.est_ins === "APROBADO" && (
+                {ins.status === "APPROVED" && (
                   <div className="myins-certificado">
                     {" "}
                     <button
@@ -366,7 +404,7 @@ const MyInscriptions = () => {
                           toast.info("Preparando certificado...");
                           // Hacer la petición a través de axios para que incluya el token
                           const response = await axiosInstance.get(
-                            `/certificados/${ins.id_ins}`,
+                            `/certificados/${ins.id}`,
                             {
                               responseType: "blob", // Importante para manejar PDF
                             }
@@ -381,7 +419,7 @@ const MyInscriptions = () => {
                           // Guardar la URL y mostrar el modal
                           setCertificadoUrl(url);
                           setCertificadoFileName(
-                            `certificado_${ins.evento.nom_eve
+                            `certificado_${ins.event.name
                               .replace(/\s+/g, "_")
                               .toLowerCase()}.pdf`
                           );
@@ -413,7 +451,7 @@ const MyInscriptions = () => {
                         try {
                           toast.info("Enviando certificado a tu correo...");
                           const response = await axiosInstance.post(
-                            `/certificados/enviar/${ins.id_ins}`
+                            `/certificados/enviar/${ins.id}`
                           );
                           toast.success(
                             "Certificado enviado a tu correo electrónico"
@@ -437,7 +475,7 @@ const MyInscriptions = () => {
                     </button>
                   </div>
                 )}{" "}
-                {ins.est_ins === "ACEPTADA" && (
+                {ins.status === "ACCEPTED" && (
                   <button
                     className="btn-felicitaciones"
                     onClick={() => lanzarConfetti()}
@@ -445,7 +483,7 @@ const MyInscriptions = () => {
                     ¡Felicitaciones!
                   </button>
                 )}{" "}
-                {ins.est_ins === "RECHAZADA" && (
+                {ins.status === "REJECTED" && (
                   <div>
                     <button
                       className="btn-reenviar"
@@ -456,7 +494,7 @@ const MyInscriptions = () => {
                             autoClose: 3000,
                           }
                         );
-                        window.location.href = "/eventos";
+                        navigate("/events");
                       }}
                     >
                       <Upload size={16} />
@@ -464,7 +502,7 @@ const MyInscriptions = () => {
                     </button>
                   </div>
                 )}
-                {ins.est_ins === "PENDIENTE" && (
+                {ins.status === "PENDING" && (
                   <div className="myins-pendiente">
                     <Clock size={18} />
                     <p>
@@ -536,7 +574,7 @@ const MyInscriptions = () => {
           <div className="modal-content">
             <h2 className="modal-title-mi">
               Reenviar comprobante para: <br />
-              {inscripcionSeleccionada.evento.nom_eve}
+              {inscripcionSeleccionada.event.name}
             </h2>
 
             <div className="archivo-container">

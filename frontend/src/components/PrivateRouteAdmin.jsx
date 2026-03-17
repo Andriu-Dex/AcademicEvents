@@ -36,7 +36,7 @@ const PrivateRouteAdmin = ({ children }) => {
   // Verificar rol de administrador
   const role = usuario?.rol_usu || usuario?.role;
   if (!ADMIN_ROLES.has(role)) {
-    return <Navigate to="/eventos" replace />;
+    return <Navigate to="/events" replace />;
   }
 
   // Si el usuario está autenticado y es admin, renderizar los componentes hijos

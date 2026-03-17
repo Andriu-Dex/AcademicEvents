@@ -12,6 +12,18 @@
  */
 const { prisma } = require("../config/db");
 
+const LEGACY_REG_STATUS_TO_DB = {
+  PENDIENTE: "PENDING",
+  ACEPTADA: "ACCEPTED",
+  RECHAZADA: "REJECTED",
+  APROBADO: "APPROVED",
+  REPROBADO_NOTA: "FAILED_GRADE",
+  REPROBADO_ASISTENCIA: "FAILED_ATTENDANCE",
+  REPROBADO_TOTAL: "FAILED_TOTAL",
+};
+
+const toDbRegistrationStatus = (status) => LEGACY_REG_STATUS_TO_DB[status] || status;
+
 /**
  * Calcula los cupos disponibles de un evento basado en las inscripciones que ocupan cupo
  * @param {string} idEvento - ID del evento a calcular cupos
@@ -125,6 +137,8 @@ async function actualizarEstadoYSincronizarCupos(
   idAdministrador = null
 ) {
   try {
+    const normalizedNuevoEstado = toDbRegistrationStatus(nuevoEstado);
+
     // Ejecutamos todo en una transacción atómica para garantizar consistencia
     const resultado = await prisma.$transaction(async (tx) => {
       // 1. Obtener inscripción actual con datos del evento
@@ -161,31 +175,37 @@ async function actualizarEstadoYSincronizarCupos(
 
       // Definir los estados finales
       const estadosFinales = [
-        "APROBADO",
-        "REPROBADO_NOTA",
-        "REPROBADO_ASISTENCIA",
-        "REPROBADO_TOTAL",
+        "APPROVED",
+        "FAILED_GRADE",
+        "FAILED_ATTENDANCE",
+        "FAILED_TOTAL",
       ];
 
       // NUEVO ENFOQUE SIMPLIFICADO: Basado únicamente en el estado al que se transiciona
-      if (nuevoEstado === "ACEPTADA" || estadosFinales.includes(nuevoEstado)) {
+      if (
+        normalizedNuevoEstado === "ACCEPTED" ||
+        estadosFinales.includes(normalizedNuevoEstado)
+      ) {
         // Si va a ACEPTADA o cualquier estado final, debe ocupar cupo
         debeOcuparCupo = true;
-      } else if (nuevoEstado === "PENDIENTE" || nuevoEstado === "RECHAZADA") {
+      } else if (
+        normalizedNuevoEstado === "PENDING" ||
+        normalizedNuevoEstado === "REJECTED"
+      ) {
         // Si va a PENDIENTE o RECHAZADA, no debe ocupar cupo
         debeOcuparCupo = false;
       }
 
       // Preparar datos de actualización incluyendo información de validación si corresponde
       let datosActualizacion = {
-        status: nuevoEstado,
+        status: normalizedNuevoEstado,
         occupiesSpot: debeOcuparCupo,
         ...datosAdicionales,
       };
 
       // Si hay un cambio de estado significativo y se proporciona un ID de administrador,
       // registramos quién hizo la validación y cuándo
-      if (estadoAnterior !== nuevoEstado && idAdministrador) {
+      if (estadoAnterior !== normalizedNuevoEstado && idAdministrador) {
         datosActualizacion.validatedByAdminId = idAdministrador;
         datosActualizacion.validatedAt = new Date();
       }
@@ -206,7 +226,7 @@ async function actualizarEstadoYSincronizarCupos(
         inscripcion: {
           id: idInscripcion,
           estadoAnterior,
-          estadoNuevo: nuevoEstado,
+          estadoNuevo: normalizedNuevoEstado,
           ocupabaCupo,
           ocupaCupoAhora: debeOcuparCupo,
         },

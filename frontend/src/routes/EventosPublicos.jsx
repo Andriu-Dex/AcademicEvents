@@ -110,7 +110,8 @@ const EventosPublicos = () => {
   // Función para aplicar filtros
   const aplicarFiltros = (evento) => {
     // Convertir cupos a número para comparaciones
-    const cuposDisponibles = parseInt(evento.cup_dis_eve) || 0;
+    const cuposDisponibles = parseInt(evento.availableSlots ?? evento.cup_dis_eve) || 0;
+    const eventStatus = evento.status || evento.est_eve || "";
 
     // Si algún filtro de estado está activo, mostrar solo eventos con esos estados
     const filtrosEstadoActivos =
@@ -119,13 +120,13 @@ const EventosPublicos = () => {
     if (filtrosEstadoActivos) {
       let cumpleEstado = false;
 
-      if (filtros.finalizado && evento.est_eve === "FINALIZADO") {
+      if (filtros.finalizado && eventStatus === "FINISHED") {
         cumpleEstado = true;
       }
-      if (filtros.cancelado && evento.est_eve === "CANCELADO") {
+      if (filtros.cancelado && eventStatus === "CANCELLED") {
         cumpleEstado = true;
       }
-      if (filtros.suspendido && evento.est_eve === "SUSPENDIDO") {
+      if (filtros.suspendido && eventStatus === "SUSPENDED") {
         cumpleEstado = true;
       }
 
@@ -136,9 +137,9 @@ const EventosPublicos = () => {
     } else {
       // Por defecto, no mostrar eventos finalizados, cancelados, suspendidos
       if (
-        evento.est_eve === "FINALIZADO" ||
-        evento.est_eve === "CANCELADO" ||
-        evento.est_eve === "SUSPENDIDO"
+        eventStatus === "FINISHED" ||
+        eventStatus === "CANCELLED" ||
+        eventStatus === "SUSPENDED"
       ) {
         return false;
       }
@@ -161,9 +162,8 @@ const EventosPublicos = () => {
     }
 
     // Filtro por nombre
-    const coincideNombre = evento.nom_eve
-      .toLowerCase()
-      .includes(filtro.toLowerCase());
+    const eventName = evento.name || evento.nom_eve || "";
+    const coincideNombre = eventName.toLowerCase().includes(filtro.toLowerCase());
 
     if (!coincideNombre) return false;
 
@@ -188,20 +188,24 @@ const EventosPublicos = () => {
     }
 
     if (filtros.publico) {
-      if (evento.tip_eve !== "PUBLICO") return false;
+      const eventType = evento.type || evento.tip_eve;
+      if (eventType !== "PUBLICO") return false;
     }
 
     if (filtros.gratuito) {
-      if (evento.val_eve !== 0) return false;
+      const eventPrice = evento.price ?? evento.val_eve;
+      if (eventPrice !== 0) return false;
     }
 
     if (filtros.pagado) {
-      if (evento.val_eve === 0) return false;
+      const eventPrice = evento.price ?? evento.val_eve;
+      if (eventPrice === 0) return false;
     }
 
     // Filtro por modalidad
     if (filtros.modalidad) {
-      if (evento.mod_eve !== filtros.modalidad) return false;
+      const eventModality = evento.modality || evento.mod_eve;
+      if (eventModality !== filtros.modalidad) return false;
     }
 
     // Nota: El filtro "completo" ya se manejó en el control de visibilidad por cupos arriba
@@ -263,12 +267,13 @@ const EventosPublicos = () => {
 
       // Mostrar notificación
       const { action, data } = eventUpdate;
+      const eventName = data.name || data.nom_eve || "Sin nombre";
       if (action === "created") {
-        toast.info(`¡Nuevo evento disponible: ${data.nom_eve}!`);
+        toast.info(`¡Nuevo evento disponible: ${eventName}!`);
       } else if (action === "updated") {
-        toast.info(`El evento "${data.nom_eve}" ha sido actualizado.`);
+        toast.info(`El evento "${eventName}" ha sido actualizado.`);
       } else if (action === "deleted") {
-        toast.info(`El evento "${data.nom_eve}" ha sido eliminado.`);
+        toast.info(`El evento "${eventName}" ha sido eliminado.`);
       }
     },
     [fetchData]
@@ -309,7 +314,7 @@ const EventosPublicos = () => {
   // Redirigir a usuarios autenticados a la vista de eventos para usuarios
   useEffect(() => {
     if (usuario) {
-      navigate("/eventos");
+      navigate("/events");
     }
   }, [usuario, navigate]);
   if (cargando && currentPage === 1) {
@@ -608,9 +613,13 @@ const EventosPublicos = () => {
                 </div>
               ) : (
                 // Mostrar la lista de eventos
-                eventos.map((evento, index) => (
+                eventos.map((evento, index) => {
+                  const eventStatus = evento.status || evento.est_eve || "";
+                  const availableSlots =
+                    evento.availableSlots ?? evento.cup_dis_eve ?? 0;
+                  return (
                   <div
-                    key={evento.id_eve}
+                    key={evento.id || evento.id_eve}
                     className="evento-card"
                     style={{ animationDelay: `${index * 0.1}s` }}
                   >
@@ -618,29 +627,30 @@ const EventosPublicos = () => {
                     <div className="evento-portada-wrapper">
                       <img
                         src={
+                          evento.coverImageUrl ||
                           evento.img_por_eve ||
                           "https://i.imgur.com/c6Ry30Z.jpeg"
                         }
-                        alt={`Portada de ${evento.nom_eve}`}
+                        alt={`Portada de ${evento.name || evento.nom_eve}`}
                         className="evento-portada"
                       />
 
                       {/* Indicador de estado para eventos filtrados */}
-                      {evento.est_eve === "FINALIZADO" && (
+                      {eventStatus === "FINISHED" && (
                         <div className="evento-estado-badge-er evento-estado-finalizado-er">
                           <Clock size={14} />
                           Finalizado
                         </div>
                       )}
 
-                      {evento.est_eve === "CANCELADO" && (
+                      {eventStatus === "CANCELLED" && (
                         <div className="evento-estado-badge-er evento-estado-cancelado-er">
                           <AlertCircle size={14} />
                           Cancelado
                         </div>
                       )}
 
-                      {evento.est_eve === "SUSPENDIDO" && (
+                      {eventStatus === "SUSPENDED" && (
                         <div className="evento-estado-badge-er evento-estado-suspendido-er">
                           <AlertTriangle size={14} />
                           Suspendido
@@ -649,32 +659,32 @@ const EventosPublicos = () => {
 
                       <div className="portada-overlay"></div>
                     </div>
-                    <h2 className="nombre-evento-ep">{evento.nom_eve}</h2>
-                    <p className="tipo-ep">{evento.tip_eve}</p>
+                    <h2 className="nombre-evento-ep">{evento.name || evento.nom_eve}</h2>
+                    <p className="tipo-ep">{evento.type || evento.tip_eve}</p>
                     <p className="precio-evento">
                       <BadgeDollarSign size={16} />
-                      {evento.val_eve === 0
+                      {(evento.price ?? evento.val_eve ?? 0) === 0
                         ? "Gratuito"
-                        : `Precio: $${evento.val_eve.toFixed(2)}`}
+                        : `Precio: $${(evento.price ?? evento.val_eve).toFixed(2)}`}
                     </p>
                     <div className="fechas-contenedor-ep">
                       <p className="fecha-inicio-ep">
                         <Calendar size={16} className="inline-icon-ep" />{" "}
-                        Inicio: {formatUTCForLocalDisplay(evento.fec_ini_eve)}
+                        Inicio: {formatUTCForLocalDisplay(evento.startDate || evento.fec_ini_eve)}
                       </p>
                       <p className="fecha-fin-ep">
                         <Calendar size={16} className="inline-icon-ep" /> Fin:{" "}
-                        {formatUTCForLocalDisplay(evento.fec_fin_eve)}
+                        {formatUTCForLocalDisplay(evento.endDate || evento.fec_fin_eve)}
                       </p>
                     </div>{" "}
                     <p
                       className={
-                        evento.cup_dis_eve === 0
+                        availableSlots === 0
                           ? "cupos-agotados"
                           : "cupos-disponibles"
                       }
                     >
-                      {evento.cup_dis_eve === 0 ? (
+                      {availableSlots === 0 ? (
                         <>
                           <AlertCircle size={16} className="inline-icon-ep" />{" "}
                           Sin cupos disponibles
@@ -682,30 +692,30 @@ const EventosPublicos = () => {
                       ) : (
                         <>
                           <CheckCircle size={16} className="inline-icon-ep" />{" "}
-                          Cupos disponibles: {evento.cup_dis_eve || 0}
+                          Cupos disponibles: {availableSlots || 0}
                         </>
                       )}
                     </p>{" "}
                     <p className="modalidad-evento-ep">
-                      {evento.mod_eve === "PRESENCIAL" && (
+                      {(evento.modality || evento.mod_eve) === "PRESENCIAL" && (
                         <>
                           <MapPin size={16} className="inline-icon-ep" />{" "}
                           Modalidad: Presencial
                         </>
                       )}
-                      {evento.mod_eve === "VIRTUAL" && (
+                      {(evento.modality || evento.mod_eve) === "VIRTUAL" && (
                         <>
                           <Monitor size={16} className="inline-icon-ep" />{" "}
                           Modalidad: Virtual
                         </>
                       )}
-                      {evento.mod_eve === "SEMIPRESENCIAL" && (
+                      {(evento.modality || evento.mod_eve) === "SEMIPRESENCIAL" && (
                         <>
                           <Laptop size={16} className="inline-icon-ep" />{" "}
                           Modalidad: Semipresencial
                         </>
                       )}
-                      {!evento.mod_eve && (
+                      {!(evento.modality || evento.mod_eve) && (
                         <>
                           <Users size={16} className="inline-icon-ep" />{" "}
                           Modalidad: No especificada
@@ -715,9 +725,9 @@ const EventosPublicos = () => {
                     <div className="evento-footer-ep">
                       {" "}
                       <div
-                        className={`estado-evento-ep ${evento.est_eve?.toLowerCase()}`}
+                        className={`estado-evento-ep ${eventStatus?.toLowerCase()}`}
                       >
-                        {evento.est_eve === "ACTIVO" ? (
+                        {eventStatus === "ACTIVE" ? (
                           <>
                             <Zap size={14} className="inline-icon-ep" /> ACTIVO
                           </>
@@ -743,7 +753,8 @@ const EventosPublicos = () => {
                       </Link>
                     </div>
                   </div>
-                ))
+                  );
+                })
               )}
             </div>
 

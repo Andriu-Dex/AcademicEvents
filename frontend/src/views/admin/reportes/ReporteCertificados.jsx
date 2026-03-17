@@ -46,7 +46,7 @@ const ReporteCertificados = () => {
 
         // Cargar resumen de certificados
         const resResumen = await axiosInstance.get(
-          `/admin/reportes-certificados/resumen`,
+          `/admin/reports/certificates/summary`,
           {
             params: { fechaInicio: fechaInicioStr, fechaFin: fechaFinStr },
           }
@@ -55,7 +55,7 @@ const ReporteCertificados = () => {
 
         // Cargar estadísticas de descargas por período
         const resDescargas = await axiosInstance.get(
-          `/admin/reportes-certificados/descargas`,
+          `/admin/reports/certificates/downloads`,
           {
             params: { fechaInicio: fechaInicioStr, fechaFin: fechaFinStr },
           }
@@ -64,7 +64,7 @@ const ReporteCertificados = () => {
 
         // Cargar eventos con mayor emisión de certificados
         const resEventos = await axiosInstance.get(
-          `/admin/reportes-certificados/eventos`,
+          `/admin/reports/certificates/events`,
           {
             params: { fechaInicio: fechaInicioStr, fechaFin: fechaFinStr },
           }
@@ -97,7 +97,7 @@ const ReporteCertificados = () => {
       const fechaFinStr = formatDateForReports(fechaFin);
 
       const res = await axiosInstance.post(
-        `/admin/reportes-certificados/pdf`,
+        `/admin/reports/certificates/pdf`,
         {
           fechaInicio: fechaInicioStr,
           fechaFin: fechaFinStr,

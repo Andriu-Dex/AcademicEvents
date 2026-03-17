@@ -182,9 +182,10 @@ app.use("/api/upload", uploadRoutes);
 const reporteRoutes = require("./routes/reporte.routes");
 app.use("/api/admin", reporteRoutes);
 
-// Rutas de reportes de ingresos (solo admins)
+// Rutas de reportes de ingresos (solo admins) - Canonical & Legacy
 const reporteIngresosRoutes = require("./routes/reporte-ingresos.routes");
-app.use("/api/admin/reportes-ingresos", reporteIngresosRoutes);
+app.use("/api/admin/reports/revenue", reporteIngresosRoutes); // Canonical (English)
+app.use("/api/admin/reportes-ingresos", reporteIngresosRoutes); // Legacy (Spanish)
 
 // Rutas de paginación
 const paginacionRoutes = require("./routes/paginacion.routes");
@@ -209,6 +210,21 @@ app.use((req, res) => {
 // ============================
 const HOST = process.env.HOST || "localhost";
 const PORT = process.env.PORT || 3000;
+
+server.on("error", (error) => {
+  if (error.code === "EADDRINUSE") {
+    console.error(
+      `❌ Puerto en uso: ${HOST}:${PORT}. Cierra la instancia anterior antes de reiniciar.`
+    );
+    console.error(
+      "💡 Sugerencia (PowerShell): Get-Process node | Stop-Process -Force"
+    );
+    process.exit(1);
+  }
+
+  console.error("❌ Error al iniciar servidor:", error);
+  process.exit(1);
+});
 
 server.listen(PORT, HOST, () => {
   console.log(`✅ Servidor corriendo en http://${HOST}:${PORT} ✅`);

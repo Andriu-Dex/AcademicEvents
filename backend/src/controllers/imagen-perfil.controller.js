@@ -1,6 +1,7 @@
 const { prisma } = require("../config/db");
 const { subirImagenAImgur } = require("../utils/imgur.utils");
 const fs = require("fs");
+const { withTenantWhere } = require("../utils/tenantScope");
 
 // Actualizar imagen de perfil del usuario
 const actualizarImagenPerfil = async (req, res) => {
@@ -27,8 +28,8 @@ const actualizarImagenPerfil = async (req, res) => {
     }
 
     // Obtener cuenta y usuario asociado
-    const cuenta = await prisma.account.findUnique({
-      where: { id: id },
+    const cuenta = await prisma.account.findFirst({
+      where: withTenantWhere(req.tenantId, { id: id }),
       include: { user: true },
     });
 
@@ -40,11 +41,16 @@ const actualizarImagenPerfil = async (req, res) => {
     const imgurUrl = await subirImagenAImgur(archivo);
 
     // Actualizar la URL de imagen de perfil en el schema actual
-    const usuarioActualizado = await prisma.user.update({
-      where: { id: cuenta.user.id },
+    await prisma.user.updateMany({
+      where: withTenantWhere(req.tenantId, { id: cuenta.user.id }),
       data: {
         profileImageUrl: imgurUrl,
       },
+    });
+
+    const usuarioActualizado = await prisma.user.findFirst({
+      where: withTenantWhere(req.tenantId, { id: cuenta.user.id }),
+      select: { profileImageUrl: true },
     });
 
     // Eliminar el archivo temporal

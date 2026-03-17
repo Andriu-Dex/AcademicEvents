@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useParams } from "react-router-dom";
 
 // Hook para sincronización de datos de usuario
 import useUserSync from "./hooks/useUserSync.js";
@@ -53,6 +53,31 @@ import StyleRefresher from "./components/StyleRefresher";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+function ResetPasswordLegacyRedirect() {
+  const { token } = useParams();
+  return <Navigate to={`/reset-password/${token}`} replace />;
+}
+
+function VerifyEmailLegacyRedirect() {
+  const { token } = useParams();
+  return <Navigate to={`/verify-email/${token}`} replace />;
+}
+
+function AdminEditEventLegacyRedirect() {
+  const { id } = useParams();
+  return <Navigate to={`/admin/events/edit/${id}`} replace />;
+}
+
+function AdminEventEnrollmentsLegacyRedirect() {
+  const { id } = useParams();
+  return <Navigate to={`/admin/events/${id}/enrollments`} replace />;
+}
+
+function AdminReporteEventoLegacyRedirect() {
+  const { id_eve } = useParams();
+  return <Navigate to={`/admin/reports/event/${id_eve}`} replace />;
+}
+
 function App() {
   // Usar el hook para sincronizar datos del usuario automáticamente
   useUserSync();
@@ -68,31 +93,49 @@ function App() {
           <Route path="/" element={<Navigate to="/home" />} />
           {/* Rutas públicas */}
           <Route path="/login" element={<Login />} />
-          <Route path="/registro" element={<Register />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/registro" element={<Navigate to="/register" replace />} />
           {/* Rutas de recuperación de contraseña */}
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route
             path="/recovery-instructions"
             element={<RecoveryInstructionsPage />}
           />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
           <Route
             path="/restablecer-contrasena/:token"
-            element={<ResetPassword />}
+            element={<ResetPasswordLegacyRedirect />}
           />
           {/* Rutas de verificación de correo */}
-          <Route path="/verificar-correo/:token" element={<VerifyEmail />} />
+          <Route path="/verify-email/:token" element={<VerifyEmail />} />
           <Route
-            path="/verificacion-pendiente"
+            path="/verificar-correo/:token"
+            element={<VerifyEmailLegacyRedirect />}
+          />
+          <Route
+            path="/verification-pending"
             element={<VerificationPending />}
           />
-          <Route path="/corregir-correo" element={<CorrectEmail />} />
+          <Route
+            path="/verificacion-pendiente"
+            element={<Navigate to="/verification-pending" replace />}
+          />
+          <Route path="/correct-email" element={<CorrectEmail />} />
+          <Route
+            path="/corregir-correo"
+            element={<Navigate to="/correct-email" replace />}
+          />
           {/* ✅ Ruta temporal para probar Home con diferentes roles */}
           <Route path="/home" element={<Home />} />
           {/* Ruta pública para eventos públicos */}
-          <Route path="/eventos-publicos" element={<EventosPublicos />} />
+          <Route path="/public-events" element={<EventosPublicos />} />
+          <Route
+            path="/eventos-publicos"
+            element={<Navigate to="/public-events" replace />}
+          />
           {/* Rutas privadas (usuario autenticado) */}
           <Route
-            path="/eventos"
+            path="/events"
             element={
               <ProtectedRoute>
                 <PrivateLayout>
@@ -101,8 +144,9 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route path="/eventos" element={<Navigate to="/events" replace />} />
           <Route
-            path="/inscripciones"
+            path="/enrollments"
             element={
               <ProtectedRoute>
                 <PrivateLayout>
@@ -112,7 +156,11 @@ function App() {
             }
           />{" "}
           <Route
-            path="/certificados"
+            path="/inscripciones"
+            element={<Navigate to="/enrollments" replace />}
+          />
+          <Route
+            path="/certificates"
             element={
               <ProtectedRoute>
                 <PrivateLayout>
@@ -122,7 +170,11 @@ function App() {
             }
           />
           <Route
-            path="/perfil"
+            path="/certificados"
+            element={<Navigate to="/certificates" replace />}
+          />
+          <Route
+            path="/profile"
             element={
               <ProtectedRoute>
                 <PrivateLayout>
@@ -131,6 +183,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route path="/perfil" element={<Navigate to="/profile" replace />} />
           {/* Rutas protegidas para ADMIN */}
           <Route
             path="/admin"
@@ -143,7 +196,7 @@ function App() {
             }
           />
           <Route
-            path="/admin/eventos"
+            path="/admin/events"
             element={
               <PrivateRouteAdmin>
                 <PrivateLayout>
@@ -153,7 +206,11 @@ function App() {
             }
           />
           <Route
-            path="/admin/eventos/crear"
+            path="/admin/eventos"
+            element={<Navigate to="/admin/events" replace />}
+          />
+          <Route
+            path="/admin/events/create"
             element={
               <PrivateRouteAdmin>
                 <PrivateLayout>
@@ -163,7 +220,11 @@ function App() {
             }
           />
           <Route
-            path="/admin/eventos/editar/:id"
+            path="/admin/eventos/crear"
+            element={<Navigate to="/admin/events/create" replace />}
+          />
+          <Route
+            path="/admin/events/edit/:id"
             element={
               <PrivateRouteAdmin>
                 <PrivateLayout>
@@ -173,7 +234,11 @@ function App() {
             }
           />
           <Route
-            path="/admin/eventos/:id/inscripciones"
+            path="/admin/eventos/editar/:id"
+            element={<AdminEditEventLegacyRedirect />}
+          />
+          <Route
+            path="/admin/events/:id/enrollments"
             element={
               <PrivateRouteAdmin>
                 <PrivateLayout>
@@ -183,7 +248,11 @@ function App() {
             }
           />
           <Route
-            path="/admin/carreras"
+            path="/admin/eventos/:id/inscripciones"
+            element={<AdminEventEnrollmentsLegacyRedirect />}
+          />
+          <Route
+            path="/admin/careers"
             element={
               <PrivateRouteAdmin>
                 <PrivateLayout>
@@ -193,7 +262,11 @@ function App() {
             }
           />
           <Route
-            path="/admin/configuracion"
+            path="/admin/carreras"
+            element={<Navigate to="/admin/careers" replace />}
+          />
+          <Route
+            path="/admin/settings"
             element={
               <PrivateRouteAdmin>
                 <PrivateLayout>
@@ -203,7 +276,11 @@ function App() {
             }
           />
           <Route
-            path="/admin/gestion-admins"
+            path="/admin/configuracion"
+            element={<Navigate to="/admin/settings" replace />}
+          />
+          <Route
+            path="/admin/admins"
             element={
               <PrivateRouteAdmin>
                 <PrivateLayout>
@@ -213,7 +290,11 @@ function App() {
             }
           />
           <Route
-            path="/admin/reportes-evento"
+            path="/admin/gestion-admins"
+            element={<Navigate to="/admin/admins" replace />}
+          />
+          <Route
+            path="/admin/reports/events"
             element={
               <PrivateRouteAdmin>
                 <PrivateLayout>
@@ -223,7 +304,11 @@ function App() {
             }
           />
           <Route
-            path="/admin/reportes-evento/:id_eve"
+            path="/admin/reportes-evento"
+            element={<Navigate to="/admin/reports/events" replace />}
+          />
+          <Route
+            path="/admin/reports/event/:id_eve"
             element={
               <PrivateRouteAdmin>
                 <PrivateLayout>
@@ -233,7 +318,11 @@ function App() {
             }
           />
           <Route
-            path="/admin/reportes-mes"
+            path="/admin/reportes-evento/:id_eve"
+            element={<AdminReporteEventoLegacyRedirect />}
+          />
+          <Route
+            path="/admin/reports/month"
             element={
               <PrivateRouteAdmin>
                 <PrivateLayout>
@@ -242,9 +331,13 @@ function App() {
               </PrivateRouteAdmin>
             }
           />
+          <Route
+            path="/admin/reportes-mes"
+            element={<Navigate to="/admin/reports/month" replace />}
+          />
           {/* Nuevas rutas para reportes específicos */}
           <Route
-            path="/admin/reportes/carrera"
+            path="/admin/reports/career"
             element={
               <PrivateRouteAdmin>
                 <PrivateLayout>
@@ -254,7 +347,11 @@ function App() {
             }
           />
           <Route
-            path="/admin/reportes/inscripciones"
+            path="/admin/reportes/carrera"
+            element={<Navigate to="/admin/reports/career" replace />}
+          />
+          <Route
+            path="/admin/reports/enrollments"
             element={
               <PrivateRouteAdmin>
                 <PrivateLayout>
@@ -264,7 +361,11 @@ function App() {
             }
           />
           <Route
-            path="/admin/reportes/asistencia"
+            path="/admin/reportes/inscripciones"
+            element={<Navigate to="/admin/reports/enrollments" replace />}
+          />
+          <Route
+            path="/admin/reports/attendance"
             element={
               <PrivateRouteAdmin>
                 <PrivateLayout>
@@ -274,7 +375,11 @@ function App() {
             }
           />
           <Route
-            path="/admin/reportes/certificados"
+            path="/admin/reportes/asistencia"
+            element={<Navigate to="/admin/reports/attendance" replace />}
+          />
+          <Route
+            path="/admin/reports/certificates"
             element={
               <PrivateRouteAdmin>
                 <PrivateLayout>
@@ -284,7 +389,11 @@ function App() {
             }
           />
           <Route
-            path="/admin/reportes/ingresos"
+            path="/admin/reportes/certificados"
+            element={<Navigate to="/admin/reports/certificates" replace />}
+          />
+          <Route
+            path="/admin/reports/revenue"
             element={
               <PrivateRouteAdmin>
                 <PrivateLayout>
@@ -294,7 +403,11 @@ function App() {
             }
           />
           <Route
-            path="/admin/inscripciones"
+            path="/admin/reportes/ingresos"
+            element={<Navigate to="/admin/reports/revenue" replace />}
+          />
+          <Route
+            path="/admin/enrollments"
             element={
               <PrivateRouteAdmin>
                 <PrivateLayout>
@@ -304,7 +417,11 @@ function App() {
             }
           />
           <Route
-            path="/admin/gestion"
+            path="/admin/inscripciones"
+            element={<Navigate to="/admin/enrollments" replace />}
+          />
+          <Route
+            path="/admin/management"
             element={
               <PrivateRouteAdmin>
                 <PrivateLayout>
@@ -312,6 +429,10 @@ function App() {
                 </PrivateLayout>
               </PrivateRouteAdmin>
             }
+          />
+          <Route
+            path="/admin/gestion"
+            element={<Navigate to="/admin/management" replace />}
           />
         </Routes>
 

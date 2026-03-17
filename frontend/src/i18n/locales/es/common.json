@@ -1,0 +1,25 @@
+{
+  "app": {
+    "name": "Eventos Academicos",
+    "title": "Sistema de Gestion de Eventos"
+  },
+  "actions": {
+    "create": "Crear",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "view": "Ver",
+    "download": "Descargar"
+  },
+  "navigation": {
+    "home": "Inicio",
+    "events": "Eventos",
+    "myRegistrations": "Mis Inscripciones",
+    "profile": "Perfil",
+    "admin": "Administracion",
+    "logout": "Cerrar Sesion"
+  }
+}

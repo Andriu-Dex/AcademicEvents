@@ -4,6 +4,7 @@
  */
 
 const { prisma } = require("../config/db");
+const { withTenantWhere } = require("../utils/tenantScope");
 
 const {
   extractPaginationParams,
@@ -57,9 +58,9 @@ async function obtenerEventosPublicosPaginados(req, res) {
       modalidad,
       search,
     } = req.query; // Construir condición WHERE para filtros
-    const whereCondition = {
+    const whereCondition = withTenantWhere(req.tenantId, {
       status: "ACTIVE", // Solo eventos activos según el enum status
-    };
+    });
 
     // Construir filtros de carreras usando OR para combinar múltiples criterios
     const carreraFilters = [];
@@ -214,8 +215,8 @@ async function obtenerEventosUsuarioPaginados(req, res) {
     const userId = req.usuario.id; // ID de la cuenta
 
     // Obtener información del usuario con su carrera
-    const userAccount = await prisma.account.findUnique({
-      where: { id: userId },
+    const userAccount = await prisma.account.findFirst({
+      where: withTenantWhere(req.tenantId, { id: userId }),
       include: {
         user: {
           include: {
@@ -230,7 +231,7 @@ async function obtenerEventosUsuarioPaginados(req, res) {
     }
 
     // Construir condición WHERE para filtros
-    const whereCondition = {}; // 🎯 LÓGICA DE FILTRADO POR ROL Y CARRERA
+    const whereCondition = withTenantWhere(req.tenantId); // 🎯 LÓGICA DE FILTRADO POR ROL Y CARRERA
     if (userAccount.role === "ESTUDIANTE" || userAccount.role === "STUDENT") {
       if (userAccount.user.career) {
         // Estudiante con carrera asignada puede ver:
@@ -495,7 +496,7 @@ async function obtenerEventosAdminPaginados(req, res) {
     } = req.query;
 
     // Construir condición WHERE para filtros
-    const whereCondition = {};
+    const whereCondition = withTenantWhere(req.tenantId);
 
     // Búsqueda por nombre o descripción
     if (search && search.trim() !== "") {

@@ -1,6 +1,7 @@
 // Importación de módulos necesarios
 import React, { useState, useEffect } from "react";
 import axiosInstance from "../api/axiosConfig";
+import { requestWithEndpointFallback } from "../api/endpointFallback";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "../hooks/useAuth";
@@ -112,10 +113,19 @@ const Login = () => {
     }
     saveEmailIfNew(email);
     try {
-      const res = await axiosInstance.post(`/login`, {
-        correo: email,
-        contrasena: password,
-      });
+      const payload = {
+        email,
+        password,
+      };
+
+      const res = await requestWithEndpointFallback(
+        () => axiosInstance.post("/auth/login", payload),
+        () =>
+          axiosInstance.post("/login", {
+            correo: email,
+            contrasena: password,
+          })
+      );
 
       // Verificar si la cuenta requiere verificación
       if (res.data.requireVerification) {
@@ -318,7 +328,7 @@ const Login = () => {
           </form>
           <p className="register-text-l">
             ¿No tienes cuenta?{" "}
-            <Link to="/registro" className="register-link-l hover:underline">
+            <Link to="/register" className="register-link-l hover:underline">
               Regístrate
             </Link>
           </p>

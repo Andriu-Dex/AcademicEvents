@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
-import { BadgeCheck, Clock, Ban, Eye, Download, Loader } from "lucide-react";
+import { BadgeCheck, Clock, Ban, Eye, Loader } from "lucide-react";
 import { toast } from "react-toastify";
 import InscripcionService from "../../services/InscripcionService";
 import ZoomableImage from "../../components/ZoomableImage";
@@ -9,16 +9,38 @@ import { usePagination } from "../../hooks/usePagination";
 import PaginationControls from "../../components/Pagination/PaginationControls";
 import "./styles/AdminEventInscription.css";
 
-const colores = {
-  PENDIENTE: "estado-pendiente-aei",
-  ACEPTADA: "estado-aceptada-aei",
-  RECHAZADA: "estado-rechazada-aei",
-  FINALIZADA: "estado-finalizada-aei",
-  APROBADO: "estado-aprobado-aei",
-  REPROBADO_NOTA: "estado-reprobado-nota-aei",
-  REPROBADO_ASISTENCIA: "estado-reprobado-asistencia-aei",
-  REPROBADO_TOTAL: "estado-reprobado-total-aei",
+const LEGACY_REG_STATUS_TO_DB = {
+  PENDIENTE: "PENDING",
+  ACEPTADA: "ACCEPTED",
+  RECHAZADA: "REJECTED",
+  APROBADO: "APPROVED",
+  REPROBADO_NOTA: "FAILED_GRADE",
+  REPROBADO_ASISTENCIA: "FAILED_ATTENDANCE",
+  REPROBADO_TOTAL: "FAILED_TOTAL",
 };
+
+const toDbStatus = (status) => LEGACY_REG_STATUS_TO_DB[status] || status;
+
+const colores = {
+  PENDING: "estado-pendiente-aei",
+  ACCEPTED: "estado-aceptada-aei",
+  REJECTED: "estado-rechazada-aei",
+  APPROVED: "estado-aprobado-aei",
+  FAILED_GRADE: "estado-reprobado-nota-aei",
+  FAILED_ATTENDANCE: "estado-reprobado-asistencia-aei",
+  FAILED_TOTAL: "estado-reprobado-total-aei",
+};
+
+const STATUS_OPTIONS = [
+  "TODOS",
+  "PENDING",
+  "ACCEPTED",
+  "REJECTED",
+  "APPROVED",
+  "FAILED_GRADE",
+  "FAILED_ATTENDANCE",
+  "FAILED_TOTAL",
+];
 
 const AdminEventInscription = () => {
   const { id } = useParams();
@@ -54,29 +76,34 @@ const AdminEventInscription = () => {
   const determinarEstadoFinal = (asistencia, notaFinal, porcentajeMinimo) => {
     // Si la asistencia es menor al porcentaje mínimo requerido
     if (asistencia < porcentajeMinimo) {
-      return "REPROBADO_ASISTENCIA";
+      return "FAILED_ATTENDANCE";
     }
 
+    const finalizationEvent =
+      inscripcionFinalizar?.event || inscripcionFinalizar?.evento || {};
+
     // Si es un curso, verificar la nota
-    if (inscripcionFinalizar?.evento?.tip_eve === "CURSO") {
+    if ((finalizationEvent.type || finalizationEvent.tip_eve) === "CURSO") {
       // Obtener la nota mínima desde el curso
       const notaMinima =
-        inscripcionFinalizar?.evento?.eventos_curso?.not_min_cur || 7;
+        finalizationEvent?.eventos_curso?.minPassingGrade ||
+        finalizationEvent?.eventos_curso?.not_min_cur ||
+        7;
 
       // Si la nota es menor a la mínima, reprobar por nota
       if (notaFinal < notaMinima) {
-        return "REPROBADO_NOTA";
+        return "FAILED_GRADE";
       }
     }
 
     // Si pasó todos los filtros, aprobar
-    return "APROBADO";
+    return "APPROVED";
   };
 
   const obtenerNombreEvento = useCallback(async () => {
     try {
       const eventoData = await InscripcionService.obtenerEvento(id);
-      setNombreEvento(eventoData.nom_eve);
+      setNombreEvento(eventoData.name || eventoData.nom_eve);
       setEventoInfo(eventoData);
     } catch (err) {
       console.error("Error al obtener evento:", err);
@@ -87,7 +114,7 @@ const AdminEventInscription = () => {
           `${import.meta.env.VITE_API_URL}/api/eventos/${id}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        setNombreEvento(res.data.nom_eve);
+        setNombreEvento(res.data.name || res.data.nom_eve);
         setEventoInfo(res.data);
       } catch (fallbackErr) {
         console.error("Error al obtener evento en fallback:", fallbackErr);
@@ -95,28 +122,30 @@ const AdminEventInscription = () => {
       }
     }
   }, [id]);
-  const cambiarEstado = async (id_ins, estado) => {
-    setActualizandoId(id_ins);
+  const cambiarEstado = async (registrationId, estado) => {
+    setActualizandoId(registrationId);
     try {
       // Encontrar la inscripción actual
-      const inscripcionActual = inscripciones.find((i) => i.id_ins === id_ins);
+      const inscripcionActual = inscripciones.find(
+        (i) => (i.id || i.id_ins) === registrationId
+      );
       if (!inscripcionActual) {
         throw new Error("Inscripción no encontrada");
       }
 
       // Validar cambios de estado prohibidos
       const estadosFinales = [
-        "APROBADO",
-        "REPROBADO_NOTA",
-        "REPROBADO_ASISTENCIA",
-        "REPROBADO_TOTAL",
+        "APPROVED",
+        "FAILED_GRADE",
+        "FAILED_ATTENDANCE",
+        "FAILED_TOTAL",
       ];
-      if (
-        estadosFinales.includes(inscripcionActual.est_ins) &&
-        estado === "RECHAZADA"
-      ) {
+      const estadoActual = toDbStatus(
+        inscripcionActual.status || inscripcionActual.est_ins
+      );
+      if (estadosFinales.includes(estadoActual) && estado === "REJECTED") {
         toast.error(
-          "No se puede cambiar una inscripción finalizada a RECHAZADA"
+          "No se puede cambiar una inscripción finalizada a REJECTED"
         );
         setActualizandoId(null);
         return;
@@ -125,16 +154,15 @@ const AdminEventInscription = () => {
       // Verificar si es un flujo de finalización
       const esFlujoDeFinalizacion =
         estadosFinales.includes(estado) ||
-        (estadosFinales.includes(inscripcionActual.est_ins) &&
-          estado === "ACEPTADA");
+        (estadosFinales.includes(estadoActual) && estado === "ACCEPTED");
 
       const token = localStorage.getItem("token");
       const response = await axios.put(
         `${
           import.meta.env.VITE_API_URL
-        }/api/admin/inscripciones/validar/${id_ins}`,
+        }/api/admin/inscripciones/validar/${registrationId}`,
         {
-          est_ins: estado,
+          status: estado,
           esFlujoFinalizacion: esFlujoDeFinalizacion, // Agregar flag para todos los cambios de estado
         },
         { headers: { Authorization: `Bearer ${token}` } }
@@ -150,7 +178,7 @@ const AdminEventInscription = () => {
       toast.success(`Inscripción ${estado.toLowerCase()} exitosamente`);
 
       // 🚨 ALERTA ESPECIAL: Si se aceptó una inscripción, verificar cupos restantes
-      if (estado === "ACEPTADA") {
+      if (estado === "ACCEPTED") {
         // Obtener información actualizada del evento
         const token = localStorage.getItem("token");
         const eventoRes = await axios.get(
@@ -158,7 +186,8 @@ const AdminEventInscription = () => {
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
-        const cuposRestantes = eventoRes.data.cup_dis_eve;
+        const cuposRestantes =
+          eventoRes.data.availableSlots ?? eventoRes.data.cup_dis_eve;
 
         if (cuposRestantes === 0) {
           // 🚫 ALERTA CRÍTICA: Cupos agotados
@@ -320,18 +349,22 @@ const AdminEventInscription = () => {
           <div className="cupos-info">
             <span
               className={`cupos-disponibles ${
-                eventoInfo.cup_dis_eve === 0
+                (eventoInfo.availableSlots ?? eventoInfo.cup_dis_eve) === 0
                   ? "cupos-agotados"
-                  : eventoInfo.cup_dis_eve <= 3
+                  : (eventoInfo.availableSlots ?? eventoInfo.cup_dis_eve) <= 3
                   ? "cupos-pocos"
                   : ""
               }`}
             >
-              {eventoInfo.cup_dis_eve === 0
+              {(eventoInfo.availableSlots ?? eventoInfo.cup_dis_eve) === 0
                 ? "🚫 Sin cupos disponibles"
-                : eventoInfo.cup_dis_eve <= 3
-                ? `⚠️ Pocos cupos: ${eventoInfo.cup_dis_eve} de ${eventoInfo.cup_max_eve}`
-                : `📍 Cupos disponibles: ${eventoInfo.cup_dis_eve} de ${eventoInfo.cup_max_eve}`}
+                : (eventoInfo.availableSlots ?? eventoInfo.cup_dis_eve) <= 3
+                ? `⚠️ Pocos cupos: ${
+                    eventoInfo.availableSlots ?? eventoInfo.cup_dis_eve
+                  } de ${eventoInfo.maxCapacity ?? eventoInfo.cup_max_eve}`
+                : `📍 Cupos disponibles: ${
+                    eventoInfo.availableSlots ?? eventoInfo.cup_dis_eve
+                  } de ${eventoInfo.maxCapacity ?? eventoInfo.cup_max_eve}`}
             </span>
 
             <div className="cupos-actions">
@@ -360,16 +393,7 @@ const AdminEventInscription = () => {
       </div>
 
       <div className="filtros">
-        {[
-          "TODOS",
-          "PENDIENTE",
-          "ACEPTADA",
-          "RECHAZADA",
-          "APROBADO",
-          "REPROBADO_NOTA",
-          "REPROBADO_ASISTENCIA",
-          "REPROBADO_TOTAL",
-        ].map((estado) => (
+        {STATUS_OPTIONS.map((estado) => (
           <button
             key={estado}
             className={`filtro-btn ${filtro === estado ? "filtro-activo" : ""}`}
@@ -401,51 +425,51 @@ const AdminEventInscription = () => {
               No hay inscripciones con estos criterios.
             </p>
           ) : (
-            inscripciones.map((inscripcion) => (
-              <div key={inscripcion.id_ins} className="card-inscripcion">
-                <div className="flex-header">
-                  <div>
-                    <p className="nombre-usuario">
-                      {inscripcion.cuenta?.usuario?.nom_usu}{" "}
-                      {inscripcion.cuenta?.usuario?.ape_usu}
-                    </p>
-                    <p className="card-correo">{inscripcion.cuenta?.cor_usu}</p>
-                    <p className="card-asistencia">
-                      Asistencia: {inscripcion.por_asi_fin_usu ?? "-"}% | Nota:{" "}
-                      {inscripcion.inscripcion_curso?.not_fin_usu ?? "-"}
-                    </p>
+            inscripciones.map((inscripcion) => {
+              const registrationId = inscripcion.id || inscripcion.id_ins;
+              const status = toDbStatus(inscripcion.status || inscripcion.est_ins);
+              const account = inscripcion.account || inscripcion.cuenta || {};
+              const user = account.user || account.usuario || {};
+              const attendance =
+                inscripcion.finalAttendancePercent ?? inscripcion.por_asi_fin_usu;
+              const grade =
+                inscripcion.finalGrade ?? inscripcion.inscripcion_curso?.not_fin_usu;
+              const paymentReceipts =
+                inscripcion.paymentReceipts || inscripcion.comprobantes_pago || [];
+
+              return (
+                <div key={registrationId} className="card-inscripcion">
+                  <div className="flex-header">
+                    <div>
+                      <p className="nombre-usuario">
+                        {user.firstName || user.nom_usu} {user.lastName || user.ape_usu}
+                      </p>
+                      <p className="card-correo">{account.email || account.cor_usu}</p>
+                      <p className="card-asistencia">
+                        Asistencia: {attendance ?? "-"}% | Nota: {grade ?? "-"}
+                      </p>
+                    </div>
+
+                    <span className={`estado-badge ${colores[status]}`}>
+                      {status === "PENDING" && <Clock size={14} />}
+                      {status === "ACCEPTED" && <BadgeCheck size={14} />}
+                      {status === "REJECTED" && <Ban size={14} />}
+                      {status === "APPROVED" && <BadgeCheck size={14} />}
+                      {status === "FAILED_GRADE" ||
+                      status === "FAILED_ATTENDANCE" ||
+                      status === "FAILED_TOTAL" ? (
+                        <Ban size={14} />
+                      ) : null}
+                      {status}
+                    </span>
                   </div>
 
-                  <span
-                    className={`estado-badge ${colores[inscripcion.est_ins]}`}
-                  >
-                    {inscripcion.est_ins === "PENDIENTE" && <Clock size={14} />}
-                    {inscripcion.est_ins === "ACEPTADA" && (
-                      <BadgeCheck size={14} />
-                    )}
-                    {inscripcion.est_ins === "RECHAZADA" && <Ban size={14} />}
-                    {inscripcion.est_ins === "FINALIZADA" && (
-                      <Download size={14} />
-                    )}
-                    {inscripcion.est_ins === "APROBADO" && (
-                      <BadgeCheck size={14} />
-                    )}
-                    {inscripcion.est_ins === "REPROBADO_NOTA" ||
-                    inscripcion.est_ins === "REPROBADO_ASISTENCIA" ||
-                    inscripcion.est_ins === "REPROBADO_TOTAL" ? (
-                      <Ban size={14} />
-                    ) : null}
-                    {inscripcion.est_ins}
-                  </span>
-                </div>
-
-                {inscripcion.comprobantes_pago &&
-                  inscripcion.comprobantes_pago[0] && (
+                  {paymentReceipts[0] && (
                     <div className="mt-2">
                       <button
                         onClick={() =>
                           setComprobanteSeleccionado(
-                            inscripcion.comprobantes_pago[0].url_com_pag
+                            paymentReceipts[0].url || paymentReceipts[0].url_com_pag
                           )
                         }
                         className="link-comprobante"
@@ -456,89 +480,82 @@ const AdminEventInscription = () => {
                     </div>
                   )}
 
-                <div className="acciones-inscripcion">
-                  {inscripcion.est_ins === "PENDIENTE" && (
-                    <>
+                  <div className="acciones-inscripcion">
+                    {status === "PENDING" && (
+                      <>
+                        <button
+                          onClick={() => cambiarEstado(registrationId, "ACCEPTED")}
+                          disabled={actualizandoId === registrationId}
+                          className="btn-accion btn-aceptar"
+                        >
+                          {actualizandoId === registrationId
+                            ? "Actualizando..."
+                            : "Aceptar"}
+                        </button>
+
+                        <button
+                          onClick={() => cambiarEstado(registrationId, "REJECTED")}
+                          disabled={actualizandoId === registrationId}
+                          className="btn-accion btn-rechazar"
+                        >
+                          {actualizandoId === registrationId
+                            ? "Actualizando..."
+                            : "Rechazar"}
+                        </button>
+                      </>
+                    )}
+
+                    {status === "ACCEPTED" && (
+                      <>
+                        <button
+                          onClick={() => {
+                            setInscripcionFinalizar(inscripcion);
+                            setMostrarFinalizarModal(true);
+                            setNotaFinal("");
+                            setAsistencia("");
+                          }}
+                          className="btn-accion btn-finalizar"
+                        >
+                          Finalizar inscripción
+                        </button>
+
+                        <button
+                          onClick={() => cambiarEstado(registrationId, "REJECTED")}
+                          disabled={actualizandoId === registrationId}
+                          className="btn-accion btn-rechazar"
+                        >
+                          {actualizandoId === registrationId
+                            ? "Actualizando..."
+                            : "Rechazar"}
+                        </button>
+                      </>
+                    )}
+
+                    {(status === "FAILED_GRADE" ||
+                      status === "FAILED_ATTENDANCE" ||
+                      status === "FAILED_TOTAL") && (
                       <button
-                        onClick={() =>
-                          cambiarEstado(inscripcion.id_ins, "ACEPTADA")
-                        }
-                        disabled={actualizandoId === inscripcion.id_ins}
+                        onClick={() => cambiarEstado(registrationId, "ACCEPTED")}
+                        disabled={actualizandoId === registrationId}
                         className="btn-accion btn-aceptar"
                       >
-                        {actualizandoId === inscripcion.id_ins
+                        {actualizandoId === registrationId
                           ? "Actualizando..."
-                          : "Aceptar"}
+                          : "Volver a Aceptada"}
                       </button>
+                    )}
 
-                      <button
-                        onClick={() =>
-                          cambiarEstado(inscripcion.id_ins, "RECHAZADA")
-                        }
-                        disabled={actualizandoId === inscripcion.id_ins}
-                        className="btn-accion btn-rechazar"
-                      >
-                        {actualizandoId === inscripcion.id_ins
-                          ? "Actualizando..."
-                          : "Rechazar"}
-                      </button>
-                    </>
-                  )}
-
-                  {inscripcion.est_ins === "ACEPTADA" && (
-                    <>
-                      <button
-                        onClick={() => {
-                          setInscripcionFinalizar(inscripcion);
-                          setMostrarFinalizarModal(true);
-                          setNotaFinal("");
-                          setAsistencia("");
-                        }}
-                        className="btn-accion btn-finalizar"
-                      >
-                        Finalizar inscripción
-                      </button>
-
-                      <button
-                        onClick={() =>
-                          cambiarEstado(inscripcion.id_ins, "RECHAZADA")
-                        }
-                        disabled={actualizandoId === inscripcion.id_ins}
-                        className="btn-accion btn-rechazar"
-                      >
-                        {actualizandoId === inscripcion.id_ins
-                          ? "Actualizando..."
-                          : "Rechazar"}
-                      </button>
-                    </>
-                  )}
-
-                  {(inscripcion.est_ins === "REPROBADO_NOTA" ||
-                    inscripcion.est_ins === "REPROBADO_ASISTENCIA" ||
-                    inscripcion.est_ins === "REPROBADO_TOTAL") && (
-                    <button
-                      onClick={() =>
-                        cambiarEstado(inscripcion.id_ins, "ACEPTADA")
-                      }
-                      disabled={actualizandoId === inscripcion.id_ins}
-                      className="btn-accion btn-aceptar"
-                    >
-                      {actualizandoId === inscripcion.id_ins
-                        ? "Actualizando..."
-                        : "Volver a Aceptada"}
-                    </button>
-                  )}
-
-                  {inscripcion.est_ins === "APROBADO" && (
-                    <div className="mensaje-estado-final">
-                      <span className="texto-estado-final">
-                        Inscripción aprobada finalizada
-                      </span>
-                    </div>
-                  )}
+                    {status === "APPROVED" && (
+                      <div className="mensaje-estado-final">
+                        <span className="texto-estado-final">
+                          Inscripción aprobada finalizada
+                        </span>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))
+              );
+            })
           )}
         </div>
       )}
@@ -566,12 +583,14 @@ const AdminEventInscription = () => {
           <div className="finalizar-modal-content">
             <h2 className="modal-title-aei">
               Finalizar inscripción de{" "}
-              {inscripcionFinalizar?.cuenta?.usuario?.nom_usu}{" "}
-              {inscripcionFinalizar?.cuenta?.usuario?.ape_usu}
+              {inscripcionFinalizar?.account?.user?.firstName ||
+                inscripcionFinalizar?.cuenta?.usuario?.nom_usu}{" "}
+              {inscripcionFinalizar?.account?.user?.lastName ||
+                inscripcionFinalizar?.cuenta?.usuario?.ape_usu}
             </h2>
 
             <label className="modal-label">
-              Asistencia (mín: {eventoInfo?.por_min_asi_eve || 0}%)
+              Asistencia (mín: {eventoInfo?.minAttendancePercent ?? eventoInfo?.por_min_asi_eve ?? 0}%)
             </label>
             <input
               type="number"
@@ -582,10 +601,10 @@ const AdminEventInscription = () => {
               max={100}
             />
 
-            {eventoInfo?.tip_eve === "CURSO" && (
+            {(eventoInfo?.type || eventoInfo?.tip_eve) === "CURSO" && (
               <>
                 <label className="modal-label">
-                  Nota final (mín: {eventoInfo?.eventos_curso?.not_min_cur || 0}
+                  Nota final (mín: {eventoInfo?.eventos_curso?.minPassingGrade ?? eventoInfo?.eventos_curso?.not_min_cur ?? 0}
                   )
                 </label>
                 <input
@@ -611,32 +630,41 @@ const AdminEventInscription = () => {
                 onClick={async () => {
                   setEnviandoFinalizacion(true);
                   try {
-                    if (
-                      isNaN(Number(asistencia)) ||
-                      isNaN(Number(notaFinal)) ||
-                      asistencia === "" ||
-                      notaFinal === ""
-                    ) {
-                      toast.error("Debe ingresar asistencia y nota válidas");
+                    const eventoFinalizacion =
+                      inscripcionFinalizar?.event || inscripcionFinalizar?.evento || {};
+                    const requiereNota =
+                      (eventoFinalizacion.type || eventoFinalizacion.tip_eve) ===
+                      "CURSO";
+
+                    if (isNaN(Number(asistencia)) || asistencia === "") {
+                      toast.error("Debe ingresar una asistencia valida");
                       setEnviandoFinalizacion(false);
                       return;
                     }
+
+                    if (requiereNota && (isNaN(Number(notaFinal)) || notaFinal === "")) {
+                      toast.error("Debe ingresar una nota valida");
+                      setEnviandoFinalizacion(false);
+                      return;
+                    }
+
                     const token = localStorage.getItem("token");
 
-                    const response = await axios.put(
+                    await axios.put(
                       `${
                         import.meta.env.VITE_API_URL
                       }/api/admin/inscripciones/validar/${
-                        inscripcionFinalizar.id_ins
+                        inscripcionFinalizar.id || inscripcionFinalizar.id_ins
                       }`,
                       {
-                        est_ins: determinarEstadoFinal(
+                        status: determinarEstadoFinal(
                           Number(asistencia),
                           Number(notaFinal),
-                          inscripcionFinalizar?.evento?.por_min_asi_eve
+                          inscripcionFinalizar?.event?.minAttendancePercent ??
+                            inscripcionFinalizar?.evento?.por_min_asi_eve
                         ),
-                        por_asi_fin_usu: Number(asistencia),
-                        not_fin_usu: Number(notaFinal),
+                        finalAttendancePercent: Number(asistencia),
+                        finalGrade: notaFinal === "" ? null : Number(notaFinal),
                         esFlujoFinalizacion: true, // Marcar que viene de finalización
                         observacion: "", // Agregar campo vacío para asegurar compatibilidad
                       },

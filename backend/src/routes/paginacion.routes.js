@@ -9,9 +9,31 @@ const {
   obtenerEventosAdminPaginados,
 } = require("../controllers/evento.paginacion.controller");
 
-// ============================
-// Rutas para eventos con paginación
-// ============================
+// ===============================================================
+// Canonical Routes (English) - Primary
+// ===============================================================
+
+// Get paginated public events (no authentication)
+router.get("/public-events", obtenerEventosPublicosPaginados);
+
+// Get paginated events for authenticated user
+router.get(
+  "/events-paginated",
+  verificarToken,
+  obtenerEventosUsuarioPaginados
+);
+
+// Get paginated events for administrators
+router.get(
+  "/admin/events-paginated",
+  verificarToken,
+  onlyAdmin,
+  obtenerEventosAdminPaginados
+);
+
+// ===============================================================
+// Legacy Routes (Spanish) - Backward Compatibility
+// ===============================================================
 
 // Obtener eventos públicos paginados (sin autenticación)
 router.get("/eventos-publicos", obtenerEventosPublicosPaginados);

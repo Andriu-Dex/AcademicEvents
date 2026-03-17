@@ -47,33 +47,33 @@ class EventoDestacado {
    * @param {Object} evento - Datos del evento
    */
   constructor(evento) {
-    this.id = evento.id_eve ?? evento.id;
-    this.titulo = evento.nom_eve ?? evento.name ?? evento.title ?? "Evento";
-    this.descripcion = evento.des_eve ?? evento.description ?? "";
+    this.id = evento.id ?? evento.id_eve;
+    this.titulo = evento.name ?? evento.nom_eve ?? evento.title ?? "Evento";
+    this.descripcion = evento.description ?? evento.des_eve ?? "";
     this.fechaInicio = EventoDestacado.safeDate(
-      evento.fec_ini_eve ?? evento.startDate
+      evento.startDate ?? evento.fec_ini_eve
     );
     this.fechaFin = EventoDestacado.safeDate(
-      evento.fec_fin_eve ?? evento.endDate
+      evento.endDate ?? evento.fec_fin_eve
     );
     this.imagen =
-      evento.img_por_eve ??
       evento.coverImageUrl ??
+      evento.img_por_eve ??
       evento.coverImage ??
       "https://i.imgur.com/f8adUbZ.png";
-    this.esDestacado = Boolean(evento.eve_des ?? evento.isFeatured);
+    this.esDestacado = Boolean(evento.isFeatured ?? evento.eve_des);
     this.modalidad = EventoDestacado.normalizeModality(
-      evento.mod_eve ?? evento.modality
+      evento.modality ?? evento.mod_eve
     );
-    this.valor = Number(evento.val_eve ?? evento.price ?? 0);
-    this.tipo = evento.tip_eve ?? evento.type ?? "";
-    this.duracionHoras = Number(evento.dur_hor_eve ?? evento.durationHours ?? 0);
+    this.valor = Number(evento.price ?? evento.val_eve ?? 0);
+    this.tipo = evento.type ?? evento.tip_eve ?? "";
+    this.duracionHoras = Number(evento.durationHours ?? evento.dur_hor_eve ?? 0);
     this.cuposDisponibles = Number(
-      evento.cup_dis_eve ?? evento.availableSpots ?? 0
+      evento.availableSpots ?? evento.cup_dis_eve ?? 0
     );
-    this.cuposMaximos = Number(evento.cup_max_eve ?? evento.maxCapacity ?? 0);
+    this.cuposMaximos = Number(evento.maxCapacity ?? evento.cup_max_eve ?? 0);
     this.estado = EventoDestacado.normalizeStatus(
-      evento.est_eve ?? evento.status
+      evento.status ?? evento.est_eve
     );
   }
 

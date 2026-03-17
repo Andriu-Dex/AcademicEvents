@@ -5,6 +5,7 @@ const { PDFDocument, rgb } = require("pdf-lib");
 const fontkit = require("@pdf-lib/fontkit");
 const sharp = require("sharp");
 const { limpiarArchivosTemporales } = require("../middlewares/upload");
+const { withTenantWhere } = require("../utils/tenantScope");
 
 const ROLE_TO_LEGACY = {
   GLOBAL_ADMIN: "ADMIN_GLOBAL",
@@ -29,8 +30,8 @@ const obtenerPerfil = async (req, res) => {
     const { id } = req.usuario; // Ahora id es el ID de la cuenta
 
     // Primero buscamos la cuenta
-    const account = await prisma.account.findUnique({
-      where: { id },
+    const account = await prisma.account.findFirst({
+      where: withTenantWhere(req.tenantId, { id }),
       include: {
         user: {
           include: {
@@ -51,7 +52,7 @@ const obtenerPerfil = async (req, res) => {
 
     // Ahora obtenemos las inscripciones asociadas a la cuenta
     const registrations = await prisma.registration.findMany({
-      where: { accountId: account.id },
+      where: withTenantWhere(req.tenantId, { accountId: account.id }),
       include: {
         event: true,
         registrationCourse: true,
@@ -416,16 +417,16 @@ const actualizarDocumentos = async (req, res) => {
     }
 
     // Obtener cuenta y usuario asociado
-    const cuenta = await prisma.account.findUnique({
-      where: { id },
+    const cuenta = await prisma.account.findFirst({
+      where: withTenantWhere(req.tenantId, { id }),
       include: { user: true },
     });
 
     if (!cuenta || !cuenta.user) {
       return res.status(404).json({ msg: "Usuario no encontrado" });
     } // Obtener información completa del usuario para el PDF
-    const usuario = await prisma.user.findUnique({
-      where: { id: cuenta.user.id },
+    const usuario = await prisma.user.findFirst({
+      where: withTenantWhere(req.tenantId, { id: cuenta.user.id }),
       include: {
         career: {
           include: {
@@ -447,8 +448,8 @@ const actualizarDocumentos = async (req, res) => {
     const rutaArchivo = `/uploads/${archivoFinal.filename}`;
 
     // Actualizar el campo company del usuario
-    const usuarioActualizado = await prisma.user.update({
-      where: { id: cuenta.user.id },
+    const usuarioActualizado = await prisma.user.updateMany({
+      where: withTenantWhere(req.tenantId, { id: cuenta.user.id }),
       data: {
         documentUrl: rutaArchivo,
       },
@@ -480,8 +481,8 @@ const actualizarDocumento = async (req, res) => {
     }
 
     // Obtener cuenta y usuario asociado
-    const cuenta = await prisma.account.findUnique({
-      where: { id },
+    const cuenta = await prisma.account.findFirst({
+      where: withTenantWhere(req.tenantId, { id }),
       include: { user: true },
     });
 
@@ -493,8 +494,8 @@ const actualizarDocumento = async (req, res) => {
     const rutaArchivo = `/uploads/${archivo.filename}`;
 
     // Actualizar el campo company del usuario
-    const usuarioActualizado = await prisma.user.update({
-      where: { id: cuenta.user.id },
+    const usuarioActualizado = await prisma.user.updateMany({
+      where: withTenantWhere(req.tenantId, { id: cuenta.user.id }),
       data: {
         documentUrl: rutaArchivo,
       },

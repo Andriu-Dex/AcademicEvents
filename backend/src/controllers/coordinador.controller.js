@@ -1,11 +1,13 @@
 // Importamos la instancia de Prisma desde el archivo de configuración de la base de datos
 const { prisma } = require("../config/db");
+const { createTenantScoped } = require("../utils/tenantScope");
 
 // =====================
 // Crear nuevo coordinador
 // =====================
 const crearCoordinador = async (req, res) => {
   try {
+    const scoped = createTenantScoped(prisma, req.tenantId);
     const { nom_coo, ape_coo, cor_coo, url_img_coo, tit_coo } = req.body;
 
     // Validación básica
@@ -50,9 +52,8 @@ const crearCoordinador = async (req, res) => {
     }
 
     // Crear coordinador
-    const nuevoCoordinador = await prisma.coordinator.create({
+    const nuevoCoordinador = await scoped.create("coordinator", {
       data: {
-        tenantId: req.tenantId,
         firstName: nom_coo,
         lastName: ape_coo,
         email: cor_coo,
@@ -76,10 +77,9 @@ const crearCoordinador = async (req, res) => {
 // ==============================
 const obtenerCoordinadores = async (req, res) => {
   try {
-    const coordinadores = await prisma.coordinator.findMany({
-      where: {
-        tenantId: req.tenantId,
-      },
+    const scoped = createTenantScoped(prisma, req.tenantId);
+    const coordinadores = await scoped.findMany("coordinator", {
+      where: {},
       orderBy: { firstName: "asc" },
     });
 
@@ -98,6 +98,7 @@ const obtenerCoordinadores = async (req, res) => {
 // =======================
 const actualizarCoordinador = async (req, res) => {
   try {
+    const scoped = createTenantScoped(prisma, req.tenantId);
     const id = req.params.id;
     const { nom_coo, ape_coo, cor_coo, url_img_coo, tit_coo } = req.body;
 
@@ -127,7 +128,7 @@ const actualizarCoordinador = async (req, res) => {
     }
 
     // Verificar que el coordinador existe
-    const coordinadorExistente = await prisma.coordinator.findUnique({
+    const coordinadorExistente = await scoped.findFirst("coordinator", {
       where: { id },
     });
 
@@ -154,7 +155,7 @@ const actualizarCoordinador = async (req, res) => {
     }
 
     // Actualizar coordinador
-    const actualizado = await prisma.coordinator.update({
+    await scoped.updateMany("coordinator", {
       where: { id },
       data: {
         firstName: nom_coo,
@@ -163,6 +164,10 @@ const actualizarCoordinador = async (req, res) => {
         imageUrl: url_img_coo || coordinadorExistente.imageUrl,
         title: tit_coo,
       },
+    });
+
+    const actualizado = await scoped.findFirst("coordinator", {
+      where: { id },
     });
 
     res.json(actualizado);
@@ -180,10 +185,11 @@ const actualizarCoordinador = async (req, res) => {
 // ======================
 const eliminarCoordinador = async (req, res) => {
   try {
+    const scoped = createTenantScoped(prisma, req.tenantId);
     const { id } = req.params;
 
     // Verificar que el coordinador existe
-    const coordinadorExistente = await prisma.coordinator.findUnique({
+    const coordinadorExistente = await scoped.findFirst("coordinator", {
       where: { id },
       include: {
         careers: true,
@@ -202,7 +208,7 @@ const eliminarCoordinador = async (req, res) => {
     }
 
     // Eliminar coordinador
-    await prisma.coordinator.delete({
+    await scoped.deleteMany("coordinator", {
       where: { id },
     });
 

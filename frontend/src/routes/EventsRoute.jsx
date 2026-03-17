@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
 import axiosInstance from "../api/axiosConfig";
+import { requestWithEndpointFallback } from "../api/endpointFallback";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -109,31 +110,31 @@ const EVENT_MODALITY_TO_LEGACY = {
 };
 
 const normalizeEventForUI = (evento, index = 0) => {
-  const parsedPrice = Number(evento?.val_eve ?? evento?.price ?? 0);
+  const parsedPrice = Number(evento?.price ?? evento?.val_eve ?? 0);
 
   return {
     ...evento,
-    id_eve: evento?.id_eve || evento?.id || `evento-${index}`,
-    nom_eve: evento?.nom_eve || evento?.name || `Evento ${index + 1}`,
-    des_eve: evento?.des_eve ?? evento?.description ?? "",
+    id_eve: evento?.id || evento?.id_eve || `evento-${index}`,
+    nom_eve: evento?.name || evento?.nom_eve || `Evento ${index + 1}`,
+    des_eve: evento?.description ?? evento?.des_eve ?? "",
     tip_eve:
-      evento?.tip_eve || EVENT_TYPE_TO_LEGACY[evento?.type] || evento?.type,
+      EVENT_TYPE_TO_LEGACY[evento?.type] || evento?.tip_eve || evento?.type,
     mod_eve:
-      evento?.mod_eve ||
       EVENT_MODALITY_TO_LEGACY[evento?.modality] ||
+      evento?.mod_eve ||
       evento?.modality,
     est_eve:
-      evento?.est_eve ||
       EVENT_STATUS_TO_LEGACY[evento?.status] ||
+      evento?.est_eve ||
       evento?.status,
-    fec_ini_eve: evento?.fec_ini_eve || evento?.startDate || null,
-    fec_fin_eve: evento?.fec_fin_eve || evento?.endDate || null,
-    dur_hor_eve: evento?.dur_hor_eve ?? evento?.durationHours ?? null,
+    fec_ini_eve: evento?.startDate || evento?.fec_ini_eve || null,
+    fec_fin_eve: evento?.endDate || evento?.fec_fin_eve || null,
+    dur_hor_eve: evento?.durationHours ?? evento?.dur_hor_eve ?? null,
     val_eve: Number.isFinite(parsedPrice) ? parsedPrice : 0,
-    cup_dis_eve: evento?.cup_dis_eve ?? evento?.availableSpots ?? 0,
-    cup_max_eve: evento?.cup_max_eve ?? evento?.maxCapacity ?? 0,
+    cup_dis_eve: evento?.availableSpots ?? evento?.cup_dis_eve ?? 0,
+    cup_max_eve: evento?.maxCapacity ?? evento?.cup_max_eve ?? 0,
     img_por_eve:
-      evento?.img_por_eve || evento?.coverImageUrl || evento?.coverImage || "",
+      evento?.coverImageUrl || evento?.img_por_eve || evento?.coverImage || "",
   };
 };
 
@@ -196,7 +197,10 @@ const EventsRoute = () => {
 
         // Verificar cupos disponibles
         try {
-          await axiosInstance.get("/eventos-verificar-cupos");
+          await requestWithEndpointFallback(
+            () => axiosInstance.get("/events/verify-capacity"),
+            () => axiosInstance.get("/eventos-verificar-cupos")
+          );
         } catch (verifyError) {
           console.warn("Error al verificar cupos:", verifyError);
           // Continuar con la carga normal aunque falle la verificación
@@ -277,22 +281,26 @@ const EventsRoute = () => {
         const insRes = await axiosInstance.get("/inscripciones/propias");
 
         // Filtramos sólo las inscripciones activas (PENDIENTES, ACEPTADAS o APROBADO)
+        const toDbStatus = (s) => {
+          const map = { PENDIENTE: "PENDING", ACEPTADA: "ACCEPTED", APROBADO: "APPROVED" };
+          return map[s] || s;
+        };
         const inscripcionesActivas = insRes.data.filter(
-          (ins) =>
-            ins.est_ins === "PENDIENTE" ||
-            ins.est_ins === "ACEPTADA" ||
-            ins.est_ins === "APROBADO"
+          (ins) => {
+            const status = toDbStatus(ins.status || ins.est_ins);
+            return status === "PENDING" || status === "ACCEPTED" || status === "APPROVED";
+          }
         );
 
         // Extraemos los ids de los eventos en los que el usuario está inscrito activamente
         const eventosInscritos = inscripcionesActivas.map(
-          (ins) => ins.evento.id_eve
+          (ins) => (ins.event || ins.evento).id || (ins.event || ins.evento).id_eve
         );
 
         // Obtener eventos aprobados
         const eventosAprobados = insRes.data
-          .filter((ins) => ins.est_ins === "APROBADO")
-          .map((ins) => ins.evento.id_eve);
+          .filter((ins) => toDbStatus(ins.status || ins.est_ins) === "APPROVED")
+          .map((ins) => (ins.event || ins.evento).id || (ins.event || ins.evento).id_eve);
 
         // Guardar los eventos aprobados en el estado
         setEventosAprobados(eventosAprobados);
@@ -300,33 +308,38 @@ const EventsRoute = () => {
         // Obtener eventos reprobados (por nota, asistencia o total)
         const eventosReprobados = insRes.data
           .filter(
-            (ins) =>
-              ins.est_ins === "REPROBADO_NOTA" ||
-              ins.est_ins === "REPROBADO_ASISTENCIA" ||
-              ins.est_ins === "REPROBADO_TOTAL"
+            (ins) => {
+              const status = toDbStatus(ins.status || ins.est_ins);
+              return status === "FAILED_GRADE" || status === "FAILED_ATTENDANCE" || status === "FAILED_TOTAL";
+            }
           )
-          .map((ins) => ins.evento.id_eve);
+          .map((ins) => (ins.event || ins.evento).id || (ins.event || ins.evento).id_eve);
 
         // Guardar los eventos reprobados en el estado
         setEventosReprobados(eventosReprobados);
 
         // Identificamos las inscripciones rechazadas para mostrar un mensaje especial
         const rechazadas = insRes.data.filter(
-          (ins) => ins.est_ins === "RECHAZADA"
+          (ins) => toDbStatus(ins.status || ins.est_ins) === "REJECTED"
         );
 
         // Almacenar los IDs de eventos con inscripciones rechazadas
-        const eventosRechazados = rechazadas.map((ins) => ins.evento.id_eve);
+        const eventosRechazados = rechazadas.map(
+          (ins) => (ins.event || ins.evento).id || (ins.event || ins.evento).id_eve
+        );
         setInscripcionesRechazadas(eventosRechazados);
 
         if (rechazadas.length > 0) {
           // Informar al usuario que puede volver a inscribirse
           rechazadas.forEach((ins) => {
+            const event = ins.event || ins.evento;
+            const eventName = event.name || event.nom_eve;
+            const insId = ins.id || ins.id_ins;
             toast.info(
-              `Tu inscripción a "${ins.evento.nom_eve}" fue rechazada. Puedes volver a inscribirte.`,
+              `Tu inscripción a "${eventName}" fue rechazada. Puedes volver a inscribirte.`,
               {
                 autoClose: 8000,
-                toastId: `rechazada-${ins.id_ins}`, // Evita duplicados
+                toastId: `rechazada-${insId}`, // Evita duplicados
               }
             );
           });
@@ -353,7 +366,9 @@ const EventsRoute = () => {
     }
 
     // Solo validar archivo para eventos con costo o si se subió un archivo para eventos gratuitos
-    if (eventoSeleccionado.val_eve > 0 && !archivo) {
+    // Normalizar val_eve con fallback a campos canónicos
+    const eventPrice = eventoSeleccionado.val_eve ?? eventoSeleccionado.price ?? 0;
+    if (eventPrice > 0 && !archivo) {
       return toast.error("Debes subir un comprobante de pago");
     }
 
@@ -409,7 +424,10 @@ const EventsRoute = () => {
 
         // Refrescar la lista de eventos para actualizar los cupos disponibles
         try {
-          const eventosRes = await axiosInstance.get("/eventos");
+          const eventosRes = await requestWithEndpointFallback(
+            () => axiosInstance.get("/events"),
+            () => axiosInstance.get("/eventos")
+          );
           setEventos(eventosRes.data);
         } catch (error) {
           console.error("Error al actualizar eventos:", error);
@@ -495,12 +513,13 @@ const EventsRoute = () => {
 
       // Mostrar notificación
       const { action, data } = eventUpdate;
+      const eventName = data.name || data.nom_eve || "Sin nombre";
       if (action === "created") {
-        toast.info(`¡Nuevo evento disponible: ${data.nom_eve}!`);
+        toast.info(`¡Nuevo evento disponible: ${eventName}!`);
       } else if (action === "updated") {
-        toast.info(`El evento "${data.nom_eve}" ha sido actualizado.`);
+        toast.info(`El evento "${eventName}" ha sido actualizado.`);
       } else if (action === "deleted") {
-        toast.info(`El evento "${data.nom_eve}" ha sido eliminado.`);
+        toast.info(`El evento "${eventName}" ha sido eliminado.`);
       }
     },
     [fetchData, construirFiltrosAPI]
@@ -769,8 +788,8 @@ const EventsRoute = () => {
               <div key={evento.id_eve} className="evento-card">
                 {/* Imagen de portada (real o placeholder) */}
                 <img
-                  src={evento.img_por_eve || "https://i.imgur.com/c6Ry30Z.jpeg"}
-                  alt={`Portada de ${evento.nom_eve}`}
+                  src={evento.coverImageUrl || "https://i.imgur.com/c6Ry30Z.jpeg"}
+                  alt={`Portada de ${evento.name}`}
                   className="evento-portada-er"
                   style={{
                     width: "100%",
@@ -781,77 +800,77 @@ const EventsRoute = () => {
                   }}
                 />
                 {/* Indicador de estado para eventos filtrados */}
-                {evento.est_eve === "FINALIZADO" && (
+                {evento.status === "FINISHED" && (
                   <div className="evento-estado-badge-er evento-estado-finalizado-er">
                     <Clock size={14} />
                     Finalizado
                   </div>
                 )}
-                {evento.est_eve === "CANCELADO" && (
+                {evento.status === "CANCELLED" && (
                   <div className="evento-estado-badge-er evento-estado-cancelado-er">
                     <AlertCircle size={14} />
                     Cancelado
                   </div>
                 )}
-                {evento.est_eve === "SUSPENDIDO" && (
+                {evento.status === "SUSPENDED" && (
                   <div className="evento-estado-badge-er evento-estado-suspendido-er">
                     <AlertTriangle size={14} />
                     Suspendido
                   </div>
                 )}
-                <h2 className="nombre-evento-er">{evento.nom_eve}</h2>
-                <p className="tipo">{evento.tip_eve}</p>
+                <h2 className="nombre-evento-er">{evento.name}</h2>
+                <p className="tipo">{evento.type}</p>
                 {/* Precio del evento */}
                 <p className="precio-evento">
-                  {evento.val_eve === 0
+                  {evento.price === 0
                     ? "Gratuito"
-                    : `Precio: $${Number(evento.val_eve || 0).toFixed(2)}`}
+                    : `Precio: $${Number(evento.price || 0).toFixed(2)}`}
                 </p>
                 {/* Descripción del evento */}
-                {evento.des_eve && (
+                {evento.description && (
                   <div className="descripcion-evento">
                     <p>
-                      {evento.des_eve.length > 150
-                        ? `${evento.des_eve.substring(0, 150)}...`
-                        : evento.des_eve}
+                      {evento.description.length > 150
+                        ? `${evento.description.substring(0, 150)}...`
+                        : evento.description}
                     </p>
                   </div>
                 )}{" "}
                 <p className="fecha-evento-er">
-                  Fecha: {formatUTCForLocalDisplay(evento.fec_ini_eve)} a{" "}
-                  {formatUTCForLocalDisplay(evento.fec_fin_eve)}
+                  Fecha: {formatUTCForLocalDisplay(evento.startDate)} a{" "}
+                  {formatUTCForLocalDisplay(evento.endDate)}
                 </p>{" "}
                 <p className="duracion-evento-er">
-                  Duración: {evento.dur_hor_eve} horas
+                  Duración: {evento.durationHours} horas
                 </p>
                 {/* Cupos disponibles */}
                 <p
                   className={
-                    evento.cup_dis_eve === 0
+                    evento.availableSpots === 0
                       ? "cupos-agotados"
                       : "cupos-disponibles"
                   }
                 >
-                  {evento.cup_dis_eve === 0
+                  {evento.availableSpots === 0
                     ? "🚫 Sin cupos disponibles"
-                    : `Cupos disponibles: ${evento.cup_dis_eve || 0}`}
+                    : `Cupos disponibles: ${evento.availableSpots || 0}`}
                 </p>
                 {/* Modalidad con ícono */}
-                {evento.mod_eve && (
+                {evento.modality && (
                   <p className="modalidad-evento">
-                    {evento.mod_eve === "PRESENCIAL" && (
+                    {evento.modality === "IN_PERSON" && (
                       <>
                         <MapPin size={16} className="inline-icon" /> Modalidad:
                         Presencial
                       </>
                     )}
-                    {evento.mod_eve === "VIRTUAL" && (
+                    {evento.modality === "VIRTUAL" && (
                       <>
                         <Monitor size={16} className="inline-icon" /> Modalidad:
                         Virtual
                       </>
                     )}
-                    {evento.mod_eve === "SEMIPRESENCIAL" && (
+                    {evento.modality === "HYBRID" && (
                       <>
                         <Laptop size={16} className="inline-icon" /> Modalidad:
                         Semipresencial
@@ -886,11 +905,11 @@ const EventsRoute = () => {
                       eventosAprobados.includes(evento.id_eve)) ||
                     (eventosReprobados &&
                       eventosReprobados.includes(evento.id_eve)) ||
-                    evento.cup_dis_eve === 0 ||
-                    evento.est_eve === "INACTIVO" ||
-                    evento.est_eve === "FINALIZADO" ||
-                    evento.est_eve === "SUSPENDIDO" ||
-                    evento.est_eve === "CANCELADO"
+                    evento.availableSpots === 0 ||
+                    evento.status === "INACTIVE" ||
+                    evento.status === "FINISHED" ||
+                    evento.status === "SUSPENDED" ||
+                    evento.status === "CANCELLED"
                   }
                 >
                   {eventosAprobados && eventosAprobados.includes(evento.id_eve)
@@ -900,15 +919,15 @@ const EventsRoute = () => {
                     ? "Evento reprobado"
                     : inscripciones.includes(evento.id_eve)
                     ? "Ya inscrito"
-                    : evento.cup_dis_eve === 0
+                    : evento.availableSpots === 0
                     ? "Sin cupos"
-                    : evento.est_eve === "INACTIVO"
+                    : evento.status === "INACTIVE"
                     ? "Evento inactivo"
-                    : evento.est_eve === "FINALIZADO"
+                    : evento.status === "FINISHED"
                     ? "Evento finalizado"
-                    : evento.est_eve === "SUSPENDIDO"
+                    : evento.status === "SUSPENDED"
                     ? "Evento suspendido"
-                    : evento.est_eve === "CANCELADO"
+                    : evento.status === "CANCELLED"
                     ? "Evento cancelado"
                     : "Inscribirme"}
                 </button>
@@ -934,7 +953,7 @@ const EventsRoute = () => {
       {eventoSeleccionado && (
         <div className="modal-overlay-er">
           <div className="modal-contenido-er">
-            <h2>Inscripción a: {eventoSeleccionado.nom_eve}</h2>
+            <h2>Inscripción a: {eventoSeleccionado.nom_eve || eventoSeleccionado.name}</h2>
 
             {/* Mensaje adicional para reinscripciones */}
             {eventoSeleccionado.reinscripcion && (
@@ -958,7 +977,7 @@ const EventsRoute = () => {
               />
             </div>
 
-            {eventoSeleccionado.val_eve > 0 && (
+            {(eventoSeleccionado.val_eve ?? eventoSeleccionado.price ?? 0) > 0 && (
               <div className="form-group-er">
                 <label className="form-label-er">Comprobante de pago:</label>
                 <input
@@ -995,7 +1014,8 @@ const EventsRoute = () => {
               <button
                 onClick={() => {
                   // Validación personalizada según costo del evento
-                  if (eventoSeleccionado.val_eve > 0 && !archivo) {
+                  const eventPrice = eventoSeleccionado.val_eve ?? eventoSeleccionado.price ?? 0;
+                  if (eventPrice > 0 && !archivo) {
                     toast.warning(
                       "Por favor selecciona un comprobante de pago antes de continuar"
                     );

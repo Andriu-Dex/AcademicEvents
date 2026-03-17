@@ -7,6 +7,41 @@ const onlyAdmin = require("../middlewares/autorizacion/onlyAdmin");
 // Middleware para validar JWT y rol de administrador en todas las rutas
 router.use(verificarToken, onlyAdmin);
 
+// ===============================================================
+// Canonical Routes (English) - Primary
+// ===============================================================
+
+// Routes for general metrics
+router.get(
+  "/general-metrics",
+  reporteIngresosController.getMetricasGenerales
+);
+
+// Routes for revenue by event type
+router.get("/revenue-by-type", reporteIngresosController.getIngresosPorTipo);
+
+// Routes for most profitable events
+router.get("/profitable-events", reporteIngresosController.getEventosRentables);
+
+// Routes for period trends
+router.get(
+  "/period-trends",
+  reporteIngresosController.getTendenciasPeriodo
+);
+
+// Routes for rejected receipts
+router.get(
+  "/rejected-receipts",
+  reporteIngresosController.getComprobantesRechazados
+);
+
+// Route to generate revenue report PDF
+router.post("/pdf", reporteIngresosController.generarReporteIngresosPDF);
+
+// ===============================================================
+// Legacy Routes (Spanish) - Backward Compatibility
+// ===============================================================
+
 // Rutas para métricas generales
 router.get(
   "/metricas-generales",
@@ -30,8 +65,5 @@ router.get(
   "/comprobantes-rechazados",
   reporteIngresosController.getComprobantesRechazados
 );
-
-// Ruta para generar PDF del reporte de ingresos
-router.post("/pdf", reporteIngresosController.generarReporteIngresosPDF);
 
 module.exports = router;

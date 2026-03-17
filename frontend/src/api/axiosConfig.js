@@ -4,6 +4,7 @@ import { toast } from "react-toastify"; // Importar toast para notificaciones
 const resolveTenantSlug = () => {
   return (
     localStorage.getItem("tenantSlug") ||
+    import.meta.env.VITE_TENANT_SLUG ||
     import.meta.env.VITE_TENANT_ID ||
     "uta"
   );

@@ -123,13 +123,13 @@ export const SocketProvider = ({ children }) => {
       }
 
       const eventoId =
-        data.data?.id_eve ?? data.data?.id ?? data.data?.evento?.id ?? null;
+        data.data?.id ?? data.data?.id_eve ?? data.data?.evento?.id ?? data.data?.evento?.id_eve ?? null;
       const nombreEvento =
-        data.data?.nom_eve ??
         data.data?.name ??
+        data.data?.nom_eve ??
         data.data?.title ??
-        data.data?.evento?.nom_eve ??
         data.data?.evento?.name ??
+        data.data?.evento?.nom_eve ??
         null;
 
       console.log("✅ [SOCKET_CONTEXT] Evento recibido:", {
@@ -160,8 +160,8 @@ export const SocketProvider = ({ children }) => {
 
       console.log("✅ [SOCKET_CONTEXT] Cambio en inscripción recibido:", {
         action: data.action,
-        inscripcionId: data.data?.inscripcion?.id_ins,
-        eventoNombre: data.data?.evento?.nom_eve,
+        inscripcionId: data.data?.inscripcion?.id || data.data?.inscripcion?.id_ins,
+        eventoNombre: data.data?.evento?.name || data.data?.evento?.nom_eve,
         timestamp: data.timestamp,
       });
 

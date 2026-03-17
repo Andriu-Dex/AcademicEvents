@@ -20,11 +20,22 @@ const ROLE_TO_LEGACY = {
   GENERAL: "GENERAL",
 };
 
+const readFirstDefined = (...values) =>
+  values.find((value) => value !== undefined && value !== null);
+
 // ===============================
 // Login de estudiante
 // ===============================
 const login = async (req, res) => {
-  const { correo, contrasena } = req.body;
+  const correo = readFirstDefined(req.body?.correo, req.body?.email);
+  const contrasena = readFirstDefined(req.body?.contrasena, req.body?.password);
+
+  if (!correo || !contrasena) {
+    return res.status(400).json({
+      msg: "Correo y contrasena son obligatorios",
+      error: "MISSING_FIELDS",
+    });
+  }
 
   try {
     // Buscar cuenta usando el índice compuesto tenantId_email
@@ -67,7 +78,13 @@ const login = async (req, res) => {
     const legacyRole = ROLE_TO_LEGACY[account.role] || account.role;
 
     const token = jwt.sign(
-      { id: account.id, rol_usu: legacyRole },
+      {
+        id: account.id,
+        role: account.role,
+        rol_usu: legacyRole,
+        tenantId: account.tenantId,
+        tenantSlug: req.tenantSlug,
+      },
       process.env.JWT_SECRET,
       { expiresIn: "2h" }
     );
@@ -92,8 +109,20 @@ const login = async (req, res) => {
 // ==========================================
 const registrarEstudiante = async (req, res) => {
   try {
-    const { ced_usu, nom_usu, ape_usu, cor_usu, con_usu, cel_usu, id_car_est } =
-      req.body;
+    const ced_usu = readFirstDefined(req.body?.ced_usu, req.body?.idNumber);
+    const nom_usu = readFirstDefined(req.body?.nom_usu, req.body?.firstName);
+    const ape_usu = readFirstDefined(req.body?.ape_usu, req.body?.lastName);
+    const cor_usu = readFirstDefined(req.body?.cor_usu, req.body?.email);
+    const con_usu = readFirstDefined(req.body?.con_usu, req.body?.password);
+    const cel_usu = readFirstDefined(req.body?.cel_usu, req.body?.phone);
+    const id_car_est = readFirstDefined(req.body?.id_car_est, req.body?.careerId);
+
+    if (!ced_usu || !nom_usu || !ape_usu || !cor_usu || !con_usu || !cel_usu) {
+      return res.status(400).json({
+        msg: "Todos los campos obligatorios deben enviarse",
+        error: "MISSING_FIELDS",
+      });
+    }
 
     // Si es correo institucional, carrera es obligatoria
     const esUTA = cor_usu.endsWith("@uta.edu.ec");
@@ -210,4 +239,5 @@ const registrarEstudiante = async (req, res) => {
 module.exports = {
   login,
   registrarEstudiante,
+  register: registrarEstudiante,
 };

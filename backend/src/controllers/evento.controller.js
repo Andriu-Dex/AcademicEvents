@@ -2,6 +2,7 @@ const { prisma } = require("../config/db");
 const DEFAULT_IMAGE_URL = "https://i.imgur.com/f8adUbZ.png";
 const axios = require("axios");
 const socketService = require("../services/socket.service");
+const { withTenantWhere } = require("../utils/tenantScope");
 require("dotenv").config();
 
 /**
@@ -13,6 +14,46 @@ const conditionalCuposLog = (message, forceShow = false) => {
   const logsEnabled = process.env.CUPOS_VERIFICATION_LOGS_ENABLED === "true";
   if (logsEnabled || forceShow) {
     console.log(message);
+  }
+};
+
+const LEGACY_EVENT_TYPE_TO_DB = {
+  CURSO: "COURSE",
+  CONGRESO: "CONGRESS",
+  WEBINAR: "WEBINAR",
+  CHARLA: "TALK",
+  SOCIALIZACION: "SOCIALIZATION",
+};
+
+const LEGACY_EVENT_MODALITY_TO_DB = {
+  PRESENCIAL: "IN_PERSON",
+  VIRTUAL: "VIRTUAL",
+  SEMIPRESENCIAL: "HYBRID",
+};
+
+const LEGACY_EVENT_STATUS_TO_DB = {
+  ACTIVO: "ACTIVE",
+  INACTIVO: "INACTIVE",
+  FINALIZADO: "FINISHED",
+  CANCELADO: "CANCELLED",
+  SUSPENDIDO: "SUSPENDED",
+};
+
+const normalizeEventType = (type) => LEGACY_EVENT_TYPE_TO_DB[type] || type;
+const normalizeEventModality = (modality) =>
+  LEGACY_EVENT_MODALITY_TO_DB[modality] || modality;
+const normalizeEventStatus = (status) => LEGACY_EVENT_STATUS_TO_DB[status] || status;
+const isCourseEventType = (type) => normalizeEventType(type) === "COURSE";
+
+const parseBoolean = (value) => value === true || value === "true";
+
+const parseCarrerasIds = (rawCarrerasIds) => {
+  if (!rawCarrerasIds) return [];
+  if (Array.isArray(rawCarrerasIds)) return rawCarrerasIds;
+  try {
+    return JSON.parse(rawCarrerasIds);
+  } catch {
+    return [];
   }
 };
 
@@ -143,33 +184,35 @@ async function subirImagenAImgur(archivo) {
 //Crea un nuevo evento académico, y si es curso, lo vincula a evento_curso
 const crearEvento = async (req, res) => {
   try {
-    const {
-      nom_eve,
-      des_eve,
-      tip_eve,
-      fec_ini_eve,
-      val_eve,
-      dur_hor_eve,
-      por_min_asi_eve,
-      fec_fin_eve,
-      mod_eve,
-      cup_max_eve,
-      not_min_cur,
-    } = req.body; // Convertir valores numéricos y fechas antes de validar
-    const durHor = Number(dur_hor_eve);
-    const porcMinAsi = Number(por_min_asi_eve);
-    const valNum = Number(val_eve);
-    const cupoMax = Number(cup_max_eve);
+    const nombreEvento = req.body.name ?? req.body.nom_eve;
+    const descripcionEvento = req.body.description ?? req.body.des_eve;
+    const tipoEventoEntrada = req.body.type ?? req.body.tip_eve;
+    const fechaInicioEntrada = req.body.startDate ?? req.body.fec_ini_eve;
+    const fechaFinEntrada = req.body.endDate ?? req.body.fec_fin_eve;
+    const modalidadEntrada = req.body.modality ?? req.body.mod_eve;
+    const estadoEntrada = req.body.status ?? req.body.est_eve;
+    const durHor = Number(req.body.durationHours ?? req.body.dur_hor_eve);
+    const porcMinAsi = Number(
+      req.body.minAttendancePercent ?? req.body.por_min_asi_eve
+    );
+    const valNum = Number(req.body.price ?? req.body.val_eve);
+    const cupoMax = Number(req.body.maxCapacity ?? req.body.cup_max_eve);
+    const notaMinRaw = req.body.minPassingGrade ?? req.body.not_min_cur;
+    const notaMin = notaMinRaw !== undefined ? Number(notaMinRaw) : undefined;
+
+    const tipoEventoFinal = normalizeEventType(tipoEventoEntrada);
+    const modalidadFinal = normalizeEventModality(modalidadEntrada || "IN_PERSON");
+    const estadoFinal = normalizeEventStatus(estadoEntrada || "ACTIVE");
 
     // Convertir fechas a objetos Date en UTC para evitar problemas de zona horaria
-    const fechaIni = parseUTCDate(fec_ini_eve);
-    const fechaFin = parseUTCDate(fec_fin_eve);
+    const fechaIni = parseUTCDate(fechaInicioEntrada);
+    const fechaFin = parseUTCDate(fechaFinEntrada);
 
-    const notaMin = not_min_cur !== undefined ? Number(not_min_cur) : undefined; // Validaciones generales (debería validar los campos nuevos)
+    // Validaciones generales (debería validar los campos nuevos)
     try {
       validarEventoGeneral({
-        nom_eve,
-        tip_eve,
+        nom_eve: nombreEvento,
+        tip_eve: tipoEventoFinal,
         fec_ini_eve: fechaIni,
         val_eve: valNum,
         dur_hor_eve: durHor,
@@ -182,7 +225,7 @@ const crearEvento = async (req, res) => {
     }
 
     // Validación específica para CURSO (solo nota mínima)
-    if (tip_eve === "CURSO") {
+    if (isCourseEventType(tipoEventoFinal)) {
       try {
         validarCurso(notaMin);
       } catch (e) {
@@ -208,10 +251,8 @@ const crearEvento = async (req, res) => {
     }
 
     // Procesar carreras asociadas y validar lógica de eventos
-    const esEventoGeneral = req.body.esEventoGeneral === "true";
-    const carrerasIds = req.body.carrerasIds
-      ? JSON.parse(req.body.carrerasIds)
-      : [];
+    const esEventoGeneral = parseBoolean(req.body.esEventoGeneral);
+    const carrerasIds = parseCarrerasIds(req.body.carrerasIds);
 
     // 🔍 VALIDACIÓN: Debe seleccionar carreras O marcar como evento general
     if (!esEventoGeneral && (!carrerasIds || carrerasIds.length === 0)) {
@@ -220,36 +261,33 @@ const crearEvento = async (req, res) => {
       });
     }
 
-    // 🎯 LÓGICA ACTUALIZADA: El tipo de evento define QUÉ es (CURSO, CONGRESO, etc.)
-    // Las carreras asociadas definen QUIÉN puede acceder (con carreras = específico, sin carreras = público)
-    let tipoEventoFinal = tip_eve; // Mantener el tipo original seleccionado
-
     // Procesar las fechas para mantener las horas exactas
-    const fechaInicial = parseUTCDate(fec_ini_eve);
-    const fechaFinal = parseUTCDate(fec_fin_eve);
+    const fechaInicial = parseUTCDate(fechaInicioEntrada);
+    const fechaFinal = parseUTCDate(fechaFinEntrada);
 
     const nuevoEvento = await prisma.event.create({
       data: {
-        title: nom_eve,
-        description: des_eve,
+        tenantId: req.tenantId,
+        name: nombreEvento,
+        description: descripcionEvento,
         type: tipoEventoFinal, // Usar tipo corregido
         startDate: fechaInicial,
-        value: valNum,
+        price: valNum,
         durationHours: durHor,
-        minAttendancePercentage: porcMinAsi,
+        minAttendancePercent: porcMinAsi,
         endDate: fechaFinal,
-        modality: mod_eve || "IN_PERSON", // Usar valor por defecto si no se proporciona
+        modality: modalidadFinal,
         maxCapacity: cupoMax,
         availableSpots: cupoMax, // ✅ Inicialmente disponible = máximo
-        coverImage: imgUrl,
-        status: "ACTIVE", // Estado por defecto según nuevo enum
-        creatorAccountId: req.usuario.id, // ID de la cuenta creadora
+        coverImageUrl: imgUrl,
+        status: estadoFinal,
+        createdByAccountId: req.usuario.id, // ID de la cuenta creadora
       },
     });
 
     // Si es CURSO, crear registro en eventCourse con la nota mínima
     let datosCurso = null;
-    if (tipoEventoFinal === "CURSO" && notaMin !== undefined) {
+    if (isCourseEventType(tipoEventoFinal) && notaMin !== undefined) {
       datosCurso = await crearEventoCurso(nuevoEvento.id, notaMin);
     }
 
@@ -259,6 +297,7 @@ const crearEvento = async (req, res) => {
         carrerasIds.map(async (carreraId) => {
           await prisma.eventCareer.create({
             data: {
+              tenantId: req.tenantId,
               careerId: carreraId,
               eventId: nuevoEvento.id,
             },
@@ -291,7 +330,7 @@ const crearEventoCurso = async (eventoId, not_min_cur) => {
   return prisma.eventCourse.create({
     data: {
       eventId: eventoId,
-      minGrade: Number(not_min_cur),
+      minPassingGrade: Number(not_min_cur),
     },
   });
 };
@@ -300,6 +339,7 @@ const crearEventoCurso = async (eventoId, not_min_cur) => {
 const obtenerEventos = async (req, res) => {
   try {
     const eventos = await prisma.event.findMany({
+      where: withTenantWhere(req.tenantId),
       include: {
         eventCareers: {
           include: { career: { select: { name: true, id: true } } },
@@ -320,10 +360,10 @@ const obtenerEventos = async (req, res) => {
         try {
           // Contar inscripciones que ocupan cupo
           const inscripcionesOcupandoCupo = await prisma.registration.count({
-            where: {
+            where: withTenantWhere(req.tenantId, {
               eventId: evento.id,
               occupiesSpot: true,
-            },
+            }),
           });
 
           const cupoMaximo = evento.maxCapacity;
@@ -334,18 +374,18 @@ const obtenerEventos = async (req, res) => {
           );
 
           conditionalCuposLog(
-            `Evento ${evento.title}: Cupo actual=${cupoDisponibleActual}, Cupo calculado=${cupoDisponibleCorrecto}`
+            `Evento ${evento.name}: Cupo actual=${cupoDisponibleActual}, Cupo calculado=${cupoDisponibleCorrecto}`
           );
 
           // Si hay inconsistencia, corregir automáticamente
           if (cupoDisponibleActual !== cupoDisponibleCorrecto) {
             conditionalCuposLog(
-              `⚠️ Corrigiendo cupo para evento ${evento.title}...`
+              `⚠️ Corrigiendo cupo para evento ${evento.name}...`
             );
 
             // Actualizar en la base de datos
-            const eventoCorregido = await prisma.event.update({
-              where: { id: evento.id },
+            await prisma.event.updateMany({
+              where: withTenantWhere(req.tenantId, { id: evento.id }),
               data: { availableSpots: cupoDisponibleCorrecto },
             });
 
@@ -385,6 +425,18 @@ const obtenerEventos = async (req, res) => {
 
 // 1. Campos permitidos para cada tabla (evento y curso)
 const camposEvento = [
+  "name",
+  "description",
+  "type",
+  "startDate",
+  "price",
+  "status",
+  "durationHours",
+  "minAttendancePercent",
+  "endDate",
+  "maxCapacity",
+  "availableSpots",
+  "modality",
   "nom_eve",
   "des_eve",
   "tip_eve",
@@ -398,7 +450,7 @@ const camposEvento = [
   "cup_dis_eve",
   "mod_eve",
 ];
-const camposCurso = ["not_min_cur"];
+const camposCurso = ["not_min_cur", "minPassingGrade"];
 // 2. Función principal para actualizar un evento
 const actualizarEvento = async (req, res) => {
   // 3. Extrae solo los campos de evento presentes en el body y que están permitidos
@@ -412,18 +464,36 @@ const actualizarEvento = async (req, res) => {
     Object.entries(req.body).filter(([key]) => camposCurso.includes(key))
   );
 
+  const normalizedEventoData = {
+    name: dataEvento.name ?? dataEvento.nom_eve,
+    description: dataEvento.description ?? dataEvento.des_eve,
+    type: normalizeEventType(dataEvento.type ?? dataEvento.tip_eve),
+    startDate: dataEvento.startDate ?? dataEvento.fec_ini_eve,
+    endDate: dataEvento.endDate ?? dataEvento.fec_fin_eve,
+    price: dataEvento.price ?? dataEvento.val_eve,
+    status: dataEvento.status ?? dataEvento.est_eve,
+    durationHours: dataEvento.durationHours ?? dataEvento.dur_hor_eve,
+    minAttendancePercent:
+      dataEvento.minAttendancePercent ?? dataEvento.por_min_asi_eve,
+    maxCapacity: dataEvento.maxCapacity ?? dataEvento.cup_max_eve,
+    modality: dataEvento.modality ?? dataEvento.mod_eve,
+  };
+
+  const minPassingGrade =
+    dataCurso.minPassingGrade ?? dataCurso.not_min_cur;
+
   try {
     // 4. Extrae el ID del evento a actualizar desde los parámetros de la ruta
     const { id } = req.params;
 
     // 5. Busca el evento en la base de datos; si no existe, devuelve error 404
-    const eventoExistente = await prisma.event.findUnique({
-      where: { id: id },
+    const eventoExistente = await prisma.event.findFirst({
+      where: withTenantWhere(req.tenantId, { id }),
     });
     if (!eventoExistente) {
       return res.status(404).json({ msg: "Evento no encontrado para editar" });
     } // --- GESTIÓN DE IMAGENES --- //
-    let imgUrl = eventoExistente.coverImage; // Por defecto, se queda la actual
+    let imgUrl = eventoExistente.coverImageUrl; // Por defecto, se queda la actual
 
     if (req.file) {
       try {
@@ -435,23 +505,25 @@ const actualizarEvento = async (req, res) => {
     }
     try {
       validarEventoGeneral({
-        nom_eve: dataEvento.nom_eve ?? eventoExistente.nom_eve,
-        tip_eve: dataEvento.tip_eve ?? eventoExistente.tip_eve,
-        fec_ini_eve: dataEvento.fec_ini_eve ?? eventoExistente.fec_ini_eve,
-        val_eve: dataEvento.val_eve ?? eventoExistente.val_eve,
-        dur_hor_eve: dataEvento.dur_hor_eve ?? eventoExistente.dur_hor_eve,
+        nom_eve: normalizedEventoData.name ?? eventoExistente.name,
+        tip_eve: normalizedEventoData.type ?? eventoExistente.type,
+        fec_ini_eve: normalizedEventoData.startDate ?? eventoExistente.startDate,
+        val_eve: normalizedEventoData.price ?? eventoExistente.price,
+        dur_hor_eve:
+          normalizedEventoData.durationHours ?? eventoExistente.durationHours,
         por_min_asi_eve:
-          dataEvento.por_min_asi_eve ?? eventoExistente.por_min_asi_eve,
-        fec_fin_eve: dataEvento.fec_fin_eve ?? eventoExistente.fec_fin_eve,
-        cup_max_eve: dataEvento.cup_max_eve ?? eventoExistente.cup_max_eve,
+          normalizedEventoData.minAttendancePercent ??
+          eventoExistente.minAttendancePercent,
+        fec_fin_eve: normalizedEventoData.endDate ?? eventoExistente.endDate,
+        cup_max_eve: normalizedEventoData.maxCapacity ?? eventoExistente.maxCapacity,
       });
     } catch (e) {
       return res.status(400).json({ msg: e.message });
     } // 6. Actualiza evento principal
     // Calcular availableSpots si se actualiza maxCapacity
     let cupoDisponibleActualizado = eventoExistente.availableSpots;
-    if (dataEvento.cup_max_eve !== undefined) {
-      const nuevoCupoMax = Number(dataEvento.cup_max_eve);
+    if (normalizedEventoData.maxCapacity !== undefined) {
+      const nuevoCupoMax = Number(normalizedEventoData.maxCapacity);
       const cupoMaxAnterior = eventoExistente.maxCapacity;
       const cupoDisponibleAnterior = eventoExistente.availableSpots;
 
@@ -464,10 +536,8 @@ const actualizarEvento = async (req, res) => {
     }
 
     // Procesar carreras asociadas y validar lógica de eventos
-    const esEventoGeneral = req.body.esEventoGeneral === "true";
-    const carrerasIds = req.body.carrerasIds
-      ? JSON.parse(req.body.carrerasIds)
-      : [];
+    const esEventoGeneral = parseBoolean(req.body.esEventoGeneral);
+    const carrerasIds = parseCarrerasIds(req.body.carrerasIds);
 
     // 🔍 VALIDACIÓN: Debe seleccionar carreras O marcar como evento general
     if (!esEventoGeneral && (!carrerasIds || carrerasIds.length === 0)) {
@@ -478,47 +548,57 @@ const actualizarEvento = async (req, res) => {
 
     // 🎯 LÓGICA ACTUALIZADA: El tipo de evento define QUÉ es (CURSO, CONGRESO, etc.)
     // Las carreras asociadas definen QUIÉN puede acceder (con carreras = específico, sin carreras = público)
-    let tipoEventoFinal = dataEvento.tip_eve || eventoExistente.tip_eve; // Mantener el tipo original
+    let tipoEventoFinal = normalizeEventType(
+      normalizedEventoData.type || eventoExistente.type
+    );
 
-    const eventoActualizado = await prisma.event.update({
-      where: { id: id },
+    await prisma.event.updateMany({
+      where: withTenantWhere(req.tenantId, { id }),
       data: {
-        ...dataEvento,
-        title: dataEvento.nom_eve || eventoExistente.title,
-        description: dataEvento.des_eve || eventoExistente.description,
+        name: normalizedEventoData.name || eventoExistente.name,
+        description: normalizedEventoData.description || eventoExistente.description,
         type: tipoEventoFinal, // Usar tipo corregido
-        value:
-          dataEvento.val_eve !== undefined
-            ? Number(dataEvento.val_eve)
-            : eventoExistente.value,
-        startDate: dataEvento.fec_ini_eve
-          ? parseUTCDate(dataEvento.fec_ini_eve)
+        price:
+          normalizedEventoData.price !== undefined
+            ? Number(normalizedEventoData.price)
+            : eventoExistente.price,
+        startDate: normalizedEventoData.startDate
+          ? parseUTCDate(normalizedEventoData.startDate)
           : eventoExistente.startDate,
-        endDate: dataEvento.fec_fin_eve
-          ? parseUTCDate(dataEvento.fec_fin_eve)
+        endDate: normalizedEventoData.endDate
+          ? parseUTCDate(normalizedEventoData.endDate)
           : eventoExistente.endDate,
         durationHours:
-          dataEvento.dur_hor_eve !== undefined
-            ? Number(dataEvento.dur_hor_eve)
+          normalizedEventoData.durationHours !== undefined
+            ? Number(normalizedEventoData.durationHours)
             : eventoExistente.durationHours,
-        minAttendancePercentage:
-          dataEvento.por_min_asi_eve !== undefined
-            ? Number(dataEvento.por_min_asi_eve)
-            : eventoExistente.minAttendancePercentage,
+        minAttendancePercent:
+          normalizedEventoData.minAttendancePercent !== undefined
+            ? Number(normalizedEventoData.minAttendancePercent)
+            : eventoExistente.minAttendancePercent,
         maxCapacity:
-          dataEvento.cup_max_eve !== undefined
-            ? Number(dataEvento.cup_max_eve)
+          normalizedEventoData.maxCapacity !== undefined
+            ? Number(normalizedEventoData.maxCapacity)
             : eventoExistente.maxCapacity,
         availableSpots: cupoDisponibleActualizado,
-        status: dataEvento.est_eve || eventoExistente.status,
-        coverImage: imgUrl,
+        status: normalizedEventoData.status
+          ? normalizeEventStatus(normalizedEventoData.status)
+          : eventoExistente.status,
+        modality: normalizedEventoData.modality
+          ? normalizeEventModality(normalizedEventoData.modality)
+          : eventoExistente.modality,
+        coverImageUrl: imgUrl,
       },
+    });
+
+    const eventoActualizado = await prisma.event.findFirst({
+      where: withTenantWhere(req.tenantId, { id }),
     });
 
     // Verifica si el evento ANTES era CURSO y AHORA ya NO lo es
     if (
-      eventoExistente.type === "CURSO" &&
-      eventoActualizado.type !== "CURSO"
+      isCourseEventType(eventoExistente.type) &&
+      !isCourseEventType(eventoActualizado.type)
     ) {
       // Elimina el registro de eventCourse si existe
       await prisma.eventCourse.deleteMany({
@@ -529,7 +609,7 @@ const actualizarEvento = async (req, res) => {
     // 6.1. Si el evento es de tipo CURSO y hay datos de curso para actualizar...
     let cursoActualizado = null; // Inicializa como null para evitar errores si no es CURSO
     if (
-      eventoActualizado.type === "CURSO" &&
+      isCourseEventType(eventoActualizado.type) &&
       Object.keys(dataCurso).length > 0
     ) {
       // 6.1.1. Busca los datos actuales del curso (eventCourse) relacionados a ese evento
@@ -541,7 +621,7 @@ const actualizarEvento = async (req, res) => {
       // 7. Valida los datos (los nuevos o los actuales si no vienen en el body)
       try {
         validarCurso(
-          Number(dataCurso.not_min_cur ?? (cursoBD && cursoBD.minGrade))
+          Number(minPassingGrade ?? (cursoBD && cursoBD.minPassingGrade))
         );
       } catch (e) {
         // 8. Si no pasa la validación, devuelve un error 400 con el mensaje
@@ -553,10 +633,10 @@ const actualizarEvento = async (req, res) => {
         cursoActualizado = await prisma.eventCourse.update({
           where: { eventId: id },
           data: {
-            minGrade:
-              dataCurso.not_min_cur !== undefined
-                ? Number(dataCurso.not_min_cur)
-                : cursoBD.minGrade,
+            minPassingGrade:
+              minPassingGrade !== undefined
+                ? Number(minPassingGrade)
+                : cursoBD.minPassingGrade,
           },
         });
       } else {
@@ -564,7 +644,7 @@ const actualizarEvento = async (req, res) => {
         cursoActualizado = await prisma.eventCourse.create({
           data: {
             eventId: id,
-            minGrade: Number(dataCurso.not_min_cur),
+            minPassingGrade: Number(minPassingGrade),
           },
         });
       }
@@ -581,6 +661,7 @@ const actualizarEvento = async (req, res) => {
         carrerasIds.map(async (carreraId) => {
           await prisma.eventCareer.create({
             data: {
+              tenantId: req.tenantId,
               careerId: carreraId,
               eventId: id,
             },
@@ -615,27 +696,32 @@ const eliminarEvento = async (req, res) => {
     const { id } = req.params;
 
     // 1. Busca el evento primero
-    const evento = await prisma.event.findUnique({ where: { id: id } });
+    const evento = await prisma.event.findFirst({
+      where: withTenantWhere(req.tenantId, { id }),
+    });
     if (!evento) {
       return res.status(404).json({ msg: "Evento no encontrado" });
     } // 2. Si el evento es CURSO, elimina primero el registro en eventCourse
-    if (evento.type === "CURSO") {
+    if (isCourseEventType(evento.type)) {
       await prisma.eventCourse.deleteMany({ where: { eventId: id } });
       // (Usamos deleteMany por si acaso, aunque debería haber solo uno)
     }
 
     // Eliminar todas las relaciones evento-carrera
-    await prisma.eventCareer.deleteMany({ where: { eventId: id } });
+    await prisma.eventCareer.deleteMany({
+      where: withTenantWhere(req.tenantId, { eventId: id }),
+    });
 
     // 3. Elimina el evento
-    await prisma.event.delete({ where: { id: id } });
+    await prisma.event.deleteMany({ where: withTenantWhere(req.tenantId, { id }) });
 
     res.status(200).json({ msg: "Evento eliminado correctamente" });
 
     // 🔌 Notificar a todos los clientes sobre la eliminación del evento
     socketService.notifyEventChange("deleted", {
       id: id,
-      title: evento.title,
+      name: evento.name,
+      nom_eve: evento.name,
     });
   } catch (error) {
     res.status(500).json({
@@ -650,8 +736,8 @@ const obtenerEventoPorId = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const evento = await prisma.event.findUnique({
-      where: { id: id },
+    const evento = await prisma.event.findFirst({
+      where: withTenantWhere(req.tenantId, { id }),
       include: {
         eventCourse: true,
         eventCareers: {
@@ -666,22 +752,22 @@ const obtenerEventoPorId = async (req, res) => {
 
     // � SUPER DEBUG: Verificar datos del evento específico
     console.log(`🔥 [EVENTO CONTROLLER DEBUG] Evento obtenido por ID:`);
-    console.log(`  - title: "${evento.title}"`);
+    console.log(`  - name: "${evento.name}"`);
     console.log(`  - type: "${evento.type}"`);
     console.log(
-      `  - minAttendancePercentage: "${
-        evento.minAttendancePercentage
-      }" (${typeof evento.minAttendancePercentage})`
+      `  - minAttendancePercent: "${
+        evento.minAttendancePercent
+      }" (${typeof evento.minAttendancePercent})`
     );
     console.log(`  - eventCourse: ${JSON.stringify(evento.eventCourse)}`);
 
-    if (evento.minAttendancePercentage === undefined) {
-      console.log(`❌ [EVENTO CONTROLLER DEBUG] minAttendancePercentage es UNDEFINED!`);
-    } else if (evento.minAttendancePercentage === null) {
-      console.log(`❌ [EVENTO CONTROLLER DEBUG] minAttendancePercentage es NULL!`);
+    if (evento.minAttendancePercent === undefined) {
+      console.log(`❌ [EVENTO CONTROLLER DEBUG] minAttendancePercent es UNDEFINED!`);
+    } else if (evento.minAttendancePercent === null) {
+      console.log(`❌ [EVENTO CONTROLLER DEBUG] minAttendancePercent es NULL!`);
     } else {
       console.log(
-        `✅ [EVENTO CONTROLLER DEBUG] minAttendancePercentage tiene valor: ${evento.minAttendancePercentage}`
+        `✅ [EVENTO CONTROLLER DEBUG] minAttendancePercent tiene valor: ${evento.minAttendancePercent}`
       );
     }
 
@@ -692,10 +778,10 @@ const obtenerEventoPorId = async (req, res) => {
 
       // Contar inscripciones que ocupan cupo
       const inscripcionesOcupandoCupo = await prisma.registration.count({
-        where: {
+        where: withTenantWhere(req.tenantId, {
           eventId: id,
           occupiesSpot: true,
-        },
+        }),
       });
 
       const cupoMaximo = evento.maxCapacity;
@@ -711,12 +797,16 @@ const obtenerEventoPorId = async (req, res) => {
 
       // Si hay inconsistencia, corregir automáticamente
       if (cupoDisponibleActual !== cupoDisponibleCorrecto) {
-        console.log(`⚠️ Corrigiendo cupo para evento ${evento.title}...`);
+        console.log(`⚠️ Corrigiendo cupo para evento ${evento.name}...`);
 
         // Actualizar en la base de datos
-        const eventoCorregido = await prisma.event.update({
-          where: { id: id },
+        await prisma.event.updateMany({
+          where: withTenantWhere(req.tenantId, { id }),
           data: { availableSpots: cupoDisponibleCorrecto },
+        });
+
+        const eventoCorregido = await prisma.event.findFirst({
+          where: withTenantWhere(req.tenantId, { id }),
           include: {
             eventCourse: true,
             eventCareers: {
@@ -728,9 +818,9 @@ const obtenerEventoPorId = async (req, res) => {
         // Retornar el evento con los cupos corregidos
         console.log(`🔥 [EVENTO FINAL DEBUG] Enviando evento corregido:`);
         console.log(
-          `  - minAttendancePercentage: "${
-            eventoCorregido.minAttendancePercentage
-          }" (${typeof eventoCorregido.minAttendancePercentage})`
+          `  - minAttendancePercent: "${
+            eventoCorregido.minAttendancePercent
+          }" (${typeof eventoCorregido.minAttendancePercent})`
         );
         return res.status(200).json(eventoCorregido);
       }
@@ -741,9 +831,9 @@ const obtenerEventoPorId = async (req, res) => {
 
     console.log(`🔥 [EVENTO FINAL DEBUG] Enviando evento original:`);
     console.log(
-      `  - minAttendancePercentage: "${
-        evento.minAttendancePercentage
-      }" (${typeof evento.minAttendancePercentage})`
+      `  - minAttendancePercent: "${
+        evento.minAttendancePercent
+      }" (${typeof evento.minAttendancePercent})`
     );
     res.status(200).json(evento);
   } catch (error) {
@@ -761,17 +851,18 @@ const obtenerEventosPorTipo = async (req, res) => {
 
     // Validar el tipo contra los permitidos
     const tiposValidos = [
-      "CURSO",
-      "CONGRESO",
+      "COURSE",
+      "CONGRESS",
       "WEBINAR",
-      "CHARLA",
-      "SOCIALIZACION",
+      "TALK",
+      "SOCIALIZATION",
     ];
-    if (!tiposValidos.includes(tipo.toUpperCase())) {
+    const tipoNormalizado = normalizeEventType(tipo.toUpperCase());
+    if (!tiposValidos.includes(tipoNormalizado)) {
       return res.status(400).json({ msg: "Tipo de evento no válido" });
     } // Busca todos los eventos de ese tipo, ordenados por fecha
     const eventos = await prisma.event.findMany({
-      where: { type: tipo.toUpperCase() },
+      where: withTenantWhere(req.tenantId, { type: tipoNormalizado }),
       orderBy: { startDate: "asc" },
       include: {
         eventCourse: true, // Si quieres incluir datos de curso (serán null si no es CURSO)
@@ -842,24 +933,24 @@ const verificarYCorregirCupos = async (req, res) => {
     console.log(`⚙️ Iniciando verificación de cupos para evento ID: ${id}`);
 
     // 1. Verificar que el evento existe
-    const evento = await prisma.event.findUnique({
-      where: { id: id },
+    const evento = await prisma.event.findFirst({
+      where: withTenantWhere(req.tenantId, { id }),
     });
 
     if (!evento) {
       return res.status(404).json({ msg: "Evento no encontrado" });
     }
 
-    console.log(`Evento encontrado: ${evento.title}`);
+    console.log(`Evento encontrado: ${evento.name}`);
     console.log(`Cupo máximo actual: ${evento.maxCapacity}`);
     console.log(`Cupo disponible actual: ${evento.availableSpots}`);
 
     // 2. Contar inscripciones en estado ACCEPTED (las que ocupan cupo)
     const inscripcionesAceptadas = await prisma.registration.count({
-      where: {
+      where: withTenantWhere(req.tenantId, {
         eventId: id,
         status: "ACCEPTED",
-      },
+      }),
     });
 
     console.log(`Inscripciones ACCEPTED: ${inscripcionesAceptadas}`);
@@ -881,7 +972,8 @@ const verificarYCorregirCupos = async (req, res) => {
         msg: "Los cupos están correctos, no se requiere corrección",
         evento: {
           id: evento.id,
-          title: evento.title,
+          title: evento.name,
+          name: evento.name,
           maxCapacity: cupoMaximo,
           availableSpots: cupoDisponibleActual,
           inscripciones_aceptadas: inscripcionesAceptadas,
@@ -890,8 +982,8 @@ const verificarYCorregirCupos = async (req, res) => {
     }
 
     // 5. Corregir la inconsistencia
-    const eventoCorregido = await prisma.event.update({
-      where: { id: id },
+    await prisma.event.updateMany({
+      where: withTenantWhere(req.tenantId, { id }),
       data: { availableSpots: cupoDisponibleCorrecto },
     });
 
@@ -900,7 +992,8 @@ const verificarYCorregirCupos = async (req, res) => {
       msg: "Cupos corregidos exitosamente",
       detalles: {
         id: evento.id,
-        title: evento.title,
+        title: evento.name,
+        name: evento.name,
         maxCapacity: cupoMaximo,
         availableSpots_anterior: cupoDisponibleActual,
         availableSpots_corregido: cupoDisponibleCorrecto,
@@ -926,7 +1019,9 @@ const verificarYCorregirTodosLosCupos = async (req, res) => {
     );
 
     // 1. Obtener todos los eventos
-    const eventos = await prisma.event.findMany();
+    const eventos = await prisma.event.findMany({
+      where: withTenantWhere(req.tenantId),
+    });
     conditionalCuposLog(`Total de eventos encontrados: ${eventos.length}`);
 
     // 2. Preparar para almacenar resultados
@@ -941,18 +1036,18 @@ const verificarYCorregirTodosLosCupos = async (req, res) => {
     for (const evento of eventos) {
       // Contar inscripciones que ocupan cupo
       const inscripcionesOcupandoCupo = await prisma.registration.count({
-        where: {
+        where: withTenantWhere(req.tenantId, {
           eventId: evento.id,
           occupiesSpot: true,
-        },
+        }),
       });
 
       // Para comparación, contar también inscripciones aceptadas
       const inscripcionesAceptadas = await prisma.registration.count({
-        where: {
+        where: withTenantWhere(req.tenantId, {
           eventId: evento.id,
           status: "ACCEPTED",
-        },
+        }),
       });
 
       // Calcular cupo disponible correcto
@@ -963,7 +1058,7 @@ const verificarYCorregirTodosLosCupos = async (req, res) => {
         cupoMaximo - inscripcionesOcupandoCupo
       );
 
-      conditionalCuposLog(`Evento ${evento.title}:`);
+      conditionalCuposLog(`Evento ${evento.name}:`);
       conditionalCuposLog(`- Cupo máximo: ${cupoMaximo}`);
       conditionalCuposLog(`- Cupo disponible actual: ${cupoDisponibleActual}`);
       conditionalCuposLog(
@@ -979,8 +1074,8 @@ const verificarYCorregirTodosLosCupos = async (req, res) => {
       // Verificar si hay inconsistencia
       if (cupoDisponibleActual !== cupoDisponibleCorrecto) {
         // Corregir la inconsistencia
-        await prisma.event.update({
-          where: { id: evento.id },
+        await prisma.event.updateMany({
+          where: withTenantWhere(req.tenantId, { id: evento.id }),
           data: { availableSpots: cupoDisponibleCorrecto },
         });
 
@@ -988,7 +1083,8 @@ const verificarYCorregirTodosLosCupos = async (req, res) => {
         resultados.corregidos++;
         resultados.detalles.push({
           id: evento.id,
-          title: evento.title,
+          title: evento.name,
+          name: evento.name,
           maxCapacity: cupoMaximo,
           availableSpots_anterior: cupoDisponibleActual,
           availableSpots_corregido: cupoDisponibleCorrecto,
@@ -1026,7 +1122,7 @@ const verificarYCorregirTodosLosCupos = async (req, res) => {
 const obtenerEventosDestacados = async (req, res) => {
   try {
     // Verificar eventos pasados para desmarcarlos automáticamente
-    await desmarcadoAutomaticoEventosPasados();
+    await desmarcadoAutomaticoEventosPasados(req.tenantId);
 
     // Obtener eventos destacados (máximo 8)
     const eventosDestacados = await prisma.event.findMany({
@@ -1133,9 +1229,13 @@ const toggleEventoDestacado = async (req, res) => {
 
     // Actualizar el evento
     console.log("Actualizando evento con:", { id: id, isFeatured: eve_des });
-    const eventoActualizado = await prisma.event.update({
-      where: { id: id },
+    await prisma.event.updateMany({
+      where: withTenantWhere(req.tenantId, { id }),
       data: { isFeatured: eve_des },
+    });
+
+    const eventoActualizado = await prisma.event.findFirst({
+      where: withTenantWhere(req.tenantId, { id }),
     });
 
     console.log("Evento actualizado exitosamente:", eventoActualizado.name);
@@ -1177,18 +1277,18 @@ const toggleEventoDestacado = async (req, res) => {
  * Desmarca automáticamente eventos pasados (finalizados)
  * @returns {Promise<void>}
  */
-const desmarcadoAutomaticoEventosPasados = async () => {
+const desmarcadoAutomaticoEventosPasados = async (tenantId) => {
   try {
     const fechaActual = new Date();
 
     // Buscar eventos destacados que ya finalizaron
     const eventosFinalizados = await prisma.event.updateMany({
-      where: {
+      where: withTenantWhere(tenantId, {
         isFeatured: true,
         endDate: {
           lt: fechaActual,
         },
-      },
+      }),
       data: {
         isFeatured: false,
       },
@@ -1271,11 +1371,11 @@ const obtenerEventosAdminPaginados = async (req, res) => {
     } = req.query;
 
     // Construir condición WHERE
-    const whereCondition = {};
+    const whereCondition = withTenantWhere(req.tenantId);
 
     // Filtro por búsqueda (nombre)
     if (search) {
-      whereCondition.title = {
+      whereCondition.name = {
         contains: search,
         mode: "insensitive",
       };

@@ -9,13 +9,14 @@ const {
   generarReporteCertificadosPDF,
 } = require("../utils/reporte.utils");
 const { analizarValidaciones } = require("../utils/validacion.utils");
+const { withTenantWhere } = require("../utils/tenantScope");
 const path = require("path");
 const fs = require("fs");
 
 async function descargarReporteEventoPDF(req, res) {
   const id = req.params.id || req.params.id_eve;
 
-  const datos = await obtenerDatosReporteEventoPorId(id);
+  const datos = await obtenerDatosReporteEventoPorId(req, id);
 
   if (!datos) {
     return res.status(404).json({ msg: "Evento no encontrado" });
@@ -70,7 +71,7 @@ async function descargarReporteMensualPDF(req, res) {
   const nombreMes = NOMBRES_MESES[Number(mes)];
 
   // 1. Obtiene los datos del reporte mensual
-  const datosReporte = await obtenerDatosReportePorMes(anio, mes);
+  const datosReporte = await obtenerDatosReportePorMes(req, anio, mes);
 
   // 2. Prepara carpeta y path temporal
   const reportesDir = path.join(process.cwd(), "uploads", "reportes");
@@ -114,6 +115,7 @@ async function descargarReporteMensualPDF(req, res) {
 async function getEventosParaReportes(req, res) {
   try {
     const eventos = await prisma.event.findMany({
+      where: withTenantWhere(req.tenantId),
       select: {
         id: true,
         name: true,
@@ -146,6 +148,7 @@ async function getEventosParaReportesPaginados(req, res) {
     // Ejecutar consultas en paralelo
     const [eventos, totalCount] = await Promise.all([
       prisma.event.findMany({
+        where: withTenantWhere(req.tenantId),
         select: {
           id: true,
           name: true,
@@ -157,7 +160,7 @@ async function getEventosParaReportesPaginados(req, res) {
         skip: offset,
         take: limit,
       }),
-      prisma.event.count(),
+      prisma.event.count({ where: withTenantWhere(req.tenantId) }),
     ]);
 
     // Calcular metadatos de paginación
@@ -191,7 +194,7 @@ async function getReporteEventoPorId(req, res) {
   const id = req.params.id || req.params.id_eve;
 
   try {
-    const datos = await obtenerDatosReporteEventoPorId(id);
+    const datos = await obtenerDatosReporteEventoPorId(req, id);
     if (!datos) {
       return res.status(404).json({ msg: "Evento no encontrado" });
     }
@@ -203,10 +206,10 @@ async function getReporteEventoPorId(req, res) {
   }
 }
 
-async function obtenerDatosReporteEventoPorId(id) {
+async function obtenerDatosReporteEventoPorId(req, id) {
   // 1. Buscar el evento con sus datos básicos y el creador
-  const evento = await prisma.event.findUnique({
-    where: { id },
+  const evento = await prisma.event.findFirst({
+    where: withTenantWhere(req.tenantId, { id }),
     select: {
       id: true,
       name: true,
@@ -254,7 +257,7 @@ async function obtenerDatosReporteEventoPorId(id) {
 
   // Buscar las inscripciones
   const inscripciones = await prisma.registration.findMany({
-    where: {
+    where: withTenantWhere(req.tenantId, {
       eventId: id,
       status: {
         in: [
@@ -264,7 +267,7 @@ async function obtenerDatosReporteEventoPorId(id) {
           "FAILED_TOTAL",
         ],
       },
-    },
+    }),
     select: inscripcionSelect,
   });
 
@@ -319,7 +322,7 @@ async function obtenerDatosReporteEventoPorId(id) {
   };
 }
 
-async function obtenerDatosReportePorMes(anio, mes) {
+async function obtenerDatosReportePorMes(req, anio, mes) {
   // Formatea el inicio y fin del mes
   const fechaInicio = new Date(
     `${anio}-${mes.toString().padStart(2, "0")}-01T00:00:00.000Z`
@@ -330,12 +333,12 @@ async function obtenerDatosReportePorMes(anio, mes) {
 
   // Trae todos los eventos cuya fecha de inicio esté dentro del mes y año
   const eventos = await prisma.event.findMany({
-    where: {
+    where: withTenantWhere(req.tenantId, {
       startDate: {
         gte: fechaInicio,
         lt: fechaFin,
       },
-    },
+    }),
     select: {
       id: true,
       name: true,
@@ -362,7 +365,7 @@ async function obtenerDatosReportePorMes(anio, mes) {
   const resultados = await Promise.all(
     eventos.map(async (evento) => {
       const can_ins = await prisma.registration.count({
-        where: {
+        where: withTenantWhere(req.tenantId, {
           eventId: evento.id,
           status: {
             in: [
@@ -373,7 +376,7 @@ async function obtenerDatosReportePorMes(anio, mes) {
               "FAILED_TOTAL",
             ],
           },
-        },
+        }),
       });
       const nom_cre = evento.createdBy?.user?.firstName || "";
       const ape_cre = evento.createdBy?.user?.lastName || "";
@@ -410,7 +413,7 @@ async function getEventosPorMes(req, res) {
     if (!anio || !mes) {
       return res.status(400).json({ msg: "Debe enviar año y mes." });
     }
-    const datos = await obtenerDatosReportePorMes(anio, mes);
+    const datos = await obtenerDatosReportePorMes(req, anio, mes);
     const { eve, tot_tod_eve } = datos;
     res.json({ eve: eve, tot_tod_eve: tot_tod_eve });
   } catch (error) {
@@ -433,10 +436,13 @@ async function getReporteCarrera(req, res) {
       });
     }
 
-    if (req.path.includes("/estadisticas/")) {
+    if (
+      req.path.includes("/estadisticas/") ||
+      req.path.includes("/statistics/")
+    ) {
       // Obtener estadísticas específicas de una carrera
-      const carrera = await prisma.career.findUnique({
-        where: { id },
+      const carrera = await prisma.career.findFirst({
+        where: withTenantWhere(req.tenantId, { id }),
         select: {
           id: true,
           name: true,
@@ -520,6 +526,7 @@ async function getReporteCarrera(req, res) {
           },
         },
         where: {
+          tenantId: req.tenantId,
           // Excluir la carrera actual de la comparativa
           NOT: {
             id: id,
@@ -585,9 +592,10 @@ async function getReporteCarrera(req, res) {
       return res.json(estadisticas);
     }
 
-    if (req.path.includes("/eventos/")) {
+    if (req.path.includes("/eventos/") || req.path.includes("/events/")) {
       // Obtener eventos populares por carrera
       const eventosCarrera = await prisma.event.findMany({
+        where: withTenantWhere(req.tenantId),
         select: {
           id: true,
           name: true,
@@ -675,8 +683,8 @@ async function descargarReporteCarreraPDF(req, res) {
     }
 
     // Obtener datos completos de la carrera
-    const carrera = await prisma.career.findUnique({
-      where: { id },
+    const carrera = await prisma.career.findFirst({
+      where: withTenantWhere(req.tenantId, { id }),
       select: {
         id: true,
         name: true,
@@ -782,6 +790,7 @@ async function descargarReporteCarreraPDF(req, res) {
 
     // Obtener comparativa con otras carreras
     const todasLasCarreras = await prisma.career.findMany({
+      where: withTenantWhere(req.tenantId),
       select: {
         id: true,
         name: true,
@@ -904,7 +913,7 @@ async function getReporteInscripciones(req, res) {
     console.log("🔍 Parámetros recibidos:", { fechaInicio, fechaFin, estado });
 
     // Construir filtros
-    const filtro = {};
+    const filtro = withTenantWhere(req.tenantId);
     if (fechaInicio && fechaFin) {
       filtro.registeredAt = {
         gte: new Date(fechaInicio),
@@ -982,7 +991,7 @@ async function getReporteInscripciones(req, res) {
       usuario: ins.account?.user || null,
     }));
 
-    if (req.path.includes("/estadisticas")) {
+    if (req.path.includes("/estadisticas") || req.path.includes("/statistics")) {
       // Estadísticas generales con categorización detallada
       const estadosAceptados = ["ACCEPTED"];
       const estadosAprobados = ["APPROVED"];
@@ -1026,7 +1035,7 @@ async function getReporteInscripciones(req, res) {
       return res.json(estadisticas);
     }
 
-    if (req.path.includes("/tendencias")) {
+    if (req.path.includes("/tendencias") || req.path.includes("/trends")) {
       // Agrupar por mes para tendencias
       const fechaInicioObj = fechaInicio ? new Date(fechaInicio) : null;
       const fechaFinObj = fechaFin ? new Date(fechaFin) : null;
@@ -1059,7 +1068,7 @@ async function getReporteInscripciones(req, res) {
       return res.json(tendencias);
     }
 
-    if (req.path.includes("/validaciones")) {
+    if (req.path.includes("/validaciones") || req.path.includes("/validations")) {
       // Estadísticas de validaciones
       const validaciones = analizarValidaciones(inscripcionesTransformadas);
       return res.json(validaciones);
@@ -1104,19 +1113,22 @@ async function descargarReporteInscripcionesPDF(req, res) {
     const estadisticas = await obtenerEstadisticasInscripciones(
       fechaInicioDate,
       fechaFinDate,
-      estado
+      estado,
+      req.tenantId
     );
 
     // Obtener tendencias por período
     const tendencias = await obtenerTendenciasInscripciones(
       fechaInicioDate,
-      fechaFinDate
+      fechaFinDate,
+      req.tenantId
     );
 
     // Obtener análisis de validaciones
     const validaciones = await obtenerAnalisisValidaciones(
       fechaInicioDate,
-      fechaFinDate
+      fechaFinDate,
+      req.tenantId
     );
 
     // 2. Preparar datos para el PDF
@@ -1319,10 +1331,13 @@ async function getReporteAsistencia(req, res) {
     const { id_evento } = req.params;
     const { tipo } = req.query;
 
-    if (req.path.includes("/evento/") && id_evento) {
+    if (
+      (req.path.includes("/evento/") || req.path.includes("/event/")) &&
+      id_evento
+    ) {
       // Obtener datos de asistencia de un evento específico
-      const evento = await prisma.event.findUnique({
-        where: { id: id_evento },
+      const evento = await prisma.event.findFirst({
+        where: withTenantWhere(req.tenantId, { id: id_evento }),
         select: {
           id: true,
           name: true,
@@ -1394,9 +1409,9 @@ async function getReporteAsistencia(req, res) {
       });
     }
 
-    if (req.path.includes("/comparativa")) {
+    if (req.path.includes("/comparativa") || req.path.includes("/comparative")) {
       // Comparativa entre eventos
-      const filtro = {};
+      const filtro = withTenantWhere(req.tenantId);
       if (tipo && tipo !== "todos") {
         filtro.type = tipo;
       }
@@ -1459,7 +1474,7 @@ async function getReporteAsistencia(req, res) {
 
     if (req.path.includes("/no-shows")) {
       // Análisis de no-shows por tipo de evento
-      const filtroTipo = {};
+      const filtroTipo = withTenantWhere(req.tenantId);
       if (tipo && tipo !== "todos") {
         filtroTipo.type = tipo;
       }
@@ -1475,7 +1490,7 @@ async function getReporteAsistencia(req, res) {
       const noShowsAnalisis = await Promise.all(
         tiposEventos.map(async (tipoGrupo) => {
           const eventos = await prisma.event.findMany({
-            where: { type: tipoGrupo.type },
+            where: withTenantWhere(req.tenantId, { type: tipoGrupo.type }),
             select: {
               minAttendancePercent: true,
               registrations: {
@@ -1549,8 +1564,8 @@ async function descargarReporteAsistenciaPDF(req, res) {
 
     if (evento) {
       // Reporte para un evento específico
-      const eventoData = await prisma.event.findUnique({
-        where: { id: evento },
+      const eventoData = await prisma.event.findFirst({
+        where: withTenantWhere(req.tenantId, { id: evento }),
         select: {
           id: true,
           name: true,
@@ -1623,7 +1638,7 @@ async function descargarReporteAsistenciaPDF(req, res) {
       };
     } else {
       // Reporte comparativo por tipo de evento
-      const filtro = {};
+      const filtro = withTenantWhere(req.tenantId);
       if (tipo && tipo !== "todos") {
         filtro.type = tipo;
       }
@@ -1694,7 +1709,7 @@ async function descargarReporteAsistenciaPDF(req, res) {
       const noShowsAnalisis = await Promise.all(
         tiposEventos.map(async (tipoGrupo) => {
           const eventosGrupo = await prisma.event.findMany({
-            where: { type: tipoGrupo.type },
+            where: withTenantWhere(req.tenantId, { type: tipoGrupo.type }),
             select: {
               minAttendancePercent: true,
               registrations: {
@@ -1807,7 +1822,7 @@ async function getReporteCertificados(req, res) {
     });
 
     // Construir filtros
-    const filtro = {};
+    const filtro = withTenantWhere(req.tenantId);
 
     if (fechaInicio && fechaFin) {
       filtro.registeredAt = {
@@ -1816,7 +1831,7 @@ async function getReporteCertificados(req, res) {
       };
     }
 
-    if (req.path.includes("/resumen")) {
+    if (req.path.includes("/resumen") || req.path.includes("/summary")) {
       // Resumen general de certificados
       // Consultar certificados emitidos directamente
       const certificados = await prisma.certificate.findMany({
@@ -1858,7 +1873,7 @@ async function getReporteCertificados(req, res) {
       return res.json(estadisticas);
     }
 
-    if (req.path.includes("/descargas")) {
+    if (req.path.includes("/descargas") || req.path.includes("/downloads")) {
       // Datos de descargas por período (trimestres)
       const certificados = await prisma.certificate.findMany({
         where: {
@@ -1925,7 +1940,7 @@ async function getReporteCertificados(req, res) {
       return res.json(descargasPorPeriodo);
     }
 
-    if (req.path.includes("/eventos")) {
+    if (req.path.includes("/eventos") || req.path.includes("/events")) {
       // Eventos con mayor emisión de certificados
       const eventos = await prisma.event.findMany({
         where: {
@@ -2015,12 +2030,12 @@ async function descargarReporteCertificadosPDF(req, res) {
     fechaFinDate.setHours(23, 59, 59, 999);
 
     // Construir filtros
-    const filtro = {
+    const filtro = withTenantWhere(req.tenantId, {
       registeredAt: {
         gte: fechaInicioDate,
         lte: fechaFinDate,
       },
-    };
+    });
 
     // Obtener resumen general de certificados
     const certificados = await prisma.certificate.findMany({
@@ -2204,10 +2219,13 @@ async function getReporteCupos(req, res) {
     const { id_evento } = req.params;
     const { tipoEvento, eventoSeleccionado } = req.body;
 
-    if (req.path.includes("/ocupacion/") && id_evento) {
+    if (
+      (req.path.includes("/ocupacion/") || req.path.includes("/occupancy/")) &&
+      id_evento
+    ) {
       // Análisis de ocupación de un evento específico
-      const evento = await prisma.event.findUnique({
-        where: { id: id_evento },
+      const evento = await prisma.event.findFirst({
+        where: withTenantWhere(req.tenantId, { id: id_evento }),
         select: {
           id: true,
           name: true,
@@ -2267,9 +2285,9 @@ async function getReporteCupos(req, res) {
       });
     }
 
-    if (req.path.includes("/demanda")) {
+    if (req.path.includes("/demanda") || req.path.includes("/demand")) {
       // Eventos con mayor demanda
-      const filtro = {};
+      const filtro = withTenantWhere(req.tenantId);
       if (tipoEvento && tipoEvento !== "todos") {
         filtro.type = tipoEvento;
       }
@@ -2313,9 +2331,10 @@ async function getReporteCupos(req, res) {
       return res.json(eventosDemanda);
     }
 
-    if (req.path.includes("/optimizacion")) {
+    if (req.path.includes("/optimizacion") || req.path.includes("/optimization")) {
       // Sugerencias de optimización
       const eventos = await prisma.event.findMany({
+        where: withTenantWhere(req.tenantId),
         select: {
           id: true,
           name: true,
@@ -2384,8 +2403,13 @@ async function descargarReporteCuposPDF(req, res) {
 }
 
 // Funciones auxiliares para reporte de inscripciones PDF
-async function obtenerEstadisticasInscripciones(fechaInicio, fechaFin, estado) {
-  const filtro = {};
+async function obtenerEstadisticasInscripciones(
+  fechaInicio,
+  fechaFin,
+  estado,
+  tenantId
+) {
+  const filtro = withTenantWhere(tenantId);
 
   if (fechaInicio && fechaFin) {
     filtro.registeredAt = {
@@ -2434,8 +2458,8 @@ async function obtenerEstadisticasInscripciones(fechaInicio, fechaFin, estado) {
   };
 }
 
-async function obtenerTendenciasInscripciones(fechaInicio, fechaFin) {
-  const filtro = {};
+async function obtenerTendenciasInscripciones(fechaInicio, fechaFin, tenantId) {
+  const filtro = withTenantWhere(tenantId);
 
   if (fechaInicio && fechaFin) {
     filtro.registeredAt = {
@@ -2508,8 +2532,8 @@ async function obtenerTendenciasInscripciones(fechaInicio, fechaFin) {
   }
 }
 
-async function obtenerAnalisisValidaciones(fechaInicio, fechaFin) {
-  const filtro = {};
+async function obtenerAnalisisValidaciones(fechaInicio, fechaFin, tenantId) {
+  const filtro = withTenantWhere(tenantId);
 
   if (fechaInicio && fechaFin) {
     filtro.registeredAt = {

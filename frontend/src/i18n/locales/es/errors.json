@@ -1,0 +1,11 @@
+{
+  "MISSING_FIELDS": "Faltan campos requeridos",
+  "INVALID_CREDENTIALS": "Credenciales invalidas",
+  "EMAIL_EXISTS": "El correo ya esta registrado",
+  "ID_NUMBER_EXISTS": "La cedula ya esta registrada",
+  "EVENT_NOT_FOUND": "Evento no encontrado",
+  "TENANT_NOT_FOUND": "Institucion no encontrada",
+  "SERVER_ERROR": "Error del servidor",
+  "UNAUTHORIZED": "No autorizado",
+  "FORBIDDEN": "Sin permisos"
+}

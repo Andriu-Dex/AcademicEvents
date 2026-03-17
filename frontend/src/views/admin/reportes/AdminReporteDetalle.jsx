@@ -15,7 +15,7 @@ const AdminReporteDetalle = () => {
     document.body.style.cursor = "wait"; // Cambia el cursor a "cargando"
     try {
       const response = await axiosInstance.get(
-        `/admin/reportes-evento/pdf/${id_eve}`
+        `/admin/reports/event/pdf/${id_eve}`
       );
       const { nom_eve, pdf } = response.data;
       const byteCharacters = atob(pdf);
@@ -44,7 +44,7 @@ const AdminReporteDetalle = () => {
     const fetchReporte = async () => {
       try {
         setLoading(true);
-        const res = await axiosInstance.get(`/admin/reportes-evento/${id_eve}`);
+        const res = await axiosInstance.get(`/admin/reports/event/${id_eve}`);
         setReporte(res.data);
       } catch {
         setReporte(null);
@@ -69,7 +69,7 @@ const AdminReporteDetalle = () => {
       {/* Volver */}
       <button
         className="reporte-btn-volver"
-        onClick={() => navigate("/admin/reportes-evento")}
+        onClick={() => navigate("/admin/reports/events")}
       >
         &larr; Volver a Reportes
       </button>

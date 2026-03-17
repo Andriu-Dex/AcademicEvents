@@ -92,13 +92,13 @@ const ReporteCarrera = () => {
         setLoading(true);
         // Endpoint para datos estadísticos de participación por carrera
         const resEstadisticas = await axiosInstance.get(
-          `/admin/reportes-carrera/estadisticas/${carreraSeleccionada}`
+          `/admin/reports/career/statistics/${carreraSeleccionada}`
         );
         setDatosEstadisticos(resEstadisticas.data);
 
         // Endpoint para eventos populares por carrera
         const resEventos = await axiosInstance.get(
-          `/admin/reportes-carrera/eventos/${carreraSeleccionada}`
+          `/admin/reports/career/events/${carreraSeleccionada}`
         );
         setEventosPorCarrera(resEventos.data);
       } catch (error) {
@@ -122,7 +122,7 @@ const ReporteCarrera = () => {
       document.body.style.cursor = "wait";
 
       const res = await axiosInstance.get(
-        `/admin/reportes-carrera/pdf/${carreraSeleccionada}`,
+        `/admin/reports/career/pdf/${carreraSeleccionada}`,
         { responseType: "blob" }
       );
 

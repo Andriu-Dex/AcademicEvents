@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axiosInstance from "../api/axiosConfig";
+import { requestWithEndpointFallback } from "../api/endpointFallback";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import DatePicker, { registerLocale } from "react-datepicker";
@@ -33,35 +34,79 @@ import {
 // Registrar el idioma
 registerLocale("es", es);
 
+const EVENT_TYPE_TO_LEGACY = {
+  COURSE: "CURSO",
+  CONGRESS: "CONGRESO",
+  WEBINAR: "WEBINAR",
+  TALK: "CHARLA",
+  SOCIALIZATION: "SOCIALIZACION",
+};
+
+const EVENT_MODALITY_TO_LEGACY = {
+  IN_PERSON: "PRESENCIAL",
+  VIRTUAL: "VIRTUAL",
+  HYBRID: "SEMIPRESENCIAL",
+};
+
+const EVENT_STATUS_TO_LEGACY = {
+  ACTIVE: "ACTIVO",
+  INACTIVE: "INACTIVO",
+  FINISHED: "FINALIZADO",
+  CANCELLED: "CANCELADO",
+  SUSPENDED: "SUSPENDIDO",
+};
+
+const LEGACY_EVENT_TYPE_TO_DB = {
+  CURSO: "COURSE",
+  CONGRESO: "CONGRESS",
+  WEBINAR: "WEBINAR",
+  CHARLA: "TALK",
+  SOCIALIZACION: "SOCIALIZATION",
+};
+
+const LEGACY_EVENT_MODALITY_TO_DB = {
+  PRESENCIAL: "IN_PERSON",
+  VIRTUAL: "VIRTUAL",
+  SEMIPRESENCIAL: "HYBRID",
+};
+
+const LEGACY_EVENT_STATUS_TO_DB = {
+  ACTIVO: "ACTIVE",
+  INACTIVO: "INACTIVE",
+  FINALIZADO: "FINISHED",
+  CANCELADO: "CANCELLED",
+  SUSPENDIDO: "SUSPENDED",
+};
+
 const EventForm = ({ eventId = null, mode = "create" }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [carreras, setCarreras] = useState([]);
   const [imagenPreview, setImagenPreview] = useState(null);
   const [formData, setFormData] = useState({
-    nom_eve: "",
-    des_eve: "",
-    tip_eve: "",
-    fec_ini_eve: "",
-    fec_fin_eve: "",
-    dur_hor_eve: "",
-    val_eve: "",
-    not_min_cur: "",
-    por_min_asi_eve: "",
-    cup_max_eve: "",
+    name: "",
+    description: "",
+    type: "",
+    startDate: "",
+    endDate: "",
+    durationHours: "",
+    price: "",
+    minPassingGrade: "",
+    minAttendancePercent: "",
+    maxCapacity: "",
     carrerasSeleccionadas: [],
     esEventoGeneral: false,
-    img_por_eve: null,
-    est_eve: "ACTIVO",
-    mod_eve: "PRESENCIAL", // Valor por defecto para modalidad
+    coverImage: null,
+    status: "ACTIVE",
+    modality: "IN_PERSON", // Valor por defecto para modalidad
   });
 
   const tiposEvento = [
-    { value: "CURSO", label: "Curso", icon: GraduationCap },
-    { value: "CONGRESO", label: "Congreso", icon: Users },
+    { value: "COURSE", label: "Curso", icon: GraduationCap },
+    { value: "CONGRESS", label: "Congreso", icon: Users },
     { value: "WEBINAR", label: "Webinar", icon: BookOpen },
-    { value: "CHARLA", label: "Charla", icon: FileText },
-    { value: "SOCIALIZACION", label: "Socialización", icon: Users },
+    { value: "TALK", label: "Charla", icon: FileText },
+    { value: "SOCIALIZATION", label: "Socialización", icon: Users },
   ];
 
   useEffect(() => {
@@ -82,45 +127,67 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
   const cargarEventoParaEditar = async () => {
     try {
       setLoading(true);
-      const res = await axiosInstance.get(`/eventos/${eventId}`);
+      const res = await requestWithEndpointFallback(
+        () => axiosInstance.get(`/events/${eventId}`),
+        () => axiosInstance.get(`/eventos/${eventId}`)
+      );
       const evento = res.data;
+
+      const eventCareers = evento.eventCareers || evento.eventos_carrera || [];
+      const eventCourse = evento.eventCourse || evento.eventos_curso || null;
+      const tipoCanon = evento.type || LEGACY_EVENT_TYPE_TO_DB[evento.tip_eve] || "";
 
       // Verificar si el evento tiene carreras asociadas o es general
       const tieneCarreras =
-        evento.eventos_carrera && evento.eventos_carrera.length > 0;
+        eventCareers && eventCareers.length > 0;
       const carrerasIds = tieneCarreras
-        ? evento.eventos_carrera.map((ec) => ec.carrera.id_car)
+        ? eventCareers
+            .map((ec) => ec.career?.id || ec.carrera?.id_car)
+            .filter(Boolean)
         : [];
       const esGeneral = !tieneCarreras;
 
       setFormData({
-        nom_eve: evento.nom_eve || "",
-        des_eve: evento.des_eve || "",
-        tip_eve: evento.tip_eve || "",
-        fec_ini_eve: evento.fec_ini_eve || "",
-        fec_fin_eve: evento.fec_fin_eve || "",
-        dur_hor_eve: evento.dur_hor_eve ? Number(evento.dur_hor_eve) : "",
-        val_eve: Number(evento.val_eve),
-        por_min_asi_eve: Number(evento.por_min_asi_eve),
-        cup_max_eve: evento.cup_max_eve ? Number(evento.cup_max_eve) : "",
-        img_por_eve: null,
-        est_eve: evento.est_eve || "ACTIVO",
-        mod_eve: evento.mod_eve || "PRESENCIAL", // Cargar la modalidad del evento
-        not_min_cur:
-          evento.tip_eve === "CURSO" && evento.eventos_curso
-            ? Number(evento.eventos_curso.not_min_cur) || ""
+        name: evento.name || evento.nom_eve || "",
+        description: evento.description || evento.des_eve || "",
+        type: tipoCanon,
+        startDate: evento.startDate || evento.fec_ini_eve || "",
+        endDate: evento.endDate || evento.fec_fin_eve || "",
+        durationHours: evento.durationHours
+          ? Number(evento.durationHours)
+          : evento.dur_hor_eve
+          ? Number(evento.dur_hor_eve)
+          : "",
+        price: Number(evento.price ?? evento.val_eve ?? 0),
+        minAttendancePercent: Number(
+          evento.minAttendancePercent ?? evento.por_min_asi_eve ?? 0
+        ),
+        maxCapacity: evento.maxCapacity
+          ? Number(evento.maxCapacity)
+          : evento.cup_max_eve
+          ? Number(evento.cup_max_eve)
+          : "",
+        coverImage: null,
+        status: evento.status || LEGACY_EVENT_STATUS_TO_DB[evento.est_eve] || "ACTIVE",
+        modality:
+          evento.modality ||
+          LEGACY_EVENT_MODALITY_TO_DB[evento.mod_eve] ||
+          "IN_PERSON", // Cargar la modalidad del evento
+        minPassingGrade:
+          tipoCanon === "COURSE" && eventCourse
+            ? Number(eventCourse.minPassingGrade ?? eventCourse.not_min_cur) || ""
             : "",
         carrerasSeleccionadas: carrerasIds,
         esEventoGeneral: esGeneral,
       });
 
       // Mostrar imagen existente si la hay
-      if (evento.img_por_eve) {
-        setImagenPreview(evento.img_por_eve);
+      if (evento.coverImageUrl || evento.img_por_eve) {
+        setImagenPreview(evento.coverImageUrl || evento.img_por_eve);
       }
     } catch (error) {
       toast.error("Error al cargar el evento");
-      navigate("/admin/eventos");
+      navigate("/admin/events");
     } finally {
       setLoading(false);
     }
@@ -175,17 +242,17 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
       let numericValue = value === "" ? "" : Number(value);
 
       // Validaciones específicas para campos que no pueden ser negativos
-      const camposPositivos = ["cup_max_eve", "dur_hor_eve"];
+      const camposPositivos = ["maxCapacity", "durationHours"];
       if (camposPositivos.includes(name) && numericValue < 0) {
         // Mostrar mensaje específico para valores negativos
-        if (name === "cup_max_eve") {
+        if (name === "maxCapacity") {
           toast.error("❌ El cupo máximo no puede ser negativo");
         }
         return;
       }
 
-      // Validación específica para cup_max_eve
-      if (name === "cup_max_eve") {
+      // Validación específica para maxCapacity
+      if (name === "maxCapacity") {
         if (numericValue !== "" && numericValue < 1) {
           toast.error("❌ El cupo máximo debe ser al menos 1 persona");
           return;
@@ -200,8 +267,8 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
         }
       }
 
-      // Validación para val_eve (puede ser 0 pero no negativo)
-      if (name === "val_eve" && numericValue < 0) {
+      // Validación para price (puede ser 0 pero no negativo)
+      if (name === "price" && numericValue < 0) {
         toast.error("❌ El valor del evento no puede ser negativo");
         return;
       }
@@ -234,7 +301,7 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
         return;
       }
 
-      setFormData((prev) => ({ ...prev, img_por_eve: file }));
+      setFormData((prev) => ({ ...prev, coverImage: file }));
 
       // Crear preview
       const reader = new FileReader();
@@ -247,50 +314,50 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
     const errores = [];
 
     // Validaciones generales
-    if (!formData.nom_eve.trim())
+    if (!formData.name.trim())
       errores.push("El nombre del evento es obligatorio");
-    if (!formData.tip_eve) errores.push("El tipo de evento es obligatorio");
-    if (!formData.fec_ini_eve)
+    if (!formData.type) errores.push("El tipo de evento es obligatorio");
+    if (!formData.startDate)
       errores.push("La fecha de inicio es obligatoria");
     if (
-      formData.val_eve === "" ||
-      formData.val_eve === null ||
-      formData.val_eve === undefined
+      formData.price === "" ||
+      formData.price === null ||
+      formData.price === undefined
     ) {
       errores.push("El valor del evento es obligatorio");
-    } else if (formData.val_eve < 0) {
+    } else if (formData.price < 0) {
       errores.push("El valor del evento debe ser 0 o un número positivo");
     }
-    if (!formData.fec_fin_eve) errores.push("La fecha de fin es obligatoria");
-    if (!formData.dur_hor_eve || formData.dur_hor_eve <= 0)
+    if (!formData.endDate) errores.push("La fecha de fin es obligatoria");
+    if (!formData.durationHours || formData.durationHours <= 0)
       errores.push("La duración debe ser mayor a 0 horas");
 
     // Validaciones específicas para cupo máximo (campo obligatorio)
     if (
-      formData.cup_max_eve === "" ||
-      formData.cup_max_eve === null ||
-      formData.cup_max_eve === undefined
+      formData.maxCapacity === "" ||
+      formData.maxCapacity === null ||
+      formData.maxCapacity === undefined
     ) {
       errores.push(
         "❌ El cupo máximo es obligatorio. Por favor ingrese un valor."
       );
-    } else if (isNaN(formData.cup_max_eve)) {
+    } else if (isNaN(formData.maxCapacity)) {
       errores.push("❌ El cupo máximo debe ser un número válido.");
-    } else if (formData.cup_max_eve <= 0) {
+    } else if (formData.maxCapacity <= 0) {
       errores.push(
         "❌ El cupo máximo debe ser mayor a 0. Valor mínimo permitido: 1"
       );
-    } else if (!Number.isInteger(Number(formData.cup_max_eve))) {
+    } else if (!Number.isInteger(Number(formData.maxCapacity))) {
       errores.push(
         "❌ El cupo máximo debe ser un número entero (sin decimales)."
       );
-    } else if (formData.cup_max_eve > 10000) {
+    } else if (formData.maxCapacity > 10000) {
       errores.push("❌ El cupo máximo no puede ser mayor a 10,000 personas.");
     }
     // Validar fechas
-    if (formData.fec_ini_eve && formData.fec_fin_eve) {
-      const fechaInicio = new Date(formData.fec_ini_eve);
-      const fechaFin = new Date(formData.fec_fin_eve);
+    if (formData.startDate && formData.endDate) {
+      const fechaInicio = new Date(formData.startDate);
+      const fechaFin = new Date(formData.endDate);
 
       // Verificar que la fecha de inicio no sea posterior a la fecha de fin
       if (fechaInicio > fechaFin) {
@@ -306,11 +373,11 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
     }
 
     // Validaciones específicas para cursos
-    if (formData.tip_eve === "CURSO") {
+    if (formData.type === "COURSE") {
       if (
-        !formData.not_min_cur ||
-        formData.not_min_cur < 0 ||
-        formData.not_min_cur > 10
+        !formData.minPassingGrade ||
+        formData.minPassingGrade < 0 ||
+        formData.minPassingGrade > 10
       )
         errores.push("Para cursos, la nota mínima debe estar entre 0 y 10");
     }
@@ -331,26 +398,26 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
       // Preparar FormData para envío (para manejar la imagen)
       const formDataToSend = new FormData();
 
-      // Agregar campos básicos
-      formDataToSend.append("nom_eve", formData.nom_eve);
-      formDataToSend.append("des_eve", formData.des_eve);
-      formDataToSend.append("tip_eve", formData.tip_eve);
+      // Agregar campos básicos (ya en canónico)
+      formDataToSend.append("name", formData.name);
+      formDataToSend.append("description", formData.description);
+      formDataToSend.append("type", formData.type);
 
       // Usar las fechas en formato ISO completo
-      formDataToSend.append("fec_ini_eve", formData.fec_ini_eve);
-      formDataToSend.append("fec_fin_eve", formData.fec_fin_eve);
+      formDataToSend.append("startDate", formData.startDate);
+      formDataToSend.append("endDate", formData.endDate);
 
-      formDataToSend.append("val_eve", formData.val_eve);
-      formDataToSend.append("img_por_eve", formData.img_por_eve);
-      formDataToSend.append("est_eve", formData.est_eve);
-      formDataToSend.append("mod_eve", formData.mod_eve); // Añadir la modalidad del evento
-      formDataToSend.append("dur_hor_eve", formData.dur_hor_eve);
-      formDataToSend.append("por_min_asi_eve", formData.por_min_asi_eve);
-      formDataToSend.append("cup_max_eve", formData.cup_max_eve);
+      formDataToSend.append("price", formData.price);
+      formDataToSend.append("coverImage", formData.coverImage);
+      formDataToSend.append("status", formData.status);
+      formDataToSend.append("modality", formData.modality); // Añadir la modalidad del evento
+      formDataToSend.append("durationHours", formData.durationHours);
+      formDataToSend.append("minAttendancePercent", formData.minAttendancePercent);
+      formDataToSend.append("maxCapacity", formData.maxCapacity);
 
       // Campos específicos para cursos
-      if (formData.tip_eve === "CURSO") {
-        formDataToSend.append("not_min_cur", formData.not_min_cur);
+      if (formData.type === "COURSE") {
+        formDataToSend.append("minPassingGrade", formData.minPassingGrade);
       }
 
       // Agregar información de carreras
@@ -369,23 +436,33 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
       }
       let response;
       if (mode === "create") {
-        response = await axiosInstance.post("/eventos", formDataToSend, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
+        response = await requestWithEndpointFallback(
+          () =>
+            axiosInstance.post("/events", formDataToSend, {
+              headers: { "Content-Type": "multipart/form-data" },
+            }),
+          () =>
+            axiosInstance.post("/eventos", formDataToSend, {
+              headers: { "Content-Type": "multipart/form-data" },
+            })
+        );
         toast.success(
-          // `✅ Evento creado exitosamente con cupo máximo de ${formData.cup_max_eve} personas`
+          // `✅ Evento creado exitosamente con cupo máximo de ${formData.maxCapacity} personas`
           `Evento creado exitosamente`
         );
       } else {
-        response = await axiosInstance.put(
-          `/eventos/${eventId}`,
-          formDataToSend,
-          {
-            headers: { "Content-Type": "multipart/form-data" },
-          }
+        response = await requestWithEndpointFallback(
+          () =>
+            axiosInstance.put(`/events/${eventId}`, formDataToSend, {
+              headers: { "Content-Type": "multipart/form-data" },
+            }),
+          () =>
+            axiosInstance.put(`/eventos/${eventId}`, formDataToSend, {
+              headers: { "Content-Type": "multipart/form-data" },
+            })
         );
         toast.success(
-          // `✅ Evento actualizado exitosamente. Cupo máximo: ${formData.cup_max_eve} personas`
+          // `✅ Evento actualizado exitosamente. Cupo máximo: ${formData.maxCapacity} personas`
           `Evento actualizado exitosamente`
         );
 
@@ -400,7 +477,7 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
           );
         }
       }
-      navigate("/admin/eventos");
+      navigate("/admin/events");
     } catch (error) {
       console.error("Error al guardar evento:", error);
 
@@ -426,7 +503,7 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
     }
   };
 
-  const esCurso = formData.tip_eve === "CURSO";
+  const esCurso = formData.type === "COURSE";
 
   if (loading && mode === "edit") {
     return (
@@ -448,7 +525,7 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
         </h1>
         <button
           type="button"
-          onClick={() => navigate("/admin/eventos")}
+          onClick={() => navigate("/admin/events")}
           className="event-form-close"
         >
           <X size={24} />
@@ -468,8 +545,8 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
               <label>Nombre del {esCurso ? "Curso" : "Evento"} *</label>
               <input
                 type="text"
-                name="nom_eve"
-                value={formData.nom_eve}
+                name="name"
+                value={formData.name}
                 onChange={handleInputChange}
                 placeholder={`Ingrese el nombre del ${
                   esCurso ? "curso" : "evento"
@@ -481,8 +558,8 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
             <div className="form-group">
               <label>Tipo *</label>
               <select
-                name="tip_eve"
-                value={formData.tip_eve}
+                name="type"
+                value={formData.type}
                 onChange={handleInputChange}
                 required
               >
@@ -498,14 +575,14 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
             <div className="form-group">
               <label>Modalidad *</label>
               <select
-                name="mod_eve"
-                value={formData.mod_eve}
+                name="modality"
+                value={formData.modality}
                 onChange={handleInputChange}
                 required
               >
-                <option value="PRESENCIAL">Presencial</option>
+                <option value="IN_PERSON">Presencial</option>
                 <option value="VIRTUAL">Virtual</option>
-                <option value="SEMIPRESENCIAL">Semipresencial</option>
+                <option value="HYBRID">Semipresencial</option>
               </select>
             </div>
 
@@ -513,16 +590,16 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
               <div className="form-group">
                 <label>Estado del Evento *</label>
                 <select
-                  name="est_eve"
-                  value={formData.est_eve}
+                  name="status"
+                  value={formData.status}
                   onChange={handleInputChange}
                   required
                 >
-                  <option value="ACTIVO">Activo</option>
-                  <option value="INACTIVO">Inactivo</option>
-                  <option value="FINALIZADO">Finalizado</option>
-                  <option value="CANCELADO">Cancelado</option>
-                  <option value="SUSPENDIDO">Suspendido</option>
+                  <option value="ACTIVE">Activo</option>
+                  <option value="INACTIVE">Inactivo</option>
+                  <option value="FINISHED">Finalizado</option>
+                  <option value="CANCELLED">Cancelado</option>
+                  <option value="SUSPENDED">Suspendido</option>
                 </select>
               </div>
             )}
@@ -531,8 +608,8 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
           <div className="form-group">
             <label>Descripción</label>
             <textarea
-              name="des_eve"
-              value={formData.des_eve}
+              name="description"
+              value={formData.description}
               onChange={handleInputChange}
               placeholder={`Describe el contenido y objetivos del ${
                 esCurso ? "curso" : "evento"
@@ -553,24 +630,24 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
               <div className="input-with-icon date-picker-container">
                 <Calendar size={18} />{" "}
                 <DatePicker
-                  selected={formatUTCForDatePicker(formData.fec_ini_eve)}
+                  selected={formatUTCForDatePicker(formData.startDate)}
                   onChange={(date) => {
                     if (!date) return;
 
                     // Verificar si es una selección de tiempo o fecha
                     const isTimeSelection =
-                      formData.fec_ini_eve &&
+                      formData.startDate &&
                       date.getDate() ===
                         formatUTCForDatePicker(
-                          formData.fec_ini_eve
+                          formData.startDate
                         )?.getDate() &&
                       date.getMonth() ===
                         formatUTCForDatePicker(
-                          formData.fec_ini_eve
+                          formData.startDate
                         )?.getMonth() &&
                       date.getFullYear() ===
                         formatUTCForDatePicker(
-                          formData.fec_ini_eve
+                          formData.startDate
                         )?.getFullYear();
 
                     if (!isTimeSelection) {
@@ -581,7 +658,7 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
                     // Usar la nueva utilidad para formatear la fecha
                     setFormData((prev) => ({
                       ...prev,
-                      fec_ini_eve: formatDateForBackend(date),
+                      startDate: formatDateForBackend(date),
                     }));
                   }}
                   dateFormat="dd/MM/yyyy HH:mm"
@@ -601,24 +678,24 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
               <div className="input-with-icon date-picker-container">
                 <Calendar size={18} />{" "}
                 <DatePicker
-                  selected={formatUTCForDatePicker(formData.fec_fin_eve)}
+                  selected={formatUTCForDatePicker(formData.endDate)}
                   onChange={(date) => {
                     if (!date) return;
 
                     // Verificar si es una selección de tiempo o fecha
                     const isTimeSelection =
-                      formData.fec_fin_eve &&
+                      formData.endDate &&
                       date.getDate() ===
                         formatUTCForDatePicker(
-                          formData.fec_fin_eve
+                          formData.endDate
                         )?.getDate() &&
                       date.getMonth() ===
                         formatUTCForDatePicker(
-                          formData.fec_fin_eve
+                          formData.endDate
                         )?.getMonth() &&
                       date.getFullYear() ===
                         formatUTCForDatePicker(
-                          formData.fec_fin_eve
+                          formData.endDate
                         )?.getFullYear();
 
                     if (!isTimeSelection) {
@@ -629,7 +706,7 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
                     // Usar la nueva utilidad para formatear la fecha
                     setFormData((prev) => ({
                       ...prev,
-                      fec_fin_eve: formatDateForBackend(date),
+                      endDate: formatDateForBackend(date),
                     }));
                   }}
                   dateFormat="dd/MM/yyyy HH:mm"
@@ -641,8 +718,8 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
                   placeholderText="Seleccionar fecha y hora"
                   className="date-picker-input"
                   minDate={
-                    formData.fec_ini_eve
-                      ? formatUTCForDatePicker(formData.fec_ini_eve)
+                    formData.startDate
+                      ? formatUTCForDatePicker(formData.startDate)
                       : null
                   }
                   required
@@ -655,8 +732,8 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
                 <Clock size={18} />{" "}
                 <input
                   type="number"
-                  name="dur_hor_eve"
-                  value={formData.dur_hor_eve}
+                  name="durationHours"
+                  value={formData.durationHours}
                   onChange={handleInputChange}
                   onWheel={preventScrollChange}
                   onMouseEnter={(e) => e.target.blur()}
@@ -681,8 +758,8 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
                 <Percent size={18} />{" "}
                 <input
                   type="number"
-                  name="por_min_asi_eve"
-                  value={formData.por_min_asi_eve}
+                  name="minAttendancePercent"
+                  value={formData.minAttendancePercent}
                   onChange={handleInputChange}
                   onWheel={preventScrollChange}
                   onMouseEnter={(e) => e.target.blur()}
@@ -708,8 +785,8 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
                 <Users size={18} />{" "}
                 <input
                   type="number"
-                  name="cup_max_eve"
-                  value={formData.cup_max_eve}
+                  name="maxCapacity"
+                  value={formData.maxCapacity}
                   onChange={handleInputChange}
                   onWheel={preventScrollChange}
                   onMouseEnter={(e) => e.target.blur()}
@@ -819,8 +896,8 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
             <label className="valor-eve-ef">Valor del Evento ($) *</label>{" "}
             <input
               type="number"
-              name="val_eve"
-              value={formData.val_eve}
+              name="price"
+              value={formData.price}
               onChange={handleInputChange}
               onWheel={preventScrollChange}
               onMouseEnter={(e) => e.target.blur()}
@@ -879,7 +956,7 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
         <div className="event-form-actions">
           <button
             type="button"
-            onClick={() => navigate("/admin/eventos")}
+            onClick={() => navigate("/admin/events")}
             className="btn-secondary"
             disabled={loading}
           >

@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { MapPin, Mail, Phone } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../api/axiosConfig";
@@ -9,6 +9,9 @@ import "./styles/Footer.css";
  * @returns {JSX.Element} El componente Footer
  */
 const Footer = ({ isAuthenticated }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  
   const [facultad, setFacultad] = useState({
     nombre: "Facultad de Ingeniería en Sistemas, Electrónica e Industrial",
     acronimo: "FISEI",
@@ -90,8 +93,10 @@ const Footer = ({ isAuthenticated }) => {
                   className="footer-link-fc"
                   onClick={(e) => {
                     e.preventDefault();
-                    // Navegar al home y luego hacer scroll al inicio
-                    window.location.href = "/home";
+                    // Navigate to home and scroll to top
+                    if (location.pathname !== "/home") {
+                      navigate("/home");
+                    }
                     setTimeout(() => {
                       window.scrollTo({ top: 0, behavior: "smooth" });
                     }, 100);
@@ -102,7 +107,7 @@ const Footer = ({ isAuthenticated }) => {
               </li>
               {isAuthenticated && (
                 <li className="footer-list-item">
-                  <Link to="/inscripciones" className="footer-link-fc">
+                  <Link to="/enrollments" className="footer-link-fc">
                     Inscripciones
                   </Link>
                 </li>

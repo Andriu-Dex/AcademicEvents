@@ -1,4 +1,5 @@
 const { prisma } = require("../config/db");
+const { createTenantScoped } = require("../utils/tenantScope");
 
 class MVAController {
   static tenantWhere(req, extra = {}) {
@@ -9,8 +10,9 @@ class MVAController {
   }
 
   static async obtenerFacultadPrincipal(req) {
-    return prisma.faculty.findFirst({
-      where: MVAController.tenantWhere(req),
+    const scoped = createTenantScoped(prisma, req.tenantId);
+    return scoped.findFirst("faculty", {
+      where: {},
       orderBy: { createdAt: "asc" },
     });
   }
@@ -92,15 +94,16 @@ class MVAController {
   }
 
   static async obtenerMVADatos(req, facultyId) {
-    const facultad = await prisma.faculty.findFirst({
-      where: MVAController.tenantWhere(req, { id: facultyId }),
+    const scoped = createTenantScoped(prisma, req.tenantId);
+    const facultad = await scoped.findFirst("faculty", {
+      where: { id: facultyId },
     });
 
-    const autoridadesFacultad = await prisma.facultyAuthority.findMany({
-      where: MVAController.tenantWhere(req, {
+    const autoridadesFacultad = await scoped.findMany("facultyAuthority", {
+      where: {
         facultyId,
         isActive: true,
-      }),
+      },
       orderBy: {
         type: "asc",
       },
@@ -161,6 +164,7 @@ class MVAController {
 
   static async actualizarMVA(req, res) {
     try {
+      const scoped = createTenantScoped(prisma, req.tenantId);
       const { mision, vision, autoridades } = req.body;
       const facultad = await MVAController.obtenerFacultadPrincipal(req);
 
@@ -173,7 +177,7 @@ class MVAController {
       if (vision !== undefined) datosActualizarFacultad.vision = vision;
 
       if (Object.keys(datosActualizarFacultad).length > 0) {
-        await prisma.faculty.update({
+        await scoped.updateMany("faculty", {
           where: { id: facultad.id },
           data: datosActualizarFacultad,
         });
@@ -185,9 +189,12 @@ class MVAController {
             ? autoridades
             : JSON.parse(autoridades);
 
-          const autoridadesActuales = await prisma.facultyAuthority.findMany({
-            where: MVAController.tenantWhere(req, { facultyId: facultad.id }),
-          });
+          const autoridadesActuales = await scoped.findMany(
+            "facultyAuthority",
+            {
+              where: { facultyId: facultad.id },
+            }
+          );
 
           for (const autoridadData of autoridadesData) {
             const tipoAutoridad = MVAController.determinarTipoAutoridad(
@@ -210,14 +217,13 @@ class MVAController {
             );
 
             if (autoridadExistente) {
-              await prisma.facultyAuthority.update({
+              await scoped.updateMany("facultyAuthority", {
                 where: { id: autoridadExistente.id },
                 data: dataAutoridad,
               });
             } else {
-              await prisma.facultyAuthority.create({
+              await scoped.create("facultyAuthority", {
                 data: {
-                  tenantId: req.tenantId || facultad.tenantId,
                   facultyId: facultad.id,
                   type: tipoAutoridad,
                   startDate: new Date(),
@@ -244,6 +250,7 @@ class MVAController {
 
   static async actualizarDatosFacultad(req, res) {
     try {
+      const scoped = createTenantScoped(prisma, req.tenantId);
       const { nombre, acronimo, logo } = req.body;
       const facultad = await MVAController.obtenerFacultadPrincipal(req);
 
@@ -262,9 +269,13 @@ class MVAController {
       if (acronimo) datosActualizar.acronym = acronimo;
       if (logo) datosActualizar.logoUrl = logo;
 
-      const facultadActualizada = await prisma.faculty.update({
+      await scoped.updateMany("faculty", {
         where: { id: facultad.id },
         data: datosActualizar,
+      });
+
+      const facultadActualizada = await scoped.findFirst("faculty", {
+        where: { id: facultad.id },
       });
 
       return res.status(200).json({

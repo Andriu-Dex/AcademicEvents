@@ -40,7 +40,7 @@ const AdminReporteMes = () => {
 
       // Petición al endpoint del PDF (ajusta la URL si tu ruta es diferente)
       const res = await axiosInstance.post(
-        "/admin/reportes-mes/pdf",
+        "/admin/reports/month/pdf",
         { anio, mes },
         { responseType: "blob" }
       );
@@ -69,7 +69,7 @@ const AdminReporteMes = () => {
   const cargarReporte = async (anioSel, mesSel) => {
     setLoading(true);
     try {
-      const res = await axiosInstance.post("/admin/reportes-mes", {
+      const res = await axiosInstance.post("/admin/reports/month", {
         anio: anioSel,
         mes: mesSel,
       });

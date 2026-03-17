@@ -6,6 +6,8 @@ const onlyAdmin = (req, res, next) => {
     return res.status(401).json({ msg: "No autenticado" });
   }
 
+  const role = req.usuario.role || req.usuario.rol_usu;
+
   // Verifica si el rol del usuario no es administrador
   if (
     ![
@@ -13,7 +15,7 @@ const onlyAdmin = (req, res, next) => {
       "ADMIN_GENERAL",
       "GLOBAL_ADMIN",
       "GENERAL_ADMIN",
-    ].includes(req.usuario.rol_usu)
+    ].includes(role)
   ) {
     // Si el rol no es administrador, responde con un error 403 (Prohibido)
     return res

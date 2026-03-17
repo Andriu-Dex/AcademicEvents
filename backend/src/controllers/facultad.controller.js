@@ -1,13 +1,16 @@
 // Importamos la instancia de Prisma desde el archivo de configuración de la base de datos
 const { prisma } = require("../config/db");
+const { createTenantScoped } = require("../utils/tenantScope");
 
 // ============================
 // Obtener todas las facultades
 // ============================
 const obtenerFacultades = async (req, res) => {
   try {
+    const scoped = createTenantScoped(prisma, req.tenantId);
     // Consultamos todas las facultades en la base de datos
-    const facultades = await prisma.faculty.findMany({
+    const facultades = await scoped.findMany("faculty", {
+      where: {},
       orderBy: { name: "asc" },
     });
 
@@ -28,9 +31,10 @@ const obtenerFacultades = async (req, res) => {
 // ======================
 const obtenerFacultad = async (req, res) => {
   try {
+    const scoped = createTenantScoped(prisma, req.tenantId);
     const { id } = req.params;
 
-    const facultad = await prisma.faculty.findUnique({
+    const facultad = await scoped.findFirst("faculty", {
       where: { id },
     });
 
@@ -53,7 +57,9 @@ const obtenerFacultad = async (req, res) => {
 // =============================
 const obtenerPrimeraFacultad = async (req, res) => {
   try {
-    const facultad = await prisma.faculty.findFirst({
+    const scoped = createTenantScoped(prisma, req.tenantId);
+    const facultad = await scoped.findFirst("faculty", {
+      where: {},
       orderBy: { createdAt: "asc" }, // Obtiene la primera facultad creada
     });
 
@@ -92,11 +98,12 @@ const obtenerPrimeraFacultad = async (req, res) => {
 // ===========================
 const actualizarDatosFacultad = async (req, res) => {
   try {
+    const scoped = createTenantScoped(prisma, req.tenantId);
     const { id } = req.params;
     const { nom_fac, acr_fac, des_fac, url_log_fac } = req.body;
 
     // Verificar que la facultad existe
-    const facultadExistente = await prisma.faculty.findUnique({
+    const facultadExistente = await scoped.findFirst("faculty", {
       where: { id },
     });
 
@@ -113,7 +120,7 @@ const actualizarDatosFacultad = async (req, res) => {
 
     // Verificar si el nombre ya existe y no es el mismo facultad
     if (nom_fac !== facultadExistente.name) {
-      const nombreExiste = await prisma.faculty.findFirst({
+      const nombreExiste = await scoped.findFirst("faculty", {
         where: {
           name: nom_fac,
           id: { not: id },
@@ -128,7 +135,7 @@ const actualizarDatosFacultad = async (req, res) => {
     }
 
     // Actualizar la facultad
-    const facultadActualizada = await prisma.faculty.update({
+    await scoped.updateMany("faculty", {
       where: { id },
       data: {
         name: nom_fac,
@@ -136,6 +143,10 @@ const actualizarDatosFacultad = async (req, res) => {
         description: des_fac,
         logoUrl: url_log_fac,
       },
+    });
+
+    const facultadActualizada = await scoped.findFirst("faculty", {
+      where: { id },
     });
 
     res.status(200).json({
@@ -156,6 +167,7 @@ const actualizarDatosFacultad = async (req, res) => {
 // ====================
 const crearFacultad = async (req, res) => {
   try {
+    const scoped = createTenantScoped(prisma, req.tenantId);
     const { nom_fac, des_fac, mis_fac, vis_fac } = req.body;
 
     if (!nom_fac || nom_fac.trim() === "") {
@@ -182,7 +194,7 @@ const crearFacultad = async (req, res) => {
         .json({ msg: "La visión de la facultad es obligatoria" });
     }
 
-    const facultadExistente = await prisma.faculty.findFirst({
+    const facultadExistente = await scoped.findFirst("faculty", {
       where: { name: nom_fac },
     });
 
@@ -190,7 +202,7 @@ const crearFacultad = async (req, res) => {
       return res.status(400).json({ msg: "La facultad ya existe" });
     }
 
-    const nuevaFacultad = await prisma.faculty.create({
+    const nuevaFacultad = await scoped.create("faculty", {
       data: {
         name: nom_fac,
         description: des_fac,

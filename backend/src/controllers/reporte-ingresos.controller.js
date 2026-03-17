@@ -1,6 +1,7 @@
 ﻿const { prisma } = require("../config/db");
 const path = require("path");
 const fs = require("fs");
+const { withTenantWhere } = require("../utils/tenantScope");
 
 // Función para obtener métricas generales de ingresos y pagos
 async function getMetricasGenerales(req, res) {
@@ -8,7 +9,7 @@ async function getMetricasGenerales(req, res) {
     const { fechaDesde, fechaHasta, tipoEvento, estadoPago } = req.query;
 
     // Construir los filtros
-    const filtroEvento = {};
+    const filtroEvento = withTenantWhere(req.tenantId);
     const filtroInscripcion = {};
 
     // Filtro por fecha
@@ -142,7 +143,7 @@ async function getIngresosPorTipo(req, res) {
     const { fechaDesde, fechaHasta, tipoEvento, estadoPago } = req.query;
 
     // Construir los filtros
-    const filtroEvento = {};
+    const filtroEvento = withTenantWhere(req.tenantId);
     const filtroInscripcion = {};
 
     // Filtro por fecha
@@ -257,7 +258,7 @@ async function getEventosRentables(req, res) {
     const { fechaDesde, fechaHasta, tipoEvento, estadoPago } = req.query;
 
     // Construir los filtros
-    const filtroEvento = {};
+    const filtroEvento = withTenantWhere(req.tenantId);
     const filtroInscripcion = {};
 
     // Filtro por fecha
@@ -362,7 +363,7 @@ async function getTendenciasPeriodo(req, res) {
     const { fechaDesde, fechaHasta, tipoEvento, estadoPago } = req.query;
 
     // Construir los filtros
-    const filtroEvento = {};
+    const filtroEvento = withTenantWhere(req.tenantId);
     const filtroInscripcion = {};
 
     // Filtro por fecha
@@ -511,7 +512,7 @@ async function getComprobantesRechazados(req, res) {
     const { fechaDesde, fechaHasta, tipoEvento } = req.query;
 
     // Construir los filtros
-    const filtroEvento = {};
+    const filtroEvento = withTenantWhere(req.tenantId);
     const filtroInscripcion = {};
 
     // Filtro por fecha
@@ -670,25 +671,40 @@ async function generarReporteIngresosPDF(req, res) {
       tendencias,
       comprobantesRechazados,
     ] = await Promise.all([
-      obtenerMetricasParaPDF(fechaDesde, fechaHasta, tipoEvento, estadoPago),
+      obtenerMetricasParaPDF(
+        fechaDesde,
+        fechaHasta,
+        tipoEvento,
+        estadoPago,
+        req.tenantId
+      ),
       obtenerIngresosPorTipoParaPDF(
         fechaDesde,
         fechaHasta,
         tipoEvento,
-        estadoPago
+        estadoPago,
+        req.tenantId
       ),
       obtenerEventosRentablesParaPDF(
         fechaDesde,
         fechaHasta,
         tipoEvento,
-        estadoPago
+        estadoPago,
+        req.tenantId
       ),
-      obtenerTendenciasParaPDF(fechaDesde, fechaHasta, tipoEvento, estadoPago),
+      obtenerTendenciasParaPDF(
+        fechaDesde,
+        fechaHasta,
+        tipoEvento,
+        estadoPago,
+        req.tenantId
+      ),
       obtenerComprobantesRechazadosParaPDF(
         fechaDesde,
         fechaHasta,
         tipoEvento,
-        estadoPago
+        estadoPago,
+        req.tenantId
       ),
     ]);
 
@@ -754,11 +770,12 @@ async function obtenerMetricasParaPDF(
   fechaDesde,
   fechaHasta,
   tipoEvento,
-  estadoPago
+  estadoPago,
+  tenantId
 ) {
   try {
     // Construir los filtros (similar a getMetricasGenerales)
-    const filtroEvento = {};
+    const filtroEvento = withTenantWhere(tenantId);
     const filtroInscripcion = {};
 
     // Filtro por fecha
@@ -863,11 +880,12 @@ async function obtenerIngresosPorTipoParaPDF(
   fechaDesde,
   fechaHasta,
   tipoEvento,
-  estadoPago
+  estadoPago,
+  tenantId
 ) {
   try {
     // Construir filtros base
-    const filtroEvento = {};
+    const filtroEvento = withTenantWhere(tenantId);
     if (fechaDesde && fechaHasta) {
       filtroEvento.startDate = {
         gte: new Date(fechaDesde),
@@ -957,7 +975,8 @@ async function obtenerEventosRentablesParaPDF(
   fechaDesde,
   fechaHasta,
   tipoEvento,
-  estadoPago
+  estadoPago,
+  tenantId
 ) {
   try {
     console.log(
@@ -971,7 +990,7 @@ async function obtenerEventosRentablesParaPDF(
     });
 
     // Construir filtros base
-    const filtroEvento = {};
+    const filtroEvento = withTenantWhere(tenantId);
     if (fechaDesde && fechaHasta) {
       filtroEvento.startDate = {
         gte: new Date(fechaDesde),
@@ -1081,11 +1100,12 @@ async function obtenerTendenciasParaPDF(
   fechaDesde,
   fechaHasta,
   tipoEvento,
-  estadoPago
+  estadoPago,
+  tenantId
 ) {
   try {
     // Construir filtros base
-    const filtroEvento = {};
+    const filtroEvento = withTenantWhere(tenantId);
     if (fechaDesde && fechaHasta) {
       filtroEvento.startDate = {
         gte: new Date(fechaDesde),
@@ -1532,11 +1552,12 @@ async function obtenerComprobantesRechazadosParaPDF(
   fechaDesde,
   fechaHasta,
   tipoEvento,
-  estadoPago
+  estadoPago,
+  tenantId
 ) {
   try {
     // Construir los filtros
-    const filtroEvento = {};
+    const filtroEvento = withTenantWhere(tenantId);
     const filtroInscripcion = {};
 
     // Filtro por fecha

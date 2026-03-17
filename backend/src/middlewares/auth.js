@@ -18,6 +18,20 @@ const verificarToken = (req, res, next) => {
     // Verificación del token con la clave secreta
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
+    // Si el token ya trae tenant, validar que coincide con el tenant resuelto.
+    // Tokens legacy sin tenantId se permiten temporalmente por compatibilidad.
+    if (req.tenantId && decoded.tenantId && decoded.tenantId !== req.tenantId) {
+      return res.status(403).json({ msg: "⛔ Token no válido para este tenant" });
+    }
+
+    if (
+      req.tenantSlug &&
+      decoded.tenantSlug &&
+      decoded.tenantSlug !== req.tenantSlug
+    ) {
+      return res.status(403).json({ msg: "⛔ Token no válido para este tenant" });
+    }
+
     // Se guarda el payload en el request para uso posterior
     req.usuario = decoded;
     next();

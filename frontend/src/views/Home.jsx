@@ -210,12 +210,13 @@ function Home() {
       }
 
       // Mostrar notificación temporal solo para otros tipos de cambios
+      const eventName = eventUpdate.data.name || eventUpdate.data.nom_eve || "Sin nombre";
       const message =
         eventUpdate.action === "created"
-          ? `Nuevo evento: ${eventUpdate.data.nom_eve || "Sin nombre"}`
+          ? `Nuevo evento: ${eventName}`
           : eventUpdate.action === "updated"
-          ? `Evento actualizado: ${eventUpdate.data.nom_eve || "Sin nombre"}`
-          : `Evento eliminado: ${eventUpdate.data.nom_eve || "Sin nombre"}`;
+          ? `Evento actualizado: ${eventName}`
+          : `Evento eliminado: ${eventName}`;
 
       // showTemporaryNotification(message, "info"); // Comentado para evitar notificaciones repetidas
     },

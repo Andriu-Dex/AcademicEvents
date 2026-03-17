@@ -7,6 +7,19 @@ import { toast } from "react-toastify"; // Notificaciones tipo toast
 import { CheckCircle, XCircle, MailCheck, MailWarning } from "lucide-react";
 import "./styles/CertificatesRoute.css";
 
+const normalizeCertificateItem = (item) => {
+  const event = item.event || item.evento || {};
+  const status = item.status || item.est_ins || "";
+
+  return {
+    id: item.id || item.id_ins,
+    eventName: event.name || event.nom_eve || "Sin nombre",
+    eventType: event.type || event.tip_eve || "-",
+    status,
+    certSent: Boolean(item.certificate || item.certificado || item.cert_enviado),
+  };
+};
+
 // Componente principal para la ruta de certificados
 const CertificatesRoute = () => {
   // Extrae información del usuario autenticado y token desde el hook de auth
@@ -30,9 +43,13 @@ const CertificatesRoute = () => {
       try {
         // Llamada al backend para obtener inscripciones del usuario
         const res = await axiosInstance.get("/inscripciones/propias");
+        const data = Array.isArray(res.data) ? res.data : res.data?.data || [];
+        const normalizadas = data.map(normalizeCertificateItem);
 
         // Filtra solo las inscripciones que están finalizadas
-        const finalizadas = res.data.filter((i) => i.estado === "FINALIZADA");
+        const finalizadas = normalizadas.filter((i) =>
+          ["APROBADO", "APPROVED", "FINALIZADA", "FINISHED"].includes(i.status)
+        );
         setCertificados(finalizadas); // Guarda en estado
       } catch (error) {
         // Muestra error en consola si falla la solicitud
@@ -51,18 +68,16 @@ const CertificatesRoute = () => {
     obtenerInscripciones();
   }, [usuario]); // Se ejecuta cuando el usuario cambia
   // Función para abrir el certificado PDF en una nueva pestaña
-  const descargar = (id_ins) => {
-    window.open(
-      `http://localhost:3001/api/certificados/${id_ins}`,
-      "_blank"
-    );
+  const descargar = (idInscripcion) => {
+    const baseUrl = axiosInstance.defaults.baseURL || "http://localhost:3000/api";
+    window.open(`${baseUrl}/certificados/${idInscripcion}`, "_blank");
   };
 
   // Función para reenviar certificado por correo
-  const reenviar = async (id_ins) => {
-    setReenviando(id_ins); // Marca el certificado que se está reenviando
+  const reenviar = async (idInscripcion) => {
+    setReenviando(idInscripcion); // Marca el certificado que se está reenviando
     try {      // Solicitud para reenviar el certificado
-      await axiosInstance.get(`/certificados/enviar/${id_ins}`);
+      await axiosInstance.get(`/certificados/enviar/${idInscripcion}`);
       // Muestra notificación de éxito
       toast.success(
         <span className="inline-flex items-center gap-2 text-green-600">
@@ -102,11 +117,11 @@ const CertificatesRoute = () => {
           </thead>
           <tbody>
             {certificados.map((insc) => (
-              <tr key={insc.id_ins}>
-                <td data-label="Evento">{insc.evento.nom_eve}</td>
-                <td data-label="Tipo">{insc.evento.tip_eve}</td>
+              <tr key={insc.id}>
+                <td data-label="Evento">{insc.eventName}</td>
+                <td data-label="Tipo">{insc.eventType}</td>
                 <td data-label="Estado">
-                  {insc.cert_enviado ? (
+                  {insc.certSent ? (
                     <span className="estado enviado">
                       <CheckCircle size={18} /> Enviado
                     </span>
@@ -118,17 +133,17 @@ const CertificatesRoute = () => {
                 </td>
                 <td className="acciones" data-label="Acciones">
                   <button
-                    onClick={() => descargar(insc.id_ins)}
+                    onClick={() => descargar(insc.id)}
                     className="btn-descargar-cr"
                   >
                     Descargar
                   </button>
                   <button
-                    disabled={reenviando === insc.id_ins}
-                    onClick={() => reenviar(insc.id_ins)}
+                    disabled={reenviando === insc.id}
+                    onClick={() => reenviar(insc.id)}
                     className="btn-reenviar-cr"
                   >
-                    {reenviando === insc.id_ins ? "Reenviando..." : "Reenviar"}
+                    {reenviando === insc.id ? "Reenviando..." : "Reenviar"}
                   </button>
                 </td>
               </tr>

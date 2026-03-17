@@ -3,6 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 // Importamos nuestros estilos personalizados después de Bootstrap
 import "./assets/custom-bootstrap.css";
 import "./index.css";
+import "./i18n/config";
 
 // React core
 import React from "react";
@@ -17,7 +18,10 @@ import { AuthProvider } from "./context/AuthContext";
 import { SocketProvider } from "./context/SocketContext";
 
 const tenantSlug =
-  localStorage.getItem("tenantSlug") || import.meta.env.VITE_TENANT_ID || "uta";
+  localStorage.getItem("tenantSlug") ||
+  import.meta.env.VITE_TENANT_SLUG ||
+  import.meta.env.VITE_TENANT_ID ||
+  "uta";
 axios.defaults.headers.common["X-Tenant-ID"] = tenantSlug;
 
 // Montaje de la aplicación con contextos y modo estricto

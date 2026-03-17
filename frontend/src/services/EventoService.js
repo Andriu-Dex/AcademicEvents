@@ -1,38 +1,23 @@
+import axiosInstance from "../api/axiosConfig";
+import { requestWithEndpointFallback } from "../api/endpointFallback";
+
 /**
  * @class EventoService
  * @description Servicio para gestionar eventos, incluyendo eventos destacados
  */
 class EventoService {
-  constructor() {
-    this.baseURL =
-      (import.meta.env.VITE_API_URL || "http://localhost:3000") + "/api";
-  }
-
-  getTenantSlug() {
-    return (
-      localStorage.getItem("tenantSlug") ||
-      import.meta.env.VITE_TENANT_ID ||
-      "uta"
-    );
-  }
-
   /**
    * Obtiene los eventos destacados (máximo 8)
    * @returns {Promise<Array>} Lista de eventos destacados
    */
   async getEventosDestacados() {
     try {
-      const response = await fetch(`${this.baseURL}/eventos-destacados`, {
-        headers: {
-          "X-Tenant-ID": this.getTenantSlug(),
-        },
-      });
+      const response = await requestWithEndpointFallback(
+        () => axiosInstance.get("/events/featured"),
+        () => axiosInstance.get("/eventos-destacados")
+      );
 
-      if (!response.ok) {
-        throw new Error(`Error ${response.status}: ${response.statusText}`);
-      }
-
-      const data = await response.json();
+      const data = response.data;
       return data.eventosDestacados || [];
     } catch (error) {
       console.error("Error al obtener eventos destacados:", error);
@@ -53,38 +38,14 @@ class EventoService {
       if (!token) {
         throw new Error("No se encontró token de autenticación");
       }
-
-      const url = `${this.baseURL}/eventos/${idEvento}/destacado`;
       const requestBody = { eve_des: esDestacado };
 
-      const response = await fetch(url, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Tenant-ID": this.getTenantSlug(),
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(requestBody),
-      });
+      const response = await requestWithEndpointFallback(
+        () => axiosInstance.patch(`/events/${idEvento}/featured`, requestBody),
+        () => axiosInstance.patch(`/eventos/${idEvento}/destacado`, requestBody)
+      );
 
-      if (!response.ok) {
-        const responseText = await response.text();
-
-        let errorData;
-        try {
-          errorData = JSON.parse(responseText);
-        } catch (parseError) {
-          throw new Error(
-            `Error ${response.status}: Respuesta no JSON - ${responseText}`
-          );
-        }
-
-        throw new Error(
-          errorData.msg || `Error ${response.status}: ${response.statusText}`
-        );
-      }
-
-      const result = await response.json();
+      const result = response.data;
       return result;
     } catch (error) {
       throw error;
@@ -103,18 +64,12 @@ class EventoService {
         throw new Error("No se encontró token de autenticación");
       }
 
-      const response = await fetch(`${this.baseURL}/eventos`, {
-        headers: {
-          "X-Tenant-ID": this.getTenantSlug(),
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await requestWithEndpointFallback(
+        () => axiosInstance.get("/events"),
+        () => axiosInstance.get("/eventos")
+      );
 
-      if (!response.ok) {
-        throw new Error(`Error ${response.status}: ${response.statusText}`);
-      }
-
-      const data = await response.json();
+      const data = response.data;
       return data.eventos || [];
     } catch (error) {
       console.error("Error al obtener eventos para admin:", error);

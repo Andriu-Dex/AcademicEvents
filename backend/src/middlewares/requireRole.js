@@ -15,8 +15,10 @@ const requireRole = (roles) => {
       return res.status(401).json({ error: "No autenticado" });
     }
 
+    const userRole = req.usuario.role || req.usuario.rol_usu;
+
     // Verificar si el rol del usuario está en la lista de roles permitidos
-    if (!roles.includes(req.usuario.rol_usu)) {
+    if (!roles.includes(userRole)) {
       return res.status(403).json({
         error: "No autorizado",
         mensaje:

@@ -94,19 +94,34 @@ const Navbar = () => {
    * @returns {string} Clase CSS para marcar el enlace como activo
    */
   const isActive = (path) => {
+    const routeAliases = {
+      "/register": ["/registro"],
+      "/public-events": ["/eventos-publicos"],
+      "/events": ["/eventos"],
+      "/enrollments": ["/inscripciones"],
+      "/profile": ["/perfil"],
+      "/admin/events": ["/admin/eventos"],
+      "/admin/careers": ["/admin/carreras"],
+      "/admin/settings": ["/admin/configuracion"],
+      "/admin/admins": ["/admin/gestion-admins"],
+      "/admin/enrollments": ["/admin/inscripciones"],
+    };
+
+    const candidates = [path, ...(routeAliases[path] || [])];
+
     // Para rutas exactas
     const exactPaths = ["/admin", "/home"];
     if (exactPaths.includes(path)) {
-      return location.pathname === path ? "nav-link-active" : "";
+      return candidates.includes(location.pathname) ? "nav-link-active" : "";
     }
 
-    // Para /admin/eventos y /eventos, activo para todas las rutas que empiecen con esto
-    if (path === "/admin/eventos" || path === "/eventos") {
-      return location.pathname.startsWith(path) ? "nav-link-active" : "";
-    }
-
-    // Para el resto de rutas
-    return location.pathname.startsWith(path) ? "nav-link-active" : "";
+    return candidates.some(
+      (candidatePath) =>
+        location.pathname === candidatePath ||
+        location.pathname.startsWith(`${candidatePath}/`)
+    )
+      ? "nav-link-active"
+      : "";
   };
 
   /**
@@ -191,8 +206,8 @@ const Navbar = () => {
               <span>Inicio</span>
             </Link>
             <Link
-              to="/eventos-publicos"
-              className={`nav-link-item ${isActive("/eventos-publicos")}`}
+              to="/public-events"
+              className={`nav-link-item ${isActive("/public-events")}`}
             >
               <span className="nav-link-icon">
                 <Calendar size={18} />
@@ -205,7 +220,7 @@ const Navbar = () => {
           <Link to="/login" className="navbar-auth-btn login-btn">
             Iniciar sesión
           </Link>
-          <Link to="/registro" className="navbar-auth-btn register-btn">
+          <Link to="/register" className="navbar-auth-btn register-btn">
             Registrarse
           </Link>
         </div>
@@ -224,10 +239,8 @@ const Navbar = () => {
             {showHamburgerMenu && (
               <div className="hamburger-menu">
                 <Link
-                  to="/admin/configuracion"
-                  className={`hamburger-menu-item ${isActive(
-                    "/admin/configuracion"
-                  )}`}
+                  to="/admin/settings"
+                  className={`hamburger-menu-item ${isActive("/admin/settings")}`}
                   onClick={toggleHamburgerMenu}
                 >
                   <span className="hamburger-menu-icon">
@@ -236,10 +249,8 @@ const Navbar = () => {
                   <span>MVA</span>
                 </Link>
                 <Link
-                  to="/admin/gestion-admins"
-                  className={`hamburger-menu-item ${isActive(
-                    "/admin/gestion-admins"
-                  )}`}
+                  to="/admin/admins"
+                  className={`hamburger-menu-item ${isActive("/admin/admins")}`}
                   onClick={toggleHamburgerMenu}
                 >
                   <span className="hamburger-menu-icon">
@@ -271,8 +282,8 @@ const Navbar = () => {
                 <span>Inicio</span>
               </Link>{" "}
               <Link
-                to="/eventos"
-                className={`nav-link-item ${isActive("/eventos")}`}
+                to="/events"
+                className={`nav-link-item ${isActive("/events")}`}
               >
                 <span className="nav-link-icon">
                   <Calendar size={18} />
@@ -280,8 +291,8 @@ const Navbar = () => {
                 <span>Eventos</span>
               </Link>
               <Link
-                to="/inscripciones"
-                className={`nav-link-item ${isActive("/inscripciones")}`}
+                to="/enrollments"
+                className={`nav-link-item ${isActive("/enrollments")}`}
               >
                 <span className="nav-link-icon">
                   <ClipboardList size={18} />
@@ -304,8 +315,8 @@ const Navbar = () => {
                 <span>Dashboard</span>
               </Link>
               <Link
-                to="/admin/eventos"
-                className={`nav-link-item ${isActive("/admin/eventos")}`}
+                to="/admin/events"
+                className={`nav-link-item ${isActive("/admin/events")}`}
               >
                 {" "}
                 <span className="nav-link-icon">
@@ -314,8 +325,8 @@ const Navbar = () => {
                 <span>Gestionar eventos</span>
               </Link>
               <Link
-                to="/admin/carreras"
-                className={`nav-link-item ${isActive("/admin/carreras")}`}
+                to="/admin/careers"
+                className={`nav-link-item ${isActive("/admin/careers")}`}
               >
                 <span className="nav-link-icon">
                   <GraduationCap size={18} />
@@ -323,8 +334,8 @@ const Navbar = () => {
                 <span>Gestionar carreras</span>
               </Link>
               <Link
-                to="/admin/inscripciones"
-                className={`nav-link-item ${isActive("/admin/inscripciones")}`}
+                to="/admin/enrollments"
+                className={`nav-link-item ${isActive("/admin/enrollments")}`}
               >
                 <span className="nav-link-icon">
                   <CheckSquare size={18} />
@@ -354,7 +365,7 @@ const Navbar = () => {
         </div>
         {showProfileMenu && (
           <div className="profile-dropdown">
-            <Link to="/perfil" className="profile-menu-item">
+            <Link to="/profile" className="profile-menu-item">
               <User size={16} />
               <span>Mi Perfil</span>
             </Link>

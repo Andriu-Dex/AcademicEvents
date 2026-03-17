@@ -66,7 +66,7 @@ const ReporteInscripciones = () => {
 
         // Cargar estadísticas generales
         const resEstadisticas = await axiosInstance.get(
-          `/admin/reportes-inscripciones/estadisticas`,
+          `/admin/reports/enrollments/statistics`,
           {
             params: {
               fechaInicio: fechaInicioStr,
@@ -79,7 +79,7 @@ const ReporteInscripciones = () => {
 
         // Cargar tendencias por período
         const resTendencias = await axiosInstance.get(
-          `/admin/reportes-inscripciones/tendencias`,
+          `/admin/reports/enrollments/trends`,
           {
             params: { fechaInicio: fechaInicioStr, fechaFin: fechaFinStr },
           }
@@ -88,7 +88,7 @@ const ReporteInscripciones = () => {
 
         // Cargar análisis de validaciones
         const resValidaciones = await axiosInstance.get(
-          `/admin/reportes-inscripciones/validaciones`,
+          `/admin/reports/enrollments/validations`,
           {
             params: { fechaInicio: fechaInicioStr, fechaFin: fechaFinStr },
           }
@@ -120,7 +120,7 @@ const ReporteInscripciones = () => {
       const fechaFinStr = formatDateForReports(fechaFin);
 
       const res = await axiosInstance.post(
-        `/admin/reportes-inscripciones/pdf`,
+        `/admin/reports/enrollments/pdf`,
         {
           fechaInicio: fechaInicioStr,
           fechaFin: fechaFinStr,

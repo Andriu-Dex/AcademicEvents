@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
 import axiosInstance from "../../api/axiosConfig";
+import { requestWithEndpointFallback } from "../../api/endpointFallback";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { formatUTCForLocalDisplay } from "../../utils/dateUtils";
@@ -252,7 +253,7 @@ const AdminEvents = () => {
     goToPage,
     hasNextPage,
     hasPrevPage,
-  } = usePagination("/admin/eventos", 15);
+  } = usePagination("/admin/events", 15);
 
   // Fecha actual para calcular estados de eventos (useMemo para evitar recreación en cada render)
   const fechaActual = useMemo(() => new Date(), []);
@@ -334,7 +335,10 @@ const AdminEvents = () => {
     if (!window.confirm("¿Estás seguro de que deseas eliminar este evento?"))
       return;
     try {
-      await axiosInstance.delete(`/eventos/${eventoId}`);
+      await requestWithEndpointFallback(
+        () => axiosInstance.delete(`/events/${eventoId}`),
+        () => axiosInstance.delete(`/eventos/${eventoId}`)
+      );
       toast.success("Evento eliminado correctamente");
       cargarEventosConFiltros(); // Recargar eventos con paginación
     } catch (error) {
@@ -458,12 +462,12 @@ const AdminEvents = () => {
   };
 
   const handleCrearEvento = () => {
-    navigate("/admin/eventos/crear");
+    navigate("/admin/events/create");
   };
 
   const handleEditEvent = (eventoId) => {
     // Navegar a la página de edición
-    navigate(`/admin/eventos/editar/${eventoId}`);
+    navigate(`/admin/events/edit/${eventoId}`);
   };
 
   // Función para registrar evento editado (se llamará desde la página de edición)

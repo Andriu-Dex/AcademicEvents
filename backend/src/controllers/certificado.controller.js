@@ -9,6 +9,7 @@ const {
   generarCodigoValidacion,
   generarHTMLCertificado, // 👈 Agregamos esta función
 } = require("../utils/certificado.utils");
+const { withTenantWhere } = require("../utils/tenantScope");
 
 // Crear directorio para almacenar los certificados si no existe
 const certificadosDir = path.join(__dirname, "../../uploads/certificados");
@@ -51,8 +52,8 @@ const generarCertificado = async (req, res) => {
     const { id } = req.params;
 
     // Verificar si ya existe un certificado para esta inscripción
-    let certificadoExistente = await prisma.certificate.findUnique({
-      where: { registrationId: id },
+    let certificadoExistente = await prisma.certificate.findFirst({
+      where: withTenantWhere(req.tenantId, { registrationId: id }),
     }); // Si ya existe un certificado, devolvemos la URL
     if (certificadoExistente) {
       // Enviamos el archivo al cliente
@@ -74,8 +75,8 @@ const generarCertificado = async (req, res) => {
         console.log("🔄 Archivo no encontrado, regenerando certificado...");
 
         // 🛠 Regenerar si el archivo fue eliminado
-        const inscripcion = await prisma.registration.findUnique({
-          where: { id: id },
+        const inscripcion = await prisma.registration.findFirst({
+          where: withTenantWhere(req.tenantId, { id: id }),
           include: {
             account: {
               include: {
@@ -125,8 +126,8 @@ const generarCertificado = async (req, res) => {
         // Guardar el PDF en disco
         fs.writeFileSync(rutaArchivo, pdfBuffer);
 
-        await prisma.certificate.update({
-          where: { registrationId: id },
+        await prisma.certificate.updateMany({
+          where: withTenantWhere(req.tenantId, { registrationId: id }),
           data: {
             fileUrl: rutaArchivo,
             type: tipoCertificadoDb,
@@ -147,8 +148,8 @@ const generarCertificado = async (req, res) => {
     }
 
     // Si no existe, buscamos la información necesaria
-    const inscripcion = await prisma.registration.findUnique({
-      where: { id: id },
+    const inscripcion = await prisma.registration.findFirst({
+      where: withTenantWhere(req.tenantId, { id: id }),
       include: {
         account: {
           include: {
@@ -264,8 +265,8 @@ const enviarCertificadoPorCorreo = async (req, res) => {
     const { id } = req.params;
 
     // Verificar si ya existe un certificado
-    let certificado = await prisma.certificate.findUnique({
-      where: { registrationId: id },
+    let certificado = await prisma.certificate.findFirst({
+      where: withTenantWhere(req.tenantId, { registrationId: id }),
     });
 
     // Si no existe, primero lo generamos
@@ -275,8 +276,8 @@ const enviarCertificadoPorCorreo = async (req, res) => {
     }
 
     // Obtener datos de la inscripción para el correo
-    const inscripcion = await prisma.registration.findUnique({
-      where: { id: id },
+    const inscripcion = await prisma.registration.findFirst({
+      where: withTenantWhere(req.tenantId, { id: id }),
       include: {
         account: {
           include: {
@@ -303,8 +304,8 @@ const enviarCertificadoPorCorreo = async (req, res) => {
 
       if (enviado) {
         // Actualizar estado en la base de datos
-        await prisma.registration.update({
-          where: { id: id },
+        await prisma.registration.updateMany({
+          where: withTenantWhere(req.tenantId, { id: id }),
           data: { userApprovedCertificate: true },
         });
 
@@ -341,7 +342,7 @@ const validarCertificado = async (req, res) => {
     const { codigo } = req.params;
 
     const certificado = await prisma.certificate.findFirst({
-      where: { validationCode: codigo },
+      where: withTenantWhere(req.tenantId, { validationCode: codigo }),
       include: {
         registration: {
           include: {
@@ -410,8 +411,8 @@ const previsualizarCertificado = async (req, res) => {
     const { id } = req.params;
 
     // Buscar la inscripción
-    const inscripcion = await prisma.registration.findUnique({
-      where: { id: id },
+    const inscripcion = await prisma.registration.findFirst({
+      where: withTenantWhere(req.tenantId, { id: id }),
       include: {
         account: {
           include: {

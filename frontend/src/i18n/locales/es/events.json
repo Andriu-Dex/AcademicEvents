@@ -1,0 +1,25 @@
+{
+  "list": {
+    "title": "Eventos Disponibles",
+    "featured": "Destacados",
+    "all": "Todos los Eventos",
+    "noEvents": "No hay eventos disponibles"
+  },
+  "details": {
+    "description": "Descripcion",
+    "date": "Fecha",
+    "duration": "Duracion",
+    "modality": "Modalidad",
+    "price": "Precio",
+    "availableSpots": "Cupos Disponibles",
+    "register": "Inscribirme"
+  },
+  "create": {
+    "title": "Crear Evento",
+    "name": "Nombre del Evento",
+    "type": "Tipo de Evento",
+    "modality": "Modalidad",
+    "startDate": "Fecha de Inicio",
+    "endDate": "Fecha de Fin"
+  }
+}

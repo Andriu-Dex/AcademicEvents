@@ -39,7 +39,7 @@ const AdminDashboard = () => {
     goToPage,
     hasNextPage,
     hasPrevPage,
-  } = usePagination("/admin/reportes-evento-paginados", 10);
+  } = usePagination("/admin/reports/events-paginated", 10);
 
   // Cargar eventos al montar el componente
   useEffect(() => {
@@ -63,7 +63,7 @@ const AdminDashboard = () => {
         <div className="reportes-cards">
           <div
             className="reporte-card"
-            onClick={() => navigate("/admin/reportes/carrera")}
+            onClick={() => navigate("/admin/reports/career")}
           >
             <div className="reporte-icon">
               <GraduationCap size={32} />
@@ -73,7 +73,7 @@ const AdminDashboard = () => {
           </div>
           <div
             className="reporte-card"
-            onClick={() => navigate("/admin/reportes/inscripciones")}
+            onClick={() => navigate("/admin/reports/enrollments")}
           >
             <div className="reporte-icon">
               <ClipboardList size={32} />
@@ -83,7 +83,7 @@ const AdminDashboard = () => {
           </div>
           <div
             className="reporte-card"
-            onClick={() => navigate("/admin/reportes/asistencia")}
+            onClick={() => navigate("/admin/reports/attendance")}
           >
             <div className="reporte-icon">
               <CheckSquare size={32} />
@@ -93,7 +93,7 @@ const AdminDashboard = () => {
           </div>
           <div
             className="reporte-card"
-            onClick={() => navigate("/admin/reportes/certificados")}
+            onClick={() => navigate("/admin/reports/certificates")}
           >
             <div className="reporte-icon">
               <Award size={32} />
@@ -103,7 +103,7 @@ const AdminDashboard = () => {
           </div>
           <div
             className="reporte-card"
-            onClick={() => navigate("/admin/reportes/ingresos")}
+            onClick={() => navigate("/admin/reports/revenue")}
           >
             <div className="reporte-icon">
               <DollarSign size={32} />
@@ -113,7 +113,7 @@ const AdminDashboard = () => {
           </div>
           <div
             className="reporte-card"
-            onClick={() => navigate("/admin/reportes-mes")}
+            onClick={() => navigate("/admin/reports/month")}
           >
             <div className="reporte-icon">
               <CalendarDays size={32} />
@@ -139,7 +139,7 @@ const AdminDashboard = () => {
                     className="evento-card-ad"
                     key={`${evento.id_eve}-${index}`}
                     onClick={() =>
-                      navigate(`/admin/reportes-evento/${evento.id_eve}`)
+                      navigate(`/admin/reports/event/${evento.id_eve}`)
                     }
                   >
                     <img

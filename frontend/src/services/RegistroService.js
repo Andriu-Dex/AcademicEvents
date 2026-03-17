@@ -1,4 +1,5 @@
 import axiosInstance from "../api/axiosConfig";
+import { requestWithEndpointFallback } from "../api/endpointFallback";
 
 /**
  * Clase para gestionar las operaciones de registro de usuarios
@@ -24,7 +25,10 @@ class RegistroService {
    */
   async registrarUsuario(datos) {
     try {
-      const response = await axiosInstance.post("/registro", datos);
+      const response = await requestWithEndpointFallback(
+        () => axiosInstance.post("/auth/register", datos),
+        () => axiosInstance.post("/registro", datos)
+      );
 
       // Verificar si la respuesta indica que se requiere verificación de correo
       if (response.data.requireVerification) {

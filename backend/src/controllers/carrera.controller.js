@@ -1,12 +1,14 @@
 // Importamos la instancia de Prisma desde el archivo de configuración de la base de datos
 const { prisma } = require("../config/db");
 const socketService = require("../services/socket.service");
+const { createTenantScoped } = require("../utils/tenantScope");
 
 // =====================
 // Crear nueva carrera
 // =====================
 const crearCarrera = async (req, res) => {
   try {
+    const scoped = createTenantScoped(prisma, req.tenantId);
     const {
       nom_car,
       des_car,
@@ -47,7 +49,7 @@ const crearCarrera = async (req, res) => {
         .json({ msg: "El ID de la facultad es obligatorio" });
     }
 
-    const carreraExistente = await prisma.career.findFirst({
+    const carreraExistente = await scoped.findFirst("career", {
       where: { name: nom_car },
     });
 
@@ -55,7 +57,7 @@ const crearCarrera = async (req, res) => {
       return res.status(400).json({ msg: "La carrera ya existe" });
     }
 
-    const facultadExistente = await prisma.faculty.findUnique({
+    const facultadExistente = await scoped.findFirst("faculty", {
       where: { id: id_fac_per },
     });
 
@@ -65,7 +67,7 @@ const crearCarrera = async (req, res) => {
 
     // Verificar si existe el coordinador, si se proporcionó ID
     if (id_coo_per) {
-      const coordinadorExistente = await prisma.coordinator.findUnique({
+      const coordinadorExistente = await scoped.findFirst("coordinator", {
         where: { id: id_coo_per },
       });
 
@@ -74,7 +76,7 @@ const crearCarrera = async (req, res) => {
       }
     }
 
-    const nuevaCarrera = await prisma.career.create({
+    const nuevaCarrera = await scoped.create("career", {
       data: {
         name: nom_car,
         description: des_car,
@@ -103,8 +105,9 @@ const crearCarrera = async (req, res) => {
 // ==============================
 const obtenerCarreras = async (req, res) => {
   try {
+    const scoped = createTenantScoped(prisma, req.tenantId);
     // Consultamos todas las carreras en la base de datos con relaciones
-    const carreras = await prisma.career.findMany({
+    const carreras = await scoped.findMany("career", {
       where: { isActive: true },
       orderBy: { name: "asc" },
       include: {
@@ -155,6 +158,7 @@ const obtenerCarreras = async (req, res) => {
 // =======================
 const actualizarCarrera = async (req, res) => {
   try {
+    const scoped = createTenantScoped(prisma, req.tenantId);
     const id = req.params.id;
     const {
       nom_car,
@@ -192,7 +196,7 @@ const actualizarCarrera = async (req, res) => {
     }
 
     // Verificar que la carrera existe
-    const carreraExistente = await prisma.career.findUnique({
+    const carreraExistente = await scoped.findFirst("career", {
       where: { id },
     });
 
@@ -202,7 +206,7 @@ const actualizarCarrera = async (req, res) => {
 
     // Verificar si el nombre actualizado ya existe en otra carrera
     if (nom_car !== carreraExistente.name) {
-      const carreraConMismoNombre = await prisma.career.findFirst({
+      const carreraConMismoNombre = await scoped.findFirst("career", {
         where: {
           name: nom_car,
           id: { not: id }, // Excluir la carrera actual de la búsqueda
@@ -219,7 +223,7 @@ const actualizarCarrera = async (req, res) => {
 
     // Verificar facultad si se proporcionó
     if (id_fac_per) {
-      const facultadExistente = await prisma.faculty.findUnique({
+      const facultadExistente = await scoped.findFirst("faculty", {
         where: { id: id_fac_per },
       });
 
@@ -230,7 +234,7 @@ const actualizarCarrera = async (req, res) => {
 
     // Verificar coordinador si se proporcionó
     if (id_coo_per) {
-      const coordinadorExistente = await prisma.coordinator.findUnique({
+      const coordinadorExistente = await scoped.findFirst("coordinator", {
         where: { id: id_coo_per },
       });
 
@@ -255,9 +259,13 @@ const actualizarCarrera = async (req, res) => {
     }
 
     // Actualizar la carrera
-    const actualizada = await prisma.career.update({
+    await scoped.updateMany("career", {
       where: { id },
       data: datosActualizacion,
+    });
+
+    const actualizada = await scoped.findFirst("career", {
+      where: { id },
     });
 
     // 🔌 Notificar a todos los clientes sobre la carrera actualizada
@@ -278,11 +286,12 @@ const actualizarCarrera = async (req, res) => {
 // ======================
 const eliminarCarrera = async (req, res) => {
   try {
+    const scoped = createTenantScoped(prisma, req.tenantId);
     // Obtenemos el ID de la carrera a desactivar desde los parámetros
     const { id } = req.params;
 
     // Verificamos que la carrera exista y esté activa
-    const carrera = await prisma.career.findUnique({
+    const carrera = await scoped.findFirst("career", {
       where: { id },
     });
 
@@ -295,9 +304,13 @@ const eliminarCarrera = async (req, res) => {
     }
 
     // Marcamos la carrera como inactiva en lugar de eliminarla
-    const carreraDesactivada = await prisma.career.update({
+    await scoped.updateMany("career", {
       where: { id },
       data: { isActive: false },
+    });
+
+    const carreraDesactivada = await scoped.findFirst("career", {
+      where: { id },
     });
 
     // 🔌 Notificar a todos los clientes sobre la carrera eliminada/desactivada
@@ -319,11 +332,12 @@ const eliminarCarrera = async (req, res) => {
 // ======================
 const activarCarrera = async (req, res) => {
   try {
+    const scoped = createTenantScoped(prisma, req.tenantId);
     // Obtenemos el ID de la carrera a activar desde los parámetros
     const { id } = req.params;
 
     // Verificamos que la carrera exista y esté inactiva
-    const carrera = await prisma.career.findUnique({
+    const carrera = await scoped.findFirst("career", {
       where: { id },
     });
 
@@ -336,9 +350,13 @@ const activarCarrera = async (req, res) => {
     }
 
     // Marcamos la carrera como activa
-    const carreraActivada = await prisma.career.update({
+    await scoped.updateMany("career", {
       where: { id },
       data: { isActive: true },
+    });
+
+    const carreraActivada = await scoped.findFirst("career", {
+      where: { id },
     });
 
     // 🔌 Notificar a todos los clientes sobre la carrera activada
@@ -360,11 +378,12 @@ const activarCarrera = async (req, res) => {
 // ======================
 const eliminarCarreraPermanentemente = async (req, res) => {
   try {
+    const scoped = createTenantScoped(prisma, req.tenantId);
     // Obtenemos el ID de la carrera a eliminar desde los parámetros
     const { id } = req.params;
 
     // Verificamos que la carrera exista
-    const carrera = await prisma.career.findUnique({
+    const carrera = await scoped.findFirst("career", {
       where: { id },
     });
 
@@ -373,11 +392,11 @@ const eliminarCarreraPermanentemente = async (req, res) => {
     }
 
     // Verificar si hay eventos o usuarios asociados a esta carrera
-    const eventosAsociados = await prisma.eventCareer.findMany({
+    const eventosAsociados = await scoped.findMany("eventCareer", {
       where: { careerId: id },
     });
 
-    const usuariosAsociados = await prisma.user.findMany({
+    const usuariosAsociados = await scoped.findMany("user", {
       where: { careerId: id },
     });
 
@@ -390,7 +409,7 @@ const eliminarCarreraPermanentemente = async (req, res) => {
     }
 
     // Eliminamos permanentemente la carrera
-    await prisma.career.delete({
+    await scoped.deleteMany("career", {
       where: { id },
     });
 
@@ -415,8 +434,10 @@ const eliminarCarreraPermanentemente = async (req, res) => {
 // ==============================
 const obtenerTodasCarreras = async (req, res) => {
   try {
+    const scoped = createTenantScoped(prisma, req.tenantId);
     // Consultamos todas las carreras en la base de datos con relaciones
-    const carreras = await prisma.career.findMany({
+    const carreras = await scoped.findMany("career", {
+      where: {},
       orderBy: { name: "asc" },
       include: {
         coordinator: true,

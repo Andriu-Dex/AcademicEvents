@@ -563,10 +563,13 @@ const generarCertificadoPDF = async (datos) => {
 // Verificar si puede generar certificado
 // ============================
 const cumpleRequisitosCertificado = (inscripcion, evento, inscripcionCurso) => {
-  if (inscripcion.est_ins !== "APROBADO") return false;
+  const estadoInscripcion = inscripcion.status || inscripcion.est_ins;
+  const estadoAprobado = estadoInscripcion === "APPROVED" || estadoInscripcion === "APROBADO";
+  if (!estadoAprobado) return false;
 
-  const porcentajeAsistencia = inscripcion.por_asi_fin_usu || 0;
-  const porcentajeMinimo = evento.por_min_asi_eve || 80;
+  const porcentajeAsistencia =
+    inscripcion.finalAttendancePercent ?? inscripcion.por_asi_fin_usu ?? 0;
+  const porcentajeMinimo = evento.minAttendancePercent ?? evento.por_min_asi_eve ?? 80;
 
   // Verificar asistencia mínima
   if (porcentajeAsistencia < porcentajeMinimo) {
@@ -574,10 +577,12 @@ const cumpleRequisitosCertificado = (inscripcion, evento, inscripcionCurso) => {
   }
 
   // Si es un curso, verificar nota mínima
-  if (evento.tip_eve === "CURSO") {
+  const tipoEvento = evento.type || evento.tip_eve;
+  if (tipoEvento === "COURSE" || tipoEvento === "CURSO") {
     // Buscar información del curso
-    const notaFinal = inscripcionCurso?.not_fin_usu || 0;
-    const notaMinima = evento.eventos_curso?.not_min_cur || 7;
+    const notaFinal = inscripcionCurso?.finalGrade ?? inscripcionCurso?.not_fin_usu ?? 0;
+    const notaMinima =
+      evento.eventCourse?.minPassingGrade ?? evento.eventos_curso?.not_min_cur ?? 7;
 
     return notaFinal >= notaMinima;
   }
@@ -588,7 +593,10 @@ const cumpleRequisitosCertificado = (inscripcion, evento, inscripcionCurso) => {
 
 // Determinar el tipo de certificado (PARTICIPACION o APROBACION)
 const determinarTipoCertificado = (evento) => {
-  return evento.tip_eve === "CURSO" ? "APROBACION" : "PARTICIPACION";
+  const tipoEvento = evento.type || evento.tip_eve;
+  return tipoEvento === "COURSE" || tipoEvento === "CURSO"
+    ? "APROBACION"
+    : "PARTICIPACION";
 };
 
 module.exports = {

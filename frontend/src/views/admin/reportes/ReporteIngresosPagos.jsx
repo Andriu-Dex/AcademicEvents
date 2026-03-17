@@ -93,35 +93,35 @@ const ReporteIngresosPagos = () => {
 
       // Cargar métricas generales
       const resMetricas = await axiosInstance.get(
-        "/admin/reportes-ingresos/metricas-generales",
+        "/admin/reports/revenue/general-metrics",
         { params }
       );
       setMetricsGenerales(resMetricas.data);
 
       // Cargar ingresos por tipo de evento
       const resIngresosTipo = await axiosInstance.get(
-        "/admin/reportes-ingresos/ingresos-por-tipo",
+        "/admin/reports/revenue/revenue-by-type",
         { params }
       );
       setIngresosPorTipo(resIngresosTipo.data);
 
       // Cargar eventos más rentables
       const resEventosRentables = await axiosInstance.get(
-        "/admin/reportes-ingresos/eventos-rentables",
+        "/admin/reports/revenue/profitable-events",
         { params }
       );
       setEventosRentables(resEventosRentables.data);
 
       // Cargar tendencias por período
       const resTendencias = await axiosInstance.get(
-        "/admin/reportes-ingresos/tendencias-periodo",
+        "/admin/reports/revenue/period-trends",
         { params }
       );
       setTendenciasPeriodo(resTendencias.data);
 
       // Cargar comprobantes rechazados
       const resComprobantes = await axiosInstance.get(
-        "/admin/reportes-ingresos/comprobantes-rechazados",
+        "/admin/reports/revenue/rejected-receipts",
         { params }
       );
       setComprobantesRechazados(resComprobantes.data);

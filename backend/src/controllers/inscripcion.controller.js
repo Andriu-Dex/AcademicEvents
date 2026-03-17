@@ -7,24 +7,48 @@ const {
   sincronizarCuposDisponibles,
   actualizarEstadoYSincronizarCupos,
 } = require("../utils/cupo.utils");
+const { withTenantWhere } = require("../utils/tenantScope");
+
+const LEGACY_REG_STATUS_TO_DB = {
+  PENDIENTE: "PENDING",
+  ACEPTADA: "ACCEPTED",
+  RECHAZADA: "REJECTED",
+  APROBADO: "APPROVED",
+  REPROBADO_NOTA: "FAILED_GRADE",
+  REPROBADO_ASISTENCIA: "FAILED_ATTENDANCE",
+  REPROBADO_TOTAL: "FAILED_TOTAL",
+};
+
+const FINAL_REG_STATUS_DB = [
+  "APPROVED",
+  "FAILED_GRADE",
+  "FAILED_ATTENDANCE",
+  "FAILED_TOTAL",
+];
+
+const normalizeRegistrationStatusToDb = (status) =>
+  LEGACY_REG_STATUS_TO_DB[status] || status;
+
+const isCourseEventType = (type) => type === "COURSE" || type === "CURSO";
 
 /**
  * Función auxiliar para guardar o actualizar una observación
  * @param {string} idInscripcion - ID de la inscripción
  * @param {string} observacion - Texto de la observación
  * @param {string} idAdmin - ID del administrador que crea la observación
+ * @param {string} tenantId - ID del tenant actual
  */
-async function guardarObservacion(idInscripcion, observacion, idAdmin) {
+async function guardarObservacion(idInscripcion, observacion, idAdmin, tenantId) {
   // Verificar si ya existe una observación para esta inscripción
-  const observacionExistente = await prisma.registrationObservation.findUnique({
-    where: { registrationId: idInscripcion },
+  const observacionExistente = await prisma.registrationObservation.findFirst({
+    where: withTenantWhere(tenantId, { registrationId: idInscripcion }),
   });
 
   if (observacionExistente) {
     // Actualizar observación existente
 
-    await prisma.registrationObservation.update({
-      where: { registrationId: idInscripcion },
+    await prisma.registrationObservation.updateMany({
+      where: withTenantWhere(tenantId, { registrationId: idInscripcion }),
       data: {
         observation: observacion,
         createdByAdminId: idAdmin,
@@ -35,6 +59,7 @@ async function guardarObservacion(idInscripcion, observacion, idAdmin) {
 
     await prisma.registrationObservation.create({
       data: {
+        tenantId,
         registrationId: idInscripcion,
         observation: observacion,
         createdByAdminId: idAdmin,
@@ -101,7 +126,9 @@ const crearInscripcion = async (req, res) => {
     // Obtenemos el evento para verificar si tiene costo
     console.log("🔍 [CREAR_INSCRIPCION] Buscando evento:", id_eve);
 
-    const evento = await prisma.event.findUnique({ where: { id: id_eve } });
+    const evento = await prisma.event.findFirst({
+      where: withTenantWhere(req.tenantId, { id: id_eve }),
+    });
     if (!evento) {
       console.log("❌ [CREAR_INSCRIPCION] Evento no encontrado:", id_eve);
       return res.status(404).json({ msg: "Evento no encontrado" });
@@ -164,8 +191,8 @@ const crearInscripcion = async (req, res) => {
     // Verificar que la cuenta existe
     console.log("🔍 [CREAR_INSCRIPCION] Verificando cuenta:", id_cue);
 
-    const cuenta = await prisma.account.findUnique({
-      where: { id: id_cue },
+    const cuenta = await prisma.account.findFirst({
+      where: withTenantWhere(req.tenantId, { id: id_cue }),
       include: { user: true },
     });
     if (!cuenta) {
@@ -180,7 +207,7 @@ const crearInscripcion = async (req, res) => {
     console.log("🔍 [CREAR_INSCRIPCION] Verificando inscripciones previas");
 
     const yaInscrito = await prisma.registration.findFirst({
-      where: { accountId: id_cue, eventId: id_eve },
+      where: withTenantWhere(req.tenantId, { accountId: id_cue, eventId: id_eve }),
     });
 
     console.log(
@@ -193,21 +220,21 @@ const crearInscripcion = async (req, res) => {
     );
 
     // Permitir reinscripción solo si la inscripción anterior fue rechazada
-     if (yaInscrito && yaInscrito.status !== "RECHAZADA") {
+     if (yaInscrito && yaInscrito.status !== "REJECTED") {
       // Mensaje específico si el usuario ya aprobó el evento
-       if (yaInscrito.status === "APROBADO") {
+       if (yaInscrito.status === "APPROVED") {
         return res.status(400).json({
           msg: "Ya has aprobado este evento, no puedes inscribirte nuevamente",
         });
       }
       return res.status(400).json({ msg: "Ya estás inscrito en este evento" });
     } // Si la inscripción estaba RECHAZADA, la actualizamos en lugar de crear una nueva
-     if (yaInscrito && yaInscrito.status === "RECHAZADA") {
+     if (yaInscrito && yaInscrito.status === "REJECTED") {
       try {
         // Usamos nuestra función centralizada para actualizar el estado
         const resultado = await actualizarEstadoYSincronizarCupos(
            yaInscrito.id,
-          "PENDIENTE",
+          "PENDING",
            { registeredAt: new Date() } // Actualizar fecha de inscripción
         );
 
@@ -236,12 +263,14 @@ const crearInscripcion = async (req, res) => {
         if (carta_motivacion) {
           // Verificar si ya existe una carta
           const cartaExistente = await prisma.motivationLetter.findFirst({
-            where: { registrationId: yaInscrito.id },
+            where: withTenantWhere(req.tenantId, {
+              registrationId: yaInscrito.id,
+            }),
           });
           if (cartaExistente) {
             // Actualizar carta existente
-            await prisma.motivationLetter.update({
-              where: { id: cartaExistente.id },
+            await prisma.motivationLetter.updateMany({
+              where: withTenantWhere(req.tenantId, { id: cartaExistente.id }),
               data: { content: carta_motivacion },
             });
           } else {
@@ -257,8 +286,8 @@ const crearInscripcion = async (req, res) => {
         }
 
         // Obtener datos completos del evento para la notificación
-        const eventoCompleto = await prisma.event.findUnique({
-          where: { id: id_eve },
+        const eventoCompleto = await prisma.event.findFirst({
+          where: withTenantWhere(req.tenantId, { id: id_eve }),
           select: {
             id: true,
             name: true,
@@ -270,8 +299,8 @@ const crearInscripcion = async (req, res) => {
         });
 
         // Obtener datos completos de la inscripción actualizada
-        const inscripcionActualizada = await prisma.registration.findUnique({
-           where: { id: yaInscrito.id },
+          const inscripcionActualizada = await prisma.registration.findFirst({
+            where: withTenantWhere(req.tenantId, { id: yaInscrito.id }),
           include: {
             account: {
               include: {
@@ -373,7 +402,7 @@ const crearInscripcion = async (req, res) => {
             data: {
              accountId: id_cue,
              eventId: id_eve,
-             status: "PENDIENTE",
+             status: "PENDING",
              occupiesSpot: false, // Las inscripciones PENDIENTES no ocupan cupo
              tenantId: req.tenantId,
             },
@@ -463,8 +492,8 @@ const crearInscripcion = async (req, res) => {
           );
           try {
             // Obtener datos completos del evento para la notificación
-            const eventoCompleto = await prisma.event.findUnique({
-              where: { id: id_eve },
+            const eventoCompleto = await prisma.event.findFirst({
+              where: withTenantWhere(req.tenantId, { id: id_eve }),
               select: {
                 id: true,
                 name: true,
@@ -499,7 +528,7 @@ const crearInscripcion = async (req, res) => {
               estado: nuevaInscripcion.status,
               evento: eventoCompleto,
               fechaCreacion: nuevaInscripcion.registeredAt,
-              requiresValidation: nuevaInscripcion.status === "PENDIENTE",
+              requiresValidation: nuevaInscripcion.status === "PENDING",
             });
 
             // Verificar si necesita alerta de capacidad (menos del 20% de cupos)
@@ -517,7 +546,7 @@ const crearInscripcion = async (req, res) => {
             }
 
             // Notificación a administradores si es inscripción pendiente
-            if (nuevaInscripcion.status === "PENDIENTE") {
+            if (nuevaInscripcion.status === "PENDING") {
               console.log(
                 "👨‍💼 [CREAR_INSCRIPCION] Enviando notificación a administradores"
               );
@@ -601,21 +630,34 @@ const validarInscripcion = async (req, res) => {
     console.log("🔑 [VALIDAR] Usuario en request:", req.usuario);
 
     const { id } = req.params;
-    const { est_ins, asistencia, nota_final, observacion } = req.body;
+    const estadoEntrada = req.body.status ?? req.body.est_ins;
+    const asistenciaEntrada =
+      req.body.finalAttendancePercent ??
+      req.body.por_asi_fin_usu ??
+      req.body.asistencia;
+    const notaFinalEntrada = req.body.finalGrade ?? req.body.nota_final;
+    const { observacion } = req.body;
 
     // Declarar resultado al inicio para que esté disponible en todo el scope
     let resultado = null;
 
     console.log("📋 [VALIDAR] Datos recibidos:", {
       id_inscripcion: id,
-      est_ins,
-      asistencia,
-      nota_final,
+      status: estadoEntrada,
+      finalAttendancePercent: asistenciaEntrada,
+      finalGrade: notaFinalEntrada,
       observacion,
     });
 
     // Verificar estados permitidos con el enum
     const estadosPermitidos = [
+      "PENDING",
+      "ACCEPTED",
+      "REJECTED",
+      "APPROVED",
+      "FAILED_GRADE",
+      "FAILED_ATTENDANCE",
+      "FAILED_TOTAL",
       "PENDIENTE",
       "ACEPTADA",
       "RECHAZADA",
@@ -625,14 +667,14 @@ const validarInscripcion = async (req, res) => {
       "REPROBADO_TOTAL",
     ];
 
-    if (!estadosPermitidos.includes(est_ins)) {
-      console.error("Estado inválido:", est_ins);
-      return res.status(400).json({ msg: "Estado inválido: " + est_ins });
+    if (!estadosPermitidos.includes(estadoEntrada)) {
+      console.error("Estado inválido:", estadoEntrada);
+      return res.status(400).json({ msg: "Estado inválido: " + estadoEntrada });
     }
 
     // Obtener la inscripción actual con datos del evento
-    const inscripcion = await prisma.registration.findUnique({
-      where: { id },
+    const inscripcion = await prisma.registration.findFirst({
+      where: withTenantWhere(req.tenantId, { id }),
       include: {
         event: {
           include: {
@@ -646,20 +688,15 @@ const validarInscripcion = async (req, res) => {
       return res.status(404).json({ msg: "Inscripción no encontrada" });
     }
 
-    const estadoNuevo = status;
+    const estadoNuevo = normalizeRegistrationStatusToDb(estadoEntrada);
     const estadoAnterior = inscripcion.status;
     const idEvento = inscripcion.eventId;
 
     // Validación especial: no permitir cambio de APROBADO o REPROBADO a RECHAZADA
-    const estadosFinales = [
-      "APROBADO",
-      "REPROBADO_NOTA",
-      "REPROBADO_ASISTENCIA",
-      "REPROBADO_TOTAL",
-    ];
+    const estadosFinales = FINAL_REG_STATUS_DB;
     if (
       estadosFinales.includes(estadoAnterior) &&
-      estadoNuevo === "RECHAZADA"
+      estadoNuevo === "REJECTED"
     ) {
       return res.status(400).json({
         msg: "No se puede cambiar una inscripción finalizada (APROBADO o REPROBADO) a RECHAZADA.",
@@ -669,7 +706,7 @@ const validarInscripcion = async (req, res) => {
     // Verificación para REPROBADO/APROBADO
     if (
       estadosFinales.includes(estadoAnterior) &&
-      (estadoNuevo === "PENDIENTE" || estadoNuevo === "RECHAZADA")
+      (estadoNuevo === "PENDING" || estadoNuevo === "REJECTED")
     ) {
       console.log(
         `ALERTA: Se intenta cambiar de ${estadoAnterior} a ${estadoNuevo}, lo cual podría afectar los cupos`
@@ -677,16 +714,17 @@ const validarInscripcion = async (req, res) => {
       // Permitimos la operación pero registramos la alerta
     }
 
-    let asistenciaNum = asistencia !== undefined ? Number(asistencia) : -1;
+    let asistenciaNum = asistenciaEntrada !== undefined ? Number(asistenciaEntrada) : -1;
     // Usar null en lugar de -1 para notas no definidas
-    let notaFinalNum = nota_final !== undefined ? Number(nota_final) : null;
+    let notaFinalNum =
+      notaFinalEntrada !== undefined ? Number(notaFinalEntrada) : null;
 
     let nuevoEstado = estadoNuevo; // Usamos el estado enviado si no se especifican asistencia ni nota
 
     // Si no se proporciona asistencia, no se entra en la lógica de validación de asistencia y nota
     if (asistenciaNum !== -1 || notaFinalNum !== null) {
       // Inicializar el nuevo estado como APROBADO (cambiará según validaciones)
-      nuevoEstado = "APROBADO";
+      nuevoEstado = "APPROVED";
 
       // Validación de asistencia
       if (asistenciaNum !== -1) {
@@ -697,12 +735,12 @@ const validarInscripcion = async (req, res) => {
 
         // Si la asistencia es baja, reprobar por asistencia independientemente de la nota
         if (asistenciaNum < asistenciaMinima) {
-          nuevoEstado = "REPROBADO_ASISTENCIA";
+          nuevoEstado = "FAILED_ATTENDANCE";
         }
       }
 
       // Validación de nota final (solo para eventos tipo CURSO)
-      if (inscripcion.event.type === "CURSO" && notaFinalNum !== null) {
+      if (isCourseEventType(inscripcion.event.type) && notaFinalNum !== null) {
         const eventoCurso = await prisma.eventCourse.findUnique({
           where: { eventId: inscripcion.event.id },
         });
@@ -729,10 +767,10 @@ const validarInscripcion = async (req, res) => {
 
         if (notaFinalNum < notaMinima) {
           // Si ya se reprobó por asistencia y ahora por nota, es REPROBADO_TOTAL
-          if (nuevoEstado === "REPROBADO_ASISTENCIA") {
-            nuevoEstado = "REPROBADO_TOTAL";
+          if (nuevoEstado === "FAILED_ATTENDANCE") {
+            nuevoEstado = "FAILED_TOTAL";
           } else {
-            nuevoEstado = "REPROBADO_NOTA";
+            nuevoEstado = "FAILED_GRADE";
           }
         }
         // NOTA: Ya no establecemos APROBADO aquí, porque podría sobreescribir REPROBADO_ASISTENCIA
@@ -740,10 +778,10 @@ const validarInscripcion = async (req, res) => {
     }
 
     if (
-      nuevoEstado === "APROBADO" ||
-      nuevoEstado === "REPROBADO_NOTA" ||
-      nuevoEstado === "REPROBADO_ASISTENCIA" ||
-      nuevoEstado === "REPROBADO_TOTAL"
+      nuevoEstado === "APPROVED" ||
+      nuevoEstado === "FAILED_GRADE" ||
+      nuevoEstado === "FAILED_ATTENDANCE" ||
+      nuevoEstado === "FAILED_TOTAL"
     ) {
       try {
         // Preparar datos adicionales solo si se proporcionan valores válidos
@@ -775,8 +813,8 @@ const validarInscripcion = async (req, res) => {
         }
 
         // 🔌 Notificar al usuario del cambio a estado final (APROBADO/REPROBADO)
-        const inscripcionUsuario = await prisma.registration.findUnique({
-          where: { id },
+        const inscripcionUsuario = await prisma.registration.findFirst({
+          where: withTenantWhere(req.tenantId, { id }),
           select: {
             id: true,
             accountId: true,
@@ -816,7 +854,7 @@ const validarInscripcion = async (req, res) => {
         }
 
         // Actualizar la nota si es un curso
-        if (inscripcion.event.type === "CURSO") {
+        if (isCourseEventType(inscripcion.event.type)) {
           const inscripcionCurso = await prisma.registrationCourse.findUnique({
             where: { registrationId: id },
           });
@@ -838,7 +876,7 @@ const validarInscripcion = async (req, res) => {
 
         // Guardar observación si se proporciona
         if (observacion) {
-          await guardarObservacion(id, observacion, req.usuario.id);
+          await guardarObservacion(id, observacion, req.usuario.id, req.tenantId);
         }
 
         return res.status(200).json({
@@ -852,7 +890,7 @@ const validarInscripcion = async (req, res) => {
 
     // VALIDACIÓN DE CUPOS DISPONIBLES
     // Verificar que hay cupos disponibles antes de aceptar una inscripción
-    if (estadoAnterior === "PENDIENTE" && estadoNuevo === "ACEPTADA") {
+    if (estadoAnterior === "PENDING" && estadoNuevo === "ACCEPTED") {
       if (inscripcion.event.availableSpots <= 0) {
         return res.status(400).json({
           msg: "No se puede aceptar la inscripción: no hay cupos disponibles para este evento",
@@ -913,7 +951,7 @@ const validarInscripcion = async (req, res) => {
     // Guardar observación si se proporciona
     if (observacion) {
       try {
-        await guardarObservacion(id, observacion, req.usuario.id);
+        await guardarObservacion(id, observacion, req.usuario.id, req.tenantId);
       } catch (error) {
         console.error("Error al procesar observación:", error);
         // Continuar con la operación aunque falle la observación
@@ -921,7 +959,7 @@ const validarInscripcion = async (req, res) => {
     }
 
     // Si es un curso, actualizar la nota final en inscripcion_curso
-    if (inscripcion.event.type === "CURSO") {
+    if (isCourseEventType(inscripcion.event.type)) {
       // Buscar si ya existe inscripcion_curso
       const inscripcionCurso = await prisma.registrationCourse.findUnique({
         where: { registrationId: id },
@@ -949,8 +987,8 @@ const validarInscripcion = async (req, res) => {
     // 🔌 Notificar cambios por socket
     try {
       // Obtener los datos actualizados de la inscripción para devolverlos en la respuesta
-      const actualizada = await prisma.registration.findUnique({
-        where: { id },
+      const actualizada = await prisma.registration.findFirst({
+        where: withTenantWhere(req.tenantId, { id }),
       });
 
       // Enviar respuesta al cliente ANTES de las notificaciones
@@ -960,8 +998,8 @@ const validarInscripcion = async (req, res) => {
       });
 
       // Obtener datos completos del evento
-      const eventoCompleto = await prisma.event.findUnique({
-        where: { id: idEvento },
+      const eventoCompleto = await prisma.event.findFirst({
+        where: withTenantWhere(req.tenantId, { id: idEvento }),
         select: {
           id: true,
           name: true,
@@ -973,8 +1011,8 @@ const validarInscripcion = async (req, res) => {
       });
 
       // Obtener ID del usuario propietario de la inscripción
-      const inscripcionConUsuario = await prisma.registration.findUnique({
-        where: { id },
+      const inscripcionConUsuario = await prisma.registration.findFirst({
+        where: withTenantWhere(req.tenantId, { id }),
         select: {
           id: true,
           accountId: true,
@@ -983,8 +1021,8 @@ const validarInscripcion = async (req, res) => {
 
       // Notificar específicamente al usuario propietario de la inscripción
       if (inscripcionConUsuario && inscripcionConUsuario.accountId) {
-        const inscripcionCompleta = await prisma.registration.findUnique({
-          where: { id },
+        const inscripcionCompleta = await prisma.registration.findFirst({
+          where: withTenantWhere(req.tenantId, { id }),
           include: {
             event: true,
             observation: true,
@@ -1108,11 +1146,16 @@ const obtenerInscripcionesPorUsuario = async (req, res) => {
   try {
     const { id } = req.params;
     const inscripciones = await prisma.registration.findMany({
-      where: { id_eve_ins: id },
+      where: withTenantWhere(req.tenantId, { accountId: id }),
       include: {
         account: {
           include: {
             user: true,
+          },
+        },
+        event: {
+          include: {
+            eventCourse: true,
           },
         },
         registrationCourse: true,
@@ -1127,7 +1170,7 @@ const obtenerInscripcionesPorUsuario = async (req, res) => {
         },
         observation: true,
       },
-      orderBy: { fec_ins: "desc" },
+      orderBy: { registeredAt: "desc" },
     }); // Mapear los resultados para tener una estructura más limpia
     const inscripcionesMapeadas = inscripciones.map((inscripcion) => ({
       id: inscripcion.id,
@@ -1193,8 +1236,8 @@ const puedeGenerarCertificado = async (req, res) => {
   try {
     const { id } = req.params; // ID de la inscripción
 
-    const inscripcion = await prisma.registration.findUnique({
-      where: { id },
+    const inscripcion = await prisma.registration.findFirst({
+      where: withTenantWhere(req.tenantId, { id }),
       include: {
         event: true,
         registrationCourse: true,
@@ -1214,11 +1257,11 @@ const puedeGenerarCertificado = async (req, res) => {
       });
     }
 
-    if (inscripcion.status !== "APROBADO") {
+    if (inscripcion.status !== "APPROVED") {
       return res.status(400).json({ msg: "Inscripción no está aprobada" });
     }
 
-    if (inscripcion.event.type === "CURSO") {
+    if (isCourseEventType(inscripcion.event.type)) {
       // Buscar la información de nota mínima del curso
       const eventoCurso = await prisma.eventCourse.findUnique({
         where: { eventId: inscripcion.event.id },
@@ -1289,8 +1332,8 @@ const reenviarComprobante = async (req, res) => {
     }
 
     // Buscar la inscripción
-    const inscripcion = await prisma.registration.findUnique({
-      where: { id },
+    const inscripcion = await prisma.registration.findFirst({
+      where: withTenantWhere(req.tenantId, { id }),
       include: { account: true, event: true },
     });
 
@@ -1306,8 +1349,8 @@ const reenviarComprobante = async (req, res) => {
 
     // Verificar cupos antes de cualquier operación
     console.log("Verificando cupos iniciales del evento...");
-    const cuposIniciales = await prisma.event.findUnique({
-      where: { id: inscripcion.eventId },
+    const cuposIniciales = await prisma.event.findFirst({
+      where: withTenantWhere(req.tenantId, { id: inscripcion.eventId }),
       select: { availableSpots: true, maxCapacity: true, name: true },
     });
     console.log(
@@ -1323,7 +1366,7 @@ const reenviarComprobante = async (req, res) => {
 
     // Verificar si hay cambio de estado que requiere actualización de cupos
     const estadoAnterior = inscripcion.status;
-    const estadoNuevo = "PENDIENTE";
+    const estadoNuevo = "PENDING";
     let actualizacionCupo = 0;
 
     console.log(`Cambio de estado: ${estadoAnterior} → ${estadoNuevo}`);
@@ -1362,7 +1405,7 @@ const reenviarComprobante = async (req, res) => {
       // Utilizamos la función centralizada que maneja todo en una transacción atómica
       const resultado = await actualizarEstadoYSincronizarCupos(
         id,
-        "PENDIENTE" // Siempre cambiamos a PENDIENTE en el reenvío de comprobante
+        "PENDING" // Siempre cambiamos a PENDING en el reenvío de comprobante
       );
 
       console.log(
@@ -1383,15 +1426,15 @@ const reenviarComprobante = async (req, res) => {
       }
 
       // Obtener la inscripción actualizada para devolverla en la respuesta
-      const actualizada = await prisma.registration.findUnique({
-        where: { id },
+      const actualizada = await prisma.registration.findFirst({
+        where: withTenantWhere(req.tenantId, { id }),
       });
       console.log("Transacción completada correctamente");
 
       // Verificar cupos finales para confirmar
       try {
-        const cuposFinales = await prisma.event.findUnique({
-          where: { id: inscripcion.eventId },
+        const cuposFinales = await prisma.event.findFirst({
+          where: withTenantWhere(req.tenantId, { id: inscripcion.eventId }),
           select: { availableSpots: true, maxCapacity: true, name: true },
         });
         console.log(
@@ -1443,8 +1486,8 @@ const obtenerInscripcionesPorEvento = async (req, res) => {
     const { id } = req.params;
 
     // Verificación específica del evento
-    const eventoRaw = await prisma.event.findUnique({
-      where: { id_eve: id },
+    const eventoRaw = await prisma.event.findFirst({
+      where: withTenantWhere(req.tenantId, { id }),
     });
 
     if (eventoRaw) {
@@ -1454,7 +1497,7 @@ const obtenerInscripcionesPorEvento = async (req, res) => {
     }
 
     // Verificar si existe información de curso
-    if (eventoRaw?.type === "CURSO") {
+    if (isCourseEventType(eventoRaw?.type)) {
       const eventoCurso = await prisma.eventCourse.findUnique({
         where: { eventId: id },
       });
@@ -1474,7 +1517,7 @@ const obtenerInscripcionesPorEvento = async (req, res) => {
     }
 
     const inscripciones = await prisma.registration.findMany({
-      where: { eventId: id },
+      where: withTenantWhere(req.tenantId, { eventId: id }),
       include: {
         account: {
           include: {
@@ -1503,8 +1546,8 @@ const obtenerInscripcionesPorEvento = async (req, res) => {
 
     // Verificar directamente los datos del evento
     console.log(`🔍 Verificando datos del evento directamente desde DB...`);
-    const eventoDirecto = await prisma.event.findUnique({
-      where: { id },
+    const eventoDirecto = await prisma.event.findFirst({
+      where: withTenantWhere(req.tenantId, { id }),
       include: {
         eventCourse: true,
       },
@@ -1560,8 +1603,8 @@ const obtenerInscripcionesPorEvento = async (req, res) => {
         Object.keys(primeraInscripcion.event).forEach((key) => {
           console.log(
             `    ${key}: ${
-              primeraInscripcion.evento[key]
-            } (${typeof primeraInscripcion.evento[key]})`
+              primeraInscripcion.event[key]
+            } (${typeof primeraInscripcion.event[key]})`
           );
         });
       }
@@ -1700,13 +1743,14 @@ const normalizeRegistrationStatus = (status) =>
   LEGACY_TO_REG_STATUS[status] || status;
 
 const buildRegistrationWhereCondition = ({
+  tenantId,
   eventId,
   search,
   estado,
   fechaInicio,
   fechaFin,
 }) => {
-  const whereCondition = {};
+  const whereCondition = withTenantWhere(tenantId);
 
   if (eventId) {
     whereCondition.eventId = eventId;
@@ -1836,6 +1880,7 @@ const obtenerInscripcionesPorEventoPaginadas = async (req, res) => {
     } = req.query;
 
     const whereCondition = buildRegistrationWhereCondition({
+      tenantId: req.tenantId,
       eventId: id,
       search,
       estado,
@@ -1933,6 +1978,7 @@ const obtenerInscripcionesPaginadas = async (req, res) => {
     } = req.query;
 
     const whereCondition = buildRegistrationWhereCondition({
+      tenantId: req.tenantId,
       eventId: evento,
       search,
       estado,
@@ -2025,6 +2071,7 @@ const obtenerInscripcionUsuarioEnEvento = async (req, res) => {
     // Buscar la inscripción del usuario en el evento específico
     const inscripcion = await prisma.registration.findFirst({
       where: {
+        tenantId: req.tenantId,
         accountId: id_cue,
         eventId: idEvento,
       },
@@ -2090,6 +2137,7 @@ const obtenerInscripcionesDelUsuarioActual = async (req, res) => {
     // Buscar todas las inscripciones del usuario
     const inscripciones = await prisma.registration.findMany({
       where: {
+        tenantId: req.tenantId,
         accountId: id_cue,
       },
       include: {
@@ -2142,6 +2190,7 @@ const obtenerInscripcionesDelUsuarioActual = async (req, res) => {
 const obtenerTodasLasInscripciones = async (req, res) => {
   try {
     const inscripciones = await prisma.registration.findMany({
+      where: withTenantWhere(req.tenantId),
       include: {
         account: {
           include: {

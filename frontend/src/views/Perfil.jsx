@@ -32,6 +32,28 @@ import {
 } from "lucide-react";
 import "./styles/Perfil.css";
 
+const LEGACY_REG_STATUS_TO_DB = {
+  PENDIENTE: "PENDING",
+  ACEPTADA: "ACCEPTED",
+  RECHAZADA: "REJECTED",
+  APROBADO: "APPROVED",
+  REPROBADO_NOTA: "FAILED_GRADE",
+  REPROBADO_ASISTENCIA: "FAILED_ATTENDANCE",
+  REPROBADO_TOTAL: "FAILED_TOTAL",
+};
+
+const toDbStatus = (status) => LEGACY_REG_STATUS_TO_DB[status] || status;
+
+const STATUS_CLASS_MAP = {
+  PENDING: "pendiente",
+  ACCEPTED: "aceptada",
+  REJECTED: "rechazada",
+  APPROVED: "aprobado",
+  FAILED_GRADE: "reprobado_nota",
+  FAILED_ATTENDANCE: "reprobado_asistencia",
+  FAILED_TOTAL: "reprobado_total",
+};
+
 const Perfil = () => {
   const { usuario, updateProfileImage, syncUserData } = useAuth();
   const [perfilData, setPerfilData] = useState(null);
@@ -474,40 +496,34 @@ const Perfil = () => {
           </p>
         ) : (
           <div className="inscripciones-lista">
-            {perfilData.inscripciones.slice(0, 3).map((inscripcion) => (
-              <div key={inscripcion.id_ins} className="inscripcion-item">
-                <div className="inscripcion-nombre">
-                  {inscripcion.evento.nom_eve}
+            {perfilData.inscripciones.slice(0, 3).map((inscripcion) => {
+              const status = toDbStatus(inscripcion.status || inscripcion.est_ins);
+              const event = inscripcion.event || inscripcion.evento || {};
+              const registrationDate = inscripcion.registeredAt || inscripcion.fec_ins;
+
+              return (
+                <div key={inscripcion.id || inscripcion.id_ins} className="inscripcion-item">
+                  <div className="inscripcion-nombre">{event.name || event.nom_eve}</div>
+                  <div className="inscripcion-fecha">
+                    {formatearFecha(registrationDate)}
+                  </div>
+                  <div
+                    className={`inscripcion-estado ${STATUS_CLASS_MAP[status] || "pendiente"}`}
+                  >
+                    {status === "PENDING" && <Clock size={14} />}
+                    {status === "ACCEPTED" && <CheckCircle size={14} />}
+                    {status === "REJECTED" && <XCircle size={14} />}
+                    {status === "APPROVED" && <FileText size={14} />}
+                    {status === "APPROVED" && <BadgeCheck size={14} />}
+                    {status === "FAILED_GRADE" && <AlertCircle size={14} />}
+                    {status === "FAILED_ATTENDANCE" && <AlertCircle size={14} />}
+                    {status === "FAILED_TOTAL" && <AlertCircle size={14} />}
+                    {status}
+                  </div>
                 </div>
-                <div className="inscripcion-fecha">
-                  {formatearFecha(inscripcion.fec_ins)}
-                </div>
-                <div
-                  className={`inscripcion-estado ${inscripcion.est_ins.toLowerCase()}`}
-                >
-                  {inscripcion.est_ins === "PENDIENTE" && <Clock size={14} />}
-                  {inscripcion.est_ins === "ACEPTADA" && (
-                    <CheckCircle size={14} />
-                  )}
-                  {inscripcion.est_ins === "RECHAZADA" && <XCircle size={14} />}
-                  {inscripcion.est_ins === "APROBADO" && <FileText size={14} />}
-                  {inscripcion.est_ins === "APROBADO" && (
-                    <BadgeCheck size={14} />
-                  )}
-                  {inscripcion.est_ins === "REPROBADO_NOTA" && (
-                    <AlertCircle size={14} />
-                  )}
-                  {inscripcion.est_ins === "REPROBADO_ASISTENCIA" && (
-                    <AlertCircle size={14} />
-                  )}
-                  {inscripcion.est_ins === "REPROBADO_TOTAL" && (
-                    <AlertCircle size={14} />
-                  )}
-                  {inscripcion.est_ins}
-                </div>
-              </div>
-            ))}
-            <a href="/inscripciones" className="ver-todas">
+              );
+            })}
+            <a href="/enrollments" className="ver-todas">
               Ver todas mis inscripciones
             </a>
           </div>

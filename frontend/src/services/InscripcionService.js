@@ -4,6 +4,7 @@
  */
 
 import axiosInstance from "../api/axiosConfig";
+import { requestWithEndpointFallback } from "../api/endpointFallback";
 
 /**
  * Clase que provee métodos para interactuar con el API de inscripciones
@@ -19,7 +20,10 @@ class InscripcionService {
       // Hacer múltiples llamadas para obtener datos desde diferentes endpoints
       const [inscripcionesRes, eventoRes] = await Promise.all([
         axiosInstance.get(`/admin/inscripciones/evento/${idEvento}`),
-        axiosInstance.get(`/eventos/${idEvento}`),
+        requestWithEndpointFallback(
+          () => axiosInstance.get(`/events/${idEvento}`),
+          () => axiosInstance.get(`/eventos/${idEvento}`)
+        ),
       ]);
 
       return {
@@ -61,7 +65,10 @@ class InscripcionService {
    */
   async obtenerEvento(idEvento) {
     try {
-      const response = await axiosInstance.get(`/eventos/${idEvento}`);
+      const response = await requestWithEndpointFallback(
+        () => axiosInstance.get(`/events/${idEvento}`),
+        () => axiosInstance.get(`/eventos/${idEvento}`)
+      );
       return response.data;
     } catch (error) {
       console.error("Error al obtener evento:", error);

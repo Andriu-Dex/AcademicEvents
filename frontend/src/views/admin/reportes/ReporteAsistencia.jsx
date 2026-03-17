@@ -20,7 +20,7 @@ const ReporteAsistencia = () => {
       try {
         setLoading(true);
         // Corregir la ruta para obtener eventos
-        const res = await axiosInstance.get("/admin/reportes-evento");
+        const res = await axiosInstance.get("/admin/reports/events");
 
         // Asegurar que res.data sea un array
         const eventosData = Array.isArray(res.data.eve) ? res.data.eve : [];
@@ -67,7 +67,7 @@ const ReporteAsistencia = () => {
         // Si se seleccionó un evento específico
         if (eventoSeleccionado) {
           const resAsistencia = await axiosInstance.get(
-            `/admin/reportes-asistencia/evento/${eventoSeleccionado}`
+            `/admin/reports/attendance/event/${eventoSeleccionado}`
           );
 
           datosEventoAsistencia = resAsistencia.data;
@@ -103,7 +103,7 @@ const ReporteAsistencia = () => {
           // Cargar comparativa entre eventos (por tipo o todos)
           try {
             const resComparativa = await axiosInstance.get(
-              `/admin/reportes-asistencia/comparativa`,
+              `/admin/reports/attendance/comparative`,
               {
                 params: { tipo: tipoEvento },
               }
@@ -118,7 +118,7 @@ const ReporteAsistencia = () => {
           // Cargar análisis de no-shows
           try {
             const resNoShows = await axiosInstance.get(
-              `/admin/reportes-asistencia/no-shows`,
+              `/admin/reports/attendance/no-shows`,
               {
                 params: { tipo: tipoEvento },
               }
@@ -162,7 +162,7 @@ const ReporteAsistencia = () => {
         : { tipo: tipoEvento };
 
       const res = await axiosInstance.post(
-        `/admin/reportes-asistencia/pdf`,
+        `/admin/reports/attendance/pdf`,
         params,
         { responseType: "blob" }
       );
