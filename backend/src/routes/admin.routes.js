@@ -14,6 +14,18 @@ const {
 const { obtenerCarreras } = require("../controllers/carrera.controller");
 const adminController = require("../controllers/admin.controller");
 
+function requireGlobalAdmin(req, res, next) {
+  if (!["ADMIN_GLOBAL", "GLOBAL_ADMIN"].includes(req.usuario.rol_usu)) {
+    return res.status(403).json({
+      error: "No autorizado",
+      mensaje:
+        "Solo los Super Administradores pueden ejecutar esta operación",
+    });
+  }
+
+  next();
+}
+
 // Ruta para obtener todas las carreras (necesaria para reportes)
 router.get("/carreras", verificarToken, onlyAdmin, obtenerCarreras);
 
@@ -67,17 +79,7 @@ router.post(
   "/create-admin",
   verificarToken,
   onlyAdmin,
-  (req, res, next) => {
-    // Verificar que el usuario sea ADMIN_GLOBAL
-    if (!["ADMIN_GLOBAL", "GLOBAL_ADMIN"].includes(req.usuario.rol_usu)) {
-      return res.status(403).json({
-        error: "No autorizado",
-        mensaje:
-          "Solo los Super Administradores pueden crear otros administradores",
-      });
-    }
-    next();
-  },
+  requireGlobalAdmin,
   adminController.crearAdmin
 );
 
@@ -90,17 +92,7 @@ router.get(
   "/list-admins",
   verificarToken,
   onlyAdmin,
-  (req, res, next) => {
-    // Verificar que el usuario sea ADMIN_GLOBAL
-    if (!["ADMIN_GLOBAL", "GLOBAL_ADMIN"].includes(req.usuario.rol_usu)) {
-      return res.status(403).json({
-        error: "No autorizado",
-        mensaje:
-          "Solo los Super Administradores pueden ver la lista de administradores",
-      });
-    }
-    next();
-  },
+  requireGlobalAdmin,
   adminController.listarAdmins
 );
 
@@ -113,18 +105,73 @@ router.get(
   "/list-admins-paginados",
   verificarToken,
   onlyAdmin,
-  (req, res, next) => {
-    // Verificar que el usuario sea ADMIN_GLOBAL
-    if (!["ADMIN_GLOBAL", "GLOBAL_ADMIN"].includes(req.usuario.rol_usu)) {
-      return res.status(403).json({
-        error: "No autorizado",
-        mensaje:
-          "Solo los Super Administradores pueden ver la lista de administradores",
-      });
-    }
-    next();
-  },
+  requireGlobalAdmin,
   adminController.listarAdminsPaginados
+);
+
+/**
+ * @route GET /api/admin/list-users-paginados
+ * @desc Obtiene la lista de usuarios no administrativos con paginación
+ * @access Privado - Solo ADMIN_GLOBAL
+ */
+router.get(
+  "/list-users-paginados",
+  verificarToken,
+  onlyAdmin,
+  requireGlobalAdmin,
+  adminController.listarUsuariosPaginados
+);
+
+/**
+ * @route PUT /api/admin/accounts/:id
+ * @desc Actualiza una cuenta existente de usuario o administrador
+ * @access Privado - Solo ADMIN_GLOBAL
+ */
+router.put(
+  "/accounts/:id",
+  verificarToken,
+  onlyAdmin,
+  requireGlobalAdmin,
+  adminController.actualizarCuenta
+);
+
+/**
+ * @route PATCH /api/admin/accounts/:id/block
+ * @desc Bloquea una cuenta con motivo obligatorio
+ * @access Privado - Solo ADMIN_GLOBAL
+ */
+router.patch(
+  "/accounts/:id/block",
+  verificarToken,
+  onlyAdmin,
+  requireGlobalAdmin,
+  adminController.bloquearCuenta
+);
+
+/**
+ * @route PATCH /api/admin/accounts/:id/unblock
+ * @desc Desbloquea una cuenta con motivo obligatorio
+ * @access Privado - Solo ADMIN_GLOBAL
+ */
+router.patch(
+  "/accounts/:id/unblock",
+  verificarToken,
+  onlyAdmin,
+  requireGlobalAdmin,
+  adminController.desbloquearCuenta
+);
+
+/**
+ * @route DELETE /api/admin/accounts/:id
+ * @desc Elimina una cuenta existente de usuario o administrador
+ * @access Privado - Solo ADMIN_GLOBAL
+ */
+router.delete(
+  "/accounts/:id",
+  verificarToken,
+  onlyAdmin,
+  requireGlobalAdmin,
+  adminController.eliminarCuenta
 );
 
 module.exports = router;

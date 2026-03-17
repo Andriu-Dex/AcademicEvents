@@ -40,6 +40,7 @@ model Tenant {
   motivationLetters     MotivationLetter[]
   registrationObservations RegistrationObservation[]
   certificates          Certificate[]
+  accountBlockStates    AccountBlockState[]
   accountTokens         AccountToken[]
   tokenInvalidations    TokenInvalidation[]
   tokenUsages           TokenUsage[]
@@ -229,12 +230,38 @@ model Account {
   validatedPaymentReceipts PaymentReceipt[]
   validatedMotivationLetters MotivationLetter[]
   createdObservations      RegistrationObservation[]
+  blockStates              AccountBlockState[]          @relation("BlockedAccountState")
+  blockedActions           AccountBlockState[]          @relation("BlockActionAdmin")
+  unblockedActions         AccountBlockState[]          @relation("UnblockActionAdmin")
   tokens                   AccountToken[]
   tokenInvalidations       TokenInvalidation[]
   
   @@unique([tenantId, email])
   @@index([tenantId])
   @@index([userId])
+}
+
+model AccountBlockState {
+  id                String    @id @default(uuid())
+  tenantId          String    @map("tenant_id")
+  accountId         String    @map("account_id")
+  blockedReason     String    @map("blocked_reason")
+  blockedByAdminId  String?   @map("blocked_by_admin_id")
+  blockedAt         DateTime  @default(now()) @map("blocked_at") @db.Timestamptz(6)
+  unblockedReason   String?   @map("unblocked_reason")
+  unblockedByAdminId String?  @map("unblocked_by_admin_id")
+  unblockedAt       DateTime? @map("unblocked_at") @db.Timestamptz(6)
+  isActive          Boolean   @default(true) @map("is_active")
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant            Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  account           Account   @relation("BlockedAccountState", fields: [accountId], references: [id], onDelete: Cascade)
+  blockedByAdmin    Account?  @relation("BlockActionAdmin", fields: [blockedByAdminId], references: [id], onDelete: SetNull)
+  unblockedByAdmin  Account?  @relation("UnblockActionAdmin", fields: [unblockedByAdminId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId, accountId, isActive], map: "idx_account_block_states_lookup")
+  @@map("account_block_states")
 }
 
 // ============================================

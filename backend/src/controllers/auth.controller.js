@@ -4,6 +4,7 @@ const { prisma } = require("../config/db");
 const TokenService = require("../services/TokenService");
 const EmailTemplateService = require("../services/EmailTemplateService");
 const EmailVerificationService = require("../services/EmailVerificationService");
+const accountBlockService = require("../services/accountBlock.service");
 
 // Instanciar servicios
 const tokenService = new TokenService();
@@ -58,6 +59,20 @@ const login = async (req, res) => {
       )
     ) {
       return res.status(401).json({ msg: "Credenciales inválidas" });
+    }
+
+    const activeBlock = await accountBlockService.getActiveBlock(
+      req.tenantId,
+      account.id
+    );
+
+    if (activeBlock) {
+      return res.status(403).json({
+        msg: "Tu cuenta se encuentra bloqueada por un administrador",
+        error: "ACCOUNT_BLOCKED",
+        motivo: activeBlock.blockedReason,
+        bloqueadoEn: activeBlock.blockedAt,
+      });
     }
 
     // Verificar si la cuenta está verificada
