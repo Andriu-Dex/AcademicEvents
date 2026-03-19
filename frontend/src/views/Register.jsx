@@ -23,6 +23,7 @@ import "./styles/Register.css"; // Importa el archivo CSS
  */
 const Register = () => {
   const navigate = useNavigate();
+  const DEFAULT_REGISTER_LOGO = "https://i.imgur.com/ZDlLQ2T.png";
 
   // Inicializamos con un modelo de Usuario
   const [usuarioModel] = useState(new Usuario());
@@ -32,6 +33,7 @@ const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [institutionLogo, setInstitutionLogo] = useState(DEFAULT_REGISTER_LOGO);
   const [passwordStrength, setPasswordStrength] = useState({
     esValida: false,
     fortaleza: "muy débil",
@@ -85,6 +87,17 @@ const Register = () => {
       }
     };
     cargarCarreras();
+  }, []);
+
+  useEffect(() => {
+    const cargarLogoInstitucional = async () => {
+      const resultado = await registroService.obtenerLogoInstitucional();
+      if (resultado.success && resultado.data) {
+        setInstitutionLogo(resultado.data);
+      }
+    };
+
+    cargarLogoInstitucional();
   }, []);
 
   const handleSubmit = async (e) => {
@@ -173,9 +186,9 @@ const Register = () => {
           <div className="text-center mb-4">
             <div>
               <img
-                src="https://i.imgur.com/ZDlLQ2T.png"
+                src={institutionLogo}
                 alt="Logo"
-                style={{ width: "320px", marginBottom: "10px" }}
+                style={{ width: "320px", marginBottom: "10px", maxHeight: "35%", maxWidth: "35%" }}
               />
             </div>
             <h2 className="registro-titulo-reg">Registro de Usuario</h2>

@@ -373,14 +373,14 @@ class EmailVerificationService {
         if (esUTA && carreraNueva) {
           console.log("Actualizando usuario con carrera:", carreraNueva);
           await prisma.user.update({
-            where: { id: account.user.id },
+            where: { id: cuenta.user.id },
             data: { careerId: carreraNueva },
           });
         } else if (!esUTA) {
           // Si cambia a correo no institucional, quitar la carrera
           console.log("Quitando carrera del usuario (correo no institucional)");
           await prisma.user.update({
-            where: { id: account.user.id },
+            where: { id: cuenta.user.id },
             data: { careerId: null },
           });
         }
@@ -388,7 +388,7 @@ class EmailVerificationService {
         // 5.2 Actualizar el correo y rol en la cuenta
         console.log("Actualizando correo y rol de la cuenta");
         const accountUpdated = await prisma.account.update({
-          where: { id: account.id },
+          where: { id: cuenta.id },
           data: {
             email: correoNuevo,
             role: nuevoRol,
@@ -405,7 +405,8 @@ class EmailVerificationService {
       const tokensInvalidados =
         await this.tokenService.invalidarTokensAnteriores(
           cuenta.id,
-          "VERIFICAR_CORREO"
+          "VERIFY_EMAIL",
+          cuenta.tenantId
         );
       console.log("Tokens invalidados:", tokensInvalidados);
 

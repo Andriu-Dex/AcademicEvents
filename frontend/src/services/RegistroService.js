@@ -77,6 +77,38 @@ class RegistroService {
       };
     }
   }
+
+  /**
+   * Obtiene el logo institucional configurable desde la API pública.
+   * Prioriza logo de universidad y, si no existe, usa logo de facultad.
+   * @returns {Promise<{success:boolean,data:string|null,error?:any}>}
+   */
+  async obtenerLogoInstitucional() {
+    const fuentes = [
+      { endpoint: "/universidad-principal", field: "url_log_uni" },
+      { endpoint: "/facultad-principal", field: "url_log_fac" },
+    ];
+
+    for (const fuente of fuentes) {
+      try {
+        const response = await axiosInstance.get(fuente.endpoint);
+        const logo = response?.data?.[fuente.field];
+        if (logo) {
+          return {
+            success: true,
+            data: logo,
+          };
+        }
+      } catch (error) {
+        // Continúa con la siguiente fuente disponible.
+      }
+    }
+
+    return {
+      success: false,
+      data: null,
+    };
+  }
 }
 
 export default RegistroService;

@@ -35,6 +35,44 @@ const ModalRequisitos = ({
   onOpenInscripcionModal = null,
   isFromEventosDestacados = false,
 }) => {
+  const eventTypeLabels = {
+    COURSE: "CURSO",
+    CONGRESS: "CONGRESO",
+    WEBINAR: "WEBINAR",
+    TALK: "CHARLA",
+    SOCIALIZATION: "SOCIALIZACION",
+    CURSO: "CURSO",
+    CONGRESO: "CONGRESO",
+    CHARLA: "CHARLA",
+    SOCIALIZACION: "SOCIALIZACION",
+  };
+
+  const eventStatusLabels = {
+    ACTIVE: "ACTIVO",
+    INACTIVE: "INACTIVO",
+    FINISHED: "FINALIZADO",
+    CANCELLED: "CANCELADO",
+    SUSPENDED: "SUSPENDIDO",
+    ACTIVO: "ACTIVO",
+    INACTIVO: "INACTIVO",
+    FINALIZADO: "FINALIZADO",
+    CANCELADO: "CANCELADO",
+    SUSPENDIDO: "SUSPENDIDO",
+  };
+
+  const modalityLabels = {
+    IN_PERSON: "PRESENCIAL",
+    VIRTUAL: "VIRTUAL",
+    HYBRID: "SEMIPRESENCIAL",
+    PRESENCIAL: "PRESENCIAL",
+    SEMIPRESENCIAL: "SEMIPRESENCIAL",
+  };
+
+  const normalizedEventType = eventTypeLabels[evento?.tip_eve] || evento?.tip_eve;
+  const normalizedEventStatus =
+    eventStatusLabels[evento?.est_eve] || evento?.est_eve || "INACTIVO";
+  const normalizedModality = modalityLabels[evento?.mod_eve] || evento?.mod_eve;
+
   // Obtener información de autenticación
   const { usuario } = useAuth();
   const navigate = useNavigate();
@@ -96,12 +134,12 @@ const ModalRequisitos = ({
             <h3>{evento.nom_eve}</h3>
             <span
               className={`badge-mr badge-estado-mr ${
-                evento.est_eve?.toLowerCase() === "activo"
+                normalizedEventStatus?.toLowerCase() === "activo"
                   ? "activo"
                   : "inactivo"
               }`}
             >
-              {evento.est_eve === "ACTIVO" ? (
+              {normalizedEventStatus === "ACTIVO" ? (
                 <>
                   <Zap size={14} /> ACTIVO
                 </>
@@ -111,7 +149,7 @@ const ModalRequisitos = ({
                 </>
               )}
             </span>
-            <span className="badge-tipo-mr">{evento.tip_eve}</span>
+            <span className="badge-tipo-mr">{normalizedEventType}</span>
           </div>
 
           <button className="modal-requisitos-cerrar-mr" onClick={onClose}>
@@ -153,22 +191,22 @@ const ModalRequisitos = ({
             <div className="info-item-mr modalidad-item-mr">
               <span className="info-label-mr">Modalidad:</span>
               <span className="info-value-mr">
-                {evento.mod_eve === "PRESENCIAL" && (
+                {normalizedModality === "PRESENCIAL" && (
                   <span className="modalidad-badge-mr">
                     <MapPin size={16} /> Presencial
                   </span>
                 )}
-                {evento.mod_eve === "VIRTUAL" && (
+                {normalizedModality === "VIRTUAL" && (
                   <span className="modalidad-badge-mr virtual">
                     <Monitor size={16} /> Virtual
                   </span>
                 )}
-                {evento.mod_eve === "SEMIPRESENCIAL" && (
+                {normalizedModality === "SEMIPRESENCIAL" && (
                   <span className="modalidad-badge-mr semi">
                     <Laptop size={16} /> Semipresencial
                   </span>
                 )}
-                {!evento.mod_eve && "No especificada"}
+                {!normalizedModality && "No especificada"}
               </span>
             </div>
             <div className="info-item-mr">
