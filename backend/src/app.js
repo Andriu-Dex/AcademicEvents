@@ -3,6 +3,7 @@
 // ============================
 const express = require("express");
 const cors = require("cors");
+const helmet = require("helmet");
 const dotenv = require("dotenv");
 const path = require("path");
 const http = require("http");
@@ -49,6 +50,13 @@ setupDirectories();
 // ============================
 //  Middlewares globales
 // ============================
+app.use(
+  helmet({
+    // Uploads e imágenes se consumen desde otro origen (frontend).
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+  })
+);
+
 app.use(
   cors({
     origin: [
