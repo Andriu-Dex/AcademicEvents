@@ -123,7 +123,11 @@ app.get("/", (req, res) => {
 
 // Rutas no protegidas
 const authRoutes = require("./routes/auth.routes");
-app.use("/api", authLimiter, authRoutes);
+app.use("/api/login", authLimiter);
+app.use("/api/auth/login", authLimiter);
+app.use("/api/registro", authLimiter);
+app.use("/api/auth/register", authLimiter);
+app.use("/api", authRoutes);
 
 // Rutas de perfil de usuario
 const perfilRoutes = require("./routes/perfil.routes");

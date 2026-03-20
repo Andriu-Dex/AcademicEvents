@@ -58,7 +58,7 @@
   resize: vertical;
   min-height: 96px;
   font-size: 0.95rem;
-  color: #f9f9f9;
+  color: #111827;
 }
 
 .action-confirm-reason-group textarea:focus {
@@ -87,6 +87,11 @@
   padding: 9px 14px;
   font-weight: 600;
   cursor: pointer;
+}
+
+.action-confirm-btn:focus-visible {
+  outline: 2px solid #8a1538;
+  outline-offset: 2px;
 }
 
 .action-confirm-btn:disabled {
