@@ -11,6 +11,7 @@ const { scheduledCleanup } = require("./services/cleanupService");
 const { setupDirectories } = require("./utils/directory.utils");
 const socketService = require("./services/socket.service");
 const eventStatusService = require("./services/eventStatusService");
+const { apiLimiter, authLimiter } = require("./middlewares/rateLimit");
 
 // ============================
 //  Configuración inicial
@@ -59,6 +60,7 @@ app.use(
   })
 ); // Habilita CORS para todas las rutas
 app.use(express.json()); // Habilita el parseo de JSON en las peticiones
+app.use("/api", apiLimiter); // Limita tráfico general para evitar abuso
 
 // Servir archivos subidos (comprobantes, PDF, etc.)
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
@@ -113,7 +115,7 @@ app.get("/", (req, res) => {
 
 // Rutas no protegidas
 const authRoutes = require("./routes/auth.routes");
-app.use("/api", authRoutes);
+app.use("/api", authLimiter, authRoutes);
 
 // Rutas de perfil de usuario
 const perfilRoutes = require("./routes/perfil.routes");
@@ -126,15 +128,15 @@ app.use("/api/admin", adminRoutes);
 
 // Rutas de recuperación de contraseña
 const passwordRecoveryRoutes = require("./routes/password-recovery.routes");
-app.use("/api/password-recovery", passwordRecoveryRoutes);
+app.use("/api/password-recovery", authLimiter, passwordRecoveryRoutes);
 
 // Rutas de verificación de correo
 const verificationRoutes = require("./routes/verification.routes");
-app.use("/api/verificacion", verificationRoutes);
+app.use("/api/verificacion", authLimiter, verificationRoutes);
 
 // Rutas de corrección de correo
 const emailCorrectionRoutes = require("./routes/email-correction.routes");
-app.use("/api/cuenta", emailCorrectionRoutes);
+app.use("/api/cuenta", authLimiter, emailCorrectionRoutes);
 
 const comprobanteRoutes = require("./routes/comprobante.routes");
 app.use("/api", comprobanteRoutes);
