@@ -209,6 +209,10 @@ app.use("/api", paginacionRoutes);
 const inscripcionRoutes = require("./routes/inscripcion.routes");
 app.use("/api/inscripciones", inscripcionRoutes);
 
+// Rutas de gestión de tokens de notificaciones push
+const pushTokenRoutes = require("./routes/pushToken.routes");
+app.use("/api", pushTokenRoutes);
+
 // Middleware para manejar rutas no encontradas (404)
 app.use((req, res) => {
   console.log(`❌ [404] Ruta no encontrada: ${req.method} ${req.originalUrl}`);

@@ -45,7 +45,9 @@ model Tenant {
   tokenInvalidations    TokenInvalidation[]
   tokenUsages           TokenUsage[]
   tokenMetadata         TokenMetadata[]
-  
+  pushTokens            PushToken[]
+  pushNotifications     PushNotificationLog[]
+
   @@index([slug])
   @@index([subdomain])
 }
@@ -221,21 +223,23 @@ model Account {
   isEmailVerified Boolean   @default(false)
   emailVerifiedAt DateTime?
   createdAt       DateTime  @default(now())
-  
-  tenant                   Tenant                     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  user                     User                       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  registrations            Registration[]
-  createdEvents            Event[]
-  validatedRegistrations   Registration[]             @relation("ValidatorAdmin")
-  validatedPaymentReceipts PaymentReceipt[]
+
+  tenant                     Tenant                     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user                       User                       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  registrations              Registration[]
+  createdEvents              Event[]
+  validatedRegistrations     Registration[]             @relation("ValidatorAdmin")
+  validatedPaymentReceipts   PaymentReceipt[]
   validatedMotivationLetters MotivationLetter[]
-  createdObservations      RegistrationObservation[]
-  blockStates              AccountBlockState[]          @relation("BlockedAccountState")
-  blockedActions           AccountBlockState[]          @relation("BlockActionAdmin")
-  unblockedActions         AccountBlockState[]          @relation("UnblockActionAdmin")
-  tokens                   AccountToken[]
-  tokenInvalidations       TokenInvalidation[]
-  
+  createdObservations        RegistrationObservation[]
+  blockStates                AccountBlockState[]        @relation("BlockedAccountState")
+  blockedActions             AccountBlockState[]        @relation("BlockActionAdmin")
+  unblockedActions           AccountBlockState[]        @relation("UnblockActionAdmin")
+  tokens                     AccountToken[]
+  tokenInvalidations         TokenInvalidation[]
+  pushTokens                 PushToken[]
+  pushNotifications          PushNotificationLog[]
+
   @@unique([tenantId, email])
   @@index([tenantId])
   @@index([userId])
@@ -504,12 +508,60 @@ model TokenMetadata {
   key       MetadataKey
   value     String
   createdAt DateTime    @default(now())
-  
+
   tenant Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   token  AccountToken @relation(fields: [tokenId], references: [id], onDelete: Cascade)
-  
+
   @@index([tenantId])
   @@index([tokenId])
+}
+
+// ============================================
+// PUSH NOTIFICATIONS
+// ============================================
+
+model PushToken {
+  id         String            @id @default(uuid())
+  tenantId   String
+  accountId  String
+  token      String            @unique
+  platform   PushTokenPlatform @default(WEB)
+  deviceInfo String?
+  isActive   Boolean           @default(true)
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
+  lastUsedAt DateTime?
+
+  tenant  Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, accountId, token])
+  @@index([tenantId])
+  @@index([accountId])
+  @@index([isActive])
+  @@map("push_tokens")
+}
+
+model PushNotificationLog {
+  id        String             @id @default(uuid())
+  tenantId  String
+  accountId String
+  title     String
+  body      String
+  type      NotificationType
+  data      Json?
+  status    NotificationStatus @default(SENT)
+  sentAt    DateTime           @default(now())
+  readAt    DateTime?
+
+  tenant  Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([accountId])
+  @@index([sentAt])
+  @@index([status])
+  @@map("push_notification_logs")
 }
 
 // ============================================
@@ -615,4 +667,37 @@ enum FacultyAuthorityType {
   VICE_DEAN
   SECRETARY
   COORDINATOR
+}
+
+// ============================================
+// PUSH NOTIFICATION ENUMS
+// ============================================
+
+enum PushTokenPlatform {
+  WEB
+  ANDROID
+  IOS
+}
+
+enum NotificationType {
+  REGISTRATION_CREATED
+  REGISTRATION_APPROVED
+  REGISTRATION_REJECTED
+  CERTIFICATE_READY
+  EVENT_REMINDER_24H
+  EVENT_REMINDER_1H
+  EVENT_UPDATED
+  EVENT_CANCELLED
+  PAYMENT_APPROVED
+  PAYMENT_REJECTED
+  MOTIVATION_LETTER_APPROVED
+  MOTIVATION_LETTER_REJECTED
+  SYSTEM_ALERT
+}
+
+enum NotificationStatus {
+  SENT
+  DELIVERED
+  READ
+  FAILED
 }
