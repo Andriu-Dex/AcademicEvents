@@ -19,6 +19,7 @@ import {
 import { toast } from "react-toastify";
 import axiosInstance from "../api/axiosConfig";
 import ProfileImageService from "../services/ProfileImageService";
+import { NotificationBell } from "./notifications";
 import "./styles/Navbar.css";
 
 /**
@@ -346,23 +347,33 @@ const Navbar = () => {
           )}
         </div>
       </div>{" "}
-      <div className="navbar-profile" ref={profileMenuRef}>
-        <span className="profile-name">{usuario?.nom_usu || "Usuario"}</span>
-        <div className="profile-button" onClick={toggleProfileMenu}>
-          {usuario?.img_per_usu ? (
-            <img
-              src={ProfileImageService.getProfileImageUrl(
-                usuario.img_per_usu,
-                true
+      <div className="navbar-right-section">
+        <NotificationBell />
+        <div className="navbar-profile" ref={profileMenuRef}>
+          <button
+            type="button"
+            className="profile-button"
+            onClick={toggleProfileMenu}
+            aria-expanded={showProfileMenu}
+            aria-haspopup="menu"
+          >
+            <span className="profile-name">{usuario?.nom_usu || "Usuario"}</span>
+            <span className="profile-avatar" aria-hidden="true">
+              {usuario?.img_per_usu ? (
+                <img
+                  src={ProfileImageService.getProfileImageUrl(
+                    usuario.img_per_usu,
+                    true
+                  )}
+                  alt="Foto de perfil"
+                  className="profile-avatar-img-nb"
+                  key={usuario.img_per_usu} // Forzar re-render cuando cambie la imagen
+                />
+              ) : (
+                <User size={18} className="profile-icon" />
               )}
-              alt="Foto de perfil"
-              className="profile-avatar-img-nb"
-              key={usuario.img_per_usu} // Forzar re-render cuando cambie la imagen
-            />
-          ) : (
-            <User size={18} className="profile-icon" />
-          )}
-        </div>
+            </span>
+          </button>
         {showProfileMenu && (
           <div className="profile-dropdown">
             <Link to="/profile" className="profile-menu-item">
@@ -375,6 +386,7 @@ const Navbar = () => {
             </div>
           </div>
         )}
+        </div>
       </div>
     </nav>
   );

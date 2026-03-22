@@ -3,6 +3,10 @@ const { estado_inscripcion } = require("@prisma/client");
 const { subirImagenAImgur } = require("../utils/imgur.utils");
 const socketService = require("../services/socket.service");
 const {
+  sendPushNotificationToUser,
+  buildNotificationPayload,
+} = require("../services/pushNotification.service");
+const {
   calcularCuposDisponibles,
   sincronizarCuposDisponibles,
   actualizarEstadoYSincronizarCupos,
@@ -851,6 +855,28 @@ const validarInscripcion = async (req, res) => {
             inscripcionUsuario.accountId,
             datosParaUsuario
           );
+
+          // 📱 Send push notification
+          const notificationType = nuevoEstado === 'APPROVED' ? 'REGISTRATION_APPROVED' :
+                                  nuevoEstado === 'REJECTED' ? 'REGISTRATION_REJECTED' :
+                                  null;
+
+          if (notificationType) {
+            const payload = buildNotificationPayload(notificationType, {
+              eventId: inscripcionUsuario.event.id,
+              eventName: inscripcionUsuario.event.name,
+              inscriptionId: inscripcionUsuario.id,
+              reason: inscripcionUsuario.observation?.observation,
+            });
+
+            // Send async (don't await to avoid blocking)
+            sendPushNotificationToUser(
+              inscripcionUsuario.accountId,
+              req.tenantId,
+              payload.notification,
+              payload.data
+            ).catch(err => console.error('Error sending push notification:', err));
+          }
         }
 
         // Actualizar la nota si es un curso
@@ -1045,6 +1071,36 @@ const validarInscripcion = async (req, res) => {
           inscripcionConUsuario.accountId,
           datosParaUsuario
         );
+
+        // 📱 Send push notification for ACCEPTED/REJECTED status
+        if (nuevoEstado === 'ACCEPTED') {
+          const payload = buildNotificationPayload('REGISTRATION_APPROVED', {
+            eventId: inscripcionCompleta.event.id,
+            eventName: inscripcionCompleta.event.name,
+            inscriptionId: inscripcionCompleta.id,
+          });
+
+          sendPushNotificationToUser(
+            inscripcionConUsuario.accountId,
+            req.tenantId,
+            payload.notification,
+            payload.data
+          ).catch(err => console.error('Error sending push notification:', err));
+        } else if (nuevoEstado === 'REJECTED') {
+          const payload = buildNotificationPayload('REGISTRATION_REJECTED', {
+            eventId: inscripcionCompleta.event.id,
+            eventName: inscripcionCompleta.event.name,
+            inscriptionId: inscripcionCompleta.id,
+            reason: inscripcionCompleta.observation?.observation,
+          });
+
+          sendPushNotificationToUser(
+            inscripcionConUsuario.accountId,
+            req.tenantId,
+            payload.notification,
+            payload.data
+          ).catch(err => console.error('Error sending push notification:', err));
+        }
       }
 
       // Notificar cambio en inscripción (general)

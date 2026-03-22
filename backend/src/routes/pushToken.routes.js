@@ -5,6 +5,9 @@ const {
   deleteAllPushTokens,
   getPushTokens,
   getPushTokenStatus,
+  getNotificationHistory,
+  markNotificationAsRead,
+  markAllNotificationsAsRead,
 } = require('../controllers/pushToken.controller');
 const verificarToken = require('../middlewares/auth');
 
@@ -48,5 +51,27 @@ router.delete('/push-token/:tokenId', deletePushToken);
  * @access  Private
  */
 router.delete('/push-token', deleteAllPushTokens);
+
+/**
+ * @route   GET /api/notifications/history
+ * @desc    Get notification history for authenticated user
+ * @access  Private
+ * @query   { limit?: number, offset?: number }
+ */
+router.get('/notifications/history', getNotificationHistory);
+
+/**
+ * @route   PATCH /api/notifications/:notificationId/read
+ * @desc    Mark specific notification as read
+ * @access  Private
+ */
+router.patch('/notifications/:notificationId/read', markNotificationAsRead);
+
+/**
+ * @route   PATCH /api/notifications/read-all
+ * @desc    Mark all notifications as read
+ * @access  Private
+ */
+router.patch('/notifications/read-all', markAllNotificationsAsRead);
 
 module.exports = router;

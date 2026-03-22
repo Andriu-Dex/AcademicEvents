@@ -30,43 +30,23 @@ const registerPushToken = async (req, res) => {
       });
     }
 
-    // Check if token already exists for this account
-    const existingToken = await prisma.pushToken.findFirst({
+    // Use upsert to handle both create and update atomically
+    // This prevents race conditions and duplicate key errors
+    const savedToken = await prisma.pushToken.upsert({
       where: {
+        token, // Unique constraint is on token field
+      },
+      update: {
+        // If token exists, update these fields
+        isActive: true,
+        lastUsedAt: new Date(),
+        deviceInfo: deviceInfo || undefined,
+        // Also update tenantId and accountId in case user switched accounts
         tenantId,
         accountId,
-        token,
       },
-    });
-
-    if (existingToken) {
-      // Update existing token (refresh lastUsedAt and ensure it's active)
-      const updatedToken = await prisma.pushToken.update({
-        where: { id: existingToken.id },
-        data: {
-          isActive: true,
-          lastUsedAt: new Date(),
-          deviceInfo: deviceInfo || existingToken.deviceInfo,
-        },
-        select: {
-          id: true,
-          platform: true,
-          isActive: true,
-          createdAt: true,
-          updatedAt: true,
-        },
-      });
-
-      return res.status(200).json({
-        success: true,
-        message: 'Token actualizado exitosamente',
-        data: updatedToken,
-      });
-    }
-
-    // Create new push token
-    const newToken = await prisma.pushToken.create({
-      data: {
+      create: {
+        // If token doesn't exist, create new record
         tenantId,
         accountId,
         token,
@@ -83,21 +63,13 @@ const registerPushToken = async (req, res) => {
       },
     });
 
-    return res.status(201).json({
+    return res.status(200).json({
       success: true,
       message: 'Token registrado exitosamente',
-      data: newToken,
+      data: savedToken,
     });
   } catch (error) {
     console.error('Error registering push token:', error);
-
-    // Handle unique constraint violation (duplicate token)
-    if (error.code === 'P2002') {
-      return res.status(409).json({
-        success: false,
-        message: 'Este token ya está registrado',
-      });
-    }
 
     return res.status(500).json({
       success: false,
@@ -295,10 +267,159 @@ const getPushTokenStatus = async (req, res) => {
   }
 };
 
+/**
+ * Get notification history for the authenticated user
+ * @route GET /api/notifications/history
+ * @access Private
+ */
+const getNotificationHistory = async (req, res) => {
+  try {
+    const accountId = req.usuario.id;
+    const tenantId = req.tenantId;
+    const { limit = 50, offset = 0 } = req.query;
+
+    const notifications = await prisma.pushNotificationLog.findMany({
+      where: {
+        accountId,
+        tenantId,
+      },
+      select: {
+        id: true,
+        title: true,
+        body: true,
+        type: true,
+        data: true,
+        status: true,
+        sentAt: true,
+        readAt: true,
+      },
+      orderBy: {
+        sentAt: 'desc',
+      },
+      take: parseInt(limit, 10),
+      skip: parseInt(offset, 10),
+    });
+
+    const unreadCount = await prisma.pushNotificationLog.count({
+      where: {
+        accountId,
+        tenantId,
+        readAt: null,
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        notifications,
+        unreadCount,
+        total: notifications.length,
+      },
+    });
+  } catch (error) {
+    console.error('Error getting notification history:', error);
+
+    return res.status(500).json({
+      success: false,
+      message: 'Error al obtener historial de notificaciones',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined,
+    });
+  }
+};
+
+/**
+ * Mark notification as read
+ * @route PATCH /api/notifications/:notificationId/read
+ * @access Private
+ */
+const markNotificationAsRead = async (req, res) => {
+  try {
+    const { notificationId } = req.params;
+    const accountId = req.usuario.id;
+    const tenantId = req.tenantId;
+
+    const notification = await prisma.pushNotificationLog.findFirst({
+      where: {
+        id: notificationId,
+        accountId,
+        tenantId,
+      },
+    });
+
+    if (!notification) {
+      return res.status(404).json({
+        success: false,
+        message: 'Notificación no encontrada',
+      });
+    }
+
+    await prisma.pushNotificationLog.update({
+      where: { id: notificationId },
+      data: { readAt: new Date(), status: 'READ' },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Notificación marcada como leída',
+    });
+  } catch (error) {
+    console.error('Error marking notification as read:', error);
+
+    return res.status(500).json({
+      success: false,
+      message: 'Error al marcar notificación como leída',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined,
+    });
+  }
+};
+
+/**
+ * Mark all notifications as read
+ * @route PATCH /api/notifications/read-all
+ * @access Private
+ */
+const markAllNotificationsAsRead = async (req, res) => {
+  try {
+    const accountId = req.usuario.id;
+    const tenantId = req.tenantId;
+
+    const result = await prisma.pushNotificationLog.updateMany({
+      where: {
+        accountId,
+        tenantId,
+        readAt: null,
+      },
+      data: {
+        readAt: new Date(),
+        status: 'READ',
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Todas las notificaciones marcadas como leídas',
+      data: {
+        updatedCount: result.count,
+      },
+    });
+  } catch (error) {
+    console.error('Error marking all notifications as read:', error);
+
+    return res.status(500).json({
+      success: false,
+      message: 'Error al marcar notificaciones como leídas',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined,
+    });
+  }
+};
+
 module.exports = {
   registerPushToken,
   deletePushToken,
   deleteAllPushTokens,
   getPushTokens,
   getPushTokenStatus,
+  getNotificationHistory,
+  markNotificationAsRead,
+  markAllNotificationsAsRead,
 };

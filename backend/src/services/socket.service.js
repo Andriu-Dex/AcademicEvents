@@ -596,6 +596,27 @@ class SocketService {
       `✅ [SOCKET] Evento de carrera ${action} notificado a ${this.connectedClients.size} clientes`
     );
   }
+
+  /**
+   * Check if a user is currently online (connected via Socket.IO)
+   * Used to avoid sending push notifications to users who are already online
+   * @param {string} accountId - Account UUID
+   * @returns {boolean} - True if user is online
+   */
+  isUserOnline(accountId) {
+    if (!accountId || !this.connectedClients) {
+      return false;
+    }
+
+    // Check if any connected client has this userId/accountId
+    for (const [socketId, clientInfo] of this.connectedClients.entries()) {
+      if (clientInfo.userId === accountId) {
+        return true;
+      }
+    }
+
+    return false;
+  }
 }
 
 // Exportar una instancia única (patrón Singleton)

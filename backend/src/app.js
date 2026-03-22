@@ -44,6 +44,14 @@ scheduledCleanup();
 // Iniciar el servicio de estados automáticos de eventos
 eventStatusService.inicializarServicio();
 
+// Inicializar Firebase Admin SDK para push notifications
+const { initializeFirebase } = require("./config/firebase.config");
+initializeFirebase();
+
+// Inicializar notificaciones programadas (recordatorios de eventos)
+const { initializeScheduledNotifications } = require("./services/scheduledNotifications.service");
+initializeScheduledNotifications();
+
 // Configurar directorios necesarios
 setupDirectories();
 
