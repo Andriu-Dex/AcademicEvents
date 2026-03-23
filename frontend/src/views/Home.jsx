@@ -36,6 +36,12 @@ import {
   Star,
   Info,
   BarChart,
+  Bell,
+  CheckCircle2,
+  CircleAlert,
+  CircleX,
+  Wifi,
+  WifiOff,
 } from "lucide-react";
 import "./styles/Home.css";
 
@@ -337,6 +343,20 @@ function Home() {
   const removeNotification = useCallback((id) => {
     setNotifications((prev) => prev.filter((notif) => notif.id !== id));
   }, []);
+
+  const getNotificationIcon = (type) => {
+    switch (type) {
+      case "success":
+        return <CheckCircle2 size={18} />;
+      case "warning":
+        return <CircleAlert size={18} />;
+      case "error":
+        return <CircleX size={18} />;
+      case "info":
+      default:
+        return <Bell size={18} />;
+    }
+  };
 
   // Cargar carreras y MVA desde la API
   useEffect(() => {
@@ -743,14 +763,7 @@ function Home() {
   }, [showNavbar]);
 
   return (
-    <div
-      className="d-flex flex-column"
-      style={{
-        minHeight: "100vh",
-        minWidth: "100vw",
-        background: "linear-gradient(135deg, #f4f6fb 60%, #e3e8f0 100%)",
-      }}
-    >
+    <div className="d-flex flex-column home-page">
       {/* Área de detección superior */}
       <div ref={topAreaRef} className="top-detection-area-h"></div>
 
@@ -799,16 +812,7 @@ function Home() {
       )}
 
       {/* Hero Section */}
-      <div
-        className="contenedor-principal-home"
-        style={{
-          background:
-            "linear-gradient(rgba(138, 21, 56, 0.85), rgba(138, 21, 56, 0.9)), url('https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover no-repeat",
-          minHeight: "400px",
-          marginTop: "0", // Ajustado para compensar el navbar oculto
-          paddingTop: "70px", // Agregar padding para compensar el espacio del navbar
-        }}
-      >
+      <div className="contenedor-principal-home hero-section-home">
         <div className="container">
           <div className="row align-items-center">
             <div className="col-lg-6 text-white py-4">
@@ -822,13 +826,7 @@ function Home() {
               <div className="d-flex gap-3 flex-wrap">
                 <Link
                   to={isAuthenticated ? "/eventos" : "/eventos-publicos"}
-                  className="btn btn-light fw-bold animate__animated animate__fadeInUp"
-                  style={{
-                    color: "#8A1538",
-                    borderRadius: "8px",
-                    fontSize: "1rem",
-                    padding: "12px 24px",
-                  }}
+                  className="btn btn-light fw-bold animate__animated animate__fadeInUp hero-button-primary"
                 >
                   <Calendar size={18} className="me-2" />
                   {isAuthenticated
@@ -837,12 +835,7 @@ function Home() {
                 </Link>{" "}
                 <a
                   href="#carreras"
-                  className="btn btn-outline-light fw-bold animate__animated animate__fadeInUp"
-                  style={{
-                    borderRadius: "8px",
-                    fontSize: "1rem",
-                    padding: "12px 24px",
-                  }}
+                  className="btn btn-outline-light fw-bold animate__animated animate__fadeInUp hero-button-secondary"
                 >
                   <GraduationCap size={18} className="me-2" /> Ver carreras
                 </a>
@@ -854,12 +847,9 @@ function Home() {
                 <div className="row g-3">
                   {stats.map((stat, index) => (
                     <div className="col-6" key={index}>
-                      <div className="card bg-white bg-opacity-90 text-center p-3 h-100">
+                      <div className="card hero-stats-card text-center p-3 h-100">
                         <div className="display-6">{stat.icon}</div>
-                        <h3
-                          className="fw-bold mb-1"
-                          style={{ color: "#8A1538" }}
-                        >
+                        <h3 className="fw-bold mb-1 hero-stat-number">
                           {stat.number}
                         </h3>
                         <small className="text-muted">{stat.label}</small>
@@ -868,7 +858,7 @@ function Home() {
                   ))}
                 </div>
               ) : (
-                <div className="card bg-white bg-opacity-90 text-center p-4 h-100">
+                <div className="card hero-stats-card text-center p-4 h-100">
                   <div className="display-6 text-muted mb-3">
                     <BarChart size={48} />
                   </div>
@@ -1004,9 +994,7 @@ function Home() {
       <div className="container mb-5" id="carreras">
         <div className="row justify-content-center mb-4">
           <div className="col-lg-6 text-center">
-            <h2 className="fw-bold" style={{ color: "#8A1538" }}>
-              Nuestras Carreras
-            </h2>
+            <h2 className="fw-bold home-section-title">Nuestras Carreras</h2>
             <p className="opciones-academicas-h">
               Descubre las opciones académicas que tenemos para ti
             </p>
@@ -1077,21 +1065,18 @@ function Home() {
                       <div className="display-4 mb-3">
                         {getIconComponent(carrera.ico_car)}
                       </div>
-                      <h5
-                        className="card-title fw-bold"
-                        style={{ color: "#8A1538" }}
-                      >
+                      <h5 className="card-title fw-bold home-section-title">
                         {carrera.nom_car}
                       </h5>
                       <p className="card-text small text-muted mb-3">
                         {carrera.des_car}
                       </p>
                       <div className="mb-3">
-                        <span className="badge bg-light text-dark me-2">
+                        <span className="badge career-badge me-2">
                           <Clock size={14} className="me-1" />{" "}
                           {carrera.dur_sem_car} semestres
                         </span>
-                        <span className="badge bg-light text-dark">
+                        <span className="badge career-badge">
                           <MapPin size={14} className="me-1" />{" "}
                           {carrera.mod_car}
                         </span>
@@ -1137,7 +1122,7 @@ function Home() {
       <div className="container mb-5" id="mision-vision">
         <div className="row justify-content-center mb-4">
           <div className="col-lg-6 text-center">
-            <h2 className="fw-bold" style={{ color: "#8A1538" }}>
+            <h2 className="fw-bold home-section-title">
               {usuario?.rol_usu === "ESTUDIANTE"
                 ? `Carrera de ${
                     usuario?.carrera === "SOFTWARE"
@@ -1164,10 +1149,7 @@ function Home() {
                 <div className="card-body p-4">
                   <div className="d-flex align-items-center mb-3">
                     <span className="display-5 me-3">{card.icon}</span>
-                    <h3
-                      className="card-title fw-bold mb-0"
-                      style={{ color: "#8A1538" }}
-                    >
+                    <h3 className="card-title fw-bold mb-0 home-section-title">
                       {card.title}
                     </h3>
                   </div>
@@ -1182,17 +1164,10 @@ function Home() {
       </div>
       {/* Sección de contacto */}
       <div className="container mb-5" id="contacto">
-        <div
-          className="card border-0 shadow-lg p-4"
-          style={{
-            borderRadius: "15px",
-            background: "linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)",
-            borderTop: "4px solid #8A1538",
-          }}
-        >
+        <div className="card border-0 shadow-lg p-4 contact-section contact-card-home">
           <div className="row align-items-center">
             <div className="col-md-8">
-              <h3 className="fw-bold mb-3" style={{ color: "#8A1538" }}>
+              <h3 className="fw-bold mb-3 home-section-title">
                 <MessageSquare
                   size={24}
                   className="me-2"
@@ -1209,20 +1184,16 @@ function Home() {
               <a
                 href="https://fisei.uta.edu.ec/v4.0/index.php/facultad/historia-facultad"
                 target="_blank"
-                className="btn fw-bold btn-lg me-2 mb-2"
-                style={{
-                  background: "#8A1538",
-                  color: "#fff",
-                  borderRadius: "8px",
-                }}
+                rel="noreferrer"
+                className="btn fw-bold btn-lg me-2 mb-2 contact-link-primary"
               >
                 <Mail size={18} className="me-2" /> Contáctanos
               </a>
               <a
                 href="https://fisei.uta.edu.ec/v4.0/index.php/facultad/directorio-telefonico"
                 target="_blank"
-                className="btn btn-outline-secondary fw-bold btn-lg mb-2"
-                style={{ borderRadius: "8px" }}
+                rel="noreferrer"
+                className="btn btn-outline-secondary fw-bold btn-lg mb-2 contact-link-secondary"
               >
                 <Phone size={18} className="me-2" /> Llamar
               </a>
@@ -1232,37 +1203,6 @@ function Home() {
       </div>
       {/* Footer */}
       <Footer isAuthenticated={usuario?.id ? true : false} />
-      {/* Estilos adicionales para efectos hover */}
-      <style>{`
-        .hover-card {
-          transition: all 0.3s ease;
-          cursor: pointer;
-        }
-        .hover-card:hover {
-          transform: translateY(-8px);
-          box-shadow: 0 15px 30px rgba(138, 21, 56, 0.15) !important;
-          border-bottom: 3px solid #8a1538;
-        }
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        .animate__animated.animate__fadeInUp {
-          animation: fadeInUp 0.6s ease-out;
-        }
-        html {
-          scroll-behavior: smooth;
-        }
-        :target {
-          scroll-margin-top: 80px;
-        }
-      `}</style>
     </div>
   );
 }

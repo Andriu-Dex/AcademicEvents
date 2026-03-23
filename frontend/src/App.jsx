@@ -1,5 +1,8 @@
 import { BrowserRouter, Routes, Route, Navigate, useParams } from "react-router-dom";
 
+// Theme Provider for Dark Mode
+import { ThemeProvider } from "./context/ThemeContext.jsx";
+
 // Hook para sincronización de datos de usuario
 import useUserSync from "./hooks/useUserSync.js";
 
@@ -48,6 +51,7 @@ import PrivateLayout from "./layouts/PrivateLayout";
 
 // Componente para refrescar estilos en cambios de ruta
 import StyleRefresher from "./components/StyleRefresher";
+import FloatingThemeSocketControls from "./components/FloatingThemeSocketControls";
 
 // Toasts
 import { ToastContainer } from "react-toastify";
@@ -83,10 +87,12 @@ function App() {
   useUserSync();
 
   return (
-    <BrowserRouter>
-      <>
-        {/* Componente para refrescar estilos en cambios de ruta */}
-        <StyleRefresher />
+    <ThemeProvider>
+      <BrowserRouter>
+        <>
+          {/* Componente para refrescar estilos en cambios de ruta */}
+          <StyleRefresher />
+          <FloatingThemeSocketControls />
 
         <Routes>
           {/* Redirección por defecto a home */}
@@ -448,6 +454,7 @@ function App() {
         />
       </>
     </BrowserRouter>
+    </ThemeProvider>
   );
 }
 

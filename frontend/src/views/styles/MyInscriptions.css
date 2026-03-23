@@ -1,874 +1,491 @@
-/* =======================
-   Variables de color
-   ======================= */
-:root {
-  --color-primario: #8a1538;
-  --color-secundario: #1d4ed8;
-  --color-acento: #2563eb;
-  --color-texto: #1f2937;
-  --color-gris: #6b7280;
-  --color-fondo: #f9fafb;
-}
-
-/* =======================
-   Estilos globales
-   ======================= */
-body {
-  font-family: "Poppins", sans-serif;
-  line-height: 1.6;
+.myins-container {
   position: relative;
   min-height: 100vh;
+  padding: clamp(1.25rem, 2vw, 2rem);
+  color: var(--color-text-primary);
+  background:
+    radial-gradient(circle at top left, rgba(212, 102, 128, 0.12), transparent 28%),
+    radial-gradient(circle at bottom right, rgba(74, 222, 128, 0.08), transparent 22%),
+    var(--gradient-secondary);
+}
+
+.myins-container::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.04), transparent 40%),
+    linear-gradient(320deg, rgba(212, 102, 128, 0.06), transparent 45%);
+}
+
+.myins-container > * {
+  position: relative;
   z-index: 1;
 }
 
-body::before {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  /* background-image: url("https://i.imgur.com/c6Ry30Z.jpeg"); */
-  background-image: url("https://i.imgur.com/4oKSBsQ.jpeg");
-  filter: saturate(1.5);
-  background-size: 110%;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  z-index: -1;
-  animation: bgMove 12s linear infinite alternate;
-}
-
-@keyframes bgMove {
-  0% {
-    background-position: 0px -80px; /* Horizontal , vertical*/
-  }
-  100% {
-    background-position: 100% 0;
-  }
-}
-
-body::after {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(
-    ellipse at center,
-    rgba(0, 0, 0, 0.15) 40%,
-    rgba(0, 0, 0, 0.5) 100%
-  );
-  /* backdrop-filter: blur(2px); */
-  z-index: -1;
-}
-
-/* =======================
-   Contenedor principal
-   ======================= */
-.myins-container {
-  margin: 15px 10px;
-  padding: 0 1rem;
-}
-
-/* =======================
-   Grid de tarjetas
-   ======================= */
-.myins-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 1.5rem;
-}
-
-/* =======================
-   Título de la vista
-   ======================= */
 .myins-title {
-  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
-    "Lucida Sans", Arial, sans-serif;
-  font-size: 35px;
-  font-weight: 700;
-  margin-bottom: 2rem;
-  width: 100%;
-  text-align: center;
-  color: black;
-  position: relative;
-  background-color: rgba(255, 255, 255, 0.82);
-  border-radius: 5px;
+  margin: 0 0 1.6rem;
+  font-size: clamp(1.9rem, 3vw, 2.5rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--color-text-primary);
 }
 
-.myins-title::after {
-  content: "";
-  position: absolute;
-  bottom: -12px;
-  left: 0;
-  width: 100%;
-  height: 5px;
-  background-color: var(--color-primario);
-  border-radius: 2px;
-  transition: background-color 0.2s ease;
+.myins-empty-container,
+.myins-filter-container,
+.myins-card,
+.modal-content {
+  background: var(--color-bg-glass);
+  border: 1px solid var(--color-border-primary);
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(18px);
 }
 
-/* =======================
-   Mensaje de lista vacía
-   ======================= */
-.myins-empty {
-  color: #6b7280;
-}
-
-/* =======================
-   Contenedor de mensaje de lista vacía mejorado
-   ======================= */
 .myins-empty-container {
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 0.75rem;
+  max-width: 42rem;
+  margin: 3rem auto 0;
   padding: 2.5rem 2rem;
-  margin: 2rem auto;
-  max-width: 550px;
+  border-radius: 1.4rem;
   text-align: center;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-  backdrop-filter: blur(4px);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  animation: fadeIn 0.5s ease-in-out;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 .myins-empty-icon {
-  margin: 0 auto 1.5rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100px;
-  height: 100px;
-  background-color: #f0f4ff;
+  display: inline-grid;
+  place-items: center;
+  width: 6rem;
+  height: 6rem;
+  margin-bottom: 1.25rem;
   border-radius: 50%;
-  color: var(--color-acento);
-  animation: pulseIcon 2.5s ease-in-out infinite;
-}
-
-@keyframes pulseIcon {
-  0% {
-    transform: scale(1);
-    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.3);
-  }
-  70% {
-    transform: scale(1.05);
-    box-shadow: 0 0 0 15px rgba(37, 99, 235, 0);
-  }
-  100% {
-    transform: scale(1);
-  }
+  color: var(--color-primary);
+  background:
+    radial-gradient(circle at center, var(--color-primary-light), transparent 72%),
+    color-mix(in srgb, var(--color-bg-primary) 92%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 24%, var(--color-border-primary));
 }
 
 .myins-empty-title {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: var(--color-texto);
-  margin-bottom: 1rem;
+  margin: 0 0 0.75rem;
+  font-size: 1.45rem;
+  color: var(--color-text-primary);
 }
 
 .myins-empty-text {
-  font-size: 1rem;
-  color: #4b5563;
-  margin-bottom: 1.75rem;
-  line-height: 1.5;
+  max-width: 34rem;
+  margin: 0 auto 1.5rem;
+  color: var(--color-text-secondary);
+  line-height: 1.65;
 }
 
-.myins-empty-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  background-color: rgb(164, 34, 34);
-  color: white;
-  font-weight: 600;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 10px rgba(140, 19, 19, 0.9);
-}
-
-.myins-empty-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(140, 19, 19, 0.9);
-}
-
-.myins-empty-button:active {
-  transform: translateY(0);
-}
-
-/* =======================
-   Tarjeta de inscripción
-   ======================= */
-
-.myins-card {
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 0.75rem;
-  padding: 1.25rem;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  backdrop-filter: blur(4px);
-  animation: bordeAnimado 8s ease-in-out infinite alternate;
-}
-
-@keyframes bordeAnimado {
-  0% {
-    border: rgb(48, 48, 48) 1px solid;
-    box-shadow: rgb(0, 0, 0) 0px 0px 10px;
-  }
-  35% {
-    border: rgb(255, 0, 0) 1px solid;
-    box-shadow: #b91c1c 0px 0px 10px;
-  }
-  70% {
-    border: rgb(47, 33, 171) 1px solid;
-    box-shadow: #112c76 0px 0px 10px;
-  }
-  100% {
-    border: rgb(22, 193, 59) 1px solid;
-    box-shadow: #0d5327 0px 0px 10px;
-  }
-}
-
-.myins-card:hover {
-  box-shadow: 0 6px 20px rgba(138, 21, 56, 0.15);
-  transform: scale(1.02);
-}
-
-@keyframes slideFadeIn {
-  from {
-    transform: translateY(10px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-/* =======================
-   Encabezado de tarjeta
-   ======================= */
-.myins-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-/* =======================
-   Nombre del evento
-   ======================= */
-.myins-event-name {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: #1f2937;
-}
-
-/* =======================
-   Estado de inscripción
-   ======================= */
-.myins-estado {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  padding: 0.25rem 0.5rem;
-  border-radius: 5px;
-  margin-bottom: 10px;
-  padding-right: 1rem;
-  width: fit-content;
-}
-
-.estado-pendiente {
-  color: #b45309;
-}
-
-.estado-aceptada {
-  color: #15803d;
-}
-
-.estado-rechazada {
-  color: #b91c1c;
-}
-
-.estado-finalizada {
-  color: #1d4ed8;
-}
-
-.estado-aprobado {
-  color: #047857; /* Verde esmeralda más intenso que el de aceptada */
-  font-weight: bold;
-}
-
-.estado-reprobado-nota {
-  color: #ef4444; /* Rojo menos intenso que el rechazada */
-}
-
-.estado-reprobado-asistencia {
-  color: #f97316; /* Naranja para diferenciar del reprobado por nota */
-}
-
-.estado-reprobado-total {
-  color: #7f1d1d; /* Rojo oscuro para reprobación total */
-  font-weight: bold;
-}
-
-/* =======================
-   Datos adicionales de inscripción
-   ======================= */
-.myins-datos {
-  font-size: 0.875rem;
-  color: #4b5563;
-}
-
-/* =======================
-   Sección de certificado
-   ======================= */
-.myins-certificado {
-  margin-top: 0.75rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-/* =======================
-   Estado del certificado
-   ======================= */
-.cert-enviado {
-  font-size: 0.75rem;
-  color: #16a34a;
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-}
-
-.cert-pendiente {
-  font-family: "Courier New", Courier, monospace;
-  font-size: 1rem;
-  color: #6b7280;
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  margin-left: auto;
-  margin-right: 5%;
-}
-
-/* =======================
-   Botónes
-   ======================= */
-.btn {
-  font-size: 0.875rem;
-  font-weight: 500;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  border: none;
-  cursor: pointer;
-  padding: 0.5rem 1rem;
-  transition: background 0.2s ease, color 0.2s ease;
-}
-
-/* =======================
-   Botón descargar certificado
-   ======================= */
-.btn-descargar-mi {
-  font-size: 0.875rem;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  border: #b6cafc 1px solid;
-  cursor: pointer;
-  padding: 0.5rem 1rem;
-  transition: background 0.2s ease, color 0.2s ease;
-  color: var(--color-acento);
-  background-color: #f0f4ff;
-  border-radius: 0.375rem;
-}
-
-.btn-descargar-mi:hover {
-  background-color: #dbeafe;
-  color: #1e3a8a;
-  transition: all 0.2s ease-in-out;
-  transform: scale(1.03);
-  border: #0400ff 1px solid;
-}
-
-/* =======================
-   Botón enviar certificado por email
-   ======================= */
-.btn-enviar-email {
-  font-size: 0.875rem;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  border: #c9b6fc 1px solid;
-  cursor: pointer;
-  padding: 0.5rem 1rem;
-  transition: background 0.2s ease, color 0.2s ease;
-  color: #5b21b6;
-  background-color: #f3f0ff;
-  border-radius: 0.375rem;
-}
-
-.btn-enviar-email:hover {
-  background-color: #e9d5ff;
-  color: #4c1d95;
-  transition: all 0.2s ease-in-out;
-  transform: scale(1.03);
-  border: #7c3aed 1px solid;
-}
-
-/* =======================
-   Botón reenviar certificado
-   ======================= */
-.btn-reenviar {
-  font-size: 0.875rem;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  border: #ffb6b6 1px solid;
-  cursor: pointer;
-  padding: 0.5rem 1rem;
-  transition: background 0.2s ease, color 0.2s ease;
-  color: #b91c1c;
-  background-color: #fde4e4;
-  border-radius: 0.375rem;
-}
-
-.btn-reenviar:hover {
-  background-color: #fdd0d0;
-  color: var(--color-primario);
-  transition: all 0.2s ease-in-out;
-  transform: scale(1.03);
-  border: #b91c1c 1px solid;
-}
-
-/* =======================
-   Botón felicitaciones
-   ======================= */
-.btn-felicitaciones {
-  font-size: 0.875rem;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  border: 1px solid #6ee7b7;
-  cursor: pointer;
-  padding: 0.5rem 1.25rem;
-  background-color: #d1fae5;
-  color: #15803d;
-  font-weight: 600;
-  margin-top: 0.5rem;
-  border-radius: 0.375rem;
-  transition: background 0.2s, color 0.2s, transform 0.15s;
-}
-
-.btn-felicitaciones:hover {
-  background-color: #bbf7d0;
-  color: #166534;
-  transform: scale(1.04);
-  border: 1px solid #22d3ee;
-}
-
-/* =======================
-   Modal (ventana emergente)
-   ======================= */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.35);
-  backdrop-filter: blur(6px);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 50;
-}
-
-.modal-overlay .modal-content {
-  background-color: rgba(255, 255, 255, 0.9);
-  border-radius: 0.75rem;
-  padding: 1.75rem;
-  width: 100%;
-  max-width: 32rem;
-  border: 2px solid rgba(0, 0, 0, 0.5);
-  box-shadow: 0 0 3px rgba(255, 255, 255, 0.7), 0 0 6px rgba(255, 255, 255, 0.5),
-    0 0 12px rgba(255, 255, 255, 0.3);
-  position: relative;
-  animation: fadeInModal 0.3s ease-out;
-}
-
-@keyframes fadeInModal {
-  from {
-    transform: scale(0.95);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-.modal-content .modal-title-mi {
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--color-texto);
-  margin-bottom: 1rem;
-  text-align: center;
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
-}
-
-/* =======================
-   Campo de archivo
-   ======================= */
-.input-archivo {
-  display: none;
-}
-
-.btn-subir {
-  display: inline-block;
-  background-color: #f0f4ff;
-  color: var(--color-acento);
-  padding: 0.5rem 1rem;
-  font-size: 0.875rem;
-  font-weight: 600;
-  border-radius: 0.375rem;
-  border: 1px solid #b6cafc;
-  cursor: pointer;
-  width: auto;
-  transition: all 0.2s ease-in-out;
-}
-
-.btn-subir:hover {
-  background-color: #dbeafe;
-  color: #1e3a8a;
-}
-
-.archivo-info {
-  font-family: "Courier New", Courier, monospace;
-  font-size: 0.85rem;
-  color: #681c1c;
-  margin-top: 0.6rem;
-  /* margin-left: 10px; */
-  text-align: center;
-}
-
-.placeholder-archivo {
-  margin-left: 15px;
-}
-
-/* =======================
-   Botones
-   ======================= */
-.modal-botones {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.75rem;
-  margin-top: 1.25rem;
-}
-
-/* Botón ENVIAR */
+.myins-empty-button,
+.btn-descargar-mi,
+.btn-enviar-email,
+.btn-felicitaciones,
+.btn-reenviar,
+.btn-subir,
 .btn-enviar,
 .btn-cancelar-mi {
-  font-size: 1rem;
-  font-weight: 600;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 2.7rem;
-  width: 35%;
-  gap: 0.4rem;
-  cursor: pointer;
-  padding: 0.45rem 1.2rem;
-  color: white;
-  border-radius: 0.375rem;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 2px 8px rgba(17, 61, 238, 0.08);
-  position: relative;
-  overflow: hidden;
-  will-change: transform, box-shadow;
-  animation: btnFadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  gap: 0.55rem;
+  border-radius: 0.95rem;
+  border: 1px solid transparent;
+  font-weight: 700;
 }
 
-@keyframes btnFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+.myins-empty-button,
+.btn-felicitaciones,
+.btn-subir,
+.btn-enviar {
+  background: var(--gradient-primary);
+  color: var(--color-text-inverse);
+  box-shadow: var(--shadow-primary);
 }
 
-.btn-enviar::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 0;
-  height: 0;
-  background: rgba(17, 61, 238, 0.15);
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 0;
-}
-
-.btn-enviar:hover::after {
-  width: 250%;
-  height: 250%;
-}
-
+.myins-empty-button:hover,
+.btn-felicitaciones:hover,
+.btn-subir:hover,
 .btn-enviar:hover {
-  background-color: #1130ab;
-  border: 1px solid #000000;
-  transform: scale(1.05) translateY(-2px);
-  box-shadow: 0 6px 24px rgba(17, 61, 238, 0.18);
+  transform: translateY(-1px);
+  filter: brightness(1.04);
 }
 
-/* Botón CANCELAR */
-.btn-cancelar-mi {
-  background-color: #e71919;
-  border: 1px solid #670b0b;
-  margin-right: auto;
-  margin-left: 10px;
-}
-
-.btn-cancelar-mi:hover {
-  background-color: #a91111;
-  border: 1px solid #000000;
-  transform: scale(1.05) translateY(-2px) rotate(-2deg);
-  box-shadow: 0 6px 24px rgba(231, 25, 25, 0.18);
-}
-
-.btn-enviar:active,
-.btn-cancelar-mi:active {
-  transform: scale(0.97);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
-}
-
-/* =======================
-   Estilos para la sección de observación del administrador
-   ======================= */
-.myins-observacion {
-  margin: 0.75rem 0;
-  padding: 0.75rem;
-  background-color: #fff8ed;
-  border-left: 3px solid #f59e0b;
-  border-radius: 0.375rem;
-}
-
-.observacion-header {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.375rem;
-  color: #92400e;
-  font-weight: 600;
-  font-size: 0.9rem;
-}
-
-.observacion-texto {
-  margin: 0;
-  color: #78350f;
-  font-size: 0.875rem;
-  line-height: 1.4;
-}
-
-/* =======================
-   Mensaje de inscripción pendiente
-   ======================= */
-.myins-pendiente {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-top: 0.75rem;
-  padding: 0.75rem;
-  background-color: #f0f9ff;
-  border-radius: 0.375rem;
-  border-left: 3px solid #0ea5e9;
-}
-
-.myins-pendiente p {
-  margin: 0;
-  color: #0369a1;
-  font-size: 0.875rem;
-}
-
-/* =======================
-   Filtros de inscripciones
-   ======================= */
 .myins-filter-container {
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 0.75rem;
-  padding: 1.25rem;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-  margin-bottom: 1.5rem;
-  backdrop-filter: blur(4px);
-  border: 1px solid rgba(138, 21, 56, 0.2);
-  animation: fadeIn 0.5s ease-in-out;
+  margin-bottom: 1.25rem;
+  padding: 1rem 1.1rem;
+  border-radius: 1.25rem;
 }
 
 .myins-filter-header {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-  color: var(--color-primario);
+  justify-content: space-between;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.9rem;
+}
+
+.myins-filter-title,
+.myins-filter-summary {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.myins-filter-title {
+  color: var(--color-text-primary);
+  font-weight: 700;
+}
+
+.myins-filter-summary {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.myins-filter-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background: var(--color-primary-light);
+  color: var(--color-primary-hover);
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.myins-filter-results {
+  color: var(--color-text-secondary);
+  font-size: 0.92rem;
   font-weight: 600;
-  font-size: 1rem;
 }
 
 .myins-filter-options {
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
-  align-items: center;
 }
 
-.myins-filter-btn {
-  display: flex;
+.myins-filter-btn,
+.myins-filter-clear,
+.myins-pagination-btn,
+.myins-pagination-number {
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  border-radius: 0.375rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  background-color: #f9fafb;
-  border: 1px solid #e5e7eb;
-  color: #6b7280;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  min-height: 2.85rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-border-primary);
+  background: color-mix(in srgb, var(--color-bg-primary) 78%, transparent);
+  color: var(--color-text-secondary);
+  font-weight: 700;
+  transition:
+    transform var(--transition-fast),
+    background-color var(--transition-fast),
+    color var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    opacity var(--transition-fast);
 }
 
-.myins-filter-btn:hover {
-  background-color: #f3f4f6;
-  transform: translateY(-2px);
+.myins-filter-btn:hover,
+.myins-filter-clear:hover,
+.myins-pagination-btn:hover,
+.myins-pagination-number:hover {
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+}
+
+.myins-filter-btn:not(.active) {
+  opacity: 0.78;
 }
 
 .myins-filter-btn.active {
-  font-weight: 600;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  color: var(--color-primary-hover);
+  border-color: var(--color-primary);
+  background: var(--color-primary-light);
+  box-shadow:
+    0 0 0 4px var(--color-primary-lighter),
+    0 10px 24px rgba(212, 102, 128, 0.14);
+  opacity: 1;
   transform: translateY(-2px);
 }
 
-.myins-filter-btn.active {
-  background-color: rgba(138, 21, 56, 0.1);
-  border-color: var(--color-primario);
-  color: var(--color-primario);
+.myins-filter-btn.active svg {
+  color: inherit;
 }
 
 .myins-filter-btn.estado-pendiente.active {
-  background-color: #fef3c7;
-  border-color: #f59e0b;
-  color: #92400e;
+  color: var(--color-warning);
+  border-color: color-mix(in srgb, var(--color-warning) 60%, transparent);
+  background: var(--color-warning-bg);
+  box-shadow: none;
 }
 
-.myins-filter-btn.estado-aceptada.active {
-  background-color: #d1fae5;
-  border-color: #10b981;
-  color: #065f46;
+.myins-filter-btn.estado-aceptada.active,
+.myins-filter-btn.estado-aprobado.active {
+  color: var(--color-success);
+  border-color: color-mix(in srgb, var(--color-success) 50%, transparent);
+  background: var(--color-success-bg);
+  box-shadow: none;
 }
 
 .myins-filter-btn.estado-rechazada.active {
-  background-color: #fee2e2;
-  border-color: #ef4444;
-  color: #b91c1c;
-}
-
-.myins-filter-btn.estado-aprobado.active {
-  background-color: #dbeafe;
-  border-color: #2563eb;
-  color: #1e40af;
+  color: var(--color-error);
+  border-color: color-mix(in srgb, var(--color-error) 55%, transparent);
+  background: var(--color-error-bg);
+  box-shadow: none;
 }
 
 .myins-filter-clear {
+  width: 2.85rem;
+  padding: 0;
+}
+
+.myins-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));
+  gap: 1.25rem;
+}
+
+.myins-card {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding: 1.25rem;
+  border-radius: 1.3rem;
+  transition:
+    transform var(--transition-normal),
+    box-shadow var(--transition-normal),
+    border-color var(--transition-normal);
+}
+
+.myins-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  border-radius: 999px;
+  background: var(--color-border-secondary);
+}
+
+.myins-card::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--color-border-secondary) 75%, transparent),
+    transparent
+  );
+}
+
+.myins-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.myins-card[data-status="PENDING"]::before {
+  background: var(--color-warning);
+}
+
+.myins-card[data-status="ACCEPTED"]::before,
+.myins-card[data-status="APPROVED"]::before {
+  background: var(--color-success);
+}
+
+.myins-card[data-status="REJECTED"]::before,
+.myins-card[data-status="FAILED_GRADE"]::before,
+.myins-card[data-status="FAILED_ATTENDANCE"]::before,
+.myins-card[data-status="FAILED_TOTAL"]::before {
+  background: var(--color-error);
+}
+
+.myins-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border-primary) 82%, transparent);
+}
+
+.myins-header-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.myins-event-type {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-bg-tertiary) 88%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-border-primary) 82%, transparent);
+  color: var(--color-text-secondary);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.myins-event-name {
+  margin: 0;
+  font-size: 1.18rem;
+  line-height: 1.3;
+  color: var(--color-text-primary);
+}
+
+.myins-estado {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  width: fit-content;
+  padding: 0.38rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+
+.estado-pendiente {
+  color: var(--color-warning);
+  background: var(--color-warning-bg);
+  border-color: color-mix(in srgb, var(--color-warning) 28%, transparent);
+}
+
+.estado-aceptada,
+.estado-aprobado {
+  color: var(--color-success);
+  background: var(--color-success-bg);
+  border-color: color-mix(in srgb, var(--color-success) 28%, transparent);
+}
+
+.estado-rechazada,
+.estado-reprobado-nota,
+.estado-reprobado-total {
+  color: var(--color-error);
+  background: var(--color-error-bg);
+  border-color: color-mix(in srgb, var(--color-error) 28%, transparent);
+}
+
+.estado-reprobado-asistencia {
+  color: #fb923c;
+  background: rgba(251, 146, 60, 0.16);
+  border-color: rgba(251, 146, 60, 0.28);
+}
+
+.myins-datos {
+  margin: 0;
+  color: var(--color-text-secondary);
+  line-height: 1.65;
+  padding: 0.95rem 1rem;
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--color-bg-primary) 72%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-border-primary) 78%, transparent);
+}
+
+.myins-observacion {
+  padding: 0.95rem 1rem;
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--color-error-bg) 70%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-error) 24%, transparent);
+}
+
+.observacion-header {
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background-color: #f3f4f6;
-  border: 1px solid #e5e7eb;
-  color: #6b7280;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  gap: 0.45rem;
+  margin-bottom: 0.45rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
 }
 
-.myins-filter-clear:hover {
-  background-color: #fee2e2;
-  color: #b91c1c;
-  transform: rotate(90deg);
+.observacion-texto {
+  margin: 0;
+  color: var(--color-text-secondary);
+  line-height: 1.55;
 }
 
-@media (max-width: 640px) {
-  .myins-filter-options {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.5rem;
-  }
-
-  .myins-filter-btn {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .myins-filter-clear {
-    margin-top: 0.5rem;
-    align-self: center;
-  }
+.myins-certificado {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
 }
 
-/* =======================
-   Paginación
-   ======================= */
+.myins-card-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin-top: auto;
+  padding-top: 0.35rem;
+}
+
+.btn-descargar-mi {
+  background: rgba(59, 130, 246, 0.14);
+  color: var(--color-info);
+  border-color: rgba(59, 130, 246, 0.28);
+}
+
+.btn-enviar-email {
+  background: rgba(168, 85, 247, 0.14);
+  color: #a855f7;
+  border-color: rgba(168, 85, 247, 0.28);
+}
+
+.btn-reenviar {
+  background: rgba(239, 68, 68, 0.14);
+  color: var(--color-error);
+  border-color: rgba(239, 68, 68, 0.28);
+}
+
+.btn-cancelar-mi {
+  background: transparent;
+  color: var(--color-text-secondary);
+  border-color: var(--color-border-primary);
+}
+
+.btn-descargar-mi:hover,
+.btn-enviar-email:hover,
+.btn-reenviar:hover,
+.btn-cancelar-mi:hover {
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+}
+
+.myins-pendiente {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.85rem 0.95rem;
+  border-radius: 1rem;
+  background: var(--color-info-bg);
+  border: 1px solid color-mix(in srgb, var(--color-info) 24%, transparent);
+  color: var(--color-info);
+}
+
+.myins-pendiente p {
+  margin: 0;
+}
+
+.myins-pagination-container {
+  margin-top: 1.5rem;
+}
+
 .myins-pagination {
   display: flex;
-  justify-content: center;
   align-items: center;
-  /* margin-top: 2rem; */
-  /* margin-bottom: 1.5rem; */
-  gap: 1rem;
-}
-
-.myins-pagination-numbers {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.myins-pagination-btn {
-  background-color: #f3f4f6;
-  border: 1px solid #51505077;
-  color: var(--color-texto);
-  font-size: 0.875rem;
-  font-weight: 500;
-  padding: 0.5rem 1rem;
-  border-radius: 0.375rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.myins-pagination-btn:hover:not(:disabled) {
-  background-color: #ebe5e5;
-  transform: translateY(-2px);
-  border-color: #8a1538;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
 }
 
 .myins-pagination-btn:disabled {
@@ -876,66 +493,143 @@ body::after {
   cursor: not-allowed;
 }
 
-.myins-pagination-number {
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #f3f4f6;
-  border: 1px solid #51505077;
-  color: var(--color-texto);
-  font-size: 0.875rem;
-  font-weight: 500;
-  border-radius: 0.375rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
+.myins-pagination-btn:disabled:hover {
+  background: color-mix(in srgb, var(--color-bg-primary) 78%, transparent);
+  color: var(--color-text-secondary);
 }
 
-.myins-pagination-number:hover:not(.active) {
-  background-color: #ebe5e5;
-  transform: translateY(-2px);
-  border-color: #8a1538;
+.myins-pagination-numbers {
+  display: flex;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+}
+
+.myins-pagination-number {
+  width: 2.85rem;
+  padding: 0;
 }
 
 .myins-pagination-number.active {
-  background-color: var(--color-primario);
-  color: white;
-  border-color: var(--color-primario);
-  box-shadow: 0 2px 5px rgba(138, 21, 56, 0.2);
+  background: var(--gradient-primary);
+  color: var(--color-text-inverse);
+  border-color: transparent;
+  box-shadow: var(--shadow-primary);
 }
 
-@media (max-width: 640px) {
-  .myins-pagination {
-    flex-direction: column;
-    gap: 0.75rem;
+.myins-counter {
+  margin-top: 1rem;
+  text-align: center;
+  color: var(--color-text-secondary);
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: var(--color-bg-overlay);
+  backdrop-filter: blur(5px);
+}
+
+.modal-content {
+  width: min(100%, 34rem);
+  padding: 1.6rem;
+  border-radius: 1.35rem;
+}
+
+.modal-title-mi {
+  margin: 0 0 1.2rem;
+  font-size: 1.35rem;
+  color: var(--color-text-primary);
+}
+
+.archivo-container {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.input-archivo {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.archivo-subida {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.placeholder-archivo {
+  color: var(--color-text-secondary);
+}
+
+.archivo-info {
+  padding: 0.85rem 0.95rem;
+  border-radius: 1rem;
+  background: var(--color-bg-tertiary);
+  border: 1px solid var(--color-border-primary);
+}
+
+.archivo-nombre {
+  color: var(--color-text-primary);
+  word-break: break-word;
+}
+
+.modal-botones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-top: 1.35rem;
+}
+
+@media (max-width: 768px) {
+  .myins-container {
+    padding: 1rem;
   }
 
+  .myins-filter-options,
+  .myins-certificado,
+  .modal-botones,
+  .archivo-subida {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .myins-filter-btn,
+  .myins-empty-button,
+  .btn-descargar-mi,
+  .btn-enviar-email,
+  .btn-felicitaciones,
+  .btn-reenviar,
+  .btn-subir,
+  .btn-enviar,
+  .btn-cancelar-mi,
   .myins-pagination-btn {
     width: 100%;
-    text-align: center;
   }
-}
 
-/* =======================
-   Contador de inscripciones
-   ======================= */
-.myins-counter {
-  text-align: center;
-  margin-top: 1rem;
-  font-size: 0.875rem;
-  color: var(--color-gris);
-  font-style: italic;
-}
+  .myins-pagination {
+    align-items: stretch;
+  }
 
-/* =======================
-   Contenedor de paginación
-   ======================= */
-.myins-pagination-container {
-  height: 120px;
-  background-color: rgba(255, 252, 252, 0.831);
-  padding: 20px 0rem 1rem;
-  margin: 1rem 0;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.667);
+  .myins-pagination-numbers {
+    justify-content: center;
+  }
+
+  .myins-header,
+  .myins-filter-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .myins-filter-summary {
+    justify-content: flex-start;
+  }
 }

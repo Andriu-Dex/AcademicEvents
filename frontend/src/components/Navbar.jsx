@@ -257,7 +257,7 @@ const Navbar = () => {
                   <span className="hamburger-menu-icon">
                     <UserCheck size={18} />
                   </span>
-                  <span>Gestionar Admins</span>
+                  <span>Gestionar Usuarios</span>
                 </Link>
               </div>
             )}
@@ -349,6 +349,7 @@ const Navbar = () => {
       </div>{" "}
       <div className="navbar-right-section">
         <NotificationBell />
+
         <div className="navbar-profile" ref={profileMenuRef}>
           <button
             type="button"

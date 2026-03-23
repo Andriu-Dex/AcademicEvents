@@ -563,3 +563,171 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ============================================
+   THEME OVERRIDES - ADMIN GESTION
+   ============================================ */
+
+.container-admin-gestion-ag {
+  background:
+    radial-gradient(circle at top right, rgba(212, 102, 128, 0.1), transparent 24%),
+    radial-gradient(circle at bottom left, rgba(96, 165, 250, 0.08), transparent 22%),
+    var(--gradient-secondary);
+  color: var(--color-text-primary);
+}
+
+.titulo-principal-ag,
+.subtitulo-ag,
+.accordion-icon-ag {
+  color: var(--color-primary);
+}
+
+.titulo-principal-ag {
+  border-bottom-color: var(--color-primary);
+}
+
+.subtitulo-ag {
+  border-bottom-color: color-mix(in srgb, var(--color-primary) 22%, transparent);
+}
+
+.formulario-section-ag,
+.lista-section-ag,
+.filtros-container-ag,
+.estado-vacio-ag,
+.modal-content-ag {
+  background: var(--color-bg-glass);
+  border: 1px solid var(--color-border-primary);
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(18px);
+}
+
+.campo-form-ag label,
+.label-ag,
+.modal-header-ag h3,
+.check-verified-ag {
+  color: var(--color-text-primary);
+}
+
+.input-ag,
+.select-ag,
+.search-input-ag,
+.select-filter-ag {
+  background: var(--color-bg-secondary);
+  border-color: var(--color-border-primary);
+  color: var(--color-text-primary);
+}
+
+.input-ag::placeholder,
+.search-input-ag::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+.input-ag:focus,
+.select-ag:focus,
+.search-input-ag:focus,
+.select-filter-ag:focus {
+  background: var(--color-bg-primary);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-light);
+}
+
+.tabla-admins-ag {
+  box-shadow: var(--shadow-sm);
+}
+
+.tabla-admins-ag .thead-ag {
+  background-color: var(--color-primary-lighter);
+}
+
+.tabla-admins-ag .th-ag {
+  color: var(--color-primary);
+  border-bottom-color: color-mix(in srgb, var(--color-primary) 18%, transparent);
+}
+
+.tabla-admins-ag .td-ag {
+  color: var(--color-text-secondary);
+  border-bottom-color: color-mix(in srgb, var(--color-border-primary) 70%, transparent);
+}
+
+.tabla-admins-ag .tr-ag:hover {
+  background-color: var(--color-primary-lighter);
+}
+
+.btn-accion-ag {
+  background: color-mix(in srgb, var(--color-bg-primary) 84%, transparent);
+  border-color: var(--color-border-primary);
+  color: var(--color-text-secondary);
+}
+
+.btn-accion-ag:hover:not(:disabled) {
+  background-color: var(--color-primary-lighter);
+}
+
+.spinner-ag {
+  border-color: color-mix(in srgb, var(--color-primary) 18%, transparent);
+  border-top-color: var(--color-primary);
+}
+
+.estado-vacio-ag {
+  color: var(--color-text-secondary);
+  border-color: color-mix(in srgb, var(--color-primary) 20%, var(--color-border-primary));
+}
+
+.filtros-container-ag {
+  background: color-mix(in srgb, var(--color-bg-primary) 82%, transparent);
+}
+
+.search-icon-ag {
+  color: var(--color-text-tertiary);
+}
+
+.btn-filter-clear-ag,
+.btn-modal-primary-ag {
+  background: var(--gradient-primary);
+  color: var(--color-text-inverse);
+  box-shadow: var(--shadow-primary);
+}
+
+.btn-filter-clear-ag:hover {
+  background: var(--color-primary-hover);
+}
+
+.modal-overlay-ag {
+  background: var(--color-bg-overlay);
+  backdrop-filter: blur(5px);
+}
+
+.modal-header-ag,
+.modal-actions-ag {
+  border-color: var(--color-border-primary);
+}
+
+.modal-close-ag,
+.btn-modal-secondary-ag {
+  color: var(--color-text-secondary);
+}
+
+.btn-modal-secondary-ag {
+  background: var(--color-bg-tertiary);
+}
+
+.btn-modal-secondary-ag:hover,
+.modal-close-ag:hover {
+  color: var(--color-text-primary);
+}
+
+[data-theme="dark"] .formulario-section-ag,
+[data-theme="dark"] .lista-section-ag,
+[data-theme="dark"] .filtros-container-ag,
+[data-theme="dark"] .estado-vacio-ag,
+[data-theme="dark"] .modal-content-ag {
+  background: var(--color-bg-glass);
+}
+
+[data-theme="dark"] .btn-accion-ag {
+  background: color-mix(in srgb, var(--color-bg-tertiary) 82%, transparent);
+}
+
+[data-theme="dark"] .tabla-admins-ag .thead-ag {
+  background-color: rgba(212, 102, 128, 0.12);
+}

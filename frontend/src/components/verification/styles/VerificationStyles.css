@@ -531,3 +531,42 @@
     height: 50px;
   }
 }
+
+/* ===========================================
+ * DARK MODE OVERRIDES
+ * =========================================== */
+
+[data-theme="dark"] .container-vs {
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-border-primary);
+  box-shadow: var(--shadow-lg);
+  color: var(--color-text-primary);
+}
+
+[data-theme="dark"] .header-vs {
+  border-bottom-color: var(--color-primary);
+}
+
+[data-theme="dark"] .title-vs,
+[data-theme="dark"] .correction-message-vs,
+[data-theme="dark"] .link-vs {
+  color: var(--color-primary);
+}
+
+[data-theme="dark"] .subtitle-vs,
+[data-theme="dark"] .message-vs,
+[data-theme="dark"] .footer-vs {
+  color: var(--color-text-secondary);
+}
+
+[data-theme="dark"] .footer-vs {
+  border-top-color: var(--color-border-primary);
+}
+
+[data-theme="dark"] .correction-message-vs {
+  background-color: var(--color-primary-lighter);
+}
+
+[data-theme="dark"] .button-secondary-vs:hover {
+  background-color: var(--color-primary-light);
+}

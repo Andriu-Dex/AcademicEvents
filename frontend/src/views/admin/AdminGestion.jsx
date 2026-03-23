@@ -531,7 +531,7 @@ const AdminGestion = () => {
 
   return (
     <div className="container-admin-gestion-ag mx-auto">
-      <h1 className="titulo-principal-ag">Gestión de Administradores</h1>
+      <h1 className="titulo-principal-ag">Gestión de Usuarios</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="formulario-section-ag">

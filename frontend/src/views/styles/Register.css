@@ -2,15 +2,14 @@
 
 body {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background-color: rgb(250, 248, 248);
+  background-color: var(--color-bg-secondary);
 }
 
 input::placeholder {
-  color: #bbb;
+  color: var(--color-text-tertiary);
   font-style: italic;
 }
 
-input,
 .btn,
 .input-group,
 a {
@@ -18,21 +17,22 @@ a {
 }
 
 .form-content-reg {
-  background: #fff;
+  background: var(--color-bg-primary);
   padding: 1.5rem;
   border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  box-shadow: 9px -9px 0 var(--color-border-primary);
   animation: fadeSlideUp-reg 0.6s ease-out;
   max-width: 500px;
   margin: 0rem auto 1rem auto;
+  color: var(--color-text-primary);
 }
 
 .input-group:hover {
-  box-shadow: 0 4px 12px rgba(138, 21, 56, 0.1);
+  box-shadow: var(--shadow-primary);
 }
 
 .btn-primary:disabled {
-  background-color: #8a1538;
+  background-color: var(--color-primary);
   opacity: 0.8;
   cursor: not-allowed;
   position: relative;
@@ -46,7 +46,7 @@ a {
   width: 16px;
   height: 16px;
   margin-top: -8px;
-  border: 2px solid white;
+  border: 2px solid var(--color-text-inverse);
   border-top: 2px solid transparent;
   border-radius: 50%;
   animation: spin 1s linear infinite;
@@ -60,13 +60,13 @@ a {
 
 a.text-primary:hover {
   text-decoration: underline;
-  color: #6e0e2d;
+  color: var(--color-primary-hover);
 }
 
 .registro-titulo-reg {
   position: relative;
   display: inline-block;
-  color: #8a1538;
+  color: var(--color-primary);
   font-weight: bold;
 }
 
@@ -75,7 +75,7 @@ a.text-primary:hover {
   position: absolute;
   width: 100%;
   height: 4px;
-  background: #8a1538;
+  background: var(--color-primary);
   left: 0;
   bottom: -5px;
   border-radius: 2px;
@@ -90,7 +90,7 @@ a.text-primary:hover {
 }
 
 .fixed-image-reg {
-  width: 50vw;
+  width: 62vw;
   background-image: url("https://i.imgur.com/5Nc5FBj.jpeg");
   background-size: cover;
   background-position: center;
@@ -102,12 +102,13 @@ a.text-primary:hover {
 }
 
 .form-scroll-reg {
-  width: 50vw;
+  width: 38vw;
   max-height: 100vh;
   padding: 2rem;
   overflow-y: auto;
   position: relative;
   z-index: 1;
+  background-color: #dadada;
 }
 
 .form-scroll-reg::before {
@@ -115,18 +116,12 @@ a.text-primary:hover {
   position: fixed;
   top: 0;
   left: 0;
-  width: 50vw;
+  width: 100vw;
   height: 100vh;
-  background-image: url("https://www.lahora.com.ec/wp-content/uploads/2024/09/UTA-NUEVAS-INSTALACIONES.jpg");
   background-size: cover;
+  background-color: var(--color-bg-dark-overlay);
   background-position: center;
-  filter: blur(5px);
   z-index: -1;
-}
-
-input:focus {
-  border-color: #8a1538;
-  box-shadow: 0 0 0 0.2rem rgba(138, 21, 56, 0.25);
 }
 
 @media (max-width: 768px) {
@@ -153,21 +148,35 @@ input:focus {
 
 .input-group input {
   border-radius: 8px;
+  color: var(--color-text-primary);
+  caret-color: var(--color-text-primary);
+  -webkit-text-fill-color: var(--color-text-primary);
   transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 .input-group input:focus {
-  border-color: #8a1538;
-  box-shadow: 0 0 0 0.2rem rgba(138, 21, 56, 0.25);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 0.2rem var(--color-primary-light);
+  color: var(--color-text-primary);
+  caret-color: var(--color-text-primary);
+  -webkit-text-fill-color: var(--color-text-primary);
+}
+
+.form-content-reg .form-control,
+.form-content-reg .form-control:focus,
+.form-content-reg .form-control:active {
+  color: var(--color-text-primary);
+  caret-color: var(--color-text-primary);
+  -webkit-text-fill-color: var(--color-text-primary);
 }
 
 .input-group-text {
-  background-color: #8a1538;
+  background-color: var(--color-primary);
   border: none;
 }
 
 .btn-primary-reg {
-  background-color: #8a1538 !important;
+  background-color: var(--color-primary) !important;
   border: none;
   border-radius: 8px;
   transition: background-color 0.3s ease;
@@ -178,7 +187,7 @@ input:focus {
 }
 
 .btn-primary-reg:hover {
-  background-color: #6e0e2d !important;
+  background-color: var(--color-primary-hover) !important;
 }
 
 .title-reg {
@@ -192,7 +201,7 @@ input:focus {
   position: absolute;
   width: 100%;
   height: 4px;
-  background: #8a1538;
+  background: var(--color-primary);
   left: 0;
   bottom: -5px;
   border-radius: 2px;
@@ -209,7 +218,7 @@ input:focus {
 }
 
 .input-group-reg {
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
   border-radius: 8px;
   margin-bottom: 0.9rem;
 }
@@ -221,9 +230,9 @@ input[type="file"] {
 }
 
 input[type="file"]::file-selector-button {
-  background-color: #f0f0f0;
-  color: #333;
-  border: 1px solid #ddd;
+  background-color: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border-primary);
   border-radius: 4px;
   padding: 8px 16px;
   margin-right: 15px;
@@ -232,7 +241,7 @@ input[type="file"]::file-selector-button {
 }
 
 input[type="file"]::file-selector-button:hover {
-  background-color: #e0e0e0;
+  background-color: var(--color-border-primary);
 }
 
 .badge-secondary-reg {
@@ -263,13 +272,13 @@ input[type="file"]::file-selector-button:hover {
   right: 20px;
   width: 45px;
   height: 45px;
-  background-color: rgba(138, 21, 56, 0.7);
+  background-color: var(--color-primary);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
-  box-shadow: 0 2px 8px rgba(138, 21, 56, 0.3);
+  color: var(--color-text-inverse);
+  box-shadow: var(--shadow-primary);
   transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
   z-index: 1000;
   backdrop-filter: blur(3px);
@@ -277,17 +286,17 @@ input[type="file"]::file-selector-button:hover {
 }
 
 .home-button-reg:hover {
-  background-color: rgba(138, 21, 56, 1);
+  background-color: var(--color-primary-hover);
   transform: rotate(360deg) scale(1.1);
-  box-shadow: 0 5px 15px rgba(138, 21, 56, 0.5);
+  box-shadow: var(--shadow-lg);
 }
 
 /* Estilos para el indicador de fortaleza de contraseña */
 .password-strength-reg {
   padding: 0.5rem;
-  background-color: #f8f9fa;
+  background-color: var(--color-bg-tertiary);
   border-radius: 6px;
-  border: 1px solid #e9ecef;
+  border: 1px solid var(--color-border-primary);
 }
 
 .password-errors-reg small {
@@ -303,7 +312,7 @@ input[type="file"]::file-selector-button:hover {
 }
 
 .progress {
-  background-color: #e9ecef !important;
+  background-color: var(--color-border-primary) !important;
   border-radius: 2px;
 }
 

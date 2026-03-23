@@ -11,20 +11,20 @@
 
 .action-confirm-card {
   width: min(560px, 100%);
-  background: #fff;
+  background: var(--color-bg-primary);
   border-radius: 12px;
-  box-shadow: 0 18px 48px rgba(15, 23, 42, 0.3);
+  box-shadow: var(--shadow-lg);
   overflow: hidden;
 }
 
 .action-confirm-header {
-  border-bottom: 1px solid #edf0f5;
+  border-bottom: 1px solid var(--color-border-primary);
   padding: 16px 18px;
 }
 
 .action-confirm-header h3 {
   margin: 0;
-  color: #8a1538;
+  color: var(--color-primary);
   font-size: 1.1rem;
 }
 
@@ -34,7 +34,7 @@
 
 .action-confirm-body p {
   margin: 0;
-  color: #334155;
+  color: var(--color-text-primary);
   line-height: 1.45;
 }
 
@@ -47,18 +47,18 @@
   margin-bottom: 8px;
   font-size: 0.9rem;
   font-weight: 600;
-  color: #374151;
+  color: var(--color-text-primary);
 }
 
 .action-confirm-reason-group textarea {
   width: 100%;
-  border: 1px solid #d5dbe4;
+  border: 1px solid var(--color-border-secondary);
   border-radius: 8px;
   padding: 10px 12px;
   resize: vertical;
   min-height: 96px;
   font-size: 0.95rem;
-  color: #111827;
+  color: var(--color-text-primary);
 }
 
 .action-confirm-reason-group textarea:focus {
@@ -70,11 +70,11 @@
 .action-confirm-reason-group small {
   display: inline-block;
   margin-top: 6px;
-  color: #64748b;
+  color: var(--color-text-tertiary);
 }
 
 .action-confirm-actions {
-  border-top: 1px solid #edf0f5;
+  border-top: 1px solid var(--color-border-primary);
   padding: 14px 18px;
   display: flex;
   justify-content: flex-end;
@@ -100,8 +100,8 @@
 }
 
 .action-confirm-btn-secondary {
-  background: #e5e7eb;
-  color: #374151;
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
 }
 
 .action-confirm-btn-danger {

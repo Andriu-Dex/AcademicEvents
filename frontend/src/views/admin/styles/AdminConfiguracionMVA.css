@@ -596,3 +596,129 @@
     transform: translateY(0) scale(1);
   }
 }
+
+/* ============================================
+   THEME OVERRIDES - ADMIN CONFIG MVA
+   ============================================ */
+
+.home-button-acmva {
+  background-color: color-mix(in srgb, var(--color-primary) 78%, transparent);
+  color: var(--color-text-inverse);
+  box-shadow: var(--shadow-primary);
+}
+
+.adminconfig-container-acmva {
+  background: var(--color-bg-glass);
+  border: 1px solid var(--color-border-primary);
+  box-shadow: var(--shadow-soft);
+  color: var(--color-text-primary);
+  backdrop-filter: blur(18px);
+}
+
+.adminconfig-collapsible-header-acmva:hover {
+  background-color: var(--color-primary-lighter);
+}
+
+.adminconfig-collapse-btn-acmva,
+.adminconfig-title-acmva,
+.adminconfig-title-acmva svg,
+.adminconfig-section-title-acmva,
+.autoridad-numero-acmva,
+.autoridad-info-acmva h4 {
+  color: var(--color-primary);
+}
+
+.adminconfig-title-acmva {
+  border-bottom-color: var(--color-primary);
+  text-shadow: none;
+}
+
+.adminconfig-description-acmva,
+.adminconfig-section-acmva,
+.adminconfig-preview-box-acmva,
+.autoridad-form-acmva,
+.autoridad-card-acmva,
+.empty-state-acmva,
+.statistics-section-acmva {
+  background: color-mix(in srgb, var(--color-bg-primary) 84%, transparent);
+  border: 1px solid var(--color-border-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.adminconfig-description-acmva,
+.adminconfig-info-acmva,
+.text-muted-acmva,
+.empty-state-acmva p,
+.autoridad-info-acmva p,
+.adminconfig-input-acmva,
+.facultad-input-acmva,
+.autoridad-input-acmva,
+.adminconfig-textarea-acmva {
+  color: var(--color-text-secondary);
+}
+
+.adminconfig-form-group-acmva span,
+.facultad-form-group-acmva span,
+.autoridad-form-group-acmva span,
+.autoridad-info-acmva h5 {
+  color: var(--color-text-primary);
+}
+
+.adminconfig-input-acmva,
+.facultad-input-acmva,
+.autoridad-input-acmva,
+.adminconfig-textarea-acmva {
+  background: var(--color-bg-secondary);
+  border-color: var(--color-border-primary);
+  caret-color: var(--color-text-primary);
+}
+
+.adminconfig-input-acmva:focus,
+.facultad-input-acmva:focus,
+.autoridad-input-acmva:focus,
+.adminconfig-textarea-acmva:focus {
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-light);
+}
+
+.adminconfig-preview-btn-acmva,
+.autoridad-add-btn-acmva {
+  background: color-mix(in srgb, var(--color-bg-primary) 82%, transparent);
+  border-color: var(--color-border-primary);
+  color: var(--color-text-secondary);
+}
+
+.adminconfig-preview-btn-acmva:hover,
+.autoridad-add-btn-acmva:hover {
+  background: var(--color-bg-tertiary);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.autoridad-info-acmva {
+  background: transparent;
+}
+
+.autoridad-form-header-acmva {
+  border-bottom-color: var(--color-border-primary);
+}
+
+.autoridad-delete-btn-acmva:hover {
+  background: var(--color-error-bg);
+}
+
+.empty-state-acmva {
+  border-style: dashed;
+}
+
+[data-theme="dark"] .adminconfig-description-acmva,
+[data-theme="dark"] .adminconfig-section-acmva,
+[data-theme="dark"] .adminconfig-preview-box-acmva,
+[data-theme="dark"] .autoridad-form-acmva,
+[data-theme="dark"] .autoridad-card-acmva,
+[data-theme="dark"] .empty-state-acmva,
+[data-theme="dark"] .statistics-section-acmva {
+  background: color-mix(in srgb, var(--color-bg-tertiary) 76%, transparent);
+}

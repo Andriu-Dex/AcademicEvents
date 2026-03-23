@@ -12,14 +12,14 @@
   padding: 0.3rem 1.5rem 0.3rem 1.5rem;
   flex-wrap: wrap;
   gap: 1rem;
-  background-color: rgba(255, 255, 255, 0.873);
+  background-color: var(--color-bg-primary);
   border-radius: 8px;
 }
 
 .admin-events-title {
   font-size: 2rem;
   font-weight: 800;
-  color: #111827;
+  color: var(--color-text-primary);
   text-align: center;
   padding-bottom: 0.5rem;
   position: relative;
@@ -33,12 +33,12 @@
   left: 0;
   width: 100%;
   height: 3px;
-  background: linear-gradient(90deg, #8a1538, rgba(138, 21, 56, 0.3));
+  background: var(--gradient-primary);
   border-radius: 3px;
 }
 
 .admin-events-create-btn {
-  background: linear-gradient(135deg, #8a1538, #6e0e2d);
+  background: var(--gradient-primary);
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
@@ -531,7 +531,7 @@
 }
 
 .admin-events-filter-toggle {
-  background: linear-gradient(135deg, #8a1538, #6e0e2d);
+  background: var(--gradient-primary);
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
@@ -570,7 +570,7 @@
 
 .filters-header h3 {
   font-size: 1.1rem;
-  color: #111827;
+  color: var(--color-text-primary);
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -736,7 +736,7 @@
 }
 
 .sort-btn.active {
-  background: linear-gradient(135deg, #8a1538, #6e0e2d);
+  background: var(--gradient-primary);
   border-color: #8a1538;
   color: white;
   box-shadow: 0 4px 8px rgba(138, 21, 56, 0.3);
@@ -751,7 +751,7 @@
 }
 
 .results-count span {
-  background: linear-gradient(135deg, #8a1538, #6e0e2d);
+  background: var(--gradient-primary);
   color: white;
   padding: 0.5rem 1rem;
   border-radius: 2rem;
@@ -813,4 +813,221 @@
     width: 100%;
     justify-content: center;
   }
+}
+
+/* ============================================
+   THEME OVERRIDES - ADMIN EVENTS
+   ============================================ */
+
+.admin-events-container {
+  max-width: 88rem;
+  padding: 0 1rem 2rem;
+  color: var(--color-text-primary);
+}
+
+.admin-events-header,
+.admin-events-filters,
+.admin-events-empty {
+  background: var(--color-bg-glass);
+  border: 1px solid var(--color-border-primary);
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(18px);
+}
+
+.admin-events-header {
+  border-radius: 1rem;
+}
+
+.admin-events-empty {
+  color: var(--color-text-primary);
+}
+
+.admin-event-card {
+  background: color-mix(in srgb, var(--color-bg-primary) 88%, transparent);
+  border: 1px solid var(--color-border-primary);
+  box-shadow: var(--shadow-md);
+}
+
+.admin-event-card:hover {
+  border-color: color-mix(in srgb, var(--color-primary) 40%, var(--color-border-primary));
+  box-shadow: var(--shadow-lg);
+}
+
+.admin-event-name,
+.filters-header h3,
+.sorting-section h4 {
+  color: var(--color-text-primary);
+}
+
+.admin-event-type-badge,
+.admin-event-details,
+.admin-events-filters,
+.sort-btn,
+.clear-filters-btn {
+  background: color-mix(in srgb, var(--color-bg-primary) 82%, transparent);
+}
+
+.admin-event-type-badge,
+.admin-event-description,
+.admin-event-details,
+.detail-item,
+.filter-group label,
+.results-count,
+.sorting-section h4,
+.sort-btn,
+.clear-filters-btn,
+.text-muted,
+.cupos-disponibles-admin {
+  color: var(--color-text-secondary);
+}
+
+.admin-event-type-badge,
+.admin-event-details,
+.clear-filters-btn,
+.sort-btn {
+  border: 1px solid var(--color-border-primary);
+}
+
+.admin-event-type-badge {
+  border-left: 3px solid var(--color-primary);
+}
+
+.detail-item {
+  border-bottom-color: color-mix(in srgb, var(--color-border-primary) 65%, transparent);
+}
+
+.icon-inline {
+  color: var(--color-primary);
+}
+
+.admin-event-image {
+  border-color: color-mix(in srgb, var(--color-border-primary) 78%, transparent);
+  box-shadow: var(--shadow-sm);
+}
+
+.admin-events-filter-toggle,
+.admin-events-create-btn {
+  box-shadow: var(--shadow-primary);
+}
+
+.admin-event-btn {
+  border: 1px solid var(--color-border-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.admin-event-btn.edit {
+  background: rgba(59, 130, 246, 0.12);
+  color: #2563eb;
+}
+
+.admin-event-btn.view {
+  background: color-mix(in srgb, var(--color-bg-tertiary) 90%, transparent);
+  color: var(--color-text-primary);
+}
+
+.admin-event-btn.delete {
+  background: rgba(239, 68, 68, 0.12);
+  color: var(--color-error);
+}
+
+.admin-event-btn.edit:hover,
+.admin-event-btn.view:hover,
+.admin-event-btn.delete:hover {
+  transform: translateY(-1px);
+}
+
+.filter-group input[type="text"],
+.filter-group input[type="number"],
+.filter-group input[type="date"],
+.filter-group select {
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+  border-color: var(--color-border-primary);
+}
+
+.filter-group input[type="text"]::placeholder,
+.filter-group input[type="number"]::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+.checkbox-label-ae input[type="checkbox"] {
+  accent-color: var(--color-primary);
+}
+
+.labels-check-ae {
+  color: var(--color-text-secondary);
+}
+
+.clear-filters-btn:hover,
+.sort-btn:hover {
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+  border-color: var(--color-primary);
+}
+
+.sort-btn.active {
+  background: var(--gradient-primary);
+  color: var(--color-text-inverse);
+  border-color: transparent;
+  box-shadow: var(--shadow-primary);
+}
+
+[data-theme="dark"] .admin-event-type-badge,
+[data-theme="dark"] .admin-event-details,
+[data-theme="dark"] .sort-btn,
+[data-theme="dark"] .clear-filters-btn,
+[data-theme="dark"] .admin-event-btn.view {
+  background: color-mix(in srgb, var(--color-bg-tertiary) 86%, transparent);
+}
+
+[data-theme="dark"] .estado-activo-ae {
+  background-color: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+[data-theme="dark"] .estado-inactivo-ae,
+[data-theme="dark"] .estado-default-ae {
+  background-color: rgba(148, 163, 184, 0.16);
+  color: #cbd5e1;
+}
+
+[data-theme="dark"] .estado-finalizado-ae,
+[data-theme="dark"] .estado-cancelado-ae {
+  background-color: var(--color-error-bg);
+  color: var(--color-error);
+}
+
+[data-theme="dark"] .estado-suspendido-ae,
+[data-theme="dark"] .valor-pago-ae {
+  background-color: var(--color-warning-bg);
+  color: var(--color-warning);
+}
+
+[data-theme="dark"] .valor-gratuito-ae {
+  background-color: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+[data-theme="dark"] .modalidad-presencial-ae {
+  background-color: rgba(96, 165, 250, 0.16);
+  color: #93c5fd;
+  border-color: #60a5fa;
+}
+
+[data-theme="dark"] .modalidad-virtual-ae {
+  background-color: var(--color-success-bg);
+  color: var(--color-success);
+  border-color: var(--color-success);
+}
+
+[data-theme="dark"] .modalidad-semipresencial-ae {
+  background-color: var(--color-warning-bg);
+  color: var(--color-warning);
+  border-color: var(--color-warning);
+}
+
+[data-theme="dark"] .modalidad-default-ae {
+  background-color: rgba(148, 163, 184, 0.16);
+  color: #cbd5e1;
+  border-color: #94a3b8;
 }

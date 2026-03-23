@@ -3,11 +3,11 @@
   font-family: "Poppins", sans-serif;
   /* background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); */
   background: linear-gradient(135deg, #4f5153 0%, #2a2c2d 100%);
-  color: #ffffff;
+  color: var(--color-text-inverse);
   padding: 3.5rem 0 1.5rem 0;
   margin-top: auto;
   width: 100%;
-  box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-lg);
   position: relative;
 }
 
@@ -75,7 +75,7 @@
 
 .footer-title-fc {
   font-weight: 700;
-  color: #ffffff;
+  color: var(--color-text-inverse);
   margin: 0;
   font-size: 1.8rem;
   letter-spacing: -0.5px;
@@ -99,7 +99,7 @@
 /* Section Titles and Links */
 .footer-section-title-fc {
   font-weight: 600;
-  color: #ffffff;
+  color: var(--color-text-inverse);
   margin-bottom: 1.5rem;
   font-size: 1.1rem;
   position: relative;
@@ -155,7 +155,7 @@
 }
 
 .footer-link-fc:hover {
-  color: #ffffff;
+  color: var(--color-text-inverse);
   transform: translateX(8px);
 }
 
@@ -182,7 +182,7 @@
 }
 
 .footer-contact-item-fc:hover {
-  color: #ffffff;
+  color: var(--color-text-inverse);
   transform: translateX(3px);
 }
 
@@ -258,7 +258,7 @@
 
 .footer-social-link-fc:hover {
   background: #3498db;
-  color: #ffffff;
+  color: var(--color-text-inverse);
   transform: translateY(-3px);
   box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
 }

@@ -13,7 +13,7 @@
 }
 
 .modal-requisitos-contenido-mr {
-  background-color: white;
+  background-color: var(--color-bg-primary);
   padding: 1.5rem;
   border-radius: 8px;
   width: 90%;
@@ -31,20 +31,20 @@
   align-items: center;
   margin-bottom: 1.5rem;
   padding-bottom: 1rem;
-  border-bottom: 2px solid #f3f4f6;
+  border-bottom: 2px solid var(--color-border-primary);
 }
 
 .modal-requisitos-header-mr h3 {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #1f2937;
+  color: var(--color-text-primary);
   margin: 0;
 }
 
 .modal-requisitos-cerrar-mr {
   background: none;
   border: none;
-  color: #6b7280;
+  color: var(--color-text-tertiary);
   cursor: pointer;
   padding: 0.5rem;
   border-radius: 50%;
@@ -65,16 +65,16 @@
 }
 
 .seccion-requisitos-mr {
-  background-color: #f9fafb;
+  background-color: var(--color-bg-tertiary);
   padding: 1.25rem;
   border-radius: 6px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--color-border-primary);
 }
 
 .seccion-requisitos-mr h4 {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #374151;
+  color: var(--color-text-secondary);
   margin-bottom: 1rem;
   display: flex;
   align-items: center;
@@ -86,7 +86,7 @@
   align-items: baseline;
   gap: 0.5rem;
   margin-bottom: 0.75rem;
-  color: #4b5563;
+  color: var(--color-text-secondary);
 }
 
 .info-label-mr {
@@ -99,7 +99,7 @@
 }
 
 .info-value-mr.enfasis {
-  color: #1f2937;
+  color: var(--color-text-primary);
   font-weight: 500;
 }
 
@@ -132,8 +132,8 @@
   transition: all 0.3s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   width: 100%;
-  background-color: #f8f9fa;
-  border: 1px solid #e9ecef;
+  background-color: var(--color-bg-tertiary);
+  border: 1px solid var(--color-border-secondary);
   color: #495057;
 }
 
@@ -151,7 +151,7 @@
 }
 
 .usuario-item-mr.no-dirigido {
-  background-color: #f8f9fa;
+  background-color: var(--color-bg-tertiary);
   color: #6c757d;
   border: 1px solid #dee2e6;
 }
@@ -180,13 +180,13 @@
   gap: 0.75rem;
   padding: 1rem;
   background-color: #ffffff;
-  border: 1px solid #e9ecef;
+  border: 1px solid var(--color-border-secondary);
   border-radius: 8px;
   transition: all 0.3s ease;
 }
 
 .carrera-item-mr:hover {
-  background-color: #f8f9fa;
+  background-color: var(--color-bg-tertiary);
   border-color: #8a1538;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(138, 21, 56, 0.08);
@@ -205,7 +205,7 @@
   padding: 1.25rem;
   background: linear-gradient(to right, #f8f9fa, #ffffff);
   border: 1px solid #8a1538;
-  color: #8a1538;
+  color: var(--color-primary);
   border-radius: 8px;
   font-weight: 500;
   margin-top: 1rem;
@@ -287,7 +287,7 @@
 }
 
 .modal-requisitos-contenido-mr::-webkit-scrollbar-thumb {
-  background: #8a1538;
+  background: var(--color-primary);
   border-radius: 4px;
 }
 
@@ -321,13 +321,13 @@
   margin-top: 2rem;
   text-align: center;
   padding: 1.5rem;
-  background-color: #f9fafb;
+  background-color: var(--color-bg-tertiary);
   border-radius: 8px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--color-border-primary);
 }
 
 .btn-inscripcion-mr {
-  background-color: #8a1538;
+  background-color: var(--color-primary);
   color: white;
   padding: 0.75rem 1.5rem;
   border: none;

@@ -1,0 +1,228 @@
+/**
+ * Theme Variables - AcademicEvents
+ * Sistema centralizado de colores para Light y Dark Mode
+ *
+ * Uso: var(--color-primary), var(--color-bg-primary), etc.
+ */
+
+/* ============================================
+   LIGHT MODE (DEFAULT)
+   ============================================ */
+:root,
+[data-theme="light"] {
+  /* === COLORES INSTITUCIONALES UTA === */
+  --color-uta-primary: #8a1538;        /* Rojo vino institucional */
+  --color-uta-secondary: #630f28;      /* Rojo vino oscuro */
+  --color-uta-accent: #ffd700;         /* Dorado UTA */
+
+  /* === COLORES PRINCIPALES === */
+  --color-primary: #8a1538;            /* Color principal (rojo UTA) */
+  --color-primary-dark: #5f1027;       /* Variante oscura del color principal */
+  --color-primary-hover: #6a102c;      /* Hover del color principal */
+  --color-primary-light: rgba(138, 21, 56, 0.1);  /* Fondo claro */
+  --color-primary-lighter: rgba(138, 21, 56, 0.05); /* Fondo muy claro */
+
+  /* === FONDOS === */
+  --color-bg-primary: #ffffff;         /* Fondo principal (cards, modales) */
+  --color-bg-secondary: #f4f6fb;       /* Fondo secundario (página) */
+  --color-bg-tertiary: #edf2f7;        /* Fondo terciario (inputs, hovers) */
+  --color-bg-elevated: #ffffff;        /* Elementos elevados (dropdowns) */
+  --color-bg-overlay: rgba(0, 0, 0, 0.5); /* Overlay de modales */
+  --color-bg-glass: rgba(255, 255, 255, 0.971);
+  --color-bg-dark-overlay: #00000000;
+
+  /* === TEXTOS === */
+  --color-text-primary: #1f2937;       /* Texto principal */
+  --color-text-secondary: #6b7280;     /* Texto secundario */
+  --color-text-tertiary: #9ca3af;      /* Texto deshabilitado */
+  --color-text-inverse: #ffffff;       /* Texto sobre fondos oscuros */
+  --color-text-link: #8a1538;          /* Enlaces */
+  --color-text-link-hover: #6a102c;    /* Hover de enlaces */
+
+  /* === BORDES === */
+  --color-border-primary: #e5e7eb;     /* Bordes principales */
+  --color-border-secondary: #d1d5db;   /* Bordes secundarios */
+  --color-border-focus: #8a1538;       /* Borde de elementos en focus */
+  --color-border-hover: #8a1538;       /* Borde en hover */
+
+  /* === ESTADOS === */
+  --color-success: #10b981;            /* Verde éxito */
+  --color-success-bg: #d1fae5;         /* Fondo verde claro */
+  --color-warning: #f59e0b;            /* Amarillo advertencia */
+  --color-warning-bg: #fef3c7;         /* Fondo amarillo claro */
+  --color-error: #ef4444;              /* Rojo error */
+  --color-error-bg: #fee2e2;           /* Fondo rojo claro */
+  --color-info: #3b82f6;               /* Azul información */
+  --color-info-bg: #dbeafe;            /* Fondo azul claro */
+
+  /* === SOMBRAS === */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-primary: 0 4px 12px rgba(138, 21, 56, 0.2); /* Sombra con color UTA */
+  --shadow-soft: 0 12px 32px rgba(15, 23, 42, 0.08);
+  --shadow-strong: 0 20px 45px rgba(15, 23, 42, 0.14);
+
+  /* === GRADIENTES === */
+  --gradient-primary: linear-gradient(135deg, #8a1538 0%, #6e0e2d 100%);
+  --gradient-hero: linear-gradient(135deg, rgba(138, 21, 56, 0.85) 0%, rgba(110, 14, 45, 0.9) 100%);
+  --gradient-card: linear-gradient(135deg, #f4f6fb 0%, #e3e8f0 100%);
+  --gradient-secondary: linear-gradient(180deg, #f7f9fc 0%, #e8edf5 100%);
+  --gradient-secondary-hover: linear-gradient(180deg, #ffffff 0%, #fff6f8 100%);
+
+  /* === ALIASES DE COMPATIBILIDAD === */
+  --primary-color: var(--color-primary);
+  --accent-color: var(--color-primary-hover);
+  --secondary-color: var(--color-text-primary);
+  --white: var(--color-bg-primary);
+  --text-dark: var(--color-text-primary);
+  --text-light: var(--color-text-secondary);
+  --light-bg: var(--color-bg-secondary);
+
+  /* === TRANSICIONES === */
+  --transition-fast: 150ms ease-in-out;
+  --transition-normal: 250ms ease-in-out;
+  --transition-slow: 350ms ease-in-out;
+}
+
+/* ============================================
+   DARK MODE
+   ============================================ */
+[data-theme="dark"] {
+  /* === COLORES INSTITUCIONALES UTA (ADAPTADOS) === */
+  --color-uta-primary: #c94767;        /* Rojo vino claro (para contraste) */
+  --color-uta-secondary: #a83652;      /* Rojo vino medio */
+  --color-uta-accent: #e6b800;         /* Dorado oscurecido */
+
+  /* === COLORES PRINCIPALES === */
+  --color-primary: #d46680;            /* Color principal adaptado */
+  --color-primary-dark: #a7445d;       /* Variante oscura para gradientes */
+  --color-primary-hover: #e37b94;      /* Hover más claro */
+  --color-primary-light: rgba(212, 102, 128, 0.16); /* Fondo claro con más opacidad */
+  --color-primary-lighter: rgba(212, 102, 128, 0.08); /* Fondo muy claro */
+
+  /* === FONDOS === */
+  --color-bg-primary: #18202b;         /* Fondo principal (cards, modales) */
+  --color-bg-secondary: #0f141d;       /* Fondo secundario (página) */
+  --color-bg-tertiary: #222c3a;        /* Fondo terciario (inputs, hovers) */
+  --color-bg-elevated: #293547;        /* Elementos elevados (dropdowns) */
+  --color-bg-overlay: rgba(7, 10, 15, 0.82); /* Overlay más oscuro */
+  --color-bg-glass: rgba(24, 32, 43, 0.84);
+  --color-bg-dark-overlay: rgb(0 0 0 / 26%);
+
+  /* === TEXTOS === */
+  --color-text-primary: #edf2f7;       /* Texto principal */
+  --color-text-secondary: #b7c2cf;     /* Texto secundario */
+  --color-text-tertiary: #8391a3;      /* Texto deshabilitado */
+  --color-text-inverse: #ffffff;       /* Texto sobre fondos de acción */
+  --color-text-link: #f09bb0;          /* Enlaces */
+  --color-text-link-hover: #f5b1c1;    /* Hover de enlaces */
+
+  /* === BORDES === */
+  --color-border-primary: #2d394b;     /* Bordes principales */
+  --color-border-secondary: #41526a;   /* Bordes secundarios */
+  --color-border-focus: #d46680;       /* Borde en focus */
+  --color-border-hover: #d46680;       /* Borde en hover */
+
+  /* === ESTADOS === */
+  --color-success: #4ade80;            /* Verde más claro */
+  --color-success-bg: rgba(74, 222, 128, 0.15);
+  --color-warning: #fbbf24;            /* Amarillo sin cambio */
+  --color-warning-bg: rgba(251, 191, 36, 0.15);
+  --color-error: #f87171;              /* Rojo más claro */
+  --color-error-bg: rgba(248, 113, 113, 0.15);
+  --color-info: #60a5fa;               /* Azul más claro */
+  --color-info-bg: rgba(96, 165, 250, 0.15);
+
+  /* === SOMBRAS (MÁS INTENSAS) === */
+  --shadow-sm: 0 2px 8px rgba(2, 6, 23, 0.26);
+  --shadow-md: 0 10px 24px rgba(2, 6, 23, 0.3);
+  --shadow-lg: 0 18px 38px rgba(2, 6, 23, 0.34);
+  --shadow-xl: 0 26px 52px rgba(2, 6, 23, 0.4);
+  --shadow-primary: 0 10px 28px rgba(212, 102, 128, 0.25);
+  --shadow-soft: 0 14px 34px rgba(2, 6, 23, 0.32);
+  --shadow-strong: 0 24px 52px rgba(2, 6, 23, 0.42);
+
+  /* === GRADIENTES (ADAPTADOS) === */
+  --gradient-primary: linear-gradient(135deg, #d46680 0%, #a7445d 100%);
+  --gradient-hero: linear-gradient(135deg, rgba(212, 102, 128, 0.78) 0%, rgba(91, 24, 41, 0.88) 100%);
+  --gradient-card: linear-gradient(145deg, #1c2531 0%, #121923 100%);
+  --gradient-secondary: linear-gradient(180deg, #0c1118 0%, #121a25 100%);
+  --gradient-secondary-hover: linear-gradient(180deg, #303842 0%, #222c3a 100%);
+
+  /* === ALIASES DE COMPATIBILIDAD === */
+  --primary-color: var(--color-primary);
+  --accent-color: var(--color-primary-dark);
+  --secondary-color: var(--color-text-primary);
+  --white: var(--color-bg-primary);
+  --text-dark: var(--color-text-primary);
+  --text-light: var(--color-text-secondary);
+  --light-bg: var(--color-bg-secondary);
+
+  /* === TRANSICIONES (SIN CAMBIOS) === */
+  --transition-fast: 150ms ease-in-out;
+  --transition-normal: 250ms ease-in-out;
+  --transition-slow: 350ms ease-in-out;
+}
+
+/* ============================================
+   SMOOTH TRANSITIONS
+   ============================================ */
+
+/* Transición suave al cambiar de tema */
+*,
+*::before,
+*::after {
+  transition:
+    background-color var(--transition-normal),
+    border-color var(--transition-normal),
+    color var(--transition-normal),
+    box-shadow var(--transition-normal);
+}
+
+/* Excepciones: elementos que no deben hacer transición */
+.no-theme-transition,
+.no-theme-transition *,
+button,
+input,
+textarea,
+select {
+  transition: none !important;
+}
+
+/* Re-aplicar transiciones específicas si es necesario */
+button {
+  transition:
+    background-color 150ms ease-in-out,
+    transform 150ms ease-in-out,
+    box-shadow 150ms ease-in-out;
+}
+
+/* ============================================
+   UTILITIES
+   ============================================ */
+
+/* Clase helper para forzar tema claro u oscuro en elementos específicos */
+.force-light-theme {
+  color-scheme: light;
+}
+
+.force-dark-theme {
+  color-scheme: dark;
+}
+
+/* Optimización de renderizado para dark mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+  }
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+}

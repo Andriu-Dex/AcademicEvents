@@ -185,6 +185,9 @@ const EventsRoute = () => {
     () => (Array.isArray(eventos) ? eventos : []).map(normalizeEventForUI),
     [eventos]
   );
+  const hasActiveFilters =
+    Boolean(filtro.trim()) ||
+    Object.values(filtros).some((value) => Boolean(value));
   useEffect(() => {
     if (loading) return;
     if (!usuario) return navigate("/login");
@@ -428,7 +431,9 @@ const EventsRoute = () => {
             () => axiosInstance.get("/events"),
             () => axiosInstance.get("/eventos")
           );
-          setEventos(eventosRes.data);
+          if (Array.isArray(eventosRes.data)) {
+            fetchData(construirFiltrosAPI());
+          }
         } catch (error) {
           console.error("Error al actualizar eventos:", error);
         }
@@ -555,7 +560,13 @@ const EventsRoute = () => {
     };
   }, [isConnected, socket, handleEventUpdate, fetchData]);
 
-  if (loading) return <p className="p-6">Cargando sesión...</p>;
+  if (loading) {
+    return (
+      <div className="eventos-container-er eventos-loading-screen-er">
+        <p>Cargando sesión...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="eventos-container-er">
@@ -625,7 +636,7 @@ const EventsRoute = () => {
             />
           </button>
 
-          {Object.values(filtros).some((f) => f) && (
+          {hasActiveFilters && (
             <button className="btn-limpiar-filtros-er" onClick={limpiarFiltros}>
               <X size={16} />
               Limpiar filtros
@@ -733,10 +744,10 @@ const EventsRoute = () => {
       {/* Contador de resultados */}
       <div className="resultados-contador-er">
         <p>
-          Mostrando {eventos.length}{" "}
+          Mostrando {eventosNormalizados.length}{" "}
           {cargando && currentPage > 1 ? "(cargando...)" : ""} de {totalItems}{" "}
           eventos
-          {Object.values(filtros).some((f) => f) && (
+          {hasActiveFilters && (
             <span className="filtros-activos-badge-er">
               ({Object.values(filtros).filter((f) => f).length} filtro
               {Object.values(filtros).filter((f) => f).length !== 1
@@ -764,22 +775,16 @@ const EventsRoute = () => {
       ) : eventosNormalizados.length === 0 ? (
         <div className="no-eventos-mensaje-er">
           <AlertTriangle size={40} />
-          <h3>No hay eventos disponibles</h3>
-          <p>No se encontraron eventos para tu perfil de usuario.</p>
-        </div>
-      ) : eventosNormalizados.length === 0 ? (
-        <div className="no-eventos-mensaje-er">
-          <AlertTriangle size={40} />
-          <h3>No hay eventos que coincidan</h3>
+          <h3>
+            {hasActiveFilters
+              ? "No hay eventos que coincidan"
+              : "No hay eventos disponibles"}
+          </h3>
           <p>
-            No se encontraron eventos que coincidan con los criterios de
-            búsqueda.
+            {hasActiveFilters
+              ? "No se encontraron eventos que coincidan con los criterios de búsqueda."
+              : "No se encontraron eventos para tu perfil de usuario."}
           </p>
-          {(filtro || Object.values(filtros).some((f) => f)) && (
-            <button onClick={limpiarFiltros} className="btn-limpiar-er">
-              Limpiar filtros
-            </button>
-          )}
         </div>
       ) : (
         <>
@@ -791,13 +796,6 @@ const EventsRoute = () => {
                   src={evento.coverImageUrl || "https://i.imgur.com/c6Ry30Z.jpeg"}
                   alt={`Portada de ${evento.name}`}
                   className="evento-portada-er"
-                  style={{
-                    width: "100%",
-                    height: "180px",
-                    objectFit: "cover",
-                    borderRadius: "8px 8px 0 0",
-                    marginBottom: "0.5rem",
-                  }}
                 />
                 {/* Indicador de estado para eventos filtrados */}
                 {evento.status === "FINISHED" && (
@@ -1040,7 +1038,7 @@ const EventsRoute = () => {
       )}
       {exitoVisible && (
         <div className="exito-animacion-er">
-          <CheckCircle size={64} color="#16a34a" />
+          <CheckCircle size={64} className="exito-icono-er" />
           <p>¡Inscripción enviada!</p>
         </div>
       )}

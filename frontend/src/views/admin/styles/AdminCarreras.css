@@ -1117,3 +1117,142 @@
   justify-content: flex-end;
   gap: 0.75rem;
 }
+
+/* ============================================
+   THEME OVERRIDES - ACTIVE ADMIN CARRERAS VIEW
+   ============================================ */
+
+.admincarreras-container-ac {
+  max-width: 1240px;
+  margin: 1.5rem auto 0;
+  background: var(--color-bg-glass);
+  border: 1px solid var(--color-border-primary);
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(18px);
+}
+
+.admincarreras-title-ac {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+  background: var(--color-bg-primary);
+  box-shadow: var(--shadow-sm);
+  text-shadow: none;
+}
+
+.admincarreras-form-ac,
+.carrera-display-ac,
+.no-carreras-ac,
+.edicion-modal-content-ac,
+.modal-content-ac {
+  background: var(--color-bg-primary);
+  border-color: var(--color-border-primary);
+  box-shadow: var(--shadow-md);
+}
+
+.admincarreras-form-ac h3,
+.admincarreras-form-ac h3::after,
+.admincarreras-subtitle-ac,
+.carrera-nombre-ac,
+.edicion-modal-title-ac,
+.modal-title-ac,
+.modal-title-eliminacion-ac {
+  color: var(--color-primary);
+}
+
+.admincarreras-subtitle-ac::after {
+  background: linear-gradient(to right, var(--color-primary), transparent);
+}
+
+.form-group-ac label,
+.modal-message-ac,
+.carrera-detalles-duracion-ac,
+.carrera-detalles-modalidad-ac,
+.carrera-facultad-ac,
+.carrera-coordinador-ac {
+  color: var(--color-text-secondary);
+}
+
+.admincarreras-input-ac,
+.admincarreras-textarea-ac,
+.admincarreras-select-ac {
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+  border-color: var(--color-border-secondary);
+}
+
+.admincarreras-input-ac:focus,
+.admincarreras-textarea-ac:focus,
+.admincarreras-select-ac:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-light);
+}
+
+.form-toggle-button-ac,
+.btn-crear-ad-ac,
+.btn-guardar-ac,
+.btn-confirmar-ac {
+  background: var(--gradient-primary);
+  color: var(--color-text-inverse);
+}
+
+.form-toggle-button-ac:hover,
+.btn-crear-ad-ac:hover,
+.btn-guardar-ac:hover,
+.btn-confirmar-ac:hover {
+  box-shadow: var(--shadow-primary);
+}
+
+.carrera-inactiva-ac {
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-lighter) 0%,
+    var(--color-bg-primary) 100%
+  );
+  border-color: var(--color-border-primary);
+}
+
+.carrera-icon-ac {
+  background: var(--color-bg-tertiary);
+  color: var(--color-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.carrera-descripcion-ac {
+  color: var(--color-text-secondary);
+}
+
+.carrera-detalles-duracion-ac,
+.carrera-detalles-modalidad-ac,
+.carrera-facultad-ac,
+.carrera-coordinador-ac {
+  border-bottom-color: var(--color-border-primary);
+}
+
+.btn-cancelar-ac {
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border-primary);
+}
+
+.btn-cancelar-ac:hover {
+  background: var(--color-border-secondary);
+}
+
+.carrera-badge-inactiva-ac {
+  box-shadow: none;
+}
+
+.modal-overlay-ac {
+  background-color: var(--color-bg-overlay);
+}
+
+.modal-warning-ac {
+  background-color: var(--color-error-bg);
+  border-color: rgba(248, 113, 113, 0.35);
+}
+
+@media (max-width: 768px) {
+  .admincarreras-container-ac {
+    margin: 1rem;
+  }
+}

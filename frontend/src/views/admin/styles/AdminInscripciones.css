@@ -1,11 +1,12 @@
 .adminins-container {
-  padding: 2.5rem 1.5rem;
-  max-width: 80%;
-  margin: auto;
-  background: rgba(255, 255, 255, 0.92);
-  border-radius: 1.2rem;
-  box-shadow: 0 8px 32px rgba(138, 21, 56, 0.09),
-    0 1.5px 8px rgba(0, 0, 0, 0.04);
+  padding: 2rem 1.5rem;
+  max-width: 1100px;
+  margin: 1.5rem auto 0;
+  background: var(--color-bg-glass);
+  border-radius: 1.25rem;
+  border: 1px solid var(--color-border-primary);
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(18px);
   animation: fadeInInscripciones 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   overflow-x: hidden;
 }
@@ -22,19 +23,17 @@
 }
 
 .adminins-title {
-  font-size: 1.7rem;
+  font-size: 1.75rem;
   font-weight: 800;
   margin-bottom: 2rem;
-  color: #8a1538;
+  color: var(--color-primary);
   text-align: center;
-  letter-spacing: 0.5px;
-  text-shadow: 0 2px 8px rgba(138, 21, 56, 0.08);
-  border-bottom: 3px solid #8a1538;
-  padding-bottom: 1rem;
-  background: rgba(255, 255, 255, 0.7);
-  border-radius: 0.7rem;
-  display: inline-block;
+  border-bottom: 3px solid var(--color-primary);
+  padding: 1rem;
+  background: var(--color-bg-primary);
+  border-radius: 0.9rem;
   width: 100%;
+  box-shadow: var(--shadow-sm);
 }
 
 .adminins-filtros {
@@ -44,51 +43,52 @@
   margin-bottom: 1.5rem;
 }
 
-.adminins-select {
-  flex: 1;
-  min-width: 200px;
-  border: 1.5px solid #8a1538;
-  padding: 0.6rem 1rem;
-  border-radius: 0.5rem;
+.adminins-select,
+.adminins-busqueda-input {
+  width: 100%;
+  border: 1px solid var(--color-border-secondary);
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
   font-size: 1rem;
-  transition: border 0.2s, box-shadow 0.2s;
-  box-shadow: 0 1px 4px rgba(138, 21, 56, 0.04);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast),
+    background-color var(--transition-fast);
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  box-shadow: var(--shadow-sm);
 }
 
-.adminins-select:focus {
+.adminins-select {
+  flex: 1;
+  min-width: 220px;
+}
+
+.adminins-select:focus,
+.adminins-busqueda-input:focus {
   outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 2px #2563eb33;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-light);
 }
 
 .adminins-busqueda {
   flex: 2;
-  min-width: 250px;
+  min-width: 260px;
   position: relative;
 }
 
 .adminins-busqueda-input {
-  width: 100%;
-  border: 1.5px solid #8a1538;
-  padding: 0.6rem 1rem 0.6rem 2.5rem;
-  border-radius: 0.5rem;
-  font-size: 1rem;
-  transition: border 0.2s, box-shadow 0.2s;
-  box-shadow: 0 1px 4px rgba(138, 21, 56, 0.04);
+  padding-left: 2.75rem;
 }
 
-.adminins-busqueda-input:focus {
-  outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 2px #2563eb33;
+.adminins-busqueda-input::placeholder {
+  color: var(--color-text-tertiary);
 }
 
 .adminins-busqueda-icono {
   position: absolute;
-  left: 0.8rem;
+  left: 0.95rem;
   top: 50%;
   transform: translateY(-50%);
-  color: #8a1538;
+  color: var(--color-primary);
 }
 
 .adminins-cards-container {
@@ -98,70 +98,59 @@
   margin-top: 1.5rem;
 }
 
-.adminins-cargando {
+.adminins-cargando,
+.adminins-sin-datos {
   text-align: center;
-  padding: 2rem;
-  color: #6b7280;
-  font-style: italic;
-  background-color: #f9fafb;
-  border-radius: 0.5rem;
+  padding: 2.25rem 1rem;
+  color: var(--color-text-secondary);
+  background-color: var(--color-bg-primary);
+  border-radius: 0.85rem;
+  border: 1px solid var(--color-border-primary);
   margin-top: 1.5rem;
+  box-shadow: var(--shadow-sm);
 }
 
 .adminins-sin-datos {
-  text-align: center;
-  padding: 3rem 1rem;
-  color: #6b7280;
-  background-color: #f9fafb;
-  border-radius: 0.5rem;
-  margin-top: 1.5rem;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
 }
 
-/* ===========================
-   RESPONSIVE DESIGN
-   =========================== */
 @media (max-width: 900px) {
   .adminins-container {
-    padding: 1.2rem 0.8rem;
+    padding: 1.25rem 1rem;
     max-width: 100%;
-    margin: 1rem auto 0 auto;
   }
 
   .adminins-title {
-    font-size: 1.4rem;
-    padding-bottom: 0.7rem;
+    font-size: 1.45rem;
   }
 }
 
 @media (max-width: 700px) {
   .adminins-container {
-    padding: 1rem 0.5rem;
-    margin: 0.5rem auto 0 auto;
-    border-radius: 0.8rem;
+    padding: 1rem 0.75rem;
+    border-radius: 1rem;
   }
 
   .adminins-title {
-    font-size: 1.2rem;
-    padding-bottom: 0.5rem;
+    font-size: 1.25rem;
+    padding: 0.85rem;
   }
 
   .adminins-filtros {
     flex-direction: column;
-    gap: 0.8rem;
   }
 }
 
 @media (max-width: 480px) {
   .adminins-container {
-    padding: 0.8rem 0.3rem;
+    padding: 0.85rem 0.65rem;
   }
 
   .adminins-title {
-    font-size: 1.1rem;
+    font-size: 1.15rem;
   }
 
   .adminins-cards-container {
-    gap: 0.8rem;
+    gap: 0.85rem;
   }
 }

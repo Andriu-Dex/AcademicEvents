@@ -255,6 +255,10 @@ const MyInscriptions = () => {
   const totalPaginas = Math.ceil(
     inscripcionesFiltradas.length / inscripcionesPorPagina
   );
+  const filtroActivoLabel =
+    filtroEstado === "TODOS"
+      ? "Todos"
+      : estadoLabel[filtroEstado]?.text || filtroEstado;
 
   // Función para cambiar de página
   const cambiarPagina = (numeroPagina) => {
@@ -269,7 +273,7 @@ const MyInscriptions = () => {
       {inscripciones.length === 0 ? (
         <div className="myins-empty-container">
           <div className="myins-empty-icon">
-            <CalendarPlus size={60} color="#8a1538" />
+            <CalendarPlus size={60} />
           </div>
           <h3 className="myins-empty-title">No tienes inscripciones activas</h3>
           <p className="myins-empty-text">
@@ -288,14 +292,26 @@ const MyInscriptions = () => {
         <>
           <div className="myins-filter-container">
             <div className="myins-filter-header">
-              <Filter size={18} />
-              <span>Filtrar por estado:</span>
+              <div className="myins-filter-title">
+                <Filter size={18} />
+                <span>Filtrar por estado</span>
+              </div>
+              <div className="myins-filter-summary">
+                <span className="myins-filter-pill">
+                  {filtroEstado === "TODOS" ? "Vista general" : "Filtro activo"}
+                </span>
+                <span className="myins-filter-results">
+                  {filtroActivoLabel} · {inscripcionesFiltradas.length} resultado
+                  {inscripcionesFiltradas.length === 1 ? "" : "s"}
+                </span>
+              </div>
             </div>
             <div className="myins-filter-options">
               <button
                 className={`myins-filter-btn ${
                   filtroEstado === "TODOS" ? "active" : ""
                 }`}
+                aria-pressed={filtroEstado === "TODOS"}
                 onClick={() => {
                   setFiltroEstado("TODOS");
                   setPaginaActual(1); // Reiniciar a la primera página al cambiar el filtro
@@ -307,6 +323,7 @@ const MyInscriptions = () => {
                 className={`myins-filter-btn estado-pendiente ${
                   filtroEstado === "PENDING" ? "active" : ""
                 }`}
+                aria-pressed={filtroEstado === "PENDING"}
                 onClick={() => {
                   setFiltroEstado("PENDING");
                   setPaginaActual(1); // Reiniciar a la primera página al cambiar el filtro
@@ -319,6 +336,7 @@ const MyInscriptions = () => {
                 className={`myins-filter-btn estado-aceptada ${
                   filtroEstado === "ACCEPTED" ? "active" : ""
                 }`}
+                aria-pressed={filtroEstado === "ACCEPTED"}
                 onClick={() => {
                   setFiltroEstado("ACCEPTED");
                   setPaginaActual(1); // Reiniciar a la primera página al cambiar el filtro
@@ -331,6 +349,7 @@ const MyInscriptions = () => {
                 className={`myins-filter-btn estado-rechazada ${
                   filtroEstado === "REJECTED" ? "active" : ""
                 }`}
+                aria-pressed={filtroEstado === "REJECTED"}
                 onClick={() => {
                   setFiltroEstado("REJECTED");
                   setPaginaActual(1); // Reiniciar a la primera página al cambiar el filtro
@@ -343,6 +362,7 @@ const MyInscriptions = () => {
                 className={`myins-filter-btn estado-aprobado ${
                   filtroEstado === "APPROVED" ? "active" : ""
                 }`}
+                aria-pressed={filtroEstado === "APPROVED"}
                 onClick={() => {
                   setFiltroEstado("APPROVED");
                   setPaginaActual(1); // Reiniciar a la primera página al cambiar el filtro
@@ -367,18 +387,25 @@ const MyInscriptions = () => {
 
           <div className="myins-grid">
             {inscripcionesActuales.map((ins) => (
-              <div key={ins.id} className="myins-card">
+              <div
+                key={ins.id}
+                className="myins-card"
+                data-status={ins.status}
+              >
                 <div className="myins-header">
-                  <h3 className="myins-event-name">{ins.event.name}</h3>
+                  <div className="myins-header-content">
+                    <span className="myins-event-type">{ins.event.type}</span>
+                    <h3 className="myins-event-name">{ins.event.name}</h3>
+                  </div>
+                  <span
+                    className={`myins-estado ${
+                      estadoLabel[ins.status]?.color || "estado-pendiente"
+                    }`}
+                  >
+                    {estadoLabel[ins.status]?.icon || <Clock size={16} />}
+                    {estadoLabel[ins.status]?.text || ins.status}
+                  </span>
                 </div>
-                <span
-                  className={`myins-estado ${
-                    estadoLabel[ins.status]?.color || "estado-pendiente"
-                  }`}
-                >
-                  {estadoLabel[ins.status]?.icon || <Clock size={16} />}
-                  {estadoLabel[ins.status]?.text || ins.status}
-                </span>
                 <p className="myins-datos">
                   Tipo: {ins.event.type} <br /> Fecha:{" "}
                   {new Date(ins.event.startDate).toLocaleDateString("es-EC")}{" "}
@@ -395,6 +422,7 @@ const MyInscriptions = () => {
                     <p className="observacion-texto">{ins.observation}</p>
                   </div>
                 )}{" "}
+                <div className="myins-card-footer">
                 {ins.status === "APPROVED" && (
                   <div className="myins-certificado">
                     {" "}
@@ -510,6 +538,7 @@ const MyInscriptions = () => {
                     </p>
                   </div>
                 )}
+                </div>
               </div>
             ))}
           </div>
@@ -588,8 +617,8 @@ const MyInscriptions = () => {
 
               <div className="archivo-subida">
                 <label htmlFor="archivo" className="btn-subir">
-                  <FileUp size={16} style={{ marginRight: 6 }} /> Seleccionar
-                  archivo
+                  <FileUp size={16} />
+                  Seleccionar archivo
                 </label>
 
                 {!nuevoArchivo && (

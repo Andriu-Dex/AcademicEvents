@@ -1,5 +1,12 @@
 /* Estilos para Home.jsx */
 
+.home-page {
+  min-height: 100vh;
+  min-width: 100vw;
+  background: var(--gradient-secondary);
+  color: var(--color-text-primary);
+}
+
 .contenedor-principal-home {
   width: 100%;
   padding-top: 3rem;
@@ -8,37 +15,141 @@
   margin-top: -1.5rem;
 }
 
+.hero-section-home {
+  background: var(--gradient-hero),
+    url("https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80")
+      center/cover no-repeat;
+  min-height: 400px;
+  margin-top: 0;
+  padding-top: 70px;
+}
+
 /* Estilos para el Hero Section */
 .hero-section {
-  background: linear-gradient(rgba(138, 21, 56, 0.85), rgba(138, 21, 56, 0.9)),
+  background: var(--gradient-hero),
     url("https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80")
       center/cover no-repeat;
   min-height: 400px;
 }
 
 .hero-button-primary {
-  color: #8a1538;
+  color: var(--color-primary);
   border-radius: 8px;
   font-size: 1rem;
   padding: 12px 24px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: var(--shadow-primary);
 }
 
 .hero-button-secondary {
   border-radius: 8px;
   font-size: 1rem;
   padding: 12px 24px;
+  backdrop-filter: blur(12px);
+}
+
+.hero-stats-card {
+  background-color: var(--color-bg-glass) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(18px);
+  box-shadow: var(--shadow-lg);
+}
+
+.display-6 {
+    font-size: calc(1.375rem + 1.5vw);
+    font-weight: 300;
+    line-height: 1.2;
+    color: var(--color-text-primary);
+}
+
+.hero-stat-number {
+  color: var(--color-primary);
+}
+
+.home-section-title {
+  color: var(--color-primary);
+}
+
+.career-badge {
+  background-color: var(--color-bg-tertiary) !important;
+  color: var(--color-text-secondary) !important;
+  border: 1px solid var(--color-border-primary);
+  font-weight: 600;
+}
+
+.contact-card-home {
+  background: var(--gradient-card);
+  border-top: 4px solid var(--color-primary);
+}
+
+.contact-link-primary {
+  background: var(--gradient-primary);
+  color: var(--color-text-inverse);
+  border-radius: 8px;
+  border: none;
+}
+
+.contact-link-primary:hover {
+  color: var(--color-text-inverse);
+  box-shadow: var(--shadow-primary);
+}
+
+.contact-link-secondary {
+  border-radius: 8px;
+}
+
+.notificacion-icono-hm {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Indicador de estado de Socket.IO */
+.socket-status-hm {
+  background: var(--color-bg-glass);
+  backdrop-filter: blur(14px);
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 1040;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 2px 4px;
+  border: 1px solid var(--color-border-primary);
+  box-shadow: var(--shadow-md);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.socket-indicator-hm.connected-hm {
+  color: var(--color-success);
+}
+
+.socket-indicator-hm.disconnected-hm {
+  color: var(--color-error);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+:target {
+  scroll-margin-top: 80px;
 }
 
 /* Estilos para tarjetas */
 .hover-card {
   transition: all 0.3s ease;
   cursor: pointer;
+  background-color: var(--color-bg-primary);
 }
 
 .hover-card:hover {
   transform: translateY(-8px);
-  box-shadow: 0 15px 30px rgba(138, 21, 56, 0.15) !important;
-  border-bottom: 3px solid #8a1538;
+  box-shadow: var(--shadow-lg) !important;
+  border-bottom: 3px solid var(--color-primary);
 }
 
 /* Animaciones */
@@ -92,7 +203,7 @@
 .autoridad-card-h:hover,
 .carrera-card-h .card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(138, 21, 56, 0.15);
+  box-shadow: var(--shadow-lg);
 }
 
 /* Suavizar transición del contenedor */
@@ -115,30 +226,30 @@
 
 .carousel-indicator-h.active-h {
   transform: scale(1.2);
-  box-shadow: 0 3px 6px rgba(138, 21, 56, 0.3);
+  box-shadow: var(--shadow-primary);
 }
 
 /* Estilos para sección de contacto */
 .contact-section {
   border-radius: 15px;
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  border-top: 4px solid #8a1538;
+  background: var(--gradient-card);
+  border-top: 4px solid var(--color-primary);
 }
 
 .contact-button {
-  background: #8a1538;
-  color: #fff;
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
   border-radius: 8px;
 }
 
 /* Colores principales */
 .primary-color {
-  color: #8a1538;
+  color: var(--color-primary);
 }
 
 .primary-bg {
-  background: #8a1538;
-  color: white;
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
 }
 
 /* Estilos de footer */
@@ -149,19 +260,19 @@
 
 /* Estilos generales */
 .stats-number {
-  color: #8a1538;
+  color: var(--color-primary);
 }
 
 .section-title {
-  color: #8a1538;
+  color: var(--color-primary);
 }
 
 .carrera-title {
-  color: #8a1538;
+  color: var(--color-primary);
 }
 
 .info-title {
-  color: #8a1538;
+  color: var(--color-primary);
 }
 
 .text-justified {
@@ -169,12 +280,12 @@
 }
 
 .carrera-info-btn {
-  background: #8a1538;
-  color: white;
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
 }
 
 .contacto-title {
-  color: #8a1538;
+  color: var(--color-primary);
 }
 
 .phone-btn {
@@ -212,14 +323,14 @@
   display: block;
   width: 80px;
   height: 3px;
-  background: linear-gradient(90deg, #8a1538, #c33c5e);
+  background: var(--gradient-primary);
   margin: 15px auto 0;
   border-radius: 2px;
 }
 
 .autoridades-title-h {
   font-weight: 700;
-  color: #8a1538;
+  color: var(--color-primary);
   margin-bottom: 0.5rem;
   font-size: 2rem;
 }
@@ -229,7 +340,7 @@
 .mision-vision-h {
   font-weight: 500;
   font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
-  color: #6c757d;
+  color: var(--color-text-secondary);
   margin-top: 0.4rem;
   font-size: 1rem;
 }
@@ -248,20 +359,20 @@
 }
 
 .autoridad-card-h {
-  background-color: #fff;
+  background-color: var(--color-bg-primary);
   border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-md);
   overflow: hidden;
   transition: all 0.3s ease;
   height: 100%;
-  border: 1px solid #f0f0f0;
+  border: 1px solid var(--color-border-primary);
   position: relative;
 }
 
 .autoridad-card-h:hover {
   transform: translateY(-8px);
-  box-shadow: 0 15px 30px rgba(138, 21, 56, 0.15);
-  border-bottom: 3px solid #8a1538;
+  box-shadow: var(--shadow-lg);
+  border-bottom: 3px solid var(--color-primary);
 }
 
 .autoridad-card-h::before {
@@ -271,7 +382,7 @@
   left: 0;
   width: 100%;
   height: 5px;
-  background: linear-gradient(90deg, #8a1538, #c33c5e);
+  background: var(--gradient-primary);
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 0.3s ease;
@@ -295,19 +406,19 @@
   border-radius: 50%;
   object-fit: cover;
   margin-bottom: 1rem;
-  border: 3px solid rgba(138, 21, 56, 0.1);
+  border: 3px solid var(--color-primary-light);
   transition: transform 0.3s ease, border 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-sm);
 }
 
 .autoridad-card-h:hover .autoridad-image-h {
   transform: scale(1.05);
-  border: 3px solid rgba(138, 21, 56, 0.3);
-  box-shadow: 0 8px 25px rgba(138, 21, 56, 0.2);
+  border: 3px solid var(--color-primary);
+  box-shadow: var(--shadow-primary);
 }
 
 .autoridad-name-h {
-  color: #8a1538;
+  color: var(--color-primary);
   font-weight: 700;
   margin-bottom: 0.5rem;
   font-size: 1.2rem;
@@ -322,7 +433,7 @@
   height: 2px;
   bottom: -3px;
   left: 50%;
-  background-color: #8a1538;
+  background-color: var(--color-primary);
   transition: width 0.3s ease, left 0.3s ease;
 }
 
@@ -332,7 +443,7 @@
 }
 
 .autoridad-cargo-h {
-  color: #6c757d;
+  color: var(--color-text-secondary);
   font-weight: 600;
   margin-bottom: 1rem;
   font-size: 0.9rem;
@@ -351,14 +462,14 @@
   font-size: 0.875rem;
   font-weight: 500;
   line-height: 1.5;
-  color: #8a1538;
+  color: var(--color-primary);
   text-align: center;
   text-decoration: none;
   vertical-align: middle;
   cursor: pointer;
   user-select: none;
   background-color: transparent;
-  border: 1px solid #8a1538;
+  border: 1px solid var(--color-primary);
   border-radius: 0.25rem;
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
     border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out,
@@ -366,16 +477,16 @@
 }
 
 .autoridad-contact-h:hover {
-  color: #fff;
-  background-color: #8a1538;
-  border-color: #8a1538;
+  color: var(--color-text-inverse);
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(138, 21, 56, 0.2);
+  box-shadow: var(--shadow-primary);
 }
 
 .autoridad-contact-h:active {
   transform: translateY(0);
-  box-shadow: 0 2px 4px rgba(138, 21, 56, 0.1);
+  box-shadow: var(--shadow-sm);
 }
 
 .autoridad-icon-h {
@@ -435,8 +546,8 @@
 }
 
 .carousel-btn-h {
-  background: #8a1538;
-  color: white;
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
   border: none;
   border-radius: 50%;
   width: 50px;
@@ -446,7 +557,7 @@
   justify-content: center;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(138, 21, 56, 0.2);
+  box-shadow: var(--shadow-primary);
   z-index: 20;
   position: absolute;
 }
@@ -462,13 +573,13 @@
 }
 
 .carousel-btn-h:hover:not(:disabled) {
-  background: #a01b47;
+  background: var(--color-primary-hover);
   transform: scale(1.1);
-  box-shadow: 0 6px 16px rgba(138, 21, 56, 0.3);
+  box-shadow: var(--shadow-lg);
 }
 
 .carousel-btn-h:disabled {
-  background: #ccc;
+  background: var(--color-border-secondary);
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
@@ -486,7 +597,7 @@
   height: 6px;
   border-radius: 8px;
   border: none;
-  background: #ddd;
+  background: var(--color-border-secondary);
   cursor: pointer;
   padding: 0;
   margin: 0 2px 0 2px;
@@ -494,12 +605,12 @@
 }
 
 .carousel-indicator-h.active-h {
-  background: #8a1538;
+  background: var(--color-primary);
   transform: scale(1.2);
 }
 
 .carousel-indicator-h:hover {
-  background: #a01b47;
+  background: var(--color-primary-hover);
 }
 
 /* Media queries responsive para carruseles h */
@@ -609,12 +720,12 @@
 
 /* Mejoras de accesibilidad para carruseles */
 .carousel-btn-h:focus {
-  outline: 2px solid #8a1538;
+  outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 
 .carousel-indicator-h:focus {
-  outline: 2px solid #8a1538;
+  outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 
@@ -629,7 +740,7 @@
   justify-content: center;
   align-items: center;
   height: 200px;
-  color: #8a1538;
+  color: var(--color-primary);
 }
 
 .carousel-window-h {
@@ -754,24 +865,6 @@
   opacity: 1;
 }
 
-/* Indicador de estado de Socket.IO */
-.socket-status-hm {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  z-index: 1040;
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  padding: 8px 12px;
-  /* background: rgba(255, 255, 255, 0.263); */
-  border-radius: 20px;
-  /* box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); */
-  /* backdrop-filter: blur(10px); */
-  font-size: 12px;
-  font-weight: 500;
-}
-
 .socket-indicator-hm {
   display: flex;
   align-items: center;
@@ -790,8 +883,8 @@
 }
 
 .updates-indicator-hm {
-  background: rgba(138, 21, 56, 0.1);
-  color: #8a1538;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
   padding: 4px 8px;
   border-radius: 12px;
   font-size: 11px;
@@ -821,6 +914,139 @@
     transform: scale(1.05);
     opacity: 0.8;
   }
+}
+
+/* ============================================
+   DARK MODE OVERRIDES PARA HOME
+   ============================================ */
+
+/* Hero Section Stats Cards */
+[data-theme="dark"] .card.bg-white.bg-opacity-90 {
+  background-color: var(--color-bg-glass) !important;
+  border: 1px solid var(--color-border-primary);
+}
+
+[data-theme="dark"] .card.bg-white.bg-opacity-90 h3 {
+  color: var(--color-primary) !important;
+}
+
+[data-theme="dark"] .card.bg-white.bg-opacity-90 small.text-muted {
+  color: var(--color-text-secondary) !important;
+}
+
+/* Hero Section Buttons */
+[data-theme="dark"] .btn.btn-light {
+  background-color: rgba(255, 255, 255, 0.92) !important;
+  color: var(--color-primary) !important;
+  border-color: var(--color-border-primary);
+}
+
+[data-theme="dark"] .btn.btn-light:hover {
+  background-color: var(--color-bg-tertiary) !important;
+}
+
+/* Hover Cards */
+[data-theme="dark"] .hover-card {
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-border-primary);
+}
+
+[data-theme="dark"] .hover-card:hover {
+  border-bottom-color: var(--color-primary);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Carreras Section */
+[data-theme="dark"] .carrera-card-h .card {
+  background-color: var(--color-bg-primary);
+  border-color: var(--color-border-primary);
+}
+
+[data-theme="dark"] .carrera-card-h .card:hover {
+  border-bottom-color: var(--color-primary);
+}
+
+[data-theme="dark"] .carrera-card-h .card-body {
+  background-color: var(--color-bg-primary);
+}
+
+[data-theme="dark"] .carrera-card-h .card-text {
+  color: var(--color-text-secondary);
+}
+
+/* Contact Section */
+[data-theme="dark"] .contact-section {
+  background: var(--gradient-card);
+  border-top-color: var(--color-primary);
+}
+
+[data-theme="dark"] .hero-stats-card {
+  background: rgba(24, 32, 43, 0.82) !important;
+  border-color: rgba(212, 102, 128, 0.2);
+}
+
+[data-theme="dark"] .contact-link-secondary {
+  color: var(--color-text-primary);
+  border-color: var(--color-border-secondary);
+}
+
+[data-theme="dark"] .contact-link-secondary:hover {
+  background-color: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+  border-color: var(--color-border-hover);
+}
+
+/* Mision/Vision Cards */
+[data-theme="dark"] .bg-white.shadow-sm {
+  background-color: var(--color-bg-primary) !important;
+  box-shadow: var(--shadow-sm);
+}
+
+/* fw-bold titles inside cards */
+[data-theme="dark"] h2.fw-bold,
+[data-theme="dark"] h3.fw-bold,
+[data-theme="dark"] h5.fw-bold {
+  color: var(--color-primary);
+}
+
+/* Text inside cards */
+[data-theme="dark"] .card p,
+[data-theme="dark"] .card .card-text {
+  color: var(--color-text-secondary);
+}
+
+/* Socket indicator colors - mantener colores funcionales */
+[data-theme="dark"] .socket-indicator-hm.connected-hm {
+  color: #22c55e;
+}
+
+[data-theme="dark"] .socket-indicator-hm.disconnected-hm {
+  color: #ef4444;
+}
+
+/* Notification colors for dark mode */
+[data-theme="dark"] .notificacion-info-hm {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(96, 165, 250, 0.15) 100%);
+  border-left-color: #3b82f6;
+  color: #60a5fa;
+}
+
+[data-theme="dark"] .notificacion-success-hm {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(74, 222, 128, 0.15) 100%);
+  border-left-color: #22c55e;
+  color: #4ade80;
+}
+
+[data-theme="dark"] .notificacion-warning-hm {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(251, 191, 36, 0.15) 100%);
+  border-left-color: #f59e0b;
+  color: #fbbf24;
+}
+
+[data-theme="dark"] .notificacion-error-hm {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(248, 113, 113, 0.15) 100%);
+  border-left-color: #ef4444;
+  color: #f87171;
 }
 
 /* Responsive para dispositivos móviles */

@@ -275,3 +275,36 @@
   background-color: rgba(220, 53, 69, 0.1);
   border-left: 3px solid var(--color-danger-vp);
 }
+
+[data-theme="dark"] .container-vp {
+  background-color: var(--color-bg-primary);
+  border-top-color: var(--color-primary);
+  box-shadow: var(--shadow-lg);
+  color: var(--color-text-primary);
+}
+
+[data-theme="dark"] .header-vp {
+  border-bottom-color: var(--color-primary);
+}
+
+[data-theme="dark"] .header-vp::after,
+[data-theme="dark"] .title-vp,
+[data-theme="dark"] .button-secondary-vp,
+[data-theme="dark"] .link-vp {
+  color: var(--color-primary);
+}
+
+[data-theme="dark"] .email-highlight-vp {
+  background-color: var(--color-primary-lighter);
+  border-left-color: var(--color-primary);
+}
+
+[data-theme="dark"] .footer-vp {
+  color: var(--color-text-secondary);
+  border-top-color: var(--color-border-primary);
+}
+
+[data-theme="dark"] .button-secondary-vp:hover {
+  background-color: var(--color-primary-light);
+  color: var(--color-primary-hover);
+}
