@@ -1,0 +1,331 @@
+
+> frontend@0.0.0 lint
+> eslint .
+
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\public\firebase-messaging-sw.js
+    7:1   error  'importScripts' is not defined     no-undef
+    8:1   error  'importScripts' is not defined     no-undef
+   31:1   error  'firebase' is not defined          no-undef
+   34:19  error  'firebase' is not defined          no-undef
+   94:5   error  'clients' is not defined           no-undef
+  104:11  error  'clients' is not defined           no-undef
+  105:16  error  'clients' is not defined           no-undef
+  114:35  error  'event' is defined but never used  no-unused-vars
+  126:19  error  'clients' is not defined           no-undef
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\components\DocumentViewer.jsx
+  55:7  error  Visible, non-interactive elements with click handlers must have at least one keyboard listener                                                                                                     jsx-a11y/click-events-have-key-events
+  55:7  error  Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role and support for tabbing, mouse, keyboard, and touch inputs to an interactive content element  jsx-a11y/no-static-element-interactions
+  56:9  error  Visible, non-interactive elements with click handlers must have at least one keyboard listener                                                                                                     jsx-a11y/click-events-have-key-events
+  56:9  error  Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role and support for tabbing, mouse, keyboard, and touch inputs to an interactive content element  jsx-a11y/no-static-element-interactions
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\components\EventForm.jsx
+  117:6   warning  React Hook useEffect has a missing dependency: 'cargarEventoParaEditar'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  123:14  error    'error' is defined but never used                                                                                          no-unused-vars
+  188:14  error    'error' is defined but never used                                                                                          no-unused-vars
+  454:9   error    'response' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                                   no-unused-vars
+  559:15  error    A form label must be associated with a control                                                                             jsx-a11y/label-has-associated-control
+  576:15  error    A form label must be associated with a control                                                                             jsx-a11y/label-has-associated-control
+  591:17  error    A form label must be associated with a control                                                                             jsx-a11y/label-has-associated-control
+  609:13  error    A form label must be associated with a control                                                                             jsx-a11y/label-has-associated-control
+  629:15  error    A form label must be associated with a control                                                                             jsx-a11y/label-has-associated-control
+  677:15  error    A form label must be associated with a control                                                                             jsx-a11y/label-has-associated-control
+  730:15  error    A form label must be associated with a control                                                                             jsx-a11y/label-has-associated-control
+  756:15  error    A form label must be associated with a control                                                                             jsx-a11y/label-has-associated-control
+  783:15  error    A form label must be associated with a control                                                                             jsx-a11y/label-has-associated-control
+  810:17  error    A form label must be associated with a control                                                                             jsx-a11y/label-has-associated-control
+  859:13  error    A form label must be associated with a control                                                                             jsx-a11y/label-has-associated-control
+  896:13  error    A form label must be associated with a control                                                                             jsx-a11y/label-has-associated-control
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\components\FloatingThemeSocketControls.jsx
+  8:11  error  'isConnected' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\components\Footer.jsx
+   73:6   warning  React Hook useEffect has missing dependencies: 'cargarDatosFacultad' and 'cargarDatosUniversidad'. Either include them or remove the dependency array                                                                                                                                                                                                              react-hooks/exhaustive-deps
+  186:15  error    The href attribute requires a valid value to be accessible. Provide a valid, navigable address as the href value. If you cannot provide a valid href, but still need the element to resemble a link, use a button and change it with appropriate styles. Learn more: https://github.com/jsx-eslint/eslint-plugin-jsx-a11y/blob/HEAD/docs/rules/anchor-is-valid.md  jsx-a11y/anchor-is-valid
+  189:15  error    The href attribute requires a valid value to be accessible. Provide a valid, navigable address as the href value. If you cannot provide a valid href, but still need the element to resemble a link, use a button and change it with appropriate styles. Learn more: https://github.com/jsx-eslint/eslint-plugin-jsx-a11y/blob/HEAD/docs/rules/anchor-is-valid.md  jsx-a11y/anchor-is-valid
+  192:15  error    The href attribute requires a valid value to be accessible. Provide a valid, navigable address as the href value. If you cannot provide a valid href, but still need the element to resemble a link, use a button and change it with appropriate styles. Learn more: https://github.com/jsx-eslint/eslint-plugin-jsx-a11y/blob/HEAD/docs/rules/anchor-is-valid.md  jsx-a11y/anchor-is-valid
+  195:15  error    The href attribute requires a valid value to be accessible. Provide a valid, navigable address as the href value. If you cannot provide a valid href, but still need the element to resemble a link, use a button and change it with appropriate styles. Learn more: https://github.com/jsx-eslint/eslint-plugin-jsx-a11y/blob/HEAD/docs/rules/anchor-is-valid.md  jsx-a11y/anchor-is-valid
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\components\ImageUploadMVA.jsx
+  179:11  error  Visible, non-interactive elements with click handlers must have at least one keyboard listener                                                                                                     jsx-a11y/click-events-have-key-events
+  179:11  error  Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role and support for tabbing, mouse, keyboard, and touch inputs to an interactive content element  jsx-a11y/no-static-element-interactions
+  211:9   error  Visible, non-interactive elements with click handlers must have at least one keyboard listener                                                                                                     jsx-a11y/click-events-have-key-events
+  211:9   error  Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role and support for tabbing, mouse, keyboard, and touch inputs to an interactive content element  jsx-a11y/no-static-element-interactions
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\components\InscripcionCard.jsx
+  269:7  error  Visible, non-interactive elements with click handlers must have at least one keyboard listener                                                                                                     jsx-a11y/click-events-have-key-events
+  269:7  error  Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role and support for tabbing, mouse, keyboard, and touch inputs to an interactive content element  jsx-a11y/no-static-element-interactions
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\components\ModalCartaMotivacion.jsx
+  8:5  error  Visible, non-interactive elements with click handlers must have at least one keyboard listener                                                                                                     jsx-a11y/click-events-have-key-events
+  8:5  error  Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role and support for tabbing, mouse, keyboard, and touch inputs to an interactive content element  jsx-a11y/no-static-element-interactions
+  9:7  error  Visible, non-interactive elements with click handlers must have at least one keyboard listener                                                                                                     jsx-a11y/click-events-have-key-events
+  9:7  error  Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role and support for tabbing, mouse, keyboard, and touch inputs to an interactive content element  jsx-a11y/no-static-element-interactions
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\components\ModalRequisitos.jsx
+   35:3  error  'onOpenInscripcionModal' is assigned a value but never used                                                                                                                                        no-unused-vars
+  125:5  error  Visible, non-interactive elements with click handlers must have at least one keyboard listener                                                                                                     jsx-a11y/click-events-have-key-events
+  125:5  error  Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role and support for tabbing, mouse, keyboard, and touch inputs to an interactive content element  jsx-a11y/no-static-element-interactions
+  126:7  error  Visible, non-interactive elements with click handlers must have at least one keyboard listener                                                                                                     jsx-a11y/click-events-have-key-events
+  126:7  error  Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role and support for tabbing, mouse, keyboard, and touch inputs to an interactive content element  jsx-a11y/no-static-element-interactions
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\components\Navbar.jsx
+  181:6   warning  React Hook useEffect has a missing dependency: 'cargarDatosFacultad'. Either include it or remove the dependency array                                                                             react-hooks/exhaustive-deps
+  188:6   warning  React Hook useEffect has missing dependencies: 'syncUserData' and 'usuario'. Either include them or remove the dependency array                                                                    react-hooks/exhaustive-deps
+  384:13  error    Visible, non-interactive elements with click handlers must have at least one keyboard listener                                                                                                     jsx-a11y/click-events-have-key-events
+  384:13  error    Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role and support for tabbing, mouse, keyboard, and touch inputs to an interactive content element  jsx-a11y/no-static-element-interactions
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\components\admin\StatisticsConfig.jsx
+   21:8   error  'axiosInstance' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                                                                                                               no-unused-vars
+  205:11  error  Visible, non-interactive elements with click handlers must have at least one keyboard listener                                                                                                     jsx-a11y/click-events-have-key-events
+  205:11  error  Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role and support for tabbing, mouse, keyboard, and touch inputs to an interactive content element  jsx-a11y/no-static-element-interactions
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\components\common\ActionConfirmModal.jsx
+   52:6  warning  React Hook useEffect has a missing dependency: 'requireReason'. Either include it or remove the dependency array                                                                                   react-hooks/exhaustive-deps
+  101:5  error    Visible, non-interactive elements with click handlers must have at least one keyboard listener                                                                                                     jsx-a11y/click-events-have-key-events
+  101:5  error    Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role and support for tabbing, mouse, keyboard, and touch inputs to an interactive content element  jsx-a11y/no-static-element-interactions
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\components\common\HomeButton.jsx
+    2:16  error  'useNavigate' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                                              no-unused-vars
+   29:16  error  Do not access Object.prototype method 'hasOwnProperty' from target object                                                       no-prototype-builtins
+  150:18  error  React Hook "useNavigate" is called conditionally. React Hooks must be called in the exact same order in every component render  react-hooks/rules-of-hooks
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\components\home\EventosDestacados.jsx
+  135:6  warning  React Hook useEffect has a missing dependency: 'gestorEventos'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\context\AuthContext.jsx
+    9:14  warning  Fast refresh only works when a file only exports components. Move your React context(s) to a separate file                      react-refresh/only-export-components
+  201:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\context\NotificationContext.jsx
+  26:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\context\SocketContext.jsx
+  13:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\context\ThemeContext.jsx
+  142:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\hooks\useConfigurableStats.js
+   66:20  error  'e' is defined but never used                                              no-unused-vars
+  120:20  error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\hooks\useHomeSocket.js
+   47:9  error    'processedNotificationIds' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                                                                no-unused-vars
+   75:6  warning  React Hook useEffect has missing dependencies: 'autoRefresh', 'clearEventUpdates', and 'onEventUpdate'. Either include them or remove the dependency array              react-hooks/exhaustive-deps
+  108:6  warning  React Hook useEffect has missing dependencies: 'autoRefresh', 'clearInscriptionUpdates', and 'onInscriptionUpdate'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+  137:6  warning  React Hook useEffect has missing dependencies: 'autoRefresh', 'clearCuposUpdates', and 'onCuposUpdate'. Either include them or remove the dependency array              react-hooks/exhaustive-deps
+  171:6  warning  React Hook useEffect has missing dependencies: 'autoRefresh', 'clearCarreraUpdates', and 'onCarreraUpdate'. Either include them or remove the dependency array          react-hooks/exhaustive-deps
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\hooks\usePagination.js
+  56:5  warning  React Hook useCallback has a missing dependency: 'currentPage'. Either include it or remove the dependency array                                                      react-hooks/exhaustive-deps
+  99:6  warning  React Hook useEffect was passed a dependency list that is not an array literal. This means we can't statically verify whether you've passed the correct dependencies  react-hooks/exhaustive-deps
+  99:6  warning  React Hook useEffect has missing dependencies: 'dependencies.length' and 'resetPagination'. Either include them or remove the dependency array                        react-hooks/exhaustive-deps
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\hooks\useUserSync.js
+  35:6  warning  React Hook useEffect has a missing dependency: 'usuario'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\models\GestorEventosDestacados.js
+  2:10  error  'useSocket' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\models\Usuario.js
+  81:9  error  Unexpected lexical declaration in case block  no-case-declarations
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\routes\CertificatesRoute.jsx
+  26:20  error    'token' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                        no-unused-vars
+  69:6   warning  React Hook useEffect has a missing dependency: 'navigate'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  87:14  error    'error' is defined but never used                                                                            no-unused-vars
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\routes\EventosPublicos.jsx
+   3:8  error  'axiosInstance' is defined but never used. Allowed unused vars must match /^[A-Z_]/u   no-unused-vars
+  74:5  error  'error' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\routes\EventsRoute.jsx
+   28:7   error  'estilosCss' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u          no-unused-vars
+  147:27  error  'setFiltroModalidad' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+  167:10  error  'usuarioConCarrera' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u   no-unused-vars
+  968:15  error  A form label must be associated with a control                                                      jsx-a11y/label-has-associated-control
+  980:17  error  A form label must be associated with a control                                                      jsx-a11y/label-has-associated-control
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\services\EventoService.js
+  35:5  error  Unnecessary try/catch wrapper  no-useless-catch
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\services\RegistroService.js
+  102:16  error  'error' is defined but never used  no-unused-vars
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\utils\HistoryEditEvents.js
+  260:13  error  'aEliminar' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\utils\Validator.js
+  98:39  error  Unnecessary escape character: \[  no-useless-escape
+  98:56  error  Unnecessary escape character: \/  no-useless-escape
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\utils\testHistoryEditEvents.js
+  12:21  error  'HistoryEditEvents' is not defined  no-undef
+  13:21  error  'HistoryEditEvents' is not defined  no-undef
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\views\CorrectEmail.jsx
+  24:10  error  'error' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\views\Home.jsx
+   74:10  error  'estadisticasHome' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                                                                                                   no-unused-vars
+   82:37  error  'loadingStats' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                                                                                                       no-unused-vars
+  191:10  error  'realtimeUpdates' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                                                                                                    no-unused-vars
+  201:5   error  'hasNewUpdates' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                                                                                                      no-unused-vars
+  202:5   error  'systemNotifications' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                                                                                                no-unused-vars
+  203:5   error  'removeSystemNotification' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                                                                                           no-unused-vars
+  220:13  error  'message' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                                                                                                            no-unused-vars
+  230:27  error  'inscriptionUpdate' is defined but never used                                                                                                                                                      no-unused-vars
+  237:21  error  'cuposUpdate' is defined but never used                                                                                                                                                            no-unused-vars
+  330:9   error  'showTemporaryNotification' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                                                                                          no-unused-vars
+  347:9   error  'getNotificationIcon' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                                                                                                no-unused-vars
+  783:13  error  Visible, non-interactive elements with click handlers must have at least one keyboard listener                                                                                                     jsx-a11y/click-events-have-key-events
+  783:13  error  Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role and support for tabbing, mouse, keyboard, and touch inputs to an interactive content element  jsx-a11y/no-static-element-interactions
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\views\Login.jsx
+   64:6   warning  React Hook useEffect has a missing dependency: 'navigateByRole'. Either include it or remove the dependency array                                                                                  react-hooks/exhaustive-deps
+  236:23  error    Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role and support for tabbing, mouse, keyboard, and touch inputs to an interactive content element  jsx-a11y/no-static-element-interactions
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\views\MyInscriptions.jsx
+  100:20  error  'token' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u     no-unused-vars
+  119:13  error  'token' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u     no-unused-vars
+  213:13  error  'response' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+  481:33  error  'response' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\views\Perfil.jsx
+  346:11  error  Visible, non-interactive elements with click handlers must have at least one keyboard listener                                                                                                     jsx-a11y/click-events-have-key-events
+  346:11  error  Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role and support for tabbing, mouse, keyboard, and touch inputs to an interactive content element  jsx-a11y/no-static-element-interactions
+  635:9   error  Visible, non-interactive elements with click handlers must have at least one keyboard listener                                                                                                     jsx-a11y/click-events-have-key-events
+  635:9   error  Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role and support for tabbing, mouse, keyboard, and touch inputs to an interactive content element  jsx-a11y/no-static-element-interactions
+  636:11  error  Visible, non-interactive elements with click handlers must have at least one keyboard listener                                                                                                     jsx-a11y/click-events-have-key-events
+  636:11  error  Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role and support for tabbing, mouse, keyboard, and touch inputs to an interactive content element  jsx-a11y/no-static-element-interactions
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\views\Register.jsx
+   90:6   warning  React Hook useEffect has a missing dependency: 'registroService'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  101:6   warning  React Hook useEffect has a missing dependency: 'registroService'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  330:15  error    A form label must be associated with a control                                                                      jsx-a11y/label-has-associated-control
+  359:17  error    A form label must be associated with a control                                                                      jsx-a11y/label-has-associated-control
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\views\VerificationPendingPage.jsx
+  17:10  error  'showCorrectEmail' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u     no-unused-vars
+  17:28  error  'setShowCorrectEmail' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\views\VerifyEmail.jsx
+  77:6  warning  React Hook useEffect has missing dependencies: 'login' and 'navigate'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\views\admin\AdminCarreras.jsx
+  115:10  error    'editandoId' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                                                  no-unused-vars
+  115:22  error    'setEditandoId' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                                               no-unused-vars
+  132:48  error    'isConnected' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                                                 no-unused-vars
+  197:14  error    'error' is defined but never used                                                                                                           no-unused-vars
+  386:6   warning  React Hook useEffect has missing dependencies: 'cargarCarreras' and 'cargarFacultades'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+  462:6   warning  React Hook useEffect has a missing dependency: 'normalizeCarrera'. Either include it or remove the dependency array                         react-hooks/exhaustive-deps
+  727:19  error    A form label must be associated with a control                                                                                              jsx-a11y/label-has-associated-control
+  738:19  error    A form label must be associated with a control                                                                                              jsx-a11y/label-has-associated-control
+  748:19  error    A form label must be associated with a control                                                                                              jsx-a11y/label-has-associated-control
+  760:19  error    A form label must be associated with a control                                                                                              jsx-a11y/label-has-associated-control
+  777:21  error    A form label must be associated with a control                                                                                              jsx-a11y/label-has-associated-control
+  793:21  error    A form label must be associated with a control                                                                                              jsx-a11y/label-has-associated-control
+  813:19  error    A form label must be associated with a control                                                                                              jsx-a11y/label-has-associated-control
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\views\admin\AdminConfiguracionMVA.jsx
+   365:9   error  Visible, non-interactive elements with click handlers must have at least one keyboard listener                                                                                                     jsx-a11y/click-events-have-key-events
+   365:9   error  Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role and support for tabbing, mouse, keyboard, and touch inputs to an interactive content element  jsx-a11y/no-static-element-interactions
+   397:19  error  A form label must be associated with a control                                                                                                                                                     jsx-a11y/label-has-associated-control
+   588:9   error  Visible, non-interactive elements with click handlers must have at least one keyboard listener                                                                                                     jsx-a11y/click-events-have-key-events
+   588:9   error  Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role and support for tabbing, mouse, keyboard, and touch inputs to an interactive content element  jsx-a11y/no-static-element-interactions
+   620:19  error  A form label must be associated with a control                                                                                                                                                     jsx-a11y/label-has-associated-control
+   727:9   error  Visible, non-interactive elements with click handlers must have at least one keyboard listener                                                                                                     jsx-a11y/click-events-have-key-events
+   727:9   error  Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role and support for tabbing, mouse, keyboard, and touch inputs to an interactive content element  jsx-a11y/no-static-element-interactions
+   979:25  error  A form label must be associated with a control                                                                                                                                                     jsx-a11y/label-has-associated-control
+  1031:9   error  Visible, non-interactive elements with click handlers must have at least one keyboard listener                                                                                                     jsx-a11y/click-events-have-key-events
+  1031:9   error  Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role and support for tabbing, mouse, keyboard, and touch inputs to an interactive content element  jsx-a11y/no-static-element-interactions
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\views\admin\AdminDashboard.jsx
+    3:8   error  'axiosInstance' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                                                                                                               no-unused-vars
+   64:11  error  Visible, non-interactive elements with click handlers must have at least one keyboard listener                                                                                                     jsx-a11y/click-events-have-key-events
+   64:11  error  Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role and support for tabbing, mouse, keyboard, and touch inputs to an interactive content element  jsx-a11y/no-static-element-interactions
+   74:11  error  Visible, non-interactive elements with click handlers must have at least one keyboard listener                                                                                                     jsx-a11y/click-events-have-key-events
+   74:11  error  Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role and support for tabbing, mouse, keyboard, and touch inputs to an interactive content element  jsx-a11y/no-static-element-interactions
+   84:11  error  Visible, non-interactive elements with click handlers must have at least one keyboard listener                                                                                                     jsx-a11y/click-events-have-key-events
+   84:11  error  Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role and support for tabbing, mouse, keyboard, and touch inputs to an interactive content element  jsx-a11y/no-static-element-interactions
+   94:11  error  Visible, non-interactive elements with click handlers must have at least one keyboard listener                                                                                                     jsx-a11y/click-events-have-key-events
+   94:11  error  Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role and support for tabbing, mouse, keyboard, and touch inputs to an interactive content element  jsx-a11y/no-static-element-interactions
+  104:11  error  Visible, non-interactive elements with click handlers must have at least one keyboard listener                                                                                                     jsx-a11y/click-events-have-key-events
+  104:11  error  Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role and support for tabbing, mouse, keyboard, and touch inputs to an interactive content element  jsx-a11y/no-static-element-interactions
+  114:11  error  Visible, non-interactive elements with click handlers must have at least one keyboard listener                                                                                                     jsx-a11y/click-events-have-key-events
+  114:11  error  Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role and support for tabbing, mouse, keyboard, and touch inputs to an interactive content element  jsx-a11y/no-static-element-interactions
+  138:19  error  Visible, non-interactive elements with click handlers must have at least one keyboard listener                                                                                                     jsx-a11y/click-events-have-key-events
+  138:19  error  Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role and support for tabbing, mouse, keyboard, and touch inputs to an interactive content element  jsx-a11y/no-static-element-interactions
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\views\admin\AdminEventInscription.jsx
+  171:13  error  'response' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\views\admin\AdminEvents.jsx
+  533:15  error  A form label must be associated with a control  jsx-a11y/label-has-associated-control
+  547:15  error  A form label must be associated with a control  jsx-a11y/label-has-associated-control
+  568:15  error  A form label must be associated with a control  jsx-a11y/label-has-associated-control
+  587:15  error  A form label must be associated with a control  jsx-a11y/label-has-associated-control
+  602:15  error  A form label must be associated with a control  jsx-a11y/label-has-associated-control
+  615:15  error  A form label must be associated with a control  jsx-a11y/label-has-associated-control
+  638:15  error  A form label must be associated with a control  jsx-a11y/label-has-associated-control
+  657:15  error  A form label must be associated with a control  jsx-a11y/label-has-associated-control
+  673:15  error  A form label must be associated with a control  jsx-a11y/label-has-associated-control
+  689:15  error  A form label must be associated with a control  jsx-a11y/label-has-associated-control
+  704:15  error  A form label must be associated with a control  jsx-a11y/label-has-associated-control
+  719:15  error  A form label must be associated with a control  jsx-a11y/label-has-associated-control
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\views\admin\AdminGestion.jsx
+   566:19  error  A form label must be associated with a control                                                                                                                                                     jsx-a11y/label-has-associated-control
+   587:19  error  A form label must be associated with a control                                                                                                                                                     jsx-a11y/label-has-associated-control
+   607:19  error  A form label must be associated with a control                                                                                                                                                     jsx-a11y/label-has-associated-control
+   627:19  error  A form label must be associated with a control                                                                                                                                                     jsx-a11y/label-has-associated-control
+   648:19  error  A form label must be associated with a control                                                                                                                                                     jsx-a11y/label-has-associated-control
+   668:19  error  A form label must be associated with a control                                                                                                                                                     jsx-a11y/label-has-associated-control
+   688:19  error  A form label must be associated with a control                                                                                                                                                     jsx-a11y/label-has-associated-control
+   710:19  error  A form label must be associated with a control                                                                                                                                                     jsx-a11y/label-has-associated-control
+  1030:9   error  Visible, non-interactive elements with click handlers must have at least one keyboard listener                                                                                                     jsx-a11y/click-events-have-key-events
+  1030:9   error  Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role and support for tabbing, mouse, keyboard, and touch inputs to an interactive content element  jsx-a11y/no-static-element-interactions
+  1031:11  error  Visible, non-interactive elements with click handlers must have at least one keyboard listener                                                                                                     jsx-a11y/click-events-have-key-events
+  1031:11  error  Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role and support for tabbing, mouse, keyboard, and touch inputs to an interactive content element  jsx-a11y/no-static-element-interactions
+  1089:21  error  A form label must be associated with a control                                                                                                                                                     jsx-a11y/label-has-associated-control
+  1099:21  error  A form label must be associated with a control                                                                                                                                                     jsx-a11y/label-has-associated-control
+  1109:21  error  A form label must be associated with a control                                                                                                                                                     jsx-a11y/label-has-associated-control
+  1119:21  error  A form label must be associated with a control                                                                                                                                                     jsx-a11y/label-has-associated-control
+  1129:21  error  A form label must be associated with a control                                                                                                                                                     jsx-a11y/label-has-associated-control
+  1139:21  error  A form label must be associated with a control                                                                                                                                                     jsx-a11y/label-has-associated-control
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\views\admin\AdminInscripciones.jsx
+  15:11  error  'token' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\views\admin\reportes\AdminReporteMes.jsx
+  78:14  error  'err' is defined but never used  no-unused-vars
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\views\admin\reportes\ReporteAsistencia.jsx
+  216:13  error  A form label must be associated with a control  jsx-a11y/label-has-associated-control
+  237:13  error  A form label must be associated with a control  jsx-a11y/label-has-associated-control
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\views\admin\reportes\ReporteCarrera.jsx
+  26:9  error  'navigate' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\views\admin\reportes\ReporteCertificados.jsx
+  154:11  error  A form label must be associated with a control  jsx-a11y/label-has-associated-control
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\views\admin\reportes\ReporteIngresosPagos.jsx
+   10:3   error    'formatDateForPicker' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                             no-unused-vars
+   78:6   warning  React Hook useEffect has a missing dependency: 'cargarDatosReporte'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  212:13  error    A form label must be associated with a control                                                                         jsx-a11y/label-has-associated-control
+  261:13  error    A form label must be associated with a control                                                                         jsx-a11y/label-has-associated-control
+  278:13  error    A form label must be associated with a control                                                                         jsx-a11y/label-has-associated-control
+
+C:\Users\andri\Documentos\D-Proyectos\Git\AcademicEvents\frontend\src\views\admin\reportes\ReporteInscripciones.jsx
+    9:3   error  'formatDateForBackend' is defined but never used. Allowed unused vars must match /^[A-Z_]/u     no-unused-vars
+   10:3   error  'formatDateForPicker' is defined but never used. Allowed unused vars must match /^[A-Z_]/u      no-unused-vars
+  156:9   error  'formatearFecha' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+  179:13  error  A form label must be associated with a control                                                  jsx-a11y/label-has-associated-control
+  228:13  error  A form label must be associated with a control                                                  jsx-a11y/label-has-associated-control
+
+✖ 218 problems (191 errors, 27 warnings)
+

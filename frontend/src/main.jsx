@@ -8,6 +8,13 @@ import "./i18n/config";
 // React core
 import React from "react";
 import ReactDOM from "react-dom/client";
+
+// Accessibility testing in development mode
+if (import.meta.env.DEV) {
+  import("@axe-core/react").then((axe) => {
+    axe.default(React, ReactDOM, 1000);
+  });
+}
 import axios from "axios";
 
 // App principal

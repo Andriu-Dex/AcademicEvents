@@ -1,0 +1,184 @@
+/* Form Field Component Styles */
+
+.form-field-container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+  gap: 0.5rem;
+}
+
+.form-field-label {
+  display: block;
+  font-weight: 500;
+  color: var(--color-text-primary, #333);
+  font-size: 0.95rem;
+  margin-bottom: 0.25rem;
+  transition: color 0.2s ease;
+}
+
+/* Dark mode support */
+:root[data-theme='dark'] .form-field-label,
+.dark-mode .form-field-label {
+  color: var(--color-text-primary, #edf2f7);
+}
+
+.form-field-label > .required-indicator {
+  color: var(--color-error, #ef4444);
+  margin-left: 0.25rem;
+  font-weight: 600;
+}
+
+.form-field-input-wrapper {
+  display: flex;
+  align-items: center;
+  position: relative;
+  border: 2px solid var(--color-border, #e5e7eb);
+  border-radius: 0.5rem;
+  background-color: var(--color-bg-input, #ffffff);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Dark mode input wrapper */
+:root[data-theme='dark'] .form-field-input-wrapper,
+.dark-mode .form-field-input-wrapper {
+  background-color: var(--color-bg-input, #2d3748);
+  border-color: var(--color-border-dark, #4a5568);
+}
+
+.form-field-input-wrapper:focus-within {
+  border-color: var(--color-primary, #3b82f6);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Dark mode focus */
+:root[data-theme='dark'] .form-field-input-wrapper:focus-within,
+.dark-mode .form-field-input-wrapper:focus-within {
+  border-color: var(--color-primary, #60a5fa);
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+}
+
+.form-field-input-wrapper.form-field-input-wrapper--error {
+  border-color: var(--color-error, #ef4444);
+  background-color: rgba(239, 68, 68, 0.05);
+}
+
+:root[data-theme='dark'] .form-field-input-wrapper.form-field-input-wrapper--error,
+.dark-mode .form-field-input-wrapper.form-field-input-wrapper--error {
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+.form-field-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem;
+  color: var(--color-text-secondary, #6b7280);
+}
+
+/* Dark mode icon */
+:root[data-theme='dark'] .form-field-icon,
+.dark-mode .form-field-icon {
+  color: var(--color-text-secondary, #a0aec0);
+}
+
+.form-field-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: var(--color-text-primary, #333);
+  font-size: 1rem;
+  padding: 0.75rem;
+  outline: none;
+  font-family: inherit;
+}
+
+/* Dark mode input */
+:root[data-theme='dark'] .form-field-input,
+.dark-mode .form-field-input {
+  color: var(--color-text-primary, #edf2f7);
+}
+
+.form-field-input::placeholder {
+  color: var(--color-text-secondary, #9ca3af);
+}
+
+:root[data-theme='dark'] .form-field-input::placeholder,
+.dark-mode .form-field-input::placeholder {
+  color: var(--color-text-secondary, #718096);
+}
+
+.form-field-input:disabled {
+  background-color: var(--color-bg-disabled, #f3f4f6);
+  color: var(--color-text-disabled, #9ca3af);
+  cursor: not-allowed;
+}
+
+:root[data-theme='dark'] .form-field-input:disabled,
+.dark-mode .form-field-input:disabled {
+  background-color: var(--color-bg-disabled, #2d3748);
+  color: var(--color-text-disabled, #4a5568);
+}
+
+.form-field-input:focus-visible {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+/* Error state */
+.form-field-input--error {
+  color: var(--color-error, #ef4444);
+}
+
+.form-field-error {
+  color: var(--color-error, #ef4444);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+:root[data-theme='dark'] .form-field-error,
+.dark-mode .form-field-error {
+  color: var(--color-error, #fc8181);
+}
+
+.form-field-error::before {
+  content: '⚠';
+  font-size: 1rem;
+  display: inline-block;
+}
+
+.form-field-helper-text {
+  color: var(--color-text-secondary, #6b7280);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+:root[data-theme='dark'] .form-field-helper-text,
+.dark-mode .form-field-helper-text {
+  color: var(--color-text-secondary, #a0aec0);
+}
+
+/* Responsive design */
+@media (max-width: 640px) {
+  .form-field-container {
+    margin-bottom: 0.75rem;
+  }
+
+  .form-field-input {
+    font-size: 16px; /* Prevents zoom on iOS */
+    padding: 0.875rem;
+  }
+
+  .form-field-icon {
+    padding: 0.625rem;
+  }
+}
+
+/* Print styles */
+@media print {
+  .form-field-input {
+    border: 1px solid #000;
+  }
+}
