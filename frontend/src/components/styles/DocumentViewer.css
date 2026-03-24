@@ -187,3 +187,49 @@
     justify-content: center;
   }
 }
+
+[data-theme="dark"] .modal-overlay-dv {
+  background-color: var(--color-bg-overlay);
+}
+
+[data-theme="dark"] .modal-content-dv {
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-border-primary);
+  box-shadow: var(--shadow-strong);
+}
+
+[data-theme="dark"] .modal-header-dv,
+[data-theme="dark"] .modal-actions-dv {
+  border-color: var(--color-border-primary);
+}
+
+[data-theme="dark"] .modal-title-dv,
+[data-theme="dark"] .loading-dv {
+  color: var(--color-text-primary);
+}
+
+[data-theme="dark"] .close-button-dv {
+  color: var(--color-text-secondary);
+}
+
+[data-theme="dark"] .close-button-dv:hover {
+  background-color: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+}
+
+[data-theme="dark"] .document-container-dv {
+  background-color: var(--color-bg-secondary);
+}
+
+[data-theme="dark"] .cancel-button-dv {
+  background: var(--gradient-primary);
+  color: var(--color-text-inverse);
+}
+
+[data-theme="dark"] .cancel-button-dv:hover {
+  background: linear-gradient(135deg, var(--color-primary-hover), var(--color-primary-dark));
+}
+
+[data-theme="dark"] .loading-dv {
+  background-color: var(--color-bg-glass);
+}

@@ -443,3 +443,90 @@
     margin-top: 1rem;
   }
 }
+
+[data-theme="dark"] .reporte-carrera-container {
+  background: var(--color-bg-primary);
+  box-shadow: var(--shadow-strong);
+  border: 1px solid var(--color-border-primary);
+}
+
+[data-theme="dark"] .reporte-header-rc,
+[data-theme="dark"] .estadisticas-container h3,
+[data-theme="dark"] .eventos-populares-container h3,
+[data-theme="dark"] .comparativa-carreras-container h3,
+[data-theme="dark"] .programa-card h4,
+[data-theme="dark"] .comparativa-card h4 {
+  border-color: var(--color-border-primary);
+}
+
+[data-theme="dark"] .reporte-descripcion,
+[data-theme="dark"] .loading-estadisticas-rc,
+[data-theme="dark"] .loading-comparativas-rc,
+[data-theme="dark"] .sin-datos-mensaje-rc p,
+[data-theme="dark"] .sin-eventos-mensaje-rc p,
+[data-theme="dark"] .sin-comparativas-mensaje-rc p {
+  color: var(--color-text-secondary);
+}
+
+[data-theme="dark"] .filtro-container,
+[data-theme="dark"] .loading-container,
+[data-theme="dark"] .estadisticas-container,
+[data-theme="dark"] .eventos-populares-container,
+[data-theme="dark"] .comparativa-carreras-container {
+  background: var(--color-bg-primary);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--color-border-primary);
+}
+
+[data-theme="dark"] .selector-container label,
+[data-theme="dark"] .stat-card h4,
+[data-theme="dark"] .eventos-tabla th,
+[data-theme="dark"] .programa-stats span,
+[data-theme="dark"] .comparativa-stats span,
+[data-theme="dark"] .select-carrera-list,
+[data-theme="dark"] .eventos-tabla td,
+[data-theme="dark"] .sin-datos-sugerencias-rc li,
+[data-theme="dark"] .sin-eventos-acciones-rc li {
+  color: var(--color-text-primary);
+}
+
+[data-theme="dark"] .selector-container select {
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+  border-color: var(--color-border-primary);
+}
+
+[data-theme="dark"] .loading-container,
+[data-theme="dark"] .stat-card,
+[data-theme="dark"] .programa-card,
+[data-theme="dark"] .comparativa-card,
+[data-theme="dark"] .sin-datos-mensaje-rc,
+[data-theme="dark"] .sin-eventos-mensaje-rc,
+[data-theme="dark"] .sin-comparativas-mensaje-rc,
+[data-theme="dark"] .loading-estadisticas-rc,
+[data-theme="dark"] .loading-comparativas-rc {
+  background: var(--color-bg-tertiary);
+  border-color: var(--color-border-primary);
+}
+
+[data-theme="dark"] .stat-card,
+[data-theme="dark"] .comparativa-card.selected {
+  background: var(--gradient-card);
+}
+
+[data-theme="dark"] .eventos-tabla th,
+[data-theme="dark"] .eventos-tabla tr:hover {
+  background-color: var(--color-bg-tertiary);
+}
+
+[data-theme="dark"] .eventos-tabla td,
+[data-theme="dark"] .programa-stats div,
+[data-theme="dark"] .comparativa-stats div {
+  border-color: var(--color-border-primary);
+}
+
+[data-theme="dark"] .sin-datos-sugerencias-rc,
+[data-theme="dark"] .sin-eventos-acciones-rc,
+[data-theme="dark"] .sin-comparativas-nota-rc {
+  background: var(--color-primary-lighter);
+}

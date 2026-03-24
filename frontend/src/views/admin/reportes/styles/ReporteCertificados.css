@@ -416,3 +416,77 @@
     justify-content: center;
   }
 }
+
+[data-theme="dark"] .reporte-certificados-container-rc {
+  background: var(--color-bg-primary);
+  box-shadow: var(--shadow-strong);
+  border: 1px solid var(--color-border-primary);
+}
+
+[data-theme="dark"] .reporte-header-rc,
+[data-theme="dark"] .resumen-container-rc h3,
+[data-theme="dark"] .descargas-container-rc h3,
+[data-theme="dark"] .eventos-certificados-container-rc h3,
+[data-theme="dark"] .descarga-card-rc h4 {
+  border-color: var(--color-border-primary);
+}
+
+[data-theme="dark"] .reporte-descripcion-rc,
+[data-theme="dark"] .fecha-input-wrapper-rc span,
+[data-theme="dark"] .descarga-stat-rc span,
+[data-theme="dark"] .eventos-tabla-rc th {
+  color: var(--color-text-secondary);
+}
+
+[data-theme="dark"] .btn-volver-rc {
+  background-color: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+}
+
+[data-theme="dark"] .btn-volver-rc:hover {
+  background-color: var(--color-bg-elevated);
+}
+
+[data-theme="dark"] .filtros-container-rc,
+[data-theme="dark"] .loading-container-rc,
+[data-theme="dark"] .resumen-container-rc,
+[data-theme="dark"] .descargas-container-rc,
+[data-theme="dark"] .eventos-certificados-container-rc {
+  background: var(--color-bg-primary);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--color-border-primary);
+}
+
+[data-theme="dark"] .filtro-grupo-rc label,
+[data-theme="dark"] .periodo-grupo-rc label,
+[data-theme="dark"] .stat-card-rc h4,
+[data-theme="dark"] .descarga-stat-rc strong,
+[data-theme="dark"] .date-picker-input-rc,
+[data-theme="dark"] .eventos-tabla-rc td {
+  color: var(--color-text-primary);
+}
+
+[data-theme="dark"] .date-picker-input-rc {
+  background: var(--color-bg-tertiary);
+  border-color: var(--color-border-primary);
+}
+
+[data-theme="dark"] .date-picker-input-rc:focus {
+  background: var(--color-bg-elevated);
+}
+
+[data-theme="dark"] .stat-card-rc,
+[data-theme="dark"] .descarga-card-rc {
+  background: var(--gradient-card);
+  border-color: var(--color-border-primary);
+}
+
+[data-theme="dark"] .barra-descarga-rc,
+[data-theme="dark"] .eventos-tabla-rc th,
+[data-theme="dark"] .eventos-tabla-rc tr:hover {
+  background: var(--color-bg-tertiary);
+}
+
+[data-theme="dark"] .eventos-tabla-rc td {
+  border-bottom-color: var(--color-border-primary);
+}

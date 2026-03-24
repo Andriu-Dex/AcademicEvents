@@ -142,3 +142,41 @@
   color: #222;
   margin-right: 6px;
 }
+
+[data-theme="dark"] .reporte-detalle-container {
+  background: var(--color-bg-primary);
+  box-shadow: var(--shadow-strong);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border-primary);
+}
+
+[data-theme="dark"] .reporte-cabecera {
+  background: var(--color-bg-tertiary);
+}
+
+[data-theme="dark"] .reporte-datos > div,
+[data-theme="dark"] .reporte-participantes td {
+  color: var(--color-text-primary);
+}
+
+[data-theme="dark"] .reporte-img-box img {
+  background: var(--color-bg-secondary);
+  border-color: var(--color-border-primary);
+}
+
+[data-theme="dark"] .reporte-participantes table {
+  background: var(--color-bg-primary);
+  box-shadow: var(--shadow-md);
+}
+
+[data-theme="dark"] .reporte-participantes th {
+  border-bottom-color: var(--color-border-primary);
+}
+
+[data-theme="dark"] .reporte-participantes tr:nth-child(even) {
+  background: var(--color-primary-lighter);
+}
+
+[data-theme="dark"] .info-evento-detalle strong {
+  color: var(--color-text-primary);
+}

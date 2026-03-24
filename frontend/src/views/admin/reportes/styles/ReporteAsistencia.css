@@ -637,3 +637,93 @@
     grid-template-columns: 1fr;
   }
 }
+
+[data-theme="dark"] .reporte-asistencia-container-ra {
+  background: var(--color-bg-primary);
+  box-shadow: var(--shadow-strong);
+  border: 1px solid var(--color-border-primary);
+}
+
+[data-theme="dark"] .reporte-header-ra,
+[data-theme="dark"] .evento-info-ra,
+[data-theme="dark"] .tipo-evento-titulo-ra,
+[data-theme="dark"] .noshow-card-ra h4 {
+  border-color: var(--color-border-primary);
+}
+
+[data-theme="dark"] .reporte-descripcion-ra,
+[data-theme="dark"] .loading-text-ra,
+[data-theme="dark"] .evento-fecha-ra,
+[data-theme="dark"] .mensaje-sin-datos-ra,
+[data-theme="dark"] .stat-label-ra,
+[data-theme="dark"] .barra-label-ra,
+[data-theme="dark"] .comparativa-tabla-ra th,
+[data-theme="dark"] .tipo-evento-ra,
+[data-theme="dark"] .fecha-evento-ra,
+[data-theme="dark"] .noshow-stats-ra span {
+  color: var(--color-text-secondary);
+}
+
+[data-theme="dark"] .btn-volver-ra {
+  background-color: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+}
+
+[data-theme="dark"] .btn-volver-ra:hover {
+  background-color: var(--color-bg-elevated);
+}
+
+[data-theme="dark"] .filtros-container-ra,
+[data-theme="dark"] .loading-container-ra,
+[data-theme="dark"] .asistencia-container-ra,
+[data-theme="dark"] .comparativa-container-ra,
+[data-theme="dark"] .noshows-container-ra,
+[data-theme="dark"] .noshow-card-ra {
+  background: var(--color-bg-primary);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--color-border-primary);
+}
+
+[data-theme="dark"] .filtro-grupo-ra label,
+[data-theme="dark"] .evento-info-ra h4,
+[data-theme="dark"] .stat-card-ra h4,
+[data-theme="dark"] .nombre-evento-ra,
+[data-theme="dark"] .stat-valor-ra,
+[data-theme="dark"] .tabla-datos-ra td,
+[data-theme="dark"] .comparativa-tabla-ra td,
+[data-theme="dark"] .valor-numerico-ra {
+  color: var(--color-text-primary);
+}
+
+[data-theme="dark"] .select-control-ra {
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+  border-color: var(--color-border-primary);
+  box-shadow: none;
+}
+
+[data-theme="dark"] .stat-card-ra {
+  background: var(--gradient-card);
+  border-color: var(--color-border-primary);
+}
+
+[data-theme="dark"] .barra-asistencia-container-ra,
+[data-theme="dark"] .comparativa-tabla-ra th,
+[data-theme="dark"] .comparativa-tabla-ra tr:hover,
+[data-theme="dark"] .barra-noshow-ra {
+  background: var(--color-bg-tertiary);
+}
+
+[data-theme="dark"] .barra-asistencia-ra,
+[data-theme="dark"] .tabla-datos-ra tbody tr,
+[data-theme="dark"] .comparativa-tabla-ra td {
+  border-color: var(--color-border-primary);
+}
+
+[data-theme="dark"] .tabla-datos-ra tbody tr {
+  border-bottom-color: var(--color-border-primary);
+}
+
+[data-theme="dark"] .tabla-datos-ra tbody tr:hover {
+  background-color: var(--color-primary-lighter);
+}

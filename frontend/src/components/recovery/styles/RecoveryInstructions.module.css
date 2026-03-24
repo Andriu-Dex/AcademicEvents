@@ -2,12 +2,12 @@
 .pw-recovery-instructions {
   max-width: 32rem;
   margin: 2.5rem auto;
-  background-color: #ffffff;
+  background-color: var(--color-bg-primary);
   border-radius: 0.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-soft);
   overflow: hidden;
   padding: 2rem;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--color-border-primary);
 }
 
 .pw-recovery-icon-container {
@@ -22,12 +22,12 @@
   width: 3rem;
   height: 3rem;
   border-radius: 9999px;
-  background-color: #f0fdf4;
+  background-color: var(--color-success-bg);
   margin-bottom: 1rem;
 }
 
 .pw-recovery-icon {
-  color: #8a1538;
+  color: var(--color-primary);
   font-size: 1.25rem;
 }
 
@@ -36,23 +36,24 @@
   font-weight: 600;
   margin-bottom: 0.5rem;
   text-align: center;
-  color: #8a1538;
+  color: var(--color-primary);
 }
 
 .pw-recovery-subtitle {
-  color: #6b7280;
+  color: var(--color-text-secondary);
   text-align: center;
   margin-bottom: 1rem;
 }
 
 .pw-recovery-email {
   font-weight: 500;
-  color: #1f2937;
+  color: var(--color-text-primary);
   padding: 0.5rem;
-  background-color: #f9fafb;
+  background-color: var(--color-bg-tertiary);
   border-radius: 0.25rem;
   margin-bottom: 1.5rem;
   text-align: center;
+  border: 1px solid var(--color-border-primary);
 }
 
 .pw-recovery-step-container {
@@ -66,8 +67,9 @@
   display: flex;
   align-items: flex-start;
   padding: 1rem;
-  background-color: #f9fafb;
+  background-color: var(--color-bg-tertiary);
   border-radius: 0.25rem;
+  border: 1px solid var(--color-border-primary);
 }
 
 .pw-recovery-step-icon {
@@ -77,20 +79,20 @@
 
 .pw-recovery-step-content h3 {
   font-weight: 500;
-  color: #1f2937;
+  color: var(--color-text-primary);
 }
 
 .pw-recovery-step-text {
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--color-text-secondary);
 }
 
 .pw-recovery-steps {
-  background-color: #f0fdf4;
+  background-color: var(--color-success-bg);
 }
 
 .pw-recovery-warning {
-  background-color: #fffbeb;
+  background-color: var(--color-warning-bg);
 }
 
 .pw-recovery-step-icon-success {
@@ -109,7 +111,7 @@
 .pw-recovery-back-link {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #8a1538;
+  color: var(--color-text-link);
   text-decoration: none;
 }
 

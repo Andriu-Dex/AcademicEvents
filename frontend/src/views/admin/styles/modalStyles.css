@@ -103,3 +103,31 @@
     transform: translateY(0) scale(1);
   }
 }
+
+[data-theme="dark"] .modal-overlay {
+  background-color: var(--color-bg-overlay);
+}
+
+[data-theme="dark"] .modal-content,
+[data-theme="dark"] .edicion-modal-content {
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-border-primary);
+  box-shadow: var(--shadow-strong);
+}
+
+[data-theme="dark"] .modal-title,
+[data-theme="dark"] .edicion-modal-title {
+  color: var(--color-primary);
+}
+
+[data-theme="dark"] .modal-message {
+  color: var(--color-text-secondary);
+}
+
+[data-theme="dark"] .edicion-modal-title {
+  border-bottom-color: var(--color-border-primary);
+}
+
+[data-theme="dark"] .edicion-modal-title::after {
+  background-color: var(--color-primary);
+}

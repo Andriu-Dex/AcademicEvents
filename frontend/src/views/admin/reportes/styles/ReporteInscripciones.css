@@ -852,3 +852,112 @@
     transform-origin: top center;
   }
 }
+
+[data-theme="dark"] .reporte-inscripciones-container-ri {
+  background: var(--color-bg-primary);
+  box-shadow: var(--shadow-strong);
+  border: 1px solid var(--color-border-primary);
+}
+
+[data-theme="dark"] .reporte-header-ri,
+[data-theme="dark"] .filtros-row-ri:first-child,
+[data-theme="dark"] .estadisticas-container-ri h3,
+[data-theme="dark"] .tendencias-container-ri h3,
+[data-theme="dark"] .validaciones-container-ri h3,
+[data-theme="dark"] .validacion-card-ri h4 {
+  border-color: var(--color-border-primary);
+}
+
+[data-theme="dark"] .reporte-descripcion-ri,
+[data-theme="dark"] .fecha-input-wrapper-ri span,
+[data-theme="dark"] .loading-container-ri,
+[data-theme="dark"] .tendencias-tabla-ri th,
+[data-theme="dark"] .validacion-stat-ri span {
+  color: var(--color-text-secondary);
+}
+
+[data-theme="dark"] .btn-volver-ri {
+  background-color: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+}
+
+[data-theme="dark"] .btn-volver-ri:hover {
+  background-color: var(--color-bg-elevated);
+}
+
+[data-theme="dark"] .filtros-container-ri,
+[data-theme="dark"] .loading-container-ri,
+[data-theme="dark"] .estadisticas-container-ri,
+[data-theme="dark"] .tendencias-container-ri,
+[data-theme="dark"] .validaciones-container-ri {
+  background: var(--color-bg-primary);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--color-border-primary);
+}
+
+[data-theme="dark"] .periodo-grupo-ri label,
+[data-theme="dark"] .filtro-grupo-ri label,
+[data-theme="dark"] .date-picker-input-ri,
+[data-theme="dark"] .stat-card-ri h4,
+[data-theme="dark"] .tendencias-tabla-ri td,
+[data-theme="dark"] .validacion-stat-ri strong,
+[data-theme="dark"] .validador-title-ri {
+  color: var(--color-text-primary);
+}
+
+[data-theme="dark"] .filtro-grupo-ri select,
+[data-theme="dark"] .date-picker-input-ri {
+  background-color: var(--color-bg-tertiary);
+  border-color: var(--color-border-primary);
+}
+
+[data-theme="dark"] .filtro-grupo-ri select:hover,
+[data-theme="dark"] .date-picker-input-ri:hover,
+[data-theme="dark"] .filtro-grupo-ri select:focus,
+[data-theme="dark"] .date-picker-input-ri:focus {
+  background-color: var(--color-bg-elevated);
+}
+
+[data-theme="dark"] .loading-container-ri,
+[data-theme="dark"] .stat-card-ri,
+[data-theme="dark"] .validacion-card-ri {
+  background: var(--gradient-card);
+  border-color: var(--color-border-primary);
+}
+
+[data-theme="dark"] .tendencias-tabla-ri th,
+[data-theme="dark"] .tendencias-tabla-ri tr:hover {
+  background-color: var(--color-bg-tertiary);
+}
+
+[data-theme="dark"] .tendencias-tabla-ri td {
+  border-bottom-color: var(--color-border-primary);
+}
+
+[data-theme="dark"] .reporte-inscripciones-container-ri .react-datepicker,
+[data-theme="dark"] .custom-calendar {
+  background: var(--color-bg-primary);
+  border-color: var(--color-border-primary);
+  box-shadow: var(--shadow-lg);
+}
+
+[data-theme="dark"] .custom-calendar .react-datepicker__month-container,
+[data-theme="dark"] .reporte-inscripciones-container-ri .react-datepicker__month {
+  background: var(--color-bg-primary);
+}
+
+[data-theme="dark"] .reporte-inscripciones-container-ri .react-datepicker__day,
+[data-theme="dark"] .custom-calendar .react-datepicker__day {
+  color: var(--color-text-primary);
+}
+
+[data-theme="dark"] .reporte-inscripciones-container-ri .react-datepicker__day:hover,
+[data-theme="dark"] .custom-calendar .react-datepicker__day:hover {
+  color: var(--color-primary);
+  background-color: var(--color-primary-light);
+}
+
+[data-theme="dark"] .reporte-inscripciones-container-ri .react-datepicker__day--outside-month,
+[data-theme="dark"] .reporte-inscripciones-container-ri .react-datepicker__day--disabled {
+  color: var(--color-text-tertiary);
+}

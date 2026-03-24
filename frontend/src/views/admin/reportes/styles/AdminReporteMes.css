@@ -137,3 +137,42 @@
     font-size: 0.96rem;
   }
 }
+
+[data-theme="dark"] .reporte-mes-container {
+  background: var(--color-bg-primary);
+  box-shadow: var(--shadow-strong);
+  border: 1px solid var(--color-border-primary);
+}
+
+[data-theme="dark"] .reporte-mes-filtros select {
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+  border-color: var(--color-border-primary);
+  box-shadow: none;
+}
+
+[data-theme="dark"] .reporte-mes-table {
+  background: var(--color-bg-primary);
+  box-shadow: var(--shadow-md);
+}
+
+[data-theme="dark"] .reporte-mes-table th {
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+  border-bottom-color: var(--color-border-primary);
+}
+
+[data-theme="dark"] .reporte-mes-table tbody tr:hover {
+  background: var(--color-primary-lighter);
+}
+
+[data-theme="dark"] .reporte-mes-table td {
+  color: var(--color-text-primary);
+  border-bottom-color: var(--color-border-primary);
+}
+
+[data-theme="dark"] .reporte-mes-table tfoot tr td {
+  background: var(--color-primary-lighter);
+  color: var(--color-primary);
+  border-top-color: var(--color-border-primary);
+}
