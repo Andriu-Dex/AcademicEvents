@@ -3,6 +3,9 @@ import { BrowserRouter, Routes, Route, Navigate, useParams } from "react-router-
 // Theme Provider for Dark Mode
 import { ThemeProvider } from "./context/ThemeContext.jsx";
 
+// Accessibility: Skip Link for keyboard navigation
+import SkipLink from "./components/common/SkipLink.jsx";
+
 // Hook para sincronización de datos de usuario
 import useUserSync from "./hooks/useUserSync.js";
 
@@ -90,10 +93,14 @@ function App() {
     <ThemeProvider>
       <BrowserRouter>
         <>
+          {/* Accessibility: Skip link for keyboard navigation */}
+          <SkipLink targetId="main-content" label="Saltar al contenido principal" />
+
           {/* Componente para refrescar estilos en cambios de ruta */}
           <StyleRefresher />
           <FloatingThemeSocketControls />
 
+        <main id="main-content" tabIndex={-1}>
         <Routes>
           {/* Redirección por defecto a home */}
           <Route path="/" element={<Navigate to="/home" />} />
@@ -441,8 +448,9 @@ function App() {
             element={<Navigate to="/admin/management" replace />}
           />
         </Routes>
+        </main>
 
-        {/* Toast global para notificaciones */}
+        {/* Toast global para notificaciones con soporte de accesibilidad */}
         <ToastContainer
           position="top-right"
           autoClose={3000}
@@ -451,6 +459,9 @@ function App() {
           closeOnClick
           pauseOnHover
           theme="colored"
+          role="alert"
+          aria-live="assertive"
+          aria-atomic="true"
         />
       </>
     </BrowserRouter>

@@ -1,5 +1,5 @@
 // Importación de módulos necesarios
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axiosInstance from "../api/axiosConfig";
 import { requestWithEndpointFallback } from "../api/endpointFallback";
 import { useNavigate, useLocation, Link } from "react-router-dom";
@@ -33,6 +33,11 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false); // Estado de carga del botón
   const [sugerencias, setSugerencias] = useState([]);
   const [mostrarSugerencias, setMostrarSugerencias] = useState(false);
+
+  // Estados de validación para accesibilidad WCAG 2.1
+  const [errors, setErrors] = useState({ email: "", password: "" });
+  const emailInputRef = useRef(null);
+  const passwordInputRef = useRef(null);
 
   const navigateByRole = (user) => {
     const role = resolveUserRole(user);
@@ -81,10 +86,21 @@ const Login = () => {
   // Validación de correo simple
   const isEmailValido = (correo) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo);
 
+  const clearFieldError = (fieldName) => {
+    setErrors((prevErrors) => {
+      if (!prevErrors[fieldName]) {
+        return prevErrors;
+      }
+
+      return { ...prevErrors, [fieldName]: "" };
+    });
+  };
+
   // Autocompletado
   const handleEmailChange = (e) => {
     const valor = e.target.value;
     setEmail(valor);
+    clearFieldError("email");
 
     const correos = JSON.parse(localStorage.getItem("emailsUsados")) || [];
     const coincidencias = correos.filter((c) =>
@@ -99,15 +115,27 @@ const Login = () => {
     e.preventDefault(); // Previene recarga de página
     setIsLoading(true); // Muestra spinner de carga
 
-    // Validación básica de campos
+    // Limpiar errores anteriores
+    setErrors({ email: "", password: "" });
+
+    // Validación básica de campos con feedback accesible
     if (!email || !password) {
-      toast.error("Todos los campos son obligatorios.");
+      const newErrors = { email: "", password: "" };
+      if (!email) {
+        newErrors.email = "El correo electrónico es obligatorio";
+        emailInputRef.current?.focus();
+      } else if (!password) {
+        newErrors.password = "La contraseña es obligatoria";
+        passwordInputRef.current?.focus();
+      }
+      setErrors(newErrors);
       setIsLoading(false);
       return;
     }
     // Validación de formato de correo
     if (!isEmailValido(email)) {
-      toast.error("El correo no tiene un formato válido.");
+      setErrors({ email: "El correo no tiene un formato válido", password: "" });
+      emailInputRef.current?.focus();
       setIsLoading(false);
       return;
     }
@@ -176,8 +204,8 @@ const Login = () => {
         </svg>
       </div>
       {/* Botón para volver al home */}
-      <Link to="/home" className="home-button-l">
-        <Home size={22} color="white" />
+      <Link to="/home" className="home-button-l" aria-label="Volver a la página de inicio">
+        <Home size={22} color="white" aria-hidden="true" />
       </Link>
       {/* Contenedor principal centrado */}
       <div className="login-main-container-l">
@@ -202,19 +230,20 @@ const Login = () => {
           </div>
 
           {/* Formulario de inicio de sesión */}
-          <form onSubmit={handleSubmit} className="login-form-l">
+          <form onSubmit={handleSubmit} className="login-form-l" aria-label="Formulario de inicio de sesión">
             {/* Campo de correo electrónico */}
             <div className="form-group-l">
               <label htmlFor="email" className="form-label-l">
                 Correo electrónico
               </label>
               <div className="input-group-l">
-                <span className="input-group-text-l">
+                <span className="input-group-text-l" aria-hidden="true">
                   <AtSign size={18} color="#ffffff" />
                 </span>
                 <input
+                  ref={emailInputRef}
                   type="email"
-                  className="form-control-l input-animate-l"
+                  className={`form-control-l input-animate-l ${errors.email ? 'input-error-l' : ''}`}
                   id="email"
                   placeholder="usuario@uta.edu.ec"
                   value={email}
@@ -223,16 +252,38 @@ const Login = () => {
                     setTimeout(() => setMostrarSugerencias(false), 150)
                   }
                   onFocus={() => setMostrarSugerencias(sugerencias.length > 0)}
-                  autoComplete="off"
+                  autoComplete="email"
                   name="email"
+                  aria-invalid={!!errors.email}
+                  aria-describedby={errors.email ? "email-error" : undefined}
+                  aria-autocomplete="list"
+                  aria-controls={mostrarSugerencias ? "email-suggestions" : undefined}
+                  aria-expanded={mostrarSugerencias}
                 />
               </div>
 
+              {/* Mensaje de error accesible */}
+              {errors.email && (
+                <div id="email-error" className="form-error-l" role="alert">
+                  {errors.email}
+                </div>
+              )}
+
               {/* Autocompletado de correos guardados */}
               {mostrarSugerencias && (
-                <div className="suggestions-container-l">
+                <div
+                  id="email-suggestions"
+                  className="suggestions-container-l"
+                  role="listbox"
+                  aria-label="Sugerencias de correo electrónico"
+                >
                   {sugerencias.map((correo, index) => (
-                    <div key={index} className="suggestion-item-l">
+                    <div
+                      key={index}
+                      className="suggestion-item-l"
+                      role="option"
+                      aria-selected={false}
+                    >
                       <span
                         onMouseDown={() => {
                           setEmail(correo);
@@ -262,9 +313,9 @@ const Login = () => {
                           );
                           if (nuevos.length === 0) setMostrarSugerencias(false);
                         }}
-                        title="Eliminar sugerencia"
+                        aria-label={`Eliminar ${correo} de sugerencias`}
                       >
-                        <X size={16} />
+                        <X size={16} aria-hidden="true" />
                       </button>
                     </div>
                   ))}
@@ -277,30 +328,45 @@ const Login = () => {
                 Contraseña
               </label>
               <div className="input-group-password-l">
-                <span className="input-group-text-l">
+                <span className="input-group-text-l" aria-hidden="true">
                   <Lock size={18} strokeWidth={1.8} />
                 </span>
                 <input
+                  ref={passwordInputRef}
                   type={showPassword ? "text" : "password"}
-                  className="form-control-l input-animate-l"
+                  className={`form-control-l input-animate-l ${errors.password ? 'input-error-l' : ''}`}
                   id="password"
                   placeholder="********"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    clearFieldError("password");
+                  }}
+                  autoComplete="current-password"
+                  aria-invalid={!!errors.password}
+                  aria-describedby={errors.password ? "password-error" : undefined}
                 />
                 <button
                   type="button"
                   className="btn-outline-secondary-l"
                   onClick={() => setShowPassword(!showPassword)}
-                  tabIndex={-1}
+                  aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                  aria-pressed={showPassword}
                 >
                   {showPassword ? (
-                    <EyeOff size={18} color="#6b7280" />
+                    <EyeOff size={18} color="#6b7280" aria-hidden="true" />
                   ) : (
-                    <Eye size={18} color="#6b7280" />
+                    <Eye size={18} color="#6b7280" aria-hidden="true" />
                   )}
                 </button>
               </div>
+
+              {/* Mensaje de error accesible */}
+              {errors.password && (
+                <div id="password-error" className="form-error-l" role="alert">
+                  {errors.password}
+                </div>
+              )}
             </div>
 
             {/* Enlace para recuperar contraseña */}

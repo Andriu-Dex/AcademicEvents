@@ -177,8 +177,8 @@ const Register = () => {
     <div className="container-page-reg">
       <div className="fixed-image-reg" />
       {/* Botón para volver al home */}
-      <Link to="/home" className="home-button-reg">
-        <Home size={22} color="white" />
+      <Link to="/home" className="home-button-reg" aria-label="Volver a la página de inicio">
+        <Home size={22} color="white" aria-hidden="true" />
       </Link>
       <div className="form-scroll-reg">
         <div className="form-content-reg">
@@ -187,7 +187,7 @@ const Register = () => {
             <div>
               <img
                 src={institutionLogo}
-                alt="Logo"
+                alt="Logo institucional de la universidad"
                 style={{ width: "320px", marginBottom: "10px", maxHeight: "35%", maxWidth: "35%" }}
               />
             </div>
@@ -198,7 +198,7 @@ const Register = () => {
                 : "Registro como usuario general"}
             </p>
           </div>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} aria-label="Formulario de registro de usuario">
             {" "}
             {[
               "ced_usu",
@@ -217,12 +217,12 @@ const Register = () => {
                 cel_usu: "Celular",
               };
               const icons = {
-                ced_usu: <User size={18} />,
-                nom_usu: <User size={18} />,
-                ape_usu: <User size={18} />,
-                cor_usu: <Mail size={18} />,
-                con_usu: <Lock size={18} />,
-                cel_usu: <Phone size={18} />,
+                ced_usu: <User size={18} aria-hidden="true" />,
+                nom_usu: <User size={18} aria-hidden="true" />,
+                ape_usu: <User size={18} aria-hidden="true" />,
+                cor_usu: <Mail size={18} aria-hidden="true" />,
+                con_usu: <Lock size={18} aria-hidden="true" />,
+                cel_usu: <Phone size={18} aria-hidden="true" />,
               };
               const type =
                 name === "con_usu"
@@ -232,40 +232,56 @@ const Register = () => {
                   : name === "cor_usu"
                   ? "email"
                   : "text";
+
+              // Autocomplete attributes for better UX and accessibility
+              const autoCompleteMap = {
+                ced_usu: "off",
+                nom_usu: "given-name",
+                ape_usu: "family-name",
+                cor_usu: "email",
+                con_usu: "new-password",
+                cel_usu: "tel",
+              };
+
               return (
                 <div key={name} className="mb-3">
-                  <label className="form-label fw-semibold">
+                  <label htmlFor={`register-${name}`} className="form-label fw-semibold">
                     {labels[name]}
                   </label>
                   <div className="input-group">
-                    <span className="input-group-text bg-primary text-white">
+                    <span className="input-group-text bg-primary text-white" aria-hidden="true">
                       {icons[name]}
                     </span>
                     <input
+                      id={`register-${name}`}
                       type={type}
                       name={name}
                       value={datos[name]}
                       onChange={handleChange}
                       className="form-control"
                       required
+                      autoComplete={autoCompleteMap[name]}
+                      aria-describedby={name === "con_usu" && datos[name] ? "password-strength-info" : undefined}
                     />
                     {name === "con_usu" && (
                       <button
                         type="button"
                         className="input-group-text btn btn-outline-secondary"
                         onClick={() => setShowPassword(!showPassword)}
+                        aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                        aria-pressed={showPassword}
                       >
                         {showPassword ? (
-                          <EyeOff size={18} />
+                          <EyeOff size={18} aria-hidden="true" />
                         ) : (
-                          <Eye size={18} />
+                          <Eye size={18} aria-hidden="true" />
                         )}
                       </button>
                     )}
                   </div>
                   {/* Indicador de fortaleza de contraseña */}
                   {name === "con_usu" && datos[name] && (
-                    <div className="password-strength-reg mt-2">
+                    <div id="password-strength-info" className="password-strength-reg mt-2" aria-live="polite">
                       <div className="d-flex justify-content-between align-items-center mb-1">
                         <small className="text-muted">
                           Fortaleza de contraseña:
@@ -284,7 +300,7 @@ const Register = () => {
                           {passwordStrength.fortaleza.toUpperCase()}
                         </small>
                       </div>
-                      <div className="progress mb-2" style={{ height: "4px" }}>
+                      <div className="progress mb-2" style={{ height: "4px" }} role="progressbar" aria-valuenow={passwordStrength.puntuacion} aria-valuemin="0" aria-valuemax="9" aria-label={`Fortaleza de contraseña: ${passwordStrength.fortaleza}`}>
                         <div
                           className={`progress-bar ${
                             passwordStrength.fortaleza === "muy fuerte"
@@ -295,7 +311,6 @@ const Register = () => {
                               ? "bg-warning"
                               : "bg-danger"
                           }`}
-                          role="progressbar"
                           style={{
                             width: `${
                               (passwordStrength.puntuacion / 9) * 100
@@ -305,7 +320,7 @@ const Register = () => {
                         ></div>
                       </div>
                       {passwordStrength.errores.length > 0 && (
-                        <div className="password-errors-reg">
+                        <div className="password-errors-reg" role="alert">
                           {passwordStrength.errores.map((error, index) => (
                             <small key={index} className="text-danger d-block">
                               • {error}
@@ -327,46 +342,52 @@ const Register = () => {
               );
             })}
             <div className="mb-3">
-              <label className="form-label fw-semibold">
+              <label htmlFor="register-confirm-password" className="form-label fw-semibold">
                 Confirmar contraseña
               </label>
               <div className="input-group">
-                <span className="input-group-text bg-primary text-white">
-                  <Lock size={18} />
+                <span className="input-group-text bg-primary text-white" aria-hidden="true">
+                  <Lock size={18} aria-hidden="true" />
                 </span>
                 <input
+                  id="register-confirm-password"
                   type={showConfirmPassword ? "text" : "password"}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   className="form-control"
                   required
+                  autoComplete="new-password"
                 />
                 <button
                   type="button"
                   className="input-group-text btn btn-outline-secondary"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  aria-label={showConfirmPassword ? "Ocultar confirmación de contraseña" : "Mostrar confirmación de contraseña"}
+                  aria-pressed={showConfirmPassword}
                 >
                   {showConfirmPassword ? (
-                    <EyeOff size={18} />
+                    <EyeOff size={18} aria-hidden="true" />
                   ) : (
-                    <Eye size={18} />
+                    <Eye size={18} aria-hidden="true" />
                   )}
                 </button>
               </div>
             </div>
             {esUTA && (
               <div className="mb-3">
-                <label className="form-label fw-semibold">Carrera</label>
+                <label htmlFor="register-carrera" className="form-label fw-semibold">Carrera</label>
                 <div className="input-group">
-                  <span className="input-group-text bg-primary text-white">
-                    <BookText size={18} />
+                  <span className="input-group-text bg-primary text-white" aria-hidden="true">
+                    <BookText size={18} aria-hidden="true" />
                   </span>
                   <select
+                    id="register-carrera"
                     className="form-select"
                     name="id_car_est"
                     value={datos.id_car_est}
                     onChange={handleChange}
                     required
+                    aria-label="Seleccionar carrera universitaria"
                   >
                     <option value="">Seleccione una carrera</option>
                     {carreras.map((c) => (
@@ -378,7 +399,7 @@ const Register = () => {
                 </div>
               </div>
             )}{" "}
-            <div className="alert alert-info mb-3">
+            <div className="alert alert-info mb-3" role="note">
               <small>
                 <strong>Nota importante:</strong> Después de registrarte,
                 deberás subir tus documentos (cédula, papeleta de votación
