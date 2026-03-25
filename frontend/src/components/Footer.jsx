@@ -73,19 +73,30 @@ const Footer = ({ isAuthenticated }) => {
   }, []); // El array vacío hace que se ejecute solo al montar el componente
 
   return (
-    <footer className="footer-component-fc">
+    <footer className="footer-component-fc" aria-label="Pie de página">
       <div className="footer-container">
         <div className="footer-row">
-          <div className="footer-col footer-col-4">
+          <section className="footer-col footer-col-4" aria-labelledby="footer-brand-title">
             <div className="footer-header">
-              <img src={facultad.logo} alt="Logo" className="footer-logo-fc" />
-              <h5 className="footer-title-fc">{facultad.acronimo}</h5>
+              <img
+                src={facultad.logo}
+                alt={`Logo de ${facultad.acronimo}`}
+                className="footer-logo-fc"
+              />
+              <h2 id="footer-brand-title" className="footer-title-fc">
+                {facultad.acronimo}
+              </h2>
             </div>
             <p className="footer-subtitle-fc">{universidad.nombre}</p>
-          </div>
+          </section>
 
-          <div className="footer-col footer-col-2">
-            <h6 className="footer-section-title-fc">Académico</h6>
+          <nav
+            className="footer-col footer-col-2"
+            aria-labelledby="footer-academic-title"
+          >
+            <h3 id="footer-academic-title" className="footer-section-title-fc">
+              Académico
+            </h3>
             <ul className="footer-list">
               <li className="footer-list-item">
                 <Link
@@ -113,10 +124,18 @@ const Footer = ({ isAuthenticated }) => {
                 </li>
               )}
             </ul>
-          </div>
+          </nav>
 
-          <div className="footer-col footer-col-3">
-            <h6 className="footer-section-title-fc">Información</h6>
+          <nav
+            className="footer-col footer-col-3"
+            aria-labelledby="footer-information-title"
+          >
+            <h3
+              id="footer-information-title"
+              className="footer-section-title-fc"
+            >
+              Información
+            </h3>
             <ul className="footer-list">
               <li className="footer-list-item">
                 <a href="#autoridades" className="footer-link-fc">
@@ -134,11 +153,16 @@ const Footer = ({ isAuthenticated }) => {
                 </a>
               </li>
             </ul>
-          </div>
+          </nav>
 
           {/* Auditoria */}
-          <div className="footer-col footer-col-3">
-            <h6 className="footer-section-title-fc">Auditoria</h6>
+          <nav
+            className="footer-col footer-col-3"
+            aria-labelledby="footer-audit-title"
+          >
+            <h3 id="footer-audit-title" className="footer-section-title-fc">
+              Auditoría
+            </h3>
             <ul className="footer-list">
               <li className="footer-list-item">
                 <a
@@ -150,11 +174,16 @@ const Footer = ({ isAuthenticated }) => {
                 </a>
               </li>
             </ul>
-          </div>
+          </nav>
           {/* Fin auditoria */}
 
-          <div className="footer-col footer-col-3">
-            <h6 className="footer-section-title-fc">Contacto</h6>
+          <section
+            className="footer-col footer-col-3"
+            aria-labelledby="footer-contact-title"
+          >
+            <h3 id="footer-contact-title" className="footer-section-title-fc">
+              Contacto
+            </h3>
             <ul className="footer-list">
               <li className="footer-contact-item-fc">
                 <MapPin size={14} className="footer-contact-icon" />
@@ -169,7 +198,7 @@ const Footer = ({ isAuthenticated }) => {
                 {universidad.telefono}
               </li>
             </ul>
-          </div>
+          </section>
         </div>
 
         <hr className="footer-divider-fc" />

@@ -6,6 +6,7 @@ import EventosDestacados from "../components/home/EventosDestacados";
 import { useAuth } from "../hooks/useAuth";
 import { useHomeSocket } from "../hooks/useHomeSocket";
 import { useConfigurableStats } from "../hooks/useConfigurableStats";
+import useDocumentTitle from "../hooks/useDocumentTitle";
 import axiosInstance from "../api/axiosConfig";
 import {
   Users,
@@ -50,6 +51,8 @@ import "./styles/Home.css";
  * @returns {JSX.Element} Componente React
  */
 function Home() {
+  useDocumentTitle("Inicio");
+
   // Usar el usuario real del contexto de autenticación
   const { usuario } = useAuth();
   // Estado para almacenar las carreras
@@ -765,16 +768,16 @@ function Home() {
   return (
     <div className="d-flex flex-column home-page">
       {/* Área de detección superior */}
-      <div ref={topAreaRef} className="top-detection-area-h"></div>
+      <div ref={topAreaRef} className="top-detection-area-h" aria-hidden="true"></div>
 
       {/* Header/Navbar con clase condicional para visibilidad */}
-      <div
+      <header
         className={`navbar-container-h ${
           showNavbar ? "navbar-visible-h" : "navbar-hidden-h"
         }`}
       >
         <Navbar usuario={usuario} />
-      </div>
+      </header>
 
       {/* 🔌 Componente de notificaciones en tiempo real */}
       {notifications.length > 0 && (
@@ -812,11 +815,17 @@ function Home() {
       )}
 
       {/* Hero Section */}
-      <div className="contenedor-principal-home hero-section-home">
+      <header
+        className="contenedor-principal-home hero-section-home"
+        aria-labelledby="home-hero-title"
+      >
         <div className="container">
           <div className="row align-items-center">
             <div className="col-lg-6 text-white py-4">
-              <h1 className="display-4 fw-bold mb-3 animate__animated animate__fadeInUp">
+              <h1
+                id="home-hero-title"
+                className="display-4 fw-bold mb-3 animate__animated animate__fadeInUp"
+              >
                 {facultadActual.nombreCompleto}
               </h1>
               <p className="lead mb-4 animate__animated animate__fadeInUp">
@@ -874,15 +883,21 @@ function Home() {
             </div>
           </div>
         </div>
-      </div>
+      </header>
 
       {/* Eventos Destacados */}
       <EventosDestacados eventUpdate={eventosDestacadosUpdate} />
 
       {/* Autoridades - Carrusel */}
-      <section className="autoridades-section-h" id="autoridades">
+      <section
+        className="autoridades-section-h"
+        id="autoridades"
+        aria-labelledby="authorities-section-title"
+      >
         <div className="autoridades-header-h">
-          <h2 className="autoridades-title-h">Autoridades de la Facultad</h2>
+          <h2 id="authorities-section-title" className="autoridades-title-h">
+            Autoridades de la Facultad
+          </h2>
           <p className="autoridades-subtitle-h">
             Conoce a nuestro equipo directivo
           </p>
@@ -991,10 +1006,16 @@ function Home() {
         )}
       </section>
       {/* Carreras Disponibles - Carrusel */}
-      <div className="container mb-5" id="carreras">
+      <section
+        className="container mb-5"
+        id="carreras"
+        aria-labelledby="careers-section-title"
+      >
         <div className="row justify-content-center mb-4">
           <div className="col-lg-6 text-center">
-            <h2 className="fw-bold home-section-title">Nuestras Carreras</h2>
+            <h2 id="careers-section-title" className="fw-bold home-section-title">
+              Nuestras Carreras
+            </h2>
             <p className="opciones-academicas-h">
               Descubre las opciones académicas que tenemos para ti
             </p>
@@ -1117,12 +1138,16 @@ function Home() {
             ))}
           </div>
         )}
-      </div>
+      </section>
       {/* Misión y Visión */}
-      <div className="container mb-5" id="mision-vision">
+      <section
+        className="container mb-5"
+        id="mision-vision"
+        aria-labelledby="identity-section-title"
+      >
         <div className="row justify-content-center mb-4">
           <div className="col-lg-6 text-center">
-            <h2 className="fw-bold home-section-title">
+            <h2 id="identity-section-title" className="fw-bold home-section-title">
               {usuario?.rol_usu === "ESTUDIANTE"
                 ? `Carrera de ${
                     usuario?.carrera === "SOFTWARE"
@@ -1161,20 +1186,24 @@ function Home() {
             </div>
           ))}
         </div>
-      </div>
+      </section>
       {/* Sección de contacto */}
-      <div className="container mb-5" id="contacto">
+      <section
+        className="container mb-5"
+        id="contacto"
+        aria-labelledby="contact-section-title"
+      >
         <div className="card border-0 shadow-lg p-4 contact-section contact-card-home">
           <div className="row align-items-center">
             <div className="col-md-8">
-              <h3 className="fw-bold mb-3 home-section-title">
+              <h2 id="contact-section-title" className="fw-bold mb-3 home-section-title">
                 <MessageSquare
                   size={24}
                   className="me-2"
                   style={{ verticalAlign: "middle" }}
                 />{" "}
                 ¿Necesitas información adicional?
-              </h3>
+              </h2>
               <p className="mb-md-0">
                 Nuestro equipo de atención está disponible para resolver todas
                 tus dudas sobre inscripciones, carreras y procesos académicos.
@@ -1200,7 +1229,7 @@ function Home() {
             </div>
           </div>
         </div>
-      </div>
+      </section>
       {/* Footer */}
       <Footer isAuthenticated={usuario?.id ? true : false} />
     </div>

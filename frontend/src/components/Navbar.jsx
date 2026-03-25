@@ -202,7 +202,7 @@ const Navbar = () => {
 
   if (!usuario) {
     return (
-      <nav className="navbar-ae">
+      <nav className="navbar-ae" aria-label="Navegación principal">
         <div className="navbar-left">
           <Link to="/" className="navbar-logo-container">
             <img
@@ -230,7 +230,7 @@ const Navbar = () => {
             </Link>
           </div>
         </div>
-        <div className="navbar-auth">
+        <div className="navbar-auth" aria-label="Acciones de autenticación">
           <Link to="/login" className="navbar-auth-btn login-btn">
             Iniciar sesión
           </Link>
@@ -243,22 +243,36 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="navbar-ae">
+    <nav className="navbar-ae" aria-label="Navegación principal">
       <div className="navbar-left">
         {usuario.rol_usu === "ADMIN_GLOBAL" && (
           <div className="hamburger-menu-container" ref={hamburgerMenuRef}>
-            <button className="hamburger-button" onClick={toggleHamburgerMenu}>
-              <Menu size={24} />
+            <button
+              className="hamburger-button"
+              onClick={toggleHamburgerMenu}
+              type="button"
+              aria-expanded={showHamburgerMenu}
+              aria-haspopup="menu"
+              aria-controls="admin-shortcuts-menu"
+              aria-label="Abrir accesos rápidos de administración"
+            >
+              <Menu size={24} aria-hidden="true" />
             </button>
             {showHamburgerMenu && (
-              <div className="hamburger-menu">
+              <div
+                id="admin-shortcuts-menu"
+                className="hamburger-menu"
+                role="menu"
+                aria-label="Accesos rápidos de administración"
+              >
                 <Link
                   to="/admin/settings"
                   className={`hamburger-menu-item ${isActive("/admin/settings")}`}
                   onClick={toggleHamburgerMenu}
+                  role="menuitem"
                 >
                   <span className="hamburger-menu-icon">
-                    <Sliders size={18} />
+                    <Sliders size={18} aria-hidden="true" />
                   </span>
                   <span>MVA</span>
                 </Link>
@@ -266,9 +280,10 @@ const Navbar = () => {
                   to="/admin/admins"
                   className={`hamburger-menu-item ${isActive("/admin/admins")}`}
                   onClick={toggleHamburgerMenu}
+                  role="menuitem"
                 >
                   <span className="hamburger-menu-icon">
-                    <UserCheck size={18} />
+                    <UserCheck size={18} aria-hidden="true" />
                   </span>
                   <span>Gestionar Usuarios</span>
                 </Link>
