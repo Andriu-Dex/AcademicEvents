@@ -24,7 +24,11 @@
   background-color: transparent;
   color: var(--color-text-primary);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
   flex-shrink: 0;
 }
 
@@ -40,10 +44,11 @@
   color: var(--color-primary);
 }
 
-.notification-bell-button:focus {
-  outline: 2px solid var(--color-border-focus);
+.notification-bell-button:focus-visible {
+  outline: 3px solid var(--color-border-focus);
   outline-offset: 2px;
   color: var(--color-primary);
+  box-shadow: 0 0 0 4px var(--color-primary-light);
 }
 
 .notification-bell-inactive:hover {

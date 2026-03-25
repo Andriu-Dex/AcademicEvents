@@ -76,6 +76,19 @@ const Navbar = () => {
   };
 
   /**
+   * Maneja eventos de teclado para accesibilidad del menú de perfil
+   * Soporta: Escape para cerrar, Enter/Space para activar
+   */
+  const handleProfileMenuKeyDown = (event) => {
+    if (event.key === "Escape") {
+      setShowProfileMenu(false);
+      // Devolver foco al botón de perfil
+      const profileButton = profileMenuRef.current?.querySelector(".profile-button");
+      profileButton?.focus();
+    }
+  };
+
+  /**
    * Alterna la visibilidad del menú de perfil
    */
   const toggleProfileMenu = () => {
@@ -350,13 +363,14 @@ const Navbar = () => {
       <div className="navbar-right-section">
         <NotificationBell />
 
-        <div className="navbar-profile" ref={profileMenuRef}>
+        <div className="navbar-profile" ref={profileMenuRef} onKeyDown={handleProfileMenuKeyDown}>
           <button
             type="button"
             className="profile-button"
             onClick={toggleProfileMenu}
             aria-expanded={showProfileMenu}
             aria-haspopup="menu"
+            aria-label={`Menú de perfil de ${usuario?.nom_usu || "Usuario"}`}
           >
             <span className="profile-name">{usuario?.nom_usu || "Usuario"}</span>
             <span className="profile-avatar" aria-hidden="true">
@@ -376,15 +390,20 @@ const Navbar = () => {
             </span>
           </button>
         {showProfileMenu && (
-          <div className="profile-dropdown">
-            <Link to="/profile" className="profile-menu-item">
-              <User size={16} />
+          <div className="profile-dropdown" role="menu" aria-label="Opciones de perfil">
+            <Link to="/profile" className="profile-menu-item" role="menuitem">
+              <User size={16} aria-hidden="true" />
               <span>Mi Perfil</span>
             </Link>
-            <div className="profile-menu-item logout" onClick={cerrarSesion}>
-              <LogOut size={16} />
+            <button
+              type="button"
+              className="profile-menu-item logout"
+              onClick={cerrarSesion}
+              role="menuitem"
+            >
+              <LogOut size={16} aria-hidden="true" />
               <span>Cerrar sesión</span>
-            </div>
+            </button>
           </div>
         )}
         </div>

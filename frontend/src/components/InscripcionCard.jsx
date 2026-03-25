@@ -266,7 +266,20 @@ const InscripcionCard = ({ inscripcion, onUpdate, onVerCarta }) => {
 
   return (
     <div className={`inscripcion-card ${getEstadoClase()}`}>
-      <div className="inscripcion-card-header" onClick={handleToggleExpand}>
+      <div
+        className="inscripcion-card-header"
+        onClick={handleToggleExpand}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            handleToggleExpand();
+          }
+        }}
+        role="button"
+        tabIndex={0}
+        aria-expanded={isExpanded}
+        aria-label={`${isExpanded ? "Contraer" : "Expandir"} detalles de inscripción de ${user?.firstName || user?.nom_usu} ${user?.lastName || user?.ape_usu}`}
+      >
         <div className="inscripcion-card-title">
           <h3>{`${user?.firstName || user?.nom_usu} ${user?.lastName || user?.ape_usu}`}</h3>
           <span className={`inscripcion-estado ${getEstadoClase()}`}>

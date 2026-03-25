@@ -16,7 +16,39 @@ class DocumentViewer extends React.Component {
     this.state = {
       loading: true,
     };
+    this.modalRef = React.createRef();
   }
+
+  componentDidMount() {
+    // Agregar listener para tecla Escape
+    document.addEventListener("keydown", this.handleKeyDown);
+    // Enfocar el modal al abrirse
+    this.modalRef.current?.focus();
+  }
+
+  componentWillUnmount() {
+    // Limpiar listener
+    document.removeEventListener("keydown", this.handleKeyDown);
+  }
+
+  /**
+   * Maneja eventos de teclado para accesibilidad
+   */
+  handleKeyDown = (event) => {
+    if (event.key === "Escape") {
+      this.props.onClose();
+    }
+  };
+
+  /**
+   * Maneja click en overlay para cerrar
+   */
+  handleOverlayClick = (event) => {
+    // Solo cerrar si se hace click directamente en el overlay
+    if (event.target === event.currentTarget) {
+      this.props.onClose();
+    }
+  };
 
   /**
    * Maneja cuando el documento termina de cargar
@@ -52,12 +84,27 @@ class DocumentViewer extends React.Component {
     const { loading } = this.state;
     const documentType = this.getDocumentType();
     return (
-      <div className="modal-overlay-dv" onClick={onClose}>
-        <div className="modal-content-dv" onClick={(e) => e.stopPropagation()}>
+      <div
+        className="modal-overlay-dv"
+        onClick={this.handleOverlayClick}
+        role="presentation"
+      >
+        <div
+          className="modal-content-dv"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="document-viewer-title"
+          ref={this.modalRef}
+          tabIndex={-1}
+        >
           <div className="modal-header-dv">
-            <h2 className="modal-title-dv">{title || "Documento"}</h2>
-            <button className="close-button-dv" onClick={onClose}>
-              <X size={24} />
+            <h2 id="document-viewer-title" className="modal-title-dv">{title || "Documento"}</h2>
+            <button
+              className="close-button-dv"
+              onClick={onClose}
+              aria-label="Cerrar visor de documento"
+            >
+              <X size={24} aria-hidden="true" />
             </button>
           </div>
 

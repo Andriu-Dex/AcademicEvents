@@ -5,6 +5,7 @@ import { requestWithEndpointFallback } from "../api/endpointFallback";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "../hooks/useAuth";
+import useDocumentTitle from "../hooks/useDocumentTitle";
 import { Eye, EyeOff, Lock, AtSign, X, Home } from "lucide-react";
 import "./styles/Login.css";
 
@@ -24,6 +25,9 @@ const Login = () => {
   const { login, usuario } = useAuth();
   const location = useLocation();
   const navigate = useNavigate(); // Hook para redireccionar
+
+  // Accessibility: Dynamic page title (WCAG 2.4.2)
+  useDocumentTitle("Iniciar Sesión");
 
   // Estados locales
   const [email, setEmail] = useState(""); // Correo electrónico
@@ -383,7 +387,6 @@ const Login = () => {
                   <span
                     className="spinner-border-sm-l"
                     role="status"
-                    aria-hidden="true"
                   ></span>
                   Iniciando sesión...
                 </>

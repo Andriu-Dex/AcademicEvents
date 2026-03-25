@@ -71,7 +71,11 @@
   /* font-size: 0.95rem; */
   color: var(--color-text-primary);
   text-decoration: none;
-  transition: all 0.3s ease;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
   padding: 10px 16px;
   border-radius: 8px;
   font-weight: 500;
@@ -128,7 +132,12 @@
   padding: 10px 22px;
   border-radius: 8px;
   font-weight: 600;
-  transition: all 0.3s ease;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
   margin: 0 6px;
   letter-spacing: 0.3px;
 }
@@ -172,7 +181,12 @@
   color: var(--color-primary);
   padding: 8px 16px;
   border-radius: 8px;
-  transition: all 0.3s ease;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
   font-weight: 500;
   margin-right: 24px;
 }
@@ -211,7 +225,11 @@
   background-color: var(--color-bg-tertiary);
   color: var(--color-primary);
   cursor: pointer;
-  transition: all 0.25s ease;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
   flex-shrink: 0;
 }
 
@@ -226,8 +244,9 @@
 }
 
 .theme-toggle-button:focus-visible {
-  outline: 2px solid var(--color-border-focus);
+  outline: 3px solid var(--color-border-focus);
   outline-offset: 2px;
+  box-shadow: 0 0 0 4px var(--color-primary-light);
 }
 
 .theme-toggle-icon {
@@ -250,7 +269,12 @@
   min-height: 52px;
   padding: 6px 8px 6px 18px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
   background-color: var(--color-bg-primary);
   position: relative;
   z-index: 2;
@@ -268,8 +292,9 @@
 }
 
 .profile-button:focus-visible {
-  outline: 2px solid var(--color-border-focus);
+  outline: 3px solid var(--color-border-focus);
   outline-offset: 2px;
+  box-shadow: 0 0 0 4px var(--color-primary-light);
 }
 
 .profile-avatar {
@@ -365,7 +390,11 @@
   padding: 12px 18px;
   color: var(--color-text-primary);
   text-decoration: none;
-  transition: all 0.2s ease;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
   font-weight: 500;
   border-radius: 8px;
   margin: 0 6px;
@@ -484,7 +513,11 @@
   padding: 8px;
   border-radius: 50%;
   color: var(--color-text-primary);
-  transition: all 0.3s ease;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .hamburger-button:hover {
@@ -514,7 +547,11 @@
   color: var(--color-text-primary);
   text-decoration: none;
   border-radius: 6px;
-  transition: all 0.2s ease;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .hamburger-menu-item:hover {

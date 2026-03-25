@@ -15,6 +15,7 @@ import {
 import Validator from "../utils/Validator"; // Importamos la clase de validación
 import Usuario from "../models/Usuario"; // Importamos el modelo de Usuario
 import RegistroService from "../services/RegistroService"; // Importamos el servicio de registro
+import useDocumentTitle from "../hooks/useDocumentTitle"; // Hook para título dinámico
 import "./styles/Register.css"; // Importa el archivo CSS
 
 /**
@@ -24,6 +25,9 @@ import "./styles/Register.css"; // Importa el archivo CSS
 const Register = () => {
   const navigate = useNavigate();
   const DEFAULT_REGISTER_LOGO = "https://i.imgur.com/ZDlLQ2T.png";
+
+  // Accessibility: Dynamic page title (WCAG 2.4.2)
+  useDocumentTitle("Registro de Usuario");
 
   // Inicializamos con un modelo de Usuario
   const [usuarioModel] = useState(new Usuario());
