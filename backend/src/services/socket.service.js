@@ -10,6 +10,15 @@ class SocketService {
     this.logsEnabled = process.env.SOCKET_LOGS_ENABLED === "true";
   }
 
+  isAdminRole(role) {
+    return [
+      "GLOBAL_ADMIN",
+      "GENERAL_ADMIN",
+      "ADMIN_GLOBAL",
+      "ADMIN_GENERAL",
+    ].includes(role);
+  }
+
   /**
    * Método helper para logs condicionales de sockets
    * @param {string} message - Mensaje a loggear
@@ -135,6 +144,13 @@ class SocketService {
       if (clientInfo) {
         clientInfo.userId = userData.userId;
         clientInfo.userRole = userData.role;
+
+        socket.join(`user:${userData.userId}`);
+
+        if (this.isAdminRole(userData.role)) {
+          socket.join("role:admin");
+        }
+
         this.log(
           `🔐 [SOCKET] Usuario autenticado en socket: ${userData.userId} (Rol: ${userData.role})`
         );
@@ -289,11 +305,11 @@ class SocketService {
       }
     );
 
-    // Enviar a vista específica de validación
-    this.io.emit("inscription-validation-change", validationData);
+    // Enviar a vista específica de validación solo a administradores
+    this.io.to("role:admin").emit("inscription-validation-change", validationData);
 
     // También enviar al dashboard general de admin
-    this.io.emit("admin-dashboard-update", {
+    this.io.to("role:admin").emit("admin-dashboard-update", {
       type: "inscription_update",
       ...validationData,
     });
@@ -372,7 +388,7 @@ class SocketService {
       datos_adicionales: Object.keys(additionalData),
     });
 
-    this.io.emit("admin-notification", notificationData);
+    this.io.to("role:admin").emit("admin-notification", notificationData);
 
     this.log(
       `✅ [SOCKET] [ADMIN NOTIFICATION] ${type.toUpperCase()}: ${message} enviado a ${
@@ -491,8 +507,7 @@ class SocketService {
       }
     );
 
-    // Emitir evento a todos los clientes, pero solo los que tengan el userId correcto lo procesarán
-    this.io.emit("user-inscription-update", notificationData);
+    this.io.to(`user:${userId}`).emit("user-inscription-update", notificationData);
 
     this.log(
       `✅ [SOCKET] [USER NOTIFICATION] Cambio de estado de inscripción notificado para usuario: ${userId} enviado a ${this.connectedClients.size} clientes`

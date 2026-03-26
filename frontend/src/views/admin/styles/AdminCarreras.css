@@ -372,7 +372,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 11000;
+  z-index: var(--z-modal-layer);
 }
 
 .modal-overlay-ac {
@@ -398,6 +398,7 @@
   max-height: 90vh;
   overflow-y: auto;
   animation: modalFadeIn-ac 0.3s ease;
+  scrollbar-width: none;
 }
 
 @keyframes modalFadeIn-ac {
@@ -874,7 +875,7 @@
   align-items: center;
   justify-content: center;
   background-color: rgba(0, 0, 0, 0.5);
-  z-index: 11000;
+  z-index: var(--z-modal-layer);
 }
 
 .edicion-modal-content {
@@ -1071,14 +1072,14 @@
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.3);
-  z-index: 11000;
+  z-index: var(--z-modal-layer);
   animation: fadeInCarreras 0.4s;
 }
 
 .admincarreras-modal-container {
   position: fixed;
   inset: 0;
-  z-index: 11010;
+  z-index: var(--z-modal-content-layer);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1093,7 +1094,7 @@
   width: 100%;
   max-width: 26rem;
   position: relative;
-  z-index: 11020;
+  z-index: var(--z-modal-content-layer);
   animation: fadeInCarreras 0.5s;
 }
 

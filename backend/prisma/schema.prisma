@@ -323,6 +323,7 @@ model Event {
   
   @@index([tenantId])
   @@index([tenantId, status])
+  @@index([tenantId, status, startDate])
   @@index([tenantId, isFeatured])
   @@index([createdByAccountId])
 }
@@ -382,6 +383,8 @@ model Registration {
   @@index([accountId])
   @@index([eventId])
   @@index([status])
+  @@index([tenantId, status])
+  @@index([tenantId, eventId, status])
 }
 
 model RegistrationCourse {
@@ -490,6 +493,7 @@ model AccountToken {
   @@index([tenantId])
   @@index([accountId])
   @@index([value])
+  @@index([value, status])
 }
 
 model TokenInvalidation {
@@ -562,6 +566,7 @@ model PushToken {
   @@index([tenantId])
   @@index([accountId])
   @@index([isActive])
+  @@index([tenantId, accountId, isActive])
   @@map("push_tokens")
 }
 

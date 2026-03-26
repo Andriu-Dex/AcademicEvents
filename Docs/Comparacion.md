@@ -1,134 +1,165 @@
 ## Nombre del Proyecto
 
-AcademicEvents Pro – Plataforma Web y Móvil para Gestión de Eventos Académicos
+AcademicEvents Pro - Plataforma Web y Cliente Móvil para Gestión de Eventos Académicos
 
 ## Objetivo del Proyecto
 
-Desarrollar una plataforma web y móvil que permita gestionar eventos académicos de manera integral, incluyendo creación de eventos, control de cupos, inscripciones, generación de certificados digitales y notificaciones en tiempo real, garantizando seguridad, accesibilidad y una experiencia de usuario optimizada.
+Desarrollar una plataforma centrada primero en la **versión web**, capaz de gestionar eventos académicos de manera integral, incluyendo creación y administración de eventos, control de cupos, inscripciones, generación de certificados digitales, notificaciones en tiempo real y accesibilidad sólida.  
+
+La **app móvil** se abordará únicamente después de cerrar la versión web a nivel funcional y técnico.
 
 **Integrantes:** Erick Aguilar, Steven Paredes, Maybelline Navarro, Gabriel Llerena.
 
 ---
 
-## Funcionalidades del Proyecto (Web y Móvil)
+## Estado Actual del Proyecto
+
+### Versión Web
+- Implementada y en etapa de cierre funcional
+- Incluye panel administrativo, perfil de usuario, gestión de eventos, inscripciones, certificados, reportes, notificaciones y accesibilidad web
+- Se considera la prioridad absoluta antes de iniciar desarrollo móvil
+
+### Aplicación Móvil
+- Planificada, no iniciada como fase de desarrollo principal
+- Su alcance será una versión adaptada para estudiantes
+- Solo comenzará cuando la versión web esté validada y estable
+
+---
+
+## Funcionalidades del Proyecto
 
 ### Aplicación Web
-- Registro e inicio de sesión con roles (Estudiante, Coordinador, Administrador)
-- Creación, edición y eliminación de eventos (CRUD)
-- Control automático de cupos disponibles
+- Registro e inicio de sesión con roles
+- Creación, edición y eliminación de eventos
+- Control de fechas, estados y cupos disponibles
 - Gestión de inscripciones con validaciones
-- Panel administrativo con estadísticas en tiempo real
-- Generación y descarga de certificados en PDF
-- Búsqueda avanzada y filtrado de eventos
+- Panel administrativo con estadísticas y monitoreo
+- Generación y descarga de certificados PDF
+- Búsqueda, filtros y paginación
 - Gestión de usuarios
-- Panel de reportes y monitoreo del sistema
+- Perfil de usuario con imagen y documentos
+- Notificaciones en tiempo real y push
+- Reportes administrativos
+- Configuración institucional dinámica
 
-### Aplicación Móvil (Versión adaptada / Cliente móvil)
-- Registro e inicio de sesión
+### Aplicación Móvil (Planificada)
+- Inicio de sesión
 - Visualización de eventos disponibles
-- Inscripción rápida a eventos
+- Inscripción a eventos
 - Visualización de mis inscripciones
-- Descarga de certificados
-- Notificaciones push de recordatorios
-- Perfil de usuario editable
-- Alertas en tiempo real sobre cambios en eventos
-
-(La aplicación móvil funciona como cliente optimizado para estudiantes.)
+- Descarga o consulta de certificados
+- Notificaciones push
+- Perfil básico de usuario
 
 ---
 
 ## Seguridad
 
 - Autenticación mediante JSON Web Tokens (JWT)
-- Encriptación de contraseñas con bcrypt
+- Encriptación de contraseñas con bcrypt/bcryptjs
 - Middleware de autorización basado en roles
 - Protección de rutas privadas
 - Validación de datos en frontend y backend
-- Uso de ORM (Prisma) para prevenir inyecciones SQL
-- Control de archivos subidos (Multer con validación de tipo y tamaño)
-- Refresh tokens para sesiones seguras
-- Manejo seguro de variables de entorno (.env)
+- Prisma ORM para acceso seguro a base de datos
+- Control de archivos subidos con validación de tipo y tamaño
+- Refresh tokens y tokens de cuenta
+- Manejo seguro de variables de entorno
+- Segmentación multi-tenant
 
 ---
 
 ## Usabilidad
 
-- Interfaz responsive adaptable a distintos dispositivos
-- Navegación intuitiva con menús claros y jerarquía visual definida
-- Retroalimentación inmediata (notificaciones tipo toast)
-- Paneles organizados por funciones (Eventos, Inscripciones, Reportes)
-- Formularios con validaciones en tiempo real
-- Búsqueda y filtros dinámicos para mejorar eficiencia
-- Diseño limpio con Tailwind CSS
+- Interfaz responsive para escritorio y tablet
+- Navegación clara con menús y jerarquía visual definida
+- Retroalimentación inmediata con toast y estados visuales
+- Formularios con validaciones y mensajes contextuales
+- Paneles organizados por módulos
+- Filtros, búsqueda y paginación para mejorar eficiencia
+- Modo claro y oscuro
+- Diseño basado en React, CSS personalizado, variables de tema y apoyo puntual de Bootstrap
 
 ---
 
-## Accesibilidad (mínimo 2 características implementadas)
+## Accesibilidad Implementada
 
-1. **Modo Alto Contraste y Modo Oscuro**  
-   Permite mejorar la legibilidad para usuarios con dificultades visuales.
+1. **Modo oscuro y soporte de alto contraste**
+   Mejora la legibilidad y adapta colores de foco y componentes al tema activo.
 
-2. **Compatibilidad con lectores de pantalla**  
-   Implementación de atributos ARIA (aria-label, aria-describedby) y estructura semántica HTML adecuada.
+2. **Compatibilidad con lectores de pantalla**
+   Uso de estructura semántica, atributos ARIA, landmarks, labels y mensajes accesibles.
 
-3. **Navegación por teclado**  
-   Soporte completo de tabulación con foco visible en todos los elementos interactivos.
+3. **Navegación completa por teclado**
+   Soporte de tabulación, focus-visible, menús accesibles y modales con foco atrapado.
 
-4. **Escalabilidad de texto**  
-   Uso de unidades relativas (rem/em) para permitir ajuste de tamaño desde el navegador.
+4. **Componentes interactivos accesibles**
+   Diálogos con `Escape`, restauración de foco, nombres accesibles y paginación navegable con teclado.
 
 ---
 
 ## Módulos del Sistema
 
-1. **Módulo de Autenticación**  
-   - Registro  
-   - Login  
+1. **Módulo de Autenticación**
+   - Registro
+   - Login
    - Roles y permisos
+   - Verificación y recuperación de cuenta
 
-2. **Módulo de Gestión de Eventos**  
-   - CRUD de eventos  
-   - Control de fechas y cupos  
+2. **Módulo de Gestión de Eventos**
+   - CRUD de eventos
    - Estados automáticos
+   - Cupos disponibles
+   - Asociación con carreras
 
-3. **Módulo de Inscripciones**  
-   - Registro a eventos  
-   - Validación de duplicados  
+3. **Módulo de Inscripciones**
+   - Registro a eventos
+   - Validación administrativa
+   - Reenvío de comprobantes
    - Historial personal
 
-4. **Módulo de Certificados**  
-   - Generación automática en PDF  
-   - Código único de verificación  
+4. **Módulo de Certificados**
+   - Generación automática en PDF
+   - Código único de verificación
    - Descarga segura
 
-5. **Módulo de Notificaciones**  
-   - Notificaciones en tiempo real (WebSockets)  
-   - Recordatorios automáticos
+5. **Módulo de Notificaciones**
+   - WebSockets
+   - Notificaciones push
+   - Alertas por cambios de estado
 
-6. **Módulo de Reportes y Estadísticas**  
-   - Eventos más populares  
-   - Inscripciones por periodo  
+6. **Módulo de Reportes y Estadísticas**
    - Panel administrativo
+   - Reportes por eventos, ingresos, inscripciones y certificados
 
-7. **Módulo de Perfil de Usuario**  
-   - Edición de datos  
-   - Imagen de perfil  
-   - Historial académico
+7. **Módulo de Perfil de Usuario**
+   - Edición de datos
+   - Imagen de perfil
+   - Documentos personales
+   - Historial de inscripciones
+
+8. **Módulo Institucional**
+   - Datos de universidad
+   - Autoridades
+   - Facultades y carreras
+   - Enlaces institucionales dinámicos
 
 ---
 
-## Herramientas a Utilizar
+## Herramientas Utilizadas
 
 ### Frontend Web
 - React
 - Vite
-- Tailwind CSS
 - React Router DOM
 - Axios
 - React Toastify
+- Lucide React
+- Headless UI
+- Bootstrap
+- CSS personalizado y variables de tema
 
 ### Aplicación Móvil
-- React Native con Expo
+- React Native con Expo (planificado)
 
 ### Backend
 - Node.js
@@ -138,14 +169,16 @@ Desarrollar una plataforma web y móvil que permita gestionar eventos académico
 
 ### Seguridad
 - JSON Web Tokens (JWT)
-- bcryptjs
+- bcrypt / bcryptjs
 
 ### Tiempo Real
-- Socket.io
+- Socket.IO
+- Firebase Cloud Messaging
 
 ### Generación de Documentos
 - PDFKit
-- Canvas
+- pdf-lib
+- Puppeteer
 
 ### Control de Versiones
 - Git + GitHub

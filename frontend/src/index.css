@@ -356,3 +356,11 @@ a:focus-visible {
   clip: auto;
   white-space: normal;
 }
+
+/* ============================================
+   GLOBAL OVERLAYS - TOAST LAYER
+   ============================================ */
+
+.Toastify__toast-container {
+  z-index: var(--z-toast-layer) !important;
+}

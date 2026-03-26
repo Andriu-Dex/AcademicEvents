@@ -468,12 +468,12 @@
   align-items: center;
   justify-content: center;
   padding: 16px;
-  z-index: 1200;
+  z-index: var(--z-modal-layer);
 }
 
 .modal-content-ag {
   width: min(680px, 100%);
-  background: #fff;
+  background: var(--color-bg-primary);
   border-radius: 12px;
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
   overflow: hidden;
@@ -483,13 +483,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #ececec;
+  border-bottom: 1px solid var(--color-border-primary);
   padding: 14px 18px;
 }
 
 .modal-header-ag h3 {
   margin: 0;
-  color: #8a1538;
+  color: var(--color-primary);
   font-size: 18px;
 }
 
@@ -498,7 +498,7 @@
   background: transparent;
   cursor: pointer;
   font-size: 18px;
-  color: #777;
+  color: var(--color-text-secondary);
 }
 
 .modal-body-ag {
@@ -522,11 +522,11 @@
   align-items: center;
   gap: 8px;
   font-size: 14px;
-  color: #333;
+  color: var(--color-text-primary);
 }
 
 .modal-actions-ag {
-  border-top: 1px solid #ececec;
+  border-top: 1px solid var(--color-border-primary);
   padding: 14px 18px;
   display: flex;
   justify-content: flex-end;
@@ -543,13 +543,13 @@
 }
 
 .btn-modal-secondary-ag {
-  background: #ebebeb;
-  color: #444;
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-secondary);
 }
 
 .btn-modal-primary-ag {
-  background: #8a1538;
-  color: #fff;
+  background: var(--gradient-primary);
+  color: var(--color-text-inverse);
 }
 
 .btn-modal-primary-ag:disabled {

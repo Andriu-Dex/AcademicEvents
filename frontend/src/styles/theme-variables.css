@@ -85,6 +85,14 @@
   --transition-fast: 100ms ease-in-out; /*--150 */
   --transition-normal: 200ms ease-in-out; /*--250 */
   --transition-slow: 300ms ease-in-out; /*--350 */
+
+  /* === CAPAS / Z-INDEX === */
+  --z-navbar-layer: 9999;
+  --z-modal-layer: 11000;
+  --z-modal-content-layer: 11010;
+  --z-modal-nested-layer: 12000;
+  --z-toast-layer: 12500;
+  --z-floating-controls-layer: 13000;
 }
 
 /* ============================================

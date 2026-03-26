@@ -237,9 +237,10 @@ const crearInscripcion = async (req, res) => {
       try {
         // Usamos nuestra función centralizada para actualizar el estado
         const resultado = await actualizarEstadoYSincronizarCupos(
-           yaInscrito.id,
+          yaInscrito.id,
           "PENDING",
-           { registeredAt: new Date() } // Actualizar fecha de inscripción
+          req.tenantId,
+          { registeredAt: new Date() } // Actualizar fecha de inscripción
         );
 
         // Si hay un archivo, lo procesamos
@@ -388,7 +389,11 @@ const crearInscripcion = async (req, res) => {
           console.log("🔄 [CREAR_INSCRIPCION] Iniciando transacción");
 
           // 1. Recalcular cupos disponibles antes de crear la inscripción para verificar
-          const { disponibles } = await calcularCuposDisponibles(id_eve, tx);
+          const { disponibles } = await calcularCuposDisponibles(
+            id_eve,
+            req.tenantId,
+            tx
+          );
           console.log(
             `📊 [CREAR_INSCRIPCION] Cupos disponibles actuales verificados: ${disponibles}`
           );
@@ -482,9 +487,6 @@ const crearInscripcion = async (req, res) => {
           }
 
           // Verificamos los cupos después de todo el proceso
-          console.log("🔄 [CREAR_INSCRIPCION] Sincronizando cupos disponibles");
-          await sincronizarCuposDisponibles(id_eve);
-
           console.log(
             "✅ [CREAR_INSCRIPCION] Inscripción creada exitosamente, enviando respuesta"
           );
@@ -798,6 +800,7 @@ const validarInscripcion = async (req, res) => {
         const resultado = await actualizarEstadoYSincronizarCupos(
           id,
           nuevoEstado,
+          req.tenantId,
           datosAdicionales,
           req.usuario.id // Pasar ID del administrador que valida
         );
@@ -914,16 +917,6 @@ const validarInscripcion = async (req, res) => {
       }
     }
 
-    // VALIDACIÓN DE CUPOS DISPONIBLES
-    // Verificar que hay cupos disponibles antes de aceptar una inscripción
-    if (estadoAnterior === "PENDING" && estadoNuevo === "ACCEPTED") {
-      if (inscripcion.event.availableSpots <= 0) {
-        return res.status(400).json({
-          msg: "No se puede aceptar la inscripción: no hay cupos disponibles para este evento",
-        });
-      }
-    }
-
     // ENFOQUE MEJORADO: UTILIZANDO LA FUNCIÓN CENTRALIZADA DE ACTUALIZACIÓN DE ESTADO
 
     try {
@@ -937,6 +930,7 @@ const validarInscripcion = async (req, res) => {
       resultado = await actualizarEstadoYSincronizarCupos(
         id,
         estadoNuevo,
+        req.tenantId,
         datosAdicionales, // Datos adicionales para la actualización
         req.usuario.id // Pasar ID del administrador que valida
       );
@@ -1461,7 +1455,8 @@ const reenviarComprobante = async (req, res) => {
       // Utilizamos la función centralizada que maneja todo en una transacción atómica
       const resultado = await actualizarEstadoYSincronizarCupos(
         id,
-        "PENDING" // Siempre cambiamos a PENDING en el reenvío de comprobante
+        "PENDING", // Siempre cambiamos a PENDING en el reenvío de comprobante
+        req.tenantId
       );
 
       console.log(
@@ -2303,4 +2298,3 @@ module.exports = {
   obtenerInscripcionesPaginadas,
   obtenerInscripcionesPorEventoPaginadas,
 };
-

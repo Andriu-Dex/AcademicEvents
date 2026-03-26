@@ -1,5 +1,6 @@
 const { prisma } = require("../config/db");
 const socketService = require("../services/socket.service");
+const { actualizarEstadoYSincronizarCupos } = require("./cupo.utils");
 
 /**
  * Función helper para logs condicionales del sistema de estados automáticos
@@ -266,9 +267,14 @@ class EventStatusManager {
 
       for (const registration of acceptedRegistrations) {
         try {
-          const updatedRegistration = await prisma.registration.update({
+          await actualizarEstadoYSincronizarCupos(
+            registration.id,
+            "FAILED_TOTAL",
+            registration.tenantId
+          );
+
+          const updatedRegistration = await prisma.registration.findUnique({
             where: { id: registration.id },
-            data: { status: "FAILED_TOTAL" },
             include: {
               event: true,
               account: {
@@ -309,9 +315,14 @@ class EventStatusManager {
 
       for (const registration of pendingRegistrations) {
         try {
-          const updatedRegistration = await prisma.registration.update({
+          await actualizarEstadoYSincronizarCupos(
+            registration.id,
+            "REJECTED",
+            registration.tenantId
+          );
+
+          const updatedRegistration = await prisma.registration.findUnique({
             where: { id: registration.id },
-            data: { status: "REJECTED" },
             include: {
               event: true,
               account: {

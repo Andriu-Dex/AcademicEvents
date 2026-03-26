@@ -11,6 +11,7 @@
  * 5. Los cupos disponibles siempre se calculan como: maxCapacity - (número de inscripciones con occupiesSpot = true)
  */
 const { prisma } = require("../config/db");
+const { withTenantWhere } = require("./tenantScope");
 
 const LEGACY_REG_STATUS_TO_DB = {
   PENDIENTE: "PENDING",
@@ -24,19 +25,30 @@ const LEGACY_REG_STATUS_TO_DB = {
 
 const toDbRegistrationStatus = (status) => LEGACY_REG_STATUS_TO_DB[status] || status;
 
+const OCCUPYING_REGISTRATION_STATUSES = new Set([
+  "ACCEPTED",
+  "APPROVED",
+  "FAILED_GRADE",
+  "FAILED_ATTENDANCE",
+  "FAILED_TOTAL",
+]);
+
+const shouldOccupySpotForStatus = (status) =>
+  OCCUPYING_REGISTRATION_STATUSES.has(toDbRegistrationStatus(status));
+
 /**
  * Calcula los cupos disponibles de un evento basado en las inscripciones que ocupan cupo
  * @param {string} idEvento - ID del evento a calcular cupos
  * @param {object} tx - Instancia de transacción de Prisma (opcional)
  * @returns {Promise<{disponibles: number, maximos: number, ocupados: number}>} Objeto con información de cupos
  */
-async function calcularCuposDisponibles(idEvento, tx) {
+async function calcularCuposDisponibles(idEvento, tenantId, tx) {
   try {
     const db = tx || prisma;
 
     // 1. Obtener información del evento
-    const evento = await db.event.findUnique({
-      where: { id: idEvento },
+    const evento = await db.event.findFirst({
+      where: withTenantWhere(tenantId, { id: idEvento }),
       select: { maxCapacity: true, name: true },
     });
 
@@ -46,10 +58,10 @@ async function calcularCuposDisponibles(idEvento, tx) {
 
     // 2. Contar inscripciones que ocupan cupo
     const inscripcionesOcupandoCupo = await db.registration.count({
-      where: {
+      where: withTenantWhere(tenantId, {
         eventId: idEvento,
         occupiesSpot: true,
-      },
+      }),
     });
 
     // 3. Calcular cupos disponibles
@@ -80,13 +92,13 @@ async function calcularCuposDisponibles(idEvento, tx) {
  * @param {object} tx - Instancia de transacción de Prisma (opcional)
  * @returns {Promise<{anterior: number, nuevo: number}>} Objeto con valores anterior y nuevo
  */
-async function sincronizarCuposDisponibles(idEvento, tx) {
+async function sincronizarCuposDisponibles(idEvento, tenantId, tx) {
   try {
     const db = tx || prisma;
 
     // 1. Obtener información actual del evento
-    const evento = await db.event.findUnique({
-      where: { id: idEvento },
+    const evento = await db.event.findFirst({
+      where: withTenantWhere(tenantId, { id: idEvento }),
       select: { maxCapacity: true, availableSpots: true, name: true },
     });
 
@@ -98,12 +110,12 @@ async function sincronizarCuposDisponibles(idEvento, tx) {
 
     // 2. Calcular cupos disponibles
     const { disponibles: cupoDisponibleCalculado } =
-      await calcularCuposDisponibles(idEvento, db);
+      await calcularCuposDisponibles(idEvento, tenantId, db);
 
     // 3. Actualizar solo si hay discrepancia
     if (cupoDisponibleAnterior !== cupoDisponibleCalculado) {
-      await db.event.update({
-        where: { id: idEvento },
+      await db.event.updateMany({
+        where: withTenantWhere(tenantId, { id: idEvento }),
         data: { availableSpots: cupoDisponibleCalculado },
       });
     }
@@ -133,6 +145,7 @@ async function sincronizarCuposDisponibles(idEvento, tx) {
 async function actualizarEstadoYSincronizarCupos(
   idInscripcion,
   nuevoEstado,
+  tenantId,
   datosAdicionales = {},
   idAdministrador = null
 ) {
@@ -142,8 +155,8 @@ async function actualizarEstadoYSincronizarCupos(
     // Ejecutamos todo en una transacción atómica para garantizar consistencia
     const resultado = await prisma.$transaction(async (tx) => {
       // 1. Obtener inscripción actual con datos del evento
-      const inscripcion = await tx.registration.findUnique({
-        where: { id: idInscripcion },
+      const inscripcion = await tx.registration.findFirst({
+        where: withTenantWhere(tenantId, { id: idInscripcion }),
         select: {
           id: true,
           status: true,
@@ -169,31 +182,38 @@ async function actualizarEstadoYSincronizarCupos(
       const estadoAnterior = inscripcion.status;
       const idEvento = inscripcion.eventId;
       const ocupabaCupo = inscripcion.occupiesSpot;
+      const debeOcuparCupo = shouldOccupySpotForStatus(normalizedNuevoEstado);
+      const cuposAntes = inscripcion.event.availableSpots;
 
-      // 2. Determinar si la inscripción debe ocupar cupo con el nuevo estado
-      let debeOcuparCupo = ocupabaCupo; // Por defecto, mantener el estado actual
+      // 2. Reservar o liberar cupos de forma atómica solo cuando cambia la ocupación real
+      if (!ocupabaCupo && debeOcuparCupo) {
+        const reservationResult = await tx.event.updateMany({
+          where: withTenantWhere(tenantId, {
+            id: idEvento,
+            availableSpots: { gt: 0 },
+          }),
+          data: {
+            availableSpots: {
+              decrement: 1,
+            },
+          },
+        });
 
-      // Definir los estados finales
-      const estadosFinales = [
-        "APPROVED",
-        "FAILED_GRADE",
-        "FAILED_ATTENDANCE",
-        "FAILED_TOTAL",
-      ];
-
-      // NUEVO ENFOQUE SIMPLIFICADO: Basado únicamente en el estado al que se transiciona
-      if (
-        normalizedNuevoEstado === "ACCEPTED" ||
-        estadosFinales.includes(normalizedNuevoEstado)
-      ) {
-        // Si va a ACEPTADA o cualquier estado final, debe ocupar cupo
-        debeOcuparCupo = true;
-      } else if (
-        normalizedNuevoEstado === "PENDING" ||
-        normalizedNuevoEstado === "REJECTED"
-      ) {
-        // Si va a PENDIENTE o RECHAZADA, no debe ocupar cupo
-        debeOcuparCupo = false;
+        if (reservationResult.count === 0) {
+          throw new Error("No hay cupos disponibles para este evento");
+        }
+      } else if (ocupabaCupo && !debeOcuparCupo) {
+        await tx.event.updateMany({
+          where: withTenantWhere(tenantId, {
+            id: idEvento,
+            availableSpots: { lt: inscripcion.event.maxCapacity },
+          }),
+          data: {
+            availableSpots: {
+              increment: 1,
+            },
+          },
+        });
       }
 
       // Preparar datos de actualización incluyendo información de validación si corresponde
@@ -216,11 +236,14 @@ async function actualizarEstadoYSincronizarCupos(
         data: datosActualizacion,
       });
 
-      // 4. Sincronizar cupos después de la actualización
-      const resultadoSincronizacion = await sincronizarCuposDisponibles(
-        idEvento,
-        tx
-      );
+      const eventoActualizado = await tx.event.findFirst({
+        where: withTenantWhere(tenantId, { id: idEvento }),
+        select: {
+          id: true,
+          availableSpots: true,
+          maxCapacity: true,
+        },
+      });
 
       return {
         inscripcion: {
@@ -232,12 +255,12 @@ async function actualizarEstadoYSincronizarCupos(
         },
         evento: {
           id: idEvento,
-          cuposAntes: resultadoSincronizacion.anterior,
-          cuposDespues: resultadoSincronizacion.nuevo,
+          cuposAntes,
+          cuposDespues: eventoActualizado?.availableSpots ?? cuposAntes,
           cuposCambiaron:
-            resultadoSincronizacion.anterior !== resultadoSincronizacion.nuevo,
+            cuposAntes !== (eventoActualizado?.availableSpots ?? cuposAntes),
           cuposCambiados:
-            resultadoSincronizacion.anterior !== resultadoSincronizacion.nuevo,
+            cuposAntes !== (eventoActualizado?.availableSpots ?? cuposAntes),
         },
       };
     });

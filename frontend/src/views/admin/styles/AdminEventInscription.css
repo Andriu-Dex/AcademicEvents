@@ -224,9 +224,9 @@
 .finalizar-modal-overlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.45);
+  background-color: var(--color-bg-overlay);
   backdrop-filter: blur(2px);
-  z-index: 50;
+  z-index: var(--z-modal-layer);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -454,12 +454,13 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: var(--color-bg-overlay);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: var(--z-modal-layer);
   animation: fadeInModal 0.3s ease;
+  backdrop-filter: blur(4px);
 }
 
 @keyframes fadeInModal {
