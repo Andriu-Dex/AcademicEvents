@@ -413,10 +413,17 @@
   cursor: pointer;
   color: var(--color-error);
   font-weight: 600;
+  background-color: transparent;
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
+  width: calc(100% - 12px);
+  text-align: left;
+  font: inherit;
 }
 
 .profile-menu-item.logout:hover {
-  background-color: var(--color-error-bg);
+  background-color: var(--color-primary-light);
   color: var(--color-error);
 }
 
