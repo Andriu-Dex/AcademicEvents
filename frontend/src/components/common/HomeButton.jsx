@@ -215,6 +215,7 @@ const HomeButton = ({
         onClick={handleClick}
         type="button"
         title="Ir al inicio"
+        aria-label="Ir al inicio"
         {...props}
       >
         <Home size={buttonConfig.size} color={buttonConfig.color} />
@@ -255,6 +256,7 @@ const HomeButton = ({
           zIndex: 1000,
         }}
         title="Ir al inicio"
+        aria-label="Ir al inicio"
       >
         <Home size={22} color="white" />
       </Link>

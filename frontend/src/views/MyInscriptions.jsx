@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../api/axiosConfig";
 import { useAuth } from "../hooks/useAuth";
 import { useSocket } from "../context/SocketContext";
 import { toast } from "react-toastify";
 import { lanzarConfetti } from "../utils/confetti";
+import useDialogAccessibility from "../hooks/useDialogAccessibility";
 import "./styles/MyInscriptions.css";
 import CertificateViewer from "../components/CertificateViewer";
 
@@ -109,6 +110,8 @@ const MyInscriptions = () => {
   const [mostrarCertificado, setMostrarCertificado] = useState(false);
   const [certificadoUrl, setCertificadoUrl] = useState("");
   const [certificadoFileName, setCertificadoFileName] = useState("");
+  const resendModalRef = useRef(null);
+  const resendCancelButtonRef = useRef(null);
 
   // Estados para la paginación
   const [paginaActual, setPaginaActual] = useState(1);
@@ -137,6 +140,19 @@ const MyInscriptions = () => {
   useEffect(() => {
     if (usuario) obtenerInscripciones();
   }, [usuario]);
+
+  const closeResendModal = useCallback(() => {
+    setMostrarModal(false);
+    setNuevoArchivo(null);
+    setInscripcionSeleccionada(null);
+  }, []);
+
+  useDialogAccessibility({
+    isOpen: mostrarModal,
+    onClose: closeResendModal,
+    containerRef: resendModalRef,
+    initialFocusRef: resendCancelButtonRef,
+  });
 
   // Escuchar cambios de inscripciones en tiempo real
   useEffect(() => {
@@ -222,9 +238,7 @@ const MyInscriptions = () => {
 
       toast.success("Comprobante reenviado correctamente");
       await obtenerInscripciones();
-      setMostrarModal(false);
-      setNuevoArchivo(null);
-      setInscripcionSeleccionada(null);
+      closeResendModal();
     } catch (error) {
       console.error("Error al reenviar comprobante:", error);
       const errorMsg =
@@ -599,12 +613,32 @@ const MyInscriptions = () => {
       )}
 
       {mostrarModal && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h2 className="modal-title-mi">
+        <div
+          className="modal-overlay"
+          onClick={(event) => {
+            if (event.target === event.currentTarget) {
+              closeResendModal();
+            }
+          }}
+          role="presentation"
+        >
+          <div
+            className="modal-content"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="resend-receipt-title"
+            aria-describedby="resend-receipt-description"
+            tabIndex={-1}
+            ref={resendModalRef}
+          >
+            <h2 className="modal-title-mi" id="resend-receipt-title">
               Reenviar comprobante para: <br />
               {inscripcionSeleccionada.event.name}
             </h2>
+            <p id="resend-receipt-description" className="sr-only">
+              Selecciona un nuevo comprobante y envíalo para actualizar tu
+              inscripción rechazada.
+            </p>
 
             <div className="archivo-container">
               <input
@@ -639,6 +673,7 @@ const MyInscriptions = () => {
 
             <div className="modal-botones">
               <button
+                type="button"
                 className="btn-enviar"
                 onClick={reenviarComprobante}
                 disabled={reenviando}
@@ -646,12 +681,10 @@ const MyInscriptions = () => {
                 {reenviando ? "Enviando..." : "Enviar"}
               </button>
               <button
+                type="button"
                 className="btn-cancelar-mi"
-                onClick={() => {
-                  setMostrarModal(false);
-                  setNuevoArchivo(null);
-                  setInscripcionSeleccionada(null);
-                }}
+                onClick={closeResendModal}
+                ref={resendCancelButtonRef}
               >
                 Cancelar
               </button>

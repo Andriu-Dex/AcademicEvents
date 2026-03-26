@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import {
   ChevronDown,
@@ -14,6 +14,7 @@ import Validator from "../../utils/Validator";
 import { usePagination } from "../../hooks/usePagination";
 import PaginationControls from "../../components/Pagination/PaginationControls";
 import ActionConfirmModal from "../../components/common/ActionConfirmModal";
+import useDialogAccessibility from "../../hooks/useDialogAccessibility";
 import "./styles/AdminGestion.css";
 
 /**
@@ -70,6 +71,8 @@ const AdminGestion = () => {
   const [accountActionTargetId, setAccountActionTargetId] = useState(null);
   const [isSubmittingAccountAction, setIsSubmittingAccountAction] =
     useState(false);
+  const accountModalRef = useRef(null);
+  const accountModalCloseButtonRef = useRef(null);
 
   const {
     data: administradores,
@@ -292,6 +295,13 @@ const AdminGestion = () => {
     setEditForm({ ...EMPTY_EDIT_FORM });
   };
 
+  useDialogAccessibility({
+    isOpen: Boolean(modalMode && selectedAccount),
+    onClose: closeModal,
+    containerRef: accountModalRef,
+    initialFocusRef: accountModalCloseButtonRef,
+  });
+
   const refreshLists = async () => {
     await Promise.all([fetchAdmins(adminFilters), fetchUsers(userFilters)]);
   };
@@ -464,6 +474,7 @@ const AdminGestion = () => {
           className="btn-accion-ag"
           onClick={() => openViewModal(account, kind)}
           title="Ver detalle"
+          aria-label={`Ver detalle de ${getAccountDisplayName(account)}`}
         >
           <Eye size={16} strokeWidth={2.2} className="action-icon-ag" />
         </button>
@@ -473,6 +484,7 @@ const AdminGestion = () => {
           onClick={() => openEditModal(account, kind)}
           disabled={isProcessingAction}
           title="Editar"
+          aria-label={`Editar cuenta de ${getAccountDisplayName(account)}`}
         >
           <Pencil size={16} strokeWidth={2.2} className="action-icon-ag" />
         </button>
@@ -488,6 +500,9 @@ const AdminGestion = () => {
               : openBlockActionModal(account)
           }
           title={isBlocked ? "Desbloquear" : "Bloquear"}
+          aria-label={`${
+            isBlocked ? "Desbloquear" : "Bloquear"
+          } cuenta de ${getAccountDisplayName(account)}`}
         >
           {isBlocked ? (
             <UserCheck size={16} strokeWidth={2.2} className="action-icon-ag" />
@@ -501,6 +516,7 @@ const AdminGestion = () => {
           disabled={isProcessingAction}
           onClick={() => openDeleteActionModal(account)}
           title="Eliminar"
+          aria-label={`Eliminar cuenta de ${getAccountDisplayName(account)}`}
         >
           <Trash2 size={16} strokeWidth={2.2} className="action-icon-ag" />
         </button>
@@ -1027,21 +1043,46 @@ const AdminGestion = () => {
       </div>
 
       {modalMode && selectedAccount && (
-        <div className="modal-overlay-ag" onClick={closeModal}>
+        <div
+          className="modal-overlay-ag"
+          onClick={(event) => {
+            if (event.target === event.currentTarget) {
+              closeModal();
+            }
+          }}
+          role="presentation"
+        >
           <div
             className="modal-content-ag"
             onClick={(event) => event.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="account-management-modal-title"
+            aria-describedby="account-management-modal-description"
+            tabIndex={-1}
+            ref={accountModalRef}
           >
             <div className="modal-header-ag">
-              <h3>
+              <h3 id="account-management-modal-title">
                 {modalMode === "view" ? "Detalle de cuenta" : "Editar cuenta"}
               </h3>
-              <button type="button" className="modal-close-ag" onClick={closeModal}>
+              <button
+                type="button"
+                className="modal-close-ag"
+                onClick={closeModal}
+                aria-label="Cerrar modal de cuenta"
+                ref={accountModalCloseButtonRef}
+              >
                 x
               </button>
             </div>
 
             <div className="modal-body-ag">
+              <p id="account-management-modal-description" className="sr-only">
+                {modalMode === "view"
+                  ? "Consulta el detalle completo de la cuenta seleccionada."
+                  : "Edita los datos de la cuenta seleccionada y guarda los cambios cuando termines."}
+              </p>
               {modalMode === "view" ? (
                 <div className="modal-view-grid-ag">
                   <div>

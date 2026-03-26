@@ -372,7 +372,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 11000;
 }
 
 .modal-overlay-ac {
@@ -394,10 +394,9 @@
   border-radius: 1rem;
   padding: 2rem;
   width: 90%;
-  max-width: 550px;
+  max-width: 600px;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
   animation: modalFadeIn-ac 0.3s ease;
 }
 
@@ -875,7 +874,7 @@
   align-items: center;
   justify-content: center;
   background-color: rgba(0, 0, 0, 0.5);
-  z-index: 50;
+  z-index: 11000;
 }
 
 .edicion-modal-content {
@@ -916,9 +915,10 @@
   background-color: white;
   padding: 1.5rem;
   border-radius: 0.7rem;
-  max-width: 400px;
+  max-width: 600px;
   width: 100%;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  top: 2rem;
 }
 
 .modal-title {
@@ -1071,14 +1071,14 @@
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.3);
-  z-index: 40;
+  z-index: 11000;
   animation: fadeInCarreras 0.4s;
 }
 
 .admincarreras-modal-container {
   position: fixed;
   inset: 0;
-  z-index: 50;
+  z-index: 11010;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1093,7 +1093,7 @@
   width: 100%;
   max-width: 26rem;
   position: relative;
-  z-index: 60;
+  z-index: 11020;
   animation: fadeInCarreras 0.5s;
 }
 
@@ -1146,7 +1146,7 @@
 .modal-content-ac {
   background: var(--color-bg-primary);
   border-color: var(--color-border-primary);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-card);
 }
 
 .admincarreras-form-ac h3,

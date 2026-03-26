@@ -1,9 +1,11 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useAuth } from "../hooks/useAuth";
 import axiosInstance from "../api/axiosConfig";
 import { toast } from "react-toastify";
 import AvatarEditor from "react-avatar-editor";
 import ProfileImageService from "../services/ProfileImageService";
+import useDialogAccessibility from "../hooks/useDialogAccessibility";
+import DocumentViewer from "../components/DocumentViewer";
 import {
   User,
   Mail,
@@ -66,6 +68,7 @@ const Perfil = () => {
     matricula: null,
   });
   const [previewDoc, setPreviewDoc] = useState(null);
+  const [previewDocUrl, setPreviewDocUrl] = useState("");
   const [mostrarPreview, setMostrarPreview] = useState(false);
 
   // Estado para el editor de imagen de perfil
@@ -75,12 +78,24 @@ const Perfil = () => {
   const [rotacionImagen, setRotacionImagen] = useState(0);
   const [subiendoImagen, setSubiendoImagen] = useState(false);
   const editorRef = useRef(null);
+  const fileInputRefs = useRef({});
+  const documentsModalRef = useRef(null);
+  const imageModalRef = useRef(null);
+  const imageCancelButtonRef = useRef(null);
 
   useEffect(() => {
     if (usuario) {
       cargarPerfil();
     }
   }, [usuario]);
+
+  useEffect(() => {
+    return () => {
+      if (previewDocUrl) {
+        URL.revokeObjectURL(previewDocUrl);
+      }
+    };
+  }, [previewDocUrl]);
 
   const cargarPerfil = async () => {
     try {
@@ -125,9 +140,39 @@ const Perfil = () => {
   };
 
   const abrirPreview = (archivo) => {
+    const objectUrl = URL.createObjectURL(archivo);
     setPreviewDoc(archivo);
+    setPreviewDocUrl(objectUrl);
     setMostrarPreview(true);
   };
+
+  const openDocumentPicker = (tipo) => {
+    fileInputRefs.current[tipo]?.click();
+  };
+
+  const closeDocumentsModal = useCallback(() => {
+    setMostrarModal(false);
+    resetearDocumentos();
+  }, []);
+
+  const closePreviewModal = useCallback(() => {
+    setMostrarPreview(false);
+    setPreviewDoc(null);
+    setPreviewDocUrl((currentUrl) => {
+      if (currentUrl) {
+        URL.revokeObjectURL(currentUrl);
+      }
+
+      return "";
+    });
+  }, []);
+
+  const closeImageModal = useCallback(() => {
+    setMostrarModalImagen(false);
+    setImagenPerfil(null);
+    setEscalaImagen(1);
+    setRotacionImagen(0);
+  }, []);
 
   const getTipoDocumentoLabel = (tipo) => {
     switch (tipo) {
@@ -205,8 +250,7 @@ const Perfil = () => {
       });
 
       toast.success("Documentos actualizados correctamente");
-      setMostrarModal(false);
-      resetearDocumentos();
+      closeDocumentsModal();
       await cargarPerfil();
     } catch (error) {
       toast.error(
@@ -242,6 +286,8 @@ const Perfil = () => {
       }
 
       setImagenPerfil(archivo);
+      setEscalaImagen(1);
+      setRotacionImagen(0);
       setMostrarModalImagen(true);
     }
   };
@@ -277,8 +323,7 @@ const Perfil = () => {
         });
 
         toast.success("Imagen de perfil actualizada correctamente");
-        setMostrarModalImagen(false);
-        setImagenPerfil(null);
+        closeImageModal();
 
         // Actualizar los datos del perfil para mostrar la nueva imagen
         await cargarPerfil();
@@ -306,6 +351,19 @@ const Perfil = () => {
   const disminuirZoom = () =>
     setEscalaImagen((prev) => Math.max(prev - 0.1, 1));
   const rotarImagen = () => setRotacionImagen((prev) => prev + 90);
+
+  useDialogAccessibility({
+    isOpen: mostrarModal,
+    onClose: closeDocumentsModal,
+    containerRef: documentsModalRef,
+  });
+
+  useDialogAccessibility({
+    isOpen: mostrarModalImagen && Boolean(imagenPerfil),
+    onClose: closeImageModal,
+    containerRef: imageModalRef,
+    initialFocusRef: imageCancelButtonRef,
+  });
 
   if (cargando) {
     return (
@@ -530,14 +588,34 @@ const Perfil = () => {
         )}
       </div>
       {mostrarModal && (
-        <div className="modal-overlay">
-          <div className="modal-content modal-documentos">
+        <div
+          className="modal-overlay"
+          onClick={(event) => {
+            if (event.target === event.currentTarget) {
+              closeDocumentsModal();
+            }
+          }}
+          role="presentation"
+        >
+          <div
+            className="modal-content-p modal-documentos"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="profile-documents-title"
+            aria-describedby="profile-documents-description"
+            tabIndex={-1}
+            ref={documentsModalRef}
+          >
             {" "}
-            <h2 className="modal-title">
+            <h2 className="modal-title" id="profile-documents-title">
               {perfilData.com_usu
                 ? "Actualizar documentos"
                 : "Subir documentos"}
             </h2>
+            <p id="profile-documents-description" className="sr-only">
+              Selecciona los documentos requeridos de tu perfil y guarda los
+              cambios cuando hayas terminado.
+            </p>
             <div className="documentos-container">
               {getDocumentosRequeridos().map((tipo) => (
                 <div key={tipo} className="documento-item">
@@ -554,16 +632,23 @@ const Perfil = () => {
                       id={`archivo-${tipo}`}
                       className="input-archivo"
                       accept=".pdf,.jpg,.jpeg,.png,.gif"
+                      ref={(element) => {
+                        fileInputRefs.current[tipo] = element;
+                      }}
                       onChange={(e) =>
                         handleDocumentoChange(tipo, e.target.files[0])
                       }
                     />
 
                     <div className="documento-upload">
-                      <label htmlFor={`archivo-${tipo}`} className="btn-subir">
+                      <button
+                        type="button"
+                        className="btn-subir"
+                        onClick={() => openDocumentPicker(tipo)}
+                      >
                         <FileUp size={16} style={{ marginRight: 6 }} />{" "}
                         Seleccionar
-                      </label>
+                      </button>
 
                       {documentosSeleccionados[tipo] ? (
                         <div className="documento-preview">
@@ -571,7 +656,10 @@ const Perfil = () => {
                             {documentosSeleccionados[tipo].name}
                           </span>
                           <button
+                            type="button"
                             className="btn-preview"
+                            title={`Previsualizar ${getTipoDocumentoLabel(tipo)}`}
+                            aria-label={`Previsualizar ${getTipoDocumentoLabel(tipo)}`}
                             onClick={() =>
                               abrirPreview(documentosSeleccionados[tipo])
                             }
@@ -604,6 +692,7 @@ const Perfil = () => {
             </div>
             <div className="modal-botones">
               <button
+                type="button"
                 className="btn-guardar-p"
                 onClick={actualizarDocumentos}
                 disabled={enviandoArchivo || !hayDocumentosSeleccionados()}
@@ -619,11 +708,9 @@ const Perfil = () => {
                 )}
               </button>
               <button
-                className="btn-cancelar"
-                onClick={() => {
-                  setMostrarModal(false);
-                  resetearDocumentos();
-                }}
+                type="button"
+                className="btn-cancelar-p"
+                onClick={closeDocumentsModal}
               >
                 Cancelar
               </button>
@@ -631,35 +718,40 @@ const Perfil = () => {
           </div>
         </div>
       )}
-      {mostrarPreview && previewDoc && (
-        <div className="modal-overlay" onClick={() => setMostrarPreview(false)}>
-          <div className="modal-preview" onClick={(e) => e.stopPropagation()}>
-            <div className="preview-header">
-              <h3>Vista previa: {previewDoc.name}</h3>
-              <button
-                className="btn-cerrar-preview"
-                onClick={() => setMostrarPreview(false)}
-              >
-                <XCircle size={20} />
-              </button>
-            </div>
-            <div className="preview-content">
-              <iframe
-                src={URL.createObjectURL(previewDoc)}
-                width="100%"
-                height="100%"
-                title="Vista previa del documento"
-              />
-            </div>
-          </div>
-        </div>
+      {mostrarPreview && previewDoc && previewDocUrl && (
+        <DocumentViewer
+          documentUrl={previewDocUrl}
+          documentType={
+            previewDoc.type === "application/pdf" ? "pdf" : "image"
+          }
+          title={`Vista previa: ${previewDoc.name}`}
+          onClose={closePreviewModal}
+        />
       )}
       {/* Modal de edición de imagen de perfil */}
       {mostrarModalImagen && imagenPerfil && (
-        <div className="modal-overlay">
-          <div className="modal-content modal-imagen-perfil">
-            <h2 className="modal-title">Editar imagen de perfil</h2>
-            <p className="modal-descripcion">
+        <div
+          className="modal-overlay"
+          onClick={(event) => {
+            if (event.target === event.currentTarget) {
+              closeImageModal();
+            }
+          }}
+          role="presentation"
+        >
+          <div
+            className="modal-content-p modal-imagen-perfil"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="profile-image-title"
+            aria-describedby="profile-image-description"
+            tabIndex={-1}
+            ref={imageModalRef}
+          >
+            <h2 className="modal-title" id="profile-image-title">
+              Editar imagen de perfil
+            </h2>
+            <p className="modal-descripcion" id="profile-image-description">
               Ajusta, recorta y rota tu imagen de perfil
             </p>
 
@@ -678,6 +770,7 @@ const Perfil = () => {
 
               <div className="editor-controles">
                 <button
+                  type="button"
                   className="btn-control"
                   onClick={disminuirZoom}
                   title="Disminuir zoom"
@@ -685,6 +778,7 @@ const Perfil = () => {
                   <ZoomOut size={20} />
                 </button>
                 <button
+                  type="button"
                   className="btn-control"
                   onClick={aumentarZoom}
                   title="Aumentar zoom"
@@ -692,6 +786,7 @@ const Perfil = () => {
                   <ZoomIn size={20} />
                 </button>
                 <button
+                  type="button"
                   className="btn-control"
                   onClick={rotarImagen}
                   title="Rotar imagen"
@@ -703,6 +798,7 @@ const Perfil = () => {
 
             <div className="modal-botones">
               <button
+                type="button"
                 className="btn-guardar-p"
                 onClick={guardarImagenPerfil}
                 disabled={subiendoImagen}
@@ -718,11 +814,10 @@ const Perfil = () => {
                 )}
               </button>
               <button
-                className="btn-cancelar"
-                onClick={() => {
-                  setMostrarModalImagen(false);
-                  setImagenPerfil(null);
-                }}
+                type="button"
+                className="btn-cancelar-p"
+                onClick={closeImageModal}
+                ref={imageCancelButtonRef}
               >
                 Cancelar
               </button>

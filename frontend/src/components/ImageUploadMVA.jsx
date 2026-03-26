@@ -190,6 +190,7 @@ const ImageUpload = ({
                   openFileDialog(e);
                 }}
                 title="Cambiar imagen"
+                aria-label="Cambiar imagen"
               >
                 <Edit3 size={16} />
               </button>
@@ -201,6 +202,7 @@ const ImageUpload = ({
                   handleDeleteImage();
                 }}
                 title="Eliminar imagen"
+                aria-label="Eliminar imagen"
               >
                 <X size={16} />
               </button>

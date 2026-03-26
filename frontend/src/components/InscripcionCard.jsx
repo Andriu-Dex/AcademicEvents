@@ -277,8 +277,8 @@ const InscripcionCard = ({ inscripcion, onUpdate, onVerCarta }) => {
         }}
         role="button"
         tabIndex={0}
-        aria-expanded={isExpanded}
-        aria-label={`${isExpanded ? "Contraer" : "Expandir"} detalles de inscripción de ${user?.firstName || user?.nom_usu} ${user?.lastName || user?.ape_usu}`}
+        aria-expanded={expanded}
+        aria-label={`${expanded ? "Contraer" : "Expandir"} detalles de inscripción de ${user?.firstName || user?.nom_usu} ${user?.lastName || user?.ape_usu}`}
       >
         <div className="inscripcion-card-title">
           <h3>{`${user?.firstName || user?.nom_usu} ${user?.lastName || user?.ape_usu}`}</h3>

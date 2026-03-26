@@ -1,11 +1,9 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   X,
   Calendar,
   Users,
-  CheckCircle,
-  Target,
   FileText,
   AlertCircle,
   Zap,
@@ -15,6 +13,7 @@ import {
   Laptop,
 } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
+import useDialogAccessibility from "../hooks/useDialogAccessibility";
 import { formatUTCForLocalDisplay } from "../utils/dateUtils";
 import "./styles/ModalRequisitos.css";
 
@@ -68,24 +67,31 @@ const ModalRequisitos = ({
     SEMIPRESENCIAL: "SEMIPRESENCIAL",
   };
 
-  const normalizedEventType = eventTypeLabels[evento?.tip_eve] || evento?.tip_eve;
+  const normalizedEventType =
+    eventTypeLabels[evento?.tip_eve] || evento?.tip_eve;
   const normalizedEventStatus =
     eventStatusLabels[evento?.est_eve] || evento?.est_eve || "INACTIVO";
-  const normalizedModality = modalityLabels[evento?.mod_eve] || evento?.mod_eve;
+  const normalizedModality =
+    modalityLabels[evento?.mod_eve] || evento?.mod_eve;
 
-  // Obtener información de autenticación
   const { usuario } = useAuth();
   const navigate = useNavigate();
+  const dialogRef = useRef(null);
+  const closeButtonRef = useRef(null);
 
-  // Verificar si el usuario está autenticado
   const isAuthenticated = !!usuario;
 
-  const handleInscripcion = () => {
-    onClose(); // Primero cerramos el modal
+  useDialogAccessibility({
+    isOpen: Boolean(evento),
+    onClose,
+    containerRef: dialogRef,
+    initialFocusRef: closeButtonRef,
+  });
 
-    // Si viene desde eventos destacados y el usuario está autenticado
+  const handleInscripcion = () => {
+    onClose();
+
     if (isFromEventosDestacados && isAuthenticated) {
-      // Transformar el evento al formato esperado por EventsRoute
       const eventoParaInscripcion = {
         id_eve: evento.id_eve,
         nom_eve: evento.nom_eve,
@@ -102,36 +108,57 @@ const ModalRequisitos = ({
         img_por_eve: evento.img_por_eve,
       };
 
-      // Navegar a eventos y abrir modal de inscripción
       navigate("/events", {
         state: {
           openInscripcionModal: true,
           eventoSeleccionado: eventoParaInscripcion,
         },
       });
-    } else {
-      // Comportamiento original: redirigir a la página correspondiente
-      if (isAuthenticated) {
-        navigate("/events"); // Si está autenticado, va a EventsRoute
-      } else {
-        navigate("/public-events"); // Si no está autenticado, va a EventosPublicos
-      }
+      return;
     }
+
+    if (isAuthenticated) {
+      navigate("/events");
+      return;
+    }
+
+    navigate("/public-events");
   };
 
-  if (!evento) return null;
+  if (!evento) {
+    return null;
+  }
 
   return (
-    <div className={overlayClassName} onClick={onClose}>
+    <div
+      className={overlayClassName}
+      onClick={(event) => {
+        if (event.target === event.currentTarget) {
+          onClose();
+        }
+      }}
+      role="presentation"
+    >
       <div
         className="modal-requisitos-contenido-mr"
-        onClick={(e) => e.stopPropagation()}
+        onClick={(event) => event.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="event-requirements-title"
+        aria-describedby="event-requirements-description"
+        tabIndex={-1}
+        ref={dialogRef}
       >
+        <p id="event-requirements-description" className="sr-only">
+          Consulta las fechas, modalidad, requisitos y detalles principales del
+          evento seleccionado.
+        </p>
+
         <div className="modal-requisitos-header-mr">
           <div
             style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}
           >
-            <h3>{evento.nom_eve}</h3>
+            <h3 id="event-requirements-title">{evento.nom_eve}</h3>
             <span
               className={`badge-mr badge-estado-mr ${
                 normalizedEventStatus?.toLowerCase() === "activo"
@@ -141,26 +168,32 @@ const ModalRequisitos = ({
             >
               {normalizedEventStatus === "ACTIVO" ? (
                 <>
-                  <Zap size={14} /> ACTIVO
+                  <Zap size={14} aria-hidden="true" /> ACTIVO
                 </>
               ) : (
                 <>
-                  <Pause size={14} /> INACTIVO
+                  <Pause size={14} aria-hidden="true" /> INACTIVO
                 </>
               )}
             </span>
             <span className="badge-tipo-mr">{normalizedEventType}</span>
           </div>
 
-          <button className="modal-requisitos-cerrar-mr" onClick={onClose}>
-            <X size={20} />
+          <button
+            type="button"
+            className="modal-requisitos-cerrar-mr"
+            onClick={onClose}
+            aria-label="Cerrar detalles del evento"
+            ref={closeButtonRef}
+          >
+            <X size={20} aria-hidden="true" />
           </button>
         </div>
 
         <div className="modal-requisitos-cuerpo-mr">
           <div className="seccion-requisitos-mr">
             <h4>
-              <Calendar size={18} /> Fechas del Evento
+              <Calendar size={18} aria-hidden="true" /> Fechas del Evento
             </h4>
             <div className="info-item-mr">
               <span className="info-label-mr">Inicio:</span>
@@ -186,24 +219,24 @@ const ModalRequisitos = ({
 
           <div className="seccion-requisitos-mr">
             <h4>
-              <Users size={18} /> Modalidad y Participación
+              <Users size={18} aria-hidden="true" /> Modalidad y Participación
             </h4>
             <div className="info-item-mr modalidad-item-mr">
               <span className="info-label-mr">Modalidad:</span>
               <span className="info-value-mr">
                 {normalizedModality === "PRESENCIAL" && (
                   <span className="modalidad-badge-mr">
-                    <MapPin size={16} /> Presencial
+                    <MapPin size={16} aria-hidden="true" /> Presencial
                   </span>
                 )}
                 {normalizedModality === "VIRTUAL" && (
                   <span className="modalidad-badge-mr virtual">
-                    <Monitor size={16} /> Virtual
+                    <Monitor size={16} aria-hidden="true" /> Virtual
                   </span>
                 )}
                 {normalizedModality === "SEMIPRESENCIAL" && (
                   <span className="modalidad-badge-mr semi">
-                    <Laptop size={16} /> Semipresencial
+                    <Laptop size={16} aria-hidden="true" /> Semipresencial
                   </span>
                 )}
                 {!normalizedModality && "No especificada"}
@@ -230,7 +263,7 @@ const ModalRequisitos = ({
 
           <div className="seccion-requisitos-mr">
             <h4>
-              <FileText size={18} /> Descripción del Evento
+              <FileText size={18} aria-hidden="true" /> Descripción del Evento
             </h4>
             <p className="descripcion-evento">
               {evento.des_eve || "No hay descripción disponible."}
@@ -241,7 +274,7 @@ const ModalRequisitos = ({
             <div className="requisitos-grid">
               <div className="seccion-participantes-mr">
                 <h5 className="requisito-subtitulo">
-                  <Users size={16} /> Dirigido a
+                  <Users size={16} aria-hidden="true" /> Dirigido a
                 </h5>
                 <div className="grupos-participantes-mr">
                   <div className="grupo-participante-mr">
@@ -250,7 +283,7 @@ const ModalRequisitos = ({
                         evento.dirigido_estudiantes ? "dirigido" : "no-dirigido"
                       }`}
                     >
-                      <Users size={14} /> Estudiantes
+                      <Users size={14} aria-hidden="true" /> Estudiantes
                     </span>
                   </div>
                   <div className="grupo-participante-mr">
@@ -259,7 +292,7 @@ const ModalRequisitos = ({
                         evento.dirigido_docentes ? "dirigido" : "no-dirigido"
                       }`}
                     >
-                      <Users size={14} /> Docentes
+                      <Users size={14} aria-hidden="true" /> Docentes
                     </span>
                   </div>
                   <div className="grupo-participante-mr">
@@ -268,7 +301,7 @@ const ModalRequisitos = ({
                         evento.dirigido_publico ? "dirigido" : "no-dirigido"
                       }`}
                     >
-                      <Users size={14} /> Público General
+                      <Users size={14} aria-hidden="true" /> Público General
                     </span>
                   </div>
                 </div>
@@ -276,7 +309,7 @@ const ModalRequisitos = ({
 
               <div className="seccion-carreras-mr">
                 <h5 className="requisito-subtitulo">
-                  <FileText size={16} /> Carreras asociadas
+                  <FileText size={16} aria-hidden="true" /> Carreras asociadas
                 </h5>
                 {evento.eventos_carrera && evento.eventos_carrera.length > 0 ? (
                   <div className="carreras-contenedor-mr">
@@ -285,7 +318,7 @@ const ModalRequisitos = ({
                         key={carreraEvento.id_eve_car}
                         className="carrera-item-mr"
                       >
-                        <FileText size={14} />
+                        <FileText size={14} aria-hidden="true" />
                         <span className="carrera-nombre-mr">
                           {carreraEvento.carrera?.nom_car ||
                             "Carrera no especificada"}
@@ -295,7 +328,7 @@ const ModalRequisitos = ({
                   </div>
                 ) : (
                   <div className="todas-carreras-mr">
-                    <FileText size={16} />
+                    <FileText size={16} aria-hidden="true" />
                     <span>
                       Este evento está abierto a todas las carreras de la
                       universidad
@@ -308,7 +341,8 @@ const ModalRequisitos = ({
             {evento.eventos_curso && (
               <div className="requisito-seccion curso-requisitos">
                 <h5 className="requisito-subtitulo">
-                  <AlertCircle size={16} /> Requisitos del curso
+                  <AlertCircle size={16} aria-hidden="true" /> Requisitos del
+                  curso
                 </h5>
                 <div className="info-item-mr">
                   <span className="info-label-mr">Nota mínima:</span>
@@ -323,7 +357,8 @@ const ModalRequisitos = ({
           {evento.datos_extra && (
             <div className="seccion-requisitos-mr">
               <h4>
-                <AlertCircle size={18} /> Información Adicional
+                <AlertCircle size={18} aria-hidden="true" /> Información
+                Adicional
               </h4>
               <p>{evento.datos_extra}</p>
             </div>
@@ -337,6 +372,7 @@ const ModalRequisitos = ({
               <div>
                 <p>¿Quieres inscribirte en este evento?</p>
                 <button
+                  type="button"
                   onClick={handleInscripcion}
                   className="btn-inscripcion-mr"
                 >

@@ -1,10 +1,11 @@
 import { useParams } from "react-router-dom";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import axios from "axios";
 import { BadgeCheck, Clock, Ban, Eye, Loader } from "lucide-react";
 import { toast } from "react-toastify";
 import InscripcionService from "../../services/InscripcionService";
 import ZoomableImage from "../../components/ZoomableImage";
+import useDialogAccessibility from "../../hooks/useDialogAccessibility";
 import { usePagination } from "../../hooks/usePagination";
 import PaginationControls from "../../components/Pagination/PaginationControls";
 import "./styles/AdminEventInscription.css";
@@ -70,6 +71,10 @@ const AdminEventInscription = () => {
   const [eventoInfo, setEventoInfo] = useState(null);
   const [corrigiendoCupos, setCorrigiendoCupos] = useState(false);
   const [comprobanteSeleccionado, setComprobanteSeleccionado] = useState(null);
+  const finalizationModalRef = useRef(null);
+  const finalizationCancelButtonRef = useRef(null);
+  const receiptModalRef = useRef(null);
+  const receiptCloseButtonRef = useRef(null);
 
   // Hook de paginación
   const {
@@ -135,6 +140,32 @@ const AdminEventInscription = () => {
       }
     }
   }, [id]);
+
+  const closeFinalizationModal = useCallback(() => {
+    setMostrarFinalizarModal(false);
+    setInscripcionFinalizar(null);
+    setAsistencia("");
+    setNotaFinal("");
+  }, []);
+
+  const closeReceiptModal = useCallback(() => {
+    setComprobanteSeleccionado(null);
+  }, []);
+
+  useDialogAccessibility({
+    isOpen: mostrarFinalizarModal,
+    onClose: closeFinalizationModal,
+    containerRef: finalizationModalRef,
+    initialFocusRef: finalizationCancelButtonRef,
+  });
+
+  useDialogAccessibility({
+    isOpen: Boolean(comprobanteSeleccionado),
+    onClose: closeReceiptModal,
+    containerRef: receiptModalRef,
+    initialFocusRef: receiptCloseButtonRef,
+  });
+
   const cambiarEstado = async (registrationId, estado) => {
     setActualizandoId(registrationId);
     try {
@@ -590,9 +621,25 @@ const AdminEventInscription = () => {
       )}
 
       {mostrarFinalizarModal && (
-        <div className="finalizar-modal-overlay">
-          <div className="finalizar-modal-content">
-            <h2 className="modal-title-aei">
+        <div
+          className="finalizar-modal-overlay"
+          onClick={(event) => {
+            if (event.target === event.currentTarget) {
+              closeFinalizationModal();
+            }
+          }}
+          role="presentation"
+        >
+          <div
+            className="finalizar-modal-content"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="finalize-inscription-title"
+            aria-describedby="finalize-inscription-description"
+            tabIndex={-1}
+            ref={finalizationModalRef}
+          >
+            <h2 className="modal-title-aei" id="finalize-inscription-title">
               Finalizar inscripción de{" "}
               {inscripcionFinalizar?.account?.user?.firstName ||
                 inscripcionFinalizar?.cuenta?.usuario?.nom_usu}{" "}
@@ -600,6 +647,10 @@ const AdminEventInscription = () => {
                 inscripcionFinalizar?.cuenta?.usuario?.ape_usu}
             </h2>
 
+            <p id="finalize-inscription-description" className="sr-only">
+              Ingresa la asistencia final y, si el evento es un curso, la nota
+              final para determinar el estado de la inscripción.
+            </p>
             <label className="modal-label">
               Asistencia (mín: {eventoInfo?.minAttendancePercent ?? eventoInfo?.por_min_asi_eve ?? 0}%)
             </label>
@@ -632,12 +683,15 @@ const AdminEventInscription = () => {
 
             <div className="modal-actions">
               <button
-                onClick={() => setMostrarFinalizarModal(false)}
+                type="button"
+                onClick={closeFinalizationModal}
                 className="btn-accion btn-cancelar-aei"
+                ref={finalizationCancelButtonRef}
               >
                 Cancelar
               </button>
               <button
+                type="button"
                 onClick={async () => {
                   setEnviandoFinalizacion(true);
                   try {
@@ -683,7 +737,7 @@ const AdminEventInscription = () => {
                     );
 
                     toast.success("Inscripción finalizada correctamente");
-                    setMostrarFinalizarModal(false);
+                    closeFinalizationModal();
                     // Actualizar tanto las inscripciones como la información del evento
                     await Promise.all([
                       fetchData(), // Usar fetchData en lugar de obtenerInscripciones
@@ -714,15 +768,40 @@ const AdminEventInscription = () => {
 
       {/* Modal para mostrar el comprobante con zoom */}
       {comprobanteSeleccionado && (
-        <div className="comprobante-modal-overlay-aei">
-          <div className="comprobante-modal-content-aei">
+        <div
+          className="comprobante-modal-overlay-aei"
+          onClick={(event) => {
+            if (event.target === event.currentTarget) {
+              closeReceiptModal();
+            }
+          }}
+          role="presentation"
+        >
+          <div
+            className="comprobante-modal-content-aei"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="payment-receipt-title"
+            aria-describedby="payment-receipt-description"
+            tabIndex={-1}
+            ref={receiptModalRef}
+          >
             <button
+              type="button"
               className="cerrar-modal-aei"
-              onClick={() => setComprobanteSeleccionado(null)}
+              onClick={closeReceiptModal}
+              aria-label="Cerrar comprobante de pago"
+              ref={receiptCloseButtonRef}
             >
               ×
             </button>
-            <h3 className="comprobante-modal-title-aei">Comprobante de Pago</h3>
+            <h3 className="comprobante-modal-title-aei" id="payment-receipt-title">
+              Comprobante de Pago
+            </h3>
+            <p id="payment-receipt-description" className="sr-only">
+              Revisa el comprobante y usa Tab para navegar o Escape para cerrar
+              este visor.
+            </p>
             <div className="comprobante-contenedor-aei">
               {comprobanteSeleccionado.startsWith("http") ? (
                 <ZoomableImage

@@ -342,6 +342,7 @@ body.login-active {
   overflow-y: auto;
   margin-top: 2px;
   top: 100%;
+  color: var(--color-text-primary);
 }
 
 .suggestion-item-l {

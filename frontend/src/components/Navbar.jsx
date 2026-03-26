@@ -1,31 +1,61 @@
+import React, { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import React, { useState, useRef, useEffect } from "react";
 import {
-  LogOut,
-  Home,
   Calendar,
-  ClipboardList,
-  GraduationCap,
-  Settings,
-  FileText,
-  PlusCircle,
-  User,
   CheckSquare,
-  Sliders,
-  UserCheck,
+  ClipboardList,
+  FileText,
+  GraduationCap,
+  Home,
+  LogOut,
   Menu,
+  Settings,
+  Sliders,
+  User,
+  UserCheck,
 } from "lucide-react";
 import { toast } from "react-toastify";
+import { useAuth } from "../context/AuthContext";
 import axiosInstance from "../api/axiosConfig";
 import ProfileImageService from "../services/ProfileImageService";
 import { NotificationBell } from "./notifications";
 import "./styles/Navbar.css";
 
-/**
- * Componente Navbar que muestra la barra de navegación de la aplicación
- * @returns {JSX.Element} El componente Navbar
- */
+const getMenuItems = (menuContainer) =>
+  Array.from(menuContainer?.querySelectorAll('[role="menuitem"]') || []);
+
+const focusMenuItem = (menuContainer, targetIndex) => {
+  const items = getMenuItems(menuContainer);
+
+  if (items.length === 0) {
+    return;
+  }
+
+  const normalizedIndex =
+    ((targetIndex % items.length) + items.length) % items.length;
+
+  items[normalizedIndex]?.focus();
+};
+
+const focusAdjacentMenuItem = (menuContainer, currentElement, direction) => {
+  const items = getMenuItems(menuContainer);
+
+  if (items.length === 0) {
+    return;
+  }
+
+  const currentIndex = items.indexOf(currentElement);
+  const fallbackIndex = direction === "next" ? 0 : items.length - 1;
+  const nextIndex =
+    currentIndex === -1
+      ? fallbackIndex
+      : direction === "next"
+      ? currentIndex + 1
+      : currentIndex - 1;
+
+  focusMenuItem(menuContainer, nextIndex);
+};
+
 const Navbar = () => {
   const { usuario, logout, syncUserData } = useAuth();
   const location = useLocation();
@@ -36,15 +66,15 @@ const Navbar = () => {
     "https://imgur.com/fch1iy6.png"
   );
   const [acronimoFacultad, setAcronimoFacultad] = useState("FISEI");
-  const profileMenuRef = useRef();
-  const hamburgerMenuRef = useRef();
+  const profileMenuRef = useRef(null);
+  const profileButtonRef = useRef(null);
+  const hamburgerMenuRef = useRef(null);
+  const hamburgerButtonRef = useRef(null);
 
-  /**
-   * Carga los datos de la facultad desde la API
-   */
   const cargarDatosFacultad = async () => {
     try {
       const response = await axiosInstance.get("/facultad-principal");
+
       if (response.data) {
         setLogoFacultad(response.data.url_log_fac || logoFacultad);
         setAcronimoFacultad(response.data.acr_fac || acronimoFacultad);
@@ -54,59 +84,183 @@ const Navbar = () => {
     }
   };
 
-  /**
-   * Cierra los menús si se hace clic fuera de ellos
-   */
+  const openProfileMenu = ({
+    focusFirstItem = false,
+    focusLastItem = false,
+  } = {}) => {
+    setShowProfileMenu(true);
+
+    if (focusFirstItem || focusLastItem) {
+      requestAnimationFrame(() => {
+        focusMenuItem(profileMenuRef.current, focusLastItem ? -1 : 0);
+      });
+    }
+  };
+
+  const closeProfileMenu = ({ focusTrigger = false } = {}) => {
+    setShowProfileMenu(false);
+
+    if (focusTrigger) {
+      requestAnimationFrame(() => {
+        profileButtonRef.current?.focus();
+      });
+    }
+  };
+
+  const openHamburgerMenu = ({
+    focusFirstItem = false,
+    focusLastItem = false,
+  } = {}) => {
+    setShowHamburgerMenu(true);
+
+    if (focusFirstItem || focusLastItem) {
+      requestAnimationFrame(() => {
+        focusMenuItem(hamburgerMenuRef.current, focusLastItem ? -1 : 0);
+      });
+    }
+  };
+
+  const closeHamburgerMenu = ({ focusTrigger = false } = {}) => {
+    setShowHamburgerMenu(false);
+
+    if (focusTrigger) {
+      requestAnimationFrame(() => {
+        hamburgerButtonRef.current?.focus();
+      });
+    }
+  };
+
+  const toggleProfileMenu = () => {
+    if (showProfileMenu) {
+      closeProfileMenu();
+      return;
+    }
+
+    openProfileMenu();
+  };
+
+  const toggleHamburgerMenu = () => {
+    if (showHamburgerMenu) {
+      closeHamburgerMenu();
+      return;
+    }
+
+    openHamburgerMenu();
+  };
+
+  const handleMenuNavigation = ({
+    event,
+    isOpen,
+    openMenu,
+    closeMenu,
+    menuRef,
+  }) => {
+    switch (event.key) {
+      case "Escape":
+        if (!isOpen) {
+          return;
+        }
+
+        event.preventDefault();
+        closeMenu({ focusTrigger: true });
+        break;
+      case "ArrowDown":
+        event.preventDefault();
+
+        if (!isOpen) {
+          openMenu({ focusFirstItem: true });
+          return;
+        }
+
+        focusAdjacentMenuItem(menuRef.current, event.target, "next");
+        break;
+      case "ArrowUp":
+        event.preventDefault();
+
+        if (!isOpen) {
+          openMenu({ focusLastItem: true });
+          return;
+        }
+
+        focusAdjacentMenuItem(menuRef.current, event.target, "previous");
+        break;
+      case "Home":
+        if (!isOpen) {
+          return;
+        }
+
+        event.preventDefault();
+        focusMenuItem(menuRef.current, 0);
+        break;
+      case "End":
+        if (!isOpen) {
+          return;
+        }
+
+        event.preventDefault();
+        focusMenuItem(menuRef.current, -1);
+        break;
+      default:
+        break;
+    }
+  };
+
+  const handleProfileButtonKeyDown = (event) => {
+    handleMenuNavigation({
+      event,
+      isOpen: showProfileMenu,
+      openMenu: openProfileMenu,
+      closeMenu: closeProfileMenu,
+      menuRef: profileMenuRef,
+    });
+  };
+
+  const handleProfileMenuKeyDown = (event) => {
+    handleMenuNavigation({
+      event,
+      isOpen: showProfileMenu,
+      openMenu: openProfileMenu,
+      closeMenu: closeProfileMenu,
+      menuRef: profileMenuRef,
+    });
+  };
+
+  const handleHamburgerButtonKeyDown = (event) => {
+    handleMenuNavigation({
+      event,
+      isOpen: showHamburgerMenu,
+      openMenu: openHamburgerMenu,
+      closeMenu: closeHamburgerMenu,
+      menuRef: hamburgerMenuRef,
+    });
+  };
+
+  const handleHamburgerMenuKeyDown = (event) => {
+    handleMenuNavigation({
+      event,
+      isOpen: showHamburgerMenu,
+      openMenu: openHamburgerMenu,
+      closeMenu: closeHamburgerMenu,
+      menuRef: hamburgerMenuRef,
+    });
+  };
+
   const handleClickOutside = (event) => {
-    // Cierra el menú de perfil si se hace clic fuera de él
     if (
       profileMenuRef.current &&
       !profileMenuRef.current.contains(event.target)
     ) {
-      setShowProfileMenu(false);
+      closeProfileMenu();
     }
 
-    // Cierra el menú hamburguesa si se hace clic fuera de él
     if (
       hamburgerMenuRef.current &&
       !hamburgerMenuRef.current.contains(event.target)
     ) {
-      setShowHamburgerMenu(false);
+      closeHamburgerMenu();
     }
   };
 
-  /**
-   * Maneja eventos de teclado para accesibilidad del menú de perfil
-   * Soporta: Escape para cerrar, Enter/Space para activar
-   */
-  const handleProfileMenuKeyDown = (event) => {
-    if (event.key === "Escape") {
-      setShowProfileMenu(false);
-      // Devolver foco al botón de perfil
-      const profileButton = profileMenuRef.current?.querySelector(".profile-button");
-      profileButton?.focus();
-    }
-  };
-
-  /**
-   * Alterna la visibilidad del menú de perfil
-   */
-  const toggleProfileMenu = () => {
-    setShowProfileMenu(!showProfileMenu);
-  };
-
-  /**
-   * Alterna la visibilidad del menú hamburguesa
-   */
-  const toggleHamburgerMenu = () => {
-    setShowHamburgerMenu(!showHamburgerMenu);
-  };
-
-  /**
-   * Determina si un enlace está activo
-   * @param {string} path - La ruta a verificar
-   * @returns {string} Clase CSS para marcar el enlace como activo
-   */
   const isActive = (path) => {
     const routeAliases = {
       "/register": ["/registro"],
@@ -122,9 +276,8 @@ const Navbar = () => {
     };
 
     const candidates = [path, ...(routeAliases[path] || [])];
-
-    // Para rutas exactas
     const exactPaths = ["/admin", "/home"];
+
     if (exactPaths.includes(path)) {
       return candidates.includes(location.pathname) ? "nav-link-active" : "";
     }
@@ -138,18 +291,11 @@ const Navbar = () => {
       : "";
   };
 
-  /**
-   * Cierra la sesión del usuario
-   */
-
   const cerrarSesion = () => {
-    // Obtener el nombre del usuario para personalizar el mensaje
     const nombreUsuario = usuario?.nom_usu || "Usuario";
 
-    // Limpiar la sesión
     logout();
 
-    // Mostrar un toast estilizado
     toast.success(
       <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
         <UserCheck size={20} color="#8a1538" />
@@ -176,29 +322,23 @@ const Navbar = () => {
       }
     );
 
-    // Redireccionar al home usando navigate
     navigate("/home");
   };
 
-  // Equivalente a componentDidMount y componentWillUnmount
   useEffect(() => {
     cargarDatosFacultad();
-
-    // Agregar listener para cerrar el menú de perfil al hacer clic fuera de él
     document.addEventListener("mousedown", handleClickOutside);
 
-    // Cleanup function (equivalente a componentWillUnmount)
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []); // El array vacío hace que se ejecute solo al montar y desmontar
+  }, []);
 
-  // Sincronizar datos del usuario cuando el componente se monte
   useEffect(() => {
     if (usuario && syncUserData) {
       syncUserData();
     }
-  }, []); // Solo ejecutar una vez al montar el componente
+  }, []);
 
   if (!usuario) {
     return (
@@ -248,8 +388,10 @@ const Navbar = () => {
         {usuario.rol_usu === "ADMIN_GLOBAL" && (
           <div className="hamburger-menu-container" ref={hamburgerMenuRef}>
             <button
+              ref={hamburgerButtonRef}
               className="hamburger-button"
               onClick={toggleHamburgerMenu}
+              onKeyDown={handleHamburgerButtonKeyDown}
               type="button"
               aria-expanded={showHamburgerMenu}
               aria-haspopup="menu"
@@ -264,11 +406,12 @@ const Navbar = () => {
                 className="hamburger-menu"
                 role="menu"
                 aria-label="Accesos rápidos de administración"
+                onKeyDown={handleHamburgerMenuKeyDown}
               >
                 <Link
                   to="/admin/settings"
                   className={`hamburger-menu-item ${isActive("/admin/settings")}`}
-                  onClick={toggleHamburgerMenu}
+                  onClick={() => closeHamburgerMenu()}
                   role="menuitem"
                 >
                   <span className="hamburger-menu-icon">
@@ -279,7 +422,7 @@ const Navbar = () => {
                 <Link
                   to="/admin/admins"
                   className={`hamburger-menu-item ${isActive("/admin/admins")}`}
-                  onClick={toggleHamburgerMenu}
+                  onClick={() => closeHamburgerMenu()}
                   role="menuitem"
                 >
                   <span className="hamburger-menu-icon">
@@ -291,6 +434,7 @@ const Navbar = () => {
             )}
           </div>
         )}
+
         <Link to="/home" className="navbar-logo-container">
           <img
             src={logoFacultad}
@@ -298,18 +442,18 @@ const Navbar = () => {
             className="navbar-logo-img"
           />
           <span className="navbar-logo-text">{acronimoFacultad}</span>
-        </Link>{" "}
+        </Link>
+
         <div className="navbar-links">
           {(usuario.rol_usu === "ESTUDIANTE" ||
             usuario.rol_usu === "GENERAL") && (
             <>
-              {" "}
               <Link to="/home" className={`nav-link-item ${isActive("/home")}`}>
                 <span className="nav-link-icon">
                   <Home size={18} />
                 </span>
                 <span>Inicio</span>
-              </Link>{" "}
+              </Link>
               <Link
                 to="/events"
                 className={`nav-link-item ${isActive("/events")}`}
@@ -329,15 +473,12 @@ const Navbar = () => {
                 <span>Mis inscripciones</span>
               </Link>
             </>
-          )}{" "}
+          )}
+
           {(usuario.rol_usu === "ADMIN_GLOBAL" ||
             usuario.rol_usu === "ADMIN_GENERAL") && (
             <>
-              {" "}
-              <Link
-                to="/admin"
-                className={`nav-link-item ${isActive("/admin")}`}
-              >
+              <Link to="/admin" className={`nav-link-item ${isActive("/admin")}`}>
                 <span className="nav-link-icon">
                   <Settings size={18} />
                 </span>
@@ -347,7 +488,6 @@ const Navbar = () => {
                 to="/admin/events"
                 className={`nav-link-item ${isActive("/admin/events")}`}
               >
-                {" "}
                 <span className="nav-link-icon">
                   <FileText size={18} />
                 </span>
@@ -374,17 +514,21 @@ const Navbar = () => {
             </>
           )}
         </div>
-      </div>{" "}
+      </div>
+
       <div className="navbar-right-section">
         <NotificationBell />
 
-        <div className="navbar-profile" ref={profileMenuRef} onKeyDown={handleProfileMenuKeyDown}>
+        <div className="navbar-profile" ref={profileMenuRef}>
           <button
+            ref={profileButtonRef}
             type="button"
             className="profile-button"
             onClick={toggleProfileMenu}
+            onKeyDown={handleProfileButtonKeyDown}
             aria-expanded={showProfileMenu}
             aria-haspopup="menu"
+            aria-controls="profile-menu"
             aria-label={`Menú de perfil de ${usuario?.nom_usu || "Usuario"}`}
           >
             <span className="profile-name">{usuario?.nom_usu || "Usuario"}</span>
@@ -397,30 +541,45 @@ const Navbar = () => {
                   )}
                   alt="Foto de perfil"
                   className="profile-avatar-img-nb"
-                  key={usuario.img_per_usu} // Forzar re-render cuando cambie la imagen
+                  key={usuario.img_per_usu}
                 />
               ) : (
                 <User size={18} className="profile-icon" />
               )}
             </span>
           </button>
-        {showProfileMenu && (
-          <div className="profile-dropdown" role="menu" aria-label="Opciones de perfil">
-            <Link to="/profile" className="profile-menu-item" role="menuitem">
-              <User size={16} aria-hidden="true" />
-              <span>Mi Perfil</span>
-            </Link>
-            <button
-              type="button"
-              className="profile-menu-item logout"
-              onClick={cerrarSesion}
-              role="menuitem"
+
+          {showProfileMenu && (
+            <div
+              id="profile-menu"
+              className="profile-dropdown"
+              role="menu"
+              aria-label="Opciones de perfil"
+              onKeyDown={handleProfileMenuKeyDown}
             >
-              <LogOut size={16} aria-hidden="true" />
-              <span>Cerrar sesión</span>
-            </button>
-          </div>
-        )}
+              <Link
+                to="/profile"
+                className="profile-menu-item"
+                role="menuitem"
+                onClick={() => closeProfileMenu()}
+              >
+                <User size={16} aria-hidden="true" />
+                <span>Mi Perfil</span>
+              </Link>
+              <button
+                type="button"
+                className="profile-menu-item logout"
+                onClick={() => {
+                  closeProfileMenu();
+                  cerrarSesion();
+                }}
+                role="menuitem"
+              >
+                <LogOut size={16} aria-hidden="true" />
+                <span>Cerrar sesión</span>
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </nav>
@@ -428,4 +587,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-//Andriu Dex

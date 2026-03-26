@@ -526,12 +526,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 11000;
   backdrop-filter: blur(4px);
   animation: fadeIn 0.3s ease;
 }
 
-.modal-content {
+.modal-content-p {
   background-color: var(--color-bg-primary);
   border-radius: 12px;
   box-shadow: var(--shadow-lg);
@@ -543,6 +543,23 @@
   overflow-y: auto;
   animation: modalSlideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   border-top: 5px solid var(--color-primary);
+}
+
+.btn-control{
+  background-color: var(  --color-border-focus);
+  box-shadow: 2.8px 2.4px 5px black;
+  padding: 4px 8px;
+  color: white;
+}
+
+.editor-controles{
+  display: flex;
+  gap: 12px;
+  margin-top: 5px;
+}
+
+.button:hover {
+  background-color: aqua;
 }
 
 @keyframes modalSlideIn {
@@ -663,7 +680,7 @@
 }
 
 .btn-guardar-p,
-.btn-cancelar {
+.btn-cancelar-p {
   padding: 10px 22px;
   border-radius: 6px;
   font-weight: 600;
@@ -694,25 +711,25 @@
   box-shadow: none;
 }
 
-.btn-cancelar {
+.btn-cancelar-p {
   background-color: var(--color-bg-tertiary);
   color: var(--color-text-secondary);
 }
 
-.btn-cancelar:hover {
+.btn-cancelar-p:hover {
   background-color: var(--color-bg-tertiary);
   transform: translateY(-3px);
   box-shadow: var(--shadow-md);
 }
 
 .btn-guardar-p svg,
-.btn-cancelar svg {
+.btn-cancelar-p svg {
   margin-right: 8px;
   transition: transform 0.3s ease;
 }
 
 .btn-guardar-p:hover svg,
-.btn-cancelar:hover svg {
+.btn-cancelar-p:hover svg {
   transform: scale(1.2);
 }
 
@@ -744,7 +761,7 @@
 .documento-header {
   display: flex;
   align-items: center;
-  padding: 14px 18px;
+  padding: 8px 18px;
   background: linear-gradient(
     to right,
     var(--color-primary-lighter),
@@ -764,13 +781,15 @@
 }
 
 .documento-content {
-  padding: 18px;
+  padding: 10px;
 }
 
 .documento-upload {
   display: flex;
   align-items: center;
   gap: 12px;
+  min-width: 0;
+  width: 100%;
 }
 
 .documento-preview {
@@ -781,15 +800,19 @@
   border-radius: 6px;
   flex: 1;
   border: 1px solid var(--color-primary-light);
+  gap: 10px;
+  min-width: 0;
 }
 
 .documento-nombre {
+  display: block;
   font-size: 0.875rem;
   color: var(--color-text-primary);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   flex: 1;
+  min-width: 0;
 }
 
 .btn-preview {
@@ -946,7 +969,7 @@
     justify-content: center;
   }
 
-  .modal-content {
+  .modal-content-p {
     width: 95%;
     padding: 20px 16px;
   }
@@ -961,6 +984,7 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
+    width: 100%;
   }
 
   .documento-preview {
@@ -978,7 +1002,7 @@
   }
 
   .btn-guardar-p,
-  .btn-cancelar {
+  .btn-cancelar-p {
     width: 100%;
     justify-content: center;
   }

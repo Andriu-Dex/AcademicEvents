@@ -1,12 +1,7 @@
-import React from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
 import "./PaginationControls.css";
 
-/**
- * Componente de controles de paginación reutilizable
- * @param {Object} props - Propiedades del componente
- * @returns {JSX.Element} Componente de controles de paginación
- */
 const PaginationControls = ({
   currentPage,
   totalPages,
@@ -21,54 +16,106 @@ const PaginationControls = ({
   showNumbers = true,
   maxVisiblePages = 5,
 }) => {
-  if (totalPages <= 1) return null;
+  const pageButtonRefs = useRef(new Map());
+  const [pendingFocusPage, setPendingFocusPage] = useState(null);
+
+  const pageNumbers = useMemo(() => {
+    const pages = [];
+
+    if (totalPages <= maxVisiblePages) {
+      for (let pageNumber = 1; pageNumber <= totalPages; pageNumber += 1) {
+        pages.push(pageNumber);
+      }
+
+      return pages;
+    }
+
+    const startPage = Math.max(
+      1,
+      currentPage - Math.floor(maxVisiblePages / 2)
+    );
+    const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+    if (startPage > 1) {
+      pages.push(1);
+      if (startPage > 2) {
+        pages.push("...");
+      }
+    }
+
+    for (let pageNumber = startPage; pageNumber <= endPage; pageNumber += 1) {
+      pages.push(pageNumber);
+    }
+
+    if (endPage < totalPages) {
+      if (endPage < totalPages - 1) {
+        pages.push("...");
+      }
+      pages.push(totalPages);
+    }
+
+    return pages;
+  }, [currentPage, maxVisiblePages, totalPages]);
+
+  useEffect(() => {
+    if (pendingFocusPage === null) {
+      return;
+    }
+
+    const targetButton = pageButtonRefs.current.get(pendingFocusPage);
+    targetButton?.focus();
+    setPendingFocusPage(null);
+  }, [currentPage, pendingFocusPage]);
+
+  if (totalPages <= 1) {
+    return null;
+  }
 
   const startItem = (currentPage - 1) * itemsPerPage + 1;
   const endItem = Math.min(currentPage * itemsPerPage, totalItems);
 
-  const getPageNumbers = () => {
-    const pages = [];
-
-    if (totalPages <= maxVisiblePages) {
-      // Mostrar todas las páginas
-      for (let i = 1; i <= totalPages; i++) {
-        pages.push(i);
-      }
-    } else {
-      // Lógica para mostrar páginas relevantes
-      const startPage = Math.max(
-        1,
-        currentPage - Math.floor(maxVisiblePages / 2)
-      );
-      const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
-
-      // Agregar primera página
-      if (startPage > 1) {
-        pages.push(1);
-        if (startPage > 2) {
-          pages.push("...");
-        }
-      }
-
-      // Agregar páginas del rango
-      for (let i = startPage; i <= endPage; i++) {
-        pages.push(i);
-      }
-
-      // Agregar última página
-      if (endPage < totalPages) {
-        if (endPage < totalPages - 1) {
-          pages.push("...");
-        }
-        pages.push(totalPages);
-      }
+  const changePage = (targetPage, shouldFocus = false) => {
+    if (
+      loading ||
+      targetPage < 1 ||
+      targetPage > totalPages ||
+      targetPage === currentPage
+    ) {
+      return;
     }
 
-    return pages;
+    if (shouldFocus) {
+      setPendingFocusPage(targetPage);
+    }
+
+    onPageChange(targetPage);
+  };
+
+  const handlePageKeyDown = (event) => {
+    switch (event.key) {
+      case "ArrowLeft":
+        event.preventDefault();
+        changePage(currentPage - 1, true);
+        break;
+      case "ArrowRight":
+        event.preventDefault();
+        changePage(currentPage + 1, true);
+        break;
+      case "Home":
+        event.preventDefault();
+        changePage(1, true);
+        break;
+      case "End":
+        event.preventDefault();
+        changePage(totalPages, true);
+        break;
+      default:
+        break;
+    }
   };
 
   return (
-    <div className={`pagination-controls-pc ${className}`}>
+    <nav className={`pagination-controls-pc ${className}`} aria-label="Paginación">
       {showInfo && (
         <div className="pagination-info-pc">
           {totalItems > 0 ? (
@@ -83,29 +130,40 @@ const PaginationControls = ({
 
       <div className="pagination-buttons-pc">
         <button
+          type="button"
           className="pagination-btn-pc pagination-prev-pc"
-          onClick={() => onPageChange(currentPage - 1)}
+          onClick={() => changePage(currentPage - 1)}
           disabled={!hasPrevPage || loading}
           aria-label="Página anterior"
         >
-          <ChevronLeft size={16} />
+          <ChevronLeft size={16} aria-hidden="true" />
           <span className="pagination-btn-text-pc">Anterior</span>
         </button>
 
         {showNumbers && (
-          <div className="pagination-numbers-pc">
-            {getPageNumbers().map((page, index) => (
-              <React.Fragment key={index}>
+          <div className="pagination-numbers-pc" role="group" aria-label="Páginas disponibles">
+            {pageNumbers.map((page, index) => (
+              <React.Fragment key={`${page}-${index}`}>
                 {page === "..." ? (
-                  <span className="pagination-ellipsis-pc">
+                  <span className="pagination-ellipsis-pc" aria-hidden="true">
                     <MoreHorizontal size={16} />
                   </span>
                 ) : (
                   <button
+                    ref={(node) => {
+                      if (node) {
+                        pageButtonRefs.current.set(page, node);
+                        return;
+                      }
+
+                      pageButtonRefs.current.delete(page);
+                    }}
+                    type="button"
                     className={`pagination-number-pc ${
                       currentPage === page ? "active" : ""
                     }`}
-                    onClick={() => onPageChange(page)}
+                    onClick={() => changePage(page)}
+                    onKeyDown={handlePageKeyDown}
                     disabled={loading}
                     aria-label={`Ir a página ${page}`}
                     aria-current={currentPage === page ? "page" : undefined}
@@ -119,16 +177,17 @@ const PaginationControls = ({
         )}
 
         <button
+          type="button"
           className="pagination-btn-pc pagination-next-pc"
-          onClick={() => onPageChange(currentPage + 1)}
+          onClick={() => changePage(currentPage + 1)}
           disabled={!hasNextPage || loading}
           aria-label="Página siguiente"
         >
           <span className="pagination-btn-text-pc">Siguiente</span>
-          <ChevronRight size={16} />
+          <ChevronRight size={16} aria-hidden="true" />
         </button>
       </div>
-    </div>
+    </nav>
   );
 };
 

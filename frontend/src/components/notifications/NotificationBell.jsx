@@ -34,7 +34,10 @@ const NotificationBell = () => {
 
   const [showPanel, setShowPanel] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [liveAnnouncement, setLiveAnnouncement] = useState("");
   const panelRef = useRef(null);
+  const bellButtonRef = useRef(null);
+  const closeButtonRef = useRef(null);
 
   // Backend notification history state
   const [historyNotifications, setHistoryNotifications] = useState([]);
@@ -96,6 +99,18 @@ const NotificationBell = () => {
     const backendUnread = historyNotifications.filter((n) => !n.read).length;
     return foregroundUnreadCount + backendUnread;
   }, [foregroundUnreadCount, historyNotifications]);
+
+  useEffect(() => {
+    const latestForegroundNotification = foregroundNotifications[0];
+
+    if (!latestForegroundNotification) {
+      return;
+    }
+
+    setLiveAnnouncement(
+      `Nueva notificación: ${latestForegroundNotification.title}. ${latestForegroundNotification.body}`
+    );
+  }, [foregroundNotifications]);
 
   /**
    * Mark a notification as read (both local and backend)
@@ -169,6 +184,35 @@ const NotificationBell = () => {
       setHistoryNotifications([]);
     }
   }, [isEnabled]);
+
+  useEffect(() => {
+    if (!showPanel) {
+      return undefined;
+    }
+
+    requestAnimationFrame(() => {
+      closeButtonRef.current?.focus();
+    });
+
+    const handlePanelKeyDown = (event) => {
+      if (event.key !== "Escape") {
+        return;
+      }
+
+      event.preventDefault();
+      setShowPanel(false);
+      setShowSettings(false);
+      requestAnimationFrame(() => {
+        bellButtonRef.current?.focus();
+      });
+    };
+
+    document.addEventListener("keydown", handlePanelKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handlePanelKeyDown);
+    };
+  }, [showPanel]);
 
   // Handle bell click - Auto-enable on first click
   const handleBellClick = async () => {
@@ -269,20 +313,33 @@ const NotificationBell = () => {
 
   return (
     <div className="notification-bell-container" ref={panelRef}>
+      <div className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+        {liveAnnouncement}
+      </div>
+
       {/* Bell Button */}
       <button
+        ref={bellButtonRef}
         className={`notification-bell-button ${isEnabled ? '' : 'notification-bell-inactive'}`}
         onClick={handleBellClick}
         title={isEnabled ? 'Ver notificaciones' : 'Activar notificaciones'}
         aria-label={
           isEnabled
-            ? `Notificaciones: ${totalUnreadCount} sin leer`
+            ? totalUnreadCount > 0
+              ? `${totalUnreadCount} notificaciones nuevas`
+              : 'Notificaciones, sin novedades'
             : 'Haz clic para activar notificaciones'
         }
+        aria-haspopup="dialog"
+        aria-expanded={showPanel}
+        aria-controls="notification-panel"
       >
         <Bell size={20} />
         {isEnabled && totalUnreadCount > 0 && (
-          <span className="notification-badge" aria-hidden="true">
+          <span
+            className="notification-badge"
+            aria-label={`${totalUnreadCount} notificaciones nuevas`}
+          >
             {totalUnreadCount > 99 ? '99+' : totalUnreadCount}
           </span>
         )}
@@ -290,10 +347,16 @@ const NotificationBell = () => {
 
       {/* Notification Panel */}
       {showPanel && (
-        <div className="notification-panel" role="dialog" aria-label="Panel de notificaciones">
+        <div
+          id="notification-panel"
+          className="notification-panel"
+          role="dialog"
+          aria-modal="false"
+          aria-labelledby="notification-panel-title"
+        >
           {/* Header */}
           <div className="notification-panel-header">
-            <h3>Notificaciones</h3>
+            <h3 id="notification-panel-title">Notificaciones</h3>
             <div className="notification-header-actions">
               {/* Settings - always visible */}
               <button
@@ -334,6 +397,7 @@ const NotificationBell = () => {
                 className="notification-close-btn"
                 onClick={() => setShowPanel(false)}
                 aria-label="Cerrar panel"
+                ref={closeButtonRef}
               >
                 <X size={18} />
               </button>

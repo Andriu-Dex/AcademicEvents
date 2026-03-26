@@ -14,9 +14,14 @@ const FloatingThemeSocketControls = () => {
         className="floating-theme-toggle"
         onClick={toggleTheme}
         aria-label={isDarkMode ? "Cambiar a modo claro" : "Cambiar a modo oscuro"}
+        aria-pressed={isDarkMode}
         title={isDarkMode ? "Modo claro" : "Modo oscuro"}
       >
-        {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
+        {isDarkMode ? (
+          <Sun size={18} aria-hidden="true" />
+        ) : (
+          <Moon size={18} aria-hidden="true" />
+        )}
       </button>
     </div>
   );

@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import axiosInstance from "../api/axiosConfig";
 import { requestWithEndpointFallback } from "../api/endpointFallback";
 import { useAuth } from "../hooks/useAuth";
@@ -6,6 +6,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useSocket } from "../context/SocketContext";
 import usePagination from "../hooks/usePagination";
+import useDialogAccessibility from "../hooks/useDialogAccessibility";
 import PaginationControls from "../components/Pagination/PaginationControls";
 import {
   CalendarDays,
@@ -163,6 +164,8 @@ const EventsRoute = () => {
   const [eventosAprobados, setEventosAprobados] = useState([]);
   const [eventosReprobados, setEventosReprobados] = useState([]);
   const [subiendo, setSubiendo] = useState(false);
+  const enrollmentModalRef = useRef(null);
+  const enrollmentCancelButtonRef = useRef(null);
   const [exitoVisible, setExitoVisible] = useState(false);
   const [usuarioConCarrera, setUsuarioConCarrera] = useState(null);
 
@@ -233,6 +236,19 @@ const EventsRoute = () => {
       navigate(location.pathname, { replace: true, state: {} });
     }
   }, [location.state, navigate, location.pathname]);
+
+  const closeEnrollmentModal = useCallback(() => {
+    setEventoSeleccionado(null);
+    setArchivo(null);
+    setCartaMotivacion("");
+  }, []);
+
+  useDialogAccessibility({
+    isOpen: Boolean(eventoSeleccionado),
+    onClose: closeEnrollmentModal,
+    containerRef: enrollmentModalRef,
+    initialFocusRef: enrollmentCancelButtonRef,
+  });
 
   // Función para construir filtros API de forma consistente
   const construirFiltrosAPI = useCallback(() => {
@@ -438,9 +454,7 @@ const EventsRoute = () => {
           console.error("Error al actualizar eventos:", error);
         }
 
-        setEventoSeleccionado(null);
-        setArchivo(null);
-        setCartaMotivacion("");
+        closeEnrollmentModal();
         setExitoVisible(true);
         setTimeout(() => setExitoVisible(false), 2000);
       }
@@ -949,9 +963,29 @@ const EventsRoute = () => {
       )}
 
       {eventoSeleccionado && (
-        <div className="modal-overlay-er">
-          <div className="modal-contenido-er">
+        <div
+          className="modal-overlay-er"
+          onClick={(event) => {
+            if (event.target === event.currentTarget) {
+              closeEnrollmentModal();
+            }
+          }}
+          role="presentation"
+        >
+          <div
+            className="modal-contenido-er"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Formulario de inscripción al evento"
+            tabIndex={-1}
+            ref={enrollmentModalRef}
+          >
             <h2>Inscripción a: {eventoSeleccionado.nom_eve || eventoSeleccionado.name}</h2>
+
+            <p className="sr-only">
+              Completa la carta de motivación y, si el evento requiere pago,
+              adjunta el comprobante para enviar tu inscripción.
+            </p>
 
             {/* Mensaje adicional para reinscripciones */}
             {eventoSeleccionado.reinscripcion && (
@@ -999,17 +1033,18 @@ const EventsRoute = () => {
 
             <div className="modal-botones-er">
               <button
+                type="button"
                 onClick={() => {
-                  setEventoSeleccionado(null);
-                  setArchivo(null);
-                  setCartaMotivacion("");
+                  closeEnrollmentModal();
                 }}
                 className="btn-cancelar-modal-er"
+                ref={enrollmentCancelButtonRef}
               >
                 Cancelar
               </button>
 
               <button
+                type="button"
                 onClick={() => {
                   // Validación personalizada según costo del evento
                   const eventPrice = eventoSeleccionado.val_eve ?? eventoSeleccionado.price ?? 0;
