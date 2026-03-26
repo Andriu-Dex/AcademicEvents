@@ -17,6 +17,7 @@ import {
   Home,
   ChevronDown,
   ChevronUp,
+  GripVertical,
   Building,
   Briefcase,
   Image,
@@ -93,6 +94,36 @@ const createEmptySocialLink = (displayOrder = 0) => ({
   opensInNewTab: true,
 });
 
+const reorderSocialLinksByClientId = (
+  currentSocialLinks,
+  draggedClientId,
+  targetClientId
+) => {
+  const draggedIndex = currentSocialLinks.findIndex(
+    (socialLink) => socialLink.clientId === draggedClientId
+  );
+  const targetIndex = currentSocialLinks.findIndex(
+    (socialLink) => socialLink.clientId === targetClientId
+  );
+
+  if (
+    draggedIndex === -1 ||
+    targetIndex === -1 ||
+    draggedIndex === targetIndex
+  ) {
+    return currentSocialLinks;
+  }
+
+  const nextSocialLinks = [...currentSocialLinks];
+  const [draggedSocialLink] = nextSocialLinks.splice(draggedIndex, 1);
+  nextSocialLinks.splice(targetIndex, 0, draggedSocialLink);
+
+  return nextSocialLinks.map((socialLink, index) => ({
+    ...socialLink,
+    displayOrder: index,
+  }));
+};
+
 const isValidAbsoluteUrl = (value) => {
   try {
     const parsedUrl = new URL(value);
@@ -156,6 +187,8 @@ const AdminConfiguracionMVA = () => {
   const [initialSocialLinks, setInitialSocialLinks] = useState([]);
   const [loadingSocialLinks, setLoadingSocialLinks] = useState(false);
   const [saveSocialLinksSuccess, setSaveSocialLinksSuccess] = useState(false);
+  const [draggedSocialLinkId, setDraggedSocialLinkId] = useState(null);
+  const [dragOverSocialLinkId, setDragOverSocialLinkId] = useState(null);
   const [initialUniversidad, setInitialUniversidad] =
     useState(EMPTY_UNIVERSITY_STATE);
   const [socialLinkPendingDeletion, setSocialLinkPendingDeletion] =
@@ -466,6 +499,11 @@ const AdminConfiguracionMVA = () => {
   };
 
   const eliminarSocialLink = (clientId) => {
+    if (draggedSocialLinkId === clientId) {
+      setDraggedSocialLinkId(null);
+      setDragOverSocialLinkId(null);
+    }
+
     setSocialLinks((currentSocialLinks) =>
       currentSocialLinks.filter((socialLink) => socialLink.clientId !== clientId)
     );
@@ -496,6 +534,50 @@ const AdminConfiguracionMVA = () => {
 
     eliminarSocialLink(socialLinkPendingDeletion.clientId);
     cerrarModalEliminacionSocialLink();
+  };
+
+  const handleSocialLinkDragStart = (event, clientId) => {
+    event.dataTransfer.effectAllowed = "move";
+    event.dataTransfer.setData("text/plain", clientId);
+    setDraggedSocialLinkId(clientId);
+  };
+
+  const handleSocialLinkDragOver = (event, clientId) => {
+    if (!draggedSocialLinkId || draggedSocialLinkId === clientId) {
+      return;
+    }
+
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "move";
+    setDragOverSocialLinkId(clientId);
+  };
+
+  const handleSocialLinkDrop = (event, targetClientId) => {
+    event.preventDefault();
+
+    const droppedClientId =
+      event.dataTransfer.getData("text/plain") || draggedSocialLinkId;
+
+    if (!droppedClientId || droppedClientId === targetClientId) {
+      setDragOverSocialLinkId(null);
+      return;
+    }
+
+    setSocialLinks((currentSocialLinks) =>
+      reorderSocialLinksByClientId(
+        currentSocialLinks,
+        droppedClientId,
+        targetClientId
+      )
+    );
+
+    setDragOverSocialLinkId(null);
+    setDraggedSocialLinkId(null);
+  };
+
+  const handleSocialLinkDragEnd = () => {
+    setDraggedSocialLinkId(null);
+    setDragOverSocialLinkId(null);
   };
 
   const moverSocialLink = (clientId, direction) => {
@@ -991,7 +1073,21 @@ const AdminConfiguracionMVA = () => {
                           socialLink.isActive
                             ? ""
                             : "adminconfig-social-card-inactive-acmva"
+                        } ${
+                          draggedSocialLinkId === socialLink.clientId
+                            ? "adminconfig-social-card-dragging-acmva"
+                            : ""
+                        } ${
+                          dragOverSocialLinkId === socialLink.clientId
+                            ? "adminconfig-social-card-drop-target-acmva"
+                            : ""
                         }`}
+                        onDragOver={(event) =>
+                          handleSocialLinkDragOver(event, socialLink.clientId)
+                        }
+                        onDrop={(event) =>
+                          handleSocialLinkDrop(event, socialLink.clientId)
+                        }
                       >
                         <div className="adminconfig-social-card-header-acmva">
                           <div className="adminconfig-social-card-title-acmva">
@@ -1007,6 +1103,22 @@ const AdminConfiguracionMVA = () => {
                           </div>
 
                           <div className="adminconfig-social-card-actions-acmva">
+                            <button
+                              type="button"
+                              className="adminconfig-social-drag-handle-acmva"
+                              draggable
+                              onDragStart={(event) =>
+                                handleSocialLinkDragStart(
+                                  event,
+                                  socialLink.clientId
+                                )
+                              }
+                              onDragEnd={handleSocialLinkDragEnd}
+                              aria-label="Arrastrar para reordenar"
+                              title="Arrastrar para reordenar"
+                            >
+                              <GripVertical size={16} />
+                            </button>
                             <button
                               type="button"
                               className="adminconfig-social-order-btn-acmva"
