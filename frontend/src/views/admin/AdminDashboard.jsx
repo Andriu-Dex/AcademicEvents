@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../api/axiosConfig";
 import { usePagination } from "../../hooks/usePagination";
 import PaginationControls from "../../components/Pagination/PaginationControls";
+import useDocumentTitle from "../../hooks/useDocumentTitle";
 import {
   GraduationCap,
   ClipboardList,
@@ -26,6 +27,7 @@ const normalizeDashboardEvent = (evento, index = 0) => ({
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
+  useDocumentTitle("Panel de Administración");
 
   // Usar el hook de paginación para los eventos recientes
   const {

@@ -6,6 +6,8 @@ import DatePicker, { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import es from "date-fns/locale/es";
 import { formatDateForReports } from "../../../utils/dateUtils";
+import useDocumentTitle from "../../../hooks/useDocumentTitle";
+import { downloadBlobFile } from "../../../utils/fileDownload";
 import "./styles/ReporteCertificados.css";
 
 // Registrar el idioma
@@ -19,6 +21,8 @@ const ReporteCertificados = () => {
   const [eventosCertificados, setEventosCertificados] = useState([]);
   const [loading, setLoading] = useState(false);
   const [loadingPDF, setLoadingPDF] = useState(false);
+
+  useDocumentTitle("Reporte de Certificados");
 
   useEffect(() => {
     // Establecer fechas por defecto (último mes)
@@ -109,14 +113,7 @@ const ReporteCertificados = () => {
       const nombreArchivo = `Reporte_Certificados_${fechaInicioStr}_al_${fechaFinStr}.pdf`;
 
       // Descargar el archivo
-      const url = window.URL.createObjectURL(new Blob([res.data]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", nombreArchivo);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
+      await downloadBlobFile(res.data, nombreArchivo, "application/pdf");
 
       toast.success("Reporte PDF descargado exitosamente");
     } catch (error) {

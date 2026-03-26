@@ -901,6 +901,19 @@ async function descargarReporteCarreraPDF(req, res) {
 }
 
 // Reporte de Inscripciones
+const REPORT_REG_STATUS_TO_DB = {
+  PENDIENTE: "PENDING",
+  ACEPTADA: "ACCEPTED",
+  RECHAZADA: "REJECTED",
+  APROBADO: "APPROVED",
+  REPROBADO_NOTA: "FAILED_GRADE",
+  REPROBADO_ASISTENCIA: "FAILED_ATTENDANCE",
+  REPROBADO_TOTAL: "FAILED_TOTAL",
+};
+
+const normalizeReportRegistrationStatus = (status) =>
+  REPORT_REG_STATUS_TO_DB[status] || status;
+
 async function getReporteInscripciones(req, res) {
   try {
     console.log("🔍 Ruta solicitada:", req.path);
@@ -922,7 +935,7 @@ async function getReporteInscripciones(req, res) {
     }
 
     if (estado && estado !== "todos") {
-      filtro.status = estado;
+      filtro.status = normalizeReportRegistrationStatus(estado);
     }
 
     // Obtener inscripciones con filtros
@@ -2419,7 +2432,7 @@ async function obtenerEstadisticasInscripciones(
   }
 
   if (estado && estado !== "todos") {
-    filtro.status = estado;
+    filtro.status = normalizeReportRegistrationStatus(estado);
   }
 
   const inscripciones = await prisma.registration.findMany({
@@ -2651,5 +2664,3 @@ module.exports = {
   getReporteCupos,
   descargarReporteCuposPDF,
 };
-
-

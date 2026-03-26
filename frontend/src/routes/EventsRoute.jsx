@@ -139,6 +139,23 @@ const normalizeEventForUI = (evento, index = 0) => {
   };
 };
 
+const getEventName = (evento) => evento?.name || evento?.nom_eve || "Evento";
+const getEventType = (evento) => evento?.type || evento?.tip_eve || "-";
+const getEventDescription = (evento) =>
+  evento?.description ?? evento?.des_eve ?? "";
+const getEventPrice = (evento) =>
+  Number(evento?.price ?? evento?.val_eve ?? 0);
+const getEventAvailableSpots = (evento) =>
+  Number(evento?.availableSpots ?? evento?.cup_dis_eve ?? 0);
+const getEventStatus = (evento) => evento?.status || evento?.est_eve || "";
+const getEventCoverImage = (evento) =>
+  evento?.coverImageUrl || evento?.img_por_eve || "https://i.imgur.com/c6Ry30Z.jpeg";
+const getEventStartDate = (evento) => evento?.startDate || evento?.fec_ini_eve;
+const getEventEndDate = (evento) => evento?.endDate || evento?.fec_fin_eve;
+const getEventDurationHours = (evento) =>
+  evento?.durationHours ?? evento?.dur_hor_eve ?? 0;
+const getEventModality = (evento) => evento?.modality || evento?.mod_eve || "";
+
 const EventsRoute = () => {
   const { usuario, token, loading } = useAuth();
   const navigate = useNavigate();
@@ -561,8 +578,8 @@ const EventsRoute = () => {
         return;
       }
 
-      // Recargar los datos para mantener la consistencia con la paginación
-      fetchData();
+      // Recargar los datos manteniendo los filtros actuales
+      fetchData(construirFiltrosAPI());
     };
 
     socket.on("cupos-change-hm", handleCuposChange);
@@ -572,7 +589,7 @@ const EventsRoute = () => {
       socket.off("evento-change-hm", handleEventUpdate);
       socket.off("cupos-change-hm", handleCuposChange);
     };
-  }, [isConnected, socket, handleEventUpdate, fetchData]);
+  }, [isConnected, socket, handleEventUpdate, fetchData, construirFiltrosAPI]);
 
   if (loading) {
     return (
@@ -807,82 +824,82 @@ const EventsRoute = () => {
               <div key={evento.id_eve} className="evento-card">
                 {/* Imagen de portada (real o placeholder) */}
                 <img
-                  src={evento.coverImageUrl || "https://i.imgur.com/c6Ry30Z.jpeg"}
-                  alt={`Portada de ${evento.name}`}
+                  src={getEventCoverImage(evento)}
+                  alt={`Portada de ${getEventName(evento)}`}
                   className="evento-portada-er"
                 />
                 {/* Indicador de estado para eventos filtrados */}
-                {evento.status === "FINISHED" && (
+                {getEventStatus(evento) === "FINISHED" && (
                   <div className="evento-estado-badge-er evento-estado-finalizado-er">
                     <Clock size={14} />
                     Finalizado
                   </div>
                 )}
-                {evento.status === "CANCELLED" && (
+                {getEventStatus(evento) === "CANCELLED" && (
                   <div className="evento-estado-badge-er evento-estado-cancelado-er">
                     <AlertCircle size={14} />
                     Cancelado
                   </div>
                 )}
-                {evento.status === "SUSPENDED" && (
+                {getEventStatus(evento) === "SUSPENDED" && (
                   <div className="evento-estado-badge-er evento-estado-suspendido-er">
                     <AlertTriangle size={14} />
                     Suspendido
                   </div>
                 )}
-                <h2 className="nombre-evento-er">{evento.name}</h2>
-                <p className="tipo">{evento.type}</p>
+                <h2 className="nombre-evento-er">{getEventName(evento)}</h2>
+                <p className="tipo">{getEventType(evento)}</p>
                 {/* Precio del evento */}
                 <p className="precio-evento">
-                  {evento.price === 0
+                  {getEventPrice(evento) === 0
                     ? "Gratuito"
-                    : `Precio: $${Number(evento.price || 0).toFixed(2)}`}
+                    : `Precio: $${getEventPrice(evento).toFixed(2)}`}
                 </p>
                 {/* Descripción del evento */}
-                {evento.description && (
+                {getEventDescription(evento) && (
                   <div className="descripcion-evento">
                     <p>
-                      {evento.description.length > 150
-                        ? `${evento.description.substring(0, 150)}...`
-                        : evento.description}
+                      {getEventDescription(evento).length > 150
+                        ? `${getEventDescription(evento).substring(0, 150)}...`
+                        : getEventDescription(evento)}
                     </p>
                   </div>
                 )}{" "}
                 <p className="fecha-evento-er">
-                  Fecha: {formatUTCForLocalDisplay(evento.startDate)} a{" "}
-                  {formatUTCForLocalDisplay(evento.endDate)}
+                  Fecha: {formatUTCForLocalDisplay(getEventStartDate(evento))} a{" "}
+                  {formatUTCForLocalDisplay(getEventEndDate(evento))}
                 </p>{" "}
                 <p className="duracion-evento-er">
-                  Duración: {evento.durationHours} horas
+                  Duración: {getEventDurationHours(evento)} horas
                 </p>
                 {/* Cupos disponibles */}
                 <p
                   className={
-                    evento.availableSpots === 0
+                    getEventAvailableSpots(evento) === 0
                       ? "cupos-agotados"
                       : "cupos-disponibles"
                   }
                 >
-                  {evento.availableSpots === 0
-                    ? "🚫 Sin cupos disponibles"
-                    : `Cupos disponibles: ${evento.availableSpots || 0}`}
+                  {getEventAvailableSpots(evento) === 0
+                    ? "Sin cupos disponibles"
+                    : `Cupos disponibles: ${getEventAvailableSpots(evento)}`}
                 </p>
                 {/* Modalidad con ícono */}
-                {evento.modality && (
+                {getEventModality(evento) && (
                   <p className="modalidad-evento">
-                    {evento.modality === "IN_PERSON" && (
+                    {getEventModality(evento) === "IN_PERSON" && (
                       <>
                         <MapPin size={16} className="inline-icon" /> Modalidad:
                         Presencial
                       </>
                     )}
-                    {evento.modality === "VIRTUAL" && (
+                    {getEventModality(evento) === "VIRTUAL" && (
                       <>
                         <Monitor size={16} className="inline-icon" /> Modalidad:
                         Virtual
                       </>
                     )}
-                    {evento.modality === "HYBRID" && (
+                    {getEventModality(evento) === "HYBRID" && (
                       <>
                         <Laptop size={16} className="inline-icon" /> Modalidad:
                         Semipresencial
@@ -917,11 +934,11 @@ const EventsRoute = () => {
                       eventosAprobados.includes(evento.id_eve)) ||
                     (eventosReprobados &&
                       eventosReprobados.includes(evento.id_eve)) ||
-                    evento.availableSpots === 0 ||
-                    evento.status === "INACTIVE" ||
-                    evento.status === "FINISHED" ||
-                    evento.status === "SUSPENDED" ||
-                    evento.status === "CANCELLED"
+                    getEventAvailableSpots(evento) === 0 ||
+                    getEventStatus(evento) === "INACTIVE" ||
+                    getEventStatus(evento) === "FINISHED" ||
+                    getEventStatus(evento) === "SUSPENDED" ||
+                    getEventStatus(evento) === "CANCELLED"
                   }
                 >
                   {eventosAprobados && eventosAprobados.includes(evento.id_eve)
@@ -931,15 +948,15 @@ const EventsRoute = () => {
                     ? "Evento reprobado"
                     : inscripciones.includes(evento.id_eve)
                     ? "Ya inscrito"
-                    : evento.availableSpots === 0
+                    : getEventAvailableSpots(evento) === 0
                     ? "Sin cupos"
-                    : evento.status === "INACTIVE"
+                    : getEventStatus(evento) === "INACTIVE"
                     ? "Evento inactivo"
-                    : evento.status === "FINISHED"
+                    : getEventStatus(evento) === "FINISHED"
                     ? "Evento finalizado"
-                    : evento.status === "SUSPENDED"
+                    : getEventStatus(evento) === "SUSPENDED"
                     ? "Evento suspendido"
-                    : evento.status === "CANCELLED"
+                    : getEventStatus(evento) === "CANCELLED"
                     ? "Evento cancelado"
                     : "Inscribirme"}
                 </button>

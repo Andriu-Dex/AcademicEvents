@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import axiosInstance from "../../../api/axiosConfig";
 import { CheckSquare, Download, BarChart } from "lucide-react";
 import { toast } from "react-toastify";
+import useDocumentTitle from "../../../hooks/useDocumentTitle";
+import { downloadBlobFile } from "../../../utils/fileDownload";
 import "./styles/ReporteAsistencia.css";
 
 const ReporteAsistencia = () => {
@@ -13,6 +15,8 @@ const ReporteAsistencia = () => {
   const [noShowsAnalisis, setNoShowsAnalisis] = useState([]);
   const [loading, setLoading] = useState(false);
   const [loadingPDF, setLoadingPDF] = useState(false);
+
+  useDocumentTitle("Reporte de Asistencia");
 
   // Cargar lista de eventos
   useEffect(() => {
@@ -175,14 +179,7 @@ const ReporteAsistencia = () => {
           }.pdf`;
 
       // Descargar el archivo
-      const url = window.URL.createObjectURL(new Blob([res.data]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", nombreArchivo);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
+      await downloadBlobFile(res.data, nombreArchivo, "application/pdf");
 
       toast.success("Reporte PDF descargado exitosamente");
     } catch (error) {

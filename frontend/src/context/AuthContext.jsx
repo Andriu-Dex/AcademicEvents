@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { setLogoutFunction } from "../api/axiosConfig";
 import * as jwt_decode from "jwt-decode";
 import { toast } from "react-toastify";
@@ -98,15 +98,27 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Función para sincronizar datos del usuario con el servidor
-  const syncUserData = async () => {
+  const syncUserData = useCallback(async () => {
     if (!token || !usuario || !UserDataSyncService.shouldSync()) {
       return;
     }
 
     try {
+      UserDataSyncService.markSyncStarted();
+
       // Importar axiosInstance dinámicamente para evitar circular dependencies
       const { default: axiosInstance } = await import("../api/axiosConfig");
-      const serverData = await UserDataSyncService.fetchUserData(axiosInstance);
+      const result = await UserDataSyncService.fetchUserData(axiosInstance);
+
+      if (!result?.success) {
+        if (result?.statusCode === 429) {
+          UserDataSyncService.markRateLimited();
+          return;
+        }
+        return;
+      }
+
+      const serverData = result.data;
 
       if (serverData) {
         const updatedUserData = UserDataSyncService.transformUserData(
@@ -114,17 +126,24 @@ export const AuthProvider = ({ children }) => {
           usuario
         );
 
+        UserDataSyncService.updateSyncTime();
+
+        if (!UserDataSyncService.hasUserDataChanged(usuario, updatedUserData)) {
+          return;
+        }
+
         // Actualizar estado
         setUsuario(updatedUserData);
-        UserDataSyncService.updateSyncTime();
 
         // Actualizar localStorage
         UserDataSyncService.updateLocalStorage(updatedUserData);
       }
     } catch (error) {
       console.error("Error al sincronizar datos del usuario:", error);
+    } finally {
+      UserDataSyncService.markSyncFinished();
     }
-  };
+  }, [token, usuario]);
 
   // Cerrar sesión y limpiar localStorage
   const logout = () => {

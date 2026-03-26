@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useRef } from "react";
 import { useAuth } from "../context/AuthContext";
 
 /**
@@ -15,38 +15,43 @@ const useUserSync = (options = {}) => {
   } = options;
 
   const { usuario, syncUserData } = useAuth();
+  const syncUserDataRef = useRef(syncUserData);
+
+  useEffect(() => {
+    syncUserDataRef.current = syncUserData;
+  }, [syncUserData]);
 
   // Sincronización manual optimizada
   const manualSync = useCallback(() => {
-    if (syncUserData) {
-      return syncUserData();
+    if (syncUserDataRef.current) {
+      return syncUserDataRef.current();
     }
-  }, [syncUserData]);
+  }, []);
 
   // Sincronización inicial
   useEffect(() => {
-    if (!enableAutoSync || !usuario || !syncUserData) return;
+    if (!enableAutoSync || !usuario || !syncUserDataRef.current) return;
 
     const timeoutId = setTimeout(() => {
-      syncUserData();
+      syncUserDataRef.current?.();
     }, 100);
 
     return () => clearTimeout(timeoutId);
-  }, [usuario?.id, syncUserData, enableAutoSync]);
+  }, [usuario?.id, enableAutoSync]);
 
   // Sincronización por eventos del navegador
   useEffect(() => {
-    if (!usuario || !syncUserData) return;
+    if (!usuario || !syncUserDataRef.current) return;
 
     const handleWindowFocus = () => {
       if (enableWindowFocus) {
-        syncUserData();
+        syncUserDataRef.current?.();
       }
     };
 
     const handleVisibilityChange = () => {
       if (enableVisibilityChange && !document.hidden) {
-        syncUserData();
+        syncUserDataRef.current?.();
       }
     };
 
@@ -69,20 +74,20 @@ const useUserSync = (options = {}) => {
         );
       }
     };
-  }, [usuario, syncUserData, enableWindowFocus, enableVisibilityChange]);
+  }, [usuario?.id, enableWindowFocus, enableVisibilityChange]);
 
   // Sincronización periódica
   useEffect(() => {
-    if (!enablePeriodicSync || !usuario || !syncUserData) return;
+    if (!enablePeriodicSync || !usuario || !syncUserDataRef.current) return;
 
     const interval = setInterval(() => {
       if (!document.hidden) {
-        syncUserData();
+        syncUserDataRef.current?.();
       }
     }, periodicSyncInterval);
 
     return () => clearInterval(interval);
-  }, [usuario, syncUserData, enablePeriodicSync, periodicSyncInterval]);
+  }, [usuario?.id, enablePeriodicSync, periodicSyncInterval]);
 
   return {
     manualSync,

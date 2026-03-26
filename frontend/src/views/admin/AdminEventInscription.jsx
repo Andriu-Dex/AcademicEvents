@@ -236,7 +236,7 @@ const AdminEventInscription = () => {
           toast.warning(
             `🚫 ¡ATENCIÓN! Los cupos para este evento se han AGOTADO. No se pueden aceptar más inscripciones.`,
             {
-              duration: 8000,
+              autoClose: 8000,
               position: "top-center",
               style: {
                 background: "#fef3c7",
@@ -254,7 +254,7 @@ const AdminEventInscription = () => {
               cuposRestantes > 1 ? "s" : ""
             } disponible${cuposRestantes > 1 ? "s" : ""} para este evento.`,
             {
-              duration: 6000,
+              autoClose: 6000,
               position: "top-center",
               style: {
                 background: "#dbeafe",
@@ -323,7 +323,7 @@ const AdminEventInscription = () => {
             `✅ Cupos corregidos exitosamente. Antes: ${cup_dis_eve_anterior}, Ahora: ${cup_dis_eve_corregido} (${
               diferencia > 0 ? `+${diferencia}` : diferencia
             })`,
-            { duration: 6000 }
+            { autoClose: 6000 }
           );
         }
 
@@ -357,12 +357,12 @@ const AdminEventInscription = () => {
         if (corregidos > 0) {
           toast.success(
             `✅ Verificación completa: ${corregidos} eventos corregidos, ${correctos} eventos correctos de un total de ${total}`,
-            { duration: 6000 }
+            { autoClose: 6000 }
           );
         } else {
           toast.success(
             `✅ Todos los eventos (${total}) tienen cupos correctos, no se requirió corrección`,
-            { duration: 4000 }
+            { autoClose: 4000 }
           );
         }
 

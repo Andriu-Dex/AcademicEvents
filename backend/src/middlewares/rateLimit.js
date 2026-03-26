@@ -5,9 +5,17 @@ const toPositiveInt = (value, fallback) => {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
 };
 
+const isProduction = process.env.NODE_ENV === "production";
+
 const apiLimiter = rateLimit({
-  windowMs: toPositiveInt(process.env.RATE_LIMIT_WINDOW_MS, 15 * 60 * 1000),
-  max: toPositiveInt(process.env.RATE_LIMIT_MAX_REQUESTS, 300),
+  windowMs: toPositiveInt(
+    process.env.RATE_LIMIT_WINDOW_MS,
+    isProduction ? 15 * 60 * 1000 : 5 * 60 * 1000
+  ),
+  max: toPositiveInt(
+    process.env.RATE_LIMIT_MAX_REQUESTS,
+    isProduction ? 300 : 5000
+  ),
   standardHeaders: true,
   legacyHeaders: false,
   message: {

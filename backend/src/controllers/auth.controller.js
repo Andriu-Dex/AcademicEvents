@@ -24,11 +24,19 @@ const ROLE_TO_LEGACY = {
 const readFirstDefined = (...values) =>
   values.find((value) => value !== undefined && value !== null);
 
+const normalizeEmail = (value) =>
+  typeof value === "string" ? value.trim().toLowerCase() : value;
+
+const normalizeText = (value) =>
+  typeof value === "string" ? value.trim() : value;
+
 // ===============================
 // Login de estudiante
 // ===============================
 const login = async (req, res) => {
-  const correo = readFirstDefined(req.body?.correo, req.body?.email);
+  const correo = normalizeEmail(
+    readFirstDefined(req.body?.correo, req.body?.email)
+  );
   const contrasena = readFirstDefined(req.body?.contrasena, req.body?.password);
 
   if (!correo || !contrasena) {
@@ -124,13 +132,25 @@ const login = async (req, res) => {
 // ==========================================
 const registrarEstudiante = async (req, res) => {
   try {
-    const ced_usu = readFirstDefined(req.body?.ced_usu, req.body?.idNumber);
-    const nom_usu = readFirstDefined(req.body?.nom_usu, req.body?.firstName);
-    const ape_usu = readFirstDefined(req.body?.ape_usu, req.body?.lastName);
-    const cor_usu = readFirstDefined(req.body?.cor_usu, req.body?.email);
+    const ced_usu = normalizeText(
+      readFirstDefined(req.body?.ced_usu, req.body?.idNumber)
+    );
+    const nom_usu = normalizeText(
+      readFirstDefined(req.body?.nom_usu, req.body?.firstName)
+    );
+    const ape_usu = normalizeText(
+      readFirstDefined(req.body?.ape_usu, req.body?.lastName)
+    );
+    const cor_usu = normalizeEmail(
+      readFirstDefined(req.body?.cor_usu, req.body?.email)
+    );
     const con_usu = readFirstDefined(req.body?.con_usu, req.body?.password);
-    const cel_usu = readFirstDefined(req.body?.cel_usu, req.body?.phone);
-    const id_car_est = readFirstDefined(req.body?.id_car_est, req.body?.careerId);
+    const cel_usu = normalizeText(
+      readFirstDefined(req.body?.cel_usu, req.body?.phone)
+    );
+    const id_car_est = normalizeText(
+      readFirstDefined(req.body?.id_car_est, req.body?.careerId)
+    );
 
     if (!ced_usu || !nom_usu || !ape_usu || !cor_usu || !con_usu || !cel_usu) {
       return res.status(400).json({

@@ -10,6 +10,8 @@ import {
   formatDateForPicker,
   formatDateForReports,
 } from "../../../utils/dateUtils";
+import useDocumentTitle from "../../../hooks/useDocumentTitle";
+import { downloadBlobFile } from "../../../utils/fileDownload";
 import "./styles/ReporteInscripciones.css";
 
 // Registrar el idioma
@@ -39,6 +41,8 @@ const ReporteInscripciones = () => {
   const [validaciones, setValidaciones] = useState([]);
   const [loading, setLoading] = useState(false);
   const [loadingPDF, setLoadingPDF] = useState(false);
+
+  useDocumentTitle("Reporte de Inscripciones");
 
   useEffect(() => {
     // Establecer fechas por defecto (último mes)
@@ -133,14 +137,7 @@ const ReporteInscripciones = () => {
       const nombreArchivo = `Reporte_Inscripciones_${fechaInicioStr}_al_${fechaFinStr}.pdf`;
 
       // Descargar el archivo
-      const url = window.URL.createObjectURL(new Blob([res.data]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", nombreArchivo);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
+      await downloadBlobFile(res.data, nombreArchivo, "application/pdf");
 
       toast.success("Reporte PDF descargado exitosamente");
     } catch (error) {

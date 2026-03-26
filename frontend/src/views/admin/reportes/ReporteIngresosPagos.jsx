@@ -10,6 +10,8 @@ import {
   formatDateForPicker,
   formatDateForReports,
 } from "../../../utils/dateUtils";
+import useDocumentTitle from "../../../hooks/useDocumentTitle";
+import { downloadBlobFile } from "../../../utils/fileDownload";
 import "./styles/ReporteIngresosPagos.css";
 
 // Registrar el idioma español
@@ -58,6 +60,8 @@ const ReporteIngresosPagos = () => {
   }); // Estados para carga
   const [loading, setLoading] = useState(false);
   const [loadingPDF, setLoadingPDF] = useState(false);
+
+  useDocumentTitle("Reporte de Ingresos y Pagos");
 
   // Efecto para establecer fechas por defecto
   useEffect(() => {
@@ -176,14 +180,7 @@ const ReporteIngresosPagos = () => {
       const nombreArchivo = `Reporte_Ingresos_${fechaInicioStr}_al_${fechaFinStr}.pdf`;
 
       // Descargar el blob como archivo
-      const url = window.URL.createObjectURL(new Blob([res.data]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", nombreArchivo);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
+      await downloadBlobFile(res.data, nombreArchivo, "application/pdf");
     } catch (error) {
       console.error("Error al descargar el PDF:", error);
       toast.error("No se pudo descargar el reporte. Intente nuevamente.");

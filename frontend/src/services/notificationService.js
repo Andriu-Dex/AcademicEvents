@@ -36,6 +36,7 @@ export const registerPushToken = async (token, platform = 'WEB', deviceInfo = nu
     console.error('[NotificationService] Error registering token:', error);
     return {
       success: false,
+      statusCode: error.response?.status ?? null,
       error: error.response?.data?.message || error.message,
     };
   }
@@ -154,7 +155,9 @@ export const getNotificationHistory = async (limit = 50, offset = 0) => {
       data: response.data.data,
     };
   } catch (error) {
-    console.error('[NotificationService] Error getting notification history:', error);
+    if (error.response?.status !== 429) {
+      console.error('[NotificationService] Error getting notification history:', error);
+    }
     return {
       success: false,
       error: error.response?.data?.message || error.message,

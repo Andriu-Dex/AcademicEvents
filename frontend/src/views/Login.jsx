@@ -119,13 +119,15 @@ const Login = () => {
     e.preventDefault(); // Previene recarga de página
     setIsLoading(true); // Muestra spinner de carga
 
+    const normalizedEmail = email.trim().toLowerCase();
+
     // Limpiar errores anteriores
     setErrors({ email: "", password: "" });
 
     // Validación básica de campos con feedback accesible
-    if (!email || !password) {
+    if (!normalizedEmail || !password) {
       const newErrors = { email: "", password: "" };
-      if (!email) {
+      if (!normalizedEmail) {
         newErrors.email = "El correo electrónico es obligatorio";
         emailInputRef.current?.focus();
       } else if (!password) {
@@ -137,16 +139,20 @@ const Login = () => {
       return;
     }
     // Validación de formato de correo
-    if (!isEmailValido(email)) {
+    if (!isEmailValido(normalizedEmail)) {
       setErrors({ email: "El correo no tiene un formato válido", password: "" });
       emailInputRef.current?.focus();
       setIsLoading(false);
       return;
     }
-    saveEmailIfNew(email);
+    if (normalizedEmail !== email) {
+      setEmail(normalizedEmail);
+    }
+
+    saveEmailIfNew(normalizedEmail);
     try {
       const payload = {
-        email,
+        email: normalizedEmail,
         password,
       };
 
@@ -154,7 +160,7 @@ const Login = () => {
         () => axiosInstance.post("/auth/login", payload),
         () =>
           axiosInstance.post("/login", {
-            correo: email,
+            correo: normalizedEmail,
             contrasena: password,
           })
       );
@@ -165,7 +171,7 @@ const Login = () => {
           "Debes verificar tu correo electrónico antes de iniciar sesión"
         );
         // Guardar el email para la página de verificación
-        localStorage.setItem("verificationPendingEmail", email);
+        localStorage.setItem("verificationPendingEmail", normalizedEmail);
         navigate("/verificacion-pendiente");
         setIsLoading(false);
         return;

@@ -14,6 +14,8 @@ import {
   Lightbulb,
 } from "lucide-react";
 import { toast } from "react-toastify";
+import useDocumentTitle from "../../../hooks/useDocumentTitle";
+import { downloadBlobFile } from "../../../utils/fileDownload";
 import "./styles/ReporteCarrera.css";
 
 const ReporteCarrera = () => {
@@ -24,6 +26,8 @@ const ReporteCarrera = () => {
   const [loading, setLoading] = useState(false);
   const [loadingPDF, setLoadingPDF] = useState(false);
   const navigate = useNavigate();
+
+  useDocumentTitle("Reporte por Carrera");
 
   // Función para verificar si hay datos significativos
   const tieneDataSignificativa = () => {
@@ -136,14 +140,7 @@ const ReporteCarrera = () => {
       const nombreArchivo = `Reporte_${nombreCarrera.replace(/\s+/g, "_")}.pdf`;
 
       // Descargar el archivo
-      const url = window.URL.createObjectURL(new Blob([res.data]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", nombreArchivo);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
+      await downloadBlobFile(res.data, nombreArchivo, "application/pdf");
 
       toast.success("Reporte PDF descargado exitosamente");
     } catch (error) {

@@ -91,7 +91,7 @@ const Perfil = () => {
 
   useEffect(() => {
     return () => {
-      if (previewDocUrl) {
+      if (previewDocUrl?.startsWith("blob:")) {
         URL.revokeObjectURL(previewDocUrl);
       }
     };
@@ -146,6 +146,24 @@ const Perfil = () => {
     setMostrarPreview(true);
   };
 
+  const abrirDocumentoPerfil = () => {
+    if (!perfilData?.com_usu) {
+      toast.error("No hay un documento cargado para previsualizar");
+      return;
+    }
+
+    const documentUrl = `${import.meta.env.VITE_API_URL}${perfilData.com_usu}`;
+    const documentName =
+      perfilData.com_usu.split("/").pop() || "documentos-personales.pdf";
+
+    setPreviewDoc({
+      name: documentName,
+      type: "application/pdf",
+    });
+    setPreviewDocUrl(documentUrl);
+    setMostrarPreview(true);
+  };
+
   const openDocumentPicker = (tipo) => {
     fileInputRefs.current[tipo]?.click();
   };
@@ -159,7 +177,7 @@ const Perfil = () => {
     setMostrarPreview(false);
     setPreviewDoc(null);
     setPreviewDocUrl((currentUrl) => {
-      if (currentUrl) {
+      if (currentUrl?.startsWith("blob:")) {
         URL.revokeObjectURL(currentUrl);
       }
 
@@ -499,19 +517,15 @@ const Perfil = () => {
                   {" "}
                   <button
                     className="btn-ver-documento"
-                    onClick={() => {
-                      const url = `${import.meta.env.VITE_API_URL}${
-                        perfilData.com_usu
-                      }`;
-                      // Abrir directamente en el navegador
-                      window.open(url, "_blank");
-                    }}
+                    type="button"
+                    onClick={abrirDocumentoPerfil}
                   >
                     <Eye size={16} />
                     Ver documento
                   </button>
                   <button
                     className="btn-actualizar-documento"
+                    type="button"
                     onClick={() => setMostrarModal(true)}
                   >
                     <Edit size={16} />

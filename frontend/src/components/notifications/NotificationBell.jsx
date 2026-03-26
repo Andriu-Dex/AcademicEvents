@@ -6,6 +6,7 @@
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Bell, BellOff, Settings, CheckCheck, Trash2, X, Loader2 } from 'lucide-react';
+import { toast } from 'react-toastify';
 import { useNotifications } from '../../context/NotificationContext';
 import {
   getNotificationHistory,
@@ -38,18 +39,39 @@ const NotificationBell = () => {
   const panelRef = useRef(null);
   const bellButtonRef = useRef(null);
   const closeButtonRef = useRef(null);
+  const lastHistoryLoadRef = useRef(0);
+  const historyRetryAtRef = useRef(0);
+  const historyNotificationsRef = useRef([]);
+  const isLoadingHistoryRef = useRef(false);
 
   // Backend notification history state
   const [historyNotifications, setHistoryNotifications] = useState([]);
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
-  const [historyLoaded, setHistoryLoaded] = useState(false);
+
+  useEffect(() => {
+    historyNotificationsRef.current = historyNotifications;
+  }, [historyNotifications]);
+
+  useEffect(() => {
+    isLoadingHistoryRef.current = isLoadingHistory;
+  }, [isLoadingHistory]);
 
   /**
    * Load notification history from backend
    */
   const loadNotificationHistory = useCallback(async () => {
-    if (!isEnabled || isLoadingHistory) return;
+    if (!isEnabled || isLoadingHistoryRef.current) return;
 
+    const now = Date.now();
+    const shouldReuseRecentHistory =
+      historyNotificationsRef.current.length > 0 &&
+      now - lastHistoryLoadRef.current < 15000;
+
+    if (shouldReuseRecentHistory || now < historyRetryAtRef.current) {
+      return;
+    }
+
+    isLoadingHistoryRef.current = true;
     setIsLoadingHistory(true);
     try {
       const result = await getNotificationHistory(50, 0);
@@ -66,14 +88,33 @@ const NotificationBell = () => {
           fromBackend: true,
         }));
         setHistoryNotifications(transformed);
-        setHistoryLoaded(true);
+        lastHistoryLoadRef.current = now;
+      } else {
+        const isRateLimited =
+          result.statusCode === 429 || String(result.error || "").includes("429");
+
+        if (isRateLimited) {
+          historyRetryAtRef.current = now + 30000;
+          return;
+        }
+
+        toast.error("No se pudo cargar el historial de notificaciones.");
       }
     } catch (error) {
       console.error('[NotificationBell] Error loading history:', error);
+      const statusCode = error?.response?.status;
+
+      if (statusCode === 429) {
+        historyRetryAtRef.current = now + 30000;
+        return;
+      }
+
+      toast.error("No se pudo cargar el historial de notificaciones.");
     } finally {
+      isLoadingHistoryRef.current = false;
       setIsLoadingHistory(false);
     }
-  }, [isEnabled, isLoadingHistory]);
+  }, [isEnabled]);
 
   /**
    * Merge foreground notifications with backend history
@@ -172,16 +213,16 @@ const NotificationBell = () => {
 
   // Load notification history when panel opens and notifications are enabled
   useEffect(() => {
-    if (showPanel && isEnabled && !historyLoaded && !showSettings) {
+    if (showPanel && isEnabled && !showSettings) {
       loadNotificationHistory();
     }
-  }, [showPanel, isEnabled, historyLoaded, showSettings, loadNotificationHistory]);
+  }, [showPanel, isEnabled, showSettings, loadNotificationHistory]);
 
-  // Reset history loaded flag when notifications are disabled/enabled
   useEffect(() => {
     if (!isEnabled) {
-      setHistoryLoaded(false);
       setHistoryNotifications([]);
+      lastHistoryLoadRef.current = 0;
+      historyRetryAtRef.current = 0;
     }
   }, [isEnabled]);
 

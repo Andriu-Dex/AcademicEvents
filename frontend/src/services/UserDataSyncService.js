@@ -5,6 +5,8 @@
 class UserDataSyncService {
   static SYNC_CACHE_TIME = 30000; // 30 segundos
   static lastSyncTime = 0;
+  static isSyncing = false;
+  static retryAfterTime = 0;
 
   /**
    * Verifica si es necesario sincronizar datos basado en cache
@@ -12,7 +14,11 @@ class UserDataSyncService {
    */
   static shouldSync() {
     const now = Date.now();
-    return now - this.lastSyncTime >= this.SYNC_CACHE_TIME;
+    return (
+      !this.isSyncing &&
+      now >= this.retryAfterTime &&
+      now - this.lastSyncTime >= this.SYNC_CACHE_TIME
+    );
   }
 
   /**
@@ -20,6 +26,19 @@ class UserDataSyncService {
    */
   static updateSyncTime() {
     this.lastSyncTime = Date.now();
+  }
+
+  static markSyncStarted() {
+    this.isSyncing = true;
+  }
+
+  static markSyncFinished() {
+    this.isSyncing = false;
+  }
+
+  static markRateLimited(retryDelayMs = 60000) {
+    this.retryAfterTime = Date.now() + retryDelayMs;
+    this.isSyncing = false;
   }
 
   /**
@@ -30,10 +49,20 @@ class UserDataSyncService {
   static async fetchUserData(axiosInstance) {
     try {
       const response = await axiosInstance.get("/perfil");
-      return response.data;
+      return {
+        success: true,
+        data: response.data,
+      };
     } catch (error) {
-      console.error("Error al obtener datos del usuario:", error);
-      return null;
+      if (error.response?.status !== 429) {
+        console.error("Error al obtener datos del usuario:", error);
+      }
+
+      return {
+        success: false,
+        statusCode: error.response?.status ?? null,
+        error,
+      };
     }
   }
 
@@ -74,6 +103,20 @@ class UserDataSyncService {
     } catch (error) {
       console.error("Error al actualizar localStorage:", error);
     }
+  }
+
+  static hasUserDataChanged(currentUser, nextUser) {
+    if (!currentUser || !nextUser) {
+      return true;
+    }
+
+    return (
+      currentUser.correo !== nextUser.correo ||
+      currentUser.rol_usu !== nextUser.rol_usu ||
+      currentUser.nom_usu !== nextUser.nom_usu ||
+      currentUser.ape_usu !== nextUser.ape_usu ||
+      currentUser.img_per_usu !== nextUser.img_per_usu
+    );
   }
 }
 

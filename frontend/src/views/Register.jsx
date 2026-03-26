@@ -107,6 +107,16 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const sanitizedData = {
+      ...datos,
+      ced_usu: datos.ced_usu.trim(),
+      nom_usu: datos.nom_usu.trim(),
+      ape_usu: datos.ape_usu.trim(),
+      cor_usu: datos.cor_usu.trim().toLowerCase(),
+      cel_usu: datos.cel_usu.trim(),
+      id_car_est: typeof datos.id_car_est === "string" ? datos.id_car_est.trim() : datos.id_car_est,
+    };
+
     const {
       ced_usu,
       nom_usu,
@@ -114,7 +124,7 @@ const Register = () => {
       id_car_est: carrera,
       cel_usu,
       con_usu,
-    } = datos;
+    } = sanitizedData;
 
     // Validar campos
     if (!validarCedula(ced_usu)) {
@@ -153,7 +163,10 @@ const Register = () => {
 
     try {
       setLoading(true);
-      const resultado = await registroService.registrarUsuario(datos);
+      const resultado = await registroService.registrarUsuario({
+        ...sanitizedData,
+        con_usu,
+      });
 
       if (resultado.success) {
         if (resultado.requireVerification) {
