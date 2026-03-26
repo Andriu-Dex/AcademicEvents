@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axiosInstance from "../../api/axiosConfig";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
+import ActionConfirmModal from "../../components/common/ActionConfirmModal";
 import { useConfigurableStats } from "../../hooks/useConfigurableStats";
 import {
   Save,
@@ -10,7 +11,6 @@ import {
   Eye,
   User,
   Mail,
-  EyeOff,
   Edit2,
   CheckCircle,
   AlertCircle,
@@ -21,7 +21,6 @@ import {
   Briefcase,
   Image,
   AlignLeft,
-  Globe,
   Phone,
   MapPin,
   School,
@@ -31,11 +30,88 @@ import {
 } from "lucide-react";
 import ImageUpload from "../../components/ImageUploadMVA";
 import StatisticsConfig from "../../components/admin/StatisticsConfig";
+import {
+  SOCIAL_ICON_COMPONENTS,
+  SOCIAL_ICON_OPTIONS,
+  SOCIAL_PLATFORM_DEFAULTS,
+  SOCIAL_PLATFORM_OPTIONS,
+} from "../../constants/socialLinkOptions";
+import { useSocket } from "../../context/SocketContext";
+import { resolveTenantScope } from "../../utils/tenantScope";
+import {
+  normalizeUniversityData,
+  normalizeUniversitySocialLink,
+} from "../../utils/universityData";
 import "./styles/AdminConfiguracionMVA.css";
+
+const UNIVERSITY_SOCKET_EVENT = "university-change-hm";
+
+const EMPTY_UNIVERSITY_STATE = {
+  id_uni: "",
+  nom_uni: "",
+  acr_uni: "",
+  url_log_uni: "",
+  dir_uni: "",
+  tel_uni: "",
+  cor_uni: "",
+  social_links: [],
+};
+
+const normalizeComparableValue = (value) =>
+  typeof value === "string" ? value.trim() : value ?? "";
+
+const normalizeSocialLinksForComparison = (socialLinks = []) =>
+  socialLinks
+    .map((socialLink) => ({
+      id: socialLink.id || "",
+      label: normalizeComparableValue(socialLink.label),
+      url: normalizeComparableValue(socialLink.url),
+      iconKey: normalizeComparableValue(socialLink.iconKey),
+      platformKey: normalizeComparableValue(socialLink.platformKey || "custom"),
+      displayOrder: Number(socialLink.displayOrder) || 0,
+      isActive: Boolean(socialLink.isActive),
+      opensInNewTab: Boolean(socialLink.opensInNewTab),
+    }))
+    .sort((leftLink, rightLink) => leftLink.displayOrder - rightLink.displayOrder);
+
+const areUniversityBaseFieldsEqual = (leftUniversity, rightUniversity) =>
+  ["nom_uni", "acr_uni", "url_log_uni", "dir_uni", "tel_uni", "cor_uni"].every(
+    (field) =>
+      normalizeComparableValue(leftUniversity?.[field]) ===
+      normalizeComparableValue(rightUniversity?.[field])
+  );
+
+const createEmptySocialLink = (displayOrder = 0) => ({
+  id: "",
+  clientId: `temp-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+  label: "",
+  url: "",
+  iconKey: SOCIAL_PLATFORM_DEFAULTS.custom.defaultIconKey,
+  platformKey: "custom",
+  displayOrder,
+  isActive: true,
+  opensInNewTab: true,
+});
+
+const isValidAbsoluteUrl = (value) => {
+  try {
+    const parsedUrl = new URL(value);
+    return parsedUrl.protocol === "http:" || parsedUrl.protocol === "https:";
+  } catch {
+    return false;
+  }
+};
 
 const AdminConfiguracionMVA = () => {
   // Hook para manejar estadísticas configurables
   const { updateActiveStats } = useConfigurableStats();
+  const { socket } = useSocket();
+  const tenantScopeRef = useRef(resolveTenantScope());
+  const socialLinksReloadTimeoutRef = useRef(null);
+  const externalChangesToastShownRef = useRef(false);
+  const hasPendingUniversityChangesRef = useRef(false);
+  const loadUniversityDataRef = useRef(null);
+  const isPersistingUniversityChangesRef = useRef(false);
 
   const [form, setForm] = useState({
     mision: "",
@@ -71,21 +147,21 @@ const AdminConfiguracionMVA = () => {
       nom_uni: false,
       dir_uni: false,
     });
+  const [socialLinksErrors, setSocialLinksErrors] = useState({});
   const [mvaExpanded, setMvaExpanded] = useState(false);
   const [facultadExpanded, setFacultadExpanded] = useState(false);
   const [universidadExpanded, setUniversidadExpanded] = useState(false);
   const [statisticsExpanded, setStatisticsExpanded] = useState(false);
+  const [socialLinks, setSocialLinks] = useState([]);
+  const [initialSocialLinks, setInitialSocialLinks] = useState([]);
+  const [loadingSocialLinks, setLoadingSocialLinks] = useState(false);
+  const [saveSocialLinksSuccess, setSaveSocialLinksSuccess] = useState(false);
+  const [initialUniversidad, setInitialUniversidad] =
+    useState(EMPTY_UNIVERSITY_STATE);
+  const [socialLinkPendingDeletion, setSocialLinkPendingDeletion] =
+    useState(null);
 
-  const [universidad, setUniversidad] = useState({
-    id_uni: "",
-    nom_uni: "",
-    acr_uni: "",
-    url_log_uni: "",
-    url_web_uni: "",
-    dir_uni: "",
-    tel_uni: "",
-    cor_uni: "",
-  });
+  const [universidad, setUniversidad] = useState(EMPTY_UNIVERSITY_STATE);
 
   const defaultAutoridad = {
     cargo: "",
@@ -155,20 +231,43 @@ const AdminConfiguracionMVA = () => {
   const cargarUniversidad = async () => {
     try {
       setLoadingUniversidad(true);
-      const res = await axiosInstance.get("/universidad-principal");
-      if (res.data) {
-        const data = res.data;
-        setUniversidad({
-          id_uni: data.id_uni || "",
-          nom_uni: data.nom_uni || "",
-          acr_uni: data.acr_uni || "",
-          url_log_uni: data.url_log_uni || "",
-          url_web_uni: data.url_web_uni || "",
-          dir_uni: data.dir_uni || "",
-          tel_uni: data.tel_uni || "",
-          cor_uni: data.cor_uni || "",
-        });
+      const universityResponse = await axiosInstance.get("/universidad-principal");
+      if (!universityResponse.data) {
+        return;
       }
+
+      const normalizedUniversity = normalizeUniversityData(
+        universityResponse.data,
+        EMPTY_UNIVERSITY_STATE
+      );
+
+      let normalizedSocialLinks = [];
+
+      if (normalizedUniversity.id_uni) {
+        const socialLinksResponse = await axiosInstance.get(
+          `/universidad/${normalizedUniversity.id_uni}/social-links`
+        );
+
+        normalizedSocialLinks = (socialLinksResponse.data?.socialLinks || [])
+          .map((socialLink, index) => ({
+            ...normalizeUniversitySocialLink(socialLink, index),
+            clientId: socialLink.id || `social-${index}`,
+          }))
+          .sort(
+            (leftLink, rightLink) => leftLink.displayOrder - rightLink.displayOrder
+          );
+      }
+
+      const universityState = {
+        ...normalizedUniversity,
+        social_links: normalizedSocialLinks,
+      };
+
+      setUniversidad(universityState);
+      setInitialUniversidad(universityState);
+      setSocialLinks(normalizedSocialLinks);
+      setInitialSocialLinks(normalizedSocialLinks);
+      setSocialLinksErrors({});
     } catch (error) {
       console.error("Error al cargar información de la Universidad:", error);
       toast.error("Error al cargar la información de la Universidad");
@@ -176,6 +275,8 @@ const AdminConfiguracionMVA = () => {
       setLoadingUniversidad(false);
     }
   };
+
+  loadUniversityDataRef.current = cargarUniversidad;
 
   const guardar = async () => {
     try {
@@ -283,12 +384,12 @@ const AdminConfiguracionMVA = () => {
 
       setLoadingUniversidad(true);
       setSaveUniversidadSuccess(false);
+      isPersistingUniversityChangesRef.current = true;
 
       await axiosInstance.put(`/universidad/${universidad.id_uni}`, {
         nom_uni: universidad.nom_uni,
         acr_uni: universidad.acr_uni,
         url_log_uni: universidad.url_log_uni,
-        url_web_uni: universidad.url_web_uni,
         dir_uni: universidad.dir_uni,
         tel_uni: universidad.tel_uni,
         cor_uni: universidad.cor_uni,
@@ -305,7 +406,225 @@ const AdminConfiguracionMVA = () => {
       console.error("Error al guardar información de la Universidad:", error);
       toast.error("Error al guardar la información de la Universidad");
     } finally {
+      isPersistingUniversityChangesRef.current = false;
       setLoadingUniversidad(false);
+    }
+  };
+
+  const actualizarSocialLink = (clientId, field, value) => {
+    setSocialLinks((currentSocialLinks) =>
+      currentSocialLinks.map((socialLink) => {
+        if (socialLink.clientId !== clientId) {
+          return socialLink;
+        }
+
+        if (field === "platformKey") {
+          const selectedPlatform =
+            SOCIAL_PLATFORM_DEFAULTS[value] || SOCIAL_PLATFORM_DEFAULTS.custom;
+
+          return {
+            ...socialLink,
+            platformKey: value,
+            iconKey:
+              value === "custom" ? socialLink.iconKey : selectedPlatform.defaultIconKey,
+            label:
+              !socialLink.label ||
+              socialLink.label ===
+                (SOCIAL_PLATFORM_DEFAULTS[socialLink.platformKey]?.label || "")
+                ? selectedPlatform.label
+                : socialLink.label,
+          };
+        }
+
+        return {
+          ...socialLink,
+          [field]: value,
+        };
+      })
+    );
+
+    setSocialLinksErrors((currentErrors) => {
+      if (!currentErrors[clientId]) {
+        return currentErrors;
+      }
+
+      return {
+        ...currentErrors,
+        [clientId]: {
+          ...currentErrors[clientId],
+          [field]: false,
+        },
+      };
+    });
+  };
+
+  const agregarSocialLink = () => {
+    setSocialLinks((currentSocialLinks) => [
+      ...currentSocialLinks,
+      createEmptySocialLink(currentSocialLinks.length),
+    ]);
+  };
+
+  const eliminarSocialLink = (clientId) => {
+    setSocialLinks((currentSocialLinks) =>
+      currentSocialLinks.filter((socialLink) => socialLink.clientId !== clientId)
+    );
+
+    setSocialLinksErrors((currentErrors) => {
+      if (!currentErrors[clientId]) {
+        return currentErrors;
+      }
+
+      const nextErrors = { ...currentErrors };
+      delete nextErrors[clientId];
+      return nextErrors;
+    });
+  };
+
+  const solicitarEliminacionSocialLink = (socialLink) => {
+    setSocialLinkPendingDeletion(socialLink);
+  };
+
+  const cerrarModalEliminacionSocialLink = () => {
+    setSocialLinkPendingDeletion(null);
+  };
+
+  const confirmarEliminacionSocialLink = () => {
+    if (!socialLinkPendingDeletion?.clientId) {
+      return;
+    }
+
+    eliminarSocialLink(socialLinkPendingDeletion.clientId);
+    cerrarModalEliminacionSocialLink();
+  };
+
+  const moverSocialLink = (clientId, direction) => {
+    setSocialLinks((currentSocialLinks) => {
+      const currentIndex = currentSocialLinks.findIndex(
+        (socialLink) => socialLink.clientId === clientId
+      );
+
+      if (currentIndex === -1) {
+        return currentSocialLinks;
+      }
+
+      const targetIndex = direction === "up" ? currentIndex - 1 : currentIndex + 1;
+
+      if (targetIndex < 0 || targetIndex >= currentSocialLinks.length) {
+        return currentSocialLinks;
+      }
+
+      const nextSocialLinks = [...currentSocialLinks];
+      [nextSocialLinks[currentIndex], nextSocialLinks[targetIndex]] = [
+        nextSocialLinks[targetIndex],
+        nextSocialLinks[currentIndex],
+      ];
+
+      return nextSocialLinks.map((socialLink, index) => ({
+        ...socialLink,
+        displayOrder: index,
+      }));
+    });
+  };
+
+  const validarSocialLinks = () => {
+    const nextErrors = {};
+
+    socialLinks.forEach((socialLink) => {
+      nextErrors[socialLink.clientId] = {
+        label: !socialLink.label.trim(),
+        url:
+          !socialLink.url.trim() || !isValidAbsoluteUrl(socialLink.url.trim()),
+        iconKey: !socialLink.iconKey.trim(),
+      };
+    });
+
+    setSocialLinksErrors(nextErrors);
+
+    return !Object.values(nextErrors).some((error) =>
+      Object.values(error).some(Boolean)
+    );
+  };
+
+  const guardarSocialLinks = async () => {
+    if (!universidad.id_uni) {
+      toast.error("No se encontró la universidad para guardar los enlaces");
+      return;
+    }
+
+    if (!validarSocialLinks()) {
+      toast.error("Revisa los enlaces institucionales antes de guardar");
+      return;
+    }
+
+    try {
+      setLoadingSocialLinks(true);
+      setSaveSocialLinksSuccess(false);
+      isPersistingUniversityChangesRef.current = true;
+
+      const normalizedSocialLinks = socialLinks.map((socialLink, index) => ({
+        ...socialLink,
+        label: socialLink.label.trim(),
+        url: socialLink.url.trim(),
+        iconKey: socialLink.iconKey.trim(),
+        platformKey: socialLink.platformKey || "custom",
+        displayOrder: index,
+      }));
+
+      const currentIds = new Set(
+        normalizedSocialLinks.filter((socialLink) => socialLink.id).map((socialLink) => socialLink.id)
+      );
+      const deletedSocialLinks = initialSocialLinks.filter(
+        (socialLink) => socialLink.id && !currentIds.has(socialLink.id)
+      );
+
+      await Promise.all(
+        deletedSocialLinks.map((socialLink) =>
+          axiosInstance.delete(
+            `/universidad/${universidad.id_uni}/social-links/${socialLink.id}`
+          )
+        )
+      );
+
+      await Promise.all(
+        normalizedSocialLinks.map((socialLink) => {
+          const payload = {
+            label: socialLink.label,
+            url: socialLink.url,
+            iconKey: socialLink.iconKey,
+            platformKey: socialLink.platformKey,
+            displayOrder: socialLink.displayOrder,
+            isActive: socialLink.isActive,
+            opensInNewTab: socialLink.opensInNewTab,
+          };
+
+          if (socialLink.id) {
+            return axiosInstance.put(
+              `/universidad/${universidad.id_uni}/social-links/${socialLink.id}`,
+              payload
+            );
+          }
+
+          return axiosInstance.post(
+            `/universidad/${universidad.id_uni}/social-links`,
+            payload
+          );
+        })
+      );
+
+      toast.success("Enlaces institucionales actualizados correctamente");
+      setSaveSocialLinksSuccess(true);
+      setTimeout(() => setSaveSocialLinksSuccess(false), 3000);
+      await cargarUniversidad();
+    } catch (error) {
+      console.error("Error al guardar enlaces institucionales:", error);
+      toast.error(
+        error.response?.data?.message ||
+          "Error al guardar los enlaces institucionales"
+      );
+    } finally {
+      isPersistingUniversityChangesRef.current = false;
+      setLoadingSocialLinks(false);
     }
   };
 
@@ -327,11 +646,82 @@ const AdminConfiguracionMVA = () => {
     setAutoridadesArray(nuevasAutoridades);
   };
 
+  const hasPendingUniversityBaseChanges = !areUniversityBaseFieldsEqual(
+    universidad,
+    initialUniversidad
+  );
+
+  const hasPendingSocialLinksChanges =
+    JSON.stringify(normalizeSocialLinksForComparison(socialLinks)) !==
+    JSON.stringify(normalizeSocialLinksForComparison(initialSocialLinks));
+
+  useEffect(() => {
+    hasPendingUniversityChangesRef.current =
+      hasPendingUniversityBaseChanges || hasPendingSocialLinksChanges;
+
+    if (!hasPendingUniversityChangesRef.current) {
+      externalChangesToastShownRef.current = false;
+    }
+  }, [hasPendingSocialLinksChanges, hasPendingUniversityBaseChanges]);
+
   useEffect(() => {
     cargar();
     cargarFacultad();
     cargarUniversidad();
   }, []);
+
+  useEffect(() => {
+    if (!socket) {
+      return undefined;
+    }
+
+    const handleUniversityChange = (eventData) => {
+      if (!eventData?.data) {
+        return;
+      }
+
+      if (
+        eventData.data.tenantSlug &&
+        eventData.data.tenantSlug !== tenantScopeRef.current
+      ) {
+        return;
+      }
+
+      if (isPersistingUniversityChangesRef.current) {
+        return;
+      }
+
+      if (hasPendingUniversityChangesRef.current) {
+        if (!externalChangesToastShownRef.current) {
+          toast.info(
+            "Se detectaron cambios externos en la universidad. Guarda tus cambios o recarga la sección para sincronizarla."
+          );
+          externalChangesToastShownRef.current = true;
+        }
+
+        return;
+      }
+
+      if (socialLinksReloadTimeoutRef.current) {
+        clearTimeout(socialLinksReloadTimeoutRef.current);
+      }
+
+      socialLinksReloadTimeoutRef.current = setTimeout(() => {
+        loadUniversityDataRef.current?.();
+      }, 150);
+    };
+
+    socket.on(UNIVERSITY_SOCKET_EVENT, handleUniversityChange);
+
+    return () => {
+      socket.off(UNIVERSITY_SOCKET_EVENT, handleUniversityChange);
+
+      if (socialLinksReloadTimeoutRef.current) {
+        clearTimeout(socialLinksReloadTimeoutRef.current);
+        socialLinksReloadTimeoutRef.current = null;
+      }
+    };
+  }, [socket]);
 
   const togglePreviewMode = () => {
     setPreviewMode(!previewMode);
@@ -387,8 +777,9 @@ const AdminConfiguracionMVA = () => {
           <>
             <p className="adminconfig-description-acmva">
               Desde aquí puedes editar la información básica de la universidad,
-              como su nombre, logo, dirección y datos de contacto. Esta
-              información aparecerá en todas las secciones del sistema.
+              como su nombre, logo, dirección y datos de contacto. También
+              puedes administrar los enlaces institucionales que se mostrarán
+              en el footer del sistema.
             </p>
 
             <div className="adminconfig-section-acmva">
@@ -459,26 +850,6 @@ const AdminConfiguracionMVA = () => {
                         })
                       }
                       placeholder="Ejemplo: UTA"
-                    />
-                  </label>
-                </div>
-
-                <div className="adminconfig-form-group-acmva">
-                  <label>
-                    <span>
-                      <Globe size={14} /> Sitio Web:
-                    </span>
-                    <input
-                      type="text"
-                      className="adminconfig-input-acmva"
-                      value={universidad.url_web_uni || ""}
-                      onChange={(e) =>
-                        setUniversidad({
-                          ...universidad,
-                          url_web_uni: e.target.value,
-                        })
-                      }
-                      placeholder="https://ejemplo.com"
                     />
                   </label>
                 </div>
@@ -576,6 +947,273 @@ const AdminConfiguracionMVA = () => {
                   ) : (
                     <>
                       <Save size={18} /> Guardar Cambios
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            <div className="adminconfig-section-acmva">
+              <div className="adminconfig-social-header-acmva">
+                <div>
+                  <h3 className="adminconfig-section-title-acmva">
+                    Enlaces institucionales
+                  </h3>
+                  <p className="adminconfig-info-acmva">
+                    Configura los enlaces que se mostrarán en el footer. Puedes
+                    elegir plataforma, icono, orden de aparición y si estarán
+                    visibles.
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  className="autoridad-add-btn-acmva"
+                  onClick={agregarSocialLink}
+                >
+                  <Plus size={18} /> Agregar enlace
+                </button>
+              </div>
+
+              {socialLinks.length > 0 ? (
+                <div className="adminconfig-social-links-acmva">
+                  {socialLinks.map((socialLink, index) => {
+                    const IconPreview =
+                      SOCIAL_ICON_COMPONENTS[socialLink.iconKey] ||
+                      SOCIAL_ICON_COMPONENTS.link;
+                    const socialLinkError =
+                      socialLinksErrors[socialLink.clientId] || {};
+
+                    return (
+                      <div
+                        key={socialLink.clientId}
+                        className={`adminconfig-social-card-acmva ${
+                          socialLink.isActive
+                            ? ""
+                            : "adminconfig-social-card-inactive-acmva"
+                        }`}
+                      >
+                        <div className="adminconfig-social-card-header-acmva">
+                          <div className="adminconfig-social-card-title-acmva">
+                            <span className="autoridad-numero-acmva">
+                              Enlace {index + 1}
+                            </span>
+                            <span className="adminconfig-social-visibility-badge-acmva">
+                              {socialLink.isActive ? "Visible" : "Oculto"}
+                            </span>
+                            <span className="adminconfig-social-icon-preview-acmva">
+                              <IconPreview size={18} aria-hidden="true" />
+                            </span>
+                          </div>
+
+                          <div className="adminconfig-social-card-actions-acmva">
+                            <button
+                              type="button"
+                              className="adminconfig-social-order-btn-acmva"
+                              onClick={() =>
+                                moverSocialLink(socialLink.clientId, "up")
+                              }
+                              disabled={index === 0}
+                              aria-label="Mover enlace hacia arriba"
+                            >
+                              <ChevronUp size={16} />
+                            </button>
+                            <button
+                              type="button"
+                              className="adminconfig-social-order-btn-acmva"
+                              onClick={() =>
+                                moverSocialLink(socialLink.clientId, "down")
+                              }
+                              disabled={index === socialLinks.length - 1}
+                              aria-label="Mover enlace hacia abajo"
+                            >
+                              <ChevronDown size={16} />
+                            </button>
+                            <button
+                              type="button"
+                              className="autoridad-delete-btn-acmva"
+                              onClick={() =>
+                                solicitarEliminacionSocialLink(socialLink)
+                              }
+                              aria-label="Eliminar enlace institucional"
+                              title="Eliminar enlace institucional"
+                            >
+                              <Trash2 size={18} />
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="adminconfig-social-grid-acmva">
+                          <div className="adminconfig-form-group-acmva">
+                            <label>
+                              <span>Plataforma:</span>
+                              <select
+                                className="adminconfig-input-acmva"
+                                value={socialLink.platformKey}
+                                onChange={(event) =>
+                                  actualizarSocialLink(
+                                    socialLink.clientId,
+                                    "platformKey",
+                                    event.target.value
+                                  )
+                                }
+                              >
+                                {SOCIAL_PLATFORM_OPTIONS.map((option) => (
+                                  <option key={option.value} value={option.value}>
+                                    {option.label}
+                                  </option>
+                                ))}
+                              </select>
+                            </label>
+                          </div>
+
+                          <div className="adminconfig-form-group-acmva">
+                            <label>
+                              <span>Icono:</span>
+                              <select
+                                className={`adminconfig-input-acmva ${
+                                  socialLinkError.iconKey
+                                    ? "error-input-acmva"
+                                    : ""
+                                }`}
+                                value={socialLink.iconKey}
+                                onChange={(event) =>
+                                  actualizarSocialLink(
+                                    socialLink.clientId,
+                                    "iconKey",
+                                    event.target.value
+                                  )
+                                }
+                              >
+                                {SOCIAL_ICON_OPTIONS.map((option) => (
+                                  <option key={option.value} value={option.value}>
+                                    {option.label}
+                                  </option>
+                                ))}
+                              </select>
+                              {socialLinkError.iconKey && (
+                                <p className="validation-error-message-acmva">
+                                  Selecciona un icono
+                                </p>
+                              )}
+                            </label>
+                          </div>
+
+                          <div className="adminconfig-form-group-acmva">
+                            <label>
+                              <span>Etiqueta:</span>
+                              <input
+                                type="text"
+                                className={`adminconfig-input-acmva ${
+                                  socialLinkError.label ? "error-input-acmva" : ""
+                                }`}
+                                value={socialLink.label}
+                                onChange={(event) =>
+                                  actualizarSocialLink(
+                                    socialLink.clientId,
+                                    "label",
+                                    event.target.value
+                                  )
+                                }
+                                placeholder="Ejemplo: Facebook oficial"
+                              />
+                              {socialLinkError.label && (
+                                <p className="validation-error-message-acmva">
+                                  La etiqueta es obligatoria
+                                </p>
+                              )}
+                            </label>
+                          </div>
+
+                          <div className="adminconfig-form-group-acmva">
+                            <label>
+                              <span>URL:</span>
+                              <input
+                                type="url"
+                                inputMode="url"
+                                autoComplete="url"
+                                className={`adminconfig-input-acmva ${
+                                  socialLinkError.url ? "error-input-acmva" : ""
+                                }`}
+                                value={socialLink.url}
+                                onChange={(event) =>
+                                  actualizarSocialLink(
+                                    socialLink.clientId,
+                                    "url",
+                                    event.target.value
+                                  )
+                                }
+                                placeholder="https://ejemplo.com"
+                              />
+                              {socialLinkError.url && (
+                                <p className="validation-error-message-acmva">
+                                  Ingresa una URL válida
+                                </p>
+                              )}
+                            </label>
+                          </div>
+                        </div>
+
+                        <div className="adminconfig-social-flags-acmva">
+                          <label className="adminconfig-social-flag-acmva">
+                            <input
+                              type="checkbox"
+                              checked={socialLink.isActive}
+                              onChange={(event) =>
+                                actualizarSocialLink(
+                                  socialLink.clientId,
+                                  "isActive",
+                                  event.target.checked
+                                )
+                              }
+                            />
+                            <span>Visible en footer</span>
+                          </label>
+
+                          <label className="adminconfig-social-flag-acmva">
+                            <input
+                              type="checkbox"
+                              checked={socialLink.opensInNewTab}
+                              onChange={(event) =>
+                                actualizarSocialLink(
+                                  socialLink.clientId,
+                                  "opensInNewTab",
+                                  event.target.checked
+                                )
+                              }
+                            />
+                            <span>Abrir en nueva pestaña</span>
+                          </label>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="empty-state-acmva">
+                  <AlertCircle size={36} color="#94a3b8" />
+                  <p>No se han agregado enlaces institucionales.</p>
+                </div>
+              )}
+
+              <div className="adminconfig-actions-acmva">
+                <button
+                  type="button"
+                  onClick={guardarSocialLinks}
+                  className={`adminconfig-btn-acmva ${
+                    loadingSocialLinks ? "loading-acmva" : ""
+                  } ${saveSocialLinksSuccess ? "success-acmva" : ""}`}
+                  disabled={loadingSocialLinks}
+                >
+                  {loadingSocialLinks ? (
+                    <>Guardando...</>
+                  ) : saveSocialLinksSuccess ? (
+                    <>
+                      <CheckCircle size={18} /> Guardado
+                    </>
+                  ) : (
+                    <>
+                      <Save size={18} /> Guardar enlaces
                     </>
                   )}
                 </button>
@@ -1067,6 +1705,19 @@ const AdminConfiguracionMVA = () => {
           </>
         )}
       </div>
+
+      <ActionConfirmModal
+        isOpen={Boolean(socialLinkPendingDeletion)}
+        title="Confirmar eliminación de enlace"
+        description={`Se quitará "${
+          socialLinkPendingDeletion?.label || "este enlace institucional"
+        }" de la lista actual. El cambio se aplicará en el sistema cuando guardes los enlaces.`}
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        confirmVariant="danger"
+        onClose={cerrarModalEliminacionSocialLink}
+        onConfirm={confirmarEliminacionSocialLink}
+      />
     </>
   );
 };

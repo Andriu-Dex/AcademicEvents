@@ -43,50 +43,50 @@ const EVENT_STATUS_MAP = {
 
 const ACTIVE_EVENT_OVERRIDES = {
   "80ce8ece-c17a-4c82-9d0d-be303eb25e37": {
-    startDate: "2026-03-06T14:00:00.000Z",
-    endDate: "2026-03-08T23:00:00.000Z",
+    startDate: "2026-03-24T14:00:00.000Z",
+    endDate: "2026-03-27T23:00:00.000Z",
     status: "ACTIVO",
     isFeatured: true,
   },
   "b1a2c3d4-e5f6-4789-8012-345678901234": {
-    startDate: "2026-03-03T14:00:00.000Z",
-    endDate: "2026-03-10T22:00:00.000Z",
+    startDate: "2026-03-22T14:00:00.000Z",
+    endDate: "2026-04-02T22:00:00.000Z",
     status: "ACTIVO",
     isFeatured: true,
   },
   "c2b3a4d5-f6e7-4890-9123-456789012345": {
-    startDate: "2026-03-07T13:00:00.000Z",
-    endDate: "2026-03-09T22:00:00.000Z",
+    startDate: "2026-03-25T13:00:00.000Z",
+    endDate: "2026-03-28T22:00:00.000Z",
     status: "ACTIVO",
     isFeatured: true,
   },
   "d3c4b5a6-e7f8-4901-0234-567890123456": {
-    startDate: "2026-03-07T15:00:00.000Z",
-    endDate: "2026-03-07T18:00:00.000Z",
+    startDate: "2026-03-25T15:00:00.000Z",
+    endDate: "2026-03-25T18:00:00.000Z",
     status: "ACTIVO",
     isFeatured: false,
   },
   "c8b9a0f1-f2e3-4456-5789-012345678901": {
-    startDate: "2026-03-05T15:00:00.000Z",
-    endDate: "2026-03-12T22:00:00.000Z",
+    startDate: "2026-03-20T15:00:00.000Z",
+    endDate: "2026-04-03T22:00:00.000Z",
     status: "ACTIVO",
     isFeatured: true,
   },
   "da1e167e-56fa-4f3f-af5e-c3c1539461c3": {
-    startDate: "2026-03-06T14:00:00.000Z",
-    endDate: "2026-03-09T19:00:00.000Z",
+    startDate: "2026-03-23T14:00:00.000Z",
+    endDate: "2026-03-30T19:00:00.000Z",
     status: "ACTIVO",
     isFeatured: false,
   },
   "f2575503-6234-4a03-bee7-0dd17e04b917": {
-    startDate: "2026-03-04T14:00:00.000Z",
-    endDate: "2026-03-11T22:00:00.000Z",
+    startDate: "2026-03-21T14:00:00.000Z",
+    endDate: "2026-04-01T22:00:00.000Z",
     status: "ACTIVO",
     isFeatured: false,
   },
   "30854a1f-06c7-4c7c-979f-62545b54c9aa": {
-    startDate: "2026-03-01T13:00:00.000Z",
-    endDate: "2026-03-14T22:00:00.000Z",
+    startDate: "2026-03-18T13:00:00.000Z",
+    endDate: "2026-03-29T22:00:00.000Z",
     status: "ACTIVO",
     isFeatured: true,
   },
@@ -245,14 +245,14 @@ const careers = [
 ];
 
 const rawEvents = [
-  {
+{
     id_eve: "80ce8ece-c17a-4c82-9d0d-be303eb25e37",
     nom_eve: "Congreso Internacional de Tecnología",
     des_eve:
       "Congreso donde se discutirán los avances más recientes en el campo de la tecnología.",
     tip_eve: "CONGRESO",
-    fec_ini_eve: new Date("2025-07-10T10:00:00.000Z"),
-    fec_fin_eve: new Date("2025-07-12T18:00:00.000Z"),
+    fec_ini_eve: new Date("2026-07-10T10:00:00.000Z"),
+    fec_fin_eve: new Date("2026-07-12T18:00:00.000Z"),
     dur_hor_eve: 20,
     val_eve: 200.0,
     est_eve: "ACTIVO",
@@ -262,14 +262,14 @@ const rawEvents = [
     cup_dis_eve: 49,
     mod_eve: "PRESENCIAL",
   },
-  {
+{
     id_eve: "41745eee-6a8f-4c92-8943-5382f1868bc2",
-    nom_eve: "Bienvenida Estudiantil 2025",
+    nom_eve: "Bienvenida Estudiantil 2026",
     des_eve:
       "Espacio de integración para nuevos estudiantes con actividades recreativas, presentaciones institucionales y orientación académica.",
     tip_eve: "SOCIALIZACION",
-    fec_ini_eve: new Date("2025-06-21T05:00:00.000Z"),
-    fec_fin_eve: new Date("2025-06-22T05:00:00.000Z"),
+    fec_ini_eve: new Date("2026-06-21T05:00:00.000Z"),
+    fec_fin_eve: new Date("2026-06-22T05:00:00.000Z"),
     dur_hor_eve: 5,
     mod_eve: "PRESENCIAL",
     val_eve: 5.0,
@@ -279,14 +279,14 @@ const rawEvents = [
     cup_max_eve: 5,
     cup_dis_eve: 5,
   },
-  {
+{
     id_eve: "a7133aa5-4891-49a1-b495-12aec5ab53c8",
     nom_eve: "Inteligencia Artificial en la Educación",
     des_eve:
       "Charla sobre el impacto y las oportunidades de la inteligencia artificial en los procesos de enseñanza y aprendizaje.",
     tip_eve: "CHARLA",
-    fec_ini_eve: new Date("2025-06-21T05:00:00.000Z"),
-    fec_fin_eve: new Date("2025-06-22T05:00:00.000Z"),
+    fec_ini_eve: new Date("2026-06-21T05:00:00.000Z"),
+    fec_fin_eve: new Date("2026-06-22T05:00:00.000Z"),
     dur_hor_eve: 4,
     mod_eve: "PRESENCIAL",
     val_eve: 45.0,
@@ -296,13 +296,13 @@ const rawEvents = [
     cup_max_eve: 5,
     cup_dis_eve: 5,
   },
-  {
+{
     id_eve: "ddbf0681-fad5-487e-845c-8aff2792e0f6",
     nom_eve: "JavaScript",
     des_eve: "asdsad",
     tip_eve: "WEBINAR",
-    fec_ini_eve: new Date("2025-06-19T05:00:00.000Z"),
-    fec_fin_eve: new Date("2025-06-27T05:00:00.000Z"),
+    fec_ini_eve: new Date("2026-06-19T05:00:00.000Z"),
+    fec_fin_eve: new Date("2026-06-27T05:00:00.000Z"),
     dur_hor_eve: 5,
     mod_eve: "PRESENCIAL",
     val_eve: 0.0,
@@ -312,13 +312,13 @@ const rawEvents = [
     cup_max_eve: 5,
     cup_dis_eve: 5,
   },
-  {
+{
     id_eve: "8c1c5837-e282-4dac-be35-5f7fa7e12b86",
     nom_eve: "Ruby",
     des_eve: "",
     tip_eve: "CURSO",
-    fec_ini_eve: new Date("2025-06-21T05:00:00.000Z"),
-    fec_fin_eve: new Date("2025-06-27T05:00:00.000Z"),
+    fec_ini_eve: new Date("2026-06-21T05:00:00.000Z"),
+    fec_fin_eve: new Date("2026-06-27T05:00:00.000Z"),
     dur_hor_eve: 5,
     mod_eve: "VIRTUAL",
     val_eve: 2.0,
@@ -328,13 +328,13 @@ const rawEvents = [
     cup_max_eve: 5,
     cup_dis_eve: 5,
   },
-  {
+{
     id_eve: "d468c0b5-e059-4e00-a93a-f64e24e582c0",
     nom_eve: "PHP",
     des_eve: "",
     tip_eve: "CURSO",
-    fec_ini_eve: new Date("2025-06-20T05:00:00.000Z"),
-    fec_fin_eve: new Date("2025-06-29T05:00:00.000Z"),
+    fec_ini_eve: new Date("2026-06-20T05:00:00.000Z"),
+    fec_fin_eve: new Date("2026-06-29T05:00:00.000Z"),
     dur_hor_eve: 4,
     mod_eve: "PRESENCIAL",
     val_eve: 45.0,
@@ -344,13 +344,13 @@ const rawEvents = [
     cup_max_eve: 5,
     cup_dis_eve: 5,
   },
-  {
+{
     id_eve: "02e1df41-a185-4a01-9e3b-156d579f523d",
     nom_eve: "Los Mejores Lenguajes De Programación",
-    des_eve: "Congreso que trata los mejores lenguajes de programación en 2025",
+    des_eve: "Congreso que trata los mejores lenguajes de programación en 2026",
     tip_eve: "CONGRESO",
-    fec_ini_eve: new Date("2025-06-07T00:00:00.000Z"),
-    fec_fin_eve: new Date("2025-06-09T00:00:00.000Z"),
+    fec_ini_eve: new Date("2026-01-10T00:00:00.000Z"),
+    fec_fin_eve: new Date("2026-01-12T00:00:00.000Z"),
     dur_hor_eve: 8,
     mod_eve: "PRESENCIAL",
     val_eve: 0.0,
@@ -360,14 +360,14 @@ const rawEvents = [
     cup_max_eve: 200,
     cup_dis_eve: 199,
   },
-  {
+{
     id_eve: "bf0213d7-3cf5-44bd-9468-41ab9c01441a",
     nom_eve: "La Inteligencia Artificial En La Educación",
     des_eve:
       "Seminario web que aborda los temas más recientes sobre la IA en la educación y que repercute en la actualidad",
     tip_eve: "WEBINAR",
-    fec_ini_eve: new Date("2025-06-11T00:00:00.000Z"),
-    fec_fin_eve: new Date("2025-06-19T00:00:00.000Z"),
+    fec_ini_eve: new Date("2026-01-15T00:00:00.000Z"),
+    fec_fin_eve: new Date("2026-01-23T00:00:00.000Z"),
     dur_hor_eve: 7,
     mod_eve: "VIRTUAL",
     val_eve: 0.0,
@@ -377,14 +377,14 @@ const rawEvents = [
     cup_max_eve: 100,
     cup_dis_eve: 99,
   },
-  {
+{
     id_eve: "92b8ce78-248e-4ff4-9bab-0cf3127b5f51",
     nom_eve: "La Depresión En Los Estudiantes",
     des_eve:
       "Charla informativa que busca concienciar sobre la depresión en estudiantes, sus causas, síntomas y estrategias para afrontarla.",
     tip_eve: "CHARLA",
-    fec_ini_eve: new Date("2025-06-18T23:30:00.000Z"),
-    fec_fin_eve: new Date("2025-06-19T02:00:00.000Z"),
+    fec_ini_eve: new Date("2026-02-05T23:30:00.000Z"),
+    fec_fin_eve: new Date("2026-02-06T02:00:00.000Z"),
     dur_hor_eve: 10,
     mod_eve: "SEMIPRESENCIAL",
     val_eve: 0.0,
@@ -394,13 +394,13 @@ const rawEvents = [
     cup_max_eve: 50,
     cup_dis_eve: 50,
   },
-  {
+{
     id_eve: "73c28d62-e7e4-45df-81c8-654e9fb2d36c",
     nom_eve: "Anime Comic",
     des_eve: "Evento de actividades anime para otakus",
     tip_eve: "SOCIALIZACION",
-    fec_ini_eve: new Date("2025-06-20T13:45:00.000Z"),
-    fec_fin_eve: new Date("2025-06-22T04:30:00.000Z"),
+    fec_ini_eve: new Date("2026-02-07T13:45:00.000Z"),
+    fec_fin_eve: new Date("2026-02-09T04:30:00.000Z"),
     dur_hor_eve: 5,
     mod_eve: "PRESENCIAL",
     val_eve: 6.0,
@@ -410,14 +410,14 @@ const rawEvents = [
     cup_max_eve: 100,
     cup_dis_eve: 99,
   },
-  {
+{
     id_eve: "e75c9cb8-4c76-4a15-ac47-c4bc946e992d",
     nom_eve: "Comunicación Efectiva en Equipos de Trabajo",
     des_eve:
       "Taller interactivo para mejorar habilidades de comunicación y colaboración en entornos académicos y laborales.",
     tip_eve: "CURSO",
-    fec_ini_eve: new Date("2025-06-22T05:00:00.000Z"),
-    fec_fin_eve: new Date("2025-07-03T05:00:00.000Z"),
+    fec_ini_eve: new Date("2026-06-22T05:00:00.000Z"),
+    fec_fin_eve: new Date("2026-07-03T05:00:00.000Z"),
     dur_hor_eve: 5,
     mod_eve: "SEMIPRESENCIAL",
     val_eve: 0.0,
@@ -427,14 +427,14 @@ const rawEvents = [
     cup_max_eve: 57,
     cup_dis_eve: 57,
   },
-  {
+{
     id_eve: "0c4e9719-6e5b-4bf4-9637-e642a953e9d7",
     nom_eve: "Anime X",
     des_eve:
       "Congreso académico y cultural que explora el anime desde perspectivas artísticas, sociales y educativas.",
     tip_eve: "CONGRESO",
-    fec_ini_eve: new Date("2025-06-24T05:00:00.000Z"),
-    fec_fin_eve: new Date("2025-07-01T06:15:00.000Z"),
+    fec_ini_eve: new Date("2026-02-10T05:00:00.000Z"),
+    fec_fin_eve: new Date("2026-02-17T06:15:00.000Z"),
     dur_hor_eve: 2,
     mod_eve: "PRESENCIAL",
     val_eve: 10.0,
@@ -444,14 +444,15 @@ const rawEvents = [
     cup_max_eve: 10,
     cup_dis_eve: 10,
   },
-  {
+
+{
     id_eve: "cdd86459-0ada-4e4a-a1ff-4578d277db96",
     nom_eve: "Fundamentos de HTML y CSS",
     des_eve:
       "Curso práctico para aprender a crear y diseñar páginas web con HTML y CSS desde cero.",
     tip_eve: "CURSO",
-    fec_ini_eve: new Date("2025-06-21T05:00:00.000Z"),
-    fec_fin_eve: new Date("2025-06-22T05:00:00.000Z"),
+    fec_ini_eve: new Date("2026-02-20T05:00:00.000Z"),
+    fec_fin_eve: new Date("2026-02-21T05:00:00.000Z"),
     dur_hor_eve: 6,
     mod_eve: "SEMIPRESENCIAL",
     val_eve: 15.0,
@@ -461,14 +462,14 @@ const rawEvents = [
     cup_max_eve: 6,
     cup_dis_eve: 6,
   },
-  {
+{
     id_eve: "08137feb-da7d-4fd5-b600-e2f6fb4334dc",
     nom_eve: "Gestión del Estrés y Bienestar Laboral",
     des_eve:
       "Webinar para aprender técnicas prácticas que ayuden a manejar el estrés y mejorar el bienestar en el entorno laboral.",
     tip_eve: "WEBINAR",
-    fec_ini_eve: new Date("2025-06-21T05:00:00.000Z"),
-    fec_fin_eve: new Date("2025-06-28T05:00:00.000Z"),
+    fec_ini_eve: new Date("2026-06-21T05:00:00.000Z"),
+    fec_fin_eve: new Date("2026-06-28T05:00:00.000Z"),
     dur_hor_eve: 5,
     mod_eve: "VIRTUAL",
     val_eve: 5.0,
@@ -478,14 +479,14 @@ const rawEvents = [
     cup_max_eve: 54,
     cup_dis_eve: 54,
   },
-  {
+{
     id_eve: "f8abc120-32a7-4fbe-aae6-6ed66f3c595f",
     nom_eve: "Innovación y Emprendimiento Social",
     des_eve:
       "Congreso para promover proyectos innovadores que generen impacto social positivo en la comunidad.",
     tip_eve: "CONGRESO",
-    fec_ini_eve: new Date("2025-06-22T05:00:00.000Z"),
-    fec_fin_eve: new Date("2025-06-29T05:00:00.000Z"),
+    fec_ini_eve: new Date("2026-06-22T05:00:00.000Z"),
+    fec_fin_eve: new Date("2026-06-29T05:00:00.000Z"),
     dur_hor_eve: 9,
     mod_eve: "VIRTUAL",
     val_eve: 9.0,
@@ -495,14 +496,14 @@ const rawEvents = [
     cup_max_eve: 99,
     cup_dis_eve: 99,
   },
-  {
+{
     id_eve: "f2575503-6234-4a03-bee7-0dd17e04b917",
     nom_eve: "Desarrollo Ágil de Software",
     des_eve:
       "Webinar sobre metodologías ágiles para optimizar procesos de desarrollo y entrega de software.",
     tip_eve: "WEBINAR",
-    fec_ini_eve: new Date("2025-06-22T05:00:00.000Z"),
-    fec_fin_eve: new Date("2025-07-04T05:00:00.000Z"),
+    fec_ini_eve: new Date("2026-06-22T05:00:00.000Z"),
+    fec_fin_eve: new Date("2026-07-04T05:00:00.000Z"),
     dur_hor_eve: 5,
     mod_eve: "VIRTUAL",
     val_eve: 10.0,
@@ -512,14 +513,14 @@ const rawEvents = [
     cup_max_eve: 5,
     cup_dis_eve: 5,
   },
-  {
+{
     id_eve: "83dd0d01-a0c9-4d4b-aafe-af4600694306",
     nom_eve: "Programación en Java desde Cero",
     des_eve:
       "Curso introductorio para aprender los fundamentos de programación orientada a objetos con Java.",
     tip_eve: "CURSO",
-    fec_ini_eve: new Date("2025-06-21T05:00:00.000Z"),
-    fec_fin_eve: new Date("2025-06-22T08:45:00.000Z"),
+    fec_ini_eve: new Date("2026-06-21T05:00:00.000Z"),
+    fec_fin_eve: new Date("2026-06-22T08:45:00.000Z"),
     dur_hor_eve: 5,
     mod_eve: "PRESENCIAL",
     val_eve: 0.0,
@@ -529,14 +530,14 @@ const rawEvents = [
     cup_max_eve: 8,
     cup_dis_eve: 8,
   },
-  {
+{
     id_eve: "fdcf18eb-91e9-44e7-9e2e-cea89d6280f2",
     nom_eve: "Introducción a la Programación en C++",
     des_eve:
       "Curso básico para aprender a programar con C++ y comprender los principios de la programación estructurada y orientada a objetos.",
     tip_eve: "CURSO",
-    fec_ini_eve: new Date("2025-06-21T05:00:00.000Z"),
-    fec_fin_eve: new Date("2025-06-24T05:00:00.000Z"),
+    fec_ini_eve: new Date("2026-06-21T05:00:00.000Z"),
+    fec_fin_eve: new Date("2026-06-24T05:00:00.000Z"),
     dur_hor_eve: 6,
     mod_eve: "PRESENCIAL",
     val_eve: 88.0,
@@ -546,14 +547,14 @@ const rawEvents = [
     cup_max_eve: 6,
     cup_dis_eve: 6,
   },
-  {
+{
     id_eve: "4f44a39f-4891-42a4-995b-191fddfa6fc3",
     nom_eve: "Desarrollo de Aplicaciones con .NET 9",
     des_eve:
       "Curso práctico para aprender a crear aplicaciones modernas con la nueva versión de .NET 9.",
     tip_eve: "CURSO",
-    fec_ini_eve: new Date("2025-06-21T05:00:00.000Z"),
-    fec_fin_eve: new Date("2025-06-27T05:00:00.000Z"),
+    fec_ini_eve: new Date("2026-06-21T05:00:00.000Z"),
+    fec_fin_eve: new Date("2026-06-27T05:00:00.000Z"),
     dur_hor_eve: 55,
     mod_eve: "VIRTUAL",
     val_eve: 2.0,
@@ -563,14 +564,14 @@ const rawEvents = [
     cup_max_eve: 58,
     cup_dis_eve: 58,
   },
-  {
+{
     id_eve: "da1e167e-56fa-4f3f-af5e-c3c1539461c3",
     nom_eve: "Seguridad en Aplicaciones Web",
     des_eve:
       "Charla sobre buenas prácticas y herramientas para proteger aplicaciones web frente a vulnerabilidades comunes.",
     tip_eve: "CHARLA",
-    fec_ini_eve: new Date("2025-06-26T05:00:00.000Z"),
-    fec_fin_eve: new Date("2025-07-05T05:00:00.000Z"),
+    fec_ini_eve: new Date("2026-06-26T05:00:00.000Z"),
+    fec_fin_eve: new Date("2026-07-05T05:00:00.000Z"),
     dur_hor_eve: 6,
     mod_eve: "PRESENCIAL",
     val_eve: 6.0,
@@ -580,14 +581,14 @@ const rawEvents = [
     cup_max_eve: 6,
     cup_dis_eve: 6,
   },
-  {
+{
     id_eve: "cc55aacd-c38f-4c27-8ec1-76edc8d42427",
     nom_eve: "Programación en Java desde Cero",
     des_eve:
       "Curso introductorio para aprender los fundamentos de programación orientada a objetos con Java.",
     tip_eve: "CURSO",
-    fec_ini_eve: new Date("2025-06-20T09:45:00.000Z"),
-    fec_fin_eve: new Date("2025-06-28T05:00:00.000Z"),
+    fec_ini_eve: new Date("2026-06-20T09:45:00.000Z"),
+    fec_fin_eve: new Date("2026-06-28T05:00:00.000Z"),
     dur_hor_eve: 8,
     mod_eve: "PRESENCIAL",
     val_eve: 7.0,
@@ -597,14 +598,14 @@ const rawEvents = [
     cup_max_eve: 77,
     cup_dis_eve: 76,
   },
-  {
+{
     id_eve: "b1a2c3d4-e5f6-4789-8012-345678901234",
     nom_eve: "Machine Learning con Python",
     des_eve:
       "Taller intensivo para aprender fundamentos de aprendizaje automático utilizando bibliotecas como scikit-learn y pandas.",
     tip_eve: "CURSO",
-    fec_ini_eve: new Date("2025-06-25T09:00:00.000Z"),
-    fec_fin_eve: new Date("2025-07-02T17:00:00.000Z"),
+    fec_ini_eve: new Date("2026-06-25T09:00:00.000Z"),
+    fec_fin_eve: new Date("2026-07-02T17:00:00.000Z"),
     dur_hor_eve: 40,
     mod_eve: "SEMIPRESENCIAL",
     val_eve: 120.0,
@@ -614,14 +615,14 @@ const rawEvents = [
     cup_max_eve: 25,
     cup_dis_eve: 22,
   },
-  {
+{
     id_eve: "c2b3a4d5-f6e7-4890-9123-456789012345",
     nom_eve: "Ciberseguridad en el Mundo Digital",
     des_eve:
       "Conferencia sobre amenazas digitales actuales y estrategias de protección para empresas y usuarios.",
     tip_eve: "CONGRESO",
-    fec_ini_eve: new Date("2025-06-28T08:00:00.000Z"),
-    fec_fin_eve: new Date("2025-06-30T18:00:00.000Z"),
+    fec_ini_eve: new Date("2026-06-28T08:00:00.000Z"),
+    fec_fin_eve: new Date("2026-06-30T18:00:00.000Z"),
     dur_hor_eve: 24,
     mod_eve: "PRESENCIAL",
     val_eve: 80.0,
@@ -631,14 +632,14 @@ const rawEvents = [
     cup_max_eve: 100,
     cup_dis_eve: 95,
   },
-  {
+{
     id_eve: "d3c4b5a6-e7f8-4901-0234-567890123456",
     nom_eve: "Diseño UX/UI para Aplicaciones Móviles",
     des_eve:
       "Webinar sobre principios de diseño centrado en el usuario para crear interfaces intuitivas y atractivas.",
     tip_eve: "WEBINAR",
-    fec_ini_eve: new Date("2025-07-01T15:00:00.000Z"),
-    fec_fin_eve: new Date("2025-07-01T18:00:00.000Z"),
+    fec_ini_eve: new Date("2026-07-01T15:00:00.000Z"),
+    fec_fin_eve: new Date("2026-07-01T18:00:00.000Z"),
     dur_hor_eve: 3,
     mod_eve: "VIRTUAL",
     val_eve: 25.0,
@@ -648,14 +649,15 @@ const rawEvents = [
     cup_max_eve: 150,
     cup_dis_eve: 148,
   },
-  {
+
+{
     id_eve: "e4d5c6b7-f8e9-4012-1345-678901234567",
     nom_eve: "Blockchain y Criptomonedas: Presente y Futuro",
     des_eve:
       "Charla informativa sobre tecnología blockchain, su impacto en las finanzas y aplicaciones futuras.",
     tip_eve: "CHARLA",
-    fec_ini_eve: new Date("2025-07-05T10:00:00.000Z"),
-    fec_fin_eve: new Date("2025-07-05T12:00:00.000Z"),
+    fec_ini_eve: new Date("2026-07-05T10:00:00.000Z"),
+    fec_fin_eve: new Date("2026-07-05T12:00:00.000Z"),
     dur_hor_eve: 2,
     mod_eve: "VIRTUAL",
     val_eve: 0.0,
@@ -665,14 +667,14 @@ const rawEvents = [
     cup_max_eve: 200,
     cup_dis_eve: 180,
   },
-  {
+{
     id_eve: "f5e6d7c8-e9f0-4123-2456-789012345678",
     nom_eve: "Desarrollo de Videojuegos con Unity",
     des_eve:
       "Curso práctico para crear juegos 2D y 3D utilizando el motor Unity y programación en C#.",
     tip_eve: "CURSO",
-    fec_ini_eve: new Date("2025-07-07T09:00:00.000Z"),
-    fec_fin_eve: new Date("2025-07-14T17:00:00.000Z"),
+    fec_ini_eve: new Date("2026-07-07T09:00:00.000Z"),
+    fec_fin_eve: new Date("2026-07-14T17:00:00.000Z"),
     dur_hor_eve: 35,
     mod_eve: "PRESENCIAL",
     val_eve: 150.0,
@@ -682,14 +684,14 @@ const rawEvents = [
     cup_max_eve: 20,
     cup_dis_eve: 18,
   },
-  {
+{
     id_eve: "a6f7e8d9-f0e1-4234-3567-890123456789",
     nom_eve: "Marketing Digital y Redes Sociales",
     des_eve:
       "Seminario sobre estrategias de marketing digital, gestión de redes sociales y análisis de métricas.",
     tip_eve: "WEBINAR",
-    fec_ini_eve: new Date("2025-07-10T14:00:00.000Z"),
-    fec_fin_eve: new Date("2025-07-10T17:00:00.000Z"),
+    fec_ini_eve: new Date("2026-07-10T14:00:00.000Z"),
+    fec_fin_eve: new Date("2026-07-10T17:00:00.000Z"),
     dur_hor_eve: 3,
     mod_eve: "VIRTUAL",
     val_eve: 30.0,
@@ -699,14 +701,14 @@ const rawEvents = [
     cup_max_eve: 80,
     cup_dis_eve: 75,
   },
-  {
+{
     id_eve: "b7a8f9e0-e1f2-4345-4678-901234567890",
     nom_eve: "Festival de Robótica Estudiantil",
     des_eve:
       "Evento de socialización donde estudiantes presentan proyectos de robótica y automatización.",
     tip_eve: "SOCIALIZACION",
-    fec_ini_eve: new Date("2025-07-12T08:00:00.000Z"),
-    fec_fin_eve: new Date("2025-07-13T18:00:00.000Z"),
+    fec_ini_eve: new Date("2026-07-12T08:00:00.000Z"),
+    fec_fin_eve: new Date("2026-07-13T18:00:00.000Z"),
     dur_hor_eve: 16,
     mod_eve: "PRESENCIAL",
     val_eve: 10.0,
@@ -716,14 +718,14 @@ const rawEvents = [
     cup_max_eve: 300,
     cup_dis_eve: 285,
   },
-  {
+{
     id_eve: "c8b9a0f1-f2e3-4456-5789-012345678901",
     nom_eve: "Cloud Computing con AWS",
     des_eve:
       "Curso de introducción a servicios en la nube de Amazon Web Services para desarrolladores.",
     tip_eve: "CURSO",
-    fec_ini_eve: new Date("2025-07-15T10:00:00.000Z"),
-    fec_fin_eve: new Date("2025-07-22T16:00:00.000Z"),
+    fec_ini_eve: new Date("2026-07-15T10:00:00.000Z"),
+    fec_fin_eve: new Date("2026-07-22T16:00:00.000Z"),
     dur_hor_eve: 30,
     mod_eve: "VIRTUAL",
     val_eve: 100.0,
@@ -733,14 +735,14 @@ const rawEvents = [
     cup_max_eve: 40,
     cup_dis_eve: 35,
   },
-  {
+{
     id_eve: "d9c0b1a2-e3f4-4567-6890-123456789012",
     nom_eve: "Liderazgo y Gestión de Equipos",
     des_eve:
       "Taller sobre habilidades de liderazgo, comunicación efectiva y gestión de equipos multidisciplinarios.",
     tip_eve: "CHARLA",
-    fec_ini_eve: new Date("2025-07-18T09:00:00.000Z"),
-    fec_fin_eve: new Date("2025-07-18T13:00:00.000Z"),
+    fec_ini_eve: new Date("2026-07-18T09:00:00.000Z"),
+    fec_fin_eve: new Date("2026-07-18T13:00:00.000Z"),
     dur_hor_eve: 4,
     mod_eve: "SEMIPRESENCIAL",
     val_eve: 20.0,
@@ -750,14 +752,14 @@ const rawEvents = [
     cup_max_eve: 60,
     cup_dis_eve: 58,
   },
-  {
+{
     id_eve: "e0d1c2b3-f4e5-4678-7901-234567890123",
     nom_eve: "Internet de las Cosas (IoT)",
     des_eve:
       "Congreso sobre dispositivos conectados, sensores inteligentes y el futuro del IoT en la industria.",
     tip_eve: "CONGRESO",
-    fec_ini_eve: new Date("2025-07-20T08:00:00.000Z"),
-    fec_fin_eve: new Date("2025-07-22T17:00:00.000Z"),
+    fec_ini_eve: new Date("2026-07-20T08:00:00.000Z"),
+    fec_fin_eve: new Date("2026-07-22T17:00:00.000Z"),
     dur_hor_eve: 18,
     mod_eve: "PRESENCIAL",
     val_eve: 75.0,
@@ -767,14 +769,14 @@ const rawEvents = [
     cup_max_eve: 120,
     cup_dis_eve: 115,
   },
-  {
+{
     id_eve: "f1e2d3c4-e5f6-4789-8012-345678901234",
     nom_eve: "Programación Competitiva",
     des_eve:
       "Webinar sobre técnicas y estrategias para competencias de programación como ACM-ICPC y Codeforces.",
     tip_eve: "WEBINAR",
-    fec_ini_eve: new Date("2025-07-25T16:00:00.000Z"),
-    fec_fin_eve: new Date("2025-07-25T19:00:00.000Z"),
+    fec_ini_eve: new Date("2026-07-25T16:00:00.000Z"),
+    fec_fin_eve: new Date("2026-07-25T19:00:00.000Z"),
     dur_hor_eve: 3,
     mod_eve: "VIRTUAL",
     val_eve: 15.0,
@@ -784,14 +786,14 @@ const rawEvents = [
     cup_max_eve: 50,
     cup_dis_eve: 45,
   },
-  {
+{
     id_eve: "a2f3e4d5-f6e7-4890-9123-456789012345",
     nom_eve: "Realidad Virtual y Aumentada",
     des_eve:
       "Curso sobre desarrollo de aplicaciones de VR/AR utilizando Unity y herramientas especializadas.",
     tip_eve: "CURSO",
-    fec_ini_eve: new Date("2025-07-28T09:00:00.000Z"),
-    fec_fin_eve: new Date("2025-08-04T17:00:00.000Z"),
+    fec_ini_eve: new Date("2026-07-28T09:00:00.000Z"),
+    fec_fin_eve: new Date("2026-08-04T17:00:00.000Z"),
     dur_hor_eve: 32,
     mod_eve: "PRESENCIAL",
     val_eve: 180.0,
@@ -801,14 +803,14 @@ const rawEvents = [
     cup_max_eve: 15,
     cup_dis_eve: 12,
   },
-  {
+{
     id_eve: "b3a4f5e6-e7f8-4901-0234-567890123456",
-    nom_eve: "Hackathon Universitario 2025",
+    nom_eve: "Hackathon Universitario 2026",
     des_eve:
       "Competencia de programación de 48 horas donde equipos desarrollan soluciones innovadoras a problemas reales.",
     tip_eve: "SOCIALIZACION",
-    fec_ini_eve: new Date("2025-08-01T18:00:00.000Z"),
-    fec_fin_eve: new Date("2025-08-03T18:00:00.000Z"),
+    fec_ini_eve: new Date("2026-08-01T18:00:00.000Z"),
+    fec_fin_eve: new Date("2026-08-03T18:00:00.000Z"),
     dur_hor_eve: 48,
     mod_eve: "PRESENCIAL",
     val_eve: 25.0,
@@ -818,13 +820,13 @@ const rawEvents = [
     cup_max_eve: 100,
     cup_dis_eve: 88,
   },
-  {
+{
     id_eve: "30854a1f-06c7-4c7c-979f-62545b54c9aa",
     nom_eve: "Curso De Python",
     des_eve: "Curso para aprender Python desde 0",
     tip_eve: "CURSO",
-    fec_ini_eve: new Date("2025-06-18T08:00:00.000Z"),
-    fec_fin_eve: new Date("2025-06-18T08:15:00.000Z"),
+    fec_ini_eve: new Date("2026-03-01T08:00:00.000Z"),
+    fec_fin_eve: new Date("2026-03-01T08:15:00.000Z"),
     dur_hor_eve: 5,
     mod_eve: "VIRTUAL",
     val_eve: 15.0,
@@ -833,7 +835,7 @@ const rawEvents = [
     por_min_asi_eve: 88,
     cup_max_eve: 80,
     cup_dis_eve: 78,
-  },
+  }
 ];
 
 const courseEventMinPassingGrades = [
@@ -938,7 +940,6 @@ async function main() {
       update: {
         acronym: "UTA",
         logoUrl: "https://i.imgur.com/MgZ1TiM.png",
-        websiteUrl: "https://uta.edu.ec/",
         address: "Av. Los Chasquis y Rio Payamino",
         phone: "03-3700090",
         email: "utarectorado@uta.edu.ec",
@@ -951,7 +952,6 @@ async function main() {
         name: "Universidad Técnica de Ambato",
         acronym: "UTA",
         logoUrl: "https://i.imgur.com/MgZ1TiM.png",
-        websiteUrl: "https://uta.edu.ec/",
         address: "Av. Los Chasquis y Rio Payamino",
         phone: "03-3700090",
         email: "utarectorado@uta.edu.ec",
@@ -960,6 +960,60 @@ async function main() {
       },
     });
     console.log("✅ Universidad creada/actualizada");
+
+    const universitySocialLinks = [
+      {
+        label: "Página web oficial",
+        url: "https://uta.edu.ec/",
+        iconKey: "globe",
+        platformKey: "website",
+        displayOrder: 0,
+        isActive: true,
+        opensInNewTab: true,
+      },
+      {
+        label: "Facebook oficial",
+        url: "https://www.facebook.com/UniversidadTecnicadeAmbatoOficial/?locale=es_LA",
+        iconKey: "facebook",
+        platformKey: "facebook",
+        displayOrder: 1,
+        isActive: true,
+        opensInNewTab: true,
+      },
+      {
+        label: "Instagram oficial",
+        url: "https://www.instagram.com/utecnicaambato/",
+        iconKey: "instagram",
+        platformKey: "instagram",
+        displayOrder: 2,
+        isActive: true,
+        opensInNewTab: true,
+      },
+      {
+        label: "YouTube oficial",
+        url: "https://www.youtube.com/@utecnicaambato",
+        iconKey: "youtube",
+        platformKey: "youtube",
+        displayOrder: 3,
+        isActive: true,
+        opensInNewTab: true,
+      },
+    ];
+
+    await prisma.universitySocialLink.deleteMany({
+      where: {
+        tenantId: tenant.id,
+        universityId: university.id,
+      },
+    });
+
+    await prisma.universitySocialLink.createMany({
+      data: universitySocialLinks.map((socialLink) => ({
+        ...socialLink,
+        tenantId: tenant.id,
+        universityId: university.id,
+      })),
+    });
 
     // ============================================
     // 3. UNIVERSITY AUTHORITIES

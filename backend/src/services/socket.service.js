@@ -567,6 +567,40 @@ class SocketService {
   }
 
   /**
+   * Notificar cambios en datos de universidad y enlaces institucionales.
+   * @param {string} action - Tipo de acción realizada.
+   * @param {Object} universityData - Datos asociados al cambio.
+   */
+  notifyUniversityChange(action, universityData = {}) {
+    if (!this.io) {
+      this.log(
+        `❌ [SOCKET] No hay instancia de io disponible para notifyUniversityChange`
+      );
+      return;
+    }
+
+    const eventData = {
+      action,
+      data: universityData,
+      timestamp: new Date(),
+    };
+
+    this.log(`📡 [SOCKET] Enviando cambio de universidad:`, {
+      accion: action,
+      tenantId: universityData.tenantId,
+      universityId: universityData.universityId,
+      scope: universityData.scope,
+      clientes_conectados: this.connectedClients.size,
+    });
+
+    this.io.emit("university-change-hm", eventData);
+
+    this.log(
+      `✅ [SOCKET] Cambio de universidad (${action}) notificado a ${this.connectedClients.size} clientes`
+    );
+  }
+
+  /**
    * Notificar cambios en eventos de carreras
    * @param {string} action - Tipo de acción ('created', 'updated', 'deleted')
    * @param {Object} eventoCarreraData - Datos del evento de carrera

@@ -17,6 +17,16 @@ class UniversidadService {
         where: {
           isActive: true,
         },
+        include: {
+          socialLinks: {
+            where: {
+              isActive: true,
+            },
+            orderBy: {
+              displayOrder: "asc",
+            },
+          },
+        },
       });
 
       // Si no hay datos en la BD, devolvemos los valores predeterminados de la configuración
@@ -24,20 +34,20 @@ class UniversidadService {
         return {
           name: config.universidad.nombre,
           acronym: config.universidad.acronimo,
-          websiteUrl: config.universidad.sitioWeb,
           address: "Av. de los Chasquis, Ambato",
           phone: "(03) 252-1081",
           email: "info@uta.edu.ec",
+          socialLinks: [],
         };
       }
 
       return {
         name: universidad.name,
         acronym: universidad.acronym,
-        websiteUrl: universidad.websiteUrl,
         address: universidad.address,
         phone: universidad.phone,
         email: universidad.email,
+        socialLinks: universidad.socialLinks || [],
       };
     } catch (error) {
       console.error("Error al obtener datos de la universidad:", error);
@@ -45,10 +55,10 @@ class UniversidadService {
       return {
         name: config.universidad.nombre,
         acronym: config.universidad.acronimo,
-        websiteUrl: config.universidad.sitioWeb,
         address: "Av. de los Chasquis, Ambato",
         phone: "(03) 252-1081",
         email: "info@uta.edu.ec",
+        socialLinks: [],
       };
     }
   }

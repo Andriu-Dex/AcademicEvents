@@ -26,6 +26,7 @@ model Tenant {
   updatedAt     DateTime @updatedAt
   
   universities          University[]
+  universitySocialLinks UniversitySocialLink[]
   universityAuthorities UniversityAuthority[]
   faculties             Faculty[]
   facultyAuthorities    FacultyAuthority[]
@@ -62,7 +63,6 @@ model University {
   name        String
   acronym     String?
   logoUrl     String?
-  websiteUrl  String?
   address     String
   phone       String?
   email       String?
@@ -73,9 +73,32 @@ model University {
   tenant      Tenant                @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   faculties   Faculty[]
   authorities UniversityAuthority[]
+  socialLinks UniversitySocialLink[]
   
   @@unique([tenantId, name])
   @@index([tenantId])
+}
+
+model UniversitySocialLink {
+  id            String     @id @default(uuid())
+  tenantId      String
+  universityId  String
+  label         String
+  url           String
+  iconKey       String
+  platformKey   String?
+  displayOrder  Int        @default(0)
+  isActive      Boolean    @default(true)
+  opensInNewTab Boolean    @default(true)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  tenant     Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  university University @relation(fields: [universityId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([universityId, isActive])
+  @@index([universityId, displayOrder])
 }
 
 model UniversityAuthority {

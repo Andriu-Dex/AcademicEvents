@@ -1,17 +1,24 @@
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import { MapPin, Mail, Phone } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Mail, MapPin, Phone } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import axiosInstance from "../api/axiosConfig";
+import { SOCIAL_ICON_COMPONENTS } from "../constants/socialLinkOptions";
+import { useSocket } from "../context/SocketContext";
+import { resolveTenantScope } from "../utils/tenantScope";
+import {
+  normalizeUniversityData,
+  normalizeUniversitySocialLink,
+} from "../utils/universityData";
 import "./styles/Footer.css";
 
-/**
- * Componente Footer que muestra el pie de página de la aplicación
- * @returns {JSX.Element} El componente Footer
- */
 const Footer = ({ isAuthenticated }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  
+  const { socket } = useSocket();
+  const tenantScopeRef = useRef(resolveTenantScope());
+  const reloadTimeoutRef = useRef(null);
+  const loadUniversityRef = useRef(null);
+
   const [facultad, setFacultad] = useState({
     nombre: "Facultad de Ingeniería en Sistemas, Electrónica e Industrial",
     acronimo: "FISEI",
@@ -25,58 +32,118 @@ const Footer = ({ isAuthenticated }) => {
     direccion: "Av. de los Chasquis, Ambato",
     email: "info@uta.edu.ec",
     telefono: "(03) 252-1081",
+    socialLinks: [],
   });
 
-  /**
-   * Carga los datos de la facultad desde la API
-   */
   const cargarDatosFacultad = async () => {
     try {
       const response = await axiosInstance.get("/facultad-principal");
       if (response.data) {
-        setFacultad({
-          nombre: response.data.nom_fac || facultad.nombre,
-          acronimo: response.data.acr_fac || facultad.acronimo,
-          logo: response.data.url_log_fac || facultad.logo,
-        });
+        setFacultad((currentFacultad) => ({
+          nombre: response.data.nom_fac || currentFacultad.nombre,
+          acronimo: response.data.acr_fac || currentFacultad.acronimo,
+          logo: response.data.url_log_fac || currentFacultad.logo,
+        }));
       }
     } catch (error) {
       console.error("Error al cargar datos de la facultad:", error);
     }
   };
 
-  /**
-   * Carga los datos de la universidad desde la API
-   */
   const cargarDatosUniversidad = async () => {
     try {
       const response = await axiosInstance.get("/universidad-principal");
       if (response.data) {
-        setUniversidad({
-          nombre: response.data.nom_uni || universidad.nombre,
-          acronimo: response.data.acr_uni || universidad.acronimo,
-          logo: response.data.url_log_uni || universidad.logo,
-          direccion: response.data.dir_uni || universidad.direccion,
-          email: response.data.cor_uni || universidad.email,
-          telefono: response.data.tel_uni || universidad.telefono,
-        });
+        const normalizedUniversity = normalizeUniversityData(
+          response.data,
+          universidad
+        );
+
+        setUniversidad((currentUniversidad) => ({
+          ...currentUniversidad,
+          nombre: normalizedUniversity.nom_uni || currentUniversidad.nombre,
+          acronimo:
+            normalizedUniversity.acr_uni || currentUniversidad.acronimo,
+          logo: normalizedUniversity.url_log_uni || currentUniversidad.logo,
+          direccion:
+            normalizedUniversity.dir_uni || currentUniversidad.direccion,
+          email: normalizedUniversity.cor_uni || currentUniversidad.email,
+          telefono:
+            normalizedUniversity.tel_uni || currentUniversidad.telefono,
+          socialLinks: normalizedUniversity.social_links
+            .map((socialLink, index) =>
+              normalizeUniversitySocialLink(socialLink, index)
+            )
+            .filter((socialLink) => socialLink.isActive),
+        }));
       }
     } catch (error) {
       console.error("Error al cargar datos de la universidad:", error);
     }
   };
 
-  // Equivalente a componentDidMount
+  loadUniversityRef.current = cargarDatosUniversidad;
+
   useEffect(() => {
     cargarDatosFacultad();
     cargarDatosUniversidad();
-  }, []); // El array vacío hace que se ejecute solo al montar el componente
+  }, []);
+
+  useEffect(() => {
+    if (!socket) {
+      return undefined;
+    }
+
+    const handleUniversityUpdate = (eventData) => {
+      if (!eventData?.data) {
+        return;
+      }
+
+      if (
+        eventData.data.tenantSlug &&
+        eventData.data.tenantSlug !== tenantScopeRef.current
+      ) {
+        return;
+      }
+
+      if (reloadTimeoutRef.current) {
+        clearTimeout(reloadTimeoutRef.current);
+      }
+
+      reloadTimeoutRef.current = setTimeout(() => {
+        loadUniversityRef.current?.();
+      }, 150);
+    };
+
+    socket.on("university-change-hm", handleUniversityUpdate);
+
+    return () => {
+      socket.off("university-change-hm", handleUniversityUpdate);
+
+      if (reloadTimeoutRef.current) {
+        clearTimeout(reloadTimeoutRef.current);
+        reloadTimeoutRef.current = null;
+      }
+    };
+  }, [socket]);
+
+  const socialLinks = universidad.socialLinks
+    .filter(
+      (socialLink) =>
+        socialLink.isActive &&
+        typeof socialLink.url === "string" &&
+        socialLink.url.trim().length > 0
+    )
+    .sort((leftLink, rightLink) => leftLink.displayOrder - rightLink.displayOrder);
 
   return (
     <footer className="footer-component-fc" aria-label="Pie de página">
       <div className="footer-container">
         <div className="footer-row">
-          <section className="footer-col footer-col-4" aria-labelledby="footer-brand-title">
+          <section
+            className="footer-col footer-col-4"
+            aria-labelledby="footer-brand-title"
+          >
             <div className="footer-header">
               <img
                 src={facultad.logo}
@@ -102,9 +169,8 @@ const Footer = ({ isAuthenticated }) => {
                 <Link
                   to="/home#inicio"
                   className="footer-link-fc"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    // Navigate to home and scroll to top
+                  onClick={(event) => {
+                    event.preventDefault();
                     if (location.pathname !== "/home") {
                       navigate("/home");
                     }
@@ -155,7 +221,6 @@ const Footer = ({ isAuthenticated }) => {
             </ul>
           </nav>
 
-          {/* Auditoria */}
           <nav
             className="footer-col footer-col-3"
             aria-labelledby="footer-audit-title"
@@ -168,6 +233,7 @@ const Footer = ({ isAuthenticated }) => {
                 <a
                   href="https://auditoria-academic-events.netlify.app/auditoria.html"
                   target="_blank"
+                  rel="noopener noreferrer"
                   className="footer-link-fc"
                 >
                   Consulta
@@ -175,7 +241,6 @@ const Footer = ({ isAuthenticated }) => {
               </li>
             </ul>
           </nav>
-          {/* Fin auditoria */}
 
           <section
             className="footer-col footer-col-3"
@@ -210,22 +275,36 @@ const Footer = ({ isAuthenticated }) => {
               {universidad.nombre}
             </small>
           </div>
-          <div className="footer-bottom-right">
-            <div className="footer-social-links">
-              <a href="#" className="footer-social-link-fc">
-                <i className="bi bi-facebook"></i>
-              </a>
-              <a href="#" className="footer-social-link-fc">
-                <i className="bi bi-twitter"></i>
-              </a>
-              <a href="#" className="footer-social-link-fc">
-                <i className="bi bi-instagram"></i>
-              </a>
-              <a href="#" className="footer-social-link-fc">
-                <i className="bi bi-linkedin"></i>
-              </a>
-            </div>
-          </div>
+
+          {socialLinks.length > 0 && (
+            <nav
+              className="footer-bottom-right"
+              aria-label="Redes sociales y enlaces institucionales"
+            >
+              <div className="footer-social-links">
+                {socialLinks.map((socialLink) => {
+                  const IconComponent =
+                    SOCIAL_ICON_COMPONENTS[socialLink.iconKey] ||
+                    SOCIAL_ICON_COMPONENTS.link;
+                  const shouldOpenInNewTab = socialLink.opensInNewTab;
+
+                  return (
+                    <a
+                      key={socialLink.id || `${socialLink.platformKey}-${socialLink.displayOrder}`}
+                      href={socialLink.url}
+                      className={`footer-social-link-fc footer-social-link-${socialLink.platformKey || "custom"}`}
+                      aria-label={`Abrir ${socialLink.label}`}
+                      title={socialLink.label}
+                      target={shouldOpenInNewTab ? "_blank" : undefined}
+                      rel={shouldOpenInNewTab ? "noopener noreferrer" : undefined}
+                    >
+                      <IconComponent size={18} aria-hidden="true" />
+                    </a>
+                  );
+                })}
+              </div>
+            </nav>
+          )}
         </div>
       </div>
     </footer>
