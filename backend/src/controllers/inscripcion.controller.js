@@ -1898,6 +1898,10 @@ const mapRegistrationToLegacy = (inscripcion) => {
           tip_eve: EVENT_TYPE_TO_LEGACY[event.type] || event.type,
           val_eve: event.price,
           est_eve: EVENT_STATUS_TO_LEGACY[event.status] || event.status,
+          fec_ini_eve: event.startDate,
+          fec_fin_eve: event.endDate,
+          startDate: event.startDate,
+          endDate: event.endDate,
           por_min_asi_eve: event.minAttendancePercent,
           eventos_curso: event.eventCourse
             ? {

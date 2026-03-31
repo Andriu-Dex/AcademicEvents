@@ -242,17 +242,78 @@ const EventsRoute = () => {
     obtenerPerfilUsuario();
   }, [usuario, token, loading, navigate]);
 
-  // Efecto para detectar cuando se debe abrir el modal de inscripción directamente
+  // Efecto para abrir el modal de inscripción directamente al llegar desde otras vistas
   useEffect(() => {
-    if (
-      location.state?.openInscripcionModal &&
-      location.state?.eventoSeleccionado
-    ) {
-      setEventoSeleccionado(location.state.eventoSeleccionado);
-      // Limpiar el estado para evitar que se reabra el modal
+    if (!location.state?.openInscripcionModal) return;
+
+    let isCancelled = false;
+
+    const openInscripcionModal = async () => {
+      const reinscripcion = Boolean(location.state?.reinscripcion);
+      const stateEventId = location.state?.eventId;
+      let eventToOpen = null;
+
+      if (location.state?.eventoSeleccionado) {
+        eventToOpen = normalizeEventForUI(location.state.eventoSeleccionado);
+      } else if (stateEventId !== undefined && stateEventId !== null) {
+        eventToOpen = eventosNormalizados.find(
+          (evento) => String(evento.id_eve) === String(stateEventId)
+        );
+
+        // Fallback: si el evento no está en la página actual, buscarlo por ID.
+        if (!eventToOpen) {
+          try {
+            const response = await requestWithEndpointFallback(
+              () => axiosInstance.get(`/events/${stateEventId}`),
+              () => axiosInstance.get(`/eventos/${stateEventId}`)
+            );
+
+            if (isCancelled) return;
+
+            const eventoResponse = response?.data?.data || response?.data;
+            if (eventoResponse) {
+              eventToOpen = normalizeEventForUI(eventoResponse);
+            }
+          } catch (error) {
+            console.warn(
+              "No se pudo obtener el evento para abrir reinscripción:",
+              error
+            );
+          }
+        }
+      }
+
+      // Si aún está cargando eventos y no hay target, esperamos siguiente ciclo.
+      if (!eventToOpen && cargando) return;
+
+      if (!eventToOpen) {
+        toast.warning(
+          "No se pudo abrir el modal porque el evento ya no está disponible para reinscripción."
+        );
+        navigate(location.pathname, { replace: true, state: {} });
+        return;
+      }
+
+      setEventoSeleccionado(
+        reinscripcion ? { ...eventToOpen, reinscripcion: true } : eventToOpen
+      );
+
+      // Limpiar estado para evitar reapertura en re-renders o navegaciones atrás.
       navigate(location.pathname, { replace: true, state: {} });
-    }
-  }, [location.state, navigate, location.pathname]);
+    };
+
+    openInscripcionModal();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [
+    location.state,
+    location.pathname,
+    navigate,
+    eventosNormalizados,
+    cargando,
+  ]);
 
   const closeEnrollmentModal = useCallback(() => {
     setEventoSeleccionado(null);
