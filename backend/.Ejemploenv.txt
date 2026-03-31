@@ -1,42 +1,41 @@
-# Conexión a la base de datos PostgreSQL
+# Base de datos PostgreSQL
 DATABASE_URL=postgresql://postgres:tu_contraseña@localhost:5432/academicevents
 
-# Configuración del servidor
+# Servidor
 PORT=3000
+HOST=localhost
+FRONTEND_URL=http://localhost:5173
+BACKEND_URL=http://localhost:3000
 
-#HOST
-HOST=coloca_IP o localhost
-
-# JWT y Email
+# Seguridad
 JWT_SECRET=clave_secreta_segura
 
-#Dirección del servidor SMTP. Gmail usa smtp.gmail.com
+# Email SMTP (Gmail)
 SMTP_HOST=smtp.gmail.com
-
-#Puerto del servidor. El 587 es para conexiones seguras (STARTTLS)
 SMTP_PORT=587
-
-#Tu dirección de correo electrónico desde la cual se enviarán los correos
 SMTP_USER=correo@gmail.com
-
-#Contraseña de aplicación Gmail
-#Entrar a ese link: https://www.youtube.com/redirect?event=video_description&redir_token=QUFFLUhqbWktbWpqYy01Q2FWVlF5eS1Tb1o0b0tWUU1lUXxBQ3Jtc0tsTE5IMjh1MmtjZ24zbzYwdGRRbUVzdDFzTkVZYjZkX1BQc0ZiRVhZVDc1Z3JzVzZrUmJSamVGSW9ocDBSZFVORTc5eVZiSnVIVkc2STdKRk1iVks2QmFZUHFnY3hZVHJlc2kzZHJNMXJuT0pqeHdLTQ&q=https%3A%2F%2Fmyaccount.google.com%2Fapppasswords&v=h4eVrDSf8Eg
 SMTP_PASS=contraseña_aplicacion
 
-# Id de cliente generada (https://api.imgur.com/oauth2/addclient)
-IMGUR_CLIENT_ID=tu_pass_client_generada
+# Imgur (opcional)
+IMGUR_CLIENT_ID=tu_imgur_client_id
+IMGUR_CLIENT_SECRET=tu_imgur_client_secret
 
-# Client Secret de Imgur
-IMGUR_CLIENT_SECRET=colocar_tu_secret_imgur
-
-#Credenciales de Super Admin
+# Credenciales de Super Admin
 SUPER_ADMIN_EMAIL=admin@uta.edu.ec
 SUPER_ADMIN_PASSWORD=Admin12345
 SUPER_ADMIN_CEDULA=9999999999
 
-# Configuración para estados automáticos de eventos
+# Estados automáticos de eventos
 EVENT_STATUS_CRON_ENABLED=true
-# Cada 5 minutos se ejecutará el cron
 EVENT_STATUS_CRON_SCHEDULE="*/5 * * * *"
-# Zona horaria para el cron
 EVENT_STATUS_TIMEZONE="America/Guayaquil"
+
+# Firebase Admin SDK (backend)
+FIREBASE_PROJECT_ID=tu_project_id_firebase
+FIREBASE_SERVICE_ACCOUNT_PATH=./firebase-service-account.json
+
+# Notas:
+# 1) Descarga la clave privada JSON en Firebase Console -> Project settings -> Service accounts.
+# 2) Guarda el archivo en backend/firebase-service-account.json.
+# 3) Nunca subas ese JSON al repositorio.
+# 4) Las variables VITE_FIREBASE_* se configuran solo en frontend/Ejemplo.env.txt.

@@ -45,6 +45,29 @@ const LEGACY_EVENT_STATUS_TO_DB = {
 
 const toDbEventStatus = (status) => LEGACY_EVENT_STATUS_TO_DB[status] || status;
 
+const REGISTRATION_STATUS_LABELS = {
+  PENDING: "Pendiente",
+  ACCEPTED: "Aceptada",
+  REJECTED: "Rechazada",
+  APPROVED: "Aprobada",
+  FAILED_GRADE: "Reprobada por nota",
+  FAILED_ATTENDANCE: "Reprobada por asistencia",
+  FAILED_TOTAL: "Reprobada total",
+};
+
+const EVENT_STATUS_LABELS = {
+  ACTIVE: "Activo",
+  INACTIVE: "Inactivo",
+  FINISHED: "Finalizado",
+  CANCELLED: "Cancelado",
+  SUSPENDED: "Suspendido",
+};
+
+const getRegistrationStatusLabel = (status) =>
+  REGISTRATION_STATUS_LABELS[status] || status;
+
+const getEventStatusLabel = (status) => EVENT_STATUS_LABELS[status] || status;
+
 const InscripcionCard = ({ inscripcion, onUpdate, onVerCarta }) => {
   const registrationId = inscripcion.id || inscripcion.id_ins;
   const status = toDbStatus(inscripcion.status || inscripcion.est_ins);
@@ -144,7 +167,9 @@ const InscripcionCard = ({ inscripcion, onUpdate, onVerCarta }) => {
         eventoNoValidable,
       });
       toast.error(
-        `No se puede validar inscripciones de un evento ${eventStatus.toLowerCase()}`
+        `No se puede validar inscripciones de un evento ${getEventStatusLabel(
+          eventStatus
+        ).toLowerCase()}`
       );
       return;
     }
@@ -165,7 +190,9 @@ const InscripcionCard = ({ inscripcion, onUpdate, onVerCarta }) => {
         `✅ [INSCRIPCION_CARD] Respuesta del servidor:`,
         response.data
       );
-      toast.success(`Inscripción ${nuevoEstado.toLowerCase()}`);
+      toast.success(
+        `Inscripción ${getRegistrationStatusLabel(nuevoEstado).toLowerCase()}`
+      );
 
       if (onUpdate) {
         console.log(`🔄 [INSCRIPCION_CARD] Ejecutando callback onUpdate`);
@@ -188,7 +215,9 @@ const InscripcionCard = ({ inscripcion, onUpdate, onVerCarta }) => {
     // Verificar si el evento está en un estado que no permite validación
     if (eventoNoValidable) {
       toast.error(
-        `No se puede finalizar inscripciones de un evento ${eventStatus.toLowerCase()}`
+        `No se puede finalizar inscripciones de un evento ${getEventStatusLabel(
+          eventStatus
+        ).toLowerCase()}`
       );
       return;
     }
@@ -283,7 +312,7 @@ const InscripcionCard = ({ inscripcion, onUpdate, onVerCarta }) => {
         <div className="inscripcion-card-title">
           <h3>{`${user?.firstName || user?.nom_usu} ${user?.lastName || user?.ape_usu}`}</h3>
           <span className={`inscripcion-estado ${getEstadoClase()}`}>
-            {status}
+            {getRegistrationStatusLabel(status)}
           </span>
         </div>
         <div className="inscripcion-card-subtitle">
@@ -296,7 +325,7 @@ const InscripcionCard = ({ inscripcion, onUpdate, onVerCarta }) => {
                   className={`evento-estado-badge-ic evento-estado-${eventStatus.toLowerCase()}-ic`}
                 >
                   {getEventoEstadoIcono()}
-                  {eventStatus}
+                  {getEventStatusLabel(eventStatus)}
                 </span>
               )}
           </div>
@@ -561,7 +590,7 @@ const InscripcionCard = ({ inscripcion, onUpdate, onVerCarta }) => {
                 <div className="inscripcion-evento-no-validable-mensaje-ic">
                   <AlertTriangle size={16} />
                   No se puede finalizar inscripciones de un evento{" "}
-                  {eventStatus.toLowerCase()}
+                  {getEventStatusLabel(eventStatus).toLowerCase()}
                 </div>
               )}
               <button

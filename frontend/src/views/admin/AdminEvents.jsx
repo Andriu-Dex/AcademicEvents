@@ -201,6 +201,11 @@ const normalizeEventForUI = (eve, index = 0) => {
 
 const getCareerId = (career) => career?.id_car || career?.id || "";
 const getCareerName = (career) => career?.nom_car || career?.name || "Carrera";
+const getEventCareerNames = (eventCareers = []) =>
+  (Array.isArray(eventCareers) ? eventCareers : [])
+    .map((ec) => getCareerName(ec?.carrera || ec?.career))
+    .map((name) => (typeof name === "string" ? name.trim() : ""))
+    .filter((name) => name.length > 0 && name.toLowerCase() !== "carrera");
 
 const AdminEvents = () => {
   const [carreras, setCarreras] = useState([]);
@@ -1057,11 +1062,14 @@ const AdminEvents = () => {
                       <strong>
                         Carrera{eve.eventos_carrera?.length !== 1 ? "s" : ""}:
                       </strong>{" "}
-                      {eve.eventos_carrera && eve.eventos_carrera.length > 0
-                        ? eve.eventos_carrera
-                            .map((ec) => ec.carrera.nom_car)
-                            .join(", ")
-                        : "General"}
+                      {(() => {
+                        const careerNames = getEventCareerNames(
+                          eve.eventos_carrera
+                        );
+                        return careerNames.length > 0
+                          ? careerNames.join(", ")
+                          : "General";
+                      })()}
                     </span>
                   </div>
                   {/* Contenedor para estado y modalidad uno al lado del otro */}

@@ -112,12 +112,11 @@ npm install
 
 #### Backend
 
-Crea un archivo `.env` en la carpeta `backend/` basado en `.env.example`:
+Crea un archivo `.env` en la carpeta `backend/` basado en `backend/.Ejemploenv.txt`:
 
 ```env
 # Base de datos
-DATABASE_URL="postgresql://usuario:contraseña@localhost:5432/academic_events"
-DIRECT_URL="postgresql://usuario:contraseña@localhost:5432/academic_events"
+DATABASE_URL=postgresql://usuario:contraseña@localhost:5432/academicevents
 
 # JWT
 JWT_SECRET=tu_clave_secreta_super_segura
@@ -125,12 +124,18 @@ JWT_SECRET=tu_clave_secreta_super_segura
 # Servidor
 PORT=3000
 HOST=localhost
+FRONTEND_URL=http://localhost:5173
+BACKEND_URL=http://localhost:3000
 
 # Email (opcional para notificaciones)
-EMAIL_HOST=smtp.gmail.com
-EMAIL_PORT=587
-EMAIL_USER=tu_email@gmail.com
-EMAIL_PASS=tu_contraseña_de_aplicacion
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=tu_email@gmail.com
+SMTP_PASS=tu_contraseña_de_aplicacion
+
+# Firebase Admin (obligatorio para notificaciones push)
+FIREBASE_PROJECT_ID=tu_project_id_firebase
+FIREBASE_SERVICE_ACCOUNT_PATH=./firebase-service-account.json
 ```
 
 #### Frontend
@@ -140,7 +145,37 @@ Crea un archivo `.env` en la carpeta `frontend/` basado en `Ejemplo.env.txt`:
 ```env
 VITE_API_URL=http://localhost:3000
 VITE_HOST=localhost
+VITE_PORT=5173
+
+# Firebase Web SDK
+VITE_FIREBASE_API_KEY=tu_firebase_api_key
+VITE_FIREBASE_AUTH_DOMAIN=tu_proyecto.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=tu_project_id_firebase
+VITE_FIREBASE_STORAGE_BUCKET=tu_proyecto.appspot.com
+VITE_FIREBASE_MESSAGING_SENDER_ID=tu_messaging_sender_id
+VITE_FIREBASE_APP_ID=tu_firebase_app_id
+VITE_FIREBASE_VAPID_KEY=tu_web_push_public_vapid_key
 ```
+
+#### Firebase: cómo obtener los datos (rápido y exacto)
+
+1. Entra a [Firebase Console](https://console.firebase.google.com/) y selecciona tu proyecto.
+2. Registra una app Web (`</>`). En el bloque `firebaseConfig` copia:
+   - `apiKey` -> `VITE_FIREBASE_API_KEY`
+   - `authDomain` -> `VITE_FIREBASE_AUTH_DOMAIN`
+   - `projectId` -> `VITE_FIREBASE_PROJECT_ID`
+   - `storageBucket` -> `VITE_FIREBASE_STORAGE_BUCKET`
+   - `messagingSenderId` -> `VITE_FIREBASE_MESSAGING_SENDER_ID`
+   - `appId` -> `VITE_FIREBASE_APP_ID`
+3. En **Project settings -> Cloud Messaging**, copia la **Public key** de Web Push y pégala en `VITE_FIREBASE_VAPID_KEY`.
+4. En **Project settings -> Service accounts**, genera una clave privada JSON y guárdala como `backend/firebase-service-account.json`.
+5. Configura en backend: `FIREBASE_PROJECT_ID` y `FIREBASE_SERVICE_ACCOUNT_PATH=./firebase-service-account.json`.
+
+Notas:
+- Reinicia frontend/backend después de cambiar variables de entorno.
+- Mantén sincronizada la config pública entre `frontend/.env` y `frontend/public/firebase-messaging-sw.js`.
+- No subas `firebase-service-account.json` al repositorio.
+- Para guía extendida: `frontend/Ejemplo.env.txt` y `Docs/05_NOTIFICACIONES_PUSH.md`.
 
 ### Configuración de la base de datos
 
@@ -376,7 +411,7 @@ Todas las versiones y cambios notables del proyecto están documentados en nuest
 - ✅ Gestión integral de eventos académicos
 - ✅ Generación automática de certificados PDF
 - ✅ Panel administrativo con estadísticas en tiempo real
-- ✅ Notificaciones push mediante WebSockets
+- ✅ Notificaciones en tiempo real (Socket.io) y push web (Firebase Cloud Messaging)
 - ✅ Interfaz responsive y moderna
 
 #### Próximas versiones:

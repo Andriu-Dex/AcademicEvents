@@ -213,8 +213,6 @@ const generarCertificado = async (req, res) => {
     const nombreArchivo = `certificado_${inscripcion.id}_${Date.now()}.pdf`;
     // Guardar en la carpeta uploads/certificados que está expuesta públicamente
     const rutaArchivo = path.join(certificadosDir, nombreArchivo);
-    // URL para acceso público al certificado
-    const urlPublica = `/uploads/certificados/${nombreArchivo}`;
 
     // Generar el PDF
     const pdfBuffer = await generarCertificadoPDF(datosCertificado);
@@ -223,12 +221,18 @@ const generarCertificado = async (req, res) => {
     fs.writeFileSync(rutaArchivo, pdfBuffer);
 
     try {
-      // Guardar el certificado en la base de datos
-      certificadoExistente = await prisma.certificate.create({
-        data: {
+      // Upsert atómico para evitar condición de carrera cuando hay doble solicitud
+      certificadoExistente = await prisma.certificate.upsert({
+        where: { registrationId: id },
+        update: {
+          fileUrl: rutaArchivo,
+          type: tipoCertificadoDb,
+          validationCode: codigoValidacion,
+        },
+        create: {
           tenantId: inscripcion.tenantId,
           registrationId: id,
-          fileUrl: rutaArchivo, // Ruta del archivo en el sistema
+          fileUrl: rutaArchivo,
           type: tipoCertificadoDb,
           validationCode: codigoValidacion,
         },
@@ -238,12 +242,35 @@ const generarCertificado = async (req, res) => {
       res.setHeader("Content-Type", "application/pdf");
       res.setHeader(
         "Content-Disposition",
-        `attachment; filename=${nombreArchivo}`
+        `attachment; filename=${path.basename(certificadoExistente.fileUrl)}`
       );
 
       // Enviar el buffer directamente
       res.send(pdfBuffer);
     } catch (error) {
+      if (
+        error?.code === "P2002" &&
+        Array.isArray(error?.meta?.target) &&
+        error.meta.target.includes("registrationId")
+      ) {
+        const certificadoEnConflicto = await prisma.certificate.findFirst({
+          where: withTenantWhere(req.tenantId, { registrationId: id }),
+        });
+
+        if (
+          certificadoEnConflicto?.fileUrl &&
+          fs.existsSync(certificadoEnConflicto.fileUrl)
+        ) {
+          const fileName = path.basename(certificadoEnConflicto.fileUrl);
+          res.setHeader("Content-Type", "application/pdf");
+          res.setHeader(
+            "Content-Disposition",
+            `attachment; filename=${fileName}`
+          );
+          return fs.createReadStream(certificadoEnConflicto.fileUrl).pipe(res);
+        }
+      }
+
       console.error("Error al guardar certificado en DB:", error);
       res.status(500).json({
         msg: "Error al guardar el certificado en la base de datos",
