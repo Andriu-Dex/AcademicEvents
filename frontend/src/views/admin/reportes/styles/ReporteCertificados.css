@@ -471,6 +471,12 @@
   border-color: var(--color-border-primary);
 }
 
+[data-theme="dark"] .react-datepicker__month-select option,
+[data-theme="dark"] .react-datepicker__year-select option {
+  background: var(--color-bg-elevated);
+  color: var(--color-text-primary);
+}
+
 [data-theme="dark"] .date-picker-input-rc:focus {
   background: var(--color-bg-elevated);
 }

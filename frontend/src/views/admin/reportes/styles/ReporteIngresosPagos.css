@@ -761,6 +761,13 @@
   border-color: var(--color-border-primary);
 }
 
+[data-theme="dark"] .filtro-grupo-rip select option,
+[data-theme="dark"] .react-datepicker__month-select option,
+[data-theme="dark"] .react-datepicker__year-select option {
+  background-color: var(--color-bg-elevated);
+  color: var(--color-text-primary);
+}
+
 [data-theme="dark"] .filtro-grupo-rip select:hover,
 [data-theme="dark"] .filtro-grupo-rip input:hover,
 [data-theme="dark"] .date-picker-input-rip:hover,
