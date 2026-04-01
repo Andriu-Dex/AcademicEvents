@@ -1,8 +1,9 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import {
   ChevronDown,
   Eye,
+  EyeOff,
   Pencil,
   Search,
   Trash2,
@@ -48,6 +49,9 @@ const AdminGestion = () => {
   });
   const [formErrors, setFormErrors] = useState({});
   const [createLoading, setCreateLoading] = useState(false);
+  const [showCreatePassword, setShowCreatePassword] = useState(false);
+  const [showCreateConfirmPassword, setShowCreateConfirmPassword] =
+    useState(false);
 
   const [adminFilters, setAdminFilters] = useState({
     search: "",
@@ -73,6 +77,7 @@ const AdminGestion = () => {
     useState(false);
   const accountModalRef = useRef(null);
   const accountModalCloseButtonRef = useRef(null);
+  const accountModalEditFirstInputRef = useRef(null);
 
   const {
     data: administradores,
@@ -255,6 +260,8 @@ const AdminGestion = () => {
       setFormData({
         ...EMPTY_ADMIN_FORM,
       });
+      setShowCreatePassword(false);
+      setShowCreateConfirmPassword(false);
 
       await fetchAdmins(adminFilters);
     } catch (error) {
@@ -289,17 +296,22 @@ const AdminGestion = () => {
     setModalMode("edit");
   };
 
-  const closeModal = () => {
+  const closeModal = useCallback(() => {
     setModalMode(null);
     setSelectedAccount(null);
     setEditForm({ ...EMPTY_EDIT_FORM });
-  };
+  }, []);
+
+  const accountModalInitialFocusRef =
+    modalMode === "edit"
+      ? accountModalEditFirstInputRef
+      : accountModalCloseButtonRef;
 
   useDialogAccessibility({
     isOpen: Boolean(modalMode && selectedAccount),
     onClose: closeModal,
     containerRef: accountModalRef,
-    initialFocusRef: accountModalCloseButtonRef,
+    initialFocusRef: accountModalInitialFocusRef,
   });
 
   const refreshLists = async () => {
@@ -684,16 +696,32 @@ const AdminGestion = () => {
                   <label className="label-ag block text-sm font-medium text-gray-700">
                     Contraseña
                   </label>
-                  <input
-                    type="password"
-                    name="contrasena"
-                    value={formData.contrasena}
-                    onChange={handleChange}
-                    className={`input-ag w-full p-2 border rounded-md ${
-                      formErrors.contrasena ? "border-red-500" : "border-gray-300"
-                    }`}
-                    placeholder="Ingrese la contraseña"
-                  />
+                  <div className="password-field-wrapper-ag">
+                    <input
+                      type={showCreatePassword ? "text" : "password"}
+                      name="contrasena"
+                      value={formData.contrasena}
+                      onChange={handleChange}
+                      className={`input-ag input-password-ag w-full p-2 border rounded-md ${
+                        formErrors.contrasena ? "border-red-500" : "border-gray-300"
+                      }`}
+                      placeholder="Ingrese la contraseña"
+                    />
+                    <button
+                      type="button"
+                      className="password-toggle-btn-ag"
+                      onClick={() =>
+                        setShowCreatePassword((prev) => !prev)
+                      }
+                      aria-label={
+                        showCreatePassword
+                          ? "Ocultar contraseña"
+                          : "Mostrar contraseña"
+                      }
+                    >
+                      {showCreatePassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
                   {formErrors.contrasena && (
                     <p className="error-message-ag text-red-500 text-xs mt-1">
                       {formErrors.contrasena}
@@ -704,18 +732,38 @@ const AdminGestion = () => {
                   <label className="label-ag block text-sm font-medium text-gray-700">
                     Confirmar Contraseña
                   </label>
-                  <input
-                    type="password"
-                    name="confirmarContrasena"
-                    value={formData.confirmarContrasena}
-                    onChange={handleChange}
-                    className={`input-ag w-full p-2 border rounded-md ${
-                      formErrors.confirmarContrasena
-                        ? "border-red-500"
-                        : "border-gray-300"
-                    }`}
-                    placeholder="Confirme la contraseña"
-                  />
+                  <div className="password-field-wrapper-ag">
+                    <input
+                      type={showCreateConfirmPassword ? "text" : "password"}
+                      name="confirmarContrasena"
+                      value={formData.confirmarContrasena}
+                      onChange={handleChange}
+                      className={`input-ag input-password-ag w-full p-2 border rounded-md ${
+                        formErrors.confirmarContrasena
+                          ? "border-red-500"
+                          : "border-gray-300"
+                      }`}
+                      placeholder="Confirme la contraseña"
+                    />
+                    <button
+                      type="button"
+                      className="password-toggle-btn-ag"
+                      onClick={() =>
+                        setShowCreateConfirmPassword((prev) => !prev)
+                      }
+                      aria-label={
+                        showCreateConfirmPassword
+                          ? "Ocultar confirmación de contraseña"
+                          : "Mostrar confirmación de contraseña"
+                      }
+                    >
+                      {showCreateConfirmPassword ? (
+                        <EyeOff size={18} />
+                      ) : (
+                        <Eye size={18} />
+                      )}
+                    </button>
+                  </div>
                   {formErrors.confirmarContrasena && (
                     <p className="error-message-ag text-red-500 text-xs mt-1">
                       {formErrors.confirmarContrasena}
@@ -1133,6 +1181,7 @@ const AdminGestion = () => {
                       name="cedula"
                       value={editForm.cedula}
                       onChange={handleEditFieldChange}
+                      ref={accountModalEditFirstInputRef}
                     />
                   </div>
 

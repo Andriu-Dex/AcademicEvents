@@ -78,6 +78,24 @@ const LEGACY_EVENT_STATUS_TO_DB = {
   SUSPENDIDO: "SUSPENDED",
 };
 
+const CREATE_DEFAULT_STATUS = "INACTIVE";
+
+const EVENT_STATUS_LABELS = {
+  ACTIVE: "Activo",
+  INACTIVE: "Inactivo",
+  FINISHED: "Finalizado",
+  CANCELLED: "Cancelado",
+  SUSPENDED: "Suspendido",
+};
+
+const STATUS_OPTIONS_FOR_EDIT = [
+  { value: "ACTIVE", label: "Activo" },
+  { value: "INACTIVE", label: "Inactivo" },
+  { value: "CANCELLED", label: "Cancelado" },
+];
+
+const READ_ONLY_EVENT_STATUSES = new Set(["FINISHED", "SUSPENDED"]);
+
 const EventForm = ({ eventId = null, mode = "create" }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -97,7 +115,7 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
     carrerasSeleccionadas: [],
     esEventoGeneral: false,
     coverImage: null,
-    status: "ACTIVE",
+    status: CREATE_DEFAULT_STATUS,
     modality: "IN_PERSON", // Valor por defecto para modalidad
   });
 
@@ -168,7 +186,10 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
           ? Number(evento.cup_max_eve)
           : "",
         coverImage: null,
-        status: evento.status || LEGACY_EVENT_STATUS_TO_DB[evento.est_eve] || "ACTIVE",
+        status:
+          evento.status ||
+          LEGACY_EVENT_STATUS_TO_DB[evento.est_eve] ||
+          CREATE_DEFAULT_STATUS,
         modality:
           evento.modality ||
           LEGACY_EVENT_MODALITY_TO_DB[evento.mod_eve] ||
@@ -504,6 +525,8 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
   };
 
   const esCurso = formData.type === "COURSE";
+  const isReadOnlyStatus =
+    mode === "edit" && READ_ONLY_EVENT_STATUSES.has(formData.status);
 
   if (loading && mode === "edit") {
     return (
@@ -589,18 +612,34 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
             {mode === "edit" && (
               <div className="form-group">
                 <label>Estado del Evento *</label>
-                <select
-                  name="status"
-                  value={formData.status}
-                  onChange={handleInputChange}
-                  required
-                >
-                  <option value="ACTIVE">Activo</option>
-                  <option value="INACTIVE">Inactivo</option>
-                  <option value="FINISHED">Finalizado</option>
-                  <option value="CANCELLED">Cancelado</option>
-                  <option value="SUSPENDED">Suspendido</option>
-                </select>
+                {isReadOnlyStatus ? (
+                  <>
+                    <input
+                      type="text"
+                      value={`${
+                        EVENT_STATUS_LABELS[formData.status] || formData.status
+                      } (automático)`}
+                      disabled
+                      readOnly
+                    />
+                    <small>
+                      Este estado no se puede asignar manualmente desde edición.
+                    </small>
+                  </>
+                ) : (
+                  <select
+                    name="status"
+                    value={formData.status}
+                    onChange={handleInputChange}
+                    required
+                  >
+                    {STATUS_OPTIONS_FOR_EDIT.map((statusOption) => (
+                      <option key={statusOption.value} value={statusOption.value}>
+                        {statusOption.label}
+                      </option>
+                    ))}
+                  </select>
+                )}
               </div>
             )}
           </div>

@@ -29,6 +29,59 @@ const conditionalPaginationLog = (message, forceShow = false) => {
 const LEGACY_SORT_FIELD_MAP = {
   title: "name",
   value: "price",
+  fec_cre_eve: "createdAt",
+  nom_eve: "name",
+  fec_ini_eve: "startDate",
+  val_eve: "price",
+  cup_max_eve: "maxCapacity",
+  cup_dis_eve: "availableSpots",
+};
+
+const LEGACY_EVENT_TYPE_TO_DB = {
+  CURSO: "COURSE",
+  CONGRESO: "CONGRESS",
+  WEBINAR: "WEBINAR",
+  CHARLA: "TALK",
+  SOCIALIZACION: "SOCIALIZATION",
+};
+
+const LEGACY_EVENT_MODALITY_TO_DB = {
+  PRESENCIAL: "IN_PERSON",
+  VIRTUAL: "VIRTUAL",
+  SEMIPRESENCIAL: "HYBRID",
+};
+
+const LEGACY_EVENT_STATUS_TO_DB = {
+  ACTIVO: "ACTIVE",
+  INACTIVO: "INACTIVE",
+  FINALIZADO: "FINISHED",
+  CANCELADO: "CANCELLED",
+  SUSPENDIDO: "SUSPENDED",
+};
+
+const VALID_EVENT_TYPES = new Set([
+  "COURSE",
+  "CONGRESS",
+  "WEBINAR",
+  "TALK",
+  "SOCIALIZATION",
+]);
+
+const VALID_EVENT_MODALITIES = new Set(["IN_PERSON", "VIRTUAL", "HYBRID"]);
+
+const VALID_EVENT_STATUSES = new Set([
+  "ACTIVE",
+  "INACTIVE",
+  "FINISHED",
+  "CANCELLED",
+  "SUSPENDED",
+]);
+
+const normalizeEnumFilter = (value, map, validValues) => {
+  if (!value) return undefined;
+
+  const normalized = map[value] || value;
+  return validValues.has(normalized) ? normalized : undefined;
 };
 
 const getNormalizedSortReq = (req) => ({
@@ -485,8 +538,11 @@ async function obtenerEventosAdminPaginados(req, res) {
       search,
       estado,
       tipo,
+      tipoEvento,
       fechaDesde,
       fechaHasta,
+      fechaInicio,
+      fechaFin,
       carrera,
       modalidad,
       capacidadMin,
@@ -494,6 +550,10 @@ async function obtenerEventosAdminPaginados(req, res) {
       valorMin,
       valorMax,
     } = req.query;
+
+    const tipoFiltro = tipo || tipoEvento;
+    const fechaDesdeFiltro = fechaDesde || fechaInicio;
+    const fechaHastaFiltro = fechaHasta || fechaFin;
 
     // Construir condición WHERE para filtros
     const whereCondition = withTenantWhere(req.tenantId);
@@ -508,27 +568,53 @@ async function obtenerEventosAdminPaginados(req, res) {
 
     // Filtro por estado
     if (estado && estado !== "") {
-      whereCondition.status = estado;
+      const normalizedStatus = normalizeEnumFilter(
+        estado,
+        LEGACY_EVENT_STATUS_TO_DB,
+        VALID_EVENT_STATUSES
+      );
+
+      if (!normalizedStatus) {
+        return res.status(400).json({
+          error: "Filtro de estado inválido",
+          message: `Estado no reconocido: ${estado}`,
+        });
+      }
+
+      whereCondition.status = normalizedStatus;
     }
 
     // Filtro por tipo de evento
-    if (tipo && tipo !== "") {
-      whereCondition.type = tipo;
+    if (tipoFiltro && tipoFiltro !== "") {
+      const normalizedType = normalizeEnumFilter(
+        tipoFiltro,
+        LEGACY_EVENT_TYPE_TO_DB,
+        VALID_EVENT_TYPES
+      );
+
+      if (!normalizedType) {
+        return res.status(400).json({
+          error: "Filtro de tipo inválido",
+          message: `Tipo de evento no reconocido: ${tipoFiltro}`,
+        });
+      }
+
+      whereCondition.type = normalizedType;
     }
 
     // Filtro por rango de fechas
-    if (fechaDesde && fechaHasta) {
+    if (fechaDesdeFiltro && fechaHastaFiltro) {
       whereCondition.startDate = {
-        gte: new Date(fechaDesde),
-        lte: new Date(fechaHasta),
+        gte: new Date(fechaDesdeFiltro),
+        lte: new Date(fechaHastaFiltro),
       };
-    } else if (fechaDesde) {
+    } else if (fechaDesdeFiltro) {
       whereCondition.startDate = {
-        gte: new Date(fechaDesde),
+        gte: new Date(fechaDesdeFiltro),
       };
-    } else if (fechaHasta) {
+    } else if (fechaHastaFiltro) {
       whereCondition.startDate = {
-        lte: new Date(fechaHasta),
+        lte: new Date(fechaHastaFiltro),
       };
     }
 
@@ -543,7 +629,20 @@ async function obtenerEventosAdminPaginados(req, res) {
 
     // Filtro por modalidad
     if (modalidad && modalidad !== "") {
-      whereCondition.modality = modalidad;
+      const normalizedModality = normalizeEnumFilter(
+        modalidad,
+        LEGACY_EVENT_MODALITY_TO_DB,
+        VALID_EVENT_MODALITIES
+      );
+
+      if (!normalizedModality) {
+        return res.status(400).json({
+          error: "Filtro de modalidad inválido",
+          message: `Modalidad no reconocida: ${modalidad}`,
+        });
+      }
+
+      whereCondition.modality = normalizedModality;
     }
 
     // Filtro por capacidad (cupo máximo)
@@ -583,6 +682,7 @@ async function obtenerEventosAdminPaginados(req, res) {
         "name",
         "price",
         "maxCapacity",
+        "availableSpots",
       ]
     );
 

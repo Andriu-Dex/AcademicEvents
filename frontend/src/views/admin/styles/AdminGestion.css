@@ -125,6 +125,38 @@
   background-color: #fff;
 }
 
+.password-field-wrapper-ag {
+  position: relative;
+}
+
+.input-password-ag {
+  padding-right: 46px;
+}
+
+.password-toggle-btn-ag {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: #6b7280;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.password-toggle-btn-ag:hover {
+  color: #8a1538;
+}
+
+.password-toggle-btn-ag:focus-visible {
+  outline: 2px solid rgba(138, 21, 56, 0.35);
+  border-radius: 6px;
+}
+
 /* Botón de crear */
 .boton-container-ag {
   margin-top: 32px;
