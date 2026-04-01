@@ -5,6 +5,21 @@
 
 Write-Host "🚀 Iniciando despliegue de Academic Events con Docker..." -ForegroundColor Green
 
+$useDockerComposeV2 = $false
+
+function Invoke-Compose {
+    param(
+        [Parameter(ValueFromRemainingArguments = $true)]
+        [string[]]$Args
+    )
+
+    if ($script:useDockerComposeV2) {
+        docker compose @Args
+    } else {
+        docker-compose @Args
+    }
+}
+
 # ============================
 # VALIDACIONES DE SEGURIDAD
 # ============================
@@ -72,7 +87,13 @@ if ($hasInsecureDefaults) {
 Write-Host "📋 Verificando Docker..." -ForegroundColor Yellow
 try {
     docker --version | Out-Null
-    docker-compose --version | Out-Null
+    try {
+        docker compose version | Out-Null
+        $useDockerComposeV2 = $true
+    } catch {
+        docker-compose --version | Out-Null
+        $useDockerComposeV2 = $false
+    }
     Write-Host "✅ Docker está instalado y funcionando" -ForegroundColor Green
 } catch {
     Write-Host "❌ Error: Docker no está instalado o no está ejecutándose" -ForegroundColor Red
@@ -80,9 +101,15 @@ try {
     exit 1
 }
 
+if ($useDockerComposeV2) {
+    Write-Host "ℹ️ Usando 'docker compose' (plugin v2)" -ForegroundColor Cyan
+} else {
+    Write-Host "ℹ️ Usando 'docker-compose' (binario legacy)" -ForegroundColor Cyan
+}
+
 # Detener contenedores existentes si los hay
 Write-Host "🛑 Deteniendo contenedores existentes..." -ForegroundColor Yellow
-docker-compose down
+Invoke-Compose down
 
 # Limpiar imágenes antiguas (opcional)
 $cleanup = Read-Host "¿Deseas limpiar imágenes antiguas? (y/N)"
@@ -93,10 +120,10 @@ if ($cleanup -eq "y" -or $cleanup -eq "Y") {
 
 # Construir y levantar servicios
 Write-Host "🔨 Construyendo imágenes..." -ForegroundColor Yellow
-docker-compose build --no-cache
+Invoke-Compose build --no-cache
 
 Write-Host "🚀 Levantando servicios..." -ForegroundColor Yellow
-docker-compose up -d
+Invoke-Compose up -d
 
 # Esperar a que los servicios estén listos
 Write-Host "⏳ Esperando a que los servicios estén listos..." -ForegroundColor Yellow
@@ -104,17 +131,29 @@ Start-Sleep -Seconds 30
 
 # Verificar estado de los servicios
 Write-Host "📊 Estado de los servicios:" -ForegroundColor Yellow
-docker-compose ps
+Invoke-Compose ps
+
+$frontendPort = if ($envVars.ContainsKey("FRONTEND_PORT") -and $envVars["FRONTEND_PORT"]) { $envVars["FRONTEND_PORT"] } else { "8080" }
+$backendPort = if ($envVars.ContainsKey("PORT") -and $envVars["PORT"]) { $envVars["PORT"] } else { "3000" }
+$postgresPort = if ($envVars.ContainsKey("POSTGRES_PORT") -and $envVars["POSTGRES_PORT"]) { $envVars["POSTGRES_PORT"] } else { "5432" }
 
 Write-Host "" -ForegroundColor White
 Write-Host "🎉 ¡Despliegue completado!" -ForegroundColor Green
 Write-Host "" -ForegroundColor White
-Write-Host "📱 Frontend: http://localhost" -ForegroundColor Cyan
-Write-Host "🔧 Backend API: http://localhost:3000" -ForegroundColor Cyan
-Write-Host "🗄️  PostgreSQL: localhost:5432" -ForegroundColor Cyan
+Write-Host "📱 Frontend: http://localhost:$frontendPort" -ForegroundColor Cyan
+Write-Host "🔧 Backend API: http://localhost:$backendPort" -ForegroundColor Cyan
+Write-Host "🗄️  PostgreSQL: localhost:$postgresPort" -ForegroundColor Cyan
 Write-Host "" -ForegroundColor White
 Write-Host "Para ver los logs:" -ForegroundColor Yellow
-Write-Host "  docker-compose logs -f" -ForegroundColor White
+if ($useDockerComposeV2) {
+    Write-Host "  docker compose logs -f" -ForegroundColor White
+} else {
+    Write-Host "  docker-compose logs -f" -ForegroundColor White
+}
 Write-Host "" -ForegroundColor White
 Write-Host "Para detener los servicios:" -ForegroundColor Yellow
-Write-Host "  docker-compose down" -ForegroundColor White
+if ($useDockerComposeV2) {
+    Write-Host "  docker compose down" -ForegroundColor White
+} else {
+    Write-Host "  docker-compose down" -ForegroundColor White
+}

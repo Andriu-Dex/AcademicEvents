@@ -85,14 +85,17 @@
 
 ## Requisitos Previos
 
-- Node.js (v18 o superior)
+- Node.js (v18 o superior, recomendado v20)
 - PostgreSQL (v12 o superior)
-- npm o yarn
+- npm
 - Git
+- Docker Desktop + Docker Compose plugin v2 (solo para despliegue con contenedores)
 
 ---
 
 ## Instalación
+
+### 1) Clonar e instalar dependencias
 
 ```powershell
 # Clonar el repositorio
@@ -106,13 +109,22 @@ npm install
 # Instalar dependencias del frontend
 cd ../frontend
 npm install
+
+# Volver a la raíz
+cd ..
 ```
 
-### Configuración del entorno
+### 2) Configuración del entorno para LOCAL (sin Docker)
 
 #### Backend
 
-Crea un archivo `.env` en la carpeta `backend/` basado en `backend/.Ejemploenv.txt`:
+Crea `backend/.env` a partir de `backend/.Ejemploenv.txt`:
+
+```powershell
+Copy-Item backend/.Ejemploenv.txt backend/.env
+```
+
+Variables mínimas recomendadas en `backend/.env`:
 
 ```env
 # Base de datos
@@ -140,7 +152,13 @@ FIREBASE_SERVICE_ACCOUNT_PATH=./firebase-service-account.json
 
 #### Frontend
 
-Crea un archivo `.env` en la carpeta `frontend/` basado en `Ejemplo.env.txt`:
+Crea `frontend/.env` a partir de `frontend/Ejemplo.env.txt`:
+
+```powershell
+Copy-Item frontend/Ejemplo.env.txt frontend/.env
+```
+
+Variables mínimas recomendadas en `frontend/.env`:
 
 ```env
 VITE_API_URL=http://localhost:3000
@@ -177,24 +195,34 @@ Notas:
 - No subas `firebase-service-account.json` al repositorio.
 - Para guía extendida: `frontend/Ejemplo.env.txt` y `Docs/05_NOTIFICACIONES_PUSH.md`.
 
-### Configuración de la base de datos
+### 3) Base de datos local (Prisma)
 
 ```powershell
 # Desde el directorio backend
 cd backend
 
+# Generar cliente Prisma
+npx prisma generate
+
 # Ejecutar migraciones
 npx prisma migrate dev
 
-# Poblar la base de datos con datos iniciales
-npx prisma db seed
+# Poblar la base de datos con datos iniciales (seed completo)
+npm run seed
+
+# (Opcional) Ver estado de migraciones
+npx prisma migrate status
 ```
 
-**Nota importante**: Si usas Docker para el despliegue, las migraciones se deben ejecutar dentro del contenedor la primera vez. Ver la sección [Despliegue](#despliegue) para comandos específicos de Docker.
+Notas:
+- Si cambias el `schema.prisma`, vuelve a ejecutar `npx prisma generate`.
+- Para flujo Docker, mira la sección [Despliegue](#despliegue).
 
 ---
 
 ## Uso
+
+### Desarrollo local (sin Docker)
 
 ```powershell
 # Terminal 1: Iniciar el backend
@@ -208,6 +236,26 @@ npm run dev
 
 Accede a la aplicación desde:
 [http://localhost:5173](http://localhost:5173)
+
+Comandos útiles en local:
+
+```powershell
+# Backend
+cd backend
+npm run dev
+npm run start
+npm run seed
+npx prisma migrate status
+npx prisma migrate dev --name nombre_migracion
+npx prisma generate
+
+# Frontend
+cd frontend
+npm run dev
+npm run build
+npm run preview
+npm run lint
+```
 
 ### Acceso para Desarrollo en Red Local
 
@@ -326,76 +374,120 @@ AcademicEvents/
 
 ## Despliegue
 
-### Requisitos para Despliegue
+### Requisitos para Docker
 
-- **Docker** y **Docker Compose** instalados y ejecutándose
-- **Codificación UTF-8 con BOM** para máxima compatibilidad con los archivos de configuración
-- Verificar que Docker Desktop esté iniciado antes de ejecutar los comandos
+- Docker Desktop iniciado
+- Docker Compose plugin v2 (`docker compose`)
+- Archivo `.env` en la raiz del proyecto
 
-### Docker
-
-El proyecto incluye configuración Docker completa para despliegue:
+### 1) Configuracion inicial Docker
 
 ```powershell
-# Script automatizado para despliegue completo
+# Desde la raiz del proyecto
+Copy-Item .env.example .env
+```
+
+Edita `.env` y valida al menos:
+- `POSTGRES_PASSWORD`
+- `JWT_SECRET`
+- `FRONTEND_PORT` (recomendado `8080`)
+- `PORT` (backend, recomendado `3000`)
+
+Opcional para JWT seguro:
+
+```powershell
+.\generate-jwt-secret.ps1
+```
+
+### 2) Levantar servicios con Docker Compose
+
+```powershell
+# Build + up (recomendado)
+docker compose --env-file .env up -d --build
+
+# Ver estado
+docker compose ps
+
+# Ver logs
+docker compose logs -f
+```
+
+Accesos por defecto:
+- Frontend: `http://localhost:8080`
+- Backend: `http://localhost:3000`
+- Health check: `http://localhost:3000/health`
+
+### 3) Que se ejecuta automaticamente en backend Docker
+
+En cada arranque del contenedor backend:
+1. `npx prisma generate`
+2. `npx prisma migrate deploy`
+3. Bootstrap minimo multi-tenant (tenant + universidad + facultad por defecto)
+
+### 4) Seed de datos completos (manual)
+
+El seed completo **no** corre automaticamente. Ejecutalo cuando necesites datos de prueba:
+
+```powershell
+docker compose exec backend npm run seed
+```
+
+### 5) Comandos operativos utiles (Docker)
+
+```powershell
+# Logs por servicio
+docker compose logs -f backend
+docker compose logs -f frontend
+docker compose logs -f postgres
+
+# Entrar al backend
+docker compose exec backend sh
+
+# Prisma dentro de contenedor
+docker compose exec backend npx prisma migrate status
+docker compose exec backend npx prisma migrate dev --name nombre_migracion
+docker compose exec backend npx prisma migrate deploy
+docker compose exec backend npx prisma generate
+docker compose exec backend npm run seed
+
+# Reiniciar servicios
+docker compose restart backend
+docker compose restart frontend
+
+# Reconstruir un servicio puntual
+docker compose build --no-cache backend
+docker compose up -d backend
+
+# Detener stack
+docker compose down
+
+# Detener y borrar volumenes (resetea DB)
+docker compose down -v
+```
+
+### 6) Flujo recomendado para DB Docker desde cero
+
+```powershell
+# 1) Levantar contenedores
+docker compose --env-file .env up -d --build
+
+# 2) Cargar seed completo
+docker compose exec backend npm run seed
+
+# 3) Verificar endpoints
+docker compose ps
+```
+
+### 7) Script automatizado opcional (Windows)
+
+```powershell
 .\deploy.ps1
-
-# Construcción y ejecución manual con Docker Compose
-docker-compose up --build
-
-# Para producción
-docker-compose -f docker-compose.prod.yml up -d
 ```
 
-### Gestión de Migraciones con Docker
-
-#### Primera vez - Configuración inicial:
-
-```powershell
-# 1. Ejecutar el script de despliegue
-.\deploy.ps1
-
-# 2. Verificar estado de las migraciones
-docker-compose exec backend npx prisma migrate status
-
-# 3. Si es necesario, ejecutar migraciones
-docker-compose exec backend npx prisma migrate dev --name agregar_cupos
-
-# 4. Cargar datos iniciales del seed
-docker-compose exec backend npm run seed
-```
-
-#### Comandos útiles para migraciones:
-
-```powershell
-# Estado de las migraciones
-docker-compose exec backend npx prisma migrate status
-
-# Forzar limpieza de la base de datos (¡CUIDADO: Borra todos los datos!)
-docker-compose exec backend npx prisma migrate reset --force
-
-# Crear nueva migración
-docker-compose exec backend npx prisma migrate dev --name nombre_de_la_migracion
-
-# Cargar datos iniciales del seed
-docker-compose exec backend npm run seed
-
-# Regenerar el cliente Prisma
-docker-compose exec backend npx prisma generate
-```
-
-### Scripts de Despliegue
-
-- `deploy.ps1`: Script automatizado para despliegue completo en Windows
-- `check-vulnerabilities.ps1`: Análisis de seguridad
-- `generate-jwt-secret.ps1`: Generación segura de claves JWT
-
-### Notas Importantes
-
-- **Codificación**: Asegúrate de que todos los archivos de configuración estén guardados con codificación UTF-8 con BOM
-- **Docker**: Docker Desktop debe estar iniciado antes de ejecutar cualquier comando
-- **Primera ejecución**: Las migraciones se deben ejecutar la primera vez después del despliegue
-- **Datos de prueba**: El comando `npm run seed` carga datos iniciales para pruebas
+Scripts relacionados:
+- `deploy.ps1`: despliegue asistido en Windows
+- `check-vulnerabilities.ps1`: analisis de seguridad
+- `generate-jwt-secret.ps1`: generacion de JWT seguro
 
 ---
 

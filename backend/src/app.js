@@ -22,14 +22,20 @@ dotenv.config(); // Cargar variables de entorno desde .env
 const app = express(); // Crear instancia de la aplicación
 const server = http.createServer(app); // Crear servidor HTTP
 
+const allowedOrigins = [
+  process.env.FRONTEND_URL || "http://localhost:5173",
+  "http://localhost:5173",
+  "http://127.0.0.1:5173",
+  "http://localhost:8080",
+  "http://127.0.0.1:8080",
+  "http://localhost",
+  "http://frontend",
+];
+
 // Configurar Socket.IO con CORS
 const io = new Server(server, {
   cors: {
-    origin: [
-      process.env.FRONTEND_URL || "http://localhost:5173",
-      "http://localhost",
-      "http://frontend",
-    ],
+    origin: allowedOrigins,
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -67,11 +73,7 @@ app.use(
 
 app.use(
   cors({
-    origin: [
-      process.env.FRONTEND_URL || "http://localhost:5173",
-      "http://localhost",
-      "http://frontend",
-    ],
+    origin: allowedOrigins,
     credentials: true,
   })
 ); // Habilita CORS para todas las rutas
