@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { io } from "socket.io-client";
+import { useAuth } from "./AuthContext";
 
 /**
  * Contexto de Socket.IO para la aplicación
@@ -20,6 +21,7 @@ export const useSocket = () => {
 
 // Proveedor del contexto
 export const SocketProvider = ({ children }) => {
+  const { usuario, token } = useAuth();
   const [socket, setSocket] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
   const [connectionError, setConnectionError] = useState(null);
@@ -50,41 +52,6 @@ export const SocketProvider = ({ children }) => {
       setIsConnected(true);
       setConnectionError(null);
       setSocket(newSocket);
-
-      // Autenticar usuario si hay token almacenado
-      const token = localStorage.getItem("token");
-      const userData = localStorage.getItem("usuario");
-
-      console.log("🔐 [SOCKET_CONTEXT] Verificando autenticación:", {
-        hasToken: !!token,
-        hasUserData: !!userData,
-      });
-
-      if (token && userData) {
-        try {
-          const user = JSON.parse(userData);
-          console.log("📤 [SOCKET_CONTEXT] Enviando datos de autenticación:", {
-            userId: user.id,
-            role: user.rol,
-            email: user.email,
-          });
-
-          newSocket.emit("authenticate", {
-            userId: user.id,
-            role: user.rol,
-            token: token,
-          });
-        } catch (error) {
-          console.error(
-            "❌ [SOCKET_CONTEXT] Error al autenticar usuario en socket:",
-            error
-          );
-        }
-      } else {
-        console.log(
-          "⚠️ [SOCKET_CONTEXT] No hay datos de autenticación disponibles"
-        );
-      }
     });
 
     newSocket.on("disconnect", (reason) => {
@@ -108,6 +75,7 @@ export const SocketProvider = ({ children }) => {
     newSocket.off("carrera-change-hm");
     newSocket.off("system-notification-hm");
     newSocket.off("user-inscription-update");
+    newSocket.off("admin-notification");
 
     // ======================================
     // Eventos específicos para el Home
@@ -250,6 +218,18 @@ export const SocketProvider = ({ children }) => {
       console.log("📡 Actualización de inscripción de usuario recibida:", data);
     });
 
+    // Evento específico para notificaciones administrativas
+    newSocket.on("admin-notification", (data) => {
+      console.log("📡 Notificación administrativa recibida:", data);
+      setSystemNotifications((prev) => [
+        ...prev,
+        {
+          ...data,
+          id: Date.now(),
+        },
+      ]);
+    });
+
     // Limpiar al desmontar
     return () => {
       if (import.meta.env.DEV) {
@@ -266,10 +246,39 @@ export const SocketProvider = ({ children }) => {
       newSocket.off("carrera-change-hm");
       newSocket.off("system-notification-hm");
       newSocket.off("user-inscription-update");
+      newSocket.off("admin-notification");
 
       newSocket.disconnect();
     };
   }, []);
+
+  useEffect(() => {
+    if (!socket || !isConnected || !token || !usuario) {
+      return;
+    }
+
+    const role = usuario.rol_usu || usuario.role;
+    const userId = usuario.id || usuario.id_cue;
+
+    if (!userId || !role) {
+      console.warn("⚠️ [SOCKET_CONTEXT] Datos insuficientes para autenticar socket", {
+        userId,
+        role,
+      });
+      return;
+    }
+
+    console.log("📤 [SOCKET_CONTEXT] Enviando autenticación por socket:", {
+      userId,
+      role,
+    });
+
+    socket.emit("authenticate", {
+      userId,
+      role,
+      token,
+    });
+  }, [socket, isConnected, token, usuario]);
 
   // Funciones auxiliares
   const clearEventUpdates = () => setEventUpdates(null);

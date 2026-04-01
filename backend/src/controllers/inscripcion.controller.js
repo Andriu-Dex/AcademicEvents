@@ -4,6 +4,7 @@ const { subirImagenAImgur } = require("../utils/imgur.utils");
 const socketService = require("../services/socket.service");
 const {
   sendPushNotificationToUser,
+  sendPushNotificationToRole,
   buildNotificationPayload,
 } = require("../services/pushNotification.service");
 const {
@@ -365,6 +366,29 @@ const crearInscripcion = async (req, res) => {
           }
         );
 
+        const adminPayload = buildNotificationPayload("SYSTEM_ALERT", {
+          title: "🛎️ Validación pendiente",
+          message: `Reinscripción pendiente de validación para "${eventoCompleto.name}".`,
+          link: `/admin/events/${id_eve}/enrollments`,
+        });
+
+        Promise.allSettled([
+          sendPushNotificationToRole(
+            req.tenantId,
+            "GLOBAL_ADMIN",
+            adminPayload.notification,
+            adminPayload.data
+          ),
+          sendPushNotificationToRole(
+            req.tenantId,
+            "GENERAL_ADMIN",
+            adminPayload.notification,
+            adminPayload.data
+          ),
+        ]).catch((err) =>
+          console.error("Error enviando push a admins (reinscripción):", err)
+        );
+
         console.log(
           "✅ [CREAR_INSCRIPCION] Notificaciones enviadas para reinscripción"
         );
@@ -564,6 +588,29 @@ const crearInscripcion = async (req, res) => {
                   eventId: id_eve,
                   actionRequired: true,
                 }
+              );
+
+              const adminPayload = buildNotificationPayload("SYSTEM_ALERT", {
+                title: "🛎️ Validación pendiente",
+                message: `Nueva inscripción pendiente de validación para "${eventoCompleto.name}".`,
+                link: `/admin/events/${id_eve}/enrollments`,
+              });
+
+              Promise.allSettled([
+                sendPushNotificationToRole(
+                  req.tenantId,
+                  "GLOBAL_ADMIN",
+                  adminPayload.notification,
+                  adminPayload.data
+                ),
+                sendPushNotificationToRole(
+                  req.tenantId,
+                  "GENERAL_ADMIN",
+                  adminPayload.notification,
+                  adminPayload.data
+                ),
+              ]).catch((err) =>
+                console.error("Error enviando push a admins (nueva inscripción):", err)
               );
             }
 
@@ -869,6 +916,7 @@ const validarInscripcion = async (req, res) => {
               eventId: inscripcionUsuario.event.id,
               eventName: inscripcionUsuario.event.name,
               inscriptionId: inscripcionUsuario.id,
+              status: nuevoEstado,
               reason: inscripcionUsuario.observation?.observation,
             });
 
@@ -1072,6 +1120,7 @@ const validarInscripcion = async (req, res) => {
             eventId: inscripcionCompleta.event.id,
             eventName: inscripcionCompleta.event.name,
             inscriptionId: inscripcionCompleta.id,
+            status: nuevoEstado,
           });
 
           sendPushNotificationToUser(
@@ -1085,6 +1134,7 @@ const validarInscripcion = async (req, res) => {
             eventId: inscripcionCompleta.event.id,
             eventName: inscripcionCompleta.event.name,
             inscriptionId: inscripcionCompleta.id,
+            status: nuevoEstado,
             reason: inscripcionCompleta.observation?.observation,
           });
 

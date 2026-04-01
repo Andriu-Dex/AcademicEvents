@@ -97,11 +97,16 @@ const sendPushNotification = async (fcmToken, notification, data = {}, retryCoun
  */
 const sendPushNotificationToUser = async (accountId, tenantId, notification, data = {}) => {
   try {
-    // Check if user is online (avoid duplicates with Socket.IO)
-    const isOnline = socketService.isUserOnline ? socketService.isUserOnline(accountId) : false;
+    // Optional optimization: skip push for online users only when explicitly requested.
+    const skipIfOnline = data?.skipIfOnline === true;
+    const isOnline = socketService.isUserOnline
+      ? socketService.isUserOnline(accountId)
+      : false;
 
-    if (isOnline) {
-      console.log(`ℹ️ User ${accountId} is online, skipping push notification (Socket.IO will handle it)`);
+    if (skipIfOnline && isOnline) {
+      console.log(
+        `ℹ️ User ${accountId} is online, skipping push notification by flag skipIfOnline=true`
+      );
       return { success: true, sentCount: 0, failedCount: 0, skipped: true };
     }
 
@@ -253,6 +258,10 @@ const sendPushNotificationToRole = async (tenantId, role, notification, data = {
  * @returns {object} - { notification: {title, body, imageUrl}, data: {...} }
  */
 const buildNotificationPayload = (type, data) => {
+  const registrationStatus = (data?.status || data?.registrationStatus || '').toUpperCase();
+  const isAccepted = registrationStatus === 'ACCEPTED';
+  const isApproved = registrationStatus === 'APPROVED';
+
   const payloads = {
     REGISTRATION_CREATED: {
       notification: {
@@ -264,20 +273,27 @@ const buildNotificationPayload = (type, data) => {
         type,
         eventId: data.eventId,
         inscriptionId: data.inscriptionId,
-        link: `/mis-inscripciones`,
+        link: '/enrollments',
       },
     },
     REGISTRATION_APPROVED: {
       notification: {
-        title: '✅ Inscripción Aprobada',
-        body: `Tu inscripción al evento "${data.eventName}" ha sido aprobada.`,
+        title: isAccepted
+          ? '✅ Inscripción Aceptada'
+          : '🎓 Inscripción Aprobada',
+        body: isAccepted
+          ? `Tu inscripción al evento "${data.eventName}" ha sido aceptada.`
+          : isApproved
+          ? `Tu inscripción al evento "${data.eventName}" ha sido aprobada de forma final.`
+          : `Tu inscripción al evento "${data.eventName}" ha sido aprobada.`,
         imageUrl: data.eventImageUrl,
       },
       data: {
         type,
+        ...(registrationStatus ? { status: registrationStatus } : {}),
         eventId: data.eventId,
         inscriptionId: data.inscriptionId,
-        link: `/mis-inscripciones`,
+        link: '/enrollments',
       },
     },
     REGISTRATION_REJECTED: {
@@ -290,7 +306,7 @@ const buildNotificationPayload = (type, data) => {
         type,
         eventId: data.eventId,
         inscriptionId: data.inscriptionId,
-        link: `/mis-inscripciones`,
+        link: '/enrollments',
       },
     },
     CERTIFICATE_READY: {
@@ -303,7 +319,7 @@ const buildNotificationPayload = (type, data) => {
         type,
         eventId: data.eventId,
         certificateId: data.certificateId,
-        link: `/certificados/${data.certificateId}`,
+        link: '/certificates',
       },
     },
     EVENT_REMINDER_24H: {
@@ -315,7 +331,7 @@ const buildNotificationPayload = (type, data) => {
       data: {
         type,
         eventId: data.eventId,
-        link: `/eventos/${data.eventId}`,
+        link: '/events',
       },
     },
     EVENT_REMINDER_1H: {
@@ -327,7 +343,7 @@ const buildNotificationPayload = (type, data) => {
       data: {
         type,
         eventId: data.eventId,
-        link: `/eventos/${data.eventId}`,
+        link: '/events',
       },
     },
     EVENT_UPDATED: {
@@ -339,7 +355,7 @@ const buildNotificationPayload = (type, data) => {
       data: {
         type,
         eventId: data.eventId,
-        link: `/eventos/${data.eventId}`,
+        link: '/events',
       },
     },
     EVENT_CANCELLED: {
@@ -351,7 +367,7 @@ const buildNotificationPayload = (type, data) => {
       data: {
         type,
         eventId: data.eventId,
-        link: `/mis-inscripciones`,
+        link: '/enrollments',
       },
     },
     PAYMENT_APPROVED: {
@@ -363,7 +379,7 @@ const buildNotificationPayload = (type, data) => {
         type,
         eventId: data.eventId,
         inscriptionId: data.inscriptionId,
-        link: `/mis-inscripciones`,
+        link: '/enrollments',
       },
     },
     PAYMENT_REJECTED: {
@@ -375,7 +391,7 @@ const buildNotificationPayload = (type, data) => {
         type,
         eventId: data.eventId,
         inscriptionId: data.inscriptionId,
-        link: `/mis-inscripciones`,
+        link: '/enrollments',
       },
     },
     SYSTEM_ALERT: {
