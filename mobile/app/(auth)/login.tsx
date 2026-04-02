@@ -1,24 +1,25 @@
 import { useEffect, useRef, useState } from "react";
-import { Image, Animated } from "react-native";
 import { Link, useRouter } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import {
     ActivityIndicator,
+    Animated,
+    ImageBackground,
     Pressable,
     StyleSheet,
     Text,
     TextInput,
     View,
 } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
+import { Ionicons } from "@expo/vector-icons";
 import { login } from "../../src/api/auth";
 import { useAuthStore } from "../../src/store/authStore";
 import { theme } from "../../src/shared/theme";
 
 const loginSchema = z.object({
-    email: z.string().email("Correo invalido"),
+    email: z.email("Correo invalido"),
     password: z.string().min(6, "Minimo 6 caracteres"),
 });
 
@@ -27,6 +28,7 @@ type LoginForm = z.infer<typeof loginSchema>;
 export default function LoginScreen() {
     const router = useRouter();
     const [submitError, setSubmitError] = useState<string | null>(null);
+    const [showPassword, setShowPassword] = useState(false);
     const setSession = useAuthStore((state) => state.setSession);
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const slideAnim = useRef(new Animated.Value(18)).current;
@@ -71,42 +73,42 @@ export default function LoginScreen() {
     };
 
     return (
-        <LinearGradient colors={theme.gradients.hero} style={styles.heroBackground}>
-            <View style={styles.heroGlow} />
+        <ImageBackground
+            source={{ uri: "https://i.imgur.com/eMavQXu.png" }}
+            style={styles.heroBackground}
+            resizeMode="cover"
+        >
+            <View style={styles.overlay} />
+            <Pressable style={styles.homeButton} onPress={() => router.replace("/")}>
+                <Ionicons name="home-outline" color={theme.colors.textInverse} size={20} />
+            </Pressable>
             <Animated.View
                 style={[
                     styles.card,
                     { opacity: fadeAnim, transform: [{ translateY: slideAnim }] },
                 ]}
             >
-                <View style={styles.brandRow}>
-                    <Image
-                        source={require("../../assets/brand/logo.png")}
-                        style={styles.logo}
-                        resizeMode="contain"
-                    />
-                    <View>
-                        <Text style={styles.brandTitle}>AcademicEvents</Text>
-                        <Text style={styles.brandSubtitle}>Acceso estudiantil</Text>
-                    </View>
-                </View>
-
-                <Text style={styles.title}>Iniciar sesion</Text>
+                <Text style={styles.title}>Iniciar Sesion</Text>
 
                 <Text style={styles.label}>Correo</Text>
                 <Controller
                     control={control}
                     name="email"
                     render={({ field: { onChange, value } }) => (
-                        <TextInput
-                            style={styles.input}
-                            value={value}
-                            onChangeText={onChange}
-                            autoCapitalize="none"
-                            keyboardType="email-address"
-                            placeholder="correo@uta.edu.ec"
-                            placeholderTextColor={theme.colors.textTertiary}
-                        />
+                        <View style={styles.inputGroup}>
+                            <View style={styles.inputIconWrap}>
+                                <Ionicons name="at-outline" size={16} color={theme.colors.textInverse} />
+                            </View>
+                            <TextInput
+                                style={styles.input}
+                                value={value}
+                                onChangeText={onChange}
+                                autoCapitalize="none"
+                                keyboardType="email-address"
+                                placeholder="usuario@uta.edu.ec"
+                                placeholderTextColor={theme.colors.textTertiary}
+                            />
+                        </View>
                     )}
                 />
                 {errors.email && (
@@ -118,14 +120,29 @@ export default function LoginScreen() {
                     control={control}
                     name="password"
                     render={({ field: { onChange, value } }) => (
-                        <TextInput
-                            style={styles.input}
-                            value={value}
-                            onChangeText={onChange}
-                            secureTextEntry
-                            placeholder="********"
-                            placeholderTextColor={theme.colors.textTertiary}
-                        />
+                        <View style={styles.inputGroup}>
+                            <View style={styles.inputIconWrap}>
+                                <Ionicons name="lock-closed-outline" size={16} color={theme.colors.textInverse} />
+                            </View>
+                            <TextInput
+                                style={styles.input}
+                                value={value}
+                                onChangeText={onChange}
+                                secureTextEntry={!showPassword}
+                                placeholder="********"
+                                placeholderTextColor={theme.colors.textTertiary}
+                            />
+                            <Pressable
+                                style={styles.eyeButton}
+                                onPress={() => setShowPassword((prev) => !prev)}
+                            >
+                                {showPassword ? (
+                                    <Ionicons name="eye-off-outline" size={18} color={theme.colors.textSecondary} />
+                                ) : (
+                                    <Ionicons name="eye-outline" size={18} color={theme.colors.textSecondary} />
+                                )}
+                            </Pressable>
+                        </View>
                     )}
                 />
                 {errors.password && (
@@ -133,6 +150,10 @@ export default function LoginScreen() {
                 )}
 
                 {submitError && <Text style={styles.error}>{submitError}</Text>}
+
+                <Pressable style={styles.forgotWrap}>
+                    <Text style={styles.forgotText}>Olvidaste tu contrasena?</Text>
+                </Pressable>
 
                 <Pressable
                     style={[styles.button, isSubmitting && styles.buttonDisabled]}
@@ -150,7 +171,7 @@ export default function LoginScreen() {
                     No tienes cuenta? Registrate
                 </Link>
             </Animated.View>
-        </LinearGradient>
+        </ImageBackground>
     );
 }
 
@@ -160,45 +181,39 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         padding: theme.spacing.lg,
     },
-    heroGlow: {
+    overlay: {
         position: "absolute",
-        width: 220,
-        height: 220,
-        borderRadius: 110,
-        backgroundColor: theme.colors.utaAccent,
-        opacity: 0.15,
-        top: -40,
-        right: -30,
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: "rgba(0,0,0,0.22)",
+    },
+    homeButton: {
+        position: "absolute",
+        right: 20,
+        top: 56,
+        zIndex: 3,
+        width: 42,
+        height: 42,
+        borderRadius: 21,
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: theme.colors.primary,
     },
     card: {
         backgroundColor: theme.colors.bgPrimary,
+        borderTopWidth: 6,
+        borderTopColor: theme.colors.primary,
         borderRadius: theme.radius.lg,
         padding: theme.spacing.lg,
-        ...theme.shadow.primary,
-    },
-    brandRow: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: theme.spacing.sm,
-        marginBottom: theme.spacing.md,
-    },
-    logo: {
-        width: 46,
-        height: 46,
-    },
-    brandTitle: {
-        fontSize: 18,
-        fontWeight: "700",
-        color: theme.colors.primary,
-    },
-    brandSubtitle: {
-        fontSize: 12,
-        color: theme.colors.textSecondary,
+        ...theme.shadow.md,
     },
     title: {
-        fontSize: 20,
+        fontSize: 28,
         fontWeight: "700",
         marginBottom: theme.spacing.md,
+        textAlign: "center",
         color: theme.colors.textPrimary,
     },
     label: {
@@ -207,15 +222,44 @@ const styles = StyleSheet.create({
         marginTop: theme.spacing.sm,
         color: theme.colors.textSecondary,
     },
-    input: {
+    inputGroup: {
+        marginTop: 6,
         borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
+        borderColor: theme.colors.borderSecondary,
         borderRadius: theme.radius.sm,
+        flexDirection: "row",
+        alignItems: "center",
+        overflow: "hidden",
+        backgroundColor: theme.colors.bgPrimary,
+    },
+    inputIconWrap: {
+        width: 44,
+        height: 44,
+        backgroundColor: theme.colors.primary,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    input: {
+        flex: 1,
         paddingHorizontal: 12,
         paddingVertical: 10,
-        marginTop: 6,
-        backgroundColor: theme.colors.bgTertiary,
         color: theme.colors.textPrimary,
+    },
+    eyeButton: {
+        paddingHorizontal: 12,
+        height: 44,
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: theme.colors.bgTertiary,
+    },
+    forgotWrap: {
+        marginTop: 10,
+        alignItems: "flex-end",
+    },
+    forgotText: {
+        color: theme.colors.primary,
+        fontSize: 13,
+        fontWeight: "500",
     },
     button: {
         backgroundColor: theme.colors.primary,
