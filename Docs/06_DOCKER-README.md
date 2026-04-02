@@ -44,20 +44,20 @@ Este proyecto incluye configuración completa de Docker para despliegue local.
 
 ```powershell
 # 1. Construir imágenes
-docker-compose build
+docker compose build
 
 # 2. Levantar servicios
-docker-compose up -d
+docker compose up -d
 
 # 3. Ver logs (opcional)
-docker-compose logs -f
+docker compose logs -f
 ```
 
 ## 🌐 Acceso a la Aplicación
 
 Una vez desplegado, podrás acceder a:
 
-- **Frontend**: http://localhost
+- **Frontend**: http://localhost:8080
 - **Backend API**: http://localhost:3000
 - **Base de Datos**: localhost:5432
 
@@ -126,29 +126,29 @@ academic-events/
 
 ```powershell
 # Ver estado de servicios
-docker-compose ps
+docker compose ps
 
 # Ver logs de todos los servicios
-docker-compose logs -f
+docker compose logs -f
 
 # Ver logs de un servicio específico
-docker-compose logs -f backend
-docker-compose logs -f frontend
-docker-compose logs -f postgres
+docker compose logs -f backend
+docker compose logs -f frontend
+docker compose logs -f postgres
 
 # Detener servicios
-docker-compose down
+docker compose down
 
 # Detener y eliminar volúmenes (¡CUIDADO! Elimina datos)
-docker-compose down -v
+docker compose down -v
 
 # Reconstruir un servicio específico
-docker-compose build backend
-docker-compose up -d backend
+docker compose build backend
+docker compose up -d backend
 
 # Ejecutar comandos dentro de un contenedor
-docker-compose exec backend bash
-docker-compose exec postgres psql -U postgres -d academic_events
+docker compose exec backend bash
+docker compose exec postgres psql -U postgres -d academic_events
 ```
 
 ## 🔄 Actualizaciones
@@ -157,13 +157,13 @@ Para aplicar cambios en el código:
 
 ```powershell
 # 1. Detener servicios
-docker-compose down
+docker compose down
 
 # 2. Reconstruir imágenes
-docker-compose build
+docker compose build
 
 # 3. Levantar servicios
-docker-compose up -d
+docker compose up -d
 ```
 
 ## 🛠️ Troubleshooting
@@ -182,46 +182,46 @@ netstat -ano | findstr :80
 
 ```powershell
 # Verificar logs de PostgreSQL
-docker-compose logs postgres
+docker compose logs postgres
 
 # Reiniciar solo el servicio de base de datos
-docker-compose restart postgres
+docker compose restart postgres
 ```
 
 ### Problema: Frontend no carga
 
 ```powershell
 # Verificar logs del frontend
-docker-compose logs frontend
+docker compose logs frontend
 
 # Verificar que nginx esté funcionando y el proxy esté configurado
-docker-compose exec frontend nginx -t
+docker compose exec frontend nginx -t
 
 # Verificar conectividad con el backend desde el frontend
-docker-compose exec frontend wget -qO- http://backend:3000/health
+docker compose exec frontend wget -qO- http://backend:3000/health
 ```
 
 ### Problema: API no responde desde el frontend
 
 ```powershell
 # El frontend usa proxy reverso, las llamadas deben ser a:
-# http://localhost/api/endpoint (NO http://localhost:3000/api/endpoint)
+# http://localhost:8080/api/endpoint (NO http://localhost:3000/api/endpoint)
 
 # Verificar configuración del proxy en nginx
-docker-compose exec frontend cat /etc/nginx/nginx.conf | grep -A 10 "location /api"
+docker compose exec frontend cat /etc/nginx/nginx.conf | grep -A 10 "location /api"
 
 # Verificar que el backend esté accesible desde el contenedor frontend
-docker-compose exec frontend nc -z backend 3000
+docker compose exec frontend nc -z backend 3000
 ```
 
 ### Problema: Socket.IO no funciona
 
 ```powershell
 # Verificar que el proxy de Socket.IO esté configurado
-docker-compose exec frontend cat /etc/nginx/nginx.conf | grep -A 10 "location /socket.io"
+docker compose exec frontend cat /etc/nginx/nginx.conf | grep -A 10 "location /socket.io"
 
 # Verificar logs del backend para conexiones Socket.IO
-docker-compose logs backend | grep -i socket
+docker compose logs backend | grep -i socket
 ```
 
 ### ❌ Error: "ERESOLVE could not resolve" o conflictos de dependencias de React
@@ -233,20 +233,20 @@ docker-compose logs backend | grep -i socket
 
 # Solución: El Dockerfile ya incluye --legacy-peer-deps para manejar esto
 # Si necesitas reconstruir:
-docker-compose build --no-cache frontend
-docker-compose up -d frontend
+docker compose build --no-cache frontend
+docker compose up -d frontend
 
 # Alternativamente, puedes actualizar dependencias manualmente:
-docker-compose exec frontend npm update
+docker compose exec frontend npm update
 ```
 
 ### Limpiar todo y empezar de nuevo
 
 ```powershell
 # ¡CUIDADO! Esto elimina todos los datos
-docker-compose down -v
+docker compose down -v
 docker system prune -a
-docker-compose up -d
+docker compose up -d
 ```
 
 ## 🔍 Verificación de Vulnerabilidades
@@ -267,7 +267,7 @@ docker pull nginx:1.27-alpine
 docker pull postgres:15-alpine
 
 # Reconstruir con imágenes actualizadas
-docker-compose build --no-cache
+docker compose build --no-cache
 ```
 
 ### Herramientas adicionales de seguridad
@@ -331,7 +331,7 @@ cd "C:\ruta\a\tu\proyecto\AcademicEvents"
 
 # Verificar que Docker esté ejecutándose
 docker --version
-docker-compose --version
+docker compose --version
 ```
 
 ### **Paso 2: Configurar variables de entorno (si es necesario)**
@@ -366,23 +366,23 @@ notepad .env
 
 ```powershell
 # Verificar que todos los servicios estén corriendo
-docker-compose ps
+docker compose ps
 
 # Deberías ver 3 servicios: postgres, backend, frontend (todos "healthy")
 # Si el frontend aparece como "unhealthy", es normal al inicio - dale unos minutos
 
 # Ver logs en tiempo real (Ctrl+C para salir)
-docker-compose logs -f
+docker compose logs -f
 
 # Probar endpoints
-# Frontend: http://localhost
+# Frontend: http://localhost:8080
 # Backend API: http://localhost:3000/health
-# API a través del proxy: http://localhost/api/test (si existe)
+# API a través del proxy: http://localhost:8080/api/test (si existe)
 ```
 
 ### **Paso 5: Primer acceso y configuración**
 
-1. **Abre tu navegador en http://localhost**
+1. **Abre tu navegador en http://localhost:8080**
 2. **La aplicación debe cargar correctamente**
 3. **Configuración automática:**
    - Las migraciones de base de datos se ejecutan automáticamente
@@ -409,19 +409,19 @@ Por defecto, se crea un super admin con:
 
 ```powershell
 # Ver logs en vivo
-docker-compose logs -f backend
+docker compose logs -f backend
 
 # Reiniciar solo el backend después de cambios
-docker-compose restart backend
+docker compose restart backend
 
 # Reconstruir y reiniciar un servicio específico
-docker-compose build backend && docker-compose up -d backend
+docker compose build backend && docker compose up -d backend
 
 # Acceder al contenedor del backend
-docker-compose exec backend sh
+docker compose exec backend sh
 
 # Acceder a la base de datos
-docker-compose exec postgres psql -U postgres -d academicevents
+docker compose exec postgres psql -U postgres -d academicevents
 
 # Ver uso de recursos
 docker stats
@@ -430,8 +430,8 @@ docker stats
 ### Comandos para debugging:
 
 ```powershell
-# Ver configuración de docker-compose
-docker-compose config
+# Ver configuración de docker compose
+docker compose config
 
 # Ver imágenes construidas
 docker images
@@ -454,18 +454,18 @@ docker system prune
 # 1. Hacer cambios en el código
 
 # 2. Si cambios en backend:
-docker-compose build backend
-docker-compose up -d backend
+docker compose build backend
+docker compose up -d backend
 
 # 3. Si cambios en frontend:
-docker-compose build frontend
-docker-compose up -d frontend
+docker compose build frontend
+docker compose up -d frontend
 
 # 4. Si cambios en base de datos/schema de Prisma:
-docker-compose exec backend npx prisma migrate dev --name "nombre_descriptivo"
+docker compose exec backend npx prisma migrate dev --name "nombre_descriptivo"
 # O si solo necesitas regenerar el cliente:
-docker-compose exec backend npx prisma generate
-docker-compose restart backend
+docker compose exec backend npx prisma generate
+docker compose restart backend
 
 # NOTA: El docker-entrypoint.sh maneja automáticamente:
 # - Generación del cliente Prisma
@@ -478,21 +478,21 @@ docker-compose restart backend
 ```powershell
 # 1. Si agregaste nuevas dependencias npm al backend:
 # Edita package.json, luego:
-docker-compose build --no-cache backend
-docker-compose up -d backend
+docker compose build --no-cache backend
+docker compose up -d backend
 
 # 2. Si agregaste nuevas dependencias npm al frontend:
 # Edita package.json, luego:
-docker-compose build --no-cache frontend
-docker-compose up -d frontend
+docker compose build --no-cache frontend
+docker compose up -d frontend
 
 # 3. Si cambiaste el schema de Prisma:
 # El docker-entrypoint.sh maneja esto automáticamente al reiniciar el backend
-docker-compose restart backend
+docker compose restart backend
 
 # O manualmente:
-docker-compose exec backend npx prisma generate
-docker-compose restart backend
+docker compose exec backend npx prisma generate
+docker compose restart backend
 ```
 
 ## 🚨 Solución de Problemas Comunes
@@ -514,47 +514,47 @@ netstat -ano | findstr :3000
 
 ```powershell
 # Verificar que PostgreSQL esté funcionando
-docker-compose logs postgres
+docker compose logs postgres
 
 # Reiniciar base de datos
-docker-compose restart postgres
+docker compose restart postgres
 
 # Verificar variables de entorno
-docker-compose exec backend printenv | grep DATABASE_URL
+docker compose exec backend printenv | grep DATABASE_URL
 ```
 
 ### ❌ Error: "Frontend no carga"
 
 ```powershell
 # Verificar logs del frontend
-docker-compose logs frontend
+docker compose logs frontend
 
 # Verificar que nginx esté funcionando
-docker-compose exec frontend nginx -t
+docker compose exec frontend nginx -t
 
 # Reconstruir frontend
-docker-compose build --no-cache frontend
-docker-compose up -d frontend
+docker compose build --no-cache frontend
+docker compose up -d frontend
 ```
 
 ### ❌ Error: "Prisma migrations fail"
 
 ```powershell
 # Verificar logs detallados del backend
-docker-compose logs backend
+docker compose logs backend
 
 # Verificar que la base de datos esté accesible
-docker-compose exec backend npx prisma db pull
+docker compose exec backend npx prisma db pull
 
 # Si hay problemas con migraciones, reset completo (¡CUIDADO! Borra datos)
-docker-compose exec backend npx prisma migrate reset --force
+docker compose exec backend npx prisma migrate reset --force
 
 # O aplicar migraciones manualmente
-docker-compose exec backend npx prisma migrate deploy
+docker compose exec backend npx prisma migrate deploy
 
 # Regenerar cliente si es necesario
-docker-compose exec backend npx prisma generate
-docker-compose restart backend
+docker compose exec backend npx prisma generate
+docker compose restart backend
 ```
 
 ### ❌ Error: "EADDRINUSE: puerto ya en uso"
@@ -565,7 +565,7 @@ netstat -ano | findstr :80
 netstat -ano | findstr :3000
 
 # Detener servicios Docker que puedan estar ejecutándose
-docker-compose down
+docker compose down
 
 # Limpiar procesos Docker huérfanos
 docker system prune -f
@@ -585,11 +585,11 @@ docker ps -a
 
 # Solución: El Dockerfile ya incluye --legacy-peer-deps para manejar esto
 # Si necesitas reconstruir:
-docker-compose build --no-cache frontend
-docker-compose up -d frontend
+docker compose build --no-cache frontend
+docker compose up -d frontend
 
 # Alternativamente, puedes actualizar dependencias manualmente:
-docker-compose exec frontend npm update
+docker compose exec frontend npm update
 ```
 
 ### ❌ Error de permisos en uploads
@@ -604,7 +604,7 @@ chmod -R 755 backend/uploads
 
 **✅ Verificaciones básicas:**
 
-- [ ] Frontend carga en http://localhost
+- [ ] Frontend carga en http://localhost:8080
 - [ ] Backend responde en http://localhost:3000/health
 - [ ] Base de datos acepta conexiones
 - [ ] No hay errores en logs
@@ -626,7 +626,7 @@ chmod -R 755 backend/uploads
 
 ## 📱 Primer Uso
 
-1. Después del despliegue, ve a http://localhost
+1. Después del despliegue, ve a http://localhost:8080
 2. El sistema debe cargar la página principal
 3. Si hay datos de prueba, se cargarán automáticamente
 4. Puedes acceder al panel de administración si hay usuarios configurados
@@ -645,12 +645,12 @@ notepad .env  # Configurar variables
 .\deploy.ps1
 
 # 3. Verificación
-# Abrir http://localhost en el navegador
+# Abrir http://localhost:8080 en el navegador
 ```
 
 **URLs importantes:**
 
-- 🌐 **Aplicación**: http://localhost
+- 🌐 **Aplicación**: http://localhost:8080
 - 🔧 **API**: http://localhost:3000
 - ❤️ **Health Check**: http://localhost:3000/health
 - 🗄️ **Base de Datos**: localhost:5432
@@ -726,7 +726,7 @@ notepad .env  # Configurar variables
 
 **Logs Estructurados:**
 
-- Logs centralizados accesibles con `docker-compose logs`
+- Logs centralizados accesibles con `docker compose logs`
 - Configuración de logs de nginx para debug
 - Logs de Socket.IO configurables via variables de entorno
 
@@ -766,3 +766,4 @@ notepad .env  # Configurar variables
 ```
 
 **Sin configuración manual adicional requerida** - el proyecto funciona inmediatamente después del despliegue con la configuración incluida.
+

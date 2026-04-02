@@ -85,14 +85,31 @@
 
 ## Requisitos Previos
 
-- Node.js (v18 o superior)
-- PostgreSQL (v12 o superior)
-- npm o yarn
+- Node.js (v18 o superior, recomendado v20)
+- npm
 - Git
+- PostgreSQL (v12 o superior) si vas a trabajar sin Docker
+- Docker Desktop + Docker Compose plugin v2 si vas a trabajar con contenedores
+
+Verificación rápida (opcional):
+
+```powershell
+node -v
+npm -v
+docker --version
+docker compose version
+```
 
 ---
 
 ## Instalación
+
+### Ruta recomendada para iniciar desde cero
+
+- Si quieres levantar el proyecto rápido y con la menor fricción, usa el flujo Docker en la sección [Despliegue](#despliegue).
+- Si vas a desarrollar con hot reload de backend/frontend y PostgreSQL local, sigue esta instalación local.
+
+### 1) Clonar repositorio e instalar dependencias
 
 ```powershell
 # Clonar el repositorio
@@ -106,18 +123,26 @@ npm install
 # Instalar dependencias del frontend
 cd ../frontend
 npm install
+
+# Volver a la raíz
+cd ..
 ```
 
-### Configuración del entorno
+### 2) Configurar variables de entorno para LOCAL (sin Docker)
 
 #### Backend
 
-Crea un archivo `.env` en la carpeta `backend/` basado en `.env.example`:
+Crea `backend/.env` a partir de `backend/.Ejemploenv.txt`:
+
+```powershell
+Copy-Item backend/.Ejemploenv.txt backend/.env
+```
+
+Variables mínimas recomendadas en `backend/.env`:
 
 ```env
 # Base de datos
-DATABASE_URL="postgresql://usuario:contraseña@localhost:5432/academic_events"
-DIRECT_URL="postgresql://usuario:contraseña@localhost:5432/academic_events"
+DATABASE_URL=postgresql://usuario:contraseña@localhost:5432/academicevents
 
 # JWT
 JWT_SECRET=tu_clave_secreta_super_segura
@@ -125,56 +150,151 @@ JWT_SECRET=tu_clave_secreta_super_segura
 # Servidor
 PORT=3000
 HOST=localhost
+FRONTEND_URL=http://localhost:5173
+BACKEND_URL=http://localhost:3000
 
 # Email (opcional para notificaciones)
-EMAIL_HOST=smtp.gmail.com
-EMAIL_PORT=587
-EMAIL_USER=tu_email@gmail.com
-EMAIL_PASS=tu_contraseña_de_aplicacion
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=tu_email@gmail.com
+SMTP_PASS=tu_contraseña_de_aplicacion
+
+# Firebase Admin (obligatorio para notificaciones push)
+FIREBASE_PROJECT_ID=tu_project_id_firebase
+FIREBASE_SERVICE_ACCOUNT_PATH=./firebase-service-account.json
 ```
+
+Si usas PostgreSQL local, asegúrate de que `DATABASE_URL` apunte a una base real existente.
 
 #### Frontend
 
-Crea un archivo `.env` en la carpeta `frontend/` basado en `Ejemplo.env.txt`:
+Crea `frontend/.env` a partir de `frontend/Ejemplo.env.txt`:
+
+```powershell
+Copy-Item frontend/Ejemplo.env.txt frontend/.env
+```
+
+Variables mínimas recomendadas en `frontend/.env`:
 
 ```env
 VITE_API_URL=http://localhost:3000
 VITE_HOST=localhost
+VITE_PORT=5173
+
+# Firebase Web SDK
+VITE_FIREBASE_API_KEY=tu_firebase_api_key
+VITE_FIREBASE_AUTH_DOMAIN=tu_proyecto.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=tu_project_id_firebase
+VITE_FIREBASE_STORAGE_BUCKET=tu_proyecto.appspot.com
+VITE_FIREBASE_MESSAGING_SENDER_ID=tu_messaging_sender_id
+VITE_FIREBASE_APP_ID=tu_firebase_app_id
+VITE_FIREBASE_VAPID_KEY=tu_web_push_public_vapid_key
 ```
 
-### Configuración de la base de datos
+#### Firebase: cómo obtener los datos (rápido y exacto)
+
+1. Entra a [Firebase Console](https://console.firebase.google.com/) y selecciona tu proyecto.
+2. Registra una app Web (`</>`). En el bloque `firebaseConfig` copia:
+   - `apiKey` -> `VITE_FIREBASE_API_KEY`
+   - `authDomain` -> `VITE_FIREBASE_AUTH_DOMAIN`
+   - `projectId` -> `VITE_FIREBASE_PROJECT_ID`
+   - `storageBucket` -> `VITE_FIREBASE_STORAGE_BUCKET`
+   - `messagingSenderId` -> `VITE_FIREBASE_MESSAGING_SENDER_ID`
+   - `appId` -> `VITE_FIREBASE_APP_ID`
+3. En **Project settings -> Cloud Messaging**, copia la **Public key** de Web Push y pégala en `VITE_FIREBASE_VAPID_KEY`.
+4. En **Project settings -> Service accounts**, genera una clave privada JSON y guárdala como `backend/firebase-service-account.json`.
+5. Configura en backend: `FIREBASE_PROJECT_ID` y `FIREBASE_SERVICE_ACCOUNT_PATH=./firebase-service-account.json`.
+
+Notas:
+- Reinicia frontend/backend después de cambiar variables de entorno.
+- Mantén sincronizada la config pública entre `frontend/.env` y `frontend/public/firebase-messaging-sw.js`.
+- No subas `firebase-service-account.json` al repositorio (archivo sensible).
+- Para guía extendida: `frontend/Ejemplo.env.txt` y `Docs/05_NOTIFICACIONES_PUSH.md`.
+- Si no configuras Firebase, la app puede funcionar sin push notifications.
+
+### 3) Crear base de datos local (solo si trabajas sin Docker)
+
+Si ya tienes una base creada y credenciales válidas en `DATABASE_URL`, puedes ir al paso 4.
+
+Ejemplo con `psql`:
+
+```powershell
+# Ajusta usuario, contraseña y nombre de base a tu entorno
+psql -U postgres -h localhost -p 5432 -c "CREATE USER academicevents_user WITH PASSWORD 'cambia_esta_clave';"
+psql -U postgres -h localhost -p 5432 -c "CREATE DATABASE academicevents OWNER academicevents_user;"
+```
+
+Luego actualiza `backend/.env`:
+
+```env
+DATABASE_URL=postgresql://academicevents_user:cambia_esta_clave@localhost:5432/academicevents
+```
+
+### 4) Ejecutar Prisma y seed (obligatorio en primer arranque local)
 
 ```powershell
 # Desde el directorio backend
 cd backend
 
+# Generar cliente Prisma
+npx prisma generate
+
 # Ejecutar migraciones
 npx prisma migrate dev
 
-# Poblar la base de datos con datos iniciales
-npx prisma db seed
+# Poblar la base de datos con datos iniciales (seed completo)
+npm run seed
+
+# (Opcional) Ver estado de migraciones
+npx prisma migrate status
 ```
 
-**Nota importante**: Si usas Docker para el despliegue, las migraciones se deben ejecutar dentro del contenedor la primera vez. Ver la sección [Despliegue](#despliegue) para comandos específicos de Docker.
+Notas:
+- Si cambias el `schema.prisma`, vuelve a ejecutar `npx prisma generate`.
+- El `seed` del primer arranque es importante para crear datos base (incluyendo tenant por defecto).
+- Para flujo Docker, mira la sección [Despliegue](#despliegue).
 
 ---
 
 ## Uso
 
+### Desarrollo local (sin Docker)
+
 ```powershell
-# Terminal 1: Iniciar el backend
+# Terminal 1
 cd backend
 npm run dev
 
-# Terminal 2: Iniciar el frontend
+# Terminal 2
 cd frontend
 npm run dev
 ```
 
-Accede a la aplicación desde:
-[http://localhost:5173](http://localhost:5173)
+Accesos locales:
+- [http://localhost:5173](http://localhost:5173)
+- [http://localhost:3000/health](http://localhost:3000/health)
 
-### Acceso para Desarrollo en Red Local
+Comandos útiles en local:
+
+```powershell
+# Backend
+cd backend
+npm run dev
+npm run start
+npm run seed
+npx prisma migrate status
+npx prisma migrate dev --name nombre_migracion
+npx prisma generate
+
+# Frontend
+cd frontend
+npm run dev
+npm run build
+npm run preview
+npm run lint
+```
+
+### Acceso para desarrollo en red local
 
 Para permitir acceso desde otros dispositivos en la red local:
 
@@ -190,6 +310,10 @@ Para permitir acceso desde otros dispositivos en la red local:
    - **Backend:** Cambia `HOST` por tu IP local
 
 3. Accede desde otros dispositivos: `http://tu_ip_local:5173`
+
+### Si prefieres Docker
+
+Usa la sección [Despliegue](#despliegue). Es la opción más directa para una instalación desde cero.
 
 ---
 
@@ -291,76 +415,126 @@ AcademicEvents/
 
 ## Despliegue
 
-### Requisitos para Despliegue
+### Requisitos para Docker
 
-- **Docker** y **Docker Compose** instalados y ejecutándose
-- **Codificación UTF-8 con BOM** para máxima compatibilidad con los archivos de configuración
-- Verificar que Docker Desktop esté iniciado antes de ejecutar los comandos
+- Docker Desktop iniciado
+- Docker Compose plugin v2 (`docker compose`)
+- Archivo `.env` en la raíz del proyecto
 
-### Docker
-
-El proyecto incluye configuración Docker completa para despliegue:
+### 1) Configuración inicial Docker
 
 ```powershell
-# Script automatizado para despliegue completo
+# Desde la raíz del proyecto
+Copy-Item .env.example .env
+```
+
+Edita `.env` y valida al menos:
+- `POSTGRES_PASSWORD`
+- `JWT_SECRET`
+- `FRONTEND_PORT` (recomendado `8080`)
+- `PORT` (backend, recomendado `3000`)
+
+Opcional para JWT seguro:
+
+```powershell
+.\generate-jwt-secret.ps1
+```
+
+### 2) Levantar servicios con Docker Compose
+
+```powershell
+# Build + up (recomendado)
+docker compose --env-file .env up -d --build
+
+# Ver estado
+docker compose ps
+
+# Ver logs
+docker compose logs -f
+```
+
+Accesos por defecto:
+- Frontend: `http://localhost:8080`
+- Backend: `http://localhost:3000`
+- Health check: `http://localhost:3000/health`
+
+### 3) Qué se ejecuta automáticamente en backend Docker
+
+En cada arranque del contenedor backend:
+1. `npx prisma generate`
+2. `npx prisma migrate deploy`
+3. Bootstrap mínimo multi-tenant (tenant + universidad + facultad por defecto)
+
+### 4) Seed de datos completos (manual)
+
+El seed completo **no** corre automáticamente. Ejecútalo cuando necesites datos de prueba:
+
+```powershell
+docker compose exec backend npm run seed
+```
+
+### 5) Comandos operativos útiles (Docker)
+
+```powershell
+# Logs por servicio
+docker compose logs -f backend
+docker compose logs -f frontend
+docker compose logs -f postgres
+
+# Entrar al backend
+docker compose exec backend sh
+
+# Prisma dentro de contenedor
+docker compose exec backend npx prisma migrate status
+docker compose exec backend npx prisma migrate dev --name nombre_migracion
+docker compose exec backend npx prisma migrate deploy
+docker compose exec backend npx prisma generate
+docker compose exec backend npm run seed
+
+# Reiniciar servicios
+docker compose restart backend
+docker compose restart frontend
+
+# Reconstruir un servicio puntual
+docker compose build --no-cache backend
+docker compose up -d backend
+
+# Detener stack
+docker compose down
+
+# Detener y borrar volumenes (resetea DB)
+docker compose down -v
+```
+
+### 6) Flujo recomendado para DB Docker desde cero
+
+```powershell
+# 1) Levantar contenedores
+docker compose --env-file .env up -d --build
+
+# 2) Cargar seed completo
+docker compose exec backend npm run seed
+
+# 3) Verificar endpoints
+docker compose ps
+```
+
+### 7) Solución de problemas comunes
+
+- Error `P1000` (Prisma / autenticación PostgreSQL): suele indicar credenciales distintas entre `.env` y el volumen existente. Solución: alinear variables o resetear volúmenes con `docker compose down -v` y volver a levantar.
+- Error `TENANT_HEADER_REQUIRED` o `TENANT_NOT_FOUND`: ejecuta `docker compose exec backend npm run seed` y reinicia backend (`docker compose restart backend`).
+- `npm run dev` falla en local: revisa `backend/.env`, la conexión `DATABASE_URL`, y que ejecutaste `npx prisma migrate dev` + `npm run seed`.
+
+### 8) Script automatizado opcional (Windows)
+
+```powershell
 .\deploy.ps1
-
-# Construcción y ejecución manual con Docker Compose
-docker-compose up --build
-
-# Para producción
-docker-compose -f docker-compose.prod.yml up -d
 ```
 
-### Gestión de Migraciones con Docker
-
-#### Primera vez - Configuración inicial:
-
-```powershell
-# 1. Ejecutar el script de despliegue
-.\deploy.ps1
-
-# 2. Verificar estado de las migraciones
-docker-compose exec backend npx prisma migrate status
-
-# 3. Si es necesario, ejecutar migraciones
-docker-compose exec backend npx prisma migrate dev --name agregar_cupos
-
-# 4. Cargar datos iniciales del seed
-docker-compose exec backend npm run seed
-```
-
-#### Comandos útiles para migraciones:
-
-```powershell
-# Estado de las migraciones
-docker-compose exec backend npx prisma migrate status
-
-# Forzar limpieza de la base de datos (¡CUIDADO: Borra todos los datos!)
-docker-compose exec backend npx prisma migrate reset --force
-
-# Crear nueva migración
-docker-compose exec backend npx prisma migrate dev --name nombre_de_la_migracion
-
-# Cargar datos iniciales del seed
-docker-compose exec backend npm run seed
-
-# Regenerar el cliente Prisma
-docker-compose exec backend npx prisma generate
-```
-
-### Scripts de Despliegue
-
-- `deploy.ps1`: Script automatizado para despliegue completo en Windows
-- `check-vulnerabilities.ps1`: Análisis de seguridad
-- `generate-jwt-secret.ps1`: Generación segura de claves JWT
-
-### Notas Importantes
-
-- **Codificación**: Asegúrate de que todos los archivos de configuración estén guardados con codificación UTF-8 con BOM
-- **Docker**: Docker Desktop debe estar iniciado antes de ejecutar cualquier comando
-- **Primera ejecución**: Las migraciones se deben ejecutar la primera vez después del despliegue
-- **Datos de prueba**: El comando `npm run seed` carga datos iniciales para pruebas
+Scripts relacionados:
+- `deploy.ps1`: despliegue asistido en Windows
+- `check-vulnerabilities.ps1`: análisis de seguridad
+- `generate-jwt-secret.ps1`: generación de JWT seguro
 
 ---
 
@@ -376,7 +550,7 @@ Todas las versiones y cambios notables del proyecto están documentados en nuest
 - ✅ Gestión integral de eventos académicos
 - ✅ Generación automática de certificados PDF
 - ✅ Panel administrativo con estadísticas en tiempo real
-- ✅ Notificaciones push mediante WebSockets
+- ✅ Notificaciones en tiempo real (Socket.io) y push web (Firebase Cloud Messaging)
 - ✅ Interfaz responsive y moderna
 
 #### Próximas versiones:

@@ -4,6 +4,7 @@
  */
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   CheckCircle,
   XCircle,
@@ -14,6 +15,10 @@ import {
   FileText,
   AlertTriangle,
 } from 'lucide-react';
+import {
+  isExternalNotificationLink,
+  normalizeNotificationLink,
+} from '../../utils/notificationLink';
 
 // Notification type icons and styles
 const NOTIFICATION_STYLES = {
@@ -108,6 +113,8 @@ const formatRelativeTime = (timestamp) => {
 };
 
 const NotificationItem = ({ notification, onClose, onMarkAsRead }) => {
+  const navigate = useNavigate();
+
   // Get notification style based on type
   const type = notification.data?.type || notification.type || 'DEFAULT';
   const style = NOTIFICATION_STYLES[type] || NOTIFICATION_STYLES.DEFAULT;
@@ -121,9 +128,16 @@ const NotificationItem = ({ notification, onClose, onMarkAsRead }) => {
     }
 
     // Navigate to link if provided
-    if (notification.data?.link) {
-      window.location.href = notification.data.link;
+    const targetLink = normalizeNotificationLink(notification.data?.link);
+    if (targetLink) {
       onClose?.();
+
+      if (isExternalNotificationLink(targetLink)) {
+        window.location.assign(targetLink);
+        return;
+      }
+
+      navigate(targetLink);
     }
   };
 

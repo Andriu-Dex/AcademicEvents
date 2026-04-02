@@ -17,6 +17,10 @@
   text-align: center;
 }
 
+.reporte-mes-title {
+  margin-bottom: 1rem;
+}
+
 .reporte-mes-filtros {
   display: flex;
   justify-content: center;
@@ -52,6 +56,12 @@
   border-radius: 18px;
   box-shadow: 0 2px 8px #0001;
   overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.reporte-mes-loading,
+.reporte-mes-empty {
+  text-align: center;
 }
 
 .reporte-btn-descargar {
@@ -71,6 +81,13 @@
 
 .reporte-btn-descargar:hover {
   background: #a22145;
+}
+
+.reporte-btn-descargar:disabled {
+  opacity: 0.7;
+  pointer-events: none;
+  transform: none;
+  box-shadow: none;
 }
 
 .reporte-mes-table th,
@@ -99,6 +116,15 @@
 .reporte-mes-table td {
   color: #222;
   border-bottom: 1px solid #f0e4e6;
+}
+
+.reporte-mes-total-label {
+  text-align: right;
+  font-weight: bold;
+}
+
+.reporte-mes-total-value {
+  font-weight: bold;
 }
 
 /* -- Cambia el footer de la tabla para que el total esté a la izquierda -- */
@@ -149,6 +175,15 @@
   color: var(--color-text-primary);
   border-color: var(--color-border-primary);
   box-shadow: none;
+}
+
+[data-theme="dark"] .reporte-mes-filtros select option {
+  background: var(--color-bg-elevated);
+  color: var(--color-text-primary);
+}
+
+[data-theme="dark"] .reporte-mes-loading {
+  color: var(--color-text-secondary);
 }
 
 [data-theme="dark"] .reporte-mes-table {

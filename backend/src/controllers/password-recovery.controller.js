@@ -217,16 +217,24 @@ const resetPassword = async (req, res) => {
     const hasUppercase = /[A-Z]/.test(newPassword);
     const hasLowercase = /[a-z]/.test(newPassword);
     const hasNumbers = /[0-9]/.test(newPassword);
-    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(newPassword);
+    const hasSpecialChar =
+      /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?]/.test(newPassword);
+    const hasNoSpaces = !/\s/.test(newPassword);
 
-    if (!hasUppercase || !hasLowercase || !hasNumbers || !hasSpecialChar) {
+    if (
+      !hasUppercase ||
+      !hasLowercase ||
+      !hasNumbers ||
+      !hasSpecialChar ||
+      !hasNoSpaces
+    ) {
       console.log(
         "❌ [RESET-PASSWORD] Contraseña no cumple requisitos de complejidad"
       );
       return res.status(400).json({
         success: false,
         message:
-          "La contraseña debe incluir mayúsculas, minúsculas, números y caracteres especiales",
+          "La contraseña debe incluir mayúsculas, minúsculas, números, caracteres especiales y no contener espacios",
         reason: "PASSWORD_DEBIL",
       });
     }

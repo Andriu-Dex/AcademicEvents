@@ -95,21 +95,9 @@ const AdminReporteMes = () => {
 
   return (
     <div className="reporte-mes-container">
-      <h2
-        style={{ color: "#8a1538", textAlign: "center", marginBottom: "1rem" }}
-      >
-        Reporte Mensual de Eventos
-      </h2>
+      <h2 className="reporte-mes-title">Reporte Mensual de Eventos</h2>
 
-      <div
-        className="reporte-mes-filtros"
-        style={{
-          display: "flex",
-          gap: "1rem",
-          justifyContent: "center",
-          marginBottom: "2rem",
-        }}
-      >
+      <div className="reporte-mes-filtros">
         <select value={month} onChange={(event) => setMonth(Number(event.target.value))}>
           {MONTHS.map((label, index) => (
             <option key={label} value={index + 1}>
@@ -128,20 +116,11 @@ const AdminReporteMes = () => {
       </div>
 
       {loading ? (
-        <div style={{ textAlign: "center" }}>Cargando reporte...</div>
+        <div className="reporte-mes-loading">Cargando reporte...</div>
       ) : (
-        <table
-          className="reporte-mes-table"
-          style={{
-            width: "100%",
-            background: "#fff",
-            borderRadius: "10px",
-            boxShadow: "0 2px 8px #0001",
-            marginBottom: "1.5rem",
-          }}
-        >
+        <table className="reporte-mes-table">
           <thead>
-            <tr style={{ background: "#f5e9ec", color: "#8a1538" }}>
+            <tr>
               <th>#</th>
               <th>Nombre del Evento</th>
               <th>Valor ($)</th>
@@ -156,7 +135,7 @@ const AdminReporteMes = () => {
           <tbody>
             {events.length === 0 ? (
               <tr>
-                <td colSpan={8} style={{ textAlign: "center" }}>
+                <td colSpan={8} className="reporte-mes-empty">
                   No hay eventos para este mes y año.
                 </td>
               </tr>
@@ -179,10 +158,10 @@ const AdminReporteMes = () => {
           {events.length > 0 && (
             <tfoot>
               <tr>
-                <td colSpan={7} style={{ textAlign: "right", fontWeight: "bold" }}>
+                <td colSpan={7} className="reporte-mes-total-label">
                   Total del mes:
                 </td>
-                <td style={{ fontWeight: "bold" }}>{monthlyTotal}</td>
+                <td className="reporte-mes-total-value">{monthlyTotal}</td>
               </tr>
             </tfoot>
           )}
@@ -195,10 +174,6 @@ const AdminReporteMes = () => {
           className="reporte-btn-descargar"
           onClick={handleDownloadMonthlyPdf}
           disabled={loadingPdf}
-          style={{
-            opacity: loadingPdf ? 0.7 : 1,
-            pointerEvents: loadingPdf ? "none" : "auto",
-          }}
         >
           {loadingPdf ? "Generando PDF..." : "Descargar Reporte PDF"}
         </button>

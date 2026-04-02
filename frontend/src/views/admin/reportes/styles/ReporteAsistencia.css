@@ -380,7 +380,7 @@
 }
 
 .baja-asistencia-ra {
-  background-color: #f8d7da;
+  background-color: #ff4c5b;
   color: #721c24;
   text-align: center;
   font-weight: 600;
@@ -553,10 +553,7 @@
   font-weight: 700;
 }
 
-.baja-asistencia-ra {
-  color: #dc3545;
-  font-weight: 700;
-}
+
 
 .noshows-grid-ra {
   display: grid;
@@ -700,6 +697,11 @@
   color: var(--color-text-primary);
   border-color: var(--color-border-primary);
   box-shadow: none;
+}
+
+[data-theme="dark"] .select-control-ra option {
+  background: var(--color-bg-elevated);
+  color: var(--color-text-primary);
 }
 
 [data-theme="dark"] .stat-card-ra {

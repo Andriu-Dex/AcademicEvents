@@ -37,9 +37,63 @@ const LEGACY_REG_STATUS_TO_DB = {
 
 const toDbStatus = (status) => LEGACY_REG_STATUS_TO_DB[status] || status;
 
+const resolveDateValue = (...candidates) => {
+  for (const candidate of candidates) {
+    if (candidate !== undefined && candidate !== null && candidate !== "") {
+      return candidate;
+    }
+  }
+
+  return null;
+};
+
+const toValidDate = (value) => {
+  if (!value) return null;
+  const parsedDate = value instanceof Date ? value : new Date(value);
+
+  return Number.isNaN(parsedDate.getTime()) ? null : parsedDate;
+};
+
+const formatDateRange = (startValue, endValue) => {
+  const startDate = toValidDate(startValue);
+  const endDate = toValidDate(endValue);
+
+  if (startDate && endDate) {
+    return `${startDate.toLocaleDateString("es-EC")} – ${endDate.toLocaleDateString("es-EC")}`;
+  }
+
+  if (startDate) {
+    return startDate.toLocaleDateString("es-EC");
+  }
+
+  if (endDate) {
+    return endDate.toLocaleDateString("es-EC");
+  }
+
+  return "Fecha no disponible";
+};
+
 const normalizeInscripcion = (item) => {
   const event = item.event || item.evento || {};
   const rawObservation = item.observation ?? item.observacion ?? null;
+  const startDate = resolveDateValue(
+    event.startDate,
+    event.fec_ini_eve,
+    event.fecha_inicio,
+    event.fec_ini_cur,
+    event.eventCourse?.startDate,
+    event.eventos_curso?.startDate,
+    event.eventos_curso?.fec_ini_cur
+  );
+  const endDate = resolveDateValue(
+    event.endDate,
+    event.fec_fin_eve,
+    event.fecha_fin,
+    event.fec_fin_cur,
+    event.eventCourse?.endDate,
+    event.eventos_curso?.endDate,
+    event.eventos_curso?.fec_fin_cur
+  );
 
   return {
     id: item.id || item.id_ins,
@@ -48,8 +102,8 @@ const normalizeInscripcion = (item) => {
       id: event.id || event.id_eve,
       name: event.name || event.nom_eve || "Evento sin nombre",
       type: event.type || event.tip_eve || "N/A",
-      startDate: event.startDate || event.fec_ini_eve,
-      endDate: event.endDate || event.fec_fin_eve,
+      startDate,
+      endDate,
     },
     observation:
       typeof rawObservation === "string"
@@ -249,9 +303,12 @@ const MyInscriptions = () => {
     }
   };
 
-  const inscripcionesOrdenadas = [...inscripciones].sort(
-    (a, b) => new Date(a.event.startDate) - new Date(b.event.startDate)
-  );
+  const inscripcionesOrdenadas = [...inscripciones].sort((a, b) => {
+    const startA = toValidDate(a.event.startDate)?.getTime() ?? Number.MAX_SAFE_INTEGER;
+    const startB = toValidDate(b.event.startDate)?.getTime() ?? Number.MAX_SAFE_INTEGER;
+
+    return startA - startB;
+  });
 
   const inscripcionesFiltradas =
     filtroEstado === "TODOS"
@@ -422,9 +479,7 @@ const MyInscriptions = () => {
                 </div>
                 <p className="myins-datos">
                   Tipo: {ins.event.type} <br /> Fecha:{" "}
-                  {new Date(ins.event.startDate).toLocaleDateString("es-EC")}{" "}
-                  –{" "}
-                  {new Date(ins.event.endDate).toLocaleDateString("es-EC")}
+                  {formatDateRange(ins.event.startDate, ins.event.endDate)}
                 </p>{" "}
                 {/* Mostrar observación del administrador si existe */}
                 {ins.observation && (
@@ -530,13 +585,29 @@ const MyInscriptions = () => {
                     <button
                       className="btn-reenviar"
                       onClick={() => {
+                        const targetEventId = ins.event?.id;
+
+                        if (!targetEventId) {
+                          toast.error(
+                            "No se pudo identificar el evento para reinscripción."
+                          );
+                          return;
+                        }
+
                         toast.info(
-                          "Redirigiendo a eventos disponibles donde podrás volver a inscribirte",
+                          "Redirigiendo al evento para abrir tu reinscripción...",
                           {
                             autoClose: 3000,
                           }
                         );
-                        navigate("/events");
+
+                        navigate("/events", {
+                          state: {
+                            openInscripcionModal: true,
+                            eventId: targetEventId,
+                            reinscripcion: true,
+                          },
+                        });
                       }}
                     >
                       <Upload size={16} />

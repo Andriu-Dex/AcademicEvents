@@ -113,6 +113,26 @@ button:focus-visible {
   color: var(--color-text-primary);
 }
 
+/* Ensure native select dropdown options keep readable contrast in dark mode */
+[data-theme="dark"] select,
+[data-theme="dark"] .form-select {
+  background-color: var(--color-bg-tertiary);
+  border-color: var(--color-border-secondary);
+  color: var(--color-text-primary);
+}
+
+[data-theme="dark"] select option,
+[data-theme="dark"] .form-select option {
+  background-color: var(--color-bg-elevated);
+  color: var(--color-text-primary);
+}
+
+[data-theme="dark"] select option:checked,
+[data-theme="dark"] .form-select option:checked {
+  background-color: var(--color-primary-light);
+  color: var(--color-text-primary);
+}
+
 [data-theme="dark"] .form-control:focus {
   background-color: var(--color-bg-primary);
   border-color: var(--color-primary);
@@ -135,6 +155,70 @@ button:focus-visible {
 
 [data-theme="dark"] .dropdown-item:hover {
   background-color: var(--color-bg-tertiary);
+}
+
+/* React DatePicker shared dark theme fallback for all views */
+[data-theme="dark"] .react-datepicker {
+  background-color: var(--color-bg-primary);
+  border-color: var(--color-border-primary);
+}
+
+[data-theme="dark"] .react-datepicker__header {
+  background: var(--gradient-primary) !important;
+  border-bottom-color: var(--color-border-primary) !important;
+}
+
+[data-theme="dark"] .react-datepicker__month,
+[data-theme="dark"] .react-datepicker__month-container,
+[data-theme="dark"] .react-datepicker__time-container,
+[data-theme="dark"] .react-datepicker__time-box {
+  background-color: var(--color-bg-primary);
+}
+
+[data-theme="dark"] .react-datepicker__current-month,
+[data-theme="dark"] .react-datepicker__day-name {
+  color: var(--color-text-inverse) !important;
+}
+
+[data-theme="dark"] .react-datepicker__day,
+[data-theme="dark"] .react-datepicker__time-name,
+[data-theme="dark"] .react-datepicker__time-list-item {
+  color: var(--color-text-primary);
+}
+
+[data-theme="dark"] .react-datepicker__day:hover,
+[data-theme="dark"] .react-datepicker__time-list-item:hover {
+  background-color: var(--color-primary-light) !important;
+  color: var(--color-primary) !important;
+}
+
+[data-theme="dark"] .react-datepicker__day--outside-month,
+[data-theme="dark"] .react-datepicker__day--disabled {
+  color: var(--color-text-tertiary);
+}
+
+[data-theme="dark"] .react-datepicker__day--selected,
+[data-theme="dark"] .react-datepicker__day--keyboard-selected,
+[data-theme="dark"] .react-datepicker__time-list-item--selected {
+  background-color: var(--color-primary) !important;
+  color: var(--color-text-inverse) !important;
+}
+
+[data-theme="dark"] .react-datepicker__navigation-icon::before {
+  border-color: var(--color-text-inverse) !important;
+}
+
+[data-theme="dark"] .react-datepicker__month-select,
+[data-theme="dark"] .react-datepicker__year-select {
+  background-color: var(--color-bg-elevated);
+  border-color: var(--color-border-primary);
+  color: var(--color-text-primary);
+}
+
+[data-theme="dark"] .react-datepicker__month-select option,
+[data-theme="dark"] .react-datepicker__year-select option {
+  background-color: var(--color-bg-elevated);
+  color: var(--color-text-primary);
 }
 
 /* Override tables */

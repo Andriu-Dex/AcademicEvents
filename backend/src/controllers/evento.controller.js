@@ -39,10 +39,19 @@ const LEGACY_EVENT_STATUS_TO_DB = {
   SUSPENDIDO: "SUSPENDED",
 };
 
+const VALID_EVENT_STATUSES = new Set([
+  "ACTIVE",
+  "INACTIVE",
+  "FINISHED",
+  "CANCELLED",
+  "SUSPENDED",
+]);
+
 const normalizeEventType = (type) => LEGACY_EVENT_TYPE_TO_DB[type] || type;
 const normalizeEventModality = (modality) =>
   LEGACY_EVENT_MODALITY_TO_DB[modality] || modality;
 const normalizeEventStatus = (status) => LEGACY_EVENT_STATUS_TO_DB[status] || status;
+const isValidEventStatus = (status) => VALID_EVENT_STATUSES.has(status);
 const isCourseEventType = (type) => normalizeEventType(type) === "COURSE";
 
 const parseBoolean = (value) => value === true || value === "true";
@@ -202,7 +211,13 @@ const crearEvento = async (req, res) => {
 
     const tipoEventoFinal = normalizeEventType(tipoEventoEntrada);
     const modalidadFinal = normalizeEventModality(modalidadEntrada || "IN_PERSON");
-    const estadoFinal = normalizeEventStatus(estadoEntrada || "ACTIVE");
+    const estadoFinal = normalizeEventStatus(estadoEntrada || "INACTIVE");
+
+    if (!isValidEventStatus(estadoFinal)) {
+      return res.status(400).json({
+        msg: "Estado del evento no válido",
+      });
+    }
 
     // Convertir fechas a objetos Date en UTC para evitar problemas de zona horaria
     const fechaIni = parseUTCDate(fechaInicioEntrada);
@@ -471,7 +486,10 @@ const actualizarEvento = async (req, res) => {
     startDate: dataEvento.startDate ?? dataEvento.fec_ini_eve,
     endDate: dataEvento.endDate ?? dataEvento.fec_fin_eve,
     price: dataEvento.price ?? dataEvento.val_eve,
-    status: dataEvento.status ?? dataEvento.est_eve,
+    status:
+      dataEvento.status !== undefined || dataEvento.est_eve !== undefined
+        ? normalizeEventStatus(dataEvento.status ?? dataEvento.est_eve)
+        : undefined,
     durationHours: dataEvento.durationHours ?? dataEvento.dur_hor_eve,
     minAttendancePercent:
       dataEvento.minAttendancePercent ?? dataEvento.por_min_asi_eve,
@@ -493,6 +511,14 @@ const actualizarEvento = async (req, res) => {
     if (!eventoExistente) {
       return res.status(404).json({ msg: "Evento no encontrado para editar" });
     } // --- GESTIÓN DE IMAGENES --- //
+
+    if (
+      normalizedEventoData.status !== undefined &&
+      !isValidEventStatus(normalizedEventoData.status)
+    ) {
+      return res.status(400).json({ msg: "Estado del evento no válido" });
+    }
+
     let imgUrl = eventoExistente.coverImageUrl; // Por defecto, se queda la actual
 
     if (req.file) {
@@ -581,9 +607,10 @@ const actualizarEvento = async (req, res) => {
             ? Number(normalizedEventoData.maxCapacity)
             : eventoExistente.maxCapacity,
         availableSpots: cupoDisponibleActualizado,
-        status: normalizedEventoData.status
-          ? normalizeEventStatus(normalizedEventoData.status)
-          : eventoExistente.status,
+        status:
+          normalizedEventoData.status !== undefined
+            ? normalizedEventoData.status
+            : eventoExistente.status,
         modality: normalizedEventoData.modality
           ? normalizeEventModality(normalizedEventoData.modality)
           : eventoExistente.modality,

@@ -19,6 +19,10 @@ npx prisma generate
 echo "🔄 Ejecutando migraciones de Prisma..."
 npx prisma migrate deploy
 
+# Inicializar tenant base en despliegues limpios
+echo "🏢 Verificando datos base de tenant..."
+node src/scripts/ensureDefaultTenant.js
+
 echo "🚀 Iniciando aplicación..."
 
 # Ejecutar el comando principal (npm start)

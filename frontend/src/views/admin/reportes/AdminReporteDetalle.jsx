@@ -165,10 +165,6 @@ const AdminReporteDetalle = () => {
         className="reporte-btn-descargar"
         onClick={handleDownloadPdf}
         disabled={downloadingPdf}
-        style={{
-          opacity: downloadingPdf ? 0.7 : 1,
-          pointerEvents: downloadingPdf ? "none" : "auto",
-        }}
       >
         {downloadingPdf ? "Generando PDF..." : "Descargar PDF"}
       </button>

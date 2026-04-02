@@ -496,6 +496,11 @@
   border-color: var(--color-border-primary);
 }
 
+[data-theme="dark"] .selector-container select option {
+  background: var(--color-bg-elevated);
+  color: var(--color-text-primary);
+}
+
 [data-theme="dark"] .loading-container,
 [data-theme="dark"] .stat-card,
 [data-theme="dark"] .programa-card,

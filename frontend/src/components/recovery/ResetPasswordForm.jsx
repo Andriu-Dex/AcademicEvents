@@ -4,6 +4,7 @@ import { Lock, CheckCircle, AlertCircle, Eye, EyeOff } from "lucide-react";
 import { toast } from "react-toastify";
 import PasswordRecoveryService from "../../services/PasswordRecoveryService";
 import HomeButton from "../common/HomeButton";
+import Validator from "../../utils/Validator";
 import styles from "./styles/ResetPasswordForm.module.css";
 
 /**
@@ -95,45 +96,18 @@ const ResetPasswordForm = () => {
     }
   };
 
-  // Validar contraseña
-  const validatePassword = (password) => {
-    const errors = [];
-
-    if (password.length < 8) {
-      errors.push("La contraseña debe tener al menos 8 caracteres");
-    }
-
-    if (!/[A-Z]/.test(password)) {
-      errors.push("Debe incluir al menos una letra mayúscula");
-    }
-
-    if (!/[a-z]/.test(password)) {
-      errors.push("Debe incluir al menos una letra minúscula");
-    }
-
-    if (!/[0-9]/.test(password)) {
-      errors.push("Debe incluir al menos un número");
-    }
-
-    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
-      errors.push(
-        'Debe incluir al menos un carácter especial (!@#$%^&*(),.?":{}|<>)'
-      );
-    }
-
-    return errors;
-  };
-
   // Enviar formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Validaciones
     const errors = {};
-    const passwordErrors = validatePassword(formData.newPassword);
+    const passwordValidation = Validator.validarPasswordSegura(
+      formData.newPassword
+    );
 
-    if (passwordErrors.length > 0) {
-      errors.newPassword = passwordErrors;
+    if (!passwordValidation.esValida) {
+      errors.newPassword = passwordValidation.errores;
     }
 
     if (formData.newPassword !== formData.confirmPassword) {
@@ -394,7 +368,10 @@ const ResetPasswordForm = () => {
                 Incluir al menos un número
               </li>
               <li className={styles["pw-reset-rules-item"]}>
-                Incluir al menos un carácter especial (!@#$%^&*)
+                Incluir al menos un carácter especial
+              </li>
+              <li className={styles["pw-reset-rules-item"]}>
+                No contener espacios en blanco
               </li>
             </ul>
           </div>

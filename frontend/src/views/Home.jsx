@@ -46,6 +46,21 @@ import {
 } from "lucide-react";
 import "./styles/Home.css";
 
+const normalizeCareerModality = (modality) => {
+  if (!modality) return "No especificada";
+
+  const modalityMap = {
+    IN_PERSON: "PRESENCIAL",
+    VIRTUAL: "VIRTUAL",
+    HYBRID: "SEMIPRESENCIAL",
+    PRESENCIAL: "PRESENCIAL",
+    SEMIPRESENCIAL: "SEMIPRESENCIAL",
+  };
+
+  const normalizedModality = String(modality).trim().toUpperCase();
+  return modalityMap[normalizedModality] || modality;
+};
+
 /**
  * Componente principal de la página Home
  * @returns {JSX.Element} Componente React
@@ -1099,7 +1114,7 @@ function Home() {
                         </span>
                         <span className="badge career-badge">
                           <MapPin size={14} className="me-1" />{" "}
-                          {carrera.mod_car}
+                          {normalizeCareerModality(carrera.mod_car)}
                         </span>
                       </div>
                     </div>

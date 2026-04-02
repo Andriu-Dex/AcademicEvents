@@ -713,9 +713,10 @@
 
 .validador-title-ri {
   font-weight: normal;
-  color: #8a1538;
-  font-size: 0.9rem;
+  color: var(--color-text-primary);
+  font-size: 1rem;
   margin-right: 5px;
+  font-weight: bold;
 }
 
 /* Mejorar el aspecto de los selectores */
@@ -725,7 +726,7 @@
   border-radius: 5px;
   padding: 0.5rem;
   font-size: 0.9rem;
-  color: #333;
+  color: var(--color-text-primary);
   cursor: pointer;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
   appearance: none;
@@ -909,6 +910,13 @@
 [data-theme="dark"] .date-picker-input-ri {
   background-color: var(--color-bg-tertiary);
   border-color: var(--color-border-primary);
+}
+
+[data-theme="dark"] .filtro-grupo-ri select option,
+[data-theme="dark"] .reporte-inscripciones-container-ri .react-datepicker__month-select option,
+[data-theme="dark"] .reporte-inscripciones-container-ri .react-datepicker__year-select option {
+  background-color: var(--color-bg-elevated);
+  color: var(--color-text-primary);
 }
 
 [data-theme="dark"] .filtro-grupo-ri select:hover,

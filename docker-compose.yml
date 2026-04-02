@@ -7,13 +7,13 @@ services:
     container_name: academic-events-db
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-academic_events}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
       # Configuraciones de seguridad
       POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256 --auth-local=scram-sha-256"
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init-db:/docker-entrypoint-initdb.d
@@ -21,7 +21,11 @@ services:
       - academic-events-network
     # Configuración de salud
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-academic_events}",
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -47,32 +51,40 @@ services:
     container_name: academic-events-backend
     restart: unless-stopped
     environment:
-      NODE_ENV: ${NODE_ENV}
-      PORT: ${PORT}
-      HOST: ${HOST}
-      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
-      JWT_SECRET: ${JWT_SECRET}
-      FRONTEND_URL: ${FRONTEND_URL}
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: ${PORT:-3000}
+      # En contenedor debe exponer en todas las interfaces.
+      HOST: 0.0.0.0
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-academic_events}
+      JWT_SECRET: ${JWT_SECRET:-change-me-in-.env}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:8080}
       # Variables SMTP corregidas
-      SMTP_HOST: ${SMTP_HOST}
-      SMTP_PORT: ${SMTP_PORT}
-      SMTP_USER: ${SMTP_USER}
-      SMTP_PASS: ${SMTP_PASS}
+      SMTP_HOST: ${SMTP_HOST:-smtp.gmail.com}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
       # Variables adicionales de tu .env
-      IMGUR_CLIENT_ID: ${IMGUR_CLIENT_ID}
-      IMGUR_CLIENT_SECRET: ${IMGUR_CLIENT_SECRET}
-      SUPER_ADMIN_EMAIL: ${SUPER_ADMIN_EMAIL}
-      SUPER_ADMIN_PASSWORD: ${SUPER_ADMIN_PASSWORD}
-      SUPER_ADMIN_CEDULA: ${SUPER_ADMIN_CEDULA}
-      EVENT_STATUS_LOGS_ENABLED: ${EVENT_STATUS_LOGS_ENABLED}
-      EVENT_STATUS_CRON_ENABLED: ${EVENT_STATUS_CRON_ENABLED}
-      EVENT_STATUS_CRON_SCHEDULE: ${EVENT_STATUS_CRON_SCHEDULE}
-      EVENT_STATUS_TIMEZONE: ${EVENT_STATUS_TIMEZONE}
-      SOCKET_LOGS_ENABLED: ${SOCKET_LOGS_ENABLED}
-      CUPOS_VERIFICATION_LOGS_ENABLED: ${CUPOS_VERIFICATION_LOGS_ENABLED}
-      EVENT_PAGINATION_LOGS_ENABLED: ${EVENT_PAGINATION_LOGS_ENABLED}
+      IMGUR_CLIENT_ID: ${IMGUR_CLIENT_ID:-}
+      IMGUR_CLIENT_SECRET: ${IMGUR_CLIENT_SECRET:-}
+      SUPER_ADMIN_EMAIL: ${SUPER_ADMIN_EMAIL:-admin@uta.edu.ec}
+      SUPER_ADMIN_PASSWORD: ${SUPER_ADMIN_PASSWORD:-Admin12345}
+      SUPER_ADMIN_CEDULA: ${SUPER_ADMIN_CEDULA:-9999999999}
+      DEFAULT_TENANT_NAME: ${DEFAULT_TENANT_NAME:-Universidad Tecnica de Ambato}
+      DEFAULT_TENANT_SLUG: ${DEFAULT_TENANT_SLUG:-uta}
+      DEFAULT_TENANT_SUBDOMAIN: ${DEFAULT_TENANT_SUBDOMAIN:-uta}
+      EVENT_STATUS_LOGS_ENABLED: ${EVENT_STATUS_LOGS_ENABLED:-true}
+      EVENT_STATUS_CRON_ENABLED: ${EVENT_STATUS_CRON_ENABLED:-true}
+      EVENT_STATUS_CRON_SCHEDULE: "${EVENT_STATUS_CRON_SCHEDULE:-*/5 * * * *}"
+      EVENT_STATUS_TIMEZONE: ${EVENT_STATUS_TIMEZONE:-America/Guayaquil}
+      SOCKET_LOGS_ENABLED: ${SOCKET_LOGS_ENABLED:-true}
+      CUPOS_VERIFICATION_LOGS_ENABLED: ${CUPOS_VERIFICATION_LOGS_ENABLED:-false}
+      EVENT_PAGINATION_LOGS_ENABLED: ${EVENT_PAGINATION_LOGS_ENABLED:-false}
+      FIREBASE_PROJECT_ID: ${FIREBASE_PROJECT_ID:-}
+      FIREBASE_SERVICE_ACCOUNT_PATH: ${FIREBASE_SERVICE_ACCOUNT_PATH:-./firebase-service-account.json}
+      # Frontend runtime config expuesta también en backend para trazabilidad.
+      VITE_API_URL: ${VITE_API_URL:-http://localhost:8080}
     ports:
-      - "${PORT}:${PORT}"
+      - "${PORT:-3000}:${PORT:-3000}"
     depends_on:
       postgres:
         condition: service_healthy
@@ -91,7 +103,7 @@ services:
           "--no-verbose",
           "--tries=1",
           "--spider",
-          "http://localhost:${PORT}/health",
+          "http://localhost:${PORT:-3000}/health",
         ]
       interval: 30s
       timeout: 10s
@@ -119,11 +131,12 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        VITE_API_URL: ${FRONTEND_URL}
+        # Para producción con nginx proxy, usar mismo origen.
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:8080}
     container_name: academic-events-frontend
     restart: unless-stopped
     ports:
-      - "80:8080"
+      - "${FRONTEND_PORT:-8080}:8080"
     depends_on:
       backend:
         condition: service_healthy
@@ -138,7 +151,7 @@ services:
           "--no-verbose",
           "--tries=1",
           "--spider",
-          "http://localhost:8080/",
+          "http://127.0.0.1:8080/",
         ]
       interval: 30s
       timeout: 10s

@@ -6,6 +6,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import { useAuth } from './AuthContext';
+import { useSocket } from './SocketContext';
 import {
   initializeFirebaseApp,
   requestNotificationPermission,
@@ -18,6 +19,80 @@ import {
   registerPushToken,
   deleteAllPushTokens,
 } from '../services/notificationService';
+import {
+  isExternalNotificationLink,
+  normalizeNotificationLink,
+} from '../utils/notificationLink';
+
+const ADMIN_ROLES = new Set([
+  'ADMIN_GLOBAL',
+  'ADMIN_GENERAL',
+  'GLOBAL_ADMIN',
+  'GENERAL_ADMIN',
+]);
+
+const normalizeRegistrationStatus = (status) =>
+  typeof status === 'string' ? status.toUpperCase() : '';
+
+const getUserInscriptionSocketNotification = (payload = {}) => {
+  const rawData = payload.data || payload;
+  const status = normalizeRegistrationStatus(rawData.estadoNuevo || rawData.status);
+  const eventName = rawData.event?.name || rawData.event?.nom_eve || 'el evento';
+
+  if (status === 'ACCEPTED') {
+    return {
+      title: '✅ Inscripción Aceptada',
+      body: `Tu inscripción para "${eventName}" fue aceptada.`,
+      data: {
+        type: 'REGISTRATION_APPROVED',
+        status,
+        link: '/enrollments',
+      },
+    };
+  }
+
+  if (status === 'APPROVED') {
+    return {
+      title: '🎓 Inscripción Aprobada',
+      body: `Tu inscripción para "${eventName}" fue aprobada de forma final.`,
+      data: {
+        type: 'REGISTRATION_APPROVED',
+        status,
+        link: '/enrollments',
+      },
+    };
+  }
+
+  if (status === 'REJECTED') {
+    return {
+      title: '❌ Inscripción Rechazada',
+      body: `Tu inscripción para "${eventName}" fue rechazada.`,
+      data: {
+        type: 'REGISTRATION_REJECTED',
+        status,
+        link: '/enrollments',
+      },
+    };
+  }
+
+  if (
+    status === 'FAILED_GRADE' ||
+    status === 'FAILED_ATTENDANCE' ||
+    status === 'FAILED_TOTAL'
+  ) {
+    return {
+      title: '📋 Inscripción Finalizada',
+      body: `Tu inscripción para "${eventName}" fue finalizada con resultado: ${status}.`,
+      data: {
+        type: 'SYSTEM_ALERT',
+        status,
+        link: '/enrollments',
+      },
+    };
+  }
+
+  return null;
+};
 
 // Create context
 const NotificationContext = createContext();
@@ -34,6 +109,7 @@ export const useNotifications = () => {
 // Notification Provider component
 export const NotificationProvider = ({ children }) => {
   const { usuario, token: authToken } = useAuth();
+  const { socket, isConnected } = useSocket();
 
   // State
   const [fcmToken, setFcmToken] = useState(null);
@@ -217,10 +293,10 @@ export const NotificationProvider = ({ children }) => {
    */
   const addForegroundNotification = useCallback((notification) => {
     const newNotification = {
-      id: Date.now(),
+      id: notification.id || `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
       ...notification,
       read: false,
-      timestamp: new Date().toISOString(),
+      timestamp: notification.timestamp || new Date().toISOString(),
     };
 
     setForegroundNotifications((prev) => [newNotification, ...prev].slice(0, 50)); // Keep last 50
@@ -287,8 +363,13 @@ export const NotificationProvider = ({ children }) => {
             autoClose: 5000,
             onClick: () => {
               // Navigate to link if provided
-              if (payload.data?.link) {
-                window.location.href = payload.data.link;
+              const targetLink = normalizeNotificationLink(payload.data?.link);
+              if (targetLink) {
+                if (isExternalNotificationLink(targetLink)) {
+                  window.location.assign(targetLink);
+                } else {
+                  window.location.href = targetLink;
+                }
               }
             },
           }
@@ -314,6 +395,66 @@ export const NotificationProvider = ({ children }) => {
       });
     }
   }, [authToken, usuario, fcmToken]);
+
+  // Bridge Socket.IO notifications to bell panel (especially useful for online users/admins)
+  useEffect(() => {
+    if (!socket || !isConnected || !usuario) {
+      return;
+    }
+
+    const userRole = usuario.rol_usu || usuario.role;
+    const isAdmin = ADMIN_ROLES.has(userRole);
+
+    const handleUserInscriptionUpdate = (payload) => {
+      const notification = getUserInscriptionSocketNotification(payload);
+      if (!notification) {
+        return;
+      }
+
+      addForegroundNotification({
+        ...notification,
+        data: {
+          ...notification.data,
+          source: 'socket',
+        },
+        timestamp: payload?.timestamp || new Date().toISOString(),
+      });
+    };
+
+    const handleAdminNotification = (payload) => {
+      if (!isAdmin) {
+        return;
+      }
+
+      const defaultLink = payload?.eventId
+        ? `/admin/events/${payload.eventId}/enrollments`
+        : '/admin/enrollments';
+
+      addForegroundNotification({
+        title: payload?.actionRequired
+          ? '🛎️ Validación Pendiente'
+          : '🔔 Notificación Administrativa',
+        body:
+          payload?.message ||
+          'Tienes una nueva notificación administrativa.',
+        data: {
+          type: 'SYSTEM_ALERT',
+          link: payload?.link || defaultLink,
+          source: 'socket',
+          actionRequired: Boolean(payload?.actionRequired),
+        },
+        timestamp: payload?.timestamp || new Date().toISOString(),
+      });
+    };
+
+    socket.on('user-inscription-update', handleUserInscriptionUpdate);
+    socket.on('admin-notification', handleAdminNotification);
+
+    return () => {
+      socket.off('user-inscription-update', handleUserInscriptionUpdate);
+      socket.off('admin-notification', handleAdminNotification);
+    };
+  }, [socket, isConnected, usuario, addForegroundNotification]);
 
   // Context value
   const value = {
