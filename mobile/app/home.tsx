@@ -1,6 +1,9 @@
 import { useMemo, useRef, useState } from "react";
 import {
     ActivityIndicator,
+    Animated,
+    Dimensions,
+    FlatList,
     Image,
     LayoutChangeEvent,
     Linking,
@@ -33,7 +36,39 @@ type HomeAuthority = {
     image: string;
 };
 
-type SectionKey = "eventos" | "autoridades" | "carreras" | "misionvision" | "contacto";
+type HomeFaculty = {
+    title: string;
+    acronym: string;
+    description: string;
+    logo: string;
+};
+
+type HomeStats = {
+    careers: number;
+    activeEvents: number;
+    registeredUsers: number;
+    participationRate: string;
+};
+
+type UniversitySocialLink = {
+    id: string;
+    label: string;
+    url: string;
+    iconKey: string;
+    platformKey: string;
+    displayOrder: number;
+    isActive: boolean;
+};
+
+type UniversityInfo = {
+    name: string;
+    address: string;
+    email: string;
+    phone: string;
+    socialLinks: UniversitySocialLink[];
+};
+
+type SectionKey = "inicio" | "eventos" | "autoridades" | "carreras" | "misionvision" | "contacto";
 
 const FALLBACK_MISION =
     "Formar profesionales lideres competentes, con vision humanista y pensamiento critico, a traves de docencia, investigacion y vinculacion.";
@@ -54,22 +89,57 @@ const FALLBACK_AUTORIDADES: HomeAuthority[] = [
         email: "j.sanchez@uta.edu.ec",
     },
     {
-        role: "Coordinador de Software y TI",
+        role: "Coordinador",
         name: "Ing. Mg. Marco Guachimboza",
         image: "https://i.imgur.com/XDFrTBI.png",
         email: "marcovguachimboza@uta.edu.ec",
     },
 ];
 
+const FALLBACK_UNIVERSITY: UniversityInfo = {
+    name: "Universidad Técnica de Ambato",
+    address: "Av. Los Chasquis y Rio Payamino",
+    email: "utarectorado@uta.edu.ec",
+    phone: "03-3700090",
+    socialLinks: [],
+};
+
+function pickString(...values: unknown[]) {
+    for (const value of values) {
+        if (typeof value === "string") {
+            return value;
+        }
+        if (typeof value === "number") {
+            return String(value);
+        }
+    }
+    return "";
+}
+
+function pickNumber(...values: unknown[]) {
+    for (const value of values) {
+        if (typeof value === "number" && Number.isFinite(value)) {
+            return value;
+        }
+        if (typeof value === "string") {
+            const parsed = Number(value);
+            if (!Number.isNaN(parsed)) {
+                return parsed;
+            }
+        }
+    }
+    return 0;
+}
+
 async function fetchHomeCareers(): Promise<HomeCareer[]> {
     const response = await apiClient.get<Array<Record<string, unknown>>>("/api/carreras");
 
     return response.data.map((item) => ({
-        id: String(item.id_car ?? item.id ?? ""),
-        name: String(item.nom_car ?? item.nombre ?? "Carrera"),
-        description: String(item.des_car ?? item.descripcion ?? ""),
-        duration: String(item.dur_sem_car ?? item.duracion ?? ""),
-        modality: String(item.mod_car ?? item.modalidad ?? "No especificada"),
+        id: pickString(item.id_car, item.id),
+        name: pickString(item.nom_car, item.nombre, "Carrera"),
+        description: pickString(item.des_car, item.descripcion),
+        duration: pickString(item.dur_sem_car, item.duracion),
+        modality: pickString(item.mod_car, item.modalidad, "No especificada"),
     }));
 }
 
@@ -78,36 +148,87 @@ async function fetchHomeIdentity(): Promise<{ mision: string; vision: string; au
     const rawAutoridades = response.data?.autoridades;
 
     let parsedAutoridades: HomeAuthority[] = [];
+    const normalizeAuthority = (item: Record<string, unknown>): HomeAuthority => ({
+        name: pickString(item.nombre, item.name, item.nombres, item.fullName, "Autoridad"),
+        role: pickString(item.cargo, item.role, item.rol, item.puesto, "Cargo"),
+        email: pickString(item.email, item.correo, item.mail, ""),
+        image: pickString(item.imagen, item.image, item.foto, item.avatar, ""),
+    });
+
     if (typeof rawAutoridades === "string") {
         try {
-            const authorities = JSON.parse(rawAutoridades) as Array<Record<string, string>>;
-            parsedAutoridades = authorities.map((item) => ({
-                name: item.nombre ?? "Autoridad",
-                role: item.cargo ?? "Cargo",
-                email: item.email ?? "",
-                image: item.imagen ?? "",
-            }));
+            const authorities = JSON.parse(rawAutoridades) as Array<Record<string, unknown>>;
+            if (Array.isArray(authorities)) {
+                parsedAutoridades = authorities.map(normalizeAuthority);
+            }
         } catch {
             parsedAutoridades = [];
+        }
+    } else if (Array.isArray(rawAutoridades)) {
+        parsedAutoridades = (rawAutoridades as Array<Record<string, unknown>>).map(normalizeAuthority);
+    } else if (rawAutoridades && typeof rawAutoridades === "object") {
+        const maybeList = (rawAutoridades as Record<string, unknown>).items;
+        if (Array.isArray(maybeList)) {
+            parsedAutoridades = (maybeList as Array<Record<string, unknown>>).map(normalizeAuthority);
         }
     }
 
     return {
-        mision: String(response.data?.mision ?? ""),
-        vision: String(response.data?.vision ?? ""),
+        mision: pickString(response.data?.mision),
+        vision: pickString(response.data?.vision),
         autoridades: parsedAutoridades,
     };
 }
 
-async function fetchFacultyInfo(): Promise<{ title: string; description: string }> {
+async function fetchFacultyInfo(): Promise<HomeFaculty> {
     const response = await apiClient.get<Record<string, unknown>>("/api/facultad-principal");
 
     return {
-        title: String(
-            response.data?.nombre ??
+        title: pickString(
+            response.data?.nombre,
+            response.data?.nom_fac,
             "Facultad de Ingenieria en Sistemas, Electronica e Industrial"
         ),
-        description: String(response.data?.descripcion ?? ""),
+        acronym: pickString(response.data?.acronimo, response.data?.acr_fac, "FISEI"),
+        description: pickString(response.data?.descripcion, response.data?.des_fac),
+        logo: pickString(response.data?.logo, response.data?.url_log_fac),
+    };
+}
+
+async function fetchHomeStats(): Promise<HomeStats> {
+    const response = await apiClient.get<Record<string, unknown>>("/api/estadisticas/home");
+
+    return {
+        careers: pickNumber(response.data?.carreras),
+        activeEvents: pickNumber(response.data?.eventosActivos),
+        registeredUsers: pickNumber(response.data?.usuariosRegistrados),
+        participationRate: pickString(response.data?.tasaParticipacion, "0%"),
+    };
+}
+
+async function fetchUniversityInfo(): Promise<UniversityInfo> {
+    const response = await apiClient.get<Record<string, unknown>>("/api/universidad-principal");
+    let socialRaw: Array<Record<string, unknown>> = [];
+    if (Array.isArray(response.data?.socialLinks)) {
+        socialRaw = response.data.socialLinks as Array<Record<string, unknown>>;
+    } else if (Array.isArray(response.data?.social_links)) {
+        socialRaw = response.data.social_links as Array<Record<string, unknown>>;
+    }
+
+    return {
+        name: pickString(response.data?.name, response.data?.nom_uni, FALLBACK_UNIVERSITY.name),
+        address: pickString(response.data?.address, response.data?.dir_uni, FALLBACK_UNIVERSITY.address),
+        email: pickString(response.data?.email, response.data?.cor_uni, FALLBACK_UNIVERSITY.email),
+        phone: pickString(response.data?.phone, response.data?.tel_uni, FALLBACK_UNIVERSITY.phone),
+        socialLinks: socialRaw.map((item, index) => ({
+            id: pickString(item.id, `${index}`),
+            label: pickString(item.label, "Enlace"),
+            url: pickString(item.url),
+            iconKey: pickString(item.iconKey, "link"),
+            platformKey: pickString(item.platformKey, "custom"),
+            displayOrder: pickNumber(item.displayOrder, index),
+            isActive: item.isActive !== false,
+        })),
     };
 }
 
@@ -126,10 +247,25 @@ function formatEventDate(dateISO: string) {
     });
 }
 
+function resolveSocialIcon(platformKey: string, iconKey: string) {
+    const normalized = `${platformKey}-${iconKey}`.toLowerCase();
+
+    if (normalized.includes("facebook")) return "logo-facebook";
+    if (normalized.includes("instagram")) return "logo-instagram";
+    if (normalized.includes("youtube")) return "logo-youtube";
+    if (normalized.includes("web") || normalized.includes("globe") || normalized.includes("sitio")) {
+        return "globe-outline";
+    }
+    return "link-outline";
+}
+
 export default function PublicHomeScreen() {
     const router = useRouter();
     const scrollRef = useRef<ScrollView | null>(null);
+    const [authorityIndex, setAuthorityIndex] = useState(0);
+    const authorityScrollX = useRef(new Animated.Value(0)).current;
     const [sectionOffsets, setSectionOffsets] = useState<Record<SectionKey, number>>({
+        inicio: 0,
         eventos: 0,
         autoridades: 0,
         carreras: 0,
@@ -153,6 +289,16 @@ export default function PublicHomeScreen() {
         queryFn: fetchFacultyInfo,
         staleTime: 300000,
     });
+    const { data: stats } = useQuery({
+        queryKey: ["home-stats"],
+        queryFn: fetchHomeStats,
+        staleTime: 120000,
+    });
+    const { data: university } = useQuery({
+        queryKey: ["home-university"],
+        queryFn: fetchUniversityInfo,
+        staleTime: 300000,
+    });
 
     const highlightedEvents = useMemo(() => (events ?? []).slice(0, 4), [events]);
     const visibleCareers = useMemo(() => (careers ?? []).slice(0, 6), [careers]);
@@ -160,6 +306,15 @@ export default function PublicHomeScreen() {
         const fromApi = identity?.autoridades ?? [];
         return fromApi.length > 0 ? fromApi : FALLBACK_AUTORIDADES;
     }, [identity]);
+    const footerUniversity = university ?? FALLBACK_UNIVERSITY;
+
+    const socialLinks = useMemo(
+        () =>
+            footerUniversity.socialLinks
+                .filter((item) => item.isActive && item.url.length > 0)
+                .sort((a, b) => a.displayOrder - b.displayOrder),
+        [footerUniversity.socialLinks]
+    );
 
     const handleSectionLayout = (key: SectionKey) => (event: LayoutChangeEvent) => {
         const y = event.nativeEvent.layout.y;
@@ -167,88 +322,119 @@ export default function PublicHomeScreen() {
     };
 
     const scrollToSection = (key: SectionKey) => {
-        const y = sectionOffsets[key] > 0 ? sectionOffsets[key] - 104 : 0;
+        const y = sectionOffsets[key] > 0 ? sectionOffsets[key] - 108 : 0;
         scrollRef.current?.scrollTo({ y, animated: true });
     };
 
     const openUrl = (url: string) => {
         Linking.openURL(url).catch(() => {
-            // Ignore external link failures in mobile environments without browser support.
+            // Ignore link failures in environments without browser handlers.
         });
     };
 
+    const callUniversity = () => {
+        const phone = footerUniversity.phone.replaceAll(" ", "");
+        openUrl(`tel:${phone}`);
+    };
+
+    const screenWidth = Dimensions.get("window").width;
+    const authorityCardWidth = Math.min(screenWidth * 0.82, 360);
+    const authoritySidePadding = Math.max(0, (screenWidth - authorityCardWidth) / 2);
+
     return (
-        <LinearGradient colors={["#f6f0f2", "#ffffff"]} style={styles.container}>
+        <LinearGradient colors={["#f8eff2", "#ffffff"]} style={styles.container}>
             <View style={styles.topNavbar}>
-                <View style={styles.topRow}>
-                    <View>
-                        <Text style={styles.brandTitle}>Academic Events</Text>
-                        <Text style={styles.brandSub}>UTA - FISEI</Text>
-                    </View>
-                    <Pressable style={styles.loginMiniBtn} onPress={() => router.push("/(auth)/login")}>
-                        <Ionicons name="log-in-outline" size={16} color={theme.colors.textInverse} />
+                <View style={styles.navbarRow}>
+                    <Pressable style={styles.brandWrap} onPress={() => scrollToSection("inicio")}>
+                        {faculty?.logo ? (
+                            <Image source={{ uri: faculty.logo }} style={styles.brandLogo} resizeMode="contain" />
+                        ) : (
+                            <View style={styles.brandLogoFallback} />
+                        )}
                     </Pressable>
+
+                    <View style={styles.navCtas}>
+                        <Pressable style={styles.navCtaPrimary} onPress={() => router.push("/(auth)/login")}>
+                            <Text style={styles.navCtaPrimaryText}>Iniciar sesión</Text>
+                        </Pressable>
+                        <Pressable style={styles.navCtaSecondary} onPress={() => router.push("/(auth)/register")}>
+                            <Text style={styles.navCtaSecondaryText}>Registrarse</Text>
+                        </Pressable>
+                    </View>
                 </View>
+
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.navTabs}>
+                    <Pressable style={styles.navTab} onPress={() => scrollToSection("inicio")}>
+                        <Text style={styles.navTabText}>Inicio</Text>
+                    </Pressable>
                     <Pressable style={styles.navTab} onPress={() => scrollToSection("eventos")}>
                         <Text style={styles.navTabText}>Eventos</Text>
                     </Pressable>
-                    <Pressable style={styles.navTab} onPress={() => scrollToSection("autoridades")}>
+                    <Pressable style={styles.navTabGhost} onPress={() => scrollToSection("autoridades")}>
                         <Text style={styles.navTabText}>Autoridades</Text>
                     </Pressable>
-                    <Pressable style={styles.navTab} onPress={() => scrollToSection("carreras")}>
+                    <Pressable style={styles.navTabGhost} onPress={() => scrollToSection("carreras")}>
                         <Text style={styles.navTabText}>Carreras</Text>
                     </Pressable>
-                    <Pressable style={styles.navTab} onPress={() => scrollToSection("misionvision")}>
-                        <Text style={styles.navTabText}>Mision/Vision</Text>
+                    <Pressable style={styles.navTabGhost} onPress={() => scrollToSection("misionvision")}>
+                        <Text style={styles.navTabText}>Misión y Visión</Text>
                     </Pressable>
-                    <Pressable style={styles.navTab} onPress={() => scrollToSection("contacto")}>
+                    <Pressable style={styles.navTabGhost} onPress={() => scrollToSection("contacto")}>
                         <Text style={styles.navTabText}>Contacto</Text>
                     </Pressable>
                 </ScrollView>
             </View>
 
-            <ScrollView
-                ref={scrollRef}
-                contentContainerStyle={styles.content}
-                showsVerticalScrollIndicator={false}
-            >
-                <View style={styles.heroCard}>
-                    <View style={styles.heroTopRow}>
-                        <View style={styles.brandBadge}>
-                            <Ionicons name="school-outline" size={16} color={theme.colors.textInverse} />
-                            <Text style={styles.brandBadgeText}>UTA - FISEI</Text>
-                        </View>
-                        <View style={styles.onlineDot} />
+            <ScrollView ref={scrollRef} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+                <View onLayout={handleSectionLayout("inicio")} style={styles.heroCard}>
+                    <View style={styles.heroBadge}>
+                        <Ionicons name="school-outline" size={16} color={theme.colors.textInverse} />
+                        <Text style={styles.heroBadgeText}>{faculty?.acronym ?? "FISEI"}</Text>
                     </View>
 
-                    <Text style={styles.heroTitle}>{faculty?.title ?? "Sistema de Gestion de Eventos Academicos"}</Text>
+                    <Text style={styles.heroTitle}>Sistema de Gestión de Eventos Académicos - {faculty?.acronym ?? "FISEI"}</Text>
                     <Text style={styles.heroSubtitle}>
+                        {faculty?.title ?? "Facultad de Ingenieria en Sistemas, Electronica e Industrial"}
+                    </Text>
+                    <Text style={styles.heroDescription}>
                         {faculty?.description ||
                             "Conoce eventos, participa en actividades y accede al ecosistema academico desde tu movil."}
                     </Text>
 
                     <View style={styles.heroActions}>
-                        <Pressable style={styles.primaryAction} onPress={() => router.push("/(auth)/login")}>
-                            <Ionicons name="log-in-outline" size={16} color={theme.colors.textInverse} />
-                            <Text style={styles.primaryActionText}>Iniciar sesión</Text>
+                        <Pressable style={styles.primaryAction} onPress={() => scrollToSection("eventos")}>
+                            <Ionicons name="calendar-outline" size={16} color={theme.colors.textInverse} />
+                            <Text style={styles.primaryActionText}>Explorar eventos públicos</Text>
                         </Pressable>
-                        <Pressable
-                            style={styles.secondaryAction}
-                            onPress={() => router.push("/(auth)/register")}
-                        >
-                            <Ionicons name="person-add-outline" size={16} color={theme.colors.primary} />
-                            <Text style={styles.secondaryActionText}>Registrarme</Text>
+                        <Pressable style={styles.secondaryAction} onPress={() => scrollToSection("carreras")}>
+                            <Ionicons name="school-outline" size={16} color={theme.colors.primary} />
+                            <Text style={styles.secondaryActionText}>Ver carreras</Text>
                         </Pressable>
+                    </View>
+
+                    <View style={styles.statsGrid}>
+                        <View style={styles.statCard}>
+                            <Text style={styles.statValue}>{stats?.careers ?? 0}</Text>
+                            <Text style={styles.statLabel}>Carreras</Text>
+                        </View>
+                        <View style={styles.statCard}>
+                            <Text style={styles.statValue}>{stats?.activeEvents ?? 0}</Text>
+                            <Text style={styles.statLabel}>Eventos Activos</Text>
+                        </View>
+                        <View style={styles.statCard}>
+                            <Text style={styles.statValue}>{stats?.registeredUsers ?? 0}</Text>
+                            <Text style={styles.statLabel}>Usuarios Registrados</Text>
+                        </View>
+                        <View style={styles.statCard}>
+                            <Text style={styles.statValue}>{stats?.participationRate ?? "0%"}</Text>
+                            <Text style={styles.statLabel}>Participación de Usuarios</Text>
+                        </View>
                     </View>
                 </View>
 
                 <View onLayout={handleSectionLayout("eventos")}>
                     <View style={styles.sectionHeader}>
-                        <Text style={styles.sectionTitle}>Eventos Destacados</Text>
-                        <Pressable onPress={() => router.push("/(auth)/login")}>
-                            <Text style={styles.sectionLink}>Ver todos</Text>
-                        </Pressable>
+                        <Text style={styles.sectionTitle}>Eventos</Text>
                     </View>
                 </View>
 
@@ -285,11 +471,7 @@ export default function PublicHomeScreen() {
                                 </View>
                             </View>
                             <View style={styles.locationRow}>
-                                <Ionicons
-                                    name="location-outline"
-                                    size={14}
-                                    color={theme.colors.textSecondary}
-                                />
+                                <Ionicons name="location-outline" size={14} color={theme.colors.textSecondary} />
                                 <Text style={styles.locationText}>{event.location}</Text>
                             </View>
                             {event.description ? (
@@ -302,9 +484,9 @@ export default function PublicHomeScreen() {
                     : null}
 
                 <View onLayout={handleSectionLayout("autoridades")}>
-                    <View style={styles.sectionHeader}>
-                        <Text style={styles.sectionTitle}>Autoridades</Text>
-                        <Text style={styles.sectionHint}>Equipo directivo FISEI</Text>
+                    <View style={styles.sectionHeaderCentered}>
+                        <Text style={styles.sectionTitleBrand}>Autoridades de la Facultad</Text>
+                        <Text style={styles.sectionSubtitle}>Conoce a nuestro equipo directivo</Text>
                     </View>
                 </View>
 
@@ -315,27 +497,96 @@ export default function PublicHomeScreen() {
                     </View>
                 ) : null}
 
-                {autoridades.map((item) => (
-                    <View key={`${item.name}-${item.email}`} style={styles.authorityCard}>
-                        <View style={styles.authorityAvatar}>
-                            {item.image ? (
-                                <Image source={{ uri: item.image }} style={styles.authorityAvatarImage} />
-                            ) : (
-                                <Ionicons name="person-outline" size={20} color={theme.colors.primary} />
-                            )}
-                        </View>
-                        <View style={styles.authorityBody}>
-                            <Text style={styles.authorityRole}>{item.role}</Text>
-                            <Text style={styles.authorityName}>{item.name}</Text>
-                            {item.email ? <Text style={styles.authorityEmail}>{item.email}</Text> : null}
-                        </View>
+                <View style={styles.authorityCarouselWrap}>
+                    <Animated.FlatList
+                        data={autoridades}
+                        keyExtractor={(item) => `${item.name}-${item.email}`}
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                        snapToInterval={authorityCardWidth}
+                        snapToAlignment="start"
+                        decelerationRate="fast"
+                        contentContainerStyle={{ paddingHorizontal: authoritySidePadding }}
+                        onScroll={Animated.event(
+                            [{ nativeEvent: { contentOffset: { x: authorityScrollX } } }],
+                            {
+                                useNativeDriver: true,
+                                listener: (event) => {
+                                    const x = (event as any).nativeEvent.contentOffset.x as number;
+                                    const next = Math.round(x / authorityCardWidth);
+                                    if (Number.isFinite(next) && next !== authorityIndex) {
+                                        setAuthorityIndex(next);
+                                    }
+                                },
+                            }
+                        )}
+                        scrollEventThrottle={16}
+                        renderItem={({ item, index }) => {
+                            const inputRange = [
+                                (index - 1) * authorityCardWidth,
+                                index * authorityCardWidth,
+                                (index + 1) * authorityCardWidth,
+                            ];
+
+                            const scale = authorityScrollX.interpolate({
+                                inputRange,
+                                outputRange: [0.96, 1, 0.96],
+                                extrapolate: "clamp",
+                            });
+
+                            const opacity = authorityScrollX.interpolate({
+                                inputRange,
+                                outputRange: [0.75, 1, 0.75],
+                                extrapolate: "clamp",
+                            });
+
+                            return (
+                                <Animated.View
+                                    style={[
+                                        styles.authoritySlide,
+                                        { width: authorityCardWidth, transform: [{ scale }], opacity },
+                                    ]}
+                                >
+                                    <View style={styles.authorityCardWide}>
+                                        <View style={styles.authorityAvatarLarge}>
+                                            {item.image ? (
+                                                <Image source={{ uri: item.image }} style={styles.authorityAvatarImageLarge} />
+                                            ) : (
+                                                <Ionicons name="person-outline" size={26} color={theme.colors.primary} />
+                                            )}
+                                        </View>
+                                        <View style={styles.authorityBodyWide}>
+                                            <Text style={styles.authorityRole}>{item.role}</Text>
+                                            <Text style={styles.authorityName}>{item.name}</Text>
+                                            {item.email ? <Text style={styles.authorityEmail}>{item.email}</Text> : null}
+                                            {item.email ? (
+                                                <Pressable
+                                                    style={styles.authorityContactBtnWide}
+                                                    onPress={() => openUrl(`mailto:${item.email}`)}
+                                                >
+                                                    <Text style={styles.authorityContactTextWide}>Contactar</Text>
+                                                </Pressable>
+                                            ) : null}
+                                        </View>
+                                    </View>
+                                </Animated.View>
+                            );
+                        }}
+                    />
+                    <View style={styles.carouselDots}>
+                        {autoridades.map((item, idx) => (
+                            <View
+                                key={`dot-${item.name}-${item.email || idx}`}
+                                style={[styles.carouselDot, idx === authorityIndex ? styles.carouselDotActive : null]}
+                            />
+                        ))}
                     </View>
-                ))}
+                </View>
 
                 <View onLayout={handleSectionLayout("carreras")}>
-                    <View style={styles.sectionHeader}>
-                        <Text style={styles.sectionTitle}>Carreras</Text>
-                        <Text style={styles.sectionHint}>Oferta academica</Text>
+                    <View style={styles.sectionHeaderCentered}>
+                        <Text style={styles.sectionTitleBrand}>Nuestras Carreras</Text>
+                        <Text style={styles.sectionSubtitle}>Descubre las opciones académicas que tenemos para ti</Text>
                     </View>
                 </View>
 
@@ -353,9 +604,11 @@ export default function PublicHomeScreen() {
                                 <Ionicons name="school-outline" size={18} color={theme.colors.primary} />
                             </View>
                             <Text style={styles.gridTitle}>{career.name}</Text>
-                            <Text style={styles.gridText} numberOfLines={3}>{career.description}</Text>
+                            <Text style={styles.gridText} numberOfLines={3}>
+                                {career.description}
+                            </Text>
                             <View style={styles.badgesRow}>
-                                <Text style={styles.badge}>{career.duration || "Duracion por definir"}</Text>
+                                <Text style={styles.badge}>{career.duration || "Duración por definir"}</Text>
                                 <Text style={styles.badge}>{career.modality}</Text>
                             </View>
                         </View>
@@ -363,9 +616,9 @@ export default function PublicHomeScreen() {
                 </View>
 
                 <View onLayout={handleSectionLayout("misionvision")}>
-                    <View style={styles.sectionHeader}>
-                        <Text style={styles.sectionTitle}>Mision y Vision</Text>
-                        <Text style={styles.sectionHint}>Nuestra identidad</Text>
+                    <View style={styles.sectionHeaderCentered}>
+                        <Text style={styles.sectionTitleBrand}>Nuestra Identidad</Text>
+                        <Text style={styles.sectionSubtitle}>Los principios que nos guían</Text>
                     </View>
                 </View>
 
@@ -373,7 +626,7 @@ export default function PublicHomeScreen() {
                     <View style={styles.identityIconWrap}>
                         <Ionicons name="compass-outline" size={20} color={theme.colors.primary} />
                     </View>
-                    <Text style={styles.identityTitle}>Mision</Text>
+                    <Text style={styles.identityTitle}>Misión</Text>
                     <Text style={styles.identityText}>{identity?.mision || FALLBACK_MISION}</Text>
                 </View>
 
@@ -381,26 +634,20 @@ export default function PublicHomeScreen() {
                     <View style={styles.identityIconWrap}>
                         <Ionicons name="telescope-outline" size={20} color={theme.colors.primary} />
                     </View>
-                    <Text style={styles.identityTitle}>Vision</Text>
+                    <Text style={styles.identityTitle}>Visión</Text>
                     <Text style={styles.identityText}>{identity?.vision || FALLBACK_VISION}</Text>
                 </View>
 
                 <View onLayout={handleSectionLayout("contacto")}>
-                    <View style={styles.sectionHeader}>
-                        <Text style={styles.sectionTitle}>Contactos</Text>
-                        <Text style={styles.sectionHint}>Soporte academico</Text>
+                    <View style={styles.sectionHeaderCentered}>
+                        <Text style={styles.sectionTitleBrand}>¿Necesitas información adicional?</Text>
+                        <Text style={styles.sectionSubtitleLong}>
+                            Nuestro equipo de atención está disponible para resolver todas tus dudas sobre inscripciones, carreras y procesos académicos.
+                        </Text>
                     </View>
                 </View>
 
                 <View style={styles.contactCard}>
-                    <View style={styles.contactRow}>
-                        <Ionicons name="mail-outline" size={16} color={theme.colors.primary} />
-                        <Text style={styles.contactText}>eventos.academicos@uta.edu.ec</Text>
-                    </View>
-                    <View style={styles.contactRow}>
-                        <Ionicons name="call-outline" size={16} color={theme.colors.primary} />
-                        <Text style={styles.contactText}>+593 03 3700090</Text>
-                    </View>
                     <View style={styles.contactActions}>
                         <Pressable
                             style={styles.contactPrimaryBtn}
@@ -408,42 +655,72 @@ export default function PublicHomeScreen() {
                                 openUrl("https://fisei.uta.edu.ec/v4.0/index.php/facultad/historia-facultad")
                             }
                         >
-                            <Text style={styles.contactPrimaryBtnText}>Contactanos</Text>
+                            <Text style={styles.contactPrimaryBtnText}>Contáctanos</Text>
                         </Pressable>
-                        <Pressable
-                            style={styles.contactSecondaryBtn}
-                            onPress={() =>
-                                openUrl(
-                                    "https://fisei.uta.edu.ec/v4.0/index.php/facultad/directorio-telefonico"
-                                )
-                            }
-                        >
-                            <Text style={styles.contactSecondaryBtnText}>Directorio</Text>
+                        <Pressable style={styles.contactSecondaryBtn} onPress={callUniversity}>
+                            <Text style={styles.contactSecondaryBtnText}>Llamar</Text>
                         </Pressable>
                     </View>
                 </View>
 
                 <View style={styles.footer}>
-                    <View style={styles.footerLinks}>
-                        <Pressable onPress={() => scrollToSection("eventos")}>
-                            <Text style={styles.footerLinkText}>Eventos</Text>
-                        </Pressable>
-                        <Pressable onPress={() => scrollToSection("carreras")}>
-                            <Text style={styles.footerLinkText}>Carreras</Text>
-                        </Pressable>
-                        <Pressable onPress={() => scrollToSection("contacto")}>
-                            <Text style={styles.footerLinkText}>Contacto</Text>
-                        </Pressable>
+                    <View style={styles.footerBrandRow}>
+                        <Image
+                            source={{ uri: faculty?.logo || "https://imgur.com/fch1iy6.png" }}
+                            style={styles.footerLogo}
+                        />
+                        <View>
+                            <Text style={styles.footerBrandName}>{faculty?.acronym ?? "FISEI"}</Text>
+                            <Text style={styles.footerBrandSub}>{faculty?.title ?? "Facultad"}</Text>
+                            <Text style={styles.footerBrandSubMuted}>{footerUniversity.name}</Text>
+                        </View>
                     </View>
-                    <View style={styles.footerCtaRow}>
-                        <Pressable style={styles.footerBtn} onPress={() => router.push("/(auth)/login")}>
-                            <Text style={styles.footerBtnText}>Iniciar sesion</Text>
-                        </Pressable>
-                        <Pressable style={styles.footerBtnOutline} onPress={() => router.push("/(auth)/register")}>
-                            <Text style={styles.footerBtnOutlineText}>Registrarme</Text>
-                        </Pressable>
+
+                    <View style={styles.footerColumns}>
+                        <View style={styles.footerColumn}>
+                            <Text style={styles.footerColumnTitle}>Académico</Text>
+                            <Text style={styles.footerLink} onPress={() => scrollToSection("inicio")}>Facultad</Text>
+                        </View>
+                        <View style={styles.footerColumn}>
+                            <Text style={styles.footerColumnTitle}>Información</Text>
+                            <Text style={styles.footerLink} onPress={() => scrollToSection("autoridades")}>Autoridades</Text>
+                            <Text style={styles.footerLink} onPress={() => scrollToSection("carreras")}>Carreras</Text>
+                            <Text style={styles.footerLink} onPress={() => scrollToSection("misionvision")}>Misión y Visión</Text>
+                        </View>
+                        <View style={styles.footerColumn}>
+                            <Text style={styles.footerColumnTitle}>Auditoría</Text>
+                            <Text
+                                style={styles.footerLink}
+                                onPress={() => openUrl("https://auditoria-academic-events.netlify.app/auditoria.html")}
+                            >
+                                Consulta
+                            </Text>
+                        </View>
+                        <View style={styles.footerColumn}>
+                            <Text style={styles.footerColumnTitle}>Contacto</Text>
+                            <Text style={styles.footerContactText}>{footerUniversity.address}</Text>
+                            <Text style={styles.footerContactText}>{footerUniversity.email}</Text>
+                            <Text style={styles.footerContactText}>{footerUniversity.phone}</Text>
+                        </View>
                     </View>
-                    <Text style={styles.footerCopy}>Universidad Tecnica de Ambato - Academic Events</Text>
+
+                    {socialLinks.length > 0 ? (
+                        <View style={styles.socialRow}>
+                            {socialLinks.map((item) => (
+                                <Pressable
+                                    key={item.id}
+                                    style={styles.socialBtn}
+                                    onPress={() => openUrl(item.url)}
+                                >
+                                    <Ionicons
+                                        name={resolveSocialIcon(item.platformKey, item.iconKey) as never}
+                                        size={18}
+                                        color={theme.colors.textInverse}
+                                    />
+                                </Pressable>
+                            ))}
+                        </View>
+                    ) : null}
                 </View>
             </ScrollView>
         </LinearGradient>
@@ -461,46 +738,84 @@ const styles = StyleSheet.create({
         right: 0,
         zIndex: 20,
         paddingTop: 44,
-        paddingHorizontal: theme.spacing.md,
-        paddingBottom: 10,
-        backgroundColor: "rgba(138, 21, 56, 0.95)",
-        borderBottomColor: "rgba(255,255,255,0.15)",
+        paddingBottom: 12,
+        backgroundColor: "rgba(138, 21, 56, 0.96)",
+        borderBottomColor: "rgba(255,255,255,0.18)",
         borderBottomWidth: 1,
     },
-    topRow: {
+    navbarRow: {
+        paddingHorizontal: theme.spacing.md,
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
-        marginBottom: 8,
+        gap: 12,
+        marginBottom: 10,
     },
-    brandTitle: {
-        fontSize: 16,
-        color: theme.colors.textInverse,
-        fontWeight: "800",
-        letterSpacing: 0.3,
-    },
-    brandSub: {
-        fontSize: 11,
-        color: "rgba(255,255,255,0.8)",
-        marginTop: 2,
-    },
-    loginMiniBtn: {
-        width: 34,
-        height: 34,
-        borderRadius: 17,
+    brandWrap: {
+        width: 54,
+        height: 54,
+        borderRadius: 14,
+        backgroundColor: "rgba(255,255,255,0.10)",
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "rgba(255,255,255,0.22)",
+        overflow: "hidden",
+    },
+    brandLogo: {
+        width: 46,
+        height: 46,
+    },
+    brandLogoFallback: {
+        width: 46,
+        height: 46,
+        borderRadius: 23,
+        backgroundColor: "rgba(255,255,255,0.18)",
+    },
+    navCtas: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 10,
+    },
+    navCtaPrimary: {
+        paddingHorizontal: 14,
+        paddingVertical: 10,
+        borderRadius: 999,
+        backgroundColor: theme.colors.utaPrimary,
+        borderWidth: 1,
+        borderColor: "rgba(255,255,255,0.55)",
+    },
+    navCtaPrimaryText: {
+        color: theme.colors.textInverse,
+        fontWeight: "800",
+        fontSize: 12,
+    },
+    navCtaSecondary: {
+        paddingHorizontal: 14,
+        paddingVertical: 10,
+        borderRadius: 999,
+        backgroundColor: "#ffffff",
+        borderWidth: 1,
+        borderColor: "rgba(255,255,255,0.85)",
+    },
+    navCtaSecondaryText: {
+        color: theme.colors.utaPrimary,
+        fontWeight: "800",
+        fontSize: 12,
     },
     navTabs: {
+        paddingHorizontal: theme.spacing.md,
         gap: 8,
-        paddingRight: 20,
     },
     navTab: {
         paddingHorizontal: 12,
         paddingVertical: 8,
         borderRadius: 999,
-        backgroundColor: "rgba(255,255,255,0.16)",
+        backgroundColor: "rgba(255,255,255,0.18)",
+    },
+    navTabGhost: {
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+        borderRadius: 999,
+        backgroundColor: "rgba(255,255,255,0.10)",
     },
     navTabText: {
         fontSize: 12,
@@ -509,7 +824,7 @@ const styles = StyleSheet.create({
     },
     content: {
         paddingHorizontal: theme.spacing.md,
-        paddingTop: 140,
+        paddingTop: 156,
         paddingBottom: theme.spacing.xl,
         gap: theme.spacing.md,
     },
@@ -518,195 +833,132 @@ const styles = StyleSheet.create({
         padding: theme.spacing.lg,
         backgroundColor: theme.colors.primary,
         ...theme.shadow.primary,
+        gap: 10,
     },
-    heroTopRow: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginBottom: 12,
-    },
-    brandBadge: {
+    heroBadge: {
         flexDirection: "row",
         alignItems: "center",
         gap: 8,
+        alignSelf: "flex-start",
         backgroundColor: "rgba(255,255,255,0.18)",
         borderRadius: 999,
         paddingHorizontal: 10,
         paddingVertical: 6,
     },
-    brandBadgeText: {
-        fontSize: 11,
-        fontWeight: "700",
+    heroBadgeText: {
         color: theme.colors.textInverse,
-        letterSpacing: 0.4,
-    },
-    onlineDot: {
-        width: 10,
-        height: 10,
-        borderRadius: 5,
-        backgroundColor: theme.colors.utaAccent,
+        fontSize: 11,
+        fontWeight: "800",
     },
     heroTitle: {
-        fontSize: 24,
+        color: theme.colors.textInverse,
+        fontSize: 23,
         lineHeight: 30,
         fontWeight: "800",
-        color: theme.colors.textInverse,
     },
     heroSubtitle: {
-        marginTop: 10,
+        color: "rgba(255,255,255,0.95)",
         fontSize: 14,
+        fontWeight: "700",
+    },
+    heroDescription: {
+        color: "rgba(255,255,255,0.90)",
+        fontSize: 13,
         lineHeight: 20,
-        color: "rgba(255,255,255,0.9)",
     },
     heroActions: {
-        marginTop: theme.spacing.md,
+        marginTop: 6,
         flexDirection: "row",
         gap: 10,
     },
     primaryAction: {
         flex: 1,
-        borderRadius: theme.radius.sm,
-        backgroundColor: "#ffffff",
         minHeight: 44,
+        borderRadius: theme.radius.sm,
+        backgroundColor: "rgba(255,255,255,0.2)",
         alignItems: "center",
         justifyContent: "center",
         flexDirection: "row",
         gap: 8,
+        paddingHorizontal: 8,
     },
     primaryActionText: {
-        color: theme.colors.primary,
-        fontSize: 14,
+        color: theme.colors.textInverse,
+        fontSize: 12,
         fontWeight: "700",
+        textAlign: "center",
     },
     secondaryAction: {
         flex: 1,
-        borderRadius: theme.radius.sm,
-        borderWidth: 1,
-        borderColor: "rgba(255,255,255,0.4)",
         minHeight: 44,
+        borderRadius: theme.radius.sm,
+        backgroundColor: "#ffffff",
         alignItems: "center",
         justifyContent: "center",
         flexDirection: "row",
         gap: 8,
-        backgroundColor: "rgba(255,255,255,0.12)",
+        paddingHorizontal: 8,
     },
     secondaryActionText: {
-        color: theme.colors.textInverse,
-        fontSize: 14,
+        color: theme.colors.primary,
+        fontSize: 12,
         fontWeight: "700",
+        textAlign: "center",
+    },
+    statsGrid: {
+        marginTop: 4,
+        flexDirection: "row",
+        flexWrap: "wrap",
+        gap: 8,
+    },
+    statCard: {
+        width: "48.5%",
+        borderRadius: theme.radius.sm,
+        padding: 10,
+        backgroundColor: "rgba(255,255,255,0.14)",
+        borderWidth: 1,
+        borderColor: "rgba(255,255,255,0.2)",
+    },
+    statValue: {
+        color: theme.colors.utaAccent,
+        fontSize: 18,
+        fontWeight: "800",
+    },
+    statLabel: {
+        color: theme.colors.textInverse,
+        fontSize: 11,
+        marginTop: 2,
+        fontWeight: "600",
     },
     sectionHeader: {
         marginTop: 6,
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "flex-end",
     },
     sectionTitle: {
-        fontSize: 18,
+        fontSize: 20,
         fontWeight: "800",
         color: theme.colors.textPrimary,
     },
-    sectionHint: {
-        fontSize: 12,
-        color: theme.colors.textSecondary,
-    },
-    sectionLink: {
-        fontSize: 13,
-        fontWeight: "700",
-        color: theme.colors.primary,
-    },
-    authorityCard: {
-        flexDirection: "row",
-        borderRadius: theme.radius.md,
-        backgroundColor: theme.colors.bgPrimary,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-        padding: theme.spacing.md,
-        alignItems: "center",
-        gap: 12,
-        ...theme.shadow.sm,
-    },
-    authorityAvatar: {
-        width: 44,
-        height: 44,
-        borderRadius: 22,
-        backgroundColor: theme.colors.primaryLight,
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    authorityAvatarImage: {
-        width: 44,
-        height: 44,
-        borderRadius: 22,
-    },
-    authorityBody: {
-        flex: 1,
-    },
-    authorityRole: {
-        fontSize: 11,
-        color: theme.colors.primary,
-        fontWeight: "700",
-        textTransform: "uppercase",
-    },
-    authorityName: {
-        fontSize: 14,
-        color: theme.colors.textPrimary,
-        fontWeight: "700",
-        marginTop: 3,
-    },
-    authorityEmail: {
-        fontSize: 12,
-        color: theme.colors.textSecondary,
-        marginTop: 2,
-    },
-    grid: {
-        flexDirection: "row",
-        flexWrap: "wrap",
-        gap: 10,
-    },
-    gridCard: {
-        width: "48.5%",
-        borderRadius: theme.radius.md,
-        backgroundColor: theme.colors.bgPrimary,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-        padding: theme.spacing.md,
-        ...theme.shadow.sm,
-    },
-    gridIconWrap: {
-        width: 30,
-        height: 30,
-        borderRadius: 15,
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: theme.colors.primaryLight,
-    },
-    gridTitle: {
-        marginTop: 10,
-        fontSize: 14,
-        fontWeight: "700",
-        color: theme.colors.textPrimary,
-    },
-    gridText: {
-        marginTop: 6,
-        fontSize: 12,
-        lineHeight: 18,
-        color: theme.colors.textSecondary,
-    },
-    badgesRow: {
-        flexDirection: "row",
-        flexWrap: "wrap",
-        gap: 6,
+    sectionHeaderCentered: {
         marginTop: 8,
+        alignItems: "center",
+        gap: 4,
     },
-    badge: {
-        paddingHorizontal: 8,
-        paddingVertical: 4,
-        borderRadius: 999,
-        backgroundColor: theme.colors.primaryLight,
+    sectionTitleBrand: {
+        fontSize: 22,
+        fontWeight: "800",
         color: theme.colors.primary,
-        fontSize: 11,
-        fontWeight: "700",
+        textAlign: "center",
+    },
+    sectionSubtitle: {
+        fontSize: 13,
+        color: theme.colors.textSecondary,
+        textAlign: "center",
+    },
+    sectionSubtitleLong: {
+        fontSize: 13,
+        color: theme.colors.textSecondary,
+        textAlign: "center",
+        lineHeight: 20,
     },
     loadingCard: {
         borderRadius: theme.radius.md,
@@ -806,6 +1058,135 @@ const styles = StyleSheet.create({
         lineHeight: 18,
         color: theme.colors.textSecondary,
     },
+    authorityCarouselWrap: {
+        gap: 10,
+    },
+    authoritySlide: {
+        paddingVertical: 2,
+    },
+    authorityCardWide: {
+        flexDirection: "row",
+        borderRadius: theme.radius.md,
+        backgroundColor: theme.colors.bgPrimary,
+        borderWidth: 1,
+        borderColor: theme.colors.borderPrimary,
+        padding: theme.spacing.md,
+        alignItems: "center",
+        gap: 12,
+        ...theme.shadow.sm,
+    },
+    authorityAvatarLarge: {
+        width: 60,
+        height: 60,
+        borderRadius: 30,
+        backgroundColor: theme.colors.primaryLight,
+        alignItems: "center",
+        justifyContent: "center",
+        overflow: "hidden",
+    },
+    authorityAvatarImageLarge: {
+        width: 60,
+        height: 60,
+        borderRadius: 30,
+    },
+    authorityBodyWide: {
+        flex: 1,
+        gap: 2,
+    },
+    authorityRole: {
+        fontSize: 11,
+        color: theme.colors.primary,
+        fontWeight: "700",
+        textTransform: "uppercase",
+    },
+    authorityName: {
+        fontSize: 14,
+        color: theme.colors.textPrimary,
+        fontWeight: "700",
+        marginTop: 2,
+    },
+    authorityEmail: {
+        fontSize: 12,
+        color: theme.colors.textSecondary,
+        marginTop: 2,
+    },
+    authorityContactBtnWide: {
+        alignSelf: "flex-start",
+        marginTop: 8,
+        borderRadius: theme.radius.sm,
+        paddingVertical: 8,
+        paddingHorizontal: 12,
+        backgroundColor: theme.colors.primary,
+    },
+    authorityContactTextWide: {
+        color: theme.colors.textInverse,
+        fontSize: 12,
+        fontWeight: "800",
+    },
+    carouselDots: {
+        flexDirection: "row",
+        justifyContent: "center",
+        gap: 6,
+    },
+    carouselDot: {
+        width: 7,
+        height: 7,
+        borderRadius: 4,
+        backgroundColor: "rgba(138, 21, 56, 0.22)",
+    },
+    carouselDotActive: {
+        width: 18,
+        backgroundColor: theme.colors.primary,
+    },
+    grid: {
+        flexDirection: "row",
+        flexWrap: "wrap",
+        gap: 10,
+    },
+    gridCard: {
+        width: "48.5%",
+        borderRadius: theme.radius.md,
+        backgroundColor: theme.colors.bgPrimary,
+        borderWidth: 1,
+        borderColor: theme.colors.borderPrimary,
+        padding: theme.spacing.md,
+        ...theme.shadow.sm,
+    },
+    gridIconWrap: {
+        width: 30,
+        height: 30,
+        borderRadius: 15,
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: theme.colors.primaryLight,
+    },
+    gridTitle: {
+        marginTop: 10,
+        fontSize: 14,
+        fontWeight: "700",
+        color: theme.colors.textPrimary,
+    },
+    gridText: {
+        marginTop: 6,
+        fontSize: 12,
+        lineHeight: 18,
+        color: theme.colors.textSecondary,
+    },
+    badgesRow: {
+        flexDirection: "row",
+        flexWrap: "wrap",
+        gap: 6,
+        marginTop: 8,
+    },
+    badge: {
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderRadius: 999,
+        backgroundColor: theme.colors.primaryLight,
+        color: theme.colors.primary,
+        fontSize: 11,
+        fontWeight: "700",
+    },
     identityCard: {
         borderRadius: theme.radius.md,
         backgroundColor: theme.colors.bgPrimary,
@@ -843,20 +1224,9 @@ const styles = StyleSheet.create({
         padding: theme.spacing.md,
         gap: 10,
     },
-    contactRow: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 8,
-    },
-    contactText: {
-        color: theme.colors.textPrimary,
-        fontSize: 13,
-        fontWeight: "600",
-    },
     contactActions: {
         flexDirection: "row",
         gap: 8,
-        marginTop: 4,
     },
     contactPrimaryBtn: {
         flex: 1,
@@ -887,54 +1257,76 @@ const styles = StyleSheet.create({
         fontSize: 13,
     },
     footer: {
-        marginTop: 8,
-        borderTopWidth: 1,
-        borderTopColor: theme.colors.borderPrimary,
-        paddingTop: theme.spacing.md,
-        paddingBottom: theme.spacing.md,
+        marginTop: 10,
+        backgroundColor: "#000000",
+        borderRadius: theme.radius.md,
+        padding: theme.spacing.lg,
+        gap: 14,
+    },
+    footerBrandRow: {
+        flexDirection: "row",
+        alignItems: "center",
         gap: 12,
     },
-    footerLinks: {
+    footerLogo: {
+        width: 52,
+        height: 52,
+        borderRadius: 26,
+        backgroundColor: "rgba(255,255,255,0.08)",
+    },
+    footerBrandName: {
+        fontSize: 17,
+        color: "#ffffff",
+        fontWeight: "800",
+        marginTop: 1,
+    },
+    footerBrandSub: {
+        fontSize: 12,
+        color: "rgba(255,255,255,0.82)",
+        marginTop: 1,
+    },
+    footerBrandSubMuted: {
+        fontSize: 12,
+        color: "rgba(255,255,255,0.62)",
+        marginTop: 1,
+    },
+    footerColumns: {
         flexDirection: "row",
-        justifyContent: "space-around",
+        flexWrap: "wrap",
+        gap: 10,
     },
-    footerLinkText: {
+    footerColumn: {
+        width: "48.5%",
+        gap: 3,
+    },
+    footerColumnTitle: {
+        color: "#ffffff",
         fontSize: 13,
-        color: theme.colors.primary,
-        fontWeight: "700",
+        fontWeight: "800",
+        marginBottom: 2,
     },
-    footerCtaRow: {
+    footerLink: {
+        color: "rgba(255,255,255,0.82)",
+        fontSize: 12,
+        fontWeight: "600",
+    },
+    footerContactText: {
+        color: "rgba(255,255,255,0.70)",
+        fontSize: 12,
+        lineHeight: 18,
+    },
+    socialRow: {
         flexDirection: "row",
         gap: 8,
+        justifyContent: "flex-start",
+        marginTop: 4,
     },
-    footerBtn: {
-        flex: 1,
-        minHeight: 40,
-        borderRadius: theme.radius.sm,
-        backgroundColor: theme.colors.primary,
+    socialBtn: {
+        width: 34,
+        height: 34,
+        borderRadius: 17,
         alignItems: "center",
         justifyContent: "center",
-    },
-    footerBtnText: {
-        color: theme.colors.textInverse,
-        fontWeight: "700",
-    },
-    footerBtnOutline: {
-        flex: 1,
-        minHeight: 40,
-        borderRadius: theme.radius.sm,
-        borderWidth: 1,
-        borderColor: theme.colors.primary,
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    footerBtnOutlineText: {
-        color: theme.colors.primary,
-        fontWeight: "700",
-    },
-    footerCopy: {
-        textAlign: "center",
-        color: theme.colors.textSecondary,
-        fontSize: 11,
+        backgroundColor: "rgba(255,255,255,0.16)",
     },
 });

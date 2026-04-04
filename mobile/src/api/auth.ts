@@ -23,12 +23,6 @@ type RegisterPayload = {
     careerId?: string;
 };
 
-type RegisterFile = {
-    uri: string;
-    name: string;
-    type: string;
-} | null;
-
 export async function login(email: string, password: string) {
     const response = await apiClient.post<LoginResponse>("/api/auth/login", {
         email,
@@ -47,7 +41,7 @@ export async function login(email: string, password: string) {
     return { token: response.data.token, user };
 }
 
-export async function registerStudent(payload: RegisterPayload, file: RegisterFile) {
+export async function registerStudent(payload: RegisterPayload) {
     const formData = new FormData();
     formData.append("firstName", payload.firstName);
     formData.append("lastName", payload.lastName);
@@ -57,14 +51,6 @@ export async function registerStudent(payload: RegisterPayload, file: RegisterFi
     formData.append("password", payload.password);
     if (payload.careerId) {
         formData.append("careerId", payload.careerId);
-    }
-
-    if (file) {
-        formData.append("file", {
-            uri: file.uri,
-            name: file.name,
-            type: file.type,
-        } as unknown as Blob);
     }
 
     await apiClient.post("/api/auth/register", formData, {

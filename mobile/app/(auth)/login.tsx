@@ -17,6 +17,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { login } from "../../src/api/auth";
 import { useAuthStore } from "../../src/store/authStore";
+import { useFacultyInfo } from "../../src/features/faculty/useFacultyInfo";
 import { theme } from "../../src/shared/theme";
 
 const loginSchema = z.object({
@@ -31,6 +32,7 @@ export default function LoginScreen() {
     const [submitError, setSubmitError] = useState<string | null>(null);
     const [showPassword, setShowPassword] = useState(false);
     const setSession = useAuthStore((state) => state.setSession);
+    const { data: faculty } = useFacultyInfo();
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const slideAnim = useRef(new Animated.Value(18)).current;
 
@@ -90,11 +92,20 @@ export default function LoginScreen() {
                 ]}
             >
                 <View style={styles.logoWrap}>
-                    <Image
-                        source={{ uri: "https://i.imgur.com/KrUzH8J.png" }}
-                        style={styles.logo}
-                        resizeMode="contain"
-                    />
+                    {faculty?.logo ? (
+                        <Image
+                            source={{ uri: faculty.logo }}
+                            style={styles.facultyLogo}
+                            resizeMode="contain"
+                        />
+                    ) : (
+                        <View style={styles.facultyLogoPlaceholder}>
+                            <Text style={styles.facultyLogoPlaceholderText}>FISEI</Text>
+                        </View>
+                    )}
+                    <Text style={styles.facultyTitle} numberOfLines={2}>
+                        {faculty?.title ?? "Facultad de Ingeniería en Sistemas, Electrónica e Industrial"}
+                    </Text>
                 </View>
                 <Text style={styles.title}>Iniciar Sesión</Text>
 
@@ -164,14 +175,14 @@ export default function LoginScreen() {
                 </Pressable>
 
                 <Pressable
-                    style={[styles.button, isSubmitting && styles.buttonDisabled]}
+                    style={[styles.buttonPrimary, isSubmitting && styles.buttonDisabled]}
                     onPress={handleSubmit(onSubmit)}
                     disabled={isSubmitting}
                 >
                     {isSubmitting ? (
                         <ActivityIndicator color="#ffffff" />
                     ) : (
-                        <Text style={styles.buttonText}>Ingresar</Text>
+                        <Text style={styles.buttonPrimaryText}>Iniciar sesión</Text>
                     )}
                 </Pressable>
 
@@ -225,16 +236,39 @@ const styles = StyleSheet.create({
         alignItems: "center",
         marginBottom: 8,
     },
-    logo: {
-        width: 230,
-        height: 74,
+    facultyLogo: {
+        width: 92,
+        height: 92,
+    },
+    facultyLogoPlaceholder: {
+        width: 92,
+        height: 92,
+        borderRadius: 46,
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: theme.colors.primaryLight,
+        borderWidth: 1,
+        borderColor: theme.colors.borderPrimary,
+    },
+    facultyLogoPlaceholderText: {
+        color: theme.colors.primary,
+        fontWeight: "900",
+        letterSpacing: 1,
+    },
+    facultyTitle: {
+        marginTop: 10,
+        textAlign: "center",
+        fontSize: 12,
+        color: theme.colors.textSecondary,
+        fontWeight: "600",
+        lineHeight: 16,
     },
     title: {
         fontSize: 28,
         fontWeight: "700",
         marginBottom: theme.spacing.md,
         textAlign: "center",
-        color: theme.colors.textPrimary,
+        color: theme.colors.primary,
     },
     label: {
         fontSize: 13,
@@ -281,8 +315,8 @@ const styles = StyleSheet.create({
         fontSize: 13,
         fontWeight: "500",
     },
-    button: {
-        backgroundColor: theme.colors.primary,
+    buttonPrimary: {
+        backgroundColor: theme.colors.utaPrimary,
         paddingVertical: 12,
         borderRadius: theme.radius.sm,
         marginTop: theme.spacing.md,
@@ -291,9 +325,9 @@ const styles = StyleSheet.create({
     buttonDisabled: {
         opacity: 0.7,
     },
-    buttonText: {
+    buttonPrimaryText: {
         color: theme.colors.textInverse,
-        fontWeight: "700",
+        fontWeight: "800",
     },
     error: {
         color: theme.colors.error,

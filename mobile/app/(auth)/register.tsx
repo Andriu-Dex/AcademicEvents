@@ -16,10 +16,10 @@ import {
     View,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import * as DocumentPicker from "expo-document-picker";
 import { Picker } from "@react-native-picker/picker";
 import { registerStudent } from "../../src/api/auth";
 import { useCareers } from "../../src/features/careers/useCareers";
+import { useFacultyInfo } from "../../src/features/faculty/useFacultyInfo";
 import { theme } from "../../src/shared/theme";
 
 const registerSchema = z
@@ -48,20 +48,14 @@ const registerSchema = z
 
 type RegisterForm = z.infer<typeof registerSchema>;
 
-type PickedFile = {
-    uri: string;
-    name: string;
-    type: string;
-} | null;
-
 export default function RegisterScreen() {
     const router = useRouter();
     const [submitError, setSubmitError] = useState<string | null>(null);
-    const [selectedFile, setSelectedFile] = useState<PickedFile>(null);
     const [confirmPassword, setConfirmPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const { data: careers, isLoading: careersLoading } = useCareers();
+    const { data: faculty } = useFacultyInfo();
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const slideAnim = useRef(new Animated.Value(16)).current;
 
@@ -119,23 +113,6 @@ export default function RegisterScreen() {
         return { score, label: labels[Math.max(0, score - 1)] };
     }, [passwordValue]);
 
-    const handlePickFile = async () => {
-        const result = await DocumentPicker.getDocumentAsync({
-            type: ["image/*", "application/pdf"],
-            copyToCacheDirectory: true,
-            multiple: false,
-        });
-
-        if (!result.canceled && result.assets?.length) {
-            const asset = result.assets[0];
-            setSelectedFile({
-                uri: asset.uri,
-                name: asset.name ?? "documento",
-                type: asset.mimeType ?? "application/octet-stream",
-            });
-        }
-    };
-
     const onSubmit = async (values: RegisterForm) => {
         setSubmitError(null);
         if (confirmPassword !== values.password) {
@@ -143,7 +120,7 @@ export default function RegisterScreen() {
             return;
         }
         try {
-            await registerStudent(values, selectedFile);
+            await registerStudent(values);
             router.replace("/(auth)/login");
         } catch (error) {
             const message = error instanceof Error ? error.message : "Error al registrar";
@@ -169,11 +146,20 @@ export default function RegisterScreen() {
                     ]}
                 >
                     <View style={styles.logoWrap}>
-                        <Image
-                            source={{ uri: "https://i.imgur.com/ZDlLQ2T.png" }}
-                            style={styles.logo}
-                            resizeMode="contain"
-                        />
+                        {faculty?.logo ? (
+                            <Image
+                                source={{ uri: faculty.logo }}
+                                style={styles.facultyLogo}
+                                resizeMode="contain"
+                            />
+                        ) : (
+                            <View style={styles.facultyLogoPlaceholder}>
+                                <Text style={styles.facultyLogoPlaceholderText}>FISEI</Text>
+                            </View>
+                        )}
+                        <Text style={styles.facultyTitle} numberOfLines={2}>
+                            {faculty?.title ?? "Facultad de Ingeniería en Sistemas, Electrónica e Industrial"}
+                        </Text>
                     </View>
                     <Text style={styles.title}>Registro de Usuario</Text>
                     <Text style={styles.subtitle}>Registro como usuario general</Text>
@@ -410,22 +396,6 @@ export default function RegisterScreen() {
                         </View>
                     )}
 
-                    <Pressable style={styles.fileButton} onPress={handlePickFile}>
-                        <Text style={styles.fileButtonText}>
-                            {selectedFile
-                                ? `Archivo: ${selectedFile.name}`
-                                : "Adjuntar documento (opcional)"}
-                        </Text>
-                    </Pressable>
-
-                    <View style={styles.noteBox}>
-                        <Text style={styles.noteText}>
-                            Nota importante: Después de registrarte, deberás subir tus documentos
-                            (cédula, papeleta de votación) en tu perfil de usuario para poder
-                            inscribirte en eventos.
-                        </Text>
-                    </View>
-
                     {submitError && <Text style={styles.error}>{submitError}</Text>}
 
                     <Pressable
@@ -494,9 +464,32 @@ const styles = StyleSheet.create({
         alignItems: "center",
         marginBottom: 8,
     },
-    logo: {
-        width: 220,
-        height: 80,
+    facultyLogo: {
+        width: 92,
+        height: 92,
+    },
+    facultyLogoPlaceholder: {
+        width: 92,
+        height: 92,
+        borderRadius: 46,
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: theme.colors.primaryLight,
+        borderWidth: 1,
+        borderColor: theme.colors.borderPrimary,
+    },
+    facultyLogoPlaceholderText: {
+        color: theme.colors.primary,
+        fontWeight: "900",
+        letterSpacing: 1,
+    },
+    facultyTitle: {
+        marginTop: 10,
+        textAlign: "center",
+        fontSize: 12,
+        color: theme.colors.textSecondary,
+        fontWeight: "600",
+        lineHeight: 16,
     },
     title: {
         fontSize: 28,
@@ -590,33 +583,6 @@ const styles = StyleSheet.create({
     strengthBar: {
         height: "100%",
         backgroundColor: theme.colors.success,
-    },
-    fileButton: {
-        borderWidth: 1,
-        borderColor: theme.colors.primary,
-        borderRadius: theme.radius.sm,
-        paddingVertical: 12,
-        paddingHorizontal: 12,
-        marginTop: theme.spacing.md,
-        backgroundColor: theme.colors.primaryLight,
-    },
-    fileButtonText: {
-        color: theme.colors.primary,
-        fontWeight: "600",
-        textAlign: "center",
-    },
-    noteBox: {
-        marginTop: theme.spacing.md,
-        borderWidth: 1,
-        borderColor: theme.colors.primary,
-        backgroundColor: "#eef6ff",
-        borderRadius: theme.radius.sm,
-        padding: 10,
-    },
-    noteText: {
-        color: theme.colors.textSecondary,
-        fontSize: 12,
-        lineHeight: 18,
     },
     button: {
         backgroundColor: theme.colors.primary,
