@@ -6,6 +6,7 @@ import { z } from "zod";
 import {
     ActivityIndicator,
     Animated,
+    Image,
     ImageBackground,
     Pressable,
     StyleSheet,
@@ -19,8 +20,8 @@ import { useAuthStore } from "../../src/store/authStore";
 import { theme } from "../../src/shared/theme";
 
 const loginSchema = z.object({
-    email: z.email("Correo invalido"),
-    password: z.string().min(6, "Minimo 6 caracteres"),
+    email: z.email("Correo inválido"),
+    password: z.string().min(6, "Mínimo 6 caracteres"),
 });
 
 type LoginForm = z.infer<typeof loginSchema>;
@@ -67,7 +68,7 @@ export default function LoginScreen() {
             await setSession(result.token, result.user);
             router.replace("/(app)");
         } catch (error) {
-            const message = error instanceof Error ? error.message : "Error al iniciar sesion";
+            const message = error instanceof Error ? error.message : "Error al iniciar sesión";
             setSubmitError(message);
         }
     };
@@ -79,7 +80,7 @@ export default function LoginScreen() {
             resizeMode="cover"
         >
             <View style={styles.overlay} />
-            <Pressable style={styles.homeButton} onPress={() => router.replace("/")}>
+            <Pressable style={styles.homeButton} onPress={() => router.replace("/home")}>
                 <Ionicons name="home-outline" color={theme.colors.textInverse} size={20} />
             </Pressable>
             <Animated.View
@@ -88,7 +89,14 @@ export default function LoginScreen() {
                     { opacity: fadeAnim, transform: [{ translateY: slideAnim }] },
                 ]}
             >
-                <Text style={styles.title}>Iniciar Sesion</Text>
+                <View style={styles.logoWrap}>
+                    <Image
+                        source={{ uri: "https://i.imgur.com/KrUzH8J.png" }}
+                        style={styles.logo}
+                        resizeMode="contain"
+                    />
+                </View>
+                <Text style={styles.title}>Iniciar Sesión</Text>
 
                 <Text style={styles.label}>Correo</Text>
                 <Controller
@@ -115,7 +123,7 @@ export default function LoginScreen() {
                     <Text style={styles.error}>{errors.email.message}</Text>
                 )}
 
-                <Text style={styles.label}>Contrasena</Text>
+                <Text style={styles.label}>Contraseña</Text>
                 <Controller
                     control={control}
                     name="password"
@@ -152,7 +160,7 @@ export default function LoginScreen() {
                 {submitError && <Text style={styles.error}>{submitError}</Text>}
 
                 <Pressable style={styles.forgotWrap}>
-                    <Text style={styles.forgotText}>Olvidaste tu contrasena?</Text>
+                    <Text style={styles.forgotText}>¿Olvidaste tu contraseña?</Text>
                 </Pressable>
 
                 <Pressable
@@ -167,9 +175,13 @@ export default function LoginScreen() {
                     )}
                 </Pressable>
 
-                <Link href="/(auth)/register" style={styles.link}>
-                    No tienes cuenta? Registrate
-                </Link>
+                <View style={styles.registerRow}>
+                    <Text style={styles.registerText}>¿No tienes cuenta? </Text>
+                    <Link href="/(auth)/register" style={styles.link}>
+                        Regístrate
+                    </Link>
+                </View>
+                <Text style={styles.copyright}>Universidad Técnica de Ambato © 2026</Text>
             </Animated.View>
         </ImageBackground>
     );
@@ -208,6 +220,14 @@ const styles = StyleSheet.create({
         borderRadius: theme.radius.lg,
         padding: theme.spacing.lg,
         ...theme.shadow.md,
+    },
+    logoWrap: {
+        alignItems: "center",
+        marginBottom: 8,
+    },
+    logo: {
+        width: 230,
+        height: 74,
     },
     title: {
         fontSize: 28,
@@ -279,10 +299,23 @@ const styles = StyleSheet.create({
         color: theme.colors.error,
         marginTop: 6,
     },
-    link: {
+    registerRow: {
         marginTop: theme.spacing.md,
-        textAlign: "center",
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    registerText: {
+        color: theme.colors.textSecondary,
+    },
+    link: {
         color: theme.colors.primary,
         fontWeight: "600",
+    },
+    copyright: {
+        marginTop: 10,
+        textAlign: "center",
+        fontSize: 12,
+        color: theme.colors.textSecondary,
     },
 });

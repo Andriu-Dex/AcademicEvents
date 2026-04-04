@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosHeaders } from "axios";
 import { env } from "../config/env";
 import { useAuthStore } from "../store/authStore";
 
@@ -10,10 +10,15 @@ export const apiClient = axios.create({
 apiClient.interceptors.request.use((config) => {
     const token = useAuthStore.getState().accessToken;
     if (token) {
-        config.headers = {
-            ...config.headers,
-            Authorization: `Bearer ${token}`,
-        };
+        if (!config.headers) {
+            config.headers = new AxiosHeaders();
+        }
+
+        if (config.headers instanceof AxiosHeaders) {
+            config.headers.set("Authorization", `Bearer ${token}`);
+        } else {
+            (config.headers as Record<string, string>).Authorization = `Bearer ${token}`;
+        }
     }
     return config;
 });

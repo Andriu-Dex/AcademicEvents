@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import {
     ActivityIndicator,
     Animated,
+    Image,
     ImageBackground,
     Pressable,
     ScrollView,
@@ -25,10 +26,10 @@ const registerSchema = z
     .object({
         firstName: z.string().min(1, "Nombre obligatorio"),
         lastName: z.string().min(1, "Apellido obligatorio"),
-        idNumber: z.string().min(10, "Cedula invalida"),
-        phone: z.string().regex(/^\d{10}$/, "Celular invalido"),
-        email: z.email("Correo invalido"),
-        password: z.string().min(6, "Minimo 6 caracteres"),
+        idNumber: z.string().min(10, "Cédula inválida"),
+        phone: z.string().regex(/^\d{10}$/, "Celular inválido"),
+        email: z.email("Correo inválido"),
+        password: z.string().min(6, "Mínimo 6 caracteres"),
         careerId: z.string().optional(),
     })
     .refine(
@@ -138,7 +139,7 @@ export default function RegisterScreen() {
     const onSubmit = async (values: RegisterForm) => {
         setSubmitError(null);
         if (confirmPassword !== values.password) {
-            setSubmitError("Las contrasenas no coinciden");
+            setSubmitError("Las contraseñas no coinciden");
             return;
         }
         try {
@@ -157,7 +158,7 @@ export default function RegisterScreen() {
             resizeMode="cover"
         >
             <View style={styles.overlay} />
-            <Pressable style={styles.homeButton} onPress={() => router.replace("/")}>
+            <Pressable style={styles.homeButton} onPress={() => router.replace("/home")}>
                 <Ionicons name="home-outline" color={theme.colors.textInverse} size={20} />
             </Pressable>
             <ScrollView contentContainerStyle={styles.container}>
@@ -167,7 +168,39 @@ export default function RegisterScreen() {
                         { opacity: fadeAnim, transform: [{ translateY: slideAnim }] },
                     ]}
                 >
+                    <View style={styles.logoWrap}>
+                        <Image
+                            source={{ uri: "https://i.imgur.com/ZDlLQ2T.png" }}
+                            style={styles.logo}
+                            resizeMode="contain"
+                        />
+                    </View>
                     <Text style={styles.title}>Registro de Usuario</Text>
+                    <Text style={styles.subtitle}>Registro como usuario general</Text>
+
+                    <Text style={styles.label}>Cédula</Text>
+                    <Controller
+                        control={control}
+                        name="idNumber"
+                        render={({ field: { onChange, value } }) => (
+                            <View style={styles.inputGroup}>
+                                <View style={styles.inputIconWrap}>
+                                    <Ionicons name="person-outline" size={16} color={theme.colors.textInverse} />
+                                </View>
+                                <TextInput
+                                    style={styles.input}
+                                    value={value}
+                                    onChangeText={onChange}
+                                    keyboardType="numeric"
+                                    placeholder="0102030405"
+                                    placeholderTextColor={theme.colors.textTertiary}
+                                />
+                            </View>
+                        )}
+                    />
+                    {errors.idNumber && (
+                        <Text style={styles.error}>{errors.idNumber.message}</Text>
+                    )}
 
                     <Text style={styles.label}>Nombre</Text>
                     <Controller
@@ -213,30 +246,6 @@ export default function RegisterScreen() {
                     />
                     {errors.lastName && (
                         <Text style={styles.error}>{errors.lastName.message}</Text>
-                    )}
-
-                    <Text style={styles.label}>Cedula</Text>
-                    <Controller
-                        control={control}
-                        name="idNumber"
-                        render={({ field: { onChange, value } }) => (
-                            <View style={styles.inputGroup}>
-                                <View style={styles.inputIconWrap}>
-                                    <Ionicons name="person-outline" size={16} color={theme.colors.textInverse} />
-                                </View>
-                                <TextInput
-                                    style={styles.input}
-                                    value={value}
-                                    onChangeText={onChange}
-                                    keyboardType="numeric"
-                                    placeholder="0102030405"
-                                    placeholderTextColor={theme.colors.textTertiary}
-                                />
-                            </View>
-                        )}
-                    />
-                    {errors.idNumber && (
-                        <Text style={styles.error}>{errors.idNumber.message}</Text>
                     )}
 
                     <Text style={styles.label}>Celular</Text>
@@ -293,7 +302,7 @@ export default function RegisterScreen() {
                         <Text style={styles.error}>{errors.email.message}</Text>
                     )}
 
-                    <Text style={styles.label}>Contrasena</Text>
+                    <Text style={styles.label}>Contraseña</Text>
                     <Controller
                         control={control}
                         name="password"
@@ -307,7 +316,7 @@ export default function RegisterScreen() {
                                     value={value}
                                     onChangeText={onChange}
                                     secureTextEntry={!showPassword}
-                                    placeholder="Minimo 6 caracteres"
+                                    placeholder="Mínimo 6 caracteres"
                                     placeholderTextColor={theme.colors.textTertiary}
                                 />
                                 <Pressable
@@ -330,7 +339,7 @@ export default function RegisterScreen() {
                     {passwordValue.length > 0 && (
                         <View style={styles.strengthWrap}>
                             <View style={styles.strengthHeader}>
-                                <Text style={styles.strengthLabel}>Fortaleza de contrasena</Text>
+                                <Text style={styles.strengthLabel}>Fortaleza de contraseña</Text>
                                 <Text style={styles.strengthLevel}>{passwordStrength.label}</Text>
                             </View>
                             <View style={styles.strengthTrack}>
@@ -344,7 +353,7 @@ export default function RegisterScreen() {
                         </View>
                     )}
 
-                    <Text style={styles.label}>Confirmar contrasena</Text>
+                    <Text style={styles.label}>Confirmar contraseña</Text>
                     <View style={styles.inputGroup}>
                         <View style={styles.inputIconWrap}>
                             <Ionicons name="lock-closed-outline" size={16} color={theme.colors.textInverse} />
@@ -354,7 +363,7 @@ export default function RegisterScreen() {
                             value={confirmPassword}
                             onChangeText={setConfirmPassword}
                             secureTextEntry={!showConfirmPassword}
-                            placeholder="Repite tu contrasena"
+                            placeholder="Repite tu contraseña"
                             placeholderTextColor={theme.colors.textTertiary}
                         />
                         <Pressable
@@ -411,7 +420,8 @@ export default function RegisterScreen() {
 
                     <View style={styles.noteBox}>
                         <Text style={styles.noteText}>
-                            Nota: luego del registro deberas subir documentos en tu perfil para
+                            Nota importante: Después de registrarte, deberás subir tus documentos
+                            (cédula, papeleta de votación) en tu perfil de usuario para poder
                             inscribirte en eventos.
                         </Text>
                     </View>
@@ -426,13 +436,16 @@ export default function RegisterScreen() {
                         {isSubmitting ? (
                             <ActivityIndicator color="#ffffff" />
                         ) : (
-                            <Text style={styles.buttonText}>Crear cuenta</Text>
+                            <Text style={styles.buttonText}>Registrarse</Text>
                         )}
                     </Pressable>
 
-                    <Link href="/(auth)/login" style={styles.link}>
-                        Ya tienes cuenta? Inicia sesion
-                    </Link>
+                    <Pressable
+                        style={styles.secondaryButton}
+                        onPress={() => router.replace("/(auth)/login")}
+                    >
+                        <Text style={styles.secondaryButtonText}>Ya tengo una cuenta</Text>
+                    </Pressable>
                 </Animated.View>
             </ScrollView>
         </ImageBackground>
@@ -477,12 +490,25 @@ const styles = StyleSheet.create({
         padding: theme.spacing.lg,
         ...theme.shadow.md,
     },
+    logoWrap: {
+        alignItems: "center",
+        marginBottom: 8,
+    },
+    logo: {
+        width: 220,
+        height: 80,
+    },
     title: {
         fontSize: 28,
         fontWeight: "700",
-        marginBottom: theme.spacing.md,
+        marginBottom: 4,
         textAlign: "center",
         color: theme.colors.textPrimary,
+    },
+    subtitle: {
+        textAlign: "center",
+        color: theme.colors.textSecondary,
+        marginBottom: theme.spacing.sm,
     },
     label: {
         fontSize: 13,
@@ -605,6 +631,19 @@ const styles = StyleSheet.create({
     buttonText: {
         color: theme.colors.textInverse,
         fontWeight: "700",
+    },
+    secondaryButton: {
+        borderWidth: 1,
+        borderColor: theme.colors.borderSecondary,
+        paddingVertical: 12,
+        borderRadius: theme.radius.sm,
+        marginTop: 10,
+        alignItems: "center",
+        backgroundColor: theme.colors.bgPrimary,
+    },
+    secondaryButtonText: {
+        color: theme.colors.textPrimary,
+        fontWeight: "600",
     },
     error: {
         color: theme.colors.error,

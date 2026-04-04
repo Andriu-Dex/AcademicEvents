@@ -27,7 +27,7 @@ export default function HomeScreen() {
     }, [fadeAnim, slideAnim]);
 
     return (
-        <LinearGradient colors={theme.gradients.card} style={styles.container}>
+        <LinearGradient colors={["#f4f6fb", "#e3e8f0"]} style={styles.container}>
             <Animated.View
                 style={{ opacity: fadeAnim, transform: [{ translateY: slideAnim }] }}
             >
