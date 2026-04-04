@@ -1,6 +1,7 @@
 import { useMemo, useState, type ReactNode } from "react";
 import {
     ActivityIndicator,
+    Alert,
     FlatList,
     Image,
     Linking,
@@ -13,6 +14,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
 import { AppHeader } from "../../src/components/AppHeader";
 import { fetchMyRegistrations, type RegistrationItem } from "../../src/api/registrations";
+import { toAbsoluteUrl } from "../../src/api/client";
 import { theme } from "../../src/shared/theme";
 
 function formatDate(raw: string) {
@@ -53,7 +55,7 @@ function RegistrationCard({ item }: Readonly<{ item: RegistrationItem }>) {
     return (
         <View style={styles.card}>
             {event?.coverImageUrl ? (
-                <Image source={{ uri: event.coverImageUrl }} style={styles.cover} resizeMode="cover" />
+                <Image source={{ uri: toAbsoluteUrl(event.coverImageUrl) }} style={styles.cover} resizeMode="cover" />
             ) : (
                 <View style={styles.coverFallback} />
             )}
@@ -85,7 +87,14 @@ function RegistrationCard({ item }: Readonly<{ item: RegistrationItem }>) {
                 {item.paymentProofUrl ? (
                     <Pressable
                         style={styles.linkBtn}
-                        onPress={() => Linking.openURL(item.paymentProofUrl ?? "")}
+                        onPress={() =>
+                            Linking.openURL(toAbsoluteUrl(item.paymentProofUrl ?? "")).catch(() => {
+                                Alert.alert(
+                                    "No se pudo abrir el comprobante",
+                                    "Intenta de nuevo o abre el enlace desde un navegador."
+                                );
+                            })
+                        }
                     >
                         <Ionicons name="document-text-outline" size={16} color={theme.colors.primary} />
                         <Text style={styles.linkText}>Ver comprobante</Text>

@@ -1,6 +1,7 @@
 import { useMemo, useState, type ReactNode } from "react";
 import {
     ActivityIndicator,
+    Alert,
     Image,
     Linking,
     Pressable,
@@ -13,6 +14,7 @@ import { Ionicons } from "@expo/vector-icons";
 import * as DocumentPicker from "expo-document-picker";
 import { useQuery } from "@tanstack/react-query";
 import { AppHeader } from "../../src/components/AppHeader";
+import { toAbsoluteUrl } from "../../src/api/client";
 import { fetchMyProfile, uploadDocuments, uploadProfileImage } from "../../src/api/profile";
 import { queryClient } from "../../src/shared/queryClient";
 import { useAuthStore } from "../../src/store/authStore";
@@ -75,7 +77,7 @@ function ProfileHeader({
     return (
         <View style={styles.avatarRow}>
             {profileImageUrl ? (
-                <Image source={{ uri: profileImageUrl }} style={styles.avatar} />
+                <Image source={{ uri: toAbsoluteUrl(profileImageUrl) }} style={styles.avatar} />
             ) : (
                 <View style={styles.avatarFallback} />
             )}
@@ -175,7 +177,17 @@ function DocumentsSection({
             ) : null}
 
             {profileDocumentUrl ? (
-                <Pressable style={styles.linkBtn} onPress={() => Linking.openURL(profileDocumentUrl)}>
+                <Pressable
+                    style={styles.linkBtn}
+                    onPress={() =>
+                        Linking.openURL(toAbsoluteUrl(profileDocumentUrl)).catch(() => {
+                            Alert.alert(
+                                "No se pudo abrir el documento",
+                                "Intenta de nuevo o abre el documento desde un navegador."
+                            );
+                        })
+                    }
+                >
                     <Ionicons name="open-outline" size={18} color={theme.colors.primary} />
                     <Text style={styles.linkText} numberOfLines={1}>
                         Ver documento actual ({fileLabel(profileDocumentUrl)})

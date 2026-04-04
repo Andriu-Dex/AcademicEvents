@@ -9,10 +9,10 @@ import {
     TextInput,
     View,
 } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
 import { AppHeader } from "../../src/components/AppHeader";
+import { toAbsoluteUrl } from "../../src/api/client";
 import { fetchMyProfile } from "../../src/api/profile";
 import { fetchUserEventsPaginated, type UserEventsFilters } from "../../src/api/userEvents";
 import type { PublicEventExtended } from "../../src/api/publicEvents";
@@ -22,6 +22,15 @@ import { theme } from "../../src/shared/theme";
 type ClientOnlyFilters = {
     soloCarrera: boolean;
 };
+
+type ModalityOption = { label: string; value: "" | "IN_PERSON" | "VIRTUAL" | "HYBRID" };
+
+const MODALITY_OPTIONS: ModalityOption[] = [
+    { label: "Todas", value: "" },
+    { label: "Presencial", value: "IN_PERSON" },
+    { label: "Virtual", value: "VIRTUAL" },
+    { label: "Semipresencial", value: "HYBRID" },
+];
 
 function formatEventDateTime(dateISO: string) {
     if (!dateISO) return "Fecha por confirmar";
@@ -60,17 +69,17 @@ function translateEventModality(raw: string) {
     return raw.trim();
 }
 
-function FilterChip({
+function CheckboxRow({
     label,
-    selected,
+    checked,
     onPress,
-}: Readonly<{ label: string; selected: boolean; onPress: () => void }>) {
+}: Readonly<{ label: string; checked: boolean; onPress: () => void }>) {
     return (
-        <Pressable
-            onPress={onPress}
-            style={[styles.chip, selected ? styles.chipSelected : styles.chipUnselected]}
-        >
-            <Text style={[styles.chipText, selected ? styles.chipTextSelected : styles.chipTextUnselected]}>
+        <Pressable style={styles.checkboxRow} onPress={onPress}>
+            <View style={[styles.checkbox, checked && styles.checkboxChecked]}>
+                {checked ? <Ionicons name="checkmark" size={16} color={theme.colors.textInverse} /> : null}
+            </View>
+            <Text style={styles.checkboxLabel} numberOfLines={2}>
                 {label}
             </Text>
         </Pressable>
@@ -92,7 +101,7 @@ function EventCard({ event }: Readonly<{ event: PublicEventExtended }>) {
     return (
         <View style={styles.card}>
             {event.coverImageUrl ? (
-                <Image source={{ uri: event.coverImageUrl }} style={styles.cover} resizeMode="cover" />
+                <Image source={{ uri: toAbsoluteUrl(event.coverImageUrl) }} style={styles.cover} resizeMode="cover" />
             ) : (
                 <View style={styles.coverFallback} />
             )}
@@ -152,13 +161,11 @@ function EventCard({ event }: Readonly<{ event: PublicEventExtended }>) {
 export default function EventsScreen() {
     const user = useAuthStore((s) => s.user);
 
-    const cardGradient: [string, string] = [
-        theme.gradients.card[0] ?? theme.colors.bgSecondary,
-        theme.gradients.card[1] ?? theme.colors.bgTertiary,
-    ];
-
     const [page, setPage] = useState(1);
     const limit = 10;
+
+    const [filtersOpen, setFiltersOpen] = useState(false);
+    const [modalityOpen, setModalityOpen] = useState(false);
 
     const [searchInput, setSearchInput] = useState("");
     const [filters, setFilters] = useState<UserEventsFilters>({
@@ -180,7 +187,7 @@ export default function EventsScreen() {
         queryKey: ["profile"],
         queryFn: fetchMyProfile,
         staleTime: 60000,
-        enabled: Boolean(user),
+        enabled: Boolean(user) && isUtaEmail,
     });
 
     const careerId = profileQuery.data?.career?.id ?? "";
@@ -229,6 +236,7 @@ export default function EventsScreen() {
             modalidad: "",
         });
         setClientOnly({ soloCarrera: true });
+        setModalityOpen(false);
     };
 
     const setPriceFilter = (mode: "gratuito" | "pagado") => {
@@ -246,15 +254,22 @@ export default function EventsScreen() {
         });
     };
 
-    const setModalidad = (value: string) => {
+    const setModalidad = (value: ModalityOption["value"]) => {
         setPage(1);
         setFilters((prev) => ({ ...prev, modalidad: value }));
+        setModalityOpen(false);
     };
 
-    const toggleFilter = (key: keyof Pick<UserEventsFilters, "completo" | "finalizado" | "cancelado" | "suspendido">) => {
+    const toggleFilter = (
+        key: keyof Pick<UserEventsFilters, "completo" | "finalizado" | "cancelado" | "suspendido">
+    ) => {
         setPage(1);
         setFilters((prev) => ({ ...prev, [key]: !prev[key] }));
     };
+
+    const currentModalityLabel =
+        MODALITY_OPTIONS.find((m) => m.value === (filters.modalidad as ModalityOption["value"]))?.label ??
+        "Todas";
 
     let body: ReactNode;
     if (eventsQuery.isLoading) {
@@ -289,10 +304,7 @@ export default function EventsScreen() {
                             Página {pagination?.currentPage ?? page} / {pagination?.totalPages ?? 1}
                         </Text>
                         <Pressable
-                            style={[
-                                styles.pageBtn,
-                                !(pagination?.hasNextPage ?? false) && styles.pageBtnDisabled,
-                            ]}
+                            style={[styles.pageBtn, !(pagination?.hasNextPage ?? false) && styles.pageBtnDisabled]}
                             disabled={!(pagination?.hasNextPage ?? false)}
                             onPress={() => setPage((p) => p + 1)}
                         >
@@ -306,69 +318,136 @@ export default function EventsScreen() {
 
     return (
         <View style={styles.container}>
-            <AppHeader title="Eventos" showNotifications />
+            <AppHeader title="Eventos disponibles" showNotifications />
 
-            <LinearGradient colors={cardGradient} style={styles.filtersWrap}>
+            <View style={styles.filtersShell}>
                 {isUtaEmail ? (
                     <View style={styles.careerRow}>
                         <Ionicons name="school-outline" size={16} color={theme.colors.primary} />
                         <Text style={styles.careerText} numberOfLines={1}>
-                            {profileQuery.isLoading ? "Cargando carrera…" : profileQuery.data?.career?.name ?? "Carrera"}
+                            {profileQuery.isLoading
+                                ? "Cargando carrera…"
+                                : profileQuery.data?.career?.name ?? "Carrera"}
                         </Text>
-                        <FilterChip
+                        <CheckboxRow
                             label="Solo mi carrera"
-                            selected={clientOnly.soloCarrera}
+                            checked={clientOnly.soloCarrera}
                             onPress={() => setClientOnly((p) => ({ ...p, soloCarrera: !p.soloCarrera }))}
                         />
                     </View>
                 ) : null}
 
-                <View style={styles.searchRow}>
-                    <View style={styles.searchInputWrap}>
-                        <Ionicons name="search-outline" size={18} color={theme.colors.textSecondary} />
-                        <TextInput
-                            style={styles.searchInput}
-                            placeholder="Buscar…"
-                            placeholderTextColor={theme.colors.textTertiary}
-                            value={searchInput}
-                            onChangeText={setSearchInput}
-                            onSubmitEditing={applySearch}
-                            returnKeyType="search"
+                <View style={styles.searchInputWrap}>
+                    <Ionicons name="search-outline" size={18} color={theme.colors.textSecondary} />
+                    <TextInput
+                        style={styles.searchInput}
+                        placeholder="Buscar por nombre del evento..."
+                        placeholderTextColor={theme.colors.textTertiary}
+                        value={searchInput}
+                        onChangeText={setSearchInput}
+                        onSubmitEditing={applySearch}
+                        returnKeyType="search"
+                    />
+                    {searchInput.length > 0 ? (
+                        <Pressable onPress={() => setSearchInput("")}>
+                            <Ionicons name="close-circle" size={18} color={theme.colors.textTertiary} />
+                        </Pressable>
+                    ) : null}
+                </View>
+
+                <View style={styles.filterHeaderRow}>
+                    <Pressable
+                        style={styles.filterToggle}
+                        onPress={() => setFiltersOpen((v) => !v)}
+                    >
+                        <Ionicons name="funnel-outline" size={18} color={theme.colors.primary} />
+                        <Text style={styles.filterToggleText}>Filtros</Text>
+                        <Ionicons
+                            name={filtersOpen ? "chevron-up" : "chevron-down"}
+                            size={18}
+                            color={theme.colors.primary}
                         />
-                        {searchInput.length > 0 ? (
-                            <Pressable onPress={() => setSearchInput("")}>
-                                <Ionicons name="close-circle" size={18} color={theme.colors.textTertiary} />
-                            </Pressable>
-                        ) : null}
-                    </View>
-                    <Pressable style={styles.searchBtn} onPress={applySearch}>
-                        <Text style={styles.searchBtnText}>Buscar</Text>
+                    </Pressable>
+
+                    <Pressable style={styles.clearBtn} onPress={clearFilters}>
+                        <Text style={styles.clearBtnText}>Limpiar</Text>
                     </Pressable>
                 </View>
 
-                <View style={styles.chipsRow}>
-                    <FilterChip label="Gratis" selected={Boolean(filters.gratuito)} onPress={() => setPriceFilter("gratuito")} />
-                    <FilterChip label="Pagado" selected={Boolean(filters.pagado)} onPress={() => setPriceFilter("pagado")} />
-                    <FilterChip label="Completos" selected={Boolean(filters.completo)} onPress={() => toggleFilter("completo")} />
-                </View>
+                {filtersOpen ? (
+                    <View style={styles.filtersPanel}>
+                        <View style={styles.filterCard}>
+                            <Text style={styles.filterCardTitle}>Por Precio</Text>
+                            <CheckboxRow
+                                label="Eventos Gratuitos"
+                                checked={Boolean(filters.gratuito)}
+                                onPress={() => setPriceFilter("gratuito")}
+                            />
+                            <CheckboxRow
+                                label="Eventos de Pago"
+                                checked={Boolean(filters.pagado)}
+                                onPress={() => setPriceFilter("pagado")}
+                            />
+                        </View>
 
-                <View style={styles.chipsRow}>
-                    <FilterChip label="Finalizados" selected={Boolean(filters.finalizado)} onPress={() => toggleFilter("finalizado")} />
-                    <FilterChip label="Cancelados" selected={Boolean(filters.cancelado)} onPress={() => toggleFilter("cancelado")} />
-                    <FilterChip label="Suspendidos" selected={Boolean(filters.suspendido)} onPress={() => toggleFilter("suspendido")} />
-                </View>
+                        <View style={styles.filterCard}>
+                            <Text style={styles.filterCardTitle}>Por Disponibilidad</Text>
+                            <CheckboxRow
+                                label="Eventos Llenos (sin cupos)"
+                                checked={Boolean(filters.completo)}
+                                onPress={() => toggleFilter("completo")}
+                            />
+                        </View>
 
-                <View style={styles.chipsRow}>
-                    <FilterChip label="Presencial" selected={filters.modalidad === "IN_PERSON"} onPress={() => setModalidad(filters.modalidad === "IN_PERSON" ? "" : "IN_PERSON")} />
-                    <FilterChip label="Virtual" selected={filters.modalidad === "VIRTUAL"} onPress={() => setModalidad(filters.modalidad === "VIRTUAL" ? "" : "VIRTUAL")} />
-                    <FilterChip label="Semipresencial" selected={filters.modalidad === "HYBRID"} onPress={() => setModalidad(filters.modalidad === "HYBRID" ? "" : "HYBRID")} />
-                </View>
+                        <View style={styles.filterCard}>
+                            <Text style={styles.filterCardTitle}>Por Estado</Text>
+                            <CheckboxRow
+                                label="Eventos Finalizados"
+                                checked={Boolean(filters.finalizado)}
+                                onPress={() => toggleFilter("finalizado")}
+                            />
+                            <CheckboxRow
+                                label="Eventos Cancelados"
+                                checked={Boolean(filters.cancelado)}
+                                onPress={() => toggleFilter("cancelado")}
+                            />
+                            <CheckboxRow
+                                label="Eventos Suspendidos"
+                                checked={Boolean(filters.suspendido)}
+                                onPress={() => toggleFilter("suspendido")}
+                            />
+                        </View>
 
-                <Pressable style={styles.clearBtn} onPress={clearFilters}>
-                    <Ionicons name="refresh" size={18} color={theme.colors.primary} />
-                    <Text style={styles.clearBtnText}>Limpiar filtros</Text>
-                </Pressable>
-            </LinearGradient>
+                        <View style={styles.filterCard}>
+                            <Text style={styles.filterCardTitle}>Por Modalidad</Text>
+                            <Pressable
+                                style={styles.selectBtn}
+                                onPress={() => setModalityOpen((v) => !v)}
+                            >
+                                <Text style={styles.selectBtnText}>{currentModalityLabel}</Text>
+                                <Ionicons
+                                    name={modalityOpen ? "chevron-up" : "chevron-down"}
+                                    size={18}
+                                    color={theme.colors.textSecondary}
+                                />
+                            </Pressable>
+                            {modalityOpen ? (
+                                <View style={styles.selectMenu}>
+                                    {MODALITY_OPTIONS.map((opt) => (
+                                        <Pressable
+                                            key={opt.value || "all"}
+                                            style={styles.selectItem}
+                                            onPress={() => setModalidad(opt.value)}
+                                        >
+                                            <Text style={styles.selectItemText}>{opt.label}</Text>
+                                        </Pressable>
+                                    ))}
+                                </View>
+                            ) : null}
+                        </View>
+                    </View>
+                ) : null}
+            </View>
 
             {body}
         </View>
@@ -377,64 +456,125 @@ export default function EventsScreen() {
 
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: theme.colors.bgSecondary },
-    filtersWrap: {
-        padding: theme.spacing.md,
-        borderBottomWidth: 1,
-        borderBottomColor: theme.colors.borderPrimary,
-    },
-    careerRow: { flexDirection: "row", alignItems: "center", gap: 10, flexWrap: "wrap" },
-    careerText: { flex: 1, minWidth: 120, fontWeight: "900", color: theme.colors.textPrimary },
-    searchRow: { flexDirection: "row", gap: theme.spacing.sm, marginTop: theme.spacing.sm },
-    searchInputWrap: {
-        flex: 1,
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 10,
-        backgroundColor: theme.colors.bgPrimary,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-        borderRadius: theme.radius.md,
-        paddingHorizontal: 12,
-        height: 44,
-    },
-    searchInput: { flex: 1, color: theme.colors.textPrimary, fontWeight: "700" },
-    searchBtn: {
-        width: 92,
-        height: 44,
-        borderRadius: theme.radius.md,
-        backgroundColor: theme.colors.primary,
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    searchBtnText: { color: theme.colors.textInverse, fontWeight: "900" },
-    chipsRow: { flexDirection: "row", flexWrap: "wrap", gap: 10, marginTop: theme.spacing.sm },
-    chip: {
-        paddingVertical: 8,
-        paddingHorizontal: 12,
-        borderRadius: 999,
-        borderWidth: 1,
-    },
-    chipSelected: { backgroundColor: theme.colors.primary, borderColor: theme.colors.primary },
-    chipUnselected: { backgroundColor: theme.colors.bgPrimary, borderColor: theme.colors.borderPrimary },
-    chipText: { fontSize: 12, fontWeight: "900" },
-    chipTextSelected: { color: theme.colors.textInverse },
-    chipTextUnselected: { color: theme.colors.textPrimary },
-    clearBtn: {
-        marginTop: theme.spacing.sm,
-        height: 44,
-        borderRadius: theme.radius.md,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-        backgroundColor: theme.colors.bgPrimary,
-        alignItems: "center",
-        justifyContent: "center",
-        flexDirection: "row",
-        gap: 10,
-    },
-    clearBtnText: { color: theme.colors.primary, fontWeight: "900" },
     center: { flex: 1, alignItems: "center", justifyContent: "center", padding: theme.spacing.lg },
     errorText: { color: theme.colors.error, fontWeight: "900" },
     list: { padding: theme.spacing.lg, gap: theme.spacing.md, paddingBottom: theme.spacing.xl },
+
+    filtersShell: {
+        padding: theme.spacing.lg,
+        paddingBottom: theme.spacing.md,
+        backgroundColor: theme.colors.bgSecondary,
+        borderBottomWidth: 1,
+        borderBottomColor: theme.colors.borderPrimary,
+    },
+    careerRow: { marginBottom: theme.spacing.md, gap: 10 },
+    careerText: { fontWeight: "900", color: theme.colors.textPrimary },
+
+    searchInputWrap: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 10,
+        backgroundColor: theme.colors.bgPrimary,
+        borderWidth: 1,
+        borderColor: theme.colors.borderPrimary,
+        borderRadius: theme.radius.lg,
+        paddingHorizontal: 12,
+        height: 48,
+    },
+    searchInput: { flex: 1, color: theme.colors.textPrimary, fontWeight: "700" },
+
+    filterHeaderRow: {
+        marginTop: theme.spacing.md,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: 12,
+    },
+    filterToggle: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 10,
+        paddingHorizontal: 14,
+        height: 44,
+        borderRadius: 999,
+        borderWidth: 1,
+        borderColor: theme.colors.primary,
+        backgroundColor: theme.colors.bgPrimary,
+    },
+    filterToggleText: { color: theme.colors.primary, fontWeight: "900" },
+    clearBtn: {
+        height: 44,
+        paddingHorizontal: 14,
+        borderRadius: 999,
+        borderWidth: 1,
+        borderColor: theme.colors.borderPrimary,
+        backgroundColor: theme.colors.bgPrimary,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    clearBtnText: { color: theme.colors.textSecondary, fontWeight: "900" },
+
+    filtersPanel: {
+        marginTop: theme.spacing.md,
+        backgroundColor: theme.colors.bgPrimary,
+        borderRadius: theme.radius.lg,
+        borderWidth: 1,
+        borderColor: theme.colors.borderPrimary,
+        padding: theme.spacing.md,
+        flexDirection: "row",
+        flexWrap: "wrap",
+        gap: 12,
+        ...theme.shadow.sm,
+    },
+    filterCard: {
+        width: "48%",
+        minWidth: 160,
+        flexGrow: 1,
+        borderRadius: theme.radius.md,
+        borderWidth: 1,
+        borderColor: theme.colors.borderPrimary,
+        backgroundColor: theme.colors.bgPrimary,
+        padding: theme.spacing.md,
+        gap: 10,
+    },
+    filterCardTitle: { fontWeight: "900", color: theme.colors.textPrimary },
+
+    checkboxRow: { flexDirection: "row", alignItems: "center", gap: 10 },
+    checkbox: {
+        width: 22,
+        height: 22,
+        borderRadius: 6,
+        borderWidth: 1,
+        borderColor: theme.colors.borderSecondary,
+        backgroundColor: theme.colors.bgPrimary,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    checkboxChecked: { backgroundColor: theme.colors.primary, borderColor: theme.colors.primary },
+    checkboxLabel: { flex: 1, color: theme.colors.textSecondary, fontWeight: "700", lineHeight: 18 },
+
+    selectBtn: {
+        height: 44,
+        borderRadius: theme.radius.md,
+        borderWidth: 1,
+        borderColor: theme.colors.borderPrimary,
+        backgroundColor: theme.colors.bgSecondary,
+        paddingHorizontal: 12,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+    },
+    selectBtnText: { color: theme.colors.textPrimary, fontWeight: "800" },
+    selectMenu: {
+        marginTop: 8,
+        borderRadius: theme.radius.md,
+        borderWidth: 1,
+        borderColor: theme.colors.borderPrimary,
+        overflow: "hidden",
+    },
+    selectItem: { paddingHorizontal: 12, paddingVertical: 10, backgroundColor: theme.colors.bgPrimary },
+    selectItemText: { color: theme.colors.textSecondary, fontWeight: "800" },
+
     card: {
         backgroundColor: theme.colors.bgPrimary,
         borderRadius: theme.radius.lg,

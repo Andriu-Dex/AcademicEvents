@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { toAbsoluteUrl } from "../api/client";
 import { useAuthStore } from "../store/authStore";
 import { theme } from "../shared/theme";
 
@@ -17,8 +18,8 @@ export function AppHeader({
 
     const displayName = useMemo(() => {
         if (!user) return "";
-        const name = `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim();
-        return name || user.email;
+        const firstName = (user.firstName ?? "").trim();
+        return firstName || user.email;
     }, [user]);
 
     const onLogout = async () => {
@@ -57,7 +58,7 @@ export function AppHeader({
                             onPress={() => setMenuOpen((v) => !v)}
                         >
                             {user.profileImageUrl ? (
-                                <Image source={{ uri: user.profileImageUrl }} style={styles.avatar} />
+                                <Image source={{ uri: toAbsoluteUrl(user.profileImageUrl) }} style={styles.avatar} />
                             ) : (
                                 <View style={styles.avatarFallback} />
                             )}
@@ -69,16 +70,6 @@ export function AppHeader({
 
                         {menuOpen ? (
                             <View style={styles.menu}>
-                                <Pressable
-                                    style={styles.menuItem}
-                                    onPress={() => {
-                                        setMenuOpen(false);
-                                        router.push("/profile");
-                                    }}
-                                >
-                                    <Ionicons name="person-outline" size={18} color={theme.colors.textPrimary} />
-                                    <Text style={styles.menuText}>Perfil</Text>
-                                </Pressable>
                                 <Pressable style={styles.menuItem} onPress={onLogout}>
                                     <Ionicons name="log-out-outline" size={18} color={theme.colors.textPrimary} />
                                     <Text style={styles.menuText}>Cerrar sesión</Text>
@@ -103,6 +94,8 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
+        zIndex: 50,
+        elevation: 6,
     },
     left: { width: 40 },
     right: {
@@ -129,7 +122,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
     },
     iconSpacer: { width: 40, height: 40 },
-    userArea: { position: "relative" },
+    userArea: { position: "relative", zIndex: 60 },
     userButton: {
         maxWidth: 220,
         flexDirection: "row",
@@ -153,6 +146,8 @@ const styles = StyleSheet.create({
         borderColor: theme.colors.borderPrimary,
         overflow: "hidden",
         minWidth: 180,
+        zIndex: 999,
+        elevation: 12,
         ...theme.shadow.sm,
     },
     menuItem: {

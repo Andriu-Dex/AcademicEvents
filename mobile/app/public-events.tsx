@@ -18,6 +18,7 @@ import {
     PublicEventExtended,
     PublicEventsFilters,
 } from "../src/api/publicEvents";
+import { toAbsoluteUrl } from "../src/api/client";
 import { theme } from "../src/shared/theme";
 
 type ClientOnlyFilters = {
@@ -261,7 +262,7 @@ export default function PublicEventsScreen() {
         return (
             <View style={styles.eventCard}>
                 {item.coverImageUrl ? (
-                    <Image source={{ uri: item.coverImageUrl }} style={styles.coverImage} resizeMode="cover" />
+                    <Image source={{ uri: toAbsoluteUrl(item.coverImageUrl) }} style={styles.coverImage} resizeMode="cover" />
                 ) : (
                     <View style={styles.coverImageFallback} />
                 )}

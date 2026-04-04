@@ -17,7 +17,7 @@ import { useRouter } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
-import { apiClient, getCurrentApiBaseUrl, getLastApiProbeLog } from "../src/api/client";
+import { apiClient, getCurrentApiBaseUrl, getLastApiProbeLog, toAbsoluteUrl } from "../src/api/client";
 import { useFeaturedEvents } from "../src/features/events/useFeaturedEvents";
 import { theme } from "../src/shared/theme";
 
@@ -302,6 +302,15 @@ function resolveSocialIcon(platformKey: string, iconKey: string) {
 }
 
 export default function PublicHomeScreen() {
+    return <HomeContent />;
+}
+
+export function HomeContent(
+    {
+        showAuthCtas = true,
+        eventsRoute = "/public-events",
+    }: Readonly<{ showAuthCtas?: boolean; eventsRoute?: string }> = { showAuthCtas: true, eventsRoute: "/public-events" }
+) {
     const router = useRouter();
     const scrollRef = useRef<ScrollView | null>(null);
     const [authorityIndex, setAuthorityIndex] = useState(0);
@@ -401,27 +410,33 @@ export default function PublicHomeScreen() {
                 <View style={styles.navbarRow}>
                     <Pressable style={styles.brandWrap} onPress={() => scrollToSection("inicio")}>
                         {faculty?.logo ? (
-                            <Image source={{ uri: faculty.logo }} style={styles.brandLogo} resizeMode="contain" />
+                            <Image
+                                source={{ uri: toAbsoluteUrl(faculty.logo) }}
+                                style={styles.brandLogo}
+                                resizeMode="contain"
+                            />
                         ) : (
                             <View style={styles.brandLogoFallback} />
                         )}
                     </Pressable>
 
-                    <View style={styles.navCtas}>
-                        <Pressable style={styles.navCtaPrimary} onPress={() => router.push("/(auth)/login")}>
-                            <Text style={styles.navCtaPrimaryText}>Iniciar sesión</Text>
-                        </Pressable>
-                        <Pressable style={styles.navCtaSecondary} onPress={() => router.push("/(auth)/register")}>
-                            <Text style={styles.navCtaSecondaryText}>Registrarse</Text>
-                        </Pressable>
-                    </View>
+                    {showAuthCtas ? (
+                        <View style={styles.navCtas}>
+                            <Pressable style={styles.navCtaPrimary} onPress={() => router.push("/(auth)/login")}>
+                                <Text style={styles.navCtaPrimaryText}>Iniciar sesión</Text>
+                            </Pressable>
+                            <Pressable style={styles.navCtaSecondary} onPress={() => router.push("/(auth)/register")}>
+                                <Text style={styles.navCtaSecondaryText}>Registrarse</Text>
+                            </Pressable>
+                        </View>
+                    ) : null}
                 </View>
 
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.navTabs}>
                     <Pressable style={styles.navTab} onPress={() => scrollToSection("inicio")}>
                         <Text style={styles.navTabText}>Inicio</Text>
                     </Pressable>
-                    <Pressable style={styles.navTab} onPress={() => router.push("/public-events")}>
+                    <Pressable style={styles.navTab} onPress={() => router.push(eventsRoute)}>
                         <Text style={styles.navTabText}>Eventos</Text>
                     </Pressable>
                     <Pressable style={styles.navTabGhost} onPress={() => scrollToSection("autoridades")}>
@@ -456,7 +471,7 @@ export default function PublicHomeScreen() {
                     </Text>
 
                     <View style={styles.heroActions}>
-                        <Pressable style={styles.primaryAction} onPress={() => router.push("/public-events")}>
+                        <Pressable style={styles.primaryAction} onPress={() => router.push(eventsRoute)}>
                             <Ionicons name="calendar-outline" size={16} color={theme.colors.textInverse} />
                             <Text style={styles.primaryActionText}>Explorar eventos públicos</Text>
                         </Pressable>

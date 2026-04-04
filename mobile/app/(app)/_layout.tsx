@@ -24,6 +24,17 @@ export default function AppLayout() {
                 tabBarStyle: {
                     backgroundColor: theme.colors.bgPrimary,
                     borderTopColor: theme.colors.borderPrimary,
+                    justifyContent: "space-around",
+                },
+                tabBarItemStyle: {
+                    flex: 1,
+                    alignItems: "center",
+                    justifyContent: "center",
+                },
+                tabBarLabelStyle: {
+                    fontSize: 11,
+                    fontWeight: "800",
+                    paddingBottom: 2,
                 },
             }}
         >
@@ -54,17 +65,21 @@ export default function AppLayout() {
                     ),
                 }}
             />
-            <Tabs.Screen
-                name="notifications"
-                options={{
-                    title: "Notificaciones",
-                    tabBarButton: () => null,
-                }}
-            />
+
             <Tabs.Screen
                 name="profile"
                 options={{
                     title: "Perfil",
+                    tabBarIcon: ({ color, size }) => (
+                        <Ionicons name="person-outline" color={color} size={size} />
+                    ),
+                }}
+            />
+
+            <Tabs.Screen
+                name="notifications"
+                options={{
+                    title: "Notificaciones",
                     tabBarButton: () => null,
                 }}
             />

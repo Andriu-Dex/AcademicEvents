@@ -28,6 +28,17 @@ export function getLastApiProbeLog() {
     return lastProbeLog;
 }
 
+export function toAbsoluteUrl(urlOrPath: string) {
+    const raw = (urlOrPath ?? "").trim();
+    if (!raw) return "";
+
+    // Ya es absoluta (cualquier esquema, p.ej. http/https/file/content/tel/mailto)
+    if (/^[a-z][a-z0-9+.-]*:\/\//i.test(raw) || /^[a-z][a-z0-9+.-]*:/i.test(raw)) return raw;
+
+    // Para rutas relativas (p.ej. /uploads/x.pdf o uploads/x.pdf)
+    return joinUrl(getCurrentApiBaseUrl(), raw);
+}
+
 function joinUrl(base: string, path: string) {
     const normalizedBase = base.replace(/\/+$/, "");
     const normalizedPath = path.startsWith("/") ? path : `/${path}`;
