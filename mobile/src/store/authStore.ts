@@ -18,6 +18,7 @@ type AuthState = {
     user: AuthUser | null;
     isHydrated: boolean;
     setSession: (token: string, user: AuthUser) => Promise<void>;
+    updateUser: (patch: Partial<AuthUser>) => Promise<void>;
     clearSession: () => Promise<void>;
     hydrate: () => Promise<void>;
 };
@@ -30,6 +31,15 @@ export const useAuthStore = create<AuthState>((set) => ({
         await SecureStore.setItemAsync(TOKEN_KEY, token);
         await SecureStore.setItemAsync(USER_KEY, JSON.stringify(user));
         set({ accessToken: token, user });
+    },
+    updateUser: async (patch) => {
+        set((state) => {
+            const current = state.user;
+            if (!current) return state;
+            const next = { ...current, ...patch };
+            void SecureStore.setItemAsync(USER_KEY, JSON.stringify(next));
+            return { ...state, user: next };
+        });
     },
     clearSession: async () => {
         await SecureStore.deleteItemAsync(TOKEN_KEY);

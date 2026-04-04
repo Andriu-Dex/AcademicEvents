@@ -41,14 +41,18 @@ export type PublicEventExtended = {
     title: string;
     description: string;
     location: string;
+    coverImageUrl: string;
+    type: string;
     startDate: string;
     endDate: string;
+    durationHours: number;
     status: string;
     modality: string;
     price: number;
     maxCapacity: number | null;
     availableSpots: number | null;
     careers: string[];
+    careerIds: string[];
 };
 
 export type PaginationMeta = {
@@ -87,46 +91,76 @@ function normalizeEvent(item: PublicEventApiItem): PublicEvent {
 }
 
 function normalizeEventExtended(item: Record<string, unknown>): PublicEventExtended {
-    const id = pickStringOrNumber(item, "id", "id_eve");
-    const title = pickStringOrNumber(item, "name", "nom_eve", "nombre") || "Evento sin nombre";
-    const startDate = pickStringOrNumber(item, "startDate", "fec_ini_eve", "fecha_inicio") || "";
-    const endDate = pickStringOrNumber(item, "endDate") || "";
-    const location = pickStringOrNumber(item, "location", "lug_eve", "lugar") || "Lugar por confirmar";
-    const description = pickStringOrNumber(item, "description", "des_eve", "descripcion") || "";
-    const status = pickStringOrNumber(item, "status", "est_eve") || "";
-    const modality = pickStringOrNumber(item, "modality", "modalidad") || "";
+    const base = pickBaseFields(item);
+    const derived = pickDerivedFields(item);
+    const { careers, careerIds } = extractEventCareers(item);
 
-    const price = toFiniteNumberOrNull(item.price ?? item.val_eve) ?? 0;
-    const maxCapacity = toFiniteNumberOrNull(item.maxCapacity ?? item.cup_max_eve);
-    const availableSpots = toFiniteNumberOrNull(item.availableSpots ?? item.cup_dis_eve);
+    return {
+        ...base,
+        ...derived,
+        careers,
+        careerIds,
+    };
+}
 
+function pickBaseFields(item: Record<string, unknown>) {
+    return {
+        id: pickStringOrNumber(item, "id", "id_eve"),
+        title: pickStringOrNumber(item, "name", "nom_eve", "nombre") || "Evento sin nombre",
+        description: pickStringOrNumber(item, "description", "des_eve", "descripcion") || "",
+        location: pickStringOrNumber(item, "location", "lug_eve", "lugar") || "Lugar por confirmar",
+        coverImageUrl:
+            pickStringOrNumber(item, "coverImageUrl", "cover_image_url", "img_por_eve", "imageUrl", "image") || "",
+        type: pickStringOrNumber(item, "type", "tip_eve") || "",
+        startDate: pickStringOrNumber(item, "startDate", "fec_ini_eve", "fecha_inicio") || "",
+        endDate: pickStringOrNumber(item, "endDate") || "",
+        status: pickStringOrNumber(item, "status", "est_eve") || "",
+        modality: pickStringOrNumber(item, "modality", "modalidad") || "",
+    };
+}
+
+function pickDerivedFields(item: Record<string, unknown>) {
+    return {
+        durationHours: toFiniteNumberOrNull(item.durationHours ?? item.dur_hor_eve ?? item.duration) ?? 0,
+        price: toFiniteNumberOrNull(item.price ?? item.val_eve) ?? 0,
+        maxCapacity: toFiniteNumberOrNull(item.maxCapacity ?? item.cup_max_eve),
+        availableSpots: toFiniteNumberOrNull(item.availableSpots ?? item.cup_dis_eve),
+    };
+}
+
+function extractEventCareers(item: Record<string, unknown>): { careers: string[]; careerIds: string[] } {
     const careers: string[] = [];
-    if (Array.isArray(item.eventCareers)) {
-        for (const ec of item.eventCareers) {
-            if (!ec || typeof ec !== "object") continue;
-            const career = (ec as Record<string, unknown>).career;
-            if (!career || typeof career !== "object") continue;
-            const name = (career as Record<string, unknown>).name;
-            if (typeof name === "string" && name.length > 0) {
-                careers.push(name);
-            }
+    const careerIds: string[] = [];
+
+    if (!Array.isArray(item.eventCareers)) {
+        return { careers, careerIds };
+    }
+
+    for (const ec of item.eventCareers) {
+        if (!ec || typeof ec !== "object") continue;
+        const ecRec = ec as Record<string, unknown>;
+
+        const careerId = ecRec.careerId;
+        if (typeof careerId === "string" && careerId.length > 0) {
+            careerIds.push(careerId);
+        }
+
+        const career = ecRec.career;
+        if (!career || typeof career !== "object") continue;
+
+        const careerRec = career as Record<string, unknown>;
+        const name = careerRec.name;
+        if (typeof name === "string" && name.length > 0) {
+            careers.push(name);
+        }
+
+        const embeddedId = careerRec.id;
+        if (typeof embeddedId === "string" && embeddedId.length > 0) {
+            careerIds.push(embeddedId);
         }
     }
 
-    return {
-        id,
-        title,
-        description,
-        location,
-        startDate,
-        endDate,
-        status,
-        modality,
-        price,
-        maxCapacity,
-        availableSpots,
-        careers,
-    };
+    return { careers, careerIds: Array.from(new Set(careerIds)) };
 }
 
 function pickStringOrNumber(obj: Record<string, unknown>, ...keys: string[]): string {

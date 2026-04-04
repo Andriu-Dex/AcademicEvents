@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import {
     ActivityIndicator,
     FlatList,
+    Image,
     Pressable,
     StyleSheet,
     Text,
@@ -37,6 +38,34 @@ function formatEventDate(dateISO: string) {
         month: "short",
         year: "numeric",
     });
+}
+
+function formatEventDateTime(dateISO: string) {
+    if (!dateISO) return "Fecha por confirmar";
+
+    const date = new Date(dateISO);
+    if (Number.isNaN(date.getTime())) return "Fecha por confirmar";
+
+    return date.toLocaleString("es-EC", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+    });
+}
+
+function formatDateRange(startISO: string, endISO: string) {
+    const start = formatEventDateTime(startISO);
+    const end = endISO ? formatEventDateTime(endISO) : "";
+    return end ? `${start} a ${end}` : start;
+}
+
+function formatEventType(raw: string) {
+    const value = raw.trim().toUpperCase();
+    if (!value) return "";
+    // backend enum: COURSE, CONGRESS, WEBINAR, TALK, SOCIALIZATION
+    return value;
 }
 
 function translateEventModality(raw: string) {
@@ -88,7 +117,7 @@ export default function PublicEventsScreen() {
         search: "",
         software: false,
         industrial: false,
-        publico: false,
+        publico: true,
         gratuito: false,
         pagado: false,
         modalidad: "",
@@ -152,7 +181,7 @@ export default function PublicEventsScreen() {
             search: "",
             software: false,
             industrial: false,
-            publico: false,
+            publico: true,
             gratuito: false,
             pagado: false,
             modalidad: "",
@@ -163,11 +192,6 @@ export default function PublicEventsScreen() {
             cancelado: false,
             suspendido: false,
         });
-    };
-
-    const toggleBoolean = (key: "software" | "industrial" | "publico") => {
-        setPage(1);
-        setFilters((prev) => ({ ...prev, [key]: !prev[key] }));
     };
 
     const toggleClient = (key: keyof ClientOnlyFilters) => {
@@ -231,49 +255,51 @@ export default function PublicEventsScreen() {
     const renderItem = ({ item }: { item: PublicEventExtended }) => {
         const modalityLabel = translateEventModality(item.modality);
         const priceLabel = item.price > 0 ? `$${item.price.toFixed(2)}` : "Gratis";
+        const typeLabel = formatEventType(item.type);
+        const dateRange = formatDateRange(item.startDate, item.endDate);
 
         return (
             <View style={styles.eventCard}>
-                <View style={styles.eventHeader}>
+                {item.coverImageUrl ? (
+                    <Image source={{ uri: item.coverImageUrl }} style={styles.coverImage} resizeMode="cover" />
+                ) : (
+                    <View style={styles.coverImageFallback} />
+                )}
+
+                <View style={styles.body}>
                     <Text style={styles.eventTitle} numberOfLines={2}>
                         {item.title}
                     </Text>
-                    <View style={styles.datePill}>
-                        <Text style={styles.datePillText}>{formatEventDate(item.startDate)}</Text>
+
+                    {typeLabel ? <Text style={styles.eventType}>{typeLabel}</Text> : null}
+
+                    <Text style={styles.priceText}>Precio: {priceLabel}</Text>
+
+                    {item.description ? (
+                        <Text style={styles.eventDescription} numberOfLines={3}>
+                            {item.description}
+                        </Text>
+                    ) : null}
+
+                    <Text style={styles.metaLine}>Fecha: {dateRange}</Text>
+                    {item.durationHours > 0 ? (
+                        <Text style={styles.metaLine}>Duración: {item.durationHours} horas</Text>
+                    ) : null}
+
+                    <View style={styles.badgesRow}>
+                        {typeof item.availableSpots === "number" ? (
+                            <View style={styles.badgePrimary}>
+                                <Text style={styles.badgePrimaryText}>Cupos disponibles: {item.availableSpots}</Text>
+                            </View>
+                        ) : null}
+                        {modalityLabel ? (
+                            <View style={styles.badgeSuccess}>
+                                <Ionicons name="desktop-outline" size={14} color={theme.colors.success} />
+                                <Text style={styles.badgeSuccessText}>Modalidad: {modalityLabel}</Text>
+                            </View>
+                        ) : null}
                     </View>
                 </View>
-
-                <View style={styles.metaRow}>
-                    <Ionicons name="location-outline" size={14} color={theme.colors.textSecondary} />
-                    <Text style={styles.metaText} numberOfLines={1}>
-                        {item.location}
-                    </Text>
-                </View>
-
-                <View style={styles.badgesRow}>
-                    {modalityLabel ? (
-                        <View style={styles.badge}>
-                            <Ionicons name="laptop-outline" size={14} color={theme.colors.primary} />
-                            <Text style={styles.badgeText}>{modalityLabel}</Text>
-                        </View>
-                    ) : null}
-                    <View style={styles.badge}>
-                        <Ionicons name="cash-outline" size={14} color={theme.colors.primary} />
-                        <Text style={styles.badgeText}>{priceLabel}</Text>
-                    </View>
-                    {typeof item.availableSpots === "number" ? (
-                        <View style={styles.badge}>
-                            <Ionicons name="people-outline" size={14} color={theme.colors.primary} />
-                            <Text style={styles.badgeText}>{item.availableSpots} cupos</Text>
-                        </View>
-                    ) : null}
-                </View>
-
-                {item.description ? (
-                    <Text style={styles.eventDescription} numberOfLines={3}>
-                        {item.description}
-                    </Text>
-                ) : null}
             </View>
         );
     };
@@ -318,21 +344,6 @@ export default function PublicEventsScreen() {
                         </View>
 
                         <View style={styles.chipsRow}>
-                            <FilterChip
-                                label="Software"
-                                selected={Boolean(filters.software)}
-                                onPress={() => toggleBoolean("software")}
-                            />
-                            <FilterChip
-                                label="Industrial"
-                                selected={Boolean(filters.industrial)}
-                                onPress={() => toggleBoolean("industrial")}
-                            />
-                            <FilterChip
-                                label="Público"
-                                selected={Boolean(filters.publico)}
-                                onPress={() => toggleBoolean("publico")}
-                            />
                             <FilterChip
                                 label="Gratis"
                                 selected={Boolean(filters.gratuito)}
@@ -581,63 +592,78 @@ const styles = StyleSheet.create({
     eventCard: {
         backgroundColor: theme.colors.bgElevated,
         borderRadius: theme.radius.md,
-        padding: theme.spacing.md,
         borderWidth: 1,
         borderColor: theme.colors.borderPrimary,
-        gap: 10,
+        overflow: "hidden",
     },
-    eventHeader: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "flex-start",
-        gap: 10,
+    coverImage: {
+        width: "100%",
+        height: 150,
+        backgroundColor: theme.colors.bgSecondary,
+    },
+    coverImageFallback: {
+        width: "100%",
+        height: 150,
+        backgroundColor: theme.colors.bgSecondary,
+    },
+    body: {
+        padding: theme.spacing.md,
+        gap: 8,
     },
     eventTitle: {
-        flex: 1,
         fontSize: 16,
         fontWeight: "800",
         color: theme.colors.textPrimary,
     },
-    datePill: {
-        backgroundColor: theme.colors.primary,
-        paddingHorizontal: 10,
-        paddingVertical: 6,
-        borderRadius: 999,
-    },
-    datePillText: {
-        color: theme.colors.textInverse,
-        fontWeight: "700",
+    eventType: {
+        color: theme.colors.primary,
+        fontWeight: "900",
+        letterSpacing: 1.1,
         fontSize: 12,
     },
-    metaRow: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 6,
-    },
-    metaText: {
-        flex: 1,
+    priceText: {
         color: theme.colors.textSecondary,
+        fontWeight: "700",
         fontSize: 13,
+    },
+    metaLine: {
+        color: theme.colors.textSecondary,
         fontWeight: "600",
+        fontSize: 13,
+        lineHeight: 18,
     },
     badgesRow: {
         flexDirection: "row",
         flexWrap: "wrap",
         gap: 10,
+        marginTop: 4,
     },
-    badge: {
+    badgePrimary: {
+        paddingHorizontal: 12,
+        paddingVertical: 10,
+        borderRadius: theme.radius.sm,
+        borderWidth: 1,
+        borderColor: theme.colors.borderPrimary,
+        backgroundColor: theme.colors.bgSecondary,
+    },
+    badgePrimaryText: {
+        color: theme.colors.primary,
+        fontWeight: "800",
+        fontSize: 12,
+    },
+    badgeSuccess: {
         flexDirection: "row",
         alignItems: "center",
-        gap: 6,
-        paddingHorizontal: 10,
-        paddingVertical: 7,
+        gap: 8,
+        paddingHorizontal: 12,
+        paddingVertical: 10,
         borderRadius: 999,
-        backgroundColor: theme.colors.primaryLighter,
         borderWidth: 1,
-        borderColor: theme.colors.primaryLight,
+        borderColor: theme.colors.borderPrimary,
+        backgroundColor: theme.colors.bgSecondary,
     },
-    badgeText: {
-        color: theme.colors.primary,
+    badgeSuccessText: {
+        color: theme.colors.success,
         fontWeight: "800",
         fontSize: 12,
     },
