@@ -257,10 +257,10 @@ const EventosDestacados = ({ eventUpdate }) => {
     () =>
       shouldUseCarousel && eventosDestacados.length > 0
         ? [
-            ...eventosDestacados.slice(-ELEMENTOS_VISIBLES), // Últimos elementos al inicio
-            ...eventosDestacados, // Array original
-            ...eventosDestacados.slice(0, ELEMENTOS_VISIBLES), // Primeros elementos al final
-          ]
+          ...eventosDestacados.slice(-ELEMENTOS_VISIBLES), // Últimos elementos al inicio
+          ...eventosDestacados, // Array original
+          ...eventosDestacados.slice(0, ELEMENTOS_VISIBLES), // Primeros elementos al final
+        ]
         : eventosDestacados,
     [eventosDestacados, shouldUseCarousel, ELEMENTOS_VISIBLES]
   );
@@ -375,11 +375,11 @@ const EventosDestacados = ({ eventUpdate }) => {
             style={
               shouldUseCarousel
                 ? {
-                    transform: `translateX(-${currentSlide * (330 + 24)}px)`, // 330px width + 1.5rem gap
-                    transition: isTransitioning
-                      ? "none"
-                      : "transform 0.5s ease-in-out",
-                  }
+                  transform: `translateX(-${currentSlide * (330 + 24)}px)`, // 330px width + 1.5rem gap
+                  transition: isTransitioning
+                    ? "none"
+                    : "transform 0.5s ease-in-out",
+                }
                 : {}
             }
           >
@@ -423,11 +423,10 @@ const EventosDestacados = ({ eventUpdate }) => {
 
                   <div className="evento-footer-ed">
                     <span
-                      className={`evento-valor-ed ${
-                        (evento.valor || 0) === 0
+                      className={`evento-valor-ed ${(evento.valor || 0) === 0
                           ? "evento-gratuito-ed"
                           : "evento-pago-ed"
-                      }`}
+                        }`}
                     >
                       {(evento.valor || 0) === 0
                         ? "Gratuito"
@@ -462,12 +461,11 @@ const EventosDestacados = ({ eventUpdate }) => {
           {eventosDestacados.map((_, index) => (
             <button
               key={`indicator-${index}`}
-              className={`carousel-indicator-ed ${
-                index ===
-                (currentSlide - ELEMENTOS_VISIBLES) % eventosDestacados.length
+              className={`carousel-indicator-ed ${index ===
+                  (currentSlide - ELEMENTOS_VISIBLES) % eventosDestacados.length
                   ? "active-ed"
                   : ""
-              }`}
+                }`}
               onClick={() => goToSlide(index)}
               aria-label={`Ir al evento destacado ${index + 1}`}
             />

@@ -148,27 +148,22 @@ function translateModality(raw: string) {
     if (!value) return "";
 
     const normalized = value.toLowerCase();
-    const compact = normalized.replace(/[\s_-]+/g, "");
+    const compact = normalized.replaceAll(" ", "").replaceAll("_", "").replaceAll("-", "");
 
     // Valores típicos del backend (enum) o textos simples
-    if (
-        compact === "virtual" ||
-        compact === "online" ||
-        compact === "elearning" ||
-        compact === "e-learning".replace(/-/g, "")
-    ) {
+    if (compact === "virtual" || compact === "online" || compact === "elearning") {
         return "Virtual";
     }
     if (compact === "inperson" || compact === "presential" || compact === "presencial") return "Presencial";
     if (compact === "hybrid" || compact === "semipresencial" || compact === "mixta" || compact === "hibrida") {
-        return "Híbrida";
+        return "Semipresencial";
     }
     if (compact === "distance" || compact === "distancia") return "Distancia";
 
     // Enum en mayúsculas
     if (normalized === "in_person") return "Presencial";
     if (normalized === "virtual") return "Virtual";
-    if (normalized === "hybrid") return "Híbrida";
+    if (normalized === "hybrid") return "Semipresencial";
 
     // Si ya viene en español u otro valor, lo respetamos.
     return value;
@@ -426,7 +421,7 @@ export default function PublicHomeScreen() {
                     <Pressable style={styles.navTab} onPress={() => scrollToSection("inicio")}>
                         <Text style={styles.navTabText}>Inicio</Text>
                     </Pressable>
-                    <Pressable style={styles.navTab} onPress={() => scrollToSection("eventos")}>
+                    <Pressable style={styles.navTab} onPress={() => router.push("/public-events")}>
                         <Text style={styles.navTabText}>Eventos</Text>
                     </Pressable>
                     <Pressable style={styles.navTabGhost} onPress={() => scrollToSection("autoridades")}>
@@ -461,7 +456,7 @@ export default function PublicHomeScreen() {
                     </Text>
 
                     <View style={styles.heroActions}>
-                        <Pressable style={styles.primaryAction} onPress={() => scrollToSection("eventos")}>
+                        <Pressable style={styles.primaryAction} onPress={() => router.push("/public-events")}>
                             <Ionicons name="calendar-outline" size={16} color={theme.colors.textInverse} />
                             <Text style={styles.primaryActionText}>Explorar eventos públicos</Text>
                         </Pressable>

@@ -90,13 +90,13 @@ const tenantMiddleware = async (req, res, next) => {
 
     const tenant = tenantSlug
       ? await prisma.tenant.findUnique({
-          ...tenantLookup,
-          where: { slug: tenantSlug },
-        })
+        ...tenantLookup,
+        where: { slug: tenantSlug },
+      })
       : await prisma.tenant.findUnique({
-          ...tenantLookup,
-          where: { id: jwtTenantId },
-        });
+        ...tenantLookup,
+        where: { id: jwtTenantId },
+      });
 
     if (!tenant) {
       return res.status(404).json({

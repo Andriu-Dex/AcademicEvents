@@ -261,7 +261,7 @@ server.listen(PORT, HOST, () => {
   if (HOST === "0.0.0.0") {
     console.log(
       "ℹ️  [DEV] Para acceder desde el móvil, usa la IP LAN de tu PC: http://<TU_IP>:" +
-        PORT
+      PORT
     );
   }
   console.log(`🔌 Socket.IO configurado y funcionando`);
