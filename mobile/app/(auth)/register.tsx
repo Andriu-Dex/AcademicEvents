@@ -22,14 +22,90 @@ import { useCareers } from "../../src/features/careers/useCareers";
 import { useFacultyInfo } from "../../src/features/faculty/useFacultyInfo";
 import { theme } from "../../src/shared/theme";
 
+function validarCedulaEcuatoriana(cedulaRaw: string) {
+    const cedula = String(cedulaRaw ?? "").trim();
+    if (!/^\d{10}$/.test(cedula)) return false;
+
+    const coeficientes = [2, 1, 2, 1, 2, 1, 2, 1, 2];
+    const verificador = Number.parseInt(cedula.substring(9, 10), 10);
+    const provincia = Number.parseInt(cedula.substring(0, 2), 10);
+
+    if (provincia < 1 || provincia > 24) return false;
+    if (Number.parseInt(cedula.charAt(2), 10) > 6) return false;
+
+    let suma = 0;
+    for (let index = 0; index < 9; index += 1) {
+        const valor = Number.parseInt(cedula.charAt(index), 10) * coeficientes[index];
+        suma += valor >= 10 ? valor - 9 : valor;
+    }
+
+    const digitoVerificador = 10 - (suma % 10);
+    const resultadoMod = digitoVerificador === 10 ? 0 : digitoVerificador;
+    return resultadoMod === verificador;
+}
+
+function soloLetras(textoRaw: string) {
+    const texto = String(textoRaw ?? "").trim();
+    return /^[A-Za-zÁÉÍÓÚÑáéíóúñ\s]+$/.test(texto);
+}
+
+function validarCelularEcuatoriano(celularRaw: string) {
+    const celular = String(celularRaw ?? "").trim();
+    return /^09\d{8}$/.test(celular);
+}
+
+function validarPasswordSegura(passwordRaw: string) {
+    const password = String(passwordRaw ?? "");
+    const errores: string[] = [];
+
+    if (password.length < 8) errores.push("Debe tener al menos 8 caracteres");
+    if (!/[a-z]/.test(password)) errores.push("Debe contener una letra minúscula");
+    if (!/[A-Z]/.test(password)) errores.push("Debe contener una letra mayúscula");
+    if (!/\d/.test(password)) errores.push("Debe contener un número");
+    if (!/[^A-Za-z0-9]/.test(password)) errores.push("Debe contener un carácter especial");
+    if (/\s/.test(password)) errores.push("No debe contener espacios");
+
+    return { esValida: errores.length === 0, errores };
+}
+
 const registerSchema = z
     .object({
-        firstName: z.string().min(1, "Nombre obligatorio"),
-        lastName: z.string().min(1, "Apellido obligatorio"),
-        idNumber: z.string().min(10, "Cédula inválida"),
-        phone: z.string().regex(/^\d{10}$/, "Celular inválido"),
-        email: z.email("Correo inválido"),
-        password: z.string().min(6, "Mínimo 6 caracteres"),
+        firstName: z
+            .string()
+            .trim()
+            .min(1, "Nombre obligatorio")
+            .refine((value) => soloLetras(value), "Los nombres solo deben contener letras"),
+        lastName: z
+            .string()
+            .trim()
+            .min(1, "Apellido obligatorio")
+            .refine((value) => soloLetras(value), "Los apellidos solo deben contener letras"),
+        idNumber: z
+            .string()
+            .trim()
+            .refine((value) => validarCedulaEcuatoriana(value),
+                "La cédula ingresada no es válida. Debe ser una cédula ecuatoriana de 10 dígitos."),
+        phone: z
+            .string()
+            .trim()
+            .refine((value) => validarCelularEcuatoriano(value),
+                "El número de celular debe empezar con 09 y tener 10 dígitos"),
+        email: z
+            .string()
+            .trim()
+            .transform((value) => value.toLowerCase())
+            .pipe(z.email("Correo inválido")),
+        password: z
+            .string()
+            .superRefine((value, ctx) => {
+                const validacion = validarPasswordSegura(value);
+                if (!validacion.esValida) {
+                    ctx.addIssue({
+                        code: "custom",
+                        message: `Contraseña no segura: ${validacion.errores.join(". ")}`,
+                    });
+                }
+            }),
         careerId: z.string().optional(),
     })
     .refine(
@@ -176,8 +252,9 @@ export default function RegisterScreen() {
                                 <TextInput
                                     style={styles.input}
                                     value={value}
-                                    onChangeText={onChange}
+                                    onChangeText={(text) => onChange(text.replaceAll(/\D/g, "").slice(0, 10))}
                                     keyboardType="numeric"
+                                    maxLength={10}
                                     placeholder="0102030405"
                                     placeholderTextColor={theme.colors.textTertiary}
                                 />
@@ -200,7 +277,10 @@ export default function RegisterScreen() {
                                 <TextInput
                                     style={styles.input}
                                     value={value}
-                                    onChangeText={onChange}
+                                    onChangeText={(text) =>
+                                        onChange(text.replaceAll(/[^A-Za-zÁÉÍÓÚÑáéíóúñ\s]/g, ""))
+                                    }
+                                    autoCapitalize="words"
                                     placeholder="Nombre"
                                     placeholderTextColor={theme.colors.textTertiary}
                                 />
@@ -223,7 +303,10 @@ export default function RegisterScreen() {
                                 <TextInput
                                     style={styles.input}
                                     value={value}
-                                    onChangeText={onChange}
+                                    onChangeText={(text) =>
+                                        onChange(text.replaceAll(/[^A-Za-zÁÉÍÓÚÑáéíóúñ\s]/g, ""))
+                                    }
+                                    autoCapitalize="words"
                                     placeholder="Apellido"
                                     placeholderTextColor={theme.colors.textTertiary}
                                 />
@@ -246,8 +329,9 @@ export default function RegisterScreen() {
                                 <TextInput
                                     style={styles.input}
                                     value={value}
-                                    onChangeText={onChange}
+                                    onChangeText={(text) => onChange(text.replaceAll(/\D/g, "").slice(0, 10))}
                                     keyboardType="phone-pad"
+                                    maxLength={10}
                                     placeholder="0999999999"
                                     placeholderTextColor={theme.colors.textTertiary}
                                 />
@@ -271,7 +355,7 @@ export default function RegisterScreen() {
                                     style={styles.input}
                                     value={value}
                                     onChangeText={(text) => {
-                                        onChange(text);
+                                        onChange(text.trim());
                                         if (!text.toLowerCase().endsWith("@uta.edu.ec")) {
                                             setValue("careerId", "");
                                         }
@@ -302,7 +386,7 @@ export default function RegisterScreen() {
                                     value={value}
                                     onChangeText={onChange}
                                     secureTextEntry={!showPassword}
-                                    placeholder="Mínimo 6 caracteres"
+                                    placeholder="Usa una contraseña segura"
                                     placeholderTextColor={theme.colors.textTertiary}
                                 />
                                 <Pressable

@@ -41,6 +41,7 @@ function normalizeEvent(item: PublicEventApiItem): PublicEvent {
 
 export async function fetchPublicEvents(): Promise<PublicEvent[]> {
     const candidates = ["/api/public-events", "/api/eventos-publicos", "/api/eventos"];
+    let lastError: unknown = null;
 
     for (const path of candidates) {
         try {
@@ -52,10 +53,13 @@ export async function fetchPublicEvents(): Promise<PublicEvent[]> {
             if (Array.isArray(payload)) {
                 return payload.map(normalizeEvent).filter((event) => event.id.length > 0);
             }
-        } catch {
+        } catch (error) {
+            lastError = error;
             // Try next endpoint.
         }
     }
 
-    return [];
+    throw lastError instanceof Error
+        ? lastError
+        : new Error("No se pudo cargar eventos públicos (sin conexión al backend)");
 }
