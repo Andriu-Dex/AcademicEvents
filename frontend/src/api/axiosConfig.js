@@ -2,12 +2,22 @@ import axios from "axios";
 import { toast } from "react-toastify"; // Importar toast para notificaciones
 
 const resolveTenantSlug = () => {
-  return (
-    localStorage.getItem("tenantSlug") ||
+  // Preferir env (config del despliegue) sobre localStorage (puede quedar con valores de pruebas).
+  const candidate =
     import.meta.env.VITE_TENANT_SLUG ||
     import.meta.env.VITE_TENANT_ID ||
-    "uta"
-  );
+    localStorage.getItem("tenantSlug") ||
+    "uta";
+
+  // Evita valores inválidos que pueden aparecer por pruebas/manual (ej: "192")
+  // y causan TENANT_NOT_FOUND en el backend.
+  const slug = String(candidate || "").trim().toLowerCase();
+  if (!slug) return "uta";
+  // Algunos flujos guardan por error el tenantId (p.ej. "uta-tenant-id") en lugar del slug.
+  if (slug.includes("tenant")) return "uta";
+  if (/^\d+$/.test(slug)) return "uta";
+  if (!/^[a-z0-9-]+$/.test(slug)) return "uta";
+  return slug;
 };
 
 // Crear una instancia de axios
@@ -56,16 +66,15 @@ axiosInstance.interceptors.response.use(
   (error) => {
     // Si el error es 401 (no autorizado), cerrar sesión automáticamente
     if (
-      error.response &&
-      error.response.status === 401 &&
+      error.response?.status === 401 &&
       !tokenExpirationNotified
     ) {
       // Verificar si estamos en la página de login, registro o home
       const isLoginOrHomePage =
-        window.location.pathname === "/login" ||
-        window.location.pathname === "/" ||
-        window.location.pathname === "/register" ||
-        window.location.pathname === "/home"; // Marcar que ya se ha notificado para evitar múltiples notificaciones
+        globalThis.location?.pathname === "/login" ||
+        globalThis.location?.pathname === "/" ||
+        globalThis.location?.pathname === "/register" ||
+        globalThis.location?.pathname === "/home"; // Marcar que ya se ha notificado para evitar múltiples notificaciones
       tokenExpirationNotified = true;
 
       console.warn("Token expirado o inválido. Cerrando sesión...");
@@ -87,8 +96,8 @@ axiosInstance.interceptors.response.use(
       if (logoutFunction && !isLoginOrHomePage) {
         logoutFunction();
       } // Redirigir al home solo si no estamos ya en la página de home
-      if (!isLoginOrHomePage && window.location.pathname !== "/home") {
-        window.location.href = "/home";
+      if (!isLoginOrHomePage && globalThis.location?.pathname !== "/home") {
+        globalThis.location.href = "/home";
       }
     }
 

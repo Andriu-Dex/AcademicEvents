@@ -1,5 +1,6 @@
 const { prisma } = require("../config/db");
 const jwt = require("jsonwebtoken");
+const net = require("node:net");
 
 const RESERVED_SUBDOMAINS = new Set(["localhost", "www", "api"]);
 
@@ -12,6 +13,11 @@ const normalizeSlug = (value) => {
 const resolveFromSubdomain = (hostname) => {
   if (!hostname || typeof hostname !== "string") return null;
   const host = hostname.split(":")[0].toLowerCase();
+
+  // Si el host es una IP (p.ej. 192.168.x.x), no hay subdominio real.
+  // Esto evita que se interprete "192" como tenantSlug y falle en LAN.
+  if (net.isIP(host)) return null;
+
   const [subdomain] = host.split(".");
   if (!subdomain || RESERVED_SUBDOMAINS.has(subdomain)) return null;
   return subdomain;

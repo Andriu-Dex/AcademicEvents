@@ -18,6 +18,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { Picker } from "@react-native-picker/picker";
 import { registerStudent } from "../../src/api/auth";
+import { getCurrentApiBaseUrl } from "../../src/api/client";
 import { useCareers } from "../../src/features/careers/useCareers";
 import { useFacultyInfo } from "../../src/features/faculty/useFacultyInfo";
 import { theme } from "../../src/shared/theme";
@@ -200,7 +201,8 @@ export default function RegisterScreen() {
             router.replace("/(auth)/login");
         } catch (error) {
             const message = error instanceof Error ? error.message : "Error al registrar";
-            setSubmitError(message);
+            const apiHint = __DEV__ ? `\nAPI: ${getCurrentApiBaseUrl()}` : "";
+            setSubmitError(`${message}${apiHint}`);
         }
     };
 

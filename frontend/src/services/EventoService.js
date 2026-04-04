@@ -18,7 +18,39 @@ class EventoService {
       );
 
       const data = response.data;
-      return data.eventosDestacados || [];
+      const direct = Array.isArray(data?.eventosDestacados)
+        ? data.eventosDestacados
+        : [];
+
+      // Si el endpoint existe pero devuelve vacío (compatibilidad/datos), intentamos
+      // obtener todos los eventos y filtrar los que estén marcados como destacados.
+      if (direct.length > 0) return direct;
+
+      const allEventsResponse = await requestWithEndpointFallback(
+        () => axiosInstance.get("/events"),
+        () => axiosInstance.get("/eventos")
+      );
+
+      const allData = allEventsResponse.data;
+      let allEvents = [];
+      if (Array.isArray(allData)) {
+        allEvents = allData;
+      } else if (Array.isArray(allData?.eventos)) {
+        allEvents = allData.eventos;
+      } else if (Array.isArray(allData?.data)) {
+        allEvents = allData.data;
+      }
+
+      const featured = allEvents
+        .filter((evt) => Boolean(evt?.isFeatured ?? evt?.eve_des))
+        .sort((a, b) => {
+          const aDate = new Date(a?.startDate ?? a?.fec_ini_eve ?? 0).getTime();
+          const bDate = new Date(b?.startDate ?? b?.fec_ini_eve ?? 0).getTime();
+          return aDate - bDate;
+        })
+        .slice(0, 8);
+
+      return featured;
     } catch (error) {
       console.error("Error al obtener eventos destacados:", error);
       throw error;

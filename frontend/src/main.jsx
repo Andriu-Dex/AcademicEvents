@@ -11,9 +11,8 @@ import ReactDOM from "react-dom/client";
 
 // Accessibility testing in development mode
 if (import.meta.env.DEV) {
-  import("@axe-core/react").then((axe) => {
-    axe.default(React, ReactDOM, 1000);
-  });
+  const axe = await import("@axe-core/react");
+  axe.default(React, ReactDOM, 1000);
 }
 import axios from "axios";
 
@@ -25,11 +24,20 @@ import { AuthProvider } from "./context/AuthContext";
 import { SocketProvider } from "./context/SocketContext";
 import { NotificationProvider } from "./context/NotificationContext";
 
-const tenantSlug =
-  localStorage.getItem("tenantSlug") ||
+const tenantSlugCandidate =
   import.meta.env.VITE_TENANT_SLUG ||
   import.meta.env.VITE_TENANT_ID ||
+  localStorage.getItem("tenantSlug") ||
   "uta";
+
+const tenantSlug = (() => {
+  const slug = String(tenantSlugCandidate || "").trim().toLowerCase();
+  if (!slug) return "uta";
+  if (slug.includes("tenant")) return "uta";
+  if (/^\d+$/.test(slug)) return "uta";
+  if (!/^[a-z0-9-]+$/.test(slug)) return "uta";
+  return slug;
+})();
 axios.defaults.headers.common["X-Tenant-ID"] = tenantSlug;
 
 // Montaje de la aplicación con contextos y modo estricto

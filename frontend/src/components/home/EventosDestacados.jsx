@@ -5,7 +5,6 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
-import { Link } from "react-router-dom";
 import {
   ChevronLeft,
   ChevronRight,
@@ -327,7 +326,16 @@ const EventosDestacados = ({ eventUpdate }) => {
   }
 
   if (eventosDestacados.length === 0) {
-    return null; // No mostrar la sección si no hay eventos destacados
+    return (
+      <section className="eventos-destacados-section-ed" id="eventos-destacados">
+        <div className="eventos-destacados-header-ed">
+          <h2 className="eventos-destacados-title-ed">Eventos Destacados</h2>
+          <p className="eventos-destacados-subtitle-ed">
+            Por el momento no hay eventos destacados disponibles.
+          </p>
+        </div>
+      </section>
+    );
   }
 
   // Renderizado principal

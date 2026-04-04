@@ -16,6 +16,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { login } from "../../src/api/auth";
+import { getCurrentApiBaseUrl } from "../../src/api/client";
 import { useAuthStore } from "../../src/store/authStore";
 import { useFacultyInfo } from "../../src/features/faculty/useFacultyInfo";
 import { theme } from "../../src/shared/theme";
@@ -71,7 +72,8 @@ export default function LoginScreen() {
             router.replace("/(app)");
         } catch (error) {
             const message = error instanceof Error ? error.message : "Error al iniciar sesión";
-            setSubmitError(message);
+            const apiHint = __DEV__ ? `\nAPI: ${getCurrentApiBaseUrl()}` : "";
+            setSubmitError(`${message}${apiHint}`);
         }
     };
 

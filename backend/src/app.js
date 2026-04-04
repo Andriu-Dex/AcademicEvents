@@ -236,7 +236,9 @@ app.use((req, res) => {
 // ============================
 //  Iniciar el servidor
 // ============================
-const HOST = process.env.HOST || "localhost";
+// Importante: "localhost" solo acepta conexiones desde la misma máquina.
+// Para permitir que un teléfono/emulador acceda al backend en la LAN, usar 0.0.0.0 por defecto.
+const HOST = process.env.HOST || "0.0.0.0";
 const PORT = process.env.PORT || 3000;
 
 server.on("error", (error) => {
@@ -256,6 +258,12 @@ server.on("error", (error) => {
 
 server.listen(PORT, HOST, () => {
   console.log(`✅ Servidor corriendo en http://${HOST}:${PORT} ✅`);
+  if (HOST === "0.0.0.0") {
+    console.log(
+      "ℹ️  [DEV] Para acceder desde el móvil, usa la IP LAN de tu PC: http://<TU_IP>:" +
+        PORT
+    );
+  }
   console.log(`🔌 Socket.IO configurado y funcionando`);
 });
 

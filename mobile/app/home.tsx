@@ -17,8 +17,8 @@ import { useRouter } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
-import { apiClient } from "../src/api/client";
-import { usePublicEvents } from "../src/features/events/usePublicEvents";
+import { apiClient, getCurrentApiBaseUrl, getLastApiProbeLog } from "../src/api/client";
+import { useFeaturedEvents } from "../src/features/events/useFeaturedEvents";
 import { theme } from "../src/shared/theme";
 
 type HomeCareer = {
@@ -131,6 +131,49 @@ function pickNumber(...values: unknown[]) {
     return 0;
 }
 
+function formatSemesters(raw: string) {
+    const cleaned = raw.trim();
+    if (!cleaned) return "";
+
+    const numeric = Number.parseInt(cleaned, 10);
+    if (!Number.isNaN(numeric) && Number.isFinite(numeric)) {
+        return numeric === 1 ? "1 semestre" : `${numeric} semestres`;
+    }
+
+    return cleaned;
+}
+
+function translateModality(raw: string) {
+    const value = raw.trim();
+    if (!value) return "";
+
+    const normalized = value.toLowerCase();
+    const compact = normalized.replace(/[\s_-]+/g, "");
+
+    // Valores típicos del backend (enum) o textos simples
+    if (
+        compact === "virtual" ||
+        compact === "online" ||
+        compact === "elearning" ||
+        compact === "e-learning".replace(/-/g, "")
+    ) {
+        return "Virtual";
+    }
+    if (compact === "inperson" || compact === "presential" || compact === "presencial") return "Presencial";
+    if (compact === "hybrid" || compact === "semipresencial" || compact === "mixta" || compact === "hibrida") {
+        return "Híbrida";
+    }
+    if (compact === "distance" || compact === "distancia") return "Distancia";
+
+    // Enum en mayúsculas
+    if (normalized === "in_person") return "Presencial";
+    if (normalized === "virtual") return "Virtual";
+    if (normalized === "hybrid") return "Híbrida";
+
+    // Si ya viene en español u otro valor, lo respetamos.
+    return value;
+}
+
 async function fetchHomeCareers(): Promise<HomeCareer[]> {
     const response = await apiClient.get<Array<Record<string, unknown>>>("/api/carreras");
 
@@ -138,8 +181,12 @@ async function fetchHomeCareers(): Promise<HomeCareer[]> {
         id: pickString(item.id_car, item.id),
         name: pickString(item.nom_car, item.nombre, "Carrera"),
         description: pickString(item.des_car, item.descripcion),
-        duration: pickString(item.dur_sem_car, item.duracion),
-        modality: pickString(item.mod_car, item.modalidad, "No especificada"),
+        duration: formatSemesters(
+            pickString(item.dur_sem_car, item.duracion, item.duration, item.durationSemesters, item.semesters)
+        ),
+        modality: translateModality(
+            pickString(item.mod_car, item.modalidad, item.modality, item.modalidad_car, "No especificada")
+        ),
     }));
 }
 
@@ -273,13 +320,25 @@ export default function PublicHomeScreen() {
         contacto: 0,
     });
 
-    const { data: events, isLoading, isError, refetch } = usePublicEvents();
-    const { data: careers, isLoading: loadingCareers } = useQuery({
+    const { data: events, isLoading, isError, refetch } = useFeaturedEvents();
+    const {
+        data: careers,
+        isLoading: loadingCareers,
+        isError: careersError,
+        error: careersErrorObj,
+        refetch: refetchCareers,
+    } = useQuery({
         queryKey: ["home-careers"],
         queryFn: fetchHomeCareers,
         staleTime: 300000,
     });
-    const { data: identity, isLoading: loadingIdentity } = useQuery({
+    const {
+        data: identity,
+        isLoading: loadingIdentity,
+        isError: identityError,
+        error: identityErrorObj,
+        refetch: refetchIdentity,
+    } = useQuery({
         queryKey: ["home-identity"],
         queryFn: fetchHomeIdentity,
         staleTime: 300000,
@@ -434,14 +493,14 @@ export default function PublicHomeScreen() {
 
                 <View onLayout={handleSectionLayout("eventos")}>
                     <View style={styles.sectionHeader}>
-                        <Text style={styles.sectionTitle}>Eventos</Text>
+                        <Text style={styles.sectionTitle}>Eventos Destacados</Text>
                     </View>
                 </View>
 
                 {isLoading ? (
                     <View style={styles.loadingCard}>
                         <ActivityIndicator color={theme.colors.primary} />
-                        <Text style={styles.loadingText}>Cargando eventos...</Text>
+                        <Text style={styles.loadingText}>Cargando eventos destacados...</Text>
                     </View>
                 ) : null}
 
@@ -457,7 +516,7 @@ export default function PublicHomeScreen() {
                 {!isLoading && !isError && highlightedEvents.length === 0 ? (
                     <View style={styles.emptyCard}>
                         <Ionicons name="calendar-clear-outline" size={26} color={theme.colors.textTertiary} />
-                        <Text style={styles.emptyText}>Aún no hay eventos públicos disponibles.</Text>
+                        <Text style={styles.emptyText}>Aún no hay eventos destacados disponibles.</Text>
                     </View>
                 ) : null}
 
@@ -494,6 +553,25 @@ export default function PublicHomeScreen() {
                     <View style={styles.loadingCard}>
                         <ActivityIndicator color={theme.colors.primary} />
                         <Text style={styles.loadingText}>Cargando autoridades...</Text>
+                    </View>
+                ) : null}
+
+                {identityError ? (
+                    <View style={styles.errorCard}>
+                        <Text style={styles.errorTitle}>No pudimos cargar autoridades</Text>
+                        <Text style={styles.errorSubtitle}>
+                            {identityErrorObj instanceof Error
+                                ? identityErrorObj.message
+                                : "Sin conexión al backend"}
+                        </Text>
+                        {__DEV__ ? (
+                            <Text style={styles.errorSubtitle}>
+                                API: {getCurrentApiBaseUrl()}\n{getLastApiProbeLog().join(" | ")}
+                            </Text>
+                        ) : null}
+                        <Pressable style={styles.retryButton} onPress={() => refetchIdentity()}>
+                            <Text style={styles.retryButtonText}>Reintentar</Text>
+                        </Pressable>
                     </View>
                 ) : null}
 
@@ -597,6 +675,25 @@ export default function PublicHomeScreen() {
                     </View>
                 ) : null}
 
+                {careersError ? (
+                    <View style={styles.errorCard}>
+                        <Text style={styles.errorTitle}>No pudimos cargar carreras</Text>
+                        <Text style={styles.errorSubtitle}>
+                            {careersErrorObj instanceof Error
+                                ? careersErrorObj.message
+                                : "Sin conexión al backend"}
+                        </Text>
+                        {__DEV__ ? (
+                            <Text style={styles.errorSubtitle}>
+                                API: {getCurrentApiBaseUrl()}\n{getLastApiProbeLog().join(" | ")}
+                            </Text>
+                        ) : null}
+                        <Pressable style={styles.retryButton} onPress={() => refetchCareers()}>
+                            <Text style={styles.retryButtonText}>Reintentar</Text>
+                        </Pressable>
+                    </View>
+                ) : null}
+
                 <View style={styles.grid}>
                     {visibleCareers.map((career) => (
                         <View key={career.id} style={styles.gridCard}>
@@ -675,6 +772,8 @@ export default function PublicHomeScreen() {
                             <Text style={styles.footerBrandSubMuted}>{footerUniversity.name}</Text>
                         </View>
                     </View>
+
+                    <View style={styles.footerDivider} />
 
                     <View style={styles.footerColumns}>
                         <View style={styles.footerColumn}>
@@ -987,6 +1086,12 @@ const styles = StyleSheet.create({
         fontWeight: "700",
         color: "#b91c1c",
     },
+    errorSubtitle: {
+        fontSize: 12,
+        color: "rgba(185, 28, 28, 0.85)",
+        textAlign: "center",
+        lineHeight: 18,
+    },
     retryButton: {
         borderRadius: theme.radius.sm,
         backgroundColor: theme.colors.primary,
@@ -1266,6 +1371,7 @@ const styles = StyleSheet.create({
     footerBrandRow: {
         flexDirection: "row",
         alignItems: "center",
+        flexWrap: "wrap",
         gap: 12,
     },
     footerLogo: {
@@ -1290,14 +1396,17 @@ const styles = StyleSheet.create({
         color: "rgba(255,255,255,0.62)",
         marginTop: 1,
     },
+    footerDivider: {
+        height: 1,
+        backgroundColor: "rgba(255,255,255,0.14)",
+    },
     footerColumns: {
-        flexDirection: "row",
-        flexWrap: "wrap",
-        gap: 10,
+        flexDirection: "column",
+        gap: 12,
     },
     footerColumn: {
-        width: "48.5%",
-        gap: 3,
+        width: "100%",
+        gap: 4,
     },
     footerColumnTitle: {
         color: "#ffffff",
