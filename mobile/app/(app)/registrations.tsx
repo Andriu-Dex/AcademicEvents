@@ -33,17 +33,41 @@ function statusColor(status: string) {
     return theme.colors.primary;
 }
 
+function filterColor(key: string) {
+    if (key === "PEND") return theme.colors.warning;
+    if (key === "ACEPT") return theme.colors.success;
+    if (key === "RECH") return theme.colors.error;
+    return theme.colors.primary;
+}
+
+function filterLabel(key: string) {
+    if (key === "PEND") return "Pendientes";
+    if (key === "ACEPT") return "Aceptadas";
+    if (key === "RECH") return "Rechazadas";
+    return "Todos";
+}
+
 function FilterChip({
     label,
     selected,
+    color,
     onPress,
-}: Readonly<{ label: string; selected: boolean; onPress: () => void }>) {
+}: Readonly<{ label: string; selected: boolean; color: string; onPress: () => void }>) {
     return (
         <Pressable
             onPress={onPress}
-            style={[styles.chip, selected ? styles.chipSelected : styles.chipUnselected]}
+            style={[
+                styles.chip,
+                { borderColor: color },
+                selected ? { backgroundColor: color } : styles.chipUnselected,
+            ]}
         >
-            <Text style={[styles.chipText, selected ? styles.chipTextSelected : styles.chipTextUnselected]}>
+            <Text
+                style={[
+                    styles.chipText,
+                    { color: selected ? theme.colors.textInverse : color },
+                ]}
+            >
                 {label}
             </Text>
         </Pressable>
@@ -121,6 +145,10 @@ export default function RegistrationsScreen() {
         return list.filter((r) => r.status.trim().toUpperCase().includes(normalized));
     }, [query.data, statusFilter]);
 
+    const totalCount = (query.data ?? []).length;
+    const filteredCount = items.length;
+    const countLabel = `${filterLabel(statusFilter)} · ${filteredCount} resultados`;
+
     let body: ReactNode;
     if (query.isLoading) {
         body = (
@@ -153,10 +181,40 @@ export default function RegistrationsScreen() {
             <AppHeader title="Mis inscripciones" showNotifications />
 
             <View style={styles.filters}>
-                <FilterChip label="Todos" selected={statusFilter === "TODOS"} onPress={() => setStatusFilter("TODOS")} />
-                <FilterChip label="Pendiente" selected={statusFilter === "PEND"} onPress={() => setStatusFilter("PEND")} />
-                <FilterChip label="Aceptada" selected={statusFilter === "ACEPT"} onPress={() => setStatusFilter("ACEPT")} />
-                <FilterChip label="Rechazada" selected={statusFilter === "RECH"} onPress={() => setStatusFilter("RECH")} />
+                <Text style={styles.filtersTitle}>Filtrar por estado</Text>
+                <View style={styles.filtersMetaRow}>
+                    <Text style={styles.filtersSubtitle}>Vista general</Text>
+                    <Text style={styles.filtersCount}>
+                        {statusFilter === "TODOS" ? `Todos · ${totalCount} resultados` : countLabel}
+                    </Text>
+                </View>
+
+                <View style={styles.pillsRow}>
+                    <FilterChip
+                        label="Todos"
+                        selected={statusFilter === "TODOS"}
+                        color={filterColor("TODOS")}
+                        onPress={() => setStatusFilter("TODOS")}
+                    />
+                    <FilterChip
+                        label="Pendientes"
+                        selected={statusFilter === "PEND"}
+                        color={filterColor("PEND")}
+                        onPress={() => setStatusFilter("PEND")}
+                    />
+                    <FilterChip
+                        label="Aceptadas"
+                        selected={statusFilter === "ACEPT"}
+                        color={filterColor("ACEPT")}
+                        onPress={() => setStatusFilter("ACEPT")}
+                    />
+                    <FilterChip
+                        label="Rechazadas"
+                        selected={statusFilter === "RECH"}
+                        color={filterColor("RECH")}
+                        onPress={() => setStatusFilter("RECH")}
+                    />
+                </View>
             </View>
 
             {body}
@@ -167,25 +225,25 @@ export default function RegistrationsScreen() {
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: theme.colors.bgSecondary },
     filters: {
-        flexDirection: "row",
-        flexWrap: "wrap",
-        gap: 10,
         padding: theme.spacing.md,
         borderBottomWidth: 1,
         borderBottomColor: theme.colors.borderPrimary,
         backgroundColor: theme.colors.bgPrimary,
+        gap: 10,
     },
+    filtersTitle: { fontSize: 14, fontWeight: "900", color: theme.colors.textPrimary },
+    filtersMetaRow: { flexDirection: "row", alignItems: "baseline", justifyContent: "space-between", gap: 12 },
+    filtersSubtitle: { color: theme.colors.textSecondary, fontWeight: "800" },
+    filtersCount: { color: theme.colors.textSecondary, fontWeight: "800" },
+    pillsRow: { flexDirection: "row", flexWrap: "wrap", gap: 10, marginTop: 4 },
     chip: {
         paddingVertical: 8,
         paddingHorizontal: 12,
         borderRadius: 999,
         borderWidth: 1,
     },
-    chipSelected: { backgroundColor: theme.colors.primary, borderColor: theme.colors.primary },
-    chipUnselected: { backgroundColor: theme.colors.bgPrimary, borderColor: theme.colors.borderPrimary },
+    chipUnselected: { backgroundColor: theme.colors.bgPrimary },
     chipText: { fontSize: 12, fontWeight: "900" },
-    chipTextSelected: { color: theme.colors.textInverse },
-    chipTextUnselected: { color: theme.colors.textPrimary },
     center: { flex: 1, alignItems: "center", justifyContent: "center", padding: theme.spacing.lg },
     errorText: { color: theme.colors.error, fontWeight: "900" },
     list: { padding: theme.spacing.lg, gap: theme.spacing.md, paddingBottom: theme.spacing.xl },

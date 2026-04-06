@@ -35,6 +35,7 @@ export default function AppLayout() {
                     fontSize: 11,
                     fontWeight: "800",
                     paddingBottom: 2,
+                    textAlign: "center",
                 },
             }}
         >
@@ -59,7 +60,7 @@ export default function AppLayout() {
             <Tabs.Screen
                 name="registrations"
                 options={{
-                    title: "Mis inscripciones",
+                    title: "Inscripciones",
                     tabBarIcon: ({ color, size }) => (
                         <Ionicons name="clipboard-outline" color={color} size={size} />
                     ),

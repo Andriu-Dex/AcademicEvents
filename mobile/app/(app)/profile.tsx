@@ -22,6 +22,17 @@ import { theme } from "../../src/shared/theme";
 
 type PickedFile = { uri: string; name: string; mimeType: string };
 
+function formatDate(raw: string) {
+    if (!raw) return "";
+    const date = new Date(raw);
+    if (Number.isNaN(date.getTime())) return raw;
+    return date.toLocaleDateString("es-EC", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+    });
+}
+
 function fileLabel(url: string | null) {
     if (!url) return "";
     try {
@@ -340,6 +351,11 @@ export default function ProfileScreen() {
                         <FieldRow label="Correo" value={profile.email} icon="mail-outline" />
                         <FieldRow label="Cédula" value={profile.idNumber} icon="card-outline" />
                         <FieldRow label="Teléfono" value={profile.phone} icon="call-outline" />
+                        <FieldRow
+                            label="Fecha de registro"
+                            value={formatDate(profile.createdAt) || "No disponible"}
+                            icon="calendar-outline"
+                        />
                         <FieldRow
                             label="Carrera"
                             value={profile.career?.name ?? "No aplica"}

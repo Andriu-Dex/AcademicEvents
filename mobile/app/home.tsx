@@ -19,6 +19,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
 import { apiClient, getCurrentApiBaseUrl, getLastApiProbeLog, toAbsoluteUrl } from "../src/api/client";
 import { useFeaturedEvents } from "../src/features/events/useFeaturedEvents";
+import { useAuthStore } from "../src/store/authStore";
 import { theme } from "../src/shared/theme";
 
 type HomeCareer = {
@@ -312,6 +313,7 @@ export function HomeContent(
     }: Readonly<{ showAuthCtas?: boolean; eventsRoute?: string }> = { showAuthCtas: true, eventsRoute: "/public-events" }
 ) {
     const router = useRouter();
+    const user = useAuthStore((s) => s.user);
     const scrollRef = useRef<ScrollView | null>(null);
     const [authorityIndex, setAuthorityIndex] = useState(0);
     const authorityScrollX = useRef(new Animated.Value(0)).current;
@@ -429,6 +431,18 @@ export function HomeContent(
                                 <Text style={styles.navCtaSecondaryText}>Registrarse</Text>
                             </Pressable>
                         </View>
+                    ) : user ? (
+                        <Pressable style={styles.navUserChip} onPress={() => router.push("/profile")}>
+                            {user.profileImageUrl ? (
+                                <Image source={{ uri: toAbsoluteUrl(user.profileImageUrl) }} style={styles.navUserAvatar} />
+                            ) : (
+                                <View style={styles.navUserAvatarFallback} />
+                            )}
+                            <Text style={styles.navUserName} numberOfLines={1}>
+                                {(user.firstName ?? "").trim() || user.email}
+                            </Text>
+                            <Ionicons name="chevron-forward" size={16} color={theme.colors.textInverse} />
+                        </Pressable>
                     ) : null}
                 </View>
 
@@ -884,6 +898,19 @@ const styles = StyleSheet.create({
         alignItems: "center",
         gap: 10,
     },
+    navUserChip: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 10,
+        paddingHorizontal: 12,
+        height: 42,
+        borderRadius: 999,
+        backgroundColor: theme.colors.primary,
+        ...theme.shadow.sm,
+    },
+    navUserAvatar: { width: 26, height: 26, borderRadius: 13, backgroundColor: theme.colors.bgSecondary },
+    navUserAvatarFallback: { width: 26, height: 26, borderRadius: 13, backgroundColor: theme.colors.bgSecondary },
+    navUserName: { maxWidth: 140, color: theme.colors.textInverse, fontWeight: "900", fontSize: 12 },
     navCtaPrimary: {
         paddingHorizontal: 14,
         paddingVertical: 10,

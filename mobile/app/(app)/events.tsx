@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import {
     ActivityIndicator,
     FlatList,
@@ -10,7 +10,7 @@ import {
     View,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { AppHeader } from "../../src/components/AppHeader";
 import { toAbsoluteUrl } from "../../src/api/client";
 import { fetchMyProfile } from "../../src/api/profile";
@@ -31,6 +31,17 @@ const MODALITY_OPTIONS: ModalityOption[] = [
     { label: "Virtual", value: "VIRTUAL" },
     { label: "Semipresencial", value: "HYBRID" },
 ];
+
+function useDebouncedValue<T>(value: T, delayMs: number) {
+    const [debounced, setDebounced] = useState(value);
+
+    useEffect(() => {
+        const timer = setTimeout(() => setDebounced(value), delayMs);
+        return () => clearTimeout(timer);
+    }, [value, delayMs]);
+
+    return debounced;
+}
 
 function formatEventDateTime(dateISO: string) {
     if (!dateISO) return "Fecha por confirmar";
@@ -183,6 +194,12 @@ export default function EventsScreen() {
 
     const isUtaEmail = Boolean(user?.email?.toLowerCase().endsWith("@uta.edu.ec"));
 
+    const debouncedFilters = useDebouncedValue(filters, 250);
+
+    const resetToFirstPage = () => {
+        setPage((p) => (p === 1 ? p : 1));
+    };
+
     const profileQuery = useQuery({
         queryKey: ["profile"],
         queryFn: fetchMyProfile,
@@ -193,18 +210,19 @@ export default function EventsScreen() {
     const careerId = profileQuery.data?.career?.id ?? "";
 
     const queryKey = useMemo(
-        () => ["user-events-paged", page, limit, filters, isUtaEmail, careerId, clientOnly.soloCarrera],
-        [page, limit, filters, isUtaEmail, careerId, clientOnly.soloCarrera]
+        () => ["user-events-paged", page, limit, debouncedFilters, isUtaEmail, careerId, clientOnly.soloCarrera],
+        [page, limit, debouncedFilters, isUtaEmail, careerId, clientOnly.soloCarrera]
     );
 
     const eventsQuery = useQuery({
         queryKey,
         queryFn: () =>
             fetchUserEventsPaginated(page, limit, {
-                ...filters,
-                carrera: filters.carrera ?? "",
+                ...debouncedFilters,
+                carrera: debouncedFilters.carrera ?? "",
             }),
         staleTime: 60000,
+        placeholderData: keepPreviousData,
         enabled: Boolean(user),
     });
 
@@ -218,12 +236,12 @@ export default function EventsScreen() {
     const pagination = eventsQuery.data?.pagination;
 
     const applySearch = () => {
-        setPage(1);
+        resetToFirstPage();
         setFilters((prev) => ({ ...prev, search: searchInput.trim() }));
     };
 
     const clearFilters = () => {
-        setPage(1);
+        resetToFirstPage();
         setSearchInput("");
         setFilters({
             search: "",
@@ -240,7 +258,7 @@ export default function EventsScreen() {
     };
 
     const setPriceFilter = (mode: "gratuito" | "pagado") => {
-        setPage(1);
+        resetToFirstPage();
         setFilters((prev) => {
             const next = { ...prev };
             if (mode === "gratuito") {
@@ -255,7 +273,7 @@ export default function EventsScreen() {
     };
 
     const setModalidad = (value: ModalityOption["value"]) => {
-        setPage(1);
+        resetToFirstPage();
         setFilters((prev) => ({ ...prev, modalidad: value }));
         setModalityOpen(false);
     };
@@ -263,7 +281,7 @@ export default function EventsScreen() {
     const toggleFilter = (
         key: keyof Pick<UserEventsFilters, "completo" | "finalizado" | "cancelado" | "suspendido">
     ) => {
-        setPage(1);
+        resetToFirstPage();
         setFilters((prev) => ({ ...prev, [key]: !prev[key] }));
     };
 
@@ -332,7 +350,10 @@ export default function EventsScreen() {
                         <CheckboxRow
                             label="Solo mi carrera"
                             checked={clientOnly.soloCarrera}
-                            onPress={() => setClientOnly((p) => ({ ...p, soloCarrera: !p.soloCarrera }))}
+                            onPress={() => {
+                                resetToFirstPage();
+                                setClientOnly((p) => ({ ...p, soloCarrera: !p.soloCarrera }));
+                            }}
                         />
                     </View>
                 ) : null}
