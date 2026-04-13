@@ -18,7 +18,7 @@ class PasswordRecoveryService {
    * @param {string} ip - IP de la solicitud
    * @returns {Promise<Object>} Resultado de la operación
    */
-  async requestPasswordRecovery(email, ip, tenantId) {
+  async requestPasswordRecovery(email, ip, tenantId, requestBaseUrl = null) {
     try {
       console.log(
         "🔹 [PASSWORD-RECOVERY-SERVICE] Iniciando requestPasswordRecovery"
@@ -110,17 +110,16 @@ class PasswordRecoveryService {
         token ? "Sí" : "No"
       );
 
-      // Generar URL de recuperación compatible con web y app móvil (Expo Go)
-      const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
-      const normalizedFrontendUrl = frontendUrl.replace(/\/$/, "");
-      const mobileScheme = process.env.MOBILE_APP_SCHEME || "academicevents";
-      const mobileRecoveryUrl = `${mobileScheme}://restablecer-contrasena/${token.value}`;
-      const forceMobile = (process.env.PASSWORD_RECOVERY_LINK_TARGET || "").toLowerCase() === "mobile";
-      const looksLocalFrontend = /localhost|127\.0\.0\.1/.test(normalizedFrontendUrl);
-      const recoveryUrl =
-        forceMobile || looksLocalFrontend
-          ? mobileRecoveryUrl
-          : `${normalizedFrontendUrl}/restablecer-contrasena/${token.value}`;
+      // Generar URL de recuperación sobre backend accesible para el cliente solicitante.
+      const backendBaseUrl = (
+        requestBaseUrl ||
+        process.env.BACKEND_URL ||
+        process.env.API_BASE_URL ||
+        process.env.PUBLIC_BACKEND_URL ||
+        "http://localhost:3000"
+      ).replace(/\/$/, "");
+
+      const recoveryUrl = `${backendBaseUrl}/api/password-recovery/open/${token.value}`;
       console.log(
         "🔹 [PASSWORD-RECOVERY-SERVICE] URL de recuperación generada:",
         recoveryUrl

@@ -65,10 +65,13 @@ const requestPasswordRecovery = async (req, res) => {
     console.log(
       "🔄 [REQUEST-PASSWORD-RECOVERY] Procesando solicitud con servicio..."
     );
+    const requestBaseUrl = `${req.protocol}://${req.get("host")}`;
+
     const result = await passwordRecoveryService.requestPasswordRecovery(
       email,
       ip,
-      req.tenantId
+      req.tenantId,
+      requestBaseUrl
     );
 
     console.log(
@@ -140,10 +143,10 @@ const validateRecoveryToken = async (req, res) => {
         // Incluir información adicional si el token existe pero no es válido
         tokenInfo: result.token
           ? {
-              estado: result.token.status,
-              fechaExpiracion: result.token.expiresAt,
-              fechaCreacion: result.token.createdAt,
-            }
+            estado: result.token.status,
+            fechaExpiracion: result.token.expiresAt,
+            fechaCreacion: result.token.createdAt,
+          }
           : null,
       });
     }
@@ -164,6 +167,37 @@ const validateRecoveryToken = async (req, res) => {
       reason: "ERROR_SERVIDOR",
     });
   }
+};
+
+/**
+ * Endpoint web para recuperación desde correo.
+ * Redirige al frontend de restablecimiento.
+ * En local, si FRONTEND_URL usa localhost, reemplaza host por el host real de la solicitud
+ * para que sea accesible desde dispositivos móviles en la misma red.
+ */
+const openRecoveryLink = async (req, res) => {
+  const token = req.params.token || "";
+  const safeToken = encodeURIComponent(token);
+  const frontendRaw = (process.env.FRONTEND_URL || "http://localhost:5173").replace(/\/$/, "");
+  let frontendTarget = frontendRaw;
+
+  try {
+    const parsedFrontend = new URL(frontendRaw);
+    const frontendHostIsLocal = /^(localhost|127\.0\.0\.1)$/i.test(parsedFrontend.hostname);
+
+    if (frontendHostIsLocal) {
+      const requestHostHeader = req.get("host") || "";
+      const requestHostname = requestHostHeader.split(":")[0];
+      if (requestHostname) {
+        parsedFrontend.hostname = requestHostname;
+        frontendTarget = parsedFrontend.toString().replace(/\/$/, "");
+      }
+    }
+  } catch (error) {
+    console.warn("⚠️ [OPEN-RECOVERY-LINK] FRONTEND_URL inválida, usando valor por defecto", error?.message);
+  }
+
+  return res.redirect(302, `${frontendTarget}/restablecer-contrasena/${safeToken}`);
 };
 
 /**
@@ -216,9 +250,9 @@ const resetPassword = async (req, res) => {
     // Expresiones regulares para validar complejidad
     const hasUppercase = /[A-Z]/.test(newPassword);
     const hasLowercase = /[a-z]/.test(newPassword);
-    const hasNumbers = /[0-9]/.test(newPassword);
+    const hasNumbers = /\d/.test(newPassword);
     const hasSpecialChar =
-      /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?]/.test(newPassword);
+      /[!@#$%^&*()_+=\-[\]{};':"\\|,.<>/?]/.test(newPassword);
     const hasNoSpaces = !/\s/.test(newPassword);
 
     if (
@@ -262,16 +296,16 @@ const resetPassword = async (req, res) => {
         // Incluir información del token si está disponible
         tokenInfo: result.token
           ? {
-              estado: result.token.status,
-              fechaExpiracion: result.token.expiresAt,
-              fechaCreacion: result.token.createdAt,
-              uso: result.token.usage
-                ? {
-                    fecha: result.token.usage.usedAt,
-                    ip: result.token.usage.ip,
-                  }
-                : null,
-            }
+            estado: result.token.status,
+            fechaExpiracion: result.token.expiresAt,
+            fechaCreacion: result.token.createdAt,
+            uso: result.token.usage
+              ? {
+                fecha: result.token.usage.usedAt,
+                ip: result.token.usage.ip,
+              }
+              : null,
+          }
           : null,
       });
     }
@@ -316,5 +350,6 @@ const resetPassword = async (req, res) => {
 module.exports = {
   requestPasswordRecovery,
   validateRecoveryToken,
+  openRecoveryLink,
   resetPassword,
 };

@@ -385,7 +385,11 @@ class EmailTemplateService {
    * @param {Object} options.facultad - Información de la facultad (opcional)
    * @returns {Object} Asunto y cuerpo HTML del correo
    */
-  obtenerPlantillaRecuperacion({ nombre, urlRecuperacion, facultad = null }) {
+  obtenerPlantillaRecuperacion({
+    nombre,
+    urlRecuperacion,
+    facultad = null,
+  }) {
     const asunto = "Recuperación de Contraseña - AcademicEvents UTA";
     const config = emailConfig;
 
@@ -528,7 +532,7 @@ class EmailTemplateService {
           display: inline-block;
           padding: 12px 24px;
           background-color: ${config.colores.primary};
-          color: white;
+          color: #ffffff !important;
           text-decoration: none;
           font-weight: bold;
           border-radius: 4px;
@@ -625,12 +629,12 @@ class EmailTemplateService {
           <hr class="divider">
           
           <div class="button-container">
-            <a href="${urlRecuperacion}" class="button">
+            <a href="${urlRecuperacion}" class="button" style="color:#ffffff !important; text-decoration:none;">
               🔑 Recuperar mi contraseña
             </a>
           </div>
           
-          <p class="message">Si el botón anterior no funciona, puede copiar y pegar la siguiente URL en su navegador web:</p>
+          <p class="message">Si no funciona el botón, puede usar este enlace web:</p>
           
           <div class="link-container">
             <p class="link-text">${urlRecuperacion}</p>
@@ -638,7 +642,7 @@ class EmailTemplateService {
           
           <div class="security-notice">
             <p class="notice-title">Importante:</p>
-            <p>Este enlace caducará en <strong>24 horas</strong> por motivos de seguridad. Si no ha solicitado esta recuperación, puede ignorar este mensaje.</p>
+            <p>Este enlace caducará en <strong>2 horas</strong> por motivos de seguridad. Si no ha solicitado esta recuperación, puede ignorar este mensaje.</p>
           </div>
           
           <hr class="divider">
@@ -673,7 +677,6 @@ class EmailTemplateService {
     fechaCambio,
     facultad = null,
   }) {
-    const temaConfig = emailConfig.tema;
     const plantillaConfig = emailConfig.plantillas.recuperacion;
 
     const asunto = "Confirmación de cambio de contraseña - AcademicEvents UTA";

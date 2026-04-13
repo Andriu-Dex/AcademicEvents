@@ -22,7 +22,7 @@ dotenv.config(); // Cargar variables de entorno desde .env
 const app = express(); // Crear instancia de la aplicación
 const server = http.createServer(app); // Crear servidor HTTP
 
-const allowedOrigins = [
+const allowedOrigins = new Set([
   process.env.FRONTEND_URL || "http://localhost:5173",
   "http://localhost:5173",
   "http://127.0.0.1:5173",
@@ -30,12 +30,54 @@ const allowedOrigins = [
   "http://127.0.0.1:8080",
   "http://localhost",
   "http://frontend",
-];
+]);
+
+const isPrivateDevHostname = (hostname) => {
+  if (!hostname) return false;
+  const host = hostname.toLowerCase();
+
+  if (host === "localhost" || host === "127.0.0.1") return true;
+  if (host.startsWith("10.")) return true;
+  if (host.startsWith("192.168.")) return true;
+
+  if (host.startsWith("172.")) {
+    const second = Number(host.split(".")[1]);
+    if (!Number.isNaN(second) && second >= 16 && second <= 31) return true;
+  }
+
+  return false;
+};
+
+const isAllowedCorsOrigin = (origin) => {
+  if (!origin) return true;
+  if (allowedOrigins.has(origin)) return true;
+
+  // En desarrollo permitir orígenes LAN para pruebas con dispositivos físicos.
+  if ((process.env.NODE_ENV || "development") !== "production") {
+    try {
+      const { hostname } = new URL(origin);
+      return isPrivateDevHostname(hostname);
+    } catch {
+      return false;
+    }
+  }
+
+  return false;
+};
+
+const corsOriginHandler = (origin, callback) => {
+  if (isAllowedCorsOrigin(origin)) {
+    callback(null, true);
+    return;
+  }
+
+  callback(new Error(`Origen no permitido por CORS: ${origin}`));
+};
 
 // Configurar Socket.IO con CORS
 const io = new Server(server, {
   cors: {
-    origin: allowedOrigins,
+    origin: corsOriginHandler,
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -73,7 +115,7 @@ app.use(
 
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: corsOriginHandler,
     credentials: true,
   })
 ); // Habilita CORS para todas las rutas
@@ -238,7 +280,13 @@ app.use((req, res) => {
 // ============================
 // Importante: "localhost" solo acepta conexiones desde la misma máquina.
 // Para permitir que un teléfono/emulador acceda al backend en la LAN, usar 0.0.0.0 por defecto.
-const HOST = process.env.HOST || "0.0.0.0";
+const envHost = (process.env.HOST || "").trim();
+const HOST =
+  !envHost ||
+    ((envHost === "localhost" || envHost === "127.0.0.1") &&
+      (process.env.NODE_ENV || "development") !== "production")
+    ? "0.0.0.0"
+    : envHost;
 const PORT = process.env.PORT || 3000;
 
 server.on("error", (error) => {

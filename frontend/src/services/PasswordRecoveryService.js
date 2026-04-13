@@ -1,8 +1,35 @@
 import axios from "axios";
 
+function resolveBaseUrl() {
+  const configuredBase = (import.meta.env.VITE_API_URL || "http://localhost:3000").trim();
+
+  try {
+    const parsed = new URL(configuredBase);
+    const isLoopbackHost = /^(localhost|127\.0\.0\.1)$/i.test(parsed.hostname);
+
+    // Cuando se abre desde teléfono, localhost apunta al propio dispositivo.
+    // Reemplazamos por el host real del navegador (IP LAN del PC).
+    if (isLoopbackHost && typeof globalThis !== "undefined" && globalThis.location?.hostname) {
+      parsed.hostname = globalThis.location.hostname;
+      return parsed.toString().replace(/\/$/, "");
+    }
+
+    return configuredBase.replace(/\/$/, "");
+  } catch {
+    return configuredBase.replace(/\/$/, "");
+  }
+}
+
 // Construir la URL del API asegurándonos de que termine con /api
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+const BASE_URL = resolveBaseUrl();
 const API_URL = BASE_URL.endsWith("/api") ? BASE_URL : `${BASE_URL}/api`;
+const TENANT_SLUG = (import.meta.env.VITE_TENANT_SLUG || "uta").trim().toLowerCase();
+
+const requestConfig = {
+  headers: {
+    "X-Tenant-ID": TENANT_SLUG,
+  },
+};
 
 /**
  * Servicio para gestionar la recuperación de contraseña
@@ -17,7 +44,7 @@ class PasswordRecoveryService {
     try {
       const url = `${API_URL}/password-recovery/request`;
 
-      const response = await axios.post(url, { email });
+      const response = await axios.post(url, { email }, requestConfig);
 
       return response.data;
     } catch (error) {
@@ -54,7 +81,7 @@ class PasswordRecoveryService {
       console.log("🔍 [VALIDATE-TOKEN] Enviando solicitud a:", url);
       console.log("🔍 [VALIDATE-TOKEN] Token:", token);
 
-      const response = await axios.get(url);
+      const response = await axios.get(url, requestConfig);
 
       console.log("✅ [VALIDATE-TOKEN] Respuesta exitosa:", response.data);
       return response.data;
@@ -95,11 +122,15 @@ class PasswordRecoveryService {
         !!newPassword && !!confirmPassword
       );
 
-      const response = await axios.post(url, {
-        token,
-        newPassword,
-        confirmPassword,
-      });
+      const response = await axios.post(
+        url,
+        {
+          token,
+          newPassword,
+          confirmPassword,
+        },
+        requestConfig
+      );
 
       console.log("✅ [RESET-PASSWORD] Respuesta exitosa:", response.data);
       return response.data;

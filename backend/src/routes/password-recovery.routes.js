@@ -2,6 +2,7 @@ const express = require("express");
 const {
   requestPasswordRecovery,
   validateRecoveryToken,
+  openRecoveryLink,
   resetPassword,
 } = require("../controllers/password-recovery.controller");
 const router = express.Router();
@@ -19,6 +20,13 @@ router.post("/request", requestPasswordRecovery);
  * @access  Public
  */
 router.get("/validate/:token", validateRecoveryToken);
+
+/**
+ * @route   GET /api/password-recovery/open/:token
+ * @desc    Endpoint puente para apertura desde correo (app/web)
+ * @access  Public
+ */
+router.get("/open/:token", openRecoveryLink);
 
 /**
  * @route   POST /api/password-recovery/reset

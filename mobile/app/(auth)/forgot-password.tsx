@@ -120,10 +120,19 @@ export default function ForgotPasswordScreen() {
 
                 {instructionVisible ? (
                     <View style={styles.instructionsCard}>
-                        <Text style={styles.instructionsTitle}>Próximos pasos</Text>
-                        <Text style={styles.instructionsText}>1. Revisa tu bandeja de entrada y spam.</Text>
-                        <Text style={styles.instructionsText}>2. Abre el enlace del correo en este dispositivo.</Text>
-                        <Text style={styles.instructionsText}>3. Define tu nueva contraseña.</Text>
+                        <Text style={styles.instructionsTitle}>Revise su correo electrónico</Text>
+                        <Text style={styles.instructionsText}>Hemos enviado instrucciones para restablecer su contraseña a:</Text>
+                        <Text style={styles.emailHighlight}>{email.trim().toLowerCase()}</Text>
+
+                        <Text style={styles.sectionTitle}>Próximos pasos:</Text>
+                        <Text style={styles.instructionsText}>1. Revise su bandeja de entrada y carpeta de spam</Text>
+                        <Text style={styles.instructionsText}>2. Haga clic en el enlace del correo</Text>
+                        <Text style={styles.instructionsText}>3. Cree una nueva contraseña segura</Text>
+
+                        <Text style={styles.sectionTitle}>Importante:</Text>
+                        <Text style={styles.instructionsText}>
+                            El enlace enviado será válido durante 2 horas. Si no lo utiliza en este tiempo, deberá solicitar uno nuevo.
+                        </Text>
 
                         <Pressable style={styles.mailButton} onPress={openGmailOrMail}>
                             <Ionicons name="mail-open-outline" size={16} color={theme.colors.primary} />
@@ -266,6 +275,15 @@ const styles = StyleSheet.create({
     instructionsText: {
         color: theme.colors.textSecondary,
         fontWeight: "700",
+    },
+    emailHighlight: {
+        color: theme.colors.primary,
+        fontWeight: "900",
+    },
+    sectionTitle: {
+        marginTop: 4,
+        color: theme.colors.textPrimary,
+        fontWeight: "900",
     },
     mailButton: {
         marginTop: 6,
