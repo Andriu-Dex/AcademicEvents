@@ -18,6 +18,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { login } from "../../src/api/auth";
 import { getCurrentApiBaseUrl } from "../../src/api/client";
 import { useAuthStore } from "../../src/store/authStore";
+import { isAdminRole } from "../../src/utils/roles";
 import { useFacultyInfo } from "../../src/features/faculty/useFacultyInfo";
 import { theme } from "../../src/shared/theme";
 
@@ -69,7 +70,7 @@ export default function LoginScreen() {
         try {
             const result = await login(values.email, values.password);
             await setSession(result.token, result.user);
-            router.replace("/(app)");
+            router.replace(isAdminRole(result.user.role) ? "/(admin)" : "/(app)");
         } catch (error) {
             const message = error instanceof Error ? error.message : "Error al iniciar sesión";
             const apiHint = __DEV__ ? `\nAPI: ${getCurrentApiBaseUrl()}` : "";

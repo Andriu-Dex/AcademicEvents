@@ -16,9 +16,11 @@ import { useQuery } from "@tanstack/react-query";
 import { AppHeader } from "../../src/components/AppHeader";
 import { toAbsoluteUrl } from "../../src/api/client";
 import { fetchMyProfile, uploadDocuments, uploadProfileImage } from "../../src/api/profile";
+import { fetchMyRegistrations, type RegistrationItem } from "../../src/api/registrations";
 import { queryClient } from "../../src/shared/queryClient";
 import { useAuthStore } from "../../src/store/authStore";
 import { theme } from "../../src/shared/theme";
+import { formatRoleLabel } from "../../src/utils/roles";
 
 type PickedFile = { uri: string; name: string; mimeType: string };
 
@@ -97,9 +99,52 @@ function ProfileHeader({
                     {fullName}
                 </Text>
                 <Text style={styles.role} numberOfLines={1}>
-                    {role}
+                    {formatRoleLabel(role)}
                 </Text>
             </View>
+        </View>
+    );
+}
+
+function registrationStatusLabel(status: string) {
+    const key = (status ?? "").trim().toUpperCase();
+    if (key === "PENDING") return "Pendiente";
+    if (key === "ACCEPTED") return "Aceptada";
+    if (key === "REJECTED") return "Rechazada";
+    if (key === "APPROVED") return "Aprobada";
+    return status || "-";
+}
+
+function RecentRegistrationsSection({
+    registrations,
+}: Readonly<{
+    registrations: RegistrationItem[];
+}>) {
+    const recent = [...registrations]
+        .sort((a, b) => {
+            const ta = new Date(a.createdAt).getTime();
+            const tb = new Date(b.createdAt).getTime();
+            return tb - ta;
+        })
+        .slice(0, 4);
+
+    return (
+        <View style={styles.card}>
+            <SectionTitle title="Mis Inscripciones Recientes" />
+            {recent.length === 0 ? (
+                <Text style={styles.hint}>Aun no tienes inscripciones recientes.</Text>
+            ) : (
+                recent.map((item) => (
+                    <View key={item.id} style={styles.recentItem}>
+                        <Text style={styles.recentTitle} numberOfLines={2}>
+                            {item.event?.title ?? "Evento"}
+                        </Text>
+                        <Text style={styles.recentMeta}>
+                            {registrationStatusLabel(item.status)} · {formatDate(item.createdAt) || "Fecha no disponible"}
+                        </Text>
+                    </View>
+                ))
+            )}
         </View>
     );
 }
@@ -214,6 +259,12 @@ function DocumentsSection({
                 <Text style={styles.primaryBtnText}>{isSaving ? "Subiendo…" : "Subir documentos"}</Text>
             </Pressable>
 
+            {profileDocumentUrl ? null : (
+                <Text style={styles.hint}>
+                    No has subido ningún documento aún. Debes subir tu cédula y papeleta de votación.
+                </Text>
+            )}
+
             <Text style={styles.hint}>
                 {isUtaEmail
                     ? "Requerido: cédula, papeleta y matrícula."
@@ -314,6 +365,13 @@ export default function ProfileScreen() {
         enabled: Boolean(user),
     });
 
+    const registrationsQuery = useQuery({
+        queryKey: ["my-registrations"],
+        queryFn: fetchMyRegistrations,
+        staleTime: 30000,
+        enabled: Boolean(user),
+    });
+
     const profile = profileQuery.data;
 
     let body: ReactNode;
@@ -382,13 +440,15 @@ export default function ProfileScreen() {
 
                     {uploads.saveError ? <Text style={styles.errorInline}>{uploads.saveError}</Text> : null}
                 </View>
+
+                <RecentRegistrationsSection registrations={registrationsQuery.data ?? []} />
             </ScrollView>
         );
     }
 
     return (
         <View style={styles.container}>
-            <AppHeader title="Perfil" showBack />
+            <AppHeader title="Mi Perfil" showBack />
             {body}
         </View>
     );
@@ -396,7 +456,7 @@ export default function ProfileScreen() {
 
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: theme.colors.bgSecondary },
-    content: { padding: theme.spacing.lg, paddingBottom: theme.spacing.xl },
+    content: { padding: theme.spacing.lg, paddingBottom: theme.spacing.xl, gap: theme.spacing.md },
     center: { flex: 1, alignItems: "center", justifyContent: "center", padding: theme.spacing.lg },
     errorText: { color: theme.colors.error, fontWeight: "900" },
     card: {
@@ -454,4 +514,14 @@ const styles = StyleSheet.create({
     btnDisabled: { opacity: 0.6 },
     hint: { color: theme.colors.textSecondary, fontWeight: "700", lineHeight: 18 },
     errorInline: { marginTop: theme.spacing.md, color: theme.colors.error, fontWeight: "900" },
+    recentItem: {
+        borderWidth: 1,
+        borderColor: theme.colors.borderPrimary,
+        borderRadius: theme.radius.md,
+        paddingHorizontal: 12,
+        paddingVertical: 10,
+        backgroundColor: theme.colors.bgSecondary,
+    },
+    recentTitle: { color: theme.colors.textPrimary, fontWeight: "900" },
+    recentMeta: { color: theme.colors.textSecondary, fontWeight: "700", marginTop: 4 },
 });

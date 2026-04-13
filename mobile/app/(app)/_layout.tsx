@@ -4,16 +4,23 @@ import { useEffect } from "react";
 import { useRouter } from "expo-router";
 import { theme } from "../../src/shared/theme";
 import { useAuthStore } from "../../src/store/authStore";
+import { isAdminRole } from "../../src/utils/roles";
 
 export default function AppLayout() {
     const router = useRouter();
     const token = useAuthStore((s) => s.accessToken);
+    const role = useAuthStore((s) => s.user?.role);
 
     useEffect(() => {
         if (!token) {
             router.replace("/home");
+            return;
         }
-    }, [token, router]);
+
+        if (isAdminRole(role ?? null)) {
+            router.replace("/(admin)");
+        }
+    }, [token, role, router]);
 
     return (
         <Tabs

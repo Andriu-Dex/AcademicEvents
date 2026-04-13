@@ -13,7 +13,7 @@ import {
     Text,
     View,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, useSegments } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
@@ -313,7 +313,9 @@ export function HomeContent(
     }: Readonly<{ showAuthCtas?: boolean; eventsRoute?: string }> = { showAuthCtas: true, eventsRoute: "/public-events" }
 ) {
     const router = useRouter();
+    const segments = useSegments();
     const user = useAuthStore((s) => s.user);
+    const isAdminArea = segments.includes("(admin)");
     const scrollRef = useRef<ScrollView | null>(null);
     const [authorityIndex, setAuthorityIndex] = useState(0);
     const authorityScrollX = useRef(new Animated.Value(0)).current;
@@ -422,17 +424,8 @@ export function HomeContent(
                         )}
                     </Pressable>
 
-                    {showAuthCtas ? (
-                        <View style={styles.navCtas}>
-                            <Pressable style={styles.navCtaPrimary} onPress={() => router.push("/(auth)/login")}>
-                                <Text style={styles.navCtaPrimaryText}>Iniciar sesión</Text>
-                            </Pressable>
-                            <Pressable style={styles.navCtaSecondary} onPress={() => router.push("/(auth)/register")}>
-                                <Text style={styles.navCtaSecondaryText}>Registrarse</Text>
-                            </Pressable>
-                        </View>
-                    ) : user ? (
-                        <Pressable style={styles.navUserChip} onPress={() => router.push("/profile")}>
+                    {user ? (
+                        <Pressable style={styles.navUserChip} onPress={() => router.push(isAdminArea ? "/(admin)/profile" : "/profile")}>
                             {user.profileImageUrl ? (
                                 <Image source={{ uri: toAbsoluteUrl(user.profileImageUrl) }} style={styles.navUserAvatar} />
                             ) : (
@@ -443,6 +436,15 @@ export function HomeContent(
                             </Text>
                             <Ionicons name="chevron-forward" size={16} color={theme.colors.textInverse} />
                         </Pressable>
+                    ) : showAuthCtas ? (
+                        <View style={styles.navCtas}>
+                            <Pressable style={styles.navCtaPrimary} onPress={() => router.push("/(auth)/login")}>
+                                <Text style={styles.navCtaPrimaryText}>Iniciar sesión</Text>
+                            </Pressable>
+                            <Pressable style={styles.navCtaSecondary} onPress={() => router.push("/(auth)/register")}>
+                                <Text style={styles.navCtaSecondaryText}>Registrarse</Text>
+                            </Pressable>
+                        </View>
                     ) : null}
                 </View>
 

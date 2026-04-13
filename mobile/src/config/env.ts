@@ -33,11 +33,6 @@ function guessDevHost(): string | null {
     const host = tryParseHost(hostUri);
     if (!host) return null;
 
-    if ((host === "localhost" || host === "127.0.0.1") && Platform.OS === "android") {
-        // Android emulator -> host machine (ojo: NO sirve en dispositivo físico)
-        return "10.0.2.2";
-    }
-
     return host;
 }
 

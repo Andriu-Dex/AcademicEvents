@@ -1,0 +1,137 @@
+import { apiClient } from "./client";
+
+export type University = {
+    id: string;
+    name: string;
+    acronym: string;
+    address: string;
+    phone: string;
+    email: string;
+    website: string;
+    logoUrl: string;
+};
+
+export type UniversitySocialLink = {
+    id: string;
+    label: string;
+    url: string;
+    order: number;
+};
+
+function pickString(obj: Record<string, unknown>, ...keys: string[]): string {
+    for (const key of keys) {
+        const value = obj[key];
+        if (typeof value === "string") return value;
+        if (typeof value === "number" && Number.isFinite(value)) return String(value);
+    }
+    return "";
+}
+
+function toFiniteNumber(value: unknown, fallback = 0): number {
+    if (typeof value === "number" && Number.isFinite(value)) return value;
+    if (typeof value === "string") {
+        const parsed = Number(value);
+        return Number.isFinite(parsed) ? parsed : fallback;
+    }
+    return fallback;
+}
+
+export async function fetchMainUniversity(): Promise<University> {
+    const response = await apiClient.get<unknown>("/api/universidad-principal");
+    const payload = response.data as Record<string, unknown>;
+
+    return {
+        id: pickString(payload, "id", "id_uni"),
+        name: pickString(payload, "name", "nom_uni"),
+        acronym: pickString(payload, "acronym", "acr_uni"),
+        address: pickString(payload, "address", "dir_uni"),
+        phone: pickString(payload, "phone", "tel_uni"),
+        email: pickString(payload, "email", "cor_uni"),
+        website: pickString(payload, "website", "web_uni"),
+        logoUrl: pickString(payload, "logoUrl", "log_uni"),
+    };
+}
+
+export async function updateUniversity(universityId: string, patch: Partial<University>): Promise<University> {
+    const response = await apiClient.put<unknown>(`/api/universidad/${universityId}`, {
+        nom_uni: patch.name,
+        acr_uni: patch.acronym,
+        dir_uni: patch.address,
+        tel_uni: patch.phone,
+        cor_uni: patch.email,
+        web_uni: patch.website,
+        log_uni: patch.logoUrl,
+    });
+
+    const payload = response.data as Record<string, unknown>;
+    const uni = payload.universidad && typeof payload.universidad === "object" ? (payload.universidad as Record<string, unknown>) : payload;
+
+    return {
+        id: pickString(uni, "id", "id_uni", "id_uni_per") || universityId,
+        name: pickString(uni, "name", "nom_uni") || patch.name || "",
+        acronym: pickString(uni, "acronym", "acr_uni") || patch.acronym || "",
+        address: pickString(uni, "address", "dir_uni") || patch.address || "",
+        phone: pickString(uni, "phone", "tel_uni") || patch.phone || "",
+        email: pickString(uni, "email", "cor_uni") || patch.email || "",
+        website: pickString(uni, "website", "web_uni") || patch.website || "",
+        logoUrl: pickString(uni, "logoUrl", "log_uni") || patch.logoUrl || "",
+    };
+}
+
+export async function fetchUniversitySocialLinks(universityId: string): Promise<UniversitySocialLink[]> {
+    const response = await apiClient.get<unknown>(`/api/universidad/${universityId}/social-links`);
+    const payload = response.data as unknown;
+    if (!Array.isArray(payload)) {
+        throw new Error("Respuesta inválida de enlaces sociales");
+    }
+
+    return (payload as Array<Record<string, unknown>>)
+        .map((l) => ({
+            id: pickString(l, "id"),
+            label: pickString(l, "label", "nombre") || "Enlace",
+            url: pickString(l, "url"),
+            order: toFiniteNumber(l.order ?? l.orden, 0),
+        }))
+        .filter((l) => l.id.length > 0);
+}
+
+export async function createUniversitySocialLink(universityId: string, input: { label: string; url: string }): Promise<UniversitySocialLink> {
+    const response = await apiClient.post<unknown>(`/api/universidad/${universityId}/social-links`, {
+        label: input.label,
+        url: input.url,
+    });
+
+    const payload = response.data as Record<string, unknown>;
+    return {
+        id: pickString(payload, "id"),
+        label: pickString(payload, "label"),
+        url: pickString(payload, "url"),
+        order: toFiniteNumber(payload.order, 0),
+    };
+}
+
+export async function updateUniversitySocialLink(
+    universityId: string,
+    linkId: string,
+    patch: Partial<{ label: string; url: string; order: number }>
+): Promise<UniversitySocialLink> {
+    const response = await apiClient.put<unknown>(`/api/universidad/${universityId}/social-links/${linkId}`, patch);
+    const payload = response.data as Record<string, unknown>;
+
+    return {
+        id: pickString(payload, "id") || linkId,
+        label: pickString(payload, "label") || patch.label || "",
+        url: pickString(payload, "url") || patch.url || "",
+        order: toFiniteNumber(payload.order ?? patch.order, 0),
+    };
+}
+
+export async function deleteUniversitySocialLink(universityId: string, linkId: string): Promise<void> {
+    await apiClient.delete(`/api/universidad/${universityId}/social-links/${linkId}`);
+}
+
+export async function reorderUniversitySocialLinks(universityId: string, orderedIds: string[]): Promise<void> {
+    await apiClient.patch(`/api/universidad/${universityId}/social-links/reorder`, {
+        orderedIds,
+    });
+}
