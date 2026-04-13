@@ -110,9 +110,17 @@ class PasswordRecoveryService {
         token ? "Sí" : "No"
       );
 
-      // Generar URL para el frontend
+      // Generar URL de recuperación compatible con web y app móvil (Expo Go)
       const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
-      const recoveryUrl = `${frontendUrl}/restablecer-contrasena/${token.value}`;
+      const normalizedFrontendUrl = frontendUrl.replace(/\/$/, "");
+      const mobileScheme = process.env.MOBILE_APP_SCHEME || "academicevents";
+      const mobileRecoveryUrl = `${mobileScheme}://restablecer-contrasena/${token.value}`;
+      const forceMobile = (process.env.PASSWORD_RECOVERY_LINK_TARGET || "").toLowerCase() === "mobile";
+      const looksLocalFrontend = /localhost|127\.0\.0\.1/.test(normalizedFrontendUrl);
+      const recoveryUrl =
+        forceMobile || looksLocalFrontend
+          ? mobileRecoveryUrl
+          : `${normalizedFrontendUrl}/restablecer-contrasena/${token.value}`;
       console.log(
         "🔹 [PASSWORD-RECOVERY-SERVICE] URL de recuperación generada:",
         recoveryUrl
@@ -190,8 +198,7 @@ class PasswordRecoveryService {
 
       if (!validationResult.valido) {
         console.log(
-          `[${new Date().toISOString()}] Token inválido ${tokenValue}. Motivo: ${
-            validationResult.motivo || "ERROR_GENERICO"
+          `[${new Date().toISOString()}] Token inválido ${tokenValue}. Motivo: ${validationResult.motivo || "ERROR_GENERICO"
           }`
         );
         return {
@@ -280,10 +287,9 @@ class PasswordRecoveryService {
           where: { value: tokenValue },
         });
 
-        if (!currentToken || currentToken.status !== "ACTIVE") {
+        if (currentToken?.status !== "ACTIVE") {
           console.log(
-            `[${new Date().toISOString()}] Token ${tokenValue} ya no válido durante la transacción. Estado: ${
-              currentToken?.status || "NO_EXISTE"
+            `[${new Date().toISOString()}] Token ${tokenValue} ya no válido durante la transacción. Estado: ${currentToken?.status || "NO_EXISTE"
             }`
           );
           throw new Error("Token ya no válido durante la transacción");
@@ -376,7 +382,7 @@ class PasswordRecoveryService {
       }
 
       // Si es un error relacionado con la función invalidarTokensOtros
-      if (error.message && error.message.includes("invalidarTokensOtros")) {
+      if (error.message?.includes("invalidarTokensOtros")) {
         // El cambio de contraseña ya se realizó, pero hubo problemas en la invalidación
         return {
           success: true,

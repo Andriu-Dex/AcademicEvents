@@ -173,7 +173,7 @@ export default function LoginScreen() {
 
                 {submitError && <Text style={styles.error}>{submitError}</Text>}
 
-                <Pressable style={styles.forgotWrap}>
+                <Pressable style={styles.forgotWrap} onPress={() => router.push("/(auth)/forgot-password")}>
                     <Text style={styles.forgotText}>¿Olvidaste tu contraseña?</Text>
                 </Pressable>
 
