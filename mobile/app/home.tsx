@@ -412,16 +412,19 @@ export function HomeContent(
         <LinearGradient colors={["#f8eff2", "#ffffff"]} style={styles.container}>
             <View style={styles.topNavbar}>
                 <View style={styles.navbarRow}>
-                    <Pressable style={styles.brandWrap} onPress={() => scrollToSection("inicio")}>
-                        {faculty?.logo ? (
-                            <Image
-                                source={{ uri: toAbsoluteUrl(faculty.logo) }}
-                                style={styles.brandLogo}
-                                resizeMode="contain"
-                            />
-                        ) : (
-                            <View style={styles.brandLogoFallback} />
-                        )}
+                    <Pressable style={styles.brandGroup} onPress={() => scrollToSection("inicio")}>
+                        <View style={styles.brandWrap}>
+                            {faculty?.logo ? (
+                                <Image
+                                    source={{ uri: toAbsoluteUrl(faculty.logo) }}
+                                    style={styles.brandLogo}
+                                    resizeMode="contain"
+                                />
+                            ) : (
+                                <View style={styles.brandLogoFallback} />
+                            )}
+                        </View>
+                        <Text style={styles.brandLabel}>FISEI</Text>
                     </Pressable>
 
                     {user ? (
@@ -452,7 +455,7 @@ export function HomeContent(
                     <Pressable style={styles.navTab} onPress={() => scrollToSection("inicio")}>
                         <Text style={styles.navTabText}>Inicio</Text>
                     </Pressable>
-                    <Pressable style={styles.navTab} onPress={() => router.push(eventsRoute)}>
+                    <Pressable style={styles.navTab} onPress={() => scrollToSection("eventos")}>
                         <Text style={styles.navTabText}>Eventos</Text>
                     </Pressable>
                     <Pressable style={styles.navTabGhost} onPress={() => scrollToSection("autoridades")}>
@@ -793,6 +796,7 @@ export function HomeContent(
                             style={styles.footerLogo}
                         />
                         <View>
+                            <Text style={styles.footerBrandAcronymFixed}>FISEI</Text>
                             <Text style={styles.footerBrandName}>{faculty?.acronym ?? "FISEI"}</Text>
                             <Text style={styles.footerBrandSub}>{faculty?.title ?? "Facultad"}</Text>
                             <Text style={styles.footerBrandSubMuted}>{footerUniversity.name}</Text>
@@ -884,6 +888,17 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         overflow: "hidden",
+    },
+    brandGroup: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 10,
+    },
+    brandLabel: {
+        color: theme.colors.textInverse,
+        fontWeight: "900",
+        fontSize: 14,
+        letterSpacing: 0.6,
     },
     brandLogo: {
         width: 46,
@@ -1424,6 +1439,13 @@ const styles = StyleSheet.create({
         color: "#ffffff",
         fontWeight: "800",
         marginTop: 1,
+    },
+    footerBrandAcronymFixed: {
+        fontSize: 12,
+        color: "rgba(255,255,255,0.86)",
+        fontWeight: "800",
+        letterSpacing: 1.2,
+        textTransform: "uppercase",
     },
     footerBrandSub: {
         fontSize: 12,

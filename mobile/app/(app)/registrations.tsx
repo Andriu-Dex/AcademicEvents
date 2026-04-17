@@ -3,7 +3,6 @@ import {
     ActivityIndicator,
     Alert,
     FlatList,
-    Image,
     Linking,
     Pressable,
     StyleSheet,
@@ -26,24 +25,31 @@ function formatDate(raw: string) {
 
 function statusColor(status: string) {
     const normalized = status.trim().toUpperCase();
-    if (normalized.includes("ACEPT")) return theme.colors.success;
-    if (normalized.includes("APROB")) return theme.colors.success;
-    if (normalized.includes("RECH")) return theme.colors.error;
+    if (normalized.includes("APROB") || normalized.includes("ACCEPT")) return theme.colors.success;
+    if (normalized.includes("REPROB") || normalized.includes("REJECT")) return theme.colors.error;
     if (normalized.includes("PEND")) return theme.colors.warning;
     return theme.colors.primary;
 }
 
+function statusLabel(status: string) {
+    const normalized = status.trim().toUpperCase();
+    if (normalized.includes("APROB") || normalized.includes("ACCEPT")) return "Aprobado";
+    if (normalized.includes("REPROB") || normalized.includes("REJECT")) return "Reprobado";
+    if (normalized.includes("PEND")) return "Pendiente";
+    return status || "Sin estado";
+}
+
 function filterColor(key: string) {
     if (key === "PEND") return theme.colors.warning;
-    if (key === "ACEPT") return theme.colors.success;
-    if (key === "RECH") return theme.colors.error;
+    if (key === "APROB") return theme.colors.success;
+    if (key === "REPROB") return theme.colors.error;
     return theme.colors.primary;
 }
 
 function filterLabel(key: string) {
     if (key === "PEND") return "Pendientes";
-    if (key === "ACEPT") return "Aceptadas";
-    if (key === "RECH") return "Rechazadas";
+    if (key === "APROB") return "Aprobados";
+    if (key === "REPROB") return "Reprobados";
     return "Todos";
 }
 
@@ -78,20 +84,14 @@ function RegistrationCard({ item }: Readonly<{ item: RegistrationItem }>) {
     const event = item.event;
     return (
         <View style={styles.card}>
-            {event?.coverImageUrl ? (
-                <Image source={{ uri: toAbsoluteUrl(event.coverImageUrl) }} style={styles.cover} resizeMode="cover" />
-            ) : (
-                <View style={styles.coverFallback} />
-            )}
-
             <View style={styles.cardBody}>
                 <View style={styles.rowTop}>
                     <Text style={styles.title} numberOfLines={2}>
-                        {event?.title ?? "Inscripción"}
+                        {event?.title ?? "Curso"}
                     </Text>
                     <View style={[styles.badge, { backgroundColor: statusColor(item.status) }]}>
                         <Text style={styles.badgeText} numberOfLines={1}>
-                            {item.status || "Estado"}
+                            {statusLabel(item.status)}
                         </Text>
                     </View>
                 </View>
@@ -100,13 +100,6 @@ function RegistrationCard({ item }: Readonly<{ item: RegistrationItem }>) {
                     <Ionicons name="calendar-outline" size={14} color={theme.colors.textSecondary} />
                     <Text style={styles.metaText}>{formatDate(item.createdAt) || "Fecha por confirmar"}</Text>
                 </View>
-
-                {event?.modality ? (
-                    <View style={styles.metaRow}>
-                        <Ionicons name="laptop-outline" size={14} color={theme.colors.textSecondary} />
-                        <Text style={styles.metaText}>{event.modality}</Text>
-                    </View>
-                ) : null}
 
                 {item.paymentProofUrl ? (
                     <Pressable
@@ -141,8 +134,22 @@ export default function RegistrationsScreen() {
     const items = useMemo(() => {
         const list = query.data ?? [];
         if (statusFilter === "TODOS") return list;
-        const normalized = statusFilter.trim().toUpperCase();
-        return list.filter((r) => r.status.trim().toUpperCase().includes(normalized));
+        if (statusFilter === "PEND") {
+            return list.filter((r) => r.status.trim().toUpperCase().includes("PEND"));
+        }
+        if (statusFilter === "APROB") {
+            return list.filter((r) => {
+                const status = r.status.trim().toUpperCase();
+                return status.includes("APROB") || status.includes("ACCEPT");
+            });
+        }
+        if (statusFilter === "REPROB") {
+            return list.filter((r) => {
+                const status = r.status.trim().toUpperCase();
+                return status.includes("REPROB") || status.includes("REJECT");
+            });
+        }
+        return list;
     }, [query.data, statusFilter]);
 
     const totalCount = (query.data ?? []).length;
@@ -203,16 +210,16 @@ export default function RegistrationsScreen() {
                         onPress={() => setStatusFilter("PEND")}
                     />
                     <FilterChip
-                        label="Aceptadas"
-                        selected={statusFilter === "ACEPT"}
-                        color={filterColor("ACEPT")}
-                        onPress={() => setStatusFilter("ACEPT")}
+                        label="Aprobados"
+                        selected={statusFilter === "APROB"}
+                        color={filterColor("APROB")}
+                        onPress={() => setStatusFilter("APROB")}
                     />
                     <FilterChip
-                        label="Rechazadas"
-                        selected={statusFilter === "RECH"}
-                        color={filterColor("RECH")}
-                        onPress={() => setStatusFilter("RECH")}
+                        label="Reprobados"
+                        selected={statusFilter === "REPROB"}
+                        color={filterColor("REPROB")}
+                        onPress={() => setStatusFilter("REPROB")}
                     />
                 </View>
             </View>
@@ -256,8 +263,6 @@ const styles = StyleSheet.create({
         overflow: "hidden",
         ...theme.shadow.sm,
     },
-    cover: { width: "100%", height: 150, backgroundColor: theme.colors.bgTertiary },
-    coverFallback: { width: "100%", height: 150, backgroundColor: theme.colors.bgTertiary },
     cardBody: { padding: theme.spacing.md },
     rowTop: { flexDirection: "row", alignItems: "flex-start", justifyContent: "space-between", gap: 12 },
     title: { flex: 1, fontWeight: "900", fontSize: 15, color: theme.colors.textPrimary },

@@ -31,10 +31,8 @@ export default function AppLayout() {
                 tabBarStyle: {
                     backgroundColor: theme.colors.bgPrimary,
                     borderTopColor: theme.colors.borderPrimary,
-                    justifyContent: "space-around",
                 },
                 tabBarItemStyle: {
-                    flex: 1,
                     alignItems: "center",
                     justifyContent: "center",
                 },
@@ -88,7 +86,14 @@ export default function AppLayout() {
                 name="notifications"
                 options={{
                     title: "Notificaciones",
-                    tabBarButton: () => null,
+                    href: null,
+                }}
+            />
+            <Tabs.Screen
+                name="event-registration"
+                options={{
+                    title: "Inscripción evento",
+                    href: null,
                 }}
             />
         </Tabs>

@@ -11,9 +11,11 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { useRouter } from "expo-router";
 import { AppHeader } from "../../src/components/AppHeader";
 import { toAbsoluteUrl } from "../../src/api/client";
 import { fetchMyProfile } from "../../src/api/profile";
+import { fetchMyRegistrations } from "../../src/api/registrations";
 import { fetchUserEventsPaginated, type UserEventsFilters } from "../../src/api/userEvents";
 import type { PublicEventExtended } from "../../src/api/publicEvents";
 import { useAuthStore } from "../../src/store/authStore";
@@ -80,6 +82,17 @@ function translateEventModality(raw: string) {
     return raw.trim();
 }
 
+function translateEventType(raw: string) {
+    const normalized = raw.trim().toUpperCase();
+    if (!normalized) return "";
+    if (normalized === "COURSE") return "Curso";
+    if (normalized === "CONGRESS") return "Congreso";
+    if (normalized === "WEBINAR") return "Seminario web";
+    if (normalized === "TALK") return "Charla";
+    if (normalized === "SOCIALIZATION") return "Socialización";
+    return raw.trim();
+}
+
 function CheckboxRow({
     label,
     checked,
@@ -97,9 +110,20 @@ function CheckboxRow({
     );
 }
 
-function EventCard({ event }: Readonly<{ event: PublicEventExtended }>) {
+function EventCard({
+    event,
+    onOpenRegister,
+    isRegistering,
+    isAlreadyRegistered,
+}: Readonly<{
+    event: PublicEventExtended;
+    onOpenRegister: (event: PublicEventExtended) => void;
+    isRegistering: boolean;
+    isAlreadyRegistered: boolean;
+}>) {
     const isFree = (event.price ?? 0) <= 0;
     const modality = translateEventModality(event.modality);
+    const eventType = translateEventType(event.type);
 
     const capacityLabel = useMemo(() => {
         if (typeof event.availableSpots === "number") {
@@ -119,9 +143,9 @@ function EventCard({ event }: Readonly<{ event: PublicEventExtended }>) {
 
             <View style={styles.cardBody}>
                 <View style={styles.badgeRow}>
-                    {event.type ? (
+                    {eventType ? (
                         <View style={styles.badgeSoft}>
-                            <Text style={styles.badgeSoftText}>{event.type}</Text>
+                            <Text style={styles.badgeSoftText}>{eventType}</Text>
                         </View>
                     ) : null}
                     <View style={[styles.badge, isFree ? styles.badgeSuccess : styles.badgePrimary]}>
@@ -164,12 +188,23 @@ function EventCard({ event }: Readonly<{ event: PublicEventExtended }>) {
                         <Text style={styles.metaText}>{modality}</Text>
                     </View>
                 ) : null}
+
+                <Pressable
+                    style={[styles.registerBtn, (isRegistering || isAlreadyRegistered) && styles.registerBtnDisabled]}
+                    onPress={() => onOpenRegister(event)}
+                    disabled={isRegistering || isAlreadyRegistered}
+                >
+                    <Text style={styles.registerBtnText}>
+                        {isAlreadyRegistered ? "Ya inscrito" : isRegistering ? "Inscribiendo..." : "Inscribirme"}
+                    </Text>
+                </Pressable>
             </View>
         </View>
     );
 }
 
 export default function EventsScreen() {
+    const router = useRouter();
     const user = useAuthStore((s) => s.user);
 
     const [page, setPage] = useState(1);
@@ -225,6 +260,12 @@ export default function EventsScreen() {
         placeholderData: keepPreviousData,
         enabled: Boolean(user),
     });
+    const myRegistrationsQuery = useQuery({
+        queryKey: ["my-registrations"],
+        queryFn: fetchMyRegistrations,
+        staleTime: 30000,
+        enabled: Boolean(user),
+    });
 
     const events = useMemo(() => {
         const items = eventsQuery.data?.data ?? [];
@@ -234,6 +275,10 @@ export default function EventsScreen() {
     }, [eventsQuery.data?.data, isUtaEmail, careerId, clientOnly.soloCarrera]);
 
     const pagination = eventsQuery.data?.pagination;
+    const registeredEventIds = useMemo(
+        () => new Set((myRegistrationsQuery.data ?? []).map((item) => item.event?.id).filter(Boolean) as string[]),
+        [myRegistrationsQuery.data]
+    );
 
     const applySearch = () => {
         resetToFirstPage();
@@ -308,7 +353,23 @@ export default function EventsScreen() {
                 data={events}
                 keyExtractor={(item) => item.id}
                 contentContainerStyle={styles.list}
-                renderItem={({ item }) => <EventCard event={item} />}
+                renderItem={({ item }) => (
+                    <EventCard
+                        event={item}
+                        onOpenRegister={(event) =>
+                            router.push({
+                                pathname: "/(app)/event-registration",
+                                params: {
+                                    eventId: event.id,
+                                    title: event.title,
+                                    price: String(event.price ?? 0),
+                                },
+                            })
+                        }
+                        isRegistering={false}
+                        isAlreadyRegistered={registeredEventIds.has(item.id)}
+                    />
+                )}
                 ListFooterComponent={
                     <View style={styles.pagination}>
                         <Pressable
@@ -625,6 +686,22 @@ const styles = StyleSheet.create({
     badgePrimary: { backgroundColor: theme.colors.primary },
     badgeSuccess: { backgroundColor: theme.colors.success },
     badgeText: { color: theme.colors.textInverse, fontWeight: "900", fontSize: 12 },
+    registerBtn: {
+        marginTop: 12,
+        height: 42,
+        borderRadius: theme.radius.md,
+        backgroundColor: theme.colors.primary,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    registerBtnDisabled: {
+        opacity: 0.55,
+    },
+    registerBtnText: {
+        color: theme.colors.textInverse,
+        fontWeight: "900",
+        fontSize: 13,
+    },
     cardTitle: {
         marginTop: 10,
         fontSize: 16,

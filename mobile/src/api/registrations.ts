@@ -19,6 +19,12 @@ export type RegistrationItem = {
     event: RegistrationEventSummary | null;
 };
 
+export type RegistrationReceiptFile = {
+    uri: string;
+    name: string;
+    mimeType: string;
+};
+
 function pickString(obj: Record<string, unknown>, ...keys: string[]): string {
     for (const key of keys) {
         const value = obj[key];
@@ -63,4 +69,31 @@ export async function fetchMyRegistrations(): Promise<RegistrationItem[]> {
     return (response.data as Array<Record<string, unknown>>)
         .map(normalizeRegistration)
         .filter((r) => r.id.length > 0);
+}
+
+export async function createMyRegistration(input: {
+    eventId: string;
+    motivation: string;
+    receiptFile?: RegistrationReceiptFile | null;
+}): Promise<void> {
+    const formData = new FormData();
+    formData.append("id_eve", input.eventId);
+    formData.append("carta_motivacion", input.motivation.trim());
+
+    if (input.receiptFile) {
+        formData.append(
+            "archivo",
+            {
+                uri: input.receiptFile.uri,
+                name: input.receiptFile.name,
+                type: input.receiptFile.mimeType,
+            } as never
+        );
+    }
+
+    await apiClient.post("/api/inscripciones", formData, {
+        headers: {
+            "Content-Type": "multipart/form-data",
+        },
+    });
 }

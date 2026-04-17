@@ -2,17 +2,31 @@ import { useEffect } from "react";
 import { useRouter } from "expo-router";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { theme } from "../src/shared/theme";
+import { useAuthStore } from "../src/store/authStore";
+import { isAdminRole } from "../src/utils/roles";
 
 export default function IndexScreen() {
     const router = useRouter();
+    const token = useAuthStore((s) => s.accessToken);
+    const role = useAuthStore((s) => s.user?.role);
 
     useEffect(() => {
         const id = setTimeout(() => {
-            router.replace("/home");
+            if (!token) {
+                router.replace("/home");
+                return;
+            }
+
+            if (isAdminRole(role ?? null)) {
+                router.replace("/(admin)");
+                return;
+            }
+
+            router.replace("/(app)");
         }, 900);
 
         return () => clearTimeout(id);
-    }, [router]);
+    }, [router, token, role]);
 
     return (
         <View style={styles.container}>
