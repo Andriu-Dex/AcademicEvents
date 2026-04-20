@@ -1,12 +1,12 @@
-import { useMemo, useState, type ReactNode } from "react";
+import { useMemo, useState } from "react";
 import {
     ActivityIndicator,
     FlatList,
     Image,
     Pressable,
-    ScrollView,
     StyleSheet,
     Text,
+    useWindowDimensions,
     View,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
@@ -80,12 +80,12 @@ const REPORT_CARDS: ReportCard[] = [
     },
 ];
 
-function ReportGridCard({ card }: Readonly<{ card: ReportCard }>) {
+function ReportGridCard({ card, compact }: Readonly<{ card: ReportCard; compact: boolean }>) {
     const router = useRouter();
 
     return (
         <Pressable
-            style={styles.reportCard}
+            style={[styles.reportCard, compact ? styles.reportCardCompact : styles.reportCardWide]}
             onPress={() => router.push(card.href)}
         >
             <LinearGradient
@@ -107,8 +107,10 @@ function ReportGridCard({ card }: Readonly<{ card: ReportCard }>) {
 
 export default function AdminDashboardScreen() {
     const router = useRouter();
+    const { width } = useWindowDimensions();
     const role = useAuthStore((s) => s.user?.role);
     const isGlobal = isGlobalAdminRole(role ?? null);
+    const compactReportCards = width < 380;
 
     const [page, setPage] = useState(1);
     const limit = 10;
@@ -149,7 +151,7 @@ export default function AdminDashboardScreen() {
                     </View>
                     <View style={styles.reportGrid}>
                         {REPORT_CARDS.map((card) => (
-                            <ReportGridCard key={card.key} card={card} />
+                            <ReportGridCard key={card.key} card={card} compact={compactReportCards} />
                         ))}
                     </View>
                 </View>
@@ -197,91 +199,86 @@ export default function AdminDashboardScreen() {
                 </View>
             </View>
         );
-    }, [router, isGlobal]);
+    }, [router, isGlobal, compactReportCards]);
 
-    let body: ReactNode;
-    if (eventsQuery.isLoading) {
-        body = (
-            <View style={styles.center}>
-                <ActivityIndicator size="large" color={theme.colors.primary} />
-                <Text style={styles.loadingText}>Cargando datos...</Text>
-            </View>
-        );
-    } else if (eventsQuery.isError) {
-        body = (
-            <View style={styles.center}>
-                <Ionicons name="alert-circle-outline" size={48} color={theme.colors.error} />
-                <Text style={styles.errorText}>No se pudieron cargar eventos recientes.</Text>
-            </View>
-        );
-    } else {
-        body = (
-            <FlatList
-                data={recentEvents}
-                keyExtractor={(item) => item.id}
-                ListHeaderComponent={header}
-                contentContainerStyle={styles.list}
-                showsVerticalScrollIndicator={false}
-                renderItem={({ item }) => (
-                    <Pressable
-                        style={styles.eventCard}
-                        onPress={() => router.push({ pathname: "/(admin)/reports/event/[id]", params: { id: item.id } })}
-                    >
-                        <Image
-                            source={{ uri: toAbsoluteUrl(item.coverImageUrl) }}
-                            style={styles.eventCover}
-                            resizeMode="cover"
-                        />
-                        <View style={styles.eventBody}>
-                            <Text style={styles.eventTitle} numberOfLines={2}>
-                                {item.name}
-                            </Text>
-                            <View style={styles.eventFooter}>
-                                <Text style={styles.eventSeeMore}>Ver reporte</Text>
-                                <Ionicons name="arrow-forward-outline" size={13} color={theme.colors.primary} />
-                            </View>
+    const body = (
+        <FlatList
+            data={recentEvents}
+            keyExtractor={(item) => item.id}
+            ListHeaderComponent={header}
+            contentContainerStyle={styles.list}
+            showsVerticalScrollIndicator={false}
+            renderItem={({ item }) => (
+                <Pressable
+                    style={styles.eventCard}
+                    onPress={() => router.push({ pathname: "/(admin)/reports/event/[id]", params: { id: item.id } })}
+                >
+                    <Image
+                        source={{ uri: toAbsoluteUrl(item.coverImageUrl) }}
+                        style={styles.eventCover}
+                        resizeMode="cover"
+                    />
+                    <View style={styles.eventBody}>
+                        <Text style={styles.eventTitle} numberOfLines={2}>
+                            {item.name}
+                        </Text>
+                        <View style={styles.eventFooter}>
+                            <Text style={styles.eventSeeMore}>Ver reporte</Text>
+                            <Ionicons name="arrow-forward-outline" size={13} color={theme.colors.primary} />
                         </View>
-                    </Pressable>
-                )}
-                ListEmptyComponent={
+                    </View>
+                </Pressable>
+            )}
+            ListEmptyComponent={
+                eventsQuery.isLoading ? (
+                    <View style={styles.center}>
+                        <ActivityIndicator size="large" color={theme.colors.primary} />
+                        <Text style={styles.loadingText}>Cargando datos...</Text>
+                    </View>
+                ) : eventsQuery.isError ? (
+                    <View style={styles.center}>
+                        <Ionicons name="alert-circle-outline" size={48} color={theme.colors.error} />
+                        <Text style={styles.errorText}>No se pudieron cargar eventos recientes.</Text>
+                    </View>
+                ) : (
                     <View style={styles.emptyState}>
                         <Ionicons name="document-outline" size={40} color={theme.colors.textTertiary} />
                         <Text style={styles.emptyText}>No hay eventos recientes.</Text>
                     </View>
-                }
-                ListFooterComponent={
-                    recentEvents.length > 0 ? (
-                        <View style={styles.pagination}>
-                            <Pressable
-                                style={[styles.pageBtn, page <= 1 && styles.pageBtnDisabled]}
-                                disabled={page <= 1}
-                                onPress={() => setPage((p) => Math.max(1, p - 1))}
-                            >
-                                <Ionicons name="chevron-back" size={16} color={theme.colors.textInverse} />
-                                <Text style={styles.pageBtnText}>Anterior</Text>
-                            </Pressable>
-                            <View style={styles.pageInfoWrap}>
-                                <Text style={styles.pageInfo}>
-                                    {pagination?.currentPage ?? page} / {pagination?.totalPages ?? 1}
-                                </Text>
-                            </View>
-                            <Pressable
-                                style={[
-                                    styles.pageBtn,
-                                    !(pagination?.hasNextPage ?? false) && styles.pageBtnDisabled,
-                                ]}
-                                disabled={!(pagination?.hasNextPage ?? false)}
-                                onPress={() => setPage((p) => p + 1)}
-                            >
-                                <Text style={styles.pageBtnText}>Siguiente</Text>
-                                <Ionicons name="chevron-forward" size={16} color={theme.colors.textInverse} />
-                            </Pressable>
+                )
+            }
+            ListFooterComponent={
+                recentEvents.length > 0 ? (
+                    <View style={styles.pagination}>
+                        <Pressable
+                            style={[styles.pageBtn, page <= 1 && styles.pageBtnDisabled]}
+                            disabled={page <= 1}
+                            onPress={() => setPage((p) => Math.max(1, p - 1))}
+                        >
+                            <Ionicons name="chevron-back" size={16} color={theme.colors.textInverse} />
+                            <Text style={styles.pageBtnText}>Anterior</Text>
+                        </Pressable>
+                        <View style={styles.pageInfoWrap}>
+                            <Text style={styles.pageInfo}>
+                                {pagination?.currentPage ?? page} / {pagination?.totalPages ?? 1}
+                            </Text>
                         </View>
-                    ) : null
-                }
-            />
-        );
-    }
+                        <Pressable
+                            style={[
+                                styles.pageBtn,
+                                !(pagination?.hasNextPage ?? false) && styles.pageBtnDisabled,
+                            ]}
+                            disabled={!(pagination?.hasNextPage ?? false)}
+                            onPress={() => setPage((p) => p + 1)}
+                        >
+                            <Text style={styles.pageBtnText}>Siguiente</Text>
+                            <Ionicons name="chevron-forward" size={16} color={theme.colors.textInverse} />
+                        </Pressable>
+                    </View>
+                ) : null
+            }
+        />
+    );
 
     return (
         <View style={styles.container}>
@@ -336,11 +333,12 @@ const styles = StyleSheet.create({
         gap: 10,
     },
     reportCard: {
-        width: "47%",
         borderRadius: theme.radius.md,
         overflow: "hidden",
         ...theme.shadow.xs,
     },
+    reportCardWide: { width: "47%" },
+    reportCardCompact: { width: "100%" },
     reportCardGradient: {
         padding: 14,
         gap: 6,

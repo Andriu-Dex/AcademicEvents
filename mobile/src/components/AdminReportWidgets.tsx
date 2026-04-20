@@ -1,0 +1,148 @@
+import { type ReactNode } from "react";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { theme } from "../shared/theme";
+
+export function formatNumber(value: unknown) {
+    const num = typeof value === "number" ? value : Number(value);
+    if (!Number.isFinite(num)) return "0";
+    return new Intl.NumberFormat("es-EC").format(num);
+}
+
+export function formatCurrency(value: unknown) {
+    const num = typeof value === "number" ? value : Number(value);
+    if (!Number.isFinite(num)) return "$0.00";
+    return new Intl.NumberFormat("es-EC", {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 2,
+    }).format(num);
+}
+
+export function formatPercent(value: unknown) {
+    const num = typeof value === "number" ? value : Number(value);
+    if (!Number.isFinite(num)) return "0%";
+    const normalized = num <= 1 ? num * 100 : num;
+    return `${normalized.toFixed(1)}%`;
+}
+
+export function MetricCard({ label, value }: Readonly<{ label: string; value: string }>) {
+    return (
+        <View style={styles.metricCard}>
+            <Text style={styles.metricLabel} numberOfLines={2}>
+                {label}
+            </Text>
+            <Text style={styles.metricValue} numberOfLines={1}>
+                {value}
+            </Text>
+        </View>
+    );
+}
+
+export function SectionCard({ title, children }: Readonly<{ title: string; children: ReactNode }>) {
+    return (
+        <View style={styles.sectionCard}>
+            <Text style={styles.sectionTitle}>{title}</Text>
+            {children}
+        </View>
+    );
+}
+
+export function DataList({
+    rows,
+    emptyText,
+}: Readonly<{
+    rows: Array<{ title: string; subtitle?: string; right?: string }>;
+    emptyText?: string;
+}>) {
+    if (rows.length === 0) {
+        return <Text style={styles.emptyText}>{emptyText ?? "Sin datos disponibles."}</Text>;
+    }
+
+    return (
+        <View style={styles.listWrap}>
+            {rows.map((row, index) => (
+                <View key={`${row.title}-${index}`} style={styles.listItem}>
+                    <View style={{ flex: 1 }}>
+                        <Text style={styles.itemTitle}>{row.title}</Text>
+                        {row.subtitle ? <Text style={styles.itemSubtitle}>{row.subtitle}</Text> : null}
+                    </View>
+                    {row.right ? <Text style={styles.itemRight}>{row.right}</Text> : null}
+                </View>
+            ))}
+        </View>
+    );
+}
+
+export function JsonPreview({ value }: Readonly<{ value: unknown }>) {
+    const text = (() => {
+        try {
+            return JSON.stringify(value, null, 2);
+        } catch {
+            return String(value);
+        }
+    })();
+
+    return (
+        <ScrollView horizontal style={styles.jsonWrap} showsHorizontalScrollIndicator={false}>
+            <Text style={styles.jsonText}>{text}</Text>
+        </ScrollView>
+    );
+}
+
+const styles = StyleSheet.create({
+    sectionCard: {
+        backgroundColor: theme.colors.bgPrimary,
+        borderRadius: theme.radius.lg,
+        borderWidth: 1,
+        borderColor: theme.colors.borderPrimary,
+        padding: theme.spacing.md,
+        gap: theme.spacing.sm,
+        ...theme.shadow.sm,
+    },
+    sectionTitle: { fontWeight: "900", color: theme.colors.textPrimary, fontSize: 15 },
+    metricCard: {
+        minWidth: 130,
+        flexGrow: 1,
+        backgroundColor: theme.colors.bgPrimary,
+        borderWidth: 1,
+        borderColor: theme.colors.borderPrimary,
+        borderRadius: theme.radius.md,
+        paddingVertical: 12,
+        paddingHorizontal: 12,
+        gap: 6,
+    },
+    metricLabel: { color: theme.colors.textSecondary, fontWeight: "700", fontSize: 12 },
+    metricValue: { color: theme.colors.textPrimary, fontWeight: "900", fontSize: 18 },
+    listWrap: { gap: 8 },
+    listItem: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 10,
+        backgroundColor: theme.colors.bgSecondary,
+        borderRadius: theme.radius.md,
+        borderWidth: 1,
+        borderColor: theme.colors.borderLight,
+        paddingHorizontal: 12,
+        paddingVertical: 10,
+    },
+    itemTitle: { color: theme.colors.textPrimary, fontWeight: "800", fontSize: 13 },
+    itemSubtitle: { color: theme.colors.textTertiary, marginTop: 2, fontWeight: "600", fontSize: 11 },
+    itemRight: { color: theme.colors.primary, fontWeight: "900", fontSize: 12, maxWidth: 120, textAlign: "right" },
+    emptyText: { color: theme.colors.textTertiary, fontWeight: "700" },
+    jsonWrap: {
+        backgroundColor: theme.colors.bgSecondary,
+        borderWidth: 1,
+        borderColor: theme.colors.borderLight,
+        borderRadius: theme.radius.md,
+        paddingHorizontal: 10,
+        paddingVertical: 8,
+        maxHeight: 260,
+    },
+    jsonText: {
+        color: theme.colors.textSecondary,
+        fontSize: 11,
+        lineHeight: 16,
+        fontFamily: "monospace",
+        fontWeight: "700",
+    },
+});

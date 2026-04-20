@@ -16,7 +16,15 @@ export type RegistrationItem = {
     status: string;
     createdAt: string;
     paymentProofUrl: string | null;
+    certificate: RegistrationCertificate | null;
     event: RegistrationEventSummary | null;
+};
+
+export type RegistrationCertificate = {
+    id: string;
+    fileUrl: string | null;
+    type: string;
+    generatedAt: string | null;
 };
 
 export type RegistrationReceiptFile = {
@@ -49,12 +57,23 @@ function normalizeEvent(raw: Record<string, unknown>): RegistrationEventSummary 
 
 function normalizeRegistration(raw: Record<string, unknown>): RegistrationItem {
     const event = raw.evento && typeof raw.evento === "object" ? normalizeEvent(raw.evento as Record<string, unknown>) : null;
+    const certificateRaw =
+        raw.certificado && typeof raw.certificado === "object" ? (raw.certificado as Record<string, unknown>) : null;
+    const certificate = certificateRaw
+        ? {
+            id: pickString(certificateRaw, "id", "id_cert", "certificateId"),
+            fileUrl: pickString(certificateRaw, "fileUrl", "url", "file_url", "archivo") || null,
+            type: pickString(certificateRaw, "type", "tipo"),
+            generatedAt: pickString(certificateRaw, "generatedAt", "createdAt", "fec_gen") || null,
+        }
+        : null;
 
     return {
         id: pickString(raw, "id_ins", "id", "registrationId"),
         status: pickString(raw, "est_ins", "status") || "",
         createdAt: pickString(raw, "fec_ins", "createdAt") || "",
         paymentProofUrl: pickString(raw, "comprobante", "com_ins", "paymentProofUrl") || null,
+        certificate,
         event,
     };
 }
@@ -96,4 +115,14 @@ export async function createMyRegistration(input: {
             "Content-Type": "multipart/form-data",
         },
     });
+}
+
+export async function generateCertificateForRegistration(registrationId: string): Promise<void> {
+    await apiClient.get<ArrayBuffer>(`/api/certificados/${registrationId}`, {
+        responseType: "arraybuffer",
+    });
+}
+
+export async function sendCertificateByEmail(registrationId: string): Promise<void> {
+    await apiClient.post(`/api/certificados/enviar/${registrationId}`);
 }

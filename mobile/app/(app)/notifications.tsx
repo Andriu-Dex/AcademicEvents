@@ -3,18 +3,23 @@ import {
     ActivityIndicator,
     FlatList,
     Pressable,
+    RefreshControl,
     StyleSheet,
     Text,
     View,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
+import { useFocusEffect } from "@react-navigation/native";
 import { AppHeader } from "../../src/components/AppHeader";
 import {
     fetchNotificationHistory,
+    fetchPushTokenStatus,
     markAllNotificationsAsRead,
+    markNotificationAsRead,
     type NotificationItem,
 } from "../../src/api/notifications";
+import { syncPushTokenNow } from "../../src/features/notifications/usePushTokenSync";
 import { queryClient } from "../../src/shared/queryClient";
 import { theme } from "../../src/shared/theme";
 
@@ -31,10 +36,13 @@ function formatDateTime(raw: string) {
     });
 }
 
-function NotificationCard({ item }: Readonly<{ item: NotificationItem }>) {
+function NotificationCard({
+    item,
+    onPress,
+}: Readonly<{ item: NotificationItem; onPress: (item: NotificationItem) => void }>) {
     const isRead = Boolean(item.readAt);
     return (
-        <View style={[styles.card, !isRead && styles.cardUnread]}>
+        <Pressable style={[styles.card, !isRead && styles.cardUnread]} onPress={() => onPress(item)}>
             <View style={styles.cardTop}>
                 <Text style={styles.title} numberOfLines={1}>
                     {item.title}
@@ -45,7 +53,7 @@ function NotificationCard({ item }: Readonly<{ item: NotificationItem }>) {
                 {item.body}
             </Text>
             <Text style={styles.meta}>{formatDateTime(item.createdAt)}</Text>
-        </View>
+        </Pressable>
     );
 }
 
@@ -53,7 +61,20 @@ export default function NotificationsScreen() {
     const query = useQuery({
         queryKey: ["notifications-history"],
         queryFn: () => fetchNotificationHistory(80, 0),
-        staleTime: 30000,
+        staleTime: 10000,
+        refetchOnWindowFocus: false,
+    });
+    const pushStatusQuery = useQuery({
+        queryKey: ["push-token-status"],
+        queryFn: fetchPushTokenStatus,
+        staleTime: 10000,
+        refetchOnWindowFocus: false,
+    });
+
+    useFocusEffect(() => {
+        void query.refetch();
+        void pushStatusQuery.refetch();
+        return () => undefined;
     });
 
     const items = useMemo(() => query.data ?? [], [query.data]);
@@ -61,6 +82,17 @@ export default function NotificationsScreen() {
     const onReadAll = async () => {
         await markAllNotificationsAsRead();
         await queryClient.invalidateQueries({ queryKey: ["notifications-history"] });
+    };
+
+    const onOpenNotification = async (item: NotificationItem) => {
+        if (item.readAt) return;
+        await markNotificationAsRead(item.id);
+        await queryClient.invalidateQueries({ queryKey: ["notifications-history"] });
+    };
+
+    const onRetryPushSync = async () => {
+        await syncPushTokenNow();
+        await pushStatusQuery.refetch();
     };
 
     let body: ReactNode;
@@ -82,10 +114,15 @@ export default function NotificationsScreen() {
                 data={items}
                 keyExtractor={(item) => item.id}
                 contentContainerStyle={styles.list}
-                renderItem={({ item }) => <NotificationCard item={item} />}
-                ListEmptyComponent={
-                    <Text style={styles.emptyText}>No tienes notificaciones todavía.</Text>
+                refreshControl={
+                    <RefreshControl
+                        refreshing={query.isRefetching && !query.isLoading}
+                        onRefresh={() => void query.refetch()}
+                        tintColor={theme.colors.primary}
+                    />
                 }
+                renderItem={({ item }) => <NotificationCard item={item} onPress={onOpenNotification} />}
+                ListEmptyComponent={<Text style={styles.emptyText}>No tienes notificaciones todavia.</Text>}
             />
         );
     }
@@ -97,8 +134,20 @@ export default function NotificationsScreen() {
             <View style={styles.actions}>
                 <Pressable style={styles.actionBtn} onPress={onReadAll}>
                     <Ionicons name="checkmark-done-outline" size={18} color={theme.colors.primary} />
-                    <Text style={styles.actionText}>Marcar todo como leído</Text>
+                    <Text style={styles.actionText}>Marcar todo como leido</Text>
                 </Pressable>
+
+                <View style={styles.pushStatusRow}>
+                    <Text style={styles.pushStatusText}>
+                        {pushStatusQuery.data?.hasActiveTokens
+                            ? `Push activo en ${pushStatusQuery.data.activeTokenCount} dispositivo(s)`
+                            : "Push no activo en este dispositivo"}
+                    </Text>
+                    <Pressable style={styles.syncBtn} onPress={() => void onRetryPushSync()}>
+                        <Ionicons name="refresh" size={14} color={theme.colors.primary} />
+                        <Text style={styles.syncText}>Reintentar</Text>
+                    </Pressable>
+                </View>
             </View>
 
             {body}
@@ -126,6 +175,26 @@ const styles = StyleSheet.create({
         gap: 10,
     },
     actionText: { color: theme.colors.primary, fontWeight: "900" },
+    pushStatusRow: {
+        marginTop: 8,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: 8,
+    },
+    pushStatusText: { flex: 1, color: theme.colors.textTertiary, fontWeight: "700", fontSize: 12 },
+    syncBtn: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 4,
+        borderRadius: theme.radius.full,
+        borderWidth: 1,
+        borderColor: theme.colors.primaryLight,
+        paddingHorizontal: 10,
+        paddingVertical: 6,
+        backgroundColor: theme.colors.primaryLighter,
+    },
+    syncText: { color: theme.colors.primary, fontWeight: "800", fontSize: 12 },
     center: { flex: 1, alignItems: "center", justifyContent: "center", padding: theme.spacing.lg },
     errorText: { color: theme.colors.error, fontWeight: "900" },
     list: { padding: theme.spacing.lg, gap: theme.spacing.md, paddingBottom: theme.spacing.xl },
