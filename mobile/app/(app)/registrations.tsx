@@ -5,6 +5,7 @@ import {
     FlatList,
     Linking,
     Pressable,
+    ScrollView,
     StyleSheet,
     Text,
     View,
@@ -34,9 +35,17 @@ function statusColor(status: string) {
 function statusLabel(status: string) {
     const normalized = status.trim().toUpperCase();
     if (normalized.includes("APROB") || normalized.includes("ACCEPT")) return "Aprobado";
-    if (normalized.includes("REPROB") || normalized.includes("REJECT")) return "Reprobado";
+    if (normalized.includes("REPROB") || normalized.includes("REJECT")) return "Rechazado";
     if (normalized.includes("PEND")) return "Pendiente";
     return status || "Sin estado";
+}
+
+function statusIcon(status: string): keyof typeof Ionicons.glyphMap {
+    const normalized = status.trim().toUpperCase();
+    if (normalized.includes("APROB") || normalized.includes("ACCEPT")) return "checkmark-circle";
+    if (normalized.includes("REPROB") || normalized.includes("REJECT")) return "close-circle";
+    if (normalized.includes("PEND")) return "time";
+    return "ellipse";
 }
 
 function filterColor(key: string) {
@@ -49,9 +58,11 @@ function filterColor(key: string) {
 function filterLabel(key: string) {
     if (key === "PEND") return "Pendientes";
     if (key === "APROB") return "Aprobados";
-    if (key === "REPROB") return "Reprobados";
+    if (key === "REPROB") return "Rechazados";
     return "Todos";
 }
+
+const FILTER_KEYS = ["TODOS", "PEND", "APROB", "REPROB"];
 
 function FilterChip({
     label,
@@ -65,7 +76,7 @@ function FilterChip({
             style={[
                 styles.chip,
                 { borderColor: color },
-                selected ? { backgroundColor: color } : styles.chipUnselected,
+                selected ? { backgroundColor: color } : { backgroundColor: `${color}15` },
             ]}
         >
             <Text
@@ -82,28 +93,39 @@ function FilterChip({
 
 function RegistrationCard({ item }: Readonly<{ item: RegistrationItem }>) {
     const event = item.event;
+    const color = statusColor(item.status);
+    const label = statusLabel(item.status);
+    const icon = statusIcon(item.status);
+
     return (
         <View style={styles.card}>
+            {/* Borde de color lateral */}
+            <View style={[styles.cardAccent, { backgroundColor: color }]} />
+
             <View style={styles.cardBody}>
+                {/* Encabezado con título y badge */}
                 <View style={styles.rowTop}>
-                    <Text style={styles.title} numberOfLines={2}>
-                        {event?.title ?? "Curso"}
+                    <Text style={styles.cardTitle} numberOfLines={2}>
+                        {event?.title ?? "Evento sin título"}
                     </Text>
-                    <View style={[styles.badge, { backgroundColor: statusColor(item.status) }]}>
-                        <Text style={styles.badgeText} numberOfLines={1}>
-                            {statusLabel(item.status)}
-                        </Text>
+                    <View style={[styles.statusBadge, { backgroundColor: `${color}18`, borderColor: `${color}40` }]}>
+                        <Ionicons name={icon} size={12} color={color} />
+                        <Text style={[styles.statusBadgeText, { color }]}>{label}</Text>
                     </View>
                 </View>
 
+                {/* Fecha de inscripción */}
                 <View style={styles.metaRow}>
-                    <Ionicons name="calendar-outline" size={14} color={theme.colors.textSecondary} />
-                    <Text style={styles.metaText}>{formatDate(item.createdAt) || "Fecha por confirmar"}</Text>
+                    <Ionicons name="calendar-outline" size={13} color={theme.colors.textTertiary} />
+                    <Text style={styles.metaText}>
+                        Inscrito el {formatDate(item.createdAt) || "fecha no disponible"}
+                    </Text>
                 </View>
 
+                {/* Botón comprobante */}
                 {item.paymentProofUrl ? (
                     <Pressable
-                        style={styles.linkBtn}
+                        style={styles.proofBtn}
                         onPress={() =>
                             Linking.openURL(toAbsoluteUrl(item.paymentProofUrl ?? "")).catch(() => {
                                 Alert.alert(
@@ -113,8 +135,9 @@ function RegistrationCard({ item }: Readonly<{ item: RegistrationItem }>) {
                             })
                         }
                     >
-                        <Ionicons name="document-text-outline" size={16} color={theme.colors.primary} />
-                        <Text style={styles.linkText}>Ver comprobante</Text>
+                        <Ionicons name="document-text-outline" size={15} color={theme.colors.primary} />
+                        <Text style={styles.proofBtnText}>Ver comprobante de pago</Text>
+                        <Ionicons name="open-outline" size={14} color={theme.colors.primary} />
                     </Pressable>
                 ) : null}
             </View>
@@ -153,19 +176,36 @@ export default function RegistrationsScreen() {
     }, [query.data, statusFilter]);
 
     const totalCount = (query.data ?? []).length;
-    const filteredCount = items.length;
-    const countLabel = `${filterLabel(statusFilter)} · ${filteredCount} resultados`;
+
+    // Conteos por estado para las chips
+    const counts = useMemo(() => {
+        const all = query.data ?? [];
+        return {
+            TODOS: all.length,
+            PEND: all.filter((r) => r.status.trim().toUpperCase().includes("PEND")).length,
+            APROB: all.filter((r) => {
+                const s = r.status.trim().toUpperCase();
+                return s.includes("APROB") || s.includes("ACCEPT");
+            }).length,
+            REPROB: all.filter((r) => {
+                const s = r.status.trim().toUpperCase();
+                return s.includes("REPROB") || s.includes("REJECT");
+            }).length,
+        };
+    }, [query.data]);
 
     let body: ReactNode;
     if (query.isLoading) {
         body = (
             <View style={styles.center}>
-                <ActivityIndicator size="large" />
+                <ActivityIndicator size="large" color={theme.colors.primary} />
+                <Text style={styles.loadingText}>Cargando inscripciones...</Text>
             </View>
         );
     } else if (query.isError) {
         body = (
             <View style={styles.center}>
+                <Ionicons name="alert-circle-outline" size={48} color={theme.colors.error} />
                 <Text style={styles.errorText}>No se pudieron cargar tus inscripciones.</Text>
             </View>
         );
@@ -175,9 +215,19 @@ export default function RegistrationsScreen() {
                 data={items}
                 keyExtractor={(item) => item.id}
                 contentContainerStyle={styles.list}
+                showsVerticalScrollIndicator={false}
                 renderItem={({ item }) => <RegistrationCard item={item} />}
                 ListEmptyComponent={
-                    <Text style={styles.emptyText}>No tienes inscripciones todavía.</Text>
+                    <View style={styles.emptyState}>
+                        <Ionicons name="clipboard-outline" size={52} color={theme.colors.textTertiary} />
+                        <Text style={styles.emptyTitle}>Sin inscripciones</Text>
+                        <Text style={styles.emptySubtitle}>
+                            {statusFilter === "TODOS"
+                                ? "Aún no tienes inscripciones en ningún evento."
+                                : `No tienes inscripciones con estado "${filterLabel(statusFilter)}".`
+                            }
+                        </Text>
+                    </View>
                 }
             />
         );
@@ -185,43 +235,29 @@ export default function RegistrationsScreen() {
 
     return (
         <View style={styles.container}>
-            <AppHeader title="Mis inscripciones" showNotifications />
+            <AppHeader title="Mis Inscripciones" showNotifications />
 
-            <View style={styles.filters}>
-                <Text style={styles.filtersTitle}>Filtrar por estado</Text>
-                <View style={styles.filtersMetaRow}>
-                    <Text style={styles.filtersSubtitle}>Vista general</Text>
-                    <Text style={styles.filtersCount}>
-                        {statusFilter === "TODOS" ? `Todos · ${totalCount} resultados` : countLabel}
-                    </Text>
+            {/* Filtros */}
+            <View style={styles.filtersWrap}>
+                <View style={styles.filtersHeader}>
+                    <Text style={styles.filtersTitle}>Filtrar por estado</Text>
+                    <Text style={styles.totalCount}>{totalCount} total</Text>
                 </View>
-
-                <View style={styles.pillsRow}>
-                    <FilterChip
-                        label="Todos"
-                        selected={statusFilter === "TODOS"}
-                        color={filterColor("TODOS")}
-                        onPress={() => setStatusFilter("TODOS")}
-                    />
-                    <FilterChip
-                        label="Pendientes"
-                        selected={statusFilter === "PEND"}
-                        color={filterColor("PEND")}
-                        onPress={() => setStatusFilter("PEND")}
-                    />
-                    <FilterChip
-                        label="Aprobados"
-                        selected={statusFilter === "APROB"}
-                        color={filterColor("APROB")}
-                        onPress={() => setStatusFilter("APROB")}
-                    />
-                    <FilterChip
-                        label="Reprobados"
-                        selected={statusFilter === "REPROB"}
-                        color={filterColor("REPROB")}
-                        onPress={() => setStatusFilter("REPROB")}
-                    />
-                </View>
+                <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={styles.chipsRow}
+                >
+                    {FILTER_KEYS.map((key) => (
+                        <FilterChip
+                            key={key}
+                            label={`${filterLabel(key)} (${counts[key as keyof typeof counts]})`}
+                            selected={statusFilter === key}
+                            color={filterColor(key)}
+                            onPress={() => setStatusFilter(key)}
+                        />
+                    ))}
+                </ScrollView>
             </View>
 
             {body}
@@ -231,56 +267,85 @@ export default function RegistrationsScreen() {
 
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: theme.colors.bgSecondary },
-    filters: {
-        padding: theme.spacing.md,
-        borderBottomWidth: 1,
-        borderBottomColor: theme.colors.borderPrimary,
+
+    // Filtros
+    filtersWrap: {
         backgroundColor: theme.colors.bgPrimary,
-        gap: 10,
+        paddingHorizontal: theme.spacing.md,
+        paddingTop: theme.spacing.md,
+        paddingBottom: theme.spacing.sm,
+        borderBottomWidth: 1,
+        borderBottomColor: theme.colors.borderLight,
+        ...theme.shadow.xs,
     },
-    filtersTitle: { fontSize: 14, fontWeight: "900", color: theme.colors.textPrimary },
-    filtersMetaRow: { flexDirection: "row", alignItems: "baseline", justifyContent: "space-between", gap: 12 },
-    filtersSubtitle: { color: theme.colors.textSecondary, fontWeight: "800" },
-    filtersCount: { color: theme.colors.textSecondary, fontWeight: "800" },
-    pillsRow: { flexDirection: "row", flexWrap: "wrap", gap: 10, marginTop: 4 },
+    filtersHeader: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        marginBottom: 10,
+    },
+    filtersTitle: { fontSize: 14, fontWeight: "800", color: theme.colors.textPrimary },
+    totalCount: { fontSize: 12, fontWeight: "700", color: theme.colors.textTertiary },
+    chipsRow: { gap: 8, paddingBottom: 4 },
     chip: {
-        paddingVertical: 8,
-        paddingHorizontal: 12,
-        borderRadius: 999,
-        borderWidth: 1,
+        paddingVertical: 7,
+        paddingHorizontal: 14,
+        borderRadius: theme.radius.full,
+        borderWidth: 1.5,
     },
-    chipUnselected: { backgroundColor: theme.colors.bgPrimary },
-    chipText: { fontSize: 12, fontWeight: "900" },
-    center: { flex: 1, alignItems: "center", justifyContent: "center", padding: theme.spacing.lg },
-    errorText: { color: theme.colors.error, fontWeight: "900" },
-    list: { padding: theme.spacing.lg, gap: theme.spacing.md, paddingBottom: theme.spacing.xl },
-    emptyText: { color: theme.colors.textSecondary, fontWeight: "800", textAlign: "center", marginTop: theme.spacing.lg },
+    chipText: { fontSize: 12, fontWeight: "800" },
+
+    // Lista
+    center: { flex: 1, alignItems: "center", justifyContent: "center", padding: theme.spacing.lg, gap: 10 },
+    loadingText: { color: theme.colors.textSecondary, fontWeight: "700" },
+    errorText: { color: theme.colors.error, fontWeight: "700", textAlign: "center" },
+    list: { padding: theme.spacing.md, gap: 12, paddingBottom: theme.spacing.xl },
+
+    // Tarjetas
     card: {
         backgroundColor: theme.colors.bgPrimary,
         borderRadius: theme.radius.lg,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
+        flexDirection: "row",
         overflow: "hidden",
         ...theme.shadow.sm,
     },
-    cardBody: { padding: theme.spacing.md },
-    rowTop: { flexDirection: "row", alignItems: "flex-start", justifyContent: "space-between", gap: 12 },
-    title: { flex: 1, fontWeight: "900", fontSize: 15, color: theme.colors.textPrimary },
-    badge: { paddingHorizontal: 10, paddingVertical: 6, borderRadius: 999 },
-    badgeText: { color: theme.colors.textInverse, fontWeight: "900", fontSize: 12, maxWidth: 130 },
-    metaRow: { marginTop: 8, flexDirection: "row", alignItems: "center", gap: 8 },
-    metaText: { color: theme.colors.textSecondary, fontWeight: "700", flex: 1 },
-    linkBtn: {
-        marginTop: 10,
-        height: 44,
-        borderRadius: theme.radius.md,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-        backgroundColor: theme.colors.bgPrimary,
+    cardAccent: { width: 5 },
+    cardBody: { flex: 1, padding: theme.spacing.md },
+    rowTop: {
         flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
+        alignItems: "flex-start",
+        justifyContent: "space-between",
         gap: 10,
     },
-    linkText: { color: theme.colors.primary, fontWeight: "900" },
+    cardTitle: { flex: 1, fontWeight: "800", fontSize: 15, color: theme.colors.textPrimary, lineHeight: 21 },
+    statusBadge: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 4,
+        paddingHorizontal: 9,
+        paddingVertical: 5,
+        borderRadius: theme.radius.full,
+        borderWidth: 1,
+    },
+    statusBadgeText: { fontSize: 11, fontWeight: "800" },
+    metaRow: { flexDirection: "row", alignItems: "center", gap: 6, marginTop: 8 },
+    metaText: { color: theme.colors.textTertiary, fontWeight: "600", fontSize: 12 },
+    proofBtn: {
+        marginTop: 12,
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 8,
+        paddingVertical: 10,
+        paddingHorizontal: 12,
+        borderRadius: theme.radius.sm,
+        backgroundColor: theme.colors.primaryLighter,
+        borderWidth: 1,
+        borderColor: theme.colors.primaryLight,
+    },
+    proofBtnText: { flex: 1, color: theme.colors.primary, fontWeight: "700", fontSize: 13 },
+
+    // Estado vacío
+    emptyState: { alignItems: "center", paddingVertical: theme.spacing.xxl, gap: 12 },
+    emptyTitle: { fontSize: 16, fontWeight: "800", color: theme.colors.textSecondary },
+    emptySubtitle: { color: theme.colors.textTertiary, textAlign: "center", lineHeight: 20, paddingHorizontal: theme.spacing.lg },
 });

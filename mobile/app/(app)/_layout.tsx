@@ -2,9 +2,33 @@ import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect } from "react";
 import { useRouter } from "expo-router";
+import { View, StyleSheet, Platform } from "react-native";
 import { theme } from "../../src/shared/theme";
 import { useAuthStore } from "../../src/store/authStore";
 import { isAdminRole } from "../../src/utils/roles";
+
+const TAB_BAR_HEIGHT = Platform.OS === "ios" ? 82 : 68;
+
+function TabIcon({ name, color, size, focused }: Readonly<{ name: keyof typeof Ionicons.glyphMap; color: string; size: number; focused: boolean }>) {
+    return (
+        <View style={[iconStyles.wrap, focused && iconStyles.wrapActive]}>
+            <Ionicons name={name} color={color} size={size} />
+        </View>
+    );
+}
+
+const iconStyles = StyleSheet.create({
+    wrap: {
+        width: 42,
+        height: 32,
+        borderRadius: 16,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    wrapActive: {
+        backgroundColor: theme.colors.primaryLight,
+    },
+});
 
 export default function AppLayout() {
     const router = useRouter();
@@ -30,7 +54,11 @@ export default function AppLayout() {
                 tabBarInactiveTintColor: theme.colors.textTertiary,
                 tabBarStyle: {
                     backgroundColor: theme.colors.bgPrimary,
-                    borderTopColor: theme.colors.borderPrimary,
+                    borderTopWidth: 0,
+                    height: TAB_BAR_HEIGHT,
+                    paddingBottom: Platform.OS === "ios" ? 22 : 10,
+                    paddingTop: 8,
+                    ...theme.shadow.tab,
                 },
                 tabBarItemStyle: {
                     alignItems: "center",
@@ -38,9 +66,8 @@ export default function AppLayout() {
                 },
                 tabBarLabelStyle: {
                     fontSize: 11,
-                    fontWeight: "800",
-                    paddingBottom: 2,
-                    textAlign: "center",
+                    fontWeight: "700",
+                    marginTop: 2,
                 },
             }}
         >
@@ -48,8 +75,8 @@ export default function AppLayout() {
                 name="index"
                 options={{
                     title: "Inicio",
-                    tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="home-outline" color={color} size={size} />
+                    tabBarIcon: ({ color, size, focused }) => (
+                        <TabIcon name="home-outline" color={color} size={size} focused={focused} />
                     ),
                 }}
             />
@@ -57,8 +84,8 @@ export default function AppLayout() {
                 name="events"
                 options={{
                     title: "Eventos",
-                    tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="calendar-outline" color={color} size={size} />
+                    tabBarIcon: ({ color, size, focused }) => (
+                        <TabIcon name="calendar-outline" color={color} size={size} focused={focused} />
                     ),
                 }}
             />
@@ -66,8 +93,8 @@ export default function AppLayout() {
                 name="registrations"
                 options={{
                     title: "Inscripciones",
-                    tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="clipboard-outline" color={color} size={size} />
+                    tabBarIcon: ({ color, size, focused }) => (
+                        <TabIcon name="clipboard-outline" color={color} size={size} focused={focused} />
                     ),
                 }}
             />
@@ -76,8 +103,8 @@ export default function AppLayout() {
                 name="profile"
                 options={{
                     title: "Perfil",
-                    tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="person-outline" color={color} size={size} />
+                    tabBarIcon: ({ color, size, focused }) => (
+                        <TabIcon name="person-outline" color={color} size={size} focused={focused} />
                     ),
                 }}
             />

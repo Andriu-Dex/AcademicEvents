@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as DocumentPicker from "expo-document-picker";
+import { LinearGradient } from "expo-linear-gradient";
 import { useQuery } from "@tanstack/react-query";
 import { AppHeader } from "../../src/components/AppHeader";
 import { toAbsoluteUrl } from "../../src/api/client";
@@ -71,7 +72,9 @@ function FieldRow({
 }: Readonly<{ label: string; value: string; icon: keyof typeof Ionicons.glyphMap }>) {
     return (
         <View style={styles.fieldRow}>
-            <Ionicons name={icon} size={18} color={theme.colors.primary} />
+            <View style={styles.fieldIconWrap}>
+                <Ionicons name={icon} size={16} color={theme.colors.primary} />
+            </View>
             <View style={{ flex: 1 }}>
                 <Text style={styles.fieldLabel}>{label}</Text>
                 <Text style={styles.fieldValue} numberOfLines={2}>
@@ -88,21 +91,28 @@ function ProfileHeader({
     role,
 }: Readonly<{ profileImageUrl: string | null; fullName: string; role: string }>) {
     return (
-        <View style={styles.avatarRow}>
-            {profileImageUrl ? (
-                <Image source={{ uri: toAbsoluteUrl(profileImageUrl) }} style={styles.avatar} />
-            ) : (
-                <View style={styles.avatarFallback} />
-            )}
-            <View style={{ flex: 1 }}>
-                <Text style={styles.name} numberOfLines={2}>
-                    {fullName}
-                </Text>
-                <Text style={styles.role} numberOfLines={1}>
-                    {formatRoleLabel(role)}
-                </Text>
+        <LinearGradient
+            colors={theme.gradients.header}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.profileHero}
+        >
+            <View style={styles.avatarContainer}>
+                {profileImageUrl ? (
+                    <Image source={{ uri: toAbsoluteUrl(profileImageUrl) }} style={styles.avatar} />
+                ) : (
+                    <View style={styles.avatarFallback}>
+                        <Ionicons name="person" size={34} color={theme.colors.primary} />
+                    </View>
+                )}
             </View>
-        </View>
+            <Text style={styles.heroName} numberOfLines={2}>
+                {fullName}
+            </Text>
+            <View style={styles.roleBadge}>
+                <Text style={styles.roleText}>{formatRoleLabel(role)}</Text>
+            </View>
+        </LinearGradient>
     );
 }
 
@@ -113,6 +123,13 @@ function registrationStatusLabel(status: string) {
     if (key === "REJECTED") return "Rechazada";
     if (key === "APPROVED") return "Aprobada";
     return status || "-";
+}
+
+function registrationStatusColor(status: string) {
+    const key = (status ?? "").trim().toUpperCase();
+    if (key === "ACCEPTED" || key === "APPROVED") return theme.colors.success;
+    if (key === "REJECTED") return theme.colors.error;
+    return theme.colors.warning;
 }
 
 function RecentRegistrationsSection({
@@ -129,19 +146,30 @@ function RecentRegistrationsSection({
         .slice(0, 4);
 
     return (
-        <View style={styles.card}>
-            <SectionTitle title="Mis Inscripciones Recientes" />
+        <View style={styles.sectionCard}>
+            <SectionTitle icon="clipboard-outline" title="Mis Inscripciones Recientes" />
             {recent.length === 0 ? (
-                <Text style={styles.hint}>Aun no tienes inscripciones recientes.</Text>
+                <View style={styles.emptyState}>
+                    <Ionicons name="clipboard-outline" size={28} color={theme.colors.textTertiary} />
+                    <Text style={styles.emptyText}>Aún no tienes inscripciones recientes.</Text>
+                </View>
             ) : (
                 recent.map((item) => (
                     <View key={item.id} style={styles.recentItem}>
-                        <Text style={styles.recentTitle} numberOfLines={2}>
-                            {item.event?.title ?? "Evento"}
-                        </Text>
-                        <Text style={styles.recentMeta}>
-                            {registrationStatusLabel(item.status)} · {formatDate(item.createdAt) || "Fecha no disponible"}
-                        </Text>
+                        <View style={[styles.recentStatusBar, { backgroundColor: registrationStatusColor(item.status) }]} />
+                        <View style={styles.recentContent}>
+                            <Text style={styles.recentTitle} numberOfLines={2}>
+                                {item.event?.title ?? "Evento"}
+                            </Text>
+                            <View style={styles.recentMeta}>
+                                <View style={[styles.statusPill, { backgroundColor: `${registrationStatusColor(item.status)}1a` }]}>
+                                    <Text style={[styles.statusPillText, { color: registrationStatusColor(item.status) }]}>
+                                        {registrationStatusLabel(item.status)}
+                                    </Text>
+                                </View>
+                                <Text style={styles.recentDate}>{formatDate(item.createdAt) || "Sin fecha"}</Text>
+                            </View>
+                        </View>
                     </View>
                 ))
             )}
@@ -149,8 +177,13 @@ function RecentRegistrationsSection({
     );
 }
 
-function SectionTitle({ title }: Readonly<{ title: string }>) {
-    return <Text style={styles.sectionTitle}>{title}</Text>;
+function SectionTitle({ title, icon }: Readonly<{ title: string; icon?: keyof typeof Ionicons.glyphMap }>) {
+    return (
+        <View style={styles.sectionTitleRow}>
+            {icon ? <Ionicons name={icon} size={16} color={theme.colors.primary} /> : null}
+            <Text style={styles.sectionTitle}>{title}</Text>
+        </View>
+    );
 }
 
 function PhotoSection({
@@ -165,8 +198,8 @@ function PhotoSection({
     onUploadImage: () => Promise<void>;
 }>) {
     return (
-        <View style={styles.section}>
-            <SectionTitle title="Foto de perfil" />
+        <View style={styles.subSection}>
+            <SectionTitle icon="camera-outline" title="Foto de perfil" />
             <Pressable style={styles.secondaryBtn} onPress={onPickImage} disabled={isSaving}>
                 <Ionicons name="image-outline" size={18} color={theme.colors.primary} />
                 <Text style={styles.secondaryBtnText} numberOfLines={1}>
@@ -202,8 +235,8 @@ function DocumentsSection({
     onUploadDocs: () => Promise<void>;
 }>) {
     return (
-        <View style={styles.section}>
-            <SectionTitle title="Documentos" />
+        <View style={styles.subSection}>
+            <SectionTitle icon="document-text-outline" title="Documentos" />
 
             <Pressable style={styles.secondaryBtn} onPress={() => onPickDoc("cedula")} disabled={isSaving}>
                 <Ionicons name="document-outline" size={18} color={theme.colors.primary} />
@@ -259,17 +292,14 @@ function DocumentsSection({
                 <Text style={styles.primaryBtnText}>{isSaving ? "Subiendo…" : "Subir documentos"}</Text>
             </Pressable>
 
-            {profileDocumentUrl ? null : (
-                <Text style={styles.hint}>
-                    No has subido ningún documento aún. Debes subir tu cédula y papeleta de votación.
+            <View style={styles.hintBox}>
+                <Ionicons name="information-circle-outline" size={14} color={theme.colors.textSecondary} />
+                <Text style={styles.hintText}>
+                    {isUtaEmail
+                        ? "Requerido: cédula, papeleta y matrícula."
+                        : "Requerido: cédula y papeleta."}
                 </Text>
-            )}
-
-            <Text style={styles.hint}>
-                {isUtaEmail
-                    ? "Requerido: cédula, papeleta y matrícula."
-                    : "Requerido: cédula y papeleta."}
-            </Text>
+            </View>
         </View>
     );
 }
@@ -378,12 +408,14 @@ export default function ProfileScreen() {
     if (profileQuery.isLoading) {
         body = (
             <View style={styles.center}>
-                <ActivityIndicator size="large" />
+                <ActivityIndicator size="large" color={theme.colors.primary} />
+                <Text style={styles.loadingText}>Cargando perfil...</Text>
             </View>
         );
     } else if (profileQuery.isError) {
         body = (
             <View style={styles.center}>
+                <Ionicons name="alert-circle-outline" size={48} color={theme.colors.error} />
                 <Text style={styles.errorText}>No se pudo cargar tu perfil.</Text>
             </View>
         );
@@ -396,38 +428,38 @@ export default function ProfileScreen() {
     } else {
         const fullName = `${profile.firstName} ${profile.lastName}`.trim();
         body = (
-            <ScrollView contentContainerStyle={styles.content}>
-                <View style={styles.card}>
-                    <ProfileHeader
-                        profileImageUrl={profile.profileImageUrl}
-                        fullName={fullName}
-                        role={profile.role}
+            <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+                <ProfileHeader
+                    profileImageUrl={profile.profileImageUrl}
+                    fullName={fullName}
+                    role={profile.role}
+                />
+
+                <View style={styles.sectionCard}>
+                    <SectionTitle icon="person-outline" title="Información Personal" />
+                    <FieldRow label="Correo electrónico" value={profile.email} icon="mail-outline" />
+                    <FieldRow label="Cédula de identidad" value={profile.idNumber} icon="card-outline" />
+                    <FieldRow label="Teléfono" value={profile.phone} icon="call-outline" />
+                    <FieldRow
+                        label="Fecha de registro"
+                        value={formatDate(profile.createdAt) || "No disponible"}
+                        icon="calendar-outline"
                     />
+                    <FieldRow
+                        label="Carrera"
+                        value={profile.career?.name ?? "No aplica"}
+                        icon="school-outline"
+                    />
+                </View>
 
-                    <View style={styles.section}>
-                        <SectionTitle title="Datos" />
-                        <FieldRow label="Correo" value={profile.email} icon="mail-outline" />
-                        <FieldRow label="Cédula" value={profile.idNumber} icon="card-outline" />
-                        <FieldRow label="Teléfono" value={profile.phone} icon="call-outline" />
-                        <FieldRow
-                            label="Fecha de registro"
-                            value={formatDate(profile.createdAt) || "No disponible"}
-                            icon="calendar-outline"
-                        />
-                        <FieldRow
-                            label="Carrera"
-                            value={profile.career?.name ?? "No aplica"}
-                            icon="school-outline"
-                        />
-                    </View>
-
+                <View style={styles.sectionCard}>
                     <PhotoSection
                         pickedImage={uploads.pickedImage}
                         isSaving={uploads.isSaving}
                         onPickImage={uploads.onPickImage}
                         onUploadImage={uploads.onUploadImage}
                     />
-
+                    <View style={styles.subDivider} />
                     <DocumentsSection
                         isUtaEmail={isUtaEmail}
                         docs={uploads.docs}
@@ -438,7 +470,12 @@ export default function ProfileScreen() {
                         onUploadDocs={uploads.onUploadDocs}
                     />
 
-                    {uploads.saveError ? <Text style={styles.errorInline}>{uploads.saveError}</Text> : null}
+                    {uploads.saveError ? (
+                        <View style={styles.errorBox}>
+                            <Ionicons name="warning-outline" size={16} color={theme.colors.error} />
+                            <Text style={styles.errorBoxText}>{uploads.saveError}</Text>
+                        </View>
+                    ) : null}
                 </View>
 
                 <RecentRegistrationsSection registrations={registrationsQuery.data ?? []} />
@@ -456,72 +493,185 @@ export default function ProfileScreen() {
 
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: theme.colors.bgSecondary },
-    content: { padding: theme.spacing.lg, paddingBottom: theme.spacing.xl, gap: theme.spacing.md },
-    center: { flex: 1, alignItems: "center", justifyContent: "center", padding: theme.spacing.lg },
-    errorText: { color: theme.colors.error, fontWeight: "900" },
-    card: {
+    content: { paddingBottom: theme.spacing.xl },
+    center: {
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+        padding: theme.spacing.lg,
+        gap: 12,
+    },
+    loadingText: { color: theme.colors.textSecondary, fontWeight: "700" },
+    errorText: { color: theme.colors.error, fontWeight: "700", textAlign: "center" },
+
+    // Hero profile header
+    profileHero: {
+        alignItems: "center",
+        paddingTop: theme.spacing.xl,
+        paddingBottom: theme.spacing.lg,
+        paddingHorizontal: theme.spacing.lg,
+    },
+    avatarContainer: {
+        width: 88,
+        height: 88,
+        borderRadius: 44,
+        borderWidth: 3,
+        borderColor: "rgba(255,255,255,0.5)",
+        overflow: "hidden",
+        marginBottom: 12,
+        ...theme.shadow.md,
+    },
+    avatar: { width: "100%", height: "100%", backgroundColor: theme.colors.bgTertiary },
+    avatarFallback: {
+        width: "100%",
+        height: "100%",
+        backgroundColor: theme.colors.bgSecondary,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    heroName: {
+        fontSize: 20,
+        fontWeight: "800",
+        color: theme.colors.textInverse,
+        textAlign: "center",
+        letterSpacing: 0.2,
+    },
+    roleBadge: {
+        marginTop: 8,
+        paddingHorizontal: 14,
+        paddingVertical: 5,
+        borderRadius: theme.radius.full,
+        backgroundColor: "rgba(255,255,255,0.2)",
+        borderWidth: 1,
+        borderColor: "rgba(255,255,255,0.3)",
+    },
+    roleText: {
+        color: theme.colors.textInverse,
+        fontSize: 12,
+        fontWeight: "700",
+    },
+
+    // Cards
+    sectionCard: {
+        margin: theme.spacing.md,
+        marginTop: theme.spacing.md,
         backgroundColor: theme.colors.bgPrimary,
         borderRadius: theme.radius.lg,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-        padding: theme.spacing.lg,
+        padding: theme.spacing.md,
         ...theme.shadow.sm,
     },
-    avatarRow: { flexDirection: "row", alignItems: "center", gap: 14 },
-    avatar: { width: 72, height: 72, borderRadius: 36, backgroundColor: theme.colors.bgTertiary },
-    avatarFallback: { width: 72, height: 72, borderRadius: 36, backgroundColor: theme.colors.bgTertiary },
-    name: { fontSize: 18, fontWeight: "900", color: theme.colors.textPrimary },
-    role: { marginTop: 4, color: theme.colors.textSecondary, fontWeight: "800" },
-    section: { marginTop: theme.spacing.lg, gap: 10 },
-    sectionTitle: { fontSize: 16, fontWeight: "900", color: theme.colors.textPrimary },
-    fieldRow: { flexDirection: "row", alignItems: "flex-start", gap: 10 },
-    fieldLabel: { color: theme.colors.textTertiary, fontWeight: "800", fontSize: 12 },
-    fieldValue: { color: theme.colors.textPrimary, fontWeight: "800" },
+    sectionTitleRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 8,
+        marginBottom: theme.spacing.sm,
+        paddingBottom: theme.spacing.xs,
+        borderBottomWidth: 1,
+        borderBottomColor: theme.colors.borderLight,
+    },
+    sectionTitle: { fontSize: 15, fontWeight: "800", color: theme.colors.textPrimary },
+
+    // Field rows
+    fieldRow: {
+        flexDirection: "row",
+        alignItems: "flex-start",
+        gap: 12,
+        paddingVertical: 9,
+        borderBottomWidth: 1,
+        borderBottomColor: theme.colors.borderLight,
+    },
+    fieldIconWrap: {
+        width: 32,
+        height: 32,
+        borderRadius: 10,
+        backgroundColor: theme.colors.primaryLight,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    fieldLabel: { color: theme.colors.textTertiary, fontWeight: "700", fontSize: 11, marginBottom: 2 },
+    fieldValue: { color: theme.colors.textPrimary, fontWeight: "700", fontSize: 14 },
+
+    subSection: { gap: 10 },
+    subDivider: { height: 1, backgroundColor: theme.colors.borderLight, marginVertical: theme.spacing.md },
+
     primaryBtn: {
-        height: 46,
+        height: 48,
         backgroundColor: theme.colors.primary,
         borderRadius: theme.radius.md,
         alignItems: "center",
         justifyContent: "center",
     },
-    primaryBtnText: { color: theme.colors.textInverse, fontWeight: "900" },
+    primaryBtnText: { color: theme.colors.textInverse, fontWeight: "800", fontSize: 14 },
     secondaryBtn: {
-        height: 46,
-        backgroundColor: theme.colors.bgPrimary,
+        height: 48,
+        backgroundColor: theme.colors.bgSecondary,
         borderRadius: theme.radius.md,
-        borderWidth: 1,
+        borderWidth: 1.5,
         borderColor: theme.colors.borderPrimary,
         flexDirection: "row",
         alignItems: "center",
-        justifyContent: "center",
         gap: 10,
-        paddingHorizontal: 12,
+        paddingHorizontal: 14,
     },
-    secondaryBtnText: { flex: 1, color: theme.colors.primary, fontWeight: "900" },
+    secondaryBtnText: { flex: 1, color: theme.colors.primary, fontWeight: "700", fontSize: 13 },
     linkBtn: {
         height: 46,
         borderRadius: theme.radius.md,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-        backgroundColor: theme.colors.bgPrimary,
+        borderWidth: 1.5,
+        borderColor: theme.colors.primaryLight,
+        backgroundColor: theme.colors.primaryLighter,
         flexDirection: "row",
         alignItems: "center",
-        justifyContent: "center",
         gap: 10,
-        paddingHorizontal: 12,
+        paddingHorizontal: 14,
     },
-    linkText: { flex: 1, color: theme.colors.primary, fontWeight: "900" },
-    btnDisabled: { opacity: 0.6 },
-    hint: { color: theme.colors.textSecondary, fontWeight: "700", lineHeight: 18 },
-    errorInline: { marginTop: theme.spacing.md, color: theme.colors.error, fontWeight: "900" },
-    recentItem: {
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-        borderRadius: theme.radius.md,
-        paddingHorizontal: 12,
-        paddingVertical: 10,
+    linkText: { flex: 1, color: theme.colors.primary, fontWeight: "700", fontSize: 13 },
+    btnDisabled: { opacity: 0.5 },
+    hintBox: {
+        flexDirection: "row",
+        alignItems: "flex-start",
+        gap: 6,
         backgroundColor: theme.colors.bgSecondary,
+        borderRadius: theme.radius.sm,
+        padding: 10,
     },
-    recentTitle: { color: theme.colors.textPrimary, fontWeight: "900" },
-    recentMeta: { color: theme.colors.textSecondary, fontWeight: "700", marginTop: 4 },
+    hintText: { flex: 1, color: theme.colors.textSecondary, fontWeight: "600", lineHeight: 18, fontSize: 12 },
+    errorBox: {
+        flexDirection: "row",
+        alignItems: "flex-start",
+        gap: 8,
+        backgroundColor: theme.colors.errorLight,
+        borderRadius: theme.radius.sm,
+        padding: theme.spacing.sm,
+        borderWidth: 1,
+        borderColor: "rgba(239,68,68,0.2)",
+    },
+    errorBoxText: { flex: 1, color: theme.colors.error, fontWeight: "600", lineHeight: 18, fontSize: 12 },
+
+    // Recent registrations
+    emptyState: { alignItems: "center", gap: 8, paddingVertical: theme.spacing.md },
+    emptyText: { color: theme.colors.textTertiary, fontWeight: "600", textAlign: "center", fontSize: 13 },
+    recentItem: {
+        flexDirection: "row",
+        borderRadius: theme.radius.md,
+        backgroundColor: theme.colors.bgSecondary,
+        overflow: "hidden",
+        marginBottom: 8,
+    },
+    recentStatusBar: { width: 4, borderRadius: 2 },
+    recentContent: { flex: 1, padding: 12 },
+    recentTitle: { color: theme.colors.textPrimary, fontWeight: "800", fontSize: 14 },
+    recentMeta: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 8,
+        marginTop: 6,
+    },
+    statusPill: {
+        paddingHorizontal: 8,
+        paddingVertical: 3,
+        borderRadius: theme.radius.full,
+    },
+    statusPillText: { fontSize: 11, fontWeight: "800" },
+    recentDate: { color: theme.colors.textTertiary, fontSize: 11, fontWeight: "600" },
 });

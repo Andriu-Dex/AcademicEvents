@@ -552,21 +552,24 @@ export function HomeContent(
                 {!isLoading && !isError
                     ? highlightedEvents.map((event) => (
                         <View key={event.id} style={styles.eventCard}>
-                            <View style={styles.eventHeader}>
-                                <Text style={styles.eventTitle}>{event.title}</Text>
-                                <View style={styles.datePill}>
-                                    <Text style={styles.datePillText}>{formatEventDate(event.date)}</Text>
+                            <View style={styles.eventCardAccent} />
+                            <View style={styles.eventCardInner}>
+                                <View style={styles.eventHeader}>
+                                    <Text style={styles.eventTitle}>{event.title}</Text>
+                                    <View style={styles.datePill}>
+                                        <Text style={styles.datePillText}>{formatEventDate(event.date)}</Text>
+                                    </View>
                                 </View>
+                                <View style={styles.locationRow}>
+                                    <Ionicons name="location-outline" size={14} color={theme.colors.textSecondary} />
+                                    <Text style={styles.locationText}>{event.location}</Text>
+                                </View>
+                                {event.description ? (
+                                    <Text numberOfLines={2} style={styles.eventDescription}>
+                                        {event.description}
+                                    </Text>
+                                ) : null}
                             </View>
-                            <View style={styles.locationRow}>
-                                <Ionicons name="location-outline" size={14} color={theme.colors.textSecondary} />
-                                <Text style={styles.locationText}>{event.location}</Text>
-                            </View>
-                            {event.description ? (
-                                <Text numberOfLines={2} style={styles.eventDescription}>
-                                    {event.description}
-                                </Text>
-                            ) : null}
                         </View>
                     ))
                     : null}
@@ -866,7 +869,7 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         zIndex: 20,
-        paddingTop: 44,
+        paddingTop: 48,
         paddingBottom: 12,
         backgroundColor: "rgba(138, 21, 56, 0.96)",
         borderBottomColor: "rgba(255,255,255,0.18)",
@@ -1020,67 +1023,70 @@ const styles = StyleSheet.create({
         lineHeight: 20,
     },
     heroActions: {
-        marginTop: 6,
+        marginTop: 8,
         flexDirection: "row",
         gap: 10,
     },
     primaryAction: {
         flex: 1,
-        minHeight: 44,
-        borderRadius: theme.radius.sm,
-        backgroundColor: "rgba(255,255,255,0.2)",
+        minHeight: 48,
+        borderRadius: theme.radius.md,
+        backgroundColor: "rgba(255,255,255,0.22)",
         alignItems: "center",
         justifyContent: "center",
         flexDirection: "row",
         gap: 8,
-        paddingHorizontal: 8,
+        paddingHorizontal: 10,
+        borderWidth: 1,
+        borderColor: "rgba(255,255,255,0.3)",
     },
     primaryActionText: {
         color: theme.colors.textInverse,
-        fontSize: 12,
-        fontWeight: "700",
+        fontSize: 13,
+        fontWeight: "800",
         textAlign: "center",
     },
     secondaryAction: {
         flex: 1,
-        minHeight: 44,
-        borderRadius: theme.radius.sm,
+        minHeight: 48,
+        borderRadius: theme.radius.md,
         backgroundColor: "#ffffff",
         alignItems: "center",
         justifyContent: "center",
         flexDirection: "row",
         gap: 8,
-        paddingHorizontal: 8,
+        paddingHorizontal: 10,
     },
     secondaryActionText: {
         color: theme.colors.primary,
-        fontSize: 12,
-        fontWeight: "700",
+        fontSize: 13,
+        fontWeight: "800",
         textAlign: "center",
     },
     statsGrid: {
-        marginTop: 4,
+        marginTop: 8,
         flexDirection: "row",
         flexWrap: "wrap",
         gap: 8,
     },
     statCard: {
         width: "48.5%",
-        borderRadius: theme.radius.sm,
-        padding: 10,
-        backgroundColor: "rgba(255,255,255,0.14)",
+        borderRadius: theme.radius.md,
+        padding: 12,
+        backgroundColor: "rgba(255,255,255,0.15)",
         borderWidth: 1,
-        borderColor: "rgba(255,255,255,0.2)",
+        borderColor: "rgba(255,255,255,0.22)",
     },
     statValue: {
         color: theme.colors.utaAccent,
-        fontSize: 18,
-        fontWeight: "800",
+        fontSize: 22,
+        fontWeight: "900",
+        letterSpacing: 0.2,
     },
     statLabel: {
-        color: theme.colors.textInverse,
+        color: "rgba(255,255,255,0.85)",
         fontSize: 11,
-        marginTop: 2,
+        marginTop: 3,
         fontWeight: "600",
     },
     sectionHeader: {
@@ -1172,13 +1178,20 @@ const styles = StyleSheet.create({
         textAlign: "center",
     },
     eventCard: {
-        borderRadius: theme.radius.md,
-        padding: theme.spacing.md,
+        borderRadius: theme.radius.lg,
         backgroundColor: theme.colors.bgPrimary,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
+        flexDirection: "row",
+        overflow: "hidden",
         ...theme.shadow.sm,
-        gap: 8,
+    },
+    eventCardAccent: {
+        width: 4,
+        backgroundColor: theme.colors.primary,
+    },
+    eventCardInner: {
+        flex: 1,
+        padding: theme.spacing.md,
+        gap: 6,
     },
     eventHeader: {
         flexDirection: "row",
@@ -1189,14 +1202,17 @@ const styles = StyleSheet.create({
     eventTitle: {
         flex: 1,
         fontSize: 15,
-        fontWeight: "700",
+        fontWeight: "800",
         color: theme.colors.textPrimary,
+        lineHeight: 21,
     },
     datePill: {
-        borderRadius: 999,
+        borderRadius: theme.radius.full,
         backgroundColor: theme.colors.primaryLight,
         paddingHorizontal: 10,
         paddingVertical: 5,
+        borderWidth: 1,
+        borderColor: "rgba(138,21,56,0.15)",
     },
     datePillText: {
         fontSize: 11,
@@ -1211,6 +1227,7 @@ const styles = StyleSheet.create({
     locationText: {
         fontSize: 12,
         color: theme.colors.textSecondary,
+        fontWeight: "600",
     },
     eventDescription: {
         fontSize: 12,
@@ -1304,115 +1321,112 @@ const styles = StyleSheet.create({
     },
     gridCard: {
         width: "48.5%",
-        borderRadius: theme.radius.md,
+        borderRadius: theme.radius.lg,
         backgroundColor: theme.colors.bgPrimary,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
+        borderWidth: 0,
         padding: theme.spacing.md,
         ...theme.shadow.sm,
     },
     gridIconWrap: {
-        width: 30,
-        height: 30,
-        borderRadius: 15,
+        width: 36,
+        height: 36,
+        borderRadius: 12,
         alignItems: "center",
         justifyContent: "center",
         backgroundColor: theme.colors.primaryLight,
     },
     gridTitle: {
         marginTop: 10,
-        fontSize: 14,
-        fontWeight: "700",
+        fontSize: 13,
+        fontWeight: "800",
         color: theme.colors.textPrimary,
+        lineHeight: 18,
     },
     gridText: {
-        marginTop: 6,
-        fontSize: 12,
-        lineHeight: 18,
+        marginTop: 4,
+        fontSize: 11,
+        lineHeight: 16,
         color: theme.colors.textSecondary,
     },
     badgesRow: {
         flexDirection: "row",
         flexWrap: "wrap",
-        gap: 6,
+        gap: 4,
         marginTop: 8,
     },
     badge: {
         paddingHorizontal: 8,
         paddingVertical: 4,
-        borderRadius: 999,
+        borderRadius: theme.radius.full,
         backgroundColor: theme.colors.primaryLight,
         color: theme.colors.primary,
-        fontSize: 11,
+        fontSize: 10,
         fontWeight: "700",
     },
     identityCard: {
-        borderRadius: theme.radius.md,
+        borderRadius: theme.radius.lg,
         backgroundColor: theme.colors.bgPrimary,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
         padding: theme.spacing.md,
         ...theme.shadow.sm,
     },
     identityIconWrap: {
-        width: 34,
-        height: 34,
-        borderRadius: 17,
+        width: 38,
+        height: 38,
+        borderRadius: 12,
         alignItems: "center",
         justifyContent: "center",
         backgroundColor: theme.colors.primaryLight,
     },
     identityTitle: {
-        marginTop: 8,
-        fontSize: 16,
+        marginTop: 10,
+        fontSize: 17,
         fontWeight: "800",
         color: theme.colors.textPrimary,
     },
     identityText: {
-        marginTop: 6,
+        marginTop: 8,
         fontSize: 13,
-        lineHeight: 20,
+        lineHeight: 21,
         color: theme.colors.textSecondary,
-        textAlign: "justify",
     },
     contactCard: {
-        borderRadius: theme.radius.md,
-        backgroundColor: "#fff7f9",
-        borderWidth: 1,
-        borderColor: "#f8c7d5",
+        borderRadius: theme.radius.lg,
+        backgroundColor: theme.colors.bgPrimary,
         padding: theme.spacing.md,
-        gap: 10,
+        gap: 12,
+        ...theme.shadow.sm,
     },
     contactActions: {
         flexDirection: "row",
-        gap: 8,
+        gap: 10,
     },
     contactPrimaryBtn: {
         flex: 1,
-        minHeight: 42,
-        borderRadius: theme.radius.sm,
+        minHeight: 48,
+        borderRadius: theme.radius.md,
         backgroundColor: theme.colors.primary,
         alignItems: "center",
         justifyContent: "center",
+        ...theme.shadow.primary,
     },
     contactPrimaryBtnText: {
         color: theme.colors.textInverse,
-        fontWeight: "700",
+        fontWeight: "800",
         fontSize: 13,
     },
     contactSecondaryBtn: {
         flex: 1,
-        minHeight: 42,
-        borderRadius: theme.radius.sm,
-        borderWidth: 1,
+        minHeight: 48,
+        borderRadius: theme.radius.md,
+        borderWidth: 1.5,
         borderColor: theme.colors.primary,
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: theme.colors.bgPrimary,
+        backgroundColor: theme.colors.primaryLighter,
     },
     contactSecondaryBtnText: {
         color: theme.colors.primary,
-        fontWeight: "700",
+        fontWeight: "800",
         fontSize: 13,
     },
     footer: {
