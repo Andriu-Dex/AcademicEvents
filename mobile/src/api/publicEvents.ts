@@ -34,6 +34,9 @@ export type PublicEvent = {
     location: string;
     description: string;
     status: string;
+    coverImageUrl?: string;
+    modality?: string;
+    price?: number;
 };
 
 export type PublicEventExtended = {

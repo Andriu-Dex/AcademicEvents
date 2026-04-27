@@ -50,6 +50,7 @@ class EventoDestacado {
     this.id = evento.id ?? evento.id_eve;
     this.titulo = evento.name ?? evento.nom_eve ?? evento.title ?? "Evento";
     this.descripcion = evento.description ?? evento.des_eve ?? "";
+    this.lugar = evento.location ?? evento.lug_eve ?? evento.lugar ?? "Lugar por confirmar";
     this.fechaInicio = EventoDestacado.safeDate(
       evento.startDate ?? evento.fec_ini_eve
     );

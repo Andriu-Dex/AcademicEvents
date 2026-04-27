@@ -319,6 +319,8 @@ export function HomeContent(
     const scrollRef = useRef<ScrollView | null>(null);
     const [authorityIndex, setAuthorityIndex] = useState(0);
     const authorityScrollX = useRef(new Animated.Value(0)).current;
+    const [featuredIndex, setFeaturedIndex] = useState(0);
+    const featuredScrollX = useRef(new Animated.Value(0)).current;
     const [sectionOffsets, setSectionOffsets] = useState<Record<SectionKey, number>>({
         inicio: 0,
         eventos: 0,
@@ -382,7 +384,6 @@ export function HomeContent(
                 .sort((a, b) => a.displayOrder - b.displayOrder),
         [footerUniversity.socialLinks]
     );
-
     const handleSectionLayout = (key: SectionKey) => (event: LayoutChangeEvent) => {
         const y = event.nativeEvent.layout.y;
         setSectionOffsets((prev) => ({ ...prev, [key]: y }));
@@ -407,6 +408,8 @@ export function HomeContent(
     const screenWidth = Dimensions.get("window").width;
     const authorityCardWidth = Math.min(screenWidth * 0.82, 360);
     const authoritySidePadding = Math.max(0, (screenWidth - authorityCardWidth) / 2);
+    const featuredCardWidth = Math.min(screenWidth * 0.86, 370);
+    const featuredSidePadding = Math.max(0, (screenWidth - featuredCardWidth) / 2);
 
     return (
         <LinearGradient colors={["#f8eff2", "#ffffff"]} style={styles.container}>
@@ -521,8 +524,9 @@ export function HomeContent(
                 </View>
 
                 <View onLayout={handleSectionLayout("eventos")}>
-                    <View style={styles.sectionHeader}>
-                        <Text style={styles.sectionTitle}>Eventos Destacados</Text>
+                    <View style={styles.sectionHeaderCentered}>
+                        <Text style={styles.sectionTitleBrand}>Eventos Destacados</Text>
+                        <Text style={styles.sectionSubtitle}>Descubre las actividades mas relevantes del momento</Text>
                     </View>
                 </View>
 
@@ -544,35 +548,136 @@ export function HomeContent(
 
                 {!isLoading && !isError && highlightedEvents.length === 0 ? (
                     <View style={styles.emptyCard}>
-                        <Ionicons name="calendar-clear-outline" size={26} color={theme.colors.textTertiary} />
-                        <Text style={styles.emptyText}>Aún no hay eventos destacados disponibles.</Text>
+                        <Text style={styles.emptyText}>No hay eventos destacados disponibles por el momento.</Text>
                     </View>
                 ) : null}
 
-                {!isLoading && !isError
-                    ? highlightedEvents.map((event) => (
-                        <View key={event.id} style={styles.eventCard}>
-                            <View style={styles.eventCardAccent} />
-                            <View style={styles.eventCardInner}>
-                                <View style={styles.eventHeader}>
-                                    <Text style={styles.eventTitle}>{event.title}</Text>
-                                    <View style={styles.datePill}>
-                                        <Text style={styles.datePillText}>{formatEventDate(event.date)}</Text>
-                                    </View>
-                                </View>
-                                <View style={styles.locationRow}>
-                                    <Ionicons name="location-outline" size={14} color={theme.colors.textSecondary} />
-                                    <Text style={styles.locationText}>{event.location}</Text>
-                                </View>
-                                {event.description ? (
-                                    <Text numberOfLines={2} style={styles.eventDescription}>
-                                        {event.description}
-                                    </Text>
-                                ) : null}
-                            </View>
+                {!isLoading && !isError && highlightedEvents.length > 0 ? (
+                    <View style={styles.featuredCarouselWrap}>
+                        <Animated.FlatList
+                            data={highlightedEvents}
+                            keyExtractor={(item, index) => `featured-${item.id || item.title}-${index}`}
+                            horizontal
+                            showsHorizontalScrollIndicator={false}
+                            snapToInterval={featuredCardWidth}
+                            snapToAlignment="start"
+                            decelerationRate="fast"
+                            contentContainerStyle={{ paddingHorizontal: featuredSidePadding }}
+                            onScroll={Animated.event(
+                                [{ nativeEvent: { contentOffset: { x: featuredScrollX } } }],
+                                {
+                                    useNativeDriver: true,
+                                    listener: (event) => {
+                                        const x = (event as any).nativeEvent.contentOffset.x as number;
+                                        const next = Math.round(x / featuredCardWidth);
+                                        if (Number.isFinite(next) && next !== featuredIndex) {
+                                            setFeaturedIndex(next);
+                                        }
+                                    },
+                                }
+                            )}
+                            scrollEventThrottle={16}
+                            renderItem={({ item, index }) => {
+                                const inputRange = [
+                                    (index - 1) * featuredCardWidth,
+                                    index * featuredCardWidth,
+                                    (index + 1) * featuredCardWidth,
+                                ];
+
+                                const scale = featuredScrollX.interpolate({
+                                    inputRange,
+                                    outputRange: [0.96, 1, 0.96],
+                                    extrapolate: "clamp",
+                                });
+
+                                const opacity = featuredScrollX.interpolate({
+                                    inputRange,
+                                    outputRange: [0.78, 1, 0.78],
+                                    extrapolate: "clamp",
+                                });
+
+                                return (
+                                    <Animated.View
+                                        style={[
+                                            styles.featuredSlide,
+                                            { width: featuredCardWidth, transform: [{ scale }], opacity },
+                                        ]}
+                                    >
+                                        <View style={styles.featuredCard}>
+                                            <View style={styles.featuredImageWrap}>
+                                                {item.coverImageUrl ? (
+                                                    <Image
+                                                        source={{ uri: toAbsoluteUrl(item.coverImageUrl) }}
+                                                        style={styles.featuredImage}
+                                                        resizeMode="cover"
+                                                    />
+                                                ) : (
+                                                    <View style={styles.featuredImageFallback}>
+                                                        <Ionicons name="image-outline" size={28} color={theme.colors.primary} />
+                                                    </View>
+                                                )}
+                                                <LinearGradient
+                                                    colors={["transparent", "rgba(26,31,46,0.78)"]}
+                                                    style={styles.featuredImageOverlay}
+                                                />
+                                                <View style={styles.featuredBadge}>
+                                                    <Ionicons name="star" size={12} color={theme.colors.utaAccent} />
+                                                    <Text style={styles.featuredBadgeText}>Destacado</Text>
+                                                </View>
+                                            </View>
+
+                                            <View style={styles.featuredBody}>
+                                                <View style={styles.eventHeader}>
+                                                    <Text style={styles.eventTitle} numberOfLines={2}>
+                                                        {item.title}
+                                                    </Text>
+                                                    <View style={styles.datePill}>
+                                                        <Text style={styles.datePillText}>{formatEventDate(item.date)}</Text>
+                                                    </View>
+                                                </View>
+
+                                                <View style={styles.featuredMetaRow}>
+                                                    {item.modality ? (
+                                                        <View style={styles.featuredMetaPill}>
+                                                            <Ionicons name="desktop-outline" size={12} color={theme.colors.primary} />
+                                                            <Text style={styles.featuredMetaText}>{item.modality}</Text>
+                                                        </View>
+                                                    ) : null}
+                                                    <View style={styles.featuredMetaPill}>
+                                                        <Ionicons name="pricetag-outline" size={12} color={theme.colors.primary} />
+                                                        <Text style={styles.featuredMetaText}>
+                                                            {(item.price ?? 0) > 0 ? `$${(item.price ?? 0).toFixed(2)}` : "Gratuito"}
+                                                        </Text>
+                                                    </View>
+                                                    {item.status ? (
+                                                        <View style={styles.featuredMetaPill}>
+                                                            <Ionicons name="checkmark-circle-outline" size={12} color={theme.colors.primary} />
+                                                            <Text style={styles.featuredMetaText}>{item.status}</Text>
+                                                        </View>
+                                                    ) : null}
+                                                </View>
+
+                                                {item.description ? (
+                                                    <Text numberOfLines={3} style={styles.eventDescription}>
+                                                        {item.description}
+                                                    </Text>
+                                                ) : null}
+                                            </View>
+                                        </View>
+                                    </Animated.View>
+                                );
+                            }}
+                        />
+                        <View style={styles.carouselDots}>
+                            {highlightedEvents.map((item, idx) => (
+                                <View
+                                    key={`featured-dot-${item.id || item.title}-${idx}`}
+                                    style={[styles.carouselDot, idx === featuredIndex ? styles.carouselDotActive : null]}
+                                />
+                            ))}
                         </View>
-                    ))
-                    : null}
+                    </View>
+                ) : null}
 
                 <View onLayout={handleSectionLayout("autoridades")}>
                     <View style={styles.sectionHeaderCentered}>
@@ -1176,6 +1281,80 @@ const styles = StyleSheet.create({
         fontSize: 13,
         color: theme.colors.textSecondary,
         textAlign: "center",
+    },
+    featuredCarouselWrap: {
+        gap: 10,
+    },
+    featuredSlide: {
+        paddingVertical: 2,
+    },
+    featuredCard: {
+        borderRadius: theme.radius.lg,
+        backgroundColor: theme.colors.bgPrimary,
+        overflow: "hidden",
+        ...theme.shadow.md,
+    },
+    featuredImageWrap: {
+        height: 190,
+        backgroundColor: theme.colors.primaryLight,
+        position: "relative",
+    },
+    featuredImage: {
+        width: "100%",
+        height: "100%",
+    },
+    featuredImageFallback: {
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: theme.colors.primaryLight,
+    },
+    featuredImageOverlay: {
+        position: "absolute",
+        left: 0,
+        right: 0,
+        bottom: 0,
+        height: 90,
+    },
+    featuredBadge: {
+        position: "absolute",
+        top: 12,
+        left: 12,
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 6,
+        backgroundColor: "rgba(26,31,46,0.78)",
+        borderRadius: theme.radius.full,
+        paddingHorizontal: 10,
+        paddingVertical: 6,
+    },
+    featuredBadgeText: {
+        color: theme.colors.textInverse,
+        fontSize: 11,
+        fontWeight: "800",
+    },
+    featuredBody: {
+        padding: theme.spacing.md,
+        gap: 8,
+    },
+    featuredMetaRow: {
+        flexDirection: "row",
+        flexWrap: "wrap",
+        gap: 8,
+    },
+    featuredMetaPill: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 6,
+        borderRadius: theme.radius.full,
+        backgroundColor: theme.colors.primaryLight,
+        paddingHorizontal: 10,
+        paddingVertical: 6,
+    },
+    featuredMetaText: {
+        color: theme.colors.primary,
+        fontSize: 11,
+        fontWeight: "700",
     },
     eventCard: {
         borderRadius: theme.radius.lg,

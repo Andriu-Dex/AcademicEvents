@@ -1,11 +1,44 @@
 import { useEffect } from "react";
 import { AppState, Platform } from "react-native";
-import * as Notifications from "expo-notifications";
+import Constants from "expo-constants";
 import { registerPushToken } from "../../api/notifications";
 
-let notificationHandlerConfigured = false;
+type NotificationsModule = typeof import("expo-notifications");
 
-function ensureNotificationHandler() {
+let notificationHandlerConfigured = false;
+let expoGoWarningShown = false;
+let notificationsModulePromise: Promise<NotificationsModule | null> | null = null;
+
+function isExpoGo() {
+    return Constants.appOwnership === "expo";
+}
+
+async function loadNotificationsModule(): Promise<NotificationsModule | null> {
+    if (Platform.OS === "web") {
+        return null;
+    }
+
+    if (isExpoGo()) {
+        if (__DEV__ && !expoGoWarningShown) {
+            console.warn("[PUSH] Expo Go no soporta push remoto en Android desde SDK 53. Usa un development build.");
+            expoGoWarningShown = true;
+        }
+        return null;
+    }
+
+    if (!notificationsModulePromise) {
+        notificationsModulePromise = import("expo-notifications")
+            .then((module) => module)
+            .catch((error) => {
+                notificationsModulePromise = null;
+                throw error;
+            });
+    }
+
+    return notificationsModulePromise;
+}
+
+function ensureNotificationHandler(Notifications: NotificationsModule) {
     if (notificationHandlerConfigured) return;
     Notifications.setNotificationHandler({
         handleNotification: async () => ({
@@ -20,7 +53,10 @@ function ensureNotificationHandler() {
 }
 
 async function syncPushToken() {
-    ensureNotificationHandler();
+    const Notifications = await loadNotificationsModule();
+    if (!Notifications) return;
+
+    ensureNotificationHandler(Notifications);
 
     if (Platform.OS === "android") {
         await Notifications.setNotificationChannelAsync("default", {

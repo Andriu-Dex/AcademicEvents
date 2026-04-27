@@ -281,6 +281,12 @@ const EventosDestacados = ({ eventUpdate }) => {
     }
   }, []);
 
+  const formatModalidad = useCallback((modalidad) => {
+    if (!modalidad) return "Sin modalidad";
+    const clean = String(modalidad).trim().toLowerCase();
+    return clean.charAt(0).toUpperCase() + clean.slice(1);
+  }, []);
+
   // Formatear fecha en español
   const formatFecha = useCallback((fechaString) => {
     if (!fechaString) {
@@ -389,13 +395,16 @@ const EventosDestacados = ({ eventUpdate }) => {
                 key={`evento-${evento.id}-${index}`}
               >
                 <div className="evento-image-container-ed">
-                  <img
-                    src={evento.imagen}
-                    alt={evento.titulo}
-                    className="evento-image-ed"
-                  />
+	                  <img
+	                    src={evento.imagen}
+	                    alt={evento.titulo}
+	                    className="evento-image-ed"
+	                    onError={(e) => {
+	                      e.currentTarget.src = "https://i.imgur.com/f8adUbZ.png";
+	                    }}
+	                  />
                   <span className="evento-badge-destacado-ed">
-                    ⭐ Destacado
+                    Destacado
                   </span>
                 </div>
 
@@ -403,23 +412,30 @@ const EventosDestacados = ({ eventUpdate }) => {
                   <h3 className="evento-titulo-ed">{evento.titulo}</h3>
 
                   <div className="evento-detalles-ed">
-                    <div className="evento-fecha-ed">
-                      <Calendar size={16} className="evento-icon-ed" />
-                      <span>{formatFecha(evento.fechaInicio)}</span>
-                    </div>
+	                    <div className="evento-fecha-ed">
+	                      <Calendar size={16} className="evento-icon-ed" />
+	                      <span>{formatFecha(evento.fechaInicio)}</span>
+	                    </div>
 
-                    <div className="evento-duracion-ed">
-                      <Clock size={16} className="evento-icon-ed" />
-                      <span>{evento.duracionHoras || 0} horas</span>
-                    </div>
+	                    <div className="evento-modalidad-ed">
+	                      <MapPin size={16} className="evento-icon-ed" />
+	                      <span>{evento.lugar || "Lugar por confirmar"}</span>
+	                    </div>
 
-                    <div className="evento-modalidad-ed">
-                      {getModalidadIcon(evento.modalidad)}
-                      <span>
-                        {evento.modalidad?.toLowerCase() || "Sin modalidad"}
-                      </span>
-                    </div>
-                  </div>
+	                    <div className="evento-duracion-ed">
+	                      <Clock size={16} className="evento-icon-ed" />
+	                      <span>{evento.duracionHoras || 0} horas</span>
+	                    </div>
+
+	                    <div className="evento-modalidad-ed">
+	                      {getModalidadIcon(evento.modalidad)}
+	                      <span>{formatModalidad(evento.modalidad)}</span>
+	                    </div>
+	                  </div>
+
+	                  {evento.descripcion ? (
+	                    <p className="evento-descripcion-ed">{evento.descripcion}</p>
+	                  ) : null}
 
                   <div className="evento-footer-ed">
                     <span
@@ -485,3 +501,5 @@ const EventosDestacados = ({ eventUpdate }) => {
 };
 
 export default EventosDestacados;
+
+

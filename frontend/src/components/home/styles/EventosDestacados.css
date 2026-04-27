@@ -11,6 +11,9 @@
 .eventos-destacados-header-ed {
   text-align: center;
   margin-bottom: 2rem;
+  max-width: 720px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .eventos-destacados-title-ed {
@@ -98,7 +101,20 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  margin-bottom: 1.25rem;
+  margin-bottom: 0.85rem;
+}
+
+.evento-descripcion-ed {
+  color: var(--color-text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.55;
+  margin: 0 0 1rem;
+  min-height: 4.4rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .evento-fecha-ed,
