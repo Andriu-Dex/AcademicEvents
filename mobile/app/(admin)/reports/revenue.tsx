@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { ActivityIndicator, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useQuery } from "@tanstack/react-query";
+import { Ionicons } from "@expo/vector-icons";
 import { AppHeader } from "../../../src/components/AppHeader";
 import { DataList, JsonPreview, MetricCard, SectionCard, formatCurrency, formatNumber, formatPercent } from "../../../src/components/AdminReportWidgets";
 import {
@@ -10,15 +11,29 @@ import {
     fetchRevenueProfitableEvents,
     fetchRevenueRejectedReceipts,
 } from "../../../src/api/adminReports";
+import { downloadReportPdf } from "../../../src/utils/reportDownload";
+import { joinReportText, pickReportText } from "../../../src/utils/reportText";
 import { theme } from "../../../src/shared/theme";
 
-const EVENT_TYPES = ["todos", "COURSE", "CONGRESS", "WEBINAR", "TALK", "SOCIALIZATION"];
-const PAYMENT_STATES = ["todos", "CONFIRMED", "PENDING", "REJECTED"];
+const EVENT_TYPES = [
+    { value: "todos", label: "Todos los tipos" },
+    { value: "COURSE", label: "Curso" },
+    { value: "CONGRESS", label: "Congreso" },
+    { value: "WEBINAR", label: "Webinar" },
+    { value: "TALK", label: "Charla" },
+    { value: "SOCIALIZATION", label: "Socialización" },
+];
+const PAYMENT_STATES = [
+    { value: "todos", label: "Todos los estados" },
+    { value: "CONFIRMED", label: "Confirmado" },
+    { value: "PENDING", label: "Pendiente" },
+    { value: "REJECTED", label: "Rechazado" },
+];
 
 const DATE_RANGES = [
-    { key: "30", label: "Ultimos 30 dias", days: 30 },
-    { key: "90", label: "Ultimos 90 dias", days: 90 },
-    { key: "180", label: "Ultimos 180 dias", days: 180 },
+    { key: "30", label: "Últimos 30 días", days: 30 },
+    { key: "90", label: "Últimos 90 días", days: 90 },
+    { key: "180", label: "Últimos 180 días", days: 180 },
 ];
 
 function formatDateParam(date: Date) {
@@ -32,6 +47,7 @@ export default function AdminReportRevenueScreen() {
     const [rangeDays, setRangeDays] = useState(30);
     const [eventType, setEventType] = useState("todos");
     const [paymentState, setPaymentState] = useState("todos");
+    const [loadingPdf, setLoadingPdf] = useState(false);
 
     const params = useMemo(() => {
         const now = new Date();
@@ -83,8 +99,8 @@ export default function AdminReportRevenueScreen() {
     const byTypeRows = useMemo(() => {
         const list = Array.isArray(byTypeQuery.data) ? (byTypeQuery.data as Array<Record<string, unknown>>) : [];
         return list.map((item) => ({
-            title: String(item.tipoEvento ?? "Tipo"),
-            subtitle: `${formatNumber(item.cantidadEventos)} eventos � ${formatNumber(item.inscripcionesTotales)} inscripciones`,
+            title: pickReportText(item.tipoEvento, "Tipo"),
+            subtitle: joinReportText([`${formatNumber(item.cantidadEventos)} eventos`, `${formatNumber(item.inscripcionesTotales)} inscripciones`]),
             right: formatCurrency(item.revenueTotal),
         }));
     }, [byTypeQuery.data]);
@@ -94,8 +110,8 @@ export default function AdminReportRevenueScreen() {
             ? (profitableQuery.data as Array<Record<string, unknown>>)
             : [];
         return list.map((item) => ({
-            title: String(item.nombreEvento ?? "Evento"),
-            subtitle: `${String(item.tipoEvento ?? "")} � Conversion ${formatPercent(item.tasaConversion)}`,
+            title: pickReportText(item.nombreEvento, "Evento"),
+            subtitle: joinReportText([pickReportText(item.tipoEvento, ""), `Conversión ${formatPercent(item.tasaConversion)}`]),
             right: formatCurrency(item.revenueTotal),
         }));
     }, [profitableQuery.data]);
@@ -103,8 +119,8 @@ export default function AdminReportRevenueScreen() {
     const trendRows = useMemo(() => {
         const list = Array.isArray(trendsQuery.data) ? (trendsQuery.data as Array<Record<string, unknown>>) : [];
         return list.map((item) => ({
-            title: String(item.periodo ?? "Periodo"),
-            subtitle: `${formatNumber(item.cantidadEventos)} eventos � ${formatNumber(item.inscripcionesTotales)} inscripciones`,
+            title: pickReportText(item.periodo, "Periodo"),
+            subtitle: joinReportText([`${formatNumber(item.cantidadEventos)} eventos`, `${formatNumber(item.inscripcionesTotales)} inscripciones`]),
             right: formatCurrency(item.revenueTotal),
         }));
     }, [trendsQuery.data]);
@@ -112,18 +128,38 @@ export default function AdminReportRevenueScreen() {
     const rejectedRows = useMemo(() => {
         const list = Array.isArray(rejectedQuery.data) ? (rejectedQuery.data as Array<Record<string, unknown>>) : [];
         return list.map((item) => ({
-            title: String(item.fechaPeriodo ?? "Periodo"),
+            title: pickReportText(item.fechaPeriodo, "Periodo"),
             subtitle: `Rechazados: ${formatNumber(item.totalRechazados)}`,
             right: formatCurrency(item.impactoRevenue),
         }));
     }, [rejectedQuery.data]);
+
+    const handleDownloadPdf = async () => {
+        if (!params.fechaDesde || !params.fechaHasta) return;
+
+        try {
+            setLoadingPdf(true);
+            await downloadReportPdf({
+                endpoint: "/api/admin/reportes-ingresos/pdf",
+                method: "post",
+                data: {
+                    ...params,
+                    fechaDesde: params.fechaDesde,
+                    fechaHasta: params.fechaHasta,
+                },
+                fileName: `Reporte_Ingresos_${params.fechaDesde}_al_${params.fechaHasta}.pdf`,
+            });
+        } finally {
+            setLoadingPdf(false);
+        }
+    };
 
     const isLoading =
         metricsQuery.isLoading || byTypeQuery.isLoading || profitableQuery.isLoading || trendsQuery.isLoading || rejectedQuery.isLoading;
 
     return (
         <View style={styles.container}>
-            <AppHeader title="Reportes de ingresos" showNotifications />
+            <AppHeader title="Reportes de ingresos" showBack backHref="/(admin)/dashboard" showNotifications />
 
             {isLoading ? (
                 <View style={styles.center}>
@@ -172,14 +208,14 @@ export default function AdminReportRevenueScreen() {
                         <Text style={[styles.filterLabel, { marginTop: 8 }]}>Tipo evento</Text>
                         <View style={styles.chipsWrap}>
                             {EVENT_TYPES.map((type) => {
-                                const selected = eventType === type;
+                                const selected = eventType === type.value;
                                 return (
                                     <Pressable
-                                        key={type}
+                                        key={type.value}
                                         style={[styles.chip, selected && styles.chipSelected]}
-                                        onPress={() => setEventType(type)}
+                                        onPress={() => setEventType(type.value)}
                                     >
-                                        <Text style={[styles.chipText, selected && styles.chipTextSelected]}>{type}</Text>
+                                        <Text style={[styles.chipText, selected && styles.chipTextSelected]}>{type.label}</Text>
                                     </Pressable>
                                 );
                             })}
@@ -188,28 +224,37 @@ export default function AdminReportRevenueScreen() {
                         <Text style={[styles.filterLabel, { marginTop: 8 }]}>Estado pago</Text>
                         <View style={styles.chipsWrap}>
                             {PAYMENT_STATES.map((state) => {
-                                const selected = paymentState === state;
+                                const selected = paymentState === state.value;
                                 return (
                                     <Pressable
-                                        key={state}
+                                        key={state.value}
                                         style={[styles.chip, selected && styles.chipSelected]}
-                                        onPress={() => setPaymentState(state)}
+                                        onPress={() => setPaymentState(state.value)}
                                     >
-                                        <Text style={[styles.chipText, selected && styles.chipTextSelected]}>{state}</Text>
+                                        <Text style={[styles.chipText, selected && styles.chipTextSelected]}>{state.label}</Text>
                                     </Pressable>
                                 );
                             })}
                         </View>
+
+                        <Pressable
+                            style={[styles.actionButton, (loadingPdf || isLoading || !params.fechaDesde || !params.fechaHasta) && styles.actionButtonDisabled]}
+                            onPress={() => void handleDownloadPdf()}
+                            disabled={loadingPdf || isLoading || !params.fechaDesde || !params.fechaHasta}
+                        >
+                            <Ionicons name="download-outline" size={18} color={theme.colors.textInverse} />
+                            <Text style={styles.actionButtonText}>{loadingPdf ? "Generando PDF..." : "Descargar Reporte PDF"}</Text>
+                        </Pressable>
                     </SectionCard>
 
-                    <SectionCard title="Metricas generales">
+                    <SectionCard title="Métricas generales">
                         <View style={styles.metricsWrap}>
                             <MetricCard label="Ingreso total" value={formatCurrency(metricsQuery.data?.revenueTotal)} />
                             <MetricCard label="Confirmados" value={formatCurrency(metricsQuery.data?.pagosConfirmados)} />
                             <MetricCard label="Pendientes" value={formatCurrency(metricsQuery.data?.pagosPendientes)} />
                             <MetricCard label="Inscripciones" value={formatNumber(metricsQuery.data?.totalInscripciones)} />
                             <MetricCard label="Rechazados" value={formatNumber(metricsQuery.data?.comprobantesRechazados)} />
-                            <MetricCard label="Conversion" value={formatPercent(metricsQuery.data?.tasaConversion)} />
+                            <MetricCard label="Conversión" value={formatPercent(metricsQuery.data?.tasaConversion)} />
                         </View>
                     </SectionCard>
 
@@ -217,7 +262,7 @@ export default function AdminReportRevenueScreen() {
                         <DataList rows={byTypeRows} />
                     </SectionCard>
 
-                    <SectionCard title="Eventos mas rentables">
+                    <SectionCard title="Eventos más rentables">
                         <DataList rows={profitableRows} />
                     </SectionCard>
 
@@ -230,7 +275,7 @@ export default function AdminReportRevenueScreen() {
                     </SectionCard>
 
                     {(metricsQuery.isError || byTypeQuery.isError || profitableQuery.isError || trendsQuery.isError || rejectedQuery.isError) ? (
-                        <SectionCard title="Diagnostico">
+                        <SectionCard title="Diagnóstico">
                             <JsonPreview
                                 value={{
                                     metricsError: metricsQuery.error,
@@ -266,4 +311,16 @@ const styles = StyleSheet.create({
     chipSelected: { backgroundColor: theme.colors.primary, borderColor: theme.colors.primary },
     chipText: { color: theme.colors.textSecondary, fontWeight: "700", fontSize: 12 },
     chipTextSelected: { color: theme.colors.textInverse },
+    actionButton: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 8,
+        marginTop: theme.spacing.sm,
+        borderRadius: theme.radius.full,
+        paddingVertical: 13,
+        backgroundColor: theme.colors.primary,
+    },
+    actionButtonDisabled: { opacity: 0.65 },
+    actionButtonText: { color: theme.colors.textInverse, fontWeight: "900", fontSize: 13 },
 });

@@ -47,6 +47,35 @@ export function SectionCard({ title, children }: Readonly<{ title: string; child
     );
 }
 
+export function ProgressBar({
+    label,
+    value,
+    accentColor = theme.colors.primary,
+    helperText,
+}: Readonly<{
+    label: string;
+    value: number;
+    accentColor?: string;
+    helperText?: string;
+}>) {
+    const normalizedValue = Math.max(0, Math.min(100, Number.isFinite(value) ? value : 0));
+
+    return (
+        <View style={styles.progressWrap}>
+            <View style={styles.progressHeader}>
+                <Text style={styles.progressLabel} numberOfLines={2}>
+                    {label}
+                </Text>
+                <Text style={[styles.progressValue, { color: accentColor }]}>{`${normalizedValue.toFixed(0)}%`}</Text>
+            </View>
+            {helperText ? <Text style={styles.progressHelper}>{helperText}</Text> : null}
+            <View style={styles.progressTrack}>
+                <View style={[styles.progressFill, { width: `${normalizedValue}%`, backgroundColor: accentColor }]} />
+            </View>
+        </View>
+    );
+}
+
 export function DataList({
     rows,
     emptyText,
@@ -129,6 +158,29 @@ const styles = StyleSheet.create({
     itemSubtitle: { color: theme.colors.textTertiary, marginTop: 2, fontWeight: "600", fontSize: 11 },
     itemRight: { color: theme.colors.primary, fontWeight: "900", fontSize: 12, maxWidth: 120, textAlign: "right" },
     emptyText: { color: theme.colors.textTertiary, fontWeight: "700" },
+    progressWrap: {
+        gap: 6,
+        backgroundColor: theme.colors.bgSecondary,
+        borderRadius: theme.radius.md,
+        borderWidth: 1,
+        borderColor: theme.colors.borderLight,
+        paddingHorizontal: 12,
+        paddingVertical: 10,
+    },
+    progressHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 8 },
+    progressLabel: { flex: 1, color: theme.colors.textPrimary, fontWeight: "800", fontSize: 12 },
+    progressValue: { fontWeight: "900", fontSize: 12 },
+    progressHelper: { color: theme.colors.textTertiary, fontWeight: "700", fontSize: 11 },
+    progressTrack: {
+        height: 10,
+        borderRadius: theme.radius.full,
+        backgroundColor: theme.colors.borderLight,
+        overflow: "hidden",
+    },
+    progressFill: {
+        height: "100%",
+        borderRadius: theme.radius.full,
+    },
     jsonWrap: {
         backgroundColor: theme.colors.bgSecondary,
         borderWidth: 1,

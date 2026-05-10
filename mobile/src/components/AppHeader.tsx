@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Image, Pressable, StyleSheet, Text, View, Platform } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter, useSegments } from "expo-router";
@@ -13,9 +13,10 @@ const STATUS_BAR_HEIGHT = Platform.OS === "ios" ? 50 : 28;
 export function AppHeader({
     title,
     showBack,
+    backHref,
     showNotifications,
     showBrandLogo,
-}: Readonly<{ title: string; showBack?: boolean; showNotifications?: boolean; showBrandLogo?: boolean }>) {
+}: Readonly<{ title: string; showBack?: boolean; backHref?: string; showNotifications?: boolean; showBrandLogo?: boolean }>) {
     const router = useRouter();
     const segments = useSegments();
     const user = useAuthStore((s) => s.user);
@@ -54,6 +55,12 @@ export function AppHeader({
         return firstName || user.email;
     }, [user]);
 
+    const brandLogoNode = facultyData?.logo ? (
+        <Image source={{ uri: toAbsoluteUrl(facultyData.logo) }} style={styles.brandLogo} />
+    ) : (
+        <View style={styles.brandLogoFallback} />
+    );
+
     const onLogout = async () => {
         await clearSession();
         router.replace("/home");
@@ -77,7 +84,7 @@ export function AppHeader({
             <View style={styles.content}>
                 <View style={styles.left}>
                     {showBack ? (
-                        <Pressable style={styles.iconBtn} onPress={() => router.back()}>
+                        <Pressable style={styles.iconBtn} onPress={() => (backHref ? router.replace(backHref) : router.back())}>
                             <Ionicons name="arrow-back" size={20} color={theme.colors.textInverse} />
                         </Pressable>
                     ) : (
@@ -87,11 +94,7 @@ export function AppHeader({
 
                 <View style={styles.titleWrap}>
                     {shouldShowBrandLogo ? (
-                        facultyData?.logo ? (
-                            <Image source={{ uri: toAbsoluteUrl(facultyData.logo) }} style={styles.brandLogo} />
-                        ) : (
-                            <View style={styles.brandLogoFallback} />
-                        )
+                        brandLogoNode
                     ) : null}
                     <View style={styles.titleTextWrap}>
                         <Text style={styles.title} numberOfLines={1}>

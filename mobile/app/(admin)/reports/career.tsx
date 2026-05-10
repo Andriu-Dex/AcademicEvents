@@ -5,10 +5,14 @@ import { AppHeader } from "../../../src/components/AppHeader";
 import { DataList, JsonPreview, MetricCard, SectionCard, formatNumber, formatPercent } from "../../../src/components/AdminReportWidgets";
 import { fetchAllCareers } from "../../../src/api/adminCareers";
 import { fetchCareerReportEvents, fetchCareerReportStatistics } from "../../../src/api/adminReports";
+import { Ionicons } from "@expo/vector-icons";
+import { downloadReportPdf } from "../../../src/utils/reportDownload";
+import { joinReportText, pickReportText } from "../../../src/utils/reportText";
 import { theme } from "../../../src/shared/theme";
 
 export default function AdminReportCareerScreen() {
     const [selectedCareerId, setSelectedCareerId] = useState("");
+    const [loadingPdf, setLoadingPdf] = useState(false);
 
     const careersQuery = useQuery({
         queryKey: ["admin-careers-report-pick"],
@@ -42,8 +46,8 @@ export default function AdminReportCareerScreen() {
     const comparisonRows = useMemo(() => {
         const list = Array.isArray(stats.comparativaCarreras) ? (stats.comparativaCarreras as Array<Record<string, unknown>>) : [];
         return list.map((item) => ({
-            title: String(item.nom_car ?? "Carrera"),
-            subtitle: `${formatNumber(item.totalInscripciones)} inscripciones · ${formatNumber(item.totalEstudiantes)} estudiantes`,
+            title: pickReportText(item.nom_car, "Carrera"),
+            subtitle: joinReportText([`${formatNumber(item.totalInscripciones)} inscripciones`, `${formatNumber(item.totalEstudiantes)} estudiantes`]),
             right: formatPercent(item.porcentajeParticipacion),
         }));
     }, [stats.comparativaCarreras]);
@@ -51,17 +55,36 @@ export default function AdminReportCareerScreen() {
     const eventRows = useMemo(() => {
         const list = Array.isArray(eventsQuery.data) ? (eventsQuery.data as Array<Record<string, unknown>>) : [];
         return list.map((item) => ({
-            title: String(item.nom_eve ?? item.nombreEvento ?? "Evento"),
-            subtitle: `${String(item.tip_eve ?? item.tipoEvento ?? "")} · Asistencia ${formatPercent(item.porcentajeAsistencia)}`,
+            title: pickReportText(item.nom_eve ?? item.nombreEvento, "Evento"),
+            subtitle: joinReportText([pickReportText(item.tip_eve ?? item.tipoEvento, ""), `Asistencia ${formatPercent(item.porcentajeAsistencia)}`]),
             right: `${formatNumber(item.totalInscritos)} insc.`,
         }));
     }, [eventsQuery.data]);
+
+    const handleDownloadPdf = async () => {
+        if (!selectedCareerId) return;
+
+        const currentCareer = careersQuery.data?.find((career) => career.id === selectedCareerId);
+        const careerName = pickReportText(currentCareer?.name, "Carrera");
+        const fileName = `Reporte_${careerName.replaceAll(" ", "_")}.pdf`;
+
+        try {
+            setLoadingPdf(true);
+            await downloadReportPdf({
+                endpoint: `/api/admin/reports/career/pdf/${selectedCareerId}`,
+                method: "get",
+                fileName,
+            });
+        } finally {
+            setLoadingPdf(false);
+        }
+    };
 
     const isLoading = careersQuery.isLoading || statsQuery.isLoading || eventsQuery.isLoading;
 
     return (
         <View style={styles.container}>
-            <AppHeader title="Reportes por carrera" showNotifications />
+            <AppHeader title="Reportes por carrera" showBack backHref="/(admin)/dashboard" showNotifications />
 
             {isLoading ? (
                 <View style={styles.center}>
@@ -97,6 +120,14 @@ export default function AdminReportCareerScreen() {
                                 );
                             })}
                         </ScrollView>
+                        <Pressable
+                            style={[styles.actionButton, (!selectedCareerId || loadingPdf) && styles.actionButtonDisabled]}
+                            onPress={() => void handleDownloadPdf()}
+                            disabled={!selectedCareerId || loadingPdf}
+                        >
+                            <Ionicons name="download-outline" size={18} color={theme.colors.textInverse} />
+                            <Text style={styles.actionButtonText}>{loadingPdf ? "Generando PDF..." : "Descargar Reporte PDF"}</Text>
+                        </Pressable>
                     </SectionCard>
 
                     <SectionCard title="Resumen de participacion">
@@ -117,7 +148,7 @@ export default function AdminReportCareerScreen() {
                     </SectionCard>
 
                     {(statsQuery.isError || eventsQuery.isError) ? (
-                        <SectionCard title="Diagnostico">
+                        <SectionCard title="DiagnÃ³stico">
                             <JsonPreview value={{ statsError: statsQuery.error, eventsError: eventsQuery.error }} />
                         </SectionCard>
                     ) : null}
@@ -147,4 +178,16 @@ const styles = StyleSheet.create({
     chipText: { color: theme.colors.textSecondary, fontWeight: "700", fontSize: 12 },
     chipTextSelected: { color: theme.colors.textInverse },
     metricsWrap: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
+    actionButton: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 8,
+        marginTop: theme.spacing.sm,
+        borderRadius: theme.radius.full,
+        paddingVertical: 13,
+        backgroundColor: theme.colors.primary,
+    },
+    actionButtonDisabled: { opacity: 0.65 },
+    actionButtonText: { color: theme.colors.textInverse, fontWeight: "900", fontSize: 13 },
 });

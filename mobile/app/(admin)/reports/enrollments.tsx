@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { ActivityIndicator, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useQuery } from "@tanstack/react-query";
+import { Ionicons } from "@expo/vector-icons";
 import { AppHeader } from "../../../src/components/AppHeader";
 import { DataList, JsonPreview, MetricCard, SectionCard, formatNumber } from "../../../src/components/AdminReportWidgets";
 import {
@@ -8,23 +9,25 @@ import {
     fetchEnrollmentsReportTrends,
     fetchEnrollmentsReportValidations,
 } from "../../../src/api/adminReports";
+import { downloadReportPdf } from "../../../src/utils/reportDownload";
+import { joinReportText, pickReportText } from "../../../src/utils/reportText";
 import { theme } from "../../../src/shared/theme";
 
 const STATUS_OPTIONS = [
-    "todos",
-    "PENDIENTE",
-    "ACEPTADA",
-    "APROBADO",
-    "RECHAZADA",
-    "REPROBADO_ASISTENCIA",
-    "REPROBADO_NOTA",
-    "REPROBADO_TOTAL",
+    { value: "todos", label: "Todos" },
+    { value: "PENDIENTE", label: "Pendiente" },
+    { value: "ACEPTADA", label: "Aceptada" },
+    { value: "APROBADO", label: "Aprobada" },
+    { value: "RECHAZADA", label: "Rechazada" },
+    { value: "REPROBADO_ASISTENCIA", label: "Reprobada por asistencia" },
+    { value: "REPROBADO_NOTA", label: "Reprobada por nota" },
+    { value: "REPROBADO_TOTAL", label: "Reprobada total" },
 ];
 
 const DATE_RANGES = [
-    { key: "30", label: "Ultimos 30 dias", days: 30 },
-    { key: "90", label: "Ultimos 90 dias", days: 90 },
-    { key: "180", label: "Ultimos 180 dias", days: 180 },
+    { key: "30", label: "Ãšltimos 30 dÃ­as", days: 30 },
+    { key: "90", label: "Ãšltimos 90 dÃ­as", days: 90 },
+    { key: "180", label: "Ãšltimos 180 dÃ­as", days: 180 },
 ];
 
 function formatDateParam(date: Date) {
@@ -37,6 +40,7 @@ function formatDateParam(date: Date) {
 export default function AdminReportEnrollmentsScreen() {
     const [status, setStatus] = useState("todos");
     const [rangeDays, setRangeDays] = useState(30);
+    const [loadingPdf, setLoadingPdf] = useState(false);
 
     const rangeStart = useMemo(() => {
         const now = new Date();
@@ -71,8 +75,12 @@ export default function AdminReportEnrollmentsScreen() {
     const trendRows = useMemo(() => {
         const list = Array.isArray(trendsQuery.data) ? (trendsQuery.data as Array<Record<string, unknown>>) : [];
         return list.map((item) => ({
-            title: String(item.periodo ?? "Periodo"),
-            subtitle: `Pendientes: ${formatNumber(item.pendientes)} · Aceptadas: ${formatNumber(item.aceptadas)} · Reprobadas: ${formatNumber(item.reprobadas)}`,
+            title: pickReportText(item.periodo, "Periodo"),
+            subtitle: joinReportText([
+                `Pendientes: ${formatNumber(item.pendientes)}`,
+                `Aceptadas: ${formatNumber(item.aceptadas)}`,
+                `Reprobadas: ${formatNumber(item.reprobadas)}`,
+            ]),
             right: `${formatNumber(item.total)} total`,
         }));
     }, [trendsQuery.data]);
@@ -82,17 +90,42 @@ export default function AdminReportEnrollmentsScreen() {
             ? (validationsQuery.data as Array<Record<string, unknown>>)
             : [];
         return list.map((item) => ({
-            title: String(item.responsable ?? "Validador"),
-            subtitle: `Aceptadas: ${formatNumber(item.aceptadas)} · Aprobadas: ${formatNumber(item.aprobadas)} · Rechazadas: ${formatNumber(item.rechazadas)} · Reprobadas: ${formatNumber(item.reprobadas)}`,
+            title: pickReportText(item.responsable, "Validador"),
+            subtitle: joinReportText([
+                `Aceptadas: ${formatNumber(item.aceptadas)}`,
+                `Aprobadas: ${formatNumber(item.aprobadas)}`,
+                `Rechazadas: ${formatNumber(item.rechazadas)}`,
+                `Reprobadas: ${formatNumber(item.reprobadas)}`,
+            ]),
             right: `${formatNumber(item.totalValidadas)} val.`,
         }));
     }, [validationsQuery.data]);
+
+    const handleDownloadPdf = async () => {
+        if (!rangeStart || !rangeEnd) return;
+
+        try {
+            setLoadingPdf(true);
+            await downloadReportPdf({
+                endpoint: "/api/admin/reports/enrollments/pdf",
+                method: "post",
+                data: {
+                    fechaInicio: rangeStart,
+                    fechaFin: rangeEnd,
+                    estado: status,
+                },
+                fileName: `Reporte_Inscripciones_${rangeStart}_al_${rangeEnd}.pdf`,
+            });
+        } finally {
+            setLoadingPdf(false);
+        }
+    };
 
     const isLoading = statsQuery.isLoading || trendsQuery.isLoading || validationsQuery.isLoading;
 
     return (
         <View style={styles.container}>
-            <AppHeader title="Reportes de inscripciones" showNotifications />
+            <AppHeader title="Reportes de inscripciones" showBack backHref="/(admin)/dashboard" showNotifications />
 
             {isLoading ? (
                 <View style={styles.center}>
@@ -133,18 +166,27 @@ export default function AdminReportEnrollmentsScreen() {
                         <Text style={[styles.filterLabel, { marginTop: 8 }]}>Estado</Text>
                         <View style={styles.chipsWrap}>
                             {STATUS_OPTIONS.map((option) => {
-                                const selected = status === option;
+                                const selected = status === option.value;
                                 return (
                                     <Pressable
-                                        key={option}
+                                        key={option.value}
                                         style={[styles.chip, selected && styles.chipSelected]}
-                                        onPress={() => setStatus(option)}
+                                        onPress={() => setStatus(option.value)}
                                     >
-                                        <Text style={[styles.chipText, selected && styles.chipTextSelected]}>{option}</Text>
+                                        <Text style={[styles.chipText, selected && styles.chipTextSelected]}>{option.label}</Text>
                                     </Pressable>
                                 );
                             })}
                         </View>
+
+                        <Pressable
+                            style={[styles.actionButton, (loadingPdf || !rangeStart || !rangeEnd) && styles.actionButtonDisabled]}
+                            onPress={() => void handleDownloadPdf()}
+                            disabled={loadingPdf || !rangeStart || !rangeEnd}
+                        >
+                            <Ionicons name="download-outline" size={18} color={theme.colors.textInverse} />
+                            <Text style={styles.actionButtonText}>{loadingPdf ? "Generando PDF..." : "Descargar Reporte PDF"}</Text>
+                        </Pressable>
                     </SectionCard>
 
                     <SectionCard title="Estado de inscripciones">
@@ -162,12 +204,12 @@ export default function AdminReportEnrollmentsScreen() {
                         <DataList rows={trendRows} />
                     </SectionCard>
 
-                    <SectionCard title="Analisis de validaciones">
+                    <SectionCard title="AnÃ¡lisis de validaciones">
                         <DataList rows={validationRows} />
                     </SectionCard>
 
                     {(statsQuery.isError || trendsQuery.isError || validationsQuery.isError) ? (
-                        <SectionCard title="Diagnostico">
+                        <SectionCard title="DiagnÃ³stico">
                             <JsonPreview
                                 value={{
                                     statsError: statsQuery.error,
@@ -201,4 +243,16 @@ const styles = StyleSheet.create({
     chipSelected: { backgroundColor: theme.colors.primary, borderColor: theme.colors.primary },
     chipText: { color: theme.colors.textSecondary, fontWeight: "700", fontSize: 12 },
     chipTextSelected: { color: theme.colors.textInverse },
+    actionButton: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 8,
+        marginTop: theme.spacing.sm,
+        borderRadius: theme.radius.full,
+        paddingVertical: 13,
+        backgroundColor: theme.colors.primary,
+    },
+    actionButtonDisabled: { opacity: 0.65 },
+    actionButtonText: { color: theme.colors.textInverse, fontWeight: "900", fontSize: 13 },
 });

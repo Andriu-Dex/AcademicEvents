@@ -4,6 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { AppHeader } from "../../../src/components/AppHeader";
 import { DataList, JsonPreview, MetricCard, SectionCard, formatCurrency, formatNumber } from "../../../src/components/AdminReportWidgets";
 import { fetchMonthlyReport } from "../../../src/api/adminReports";
+import { downloadReportPdf } from "../../../src/utils/reportDownload";
+import { joinReportText, pickReportText } from "../../../src/utils/reportText";
 import { theme } from "../../../src/shared/theme";
 
 const MONTHS = [
@@ -31,6 +33,7 @@ function getYears() {
 export default function AdminReportMonthScreen() {
     const [year, setYear] = useState(new Date().getFullYear());
     const [month, setMonth] = useState(new Date().getMonth() + 1);
+    const [loadingPdf, setLoadingPdf] = useState(false);
 
     const years = useMemo(() => getYears(), []);
 
@@ -47,16 +50,34 @@ export default function AdminReportMonthScreen() {
     const eventRows = useMemo(
         () =>
             events.map((item, index) => ({
-                title: `${index + 1}. ${String(item.nom_eve ?? item.name ?? "Evento")}`,
-                subtitle: `${String(item.tip_eve ?? item.type ?? "")} · Inscritos: ${formatNumber(item.can_ins)} · Creador: ${String(item.nom_cre ?? "")} ${String(item.ape_cre ?? "")}`,
+                title: `${index + 1}. ${pickReportText(item.nom_eve ?? item.name, "Evento")}`,
+                subtitle: joinReportText([
+                    pickReportText(item.tip_eve ?? item.type, ""),
+                    `Inscritos: ${formatNumber(item.can_ins)}`,
+                    `Creador: ${joinReportText([pickReportText(item.nom_cre, ""), pickReportText(item.ape_cre, "")], " ")}`,
+                ]),
                 right: formatCurrency(item.tot_eve ?? item.totalRevenue),
             })),
         [events]
     );
 
+    const handleDownloadMonthlyPdf = async () => {
+        try {
+            setLoadingPdf(true);
+            await downloadReportPdf({
+                endpoint: "/api/admin/reports/month/pdf",
+                method: "post",
+                data: { anio: year, mes: month },
+                fileName: `Reporte_Mensual_${MONTHS[month - 1]}_${year}.pdf`,
+            });
+        } finally {
+            setLoadingPdf(false);
+        }
+    };
+
     return (
         <View style={styles.container}>
-            <AppHeader title="Reportes por mes" showNotifications />
+            <AppHeader title="Reportes por mes" showBack backHref="/(admin)/dashboard" showNotifications />
 
             {query.isLoading ? (
                 <View style={styles.center}>
@@ -73,7 +94,7 @@ export default function AdminReportMonthScreen() {
                         />
                     }
                 >
-                    <SectionCard title="Seleccion de periodo">
+                    <SectionCard title="SelecciÃ³n de periodo">
                         <Text style={styles.filterLabel}>Mes</Text>
                         <View style={styles.chipsWrap}>
                             {MONTHS.map((label, index) => {
@@ -91,7 +112,7 @@ export default function AdminReportMonthScreen() {
                             })}
                         </View>
 
-                        <Text style={[styles.filterLabel, { marginTop: 8 }]}>Anio</Text>
+                        <Text style={[styles.filterLabel, { marginTop: 8 }]}>AÃ±o</Text>
                         <View style={styles.chipsWrap}>
                             {years.map((optionYear) => {
                                 const selected = year === optionYear;
@@ -106,6 +127,14 @@ export default function AdminReportMonthScreen() {
                                 );
                             })}
                         </View>
+
+                        <Pressable
+                            style={[styles.actionButton, loadingPdf && styles.actionButtonDisabled]}
+                            onPress={() => void handleDownloadMonthlyPdf()}
+                            disabled={loadingPdf}
+                        >
+                            <Text style={styles.actionButtonText}>{loadingPdf ? "Generando PDF..." : "Descargar Reporte PDF"}</Text>
+                        </Pressable>
                     </SectionCard>
 
                     <SectionCard title="Resumen mensual">
@@ -120,7 +149,7 @@ export default function AdminReportMonthScreen() {
                     </SectionCard>
 
                     {query.isError ? (
-                        <SectionCard title="Diagnostico">
+                        <SectionCard title="DiagnÃ³stico">
                             <JsonPreview value={{ error: query.error, year, month }} />
                         </SectionCard>
                     ) : null}
@@ -148,4 +177,13 @@ const styles = StyleSheet.create({
     chipSelected: { backgroundColor: theme.colors.primary, borderColor: theme.colors.primary },
     chipText: { color: theme.colors.textSecondary, fontWeight: "700", fontSize: 12 },
     chipTextSelected: { color: theme.colors.textInverse },
+    actionButton: {
+        marginTop: theme.spacing.sm,
+        borderRadius: theme.radius.full,
+        paddingVertical: 13,
+        backgroundColor: theme.colors.primary,
+        alignItems: "center",
+    },
+    actionButtonDisabled: { opacity: 0.65 },
+    actionButtonText: { color: theme.colors.textInverse, fontWeight: "900", fontSize: 13 },
 });
