@@ -975,7 +975,7 @@ const styles = StyleSheet.create({
         right: 0,
         zIndex: 20,
         paddingTop: 48,
-        paddingBottom: 12,
+        paddingBottom: 14,
         backgroundColor: "rgba(138, 21, 56, 0.96)",
         borderBottomColor: "rgba(255,255,255,0.18)",
         borderBottomWidth: 1,
@@ -1005,7 +1005,7 @@ const styles = StyleSheet.create({
     brandLabel: {
         color: theme.colors.textInverse,
         fontWeight: "900",
-        fontSize: 14,
+        fontSize: 15,
         letterSpacing: 0.6,
     },
     brandLogo: {
@@ -1079,15 +1079,18 @@ const styles = StyleSheet.create({
         backgroundColor: "rgba(255,255,255,0.10)",
     },
     navTabText: {
-        fontSize: 12,
+        fontSize: 13,
         color: theme.colors.textInverse,
         fontWeight: "700",
     },
     content: {
+        width: "100%",
+        maxWidth: 920,
+        alignSelf: "center",
         paddingHorizontal: theme.spacing.md,
         paddingTop: 156,
         paddingBottom: theme.spacing.xl,
-        gap: theme.spacing.md,
+        gap: theme.spacing.lg,
     },
     heroCard: {
         borderRadius: theme.radius.lg,
@@ -1113,8 +1116,8 @@ const styles = StyleSheet.create({
     },
     heroTitle: {
         color: theme.colors.textInverse,
-        fontSize: 23,
-        lineHeight: 30,
+        fontSize: 24,
+        lineHeight: 32,
         fontWeight: "800",
     },
     heroSubtitle: {
@@ -1123,9 +1126,9 @@ const styles = StyleSheet.create({
         fontWeight: "700",
     },
     heroDescription: {
-        color: "rgba(255,255,255,0.90)",
-        fontSize: 13,
-        lineHeight: 20,
+        color: "rgba(255,255,255,0.96)",
+        fontSize: 14,
+        lineHeight: 22,
     },
     heroActions: {
         marginTop: 8,
@@ -1189,8 +1192,8 @@ const styles = StyleSheet.create({
         letterSpacing: 0.2,
     },
     statLabel: {
-        color: "rgba(255,255,255,0.85)",
-        fontSize: 11,
+        color: "rgba(255,255,255,0.92)",
+        fontSize: 12,
         marginTop: 3,
         fontWeight: "600",
     },
@@ -1214,15 +1217,17 @@ const styles = StyleSheet.create({
         textAlign: "center",
     },
     sectionSubtitle: {
-        fontSize: 13,
-        color: theme.colors.textSecondary,
+        fontSize: 14,
+        color: theme.colors.textPrimary,
+        opacity: 0.8,
         textAlign: "center",
     },
     sectionSubtitleLong: {
-        fontSize: 13,
-        color: theme.colors.textSecondary,
+        fontSize: 14,
+        color: theme.colors.textPrimary,
+        opacity: 0.82,
         textAlign: "center",
-        lineHeight: 20,
+        lineHeight: 22,
     },
     loadingCard: {
         borderRadius: theme.radius.md,
@@ -1409,8 +1414,8 @@ const styles = StyleSheet.create({
         fontWeight: "600",
     },
     eventDescription: {
-        fontSize: 12,
-        lineHeight: 18,
+        fontSize: 13,
+        lineHeight: 20,
         color: theme.colors.textSecondary,
     },
     authorityCarouselWrap: {
@@ -1516,15 +1521,15 @@ const styles = StyleSheet.create({
     },
     gridTitle: {
         marginTop: 10,
-        fontSize: 13,
+        fontSize: 14,
         fontWeight: "800",
         color: theme.colors.textPrimary,
-        lineHeight: 18,
+        lineHeight: 20,
     },
     gridText: {
         marginTop: 4,
-        fontSize: 11,
-        lineHeight: 16,
+        fontSize: 12,
+        lineHeight: 18,
         color: theme.colors.textSecondary,
     },
     badgesRow: {
@@ -1539,7 +1544,7 @@ const styles = StyleSheet.create({
         borderRadius: theme.radius.full,
         backgroundColor: theme.colors.primaryLight,
         color: theme.colors.primary,
-        fontSize: 10,
+        fontSize: 11,
         fontWeight: "700",
     },
     identityCard: {
@@ -1564,8 +1569,8 @@ const styles = StyleSheet.create({
     },
     identityText: {
         marginTop: 8,
-        fontSize: 13,
-        lineHeight: 21,
+        fontSize: 14,
+        lineHeight: 22,
         color: theme.colors.textSecondary,
     },
     contactCard: {
@@ -1610,7 +1615,7 @@ const styles = StyleSheet.create({
     },
     footer: {
         marginTop: 10,
-        backgroundColor: "#000000",
+        backgroundColor: "#111827",
         borderRadius: theme.radius.md,
         padding: theme.spacing.lg,
         gap: 14,
@@ -1641,13 +1646,13 @@ const styles = StyleSheet.create({
         textTransform: "uppercase",
     },
     footerBrandSub: {
-        fontSize: 12,
-        color: "rgba(255,255,255,0.82)",
+        fontSize: 13,
+        color: "rgba(255,255,255,0.88)",
         marginTop: 1,
     },
     footerBrandSubMuted: {
-        fontSize: 12,
-        color: "rgba(255,255,255,0.62)",
+        fontSize: 13,
+        color: "rgba(255,255,255,0.76)",
         marginTop: 1,
     },
     footerDivider: {
@@ -1669,14 +1674,14 @@ const styles = StyleSheet.create({
         marginBottom: 2,
     },
     footerLink: {
-        color: "rgba(255,255,255,0.82)",
-        fontSize: 12,
+        color: "rgba(255,255,255,0.9)",
+        fontSize: 13,
         fontWeight: "600",
     },
     footerContactText: {
-        color: "rgba(255,255,255,0.70)",
-        fontSize: 12,
-        lineHeight: 18,
+        color: "rgba(255,255,255,0.82)",
+        fontSize: 13,
+        lineHeight: 19,
     },
     socialRow: {
         flexDirection: "row",
@@ -1693,3 +1698,4 @@ const styles = StyleSheet.create({
         backgroundColor: "rgba(255,255,255,0.16)",
     },
 });
+
