@@ -3,7 +3,8 @@ import { Image, Pressable, StyleSheet, Text, View, Platform } from "react-native
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter, useSegments } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
-import { toAbsoluteUrl } from "../api/client";
+import { useQuery } from "@tanstack/react-query";
+import { apiClient, toAbsoluteUrl } from "../api/client";
 import { useAuthStore } from "../store/authStore";
 import { theme } from "../shared/theme";
 
@@ -19,9 +20,33 @@ export function AppHeader({
     const segments = useSegments();
     const user = useAuthStore((s) => s.user);
     const clearSession = useAuthStore((s) => s.clearSession);
-    const [menuOpen, setMenuOpen] = useState(false);
     const isAdminArea = segments.includes("(admin)");
+    const isProfileScreen = segments.includes("profile");
     const shouldShowBrandLogo = showBrandLogo ?? !isAdminArea;
+
+    const { data: facultyData } = useQuery({
+        queryKey: ["header-faculty"],
+        staleTime: 300000,
+        queryFn: async () => {
+            const response = await apiClient.get<Record<string, unknown>>("/api/facultad-principal");
+            const pickString = (...values: unknown[]) => {
+                for (const value of values) {
+                    if (typeof value === "string") return value;
+                }
+                return "";
+            };
+
+            return {
+                acronym: pickString(response.data?.acronimo, response.data?.acr_fac, "FISEI"),
+                title: pickString(
+                    response.data?.nombre,
+                    response.data?.nom_fac,
+                    "Facultad de Ingenieria en Sistemas, Electronica e Industrial"
+                ),
+                logo: pickString(response.data?.logo, response.data?.url_log_fac),
+            };
+        },
+    });
 
     const displayName = useMemo(() => {
         if (!user) return "";
@@ -30,9 +55,16 @@ export function AppHeader({
     }, [user]);
 
     const onLogout = async () => {
-        setMenuOpen(false);
         await clearSession();
         router.replace("/home");
+    };
+
+    const onOpenProfile = () => {
+        if (isAdminArea) {
+            router.push("/(admin)");
+            return;
+        }
+        router.push("/profile");
     };
 
     return (
@@ -55,11 +87,20 @@ export function AppHeader({
 
                 <View style={styles.titleWrap}>
                     {shouldShowBrandLogo ? (
-                        <Image source={require("../../assets/brand/logo.png")} style={styles.brandLogo} />
+                        facultyData?.logo ? (
+                            <Image source={{ uri: toAbsoluteUrl(facultyData.logo) }} style={styles.brandLogo} />
+                        ) : (
+                            <View style={styles.brandLogoFallback} />
+                        )
                     ) : null}
-                    <Text style={styles.title} numberOfLines={1}>
-                        {title}
-                    </Text>
+                    <View style={styles.titleTextWrap}>
+                        <Text style={styles.title} numberOfLines={1}>
+                            {title}
+                        </Text>
+                        <Text style={styles.facultyText} numberOfLines={1}>
+                            {facultyData?.acronym ?? "FISEI"} · {facultyData?.title ?? "Facultad de Ingenieria en Sistemas"}
+                        </Text>
+                    </View>
                 </View>
 
                 <View style={styles.right}>
@@ -71,33 +112,26 @@ export function AppHeader({
 
                     {user ? (
                         <View style={styles.userArea}>
-                            <Pressable
-                                style={styles.userButton}
-                                onPress={() => setMenuOpen((v) => !v)}
-                            >
-                                {user.profileImageUrl ? (
-                                    <Image source={{ uri: toAbsoluteUrl(user.profileImageUrl) }} style={styles.avatar} />
-                                ) : (
-                                    <View style={styles.avatarFallback}>
-                                        <Ionicons name="person" size={14} color={theme.colors.primary} />
-                                    </View>
-                                )}
-                                <Text style={styles.userName} numberOfLines={1}>
-                                    {displayName}
-                                </Text>
-                                <Ionicons name={menuOpen ? "chevron-up" : "chevron-down"} size={14} color="rgba(255,255,255,0.8)" />
-                            </Pressable>
-
-                            {menuOpen ? (
-                                <View style={styles.menu}>
-                                    <Pressable style={styles.menuItem} onPress={onLogout}>
-                                        <View style={styles.menuIconWrap}>
-                                            <Ionicons name="log-out-outline" size={18} color={theme.colors.error} />
+                            {isProfileScreen ? (
+                                <Pressable style={styles.logoutButton} onPress={onLogout}>
+                                    <Ionicons name="log-out-outline" size={18} color={theme.colors.textInverse} />
+                                    <Text style={styles.logoutText}>Cerrar sesión</Text>
+                                </Pressable>
+                            ) : (
+                                <Pressable style={styles.userButton} onPress={onOpenProfile}>
+                                    {user.profileImageUrl ? (
+                                        <Image source={{ uri: toAbsoluteUrl(user.profileImageUrl) }} style={styles.avatar} />
+                                    ) : (
+                                        <View style={styles.avatarFallback}>
+                                            <Ionicons name="person" size={14} color={theme.colors.primary} />
                                         </View>
-                                        <Text style={styles.menuText}>Cerrar sesión</Text>
-                                    </Pressable>
-                                </View>
-                            ) : null}
+                                    )}
+                                    <Text style={styles.userName} numberOfLines={1}>
+                                        {displayName}
+                                    </Text>
+                                    <Ionicons name="chevron-forward" size={14} color="rgba(255,255,255,0.9)" />
+                                </Pressable>
+                            )}
                         </View>
                     ) : (
                         <View style={styles.iconSpacer} />
@@ -139,8 +173,11 @@ const styles = StyleSheet.create({
         marginHorizontal: 8,
         flexDirection: "row",
         alignItems: "center",
-        justifyContent: "center",
+        justifyContent: "flex-start",
         gap: 8,
+    },
+    titleTextWrap: {
+        flex: 1,
     },
     brandLogo: {
         width: 24,
@@ -148,12 +185,24 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         backgroundColor: "rgba(255,255,255,0.2)",
     },
+    brandLogoFallback: {
+        width: 24,
+        height: 24,
+        borderRadius: 12,
+        backgroundColor: "rgba(255,255,255,0.32)",
+    },
     title: {
         color: theme.colors.textInverse,
-        fontSize: 17,
+        fontSize: 15,
         fontWeight: "800",
         flexShrink: 1,
         letterSpacing: 0.2,
+    },
+    facultyText: {
+        color: "rgba(255,255,255,0.88)",
+        fontSize: 11,
+        marginTop: 1,
+        fontWeight: "600",
     },
     iconBtn: {
         width: 40,
@@ -193,33 +242,20 @@ const styles = StyleSheet.create({
         justifyContent: "center",
     },
     userName: { color: theme.colors.textInverse, fontWeight: "700", fontSize: 12, flexShrink: 1 },
-    menu: {
-        position: "absolute",
-        right: 0,
-        top: 48,
-        backgroundColor: theme.colors.bgElevated,
-        borderRadius: theme.radius.md,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-        overflow: "hidden",
-        minWidth: 186,
-        zIndex: 999,
-        ...theme.shadow.md,
-    },
-    menuItem: {
+    logoutButton: {
         flexDirection: "row",
         alignItems: "center",
-        gap: 10,
-        paddingHorizontal: 14,
-        paddingVertical: 14,
+        gap: 6,
+        paddingHorizontal: 10,
+        paddingVertical: 9,
+        borderRadius: theme.radius.full,
+        backgroundColor: "rgba(255,255,255,0.18)",
+        borderWidth: 1,
+        borderColor: "rgba(255,255,255,0.24)",
     },
-    menuIconWrap: {
-        width: 32,
-        height: 32,
-        borderRadius: 10,
-        backgroundColor: theme.colors.errorLight,
-        alignItems: "center",
-        justifyContent: "center",
+    logoutText: {
+        color: theme.colors.textInverse,
+        fontWeight: "700",
+        fontSize: 12,
     },
-    menuText: { color: theme.colors.textPrimary, fontWeight: "700", fontSize: 14 },
 });
