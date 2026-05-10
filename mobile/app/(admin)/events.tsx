@@ -59,6 +59,16 @@ const SORT_BY_OPTIONS: SelectOption[] = [
     { label: "Disponibles", value: "availableSpots" },
 ];
 
+function translateEventStatus(status: string) {
+    const key = (status ?? "").trim().toUpperCase();
+    if (key === "ACTIVE") return "Activo";
+    if (key === "INACTIVE") return "Inactivo";
+    if (key === "FINISHED") return "Finalizado";
+    if (key === "CANCELLED") return "Cancelado";
+    if (key === "SUSPENDED") return "Suspendido";
+    return status || "Estado";
+}
+
 function useDebouncedValue<T>(value: T, delayMs: number) {
     const [debounced, setDebounced] = useState(value);
 
@@ -150,7 +160,7 @@ function EventAdminCard({
                 </Text>
 
                 <Text style={styles.metaSubText} numberOfLines={2}>
-                    {spotLabel} · {event.status || "Estado"}
+                    {spotLabel} · {translateEventStatus(event.status)}
                 </Text>
 
                 <View style={styles.actionRow}>

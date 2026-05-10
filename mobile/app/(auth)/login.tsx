@@ -19,7 +19,6 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { login } from "../../src/api/auth";
-import { getCurrentApiBaseUrl } from "../../src/api/client";
 import { useAuthStore } from "../../src/store/authStore";
 import { isAdminRole } from "../../src/utils/roles";
 import { useFacultyInfo } from "../../src/features/faculty/useFacultyInfo";
@@ -76,8 +75,12 @@ export default function LoginScreen() {
             router.replace(isAdminRole(result.user.role) ? "/(admin)" : "/(app)");
         } catch (error) {
             const message = error instanceof Error ? error.message : "Error al iniciar sesión";
-            const apiHint = __DEV__ ? `\nAPI: ${getCurrentApiBaseUrl()}` : "";
-            setSubmitError(`${message}${apiHint}`);
+            const normalized = message.toLowerCase();
+            const finalMessage =
+                normalized.includes("contrase") || normalized.includes("password") || normalized.includes("credencial")
+                    ? "Contraseña incorrecta"
+                    : "No se pudo iniciar sesión";
+            setSubmitError(finalMessage);
         }
     };
 

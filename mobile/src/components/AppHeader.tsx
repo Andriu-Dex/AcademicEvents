@@ -22,7 +22,7 @@ export function AppHeader({
     const clearSession = useAuthStore((s) => s.clearSession);
     const isAdminArea = segments.includes("(admin)");
     const isProfileScreen = segments.includes("profile");
-    const shouldShowBrandLogo = showBrandLogo ?? !isAdminArea;
+    const shouldShowBrandLogo = showBrandLogo ?? true;
 
     const { data: facultyData } = useQuery({
         queryKey: ["header-faculty"],

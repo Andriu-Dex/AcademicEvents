@@ -16,6 +16,7 @@ import { useRouter } from "expo-router";
 import { AppHeader } from "../../src/components/AppHeader";
 import { toAbsoluteUrl } from "../../src/api/client";
 import { fetchReportEventsPaginated } from "../../src/api/adminReports";
+import { useFacultyInfo } from "../../src/features/faculty/useFacultyInfo";
 import { theme } from "../../src/shared/theme";
 import { useAuthStore } from "../../src/store/authStore";
 import { isGlobalAdminRole } from "../../src/utils/roles";
@@ -110,6 +111,7 @@ export default function AdminDashboardScreen() {
     const { width } = useWindowDimensions();
     const role = useAuthStore((s) => s.user?.role);
     const isGlobal = isGlobalAdminRole(role ?? null);
+    const { data: faculty } = useFacultyInfo();
     const compactReportCards = width < 380;
 
     const [page, setPage] = useState(1);
@@ -123,6 +125,7 @@ export default function AdminDashboardScreen() {
 
     const recentEvents = eventsQuery.data?.data ?? [];
     const pagination = eventsQuery.data?.pagination;
+    const reportCount = REPORT_CARDS.length;
 
     const header = useMemo(() => {
         return (
@@ -134,26 +137,40 @@ export default function AdminDashboardScreen() {
                     end={{ x: 1, y: 1 }}
                     style={styles.dashboardBanner}
                 >
-                    <View>
-                        <Text style={styles.bannerLabel}>Panel de</Text>
-                        <Text style={styles.bannerTitle}>Administración</Text>
+                    <View style={styles.bannerBrandRow}>
+                        <View style={styles.bannerLogoWrap}>
+                            {faculty?.logo ? (
+                                <Image source={{ uri: toAbsoluteUrl(faculty.logo) }} style={styles.bannerLogo} resizeMode="contain" />
+                            ) : (
+                                <Ionicons name="school-outline" size={22} color={theme.colors.primary} />
+                            )}
+                        </View>
+                        <View style={{ flex: 1 }}>
+                            <Text style={styles.bannerLabel}>FISEI · Administración</Text>
+                            <Text style={styles.bannerTitle} numberOfLines={1}>Panel administrativo</Text>
+                        </View>
                     </View>
-                    <View style={styles.bannerIcon}>
-                        <Ionicons name="settings-outline" size={32} color="rgba(255,255,255,0.3)" />
+                    <View style={styles.bannerStatsRow}>
+                        <View style={styles.bannerStatPill}>
+                            <Text style={styles.bannerStatValue}>{reportCount}</Text>
+                            <Text style={styles.bannerStatLabel}>Reportes</Text>
+                        </View>
+                        <View style={styles.bannerStatPill}>
+                            <Text style={styles.bannerStatValue}>{recentEvents.length}</Text>
+                            <Text style={styles.bannerStatLabel}>Eventos</Text>
+                        </View>
                     </View>
                 </LinearGradient>
 
-                {/* Grid de reportes */}
-                <View style={styles.sectionBlock}>
-                    <View style={styles.sectionTitleRow}>
-                        <Ionicons name="bar-chart-outline" size={16} color={theme.colors.primary} />
-                        <Text style={styles.blockTitle}>Reportes disponibles</Text>
-                    </View>
-                    <View style={styles.reportGrid}>
-                        {REPORT_CARDS.map((card) => (
-                            <ReportGridCard key={card.key} card={card} compact={compactReportCards} />
-                        ))}
-                    </View>
+                {/* Reportes fuera del bloque principal para una lectura más ligera */}
+                <View style={styles.sectionTitleRow}>
+                    <Ionicons name="bar-chart-outline" size={16} color={theme.colors.primary} />
+                    <Text style={styles.blockTitle}>Reportes disponibles</Text>
+                </View>
+                <View style={styles.reportGrid}>
+                    {REPORT_CARDS.map((card) => (
+                        <ReportGridCard key={card.key} card={card} compact={compactReportCards} />
+                    ))}
                 </View>
 
                 {/* Administración global */}
@@ -301,14 +318,55 @@ const styles = StyleSheet.create({
     dashboardBanner: {
         borderRadius: theme.radius.lg,
         padding: theme.spacing.lg,
+        gap: 12,
+        overflow: "hidden",
+        borderWidth: 1,
+        borderColor: "rgba(255,255,255,0.12)",
+    },
+    bannerBrandRow: {
         flexDirection: "row",
         alignItems: "center",
-        justifyContent: "space-between",
+        gap: 10,
+    },
+    bannerLogoWrap: {
+        width: 46,
+        height: 46,
+        borderRadius: 14,
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "rgba(255,255,255,0.18)",
         overflow: "hidden",
     },
-    bannerLabel: { color: "rgba(255,255,255,0.75)", fontSize: 13, fontWeight: "600" },
-    bannerTitle: { color: theme.colors.textInverse, fontSize: 22, fontWeight: "900", letterSpacing: 0.2 },
-    bannerIcon: { opacity: 0.6 },
+    bannerLogo: {
+        width: 36,
+        height: 36,
+    },
+    bannerLabel: { color: "rgba(255,255,255,0.82)", fontSize: 12, fontWeight: "700" },
+    bannerTitle: { color: theme.colors.textInverse, fontSize: 20, fontWeight: "900", letterSpacing: 0.2 },
+    bannerStatsRow: {
+        flexDirection: "row",
+        gap: 10,
+    },
+    bannerStatPill: {
+        flex: 1,
+        borderRadius: theme.radius.md,
+        backgroundColor: "rgba(255,255,255,0.12)",
+        paddingVertical: 10,
+        paddingHorizontal: 12,
+        borderWidth: 1,
+        borderColor: "rgba(255,255,255,0.12)",
+    },
+    bannerStatValue: {
+        color: theme.colors.textInverse,
+        fontWeight: "900",
+        fontSize: 18,
+    },
+    bannerStatLabel: {
+        color: "rgba(255,255,255,0.82)",
+        fontSize: 11,
+        fontWeight: "700",
+        marginTop: 2,
+    },
 
     // Sección blocks
     sectionBlock: {
@@ -331,6 +389,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         flexWrap: "wrap",
         gap: 10,
+        marginBottom: 6,
     },
     reportCard: {
         borderRadius: theme.radius.md,
@@ -345,6 +404,8 @@ const styles = StyleSheet.create({
         borderRadius: theme.radius.md,
         borderWidth: 1,
         borderColor: theme.colors.borderLight,
+        minHeight: 112,
+        backgroundColor: theme.colors.bgPrimary,
     },
     reportIconWrap: {
         width: 40,
@@ -355,7 +416,7 @@ const styles = StyleSheet.create({
         marginBottom: 2,
     },
     reportTitle: { fontWeight: "800", color: theme.colors.textPrimary, fontSize: 13 },
-    reportSubtitle: { color: theme.colors.textSecondary, fontWeight: "600", fontSize: 11, lineHeight: 16 },
+    reportSubtitle: { color: theme.colors.textSecondary, fontWeight: "600", fontSize: 11, lineHeight: 16, flex: 1 },
     reportArrow: {
         width: 22,
         height: 22,
@@ -395,8 +456,10 @@ const styles = StyleSheet.create({
         borderRadius: theme.radius.lg,
         overflow: "hidden",
         ...theme.shadow.sm,
+        borderWidth: 1,
+        borderColor: theme.colors.borderLight,
     },
-    eventCover: { width: "100%", height: 100, backgroundColor: theme.colors.bgTertiary },
+    eventCover: { width: "100%", height: 96, backgroundColor: theme.colors.bgTertiary },
     eventBody: {
         padding: theme.spacing.md,
         flexDirection: "row",
@@ -404,7 +467,7 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         gap: 10,
     },
-    eventTitle: { flex: 1, fontWeight: "800", color: theme.colors.textPrimary, lineHeight: 20 },
+    eventTitle: { flex: 1, fontWeight: "800", color: theme.colors.textPrimary, lineHeight: 20, fontSize: 14 },
     eventFooter: { flexDirection: "row", alignItems: "center", gap: 4 },
     eventSeeMore: { color: theme.colors.primary, fontWeight: "700", fontSize: 12 },
 
