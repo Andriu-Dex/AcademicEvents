@@ -114,6 +114,7 @@ export default function AdminDashboardScreen() {
     const { data: faculty } = useFacultyInfo();
     const compactReportCards = width < 380;
 
+
     const [page, setPage] = useState(1);
     const limit = 10;
 

@@ -16,6 +16,10 @@ export type UniversitySocialLink = {
     label: string;
     url: string;
     order: number;
+    iconKey?: string;
+    platformKey?: string;
+    isActive?: boolean;
+    opensInNewTab?: boolean;
 };
 
 function pickString(obj: Record<string, unknown>, ...keys: string[]): string {
@@ -48,7 +52,7 @@ export async function fetchMainUniversity(): Promise<University> {
         phone: pickString(payload, "phone", "tel_uni"),
         email: pickString(payload, "email", "cor_uni"),
         website: pickString(payload, "website", "web_uni"),
-        logoUrl: pickString(payload, "logoUrl", "log_uni"),
+        logoUrl: pickString(payload, "logoUrl", "url_log_uni", "log_uni"),
     };
 }
 
@@ -56,11 +60,10 @@ export async function updateUniversity(universityId: string, patch: Partial<Univ
     const response = await apiClient.put<unknown>(`/api/universidad/${universityId}`, {
         nom_uni: patch.name,
         acr_uni: patch.acronym,
+        url_log_uni: patch.logoUrl,
         dir_uni: patch.address,
         tel_uni: patch.phone,
         cor_uni: patch.email,
-        web_uni: patch.website,
-        log_uni: patch.logoUrl,
     });
 
     const payload = response.data as Record<string, unknown>;
@@ -80,25 +83,46 @@ export async function updateUniversity(universityId: string, patch: Partial<Univ
 
 export async function fetchUniversitySocialLinks(universityId: string): Promise<UniversitySocialLink[]> {
     const response = await apiClient.get<unknown>(`/api/universidad/${universityId}/social-links`);
-    const payload = response.data as unknown;
-    if (!Array.isArray(payload)) {
+    const payload = response.data as Record<string, unknown> | Array<Record<string, unknown>>;
+    const rawLinks = Array.isArray(payload) ? payload : (payload?.socialLinks as Array<Record<string, unknown>>);
+    if (!Array.isArray(rawLinks)) {
         throw new Error("Respuesta inválida de enlaces sociales");
     }
 
-    return (payload as Array<Record<string, unknown>>)
+    return rawLinks
         .map((l) => ({
             id: pickString(l, "id"),
             label: pickString(l, "label", "nombre") || "Enlace",
             url: pickString(l, "url"),
             order: toFiniteNumber(l.order ?? l.orden, 0),
+            iconKey: pickString(l, "iconKey", "icon_key") || undefined,
+            platformKey: pickString(l, "platformKey", "platform_key") || undefined,
+            isActive: l.isActive !== undefined ? Boolean(l.isActive) : undefined,
+            opensInNewTab: l.opensInNewTab !== undefined ? Boolean(l.opensInNewTab) : undefined,
         }))
         .filter((l) => l.id.length > 0);
 }
 
-export async function createUniversitySocialLink(universityId: string, input: { label: string; url: string }): Promise<UniversitySocialLink> {
+export async function createUniversitySocialLink(
+    universityId: string,
+    input: {
+        label: string;
+        url: string;
+        iconKey?: string;
+        platformKey?: string;
+        displayOrder?: number;
+        isActive?: boolean;
+        opensInNewTab?: boolean;
+    }
+): Promise<UniversitySocialLink> {
     const response = await apiClient.post<unknown>(`/api/universidad/${universityId}/social-links`, {
         label: input.label,
         url: input.url,
+        iconKey: input.iconKey,
+        platformKey: input.platformKey,
+        displayOrder: input.displayOrder,
+        isActive: input.isActive,
+        opensInNewTab: input.opensInNewTab,
     });
 
     const payload = response.data as Record<string, unknown>;
@@ -107,13 +131,25 @@ export async function createUniversitySocialLink(universityId: string, input: { 
         label: pickString(payload, "label"),
         url: pickString(payload, "url"),
         order: toFiniteNumber(payload.order, 0),
+        iconKey: pickString(payload, "iconKey") || input.iconKey,
+        platformKey: pickString(payload, "platformKey") || input.platformKey,
+        isActive: payload.isActive !== undefined ? Boolean(payload.isActive) : input.isActive,
+        opensInNewTab: payload.opensInNewTab !== undefined ? Boolean(payload.opensInNewTab) : input.opensInNewTab,
     };
 }
 
 export async function updateUniversitySocialLink(
     universityId: string,
     linkId: string,
-    patch: Partial<{ label: string; url: string; order: number }>
+    patch: Partial<{
+        label: string;
+        url: string;
+        order: number;
+        iconKey: string;
+        platformKey: string;
+        isActive: boolean;
+        opensInNewTab: boolean;
+    }>
 ): Promise<UniversitySocialLink> {
     const response = await apiClient.put<unknown>(`/api/universidad/${universityId}/social-links/${linkId}`, patch);
     const payload = response.data as Record<string, unknown>;
@@ -123,6 +159,10 @@ export async function updateUniversitySocialLink(
         label: pickString(payload, "label") || patch.label || "",
         url: pickString(payload, "url") || patch.url || "",
         order: toFiniteNumber(payload.order ?? patch.order, 0),
+        iconKey: pickString(payload, "iconKey") || patch.iconKey,
+        platformKey: pickString(payload, "platformKey") || patch.platformKey,
+        isActive: payload.isActive !== undefined ? Boolean(payload.isActive) : patch.isActive,
+        opensInNewTab: payload.opensInNewTab !== undefined ? Boolean(payload.opensInNewTab) : patch.opensInNewTab,
     };
 }
 

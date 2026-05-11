@@ -31,6 +31,16 @@ export type AccountUpdateInput = {
     est_ver_cor?: boolean;
 };
 
+export type AdminCreateInput = {
+    cedula: string;
+    nombres: string;
+    apellidos: string;
+    celular: string;
+    correo: string;
+    contrasena: string;
+    rol: "ADMIN_GLOBAL" | "ADMIN_GENERAL";
+};
+
 function pickString(obj: Record<string, unknown>, ...keys: string[]): string {
     for (const key of keys) {
         const value = obj[key];
@@ -98,6 +108,17 @@ export async function fetchAdminsPaginated(
 
     const response = await apiClient.get<unknown>("/api/admin/list-admins-paginados", { params });
     return normalizeEnvelope(response.data as Record<string, unknown>, page, limit);
+}
+
+export async function createAdmin(input: AdminCreateInput): Promise<ManagedAccount> {
+    const response = await apiClient.post<unknown>("/api/admin/create-admin", input);
+    const payload = response.data as Record<string, unknown>;
+
+    if (payload && typeof payload === "object" && payload.admin && typeof payload.admin === "object") {
+        return normalizeAccount(payload.admin as Record<string, unknown>);
+    }
+
+    return normalizeAccount(payload);
 }
 
 export async function fetchUsersPaginated(
