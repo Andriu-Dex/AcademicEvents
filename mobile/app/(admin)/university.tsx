@@ -70,14 +70,18 @@ const SOCIAL_ICON_OPTIONS = [
 ];
 
 const HOME_STATS_OPTIONS = [
-    { id: "careers", label: "Carreras" },
-    { id: "activeEvents", label: "Eventos activos" },
-    { id: "registeredUsers", label: "Usuarios registrados" },
-    { id: "participationRate", label: "Participacion" },
-    { id: "inscriptions", label: "Inscripciones" },
-    { id: "certificates", label: "Certificados" },
-    { id: "revenue", label: "Ingresos" },
-    { id: "attendance", label: "Asistencia" },
+    { id: "careersActive", label: "Carreras" },
+    { id: "activeEvents", label: "Eventos Activos" },
+    { id: "registeredUsers", label: "Usuarios Registrados" },
+    { id: "participationRate", label: "Participacion de Usuarios" },
+    { id: "cancelledEvents", label: "Eventos Cancelados" },
+    { id: "finishedEvents", label: "Eventos Finalizados" },
+    { id: "issuedCertificates", label: "Certificados Emitidos" },
+    { id: "activeEnrollments", label: "Inscripciones Activas" },
+    { id: "availableSeats", label: "Cupos Disponibles" },
+    { id: "inPersonEvents", label: "Eventos Presenciales" },
+    { id: "virtualEvents", label: "Eventos Virtuales" },
+    { id: "featuredEvents", label: "Eventos Destacados" },
 ];
 
 function buildSocialLink(link: UniversitySocialLink, index: number): EditableSocialLink {
@@ -202,7 +206,10 @@ export default function AdminUniversityScreen() {
         },
         onSuccess: async (data) => {
             setUniversityForm(data);
-            await queryClient.invalidateQueries({ queryKey: ["admin-university"] });
+            await Promise.all([
+                queryClient.invalidateQueries({ queryKey: ["admin-university"] }),
+                queryClient.invalidateQueries({ queryKey: ["home-university"] }),
+            ]);
         },
         onError: (error) => {
             if (error instanceof Error && error.message.startsWith("validation:")) {
@@ -231,7 +238,11 @@ export default function AdminUniversityScreen() {
                 acronimo: data.acronimo,
                 logo: data.logo,
             });
-            await queryClient.invalidateQueries({ queryKey: ["admin-faculty"] });
+            await Promise.all([
+                queryClient.invalidateQueries({ queryKey: ["admin-faculty"] }),
+                queryClient.invalidateQueries({ queryKey: ["home-faculty"] }),
+                queryClient.invalidateQueries({ queryKey: ["faculty-info"] }),
+            ]);
         },
         onError: (error) => {
             if (error instanceof Error && error.message.startsWith("validation:")) {
@@ -268,7 +279,10 @@ export default function AdminUniversityScreen() {
             });
         },
         onSuccess: async () => {
-            await queryClient.invalidateQueries({ queryKey: ["admin-mva"] });
+            await Promise.all([
+                queryClient.invalidateQueries({ queryKey: ["admin-mva"] }),
+                queryClient.invalidateQueries({ queryKey: ["home-identity"] }),
+            ]);
         },
         onError: (error) => {
             if (error instanceof Error && error.message.startsWith("validation:")) {
@@ -309,7 +323,10 @@ export default function AdminUniversityScreen() {
             });
         },
         onSuccess: async () => {
-            await queryClient.invalidateQueries({ queryKey: ["admin-university-social"] });
+            await Promise.all([
+                queryClient.invalidateQueries({ queryKey: ["admin-university-social"] }),
+                queryClient.invalidateQueries({ queryKey: ["home-university"] }),
+            ]);
         },
         onError: (error) => {
             if (error instanceof Error && error.message.startsWith("validation:")) {
@@ -326,7 +343,10 @@ export default function AdminUniversityScreen() {
             return deleteUniversitySocialLink(universityForm.id, linkId);
         },
         onSuccess: async () => {
-            await queryClient.invalidateQueries({ queryKey: ["admin-university-social"] });
+            await Promise.all([
+                queryClient.invalidateQueries({ queryKey: ["admin-university-social"] }),
+                queryClient.invalidateQueries({ queryKey: ["home-university"] }),
+            ]);
         },
         onError: (error) => {
             setSocialError(formatApiError(error, "No se pudo eliminar el enlace."));

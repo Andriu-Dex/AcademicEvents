@@ -7,7 +7,7 @@ import { theme } from "../../src/shared/theme";
 import { useAuthStore } from "../../src/store/authStore";
 import { isAdminRole } from "../../src/utils/roles";
 
-const TAB_BAR_HEIGHT = Platform.OS === "ios" ? 82 : 68;
+const TAB_BAR_HEIGHT = Platform.OS === "ios" ? 96 : 84;
 
 function TabIcon({ name, color, size, focused }: Readonly<{ name: keyof typeof Ionicons.glyphMap; color: string; size: number; focused: boolean }>) {
     return (
@@ -56,8 +56,8 @@ export default function AppLayout() {
                     backgroundColor: theme.colors.bgPrimary,
                     borderTopWidth: 0,
                     height: TAB_BAR_HEIGHT,
-                    paddingBottom: Platform.OS === "ios" ? 22 : 10,
-                    paddingTop: 8,
+                    paddingBottom: Platform.OS === "ios" ? 26 : 14,
+                    paddingTop: 10,
                     ...theme.shadow.tab,
                 },
                 tabBarItemStyle: {
@@ -65,9 +65,9 @@ export default function AppLayout() {
                     justifyContent: "center",
                 },
                 tabBarLabelStyle: {
-                    fontSize: 11,
+                    fontSize: 12,
                     fontWeight: "700",
-                    marginTop: 2,
+                    marginTop: 3,
                 },
             }}
         >

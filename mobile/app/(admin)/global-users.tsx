@@ -121,9 +121,12 @@ export default function AdminGlobalUsersScreen() {
     const [errors, setErrors] = useState<FieldErrors>({});
     const [roleOpen, setRoleOpen] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+    const [showCreateForm, setShowCreateForm] = useState(false);
 
     const [expandedAccountId, setExpandedAccountId] = useState<string | null>(null);
     const [editAccountId, setEditAccountId] = useState<string | null>(null);
+    const [editIsAdmin, setEditIsAdmin] = useState(false);
+    const [editTargetLabel, setEditTargetLabel] = useState("");
     const [editForm, setEditForm] = useState({
         cedula: "",
         nombres: "",
@@ -239,6 +242,22 @@ export default function AdminGlobalUsersScreen() {
     const adminsPagination = adminsQuery.data?.pagination;
     const users = usersQuery.data?.data ?? [];
     const usersPagination = usersQuery.data?.pagination;
+
+    const openEditForm = (account: ManagedAccount, isAdmin: boolean) => {
+        setEditAccountId(account.id);
+        setEditIsAdmin(isAdmin);
+        setEditTargetLabel(getAccountName(account));
+        setEditErrors({});
+        setEditForm({
+            cedula: account.user?.idNumber ?? "",
+            nombres: account.user?.firstName ?? "",
+            apellidos: account.user?.lastName ?? "",
+            celular: account.user?.phone ?? "",
+            correo: account.email ?? "",
+            rol: account.role ?? (isAdmin ? "ADMIN_GENERAL" : "GENERAL"),
+            est_ver_cor: Boolean(account.isEmailVerified),
+        });
+    };
 
     const updateMutation = useMutation({
         mutationFn: async () => {
@@ -371,148 +390,268 @@ export default function AdminGlobalUsersScreen() {
                         <Text style={styles.sectionTitle}>Crear nuevo administrador</Text>
                     </View>
 
-                    <View style={styles.formGrid}>
-                        <View style={styles.formField}>
-                            <Text style={styles.label}>Cedula</Text>
-                            <TextInput
-                                style={styles.input}
-                                value={form.cedula}
-                                onChangeText={(text) => setForm((prev) => ({ ...prev, cedula: text }))}
-                                placeholder="Ej: 0102030405"
-                                placeholderTextColor={theme.colors.textTertiary}
-                            />
-                            {errors.cedula ? <Text style={styles.errorText}>{errors.cedula}</Text> : null}
-                        </View>
-                        <View style={styles.formField}>
-                            <Text style={styles.label}>Nombres</Text>
-                            <TextInput
-                                style={styles.input}
-                                value={form.nombres}
-                                onChangeText={(text) => setForm((prev) => ({ ...prev, nombres: text }))}
-                                placeholder="Nombres"
-                                placeholderTextColor={theme.colors.textTertiary}
-                            />
-                            {errors.nombres ? <Text style={styles.errorText}>{errors.nombres}</Text> : null}
-                        </View>
-                        <View style={styles.formField}>
-                            <Text style={styles.label}>Apellidos</Text>
-                            <TextInput
-                                style={styles.input}
-                                value={form.apellidos}
-                                onChangeText={(text) => setForm((prev) => ({ ...prev, apellidos: text }))}
-                                placeholder="Apellidos"
-                                placeholderTextColor={theme.colors.textTertiary}
-                            />
-                            {errors.apellidos ? <Text style={styles.errorText}>{errors.apellidos}</Text> : null}
-                        </View>
-                        <View style={styles.formField}>
-                            <Text style={styles.label}>Celular</Text>
-                            <TextInput
-                                style={styles.input}
-                                value={form.celular}
-                                onChangeText={(text) => setForm((prev) => ({ ...prev, celular: text }))}
-                                placeholder="09xxxxxxxx"
-                                placeholderTextColor={theme.colors.textTertiary}
-                                keyboardType="phone-pad"
-                            />
-                            {errors.celular ? <Text style={styles.errorText}>{errors.celular}</Text> : null}
-                        </View>
-                        <View style={styles.formField}>
-                            <Text style={styles.label}>Correo</Text>
-                            <TextInput
-                                style={styles.input}
-                                value={form.correo}
-                                onChangeText={(text) => setForm((prev) => ({ ...prev, correo: text }))}
-                                placeholder="correo@dominio.com"
-                                placeholderTextColor={theme.colors.textTertiary}
-                                keyboardType="email-address"
-                                autoCapitalize="none"
-                            />
-                            {errors.correo ? <Text style={styles.errorText}>{errors.correo}</Text> : null}
-                        </View>
-                        <View style={styles.formField}>
-                            <Text style={styles.label}>Contrasena</Text>
-                            <View style={styles.inputRow}>
+                    <Pressable
+                        style={styles.secondaryButton}
+                        onPress={() => setShowCreateForm((prev) => !prev)}
+                    >
+                        <Text style={styles.secondaryButtonText}>
+                            {showCreateForm ? "Ocultar formulario" : "Mostrar formulario"}
+                        </Text>
+                    </Pressable>
+
+                    {showCreateForm ? (
+                        <View style={styles.formGrid}>
+                            <View style={styles.formField}>
+                                <Text style={styles.label}>Cedula</Text>
                                 <TextInput
-                                    style={[styles.input, styles.inputFlex]}
-                                    value={form.contrasena}
-                                    onChangeText={(text) => setForm((prev) => ({ ...prev, contrasena: text }))}
+                                    style={styles.input}
+                                    value={form.cedula}
+                                    onChangeText={(text) => setForm((prev) => ({ ...prev, cedula: text }))}
+                                    placeholder="Ej: 0102030405"
+                                    placeholderTextColor={theme.colors.textTertiary}
+                                />
+                                {errors.cedula ? <Text style={styles.errorText}>{errors.cedula}</Text> : null}
+                            </View>
+                            <View style={styles.formField}>
+                                <Text style={styles.label}>Nombres</Text>
+                                <TextInput
+                                    style={styles.input}
+                                    value={form.nombres}
+                                    onChangeText={(text) => setForm((prev) => ({ ...prev, nombres: text }))}
+                                    placeholder="Nombres"
+                                    placeholderTextColor={theme.colors.textTertiary}
+                                />
+                                {errors.nombres ? <Text style={styles.errorText}>{errors.nombres}</Text> : null}
+                            </View>
+                            <View style={styles.formField}>
+                                <Text style={styles.label}>Apellidos</Text>
+                                <TextInput
+                                    style={styles.input}
+                                    value={form.apellidos}
+                                    onChangeText={(text) => setForm((prev) => ({ ...prev, apellidos: text }))}
+                                    placeholder="Apellidos"
+                                    placeholderTextColor={theme.colors.textTertiary}
+                                />
+                                {errors.apellidos ? <Text style={styles.errorText}>{errors.apellidos}</Text> : null}
+                            </View>
+                            <View style={styles.formField}>
+                                <Text style={styles.label}>Celular</Text>
+                                <TextInput
+                                    style={styles.input}
+                                    value={form.celular}
+                                    onChangeText={(text) => setForm((prev) => ({ ...prev, celular: text }))}
+                                    placeholder="09xxxxxxxx"
+                                    placeholderTextColor={theme.colors.textTertiary}
+                                    keyboardType="phone-pad"
+                                />
+                                {errors.celular ? <Text style={styles.errorText}>{errors.celular}</Text> : null}
+                            </View>
+                            <View style={styles.formField}>
+                                <Text style={styles.label}>Correo</Text>
+                                <TextInput
+                                    style={styles.input}
+                                    value={form.correo}
+                                    onChangeText={(text) => setForm((prev) => ({ ...prev, correo: text }))}
+                                    placeholder="correo@dominio.com"
+                                    placeholderTextColor={theme.colors.textTertiary}
+                                    keyboardType="email-address"
+                                    autoCapitalize="none"
+                                />
+                                {errors.correo ? <Text style={styles.errorText}>{errors.correo}</Text> : null}
+                            </View>
+                            <View style={styles.formField}>
+                                <Text style={styles.label}>Contrasena</Text>
+                                <View style={styles.inputRow}>
+                                    <TextInput
+                                        style={[styles.input, styles.inputFlex]}
+                                        value={form.contrasena}
+                                        onChangeText={(text) => setForm((prev) => ({ ...prev, contrasena: text }))}
+                                        placeholder="********"
+                                        placeholderTextColor={theme.colors.textTertiary}
+                                        secureTextEntry={!showPassword}
+                                    />
+                                    <Pressable
+                                        style={styles.iconButton}
+                                        onPress={() => setShowPassword((prev) => !prev)}
+                                    >
+                                        <Ionicons
+                                            name={showPassword ? "eye-off-outline" : "eye-outline"}
+                                            size={18}
+                                            color={theme.colors.textSecondary}
+                                        />
+                                    </Pressable>
+                                </View>
+                                {errors.contrasena ? <Text style={styles.errorText}>{errors.contrasena}</Text> : null}
+                            </View>
+                            <View style={styles.formField}>
+                                <Text style={styles.label}>Confirmar contrasena</Text>
+                                <TextInput
+                                    style={styles.input}
+                                    value={confirmar}
+                                    onChangeText={setConfirmar}
                                     placeholder="********"
                                     placeholderTextColor={theme.colors.textTertiary}
-                                    secureTextEntry={!showPassword}
+                                    secureTextEntry
                                 />
+                                {errors.confirmar ? <Text style={styles.errorText}>{errors.confirmar}</Text> : null}
+                            </View>
+                            <View style={styles.formField}>
+                                <Text style={styles.label}>Rol</Text>
                                 <Pressable
-                                    style={styles.iconButton}
-                                    onPress={() => setShowPassword((prev) => !prev)}
+                                    style={styles.selectButton}
+                                    onPress={() => setRoleOpen((prev) => !prev)}
                                 >
+                                    <Text style={styles.selectText}>
+                                        {ADMIN_ROLE_OPTIONS.find((o) => o.value === form.rol)?.label ?? "Seleccionar"}
+                                    </Text>
                                     <Ionicons
-                                        name={showPassword ? "eye-off-outline" : "eye-outline"}
-                                        size={18}
+                                        name={roleOpen ? "chevron-up" : "chevron-down"}
+                                        size={16}
                                         color={theme.colors.textSecondary}
                                     />
                                 </Pressable>
+                                {roleOpen ? (
+                                    <View style={styles.selectMenu}>
+                                        {ADMIN_ROLE_OPTIONS.map((option) => (
+                                            <Pressable
+                                                key={option.value}
+                                                style={styles.selectOption}
+                                                onPress={() => {
+                                                    setForm((prev) => ({ ...prev, rol: option.value }));
+                                                    setRoleOpen(false);
+                                                }}
+                                            >
+                                                <Text style={styles.selectOptionText}>{option.label}</Text>
+                                            </Pressable>
+                                        ))}
+                                    </View>
+                                ) : null}
                             </View>
-                            {errors.contrasena ? <Text style={styles.errorText}>{errors.contrasena}</Text> : null}
-                        </View>
-                        <View style={styles.formField}>
-                            <Text style={styles.label}>Confirmar contrasena</Text>
-                            <TextInput
-                                style={styles.input}
-                                value={confirmar}
-                                onChangeText={setConfirmar}
-                                placeholder="********"
-                                placeholderTextColor={theme.colors.textTertiary}
-                                secureTextEntry
-                            />
-                            {errors.confirmar ? <Text style={styles.errorText}>{errors.confirmar}</Text> : null}
-                        </View>
-                        <View style={styles.formField}>
-                            <Text style={styles.label}>Rol</Text>
+
                             <Pressable
-                                style={styles.selectButton}
-                                onPress={() => setRoleOpen((prev) => !prev)}
+                                style={[styles.primaryButton, createMutation.isPending && styles.buttonDisabled]}
+                                onPress={() => createMutation.mutate()}
+                                disabled={createMutation.isPending}
                             >
-                                <Text style={styles.selectText}>
-                                    {ADMIN_ROLE_OPTIONS.find((o) => o.value === form.rol)?.label ?? "Seleccionar"}
-                                </Text>
-                                <Ionicons
-                                    name={roleOpen ? "chevron-up" : "chevron-down"}
-                                    size={16}
-                                    color={theme.colors.textSecondary}
-                                />
+                                {createMutation.isPending ? (
+                                    <ActivityIndicator color={theme.colors.textInverse} />
+                                ) : (
+                                    <Text style={styles.primaryButtonText}>Crear administrador</Text>
+                                )}
                             </Pressable>
-                            {roleOpen ? (
-                                <View style={styles.selectMenu}>
-                                    {ADMIN_ROLE_OPTIONS.map((option) => (
-                                        <Pressable
-                                            key={option.value}
-                                            style={styles.selectOption}
-                                            onPress={() => {
-                                                setForm((prev) => ({ ...prev, rol: option.value }));
-                                                setRoleOpen(false);
-                                            }}
+                            {createErrorText ? <Text style={styles.errorText}>{createErrorText}</Text> : null}
+                        </View>
+                    ) : null}
+                </View>
+
+                {editAccountId ? (
+                    <View style={styles.sectionCard}>
+                        <View style={styles.sectionHeader}>
+                            <Ionicons name="create-outline" size={18} color={theme.colors.primary} />
+                            <Text style={styles.sectionTitle}>Editar cuenta</Text>
+                        </View>
+                        <Text style={styles.sectionSubtitle}>Editando: {editTargetLabel}</Text>
+                        <View style={styles.formGrid}>
+                            <View style={styles.formField}>
+                                <Text style={styles.label}>Cedula</Text>
+                                <TextInput
+                                    style={styles.input}
+                                    value={editForm.cedula}
+                                    onChangeText={(text) => setEditForm({ ...editForm, cedula: text })}
+                                />
+                                {editErrors.cedula ? <Text style={styles.errorText}>{editErrors.cedula}</Text> : null}
+                            </View>
+                            <View style={styles.formField}>
+                                <Text style={styles.label}>Nombres</Text>
+                                <TextInput
+                                    style={styles.input}
+                                    value={editForm.nombres}
+                                    onChangeText={(text) => setEditForm({ ...editForm, nombres: text })}
+                                />
+                                {editErrors.nombres ? <Text style={styles.errorText}>{editErrors.nombres}</Text> : null}
+                            </View>
+                            <View style={styles.formField}>
+                                <Text style={styles.label}>Apellidos</Text>
+                                <TextInput
+                                    style={styles.input}
+                                    value={editForm.apellidos}
+                                    onChangeText={(text) => setEditForm({ ...editForm, apellidos: text })}
+                                />
+                                {editErrors.apellidos ? <Text style={styles.errorText}>{editErrors.apellidos}</Text> : null}
+                            </View>
+                            <View style={styles.formField}>
+                                <Text style={styles.label}>Celular</Text>
+                                <TextInput
+                                    style={styles.input}
+                                    value={editForm.celular}
+                                    onChangeText={(text) => setEditForm({ ...editForm, celular: text })}
+                                    keyboardType="phone-pad"
+                                />
+                                {editErrors.celular ? <Text style={styles.errorText}>{editErrors.celular}</Text> : null}
+                            </View>
+                            <View style={styles.formField}>
+                                <Text style={styles.label}>Correo</Text>
+                                <TextInput
+                                    style={styles.input}
+                                    value={editForm.correo}
+                                    onChangeText={(text) => setEditForm({ ...editForm, correo: text })}
+                                    keyboardType="email-address"
+                                    autoCapitalize="none"
+                                />
+                                {editErrors.correo ? <Text style={styles.errorText}>{editErrors.correo}</Text> : null}
+                            </View>
+                            <Text style={styles.label}>Rol</Text>
+                            <View style={styles.filterRow}>
+                                {(editIsAdmin ? ADMIN_EDIT_ROLE_OPTIONS : USER_EDIT_ROLE_OPTIONS).map((opt) => (
+                                    <Pressable
+                                        key={opt.value}
+                                        style={[styles.filterChip, editForm.rol === opt.value && styles.filterChipActive]}
+                                        onPress={() => setEditForm({ ...editForm, rol: opt.value })}
+                                    >
+                                        <Text
+                                            style={[
+                                                styles.filterChipText,
+                                                editForm.rol === opt.value && styles.filterChipTextActive,
+                                            ]}
                                         >
-                                            <Text style={styles.selectOptionText}>{option.label}</Text>
-                                        </Pressable>
-                                    ))}
+                                            {opt.label}
+                                        </Text>
+                                    </Pressable>
+                                ))}
+                            </View>
+                            <Pressable
+                                style={styles.toggleRow}
+                                onPress={() => setEditForm({ ...editForm, est_ver_cor: !editForm.est_ver_cor })}
+                            >
+                                <View style={[styles.checkbox, editForm.est_ver_cor && styles.checkboxChecked]}>
+                                    {editForm.est_ver_cor ? (
+                                        <Ionicons name="checkmark" size={14} color={theme.colors.textInverse} />
+                                    ) : null}
                                 </View>
-                            ) : null}
+                                <Text style={styles.toggleLabel}>Correo verificado</Text>
+                            </Pressable>
+                            <View style={styles.editActions}>
+                                <Pressable
+                                    style={[styles.primaryButton, updateMutation.isPending && styles.buttonDisabled]}
+                                    onPress={() => updateMutation.mutate()}
+                                    disabled={updateMutation.isPending}
+                                >
+                                    {updateMutation.isPending ? (
+                                        <ActivityIndicator color={theme.colors.textInverse} />
+                                    ) : (
+                                        <Text style={styles.primaryButtonText}>Guardar cambios</Text>
+                                    )}
+                                </Pressable>
+                                <Pressable
+                                    style={styles.secondaryButton}
+                                    onPress={() => setEditAccountId(null)}
+                                >
+                                    <Text style={styles.secondaryButtonText}>Cancelar</Text>
+                                </Pressable>
+                            </View>
                         </View>
                     </View>
-
-                    <Pressable
-                        style={[styles.primaryButton, createMutation.isPending && styles.buttonDisabled]}
-                        onPress={() => createMutation.mutate()}
-                        disabled={createMutation.isPending}
-                    >
-                        {createMutation.isPending ? (
-                            <ActivityIndicator color={theme.colors.textInverse} />
-                        ) : (
-                            <Text style={styles.primaryButtonText}>Crear administrador</Text>
-                        )}
-                    </Pressable>
-                    {createErrorText ? <Text style={styles.errorText}>{createErrorText}</Text> : null}
-                </View>
+                ) : null}
 
                 <View style={styles.sectionCard}>
                     <View style={styles.sectionHeader}>
@@ -583,22 +722,14 @@ export default function AdminGlobalUsersScreen() {
                                             setExpandedAccountId((prev) => (prev === account.id ? null : account.id))
                                         }
                                     >
-                                        <Text style={styles.actionButtonText}>Ver detalle</Text>
+                                        <Text style={styles.actionButtonText}>
+                                            {expandedAccountId === account.id ? "Ocultar detalle" : "Ver detalle"}
+                                        </Text>
                                     </Pressable>
                                     <Pressable
                                         style={styles.actionButton}
                                         onPress={() => {
-                                            setEditAccountId(account.id);
-                                            setEditErrors({});
-                                            setEditForm({
-                                                cedula: account.user?.idNumber ?? "",
-                                                nombres: account.user?.firstName ?? "",
-                                                apellidos: account.user?.lastName ?? "",
-                                                celular: account.user?.phone ?? "",
-                                                correo: account.email ?? "",
-                                                rol: account.role ?? "ADMIN_GENERAL",
-                                                est_ver_cor: Boolean(account.isEmailVerified),
-                                            });
+                                            openEditForm(account, true);
                                         }}
                                     >
                                         <Text style={styles.actionButtonText}>Editar</Text>
@@ -639,119 +770,21 @@ export default function AdminGlobalUsersScreen() {
                                         <Text style={styles.detailText}>ID cuenta: {account.id}</Text>
                                     </View>
                                 ) : null}
-                                {editAccountId === account.id ? (
-                                    <View style={styles.editBlock}>
-                                        <View style={styles.formField}>
-                                            <Text style={styles.label}>Cedula</Text>
-                                            <TextInput
-                                                style={styles.input}
-                                                value={editForm.cedula}
-                                                onChangeText={(text) => setEditForm({ ...editForm, cedula: text })}
-                                            />
-                                            {editErrors.cedula ? <Text style={styles.errorText}>{editErrors.cedula}</Text> : null}
-                                        </View>
-                                        <View style={styles.formField}>
-                                            <Text style={styles.label}>Nombres</Text>
-                                            <TextInput
-                                                style={styles.input}
-                                                value={editForm.nombres}
-                                                onChangeText={(text) => setEditForm({ ...editForm, nombres: text })}
-                                            />
-                                            {editErrors.nombres ? <Text style={styles.errorText}>{editErrors.nombres}</Text> : null}
-                                        </View>
-                                        <View style={styles.formField}>
-                                            <Text style={styles.label}>Apellidos</Text>
-                                            <TextInput
-                                                style={styles.input}
-                                                value={editForm.apellidos}
-                                                onChangeText={(text) => setEditForm({ ...editForm, apellidos: text })}
-                                            />
-                                            {editErrors.apellidos ? <Text style={styles.errorText}>{editErrors.apellidos}</Text> : null}
-                                        </View>
-                                        <View style={styles.formField}>
-                                            <Text style={styles.label}>Celular</Text>
-                                            <TextInput
-                                                style={styles.input}
-                                                value={editForm.celular}
-                                                onChangeText={(text) => setEditForm({ ...editForm, celular: text })}
-                                                keyboardType="phone-pad"
-                                            />
-                                            {editErrors.celular ? <Text style={styles.errorText}>{editErrors.celular}</Text> : null}
-                                        </View>
-                                        <View style={styles.formField}>
-                                            <Text style={styles.label}>Correo</Text>
-                                            <TextInput
-                                                style={styles.input}
-                                                value={editForm.correo}
-                                                onChangeText={(text) => setEditForm({ ...editForm, correo: text })}
-                                                keyboardType="email-address"
-                                                autoCapitalize="none"
-                                            />
-                                            {editErrors.correo ? <Text style={styles.errorText}>{editErrors.correo}</Text> : null}
-                                        </View>
-                                        <Text style={styles.label}>Rol</Text>
-                                        <View style={styles.filterRow}>
-                                            {ADMIN_EDIT_ROLE_OPTIONS.map((opt) => (
-                                                <Pressable
-                                                    key={opt.value}
-                                                    style={[styles.filterChip, editForm.rol === opt.value && styles.filterChipActive]}
-                                                    onPress={() => setEditForm({ ...editForm, rol: opt.value })}
-                                                >
-                                                    <Text
-                                                        style={[
-                                                            styles.filterChipText,
-                                                            editForm.rol === opt.value && styles.filterChipTextActive,
-                                                        ]}
-                                                    >
-                                                        {opt.label}
-                                                    </Text>
-                                                </Pressable>
-                                            ))}
-                                        </View>
-                                        <Pressable
-                                            style={styles.toggleRow}
-                                            onPress={() => setEditForm({ ...editForm, est_ver_cor: !editForm.est_ver_cor })}
-                                        >
-                                            <View style={[styles.checkbox, editForm.est_ver_cor && styles.checkboxChecked]}>
-                                                {editForm.est_ver_cor ? (
-                                                    <Ionicons name="checkmark" size={14} color={theme.colors.textInverse} />
-                                                ) : null}
-                                            </View>
-                                            <Text style={styles.toggleLabel}>Correo verificado</Text>
-                                        </Pressable>
-                                        <View style={styles.editActions}>
-                                            <Pressable
-                                                style={[styles.primaryButton, updateMutation.isPending && styles.buttonDisabled]}
-                                                onPress={() => updateMutation.mutate()}
-                                                disabled={updateMutation.isPending}
-                                            >
-                                                {updateMutation.isPending ? (
-                                                    <ActivityIndicator color={theme.colors.textInverse} />
-                                                ) : (
-                                                    <Text style={styles.primaryButtonText}>Guardar cambios</Text>
-                                                )}
-                                            </Pressable>
-                                            <Pressable
-                                                style={styles.secondaryButton}
-                                                onPress={() => setEditAccountId(null)}
-                                            >
-                                                <Text style={styles.secondaryButtonText}>Cancelar</Text>
-                                            </Pressable>
-                                        </View>
-                                    </View>
-                                ) : null}
                                 {actionTarget?.id === account.id ? (
                                     <View style={styles.actionPanel}>
                                         {actionTarget.action === "delete" ? (
                                             <Text style={styles.detailText}>Confirma eliminar esta cuenta.</Text>
                                         ) : (
-                                            <TextInput
-                                                style={styles.input}
-                                                value={actionReason}
-                                                onChangeText={setActionReason}
-                                                placeholder="Motivo"
-                                                placeholderTextColor={theme.colors.textTertiary}
-                                            />
+                                            <View style={styles.formField}>
+                                                <Text style={styles.label}>Motivo</Text>
+                                                <TextInput
+                                                    style={styles.input}
+                                                    value={actionReason}
+                                                    onChangeText={setActionReason}
+                                                    placeholder="Escribe el motivo"
+                                                    placeholderTextColor={theme.colors.textTertiary}
+                                                />
+                                            </View>
                                         )}
                                         {actionError ? <Text style={styles.errorText}>{actionError}</Text> : null}
                                         <View style={styles.editActions}>
@@ -882,22 +915,14 @@ export default function AdminGlobalUsersScreen() {
                                             setExpandedAccountId((prev) => (prev === account.id ? null : account.id))
                                         }
                                     >
-                                        <Text style={styles.actionButtonText}>Ver detalle</Text>
+                                        <Text style={styles.actionButtonText}>
+                                            {expandedAccountId === account.id ? "Ocultar detalle" : "Ver detalle"}
+                                        </Text>
                                     </Pressable>
                                     <Pressable
                                         style={styles.actionButton}
                                         onPress={() => {
-                                            setEditAccountId(account.id);
-                                            setEditErrors({});
-                                            setEditForm({
-                                                cedula: account.user?.idNumber ?? "",
-                                                nombres: account.user?.firstName ?? "",
-                                                apellidos: account.user?.lastName ?? "",
-                                                celular: account.user?.phone ?? "",
-                                                correo: account.email ?? "",
-                                                rol: account.role ?? "GENERAL",
-                                                est_ver_cor: Boolean(account.isEmailVerified),
-                                            });
+                                            openEditForm(account, false);
                                         }}
                                     >
                                         <Text style={styles.actionButtonText}>Editar</Text>
@@ -938,119 +963,21 @@ export default function AdminGlobalUsersScreen() {
                                         <Text style={styles.detailText}>ID cuenta: {account.id}</Text>
                                     </View>
                                 ) : null}
-                                {editAccountId === account.id ? (
-                                    <View style={styles.editBlock}>
-                                        <View style={styles.formField}>
-                                            <Text style={styles.label}>Cedula</Text>
-                                            <TextInput
-                                                style={styles.input}
-                                                value={editForm.cedula}
-                                                onChangeText={(text) => setEditForm({ ...editForm, cedula: text })}
-                                            />
-                                            {editErrors.cedula ? <Text style={styles.errorText}>{editErrors.cedula}</Text> : null}
-                                        </View>
-                                        <View style={styles.formField}>
-                                            <Text style={styles.label}>Nombres</Text>
-                                            <TextInput
-                                                style={styles.input}
-                                                value={editForm.nombres}
-                                                onChangeText={(text) => setEditForm({ ...editForm, nombres: text })}
-                                            />
-                                            {editErrors.nombres ? <Text style={styles.errorText}>{editErrors.nombres}</Text> : null}
-                                        </View>
-                                        <View style={styles.formField}>
-                                            <Text style={styles.label}>Apellidos</Text>
-                                            <TextInput
-                                                style={styles.input}
-                                                value={editForm.apellidos}
-                                                onChangeText={(text) => setEditForm({ ...editForm, apellidos: text })}
-                                            />
-                                            {editErrors.apellidos ? <Text style={styles.errorText}>{editErrors.apellidos}</Text> : null}
-                                        </View>
-                                        <View style={styles.formField}>
-                                            <Text style={styles.label}>Celular</Text>
-                                            <TextInput
-                                                style={styles.input}
-                                                value={editForm.celular}
-                                                onChangeText={(text) => setEditForm({ ...editForm, celular: text })}
-                                                keyboardType="phone-pad"
-                                            />
-                                            {editErrors.celular ? <Text style={styles.errorText}>{editErrors.celular}</Text> : null}
-                                        </View>
-                                        <View style={styles.formField}>
-                                            <Text style={styles.label}>Correo</Text>
-                                            <TextInput
-                                                style={styles.input}
-                                                value={editForm.correo}
-                                                onChangeText={(text) => setEditForm({ ...editForm, correo: text })}
-                                                keyboardType="email-address"
-                                                autoCapitalize="none"
-                                            />
-                                            {editErrors.correo ? <Text style={styles.errorText}>{editErrors.correo}</Text> : null}
-                                        </View>
-                                        <Text style={styles.label}>Rol</Text>
-                                        <View style={styles.filterRow}>
-                                            {USER_EDIT_ROLE_OPTIONS.map((opt) => (
-                                                <Pressable
-                                                    key={opt.value}
-                                                    style={[styles.filterChip, editForm.rol === opt.value && styles.filterChipActive]}
-                                                    onPress={() => setEditForm({ ...editForm, rol: opt.value })}
-                                                >
-                                                    <Text
-                                                        style={[
-                                                            styles.filterChipText,
-                                                            editForm.rol === opt.value && styles.filterChipTextActive,
-                                                        ]}
-                                                    >
-                                                        {opt.label}
-                                                    </Text>
-                                                </Pressable>
-                                            ))}
-                                        </View>
-                                        <Pressable
-                                            style={styles.toggleRow}
-                                            onPress={() => setEditForm({ ...editForm, est_ver_cor: !editForm.est_ver_cor })}
-                                        >
-                                            <View style={[styles.checkbox, editForm.est_ver_cor && styles.checkboxChecked]}>
-                                                {editForm.est_ver_cor ? (
-                                                    <Ionicons name="checkmark" size={14} color={theme.colors.textInverse} />
-                                                ) : null}
-                                            </View>
-                                            <Text style={styles.toggleLabel}>Correo verificado</Text>
-                                        </Pressable>
-                                        <View style={styles.editActions}>
-                                            <Pressable
-                                                style={[styles.primaryButton, updateMutation.isPending && styles.buttonDisabled]}
-                                                onPress={() => updateMutation.mutate()}
-                                                disabled={updateMutation.isPending}
-                                            >
-                                                {updateMutation.isPending ? (
-                                                    <ActivityIndicator color={theme.colors.textInverse} />
-                                                ) : (
-                                                    <Text style={styles.primaryButtonText}>Guardar cambios</Text>
-                                                )}
-                                            </Pressable>
-                                            <Pressable
-                                                style={styles.secondaryButton}
-                                                onPress={() => setEditAccountId(null)}
-                                            >
-                                                <Text style={styles.secondaryButtonText}>Cancelar</Text>
-                                            </Pressable>
-                                        </View>
-                                    </View>
-                                ) : null}
                                 {actionTarget?.id === account.id ? (
                                     <View style={styles.actionPanel}>
                                         {actionTarget.action === "delete" ? (
                                             <Text style={styles.detailText}>Confirma eliminar esta cuenta.</Text>
                                         ) : (
-                                            <TextInput
-                                                style={styles.input}
-                                                value={actionReason}
-                                                onChangeText={setActionReason}
-                                                placeholder="Motivo"
-                                                placeholderTextColor={theme.colors.textTertiary}
-                                            />
+                                            <View style={styles.formField}>
+                                                <Text style={styles.label}>Motivo</Text>
+                                                <TextInput
+                                                    style={styles.input}
+                                                    value={actionReason}
+                                                    onChangeText={setActionReason}
+                                                    placeholder="Escribe el motivo"
+                                                    placeholderTextColor={theme.colors.textTertiary}
+                                                />
+                                            </View>
                                         )}
                                         {actionError ? <Text style={styles.errorText}>{actionError}</Text> : null}
                                         <View style={styles.editActions}>
