@@ -74,6 +74,10 @@ const HOME_STATS_OPTIONS = [
     { id: "activeEvents", label: "Eventos activos" },
     { id: "registeredUsers", label: "Usuarios registrados" },
     { id: "participationRate", label: "Participacion" },
+    { id: "inscriptions", label: "Inscripciones" },
+    { id: "certificates", label: "Certificados" },
+    { id: "revenue", label: "Ingresos" },
+    { id: "attendance", label: "Asistencia" },
 ];
 
 function buildSocialLink(link: UniversitySocialLink, index: number): EditableSocialLink {
@@ -360,7 +364,7 @@ export default function AdminUniversityScreen() {
             <AppHeader title="MVA y universidad" showBack backHref="/(admin)/dashboard" showNotifications />
             <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
                 <View style={styles.sectionCard}>
-                    <View style={styles.sectionTitleRow}>
+                    <View style={styles.sectionHeader}>
                         <Ionicons name="business-outline" size={18} color={theme.colors.primary} />
                         <Text style={styles.sectionTitle}>Datos Universidad</Text>
                     </View>
@@ -444,7 +448,7 @@ export default function AdminUniversityScreen() {
                 </View>
 
                 <View style={styles.sectionCard}>
-                    <View style={styles.sectionTitleRow}>
+                    <View style={styles.sectionHeader}>
                         <Ionicons name="link-outline" size={18} color={theme.colors.primary} />
                         <Text style={styles.sectionTitle}>Enlaces institucionales</Text>
                     </View>
@@ -587,7 +591,7 @@ export default function AdminUniversityScreen() {
                 </View>
 
                 <View style={styles.sectionCard}>
-                    <View style={styles.sectionTitleRow}>
+                    <View style={styles.sectionHeader}>
                         <Ionicons name="school-outline" size={18} color={theme.colors.primary} />
                         <Text style={styles.sectionTitle}>Datos de la Facultad</Text>
                     </View>
@@ -644,7 +648,7 @@ export default function AdminUniversityScreen() {
                 </View>
 
                 <View style={styles.sectionCard}>
-                    <View style={styles.sectionTitleRow}>
+                    <View style={styles.sectionHeader}>
                         <Ionicons name="document-text-outline" size={18} color={theme.colors.primary} />
                         <Text style={styles.sectionTitle}>Mision, Vision y Autoridades</Text>
                     </View>
@@ -775,7 +779,7 @@ export default function AdminUniversityScreen() {
                 </View>
 
                 <View style={styles.sectionCard}>
-                    <View style={styles.sectionTitleRow}>
+                    <View style={styles.sectionHeader}>
                         <Ionicons name="bar-chart-outline" size={18} color={theme.colors.primary} />
                         <Text style={styles.sectionTitle}>Estadisticas del Home</Text>
                     </View>
@@ -786,11 +790,17 @@ export default function AdminUniversityScreen() {
                     <View style={styles.optionRow}>
                         {HOME_STATS_OPTIONS.map((stat) => {
                             const active = selectedStats.has(stat.id);
+                            const disabled = !active && selectedStats.size >= 4;
                             return (
                                 <Pressable
                                     key={stat.id}
-                                    style={[styles.optionChip, active && styles.optionChipActive]}
+                                    style={[
+                                        styles.optionChip,
+                                        active && styles.optionChipActive,
+                                        disabled && styles.optionChipDisabled,
+                                    ]}
                                     onPress={() => {
+                                        if (disabled) return;
                                         const next = new Set(selectedStats);
                                         if (active) {
                                             next.delete(stat.id);
@@ -800,7 +810,13 @@ export default function AdminUniversityScreen() {
                                         setStatsSelection(Array.from(next));
                                     }}
                                 >
-                                    <Text style={[styles.optionChipText, active && styles.optionChipTextActive]}>
+                                    <Text
+                                        style={[
+                                            styles.optionChipText,
+                                            active && styles.optionChipTextActive,
+                                            disabled && styles.optionChipTextDisabled,
+                                        ]}
+                                    >
                                         {stat.label}
                                     </Text>
                                 </Pressable>
@@ -828,6 +844,14 @@ const styles = StyleSheet.create({
         ...theme.shadow.sm,
     },
     sectionTitleRow: { flexDirection: "row", alignItems: "center", gap: 8 },
+    sectionHeader: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 8,
+        paddingBottom: 8,
+        borderBottomWidth: 1,
+        borderBottomColor: theme.colors.borderLight,
+    },
     sectionTitle: { fontWeight: "800", fontSize: 15, color: theme.colors.textPrimary },
     sectionSubtitle: { color: theme.colors.textSecondary, fontWeight: "600" },
 
@@ -889,9 +913,11 @@ const styles = StyleSheet.create({
         borderColor: theme.colors.borderLight,
         backgroundColor: theme.colors.bgSecondary,
     },
+    optionChipDisabled: { opacity: 0.4 },
     optionChipActive: { backgroundColor: theme.colors.primaryLight, borderColor: theme.colors.primary },
     optionChipText: { fontSize: 12, fontWeight: "700", color: theme.colors.textSecondary },
     optionChipTextActive: { color: theme.colors.primary },
+    optionChipTextDisabled: { color: theme.colors.textTertiary },
 
     linkCard: {
         borderWidth: 1,

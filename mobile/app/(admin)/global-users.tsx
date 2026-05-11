@@ -12,11 +12,15 @@ import { Ionicons } from "@expo/vector-icons";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AppHeader } from "../../src/components/AppHeader";
 import {
+    blockAccount,
     createAdmin,
+    deleteAccount,
     fetchAdminsPaginated,
     fetchUsersPaginated,
     type AdminCreateInput,
     type ManagedAccount,
+    unblockAccount,
+    updateAccount,
 } from "../../src/api/adminAccounts";
 import { theme } from "../../src/shared/theme";
 
@@ -37,6 +41,16 @@ const ADMIN_ROLE_FILTERS = [
     { label: "Todos", value: "" },
     { label: "Global", value: "ADMIN_GLOBAL" },
     { label: "General", value: "ADMIN_GENERAL" },
+];
+
+const ADMIN_EDIT_ROLE_OPTIONS = [
+    { label: "Administrador global", value: "ADMIN_GLOBAL" },
+    { label: "Administrador general", value: "ADMIN_GENERAL" },
+];
+
+const USER_EDIT_ROLE_OPTIONS = [
+    { label: "Estudiante", value: "ESTUDIANTE" },
+    { label: "General", value: "GENERAL" },
 ];
 
 function useDebouncedValue<T>(value: T, delayMs: number) {
@@ -77,6 +91,18 @@ function getApiErrorMessage(error: unknown) {
     return fallback;
 }
 
+function isValidCedula(value: string) {
+    return /^\d{10}$/.test(value.trim());
+}
+
+function isValidPhone(value: string) {
+    return /^09\d{8}$/.test(value.trim());
+}
+
+function isValidEmail(value: string) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+}
+
 export default function AdminGlobalUsersScreen() {
     const queryClient = useQueryClient();
 
@@ -95,6 +121,24 @@ export default function AdminGlobalUsersScreen() {
     const [errors, setErrors] = useState<FieldErrors>({});
     const [roleOpen, setRoleOpen] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+
+    const [expandedAccountId, setExpandedAccountId] = useState<string | null>(null);
+    const [editAccountId, setEditAccountId] = useState<string | null>(null);
+    const [editForm, setEditForm] = useState({
+        cedula: "",
+        nombres: "",
+        apellidos: "",
+        celular: "",
+        correo: "",
+        rol: "",
+        est_ver_cor: false,
+    });
+    const [editErrors, setEditErrors] = useState<FieldErrors>({});
+    const [actionTarget, setActionTarget] = useState<{ id: string; action: "block" | "unblock" | "delete" } | null>(
+        null
+    );
+    const [actionReason, setActionReason] = useState("");
+    const [actionError, setActionError] = useState<string | null>(null);
 
     const [adminsPage, setAdminsPage] = useState(1);
     const [usersPage, setUsersPage] = useState(1);
@@ -124,16 +168,20 @@ export default function AdminGlobalUsersScreen() {
         mutationFn: async () => {
             setApiError(null);
             const validation: FieldErrors = {};
-            if (!form.cedula.trim()) validation.cedula = "La cedula es obligatoria";
+            if (!form.cedula.trim()) {
+                validation.cedula = "La cedula es obligatoria";
+            } else if (!isValidCedula(form.cedula)) {
+                validation.cedula = "La cedula debe tener 10 digitos";
+            }
             if (!form.nombres.trim()) validation.nombres = "Los nombres son obligatorios";
             if (!form.apellidos.trim()) validation.apellidos = "Los apellidos son obligatorios";
             if (!form.celular.trim()) validation.celular = "El celular es obligatorio";
-            if (form.celular && !/^09\d{8}$/.test(form.celular.trim())) {
+            if (form.celular && !isValidPhone(form.celular)) {
                 validation.celular = "El celular debe iniciar con 09 y tener 10 digitos";
             }
             if (!form.correo.trim()) {
                 validation.correo = "El correo es obligatorio";
-            } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.correo.trim())) {
+            } else if (!isValidEmail(form.correo)) {
                 validation.correo = "El correo no es valido";
             }
             if (!form.contrasena.trim()) validation.contrasena = "La contrasena es obligatoria";
@@ -192,12 +240,123 @@ export default function AdminGlobalUsersScreen() {
     const users = usersQuery.data?.data ?? [];
     const usersPagination = usersQuery.data?.pagination;
 
+    const updateMutation = useMutation({
+        mutationFn: async () => {
+            setActionError(null);
+            if (!editAccountId) throw new Error("missing");
+            const validation: FieldErrors = {};
+
+            if (!editForm.cedula.trim()) {
+                validation.cedula = "La cedula es obligatoria";
+            } else if (!isValidCedula(editForm.cedula)) {
+                validation.cedula = "La cedula debe tener 10 digitos";
+            }
+
+            if (!editForm.nombres.trim()) validation.nombres = "Los nombres son obligatorios";
+            if (!editForm.apellidos.trim()) validation.apellidos = "Los apellidos son obligatorios";
+            if (!editForm.celular.trim()) validation.celular = "El celular es obligatorio";
+            if (!isValidPhone(editForm.celular)) {
+                validation.celular = "El celular debe iniciar con 09 y tener 10 digitos";
+            }
+            if (!editForm.correo.trim()) {
+                validation.correo = "El correo es obligatorio";
+            } else if (!isValidEmail(editForm.correo)) {
+                validation.correo = "El correo no es valido";
+            }
+
+            setEditErrors(validation);
+            if (Object.keys(validation).length > 0) {
+                throw new Error("validation");
+            }
+
+            return updateAccount(editAccountId, {
+                cedula: editForm.cedula.trim(),
+                nombres: editForm.nombres.trim(),
+                apellidos: editForm.apellidos.trim(),
+                celular: editForm.celular.trim(),
+                correo: editForm.correo.trim(),
+                rol: editForm.rol,
+                est_ver_cor: editForm.est_ver_cor,
+            });
+        },
+        onSuccess: async () => {
+            setEditAccountId(null);
+            setEditErrors({});
+            await Promise.all([
+                queryClient.invalidateQueries({ queryKey: ["admin-global-admins"] }),
+                queryClient.invalidateQueries({ queryKey: ["admin-global-users"] }),
+            ]);
+        },
+        onError: (error) => {
+            if (error instanceof Error && error.message === "validation") return;
+            setActionError(getApiErrorMessage(error));
+        },
+    });
+
+    const blockMutation = useMutation({
+        mutationFn: async (accountId: string) => {
+            if (!actionReason.trim()) throw new Error("validation:El motivo es obligatorio");
+            return blockAccount(accountId, actionReason.trim());
+        },
+        onSuccess: async () => {
+            setActionTarget(null);
+            setActionReason("");
+            await Promise.all([
+                queryClient.invalidateQueries({ queryKey: ["admin-global-admins"] }),
+                queryClient.invalidateQueries({ queryKey: ["admin-global-users"] }),
+            ]);
+        },
+        onError: (error) => {
+            if (error instanceof Error && error.message.startsWith("validation:")) {
+                setActionError(error.message.replace("validation:", ""));
+                return;
+            }
+            setActionError(getApiErrorMessage(error));
+        },
+    });
+
+    const unblockMutation = useMutation({
+        mutationFn: async (accountId: string) => {
+            if (!actionReason.trim()) throw new Error("validation:El motivo es obligatorio");
+            return unblockAccount(accountId, actionReason.trim());
+        },
+        onSuccess: async () => {
+            setActionTarget(null);
+            setActionReason("");
+            await Promise.all([
+                queryClient.invalidateQueries({ queryKey: ["admin-global-admins"] }),
+                queryClient.invalidateQueries({ queryKey: ["admin-global-users"] }),
+            ]);
+        },
+        onError: (error) => {
+            if (error instanceof Error && error.message.startsWith("validation:")) {
+                setActionError(error.message.replace("validation:", ""));
+                return;
+            }
+            setActionError(getApiErrorMessage(error));
+        },
+    });
+
+    const deleteMutation = useMutation({
+        mutationFn: async (accountId: string) => deleteAccount(accountId),
+        onSuccess: async () => {
+            setActionTarget(null);
+            await Promise.all([
+                queryClient.invalidateQueries({ queryKey: ["admin-global-admins"] }),
+                queryClient.invalidateQueries({ queryKey: ["admin-global-users"] }),
+            ]);
+        },
+        onError: (error) => {
+            setActionError(getApiErrorMessage(error));
+        },
+    });
+
     return (
         <View style={styles.container}>
             <AppHeader title="Gestion de usuarios" showBack backHref="/(admin)/dashboard" showNotifications />
             <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
                 <View style={styles.sectionCard}>
-                    <View style={styles.sectionTitleRow}>
+                    <View style={styles.sectionHeader}>
                         <Ionicons name="shield-outline" size={18} color={theme.colors.primary} />
                         <Text style={styles.sectionTitle}>Gestion de usuarios</Text>
                     </View>
@@ -207,7 +366,7 @@ export default function AdminGlobalUsersScreen() {
                 </View>
 
                 <View style={styles.sectionCard}>
-                    <View style={styles.sectionTitleRow}>
+                    <View style={styles.sectionHeader}>
                         <Ionicons name="person-add-outline" size={18} color={theme.colors.primary} />
                         <Text style={styles.sectionTitle}>Crear nuevo administrador</Text>
                     </View>
@@ -356,7 +515,7 @@ export default function AdminGlobalUsersScreen() {
                 </View>
 
                 <View style={styles.sectionCard}>
-                    <View style={styles.sectionTitleRow}>
+                    <View style={styles.sectionHeader}>
                         <Ionicons name="people-outline" size={18} color={theme.colors.primary} />
                         <Text style={styles.sectionTitle}>Administradores existentes</Text>
                     </View>
@@ -417,6 +576,215 @@ export default function AdminGlobalUsersScreen() {
                                         <Text style={styles.statusText}>Activo</Text>
                                     )}
                                 </View>
+                                <View style={styles.actionRow}>
+                                    <Pressable
+                                        style={styles.actionButton}
+                                        onPress={() =>
+                                            setExpandedAccountId((prev) => (prev === account.id ? null : account.id))
+                                        }
+                                    >
+                                        <Text style={styles.actionButtonText}>Ver detalle</Text>
+                                    </Pressable>
+                                    <Pressable
+                                        style={styles.actionButton}
+                                        onPress={() => {
+                                            setEditAccountId(account.id);
+                                            setEditErrors({});
+                                            setEditForm({
+                                                cedula: account.user?.idNumber ?? "",
+                                                nombres: account.user?.firstName ?? "",
+                                                apellidos: account.user?.lastName ?? "",
+                                                celular: account.user?.phone ?? "",
+                                                correo: account.email ?? "",
+                                                rol: account.role ?? "ADMIN_GENERAL",
+                                                est_ver_cor: Boolean(account.isEmailVerified),
+                                            });
+                                        }}
+                                    >
+                                        <Text style={styles.actionButtonText}>Editar</Text>
+                                    </Pressable>
+                                    <Pressable
+                                        style={[styles.actionButton, styles.actionDanger]}
+                                        onPress={() => {
+                                            setActionTarget({
+                                                id: account.id,
+                                                action: account.isBlocked ? "unblock" : "block",
+                                            });
+                                            setActionReason("");
+                                            setActionError(null);
+                                        }}
+                                    >
+                                        <Text style={styles.actionButtonText}>
+                                            {account.isBlocked ? "Desbloquear" : "Bloquear"}
+                                        </Text>
+                                    </Pressable>
+                                    <Pressable
+                                        style={[styles.actionButton, styles.actionDanger]}
+                                        onPress={() => {
+                                            setActionTarget({ id: account.id, action: "delete" });
+                                            setActionError(null);
+                                        }}
+                                    >
+                                        <Text style={styles.actionButtonText}>Eliminar</Text>
+                                    </Pressable>
+                                </View>
+                                {expandedAccountId === account.id ? (
+                                    <View style={styles.detailBlock}>
+                                        <Text style={styles.detailText}>
+                                            Telefono: {account.user?.phone || "-"}
+                                        </Text>
+                                        <Text style={styles.detailText}>
+                                            Rol actual: {formatRole(account.role)}
+                                        </Text>
+                                        <Text style={styles.detailText}>ID cuenta: {account.id}</Text>
+                                    </View>
+                                ) : null}
+                                {editAccountId === account.id ? (
+                                    <View style={styles.editBlock}>
+                                        <View style={styles.formField}>
+                                            <Text style={styles.label}>Cedula</Text>
+                                            <TextInput
+                                                style={styles.input}
+                                                value={editForm.cedula}
+                                                onChangeText={(text) => setEditForm({ ...editForm, cedula: text })}
+                                            />
+                                            {editErrors.cedula ? <Text style={styles.errorText}>{editErrors.cedula}</Text> : null}
+                                        </View>
+                                        <View style={styles.formField}>
+                                            <Text style={styles.label}>Nombres</Text>
+                                            <TextInput
+                                                style={styles.input}
+                                                value={editForm.nombres}
+                                                onChangeText={(text) => setEditForm({ ...editForm, nombres: text })}
+                                            />
+                                            {editErrors.nombres ? <Text style={styles.errorText}>{editErrors.nombres}</Text> : null}
+                                        </View>
+                                        <View style={styles.formField}>
+                                            <Text style={styles.label}>Apellidos</Text>
+                                            <TextInput
+                                                style={styles.input}
+                                                value={editForm.apellidos}
+                                                onChangeText={(text) => setEditForm({ ...editForm, apellidos: text })}
+                                            />
+                                            {editErrors.apellidos ? <Text style={styles.errorText}>{editErrors.apellidos}</Text> : null}
+                                        </View>
+                                        <View style={styles.formField}>
+                                            <Text style={styles.label}>Celular</Text>
+                                            <TextInput
+                                                style={styles.input}
+                                                value={editForm.celular}
+                                                onChangeText={(text) => setEditForm({ ...editForm, celular: text })}
+                                                keyboardType="phone-pad"
+                                            />
+                                            {editErrors.celular ? <Text style={styles.errorText}>{editErrors.celular}</Text> : null}
+                                        </View>
+                                        <View style={styles.formField}>
+                                            <Text style={styles.label}>Correo</Text>
+                                            <TextInput
+                                                style={styles.input}
+                                                value={editForm.correo}
+                                                onChangeText={(text) => setEditForm({ ...editForm, correo: text })}
+                                                keyboardType="email-address"
+                                                autoCapitalize="none"
+                                            />
+                                            {editErrors.correo ? <Text style={styles.errorText}>{editErrors.correo}</Text> : null}
+                                        </View>
+                                        <Text style={styles.label}>Rol</Text>
+                                        <View style={styles.filterRow}>
+                                            {ADMIN_EDIT_ROLE_OPTIONS.map((opt) => (
+                                                <Pressable
+                                                    key={opt.value}
+                                                    style={[styles.filterChip, editForm.rol === opt.value && styles.filterChipActive]}
+                                                    onPress={() => setEditForm({ ...editForm, rol: opt.value })}
+                                                >
+                                                    <Text
+                                                        style={[
+                                                            styles.filterChipText,
+                                                            editForm.rol === opt.value && styles.filterChipTextActive,
+                                                        ]}
+                                                    >
+                                                        {opt.label}
+                                                    </Text>
+                                                </Pressable>
+                                            ))}
+                                        </View>
+                                        <Pressable
+                                            style={styles.toggleRow}
+                                            onPress={() => setEditForm({ ...editForm, est_ver_cor: !editForm.est_ver_cor })}
+                                        >
+                                            <View style={[styles.checkbox, editForm.est_ver_cor && styles.checkboxChecked]}>
+                                                {editForm.est_ver_cor ? (
+                                                    <Ionicons name="checkmark" size={14} color={theme.colors.textInverse} />
+                                                ) : null}
+                                            </View>
+                                            <Text style={styles.toggleLabel}>Correo verificado</Text>
+                                        </Pressable>
+                                        <View style={styles.editActions}>
+                                            <Pressable
+                                                style={[styles.primaryButton, updateMutation.isPending && styles.buttonDisabled]}
+                                                onPress={() => updateMutation.mutate()}
+                                                disabled={updateMutation.isPending}
+                                            >
+                                                {updateMutation.isPending ? (
+                                                    <ActivityIndicator color={theme.colors.textInverse} />
+                                                ) : (
+                                                    <Text style={styles.primaryButtonText}>Guardar cambios</Text>
+                                                )}
+                                            </Pressable>
+                                            <Pressable
+                                                style={styles.secondaryButton}
+                                                onPress={() => setEditAccountId(null)}
+                                            >
+                                                <Text style={styles.secondaryButtonText}>Cancelar</Text>
+                                            </Pressable>
+                                        </View>
+                                    </View>
+                                ) : null}
+                                {actionTarget?.id === account.id ? (
+                                    <View style={styles.actionPanel}>
+                                        {actionTarget.action === "delete" ? (
+                                            <Text style={styles.detailText}>Confirma eliminar esta cuenta.</Text>
+                                        ) : (
+                                            <TextInput
+                                                style={styles.input}
+                                                value={actionReason}
+                                                onChangeText={setActionReason}
+                                                placeholder="Motivo"
+                                                placeholderTextColor={theme.colors.textTertiary}
+                                            />
+                                        )}
+                                        {actionError ? <Text style={styles.errorText}>{actionError}</Text> : null}
+                                        <View style={styles.editActions}>
+                                            {actionTarget.action === "delete" ? (
+                                                <Pressable
+                                                    style={[styles.primaryButton, deleteMutation.isPending && styles.buttonDisabled]}
+                                                    onPress={() => deleteMutation.mutate(account.id)}
+                                                    disabled={deleteMutation.isPending}
+                                                >
+                                                    <Text style={styles.primaryButtonText}>Eliminar cuenta</Text>
+                                                </Pressable>
+                                            ) : (
+                                                <Pressable
+                                                    style={[styles.primaryButton, (blockMutation.isPending || unblockMutation.isPending) && styles.buttonDisabled]}
+                                                    onPress={() =>
+                                                        account.isBlocked
+                                                            ? unblockMutation.mutate(account.id)
+                                                            : blockMutation.mutate(account.id)
+                                                    }
+                                                    disabled={blockMutation.isPending || unblockMutation.isPending}
+                                                >
+                                                    <Text style={styles.primaryButtonText}>Confirmar</Text>
+                                                </Pressable>
+                                            )}
+                                            <Pressable
+                                                style={styles.secondaryButton}
+                                                onPress={() => setActionTarget(null)}
+                                            >
+                                                <Text style={styles.secondaryButtonText}>Cancelar</Text>
+                                            </Pressable>
+                                        </View>
+                                    </View>
+                                ) : null}
                             </View>
                         ))
                     )}
@@ -446,7 +814,7 @@ export default function AdminGlobalUsersScreen() {
                 </View>
 
                 <View style={styles.sectionCard}>
-                    <View style={styles.sectionTitleRow}>
+                    <View style={styles.sectionHeader}>
                         <Ionicons name="people-circle-outline" size={18} color={theme.colors.primary} />
                         <Text style={styles.sectionTitle}>Usuarios existentes</Text>
                     </View>
@@ -507,6 +875,215 @@ export default function AdminGlobalUsersScreen() {
                                         <Text style={styles.statusText}>Activo</Text>
                                     )}
                                 </View>
+                                <View style={styles.actionRow}>
+                                    <Pressable
+                                        style={styles.actionButton}
+                                        onPress={() =>
+                                            setExpandedAccountId((prev) => (prev === account.id ? null : account.id))
+                                        }
+                                    >
+                                        <Text style={styles.actionButtonText}>Ver detalle</Text>
+                                    </Pressable>
+                                    <Pressable
+                                        style={styles.actionButton}
+                                        onPress={() => {
+                                            setEditAccountId(account.id);
+                                            setEditErrors({});
+                                            setEditForm({
+                                                cedula: account.user?.idNumber ?? "",
+                                                nombres: account.user?.firstName ?? "",
+                                                apellidos: account.user?.lastName ?? "",
+                                                celular: account.user?.phone ?? "",
+                                                correo: account.email ?? "",
+                                                rol: account.role ?? "GENERAL",
+                                                est_ver_cor: Boolean(account.isEmailVerified),
+                                            });
+                                        }}
+                                    >
+                                        <Text style={styles.actionButtonText}>Editar</Text>
+                                    </Pressable>
+                                    <Pressable
+                                        style={[styles.actionButton, styles.actionDanger]}
+                                        onPress={() => {
+                                            setActionTarget({
+                                                id: account.id,
+                                                action: account.isBlocked ? "unblock" : "block",
+                                            });
+                                            setActionReason("");
+                                            setActionError(null);
+                                        }}
+                                    >
+                                        <Text style={styles.actionButtonText}>
+                                            {account.isBlocked ? "Desbloquear" : "Bloquear"}
+                                        </Text>
+                                    </Pressable>
+                                    <Pressable
+                                        style={[styles.actionButton, styles.actionDanger]}
+                                        onPress={() => {
+                                            setActionTarget({ id: account.id, action: "delete" });
+                                            setActionError(null);
+                                        }}
+                                    >
+                                        <Text style={styles.actionButtonText}>Eliminar</Text>
+                                    </Pressable>
+                                </View>
+                                {expandedAccountId === account.id ? (
+                                    <View style={styles.detailBlock}>
+                                        <Text style={styles.detailText}>
+                                            Telefono: {account.user?.phone || "-"}
+                                        </Text>
+                                        <Text style={styles.detailText}>
+                                            Rol actual: {formatRole(account.role)}
+                                        </Text>
+                                        <Text style={styles.detailText}>ID cuenta: {account.id}</Text>
+                                    </View>
+                                ) : null}
+                                {editAccountId === account.id ? (
+                                    <View style={styles.editBlock}>
+                                        <View style={styles.formField}>
+                                            <Text style={styles.label}>Cedula</Text>
+                                            <TextInput
+                                                style={styles.input}
+                                                value={editForm.cedula}
+                                                onChangeText={(text) => setEditForm({ ...editForm, cedula: text })}
+                                            />
+                                            {editErrors.cedula ? <Text style={styles.errorText}>{editErrors.cedula}</Text> : null}
+                                        </View>
+                                        <View style={styles.formField}>
+                                            <Text style={styles.label}>Nombres</Text>
+                                            <TextInput
+                                                style={styles.input}
+                                                value={editForm.nombres}
+                                                onChangeText={(text) => setEditForm({ ...editForm, nombres: text })}
+                                            />
+                                            {editErrors.nombres ? <Text style={styles.errorText}>{editErrors.nombres}</Text> : null}
+                                        </View>
+                                        <View style={styles.formField}>
+                                            <Text style={styles.label}>Apellidos</Text>
+                                            <TextInput
+                                                style={styles.input}
+                                                value={editForm.apellidos}
+                                                onChangeText={(text) => setEditForm({ ...editForm, apellidos: text })}
+                                            />
+                                            {editErrors.apellidos ? <Text style={styles.errorText}>{editErrors.apellidos}</Text> : null}
+                                        </View>
+                                        <View style={styles.formField}>
+                                            <Text style={styles.label}>Celular</Text>
+                                            <TextInput
+                                                style={styles.input}
+                                                value={editForm.celular}
+                                                onChangeText={(text) => setEditForm({ ...editForm, celular: text })}
+                                                keyboardType="phone-pad"
+                                            />
+                                            {editErrors.celular ? <Text style={styles.errorText}>{editErrors.celular}</Text> : null}
+                                        </View>
+                                        <View style={styles.formField}>
+                                            <Text style={styles.label}>Correo</Text>
+                                            <TextInput
+                                                style={styles.input}
+                                                value={editForm.correo}
+                                                onChangeText={(text) => setEditForm({ ...editForm, correo: text })}
+                                                keyboardType="email-address"
+                                                autoCapitalize="none"
+                                            />
+                                            {editErrors.correo ? <Text style={styles.errorText}>{editErrors.correo}</Text> : null}
+                                        </View>
+                                        <Text style={styles.label}>Rol</Text>
+                                        <View style={styles.filterRow}>
+                                            {USER_EDIT_ROLE_OPTIONS.map((opt) => (
+                                                <Pressable
+                                                    key={opt.value}
+                                                    style={[styles.filterChip, editForm.rol === opt.value && styles.filterChipActive]}
+                                                    onPress={() => setEditForm({ ...editForm, rol: opt.value })}
+                                                >
+                                                    <Text
+                                                        style={[
+                                                            styles.filterChipText,
+                                                            editForm.rol === opt.value && styles.filterChipTextActive,
+                                                        ]}
+                                                    >
+                                                        {opt.label}
+                                                    </Text>
+                                                </Pressable>
+                                            ))}
+                                        </View>
+                                        <Pressable
+                                            style={styles.toggleRow}
+                                            onPress={() => setEditForm({ ...editForm, est_ver_cor: !editForm.est_ver_cor })}
+                                        >
+                                            <View style={[styles.checkbox, editForm.est_ver_cor && styles.checkboxChecked]}>
+                                                {editForm.est_ver_cor ? (
+                                                    <Ionicons name="checkmark" size={14} color={theme.colors.textInverse} />
+                                                ) : null}
+                                            </View>
+                                            <Text style={styles.toggleLabel}>Correo verificado</Text>
+                                        </Pressable>
+                                        <View style={styles.editActions}>
+                                            <Pressable
+                                                style={[styles.primaryButton, updateMutation.isPending && styles.buttonDisabled]}
+                                                onPress={() => updateMutation.mutate()}
+                                                disabled={updateMutation.isPending}
+                                            >
+                                                {updateMutation.isPending ? (
+                                                    <ActivityIndicator color={theme.colors.textInverse} />
+                                                ) : (
+                                                    <Text style={styles.primaryButtonText}>Guardar cambios</Text>
+                                                )}
+                                            </Pressable>
+                                            <Pressable
+                                                style={styles.secondaryButton}
+                                                onPress={() => setEditAccountId(null)}
+                                            >
+                                                <Text style={styles.secondaryButtonText}>Cancelar</Text>
+                                            </Pressable>
+                                        </View>
+                                    </View>
+                                ) : null}
+                                {actionTarget?.id === account.id ? (
+                                    <View style={styles.actionPanel}>
+                                        {actionTarget.action === "delete" ? (
+                                            <Text style={styles.detailText}>Confirma eliminar esta cuenta.</Text>
+                                        ) : (
+                                            <TextInput
+                                                style={styles.input}
+                                                value={actionReason}
+                                                onChangeText={setActionReason}
+                                                placeholder="Motivo"
+                                                placeholderTextColor={theme.colors.textTertiary}
+                                            />
+                                        )}
+                                        {actionError ? <Text style={styles.errorText}>{actionError}</Text> : null}
+                                        <View style={styles.editActions}>
+                                            {actionTarget.action === "delete" ? (
+                                                <Pressable
+                                                    style={[styles.primaryButton, deleteMutation.isPending && styles.buttonDisabled]}
+                                                    onPress={() => deleteMutation.mutate(account.id)}
+                                                    disabled={deleteMutation.isPending}
+                                                >
+                                                    <Text style={styles.primaryButtonText}>Eliminar cuenta</Text>
+                                                </Pressable>
+                                            ) : (
+                                                <Pressable
+                                                    style={[styles.primaryButton, (blockMutation.isPending || unblockMutation.isPending) && styles.buttonDisabled]}
+                                                    onPress={() =>
+                                                        account.isBlocked
+                                                            ? unblockMutation.mutate(account.id)
+                                                            : blockMutation.mutate(account.id)
+                                                    }
+                                                    disabled={blockMutation.isPending || unblockMutation.isPending}
+                                                >
+                                                    <Text style={styles.primaryButtonText}>Confirmar</Text>
+                                                </Pressable>
+                                            )}
+                                            <Pressable
+                                                style={styles.secondaryButton}
+                                                onPress={() => setActionTarget(null)}
+                                            >
+                                                <Text style={styles.secondaryButtonText}>Cancelar</Text>
+                                            </Pressable>
+                                        </View>
+                                    </View>
+                                ) : null}
                             </View>
                         ))
                     )}
@@ -550,6 +1127,14 @@ const styles = StyleSheet.create({
         ...theme.shadow.sm,
     },
     sectionTitleRow: { flexDirection: "row", alignItems: "center", gap: 8 },
+    sectionHeader: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 8,
+        paddingBottom: 8,
+        borderBottomWidth: 1,
+        borderBottomColor: theme.colors.borderLight,
+    },
     sectionTitle: { fontWeight: "800", fontSize: 15, color: theme.colors.textPrimary },
     sectionSubtitle: { color: theme.colors.textSecondary, fontWeight: "600" },
 
@@ -659,6 +1244,51 @@ const styles = StyleSheet.create({
         backgroundColor: theme.colors.bgTertiary,
     },
     roleBadgeText: { fontSize: 10, fontWeight: "800", color: theme.colors.primary },
+
+    actionRow: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginTop: 8 },
+    actionButton: {
+        paddingHorizontal: 10,
+        paddingVertical: 6,
+        borderRadius: 999,
+        borderWidth: 1,
+        borderColor: theme.colors.borderLight,
+        backgroundColor: theme.colors.bgPrimary,
+    },
+    actionDanger: { borderColor: theme.colors.error },
+    actionButtonText: { fontSize: 11, fontWeight: "700", color: theme.colors.textSecondary },
+
+    detailBlock: {
+        marginTop: 8,
+        padding: 10,
+        borderRadius: theme.radius.md,
+        borderWidth: 1,
+        borderColor: theme.colors.borderLight,
+        backgroundColor: theme.colors.bgPrimary,
+        gap: 4,
+    },
+    detailText: { color: theme.colors.textSecondary, fontWeight: "600", fontSize: 12 },
+    editBlock: {
+        marginTop: 10,
+        gap: 10,
+        paddingTop: 6,
+        borderTopWidth: 1,
+        borderTopColor: theme.colors.borderLight,
+    },
+    editActions: { flexDirection: "row", gap: 10, flexWrap: "wrap" },
+    toggleRow: { flexDirection: "row", alignItems: "center", gap: 8 },
+    toggleLabel: { color: theme.colors.textSecondary, fontWeight: "600" },
+    checkbox: {
+        width: 18,
+        height: 18,
+        borderRadius: 4,
+        borderWidth: 1,
+        borderColor: theme.colors.borderLight,
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: theme.colors.bgSecondary,
+    },
+    checkboxChecked: { backgroundColor: theme.colors.primary, borderColor: theme.colors.primary },
+    actionPanel: { gap: 8, marginTop: 8 },
 
     paginationRow: {
         flexDirection: "row",
