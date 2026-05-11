@@ -154,6 +154,11 @@ export default function AdminUniversityScreen() {
     const [facultyError, setFacultyError] = useState<string | null>(null);
     const [mvaError, setMvaError] = useState<string | null>(null);
     const [socialError, setSocialError] = useState<string | null>(null);
+    const [showUniversitySection, setShowUniversitySection] = useState(true);
+    const [showSocialSection, setShowSocialSection] = useState(true);
+    const [showFacultySection, setShowFacultySection] = useState(true);
+    const [showMvaSection, setShowMvaSection] = useState(true);
+    const [showStatsSection, setShowStatsSection] = useState(true);
 
     useEffect(() => {
         if (universityQuery.data) {
@@ -384,466 +389,538 @@ export default function AdminUniversityScreen() {
             <AppHeader title="MVA y universidad" showBack backHref="/(admin)/dashboard" showNotifications />
             <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
                 <View style={styles.sectionCard}>
-                    <View style={styles.sectionHeader}>
-                        <Ionicons name="business-outline" size={18} color={theme.colors.primary} />
-                        <Text style={styles.sectionTitle}>Datos Universidad</Text>
-                    </View>
-                    {universityQuery.isLoading || !universityForm ? (
-                        <View style={styles.centerBlock}>
-                            <ActivityIndicator color={theme.colors.primary} />
-                            <Text style={styles.mutedText}>Cargando universidad...</Text>
+                    <View style={styles.sectionHeaderRow}>
+                        <View style={styles.sectionHeader}>
+                            <Ionicons name="business-outline" size={18} color={theme.colors.primary} />
+                            <Text style={styles.sectionTitle}>Datos Universidad</Text>
                         </View>
-                    ) : (
-                        <View style={styles.infoBlock}>
-                            <View style={styles.logoRow}>
-                                <Image
-                                    source={{ uri: toAbsoluteUrl(universityForm.logoUrl || "") }}
-                                    style={styles.logo}
-                                    resizeMode="cover"
-                                />
+                        <Pressable
+                            style={styles.sectionToggle}
+                            onPress={() => setShowUniversitySection((prev) => !prev)}
+                        >
+                            <Ionicons
+                                name={showUniversitySection ? "chevron-up" : "chevron-down"}
+                                size={18}
+                                color={theme.colors.textSecondary}
+                            />
+                        </Pressable>
+                    </View>
+                    {showUniversitySection ? (
+                        universityQuery.isLoading || !universityForm ? (
+                            <View style={styles.centerBlock}>
+                                <ActivityIndicator color={theme.colors.primary} />
+                                <Text style={styles.mutedText}>Cargando universidad...</Text>
+                            </View>
+                        ) : (
+                            <View style={styles.infoBlock}>
+                                <View style={styles.logoRow}>
+                                    <Image
+                                        source={{ uri: toAbsoluteUrl(universityForm.logoUrl || "") }}
+                                        style={styles.logo}
+                                        resizeMode="cover"
+                                    />
+                                    <Pressable
+                                        style={styles.secondaryButton}
+                                        onPress={() => handlePickImage((url) => setUniversityForm({ ...universityForm, logoUrl: url }))}
+                                    >
+                                        <Text style={styles.secondaryButtonText}>Cambiar imagen</Text>
+                                    </Pressable>
+                                </View>
+                                <View style={styles.formField}>
+                                    <Text style={styles.label}>Nombre</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        value={universityForm.name}
+                                        onChangeText={(text) => setUniversityForm({ ...universityForm, name: text })}
+                                    />
+                                </View>
+                                <View style={styles.formField}>
+                                    <Text style={styles.label}>Acronimo</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        value={universityForm.acronym}
+                                        onChangeText={(text) => setUniversityForm({ ...universityForm, acronym: text })}
+                                    />
+                                </View>
+                                <View style={styles.formField}>
+                                    <Text style={styles.label}>Direccion</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        value={universityForm.address}
+                                        onChangeText={(text) => setUniversityForm({ ...universityForm, address: text })}
+                                    />
+                                </View>
+                                <View style={styles.formField}>
+                                    <Text style={styles.label}>Telefono</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        value={universityForm.phone}
+                                        onChangeText={(text) => setUniversityForm({ ...universityForm, phone: text })}
+                                        keyboardType="phone-pad"
+                                    />
+                                </View>
+                                <View style={styles.formField}>
+                                    <Text style={styles.label}>Correo</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        value={universityForm.email}
+                                        onChangeText={(text) => setUniversityForm({ ...universityForm, email: text })}
+                                        keyboardType="email-address"
+                                        autoCapitalize="none"
+                                    />
+                                </View>
+                                {universityError ? <Text style={styles.errorText}>{universityError}</Text> : null}
                                 <Pressable
-                                    style={styles.secondaryButton}
-                                    onPress={() => handlePickImage((url) => setUniversityForm({ ...universityForm, logoUrl: url }))}
+                                    style={[styles.primaryButton, universityMutation.isPending && styles.buttonDisabled]}
+                                    onPress={() => universityMutation.mutate()}
+                                    disabled={universityMutation.isPending}
                                 >
-                                    <Text style={styles.secondaryButtonText}>Cambiar imagen</Text>
+                                    {universityMutation.isPending ? (
+                                        <ActivityIndicator color={theme.colors.textInverse} />
+                                    ) : (
+                                        <Text style={styles.primaryButtonText}>Guardar universidad</Text>
+                                    )}
                                 </Pressable>
                             </View>
-                            <View style={styles.formField}>
-                                <Text style={styles.label}>Nombre</Text>
-                                <TextInput
-                                    style={styles.input}
-                                    value={universityForm.name}
-                                    onChangeText={(text) => setUniversityForm({ ...universityForm, name: text })}
-                                />
-                            </View>
-                            <View style={styles.formField}>
-                                <Text style={styles.label}>Acronimo</Text>
-                                <TextInput
-                                    style={styles.input}
-                                    value={universityForm.acronym}
-                                    onChangeText={(text) => setUniversityForm({ ...universityForm, acronym: text })}
-                                />
-                            </View>
-                            <View style={styles.formField}>
-                                <Text style={styles.label}>Direccion</Text>
-                                <TextInput
-                                    style={styles.input}
-                                    value={universityForm.address}
-                                    onChangeText={(text) => setUniversityForm({ ...universityForm, address: text })}
-                                />
-                            </View>
-                            <View style={styles.formField}>
-                                <Text style={styles.label}>Telefono</Text>
-                                <TextInput
-                                    style={styles.input}
-                                    value={universityForm.phone}
-                                    onChangeText={(text) => setUniversityForm({ ...universityForm, phone: text })}
-                                    keyboardType="phone-pad"
-                                />
-                            </View>
-                            <View style={styles.formField}>
-                                <Text style={styles.label}>Correo</Text>
-                                <TextInput
-                                    style={styles.input}
-                                    value={universityForm.email}
-                                    onChangeText={(text) => setUniversityForm({ ...universityForm, email: text })}
-                                    keyboardType="email-address"
-                                    autoCapitalize="none"
-                                />
-                            </View>
-                            {universityError ? <Text style={styles.errorText}>{universityError}</Text> : null}
-                            <Pressable
-                                style={[styles.primaryButton, universityMutation.isPending && styles.buttonDisabled]}
-                                onPress={() => universityMutation.mutate()}
-                                disabled={universityMutation.isPending}
-                            >
-                                {universityMutation.isPending ? (
-                                    <ActivityIndicator color={theme.colors.textInverse} />
-                                ) : (
-                                    <Text style={styles.primaryButtonText}>Guardar universidad</Text>
-                                )}
-                            </Pressable>
-                        </View>
-                    )}
+                        )
+                    ) : null}
                 </View>
 
                 <View style={styles.sectionCard}>
-                    <View style={styles.sectionHeader}>
-                        <Ionicons name="link-outline" size={18} color={theme.colors.primary} />
-                        <Text style={styles.sectionTitle}>Enlaces institucionales</Text>
-                    </View>
-                    {socialLinksQuery.isLoading ? (
-                        <View style={styles.centerBlock}>
-                            <ActivityIndicator color={theme.colors.primary} />
-                            <Text style={styles.mutedText}>Cargando enlaces...</Text>
+                    <View style={styles.sectionHeaderRow}>
+                        <View style={styles.sectionHeader}>
+                            <Ionicons name="link-outline" size={18} color={theme.colors.primary} />
+                            <Text style={styles.sectionTitle}>Enlaces institucionales</Text>
                         </View>
-                    ) : (
-                        <View style={styles.infoBlock}>
-                            {socialLinks.map((link, index) => (
-                                <View key={link.localId} style={styles.linkCard}>
-                                    <View style={styles.formField}>
-                                        <Text style={styles.label}>Plataforma</Text>
-                                        <View style={styles.optionRow}>
-                                            {SOCIAL_PLATFORM_OPTIONS.map((option) => (
-                                                <Pressable
-                                                    key={option.value}
-                                                    style={[
-                                                        styles.optionChip,
-                                                        link.platformKey === option.value && styles.optionChipActive,
-                                                    ]}
-                                                    onPress={() => {
-                                                        const next = [...socialLinks];
-                                                        next[index] = {
-                                                            ...next[index],
-                                                            platformKey: option.value,
-                                                            iconKey: option.defaultIconKey,
-                                                        };
-                                                        setSocialLinks(next);
-                                                    }}
-                                                >
-                                                    <Text
+                        <Pressable
+                            style={styles.sectionToggle}
+                            onPress={() => setShowSocialSection((prev) => !prev)}
+                        >
+                            <Ionicons
+                                name={showSocialSection ? "chevron-up" : "chevron-down"}
+                                size={18}
+                                color={theme.colors.textSecondary}
+                            />
+                        </Pressable>
+                    </View>
+                    {showSocialSection ? (
+                        socialLinksQuery.isLoading ? (
+                            <View style={styles.centerBlock}>
+                                <ActivityIndicator color={theme.colors.primary} />
+                                <Text style={styles.mutedText}>Cargando enlaces...</Text>
+                            </View>
+                        ) : (
+                            <View style={styles.infoBlock}>
+                                {socialLinks.map((link, index) => (
+                                    <View key={link.localId} style={styles.linkCard}>
+                                        <View style={styles.formField}>
+                                            <Text style={styles.label}>Plataforma</Text>
+                                            <View style={styles.optionRow}>
+                                                {SOCIAL_PLATFORM_OPTIONS.map((option) => (
+                                                    <Pressable
+                                                        key={option.value}
                                                         style={[
-                                                            styles.optionChipText,
-                                                            link.platformKey === option.value && styles.optionChipTextActive,
+                                                            styles.optionChip,
+                                                            link.platformKey === option.value && styles.optionChipActive,
                                                         ]}
+                                                        onPress={() => {
+                                                            const next = [...socialLinks];
+                                                            next[index] = {
+                                                                ...next[index],
+                                                                platformKey: option.value,
+                                                                iconKey: option.defaultIconKey,
+                                                            };
+                                                            setSocialLinks(next);
+                                                        }}
                                                     >
-                                                        {option.label}
-                                                    </Text>
+                                                        <Text
+                                                            style={[
+                                                                styles.optionChipText,
+                                                                link.platformKey === option.value && styles.optionChipTextActive,
+                                                            ]}
+                                                        >
+                                                            {option.label}
+                                                        </Text>
+                                                    </Pressable>
+                                                ))}
+                                            </View>
+                                        </View>
+                                        <View style={styles.formField}>
+                                            <Text style={styles.label}>Icono</Text>
+                                            <View style={styles.optionRow}>
+                                                {SOCIAL_ICON_OPTIONS.map((option) => (
+                                                    <Pressable
+                                                        key={option.value}
+                                                        style={[
+                                                            styles.optionChip,
+                                                            link.iconKey === option.value && styles.optionChipActive,
+                                                        ]}
+                                                        onPress={() => {
+                                                            const next = [...socialLinks];
+                                                            next[index] = { ...next[index], iconKey: option.value };
+                                                            setSocialLinks(next);
+                                                        }}
+                                                    >
+                                                        <Text
+                                                            style={[
+                                                                styles.optionChipText,
+                                                                link.iconKey === option.value && styles.optionChipTextActive,
+                                                            ]}
+                                                        >
+                                                            {option.label}
+                                                        </Text>
+                                                    </Pressable>
+                                                ))}
+                                            </View>
+                                        </View>
+                                        <View style={styles.formField}>
+                                            <Text style={styles.label}>Etiqueta</Text>
+                                            <TextInput
+                                                style={styles.input}
+                                                value={link.label}
+                                                onChangeText={(text) => {
+                                                    const next = [...socialLinks];
+                                                    next[index] = { ...next[index], label: text };
+                                                    setSocialLinks(next);
+                                                }}
+                                            />
+                                        </View>
+                                        <View style={styles.formField}>
+                                            <Text style={styles.label}>URL</Text>
+                                            <TextInput
+                                                style={styles.input}
+                                                value={link.url}
+                                                onChangeText={(text) => {
+                                                    const next = [...socialLinks];
+                                                    next[index] = { ...next[index], url: text };
+                                                    setSocialLinks(next);
+                                                }}
+                                                autoCapitalize="none"
+                                            />
+                                        </View>
+                                        <View style={styles.linkActions}>
+                                            <Pressable
+                                                style={styles.secondaryButton}
+                                                onPress={() => socialMutation.mutate({ ...link, order: index })}
+                                            >
+                                                <Text style={styles.secondaryButtonText}>Guardar enlace</Text>
+                                            </Pressable>
+                                            {!link.isNew && link.id ? (
+                                                <Pressable
+                                                    style={styles.dangerButton}
+                                                    onPress={() => deleteSocialMutation.mutate(link.id)}
+                                                >
+                                                    <Text style={styles.dangerButtonText}>Eliminar</Text>
                                                 </Pressable>
-                                            ))}
+                                            ) : null}
                                         </View>
                                     </View>
-                                    <View style={styles.formField}>
-                                        <Text style={styles.label}>Icono</Text>
-                                        <View style={styles.optionRow}>
-                                            {SOCIAL_ICON_OPTIONS.map((option) => (
-                                                <Pressable
-                                                    key={option.value}
-                                                    style={[
-                                                        styles.optionChip,
-                                                        link.iconKey === option.value && styles.optionChipActive,
-                                                    ]}
-                                                    onPress={() => {
-                                                        const next = [...socialLinks];
-                                                        next[index] = { ...next[index], iconKey: option.value };
-                                                        setSocialLinks(next);
-                                                    }}
-                                                >
-                                                    <Text
-                                                        style={[
-                                                            styles.optionChipText,
-                                                            link.iconKey === option.value && styles.optionChipTextActive,
-                                                        ]}
-                                                    >
-                                                        {option.label}
-                                                    </Text>
-                                                </Pressable>
-                                            ))}
-                                        </View>
-                                    </View>
-                                    <View style={styles.formField}>
-                                        <Text style={styles.label}>Etiqueta</Text>
-                                        <TextInput
-                                            style={styles.input}
-                                            value={link.label}
-                                            onChangeText={(text) => {
-                                                const next = [...socialLinks];
-                                                next[index] = { ...next[index], label: text };
-                                                setSocialLinks(next);
-                                            }}
-                                        />
-                                    </View>
-                                    <View style={styles.formField}>
-                                        <Text style={styles.label}>URL</Text>
-                                        <TextInput
-                                            style={styles.input}
-                                            value={link.url}
-                                            onChangeText={(text) => {
-                                                const next = [...socialLinks];
-                                                next[index] = { ...next[index], url: text };
-                                                setSocialLinks(next);
-                                            }}
-                                            autoCapitalize="none"
-                                        />
-                                    </View>
-                                    <View style={styles.linkActions}>
-                                        <Pressable
-                                            style={styles.secondaryButton}
-                                            onPress={() => socialMutation.mutate({ ...link, order: index })}
-                                        >
-                                            <Text style={styles.secondaryButtonText}>Guardar enlace</Text>
-                                        </Pressable>
-                                        {!link.isNew && link.id ? (
+                                ))}
+                                <Pressable
+                                    style={styles.secondaryButton}
+                                    onPress={() => {
+                                        const next = [...socialLinks];
+                                        next.push({
+                                            id: "",
+                                            label: "",
+                                            url: "",
+                                            order: next.length,
+                                            localId: `new-${Date.now()}`,
+                                            isNew: true,
+                                            platformKey: "custom",
+                                            iconKey: "link",
+                                            isActive: true,
+                                            opensInNewTab: true,
+                                        });
+                                        setSocialLinks(next);
+                                    }}
+                                >
+                                    <Text style={styles.secondaryButtonText}>Agregar enlace</Text>
+                                </Pressable>
+                                {socialError ? <Text style={styles.errorText}>{socialError}</Text> : null}
+                            </View>
+                        )
+                    ) : null}
+                </View>
+
+                <View style={styles.sectionCard}>
+                    <View style={styles.sectionHeaderRow}>
+                        <View style={styles.sectionHeader}>
+                            <Ionicons name="school-outline" size={18} color={theme.colors.primary} />
+                            <Text style={styles.sectionTitle}>Datos de la Facultad</Text>
+                        </View>
+                        <Pressable
+                            style={styles.sectionToggle}
+                            onPress={() => setShowFacultySection((prev) => !prev)}
+                        >
+                            <Ionicons
+                                name={showFacultySection ? "chevron-up" : "chevron-down"}
+                                size={18}
+                                color={theme.colors.textSecondary}
+                            />
+                        </Pressable>
+                    </View>
+                    {showFacultySection ? (
+                        facultyQuery.isLoading ? (
+                            <View style={styles.centerBlock}>
+                                <ActivityIndicator color={theme.colors.primary} />
+                                <Text style={styles.mutedText}>Cargando facultad...</Text>
+                            </View>
+                        ) : (
+                            <View style={styles.infoBlock}>
+                                <View style={styles.logoRow}>
+                                    <Image
+                                        source={{ uri: toAbsoluteUrl(facultyForm.logo || "") }}
+                                        style={styles.logo}
+                                        resizeMode="cover"
+                                    />
+                                    <Pressable
+                                        style={styles.secondaryButton}
+                                        onPress={() => handlePickImage((url) => setFacultyForm({ ...facultyForm, logo: url }))}
+                                    >
+                                        <Text style={styles.secondaryButtonText}>Cambiar logo</Text>
+                                    </Pressable>
+                                </View>
+                                <View style={styles.formField}>
+                                    <Text style={styles.label}>Nombre</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        value={facultyForm.nombre}
+                                        onChangeText={(text) => setFacultyForm({ ...facultyForm, nombre: text })}
+                                    />
+                                </View>
+                                <View style={styles.formField}>
+                                    <Text style={styles.label}>Acronimo</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        value={facultyForm.acronimo}
+                                        onChangeText={(text) => setFacultyForm({ ...facultyForm, acronimo: text })}
+                                    />
+                                </View>
+                                {facultyError ? <Text style={styles.errorText}>{facultyError}</Text> : null}
+                                <Pressable
+                                    style={[styles.primaryButton, facultyMutation.isPending && styles.buttonDisabled]}
+                                    onPress={() => facultyMutation.mutate()}
+                                    disabled={facultyMutation.isPending}
+                                >
+                                    {facultyMutation.isPending ? (
+                                        <ActivityIndicator color={theme.colors.textInverse} />
+                                    ) : (
+                                        <Text style={styles.primaryButtonText}>Guardar facultad</Text>
+                                    )}
+                                </Pressable>
+                            </View>
+                        )
+                    ) : null}
+                </View>
+
+                <View style={styles.sectionCard}>
+                    <View style={styles.sectionHeaderRow}>
+                        <View style={styles.sectionHeader}>
+                            <Ionicons name="document-text-outline" size={18} color={theme.colors.primary} />
+                            <Text style={styles.sectionTitle}>Mision, Vision y Autoridades</Text>
+                        </View>
+                        <Pressable
+                            style={styles.sectionToggle}
+                            onPress={() => setShowMvaSection((prev) => !prev)}
+                        >
+                            <Ionicons
+                                name={showMvaSection ? "chevron-up" : "chevron-down"}
+                                size={18}
+                                color={theme.colors.textSecondary}
+                            />
+                        </Pressable>
+                    </View>
+                    {showMvaSection ? (
+                        mvaQuery.isLoading ? (
+                            <View style={styles.centerBlock}>
+                                <ActivityIndicator color={theme.colors.primary} />
+                                <Text style={styles.mutedText}>Cargando MVA...</Text>
+                            </View>
+                        ) : (
+                            <View style={styles.infoBlock}>
+                                <View style={styles.formField}>
+                                    <Text style={styles.label}>Mision</Text>
+                                    <TextInput
+                                        style={[styles.input, styles.textArea]}
+                                        value={mision}
+                                        onChangeText={setMision}
+                                        multiline
+                                    />
+                                </View>
+                                <View style={styles.formField}>
+                                    <Text style={styles.label}>Vision</Text>
+                                    <TextInput
+                                        style={[styles.input, styles.textArea]}
+                                        value={vision}
+                                        onChangeText={setVision}
+                                        multiline
+                                    />
+                                </View>
+                                <Text style={styles.label}>Autoridades (max 5)</Text>
+                                {autoridades.map((authority, index) => (
+                                    <View key={`${authority.nombre}-${index}`} style={styles.authorityCard}>
+                                        <View style={styles.logoRow}>
+                                            <Image
+                                                source={{ uri: toAbsoluteUrl(authority.imagen || "") }}
+                                                style={styles.authorityAvatar}
+                                            />
+                                            <Pressable
+                                                style={styles.secondaryButton}
+                                                onPress={() =>
+                                                    handlePickImage((url) => {
+                                                        const next = [...autoridades];
+                                                        next[index] = { ...next[index], imagen: url };
+                                                        setAutoridades(next);
+                                                    })
+                                                }
+                                            >
+                                                <Text style={styles.secondaryButtonText}>Cambiar imagen</Text>
+                                            </Pressable>
                                             <Pressable
                                                 style={styles.dangerButton}
-                                                onPress={() => deleteSocialMutation.mutate(link.id)}
+                                                onPress={() => {
+                                                    const next = autoridades.filter((_, idx) => idx !== index);
+                                                    setAutoridades(next);
+                                                }}
                                             >
                                                 <Text style={styles.dangerButtonText}>Eliminar</Text>
                                             </Pressable>
-                                        ) : null}
-                                    </View>
-                                </View>
-                            ))}
-                            <Pressable
-                                style={styles.secondaryButton}
-                                onPress={() => {
-                                    const next = [...socialLinks];
-                                    next.push({
-                                        id: "",
-                                        label: "",
-                                        url: "",
-                                        order: next.length,
-                                        localId: `new-${Date.now()}`,
-                                        isNew: true,
-                                        platformKey: "custom",
-                                        iconKey: "link",
-                                        isActive: true,
-                                        opensInNewTab: true,
-                                    });
-                                    setSocialLinks(next);
-                                }}
-                            >
-                                <Text style={styles.secondaryButtonText}>Agregar enlace</Text>
-                            </Pressable>
-                            {socialError ? <Text style={styles.errorText}>{socialError}</Text> : null}
-                        </View>
-                    )}
-                </View>
-
-                <View style={styles.sectionCard}>
-                    <View style={styles.sectionHeader}>
-                        <Ionicons name="school-outline" size={18} color={theme.colors.primary} />
-                        <Text style={styles.sectionTitle}>Datos de la Facultad</Text>
-                    </View>
-                    {facultyQuery.isLoading ? (
-                        <View style={styles.centerBlock}>
-                            <ActivityIndicator color={theme.colors.primary} />
-                            <Text style={styles.mutedText}>Cargando facultad...</Text>
-                        </View>
-                    ) : (
-                        <View style={styles.infoBlock}>
-                            <View style={styles.logoRow}>
-                                <Image
-                                    source={{ uri: toAbsoluteUrl(facultyForm.logo || "") }}
-                                    style={styles.logo}
-                                    resizeMode="cover"
-                                />
-                                <Pressable
-                                    style={styles.secondaryButton}
-                                    onPress={() => handlePickImage((url) => setFacultyForm({ ...facultyForm, logo: url }))}
-                                >
-                                    <Text style={styles.secondaryButtonText}>Cambiar logo</Text>
-                                </Pressable>
-                            </View>
-                            <View style={styles.formField}>
-                                <Text style={styles.label}>Nombre</Text>
-                                <TextInput
-                                    style={styles.input}
-                                    value={facultyForm.nombre}
-                                    onChangeText={(text) => setFacultyForm({ ...facultyForm, nombre: text })}
-                                />
-                            </View>
-                            <View style={styles.formField}>
-                                <Text style={styles.label}>Acronimo</Text>
-                                <TextInput
-                                    style={styles.input}
-                                    value={facultyForm.acronimo}
-                                    onChangeText={(text) => setFacultyForm({ ...facultyForm, acronimo: text })}
-                                />
-                            </View>
-                            {facultyError ? <Text style={styles.errorText}>{facultyError}</Text> : null}
-                            <Pressable
-                                style={[styles.primaryButton, facultyMutation.isPending && styles.buttonDisabled]}
-                                onPress={() => facultyMutation.mutate()}
-                                disabled={facultyMutation.isPending}
-                            >
-                                {facultyMutation.isPending ? (
-                                    <ActivityIndicator color={theme.colors.textInverse} />
-                                ) : (
-                                    <Text style={styles.primaryButtonText}>Guardar facultad</Text>
-                                )}
-                            </Pressable>
-                        </View>
-                    )}
-                </View>
-
-                <View style={styles.sectionCard}>
-                    <View style={styles.sectionHeader}>
-                        <Ionicons name="document-text-outline" size={18} color={theme.colors.primary} />
-                        <Text style={styles.sectionTitle}>Mision, Vision y Autoridades</Text>
-                    </View>
-                    {mvaQuery.isLoading ? (
-                        <View style={styles.centerBlock}>
-                            <ActivityIndicator color={theme.colors.primary} />
-                            <Text style={styles.mutedText}>Cargando MVA...</Text>
-                        </View>
-                    ) : (
-                        <View style={styles.infoBlock}>
-                            <View style={styles.formField}>
-                                <Text style={styles.label}>Mision</Text>
-                                <TextInput
-                                    style={[styles.input, styles.textArea]}
-                                    value={mision}
-                                    onChangeText={setMision}
-                                    multiline
-                                />
-                            </View>
-                            <View style={styles.formField}>
-                                <Text style={styles.label}>Vision</Text>
-                                <TextInput
-                                    style={[styles.input, styles.textArea]}
-                                    value={vision}
-                                    onChangeText={setVision}
-                                    multiline
-                                />
-                            </View>
-                            <Text style={styles.label}>Autoridades (max 5)</Text>
-                            {autoridades.map((authority, index) => (
-                                <View key={`${authority.nombre}-${index}`} style={styles.authorityCard}>
-                                    <View style={styles.logoRow}>
-                                        <Image
-                                            source={{ uri: toAbsoluteUrl(authority.imagen || "") }}
-                                            style={styles.authorityAvatar}
-                                        />
-                                        <Pressable
-                                            style={styles.secondaryButton}
-                                            onPress={() =>
-                                                handlePickImage((url) => {
+                                        </View>
+                                        <View style={styles.formField}>
+                                            <Text style={styles.label}>Nombre</Text>
+                                            <TextInput
+                                                style={styles.input}
+                                                value={authority.nombre}
+                                                onChangeText={(text) => {
                                                     const next = [...autoridades];
-                                                    next[index] = { ...next[index], imagen: url };
+                                                    next[index] = { ...next[index], nombre: text };
                                                     setAutoridades(next);
-                                                })
-                                            }
-                                        >
-                                            <Text style={styles.secondaryButtonText}>Cambiar imagen</Text>
-                                        </Pressable>
-                                        <Pressable
-                                            style={styles.dangerButton}
-                                            onPress={() => {
-                                                const next = autoridades.filter((_, idx) => idx !== index);
-                                                setAutoridades(next);
-                                            }}
-                                        >
-                                            <Text style={styles.dangerButtonText}>Eliminar</Text>
-                                        </Pressable>
+                                                }}
+                                            />
+                                        </View>
+                                        <View style={styles.formField}>
+                                            <Text style={styles.label}>Cargo</Text>
+                                            <TextInput
+                                                style={styles.input}
+                                                value={authority.cargo}
+                                                onChangeText={(text) => {
+                                                    const next = [...autoridades];
+                                                    next[index] = { ...next[index], cargo: text };
+                                                    setAutoridades(next);
+                                                }}
+                                            />
+                                        </View>
+                                        <View style={styles.formField}>
+                                            <Text style={styles.label}>Correo</Text>
+                                            <TextInput
+                                                style={styles.input}
+                                                value={authority.email ?? ""}
+                                                onChangeText={(text) => {
+                                                    const next = [...autoridades];
+                                                    next[index] = { ...next[index], email: text };
+                                                    setAutoridades(next);
+                                                }}
+                                                keyboardType="email-address"
+                                                autoCapitalize="none"
+                                            />
+                                        </View>
                                     </View>
-                                    <View style={styles.formField}>
-                                        <Text style={styles.label}>Nombre</Text>
-                                        <TextInput
-                                            style={styles.input}
-                                            value={authority.nombre}
-                                            onChangeText={(text) => {
-                                                const next = [...autoridades];
-                                                next[index] = { ...next[index], nombre: text };
-                                                setAutoridades(next);
-                                            }}
-                                        />
-                                    </View>
-                                    <View style={styles.formField}>
-                                        <Text style={styles.label}>Cargo</Text>
-                                        <TextInput
-                                            style={styles.input}
-                                            value={authority.cargo}
-                                            onChangeText={(text) => {
-                                                const next = [...autoridades];
-                                                next[index] = { ...next[index], cargo: text };
-                                                setAutoridades(next);
-                                            }}
-                                        />
-                                    </View>
-                                    <View style={styles.formField}>
-                                        <Text style={styles.label}>Correo</Text>
-                                        <TextInput
-                                            style={styles.input}
-                                            value={authority.email ?? ""}
-                                            onChangeText={(text) => {
-                                                const next = [...autoridades];
-                                                next[index] = { ...next[index], email: text };
-                                                setAutoridades(next);
-                                            }}
-                                            keyboardType="email-address"
-                                            autoCapitalize="none"
-                                        />
-                                    </View>
-                                </View>
-                            ))}
-                            <Pressable
-                                style={[styles.secondaryButton, remainingAuthorities <= 0 && styles.buttonDisabled]}
-                                onPress={() => {
-                                    if (remainingAuthorities <= 0) return;
-                                    setAutoridades([
-                                        ...autoridades,
-                                        { nombre: "", cargo: "", email: "", imagen: "" },
-                                    ]);
-                                }}
-                                disabled={remainingAuthorities <= 0}
-                            >
-                                <Text style={styles.secondaryButtonText}>
-                                    Agregar autoridad ({remainingAuthorities} disponibles)
-                                </Text>
-                            </Pressable>
-                            {mvaError ? <Text style={styles.errorText}>{mvaError}</Text> : null}
-                            <Pressable
-                                style={[styles.primaryButton, mvaMutation.isPending && styles.buttonDisabled]}
-                                onPress={() => mvaMutation.mutate()}
-                                disabled={mvaMutation.isPending}
-                            >
-                                {mvaMutation.isPending ? (
-                                    <ActivityIndicator color={theme.colors.textInverse} />
-                                ) : (
-                                    <Text style={styles.primaryButtonText}>Guardar MVA</Text>
-                                )}
-                            </Pressable>
-                        </View>
-                    )}
-                </View>
-
-                <View style={styles.sectionCard}>
-                    <View style={styles.sectionHeader}>
-                        <Ionicons name="bar-chart-outline" size={18} color={theme.colors.primary} />
-                        <Text style={styles.sectionTitle}>Estadisticas del Home</Text>
-                    </View>
-                    <Text style={styles.sectionSubtitle}>{statsText}</Text>
-                    <Text style={styles.sectionSubtitle}>
-                        Selecciona hasta 4 estadisticas para mostrar en la pagina principal.
-                    </Text>
-                    <View style={styles.optionRow}>
-                        {HOME_STATS_OPTIONS.map((stat) => {
-                            const active = selectedStats.has(stat.id);
-                            const disabled = !active && selectedStats.size >= 4;
-                            return (
+                                ))}
                                 <Pressable
-                                    key={stat.id}
-                                    style={[
-                                        styles.optionChip,
-                                        active && styles.optionChipActive,
-                                        disabled && styles.optionChipDisabled,
-                                    ]}
+                                    style={[styles.secondaryButton, remainingAuthorities <= 0 && styles.buttonDisabled]}
                                     onPress={() => {
-                                        if (disabled) return;
-                                        const next = new Set(selectedStats);
-                                        if (active) {
-                                            next.delete(stat.id);
-                                        } else if (next.size < 4) {
-                                            next.add(stat.id);
-                                        }
-                                        setStatsSelection(Array.from(next));
+                                        if (remainingAuthorities <= 0) return;
+                                        setAutoridades([
+                                            ...autoridades,
+                                            { nombre: "", cargo: "", email: "", imagen: "" },
+                                        ]);
                                     }}
+                                    disabled={remainingAuthorities <= 0}
                                 >
-                                    <Text
-                                        style={[
-                                            styles.optionChipText,
-                                            active && styles.optionChipTextActive,
-                                            disabled && styles.optionChipTextDisabled,
-                                        ]}
-                                    >
-                                        {stat.label}
+                                    <Text style={styles.secondaryButtonText}>
+                                        Agregar autoridad ({remainingAuthorities} disponibles)
                                     </Text>
                                 </Pressable>
-                            );
-                        })}
+                                {mvaError ? <Text style={styles.errorText}>{mvaError}</Text> : null}
+                                <Pressable
+                                    style={[styles.primaryButton, mvaMutation.isPending && styles.buttonDisabled]}
+                                    onPress={() => mvaMutation.mutate()}
+                                    disabled={mvaMutation.isPending}
+                                >
+                                    {mvaMutation.isPending ? (
+                                        <ActivityIndicator color={theme.colors.textInverse} />
+                                    ) : (
+                                        <Text style={styles.primaryButtonText}>Guardar MVA</Text>
+                                    )}
+                                </Pressable>
+                            </View>
+                        )
+                    ) : null}
+                </View>
+
+                <View style={styles.sectionCard}>
+                    <View style={styles.sectionHeaderRow}>
+                        <View style={styles.sectionHeader}>
+                            <Ionicons name="bar-chart-outline" size={18} color={theme.colors.primary} />
+                            <Text style={styles.sectionTitle}>Estadisticas del Home</Text>
+                        </View>
+                        <Pressable
+                            style={styles.sectionToggle}
+                            onPress={() => setShowStatsSection((prev) => !prev)}
+                        >
+                            <Ionicons
+                                name={showStatsSection ? "chevron-up" : "chevron-down"}
+                                size={18}
+                                color={theme.colors.textSecondary}
+                            />
+                        </Pressable>
                     </View>
-                    <Text style={styles.mutedText}>Configuracion guardada localmente en esta sesion.</Text>
+                    {showStatsSection ? (
+                        <>
+                            <Text style={styles.sectionSubtitle}>{statsText}</Text>
+                            <Text style={styles.sectionSubtitle}>
+                                Selecciona hasta 4 estadisticas para mostrar en la pagina principal.
+                            </Text>
+                            <View style={styles.optionRow}>
+                                {HOME_STATS_OPTIONS.map((stat) => {
+                                    const active = selectedStats.has(stat.id);
+                                    const disabled = !active && selectedStats.size >= 4;
+                                    return (
+                                        <Pressable
+                                            key={stat.id}
+                                            style={[
+                                                styles.optionChip,
+                                                active && styles.optionChipActive,
+                                                disabled && styles.optionChipDisabled,
+                                            ]}
+                                            onPress={() => {
+                                                if (disabled) return;
+                                                const next = new Set(selectedStats);
+                                                if (active) {
+                                                    next.delete(stat.id);
+                                                } else if (next.size < 4) {
+                                                    next.add(stat.id);
+                                                }
+                                                setStatsSelection(Array.from(next));
+                                            }}
+                                        >
+                                            <Text
+                                                style={[
+                                                    styles.optionChipText,
+                                                    active && styles.optionChipTextActive,
+                                                    disabled && styles.optionChipTextDisabled,
+                                                ]}
+                                            >
+                                                {stat.label}
+                                            </Text>
+                                        </Pressable>
+                                    );
+                                })}
+                            </View>
+                            <Text style={styles.mutedText}>Configuracion guardada localmente en esta sesion.</Text>
+                        </>
+                    ) : null}
                 </View>
             </ScrollView>
         </View>
@@ -871,6 +948,22 @@ const styles = StyleSheet.create({
         paddingBottom: 8,
         borderBottomWidth: 1,
         borderBottomColor: theme.colors.borderLight,
+    },
+    sectionHeaderRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: 8,
+    },
+    sectionToggle: {
+        width: 32,
+        height: 32,
+        borderRadius: 16,
+        alignItems: "center",
+        justifyContent: "center",
+        borderWidth: 1,
+        borderColor: theme.colors.borderLight,
+        backgroundColor: theme.colors.bgSecondary,
     },
     sectionTitle: { fontWeight: "800", fontSize: 15, color: theme.colors.textPrimary },
     sectionSubtitle: { color: theme.colors.textSecondary, fontWeight: "600" },

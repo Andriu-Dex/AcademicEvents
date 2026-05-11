@@ -427,7 +427,7 @@ export function HomeContent(
                                 <View style={styles.brandLogoFallback} />
                             )}
                         </View>
-                        <Text style={styles.brandLabel}>FISEI</Text>
+                        <Text style={styles.brandLabel}>{faculty?.acronym ?? "FISEI"}</Text>
                     </Pressable>
 
                     {user ? (
@@ -904,10 +904,10 @@ export function HomeContent(
                             style={styles.footerLogo}
                         />
                         <View>
-                            <Text style={styles.footerBrandAcronymFixed}>FISEI</Text>
-                            <Text style={styles.footerBrandName}>{faculty?.acronym ?? "FISEI"}</Text>
-                            <Text style={styles.footerBrandSub}>{faculty?.title ?? "Facultad"}</Text>
-                            <Text style={styles.footerBrandSubMuted}>{footerUniversity.name}</Text>
+                            <Text style={styles.footerBrandAcronymFixed}>{faculty?.acronym ?? "FISEI"}</Text>
+                            <Text style={styles.footerBrandName}>{faculty?.title ?? "Facultad"}</Text>
+                            <Text style={styles.footerBrandSub}>{footerUniversity.name}</Text>
+                            <Text style={styles.footerBrandSubMuted}>{footerUniversity.address}</Text>
                         </View>
                     </View>
 

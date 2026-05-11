@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
     ActivityIndicator,
     Pressable,
@@ -105,6 +105,7 @@ function isValidEmail(value: string) {
 
 export default function AdminGlobalUsersScreen() {
     const queryClient = useQueryClient();
+    const scrollRef = useRef<ScrollView | null>(null);
 
     const [apiError, setApiError] = useState<string | null>(null);
 
@@ -257,6 +258,9 @@ export default function AdminGlobalUsersScreen() {
             rol: account.role ?? (isAdmin ? "ADMIN_GENERAL" : "GENERAL"),
             est_ver_cor: Boolean(account.isEmailVerified),
         });
+        setTimeout(() => {
+            scrollRef.current?.scrollTo({ y: 0, animated: true });
+        }, 120);
     };
 
     const updateMutation = useMutation({
@@ -373,7 +377,7 @@ export default function AdminGlobalUsersScreen() {
     return (
         <View style={styles.container}>
             <AppHeader title="Gestion de usuarios" showBack backHref="/(admin)/dashboard" showNotifications />
-            <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+            <ScrollView ref={scrollRef} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
                 <View style={styles.sectionCard}>
                     <View style={styles.sectionHeader}>
                         <Ionicons name="shield-outline" size={18} color={theme.colors.primary} />
@@ -385,19 +389,22 @@ export default function AdminGlobalUsersScreen() {
                 </View>
 
                 <View style={styles.sectionCard}>
-                    <View style={styles.sectionHeader}>
-                        <Ionicons name="person-add-outline" size={18} color={theme.colors.primary} />
-                        <Text style={styles.sectionTitle}>Crear nuevo administrador</Text>
+                    <View style={styles.sectionHeaderRow}>
+                        <View style={styles.sectionHeader}>
+                            <Ionicons name="person-add-outline" size={18} color={theme.colors.primary} />
+                            <Text style={styles.sectionTitle}>Crear nuevo administrador</Text>
+                        </View>
+                        <Pressable
+                            style={styles.sectionToggle}
+                            onPress={() => setShowCreateForm((prev) => !prev)}
+                        >
+                            <Ionicons
+                                name={showCreateForm ? "chevron-up" : "chevron-down"}
+                                size={18}
+                                color={theme.colors.textSecondary}
+                            />
+                        </Pressable>
                     </View>
-
-                    <Pressable
-                        style={styles.secondaryButton}
-                        onPress={() => setShowCreateForm((prev) => !prev)}
-                    >
-                        <Text style={styles.secondaryButtonText}>
-                            {showCreateForm ? "Ocultar formulario" : "Mostrar formulario"}
-                        </Text>
-                    </Pressable>
 
                     {showCreateForm ? (
                         <View style={styles.formGrid}>
@@ -1061,6 +1068,22 @@ const styles = StyleSheet.create({
         paddingBottom: 8,
         borderBottomWidth: 1,
         borderBottomColor: theme.colors.borderLight,
+    },
+    sectionHeaderRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: 8,
+    },
+    sectionToggle: {
+        width: 32,
+        height: 32,
+        borderRadius: 16,
+        alignItems: "center",
+        justifyContent: "center",
+        borderWidth: 1,
+        borderColor: theme.colors.borderLight,
+        backgroundColor: theme.colors.bgSecondary,
     },
     sectionTitle: { fontWeight: "800", fontSize: 15, color: theme.colors.textPrimary },
     sectionSubtitle: { color: theme.colors.textSecondary, fontWeight: "600" },
