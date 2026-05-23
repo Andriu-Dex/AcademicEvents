@@ -183,7 +183,7 @@ function RegistrationDocumentsSection({
     paymentCount,
     letterCount,
     docUrl,
-    expandedLetter,
+    isLetterExpanded,
     onPreviewReceipt,
     onToggleLetter,
 }: Readonly<{
@@ -191,7 +191,7 @@ function RegistrationDocumentsSection({
     paymentCount: number;
     letterCount: number;
     docUrl: string;
-    expandedLetter: boolean;
+    isLetterExpanded: boolean;
     onPreviewReceipt: (url: string) => void;
     onToggleLetter: (id: string) => void;
 }>) {
@@ -235,7 +235,7 @@ function RegistrationDocumentsSection({
                     <Pressable style={styles.letterToggleBtn} onPress={() => onToggleLetter(item.id)}>
                         <View style={styles.docInlineRow}>
                             <Ionicons name="mail-outline" size={16} color={theme.colors.primary} />
-                            <Text style={styles.docBtnText}>{expandedLetter ? "Ocultar carta" : "Ver carta"}</Text>
+                            <Text style={styles.docBtnText}>{isLetterExpanded ? "Ocultar carta" : "Ver carta"}</Text>
                         </View>
                         <Text style={styles.docPillText}>({letterCount})</Text>
                     </Pressable>
@@ -244,7 +244,7 @@ function RegistrationDocumentsSection({
                 )}
             </View>
 
-            {expandedLetter && letterCount > 0 ? (
+            {isLetterExpanded && letterCount > 0 ? (
                 <View style={styles.letterBox}>
                     <Text style={styles.letterText}>{item.motivationLetters[0]?.content ?? ""}</Text>
                 </View>
@@ -377,6 +377,7 @@ function RegistrationDetailsSection({
 function RegistrationCard({
     item,
     expanded,
+    isLetterExpanded,
     selectedEventId,
     observation,
     attendance,
@@ -384,6 +385,8 @@ function RegistrationCard({
     isPendingAction,
     validateErrorMessage,
     onToggleExpanded,
+    onToggleLetter,
+    onPreviewReceipt,
     onSetObs,
     onSetAttendance,
     onSetGrade,
@@ -397,7 +400,7 @@ function RegistrationCard({
     observation: string;
     attendance: string;
     grade: string;
-    expandedLetter: boolean;
+    isLetterExpanded: boolean;
     isPendingAction: boolean;
     validateErrorMessage: string | null;
     onToggleExpanded: (id: string) => void;
@@ -457,7 +460,7 @@ function RegistrationCard({
                 paymentCount={paymentCount}
                 letterCount={letterCount}
                 docUrl={docUrl}
-                expandedLetter={expandedLetter}
+                isLetterExpanded={isLetterExpanded}
                 onPreviewReceipt={onPreviewReceipt}
                 onToggleLetter={onToggleLetter}
             />
@@ -793,7 +796,7 @@ export default function AdminRegistrationsScreen() {
                         observation={observationById[item.id] ?? ""}
                         attendance={attendanceById[item.id] ?? ""}
                         grade={gradeById[item.id] ?? ""}
-                        expandedLetter={Boolean(expandedLetterIds[item.id])}
+                        isLetterExpanded={Boolean(expandedLetterIds[item.id])}
                         isPendingAction={validateMutation.isPending}
                         validateErrorMessage={validateErrorMessage}
                         onToggleExpanded={toggleExpanded}
@@ -808,13 +811,13 @@ export default function AdminRegistrationsScreen() {
                     />
                 )}
             />
-            <Modal visible={Boolean(receiptPreviewUrl)} transparent animationType="fade" onRequestClose={() => setReceiptPreviewUrl("") }>
+            <Modal visible={Boolean(receiptPreviewUrl)} transparent animationType="fade" onRequestClose={() => setReceiptPreviewUrl("")}>
                 <View style={styles.previewBackdrop}>
                     <Pressable style={StyleSheet.absoluteFill} onPress={() => setReceiptPreviewUrl("")} />
                     <View style={styles.previewModal}>
                         <View style={styles.previewHeader}>
                             <Text style={styles.previewTitle}>Comprobante</Text>
-                            <Pressable style={styles.previewCloseBtn} onPress={() => setReceiptPreviewUrl("") }>
+                            <Pressable style={styles.previewCloseBtn} onPress={() => setReceiptPreviewUrl("")}>
                                 <Ionicons name="close" size={18} color={theme.colors.textPrimary} />
                             </Pressable>
                         </View>
@@ -1042,4 +1045,66 @@ const styles = StyleSheet.create({
     btnPrimary: { backgroundColor: theme.colors.primary },
     btnSuccess: { backgroundColor: theme.colors.success },
     btnDanger: { backgroundColor: theme.colors.error },
+    letterToggleBtn: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: 12,
+        borderWidth: 1,
+        borderColor: theme.colors.borderPrimary,
+        borderRadius: theme.radius.md,
+        paddingHorizontal: theme.spacing.sm,
+        paddingVertical: 10,
+        backgroundColor: theme.colors.bgSecondary,
+    },
+    actionHintBtn: {
+        backgroundColor: theme.colors.bgSecondary,
+        borderWidth: 1,
+        borderColor: theme.colors.borderPrimary,
+    },
+    actionBtnHintText: { color: theme.colors.textSecondary, fontWeight: "800" },
+    cardAccent: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        height: 6,
+        borderTopLeftRadius: theme.radius.lg,
+        borderTopRightRadius: theme.radius.lg,
+    },
+    previewBackdrop: {
+        flex: 1,
+        backgroundColor: "rgba(10, 15, 28, 0.68)",
+        justifyContent: "center",
+        padding: theme.spacing.lg,
+    },
+    previewModal: {
+        backgroundColor: theme.colors.bgPrimary,
+        borderRadius: theme.radius.lg,
+        borderWidth: 1,
+        borderColor: theme.colors.borderPrimary,
+        overflow: "hidden",
+        maxHeight: "90%",
+    },
+    previewHeader: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        paddingHorizontal: theme.spacing.md,
+        paddingVertical: theme.spacing.sm,
+        borderBottomWidth: 1,
+        borderBottomColor: theme.colors.borderPrimary,
+    },
+    previewTitle: { color: theme.colors.textPrimary, fontWeight: "900", fontSize: 16 },
+    previewCloseBtn: {
+        width: 36,
+        height: 36,
+        borderRadius: 999,
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: theme.colors.bgSecondary,
+        borderWidth: 1,
+        borderColor: theme.colors.borderPrimary,
+    },
+    previewImage: { width: "100%", height: 420, backgroundColor: theme.colors.bgSecondary },
 });

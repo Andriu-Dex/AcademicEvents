@@ -72,11 +72,11 @@ export function DatePickerField({ label, valueISO, onChangeISO }: Readonly<Props
                                 markedDates={
                                     selectedDay
                                         ? {
-                                              [selectedDay]: {
-                                                  selected: true,
-                                                  selectedColor: theme.colors.primary,
-                                              },
-                                          }
+                                            [selectedDay]: {
+                                                selected: true,
+                                                selectedColor: theme.colors.primary,
+                                            },
+                                        }
                                         : undefined
                                 }
                                 onDayPress={(day) => setSelectedDay(day.dateString)}

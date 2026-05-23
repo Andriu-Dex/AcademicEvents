@@ -219,8 +219,6 @@ export default function AdminEventsScreen() {
         }
     }, [params.eventId]);
 
-    const debouncedFilters = useDebouncedValue(filters, 250);
-
     const careersQuery = useQuery({
         queryKey: ["admin-careers-all"],
         queryFn: fetchAllCareers,
@@ -237,13 +235,13 @@ export default function AdminEventsScreen() {
     }, [careersQuery.data]);
 
     const eventsQueryKey = useMemo(
-        () => ["admin-events-paged", page, limit, debouncedFilters],
-        [page, limit, debouncedFilters]
+        () => ["admin-events-paged", page, limit, filters],
+        [page, limit, filters]
     );
 
     const eventsQuery = useQuery({
         queryKey: eventsQueryKey,
-        queryFn: () => fetchAdminEventsPaginated(page, limit, debouncedFilters),
+        queryFn: () => fetchAdminEventsPaginated(page, limit, filters),
         staleTime: 15000,
         placeholderData: keepPreviousData,
     });
@@ -693,7 +691,7 @@ export default function AdminEventsScreen() {
                             ) : null}
                             <View style={styles.modalBody}>
                                 <Text style={styles.modalTitle}>{selectedEvent?.name}</Text>
-                                
+
                                 <View style={styles.modalMetaRow}>
                                     <View style={styles.modalBadgePrimary}>
                                         <Text style={styles.modalBadgeTextPrimary}>{(selectedEvent?.price ?? 0) <= 0 ? "Gratis" : `$${(selectedEvent?.price ?? 0).toFixed(2)}`}</Text>
@@ -708,7 +706,7 @@ export default function AdminEventsScreen() {
                                 {selectedEvent?.description ? (
                                     <Text style={styles.modalDescription}>{selectedEvent.description}</Text>
                                 ) : null}
-                                
+
                                 <View style={styles.modalSection}>
                                     <View style={styles.modalDetailRow}>
                                         <Ionicons name="calendar-outline" size={16} color={theme.colors.primary} />
@@ -759,7 +757,7 @@ export default function AdminEventsScreen() {
                                 <Ionicons name="people-outline" size={18} color={theme.colors.textPrimary} />
                                 <Text style={styles.modalActionBtnTextGhost}>Ver inscritos</Text>
                             </Pressable>
-                            
+
                             <View style={styles.modalFooterRow}>
                                 <Pressable style={styles.modalActionBtnDanger} onPress={() => {
                                     const event = selectedEvent;
