@@ -1,4 +1,4 @@
-import { useMemo, type ReactNode } from "react";
+import { useCallback, useMemo, type ReactNode } from "react";
 import {
     ActivityIndicator,
     FlatList,
@@ -71,11 +71,12 @@ export default function NotificationsScreen() {
         refetchOnWindowFocus: false,
     });
 
-    useFocusEffect(() => {
-        void query.refetch();
-        void pushStatusQuery.refetch();
-        return () => undefined;
-    });
+    useFocusEffect(
+        useCallback(() => {
+            void query.refetch();
+            void pushStatusQuery.refetch();
+        }, [query, pushStatusQuery])
+    );
 
     const items = useMemo(() => query.data ?? [], [query.data]);
 

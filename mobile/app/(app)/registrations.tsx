@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode } from "react";
+import { useCallback, useMemo, useState, type ReactNode } from "react";
 import {
     ActivityIndicator,
     Alert,
@@ -208,10 +208,11 @@ export default function RegistrationsScreen() {
         refetchOnWindowFocus: false,
     });
 
-    useFocusEffect(() => {
-        void query.refetch();
-        return () => undefined;
-    });
+    useFocusEffect(
+        useCallback(() => {
+            void query.refetch();
+        }, [query])
+    );
 
     const items = useMemo(() => {
         const list = query.data ?? [];
