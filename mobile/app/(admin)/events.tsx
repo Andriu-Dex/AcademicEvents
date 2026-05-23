@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/cognitive-complexity */
 import { useEffect, useMemo, useState } from "react";
 import {
     ActivityIndicator,
@@ -5,10 +6,12 @@ import {
     FlatList,
     Image,
     Pressable,
+    ScrollView,
     StyleSheet,
     Text,
     TextInput,
     View,
+    Modal,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -28,10 +31,11 @@ type SelectOption = { label: string; value: string };
 
 const EVENT_TYPE_OPTIONS: SelectOption[] = [
     { label: "Todos", value: "" },
-    { label: "Curso", value: "CURSO" },
-    { label: "Conferencia", value: "CONFERENCIA" },
-    { label: "Seminario", value: "SEMINARIO" },
-    { label: "Taller", value: "TALLER" },
+    { label: "Curso", value: "COURSE" },
+    { label: "Congreso", value: "CONGRESS" },
+    { label: "Webinar", value: "WEBINAR" },
+    { label: "Charla", value: "TALK" },
+    { label: "Socialización", value: "SOCIALIZATION" },
 ];
 
 const EVENT_STATUS_OPTIONS: SelectOption[] = [
@@ -67,6 +71,25 @@ function translateEventStatus(status: string) {
     if (key === "CANCELLED") return "Cancelado";
     if (key === "SUSPENDED") return "Suspendido";
     return status || "Estado";
+}
+
+function translateEventType(raw: string) {
+    const normalized = raw.trim().toUpperCase();
+    if (!normalized) return "";
+    if (normalized === "COURSE") return "Curso";
+    if (normalized === "CONGRESS") return "Congreso";
+    if (normalized === "WEBINAR") return "Webinar";
+    if (normalized === "TALK") return "Charla";
+    if (normalized === "SOCIALIZATION") return "Socialización";
+    return raw.trim();
+}
+
+function translateModality(raw: string) {
+    const normalized = raw.trim().toUpperCase();
+    if (normalized === "IN_PERSON") return "Presencial";
+    if (normalized === "VIRTUAL") return "Virtual";
+    if (normalized === "HYBRID") return "Semipresencial";
+    return raw.trim();
 }
 
 function useDebouncedValue<T>(value: T, delayMs: number) {
@@ -112,24 +135,12 @@ function formatDateTime(dateISO: string) {
 
 function EventAdminCard({
     event,
-    onEdit,
-    onDelete,
-    onViewRegistrations,
+    onViewDetails,
 }: Readonly<{
     event: AdminEvent;
-    onEdit: () => void;
-    onDelete: () => void;
-    onViewRegistrations: () => void;
+    onViewDetails: () => void;
 }>) {
     const isFree = (event.price ?? 0) <= 0;
-    const spotLabel =
-        typeof event.availableSpots === "number"
-            ? event.availableSpots > 0
-                ? `${event.availableSpots} disponibles`
-                : "Sin cupos"
-            : typeof event.maxCapacity === "number"
-                ? `${event.maxCapacity} cupos`
-                : "Cupos por confirmar";
 
     return (
         <View style={styles.card}>
@@ -143,7 +154,7 @@ function EventAdminCard({
                 <View style={styles.badgeRow}>
                     {event.type ? (
                         <View style={styles.badgeSoft}>
-                            <Text style={styles.badgeSoftText}>{event.type}</Text>
+                            <Text style={styles.badgeSoftText}>{translateEventType(event.type)}</Text>
                         </View>
                     ) : null}
                     <View style={[styles.badge, isFree ? styles.badgeSuccess : styles.badgePrimary]}>
@@ -155,28 +166,10 @@ function EventAdminCard({
                     {event.name}
                 </Text>
 
-                <Text style={styles.metaText} numberOfLines={2}>
-                    {formatDateTime(event.startDate)}
-                </Text>
-
-                <Text style={styles.metaSubText} numberOfLines={2}>
-                    {spotLabel} · {translateEventStatus(event.status)}
-                </Text>
-
                 <View style={styles.actionRow}>
-                    <Pressable style={[styles.actionBtn, styles.actionBtnPrimary]} onPress={onEdit}>
-                        <Ionicons name="create-outline" size={16} color={theme.colors.textInverse} />
-                        <Text style={styles.actionBtnTextPrimary}>Editar</Text>
-                    </Pressable>
-
-                    <Pressable style={[styles.actionBtn, styles.actionBtnGhost]} onPress={onViewRegistrations}>
-                        <Ionicons name="people-outline" size={16} color={theme.colors.textPrimary} />
-                        <Text style={styles.actionBtnTextGhost}>Inscritos</Text>
-                    </Pressable>
-
-                    <Pressable style={[styles.actionBtn, styles.actionBtnDanger]} onPress={onDelete}>
-                        <Ionicons name="trash-outline" size={16} color={theme.colors.textInverse} />
-                        <Text style={styles.actionBtnTextPrimary}>Eliminar</Text>
+                    <Pressable style={[styles.actionBtn, styles.actionBtnGhost, { flex: 1 }]} onPress={onViewDetails}>
+                        <Text style={[styles.actionBtnTextGhost, { textAlign: "center" }]}>Ver detalles</Text>
+                        <Ionicons name="arrow-forward" size={16} color={theme.colors.textPrimary} />
                     </Pressable>
                 </View>
             </View>
@@ -198,14 +191,13 @@ export default function AdminEventsScreen() {
     const [modalidadOpen, setModalidadOpen] = useState(false);
     const [carreraOpen, setCarreraOpen] = useState(false);
     const [sortOpen, setSortOpen] = useState(false);
+    const [selectedEvent, setSelectedEvent] = useState<AdminEvent | null>(null);
 
     const [searchInput, setSearchInput] = useState("");
     const [filters, setFilters] = useState<AdminEventsFilters>({
         search: "",
         tipoEvento: "",
         estado: "",
-        fechaInicio: "",
-        fechaFin: "",
         carrera: "",
         modalidad: "",
         capacidadMin: "",
@@ -278,8 +270,6 @@ export default function AdminEventsScreen() {
             search: "",
             tipoEvento: "",
             estado: "",
-            fechaInicio: "",
-            fechaFin: "",
             carrera: "",
             modalidad: "",
             capacidadMin: "",
@@ -350,22 +340,7 @@ export default function AdminEventsScreen() {
                 renderItem={({ item }) => (
                     <EventAdminCard
                         event={item}
-                        onEdit={() => router.push({ pathname: "/(admin)/event-form", params: { mode: "edit", id: item.id } })}
-                        onViewRegistrations={() => router.push({ pathname: "/(admin)/registrations", params: { eventId: item.id } })}
-                        onDelete={() => {
-                            Alert.alert(
-                                "Eliminar evento",
-                                `¿Seguro que deseas eliminar “${item.name}”? Esta acción no se puede deshacer.`,
-                                [
-                                    { text: "Cancelar", style: "cancel" },
-                                    {
-                                        text: "Eliminar",
-                                        style: "destructive",
-                                        onPress: () => deleteMutation.mutate(item.id),
-                                    },
-                                ]
-                            );
-                        }}
+                        onViewDetails={() => setSelectedEvent(item)}
                     />
                 )}
                 ListFooterComponent={
@@ -697,6 +672,7 @@ export default function AdminEventsScreen() {
                         </View>
                     </View>
                 ) : null}
+
             </View>
 
             {deleteMutation.isPending ? (
@@ -707,6 +683,122 @@ export default function AdminEventsScreen() {
             ) : null}
 
             {body}
+
+            <Modal visible={!!selectedEvent} animationType="slide" transparent onRequestClose={() => setSelectedEvent(null)}>
+                <View style={styles.modalBackdrop}>
+                    <View style={styles.modalCard}>
+                        <ScrollView contentContainerStyle={styles.modalContent} showsVerticalScrollIndicator={false}>
+                            {selectedEvent?.coverImageUrl ? (
+                                <Image source={{ uri: toAbsoluteUrl(selectedEvent.coverImageUrl) }} style={styles.modalImage} resizeMode="cover" />
+                            ) : null}
+                            <View style={styles.modalBody}>
+                                <Text style={styles.modalTitle}>{selectedEvent?.name}</Text>
+                                
+                                <View style={styles.modalMetaRow}>
+                                    <View style={styles.modalBadgePrimary}>
+                                        <Text style={styles.modalBadgeTextPrimary}>{(selectedEvent?.price ?? 0) <= 0 ? "Gratis" : `$${(selectedEvent?.price ?? 0).toFixed(2)}`}</Text>
+                                    </View>
+                                    {selectedEvent?.type ? (
+                                        <View style={styles.modalBadgeSoft}>
+                                            <Text style={styles.modalBadgeTextSoft}>{translateEventType(selectedEvent.type)}</Text>
+                                        </View>
+                                    ) : null}
+                                </View>
+
+                                {selectedEvent?.description ? (
+                                    <Text style={styles.modalDescription}>{selectedEvent.description}</Text>
+                                ) : null}
+                                
+                                <View style={styles.modalSection}>
+                                    <View style={styles.modalDetailRow}>
+                                        <Ionicons name="calendar-outline" size={16} color={theme.colors.primary} />
+                                        <Text style={styles.modalDetailText}>{formatDateTime(selectedEvent?.startDate || "")} – {formatDateTime(selectedEvent?.endDate || "")}</Text>
+                                    </View>
+                                    <View style={styles.modalDetailRow}>
+                                        <Ionicons name="time-outline" size={16} color={theme.colors.primary} />
+                                        <Text style={styles.modalDetailText}>Duración: {selectedEvent?.durationHours} horas</Text>
+                                    </View>
+                                    <View style={styles.modalDetailRow}>
+                                        <Ionicons name="people-outline" size={16} color={theme.colors.primary} />
+                                        <Text style={styles.modalDetailText}>Cupos disponibles: {selectedEvent?.availableSpots} de {selectedEvent?.maxCapacity}</Text>
+                                    </View>
+                                    {selectedEvent?.minGrade !== null && selectedEvent?.minGrade !== undefined ? (
+                                        <View style={styles.modalDetailRow}>
+                                            <Ionicons name="star-outline" size={16} color={theme.colors.primary} />
+                                            <Text style={styles.modalDetailText}>Nota mínima: {selectedEvent.minGrade}</Text>
+                                        </View>
+                                    ) : null}
+                                    {selectedEvent?.minAttendancePercent !== null && selectedEvent?.minAttendancePercent !== undefined ? (
+                                        <View style={styles.modalDetailRow}>
+                                            <Ionicons name="checkmark-circle-outline" size={16} color={theme.colors.primary} />
+                                            <Text style={styles.modalDetailText}>Asistencia mínima: {selectedEvent.minAttendancePercent}%</Text>
+                                        </View>
+                                    ) : null}
+                                    <View style={styles.modalDetailRow}>
+                                        <Ionicons name="book-outline" size={16} color={theme.colors.primary} />
+                                        <Text style={styles.modalDetailText}>Carreras: {selectedEvent?.isGeneral ? "General (Todas)" : selectedEvent?.careers.join(", ")}</Text>
+                                    </View>
+                                    <View style={styles.modalDetailRow}>
+                                        <Ionicons name="flag-outline" size={16} color={theme.colors.primary} />
+                                        <Text style={styles.modalDetailText}>Estado: {translateEventStatus(selectedEvent?.status || "")}</Text>
+                                    </View>
+                                    <View style={styles.modalDetailRow}>
+                                        <Ionicons name="layers-outline" size={16} color={theme.colors.primary} />
+                                        <Text style={styles.modalDetailText}>Modalidad: {translateModality(selectedEvent?.modality || "")}</Text>
+                                    </View>
+                                </View>
+                            </View>
+                        </ScrollView>
+
+                        <View style={styles.modalFooter}>
+                            <Pressable style={styles.modalActionBtnGhost} onPress={() => {
+                                const id = selectedEvent?.id;
+                                setSelectedEvent(null);
+                                if (id) router.push({ pathname: "/(admin)/registrations", params: { eventId: id } });
+                            }}>
+                                <Ionicons name="people-outline" size={18} color={theme.colors.textPrimary} />
+                                <Text style={styles.modalActionBtnTextGhost}>Ver inscritos</Text>
+                            </Pressable>
+                            
+                            <View style={styles.modalFooterRow}>
+                                <Pressable style={styles.modalActionBtnDanger} onPress={() => {
+                                    const event = selectedEvent;
+                                    Alert.alert(
+                                        "Eliminar evento",
+                                        `¿Seguro que deseas eliminar “${event?.name}”? Esta acción no se puede deshacer.`,
+                                        [
+                                            { text: "Cancelar", style: "cancel" },
+                                            {
+                                                text: "Eliminar",
+                                                style: "destructive",
+                                                onPress: () => {
+                                                    if (event) deleteMutation.mutate(event.id);
+                                                    setSelectedEvent(null);
+                                                },
+                                            },
+                                        ]
+                                    );
+                                }}>
+                                    <Ionicons name="trash-outline" size={16} color={theme.colors.error} />
+                                    <Text style={styles.modalActionBtnTextDanger}>Eliminar</Text>
+                                </Pressable>
+
+                                <Pressable style={styles.modalActionBtnPrimary} onPress={() => {
+                                    const id = selectedEvent?.id;
+                                    setSelectedEvent(null);
+                                    if (id) router.push({ pathname: "/(admin)/event-form", params: { mode: "edit", id } });
+                                }}>
+                                    <Ionicons name="create-outline" size={16} color={theme.colors.textInverse} />
+                                    <Text style={styles.modalActionBtnTextPrimary}>Editar</Text>
+                                </Pressable>
+                            </View>
+                            <Pressable style={styles.modalCloseBtn} onPress={() => setSelectedEvent(null)}>
+                                <Text style={styles.modalCloseBtnText}>Cerrar</Text>
+                            </Pressable>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 }
@@ -947,4 +1039,156 @@ const styles = StyleSheet.create({
         backgroundColor: theme.colors.primary,
     },
     mutationBannerText: { color: theme.colors.textInverse, fontWeight: "900" },
+
+    // Modal Styles
+    modalBackdrop: {
+        flex: 1,
+        backgroundColor: "rgba(0,0,0,0.5)",
+        justifyContent: "flex-end",
+    },
+    modalCard: {
+        backgroundColor: theme.colors.bgPrimary,
+        borderTopLeftRadius: theme.radius.xl,
+        borderTopRightRadius: theme.radius.xl,
+        maxHeight: "90%",
+        paddingBottom: 20,
+    },
+    modalContent: {
+        paddingBottom: 20,
+    },
+    modalImage: {
+        width: "100%",
+        height: 200,
+        borderTopLeftRadius: theme.radius.xl,
+        borderTopRightRadius: theme.radius.xl,
+    },
+    modalBody: {
+        padding: theme.spacing.lg,
+    },
+    modalTitle: {
+        fontSize: 22,
+        fontWeight: "900",
+        color: theme.colors.textPrimary,
+        marginBottom: 10,
+    },
+    modalMetaRow: {
+        flexDirection: "row",
+        gap: 8,
+        marginBottom: 16,
+    },
+    modalBadgePrimary: {
+        backgroundColor: theme.colors.primary,
+        paddingHorizontal: 12,
+        paddingVertical: 4,
+        borderRadius: 999,
+    },
+    modalBadgeTextPrimary: {
+        color: theme.colors.textInverse,
+        fontSize: 12,
+        fontWeight: "700",
+        textTransform: "uppercase",
+    },
+    modalBadgeSoft: {
+        backgroundColor: theme.colors.bgSecondary,
+        paddingHorizontal: 12,
+        paddingVertical: 4,
+        borderRadius: 999,
+    },
+    modalBadgeTextSoft: {
+        color: theme.colors.textPrimary,
+        fontSize: 12,
+        fontWeight: "700",
+        textTransform: "uppercase",
+    },
+    modalDescription: {
+        fontSize: 14,
+        lineHeight: 22,
+        color: theme.colors.textSecondary,
+    },
+    modalSection: {
+        marginTop: 16,
+        padding: theme.spacing.md,
+        backgroundColor: theme.colors.bgSecondary,
+        borderRadius: theme.radius.md,
+        borderWidth: 1,
+        borderColor: theme.colors.borderPrimary,
+    },
+    modalDetailRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 8,
+        marginBottom: 8,
+    },
+    modalDetailText: {
+        fontSize: 14,
+        color: theme.colors.textSecondary,
+        fontWeight: "600",
+    },
+    modalFooter: {
+        paddingHorizontal: theme.spacing.lg,
+        paddingTop: theme.spacing.sm,
+        gap: 12,
+    },
+    modalFooterRow: {
+        flexDirection: "row",
+        gap: 12,
+    },
+    modalActionBtnGhost: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 8,
+        paddingVertical: 14,
+        borderRadius: theme.radius.md,
+        backgroundColor: theme.colors.bgSecondary,
+        borderWidth: 1,
+        borderColor: theme.colors.borderPrimary,
+    },
+    modalActionBtnTextGhost: {
+        color: theme.colors.textPrimary,
+        fontWeight: "800",
+        fontSize: 14,
+    },
+    modalActionBtnDanger: {
+        flex: 1,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 8,
+        paddingVertical: 14,
+        borderRadius: theme.radius.md,
+        backgroundColor: theme.colors.bgSecondary,
+        borderWidth: 1,
+        borderColor: theme.colors.error,
+    },
+    modalActionBtnTextDanger: {
+        color: theme.colors.error,
+        fontWeight: "900",
+        fontSize: 14,
+    },
+    modalActionBtnPrimary: {
+        flex: 2,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 8,
+        paddingVertical: 14,
+        borderRadius: theme.radius.md,
+        backgroundColor: theme.colors.primary,
+    },
+    modalActionBtnTextPrimary: {
+        color: theme.colors.textInverse,
+        fontWeight: "900",
+        fontSize: 14,
+    },
+    modalCloseBtn: {
+        paddingVertical: 14,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    modalCloseBtnText: {
+        color: theme.colors.textSecondary,
+        fontWeight: "800",
+        fontSize: 14,
+    },
 });

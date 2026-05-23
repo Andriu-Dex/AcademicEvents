@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/cognitive-complexity */
 import { useEffect, useMemo, useState } from "react";
 import {
     ActivityIndicator,
@@ -15,6 +16,7 @@ import * as DocumentPicker from "expo-document-picker";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { AppHeader } from "../../src/components/AppHeader";
+import { DatePickerField } from "../../src/components/DatePickerField";
 import { toAbsoluteUrl } from "../../src/api/client";
 import { fetchAllCareers } from "../../src/api/adminCareers";
 import {
@@ -31,10 +33,11 @@ type Params = { mode?: "create" | "edit"; id?: string };
 type SelectOption = { label: string; value: string };
 
 const EVENT_TYPE_OPTIONS: SelectOption[] = [
-    { label: "Curso", value: "CURSO" },
-    { label: "Conferencia", value: "CONFERENCIA" },
-    { label: "Seminario", value: "SEMINARIO" },
-    { label: "Taller", value: "TALLER" },
+    { label: "Curso", value: "COURSE" },
+    { label: "Congreso", value: "CONGRESS" },
+    { label: "Webinar", value: "WEBINAR" },
+    { label: "Charla", value: "TALK" },
+    { label: "Socialización", value: "SOCIALIZATION" },
 ];
 
 const EVENT_STATUS_OPTIONS: SelectOption[] = [
@@ -50,6 +53,202 @@ const MODALITY_OPTIONS: SelectOption[] = [
     { label: "Virtual", value: "VIRTUAL" },
     { label: "Semipresencial", value: "HYBRID" },
 ];
+
+function isCourseType(typeValue: string) {
+    return (typeValue ?? "").trim().toUpperCase() === "COURSE";
+}
+
+function buildEventUpsertPayload(params: {
+    name: string;
+    description: string;
+    location: string;
+    type: string;
+    status: string;
+    modality: string;
+    startDate: string;
+    endDate: string;
+    durationHours: string;
+    maxCapacity: string;
+    minAttendancePercent: string;
+    minGrade: string;
+    price: string;
+    isGeneral: boolean;
+    careerIds: string[];
+    showCourseFields: boolean;
+}): AdminEventUpsertInput {
+    const payload: AdminEventUpsertInput = {
+        name: params.name.trim(),
+        description: params.description.trim(),
+        location: params.location.trim() || "Por definir",
+        type: params.type,
+        status: params.status,
+        modality: params.modality,
+        startDate: params.startDate.trim(),
+        endDate: params.endDate.trim(),
+        durationHours: toNumber(params.durationHours, 0),
+        maxCapacity: toNumber(params.maxCapacity, 0),
+        minAttendancePercent: toNumber(params.minAttendancePercent, 80),
+        minGrade: params.showCourseFields && params.minGrade.trim() ? toNumber(params.minGrade, 70) : null,
+        price: toNumber(params.price, 0),
+        isGeneral: params.isGeneral,
+        careerIds: params.isGeneral ? [] : params.careerIds,
+    };
+
+    if (!payload.name) throw new Error("El nombre del evento es obligatorio");
+    if (!payload.startDate) throw new Error("La fecha de inicio es obligatoria");
+    if (!payload.endDate) throw new Error("La fecha de fin es obligatoria");
+
+    return payload;
+}
+
+function hydrateEventForm(evt: {
+    name?: string;
+    description?: string;
+    location?: string;
+    type?: string;
+    status?: string;
+    modality?: string;
+    startDate?: string;
+    endDate?: string;
+    durationHours?: number | null;
+    maxCapacity?: number | null;
+    minAttendancePercent?: number | null;
+    minGrade?: number | null;
+    price?: number | null;
+    isGeneral?: boolean;
+    careerIds?: string[];
+}, setters: {
+    setName: (value: string) => void;
+    setDescription: (value: string) => void;
+    setLocation: (value: string) => void;
+    setType: (value: string) => void;
+    setStatus: (value: string) => void;
+    setModality: (value: string) => void;
+    setStartDate: (value: string) => void;
+    setEndDate: (value: string) => void;
+    setDurationHours: (value: string) => void;
+    setMaxCapacity: (value: string) => void;
+    setMinAttendancePercent: (value: string) => void;
+    setMinGrade: (value: string) => void;
+    setPrice: (value: string) => void;
+    setIsGeneral: (value: boolean) => void;
+    setCareerIds: (value: string[]) => void;
+}) {
+    setters.setName(evt.name ?? "");
+    setters.setDescription(evt.description ?? "");
+    setters.setLocation(evt.location ?? "");
+    setters.setType(evt.type || "COURSE");
+    setters.setStatus(evt.status || "INACTIVE");
+    setters.setModality(evt.modality || "IN_PERSON");
+    setters.setStartDate(evt.startDate || "");
+    setters.setEndDate(evt.endDate || "");
+    setters.setDurationHours(String(evt.durationHours ?? 0));
+    setters.setMaxCapacity(String(evt.maxCapacity ?? 0));
+    setters.setMinAttendancePercent(String(evt.minAttendancePercent ?? 80));
+    setters.setMinGrade(evt.minGrade == null ? "" : String(evt.minGrade));
+    setters.setPrice(String(evt.price ?? 0));
+    setters.setIsGeneral(Boolean(evt.isGeneral));
+    setters.setCareerIds(evt.careerIds ?? []);
+}
+
+function CareersSection({
+    isLoading,
+    isError,
+    careers,
+    careerIds,
+    isGeneral,
+    onToggleCareer,
+}: Readonly<{
+    isLoading: boolean;
+    isError: boolean;
+    careers: Array<{ id: string; name: string }>;
+    careerIds: string[];
+    isGeneral: boolean;
+    onToggleCareer: (id: string) => void;
+}>) {
+    if (isLoading) return <Text style={styles.hint}>Cargando carreras…</Text>;
+    if (isError) return <Text style={styles.errorText}>No se pudieron cargar las carreras.</Text>;
+
+    return (
+        <View style={styles.careerList}>
+            {careers.map((career) => (
+                <CheckboxRow
+                    key={career.id}
+                    label={career.name}
+                    checked={careerIds.includes(career.id)}
+                    disabled={isGeneral}
+                    onPress={() => onToggleCareer(career.id)}
+                />
+            ))}
+        </View>
+    );
+}
+
+function RulesSection({
+    durationHours,
+    setDurationHours,
+    maxCapacity,
+    setMaxCapacity,
+    minAttendancePercent,
+    setMinAttendancePercent,
+    showCourseFields,
+    minGrade,
+    setMinGrade,
+    price,
+    setPrice,
+}: Readonly<{
+    durationHours: string;
+    setDurationHours: (value: string) => void;
+    maxCapacity: string;
+    setMaxCapacity: (value: string) => void;
+    minAttendancePercent: string;
+    setMinAttendancePercent: (value: string) => void;
+    showCourseFields: boolean;
+    minGrade: string;
+    setMinGrade: (value: string) => void;
+    price: string;
+    setPrice: (value: string) => void;
+}>) {
+    return (
+        <View style={styles.card}>
+            <Text style={styles.cardTitle}>Reglas / Cupos / Precio</Text>
+
+            <View style={styles.row2}>
+                <View style={styles.col}>
+                    <Text style={styles.label}>Duración (h)</Text>
+                    <TextInput style={styles.input} value={durationHours} onChangeText={setDurationHours} keyboardType="numeric" />
+                </View>
+                <View style={styles.col}>
+                    <Text style={styles.label}>Cupos máx</Text>
+                    <TextInput style={styles.input} value={maxCapacity} onChangeText={setMaxCapacity} keyboardType="numeric" />
+                </View>
+            </View>
+
+            <View style={styles.row2}>
+                <View style={styles.col}>
+                    <Text style={styles.label}>Asistencia mín (%)</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={minAttendancePercent}
+                        onChangeText={setMinAttendancePercent}
+                        keyboardType="numeric"
+                    />
+                </View>
+                <View style={styles.col}>
+                    {showCourseFields ? (
+                        <>
+                            <Text style={styles.label}>Nota mín (curso)</Text>
+                            <TextInput style={styles.input} value={minGrade} onChangeText={setMinGrade} keyboardType="numeric" />
+                        </>
+                    ) : null}
+                </View>
+            </View>
+
+            <Text style={styles.label}>Precio</Text>
+            <TextInput style={styles.input} value={price} onChangeText={setPrice} keyboardType="numeric" />
+        </View>
+    );
+}
 
 function CheckboxRow({
     label,
@@ -88,8 +287,8 @@ export default function AdminEventFormScreen() {
     const eventId = params.id ?? "";
 
     const [typeOpen, setTypeOpen] = useState(false);
-    const [statusOpen, setStatusOpen] = useState(false);
     const [modalityOpen, setModalityOpen] = useState(false);
+    const [statusOpen, setStatusOpen] = useState(false);
 
     const careersQuery = useQuery({
         queryKey: ["admin-careers-all"],
@@ -108,8 +307,8 @@ export default function AdminEventFormScreen() {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [location, setLocation] = useState("");
-    const [type, setType] = useState("CURSO");
-    const [status, setStatus] = useState("ACTIVE");
+    const [type, setType] = useState("COURSE");
+    const [status, setStatus] = useState("INACTIVE");
     const [modality, setModality] = useState("IN_PERSON");
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
@@ -125,30 +324,30 @@ export default function AdminEventFormScreen() {
     const [image, setImage] = useState<ImageAsset | null>(null);
 
     useEffect(() => {
-        if (mode !== "edit") return;
-        if (!eventQuery.data) return;
+        if (mode !== "edit" || !eventQuery.data) return;
 
-        const evt = eventQuery.data;
-        setName(evt.name ?? "");
-        setDescription(evt.description ?? "");
-        setLocation(evt.location ?? "");
-        setType(evt.type || "CURSO");
-        setStatus(evt.status || "ACTIVE");
-        setModality(evt.modality || "IN_PERSON");
-        setStartDate(evt.startDate || "");
-        setEndDate(evt.endDate || "");
-        setDurationHours(String(evt.durationHours ?? 0));
-        setMaxCapacity(String(evt.maxCapacity ?? 0));
-        setMinAttendancePercent(String(evt.minAttendancePercent ?? 80));
-        setMinGrade(evt.minGrade == null ? "" : String(evt.minGrade));
-        setPrice(String(evt.price ?? 0));
-        setIsGeneral(Boolean(evt.isGeneral));
-        setCareerIds(evt.careerIds ?? []);
+        hydrateEventForm(eventQuery.data, {
+            setName,
+            setDescription,
+            setLocation,
+            setType,
+            setStatus,
+            setModality,
+            setStartDate,
+            setEndDate,
+            setDurationHours,
+            setMaxCapacity,
+            setMinAttendancePercent,
+            setMinGrade,
+            setPrice,
+            setIsGeneral,
+            setCareerIds,
+        });
     }, [mode, eventQuery.data]);
 
     const selectedTypeLabel = EVENT_TYPE_OPTIONS.find((o) => o.value === type)?.label ?? type;
-    const selectedStatusLabel = EVENT_STATUS_OPTIONS.find((o) => o.value === status)?.label ?? status;
     const selectedModalityLabel = MODALITY_OPTIONS.find((o) => o.value === modality)?.label ?? modality;
+    const showCourseFields = isCourseType(type);
 
     const coverPreviewUrl = useMemo(() => {
         if (image?.uri) return image.uri;
@@ -158,27 +357,24 @@ export default function AdminEventFormScreen() {
 
     const mutation = useMutation({
         mutationFn: async () => {
-            const payload: AdminEventUpsertInput = {
-                name: name.trim(),
-                description: description.trim(),
-                location: location.trim(),
+            const payload = buildEventUpsertPayload({
+                name,
+                description,
+                location,
                 type,
                 status,
                 modality,
-                startDate: startDate.trim(),
-                endDate: endDate.trim(),
-                durationHours: toNumber(durationHours, 0),
-                maxCapacity: toNumber(maxCapacity, 0),
-                minAttendancePercent: toNumber(minAttendancePercent, 80),
-                minGrade: minGrade.trim() ? toNumber(minGrade, 70) : null,
-                price: toNumber(price, 0),
+                startDate,
+                endDate,
+                durationHours,
+                maxCapacity,
+                minAttendancePercent,
+                minGrade,
+                price,
                 isGeneral,
-                careerIds: isGeneral ? [] : careerIds,
-            };
-
-            if (!payload.name) throw new Error("El nombre del evento es obligatorio");
-            if (!payload.startDate) throw new Error("La fecha de inicio es obligatoria (ISO)");
-            if (!payload.endDate) throw new Error("La fecha de fin es obligatoria (ISO)");
+                careerIds,
+                showCourseFields,
+            });
 
             if (mode === "edit") {
                 return updateEvent(eventId, payload, image ?? undefined);
@@ -269,12 +465,10 @@ export default function AdminEventFormScreen() {
                         multiline
                     />
 
-                    <Text style={styles.label}>Lugar</Text>
-                    <TextInput style={styles.input} value={location} onChangeText={setLocation} placeholder="Lugar" />
                 </View>
 
                 <View style={styles.card}>
-                    <Text style={styles.cardTitle}>Tipo / Estado / Modalidad</Text>
+                    <Text style={styles.cardTitle}>Tipo y modalidad</Text>
 
                     <Pressable style={styles.selectBtn} onPress={() => setTypeOpen((v) => !v)}>
                         <Text style={styles.selectBtnText}>Tipo: {selectedTypeLabel}</Text>
@@ -289,31 +483,6 @@ export default function AdminEventFormScreen() {
                                     onPress={() => {
                                         setType(opt.value);
                                         setTypeOpen(false);
-                                    }}
-                                >
-                                    <Text style={styles.selectItemText}>{opt.label}</Text>
-                                </Pressable>
-                            ))}
-                        </View>
-                    ) : null}
-
-                    <Pressable style={styles.selectBtn} onPress={() => setStatusOpen((v) => !v)}>
-                        <Text style={styles.selectBtnText}>Estado: {selectedStatusLabel}</Text>
-                        <Ionicons
-                            name={statusOpen ? "chevron-up" : "chevron-down"}
-                            size={18}
-                            color={theme.colors.textSecondary}
-                        />
-                    </Pressable>
-                    {statusOpen ? (
-                        <View style={styles.selectMenu}>
-                            {EVENT_STATUS_OPTIONS.map((opt) => (
-                                <Pressable
-                                    key={opt.value}
-                                    style={styles.selectItem}
-                                    onPress={() => {
-                                        setStatus(opt.value);
-                                        setStatusOpen(false);
                                     }}
                                 >
                                     <Text style={styles.selectItemText}>{opt.label}</Text>
@@ -348,62 +517,61 @@ export default function AdminEventFormScreen() {
                     ) : null}
                 </View>
 
-                <View style={styles.card}>
-                    <Text style={styles.cardTitle}>Fechas (ISO)</Text>
-                    <Text style={styles.hint}>Ejemplo: 2026-06-01T14:00:00.000Z</Text>
+                {mode === "edit" ? (
+                    <View style={styles.card}>
+                        <Text style={styles.cardTitle}>Estado del evento</Text>
 
-                    <Text style={styles.label}>Inicio</Text>
-                    <TextInput
-                        style={styles.input}
-                        value={startDate}
-                        onChangeText={setStartDate}
-                        placeholder="2026-06-01T14:00:00.000Z"
-                        autoCapitalize="none"
-                    />
-
-                    <Text style={styles.label}>Fin</Text>
-                    <TextInput
-                        style={styles.input}
-                        value={endDate}
-                        onChangeText={setEndDate}
-                        placeholder="2026-06-01T16:00:00.000Z"
-                        autoCapitalize="none"
-                    />
-                </View>
-
-                <View style={styles.card}>
-                    <Text style={styles.cardTitle}>Reglas / Cupos / Precio</Text>
-
-                    <View style={styles.row2}>
-                        <View style={styles.col}>
-                            <Text style={styles.label}>Duración (h)</Text>
-                            <TextInput style={styles.input} value={durationHours} onChangeText={setDurationHours} keyboardType="numeric" />
-                        </View>
-                        <View style={styles.col}>
-                            <Text style={styles.label}>Cupos máx</Text>
-                            <TextInput style={styles.input} value={maxCapacity} onChangeText={setMaxCapacity} keyboardType="numeric" />
-                        </View>
-                    </View>
-
-                    <View style={styles.row2}>
-                        <View style={styles.col}>
-                            <Text style={styles.label}>Asistencia mín (%)</Text>
-                            <TextInput
-                                style={styles.input}
-                                value={minAttendancePercent}
-                                onChangeText={setMinAttendancePercent}
-                                keyboardType="numeric"
+                        <Pressable style={styles.selectBtn} onPress={() => setStatusOpen((v) => !v)}>
+                            <Text style={styles.selectBtnText}>
+                                Estado: {EVENT_STATUS_OPTIONS.find((o) => o.value === status)?.label ?? status}
+                            </Text>
+                            <Ionicons
+                                name={statusOpen ? "chevron-up" : "chevron-down"}
+                                size={18}
+                                color={theme.colors.textSecondary}
                             />
-                        </View>
-                        <View style={styles.col}>
-                            <Text style={styles.label}>Nota mín (curso)</Text>
-                            <TextInput style={styles.input} value={minGrade} onChangeText={setMinGrade} keyboardType="numeric" />
-                        </View>
-                    </View>
+                        </Pressable>
 
-                    <Text style={styles.label}>Precio</Text>
-                    <TextInput style={styles.input} value={price} onChangeText={setPrice} keyboardType="numeric" />
+                        {statusOpen ? (
+                            <View style={styles.selectMenu}>
+                                {EVENT_STATUS_OPTIONS.map((opt) => (
+                                    <Pressable
+                                        key={opt.value}
+                                        style={styles.selectItem}
+                                        onPress={() => {
+                                            setStatus(opt.value);
+                                            setStatusOpen(false);
+                                        }}
+                                    >
+                                        <Text style={styles.selectItemText}>{opt.label}</Text>
+                                    </Pressable>
+                                ))}
+                            </View>
+                        ) : null}
+                    </View>
+                ) : null}
+
+                <View style={styles.card}>
+                    <Text style={styles.cardTitle}>Fechas</Text>
+                    <Text style={styles.hint}>Usa el calendario para elegir fecha y hora de inicio y fin.</Text>
+
+                    <DatePickerField label="Inicio" valueISO={startDate} onChangeISO={setStartDate} normalize="start" />
+                    <DatePickerField label="Fin" valueISO={endDate} onChangeISO={setEndDate} normalize="end" />
                 </View>
+
+                <RulesSection
+                    durationHours={durationHours}
+                    setDurationHours={setDurationHours}
+                    maxCapacity={maxCapacity}
+                    setMaxCapacity={setMaxCapacity}
+                    minAttendancePercent={minAttendancePercent}
+                    setMinAttendancePercent={setMinAttendancePercent}
+                    showCourseFields={showCourseFields}
+                    minGrade={minGrade}
+                    setMinGrade={setMinGrade}
+                    price={price}
+                    setPrice={setPrice}
+                />
 
                 <View style={styles.card}>
                     <Text style={styles.cardTitle}>Carreras</Text>
@@ -419,28 +587,19 @@ export default function AdminEventFormScreen() {
                         }}
                     />
 
-                    {careersQuery.isLoading ? (
-                        <Text style={styles.hint}>Cargando carreras…</Text>
-                    ) : careersQuery.isError ? (
-                        <Text style={styles.errorText}>No se pudieron cargar las carreras.</Text>
-                    ) : (
-                        <View style={styles.careerList}>
-                            {(careersQuery.data ?? []).map((c) => (
-                                <CheckboxRow
-                                    key={c.id}
-                                    label={c.name}
-                                    checked={careerIds.includes(c.id)}
-                                    disabled={isGeneral}
-                                    onPress={() => toggleCareer(c.id)}
-                                />
-                            ))}
-                        </View>
-                    )}
+                    <CareersSection
+                        isLoading={careersQuery.isLoading}
+                        isError={careersQuery.isError}
+                        careers={careersQuery.data ?? []}
+                        careerIds={careerIds}
+                        isGeneral={isGeneral}
+                        onToggleCareer={toggleCareer}
+                    />
                 </View>
 
                 {mutation.isError ? (
                     <View style={styles.errorBox}>
-                        <Text style={styles.errorText}>Error: {(mutation.error as Error)?.message ?? "No se pudo guardar"}</Text>
+                        <Text style={styles.errorText}>Error: {mutation.error?.message ?? "No se pudo guardar"}</Text>
                     </View>
                 ) : null}
 
@@ -535,6 +694,32 @@ const styles = StyleSheet.create({
     },
     selectItem: { paddingHorizontal: 12, paddingVertical: 12 },
     selectItemText: { color: theme.colors.textPrimary, fontWeight: "700" },
+
+    dateBtn: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: 12,
+        borderWidth: 1,
+        borderColor: theme.colors.borderPrimary,
+        borderRadius: theme.radius.sm,
+        paddingHorizontal: 12,
+        paddingVertical: 12,
+        backgroundColor: theme.colors.bgSecondary,
+    },
+    dateLabel: { color: theme.colors.textSecondary, fontWeight: "900", fontSize: 12 },
+    dateValue: { color: theme.colors.textPrimary, fontWeight: "800", marginTop: 2 },
+    noteHintBox: {
+        minHeight: 88,
+        padding: theme.spacing.sm,
+        borderRadius: theme.radius.sm,
+        borderWidth: 1,
+        borderColor: theme.colors.borderPrimary,
+        backgroundColor: theme.colors.primaryLighter,
+        justifyContent: "center",
+        gap: 8,
+    },
+    noteHintText: { color: theme.colors.textPrimary, fontWeight: "700", lineHeight: 18 },
 
     cover: { height: 140, width: "100%", borderRadius: theme.radius.md, backgroundColor: theme.colors.bgTertiary },
     coverFallback: { height: 140, width: "100%", borderRadius: theme.radius.md, backgroundColor: theme.colors.bgTertiary },

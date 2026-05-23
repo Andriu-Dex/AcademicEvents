@@ -3,7 +3,9 @@ import {
     ActivityIndicator,
     Alert,
     FlatList,
+    Image,
     Linking,
+    Modal,
     Pressable,
     StyleSheet,
     Text,
@@ -13,6 +15,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocalSearchParams } from "expo-router";
+import { LinearGradient } from "expo-linear-gradient";
 import { AppHeader } from "../../src/components/AppHeader";
 import { toAbsoluteUrl } from "../../src/api/client";
 import { fetchReportEventsPaginated } from "../../src/api/adminReports";
@@ -103,6 +106,11 @@ function statusBadgeStyle(statusRaw: string) {
     return styles.badgeSoft;
 }
 
+function isAcceptedRegistration(statusRaw: string) {
+    const key = normalizeStatus(statusRaw);
+    return key === "ACCEPTED" || key === "ACEPTADA";
+}
+
 function pickUserName(reg: AdminRegistration) {
     const first = reg.account?.user?.firstName ?? "";
     const last = reg.account?.user?.lastName ?? "";
@@ -175,13 +183,17 @@ function RegistrationDocumentsSection({
     paymentCount,
     letterCount,
     docUrl,
-    onToggleExpanded,
+    expandedLetter,
+    onPreviewReceipt,
+    onToggleLetter,
 }: Readonly<{
     item: AdminRegistration;
     paymentCount: number;
     letterCount: number;
     docUrl: string;
-    onToggleExpanded: (id: string) => void;
+    expandedLetter: boolean;
+    onPreviewReceipt: (url: string) => void;
+    onToggleLetter: (id: string) => void;
 }>) {
     return (
         <View style={styles.docsSection}>
@@ -194,7 +206,7 @@ function RegistrationDocumentsSection({
                         style={styles.docBtn}
                         onPress={() => {
                             const first = item.paymentReceipts[0]?.fileUrl;
-                            if (first) safeOpenUrl(first);
+                            if (first) onPreviewReceipt(first);
                         }}
                     >
                         <Ionicons name="cash-outline" size={16} color={theme.colors.textPrimary} />
@@ -220,17 +232,23 @@ function RegistrationDocumentsSection({
             <View style={styles.docRowColumn}>
                 <Text style={styles.docLabel}>Carta de motivación:</Text>
                 {letterCount > 0 ? (
-                    <View style={styles.docInlineRow}>
-                        <Pressable style={styles.docBtn} onPress={() => onToggleExpanded(item.id)}>
-                            <Ionicons name="mail-outline" size={16} color={theme.colors.textPrimary} />
-                            <Text style={styles.docBtnText}>Ver carta</Text>
-                        </Pressable>
+                    <Pressable style={styles.letterToggleBtn} onPress={() => onToggleLetter(item.id)}>
+                        <View style={styles.docInlineRow}>
+                            <Ionicons name="mail-outline" size={16} color={theme.colors.primary} />
+                            <Text style={styles.docBtnText}>{expandedLetter ? "Ocultar carta" : "Ver carta"}</Text>
+                        </View>
                         <Text style={styles.docPillText}>({letterCount})</Text>
-                    </View>
+                    </Pressable>
                 ) : (
                     <Text style={styles.docMissing}>No adjuntada</Text>
                 )}
             </View>
+
+            {expandedLetter && letterCount > 0 ? (
+                <View style={styles.letterBox}>
+                    <Text style={styles.letterText}>{item.motivationLetters[0]?.content ?? ""}</Text>
+                </View>
+            ) : null}
         </View>
     );
 }
@@ -263,15 +281,13 @@ function RegistrationDetailsSection({
     onFinalize: (reg: AdminRegistration) => void;
 }>) {
     const isCourse = isCourseEventType(item.event?.type ?? "");
+    const canGrade = isAcceptedRegistration(item.status);
 
     return (
         <View style={styles.detailsBox}>
             <Text style={styles.detailLabel}>Calificaciones</Text>
-            {normalizeStatus(item.status) !== "ACCEPTED" && normalizeStatus(item.status) !== "ACEPTADA" ? (
-                <Text style={styles.hintText}>Valide primero la inscripción para ingresar calificaciones.</Text>
-            ) : null}
+            {canGrade ? null : <Text style={styles.hintText}>Valide primero la inscripción para ingresar calificaciones.</Text>}
 
-            <Text style={styles.detailLabel}>Acciones</Text>
             <Text style={styles.detailLabel}>Observación:</Text>
             <TextInput
                 style={[styles.input, styles.multiline]}
@@ -282,41 +298,37 @@ function RegistrationDetailsSection({
                 multiline
             />
 
-            <Text style={styles.detailLabel}>Finalizar (resultado final)</Text>
-            <View style={styles.row2}>
-                <View style={styles.col}>
-                    <Text style={styles.labelSmall}>Asistencia %</Text>
-                    <TextInput
-                        style={styles.input}
-                        value={attendance}
-                        onChangeText={(v) => onSetAttendance(item.id, v)}
-                        placeholder="0 - 100"
-                        placeholderTextColor={theme.colors.textTertiary}
-                        keyboardType="numeric"
-                    />
-                </View>
-                <View style={styles.col}>
-                    <Text style={styles.labelSmall}>Nota (solo curso)</Text>
-                    <TextInput
-                        style={[styles.input, !isCourse && styles.inputDisabled]}
-                        value={grade}
-                        onChangeText={(v) => onSetGrade(item.id, v)}
-                        placeholder={isCourse ? "0 - 10" : "N/A"}
-                        placeholderTextColor={theme.colors.textTertiary}
-                        keyboardType="numeric"
-                        editable={isCourse}
-                    />
-                </View>
-            </View>
-
-            {item.motivationLetters.length > 0 ? (
-                <View style={styles.letterBox}>
-                    <Text style={styles.detailLabel}>Carta de motivación</Text>
-                    <Text style={styles.letterText} numberOfLines={6}>
-                        {item.motivationLetters[0]?.content ?? ""}
-                    </Text>
-                </View>
+            {canGrade ? (
+                <>
+                    <Text style={styles.detailLabel}>Finalizar (resultado final)</Text>
+                    <View style={styles.row2}>
+                        <View style={styles.col}>
+                            <Text style={styles.labelSmall}>Asistencia %</Text>
+                            <TextInput
+                                style={styles.input}
+                                value={attendance}
+                                onChangeText={(v) => onSetAttendance(item.id, v)}
+                                placeholder="0 - 100"
+                                placeholderTextColor={theme.colors.textTertiary}
+                                keyboardType="numeric"
+                            />
+                        </View>
+                        <View style={styles.col}>
+                            <Text style={styles.labelSmall}>Nota {isCourse ? "(curso)" : ""}</Text>
+                            <TextInput
+                                style={[styles.input, !isCourse && styles.inputDisabled]}
+                                value={grade}
+                                onChangeText={(v) => onSetGrade(item.id, v)}
+                                placeholder={isCourse ? "0 - 10" : "N/A"}
+                                placeholderTextColor={theme.colors.textTertiary}
+                                keyboardType="numeric"
+                                editable={isCourse}
+                            />
+                        </View>
+                    </View>
+                </>
             ) : null}
+
 
             <View style={styles.actionRow}>
                 <Pressable
@@ -340,15 +352,21 @@ function RegistrationDetailsSection({
                     <Ionicons name="close" size={18} color={theme.colors.textInverse} />
                     <Text style={styles.actionBtnText}>Rechazar</Text>
                 </Pressable>
-
-                <Pressable
-                    style={[styles.actionBtn, styles.btnPrimary, isPendingAction && styles.btnDisabled]}
-                    onPress={() => onFinalize(item)}
-                    disabled={isPendingAction}
-                >
-                    <Ionicons name="ribbon-outline" size={18} color={theme.colors.textInverse} />
-                    <Text style={styles.actionBtnText}>Finalizar</Text>
-                </Pressable>
+                {canGrade ? (
+                    <Pressable
+                        style={[styles.actionBtn, styles.btnPrimary, isPendingAction && styles.btnDisabled]}
+                        onPress={() => onFinalize(item)}
+                        disabled={isPendingAction}
+                    >
+                        <Ionicons name="ribbon-outline" size={18} color={theme.colors.textInverse} />
+                        <Text style={styles.actionBtnText}>Finalizar</Text>
+                    </Pressable>
+                ) : (
+                    <View style={[styles.actionBtn, styles.actionHintBtn]}>
+                        <Ionicons name="lock-closed-outline" size={18} color={theme.colors.textPrimary} />
+                        <Text style={styles.actionBtnHintText}>Valide primero para calificar</Text>
+                    </View>
+                )}
             </View>
 
             {validateErrorMessage ? <Text style={styles.errorText}>Error: {validateErrorMessage}</Text> : null}
@@ -379,9 +397,12 @@ function RegistrationCard({
     observation: string;
     attendance: string;
     grade: string;
+    expandedLetter: boolean;
     isPendingAction: boolean;
     validateErrorMessage: string | null;
     onToggleExpanded: (id: string) => void;
+    onToggleLetter: (id: string) => void;
+    onPreviewReceipt: (url: string) => void;
     onSetObs: (id: string, value: string) => void;
     onSetAttendance: (id: string, value: string) => void;
     onSetGrade: (id: string, value: string) => void;
@@ -400,6 +421,8 @@ function RegistrationCard({
 
     return (
         <View style={styles.card}>
+            <LinearGradient colors={theme.gradients.primary} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.cardAccent} />
+
             <View style={styles.cardHeaderRow}>
                 <View style={[styles.badgeSoft, statusBadgeStyle(item.status)]}>
                     <Text style={styles.badgeText}>{statusLabel}</Text>
@@ -434,7 +457,9 @@ function RegistrationCard({
                 paymentCount={paymentCount}
                 letterCount={letterCount}
                 docUrl={docUrl}
-                onToggleExpanded={onToggleExpanded}
+                expandedLetter={expandedLetter}
+                onPreviewReceipt={onPreviewReceipt}
+                onToggleLetter={onToggleLetter}
             />
 
             <Pressable style={styles.expandRow} onPress={() => onToggleExpanded(item.id)}>
@@ -484,9 +509,11 @@ export default function AdminRegistrationsScreen() {
     const debouncedSearch = useDebouncedValue(searchInput, 250);
 
     const [expandedIds, setExpandedIds] = useState<Record<string, boolean>>({});
+    const [expandedLetterIds, setExpandedLetterIds] = useState<Record<string, boolean>>({});
     const [observationById, setObservationById] = useState<Record<string, string>>({});
     const [attendanceById, setAttendanceById] = useState<Record<string, string>>({});
     const [gradeById, setGradeById] = useState<Record<string, string>>({});
+    const [receiptPreviewUrl, setReceiptPreviewUrl] = useState("");
 
     useEffect(() => {
         // Si llega por deep-link desde eventos, fijamos el filtro.
@@ -539,6 +566,10 @@ export default function AdminRegistrationsScreen() {
         setExpandedIds((prev) => ({ ...prev, [id]: !prev[id] }));
     }
 
+    function toggleLetterExpanded(id: string) {
+        setExpandedLetterIds((prev) => ({ ...prev, [id]: !prev[id] }));
+    }
+
     function setObs(id: string, value: string) {
         setObservationById((prev) => ({ ...prev, [id]: value }));
     }
@@ -549,6 +580,10 @@ export default function AdminRegistrationsScreen() {
 
     function setGrade(id: string, value: string) {
         setGradeById((prev) => ({ ...prev, [id]: value }));
+    }
+
+    function previewReceipt(url: string) {
+        setReceiptPreviewUrl(toAbsoluteUrl(url));
     }
 
     function runAccept(reg: AdminRegistration) {
@@ -758,9 +793,12 @@ export default function AdminRegistrationsScreen() {
                         observation={observationById[item.id] ?? ""}
                         attendance={attendanceById[item.id] ?? ""}
                         grade={gradeById[item.id] ?? ""}
+                        expandedLetter={Boolean(expandedLetterIds[item.id])}
                         isPendingAction={validateMutation.isPending}
                         validateErrorMessage={validateErrorMessage}
                         onToggleExpanded={toggleExpanded}
+                        onToggleLetter={toggleLetterExpanded}
+                        onPreviewReceipt={previewReceipt}
                         onSetObs={setObs}
                         onSetAttendance={setAttendance}
                         onSetGrade={setGrade}
@@ -770,6 +808,20 @@ export default function AdminRegistrationsScreen() {
                     />
                 )}
             />
+            <Modal visible={Boolean(receiptPreviewUrl)} transparent animationType="fade" onRequestClose={() => setReceiptPreviewUrl("") }>
+                <View style={styles.previewBackdrop}>
+                    <Pressable style={StyleSheet.absoluteFill} onPress={() => setReceiptPreviewUrl("")} />
+                    <View style={styles.previewModal}>
+                        <View style={styles.previewHeader}>
+                            <Text style={styles.previewTitle}>Comprobante</Text>
+                            <Pressable style={styles.previewCloseBtn} onPress={() => setReceiptPreviewUrl("") }>
+                                <Ionicons name="close" size={18} color={theme.colors.textPrimary} />
+                            </Pressable>
+                        </View>
+                        {receiptPreviewUrl ? <Image source={{ uri: receiptPreviewUrl }} style={styles.previewImage} resizeMode="contain" /> : null}
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 }

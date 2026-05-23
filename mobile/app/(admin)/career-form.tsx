@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/cognitive-complexity */
 import { useEffect, useMemo, useState } from "react";
 import {
     ActivityIndicator,
@@ -22,6 +23,49 @@ import {
 } from "../../src/api/adminCareers";
 import { theme } from "../../src/shared/theme";
 
+type SelectOption = { label: string; value: string; icon?: string };
+
+const MODALITY_OPTIONS: SelectOption[] = [
+    { label: "Presencial", value: "IN_PERSON" },
+    { label: "Virtual", value: "VIRTUAL" },
+    { label: "Semipresencial", value: "HYBRID" },
+];
+
+const ICON_OPTIONS: SelectOption[] = [
+    { label: "Escuela", value: "school-outline" },
+    { label: "Negocios", value: "business-outline" },
+    { label: "Código", value: "code-slash-outline" },
+    { label: "Ciencia", value: "flask-outline" },
+    { label: "Diseño", value: "color-palette-outline" },
+    { label: "Salud", value: "medkit-outline" },
+    { label: "Construcción", value: "construct-outline" },
+    { label: "Tecnología", value: "laptop-outline" },
+    { label: "Deporte", value: "fitness-outline" },
+    { label: "Música", value: "musical-notes-outline" },
+];
+
+function normalizeModalitySelection(value: string) {
+    const raw = (value ?? "").trim().toLowerCase();
+    if (raw === "in_person" || raw === "presencial" || raw === "inperson") return "IN_PERSON";
+    if (raw === "virtual") return "VIRTUAL";
+    if (raw === "hybrid" || raw === "semipresencial" || raw === "hibrida" || raw === "mixta") return "HYBRID";
+    return value || "IN_PERSON";
+}
+
+function IconPreview({ iconName }: Readonly<{ iconName: string }>) {
+    return <Ionicons name={iconName as never} size={18} color={theme.colors.primary} />;
+}
+
+function getCoordinatorLabel(coordinators: Array<{ id: string; firstName: string; lastName: string }>, coordinatorId: string) {
+    for (const coordinator of coordinators) {
+        if (coordinator.id === coordinatorId) {
+            return `${coordinator.firstName} ${coordinator.lastName}`.trim();
+        }
+    }
+
+    return "Selecciona coordinador";
+}
+
 function toNumber(value: string, fallback: number) {
     const trimmed = value.trim();
     if (!trimmed) return fallback;
@@ -40,11 +84,13 @@ export default function CareerFormScreen() {
     const [description, setDescription] = useState("");
     const [semesters, setSemesters] = useState("8");
     const [modality, setModality] = useState("Presencial");
-    const [icon, setIcon] = useState("school");
+    const [icon, setIcon] = useState("school-outline");
     const [facultyId, setFacultyId] = useState("");
     const [coordinatorId, setCoordinatorId] = useState("");
     const [facultyOpen, setFacultyOpen] = useState(false);
     const [coordinatorOpen, setCoordinatorOpen] = useState(false);
+    const [modalityOpen, setModalityOpen] = useState(false);
+    const [iconOpen, setIconOpen] = useState(false);
 
     const careersQuery = useQuery({
         queryKey: ["admin-careers-all"],
@@ -75,8 +121,8 @@ export default function CareerFormScreen() {
         setName(currentCareer.name ?? "");
         setDescription(currentCareer.description ?? "");
         setSemesters(String(currentCareer.semesters ?? 0));
-        setModality(currentCareer.modality ?? "");
-        setIcon(currentCareer.icon ?? "");
+        setModality(normalizeModalitySelection(currentCareer.modality ?? ""));
+        setIcon(currentCareer.icon ?? "school-outline");
         setFacultyId(currentCareer.facultyId ?? "");
         setCoordinatorId(currentCareer.coordinatorId ?? "");
     }, [isEdit, currentCareer]);
@@ -87,7 +133,7 @@ export default function CareerFormScreen() {
                 name: name.trim(),
                 description: description.trim(),
                 semesters: toNumber(semesters, 0),
-                modality: modality.trim(),
+                modality: modality.trim() || "IN_PERSON",
                 icon: icon.trim(),
                 facultyId: facultyId.trim(),
                 coordinatorId: coordinatorId.trim(),
@@ -111,14 +157,11 @@ export default function CareerFormScreen() {
 
     const faculties = facultiesQuery.data ?? [];
     const coordinators = coordinatorsQuery.data ?? [];
+    const selectedModalityLabel = MODALITY_OPTIONS.find((option) => option.value === modality)?.label ?? "Selecciona modalidad";
+    const selectedIconLabel = ICON_OPTIONS.find((option) => option.value === icon)?.label ?? "Selecciona icono";
+    const currentCoordinatorLabel = getCoordinatorLabel(coordinators, coordinatorId);
 
     const currentFacultyLabel = faculties.find((f) => f.id === facultyId)?.name ?? "Selecciona facultad";
-    const currentCoordinatorLabel =
-        coordinators.find((c) => c.id === coordinatorId)
-            ? `${coordinators.find((c) => c.id === coordinatorId)?.firstName ?? ""} ${coordinators.find((c) => c.id === coordinatorId)?.lastName ?? ""
-                }`.trim()
-            : "Selecciona coordinador";
-
     const loadingEdit = isEdit && careersQuery.isLoading;
 
     return (
@@ -157,17 +200,58 @@ export default function CareerFormScreen() {
                             </View>
                             <View style={styles.col}>
                                 <Text style={styles.label}>Modalidad</Text>
-                                <TextInput
-                                    style={styles.input}
-                                    value={modality}
-                                    onChangeText={setModality}
-                                    placeholder="Presencial"
-                                />
+                                <Pressable style={styles.selectBtn} onPress={() => setModalityOpen((v) => !v)}>
+                                    <Text style={styles.selectBtnText}>{selectedModalityLabel}</Text>
+                                    <Ionicons
+                                        name={modalityOpen ? "chevron-up" : "chevron-down"}
+                                        size={18}
+                                        color={theme.colors.textSecondary}
+                                    />
+                                </Pressable>
+                                {modalityOpen ? (
+                                    <View style={styles.selectMenu}>
+                                        {MODALITY_OPTIONS.map((option) => (
+                                            <Pressable
+                                                key={option.value}
+                                                style={styles.selectItem}
+                                                onPress={() => {
+                                                    setModality(option.value);
+                                                    setModalityOpen(false);
+                                                }}
+                                            >
+                                                <Text style={styles.selectItemText}>{option.label}</Text>
+                                            </Pressable>
+                                        ))}
+                                    </View>
+                                ) : null}
                             </View>
                         </View>
 
                         <Text style={styles.label}>Icono</Text>
-                        <TextInput style={styles.input} value={icon} onChangeText={setIcon} placeholder="school" />
+                        <Pressable style={styles.selectBtn} onPress={() => setIconOpen((v) => !v)}>
+                            <View style={styles.iconSelectLabelRow}>
+                                <IconPreview iconName={icon || "school-outline"} />
+                                <Text style={styles.selectBtnText}>{selectedIconLabel}</Text>
+                            </View>
+                            <Ionicons name={iconOpen ? "chevron-up" : "chevron-down"} size={18} color={theme.colors.textSecondary} />
+                        </Pressable>
+                        {iconOpen ? (
+                            <View style={styles.selectMenu}>
+                                {ICON_OPTIONS.map((option) => (
+                                    <Pressable
+                                        key={option.value}
+                                        style={styles.iconOptionRow}
+                                        onPress={() => {
+                                            setIcon(option.value);
+                                            setIconOpen(false);
+                                        }}
+                                    >
+                                        <IconPreview iconName={option.value} />
+                                        <Text style={styles.selectItemText}>{option.label}</Text>
+                                    </Pressable>
+                                ))}
+                            </View>
+                        ) : null}
 
                         <Text style={styles.label}>Facultad</Text>
                         <Pressable style={styles.selectBtn} onPress={() => setFacultyOpen((v) => !v)}>
@@ -223,7 +307,7 @@ export default function CareerFormScreen() {
 
                         {upsertMutation.isError ? (
                             <Text style={styles.errorText}>
-                                Error: {(upsertMutation.error as Error)?.message ?? "No se pudo guardar"}
+                                Error: {upsertMutation.error?.message ?? "No se pudo guardar"}
                             </Text>
                         ) : null}
 
