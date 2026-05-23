@@ -554,6 +554,16 @@ export default function EventsScreen() {
                                     checked={Boolean(filters.finalizado)}
                                     onPress={() => toggleFilter("finalizado")}
                                 />
+                                <CheckboxRow
+                                    label="Cancelados"
+                                    checked={Boolean(filters.cancelado)}
+                                    onPress={() => toggleFilter("cancelado")}
+                                />
+                                <CheckboxRow
+                                    label="Suspendidos"
+                                    checked={Boolean(filters.suspendido)}
+                                    onPress={() => toggleFilter("suspendido")}
+                                />
                             </View>
                         </View>
 

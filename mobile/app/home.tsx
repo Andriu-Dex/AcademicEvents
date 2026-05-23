@@ -413,7 +413,7 @@ export function HomeContent(
 
     return (
         <LinearGradient colors={["#f8eff2", "#ffffff"]} style={styles.container}>
-            <View style={styles.topNavbar}>
+            <LinearGradient colors={theme.gradients.header} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.topNavbar}>
                 <View style={styles.navbarRow}>
                     <Pressable style={styles.brandGroup} onPress={() => scrollToSection("inicio")}>
                         <View style={styles.brandWrap}>
@@ -431,17 +431,22 @@ export function HomeContent(
                     </Pressable>
 
                     {user ? (
-                        <Pressable style={styles.navUserChip} onPress={() => router.push(isAdminArea ? "/(admin)/profile" : "/profile")}>
-                            {user.profileImageUrl ? (
-                                <Image source={{ uri: toAbsoluteUrl(user.profileImageUrl) }} style={styles.navUserAvatar} />
-                            ) : (
-                                <View style={styles.navUserAvatarFallback} />
-                            )}
-                            <Text style={styles.navUserName} numberOfLines={1}>
-                                {(user.firstName ?? "").trim() || user.email}
-                            </Text>
-                            <Ionicons name="chevron-forward" size={16} color={theme.colors.textInverse} />
-                        </Pressable>
+                        <View style={styles.navCtas}>
+                            <Pressable style={styles.iconBtnHeader} onPress={() => router.push("/notifications")}>
+                                <Ionicons name="notifications-outline" size={22} color={theme.colors.textInverse} />
+                            </Pressable>
+                            <Pressable style={styles.navUserChip} onPress={() => router.push(isAdminArea ? "/(admin)/profile" : "/profile")}>
+                                {user.profileImageUrl ? (
+                                    <Image source={{ uri: toAbsoluteUrl(user.profileImageUrl) }} style={styles.navUserAvatar} />
+                                ) : (
+                                    <View style={styles.navUserAvatarFallback} />
+                                )}
+                                <Text style={styles.navUserName} numberOfLines={1}>
+                                    {(user.firstName ?? "").trim() || user.email}
+                                </Text>
+                                <Ionicons name="chevron-forward" size={16} color={theme.colors.textInverse} />
+                            </Pressable>
+                        </View>
                     ) : showAuthCtas ? (
                         <View style={styles.navCtas}>
                             <Pressable style={styles.navCtaPrimary} onPress={() => router.push("/(auth)/login")}>
@@ -474,7 +479,7 @@ export function HomeContent(
                         <Text style={styles.navTabText}>Contacto</Text>
                     </Pressable>
                 </ScrollView>
-            </View>
+            </LinearGradient>
 
             <ScrollView ref={scrollRef} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
                 <View onLayout={handleSectionLayout("inicio")} style={styles.heroCard}>
@@ -662,6 +667,26 @@ export function HomeContent(
                                                         {item.description}
                                                     </Text>
                                                 ) : null}
+                                                <Pressable
+                                                    style={styles.featuredDetailBtn}
+                                                    onPress={() => {
+                                                        if (user) {
+                                                            router.push({
+                                                                pathname: "/(app)/event-registration",
+                                                                params: {
+                                                                    eventId: item.id,
+                                                                    title: item.title,
+                                                                    price: String(item.price ?? 0),
+                                                                },
+                                                            });
+                                                        } else {
+                                                            router.push("/(auth)/login");
+                                                        }
+                                                    }}
+                                                >
+                                                    <Text style={styles.featuredDetailBtnText}>Ver detalles</Text>
+                                                    <Ionicons name="arrow-forward" size={14} color={theme.colors.textInverse} />
+                                                </Pressable>
                                             </View>
                                         </View>
                                     </Animated.View>
@@ -976,7 +1001,6 @@ const styles = StyleSheet.create({
         zIndex: 20,
         paddingTop: 48,
         paddingBottom: 14,
-        backgroundColor: "rgba(138, 21, 56, 0.96)",
         borderBottomColor: "rgba(255,255,255,0.18)",
         borderBottomWidth: 1,
     },
@@ -1022,6 +1046,14 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         gap: 10,
+    },
+    iconBtnHeader: {
+        width: 38,
+        height: 38,
+        borderRadius: 19,
+        backgroundColor: "rgba(255,255,255,0.18)",
+        alignItems: "center",
+        justifyContent: "center",
     },
     navUserChip: {
         flexDirection: "row",
@@ -1417,6 +1449,21 @@ const styles = StyleSheet.create({
         fontSize: 13,
         lineHeight: 20,
         color: theme.colors.textSecondary,
+    },
+    featuredDetailBtn: {
+        marginTop: 8,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 6,
+        backgroundColor: theme.colors.primary,
+        paddingVertical: 10,
+        borderRadius: theme.radius.md,
+    },
+    featuredDetailBtnText: {
+        color: theme.colors.textInverse,
+        fontWeight: "800",
+        fontSize: 13,
     },
     authorityCarouselWrap: {
         gap: 10,

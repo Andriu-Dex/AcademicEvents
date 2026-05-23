@@ -420,17 +420,8 @@ export default function RegistrationsScreen() {
                     <View style={styles.modalCard}>
                         {proofPreviewUrl ? <Image source={{ uri: proofPreviewUrl }} style={styles.proofImage} resizeMode="contain" /> : null}
                         <View style={styles.modalActions}>
-                            <Pressable style={styles.modalBtn} onPress={() => setProofPreviewUrl(null)}>
-                                <Text style={styles.modalBtnText}>Cerrar</Text>
-                            </Pressable>
-                            <Pressable
-                                style={[styles.modalBtn, styles.modalPrimaryBtn]}
-                                onPress={() => {
-                                    if (!proofPreviewUrl) return;
-                                    void Linking.openURL(proofPreviewUrl);
-                                }}
-                            >
-                                <Text style={[styles.modalBtnText, styles.modalPrimaryText]}>Abrir en navegador</Text>
+                            <Pressable style={[styles.modalBtn, styles.modalPrimaryBtn]} onPress={() => setProofPreviewUrl(null)}>
+                                <Text style={[styles.modalBtnText, styles.modalPrimaryText]}>Cerrar</Text>
                             </Pressable>
                         </View>
                     </View>

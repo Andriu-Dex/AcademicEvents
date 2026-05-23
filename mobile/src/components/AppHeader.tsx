@@ -82,14 +82,12 @@ export function AppHeader({
             style={styles.wrap}
         >
             <View style={styles.content}>
-                <View style={styles.left}>
+                <View style={showBack ? styles.left : {}}>
                     {showBack ? (
                         <Pressable style={styles.iconBtn} onPress={() => (backHref ? router.replace(backHref) : router.back())}>
                             <Ionicons name="arrow-back" size={20} color={theme.colors.textInverse} />
                         </Pressable>
-                    ) : (
-                        <View style={styles.iconSpacer} />
-                    )}
+                    ) : null}
                 </View>
 
                 <View style={styles.titleWrap}>
