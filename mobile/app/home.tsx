@@ -7,6 +7,7 @@ import {
     Image,
     LayoutChangeEvent,
     Linking,
+    Modal,
     Pressable,
     ScrollView,
     StyleSheet,
@@ -21,6 +22,8 @@ import { apiClient, getCurrentApiBaseUrl, getLastApiProbeLog, toAbsoluteUrl } fr
 import { useFeaturedEvents } from "../src/features/events/useFeaturedEvents";
 import { useAuthStore } from "../src/store/authStore";
 import { theme } from "../src/shared/theme";
+import type { PublicEvent } from "../src/api/publicEvents";
+import { fetchMyRegistrations } from "../src/api/registrations";
 
 type HomeCareer = {
     id: string;
@@ -321,6 +324,7 @@ export function HomeContent(
     const authorityScrollX = useRef(new Animated.Value(0)).current;
     const [featuredIndex, setFeaturedIndex] = useState(0);
     const featuredScrollX = useRef(new Animated.Value(0)).current;
+    const [selectedEvent, setSelectedEvent] = useState<PublicEvent | null>(null);
     const [sectionOffsets, setSectionOffsets] = useState<Record<SectionKey, number>>({
         inicio: 0,
         eventos: 0,
@@ -368,6 +372,17 @@ export function HomeContent(
         queryFn: fetchUniversityInfo,
         staleTime: 300000,
     });
+    const { data: myRegistrations } = useQuery({
+        queryKey: ["my-registrations"],
+        queryFn: fetchMyRegistrations,
+        staleTime: 60000,
+        enabled: !!user,
+    });
+
+    const isSelectedEventRegistered = useMemo(() => {
+        if (!myRegistrations || !selectedEvent) return false;
+        return myRegistrations.some((r) => String(r.event?.id) === String(selectedEvent.id));
+    }, [myRegistrations, selectedEvent]);
 
     const highlightedEvents = useMemo(() => (events ?? []).slice(0, 4), [events]);
     const visibleCareers = useMemo(() => (careers ?? []).slice(0, 6), [careers]);
@@ -669,20 +684,7 @@ export function HomeContent(
                                                 ) : null}
                                                 <Pressable
                                                     style={styles.featuredDetailBtn}
-                                                    onPress={() => {
-                                                        if (user) {
-                                                            router.push({
-                                                                pathname: "/(app)/event-registration",
-                                                                params: {
-                                                                    eventId: item.id,
-                                                                    title: item.title,
-                                                                    price: String(item.price ?? 0),
-                                                                },
-                                                            });
-                                                        } else {
-                                                            router.push("/(auth)/login");
-                                                        }
-                                                    }}
+                                                    onPress={() => setSelectedEvent(item)}
                                                 >
                                                     <Text style={styles.featuredDetailBtnText}>Ver detalles</Text>
                                                     <Ionicons name="arrow-forward" size={14} color={theme.colors.textInverse} />
@@ -985,6 +987,90 @@ export function HomeContent(
                     ) : null}
                 </View>
             </ScrollView>
+
+            <Modal visible={!!selectedEvent} animationType="slide" transparent onRequestClose={() => setSelectedEvent(null)}>
+                <View style={styles.modalBackdrop}>
+                    <View style={styles.modalCard}>
+                        <ScrollView contentContainerStyle={styles.modalContent} showsVerticalScrollIndicator={false}>
+                            {selectedEvent?.coverImageUrl ? (
+                                <Image source={{ uri: toAbsoluteUrl(selectedEvent.coverImageUrl) }} style={styles.modalImage} resizeMode="cover" />
+                            ) : null}
+                            <View style={styles.modalBody}>
+                                <Text style={styles.modalTitle}>{selectedEvent?.title}</Text>
+                                
+                                <View style={styles.modalMetaRow}>
+                                    <View style={styles.modalBadge}>
+                                        <Text style={styles.modalBadgeText}>{selectedEvent?.status || "Activo"}</Text>
+                                    </View>
+                                    {selectedEvent?.modality ? (
+                                        <View style={[styles.modalBadge, { backgroundColor: theme.colors.utaAccent }]}>
+                                            <Text style={styles.modalBadgeText}>{selectedEvent.modality}</Text>
+                                        </View>
+                                    ) : null}
+                                </View>
+                                
+                                <View style={styles.modalSection}>
+                                    <Text style={styles.modalSectionTitle}>Información del Evento</Text>
+                                    <View style={styles.modalDetailRow}>
+                                        <Ionicons name="calendar-outline" size={16} color={theme.colors.primary} />
+                                        <Text style={styles.modalDetailText}>Fecha: {selectedEvent?.date ? formatEventDate(selectedEvent.date) : "Por definir"}</Text>
+                                    </View>
+                                    <View style={styles.modalDetailRow}>
+                                        <Ionicons name="location-outline" size={16} color={theme.colors.primary} />
+                                        <Text style={styles.modalDetailText}>Lugar: {selectedEvent?.location}</Text>
+                                    </View>
+                                    <View style={styles.modalDetailRow}>
+                                        <Ionicons name="cash-outline" size={16} color={theme.colors.primary} />
+                                        <Text style={styles.modalDetailText}>Costo: {selectedEvent?.price && selectedEvent.price > 0 ? `$${selectedEvent.price.toFixed(2)}` : "Gratuito"}</Text>
+                                    </View>
+                                </View>
+
+                                {selectedEvent?.description ? (
+                                    <View style={styles.modalSection}>
+                                        <Text style={styles.modalSectionTitle}>Descripción del Evento</Text>
+                                        <Text style={styles.modalDescription}>{selectedEvent.description}</Text>
+                                    </View>
+                                ) : (
+                                    <View style={styles.modalSection}>
+                                        <Text style={styles.modalSectionTitle}>Descripción del Evento</Text>
+                                        <Text style={styles.modalDescription}>No hay descripción disponible.</Text>
+                                    </View>
+                                )}
+                            </View>
+                        </ScrollView>
+
+                        <View style={styles.modalFooter}>
+                            <Pressable style={styles.modalCancelBtn} onPress={() => setSelectedEvent(null)}>
+                                <Text style={styles.modalCancelBtnText}>Cerrar</Text>
+                            </Pressable>
+                            <Pressable 
+                                style={[styles.modalPrimaryBtn, isSelectedEventRegistered && { backgroundColor: theme.colors.textTertiary }]} 
+                                disabled={isSelectedEventRegistered}
+                                onPress={() => {
+                                    const event = selectedEvent;
+                                    setSelectedEvent(null);
+                                    if (event) {
+                                        if (user) {
+                                            router.push({
+                                                pathname: "/(app)/event-registration",
+                                                params: {
+                                                    eventId: event.id,
+                                                    title: event.title,
+                                                    price: String(event.price ?? 0),
+                                                },
+                                            });
+                                        } else {
+                                            router.push("/(auth)/login");
+                                        }
+                                    }
+                                }}
+                            >
+                                <Text style={styles.modalPrimaryBtnText}>{isSelectedEventRegistered ? "Ya estás inscrito" : "Inscribirme ahora"}</Text>
+                            </Pressable>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
         </LinearGradient>
     );
 }
@@ -1142,6 +1228,121 @@ const styles = StyleSheet.create({
         borderRadius: 999,
         paddingHorizontal: 10,
         paddingVertical: 6,
+    },
+    footerContactText: {
+        color: theme.colors.textSecondary,
+        fontSize: 13,
+    },
+    modalBackdrop: {
+        flex: 1,
+        backgroundColor: "rgba(0,0,0,0.5)",
+        justifyContent: "flex-end",
+    },
+    modalCard: {
+        backgroundColor: theme.colors.bgPrimary,
+        borderTopLeftRadius: theme.radius.xl,
+        borderTopRightRadius: theme.radius.xl,
+        maxHeight: "90%",
+        paddingBottom: 20,
+    },
+    modalContent: {
+        paddingBottom: 20,
+    },
+    modalImage: {
+        width: "100%",
+        height: 200,
+        borderTopLeftRadius: theme.radius.xl,
+        borderTopRightRadius: theme.radius.xl,
+    },
+    modalBody: {
+        padding: theme.spacing.lg,
+    },
+    modalTitle: {
+        fontSize: 22,
+        fontWeight: "900",
+        color: theme.colors.textPrimary,
+        marginBottom: 10,
+    },
+    modalMetaRow: {
+        flexDirection: "row",
+        gap: 8,
+        marginBottom: 16,
+    },
+    modalBadge: {
+        backgroundColor: theme.colors.primary,
+        paddingHorizontal: 12,
+        paddingVertical: 4,
+        borderRadius: 999,
+    },
+    modalBadgeText: {
+        color: theme.colors.textInverse,
+        fontSize: 12,
+        fontWeight: "700",
+        textTransform: "uppercase",
+    },
+    modalSection: {
+        marginTop: 16,
+        padding: theme.spacing.md,
+        backgroundColor: theme.colors.bgSecondary,
+        borderRadius: theme.radius.md,
+        borderWidth: 1,
+        borderColor: theme.colors.borderPrimary,
+    },
+    modalSectionTitle: {
+        fontSize: 16,
+        fontWeight: "800",
+        color: theme.colors.textPrimary,
+        marginBottom: 12,
+    },
+    modalDetailRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 8,
+        marginBottom: 8,
+    },
+    modalDetailText: {
+        fontSize: 14,
+        color: theme.colors.textSecondary,
+        fontWeight: "600",
+    },
+    modalDescription: {
+        fontSize: 14,
+        lineHeight: 22,
+        color: theme.colors.textSecondary,
+    },
+    modalFooter: {
+        flexDirection: "row",
+        paddingHorizontal: theme.spacing.lg,
+        paddingTop: theme.spacing.sm,
+        gap: 12,
+    },
+    modalCancelBtn: {
+        flex: 1,
+        paddingVertical: 14,
+        borderRadius: theme.radius.md,
+        backgroundColor: theme.colors.bgSecondary,
+        alignItems: "center",
+        justifyContent: "center",
+        borderWidth: 1,
+        borderColor: theme.colors.borderPrimary,
+    },
+    modalCancelBtnText: {
+        color: theme.colors.textPrimary,
+        fontWeight: "800",
+        fontSize: 14,
+    },
+    modalPrimaryBtn: {
+        flex: 2,
+        paddingVertical: 14,
+        borderRadius: theme.radius.md,
+        backgroundColor: theme.colors.primary,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    modalPrimaryBtnText: {
+        color: theme.colors.textInverse,
+        fontWeight: "900",
+        fontSize: 14,
     },
     heroBadgeText: {
         color: theme.colors.textInverse,
