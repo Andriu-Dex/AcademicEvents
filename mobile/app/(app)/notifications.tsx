@@ -1,4 +1,4 @@
-import { useCallback, useMemo, type ReactNode } from "react";
+import { useCallback, useMemo, useState, type ReactNode } from "react";
 import {
     ActivityIndicator,
     FlatList,
@@ -58,6 +58,8 @@ function NotificationCard({
 }
 
 export default function NotificationsScreen() {
+    const [manualRefreshing, setManualRefreshing] = useState(false);
+
     const query = useQuery({
         queryKey: ["notifications-history"],
         queryFn: () => fetchNotificationHistory(80, 0),
@@ -96,6 +98,16 @@ export default function NotificationsScreen() {
         await pushStatusQuery.refetch();
     };
 
+    const onManualRefresh = async () => {
+        setManualRefreshing(true);
+        try {
+            await query.refetch();
+            await pushStatusQuery.refetch();
+        } finally {
+            setManualRefreshing(false);
+        }
+    };
+
     let body: ReactNode;
     if (query.isLoading) {
         body = (
@@ -117,8 +129,8 @@ export default function NotificationsScreen() {
                 contentContainerStyle={styles.list}
                 refreshControl={
                     <RefreshControl
-                        refreshing={query.isRefetching && !query.isLoading}
-                        onRefresh={() => void query.refetch()}
+                        refreshing={manualRefreshing}
+                        onRefresh={() => void onManualRefresh()}
                         tintColor={theme.colors.primary}
                     />
                 }
