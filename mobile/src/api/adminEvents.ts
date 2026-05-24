@@ -84,6 +84,14 @@ function appendNumericParam(params: Record<string, string | number>, key: string
     params[key] = parsed;
 }
 
+function appendNumericParams(params: Record<string, string | number>, keys: string[], value: unknown) {
+    const parsed = toFiniteNumberOrNull(value);
+    if (parsed === null) return;
+    for (const key of keys) {
+        params[key] = parsed;
+    }
+}
+
 function appendTrimmedParam(params: Record<string, string | number>, key: string, value?: string) {
     const trimmed = value?.trim();
     if (!trimmed) return;
@@ -178,10 +186,10 @@ export async function fetchAdminEventsPaginated(
     appendTrimmedParam(params, "carrera", filters.carrera);
     appendTrimmedParam(params, "modalidad", filters.modalidad);
 
-    appendNumericParam(params, "capacidadMin", filters.capacidadMin);
-    appendNumericParam(params, "capacidadMax", filters.capacidadMax);
-    appendNumericParam(params, "valorMin", filters.valorMin);
-    appendNumericParam(params, "valorMax", filters.valorMax);
+    appendNumericParams(params, ["capacidadMin", "minCapacity"], filters.capacidadMin);
+    appendNumericParams(params, ["capacidadMax", "maxCapacity"], filters.capacidadMax);
+    appendNumericParams(params, ["valorMin", "minPrice", "priceMin"], filters.valorMin);
+    appendNumericParams(params, ["valorMax", "maxPrice", "priceMax"], filters.valorMax);
     appendNumericParam(params, "asistenciaMin", filters.asistenciaMin);
 
     appendBooleanParam(params, "esGratuito", filters.esGratuito);
