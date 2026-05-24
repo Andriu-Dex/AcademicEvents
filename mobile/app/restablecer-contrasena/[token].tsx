@@ -5,6 +5,7 @@ import {
     Image,
     ImageBackground,
     Pressable,
+
     StyleSheet,
     Text,
     TextInput,
@@ -12,7 +13,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { resetPasswordWithToken, validateRecoveryToken } from "../../src/api/passwordRecovery";
-import { theme } from "../../src/shared";
+import { useAppTheme } from "../../src/shared";
 
 type TokenState = {
     loading: boolean;
@@ -63,19 +64,19 @@ function createValidTokenState(userName?: string, email?: string): TokenState {
     };
 }
 
-function renderLoadingState() {
+function renderLoadingState(tokens: any, styles: any) {
     return (
         <View style={styles.centerState}>
-            <ActivityIndicator color={theme.colors.primary} />
+            <ActivityIndicator color={tokens.colors.primary} />
             <Text style={styles.stateText}>Verificando enlace...</Text>
         </View>
     );
 }
 
-function renderInvalidState(message: string) {
+function renderInvalidState(message: string, tokens: any, styles: any) {
     return (
         <View style={styles.centerState}>
-            <Ionicons name="alert-circle-outline" size={26} color={theme.colors.error} />
+            <Ionicons name="alert-circle-outline" size={26} color={tokens.colors.error} />
             <Text style={styles.errorCenterText}>{message}</Text>
             <Link href="/(auth)/forgot-password" style={styles.recoveryLink}>
                 Solicitar nuevo enlace
@@ -84,10 +85,10 @@ function renderInvalidState(message: string) {
     );
 }
 
-function renderSuccessState(message: string) {
+function renderSuccessState(message: string, tokens: any, styles: any) {
     return (
         <View style={styles.centerState}>
-            <Ionicons name="checkmark-circle-outline" size={26} color={theme.colors.success} />
+            <Ionicons name="checkmark-circle-outline" size={26} color={tokens.colors.success} />
             <Text style={styles.successCenterText}>{message}</Text>
             <Text style={styles.stateText}>Redirigiendo al inicio de sesión...</Text>
         </View>
@@ -107,6 +108,9 @@ export default function ResetPasswordWithTokenScreen() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState<string | null>(null);
     const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
+
+    const { tokens, mode, toggleTheme } = useAppTheme();
+    const styles = createStyles(tokens);
 
     useEffect(() => {
         let mounted = true;
@@ -177,92 +181,7 @@ export default function ResetPasswordWithTokenScreen() {
         }
     };
 
-    let content: ReactNode;
-    if (tokenState.loading) {
-        content = renderLoadingState();
-    } else if (!tokenState.isValid) {
-        content = renderInvalidState(tokenState.error ?? "Enlace inválido o expirado");
-    } else if (submitSuccess) {
-        content = renderSuccessState(submitSuccess);
-    } else {
-        content = (
-            <>
-                <Text style={styles.subtitle}>
-                    Hola {tokenState.userName}, crea una nueva contraseña segura para {tokenState.email || "tu cuenta"}.
-                </Text>
-
-                <Text style={styles.label}>Nueva contraseña</Text>
-                <View style={styles.inputGroup}>
-                    <View style={styles.inputIconWrap}>
-                        <Ionicons name="lock-closed-outline" size={16} color={theme.colors.textInverse} />
-                    </View>
-                    <TextInput
-                        value={newPassword}
-                        onChangeText={setNewPassword}
-                        secureTextEntry={!showPassword}
-                        placeholder="********"
-                        placeholderTextColor={theme.colors.textTertiary}
-                        style={styles.input}
-                    />
-                    <Pressable style={styles.eyeButton} onPress={() => setShowPassword((v) => !v)}>
-                        <Ionicons
-                            name={showPassword ? "eye-off-outline" : "eye-outline"}
-                            size={18}
-                            color={theme.colors.textSecondary}
-                        />
-                    </Pressable>
-                </View>
-
-                <Text style={styles.label}>Confirmar contraseña</Text>
-                <View style={styles.inputGroup}>
-                    <View style={styles.inputIconWrap}>
-                        <Ionicons name="lock-closed-outline" size={16} color={theme.colors.textInverse} />
-                    </View>
-                    <TextInput
-                        value={confirmPassword}
-                        onChangeText={setConfirmPassword}
-                        secureTextEntry={!showConfirmPassword}
-                        placeholder="********"
-                        placeholderTextColor={theme.colors.textTertiary}
-                        style={styles.input}
-                    />
-                    <Pressable style={styles.eyeButton} onPress={() => setShowConfirmPassword((v) => !v)}>
-                        <Ionicons
-                            name={showConfirmPassword ? "eye-off-outline" : "eye-outline"}
-                            size={18}
-                            color={theme.colors.textSecondary}
-                        />
-                    </Pressable>
-                </View>
-
-                {passwordErrors.length > 0 ? (
-                    <View style={styles.passwordRulesBox}>
-                        {passwordErrors.map((error) => (
-                            <Text key={error} style={styles.passwordRuleText}>
-                                • {error}
-                            </Text>
-                        ))}
-                    </View>
-                ) : null}
-
-                {submitError ? <Text style={styles.error}>{submitError}</Text> : null}
-
-                <Pressable
-                    style={[styles.buttonPrimary, isSubmitting && styles.buttonDisabled]}
-                    onPress={submit}
-                    disabled={isSubmitting}
-                >
-                    {isSubmitting ? (
-                        <ActivityIndicator color={theme.colors.textInverse} />
-                    ) : (
-                        <Text style={styles.buttonPrimaryText}>Restablecer contraseña</Text>
-                    )}
-                </Pressable>
-            </>
-        );
-    }
-
-    return (
+    const renderPage = (pageContent: ReactNode) => (
         <ImageBackground
             source={{ uri: "https://i.imgur.com/eMavQXu.png" }}
             style={styles.heroBackground}
@@ -271,7 +190,11 @@ export default function ResetPasswordWithTokenScreen() {
             <View style={styles.overlay} />
 
             <Pressable style={styles.homeButton} onPress={() => router.replace("/home")}>
-                <Ionicons name="home-outline" color={theme.colors.textInverse} size={20} />
+                <Ionicons name="home-outline" color={tokens.colors.textInverse} size={20} />
+            </Pressable>
+
+            <Pressable style={styles.themeToggle} onPress={() => toggleTheme()}>
+                <Ionicons name={mode === "dark" ? "moon" : "sunny"} size={16} color={tokens.colors.textInverse} />
             </Pressable>
 
             <View style={styles.card}>
@@ -279,160 +202,256 @@ export default function ResetPasswordWithTokenScreen() {
                     <Image source={require("../../assets/brand/logo.png")} style={styles.logo} resizeMode="contain" />
                     <Text style={styles.title}>Restablecer Contraseña</Text>
                 </View>
-                {content}
+                {pageContent}
             </View>
         </ImageBackground>
     );
+
+    if (tokenState.loading) return renderPage(renderLoadingState(tokens, styles));
+    if (!tokenState.isValid) return renderPage(renderInvalidState(tokenState.error ?? "Enlace inválido o expirado", tokens, styles));
+    if (submitSuccess) return renderPage(renderSuccessState(submitSuccess, tokens, styles));
+
+    return renderPage(
+        <>
+            <Text style={styles.subtitle}>
+                Hola {tokenState.userName}, crea una nueva contraseña segura para {tokenState.email || "tu cuenta"}.
+            </Text>
+
+            <Text style={styles.label}>Nueva contraseña</Text>
+            <View style={styles.inputGroup}>
+                <View style={styles.inputIconWrap}>
+                    <Ionicons name="lock-closed-outline" size={16} color={tokens.colors.textInverse} />
+                </View>
+                <TextInput
+                    value={newPassword}
+                    onChangeText={setNewPassword}
+                    secureTextEntry={!showPassword}
+                    placeholder="********"
+                    placeholderTextColor={tokens.colors.textTertiary}
+                    style={styles.input}
+                />
+                <Pressable style={styles.eyeButton} onPress={() => setShowPassword((v) => !v)}>
+                    <Ionicons
+                        name={showPassword ? "eye-off-outline" : "eye-outline"}
+                        size={18}
+                        color={tokens.colors.textSecondary}
+                    />
+                </Pressable>
+            </View>
+
+            <Text style={styles.label}>Confirmar contraseña</Text>
+            <View style={styles.inputGroup}>
+                <View style={styles.inputIconWrap}>
+                    <Ionicons name="lock-closed-outline" size={16} color={tokens.colors.textInverse} />
+                </View>
+                <TextInput
+                    value={confirmPassword}
+                    onChangeText={setConfirmPassword}
+                    secureTextEntry={!showConfirmPassword}
+                    placeholder="********"
+                    placeholderTextColor={tokens.colors.textTertiary}
+                    style={styles.input}
+                />
+                <Pressable style={styles.eyeButton} onPress={() => setShowConfirmPassword((v) => !v)}>
+                    <Ionicons
+                        name={showConfirmPassword ? "eye-off-outline" : "eye-outline"}
+                        size={18}
+                        color={tokens.colors.textSecondary}
+                    />
+                </Pressable>
+            </View>
+
+            {passwordErrors.length > 0 ? (
+                <View style={styles.passwordRulesBox}>
+                    {passwordErrors.map((error) => (
+                        <Text key={error} style={styles.passwordRuleText}>
+                            • {error}
+                        </Text>
+                    ))}
+                </View>
+            ) : null}
+
+            {submitError ? <Text style={styles.error}>{submitError}</Text> : null}
+
+            <Pressable
+                style={[styles.buttonPrimary, isSubmitting && styles.buttonDisabled]}
+                onPress={submit}
+                disabled={isSubmitting}
+            >
+                {isSubmitting ? (
+                    <ActivityIndicator color={tokens.colors.textInverse} />
+                ) : (
+                    <Text style={styles.buttonPrimaryText}>Restablecer contraseña</Text>
+                )}
+            </Pressable>
+        </>
+    );
 }
 
-const styles = StyleSheet.create({
-    heroBackground: {
-        flex: 1,
-        justifyContent: "center",
-        padding: theme.spacing.lg,
-    },
-    overlay: {
-        position: "absolute",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: theme.colors.overlayBlack22,
-    },
-    homeButton: {
-        position: "absolute",
-        right: 20,
-        top: 56,
-        zIndex: 3,
-        width: 42,
-        height: 42,
-        borderRadius: 21,
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: theme.colors.primary,
-    },
-    card: {
-        backgroundColor: theme.colors.bgPrimary,
-        borderTopWidth: 6,
-        borderTopColor: theme.colors.primary,
-        borderRadius: theme.radius.lg,
-        padding: theme.spacing.lg,
-        ...theme.shadow.md,
-    },
-    logoWrap: {
-        alignItems: "center",
-        marginBottom: 8,
-    },
-    logo: {
-        width: 86,
-        height: 86,
-        marginBottom: 8,
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: "700",
-        textAlign: "center",
-        color: theme.colors.primary,
-    },
-    subtitle: {
-        marginTop: 8,
-        marginBottom: theme.spacing.sm,
-        textAlign: "center",
-        color: theme.colors.textSecondary,
-        lineHeight: 18,
-    },
-    centerState: {
-        alignItems: "center",
-        gap: 8,
-        paddingVertical: theme.spacing.md,
-    },
-    stateText: {
-        color: theme.colors.textSecondary,
-        fontWeight: "700",
-        textAlign: "center",
-    },
-    errorCenterText: {
-        color: theme.colors.error,
-        fontWeight: "700",
-        textAlign: "center",
-    },
-    successCenterText: {
-        color: theme.colors.success,
-        fontWeight: "700",
-        textAlign: "center",
-    },
-    recoveryLink: {
-        color: theme.colors.primary,
-        fontWeight: "900",
-        marginTop: 4,
-    },
-    label: {
-        fontSize: 13,
-        fontWeight: "700",
-        marginTop: theme.spacing.sm,
-        color: theme.colors.textSecondary,
-    },
-    inputGroup: {
-        marginTop: 6,
-        borderWidth: 1,
-        borderColor: theme.colors.borderSecondary,
-        borderRadius: theme.radius.sm,
-        flexDirection: "row",
-        alignItems: "center",
-        overflow: "hidden",
-        backgroundColor: theme.colors.bgPrimary,
-    },
-    inputIconWrap: {
-        width: 44,
-        height: 44,
-        backgroundColor: theme.colors.primary,
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    input: {
-        flex: 1,
-        paddingHorizontal: 12,
-        paddingVertical: 10,
-        color: theme.colors.textPrimary,
-    },
-    eyeButton: {
-        paddingHorizontal: 12,
-        height: 44,
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: theme.colors.bgTertiary,
-    },
-    passwordRulesBox: {
-        marginTop: 8,
-        padding: 10,
-        borderRadius: theme.radius.sm,
-        backgroundColor: theme.colors.bgSecondary,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-        gap: 4,
-    },
-    passwordRuleText: {
-        color: theme.colors.textSecondary,
-        fontWeight: "700",
-        fontSize: 12,
-    },
-    error: {
-        color: theme.colors.error,
-        marginTop: 8,
-        fontWeight: "700",
-    },
-    buttonPrimary: {
-        backgroundColor: theme.colors.utaPrimary,
-        paddingVertical: 12,
-        borderRadius: theme.radius.sm,
-        marginTop: theme.spacing.md,
-        alignItems: "center",
-    },
-    buttonDisabled: {
-        opacity: 0.7,
-    },
-    buttonPrimaryText: {
-        color: theme.colors.textInverse,
-        fontWeight: "800",
-    },
-});
+function createStyles(tokens: typeof import("../../src/shared").theme) {
+    return StyleSheet.create({
+        heroBackground: {
+            flex: 1,
+            justifyContent: "center",
+            padding: tokens.spacing.lg,
+        },
+        overlay: {
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: tokens.colors.overlayBlack22,
+        },
+        homeButton: {
+            position: "absolute",
+            right: 20,
+            top: 56,
+            zIndex: 3,
+            width: 42,
+            height: 42,
+            borderRadius: 21,
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: tokens.colors.primary,
+        },
+        themeToggle: {
+            position: "absolute",
+            right: 68,
+            top: 56,
+            zIndex: 3,
+            width: 36,
+            height: 36,
+            borderRadius: 18,
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: tokens.colors.navbarControlBg,
+            borderWidth: 1,
+            borderColor: tokens.colors.overlayWhite20,
+        },
+        card: {
+            backgroundColor: tokens.colors.bgPrimary,
+            borderTopWidth: 6,
+            borderTopColor: tokens.colors.primary,
+            borderRadius: tokens.radius.lg,
+            padding: tokens.spacing.lg,
+            ...tokens.shadow.md,
+        },
+        logoWrap: {
+            alignItems: "center",
+            marginBottom: 8,
+        },
+        logo: {
+            width: 86,
+            height: 86,
+            marginBottom: 8,
+        },
+        title: {
+            fontSize: 24,
+            fontWeight: "700",
+            textAlign: "center",
+            color: tokens.colors.primary,
+        },
+        subtitle: {
+            marginTop: 8,
+            marginBottom: tokens.spacing.sm,
+            textAlign: "center",
+            color: tokens.colors.textSecondary,
+            lineHeight: 18,
+        },
+        centerState: {
+            alignItems: "center",
+            gap: 8,
+            paddingVertical: tokens.spacing.md,
+        },
+        stateText: {
+            color: tokens.colors.textSecondary,
+            fontWeight: "700",
+            textAlign: "center",
+        },
+        errorCenterText: {
+            color: tokens.colors.error,
+            fontWeight: "700",
+            textAlign: "center",
+        },
+        successCenterText: {
+            color: tokens.colors.success,
+            fontWeight: "700",
+            textAlign: "center",
+        },
+        recoveryLink: {
+            color: tokens.colors.primary,
+            fontWeight: "900",
+            marginTop: 4,
+        },
+        label: {
+            fontSize: 13,
+            fontWeight: "700",
+            marginTop: tokens.spacing.sm,
+            color: tokens.colors.textSecondary,
+        },
+        inputGroup: {
+            marginTop: 6,
+            borderWidth: 1,
+            borderColor: tokens.colors.borderSecondary,
+            borderRadius: tokens.radius.sm,
+            flexDirection: "row",
+            alignItems: "center",
+            overflow: "hidden",
+            backgroundColor: tokens.colors.bgPrimary,
+        },
+        inputIconWrap: {
+            width: 44,
+            height: 44,
+            backgroundColor: tokens.colors.primary,
+            alignItems: "center",
+            justifyContent: "center",
+        },
+        input: {
+            flex: 1,
+            paddingHorizontal: 12,
+            paddingVertical: 10,
+            color: tokens.colors.textPrimary,
+        },
+        eyeButton: {
+            paddingHorizontal: 12,
+            height: 44,
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: tokens.colors.bgTertiary,
+        },
+        passwordRulesBox: {
+            marginTop: 8,
+            padding: 10,
+            borderRadius: tokens.radius.sm,
+            backgroundColor: tokens.colors.bgSecondary,
+            borderWidth: 1,
+            borderColor: tokens.colors.borderPrimary,
+            gap: 4,
+        },
+        passwordRuleText: {
+            color: tokens.colors.textSecondary,
+            fontWeight: "700",
+            fontSize: 12,
+        },
+        error: {
+            color: tokens.colors.error,
+            marginTop: 8,
+            fontWeight: "700",
+        },
+        buttonPrimary: {
+            backgroundColor: tokens.colors.utaPrimary,
+            paddingVertical: 12,
+            borderRadius: tokens.radius.sm,
+            marginTop: tokens.spacing.md,
+            alignItems: "center",
+        },
+        buttonDisabled: {
+            opacity: 0.7,
+        },
+        buttonPrimaryText: {
+            color: tokens.colors.textInverse,
+            fontWeight: "800",
+        },
+    });
+}

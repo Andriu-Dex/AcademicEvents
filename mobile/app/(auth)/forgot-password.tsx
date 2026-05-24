@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Link, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import {
     ActivityIndicator,
     Image,
     ImageBackground,
     Linking,
     Pressable,
+
     StyleSheet,
     Text,
     TextInput,
@@ -13,7 +14,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { requestPasswordRecovery } from "../../src/api/passwordRecovery";
-import { theme } from "../../src/shared";
+import { useAppTheme } from "../../src/shared";
 
 function isValidEmail(value: string) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
@@ -37,6 +38,9 @@ export default function ForgotPasswordScreen() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+    const { tokens, mode, toggleTheme } = useAppTheme();
+    const styles = createStyles(tokens);
 
     const submit = async () => {
         setError(null);
@@ -75,7 +79,11 @@ export default function ForgotPasswordScreen() {
         >
             <View style={styles.overlay} />
             <Pressable style={styles.homeButton} onPress={() => router.replace("/home")}>
-                <Ionicons name="home-outline" color={theme.colors.textInverse} size={20} />
+                <Ionicons name="home-outline" color={tokens.colors.textInverse} size={20} />
+            </Pressable>
+
+            <Pressable style={styles.themeToggle} onPress={() => toggleTheme()}>
+                <Ionicons name={mode === "dark" ? "moon" : "sunny"} size={16} color={tokens.colors.textInverse} />
             </Pressable>
 
             <View style={styles.card}>
@@ -90,7 +98,7 @@ export default function ForgotPasswordScreen() {
                 <Text style={styles.label}>Correo electrónico</Text>
                 <View style={styles.inputGroup}>
                     <View style={styles.inputIconWrap}>
-                        <Ionicons name="mail-outline" size={16} color={theme.colors.textInverse} />
+                        <Ionicons name="mail-outline" size={16} color={tokens.colors.textInverse} />
                     </View>
                     <TextInput
                         value={email}
@@ -98,7 +106,7 @@ export default function ForgotPasswordScreen() {
                         autoCapitalize="none"
                         keyboardType="email-address"
                         placeholder="usuario@uta.edu.ec"
-                        placeholderTextColor={theme.colors.textTertiary}
+                        placeholderTextColor={tokens.colors.textTertiary}
                         style={styles.input}
                     />
                 </View>
@@ -112,7 +120,7 @@ export default function ForgotPasswordScreen() {
                     disabled={isSubmitting}
                 >
                     {isSubmitting ? (
-                        <ActivityIndicator color={theme.colors.textInverse} />
+                        <ActivityIndicator color={tokens.colors.textInverse} />
                     ) : (
                         <Text style={styles.buttonPrimaryText}>Enviar instrucciones</Text>
                     )}
@@ -135,7 +143,7 @@ export default function ForgotPasswordScreen() {
                         </Text>
 
                         <Pressable style={styles.mailButton} onPress={openGmailOrMail}>
-                            <Ionicons name="mail-open-outline" size={16} color={theme.colors.primary} />
+                            <Ionicons name="mail-open-outline" size={16} color={tokens.colors.primary} />
                             <Text style={styles.mailButtonText}>Abrir Gmail / correo</Text>
                         </Pressable>
                     </View>
@@ -151,162 +159,178 @@ export default function ForgotPasswordScreen() {
     );
 }
 
-const styles = StyleSheet.create({
-    heroBackground: {
-        flex: 1,
-        justifyContent: "center",
-        padding: theme.spacing.lg,
-    },
-    overlay: {
-        position: "absolute",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: theme.colors.overlayBlack22,
-    },
-    homeButton: {
-        position: "absolute",
-        right: 20,
-        top: 56,
-        zIndex: 3,
-        width: 42,
-        height: 42,
-        borderRadius: 21,
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: theme.colors.primary,
-    },
-    card: {
-        backgroundColor: theme.colors.bgPrimary,
-        borderTopWidth: 6,
-        borderTopColor: theme.colors.primary,
-        borderRadius: theme.radius.lg,
-        padding: theme.spacing.lg,
-        ...theme.shadow.md,
-    },
-    logoWrap: {
-        alignItems: "center",
-        marginBottom: 8,
-    },
-    logo: {
-        width: 86,
-        height: 86,
-        marginBottom: 8,
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: "700",
-        textAlign: "center",
-        color: theme.colors.primary,
-    },
-    subtitle: {
-        marginTop: 8,
-        textAlign: "center",
-        color: theme.colors.textSecondary,
-        lineHeight: 18,
-    },
-    label: {
-        fontSize: 13,
-        fontWeight: "700",
-        marginTop: theme.spacing.sm,
-        color: theme.colors.textSecondary,
-    },
-    inputGroup: {
-        marginTop: 6,
-        borderWidth: 1,
-        borderColor: theme.colors.borderSecondary,
-        borderRadius: theme.radius.sm,
-        flexDirection: "row",
-        alignItems: "center",
-        overflow: "hidden",
-        backgroundColor: theme.colors.bgPrimary,
-    },
-    inputIconWrap: {
-        width: 44,
-        height: 44,
-        backgroundColor: theme.colors.primary,
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    input: {
-        flex: 1,
-        paddingHorizontal: 12,
-        paddingVertical: 10,
-        color: theme.colors.textPrimary,
-    },
-    error: {
-        color: theme.colors.error,
-        marginTop: 8,
-        fontWeight: "700",
-    },
-    success: {
-        color: theme.colors.success,
-        marginTop: 8,
-        fontWeight: "700",
-    },
-    buttonPrimary: {
-        backgroundColor: theme.colors.utaPrimary,
-        paddingVertical: 12,
-        borderRadius: theme.radius.sm,
-        marginTop: theme.spacing.md,
-        alignItems: "center",
-    },
-    buttonDisabled: {
-        opacity: 0.7,
-    },
-    buttonPrimaryText: {
-        color: theme.colors.textInverse,
-        fontWeight: "800",
-    },
-    instructionsCard: {
-        marginTop: theme.spacing.md,
-        padding: theme.spacing.md,
-        borderRadius: theme.radius.md,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-        backgroundColor: theme.colors.bgSecondary,
-        gap: 6,
-    },
-    instructionsTitle: {
-        color: theme.colors.textPrimary,
-        fontWeight: "900",
-    },
-    instructionsText: {
-        color: theme.colors.textSecondary,
-        fontWeight: "700",
-    },
-    emailHighlight: {
-        color: theme.colors.primary,
-        fontWeight: "900",
-    },
-    sectionTitle: {
-        marginTop: 4,
-        color: theme.colors.textPrimary,
-        fontWeight: "900",
-    },
-    mailButton: {
-        marginTop: 6,
-        height: 40,
-        borderRadius: 999,
-        borderWidth: 1,
-        borderColor: theme.colors.primary,
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: 8,
-        backgroundColor: theme.colors.bgPrimary,
-    },
-    mailButtonText: {
-        color: theme.colors.primary,
-        fontWeight: "900",
-    },
-    loginRow: {
-        marginTop: theme.spacing.md,
-        alignItems: "center",
-    },
-    loginLink: {
-        color: theme.colors.primary,
-        fontWeight: "800",
-    },
-});
+function createStyles(tokens: typeof import("../../src/shared").theme) {
+    return StyleSheet.create({
+        heroBackground: {
+            flex: 1,
+            justifyContent: "center",
+            padding: tokens.spacing.lg,
+        },
+        overlay: {
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: tokens.colors.overlayBlack22,
+        },
+        homeButton: {
+            position: "absolute",
+            right: 20,
+            top: 56,
+            zIndex: 3,
+            width: 42,
+            height: 42,
+            borderRadius: 21,
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: tokens.colors.primary,
+        },
+        themeToggle: {
+            position: "absolute",
+            right: 68,
+            top: 56,
+            zIndex: 3,
+            width: 36,
+            height: 36,
+            borderRadius: 18,
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: tokens.colors.navbarControlBg,
+            borderWidth: 1,
+            borderColor: tokens.colors.overlayWhite20,
+        },
+        card: {
+            backgroundColor: tokens.colors.bgPrimary,
+            borderTopWidth: 6,
+            borderTopColor: tokens.colors.primary,
+            borderRadius: tokens.radius.lg,
+            padding: tokens.spacing.lg,
+            ...tokens.shadow.md,
+        },
+        logoWrap: {
+            alignItems: "center",
+            marginBottom: 8,
+        },
+        logo: {
+            width: 86,
+            height: 86,
+            marginBottom: 8,
+        },
+        title: {
+            fontSize: 24,
+            fontWeight: "700",
+            textAlign: "center",
+            color: tokens.colors.primary,
+        },
+        subtitle: {
+            marginTop: 8,
+            textAlign: "center",
+            color: tokens.colors.textSecondary,
+            lineHeight: 18,
+        },
+        label: {
+            fontSize: 13,
+            fontWeight: "700",
+            marginTop: tokens.spacing.sm,
+            color: tokens.colors.textSecondary,
+        },
+        inputGroup: {
+            marginTop: 6,
+            borderWidth: 1,
+            borderColor: tokens.colors.borderSecondary,
+            borderRadius: tokens.radius.sm,
+            flexDirection: "row",
+            alignItems: "center",
+            overflow: "hidden",
+            backgroundColor: tokens.colors.bgPrimary,
+        },
+        inputIconWrap: {
+            width: 44,
+            height: 44,
+            backgroundColor: tokens.colors.primary,
+            alignItems: "center",
+            justifyContent: "center",
+        },
+        input: {
+            flex: 1,
+            paddingHorizontal: 12,
+            paddingVertical: 10,
+            color: tokens.colors.textPrimary,
+        },
+        error: {
+            color: tokens.colors.error,
+            marginTop: 8,
+            fontWeight: "700",
+        },
+        success: {
+            color: tokens.colors.success,
+            marginTop: 8,
+            fontWeight: "700",
+        },
+        buttonPrimary: {
+            backgroundColor: tokens.colors.utaPrimary,
+            paddingVertical: 12,
+            borderRadius: tokens.radius.sm,
+            marginTop: tokens.spacing.md,
+            alignItems: "center",
+        },
+        buttonDisabled: {
+            opacity: 0.7,
+        },
+        buttonPrimaryText: {
+            color: tokens.colors.textInverse,
+            fontWeight: "800",
+        },
+        instructionsCard: {
+            marginTop: tokens.spacing.md,
+            padding: tokens.spacing.md,
+            borderRadius: tokens.radius.md,
+            borderWidth: 1,
+            borderColor: tokens.colors.borderPrimary,
+            backgroundColor: tokens.colors.bgSecondary,
+            gap: 6,
+        },
+        instructionsTitle: {
+            color: tokens.colors.textPrimary,
+            fontWeight: "900",
+        },
+        instructionsText: {
+            color: tokens.colors.textSecondary,
+            fontWeight: "700",
+        },
+        emailHighlight: {
+            color: tokens.colors.primary,
+            fontWeight: "900",
+        },
+        sectionTitle: {
+            marginTop: 4,
+            color: tokens.colors.textPrimary,
+            fontWeight: "900",
+        },
+        mailButton: {
+            marginTop: 6,
+            height: 40,
+            borderRadius: 999,
+            borderWidth: 1,
+            borderColor: tokens.colors.primary,
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 8,
+            backgroundColor: tokens.colors.bgPrimary,
+        },
+        mailButtonText: {
+            color: tokens.colors.primary,
+            fontWeight: "900",
+        },
+        loginRow: {
+            marginTop: tokens.spacing.md,
+            alignItems: "center",
+        },
+        loginLink: {
+            color: tokens.colors.primary,
+            fontWeight: "800",
+        },
+    });
+}

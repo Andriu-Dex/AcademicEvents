@@ -21,7 +21,7 @@ import { registerStudent } from "../../src/api/auth";
 import { getCurrentApiBaseUrl } from "../../src/api/client";
 import { useCareers } from "../../src/features/careers/useCareers";
 import { useFacultyInfo } from "../../src/features/faculty/useFacultyInfo";
-import { theme } from "../../src/shared";
+import { useAppTheme } from "../../src/shared";
 
 function validarCedulaEcuatoriana(cedulaRaw: string) {
     const cedula = String(cedulaRaw ?? "").trim();
@@ -170,6 +170,9 @@ export default function RegisterScreen() {
         },
     });
 
+    const { tokens, mode, toggleTheme } = useAppTheme();
+    const styles = createStyles(tokens);
+
     const email = watch("email");
     const isInstitutional = useMemo(
         () => email.toLowerCase().endsWith("@uta.edu.ec"),
@@ -214,7 +217,10 @@ export default function RegisterScreen() {
         >
             <View style={styles.overlay} />
             <Pressable style={styles.homeButton} onPress={() => router.replace("/home")}>
-                <Ionicons name="home-outline" color={theme.colors.textInverse} size={20} />
+                <Ionicons name="home-outline" color={tokens.colors.textInverse} size={20} />
+            </Pressable>
+            <Pressable style={styles.themeToggle} onPress={() => toggleTheme()}>
+                <Ionicons name={mode === "dark" ? "moon" : "sunny"} size={16} color={tokens.colors.textInverse} />
             </Pressable>
             <ScrollView contentContainerStyle={styles.container}>
                 <Animated.View
@@ -249,7 +255,7 @@ export default function RegisterScreen() {
                         render={({ field: { onChange, value } }) => (
                             <View style={styles.inputGroup}>
                                 <View style={styles.inputIconWrap}>
-                                    <Ionicons name="person-outline" size={16} color={theme.colors.textInverse} />
+                                    <Ionicons name="person-outline" size={16} color={tokens.colors.textInverse} />
                                 </View>
                                 <TextInput
                                     style={styles.input}
@@ -258,7 +264,7 @@ export default function RegisterScreen() {
                                     keyboardType="numeric"
                                     maxLength={10}
                                     placeholder="0102030405"
-                                    placeholderTextColor={theme.colors.textTertiary}
+                                    placeholderTextColor={tokens.colors.textTertiary}
                                 />
                             </View>
                         )}
@@ -274,7 +280,7 @@ export default function RegisterScreen() {
                         render={({ field: { onChange, value } }) => (
                             <View style={styles.inputGroup}>
                                 <View style={styles.inputIconWrap}>
-                                    <Ionicons name="person-outline" size={16} color={theme.colors.textInverse} />
+                                    <Ionicons name="person-outline" size={16} color={tokens.colors.textInverse} />
                                 </View>
                                 <TextInput
                                     style={styles.input}
@@ -284,7 +290,7 @@ export default function RegisterScreen() {
                                     }
                                     autoCapitalize="words"
                                     placeholder="Nombre"
-                                    placeholderTextColor={theme.colors.textTertiary}
+                                    placeholderTextColor={tokens.colors.textTertiary}
                                 />
                             </View>
                         )}
@@ -300,7 +306,7 @@ export default function RegisterScreen() {
                         render={({ field: { onChange, value } }) => (
                             <View style={styles.inputGroup}>
                                 <View style={styles.inputIconWrap}>
-                                    <Ionicons name="person-outline" size={16} color={theme.colors.textInverse} />
+                                    <Ionicons name="person-outline" size={16} color={tokens.colors.textInverse} />
                                 </View>
                                 <TextInput
                                     style={styles.input}
@@ -310,7 +316,7 @@ export default function RegisterScreen() {
                                     }
                                     autoCapitalize="words"
                                     placeholder="Apellido"
-                                    placeholderTextColor={theme.colors.textTertiary}
+                                    placeholderTextColor={tokens.colors.textTertiary}
                                 />
                             </View>
                         )}
@@ -326,7 +332,7 @@ export default function RegisterScreen() {
                         render={({ field: { onChange, value } }) => (
                             <View style={styles.inputGroup}>
                                 <View style={styles.inputIconWrap}>
-                                    <Ionicons name="call-outline" size={16} color={theme.colors.textInverse} />
+                                    <Ionicons name="call-outline" size={16} color={tokens.colors.textInverse} />
                                 </View>
                                 <TextInput
                                     style={styles.input}
@@ -335,7 +341,7 @@ export default function RegisterScreen() {
                                     keyboardType="phone-pad"
                                     maxLength={10}
                                     placeholder="0999999999"
-                                    placeholderTextColor={theme.colors.textTertiary}
+                                    placeholderTextColor={tokens.colors.textTertiary}
                                 />
                             </View>
                         )}
@@ -351,7 +357,7 @@ export default function RegisterScreen() {
                         render={({ field: { onChange, value } }) => (
                             <View style={styles.inputGroup}>
                                 <View style={styles.inputIconWrap}>
-                                    <Ionicons name="mail-outline" size={16} color={theme.colors.textInverse} />
+                                    <Ionicons name="mail-outline" size={16} color={tokens.colors.textInverse} />
                                 </View>
                                 <TextInput
                                     style={styles.input}
@@ -365,7 +371,7 @@ export default function RegisterScreen() {
                                     autoCapitalize="none"
                                     keyboardType="email-address"
                                     placeholder="correo@uta.edu.ec"
-                                    placeholderTextColor={theme.colors.textTertiary}
+                                    placeholderTextColor={tokens.colors.textTertiary}
                                 />
                             </View>
                         )}
@@ -381,7 +387,7 @@ export default function RegisterScreen() {
                         render={({ field: { onChange, value } }) => (
                             <View style={styles.inputGroup}>
                                 <View style={styles.inputIconWrap}>
-                                    <Ionicons name="lock-closed-outline" size={16} color={theme.colors.textInverse} />
+                                    <Ionicons name="lock-closed-outline" size={16} color={tokens.colors.textInverse} />
                                 </View>
                                 <TextInput
                                     style={styles.input}
@@ -389,16 +395,16 @@ export default function RegisterScreen() {
                                     onChangeText={onChange}
                                     secureTextEntry={!showPassword}
                                     placeholder="Usa una contraseña segura"
-                                    placeholderTextColor={theme.colors.textTertiary}
+                                    placeholderTextColor={tokens.colors.textTertiary}
                                 />
                                 <Pressable
                                     style={styles.eyeButton}
                                     onPress={() => setShowPassword((prev) => !prev)}
                                 >
                                     {showPassword ? (
-                                        <Ionicons name="eye-off-outline" size={18} color={theme.colors.textSecondary} />
+                                        <Ionicons name="eye-off-outline" size={18} color={tokens.colors.textSecondary} />
                                     ) : (
-                                        <Ionicons name="eye-outline" size={18} color={theme.colors.textSecondary} />
+                                        <Ionicons name="eye-outline" size={18} color={tokens.colors.textSecondary} />
                                     )}
                                 </Pressable>
                             </View>
@@ -428,7 +434,7 @@ export default function RegisterScreen() {
                     <Text style={styles.label}>Confirmar contraseña</Text>
                     <View style={styles.inputGroup}>
                         <View style={styles.inputIconWrap}>
-                            <Ionicons name="lock-closed-outline" size={16} color={theme.colors.textInverse} />
+                            <Ionicons name="lock-closed-outline" size={16} color={tokens.colors.textInverse} />
                         </View>
                         <TextInput
                             style={styles.input}
@@ -436,16 +442,16 @@ export default function RegisterScreen() {
                             onChangeText={setConfirmPassword}
                             secureTextEntry={!showConfirmPassword}
                             placeholder="Repite tu contraseña"
-                            placeholderTextColor={theme.colors.textTertiary}
+                            placeholderTextColor={tokens.colors.textTertiary}
                         />
                         <Pressable
                             style={styles.eyeButton}
                             onPress={() => setShowConfirmPassword((prev) => !prev)}
                         >
                             {showConfirmPassword ? (
-                                <Ionicons name="eye-off-outline" size={18} color={theme.colors.textSecondary} />
+                                <Ionicons name="eye-off-outline" size={18} color={tokens.colors.textSecondary} />
                             ) : (
-                                <Ionicons name="eye-outline" size={18} color={theme.colors.textSecondary} />
+                                <Ionicons name="eye-outline" size={18} color={tokens.colors.textSecondary} />
                             )}
                         </Pressable>
                     </View>
@@ -458,7 +464,7 @@ export default function RegisterScreen() {
                             ) : (
                                 <View style={styles.pickerWrapper}>
                                     <View style={styles.inputIconWrap}>
-                                        <Ionicons name="book-outline" size={16} color={theme.colors.textInverse} />
+                                        <Ionicons name="book-outline" size={16} color={tokens.colors.textInverse} />
                                     </View>
                                     <Picker
                                         style={styles.picker}
@@ -490,7 +496,7 @@ export default function RegisterScreen() {
                         disabled={isSubmitting}
                     >
                         {isSubmitting ? (
-                            <ActivityIndicator color={theme.colors.textInverse} />
+                            <ActivityIndicator color={tokens.colors.textInverse} />
                         ) : (
                             <Text style={styles.buttonText}>Registrarse</Text>
                         )}
@@ -508,203 +514,220 @@ export default function RegisterScreen() {
     );
 }
 
-const styles = StyleSheet.create({
-    heroBackground: {
-        flex: 1,
-        padding: theme.spacing.lg,
-    },
-    overlay: {
-        position: "absolute",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: theme.colors.overlayBlack18,
-    },
-    homeButton: {
-        position: "absolute",
-        right: 20,
-        top: 56,
-        zIndex: 3,
-        width: 42,
-        height: 42,
-        borderRadius: 21,
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: theme.colors.primary,
-    },
-    container: {
-        flexGrow: 1,
-        paddingBottom: theme.spacing.xl,
-    },
-    card: {
-        marginTop: theme.spacing.lg,
-        backgroundColor: theme.colors.bgPrimary,
-        borderTopWidth: 6,
-        borderTopColor: theme.colors.primary,
-        borderRadius: theme.radius.lg,
-        padding: theme.spacing.lg,
-        ...theme.shadow.md,
-    },
-    logoWrap: {
-        alignItems: "center",
-        marginBottom: 8,
-    },
-    facultyLogo: {
-        width: 92,
-        height: 92,
-    },
-    facultyLogoPlaceholder: {
-        width: 92,
-        height: 92,
-        borderRadius: 46,
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: theme.colors.primaryLight,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-    },
-    facultyLogoPlaceholderText: {
-        color: theme.colors.primary,
-        fontWeight: "900",
-        letterSpacing: 1,
-    },
-    facultyTitle: {
-        marginTop: 10,
-        textAlign: "center",
-        fontSize: 12,
-        color: theme.colors.textSecondary,
-        fontWeight: "600",
-        lineHeight: 16,
-    },
-    title: {
-        fontSize: 28,
-        fontWeight: "700",
-        marginBottom: 4,
-        textAlign: "center",
-        color: theme.colors.textPrimary,
-    },
-    subtitle: {
-        textAlign: "center",
-        color: theme.colors.textSecondary,
-        marginBottom: theme.spacing.sm,
-    },
-    label: {
-        fontSize: 13,
-        fontWeight: "600",
-        marginTop: theme.spacing.sm,
-        color: theme.colors.textSecondary,
-    },
-    inputGroup: {
-        marginTop: 6,
-        borderWidth: 1,
-        borderColor: theme.colors.borderSecondary,
-        borderRadius: theme.radius.sm,
-        flexDirection: "row",
-        alignItems: "center",
-        overflow: "hidden",
-        backgroundColor: theme.colors.bgPrimary,
-    },
-    inputIconWrap: {
-        width: 44,
-        height: 44,
-        backgroundColor: theme.colors.primary,
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    input: {
-        flex: 1,
-        paddingHorizontal: 12,
-        paddingVertical: 10,
-        color: theme.colors.textPrimary,
-    },
-    eyeButton: {
-        paddingHorizontal: 12,
-        height: 44,
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: theme.colors.bgTertiary,
-    },
-    pickerBlock: {
-        marginTop: theme.spacing.sm,
-    },
-    pickerWrapper: {
-        marginTop: 6,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-        borderRadius: theme.radius.sm,
-        overflow: "hidden",
-        backgroundColor: theme.colors.bgPrimary,
-        flexDirection: "row",
-        alignItems: "center",
-    },
-    picker: {
-        flex: 1,
-        color: theme.colors.textPrimary,
-        backgroundColor: theme.colors.bgPrimary,
-    },
-    strengthWrap: {
-        marginTop: 8,
-    },
-    strengthHeader: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        marginBottom: 4,
-    },
-    strengthLabel: {
-        fontSize: 12,
-        color: theme.colors.textSecondary,
-    },
-    strengthLevel: {
-        fontSize: 12,
-        color: theme.colors.primary,
-        fontWeight: "700",
-    },
-    strengthTrack: {
-        height: 5,
-        backgroundColor: theme.colors.borderPrimary,
-        borderRadius: 4,
-        overflow: "hidden",
-    },
-    strengthBar: {
-        height: "100%",
-        backgroundColor: theme.colors.success,
-    },
-    button: {
-        backgroundColor: theme.colors.primary,
-        paddingVertical: 12,
-        borderRadius: theme.radius.sm,
-        marginTop: theme.spacing.md,
-        alignItems: "center",
-    },
-    buttonDisabled: {
-        opacity: 0.7,
-    },
-    buttonText: {
-        color: theme.colors.textInverse,
-        fontWeight: "700",
-    },
-    secondaryButton: {
-        borderWidth: 1,
-        borderColor: theme.colors.borderSecondary,
-        paddingVertical: 12,
-        borderRadius: theme.radius.sm,
-        marginTop: 10,
-        alignItems: "center",
-        backgroundColor: theme.colors.bgPrimary,
-    },
-    secondaryButtonText: {
-        color: theme.colors.textPrimary,
-        fontWeight: "600",
-    },
-    error: {
-        color: theme.colors.error,
-        marginTop: 6,
-    },
-    link: {
-        marginTop: theme.spacing.md,
-        textAlign: "center",
-        color: theme.colors.primary,
-        fontWeight: "600",
-    },
-});
+function createStyles(tokens: typeof import("../../src/shared").theme) {
+    return StyleSheet.create({
+        heroBackground: {
+            flex: 1,
+            padding: tokens.spacing.lg,
+        },
+        overlay: {
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: tokens.colors.overlayBlack18,
+        },
+        homeButton: {
+            position: "absolute",
+            right: 20,
+            top: 56,
+            zIndex: 3,
+            width: 42,
+            height: 42,
+            borderRadius: 21,
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: tokens.colors.primary,
+        },
+        themeToggle: {
+            position: "absolute",
+            right: 68,
+            top: 56,
+            zIndex: 3,
+            width: 36,
+            height: 36,
+            borderRadius: 18,
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: tokens.colors.navbarControlBg,
+            borderWidth: 1,
+            borderColor: tokens.colors.overlayWhite20,
+        },
+        container: {
+            flexGrow: 1,
+            paddingBottom: tokens.spacing.xl,
+        },
+        card: {
+            marginTop: tokens.spacing.lg,
+            backgroundColor: tokens.colors.bgPrimary,
+            borderTopWidth: 6,
+            borderTopColor: tokens.colors.primary,
+            borderRadius: tokens.radius.lg,
+            padding: tokens.spacing.lg,
+            ...tokens.shadow.md,
+        },
+        logoWrap: {
+            alignItems: "center",
+            marginBottom: 8,
+        },
+        facultyLogo: {
+            width: 92,
+            height: 92,
+        },
+        facultyLogoPlaceholder: {
+            width: 92,
+            height: 92,
+            borderRadius: 46,
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: tokens.colors.primaryLight,
+            borderWidth: 1,
+            borderColor: tokens.colors.borderPrimary,
+        },
+        facultyLogoPlaceholderText: {
+            color: tokens.colors.primary,
+            fontWeight: "900",
+            letterSpacing: 1,
+        },
+        facultyTitle: {
+            marginTop: 10,
+            textAlign: "center",
+            fontSize: 12,
+            color: tokens.colors.textSecondary,
+            fontWeight: "600",
+            lineHeight: 16,
+        },
+        title: {
+            fontSize: 28,
+            fontWeight: "700",
+            marginBottom: 4,
+            textAlign: "center",
+            color: tokens.colors.textPrimary,
+        },
+        subtitle: {
+            textAlign: "center",
+            color: tokens.colors.textSecondary,
+            marginBottom: tokens.spacing.sm,
+        },
+        label: {
+            fontSize: 13,
+            fontWeight: "600",
+            marginTop: tokens.spacing.sm,
+            color: tokens.colors.textSecondary,
+        },
+        inputGroup: {
+            marginTop: 6,
+            borderWidth: 1,
+            borderColor: tokens.colors.borderSecondary,
+            borderRadius: tokens.radius.sm,
+            flexDirection: "row",
+            alignItems: "center",
+            overflow: "hidden",
+            backgroundColor: tokens.colors.bgPrimary,
+        },
+        inputIconWrap: {
+            width: 44,
+            height: 44,
+            backgroundColor: tokens.colors.primary,
+            alignItems: "center",
+            justifyContent: "center",
+        },
+        input: {
+            flex: 1,
+            paddingHorizontal: 12,
+            paddingVertical: 10,
+            color: tokens.colors.textPrimary,
+        },
+        eyeButton: {
+            paddingHorizontal: 12,
+            height: 44,
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: tokens.colors.bgTertiary,
+        },
+        pickerBlock: {
+            marginTop: tokens.spacing.sm,
+        },
+        pickerWrapper: {
+            marginTop: 6,
+            borderWidth: 1,
+            borderColor: tokens.colors.borderPrimary,
+            borderRadius: tokens.radius.sm,
+            overflow: "hidden",
+            backgroundColor: tokens.colors.bgPrimary,
+            flexDirection: "row",
+            alignItems: "center",
+        },
+        picker: {
+            flex: 1,
+            color: tokens.colors.textPrimary,
+            backgroundColor: tokens.colors.bgPrimary,
+        },
+        strengthWrap: {
+            marginTop: 8,
+        },
+        strengthHeader: {
+            flexDirection: "row",
+            justifyContent: "space-between",
+            marginBottom: 4,
+        },
+        strengthLabel: {
+            fontSize: 12,
+            color: tokens.colors.textSecondary,
+        },
+        strengthLevel: {
+            fontSize: 12,
+            color: tokens.colors.primary,
+            fontWeight: "700",
+        },
+        strengthTrack: {
+            height: 5,
+            backgroundColor: tokens.colors.borderPrimary,
+            borderRadius: 4,
+            overflow: "hidden",
+        },
+        strengthBar: {
+            height: "100%",
+            backgroundColor: tokens.colors.success,
+        },
+        button: {
+            backgroundColor: tokens.colors.primary,
+            paddingVertical: 12,
+            borderRadius: tokens.radius.sm,
+            marginTop: tokens.spacing.md,
+            alignItems: "center",
+        },
+        buttonDisabled: {
+            opacity: 0.7,
+        },
+        buttonText: {
+            color: tokens.colors.textInverse,
+            fontWeight: "700",
+        },
+        secondaryButton: {
+            borderWidth: 1,
+            borderColor: tokens.colors.borderSecondary,
+            paddingVertical: 12,
+            borderRadius: tokens.radius.sm,
+            marginTop: 10,
+            alignItems: "center",
+            backgroundColor: tokens.colors.bgPrimary,
+        },
+        secondaryButtonText: {
+            color: tokens.colors.textPrimary,
+            fontWeight: "600",
+        },
+        error: {
+            color: tokens.colors.error,
+            marginTop: 6,
+        },
+        link: {
+            marginTop: tokens.spacing.md,
+            textAlign: "center",
+            color: tokens.colors.primary,
+            fontWeight: "600",
+        },
+    });
+
+}
