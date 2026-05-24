@@ -39,7 +39,7 @@ export default function ForgotPasswordScreen() {
     const [error, setError] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-    const { tokens, mode, toggleTheme } = useAppTheme();
+    const { tokens } = useAppTheme();
     const styles = createStyles(tokens);
 
     const submit = async () => {
@@ -82,9 +82,7 @@ export default function ForgotPasswordScreen() {
                 <Ionicons name="home-outline" color={tokens.colors.textInverse} size={20} />
             </Pressable>
 
-            <Pressable style={styles.themeToggle} onPress={() => toggleTheme()}>
-                <Ionicons name={mode === "dark" ? "moon" : "sunny"} size={16} color={tokens.colors.textInverse} />
-            </Pressable>
+
 
             <View style={styles.card}>
                 <View style={styles.logoWrap}>
@@ -150,9 +148,9 @@ export default function ForgotPasswordScreen() {
                 ) : null}
 
                 <View style={styles.loginRow}>
-                    <Link href="/(auth)/login" style={styles.loginLink}>
-                        Volver al inicio de sesión
-                    </Link>
+                    <Pressable onPress={() => router.replace("/(auth)/login")}>
+                        <Text style={styles.loginLink}>Volver al inicio de sesión</Text>
+                    </Pressable>
                 </View>
             </View>
         </ImageBackground>

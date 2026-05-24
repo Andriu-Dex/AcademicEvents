@@ -67,7 +67,7 @@ export default function LoginScreen() {
         },
     });
 
-    const { tokens, mode, toggleTheme } = useAppTheme();
+    const { tokens } = useAppTheme();
     const styles = createStyles(tokens);
 
     const onSubmit = async (values: LoginForm) => {
@@ -97,9 +97,7 @@ export default function LoginScreen() {
             <Pressable style={styles.homeButton} onPress={() => router.replace("/home")}>
                 <Ionicons name="home" color={tokens.colors.textInverse} size={18} />
             </Pressable>
-            <Pressable style={styles.themeToggle} onPress={() => toggleTheme()}>
-                <Ionicons name={mode === "dark" ? "moon" : "sunny"} size={16} color={tokens.colors.textInverse} />
-            </Pressable>
+
 
             <KeyboardAvoidingView
                 style={{ flex: 1 }}

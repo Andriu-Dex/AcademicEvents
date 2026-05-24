@@ -109,7 +109,7 @@ export default function ResetPasswordWithTokenScreen() {
     const [submitError, setSubmitError] = useState<string | null>(null);
     const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
 
-    const { tokens, mode, toggleTheme } = useAppTheme();
+    const { tokens } = useAppTheme();
     const styles = createStyles(tokens);
 
     useEffect(() => {
@@ -193,9 +193,7 @@ export default function ResetPasswordWithTokenScreen() {
                 <Ionicons name="home-outline" color={tokens.colors.textInverse} size={20} />
             </Pressable>
 
-            <Pressable style={styles.themeToggle} onPress={() => toggleTheme()}>
-                <Ionicons name={mode === "dark" ? "moon" : "sunny"} size={16} color={tokens.colors.textInverse} />
-            </Pressable>
+
 
             <View style={styles.card}>
                 <View style={styles.logoWrap}>

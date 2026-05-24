@@ -170,7 +170,7 @@ export default function RegisterScreen() {
         },
     });
 
-    const { tokens, mode, toggleTheme } = useAppTheme();
+    const { tokens } = useAppTheme();
     const styles = createStyles(tokens);
 
     const email = watch("email");
@@ -219,9 +219,7 @@ export default function RegisterScreen() {
             <Pressable style={styles.homeButton} onPress={() => router.replace("/home")}>
                 <Ionicons name="home-outline" color={tokens.colors.textInverse} size={20} />
             </Pressable>
-            <Pressable style={styles.themeToggle} onPress={() => toggleTheme()}>
-                <Ionicons name={mode === "dark" ? "moon" : "sunny"} size={16} color={tokens.colors.textInverse} />
-            </Pressable>
+
             <ScrollView contentContainerStyle={styles.container}>
                 <Animated.View
                     style={[
