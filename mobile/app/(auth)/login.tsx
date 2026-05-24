@@ -215,7 +215,7 @@ export default function LoginScreen() {
                             disabled={isSubmitting}
                         >
                             {isSubmitting ? (
-                                <ActivityIndicator color="#ffffff" />
+                                <ActivityIndicator color={theme.colors.textInverse} />
                             ) : (
                                 <>
                                     <Ionicons name="log-in-outline" size={18} color={theme.colors.textInverse} />
@@ -255,7 +255,7 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: "rgba(10,5,15,0.45)",
+        backgroundColor: theme.colors.overlayBlack45,
     },
     homeButton: {
         position: "absolute",
@@ -267,9 +267,9 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "rgba(138, 21, 56, 0.85)",
+        backgroundColor: theme.colors.primaryOpaque85,
         borderWidth: 1,
-        borderColor: "rgba(255,255,255,0.2)",
+        borderColor: theme.colors.overlayWhite20,
     },
     scrollContent: {
         flexGrow: 1,

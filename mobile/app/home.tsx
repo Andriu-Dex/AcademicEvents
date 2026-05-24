@@ -434,7 +434,7 @@ export function HomeContent(
     const featuredSidePadding = Math.max(0, (screenWidth - featuredCardWidth) / 2);
 
     return (
-        <LinearGradient colors={["#f8eff2", "#ffffff"]} style={styles.container}>
+        <LinearGradient colors={theme.gradients.home} style={styles.container}>
             <LinearGradient colors={theme.gradients.header} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.topNavbar}>
                 <View style={styles.navbarRow}>
                     <Pressable style={styles.brandGroup} onPress={() => scrollToSection("inicio")}>
@@ -644,7 +644,7 @@ export function HomeContent(
                                                     </View>
                                                 )}
                                                 <LinearGradient
-                                                    colors={["transparent", "rgba(26,31,46,0.78)"]}
+                                                    colors={["transparent", theme.colors.eventImageOverlayDark]}
                                                     style={styles.featuredImageOverlay}
                                                 />
                                                 <View style={styles.featuredBadge}>
@@ -1094,7 +1094,7 @@ const styles = StyleSheet.create({
         zIndex: 20,
         paddingTop: 48,
         paddingBottom: 14,
-        borderBottomColor: "rgba(255,255,255,0.18)",
+                        borderBottomColor: theme.colors.overlayWhite18,
         borderBottomWidth: 1,
     },
     navbarRow: {
@@ -1109,7 +1109,7 @@ const styles = StyleSheet.create({
         width: 54,
         height: 54,
         borderRadius: 14,
-        backgroundColor: "rgba(255,255,255,0.10)",
+        backgroundColor: theme.colors.overlayWhite10,
         alignItems: "center",
         justifyContent: "center",
         overflow: "hidden",
@@ -1133,7 +1133,7 @@ const styles = StyleSheet.create({
         width: 46,
         height: 46,
         borderRadius: 23,
-        backgroundColor: "rgba(255,255,255,0.18)",
+        backgroundColor: theme.colors.overlayWhite18,
     },
     navCtas: {
         flexDirection: "row",
@@ -1144,7 +1144,7 @@ const styles = StyleSheet.create({
         width: 38,
         height: 38,
         borderRadius: 19,
-        backgroundColor: "rgba(255,255,255,0.18)",
+        backgroundColor: theme.colors.navbarControlBg,
         alignItems: "center",
         justifyContent: "center",
     },
@@ -1156,9 +1156,9 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         paddingVertical: 7,
         borderRadius: 999,
-        backgroundColor: "rgba(255,255,255,0.15)",
+        backgroundColor: theme.colors.overlayWhite15,
         borderWidth: 1,
-        borderColor: "rgba(255,255,255,0.2)",
+        borderColor: theme.colors.overlayWhite20,
     },
     navUserAvatar: { width: 26, height: 26, borderRadius: 13, backgroundColor: theme.colors.bgSecondary },
     navUserAvatarFallback: { width: 26, height: 26, borderRadius: 13, backgroundColor: theme.colors.bgSecondary },
@@ -1169,7 +1169,7 @@ const styles = StyleSheet.create({
         borderRadius: 999,
         backgroundColor: theme.colors.utaPrimary,
         borderWidth: 1,
-        borderColor: "rgba(255,255,255,0.55)",
+        borderColor: theme.colors.overlayWhite55,
     },
     navCtaPrimaryText: {
         color: theme.colors.textInverse,
@@ -1180,9 +1180,9 @@ const styles = StyleSheet.create({
         paddingHorizontal: 14,
         paddingVertical: 10,
         borderRadius: 999,
-        backgroundColor: "#ffffff",
+        backgroundColor: theme.colors.bgPrimary,
         borderWidth: 1,
-        borderColor: "rgba(255,255,255,0.85)",
+        borderColor: theme.colors.overlayWhite85,
     },
     navCtaSecondaryText: {
         color: theme.colors.utaPrimary,
@@ -1197,13 +1197,13 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
         paddingVertical: 8,
         borderRadius: 999,
-        backgroundColor: "rgba(255,255,255,0.18)",
+        backgroundColor: theme.colors.overlayWhite18,
     },
     navTabGhost: {
         paddingHorizontal: 12,
         paddingVertical: 8,
         borderRadius: 999,
-        backgroundColor: "rgba(255,255,255,0.10)",
+        backgroundColor: theme.colors.overlayWhite10,
     },
     navTabText: {
         fontSize: 13,
@@ -1231,7 +1231,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         gap: 8,
         alignSelf: "flex-start",
-        backgroundColor: "rgba(255,255,255,0.18)",
+        backgroundColor: theme.colors.overlayWhite18,
         borderRadius: 999,
         paddingHorizontal: 10,
         paddingVertical: 6,
@@ -1242,7 +1242,7 @@ const styles = StyleSheet.create({
     },
     modalBackdrop: {
         flex: 1,
-        backgroundColor: "rgba(0,0,0,0.5)",
+        backgroundColor: theme.colors.overlayBlack50,
         justifyContent: "flex-end",
     },
     modalCard: {
@@ -1363,12 +1363,12 @@ const styles = StyleSheet.create({
         fontWeight: "800",
     },
     heroSubtitle: {
-        color: "rgba(255,255,255,0.95)",
+        color: theme.colors.heroTextMedium,
         fontSize: 14,
         fontWeight: "700",
     },
     heroDescription: {
-        color: "rgba(255,255,255,0.96)",
+        color: theme.colors.heroTextHigh,
         fontSize: 14,
         lineHeight: 22,
     },
@@ -1381,14 +1381,14 @@ const styles = StyleSheet.create({
         flex: 1,
         minHeight: 48,
         borderRadius: theme.radius.md,
-        backgroundColor: "rgba(255,255,255,0.22)",
+        backgroundColor: theme.colors.overlayWhite22,
         alignItems: "center",
         justifyContent: "center",
         flexDirection: "row",
         gap: 8,
         paddingHorizontal: 10,
         borderWidth: 1,
-        borderColor: "rgba(255,255,255,0.3)",
+        borderColor: theme.colors.overlayWhite30,
     },
     primaryActionText: {
         color: theme.colors.textInverse,
@@ -1400,7 +1400,7 @@ const styles = StyleSheet.create({
         flex: 1,
         minHeight: 48,
         borderRadius: theme.radius.md,
-        backgroundColor: "#ffffff",
+        backgroundColor: theme.colors.bgPrimary,
         alignItems: "center",
         justifyContent: "center",
         flexDirection: "row",
@@ -1423,9 +1423,9 @@ const styles = StyleSheet.create({
         width: "48.5%",
         borderRadius: theme.radius.md,
         padding: 12,
-        backgroundColor: "rgba(255,255,255,0.15)",
+        backgroundColor: theme.colors.overlayWhite15,
         borderWidth: 1,
-        borderColor: "rgba(255,255,255,0.22)",
+        borderColor: theme.colors.overlayWhite22,
     },
     statValue: {
         color: theme.colors.utaAccent,
@@ -1434,7 +1434,7 @@ const styles = StyleSheet.create({
         letterSpacing: 0.2,
     },
     statLabel: {
-        color: "rgba(255,255,255,0.92)",
+        color: theme.colors.heroTextHigh,
         fontSize: 12,
         marginTop: 3,
         fontWeight: "600",
@@ -1872,7 +1872,7 @@ const styles = StyleSheet.create({
     },
     footer: {
         marginTop: 10,
-        backgroundColor: "#111827",
+        backgroundColor: theme.colors.adminPanelFooterBg,
         borderRadius: theme.radius.md,
         padding: theme.spacing.lg,
         gap: 14,
@@ -1887,34 +1887,34 @@ const styles = StyleSheet.create({
         width: 52,
         height: 52,
         borderRadius: 26,
-        backgroundColor: "rgba(255,255,255,0.08)",
+        backgroundColor: theme.colors.overlayWhite08,
     },
     footerBrandName: {
         fontSize: 17,
-        color: "#ffffff",
+        color: theme.colors.textInverse,
         fontWeight: "800",
         marginTop: 1,
     },
     footerBrandAcronymFixed: {
         fontSize: 12,
-        color: "rgba(255,255,255,0.86)",
+        color: theme.colors.overlayWhite86,
         fontWeight: "800",
         letterSpacing: 1.2,
         textTransform: "uppercase",
     },
     footerBrandSub: {
         fontSize: 13,
-        color: "rgba(255,255,255,0.88)",
+        color: theme.colors.overlayWhite88,
         marginTop: 1,
     },
     footerBrandSubMuted: {
         fontSize: 13,
-        color: "rgba(255,255,255,0.76)",
+        color: theme.colors.overlayWhite76,
         marginTop: 1,
     },
     footerDivider: {
         height: 1,
-        backgroundColor: "rgba(255,255,255,0.14)",
+        backgroundColor: theme.colors.overlayWhite14,
     },
     footerColumns: {
         flexDirection: "column",
@@ -1925,18 +1925,18 @@ const styles = StyleSheet.create({
         gap: 4,
     },
     footerColumnTitle: {
-        color: "#ffffff",
+        color: theme.colors.textInverse,
         fontSize: 13,
         fontWeight: "800",
         marginBottom: 2,
     },
     footerLink: {
-        color: "rgba(255,255,255,0.9)",
+        color: theme.colors.overlayWhite90,
         fontSize: 13,
         fontWeight: "600",
     },
     footerContactText: {
-        color: "rgba(255,255,255,0.82)",
+        color: theme.colors.overlayWhite82,
         fontSize: 13,
         lineHeight: 19,
     },
@@ -1952,7 +1952,7 @@ const styles = StyleSheet.create({
         borderRadius: 17,
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "rgba(255,255,255,0.16)",
+        backgroundColor: theme.colors.overlayWhite16,
     },
 });
 

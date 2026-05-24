@@ -322,7 +322,7 @@ const styles = StyleSheet.create({
         gap: 12,
         overflow: "hidden",
         borderWidth: 1,
-        borderColor: "rgba(255,255,255,0.12)",
+        borderColor: theme.colors.overlayWhite12,
     },
     bannerBrandRow: {
         flexDirection: "row",
@@ -335,14 +335,14 @@ const styles = StyleSheet.create({
         borderRadius: 14,
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "rgba(255,255,255,0.18)",
+        backgroundColor: theme.colors.overlayWhite18,
         overflow: "hidden",
     },
     bannerLogo: {
         width: 36,
         height: 36,
     },
-    bannerLabel: { color: "rgba(255,255,255,0.82)", fontSize: 12, fontWeight: "700" },
+    bannerLabel: { color: theme.colors.overlayWhite82, fontSize: 12, fontWeight: "700" },
     bannerTitle: { color: theme.colors.textInverse, fontSize: 20, fontWeight: "900", letterSpacing: 0.2 },
     bannerStatsRow: {
         flexDirection: "row",
@@ -351,11 +351,11 @@ const styles = StyleSheet.create({
     bannerStatPill: {
         flex: 1,
         borderRadius: theme.radius.md,
-        backgroundColor: "rgba(255,255,255,0.12)",
+        backgroundColor: theme.colors.overlayWhite12,
         paddingVertical: 10,
         paddingHorizontal: 12,
         borderWidth: 1,
-        borderColor: "rgba(255,255,255,0.12)",
+        borderColor: theme.colors.overlayWhite12,
     },
     bannerStatValue: {
         color: theme.colors.textInverse,
@@ -363,7 +363,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
     },
     bannerStatLabel: {
-        color: "rgba(255,255,255,0.82)",
+        color: theme.colors.overlayWhite82,
         fontSize: 11,
         fontWeight: "700",
         marginTop: 2,

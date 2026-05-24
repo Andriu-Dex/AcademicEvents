@@ -1048,7 +1048,7 @@ const styles = StyleSheet.create({
     // Modal Styles
     modalBackdrop: {
         flex: 1,
-        backgroundColor: "rgba(0,0,0,0.5)",
+        backgroundColor: theme.colors.overlayBlack50,
         justifyContent: "flex-end",
     },
     modalCard: {

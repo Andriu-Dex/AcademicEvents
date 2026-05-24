@@ -156,13 +156,13 @@ function RecentRegistrationsSection({
             ) : (
                 recent.map((item) => (
                     <View key={item.id} style={styles.recentItem}>
-                        <View style={[styles.recentStatusBar, { backgroundColor: registrationStatusColor(item.status) }]} />
+                                    <View style={[styles.recentStatusBar, { backgroundColor: registrationStatusColor(item.status) }]} />
                         <View style={styles.recentContent}>
                             <Text style={styles.recentTitle} numberOfLines={2}>
                                 {item.event?.title ?? "Evento"}
                             </Text>
                             <View style={styles.recentMeta}>
-                                <View style={[styles.statusPill, { backgroundColor: `${registrationStatusColor(item.status)}1a` }]}>
+                                    <View style={[styles.statusPill, { backgroundColor: `${registrationStatusColor(item.status)}1a` }]}> 
                                     <Text style={[styles.statusPillText, { color: registrationStatusColor(item.status) }]}>
                                         {registrationStatusLabel(item.status)}
                                     </Text>
@@ -516,7 +516,7 @@ const styles = StyleSheet.create({
         height: 88,
         borderRadius: 44,
         borderWidth: 3,
-        borderColor: "rgba(255,255,255,0.5)",
+        borderColor: theme.colors.overlayWhite50,
         overflow: "hidden",
         marginBottom: 12,
         ...theme.shadow.md,
@@ -541,9 +541,9 @@ const styles = StyleSheet.create({
         paddingHorizontal: 14,
         paddingVertical: 5,
         borderRadius: theme.radius.full,
-        backgroundColor: "rgba(255,255,255,0.2)",
+        backgroundColor: theme.colors.overlayWhite20,
         borderWidth: 1,
-        borderColor: "rgba(255,255,255,0.3)",
+        borderColor: theme.colors.overlayWhite30,
     },
     roleText: {
         color: theme.colors.textInverse,

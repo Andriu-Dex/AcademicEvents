@@ -489,9 +489,9 @@ export default function RegisterScreen() {
                         onPress={handleSubmit(onSubmit)}
                         disabled={isSubmitting}
                     >
-                        {isSubmitting ? (
-                            <ActivityIndicator color="#ffffff" />
-                        ) : (
+                            {isSubmitting ? (
+                                <ActivityIndicator color={theme.colors.textInverse} />
+                            ) : (
                             <Text style={styles.buttonText}>Registrarse</Text>
                         )}
                     </Pressable>
@@ -519,7 +519,7 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: "rgba(0,0,0,0.18)",
+        backgroundColor: theme.colors.overlayBlack18,
     },
     homeButton: {
         position: "absolute",

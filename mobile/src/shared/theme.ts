@@ -28,11 +28,75 @@ export const theme = {
         errorLight: "rgba(239, 68, 68, 0.1)",
         tabBarBg: "#ffffff",
         tabBarBorder: "#f0f2f5",
+        /* Semantic tokens (area-specific) */
+        /* Auth (login / register) */
+        authBackground: "#ffffff",
+        authCardBackground: "#ffffff",
+        authPrimary: "#8a1538",
+        authPrimaryText: "#ffffff",
+
+        /* Navbar */
+        navbarBackground: "transparent",
+        navbarBrandBg: "rgba(255,255,255,0.10)",
+        navbarControlBg: "rgba(255,255,255,0.18)",
+
+        /* Home */
+        homeGradientStart: "#f8eff2",
+        homeGradientEnd: "#ffffff",
+        heroTextHigh: "rgba(255,255,255,0.96)",
+        heroTextMedium: "rgba(255,255,255,0.95)",
+
+        /* Events */
+        eventCardBg: "#ffffff",
+        eventAccentBorderLight: "rgba(138,21,56,0.15)",
+        eventImageOverlayDark: "rgba(26,31,46,0.78)",
+
+        /* Overlays */
+        overlayWhite10: "rgba(255,255,255,0.10)",
+        overlayWhite15: "rgba(255,255,255,0.15)",
+        overlayWhite18: "rgba(255,255,255,0.18)",
+        overlayWhite20: "rgba(255,255,255,0.20)",
+        overlayWhite22: "rgba(255,255,255,0.22)",
+        overlayWhite85: "rgba(255,255,255,0.85)",
+        overlayBlack50: "rgba(0,0,0,0.5)",
+        overlayBlack45: "rgba(10,5,15,0.45)",
+        primaryOpaque85: "rgba(138, 21, 56, 0.85)",
+        overlayBlack18: "rgba(0,0,0,0.18)",
+        overlayBlack22: "rgba(0,0,0,0.22)",
+        overlayWhite90: "rgba(255,255,255,0.9)",
+        /* Additional precise alpha tokens used across screens */
+        overlayWhite08: "rgba(255,255,255,0.08)",
+        overlayWhite14: "rgba(255,255,255,0.14)",
+        overlayWhite16: "rgba(255,255,255,0.16)",
+        overlayWhite30: "rgba(255,255,255,0.3)",
+        overlayWhite55: "rgba(255,255,255,0.55)",
+        overlayWhite76: "rgba(255,255,255,0.76)",
+        overlayWhite86: "rgba(255,255,255,0.86)",
+        overlayWhite88: "rgba(255,255,255,0.88)",
+        overlayWhite24: "rgba(255,255,255,0.24)",
+        overlayWhite32: "rgba(255,255,255,0.32)",
+        overlayWhite50: "rgba(255,255,255,0.5)",
+        overlayWhite12: "rgba(255,255,255,0.12)",
+        overlayWhite82: "rgba(255,255,255,0.82)",
+
+        /* Profiles (student / admin) */
+        profileCardBg: "#ffffff",
+        profileTextPrimary: "#1a1f2e",
+
+        /* Admin / Reporting panels */
+        adminPanelBg: "#ffffff",
+        adminPanelFooterBg: "#111827",
+
+        /* Error / Danger */
+        errorBgLight: "#fff6f6",
+        errorBorderLight: "#fecaca",
+        errorTextStrong: "rgba(185, 28, 28, 0.85)",
     },
     gradients: {
         primary: ["#8a1538", "#5f1027"] as const,
         header: ["#8a1538", "#6e0e2d"] as const,
         hero: ["rgba(138, 21, 56, 0.96)", "rgba(80, 10, 30, 0.98)"] as const,
+        home: ["#f8eff2", "#ffffff"] as const,
         card: ["#f8f9fc", "#eef1f7"] as const,
         surface: ["#ffffff", "#f9fafb"] as const,
     },
@@ -67,14 +131,14 @@ export const theme = {
         },
         primary: {
             shadowColor: "#8a1538",
-            shadowOpacity: 0.30,
+            shadowOpacity: 0.3,
             shadowRadius: 22,
             shadowOffset: { width: 0, height: 8 },
             elevation: 8,
         },
         tab: {
             shadowColor: "#000",
-            shadowOpacity: 0.10,
+            shadowOpacity: 0.1,
             shadowRadius: 20,
             shadowOffset: { width: 0, height: -4 },
             elevation: 12,

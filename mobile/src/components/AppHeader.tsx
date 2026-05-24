@@ -130,7 +130,7 @@ export function AppHeader({
                                     <Text style={styles.userName} numberOfLines={1}>
                                         {displayName}
                                     </Text>
-                                    <Ionicons name="chevron-forward" size={14} color="rgba(255,255,255,0.9)" />
+                                    <Ionicons name="chevron-forward" size={14} color={theme.colors.overlayWhite90} />
                                 </Pressable>
                             )}
                         </View>
@@ -184,13 +184,13 @@ const styles = StyleSheet.create({
         width: 24,
         height: 24,
         borderRadius: 12,
-        backgroundColor: "rgba(255,255,255,0.2)",
+        backgroundColor: theme.colors.overlayWhite20,
     },
     brandLogoFallback: {
         width: 24,
         height: 24,
         borderRadius: 12,
-        backgroundColor: "rgba(255,255,255,0.32)",
+        backgroundColor: theme.colors.overlayWhite32,
     },
     title: {
         color: theme.colors.textInverse,
@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
         letterSpacing: 0.2,
     },
     facultyText: {
-        color: "rgba(255,255,255,0.88)",
+        color: theme.colors.overlayWhite88,
         fontSize: 11,
         marginTop: 1,
         fontWeight: "600",
@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
         width: 40,
         height: 40,
         borderRadius: 20,
-        backgroundColor: "rgba(255,255,255,0.15)",
+        backgroundColor: theme.colors.overlayWhite15,
         alignItems: "center",
         justifyContent: "center",
     },
@@ -223,22 +223,22 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         paddingVertical: 7,
         borderRadius: theme.radius.full,
-        backgroundColor: "rgba(255,255,255,0.15)",
+        backgroundColor: theme.colors.overlayWhite15,
         borderWidth: 1,
-        borderColor: "rgba(255,255,255,0.2)",
+        borderColor: theme.colors.overlayWhite20,
     },
     avatar: {
         width: 26,
         height: 26,
         borderRadius: 13,
         borderWidth: 1.5,
-        borderColor: "rgba(255,255,255,0.5)",
+        borderColor: theme.colors.overlayWhite50,
     },
     avatarFallback: {
         width: 26,
         height: 26,
         borderRadius: 13,
-        backgroundColor: "rgba(255,255,255,0.9)",
+        backgroundColor: theme.colors.overlayWhite90,
         alignItems: "center",
         justifyContent: "center",
     },
@@ -250,9 +250,9 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         paddingVertical: 9,
         borderRadius: theme.radius.full,
-        backgroundColor: "rgba(255,255,255,0.18)",
+        backgroundColor: theme.colors.overlayWhite18,
         borderWidth: 1,
-        borderColor: "rgba(255,255,255,0.24)",
+        borderColor: theme.colors.overlayWhite24,
     },
     logoutText: {
         color: theme.colors.textInverse,

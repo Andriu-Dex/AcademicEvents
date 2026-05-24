@@ -297,7 +297,7 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: "rgba(0,0,0,0.22)",
+        backgroundColor: theme.colors.overlayBlack22,
     },
     homeButton: {
         position: "absolute",

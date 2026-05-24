@@ -306,7 +306,7 @@ export default function PublicEventsScreen() {
     };
 
     return (
-        <LinearGradient colors={["#f8eff2", "#ffffff"]} style={styles.container}>
+        <LinearGradient colors={theme.gradients.home} style={styles.container}>
             <View style={styles.header}>
                 <Pressable onPress={() => router.back()} style={styles.headerButton}>
                     <Ionicons name="arrow-back" size={20} color={theme.colors.textInverse} />
@@ -472,7 +472,7 @@ const styles = StyleSheet.create({
         width: 40,
         height: 40,
         borderRadius: 20,
-        backgroundColor: "rgba(255,255,255,0.18)",
+        backgroundColor: theme.colors.overlayWhite18,
         alignItems: "center",
         justifyContent: "center",
     },
