@@ -395,7 +395,7 @@ const styles = StyleSheet.create({
         borderRadius: theme.radius.sm,
         padding: theme.spacing.sm,
         borderWidth: 1,
-        borderColor: "rgba(239,68,68,0.2)",
+        borderColor: theme.colors.error20,
     },
     errorBoxText: {
         flex: 1,

@@ -1036,7 +1036,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
         paddingVertical: 8,
         borderRadius: theme.radius.md,
-        backgroundColor: "rgba(239,68,68,0.08)",
+        backgroundColor: theme.colors.error08,
     },
     dangerButtonText: { color: theme.colors.error, fontWeight: "700" },
     buttonDisabled: { opacity: 0.5 },

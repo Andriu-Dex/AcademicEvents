@@ -49,6 +49,7 @@ export const theme = {
         /* Events */
         eventCardBg: "#ffffff",
         eventAccentBorderLight: "rgba(138,21,56,0.15)",
+        primary22: "rgba(138,21,56,0.22)",
         eventImageOverlayDark: "rgba(26,31,46,0.78)",
 
         /* Overlays */
@@ -78,6 +79,11 @@ export const theme = {
         overlayWhite50: "rgba(255,255,255,0.5)",
         overlayWhite12: "rgba(255,255,255,0.12)",
         overlayWhite82: "rgba(255,255,255,0.82)",
+        /* Additional error / black overlay tokens */
+        error20: "rgba(239,68,68,0.2)",
+        error08: "rgba(239,68,68,0.08)",
+        overlayBlack65: "rgba(0,0,0,0.65)",
+        overlayBlack68: "rgba(10,15,28,0.68)",
 
         /* Profiles (student / admin) */
         profileCardBg: "#ffffff",

@@ -156,13 +156,13 @@ function RecentRegistrationsSection({
             ) : (
                 recent.map((item) => (
                     <View key={item.id} style={styles.recentItem}>
-                                    <View style={[styles.recentStatusBar, { backgroundColor: registrationStatusColor(item.status) }]} />
+                        <View style={[styles.recentStatusBar, { backgroundColor: registrationStatusColor(item.status) }]} />
                         <View style={styles.recentContent}>
                             <Text style={styles.recentTitle} numberOfLines={2}>
                                 {item.event?.title ?? "Evento"}
                             </Text>
                             <View style={styles.recentMeta}>
-                                    <View style={[styles.statusPill, { backgroundColor: `${registrationStatusColor(item.status)}1a` }]}> 
+                                <View style={[styles.statusPill, { backgroundColor: `${registrationStatusColor(item.status)}1a` }]}>
                                     <Text style={[styles.statusPillText, { color: registrationStatusColor(item.status) }]}>
                                         {registrationStatusLabel(item.status)}
                                     </Text>
@@ -644,7 +644,7 @@ const styles = StyleSheet.create({
         borderRadius: theme.radius.sm,
         padding: theme.spacing.sm,
         borderWidth: 1,
-        borderColor: "rgba(239,68,68,0.2)",
+        borderColor: theme.colors.error20,
     },
     errorBoxText: { flex: 1, color: theme.colors.error, fontWeight: "600", lineHeight: 18, fontSize: 12 },
 

@@ -522,7 +522,7 @@ const styles = StyleSheet.create({
     emptySubtitle: { color: theme.colors.textTertiary, textAlign: "center", lineHeight: 20, paddingHorizontal: theme.spacing.lg },
     modalOverlay: {
         flex: 1,
-        backgroundColor: "rgba(0,0,0,0.65)",
+        backgroundColor: theme.colors.overlayBlack65,
         alignItems: "center",
         justifyContent: "center",
         padding: 16,

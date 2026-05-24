@@ -489,9 +489,9 @@ export default function RegisterScreen() {
                         onPress={handleSubmit(onSubmit)}
                         disabled={isSubmitting}
                     >
-                            {isSubmitting ? (
-                                <ActivityIndicator color={theme.colors.textInverse} />
-                            ) : (
+                        {isSubmitting ? (
+                            <ActivityIndicator color={theme.colors.textInverse} />
+                        ) : (
                             <Text style={styles.buttonText}>Registrarse</Text>
                         )}
                     </Pressable>

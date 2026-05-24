@@ -1068,7 +1068,7 @@ const styles = StyleSheet.create({
     },
     previewBackdrop: {
         flex: 1,
-        backgroundColor: "rgba(10, 15, 28, 0.68)",
+        backgroundColor: theme.colors.overlayBlack68,
         justifyContent: "center",
         padding: theme.spacing.lg,
     },
