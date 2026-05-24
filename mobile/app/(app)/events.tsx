@@ -20,7 +20,7 @@ import { fetchMyRegistrations } from "../../src/api/registrations";
 import { fetchUserEventsPaginated, type UserEventsFilters } from "../../src/api/userEvents";
 import type { PublicEventExtended } from "../../src/api/publicEvents";
 import { useAuthStore } from "../../src/store/authStore";
-import { theme } from "../../src/shared";
+import { useAppTheme, useThemedStyles, type ThemeTokens } from "../../src/shared";
 
 type ClientOnlyFilters = {
     soloCarrera: boolean;
@@ -101,10 +101,12 @@ function CheckboxRow({
     checked,
     onPress,
 }: Readonly<{ label: string; checked: boolean; onPress: () => void }>) {
+    const { tokens } = useAppTheme();
+    const styles = useThemedStyles(createStyles);
     return (
         <Pressable style={styles.checkboxRow} onPress={onPress}>
             <View style={[styles.checkbox, checked && styles.checkboxChecked]}>
-                {checked ? <Ionicons name="checkmark" size={14} color={theme.colors.textInverse} /> : null}
+                {checked ? <Ionicons name="checkmark" size={14} color={tokens.colors.onPrimary} /> : null}
             </View>
             <Text style={styles.checkboxLabel} numberOfLines={2}>
                 {label}
@@ -124,6 +126,8 @@ function EventCard({
     isRegistering: boolean;
     isAlreadyRegistered: boolean;
 }>) {
+    const { tokens } = useAppTheme();
+    const styles = useThemedStyles(createStyles);
     const isFree = (event.price ?? 0) <= 0;
     const modality = translateEventModality(event.modality);
     const eventType = translateEventType(event.type);
@@ -145,7 +149,7 @@ function EventCard({
                 <Image source={{ uri: toAbsoluteUrl(event.coverImageUrl) }} style={styles.cover} resizeMode="cover" />
             ) : (
                 <View style={styles.coverFallback}>
-                    <Ionicons name="calendar-outline" size={32} color={theme.colors.textTertiary} />
+                    <Ionicons name="calendar-outline" size={32} color={tokens.colors.textTertiary} />
                 </View>
             )}
 
@@ -179,7 +183,7 @@ function EventCard({
                 {/* Meta datos */}
                 <View style={styles.metaGrid}>
                     <View style={styles.metaItem}>
-                        <Ionicons name="time-outline" size={14} color={theme.colors.primary} />
+                        <Ionicons name="time-outline" size={14} color={tokens.colors.primary} />
                         <Text style={styles.metaText} numberOfLines={1}>
                             {formatDateRange(event.startDate, event.endDate)}
                         </Text>
@@ -187,21 +191,21 @@ function EventCard({
 
                     {event.durationHours ? (
                         <View style={styles.metaItem}>
-                            <Ionicons name="hourglass-outline" size={14} color={theme.colors.primary} />
+                            <Ionicons name="hourglass-outline" size={14} color={tokens.colors.primary} />
                             <Text style={styles.metaText}>{event.durationHours} horas</Text>
                         </View>
                     ) : null}
 
                     <View style={styles.metaItem}>
-                        <Ionicons name="people-outline" size={14} color={theme.colors.primary} />
-                        <Text style={[styles.metaText, hasNoSpots && { color: theme.colors.error }]}>
+                        <Ionicons name="people-outline" size={14} color={tokens.colors.primary} />
+                        <Text style={[styles.metaText, hasNoSpots && { color: tokens.colors.error }]}>
                             {capacityLabel}
                         </Text>
                     </View>
 
                     {modality ? (
                         <View style={styles.metaItem}>
-                            <Ionicons name={modalityIcon(modality)} size={14} color={theme.colors.primary} />
+                            <Ionicons name={modalityIcon(modality)} size={14} color={tokens.colors.primary} />
                             <Text style={styles.metaText}>{modality}</Text>
                         </View>
                     ) : null}
@@ -220,7 +224,7 @@ function EventCard({
                     <Ionicons
                         name={isAlreadyRegistered ? "checkmark-circle" : "add-circle-outline"}
                         size={18}
-                        color={theme.colors.textInverse}
+                        color={tokens.colors.onPrimary}
                     />
                     <Text style={styles.registerBtnText}>
                         {isAlreadyRegistered ? "Ya estás inscrito" : isRegistering ? "Inscribiendo..." : hasNoSpots ? "Sin cupos" : "Inscribirme"}
@@ -234,6 +238,8 @@ function EventCard({
 export default function EventsScreen() {
     const router = useRouter();
     const user = useAuthStore((s) => s.user);
+    const { tokens } = useAppTheme();
+    const styles = useThemedStyles(createStyles);
 
     const [page, setPage] = useState(1);
     const limit = 10;
@@ -368,14 +374,14 @@ export default function EventsScreen() {
     if (eventsQuery.isLoading) {
         body = (
             <View style={styles.center}>
-                <ActivityIndicator size="large" color={theme.colors.primary} />
+                <ActivityIndicator size="large" color={tokens.colors.primary} />
                 <Text style={styles.loadingText}>Cargando eventos...</Text>
             </View>
         );
     } else if (eventsQuery.isError) {
         body = (
             <View style={styles.center}>
-                <Ionicons name="alert-circle-outline" size={48} color={theme.colors.error} />
+                <Ionicons name="alert-circle-outline" size={48} color={tokens.colors.error} />
                 <Text style={styles.errorText}>No se pudieron cargar los eventos.</Text>
             </View>
         );
@@ -405,7 +411,7 @@ export default function EventsScreen() {
                 )}
                 ListEmptyComponent={
                     <View style={styles.emptyState}>
-                        <Ionicons name="calendar-outline" size={52} color={theme.colors.textTertiary} />
+                        <Ionicons name="calendar-outline" size={52} color={tokens.colors.textTertiary} />
                         <Text style={styles.emptyTitle}>Sin eventos</Text>
                         <Text style={styles.emptySubtitle}>
                             No se encontraron eventos con los filtros actuales.
@@ -425,7 +431,7 @@ export default function EventsScreen() {
                                 disabled={page <= 1}
                                 onPress={() => setPage((p) => Math.max(1, p - 1))}
                             >
-                                <Ionicons name="chevron-back" size={18} color={theme.colors.textInverse} />
+                                <Ionicons name="chevron-back" size={18} color={tokens.colors.textInverse} />
                                 <Text style={styles.pageBtnText}>Anterior</Text>
                             </Pressable>
                             <View style={styles.pageInfoWrap}>
@@ -439,7 +445,7 @@ export default function EventsScreen() {
                                 onPress={() => setPage((p) => p + 1)}
                             >
                                 <Text style={styles.pageBtnText}>Siguiente</Text>
-                                <Ionicons name="chevron-forward" size={18} color={theme.colors.textInverse} />
+                                <Ionicons name="chevron-forward" size={18} color={tokens.colors.textInverse} />
                             </Pressable>
                         </View>
                     ) : null
@@ -457,7 +463,7 @@ export default function EventsScreen() {
                 {isUtaEmail ? (
                     <View style={styles.careerRow}>
                         <View style={styles.careerInfo}>
-                            <Ionicons name="school-outline" size={15} color={theme.colors.primary} />
+                            <Ionicons name="school-outline" size={15} color={tokens.colors.primary} />
                             <Text style={styles.careerText} numberOfLines={1}>
                                 {profileQuery.isLoading
                                     ? "Cargando carrera…"
@@ -477,11 +483,11 @@ export default function EventsScreen() {
 
                 <View style={styles.searchRow}>
                     <View style={styles.searchInputWrap}>
-                        <Ionicons name="search-outline" size={18} color={theme.colors.textSecondary} />
+                        <Ionicons name="search-outline" size={18} color={tokens.colors.textSecondary} />
                         <TextInput
                             style={styles.searchInput}
                             placeholder="Buscar eventos..."
-                            placeholderTextColor={theme.colors.textTertiary}
+                            placeholderTextColor={tokens.colors.textTertiary}
                             value={searchInput}
                             onChangeText={setSearchInput}
                             onSubmitEditing={applySearch}
@@ -489,7 +495,7 @@ export default function EventsScreen() {
                         />
                         {searchInput.length > 0 ? (
                             <Pressable onPress={() => setSearchInput("")}>
-                                <Ionicons name="close-circle" size={18} color={theme.colors.textTertiary} />
+                                <Ionicons name="close-circle" size={18} color={tokens.colors.textTertiary} />
                             </Pressable>
                         ) : null}
                     </View>
@@ -503,7 +509,7 @@ export default function EventsScreen() {
                         <Ionicons
                             name="funnel-outline"
                             size={16}
-                            color={filtersOpen ? theme.colors.textInverse : theme.colors.primary}
+                            color={filtersOpen ? tokens.colors.onPrimary : tokens.colors.primary}
                         />
                         <Text style={[styles.filterToggleText, filtersOpen && styles.filterToggleTextActive]}>
                             Filtros{hasActiveFilters ? " •" : ""}
@@ -511,13 +517,13 @@ export default function EventsScreen() {
                         <Ionicons
                             name={filtersOpen ? "chevron-up" : "chevron-down"}
                             size={16}
-                            color={filtersOpen ? theme.colors.textInverse : theme.colors.primary}
+                            color={filtersOpen ? tokens.colors.onPrimary : tokens.colors.primary}
                         />
                     </Pressable>
 
                     {hasActiveFilters && (
                         <Pressable style={styles.clearBtn} onPress={clearFilters}>
-                            <Ionicons name="refresh-outline" size={14} color={theme.colors.textSecondary} />
+                            <Ionicons name="refresh-outline" size={14} color={tokens.colors.textSecondary} />
                             <Text style={styles.clearBtnText}>Limpiar</Text>
                         </Pressable>
                     )}
@@ -599,7 +605,8 @@ export default function EventsScreen() {
     );
 }
 
-const styles = StyleSheet.create({
+function createStyles(theme: ThemeTokens) {
+    return {
     container: { flex: 1, backgroundColor: theme.colors.bgSecondary },
     center: { flex: 1, alignItems: "center", justifyContent: "center", padding: theme.spacing.lg, gap: 10 },
     loadingText: { color: theme.colors.textSecondary, fontWeight: "700" },
@@ -662,7 +669,7 @@ const styles = StyleSheet.create({
         borderColor: theme.colors.primary,
     },
     filterToggleText: { color: theme.colors.primary, fontWeight: "800", fontSize: 13 },
-    filterToggleTextActive: { color: theme.colors.textInverse },
+    filterToggleTextActive: { color: theme.colors.onPrimary },
     clearBtn: {
         flexDirection: "row",
         alignItems: "center",
@@ -712,7 +719,7 @@ const styles = StyleSheet.create({
         borderColor: theme.colors.primary,
     },
     modalityChipText: { color: theme.colors.textSecondary, fontWeight: "700", fontSize: 13 },
-    modalityChipTextActive: { color: theme.colors.textInverse },
+    modalityChipTextActive: { color: theme.colors.onPrimary },
 
     checkboxRow: { flexDirection: "row", alignItems: "center", gap: 8 },
     checkbox: {
@@ -733,8 +740,10 @@ const styles = StyleSheet.create({
 
     // Tarjeta de evento
     card: {
-        backgroundColor: theme.colors.bgPrimary,
+        backgroundColor: theme.colors.bgCard,
         borderRadius: theme.radius.lg,
+        borderWidth: 1,
+        borderColor: theme.colors.borderPrimary,
         overflow: "hidden",
         ...theme.shadow.sm,
     },
@@ -793,7 +802,7 @@ const styles = StyleSheet.create({
     },
     registerBtnDisabled: { opacity: 0.45, shadowOpacity: 0 },
     registerBtnText: {
-        color: theme.colors.textInverse,
+        color: theme.colors.onPrimary,
         fontWeight: "800",
         fontSize: 14,
     },
@@ -826,7 +835,7 @@ const styles = StyleSheet.create({
         backgroundColor: theme.colors.primary,
     },
     pageBtnDisabled: { backgroundColor: theme.colors.borderSecondary },
-    pageBtnText: { color: theme.colors.textInverse, fontWeight: "800", fontSize: 13 },
+    pageBtnText: { color: theme.colors.onPrimary, fontWeight: "800", fontSize: 13 },
 
     // Estado vacío
     emptyState: { alignItems: "center", paddingVertical: theme.spacing.xxl, gap: 10 },
@@ -844,5 +853,6 @@ const styles = StyleSheet.create({
         borderRadius: theme.radius.full,
         backgroundColor: theme.colors.primary,
     },
-    clearBtnLargeText: { color: theme.colors.textInverse, fontWeight: "800" },
-});
+    clearBtnLargeText: { color: theme.colors.onPrimary, fontWeight: "800" },
+    };
+}

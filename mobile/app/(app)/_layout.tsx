@@ -67,7 +67,9 @@ export default function AppLayout() {
                 tabBarActiveTintColor: tokens.colors.primary,
                 tabBarInactiveTintColor: tokens.colors.textTertiary,
                 tabBarStyle: {
-                    backgroundColor: tokens.colors.bgPrimary,
+                    backgroundColor: tokens.colors.tabBarBg,
+                    borderTopColor: tokens.colors.tabBarBorder,
+                    borderTopWidth: 1,
                     borderTopWidth: 0,
                     height: TAB_BAR_HEIGHT,
                     paddingBottom: Platform.OS === "ios" ? 26 : 14,

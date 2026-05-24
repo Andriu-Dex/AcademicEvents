@@ -4,7 +4,6 @@ import {
     ActivityIndicator,
     Animated,
     Dimensions,
-    Platform,
     FlatList,
     Image,
     LayoutChangeEvent,
@@ -23,7 +22,7 @@ import { useQuery } from "@tanstack/react-query";
 import { apiClient, getCurrentApiBaseUrl, getLastApiProbeLog, toAbsoluteUrl } from "../src/api/client";
 import { useFeaturedEvents } from "../src/features/events/useFeaturedEvents";
 import { useAuthStore } from "../src/store/authStore";
-import { ThemeToggleButton, useAppTheme, useThemeToggleHost } from "../src/shared";
+import { useAppTheme } from "../src/shared";
 import type { PublicEvent } from "../src/api/publicEvents";
 import { fetchMyRegistrations } from "../src/api/registrations";
 
@@ -328,12 +327,9 @@ export function HomeContent(
     const segments = useSegments();
     const user = useAuthStore((s) => s.user);
     const { tokens } = useAppTheme();
-    useThemeToggleHost();
     const theme = tokens;
     const styles = createStyles(theme);
     const isAdminArea = segments.includes("(admin)");
-    const hasBottomTabs = segments.includes("(app)") || segments.includes("(admin)");
-    const themeToggleBottom = hasBottomTabs ? (Platform.OS === "ios" ? 110 : 96) : 28;
     let rightNavNode: React.ReactNode = null;
     if (user) {
         rightNavNode = (
@@ -1014,8 +1010,6 @@ export function HomeContent(
                     ) : null}
                 </View>
             </ScrollView>
-
-            <ThemeToggleButton bottom={themeToggleBottom} right={18} />
 
             <Modal visible={!!selectedEvent} animationType="slide" transparent onRequestClose={() => setSelectedEvent(null)}>
                 <View style={styles.modalBackdrop}>

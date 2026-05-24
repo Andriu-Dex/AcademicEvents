@@ -24,7 +24,7 @@ import {
     type RegistrationItem,
 } from "../../src/api/registrations";
 import { toAbsoluteUrl } from "../../src/api/client";
-import { theme } from "../../src/shared";
+import { useAppTheme, useThemedStyles, type ThemeTokens } from "../../src/shared";
 
 function formatDate(raw: string) {
     if (!raw) return "";
@@ -33,12 +33,12 @@ function formatDate(raw: string) {
     return date.toLocaleDateString("es-EC", { year: "numeric", month: "short", day: "2-digit" });
 }
 
-function statusColor(status: string) {
+function statusColor(status: string, colors: ThemeTokens["colors"]) {
     const normalized = status.trim().toUpperCase();
-    if (normalized.includes("APROB") || normalized.includes("APPROVED")) return theme.colors.success;
-    if (normalized.includes("REPROB") || normalized.includes("REJECT")) return theme.colors.error;
-    if (normalized.includes("PEND")) return theme.colors.warning;
-    return theme.colors.primary;
+    if (normalized.includes("APROB") || normalized.includes("APPROVED")) return colors.success;
+    if (normalized.includes("REPROB") || normalized.includes("REJECT")) return colors.error;
+    if (normalized.includes("PEND")) return colors.warning;
+    return colors.primary;
 }
 
 function statusLabel(status: string) {
@@ -96,11 +96,11 @@ function isImageProof(url: string) {
     return /(\.jpg|\.jpeg|\.png|\.webp|\.gif)(\?|$)/i.test(lower);
 }
 
-function filterColor(key: string) {
-    if (key === "PEND") return theme.colors.warning;
-    if (key === "APROB") return theme.colors.success;
-    if (key === "REPROB") return theme.colors.error;
-    return theme.colors.primary;
+function filterColor(key: string, colors: ThemeTokens["colors"]) {
+    if (key === "PEND") return colors.warning;
+    if (key === "APROB") return colors.success;
+    if (key === "REPROB") return colors.error;
+    return colors.primary;
 }
 
 function filterLabel(key: string) {
@@ -118,6 +118,8 @@ function FilterChip({
     color,
     onPress,
 }: Readonly<{ label: string; selected: boolean; color: string; onPress: () => void }>) {
+    const { tokens } = useAppTheme();
+    const styles = useThemedStyles(createStyles);
     return (
         <Pressable
             onPress={onPress}
@@ -130,7 +132,7 @@ function FilterChip({
             <Text
                 style={[
                     styles.chipText,
-                    { color: selected ? theme.colors.textInverse : color },
+                    { color: selected ? tokens.colors.onPrimary : color },
                 ]}
             >
                 {label}
@@ -148,8 +150,10 @@ function RegistrationCard({
     onDownloadCertificate: (item: RegistrationItem) => void;
     onOpenProof: (url: string) => void;
 }>) {
+    const { tokens } = useAppTheme();
+    const styles = useThemedStyles(createStyles);
     const event = item.event;
-    const color = statusColor(item.status);
+    const color = statusColor(item.status, tokens.colors);
     const label = statusLabel(item.status);
     const icon = statusIcon(item.status);
     const canDownloadCertificate = isCertificateEligible(item.status);
@@ -170,7 +174,7 @@ function RegistrationCard({
                 </View>
 
                 <View style={styles.metaRow}>
-                    <Ionicons name="calendar-outline" size={13} color={theme.colors.textTertiary} />
+                    <Ionicons name="calendar-outline" size={13} color={tokens.colors.textTertiary} />
                     <Text style={styles.metaText}>
                         Inscrito el {formatDate(item.createdAt) || "fecha no disponible"}
                     </Text>
@@ -178,17 +182,17 @@ function RegistrationCard({
 
                 {item.paymentProofUrl ? (
                     <Pressable style={styles.proofBtn} onPress={() => onOpenProof(item.paymentProofUrl ?? "")}>
-                        <Ionicons name="document-text-outline" size={15} color={theme.colors.primary} />
+                        <Ionicons name="document-text-outline" size={15} color={tokens.colors.primary} />
                         <Text style={styles.proofBtnText}>Ver comprobante de pago</Text>
-                        <Ionicons name="eye-outline" size={14} color={theme.colors.primary} />
+                        <Ionicons name="eye-outline" size={14} color={tokens.colors.primary} />
                     </Pressable>
                 ) : null}
 
                 {canDownloadCertificate ? (
                     <Pressable style={styles.certificateBtn} onPress={() => onDownloadCertificate(item)}>
-                        <Ionicons name="ribbon-outline" size={15} color={theme.colors.success} />
+                        <Ionicons name="ribbon-outline" size={15} color={tokens.colors.success} />
                         <Text style={styles.certificateBtnText}>Descargar certificado</Text>
-                        <Ionicons name="download-outline" size={14} color={theme.colors.success} />
+                        <Ionicons name="download-outline" size={14} color={tokens.colors.success} />
                     </Pressable>
                 ) : null}
             </View>
@@ -197,6 +201,8 @@ function RegistrationCard({
 }
 
 export default function RegistrationsScreen() {
+    const { tokens } = useAppTheme();
+    const styles = useThemedStyles(createStyles);
     const [statusFilter, setStatusFilter] = useState<string>("TODOS");
     const [proofPreviewUrl, setProofPreviewUrl] = useState<string | null>(null);
     const [manualRefreshing, setManualRefreshing] = useState(false);
@@ -345,14 +351,14 @@ export default function RegistrationsScreen() {
     if (query.isLoading) {
         body = (
             <View style={styles.center}>
-                <ActivityIndicator size="large" color={theme.colors.primary} />
+                <ActivityIndicator size="large" color={tokens.colors.primary} />
                 <Text style={styles.loadingText}>Cargando inscripciones...</Text>
             </View>
         );
     } else if (query.isError) {
         body = (
             <View style={styles.center}>
-                <Ionicons name="alert-circle-outline" size={48} color={theme.colors.error} />
+                <Ionicons name="alert-circle-outline" size={48} color={tokens.colors.error} />
                 <Text style={styles.errorText}>No se pudieron cargar tus inscripciones.</Text>
             </View>
         );
@@ -367,7 +373,7 @@ export default function RegistrationsScreen() {
                     <RefreshControl
                         refreshing={manualRefreshing}
                         onRefresh={() => void onManualRefresh()}
-                        tintColor={theme.colors.primary}
+                        tintColor={tokens.colors.primary}
                     />
                 }
                 renderItem={({ item }) => (
@@ -379,7 +385,7 @@ export default function RegistrationsScreen() {
                 )}
                 ListEmptyComponent={
                     <View style={styles.emptyState}>
-                        <Ionicons name="clipboard-outline" size={52} color={theme.colors.textTertiary} />
+                        <Ionicons name="clipboard-outline" size={52} color={tokens.colors.textTertiary} />
                         <Text style={styles.emptyTitle}>Sin inscripciones</Text>
                         <Text style={styles.emptySubtitle}>
                             {statusFilter === "TODOS"
@@ -407,7 +413,7 @@ export default function RegistrationsScreen() {
                             key={key}
                             label={`${filterLabel(key)} (${counts[key as keyof typeof counts]})`}
                             selected={statusFilter === key}
-                            color={filterColor(key)}
+                            color={filterColor(key, tokens.colors)}
                             onPress={() => setStatusFilter(key)}
                         />
                     ))}
@@ -432,7 +438,8 @@ export default function RegistrationsScreen() {
     );
 }
 
-const styles = StyleSheet.create({
+function createStyles(theme: ThemeTokens) {
+    return {
     container: { flex: 1, backgroundColor: theme.colors.bgSecondary },
     filtersWrap: {
         backgroundColor: theme.colors.bgPrimary,
@@ -464,8 +471,10 @@ const styles = StyleSheet.create({
     errorText: { color: theme.colors.error, fontWeight: "700", textAlign: "center" },
     list: { padding: theme.spacing.md, gap: 12, paddingBottom: theme.spacing.xl },
     card: {
-        backgroundColor: theme.colors.bgPrimary,
+        backgroundColor: theme.colors.bgCard,
         borderRadius: theme.radius.lg,
+        borderWidth: 1,
+        borderColor: theme.colors.borderPrimary,
         flexDirection: "row",
         overflow: "hidden",
         ...theme.shadow.sm,
@@ -547,5 +556,6 @@ const styles = StyleSheet.create({
     },
     modalPrimaryBtn: { backgroundColor: theme.colors.primary, borderColor: theme.colors.primary },
     modalBtnText: { color: theme.colors.textPrimary, fontWeight: "700" },
-    modalPrimaryText: { color: theme.colors.textInverse },
-});
+    modalPrimaryText: { color: theme.colors.onPrimary },
+    };
+}

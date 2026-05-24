@@ -20,7 +20,7 @@ import { fetchMyProfile, uploadDocuments, uploadProfileImage } from "../../src/a
 import { fetchMyRegistrations, type RegistrationItem } from "../../src/api/registrations";
 import { queryClient } from "../../src/shared/queryClient";
 import { useAuthStore } from "../../src/store/authStore";
-import { theme } from "../../src/shared";
+import { useAppTheme, useThemedStyles, type ThemeTokens } from "../../src/shared";
 import { formatRoleLabel } from "../../src/utils/roles";
 
 type PickedFile = { uri: string; name: string; mimeType: string };
@@ -70,10 +70,12 @@ function FieldRow({
     value,
     icon,
 }: Readonly<{ label: string; value: string; icon: keyof typeof Ionicons.glyphMap }>) {
+    const { tokens } = useAppTheme();
+    const styles = useThemedStyles(createStyles);
     return (
         <View style={styles.fieldRow}>
             <View style={styles.fieldIconWrap}>
-                <Ionicons name={icon} size={16} color={theme.colors.primary} />
+                <Ionicons name={icon} size={16} color={tokens.colors.primary} />
             </View>
             <View style={{ flex: 1 }}>
                 <Text style={styles.fieldLabel}>{label}</Text>
@@ -90,9 +92,11 @@ function ProfileHeader({
     fullName,
     role,
 }: Readonly<{ profileImageUrl: string | null; fullName: string; role: string }>) {
+    const { tokens } = useAppTheme();
+    const styles = useThemedStyles(createStyles);
     return (
         <LinearGradient
-            colors={theme.gradients.header}
+            colors={tokens.gradients.header}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.profileHero}
@@ -102,7 +106,7 @@ function ProfileHeader({
                     <Image source={{ uri: toAbsoluteUrl(profileImageUrl) }} style={styles.avatar} />
                 ) : (
                     <View style={styles.avatarFallback}>
-                        <Ionicons name="person" size={34} color={theme.colors.primary} />
+                        <Ionicons name="person" size={34} color={tokens.colors.primary} />
                     </View>
                 )}
             </View>
@@ -125,11 +129,11 @@ function registrationStatusLabel(status: string) {
     return status || "-";
 }
 
-function registrationStatusColor(status: string) {
+function registrationStatusColor(status: string, colors: ThemeTokens["colors"]) {
     const key = (status ?? "").trim().toUpperCase();
-    if (key === "ACCEPTED" || key === "APPROVED") return theme.colors.success;
-    if (key === "REJECTED") return theme.colors.error;
-    return theme.colors.warning;
+    if (key === "ACCEPTED" || key === "APPROVED") return colors.success;
+    if (key === "REJECTED") return colors.error;
+    return colors.warning;
 }
 
 function RecentRegistrationsSection({
@@ -137,6 +141,8 @@ function RecentRegistrationsSection({
 }: Readonly<{
     registrations: RegistrationItem[];
 }>) {
+    const { tokens } = useAppTheme();
+    const styles = useThemedStyles(createStyles);
     const recent = [...registrations]
         .sort((a, b) => {
             const ta = new Date(a.createdAt).getTime();
@@ -150,20 +156,20 @@ function RecentRegistrationsSection({
             <SectionTitle icon="clipboard-outline" title="Mis Inscripciones Recientes" />
             {recent.length === 0 ? (
                 <View style={styles.emptyState}>
-                    <Ionicons name="clipboard-outline" size={28} color={theme.colors.textTertiary} />
+                    <Ionicons name="clipboard-outline" size={28} color={tokens.colors.textTertiary} />
                     <Text style={styles.emptyText}>Aún no tienes inscripciones recientes.</Text>
                 </View>
             ) : (
                 recent.map((item) => (
-                    <View key={item.id} style={styles.recentItem}>
-                        <View style={[styles.recentStatusBar, { backgroundColor: registrationStatusColor(item.status) }]} />
+                        <View key={item.id} style={styles.recentItem}>
+                        <View style={[styles.recentStatusBar, { backgroundColor: registrationStatusColor(item.status, tokens.colors) }]} />
                         <View style={styles.recentContent}>
                             <Text style={styles.recentTitle} numberOfLines={2}>
                                 {item.event?.title ?? "Evento"}
                             </Text>
                             <View style={styles.recentMeta}>
-                                <View style={[styles.statusPill, { backgroundColor: `${registrationStatusColor(item.status)}1a` }]}>
-                                    <Text style={[styles.statusPillText, { color: registrationStatusColor(item.status) }]}>
+                                <View style={[styles.statusPill, { backgroundColor: `${registrationStatusColor(item.status, tokens.colors)}1a` }]}>
+                                    <Text style={[styles.statusPillText, { color: registrationStatusColor(item.status, tokens.colors) }]}>
                                         {registrationStatusLabel(item.status)}
                                     </Text>
                                 </View>
@@ -178,9 +184,11 @@ function RecentRegistrationsSection({
 }
 
 function SectionTitle({ title, icon }: Readonly<{ title: string; icon?: keyof typeof Ionicons.glyphMap }>) {
+    const { tokens } = useAppTheme();
+    const styles = useThemedStyles(createStyles);
     return (
         <View style={styles.sectionTitleRow}>
-            {icon ? <Ionicons name={icon} size={16} color={theme.colors.primary} /> : null}
+            {icon ? <Ionicons name={icon} size={16} color={tokens.colors.primary} /> : null}
             <Text style={styles.sectionTitle}>{title}</Text>
         </View>
     );
@@ -197,11 +205,13 @@ function PhotoSection({
     onPickImage: () => Promise<void>;
     onUploadImage: () => Promise<void>;
 }>) {
+    const { tokens } = useAppTheme();
+    const styles = useThemedStyles(createStyles);
     return (
         <View style={styles.subSection}>
             <SectionTitle icon="camera-outline" title="Foto de perfil" />
             <Pressable style={styles.secondaryBtn} onPress={onPickImage} disabled={isSaving}>
-                <Ionicons name="image-outline" size={18} color={theme.colors.primary} />
+                <Ionicons name="image-outline" size={18} color={tokens.colors.primary} />
                 <Text style={styles.secondaryBtnText} numberOfLines={1}>
                     {pickedImage ? pickedImage.name : "Seleccionar imagen"}
                 </Text>
@@ -234,19 +244,21 @@ function DocumentsSection({
     onPickDoc: (key: "cedula" | "papeleta" | "matricula") => Promise<void>;
     onUploadDocs: () => Promise<void>;
 }>) {
+    const { tokens } = useAppTheme();
+    const styles = useThemedStyles(createStyles);
     return (
         <View style={styles.subSection}>
             <SectionTitle icon="document-text-outline" title="Documentos" />
 
             <Pressable style={styles.secondaryBtn} onPress={() => onPickDoc("cedula")} disabled={isSaving}>
-                <Ionicons name="document-outline" size={18} color={theme.colors.primary} />
+                <Ionicons name="document-outline" size={18} color={tokens.colors.primary} />
                 <Text style={styles.secondaryBtnText} numberOfLines={1}>
                     {docs.cedula ? `Cédula: ${docs.cedula.name}` : "Seleccionar cédula"}
                 </Text>
             </Pressable>
 
             <Pressable style={styles.secondaryBtn} onPress={() => onPickDoc("papeleta")} disabled={isSaving}>
-                <Ionicons name="document-outline" size={18} color={theme.colors.primary} />
+                <Ionicons name="document-outline" size={18} color={tokens.colors.primary} />
                 <Text style={styles.secondaryBtnText} numberOfLines={1}>
                     {docs.papeleta ? `Papeleta: ${docs.papeleta.name}` : "Seleccionar papeleta"}
                 </Text>
@@ -258,7 +270,7 @@ function DocumentsSection({
                     onPress={() => onPickDoc("matricula")}
                     disabled={isSaving}
                 >
-                    <Ionicons name="document-outline" size={18} color={theme.colors.primary} />
+                    <Ionicons name="document-outline" size={18} color={tokens.colors.primary} />
                     <Text style={styles.secondaryBtnText} numberOfLines={1}>
                         {docs.matricula ? `Matrícula: ${docs.matricula.name}` : "Seleccionar matrícula"}
                     </Text>
@@ -277,7 +289,7 @@ function DocumentsSection({
                         })
                     }
                 >
-                    <Ionicons name="open-outline" size={18} color={theme.colors.primary} />
+                    <Ionicons name="open-outline" size={18} color={tokens.colors.primary} />
                     <Text style={styles.linkText} numberOfLines={1}>
                         Ver documento actual ({fileLabel(profileDocumentUrl)})
                     </Text>
@@ -293,7 +305,7 @@ function DocumentsSection({
             </Pressable>
 
             <View style={styles.hintBox}>
-                <Ionicons name="information-circle-outline" size={14} color={theme.colors.textSecondary} />
+                <Ionicons name="information-circle-outline" size={14} color={tokens.colors.textSecondary} />
                 <Text style={styles.hintText}>
                     {isUtaEmail
                         ? "Requerido: cédula, papeleta y matrícula."
@@ -384,6 +396,8 @@ function useProfileUploadActions(isUtaEmail: boolean) {
 }
 
 export default function ProfileScreen() {
+    const { tokens } = useAppTheme();
+    const styles = useThemedStyles(createStyles);
     const user = useAuthStore((s) => s.user);
     const isUtaEmail = Boolean(user?.email?.toLowerCase().endsWith("@uta.edu.ec"));
     const uploads = useProfileUploadActions(isUtaEmail);
@@ -408,14 +422,14 @@ export default function ProfileScreen() {
     if (profileQuery.isLoading) {
         body = (
             <View style={styles.center}>
-                <ActivityIndicator size="large" color={theme.colors.primary} />
+                <ActivityIndicator size="large" color={tokens.colors.primary} />
                 <Text style={styles.loadingText}>Cargando perfil...</Text>
             </View>
         );
     } else if (profileQuery.isError) {
         body = (
             <View style={styles.center}>
-                <Ionicons name="alert-circle-outline" size={48} color={theme.colors.error} />
+                <Ionicons name="alert-circle-outline" size={48} color={tokens.colors.error} />
                 <Text style={styles.errorText}>No se pudo cargar tu perfil.</Text>
             </View>
         );
@@ -472,7 +486,7 @@ export default function ProfileScreen() {
 
                     {uploads.saveError ? (
                         <View style={styles.errorBox}>
-                            <Ionicons name="warning-outline" size={16} color={theme.colors.error} />
+                            <Ionicons name="warning-outline" size={16} color={tokens.colors.error} />
                             <Text style={styles.errorBoxText}>{uploads.saveError}</Text>
                         </View>
                     ) : null}
@@ -491,7 +505,8 @@ export default function ProfileScreen() {
     );
 }
 
-const styles = StyleSheet.create({
+function createStyles(theme: ThemeTokens) {
+    return {
     container: { flex: 1, backgroundColor: theme.colors.bgSecondary },
     content: { paddingBottom: theme.spacing.xl },
     center: {
@@ -532,7 +547,7 @@ const styles = StyleSheet.create({
     heroName: {
         fontSize: 20,
         fontWeight: "800",
-        color: theme.colors.textInverse,
+        color: theme.colors.onPrimary,
         textAlign: "center",
         letterSpacing: 0.2,
     },
@@ -546,7 +561,7 @@ const styles = StyleSheet.create({
         borderColor: theme.colors.overlayWhite30,
     },
     roleText: {
-        color: theme.colors.textInverse,
+        color: theme.colors.onPrimary,
         fontSize: 12,
         fontWeight: "700",
     },
@@ -555,8 +570,10 @@ const styles = StyleSheet.create({
     sectionCard: {
         margin: theme.spacing.md,
         marginTop: theme.spacing.md,
-        backgroundColor: theme.colors.bgPrimary,
+        backgroundColor: theme.colors.bgCard,
         borderRadius: theme.radius.lg,
+        borderWidth: 1,
+        borderColor: theme.colors.borderPrimary,
         padding: theme.spacing.md,
         ...theme.shadow.sm,
     },
@@ -601,7 +618,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
     },
-    primaryBtnText: { color: theme.colors.textInverse, fontWeight: "800", fontSize: 14 },
+    primaryBtnText: { color: theme.colors.onPrimary, fontWeight: "800", fontSize: 14 },
     secondaryBtn: {
         height: 48,
         backgroundColor: theme.colors.bgSecondary,
@@ -674,4 +691,5 @@ const styles = StyleSheet.create({
     },
     statusPillText: { fontSize: 11, fontWeight: "800" },
     recentDate: { color: theme.colors.textTertiary, fontSize: 11, fontWeight: "600" },
-});
+    };
+}

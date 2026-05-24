@@ -33,7 +33,7 @@ export default function RootLayout() {
     return (
         <QueryClientProvider client={queryClient}>
             <ThemeProvider>
-                <View style={{ flex: 1 }}>
+                <View style={{ flex: 1 }} pointerEvents="box-none">
                     <Stack screenOptions={{ headerShown: false }} />
                     <GlobalThemeToggle />
                 </View>
@@ -43,9 +43,8 @@ export default function RootLayout() {
 }
 
 function GlobalThemeToggle() {
-    const { hasLocalThemeToggle } = useAppTheme();
     const segments = useSegments();
-    if (hasLocalThemeToggle) {
+    if (segments.includes("(auth)")) {
         return null;
     }
     const hasBottomTabs = segments.includes("(app)") || segments.includes("(admin)");

@@ -34,7 +34,7 @@ function createStyles(tokens: typeof import("./theme").theme, bottom: number, ri
             position: "absolute",
             right,
             bottom: Platform.OS === "ios" ? bottom + 4 : bottom,
-            zIndex: 30,
+            zIndex: 9999,
             width: 36,
             height: 36,
             borderRadius: 18,
