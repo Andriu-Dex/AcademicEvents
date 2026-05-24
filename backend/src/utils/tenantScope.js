@@ -2,7 +2,7 @@
  * Fuerza tenantId en filtros Prisma para evitar cruces entre tenants.
  */
 const withTenantWhere = (tenantId, where = {}) => ({
-  ...(where || {}),
+  ...where,
   tenantId,
 });
 
@@ -14,11 +14,24 @@ const withTenantScope = (tenantId, params = {}) => ({
   where: withTenantWhere(tenantId, params.where),
 });
 
+const normalizeOrderBy = (orderBy) => {
+  if (!orderBy || Array.isArray(orderBy) || typeof orderBy !== "object") {
+    return orderBy;
+  }
+
+  const entries = Object.entries(orderBy);
+  if (entries.length <= 1) {
+    return orderBy;
+  }
+
+  return entries.map(([field, direction]) => ({ [field]: direction }));
+};
+
 /**
  * Aplica tenantId al bloque data de operaciones de escritura.
  */
 const withTenantData = (tenantId, data = {}) => ({
-  ...(data || {}),
+  ...data,
   tenantId,
 });
 
@@ -28,9 +41,15 @@ const withTenantData = (tenantId, data = {}) => ({
  */
 const createTenantScoped = (prismaClient, tenantId) => ({
   findMany: (model, params = {}) =>
-    prismaClient[model].findMany(withTenantScope(tenantId, params)),
+    prismaClient[model].findMany({
+      ...withTenantScope(tenantId, params),
+      orderBy: normalizeOrderBy(params.orderBy),
+    }),
   findFirst: (model, params = {}) =>
-    prismaClient[model].findFirst(withTenantScope(tenantId, params)),
+    prismaClient[model].findFirst({
+      ...withTenantScope(tenantId, params),
+      orderBy: normalizeOrderBy(params.orderBy),
+    }),
   count: (model, params = {}) =>
     prismaClient[model].count(withTenantScope(tenantId, params)),
   create: (model, params = {}) =>

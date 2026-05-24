@@ -43,6 +43,10 @@ type EditableSocialLink = UniversitySocialLink & {
     opensInNewTab: boolean;
 };
 
+type EditableMvaAuthority = MvaAuthority & {
+    localId: string;
+};
+
 const MAX_AUTHORITIES = 5;
 
 const SOCIAL_PLATFORM_OPTIONS = [
@@ -98,12 +102,19 @@ function buildSocialLink(link: UniversitySocialLink, index: number): EditableSoc
     };
 }
 
+function buildMvaAuthority(authority: MvaAuthority, index: number): EditableMvaAuthority {
+    return {
+        ...authority,
+        localId: `authority-${index}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    };
+}
+
 function formatApiError(error: unknown, fallback: string) {
     if (!error || typeof error !== "object") return fallback;
     const response = (error as { response?: { data?: Record<string, unknown> } }).response;
     const data = response?.data;
     if (!data) return fallback;
-    const message = (data.msg ?? data.message ?? data.error ?? data.mensaje) as unknown;
+    const message = data.msg ?? data.message ?? data.error ?? data.mensaje;
     if (typeof message === "string" && message.trim()) return message;
     return fallback;
 }
@@ -144,7 +155,7 @@ export default function AdminUniversityScreen() {
     const [facultyForm, setFacultyForm] = useState({ nombre: "", acronimo: "", logo: "" });
     const [mision, setMision] = useState("");
     const [vision, setVision] = useState("");
-    const [autoridades, setAutoridades] = useState<MvaAuthority[]>([]);
+    const [autoridades, setAutoridades] = useState<EditableMvaAuthority[]>([]);
     const [socialLinks, setSocialLinks] = useState<EditableSocialLink[]>([]);
     const [statsSelection, setStatsSelection] = useState<string[]>(
         HOME_STATS_OPTIONS.map((stat) => stat.id)
@@ -180,13 +191,13 @@ export default function AdminUniversityScreen() {
         if (mvaQuery.data) {
             setMision(mvaQuery.data.mision);
             setVision(mvaQuery.data.vision);
-            setAutoridades(mvaQuery.data.autoridades ?? []);
+            setAutoridades((mvaQuery.data.autoridades ?? []).map((authority, index) => buildMvaAuthority(authority, index)));
         }
     }, [mvaQuery.data]);
 
     useEffect(() => {
         const raw = socialLinksQuery.data ?? [];
-        setSocialLinks(raw.map(buildSocialLink));
+        setSocialLinks(raw.map((link, index) => buildSocialLink(link, index)));
     }, [socialLinksQuery.data]);
 
     const universityMutation = useMutation({
@@ -266,6 +277,7 @@ export default function AdminUniversityScreen() {
 
             const trimmedAuthorities = autoridades
                 .map((a) => ({
+                    localId: a.localId,
                     nombre: a.nombre.trim(),
                     cargo: a.cargo.trim(),
                     email: (a.email ?? "").trim(),
@@ -280,10 +292,19 @@ export default function AdminUniversityScreen() {
             return updateMva({
                 mision: mision.trim(),
                 vision: vision.trim(),
-                autoridades: trimmedAuthorities,
+                autoridades: trimmedAuthorities.map(({ localId, ...authority }) => authority),
             });
         },
-        onSuccess: async () => {
+        onSuccess: async (updatedMva) => {
+            setMision(updatedMva.mision);
+            setVision(updatedMva.vision);
+            setAutoridades(updatedMva.autoridades.map((authority, index) => buildMvaAuthority(authority, index)));
+
+            queryClient.setQueryData(["admin-mva"], updatedMva);
+            queryClient.setQueryData(["home-identity"], (current) =>
+                current && typeof current === "object" ? { ...current, ...updatedMva } : updatedMva
+            );
+
             await Promise.all([
                 queryClient.invalidateQueries({ queryKey: ["admin-mva"] }),
                 queryClient.invalidateQueries({ queryKey: ["home-identity"] }),
@@ -759,7 +780,7 @@ export default function AdminUniversityScreen() {
                                 </View>
                                 <Text style={styles.label}>Autoridades (max 5)</Text>
                                 {autoridades.map((authority, index) => (
-                                    <View key={`${authority.nombre}-${index}`} style={styles.authorityCard}>
+                                    <View key={authority.localId} style={styles.authorityCard}>
                                         <View style={styles.logoRow}>
                                             <Image
                                                 source={{ uri: toAbsoluteUrl(authority.imagen || "") }}
@@ -833,7 +854,10 @@ export default function AdminUniversityScreen() {
                                         if (remainingAuthorities <= 0) return;
                                         setAutoridades([
                                             ...autoridades,
-                                            { nombre: "", cargo: "", email: "", imagen: "" },
+                                            buildMvaAuthority(
+                                                { nombre: "", cargo: "", email: "", imagen: "" },
+                                                autoridades.length
+                                            ),
                                         ]);
                                     }}
                                     disabled={remainingAuthorities <= 0}

@@ -82,12 +82,77 @@ class MVAController {
     return { academicTitle, firstName, lastName };
   }
 
+  static async sincronizarAutoridadesFacultad(
+    scoped,
+    facultyId,
+    autoridadesData
+  ) {
+    const autoridadesActuales = await scoped.findMany("facultyAuthority", {
+      where: { facultyId },
+      orderBy: {
+        type: "asc",
+        createdAt: "asc",
+      },
+    });
+
+    for (let index = 0; index < autoridadesData.length; index += 1) {
+      const autoridadData = autoridadesData[index];
+      const tipoAutoridad = MVAController.determinarTipoAutoridad(
+        autoridadData.cargo
+      );
+      const { academicTitle, firstName, lastName } =
+        MVAController.separarNombreYTitulo(autoridadData.nombre);
+
+      const dataAutoridad = {
+        firstName,
+        lastName,
+        email: autoridadData.email || null,
+        imageUrl: autoridadData.imagen || "https://i.imgur.com/hYBsxIf.png",
+        academicTitle: academicTitle || null,
+        isActive: true,
+      };
+
+      const autoridadExistente = autoridadesActuales[index];
+
+      if (autoridadExistente) {
+        await scoped.updateMany("facultyAuthority", {
+          where: { id: autoridadExistente.id },
+          data: dataAutoridad,
+        });
+      } else {
+        await scoped.create("facultyAuthority", {
+          data: {
+            facultyId,
+            type: tipoAutoridad,
+            startDate: new Date(),
+            ...dataAutoridad,
+          },
+        });
+      }
+    }
+
+    if (autoridadesActuales.length > autoridadesData.length) {
+      const autoridadesSobrantes = autoridadesActuales.slice(
+        autoridadesData.length
+      );
+
+      for (const autoridadSobrante of autoridadesSobrantes) {
+        await scoped.updateMany("facultyAuthority", {
+          where: { id: autoridadSobrante.id },
+          data: {
+            isActive: false,
+            endDate: new Date(),
+          },
+        });
+      }
+    }
+  }
+
   static mapearAutoridadParaFrontend(autoridad) {
     return {
       cargo: MVAController.traducirTipoAutoridad(autoridad.type),
-      nombre: `${autoridad.academicTitle || ""} ${autoridad.firstName || ""} ${
-        autoridad.lastName || ""
-      }`.trim(),
+      nombre: `${autoridad.academicTitle || ""} ${autoridad.firstName || ""} ${autoridad.lastName || ""
+        }`.trim(),
       imagen: autoridad.imageUrl || "https://i.imgur.com/hYBsxIf.png",
       email: autoridad.email || "",
     };
@@ -106,6 +171,7 @@ class MVAController {
       },
       orderBy: {
         type: "asc",
+        createdAt: "asc",
       },
     });
 
@@ -189,49 +255,11 @@ class MVAController {
             ? autoridades
             : JSON.parse(autoridades);
 
-          const autoridadesActuales = await scoped.findMany(
-            "facultyAuthority",
-            {
-              where: { facultyId: facultad.id },
-            }
+          await MVAController.sincronizarAutoridadesFacultad(
+            scoped,
+            facultad.id,
+            autoridadesData
           );
-
-          for (const autoridadData of autoridadesData) {
-            const tipoAutoridad = MVAController.determinarTipoAutoridad(
-              autoridadData.cargo
-            );
-            const { academicTitle, firstName, lastName } =
-              MVAController.separarNombreYTitulo(autoridadData.nombre);
-
-            const dataAutoridad = {
-              firstName,
-              lastName,
-              email: autoridadData.email || null,
-              imageUrl: autoridadData.imagen || "https://i.imgur.com/hYBsxIf.png",
-              academicTitle: academicTitle || null,
-              isActive: true,
-            };
-
-            const autoridadExistente = autoridadesActuales.find(
-              (autoridad) => autoridad.type === tipoAutoridad
-            );
-
-            if (autoridadExistente) {
-              await scoped.updateMany("facultyAuthority", {
-                where: { id: autoridadExistente.id },
-                data: dataAutoridad,
-              });
-            } else {
-              await scoped.create("facultyAuthority", {
-                data: {
-                  facultyId: facultad.id,
-                  type: tipoAutoridad,
-                  startDate: new Date(),
-                  ...dataAutoridad,
-                },
-              });
-            }
-          }
         } catch (jsonError) {
           console.error("Error al procesar JSON de autoridades:", jsonError);
         }

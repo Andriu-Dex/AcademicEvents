@@ -195,10 +195,17 @@ async function fetchHomeIdentity(): Promise<{ mision: string; vision: string; au
 
     let parsedAutoridades: HomeAuthority[] = [];
     const normalizeAuthority = (item: Record<string, unknown>): HomeAuthority => ({
-        name: pickString(item.nombre, item.name, item.nombres, item.fullName, "Autoridad"),
-        role: pickString(item.cargo, item.role, item.rol, item.puesto, "Cargo"),
+        name:
+            `${pickString(item.firstName, item.nombre, item.name, item.nombres, "")} ${pickString(
+                item.lastName,
+                item.apellidos,
+                item.last,
+                item.surname,
+                ""
+            )}`.trim() || pickString(item.nombre, item.name, item.nombres, item.fullName, "Autoridad"),
+        role: pickString(item.title, item.titulo, item.cargo, item.role, item.rol, item.puesto, "Cargo"),
         email: pickString(item.email, item.correo, item.mail, ""),
-        image: pickString(item.imagen, item.image, item.foto, item.avatar, ""),
+        image: pickString(item.imageUrl, item.imagen, item.image, item.foto, item.avatar, ""),
     });
 
     if (typeof rawAutoridades === "string") {
@@ -997,7 +1004,7 @@ export function HomeContent(
                             ) : null}
                             <View style={styles.modalBody}>
                                 <Text style={styles.modalTitle}>{selectedEvent?.title}</Text>
-                                
+
                                 <View style={styles.modalMetaRow}>
                                     <View style={styles.modalBadge}>
                                         <Text style={styles.modalBadgeText}>{selectedEvent?.status || "Activo"}</Text>
@@ -1008,7 +1015,7 @@ export function HomeContent(
                                         </View>
                                     ) : null}
                                 </View>
-                                
+
                                 <View style={styles.modalSection}>
                                     <Text style={styles.modalSectionTitle}>Información del Evento</Text>
                                     <View style={styles.modalDetailRow}>
@@ -1043,8 +1050,8 @@ export function HomeContent(
                             <Pressable style={styles.modalCancelBtn} onPress={() => setSelectedEvent(null)}>
                                 <Text style={styles.modalCancelBtnText}>Cerrar</Text>
                             </Pressable>
-                            <Pressable 
-                                style={[styles.modalPrimaryBtn, isSelectedEventRegistered && { backgroundColor: theme.colors.textTertiary }]} 
+                            <Pressable
+                                style={[styles.modalPrimaryBtn, isSelectedEventRegistered && { backgroundColor: theme.colors.textTertiary }]}
                                 disabled={isSelectedEventRegistered}
                                 onPress={() => {
                                     const event = selectedEvent;

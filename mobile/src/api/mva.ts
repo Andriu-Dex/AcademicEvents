@@ -25,48 +25,50 @@ function pickString(value: unknown, fallback = "") {
     return fallback;
 }
 
-export async function fetchMvaInfo(): Promise<MvaInfo> {
-    const response = await apiClient.get<Record<string, unknown>>("/api/mva");
-    const raw = response.data?.autoridades;
+function parseAuthorityItem(item: Record<string, unknown>): MvaAuthority {
+    const firstName = pickString(item.firstName ?? item.nombre ?? item.name ?? item.nombres, "");
+    const lastName = pickString(item.lastName ?? item.apellidos ?? item.last ?? item.surname, "");
+    const fullName = `${firstName} ${lastName}`.trim();
 
-    let autoridades: MvaAuthority[] = [];
+    return {
+        nombre: fullName || pickString(item.nombre ?? item.name ?? item.nombres ?? item.fullName, "Autoridad"),
+        cargo: pickString(item.title ?? item.titulo ?? item.cargo ?? item.rol ?? item.role ?? item.position, "Cargo"),
+        email: pickString(item.email ?? item.correo ?? item.mail, ""),
+        imagen: pickString(item.imageUrl ?? item.imagen ?? item.image ?? item.avatar ?? item.foto, ""),
+    };
+}
+
+function parseAuthorities(raw: unknown): MvaAuthority[] {
     if (typeof raw === "string") {
         try {
             const parsed = JSON.parse(raw) as Array<Record<string, unknown>>;
-            if (Array.isArray(parsed)) {
-                autoridades = parsed.map((item) => ({
-                    nombre: pickString(item.nombre ?? item.name ?? item.nombres, "Autoridad"),
-                    cargo: pickString(item.cargo ?? item.rol ?? item.role, "Cargo"),
-                    email: pickString(item.email ?? item.correo ?? item.mail, ""),
-                    imagen: pickString(item.imagen ?? item.image ?? item.avatar ?? item.foto, ""),
-                }));
-            }
+            return Array.isArray(parsed) ? parsed.map(parseAuthorityItem) : [];
         } catch {
-            autoridades = [];
-        }
-    } else if (Array.isArray(raw)) {
-        autoridades = (raw as Array<Record<string, unknown>>).map((item) => ({
-            nombre: pickString(item.nombre ?? item.name ?? item.nombres, "Autoridad"),
-            cargo: pickString(item.cargo ?? item.rol ?? item.role, "Cargo"),
-            email: pickString(item.email ?? item.correo ?? item.mail, ""),
-            imagen: pickString(item.imagen ?? item.image ?? item.avatar ?? item.foto, ""),
-        }));
-    } else if (raw && typeof raw === "object") {
-        const maybeList = (raw as Record<string, unknown>).items;
-        if (Array.isArray(maybeList)) {
-            autoridades = (maybeList as Array<Record<string, unknown>>).map((item) => ({
-                nombre: pickString(item.nombre ?? item.name ?? item.nombres, "Autoridad"),
-                cargo: pickString(item.cargo ?? item.rol ?? item.role, "Cargo"),
-                email: pickString(item.email ?? item.correo ?? item.mail, ""),
-                imagen: pickString(item.imagen ?? item.image ?? item.avatar ?? item.foto, ""),
-            }));
+            return [];
         }
     }
+
+    if (Array.isArray(raw)) {
+        return (raw as Array<Record<string, unknown>>).map(parseAuthorityItem);
+    }
+
+    if (raw && typeof raw === "object") {
+        const maybeList = (raw as Record<string, unknown>).items;
+        if (Array.isArray(maybeList)) {
+            return (maybeList as Array<Record<string, unknown>>).map(parseAuthorityItem);
+        }
+    }
+
+    return [];
+}
+
+export async function fetchMvaInfo(): Promise<MvaInfo> {
+    const response = await apiClient.get<Record<string, unknown>>("/api/mva");
 
     return {
         mision: pickString(response.data?.mision),
         vision: pickString(response.data?.vision),
-        autoridades,
+        autoridades: parseAuthorities(response.data?.autoridades),
     };
 }
 
@@ -80,7 +82,9 @@ export async function updateMva(payload: Partial<MvaInfo>): Promise<MvaInfo> {
     return {
         mision: pickString(response.data?.mision),
         vision: pickString(response.data?.vision),
-        autoridades: payload.autoridades ?? [],
+        autoridades: parseAuthorities(response.data?.autoridades).length > 0
+            ? parseAuthorities(response.data?.autoridades)
+            : payload.autoridades ?? [],
     };
 }
 
