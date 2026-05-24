@@ -78,6 +78,48 @@ function toFiniteNumberOrNull(value: unknown): number | null {
     return null;
 }
 
+function appendNumericParam(params: Record<string, string | number>, key: string, value: unknown) {
+    const parsed = toFiniteNumberOrNull(value);
+    if (parsed === null) return;
+    params[key] = parsed;
+}
+
+function appendTrimmedParam(params: Record<string, string | number>, key: string, value?: string) {
+    const trimmed = value?.trim();
+    if (!trimmed) return;
+    params[key] = trimmed;
+}
+
+function appendBooleanParam(params: Record<string, string | number>, key: string, value?: boolean) {
+    if (!value) return;
+    params[key] = "true";
+}
+
+function normalizeEventCareers(eventCareers: Array<Record<string, unknown>>) {
+    const careerIds: string[] = [];
+    const careers: string[] = [];
+
+    for (const ec of eventCareers) {
+        const careerId = ec.careerId;
+        if (typeof careerId === "string" && careerId.length > 0) careerIds.push(careerId);
+
+        const career = ec.career;
+        if (!career || typeof career !== "object") continue;
+
+        const careerRec = career as Record<string, unknown>;
+        const embeddedId = careerRec.id;
+        if (typeof embeddedId === "string" && embeddedId.length > 0) careerIds.push(embeddedId);
+
+        const name = careerRec.name;
+        if (typeof name === "string" && name.length > 0) careers.push(name);
+    }
+
+    return {
+        careerIds: Array.from(new Set(careerIds)),
+        careers,
+    };
+}
+
 function toFiniteNumber(value: unknown, fallback = 0): number {
     const parsed = toFiniteNumberOrNull(value);
     return typeof parsed === "number" ? parsed : fallback;
@@ -95,24 +137,7 @@ function pickString(obj: Record<string, unknown>, ...keys: string[]): string {
 function normalizeAdminEvent(item: Record<string, unknown>): AdminEvent {
     const eventCareers = Array.isArray(item.eventCareers) ? (item.eventCareers as Array<Record<string, unknown>>) : [];
 
-    const careerIds: string[] = [];
-    const careers: string[] = [];
-
-    for (const ec of eventCareers) {
-        const careerId = ec.careerId;
-        if (typeof careerId === "string" && careerId.length > 0) careerIds.push(careerId);
-
-        const career = ec.career;
-        if (career && typeof career === "object") {
-            const careerRec = career as Record<string, unknown>;
-            const embeddedId = careerRec.id;
-            if (typeof embeddedId === "string" && embeddedId.length > 0) careerIds.push(embeddedId);
-            const name = careerRec.name;
-            if (typeof name === "string" && name.length > 0) careers.push(name);
-        }
-    }
-
-    const normalizedCareerIds = Array.from(new Set(careerIds));
+    const { careerIds: normalizedCareerIds, careers } = normalizeEventCareers(eventCareers);
     const isGeneral = Boolean(item.esEventoGeneral ?? item.isGeneral) || normalizedCareerIds.length === 0;
 
     return {
@@ -145,27 +170,25 @@ export async function fetchAdminEventsPaginated(
 ): Promise<PaginatedResponse<AdminEvent>> {
     const params: Record<string, string | number> = { page, limit };
 
-    const search = filters.search?.trim();
-    if (search) params.search = search;
+    appendTrimmedParam(params, "search", filters.search);
+    appendTrimmedParam(params, "tipoEvento", filters.tipoEvento);
+    appendTrimmedParam(params, "estado", filters.estado);
+    appendTrimmedParam(params, "fechaInicio", filters.fechaInicio);
+    appendTrimmedParam(params, "fechaFin", filters.fechaFin);
+    appendTrimmedParam(params, "carrera", filters.carrera);
+    appendTrimmedParam(params, "modalidad", filters.modalidad);
 
-    if (filters.tipoEvento && filters.tipoEvento.trim()) params.tipoEvento = filters.tipoEvento.trim();
-    if (filters.estado && filters.estado.trim()) params.estado = filters.estado.trim();
-    if (filters.fechaInicio && filters.fechaInicio.trim()) params.fechaInicio = filters.fechaInicio.trim();
-    if (filters.fechaFin && filters.fechaFin.trim()) params.fechaFin = filters.fechaFin.trim();
-    if (filters.carrera && filters.carrera.trim()) params.carrera = filters.carrera.trim();
-    if (filters.modalidad && filters.modalidad.trim()) params.modalidad = filters.modalidad.trim();
+    appendNumericParam(params, "capacidadMin", filters.capacidadMin);
+    appendNumericParam(params, "capacidadMax", filters.capacidadMax);
+    appendNumericParam(params, "valorMin", filters.valorMin);
+    appendNumericParam(params, "valorMax", filters.valorMax);
+    appendNumericParam(params, "asistenciaMin", filters.asistenciaMin);
 
-    if (filters.capacidadMin !== "" && typeof filters.capacidadMin === "number") params.capacidadMin = filters.capacidadMin;
-    if (filters.capacidadMax !== "" && typeof filters.capacidadMax === "number") params.capacidadMax = filters.capacidadMax;
-    if (filters.valorMin !== "" && typeof filters.valorMin === "number") params.valorMin = filters.valorMin;
-    if (filters.valorMax !== "" && typeof filters.valorMax === "number") params.valorMax = filters.valorMax;
-    if (filters.asistenciaMin !== "" && typeof filters.asistenciaMin === "number") params.asistenciaMin = filters.asistenciaMin;
+    appendBooleanParam(params, "esGratuito", filters.esGratuito);
+    appendBooleanParam(params, "esPago", filters.esPago);
+    appendBooleanParam(params, "eventosLlenos", filters.eventosLlenos);
 
-    if (filters.esGratuito) params.esGratuito = "true";
-    if (filters.esPago) params.esPago = "true";
-    if (filters.eventosLlenos) params.eventosLlenos = "true";
-
-    if (filters.sortBy && filters.sortBy.trim()) params.sortBy = filters.sortBy.trim();
+    appendTrimmedParam(params, "sortBy", filters.sortBy);
     if (filters.sortOrder) params.sortOrder = filters.sortOrder;
 
     const response = await apiClient.get<unknown>("/api/admin/events", { params });

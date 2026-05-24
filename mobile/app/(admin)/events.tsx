@@ -103,6 +103,13 @@ function useDebouncedValue<T>(value: T, delayMs: number) {
     return debounced;
 }
 
+function toOptionalFiniteNumber(value: string) {
+    const trimmed = value.trim();
+    if (!trimmed) return "";
+    const parsed = Number(trimmed);
+    return Number.isFinite(parsed) ? parsed : "";
+}
+
 function CheckboxRow({
     label,
     checked,
@@ -546,7 +553,7 @@ export default function AdminEventsScreen() {
                                     value={filters.capacidadMin === "" ? "" : String(filters.capacidadMin)}
                                     onChangeText={(v) => {
                                         setPage(1);
-                                        setFilters((prev) => ({ ...prev, capacidadMin: v.trim() ? Number(v) : "" }));
+                                        setFilters((prev) => ({ ...prev, capacidadMin: toOptionalFiniteNumber(v) }));
                                     }}
                                 />
                                 <TextInput
@@ -557,7 +564,7 @@ export default function AdminEventsScreen() {
                                     value={filters.capacidadMax === "" ? "" : String(filters.capacidadMax)}
                                     onChangeText={(v) => {
                                         setPage(1);
-                                        setFilters((prev) => ({ ...prev, capacidadMax: v.trim() ? Number(v) : "" }));
+                                        setFilters((prev) => ({ ...prev, capacidadMax: toOptionalFiniteNumber(v) }));
                                     }}
                                 />
                             </View>
@@ -570,7 +577,7 @@ export default function AdminEventsScreen() {
                                     value={filters.valorMin === "" ? "" : String(filters.valorMin)}
                                     onChangeText={(v) => {
                                         setPage(1);
-                                        setFilters((prev) => ({ ...prev, valorMin: v.trim() ? Number(v) : "" }));
+                                        setFilters((prev) => ({ ...prev, valorMin: toOptionalFiniteNumber(v) }));
                                     }}
                                 />
                                 <TextInput
@@ -581,7 +588,7 @@ export default function AdminEventsScreen() {
                                     value={filters.valorMax === "" ? "" : String(filters.valorMax)}
                                     onChangeText={(v) => {
                                         setPage(1);
-                                        setFilters((prev) => ({ ...prev, valorMax: v.trim() ? Number(v) : "" }));
+                                        setFilters((prev) => ({ ...prev, valorMax: toOptionalFiniteNumber(v) }));
                                     }}
                                 />
                             </View>
@@ -593,7 +600,7 @@ export default function AdminEventsScreen() {
                                 value={filters.asistenciaMin === "" ? "" : String(filters.asistenciaMin)}
                                 onChangeText={(v) => {
                                     setPage(1);
-                                    setFilters((prev) => ({ ...prev, asistenciaMin: v.trim() ? Number(v) : "" }));
+                                    setFilters((prev) => ({ ...prev, asistenciaMin: toOptionalFiniteNumber(v) }));
                                 }}
                             />
                         </View>

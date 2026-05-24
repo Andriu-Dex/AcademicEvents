@@ -449,12 +449,6 @@ function RegistrationCard({
                 {item.account?.email ?? item.account?.user?.idNumber ?? ""}
             </Text>
 
-            {selectedEventId ? null : (
-                <Text style={styles.metaText} numberOfLines={2}>
-                    Evento: {item.event?.name ?? "—"}
-                </Text>
-            )}
-
             <RegistrationDocumentsSection
                 item={item}
                 paymentCount={paymentCount}
