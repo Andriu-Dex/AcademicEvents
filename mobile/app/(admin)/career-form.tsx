@@ -384,6 +384,19 @@ const styles = StyleSheet.create({
     selectItem: { paddingHorizontal: 12, paddingVertical: 12 },
     selectItemText: { color: theme.colors.textPrimary, fontWeight: "700" },
 
+    iconSelectLabelRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 8,
+    },
+    iconOptionRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 12,
+        paddingHorizontal: 12,
+        paddingVertical: 12,
+    },
+
     primaryBtn: {
         marginTop: 8,
         flexDirection: "row",

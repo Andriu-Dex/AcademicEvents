@@ -74,7 +74,7 @@ export default function AdminEventReportScreen() {
                     />
                 }
             >
-                <SectionCard title={String(header.nom_eve ?? header.name ?? "Evento")}> 
+                <SectionCard title={String(header.nom_eve ?? header.name ?? "Evento")}>
                     <Image
                         source={{ uri: toAbsoluteUrl(String(header.img_por_eve ?? header.coverImageUrl ?? DEFAULT_EVENT_IMAGE)) }}
                         style={styles.cover}

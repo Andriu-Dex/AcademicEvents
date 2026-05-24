@@ -93,12 +93,12 @@ function ReportGridCard({ card, compact }: Readonly<{ card: ReportCard; compact:
                 colors={[`${card.color}18`, `${card.color}08`]}
                 style={styles.reportCardGradient}
             >
-                    <View style={[styles.reportIconWrap, { backgroundColor: `${card.color}20` }]}>
+                <View style={[styles.reportIconWrap, { backgroundColor: `${card.color}20` }]}>
                     <Ionicons name={card.icon} size={22} color={card.color} />
                 </View>
                 <Text style={styles.reportTitle} numberOfLines={1}>{card.title}</Text>
                 <Text style={styles.reportSubtitle} numberOfLines={2}>{card.subtitle}</Text>
-                <View style={[styles.reportArrow, { backgroundColor: card.color }]}> 
+                <View style={[styles.reportArrow, { backgroundColor: card.color }]}>
                     <Ionicons name="arrow-forward" size={12} color={theme.colors.textInverse} />
                 </View>
             </LinearGradient>

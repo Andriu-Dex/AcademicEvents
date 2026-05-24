@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/cognitive-complexity */
 import { useMemo, useRef, useState } from "react";
 import {
     ActivityIndicator,
@@ -320,12 +321,44 @@ export function HomeContent(
     {
         showAuthCtas = true,
         eventsRoute = "/public-events",
-    }: Readonly<{ showAuthCtas?: boolean; eventsRoute?: string }> = { showAuthCtas: true, eventsRoute: "/public-events" }
+    }: Readonly<{ showAuthCtas?: boolean; eventsRoute?: string }>
 ) {
     const router = useRouter();
     const segments = useSegments();
     const user = useAuthStore((s) => s.user);
     const isAdminArea = segments.includes("(admin)");
+    let rightNavNode: React.ReactNode = null;
+    if (user) {
+        rightNavNode = (
+            <View style={styles.navCtas}>
+                <Pressable style={styles.iconBtnHeader} onPress={() => router.push("/notifications")}>
+                    <Ionicons name="notifications-outline" size={22} color={theme.colors.textInverse} />
+                </Pressable>
+                <Pressable style={styles.navUserChip} onPress={() => router.push(isAdminArea ? "/(admin)/profile" : "/profile")}>
+                    {user.profileImageUrl ? (
+                        <Image source={{ uri: toAbsoluteUrl(user.profileImageUrl) }} style={styles.navUserAvatar} />
+                    ) : (
+                        <View style={styles.navUserAvatarFallback} />
+                    )}
+                    <Text style={styles.navUserName} numberOfLines={1}>
+                        {(user.firstName ?? "").trim() || user.email}
+                    </Text>
+                    <Ionicons name="chevron-forward" size={16} color={theme.colors.textInverse} />
+                </Pressable>
+            </View>
+        );
+    } else if (showAuthCtas) {
+        rightNavNode = (
+            <View style={styles.navCtas}>
+                <Pressable style={styles.navCtaPrimary} onPress={() => router.push("/(auth)/login")}>
+                    <Text style={styles.navCtaPrimaryText}>Iniciar sesión</Text>
+                </Pressable>
+                <Pressable style={styles.navCtaSecondary} onPress={() => router.push("/(auth)/register")}>
+                    <Text style={styles.navCtaSecondaryText}>Registrarse</Text>
+                </Pressable>
+            </View>
+        );
+    }
     const scrollRef = useRef<ScrollView | null>(null);
     const [authorityIndex, setAuthorityIndex] = useState(0);
     const authorityScrollX = useRef(new Animated.Value(0)).current;
@@ -452,33 +485,7 @@ export function HomeContent(
                         <Text style={styles.brandLabel}>{faculty?.acronym ?? "FISEI"}</Text>
                     </Pressable>
 
-                    {user ? (
-                        <View style={styles.navCtas}>
-                            <Pressable style={styles.iconBtnHeader} onPress={() => router.push("/notifications")}>
-                                <Ionicons name="notifications-outline" size={22} color={theme.colors.textInverse} />
-                            </Pressable>
-                            <Pressable style={styles.navUserChip} onPress={() => router.push(isAdminArea ? "/(admin)/profile" : "/profile")}>
-                                {user.profileImageUrl ? (
-                                    <Image source={{ uri: toAbsoluteUrl(user.profileImageUrl) }} style={styles.navUserAvatar} />
-                                ) : (
-                                    <View style={styles.navUserAvatarFallback} />
-                                )}
-                                <Text style={styles.navUserName} numberOfLines={1}>
-                                    {(user.firstName ?? "").trim() || user.email}
-                                </Text>
-                                <Ionicons name="chevron-forward" size={16} color={theme.colors.textInverse} />
-                            </Pressable>
-                        </View>
-                    ) : showAuthCtas ? (
-                        <View style={styles.navCtas}>
-                            <Pressable style={styles.navCtaPrimary} onPress={() => router.push("/(auth)/login")}>
-                                <Text style={styles.navCtaPrimaryText}>Iniciar sesión</Text>
-                            </Pressable>
-                            <Pressable style={styles.navCtaSecondary} onPress={() => router.push("/(auth)/register")}>
-                                <Text style={styles.navCtaSecondaryText}>Registrarse</Text>
-                            </Pressable>
-                        </View>
-                    ) : null}
+                    {rightNavNode}
                 </View>
 
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.navTabs}>
@@ -1235,10 +1242,6 @@ const styles = StyleSheet.create({
         borderRadius: 999,
         paddingHorizontal: 10,
         paddingVertical: 6,
-    },
-    footerContactText: {
-        color: theme.colors.textSecondary,
-        fontSize: 13,
     },
     modalBackdrop: {
         flex: 1,
