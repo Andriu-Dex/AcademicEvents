@@ -20,7 +20,7 @@ import {
 } from "../../../src/api/adminReports";
 import { downloadReportPdf } from "../../../src/utils/reportDownload";
 import { joinReportText, pickReportText } from "../../../src/utils/reportText";
-import { theme } from "../../../src/shared/theme";
+import { theme } from "../../../src/shared";
 
 const EVENT_TYPES = [
     { value: "todos", label: "Todos los tipos" },

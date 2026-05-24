@@ -5,7 +5,7 @@ import { AppHeader } from "../../../../src/components/AppHeader";
 import { DataList, JsonPreview, SectionCard, formatNumber } from "../../../../src/components/AdminReportWidgets";
 import { fetchEventReportById } from "../../../../src/api/adminReports";
 import { toAbsoluteUrl } from "../../../../src/api/client";
-import { theme } from "../../../../src/shared/theme";
+import { theme } from "../../../../src/shared";
 
 const DEFAULT_EVENT_IMAGE = "https://via.placeholder.com/320x90?text=Sin+Imagen";
 
@@ -41,10 +41,10 @@ export default function AdminEventReportScreen() {
         const fullName = `${String(ins.nom_usu ?? ins.firstName ?? "")} ${String(ins.ape_usu ?? ins.lastName ?? "")}`.trim();
         const attendance = formatNumber(ins.por_asi_fin_usu ?? ins.finalAttendancePercent ?? 0);
         const gradeRaw = ins.not_fin_usu ?? ins.finalGrade;
-        const gradeSuffix = gradeRaw === null || gradeRaw === undefined ? "" : ` · Nota: ${String(gradeRaw)}`;
+        const gradeSuffix = gradeRaw === null || gradeRaw === undefined ? "" : ` ï¿½ Nota: ${String(gradeRaw)}`;
         return {
             title: `${index + 1}. ${fullName || "Participante"}`,
-            subtitle: `Cedula: ${String(ins.ced_usu ?? ins.idNumber ?? "-")} · Asistencia: ${attendance}%${gradeSuffix}`,
+            subtitle: `Cedula: ${String(ins.ced_usu ?? ins.idNumber ?? "-")} ï¿½ Asistencia: ${attendance}%${gradeSuffix}`,
             right: String(ins.est_ins ?? ins.status ?? "-"),
         };
     });

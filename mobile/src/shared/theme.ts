@@ -51,6 +51,9 @@ export const theme = {
         eventAccentBorderLight: "rgba(138,21,56,0.15)",
         primary22: "rgba(138,21,56,0.22)",
         eventImageOverlayDark: "rgba(26,31,46,0.78)",
+        /* Report colors */
+        reportIndigo: "#6366f1",
+        reportCyan: "#0ea5e9",
 
         /* Overlays */
         overlayWhite10: "rgba(255,255,255,0.10)",
@@ -61,6 +64,7 @@ export const theme = {
         overlayWhite85: "rgba(255,255,255,0.85)",
         overlayBlack50: "rgba(0,0,0,0.5)",
         overlayBlack45: "rgba(10,5,15,0.45)",
+        overlayBlack55: "rgba(0,0,0,0.55)",
         primaryOpaque85: "rgba(138, 21, 56, 0.85)",
         overlayBlack18: "rgba(0,0,0,0.18)",
         overlayBlack22: "rgba(0,0,0,0.22)",
@@ -97,6 +101,8 @@ export const theme = {
         errorBgLight: "#fff6f6",
         errorBorderLight: "#fecaca",
         errorTextStrong: "rgba(185, 28, 28, 0.85)",
+        /* Success borders */
+        successBorder: "#86efac",
     },
     gradients: {
         primary: ["#8a1538", "#5f1027"] as const,

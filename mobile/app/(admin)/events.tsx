@@ -25,7 +25,7 @@ import {
     type AdminEvent,
     type AdminEventsFilters,
 } from "../../src/api/adminEvents";
-import { theme } from "../../src/shared/theme";
+import { theme } from "../../src/shared";
 
 type SelectOption = { label: string; value: string };
 

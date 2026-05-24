@@ -1,5 +1,5 @@
 import { StyleSheet, Text, TextInput, View } from "react-native";
-import { theme } from "../shared/theme";
+import { theme } from "../shared";
 
 type Props = {
     label: string;

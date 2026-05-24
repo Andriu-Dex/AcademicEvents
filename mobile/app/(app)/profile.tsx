@@ -20,7 +20,7 @@ import { fetchMyProfile, uploadDocuments, uploadProfileImage } from "../../src/a
 import { fetchMyRegistrations, type RegistrationItem } from "../../src/api/registrations";
 import { queryClient } from "../../src/shared/queryClient";
 import { useAuthStore } from "../../src/store/authStore";
-import { theme } from "../../src/shared/theme";
+import { theme } from "../../src/shared";
 import { formatRoleLabel } from "../../src/utils/roles";
 
 type PickedFile = { uri: string; name: string; mimeType: string };

@@ -22,7 +22,7 @@ import { login } from "../../src/api/auth";
 import { useAuthStore } from "../../src/store/authStore";
 import { isAdminRole } from "../../src/utils/roles";
 import { useFacultyInfo } from "../../src/features/faculty/useFacultyInfo";
-import { theme } from "../../src/shared/theme";
+import { theme } from "../../src/shared";
 
 const loginSchema = z.object({
     email: z.email("Correo inválido"),

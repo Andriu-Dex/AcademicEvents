@@ -21,7 +21,7 @@ import { registerStudent } from "../../src/api/auth";
 import { getCurrentApiBaseUrl } from "../../src/api/client";
 import { useCareers } from "../../src/features/careers/useCareers";
 import { useFacultyInfo } from "../../src/features/faculty/useFacultyInfo";
-import { theme } from "../../src/shared/theme";
+import { theme } from "../../src/shared";
 
 function validarCedulaEcuatoriana(cedulaRaw: string) {
     const cedula = String(cedulaRaw ?? "").trim();

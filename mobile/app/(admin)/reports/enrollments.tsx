@@ -11,7 +11,7 @@ import {
 } from "../../../src/api/adminReports";
 import { downloadReportPdf } from "../../../src/utils/reportDownload";
 import { joinReportText, pickReportText } from "../../../src/utils/reportText";
-import { theme } from "../../../src/shared/theme";
+import { theme } from "../../../src/shared";
 
 const STATUS_OPTIONS = [
     { value: "todos", label: "Todos" },

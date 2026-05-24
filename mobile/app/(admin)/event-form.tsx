@@ -26,7 +26,7 @@ import {
     type AdminEventUpsertInput,
     type ImageAsset,
 } from "../../src/api/adminEvents";
-import { theme } from "../../src/shared/theme";
+import { theme } from "../../src/shared";
 
 type Params = { mode?: "create" | "edit"; id?: string };
 

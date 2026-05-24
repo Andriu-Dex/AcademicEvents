@@ -19,7 +19,7 @@ import {
 } from "../../../src/api/adminReports";
 import { downloadReportPdf } from "../../../src/utils/reportDownload";
 import { joinReportText, pickReportText } from "../../../src/utils/reportText";
-import { theme } from "../../../src/shared/theme";
+import { theme } from "../../../src/shared";
 
 const DATE_RANGES = [
     { key: "30", label: "Últimos 30 días", days: 30 },

@@ -6,7 +6,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useQuery } from "@tanstack/react-query";
 import { apiClient, toAbsoluteUrl } from "../api/client";
 import { useAuthStore } from "../store/authStore";
-import { theme } from "../shared/theme";
+import { theme } from "../shared";
 
 const STATUS_BAR_HEIGHT = Platform.OS === "ios" ? 50 : 28;
 
@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
         paddingTop: STATUS_BAR_HEIGHT,
         zIndex: 50,
         elevation: 8,
-        shadowColor: "#8a1538",
+        shadowColor: theme.colors.primary,
         shadowOpacity: 0.25,
         shadowRadius: 12,
         shadowOffset: { width: 0, height: 4 },

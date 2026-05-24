@@ -1,6 +1,6 @@
 import { type ReactNode } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { theme } from "../shared/theme";
+import { theme } from "../shared";
 
 export function formatNumber(value: unknown) {
     const num = typeof value === "number" ? value : Number(value);

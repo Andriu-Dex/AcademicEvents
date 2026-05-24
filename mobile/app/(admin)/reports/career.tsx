@@ -8,7 +8,7 @@ import { fetchCareerReportEvents, fetchCareerReportStatistics } from "../../../s
 import { Ionicons } from "@expo/vector-icons";
 import { downloadReportPdf } from "../../../src/utils/reportDownload";
 import { joinReportText, pickReportText } from "../../../src/utils/reportText";
-import { theme } from "../../../src/shared/theme";
+import { theme } from "../../../src/shared";
 
 export default function AdminReportCareerScreen() {
     const [selectedCareerId, setSelectedCareerId] = useState("");

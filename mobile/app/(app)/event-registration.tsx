@@ -6,7 +6,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Ionicons } from "@expo/vector-icons";
 import { AppHeader } from "../../src/components/AppHeader";
 import { createMyRegistration, type RegistrationReceiptFile } from "../../src/api/registrations";
-import { theme } from "../../src/shared/theme";
+import { theme } from "../../src/shared";
 
 function parsePrice(input: string | string[] | undefined): number {
     const raw = Array.isArray(input) ? input[0] : input;

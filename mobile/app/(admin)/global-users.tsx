@@ -22,7 +22,7 @@ import {
     unblockAccount,
     updateAccount,
 } from "../../src/api/adminAccounts";
-import { theme } from "../../src/shared/theme";
+import { theme } from "../../src/shared";
 
 type FieldErrors = Partial<Record<keyof AdminCreateInput | "confirmar", string>>;
 

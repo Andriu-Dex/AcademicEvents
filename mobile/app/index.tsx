@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useRouter } from "expo-router";
 import { Image, StyleSheet, Text, View } from "react-native";
-import { theme } from "../src/shared/theme";
+import { theme } from "../src/shared";
 import { useAuthStore } from "../src/store/authStore";
 import { isAdminRole } from "../src/utils/roles";
 

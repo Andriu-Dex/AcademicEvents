@@ -32,7 +32,7 @@ import {
     uploadMvaImage,
     type MvaAuthority,
 } from "../../src/api/mva";
-import { theme } from "../../src/shared/theme";
+import { theme } from "../../src/shared";
 
 type EditableSocialLink = UniversitySocialLink & {
     localId: string;

@@ -19,7 +19,7 @@ import {
     PublicEventsFilters,
 } from "../src/api/publicEvents";
 import { toAbsoluteUrl } from "../src/api/client";
-import { theme } from "../src/shared/theme";
+import { theme } from "../src/shared";
 
 type ClientOnlyFilters = {
     completo: boolean;

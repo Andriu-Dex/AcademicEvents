@@ -20,7 +20,7 @@ import { fetchMyRegistrations } from "../../src/api/registrations";
 import { fetchUserEventsPaginated, type UserEventsFilters } from "../../src/api/userEvents";
 import type { PublicEventExtended } from "../../src/api/publicEvents";
 import { useAuthStore } from "../../src/store/authStore";
-import { theme } from "../../src/shared/theme";
+import { theme } from "../../src/shared";
 
 type ClientOnlyFilters = {
     soloCarrera: boolean;

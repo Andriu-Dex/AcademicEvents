@@ -21,7 +21,7 @@ import { useQuery } from "@tanstack/react-query";
 import { apiClient, getCurrentApiBaseUrl, getLastApiProbeLog, toAbsoluteUrl } from "../src/api/client";
 import { useFeaturedEvents } from "../src/features/events/useFeaturedEvents";
 import { useAuthStore } from "../src/store/authStore";
-import { theme } from "../src/shared/theme";
+import { theme } from "../src/shared";
 import type { PublicEvent } from "../src/api/publicEvents";
 import { fetchMyRegistrations } from "../src/api/registrations";
 

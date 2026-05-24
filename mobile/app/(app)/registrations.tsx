@@ -24,7 +24,7 @@ import {
     type RegistrationItem,
 } from "../../src/api/registrations";
 import { toAbsoluteUrl } from "../../src/api/client";
-import { theme } from "../../src/shared/theme";
+import { theme } from "../../src/shared";
 
 function formatDate(raw: string) {
     if (!raw) return "";
@@ -514,7 +514,7 @@ const styles = StyleSheet.create({
         borderRadius: theme.radius.sm,
         backgroundColor: theme.colors.successLight,
         borderWidth: 1,
-        borderColor: "#86efac",
+        borderColor: theme.colors.successBorder,
     },
     certificateBtnText: { flex: 1, color: theme.colors.success, fontWeight: "800", fontSize: 13 },
     emptyState: { alignItems: "center", paddingVertical: theme.spacing.xxl, gap: 12 },

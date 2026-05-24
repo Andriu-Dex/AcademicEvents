@@ -17,7 +17,7 @@ import { AppHeader } from "../../src/components/AppHeader";
 import { toAbsoluteUrl } from "../../src/api/client";
 import { fetchReportEventsPaginated } from "../../src/api/adminReports";
 import { useFacultyInfo } from "../../src/features/faculty/useFacultyInfo";
-import { theme } from "../../src/shared/theme";
+import { theme } from "../../src/shared";
 import { useAuthStore } from "../../src/store/authStore";
 import { isGlobalAdminRole } from "../../src/utils/roles";
 
@@ -37,7 +37,7 @@ const REPORT_CARDS: ReportCard[] = [
         subtitle: "Participación por carrera académica",
         icon: "school-outline",
         href: "/(admin)/reports/career",
-        color: "#6366f1",
+        color: theme.colors.reportIndigo,
     },
     {
         key: "enrollments",
@@ -45,7 +45,7 @@ const REPORT_CARDS: ReportCard[] = [
         subtitle: "Estado y tendencias de inscripciones",
         icon: "clipboard-outline",
         href: "/(admin)/reports/enrollments",
-        color: "#0ea5e9",
+        color: theme.colors.reportCyan,
     },
     {
         key: "attendance",
@@ -53,7 +53,7 @@ const REPORT_CARDS: ReportCard[] = [
         subtitle: "Asistencia vs inscripciones",
         icon: "checkmark-done-outline",
         href: "/(admin)/reports/attendance",
-        color: "#10b981",
+        color: theme.colors.success,
     },
     {
         key: "certificates",
@@ -61,7 +61,7 @@ const REPORT_CARDS: ReportCard[] = [
         subtitle: "Emisión y descarga de certificados",
         icon: "ribbon-outline",
         href: "/(admin)/reports/certificates",
-        color: "#f59e0b",
+        color: theme.colors.warning,
     },
     {
         key: "revenue",
@@ -69,7 +69,7 @@ const REPORT_CARDS: ReportCard[] = [
         subtitle: "Análisis de ingresos y pagos",
         icon: "cash-outline",
         href: "/(admin)/reports/revenue",
-        color: "#10b981",
+        color: theme.colors.success,
     },
     {
         key: "month",
@@ -77,7 +77,7 @@ const REPORT_CARDS: ReportCard[] = [
         subtitle: "Datos agrupados por mes",
         icon: "calendar-outline",
         href: "/(admin)/reports/month",
-        color: "#8a1538",
+        color: theme.colors.primary,
     },
 ];
 
@@ -93,13 +93,13 @@ function ReportGridCard({ card, compact }: Readonly<{ card: ReportCard; compact:
                 colors={[`${card.color}18`, `${card.color}08`]}
                 style={styles.reportCardGradient}
             >
-                <View style={[styles.reportIconWrap, { backgroundColor: `${card.color}20` }]}>
+                    <View style={[styles.reportIconWrap, { backgroundColor: `${card.color}20` }]}>
                     <Ionicons name={card.icon} size={22} color={card.color} />
                 </View>
                 <Text style={styles.reportTitle} numberOfLines={1}>{card.title}</Text>
                 <Text style={styles.reportSubtitle} numberOfLines={2}>{card.subtitle}</Text>
-                <View style={[styles.reportArrow, { backgroundColor: card.color }]}>
-                    <Ionicons name="arrow-forward" size={12} color="#fff" />
+                <View style={[styles.reportArrow, { backgroundColor: card.color }]}> 
+                    <Ionicons name="arrow-forward" size={12} color={theme.colors.textInverse} />
                 </View>
             </LinearGradient>
         </Pressable>

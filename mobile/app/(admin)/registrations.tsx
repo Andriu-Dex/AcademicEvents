@@ -26,7 +26,7 @@ import {
     type RegistrationsValidationInput,
     validateRegistration,
 } from "../../src/api/adminRegistrations";
-import { theme } from "../../src/shared/theme";
+import { theme } from "../../src/shared";
 
 type SelectOption = { label: string; value: string };
 

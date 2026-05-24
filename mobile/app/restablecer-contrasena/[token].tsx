@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { resetPasswordWithToken, validateRecoveryToken } from "../../src/api/passwordRecovery";
-import { theme } from "../../src/shared/theme";
+import { theme } from "../../src/shared";
 
 type TokenState = {
     loading: boolean;

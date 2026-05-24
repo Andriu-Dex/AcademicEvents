@@ -21,7 +21,7 @@ import {
 } from "../../src/api/notifications";
 import { syncPushTokenNow } from "../../src/features/notifications/usePushTokenSync";
 import { queryClient } from "../../src/shared/queryClient";
-import { theme } from "../../src/shared/theme";
+import { theme } from "../../src/shared";
 
 function formatDateTime(raw: string) {
     if (!raw) return "";

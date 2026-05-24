@@ -3,7 +3,7 @@ import { Tabs, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect } from "react";
 import { View, StyleSheet, Platform } from "react-native";
-import { theme } from "../../src/shared/theme";
+import { theme } from "../../src/shared";
 import { useAuthStore } from "../../src/store/authStore";
 import { isAdminRole } from "../../src/utils/roles";
 

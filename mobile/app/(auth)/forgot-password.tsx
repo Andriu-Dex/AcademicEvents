@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { requestPasswordRecovery } from "../../src/api/passwordRecovery";
-import { theme } from "../../src/shared/theme";
+import { theme } from "../../src/shared";
 
 function isValidEmail(value: string) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);

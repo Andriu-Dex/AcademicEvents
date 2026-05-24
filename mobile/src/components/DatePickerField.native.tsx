@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Modal, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { Calendar } from "react-native-calendars";
 import { Ionicons } from "@expo/vector-icons";
-import { theme } from "../shared/theme";
+import { theme } from "../shared";
 
 type Props = {
     label: string;
@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
     value: { color: theme.colors.textPrimary, fontWeight: "800" },
     backdrop: {
         flex: 1,
-        backgroundColor: "rgba(10, 15, 28, 0.55)",
+        backgroundColor: theme.colors.overlayBlack55,
         alignItems: "center",
         justifyContent: "center",
         padding: theme.spacing.lg,

@@ -21,7 +21,7 @@ import {
     updateCareer,
     type CareerUpsertInput,
 } from "../../src/api/adminCareers";
-import { theme } from "../../src/shared/theme";
+import { theme } from "../../src/shared";
 
 type SelectOption = { label: string; value: string; icon?: string };
 

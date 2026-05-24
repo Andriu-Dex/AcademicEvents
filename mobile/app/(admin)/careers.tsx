@@ -22,7 +22,7 @@ import {
     fetchFaculties,
     type Career,
 } from "../../src/api/adminCareers";
-import { theme } from "../../src/shared/theme";
+import { theme } from "../../src/shared";
 
 function fullName(firstName: string, lastName: string) {
     return `${firstName} ${lastName}`.trim();

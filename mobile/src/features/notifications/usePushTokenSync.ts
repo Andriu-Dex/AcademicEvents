@@ -63,7 +63,7 @@ async function syncPushToken() {
             name: "default",
             importance: Notifications.AndroidImportance.MAX,
             vibrationPattern: [0, 250, 250, 250],
-            lightColor: "#8a1538",
+            lightColor: theme.colors.primary,
         });
     }
 
