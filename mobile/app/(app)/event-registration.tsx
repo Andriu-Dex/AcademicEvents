@@ -6,7 +6,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Ionicons } from "@expo/vector-icons";
 import { AppHeader } from "../../src/components/AppHeader";
 import { createMyRegistration, type RegistrationReceiptFile } from "../../src/api/registrations";
-import { theme } from "../../src/shared";
+import { useAppTheme, useThemedStyles, type ThemeTokens } from "../../src/shared";
 
 function parsePrice(input: string | string[] | undefined): number {
     const raw = Array.isArray(input) ? input[0] : input;
@@ -22,6 +22,8 @@ function pickString(input: string | string[] | undefined, fallback: string): str
 
 export default function EventRegistrationScreen() {
     const router = useRouter();
+    const { tokens } = useAppTheme();
+    const styles = useThemedStyles(createStyles);
     const params = useLocalSearchParams<{
         eventId?: string | string[];
         title?: string | string[];
@@ -96,7 +98,7 @@ export default function EventRegistrationScreen() {
                         value={motivation}
                         onChangeText={setMotivation}
                         placeholder="Ejemplo: Deseo participar para fortalecer mis conocimientos y aplicarlos en mi formación académica."
-                        placeholderTextColor={theme.colors.textTertiary}
+                        placeholderTextColor={tokens.colors.textTertiary}
                         textAlignVertical="top"
                     />
 
@@ -104,7 +106,7 @@ export default function EventRegistrationScreen() {
                         <>
                             <Text style={styles.label}>Comprobante de pago</Text>
                             <Pressable style={styles.secondaryBtn} onPress={pickReceipt} disabled={mutation.isPending}>
-                                <Ionicons name="document-attach-outline" size={18} color={theme.colors.primary} />
+                                <Ionicons name="document-attach-outline" size={18} color={tokens.colors.primary} />
                                 <Text style={styles.secondaryBtnText} numberOfLines={1}>
                                     {receiptFile ? receiptFile.name : "Seleccionar comprobante (PDF o imagen)"}
                                 </Text>
@@ -128,54 +130,56 @@ export default function EventRegistrationScreen() {
     );
 }
 
-const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: theme.colors.bgSecondary },
-    content: { padding: theme.spacing.lg, paddingBottom: theme.spacing.xl },
-    card: {
-        backgroundColor: theme.colors.bgPrimary,
-        borderRadius: theme.radius.lg,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-        padding: theme.spacing.lg,
-        gap: 12,
-        ...theme.shadow.sm,
-    },
-    title: { color: theme.colors.textPrimary, fontSize: 18, fontWeight: "900" },
-    meta: { color: theme.colors.textSecondary, fontWeight: "700" },
-    label: { marginTop: 4, color: theme.colors.textPrimary, fontWeight: "900" },
-    textarea: {
-        minHeight: 130,
-        borderRadius: theme.radius.md,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-        backgroundColor: theme.colors.bgSecondary,
-        color: theme.colors.textPrimary,
-        paddingHorizontal: 12,
-        paddingVertical: 10,
-        fontWeight: "600",
-    },
-    secondaryBtn: {
-        height: 46,
-        borderRadius: theme.radius.md,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-        backgroundColor: theme.colors.bgPrimary,
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: 10,
-        paddingHorizontal: 12,
-    },
-    secondaryBtnText: { flex: 1, color: theme.colors.primary, fontWeight: "800" },
-    hint: { color: theme.colors.textSecondary, fontWeight: "700", fontSize: 12 },
-    primaryBtn: {
-        marginTop: 10,
-        height: 48,
-        borderRadius: theme.radius.md,
-        backgroundColor: theme.colors.primary,
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    primaryBtnText: { color: theme.colors.textInverse, fontWeight: "900", fontSize: 14 },
-    btnDisabled: { opacity: 0.55 },
-});
+function createStyles(theme: ThemeTokens) {
+    return {
+        container: { flex: 1, backgroundColor: theme.colors.bgSecondary },
+        content: { padding: theme.spacing.lg, paddingBottom: theme.spacing.xl },
+        card: {
+            backgroundColor: theme.colors.bgCard,
+            borderRadius: theme.radius.lg,
+            borderWidth: 1,
+            borderColor: theme.colors.borderPrimary,
+            padding: theme.spacing.lg,
+            gap: 12,
+            ...theme.shadow.sm,
+        },
+        title: { color: theme.colors.textPrimary, fontSize: 18, fontWeight: "900" as const },
+        meta: { color: theme.colors.textSecondary, fontWeight: "700" as const },
+        label: { marginTop: 4, color: theme.colors.textPrimary, fontWeight: "900" as const },
+        textarea: {
+            minHeight: 130,
+            borderRadius: theme.radius.md,
+            borderWidth: 1,
+            borderColor: theme.colors.borderPrimary,
+            backgroundColor: theme.colors.bgTertiary,
+            color: theme.colors.textPrimary,
+            paddingHorizontal: 12,
+            paddingVertical: 10,
+            fontWeight: "600" as const,
+        },
+        secondaryBtn: {
+            height: 46,
+            borderRadius: theme.radius.md,
+            borderWidth: 1,
+            borderColor: theme.colors.borderPrimary,
+            backgroundColor: theme.colors.bgSecondary,
+            flexDirection: "row" as const,
+            alignItems: "center" as const,
+            justifyContent: "center" as const,
+            gap: 10,
+            paddingHorizontal: 12,
+        },
+        secondaryBtnText: { flex: 1, color: theme.colors.primary, fontWeight: "800" as const },
+        hint: { color: theme.colors.textSecondary, fontWeight: "700" as const, fontSize: 12 },
+        primaryBtn: {
+            marginTop: 10,
+            height: 48,
+            borderRadius: theme.radius.md,
+            backgroundColor: theme.colors.primary,
+            alignItems: "center" as const,
+            justifyContent: "center" as const,
+        },
+        primaryBtnText: { color: theme.colors.onPrimary, fontWeight: "900" as const, fontSize: 14 },
+        btnDisabled: { opacity: 0.55 },
+    };
+}

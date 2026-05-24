@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { ActivityIndicator, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, RefreshControl, ScrollView, Text, View } from "react-native";
 import { useQuery } from "@tanstack/react-query";
 import { Ionicons } from "@expo/vector-icons";
 import { AppHeader } from "../../../src/components/AppHeader";
@@ -20,7 +20,7 @@ import {
 } from "../../../src/api/adminReports";
 import { downloadReportPdf } from "../../../src/utils/reportDownload";
 import { joinReportText, pickReportText } from "../../../src/utils/reportText";
-import { theme } from "../../../src/shared";
+import { useAppTheme, useThemedStyles, type ThemeTokens } from "../../../src/shared";
 
 const EVENT_TYPES = [
     { value: "todos", label: "Todos los tipos" },
@@ -48,10 +48,10 @@ function getErrorMessage(error: unknown) {
     }
 }
 
-function getAttendanceAccent(value: number) {
-    if (value >= 80) return theme.colors.success;
-    if (value >= 50) return theme.colors.warning;
-    return theme.colors.error;
+function getAttendanceAccent(value: number, colors: ThemeTokens["colors"]) {
+    if (value >= 80) return colors.success;
+    if (value >= 50) return colors.warning;
+    return colors.error;
 }
 
 function composeReportLabel(title: string, subtitle: string) {
@@ -59,6 +59,9 @@ function composeReportLabel(title: string, subtitle: string) {
 }
 
 export default function AdminReportAttendanceScreen() {
+    const { tokens } = useAppTheme();
+    const styles = useThemedStyles(createStyles);
+
     const [selectedEventId, setSelectedEventId] = useState("");
     const [selectedType, setSelectedType] = useState("todos");
     const [loadingPdf, setLoadingPdf] = useState(false);
@@ -176,7 +179,7 @@ export default function AdminReportAttendanceScreen() {
 
             {isLoading ? (
                 <View style={styles.center}>
-                    <ActivityIndicator size="large" color={theme.colors.primary} />
+                    <ActivityIndicator size="large" color={tokens.colors.primary} />
                 </View>
             ) : (
                 <ScrollView
@@ -195,7 +198,7 @@ export default function AdminReportAttendanceScreen() {
                                 void eventQuery.refetch();
                                 void eventsQuery.refetch();
                             }}
-                            tintColor={theme.colors.primary}
+                            tintColor={tokens.colors.primary}
                         />
                     }
                 >
@@ -243,7 +246,7 @@ export default function AdminReportAttendanceScreen() {
                             onPress={() => void handleDownloadPdf()}
                             disabled={loadingPdf}
                         >
-                            <Ionicons name="download-outline" size={18} color={theme.colors.textInverse} />
+                            <Ionicons name="download-outline" size={18} color={tokens.colors.onPrimary} />
                             <Text style={styles.actionButtonText}>{loadingPdf ? "Generando PDF..." : "Descargar Reporte PDF"}</Text>
                         </Pressable>
                     </SectionCard>
@@ -259,7 +262,7 @@ export default function AdminReportAttendanceScreen() {
                             <ProgressBar
                                 label="Asistencia del evento"
                                 value={toPercentValue(eventPayload.porcentajeAsistencia)}
-                                accentColor={theme.colors.success}
+                                accentColor={tokens.colors.success}
                                 helperText={`${formatNumber(eventPayload.totalAsistencias)} asistencias de ${formatNumber(eventPayload.totalInscritos)} inscritos`}
                             />
                             <DataList rows={detailRows} />
@@ -270,7 +273,7 @@ export default function AdminReportAttendanceScreen() {
                         <DataList rows={comparativeRows} />
                         <View style={styles.progressStack}>
                             {comparativeItems.map((item, index) => {
-                                const accentColor = getAttendanceAccent(item.value);
+                                const accentColor = getAttendanceAccent(item.value, tokens.colors);
                                 const label = composeReportLabel(item.title, item.subtitle);
                                 return (
                                     <ProgressBar
@@ -293,7 +296,7 @@ export default function AdminReportAttendanceScreen() {
                                     key={`${item.title}-${item.subtitle}-${index}`}
                                     label={composeReportLabel(item.title, item.subtitle)}
                                     value={item.value}
-                                    accentColor={theme.colors.error}
+                                    accentColor={tokens.colors.error}
                                     helperText={item.helper}
                                 />
                             ))}
@@ -318,7 +321,8 @@ export default function AdminReportAttendanceScreen() {
     );
 }
 
-const styles = StyleSheet.create({
+function createStyles(theme: ThemeTokens) {
+    return {
     container: { flex: 1, backgroundColor: theme.colors.bgSecondary },
     center: { flex: 1, alignItems: "center", justifyContent: "center" },
     content: { padding: theme.spacing.md, gap: theme.spacing.md, paddingBottom: theme.spacing.xl },
@@ -329,13 +333,13 @@ const styles = StyleSheet.create({
         borderRadius: theme.radius.full,
         borderWidth: 1,
         borderColor: theme.colors.borderPrimary,
-        backgroundColor: theme.colors.bgSecondary,
+        backgroundColor: theme.colors.bgCard,
         paddingHorizontal: 12,
         paddingVertical: 7,
     },
     chipSelected: { backgroundColor: theme.colors.primary, borderColor: theme.colors.primary },
     chipText: { color: theme.colors.textSecondary, fontWeight: "700", fontSize: 12 },
-    chipTextSelected: { color: theme.colors.textInverse },
+    chipTextSelected: { color: theme.colors.onPrimary },
     actionButton: {
         flexDirection: "row",
         alignItems: "center",
@@ -347,6 +351,7 @@ const styles = StyleSheet.create({
         backgroundColor: theme.colors.primary,
     },
     actionButtonDisabled: { opacity: 0.65 },
-    actionButtonText: { color: theme.colors.textInverse, fontWeight: "900", fontSize: 13 },
+    actionButtonText: { color: theme.colors.onPrimary, fontWeight: "900", fontSize: 13 },
     progressStack: { gap: 10, marginTop: 2 },
-});
+    };
+}

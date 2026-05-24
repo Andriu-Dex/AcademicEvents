@@ -3,7 +3,6 @@ import {
     ActivityIndicator,
     Pressable,
     ScrollView,
-    StyleSheet,
     Text,
     TextInput,
     View,
@@ -22,7 +21,7 @@ import {
     unblockAccount,
     updateAccount,
 } from "../../src/api/adminAccounts";
-import { theme } from "../../src/shared";
+import { useAppTheme, useThemedStyles, type ThemeTokens } from "../../src/shared";
 
 type FieldErrors = Partial<Record<keyof AdminCreateInput | "confirmar", string>>;
 
@@ -104,6 +103,8 @@ function isValidEmail(value: string) {
 }
 
 export default function AdminGlobalUsersScreen() {
+    const { tokens } = useAppTheme();
+    const styles = useThemedStyles(createStyles);
     const queryClient = useQueryClient();
     const scrollRef = useRef<ScrollView | null>(null);
 
@@ -380,7 +381,7 @@ export default function AdminGlobalUsersScreen() {
             <ScrollView ref={scrollRef} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
                 <View style={styles.sectionCard}>
                     <View style={styles.sectionHeader}>
-                        <Ionicons name="shield-outline" size={18} color={theme.colors.primary} />
+                        <Ionicons name="shield-outline" size={18} color={tokens.colors.primary} />
                         <Text style={styles.sectionTitle}>Gestion de usuarios</Text>
                     </View>
                     <Text style={styles.sectionSubtitle}>
@@ -391,7 +392,7 @@ export default function AdminGlobalUsersScreen() {
                 <View style={styles.sectionCard}>
                     <View style={styles.sectionHeaderRow}>
                         <View style={styles.sectionHeader}>
-                            <Ionicons name="person-add-outline" size={18} color={theme.colors.primary} />
+                            <Ionicons name="person-add-outline" size={18} color={tokens.colors.primary} />
                             <Text style={styles.sectionTitle}>Crear nuevo administrador</Text>
                         </View>
                         <Pressable
@@ -401,7 +402,7 @@ export default function AdminGlobalUsersScreen() {
                             <Ionicons
                                 name={showCreateForm ? "chevron-up" : "chevron-down"}
                                 size={18}
-                                color={theme.colors.textSecondary}
+                                color={tokens.colors.textSecondary}
                             />
                         </Pressable>
                     </View>
@@ -415,7 +416,7 @@ export default function AdminGlobalUsersScreen() {
                                     value={form.cedula}
                                     onChangeText={(text) => setForm((prev) => ({ ...prev, cedula: text }))}
                                     placeholder="Ej: 0102030405"
-                                    placeholderTextColor={theme.colors.textTertiary}
+                                    placeholderTextColor={tokens.colors.textTertiary}
                                 />
                                 {errors.cedula ? <Text style={styles.errorText}>{errors.cedula}</Text> : null}
                             </View>
@@ -426,7 +427,7 @@ export default function AdminGlobalUsersScreen() {
                                     value={form.nombres}
                                     onChangeText={(text) => setForm((prev) => ({ ...prev, nombres: text }))}
                                     placeholder="Nombres"
-                                    placeholderTextColor={theme.colors.textTertiary}
+                                    placeholderTextColor={tokens.colors.textTertiary}
                                 />
                                 {errors.nombres ? <Text style={styles.errorText}>{errors.nombres}</Text> : null}
                             </View>
@@ -437,7 +438,7 @@ export default function AdminGlobalUsersScreen() {
                                     value={form.apellidos}
                                     onChangeText={(text) => setForm((prev) => ({ ...prev, apellidos: text }))}
                                     placeholder="Apellidos"
-                                    placeholderTextColor={theme.colors.textTertiary}
+                                    placeholderTextColor={tokens.colors.textTertiary}
                                 />
                                 {errors.apellidos ? <Text style={styles.errorText}>{errors.apellidos}</Text> : null}
                             </View>
@@ -448,7 +449,7 @@ export default function AdminGlobalUsersScreen() {
                                     value={form.celular}
                                     onChangeText={(text) => setForm((prev) => ({ ...prev, celular: text }))}
                                     placeholder="09xxxxxxxx"
-                                    placeholderTextColor={theme.colors.textTertiary}
+                                    placeholderTextColor={tokens.colors.textTertiary}
                                     keyboardType="phone-pad"
                                 />
                                 {errors.celular ? <Text style={styles.errorText}>{errors.celular}</Text> : null}
@@ -460,7 +461,7 @@ export default function AdminGlobalUsersScreen() {
                                     value={form.correo}
                                     onChangeText={(text) => setForm((prev) => ({ ...prev, correo: text }))}
                                     placeholder="correo@dominio.com"
-                                    placeholderTextColor={theme.colors.textTertiary}
+                                    placeholderTextColor={tokens.colors.textTertiary}
                                     keyboardType="email-address"
                                     autoCapitalize="none"
                                 />
@@ -474,7 +475,7 @@ export default function AdminGlobalUsersScreen() {
                                         value={form.contrasena}
                                         onChangeText={(text) => setForm((prev) => ({ ...prev, contrasena: text }))}
                                         placeholder="********"
-                                        placeholderTextColor={theme.colors.textTertiary}
+                                        placeholderTextColor={tokens.colors.textTertiary}
                                         secureTextEntry={!showPassword}
                                     />
                                     <Pressable
@@ -484,7 +485,7 @@ export default function AdminGlobalUsersScreen() {
                                         <Ionicons
                                             name={showPassword ? "eye-off-outline" : "eye-outline"}
                                             size={18}
-                                            color={theme.colors.textSecondary}
+                                            color={tokens.colors.textSecondary}
                                         />
                                     </Pressable>
                                 </View>
@@ -497,7 +498,7 @@ export default function AdminGlobalUsersScreen() {
                                     value={confirmar}
                                     onChangeText={setConfirmar}
                                     placeholder="********"
-                                    placeholderTextColor={theme.colors.textTertiary}
+                                    placeholderTextColor={tokens.colors.textTertiary}
                                     secureTextEntry
                                 />
                                 {errors.confirmar ? <Text style={styles.errorText}>{errors.confirmar}</Text> : null}
@@ -514,7 +515,7 @@ export default function AdminGlobalUsersScreen() {
                                     <Ionicons
                                         name={roleOpen ? "chevron-up" : "chevron-down"}
                                         size={16}
-                                        color={theme.colors.textSecondary}
+                                        color={tokens.colors.textSecondary}
                                     />
                                 </Pressable>
                                 {roleOpen ? (
@@ -541,7 +542,7 @@ export default function AdminGlobalUsersScreen() {
                                 disabled={createMutation.isPending}
                             >
                                 {createMutation.isPending ? (
-                                    <ActivityIndicator color={theme.colors.textInverse} />
+                                    <ActivityIndicator color={tokens.colors.onPrimary} />
                                 ) : (
                                     <Text style={styles.primaryButtonText}>Crear administrador</Text>
                                 )}
@@ -554,7 +555,7 @@ export default function AdminGlobalUsersScreen() {
                 {editAccountId ? (
                     <View style={styles.sectionCard}>
                         <View style={styles.sectionHeader}>
-                            <Ionicons name="create-outline" size={18} color={theme.colors.primary} />
+                            <Ionicons name="create-outline" size={18} color={tokens.colors.primary} />
                             <Text style={styles.sectionTitle}>Editar cuenta</Text>
                         </View>
                         <Text style={styles.sectionSubtitle}>Editando: {editTargetLabel}</Text>
@@ -632,7 +633,7 @@ export default function AdminGlobalUsersScreen() {
                             >
                                 <View style={[styles.checkbox, editForm.est_ver_cor && styles.checkboxChecked]}>
                                     {editForm.est_ver_cor ? (
-                                        <Ionicons name="checkmark" size={14} color={theme.colors.textInverse} />
+                                        <Ionicons name="checkmark" size={14} color={tokens.colors.onPrimary} />
                                     ) : null}
                                 </View>
                                 <Text style={styles.toggleLabel}>Correo verificado</Text>
@@ -644,7 +645,7 @@ export default function AdminGlobalUsersScreen() {
                                     disabled={updateMutation.isPending}
                                 >
                                     {updateMutation.isPending ? (
-                                        <ActivityIndicator color={theme.colors.textInverse} />
+                                        <ActivityIndicator color={tokens.colors.onPrimary} />
                                     ) : (
                                         <Text style={styles.primaryButtonText}>Guardar cambios</Text>
                                     )}
@@ -662,7 +663,7 @@ export default function AdminGlobalUsersScreen() {
 
                 <View style={styles.sectionCard}>
                     <View style={styles.sectionHeader}>
-                        <Ionicons name="people-outline" size={18} color={theme.colors.primary} />
+                        <Ionicons name="people-outline" size={18} color={tokens.colors.primary} />
                         <Text style={styles.sectionTitle}>Administradores existentes</Text>
                     </View>
                     <TextInput
@@ -670,7 +671,7 @@ export default function AdminGlobalUsersScreen() {
                         value={adminsSearch}
                         onChangeText={setAdminsSearch}
                         placeholder="Buscar por nombre o correo"
-                        placeholderTextColor={theme.colors.textTertiary}
+                        placeholderTextColor={tokens.colors.textTertiary}
                     />
                     <View style={styles.filterRow}>
                         {ADMIN_ROLE_FILTERS.map((opt) => (
@@ -696,7 +697,7 @@ export default function AdminGlobalUsersScreen() {
 
                     {adminsQuery.isLoading ? (
                         <View style={styles.centerBlock}>
-                            <ActivityIndicator color={theme.colors.primary} />
+                            <ActivityIndicator color={tokens.colors.primary} />
                             <Text style={styles.mutedText}>Cargando administradores...</Text>
                         </View>
                     ) : admins.length === 0 ? (
@@ -789,7 +790,7 @@ export default function AdminGlobalUsersScreen() {
                                                     value={actionReason}
                                                     onChangeText={setActionReason}
                                                     placeholder="Escribe el motivo"
-                                                    placeholderTextColor={theme.colors.textTertiary}
+                                                    placeholderTextColor={tokens.colors.textTertiary}
                                                 />
                                             </View>
                                         )}
@@ -835,7 +836,7 @@ export default function AdminGlobalUsersScreen() {
                             onPress={() => setAdminsPage((p) => Math.max(1, p - 1))}
                             disabled={adminsPage <= 1}
                         >
-                            <Ionicons name="chevron-back" size={16} color={theme.colors.textInverse} />
+                            <Ionicons name="chevron-back" size={16} color={tokens.colors.onPrimary} />
                         </Pressable>
                         <Text style={styles.pageInfo}>
                             {adminsPagination?.currentPage ?? adminsPage} / {adminsPagination?.totalPages ?? 1}
@@ -848,14 +849,14 @@ export default function AdminGlobalUsersScreen() {
                             onPress={() => setAdminsPage((p) => p + 1)}
                             disabled={!(adminsPagination?.hasNextPage ?? false)}
                         >
-                            <Ionicons name="chevron-forward" size={16} color={theme.colors.textInverse} />
+                            <Ionicons name="chevron-forward" size={16} color={tokens.colors.onPrimary} />
                         </Pressable>
                     </View>
                 </View>
 
                 <View style={styles.sectionCard}>
                     <View style={styles.sectionHeader}>
-                        <Ionicons name="people-circle-outline" size={18} color={theme.colors.primary} />
+                        <Ionicons name="people-circle-outline" size={18} color={tokens.colors.primary} />
                         <Text style={styles.sectionTitle}>Usuarios existentes</Text>
                     </View>
                     <TextInput
@@ -863,7 +864,7 @@ export default function AdminGlobalUsersScreen() {
                         value={usersSearch}
                         onChangeText={setUsersSearch}
                         placeholder="Buscar por nombre o correo"
-                        placeholderTextColor={theme.colors.textTertiary}
+                        placeholderTextColor={tokens.colors.textTertiary}
                     />
                     <View style={styles.filterRow}>
                         {USER_ROLE_OPTIONS.map((opt) => (
@@ -889,7 +890,7 @@ export default function AdminGlobalUsersScreen() {
 
                     {usersQuery.isLoading ? (
                         <View style={styles.centerBlock}>
-                            <ActivityIndicator color={theme.colors.primary} />
+                            <ActivityIndicator color={tokens.colors.primary} />
                             <Text style={styles.mutedText}>Cargando usuarios...</Text>
                         </View>
                     ) : users.length === 0 ? (
@@ -982,7 +983,7 @@ export default function AdminGlobalUsersScreen() {
                                                     value={actionReason}
                                                     onChangeText={setActionReason}
                                                     placeholder="Escribe el motivo"
-                                                    placeholderTextColor={theme.colors.textTertiary}
+                                                    placeholderTextColor={tokens.colors.textTertiary}
                                                 />
                                             </View>
                                         )}
@@ -1028,7 +1029,7 @@ export default function AdminGlobalUsersScreen() {
                             onPress={() => setUsersPage((p) => Math.max(1, p - 1))}
                             disabled={usersPage <= 1}
                         >
-                            <Ionicons name="chevron-back" size={16} color={theme.colors.textInverse} />
+                            <Ionicons name="chevron-back" size={16} color={tokens.colors.onPrimary} />
                         </Pressable>
                         <Text style={styles.pageInfo}>
                             {usersPagination?.currentPage ?? usersPage} / {usersPagination?.totalPages ?? 1}
@@ -1038,7 +1039,7 @@ export default function AdminGlobalUsersScreen() {
                             onPress={() => setUsersPage((p) => p + 1)}
                             disabled={!(usersPagination?.hasNextPage ?? false)}
                         >
-                            <Ionicons name="chevron-forward" size={16} color={theme.colors.textInverse} />
+                            <Ionicons name="chevron-forward" size={16} color={tokens.colors.onPrimary} />
                         </Pressable>
                     </View>
                 </View>
@@ -1047,12 +1048,13 @@ export default function AdminGlobalUsersScreen() {
     );
 }
 
-const styles = StyleSheet.create({
+function createStyles(theme: ThemeTokens) {
+    return {
     container: { flex: 1, backgroundColor: theme.colors.bgSecondary },
     content: { padding: theme.spacing.md, gap: theme.spacing.md, paddingBottom: theme.spacing.xl },
 
     sectionCard: {
-        backgroundColor: theme.colors.bgPrimary,
+        backgroundColor: theme.colors.bgCard,
         borderRadius: theme.radius.lg,
         padding: theme.spacing.md,
         gap: 12,
@@ -1142,7 +1144,7 @@ const styles = StyleSheet.create({
         paddingVertical: 12,
         alignItems: "center",
     },
-    primaryButtonText: { color: theme.colors.textInverse, fontWeight: "800" },
+    primaryButtonText: { color: theme.colors.onPrimary, fontWeight: "800" },
 
     searchInput: {
         borderWidth: 1,
@@ -1172,7 +1174,7 @@ const styles = StyleSheet.create({
         borderRadius: theme.radius.md,
         borderWidth: 1,
         borderColor: theme.colors.borderLight,
-        backgroundColor: theme.colors.bgSecondary,
+        backgroundColor: theme.colors.bgCard,
         gap: 6,
     },
     accountHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 8 },
@@ -1259,4 +1261,5 @@ const styles = StyleSheet.create({
     centerBlock: { alignItems: "center", gap: 6, paddingVertical: 8 },
     mutedText: { color: theme.colors.textTertiary, fontWeight: "600" },
     errorText: { color: theme.colors.error, fontWeight: "700", fontSize: 12 },
-});
+    };
+}

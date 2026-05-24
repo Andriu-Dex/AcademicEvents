@@ -1,12 +1,12 @@
 import { useMemo, useState } from "react";
-import { ActivityIndicator, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, RefreshControl, ScrollView, Text, View } from "react-native";
 import { useQuery } from "@tanstack/react-query";
 import { AppHeader } from "../../../src/components/AppHeader";
 import { DataList, JsonPreview, MetricCard, SectionCard, formatCurrency, formatNumber } from "../../../src/components/AdminReportWidgets";
 import { fetchMonthlyReport } from "../../../src/api/adminReports";
 import { downloadReportPdf } from "../../../src/utils/reportDownload";
 import { joinReportText, pickReportText } from "../../../src/utils/reportText";
-import { theme } from "../../../src/shared";
+import { useAppTheme, useThemedStyles, type ThemeTokens } from "../../../src/shared";
 
 const MONTHS = [
     "Enero",
@@ -31,6 +31,9 @@ function getYears() {
 }
 
 export default function AdminReportMonthScreen() {
+    const { tokens } = useAppTheme();
+    const styles = useThemedStyles(createStyles);
+
     const [year, setYear] = useState(new Date().getFullYear());
     const [month, setMonth] = useState(new Date().getMonth() + 1);
     const [loadingPdf, setLoadingPdf] = useState(false);
@@ -81,7 +84,7 @@ export default function AdminReportMonthScreen() {
 
             {query.isLoading ? (
                 <View style={styles.center}>
-                    <ActivityIndicator size="large" color={theme.colors.primary} />
+                    <ActivityIndicator size="large" color={tokens.colors.primary} />
                 </View>
             ) : (
                 <ScrollView
@@ -90,7 +93,7 @@ export default function AdminReportMonthScreen() {
                         <RefreshControl
                             refreshing={query.isRefetching && !query.isLoading}
                             onRefresh={() => void query.refetch()}
-                            tintColor={theme.colors.primary}
+                            tintColor={tokens.colors.primary}
                         />
                     }
                 >
@@ -159,7 +162,8 @@ export default function AdminReportMonthScreen() {
     );
 }
 
-const styles = StyleSheet.create({
+function createStyles(theme: ThemeTokens) {
+    return {
     container: { flex: 1, backgroundColor: theme.colors.bgSecondary },
     center: { flex: 1, alignItems: "center", justifyContent: "center" },
     content: { padding: theme.spacing.md, gap: theme.spacing.md, paddingBottom: theme.spacing.xl },
@@ -170,13 +174,13 @@ const styles = StyleSheet.create({
         borderRadius: theme.radius.full,
         borderWidth: 1,
         borderColor: theme.colors.borderPrimary,
-        backgroundColor: theme.colors.bgSecondary,
+        backgroundColor: theme.colors.bgCard,
         paddingHorizontal: 12,
         paddingVertical: 7,
     },
     chipSelected: { backgroundColor: theme.colors.primary, borderColor: theme.colors.primary },
     chipText: { color: theme.colors.textSecondary, fontWeight: "700", fontSize: 12 },
-    chipTextSelected: { color: theme.colors.textInverse },
+    chipTextSelected: { color: theme.colors.onPrimary },
     actionButton: {
         marginTop: theme.spacing.sm,
         borderRadius: theme.radius.full,
@@ -185,5 +189,6 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     actionButtonDisabled: { opacity: 0.65 },
-    actionButtonText: { color: theme.colors.textInverse, fontWeight: "900", fontSize: 13 },
-});
+    actionButtonText: { color: theme.colors.onPrimary, fontWeight: "900", fontSize: 13 },
+    };
+}

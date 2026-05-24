@@ -4,7 +4,6 @@ import {
     ActivityIndicator,
     Pressable,
     ScrollView,
-    StyleSheet,
     Text,
     TextInput,
     View,
@@ -21,7 +20,7 @@ import {
     updateCareer,
     type CareerUpsertInput,
 } from "../../src/api/adminCareers";
-import { theme } from "../../src/shared";
+import { useAppTheme, useThemedStyles, type ThemeTokens } from "../../src/shared";
 
 type SelectOption = { label: string; value: string; icon?: string };
 
@@ -53,7 +52,8 @@ function normalizeModalitySelection(value: string) {
 }
 
 function IconPreview({ iconName }: Readonly<{ iconName: string }>) {
-    return <Ionicons name={iconName as never} size={18} color={theme.colors.primary} />;
+    const { tokens } = useAppTheme();
+    return <Ionicons name={iconName as never} size={18} color={tokens.colors.primary} />;
 }
 
 function getCoordinatorLabel(coordinators: Array<{ id: string; firstName: string; lastName: string }>, coordinatorId: string) {
@@ -74,6 +74,8 @@ function toNumber(value: string, fallback: number) {
 }
 
 export default function CareerFormScreen() {
+    const { tokens } = useAppTheme();
+    const styles = useThemedStyles(createStyles);
     const router = useRouter();
     const queryClient = useQueryClient();
     const params = useLocalSearchParams<{ id?: string }>();
@@ -170,14 +172,20 @@ export default function CareerFormScreen() {
 
             {loadingEdit ? (
                 <View style={styles.center}>
-                    <ActivityIndicator color={theme.colors.primary} />
+                    <ActivityIndicator color={tokens.colors.primary} />
                     <Text style={styles.helperText}>Cargando carrera...</Text>
                 </View>
             ) : (
                 <ScrollView contentContainerStyle={styles.content}>
                     <View style={styles.formCard}>
                         <Text style={styles.label}>Nombre</Text>
-                        <TextInput style={styles.input} value={name} onChangeText={setName} placeholder="Nombre" />
+                        <TextInput
+                            style={styles.input}
+                            value={name}
+                            onChangeText={setName}
+                            placeholder="Nombre"
+                            placeholderTextColor={tokens.colors.textTertiary}
+                        />
 
                         <Text style={styles.label}>Descripcion</Text>
                         <TextInput
@@ -185,6 +193,7 @@ export default function CareerFormScreen() {
                             value={description}
                             onChangeText={setDescription}
                             placeholder="Descripcion"
+                            placeholderTextColor={tokens.colors.textTertiary}
                             multiline
                         />
 
@@ -205,7 +214,7 @@ export default function CareerFormScreen() {
                                     <Ionicons
                                         name={modalityOpen ? "chevron-up" : "chevron-down"}
                                         size={18}
-                                        color={theme.colors.textSecondary}
+                                        color={tokens.colors.textSecondary}
                                     />
                                 </Pressable>
                                 {modalityOpen ? (
@@ -233,7 +242,7 @@ export default function CareerFormScreen() {
                                 <IconPreview iconName={icon || "school-outline"} />
                                 <Text style={styles.selectBtnText}>{selectedIconLabel}</Text>
                             </View>
-                            <Ionicons name={iconOpen ? "chevron-up" : "chevron-down"} size={18} color={theme.colors.textSecondary} />
+                            <Ionicons name={iconOpen ? "chevron-up" : "chevron-down"} size={18} color={tokens.colors.textSecondary} />
                         </Pressable>
                         {iconOpen ? (
                             <View style={styles.selectMenu}>
@@ -259,7 +268,7 @@ export default function CareerFormScreen() {
                             <Ionicons
                                 name={facultyOpen ? "chevron-up" : "chevron-down"}
                                 size={18}
-                                color={theme.colors.textSecondary}
+                                color={tokens.colors.textSecondary}
                             />
                         </Pressable>
                         {facultyOpen ? (
@@ -285,7 +294,7 @@ export default function CareerFormScreen() {
                             <Ionicons
                                 name={coordinatorOpen ? "chevron-up" : "chevron-down"}
                                 size={18}
-                                color={theme.colors.textSecondary}
+                                color={tokens.colors.textSecondary}
                             />
                         </Pressable>
                         {coordinatorOpen ? (
@@ -316,9 +325,9 @@ export default function CareerFormScreen() {
                             onPress={() => upsertMutation.mutate()}
                         >
                             {upsertMutation.isPending ? (
-                                <ActivityIndicator color={theme.colors.textInverse} />
+                                <ActivityIndicator color={tokens.colors.onPrimary} />
                             ) : (
-                                <Ionicons name="save-outline" size={18} color={theme.colors.textInverse} />
+                                <Ionicons name="save-outline" size={18} color={tokens.colors.onPrimary} />
                             )}
                             <Text style={styles.primaryBtnText}>{isEdit ? "Guardar" : "Crear"}</Text>
                         </Pressable>
@@ -329,85 +338,87 @@ export default function CareerFormScreen() {
     );
 }
 
-const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: theme.colors.bgSecondary },
-    content: { padding: theme.spacing.lg, paddingBottom: theme.spacing.xl },
-    center: { flex: 1, alignItems: "center", justifyContent: "center", padding: theme.spacing.lg, gap: 10 },
-    helperText: { color: theme.colors.textSecondary, fontWeight: "800" },
-    errorText: { color: theme.colors.error, fontWeight: "900" },
+function createStyles(theme: ThemeTokens) {
+    return {
+        container: { flex: 1, backgroundColor: theme.colors.bgSecondary },
+        content: { padding: theme.spacing.lg, paddingBottom: theme.spacing.xl },
+        center: { flex: 1, alignItems: "center", justifyContent: "center", padding: theme.spacing.lg, gap: 10 },
+        helperText: { color: theme.colors.textSecondary, fontWeight: "800" },
+        errorText: { color: theme.colors.error, fontWeight: "900" },
 
-    formCard: {
-        backgroundColor: theme.colors.bgPrimary,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-        borderRadius: theme.radius.lg,
-        padding: theme.spacing.md,
-        gap: 10,
-        ...theme.shadow.sm,
-    },
-    label: { fontWeight: "900", color: theme.colors.textSecondary, marginTop: 2 },
-    input: {
-        height: 44,
-        borderRadius: theme.radius.sm,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-        paddingHorizontal: 12,
-        backgroundColor: theme.colors.bgSecondary,
-        color: theme.colors.textPrimary,
-        fontWeight: "700",
-    },
-    multiline: { height: 90, textAlignVertical: "top", paddingTop: 12 },
-    row2: { flexDirection: "row", gap: 10 },
-    col: { flex: 1, gap: 6 },
+        formCard: {
+            backgroundColor: theme.colors.bgCard,
+            borderWidth: 1,
+            borderColor: theme.colors.borderPrimary,
+            borderRadius: theme.radius.lg,
+            padding: theme.spacing.md,
+            gap: 10,
+            ...theme.shadow.sm,
+        },
+        label: { fontWeight: "900", color: theme.colors.textSecondary, marginTop: 2 },
+        input: {
+            height: 44,
+            borderRadius: theme.radius.sm,
+            borderWidth: 1,
+            borderColor: theme.colors.borderPrimary,
+            paddingHorizontal: 12,
+            backgroundColor: theme.colors.bgSecondary,
+            color: theme.colors.textPrimary,
+            fontWeight: "700",
+        },
+        multiline: { height: 90, textAlignVertical: "top", paddingTop: 12 },
+        row2: { flexDirection: "row", gap: 10 },
+        col: { flex: 1, gap: 6 },
 
-    selectBtn: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        gap: 12,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-        borderRadius: theme.radius.sm,
-        paddingHorizontal: 12,
-        height: 44,
-        backgroundColor: theme.colors.bgSecondary,
-    },
-    selectBtnText: { color: theme.colors.textPrimary, fontWeight: "800" },
-    selectMenu: {
-        marginTop: 6,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-        borderRadius: theme.radius.sm,
-        overflow: "hidden",
-        backgroundColor: theme.colors.bgPrimary,
-    },
-    selectItem: { paddingHorizontal: 12, paddingVertical: 12 },
-    selectItemText: { color: theme.colors.textPrimary, fontWeight: "700" },
+        selectBtn: {
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 12,
+            borderWidth: 1,
+            borderColor: theme.colors.borderPrimary,
+            borderRadius: theme.radius.sm,
+            paddingHorizontal: 12,
+            height: 44,
+            backgroundColor: theme.colors.bgSecondary,
+        },
+        selectBtnText: { color: theme.colors.textPrimary, fontWeight: "800" },
+        selectMenu: {
+            marginTop: 6,
+            borderWidth: 1,
+            borderColor: theme.colors.borderPrimary,
+            borderRadius: theme.radius.sm,
+            overflow: "hidden",
+            backgroundColor: theme.colors.bgCard,
+        },
+        selectItem: { paddingHorizontal: 12, paddingVertical: 12 },
+        selectItemText: { color: theme.colors.textPrimary, fontWeight: "700" },
 
-    iconSelectLabelRow: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 8,
-    },
-    iconOptionRow: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 12,
-        paddingHorizontal: 12,
-        paddingVertical: 12,
-    },
+        iconSelectLabelRow: {
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 8,
+        },
+        iconOptionRow: {
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 12,
+            paddingHorizontal: 12,
+            paddingVertical: 12,
+        },
 
-    primaryBtn: {
-        marginTop: 8,
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: 10,
-        height: 48,
-        borderRadius: 999,
-        backgroundColor: theme.colors.primary,
-        ...theme.shadow.primary,
-    },
-    primaryBtnText: { color: theme.colors.textInverse, fontWeight: "900" },
-    btnDisabled: { opacity: 0.7 },
-});
+        primaryBtn: {
+            marginTop: 8,
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 10,
+            height: 48,
+            borderRadius: 999,
+            backgroundColor: theme.colors.primary,
+            ...theme.shadow.primary,
+        },
+        primaryBtnText: { color: theme.colors.onPrimary, fontWeight: "900" },
+        btnDisabled: { opacity: 0.7 },
+    };
+}

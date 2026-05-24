@@ -4,7 +4,6 @@ import {
     FlatList,
     Image,
     Pressable,
-    StyleSheet,
     Text,
     useWindowDimensions,
     View,
@@ -17,7 +16,7 @@ import { AppHeader } from "../../src/components/AppHeader";
 import { toAbsoluteUrl } from "../../src/api/client";
 import { fetchReportEventsPaginated } from "../../src/api/adminReports";
 import { useFacultyInfo } from "../../src/features/faculty/useFacultyInfo";
-import { theme } from "../../src/shared";
+import { useAppTheme, useThemedStyles, type ThemeTokens } from "../../src/shared";
 import { useAuthStore } from "../../src/store/authStore";
 import { isGlobalAdminRole } from "../../src/utils/roles";
 
@@ -30,58 +29,62 @@ type ReportCard = {
     color: string;
 };
 
-const REPORT_CARDS: ReportCard[] = [
-    {
-        key: "career",
-        title: "Por Carrera",
-        subtitle: "Participación por carrera académica",
-        icon: "school-outline",
-        href: "/(admin)/reports/career",
-        color: theme.colors.reportIndigo,
-    },
-    {
-        key: "enrollments",
-        title: "Inscripciones",
-        subtitle: "Estado y tendencias de inscripciones",
-        icon: "clipboard-outline",
-        href: "/(admin)/reports/enrollments",
-        color: theme.colors.reportCyan,
-    },
-    {
-        key: "attendance",
-        title: "Asistencia",
-        subtitle: "Asistencia vs inscripciones",
-        icon: "checkmark-done-outline",
-        href: "/(admin)/reports/attendance",
-        color: theme.colors.success,
-    },
-    {
-        key: "certificates",
-        title: "Certificados",
-        subtitle: "Emisión y descarga de certificados",
-        icon: "ribbon-outline",
-        href: "/(admin)/reports/certificates",
-        color: theme.colors.warning,
-    },
-    {
-        key: "revenue",
-        title: "Ingresos",
-        subtitle: "Análisis de ingresos y pagos",
-        icon: "cash-outline",
-        href: "/(admin)/reports/revenue",
-        color: theme.colors.success,
-    },
-    {
-        key: "month",
-        title: "Por Mes",
-        subtitle: "Datos agrupados por mes",
-        icon: "calendar-outline",
-        href: "/(admin)/reports/month",
-        color: theme.colors.primary,
-    },
-];
+function getReportCards(colors: ThemeTokens["colors"]): ReportCard[] {
+    return [
+        {
+            key: "career",
+            title: "Por Carrera",
+            subtitle: "Participación por carrera académica",
+            icon: "school-outline",
+            href: "/(admin)/reports/career",
+            color: colors.reportIndigo,
+        },
+        {
+            key: "enrollments",
+            title: "Inscripciones",
+            subtitle: "Estado y tendencias de inscripciones",
+            icon: "clipboard-outline",
+            href: "/(admin)/reports/enrollments",
+            color: colors.reportCyan,
+        },
+        {
+            key: "attendance",
+            title: "Asistencia",
+            subtitle: "Asistencia vs inscripciones",
+            icon: "checkmark-done-outline",
+            href: "/(admin)/reports/attendance",
+            color: colors.success,
+        },
+        {
+            key: "certificates",
+            title: "Certificados",
+            subtitle: "Emisión y descarga de certificados",
+            icon: "ribbon-outline",
+            href: "/(admin)/reports/certificates",
+            color: colors.warning,
+        },
+        {
+            key: "revenue",
+            title: "Ingresos",
+            subtitle: "Análisis de ingresos y pagos",
+            icon: "cash-outline",
+            href: "/(admin)/reports/revenue",
+            color: colors.success,
+        },
+        {
+            key: "month",
+            title: "Por Mes",
+            subtitle: "Datos agrupados por mes",
+            icon: "calendar-outline",
+            href: "/(admin)/reports/month",
+            color: colors.primary,
+        },
+    ];
+}
 
 function ReportGridCard({ card, compact }: Readonly<{ card: ReportCard; compact: boolean }>) {
+    const { tokens } = useAppTheme();
+    const styles = useThemedStyles(createStyles);
     const router = useRouter();
 
     return (
@@ -99,7 +102,7 @@ function ReportGridCard({ card, compact }: Readonly<{ card: ReportCard; compact:
                 <Text style={styles.reportTitle} numberOfLines={1}>{card.title}</Text>
                 <Text style={styles.reportSubtitle} numberOfLines={2}>{card.subtitle}</Text>
                 <View style={[styles.reportArrow, { backgroundColor: card.color }]}>
-                    <Ionicons name="arrow-forward" size={12} color={theme.colors.textInverse} />
+                    <Ionicons name="arrow-forward" size={12} color={tokens.colors.onPrimary} />
                 </View>
             </LinearGradient>
         </Pressable>
@@ -107,13 +110,15 @@ function ReportGridCard({ card, compact }: Readonly<{ card: ReportCard; compact:
 }
 
 export default function AdminDashboardScreen() {
+    const { tokens } = useAppTheme();
+    const styles = useThemedStyles(createStyles);
     const router = useRouter();
     const { width } = useWindowDimensions();
     const role = useAuthStore((s) => s.user?.role);
     const isGlobal = isGlobalAdminRole(role ?? null);
     const { data: faculty } = useFacultyInfo();
     const compactReportCards = width < 380;
-
+    const reportCards = useMemo(() => getReportCards(tokens.colors), [tokens.colors]);
 
     const [page, setPage] = useState(1);
     const limit = 10;
@@ -126,14 +131,13 @@ export default function AdminDashboardScreen() {
 
     const recentEvents = eventsQuery.data?.data ?? [];
     const pagination = eventsQuery.data?.pagination;
-    const reportCount = REPORT_CARDS.length;
+    const reportCount = reportCards.length;
 
     const header = useMemo(() => {
         return (
             <View style={styles.headerWrap}>
-                {/* Título del panel */}
                 <LinearGradient
-                    colors={theme.gradients.header}
+                    colors={tokens.gradients.header}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
                     style={styles.dashboardBanner}
@@ -143,7 +147,7 @@ export default function AdminDashboardScreen() {
                             {faculty?.logo ? (
                                 <Image source={{ uri: toAbsoluteUrl(faculty.logo) }} style={styles.bannerLogo} resizeMode="contain" />
                             ) : (
-                                <Ionicons name="school-outline" size={22} color={theme.colors.primary} />
+                                <Ionicons name="school-outline" size={22} color={tokens.colors.primary} />
                             )}
                         </View>
                         <View style={{ flex: 1 }}>
@@ -163,22 +167,20 @@ export default function AdminDashboardScreen() {
                     </View>
                 </LinearGradient>
 
-                {/* Reportes fuera del bloque principal para una lectura más ligera */}
                 <View style={styles.sectionTitleRow}>
-                    <Ionicons name="bar-chart-outline" size={16} color={theme.colors.primary} />
+                    <Ionicons name="bar-chart-outline" size={16} color={tokens.colors.primary} />
                     <Text style={styles.blockTitle}>Reportes disponibles</Text>
                 </View>
                 <View style={styles.reportGrid}>
-                    {REPORT_CARDS.map((card) => (
+                    {reportCards.map((card) => (
                         <ReportGridCard key={card.key} card={card} compact={compactReportCards} />
                     ))}
                 </View>
 
-                {/* Administración global */}
                 {isGlobal ? (
                     <View style={styles.sectionBlock}>
                         <View style={styles.sectionTitleRow}>
-                            <Ionicons name="shield-outline" size={16} color={theme.colors.primary} />
+                            <Ionicons name="shield-outline" size={16} color={tokens.colors.primary} />
                             <Text style={styles.blockTitle}>Administración Global</Text>
                         </View>
                         <Pressable
@@ -186,38 +188,37 @@ export default function AdminDashboardScreen() {
                             onPress={() => router.push("/(admin)/global-users")}
                         >
                             <View style={styles.globalBtnIcon}>
-                                <Ionicons name="people-outline" size={18} color={theme.colors.primary} />
+                                <Ionicons name="people-outline" size={18} color={tokens.colors.primary} />
                             </View>
                             <View style={{ flex: 1 }}>
                                 <Text style={styles.globalBtnText}>Gestionar usuarios</Text>
                                 <Text style={styles.globalBtnSubtext}>Ver y administrar todos los usuarios</Text>
                             </View>
-                            <Ionicons name="chevron-forward" size={16} color={theme.colors.textTertiary} />
+                            <Ionicons name="chevron-forward" size={16} color={tokens.colors.textTertiary} />
                         </Pressable>
                         <Pressable
                             style={styles.globalBtn}
                             onPress={() => router.push("/(admin)/university")}
                         >
                             <View style={styles.globalBtnIcon}>
-                                <Ionicons name="business-outline" size={18} color={theme.colors.primary} />
+                                <Ionicons name="business-outline" size={18} color={tokens.colors.primary} />
                             </View>
                             <View style={{ flex: 1 }}>
                                 <Text style={styles.globalBtnText}>Información de la universidad</Text>
                                 <Text style={styles.globalBtnSubtext}>Datos, redes sociales y contacto</Text>
                             </View>
-                            <Ionicons name="chevron-forward" size={16} color={theme.colors.textTertiary} />
+                            <Ionicons name="chevron-forward" size={16} color={tokens.colors.textTertiary} />
                         </Pressable>
                     </View>
                 ) : null}
 
-                {/* Título sección eventos recientes */}
                 <View style={styles.sectionTitleRow}>
-                    <Ionicons name="time-outline" size={16} color={theme.colors.primary} />
+                    <Ionicons name="time-outline" size={16} color={tokens.colors.primary} />
                     <Text style={[styles.blockTitle, { marginLeft: 0 }]}>Eventos Recientes</Text>
                 </View>
             </View>
         );
-    }, [router, isGlobal, compactReportCards]);
+    }, [router, isGlobal, compactReportCards, styles, tokens, faculty, reportCount, recentEvents.length, reportCards]);
 
     const body = (
         <FlatList
@@ -242,7 +243,7 @@ export default function AdminDashboardScreen() {
                         </Text>
                         <View style={styles.eventFooter}>
                             <Text style={styles.eventSeeMore}>Ver reporte</Text>
-                            <Ionicons name="arrow-forward-outline" size={13} color={theme.colors.primary} />
+                            <Ionicons name="arrow-forward-outline" size={13} color={tokens.colors.primary} />
                         </View>
                     </View>
                 </Pressable>
@@ -250,17 +251,17 @@ export default function AdminDashboardScreen() {
             ListEmptyComponent={
                 eventsQuery.isLoading ? (
                     <View style={styles.center}>
-                        <ActivityIndicator size="large" color={theme.colors.primary} />
+                        <ActivityIndicator size="large" color={tokens.colors.primary} />
                         <Text style={styles.loadingText}>Cargando datos...</Text>
                     </View>
                 ) : eventsQuery.isError ? (
                     <View style={styles.center}>
-                        <Ionicons name="alert-circle-outline" size={48} color={theme.colors.error} />
+                        <Ionicons name="alert-circle-outline" size={48} color={tokens.colors.error} />
                         <Text style={styles.errorText}>No se pudieron cargar eventos recientes.</Text>
                     </View>
                 ) : (
                     <View style={styles.emptyState}>
-                        <Ionicons name="document-outline" size={40} color={theme.colors.textTertiary} />
+                        <Ionicons name="document-outline" size={40} color={tokens.colors.textTertiary} />
                         <Text style={styles.emptyText}>No hay eventos recientes.</Text>
                     </View>
                 )
@@ -273,7 +274,7 @@ export default function AdminDashboardScreen() {
                             disabled={page <= 1}
                             onPress={() => setPage((p) => Math.max(1, p - 1))}
                         >
-                            <Ionicons name="chevron-back" size={16} color={theme.colors.textInverse} />
+                            <Ionicons name="chevron-back" size={16} color={tokens.colors.onPrimary} />
                             <Text style={styles.pageBtnText}>Anterior</Text>
                         </Pressable>
                         <View style={styles.pageInfoWrap}>
@@ -290,7 +291,7 @@ export default function AdminDashboardScreen() {
                             onPress={() => setPage((p) => p + 1)}
                         >
                             <Text style={styles.pageBtnText}>Siguiente</Text>
-                            <Ionicons name="chevron-forward" size={16} color={theme.colors.textInverse} />
+                            <Ionicons name="chevron-forward" size={16} color={tokens.colors.onPrimary} />
                         </Pressable>
                     </View>
                 ) : null
@@ -306,202 +307,197 @@ export default function AdminDashboardScreen() {
     );
 }
 
-const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: theme.colors.bgSecondary },
-    center: { flex: 1, alignItems: "center", justifyContent: "center", padding: theme.spacing.lg, gap: 10 },
-    loadingText: { color: theme.colors.textSecondary, fontWeight: "700" },
-    errorText: { color: theme.colors.error, fontWeight: "700", textAlign: "center" },
-    list: { padding: theme.spacing.md, gap: theme.spacing.md, paddingBottom: theme.spacing.xl },
+function createStyles(theme: ThemeTokens) {
+    return {
+        container: { flex: 1, backgroundColor: theme.colors.bgSecondary },
+        center: { flex: 1, alignItems: "center", justifyContent: "center", padding: theme.spacing.lg, gap: 10 },
+        loadingText: { color: theme.colors.textSecondary, fontWeight: "700" },
+        errorText: { color: theme.colors.error, fontWeight: "700", textAlign: "center" },
+        list: { padding: theme.spacing.md, gap: theme.spacing.md, paddingBottom: theme.spacing.xl },
 
-    headerWrap: { gap: theme.spacing.md },
+        headerWrap: { gap: theme.spacing.md },
 
-    // Banner superior
-    dashboardBanner: {
-        borderRadius: theme.radius.lg,
-        padding: theme.spacing.lg,
-        gap: 12,
-        overflow: "hidden",
-        borderWidth: 1,
-        borderColor: theme.colors.overlayWhite12,
-    },
-    bannerBrandRow: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 10,
-    },
-    bannerLogoWrap: {
-        width: 46,
-        height: 46,
-        borderRadius: 14,
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: theme.colors.overlayWhite18,
-        overflow: "hidden",
-    },
-    bannerLogo: {
-        width: 36,
-        height: 36,
-    },
-    bannerLabel: { color: theme.colors.overlayWhite82, fontSize: 12, fontWeight: "700" },
-    bannerTitle: { color: theme.colors.textInverse, fontSize: 20, fontWeight: "900", letterSpacing: 0.2 },
-    bannerStatsRow: {
-        flexDirection: "row",
-        gap: 10,
-    },
-    bannerStatPill: {
-        flex: 1,
-        borderRadius: theme.radius.md,
-        backgroundColor: theme.colors.overlayWhite12,
-        paddingVertical: 10,
-        paddingHorizontal: 12,
-        borderWidth: 1,
-        borderColor: theme.colors.overlayWhite12,
-    },
-    bannerStatValue: {
-        color: theme.colors.textInverse,
-        fontWeight: "900",
-        fontSize: 18,
-    },
-    bannerStatLabel: {
-        color: theme.colors.overlayWhite82,
-        fontSize: 11,
-        fontWeight: "700",
-        marginTop: 2,
-    },
+        dashboardBanner: {
+            borderRadius: theme.radius.lg,
+            padding: theme.spacing.lg,
+            gap: 12,
+            overflow: "hidden",
+            borderWidth: 1,
+            borderColor: theme.colors.overlayWhite12,
+        },
+        bannerBrandRow: {
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 10,
+        },
+        bannerLogoWrap: {
+            width: 46,
+            height: 46,
+            borderRadius: 14,
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: theme.colors.overlayWhite18,
+            overflow: "hidden",
+        },
+        bannerLogo: {
+            width: 36,
+            height: 36,
+        },
+        bannerLabel: { color: theme.colors.overlayWhite82, fontSize: 12, fontWeight: "700" },
+        bannerTitle: { color: theme.colors.textInverse, fontSize: 20, fontWeight: "900", letterSpacing: 0.2 },
+        bannerStatsRow: {
+            flexDirection: "row",
+            gap: 10,
+        },
+        bannerStatPill: {
+            flex: 1,
+            borderRadius: theme.radius.md,
+            backgroundColor: theme.colors.overlayWhite12,
+            paddingVertical: 10,
+            paddingHorizontal: 12,
+            borderWidth: 1,
+            borderColor: theme.colors.overlayWhite12,
+        },
+        bannerStatValue: {
+            color: theme.colors.textInverse,
+            fontWeight: "900",
+            fontSize: 18,
+        },
+        bannerStatLabel: {
+            color: theme.colors.overlayWhite82,
+            fontSize: 11,
+            fontWeight: "700",
+            marginTop: 2,
+        },
 
-    // Sección blocks
-    sectionBlock: {
-        backgroundColor: theme.colors.bgPrimary,
-        borderRadius: theme.radius.lg,
-        padding: theme.spacing.md,
-        gap: 12,
-        ...theme.shadow.sm,
-    },
-    sectionTitleRow: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 8,
-        marginBottom: 4,
-    },
-    blockTitle: { fontWeight: "800", color: theme.colors.textPrimary, fontSize: 15 },
+        sectionBlock: {
+            backgroundColor: theme.colors.bgCard,
+            borderRadius: theme.radius.lg,
+            padding: theme.spacing.md,
+            gap: 12,
+            ...theme.shadow.sm,
+        },
+        sectionTitleRow: {
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 8,
+            marginBottom: 4,
+        },
+        blockTitle: { fontWeight: "800", color: theme.colors.textPrimary, fontSize: 15 },
 
-    // Grid reportes
-    reportGrid: {
-        flexDirection: "row",
-        flexWrap: "wrap",
-        gap: 10,
-        marginBottom: 6,
-    },
-    reportCard: {
-        borderRadius: theme.radius.md,
-        overflow: "hidden",
-        ...theme.shadow.xs,
-    },
-    reportCardWide: { width: "47%" },
-    reportCardCompact: { width: "100%" },
-    reportCardGradient: {
-        padding: 14,
-        gap: 6,
-        borderRadius: theme.radius.md,
-        borderWidth: 1,
-        borderColor: theme.colors.borderLight,
-        minHeight: 112,
-        backgroundColor: theme.colors.bgPrimary,
-    },
-    reportIconWrap: {
-        width: 40,
-        height: 40,
-        borderRadius: 12,
-        alignItems: "center",
-        justifyContent: "center",
-        marginBottom: 2,
-    },
-    reportTitle: { fontWeight: "800", color: theme.colors.textPrimary, fontSize: 13 },
-    reportSubtitle: { color: theme.colors.textSecondary, fontWeight: "600", fontSize: 11, lineHeight: 16, flex: 1 },
-    reportArrow: {
-        width: 22,
-        height: 22,
-        borderRadius: 11,
-        alignItems: "center",
-        justifyContent: "center",
-        alignSelf: "flex-end",
-        marginTop: 4,
-    },
+        reportGrid: {
+            flexDirection: "row",
+            flexWrap: "wrap",
+            gap: 10,
+            marginBottom: 6,
+        },
+        reportCard: {
+            borderRadius: theme.radius.md,
+            overflow: "hidden",
+            ...theme.shadow.xs,
+        },
+        reportCardWide: { width: "47%" },
+        reportCardCompact: { width: "100%" },
+        reportCardGradient: {
+            padding: 14,
+            gap: 6,
+            borderRadius: theme.radius.md,
+            borderWidth: 1,
+            borderColor: theme.colors.borderLight,
+            minHeight: 112,
+            backgroundColor: theme.colors.bgCard,
+        },
+        reportIconWrap: {
+            width: 40,
+            height: 40,
+            borderRadius: 12,
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: 2,
+        },
+        reportTitle: { fontWeight: "800", color: theme.colors.textPrimary, fontSize: 13 },
+        reportSubtitle: { color: theme.colors.textSecondary, fontWeight: "600", fontSize: 11, lineHeight: 16, flex: 1 },
+        reportArrow: {
+            width: 22,
+            height: 22,
+            borderRadius: 11,
+            alignItems: "center",
+            justifyContent: "center",
+            alignSelf: "flex-end",
+            marginTop: 4,
+        },
 
-    // Global buttons
-    globalBtn: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 12,
-        paddingVertical: 12,
-        paddingHorizontal: 14,
-        borderRadius: theme.radius.md,
-        backgroundColor: theme.colors.bgSecondary,
-        borderWidth: 1,
-        borderColor: theme.colors.borderLight,
-    },
-    globalBtnIcon: {
-        width: 36,
-        height: 36,
-        borderRadius: 10,
-        backgroundColor: theme.colors.primaryLight,
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    globalBtnText: { color: theme.colors.textPrimary, fontWeight: "800", fontSize: 14 },
-    globalBtnSubtext: { color: theme.colors.textTertiary, fontWeight: "600", fontSize: 11, marginTop: 1 },
+        globalBtn: {
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 12,
+            paddingVertical: 12,
+            paddingHorizontal: 14,
+            borderRadius: theme.radius.md,
+            backgroundColor: theme.colors.bgSecondary,
+            borderWidth: 1,
+            borderColor: theme.colors.borderLight,
+        },
+        globalBtnIcon: {
+            width: 36,
+            height: 36,
+            borderRadius: 10,
+            backgroundColor: theme.colors.primaryLight,
+            alignItems: "center",
+            justifyContent: "center",
+        },
+        globalBtnText: { color: theme.colors.textPrimary, fontWeight: "800", fontSize: 14 },
+        globalBtnSubtext: { color: theme.colors.textTertiary, fontWeight: "600", fontSize: 11, marginTop: 1 },
 
-    // Tarjetas de eventos
-    eventCard: {
-        backgroundColor: theme.colors.bgPrimary,
-        borderRadius: theme.radius.lg,
-        overflow: "hidden",
-        ...theme.shadow.sm,
-        borderWidth: 1,
-        borderColor: theme.colors.borderLight,
-    },
-    eventCover: { width: "100%", height: 96, backgroundColor: theme.colors.bgTertiary },
-    eventBody: {
-        padding: theme.spacing.md,
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        gap: 10,
-    },
-    eventTitle: { flex: 1, fontWeight: "800", color: theme.colors.textPrimary, lineHeight: 20, fontSize: 14 },
-    eventFooter: { flexDirection: "row", alignItems: "center", gap: 4 },
-    eventSeeMore: { color: theme.colors.primary, fontWeight: "700", fontSize: 12 },
+        eventCard: {
+            backgroundColor: theme.colors.bgCard,
+            borderRadius: theme.radius.lg,
+            overflow: "hidden",
+            ...theme.shadow.sm,
+            borderWidth: 1,
+            borderColor: theme.colors.borderLight,
+        },
+        eventCover: { width: "100%", height: 96, backgroundColor: theme.colors.bgTertiary },
+        eventBody: {
+            padding: theme.spacing.md,
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 10,
+        },
+        eventTitle: { flex: 1, fontWeight: "800", color: theme.colors.textPrimary, lineHeight: 20, fontSize: 14 },
+        eventFooter: { flexDirection: "row", alignItems: "center", gap: 4 },
+        eventSeeMore: { color: theme.colors.primary, fontWeight: "700", fontSize: 12 },
 
-    // Paginación
-    pagination: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        paddingVertical: theme.spacing.md,
-        gap: 10,
-    },
-    pageInfoWrap: {
-        paddingHorizontal: 16,
-        paddingVertical: 8,
-        borderRadius: theme.radius.sm,
-        backgroundColor: theme.colors.bgPrimary,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-    },
-    pageInfo: { color: theme.colors.textSecondary, fontWeight: "800", fontSize: 13 },
-    pageBtn: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 4,
-        paddingHorizontal: 14,
-        height: 42,
-        borderRadius: theme.radius.md,
-        backgroundColor: theme.colors.primary,
-    },
-    pageBtnDisabled: { backgroundColor: theme.colors.borderSecondary },
-    pageBtnText: { color: theme.colors.textInverse, fontWeight: "800", fontSize: 13 },
+        pagination: {
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            paddingVertical: theme.spacing.md,
+            gap: 10,
+        },
+        pageInfoWrap: {
+            paddingHorizontal: 16,
+            paddingVertical: 8,
+            borderRadius: theme.radius.sm,
+            backgroundColor: theme.colors.bgCard,
+            borderWidth: 1,
+            borderColor: theme.colors.borderPrimary,
+        },
+        pageInfo: { color: theme.colors.textSecondary, fontWeight: "800", fontSize: 13 },
+        pageBtn: {
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 4,
+            paddingHorizontal: 14,
+            height: 42,
+            borderRadius: theme.radius.md,
+            backgroundColor: theme.colors.primary,
+        },
+        pageBtnDisabled: { backgroundColor: theme.colors.borderSecondary },
+        pageBtnText: { color: theme.colors.onPrimary, fontWeight: "800", fontSize: 13 },
 
-    // Estado vacío
-    emptyState: { alignItems: "center", paddingVertical: theme.spacing.xl, gap: 10 },
-    emptyText: { color: theme.colors.textTertiary, fontWeight: "700" },
-});
+        emptyState: { alignItems: "center", paddingVertical: theme.spacing.xl, gap: 10 },
+        emptyText: { color: theme.colors.textTertiary, fontWeight: "700" },
+    };
+}

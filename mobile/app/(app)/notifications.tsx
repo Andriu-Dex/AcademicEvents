@@ -21,7 +21,7 @@ import {
 } from "../../src/api/notifications";
 import { syncPushTokenNow } from "../../src/features/notifications/usePushTokenSync";
 import { queryClient } from "../../src/shared/queryClient";
-import { theme } from "../../src/shared";
+import { useAppTheme, useThemedStyles, type ThemeTokens } from "../../src/shared";
 
 function formatDateTime(raw: string) {
     if (!raw) return "";
@@ -40,6 +40,7 @@ function NotificationCard({
     item,
     onPress,
 }: Readonly<{ item: NotificationItem; onPress: (item: NotificationItem) => void }>) {
+    const styles = useThemedStyles(createStyles);
     const isRead = Boolean(item.readAt);
     return (
         <Pressable style={[styles.card, !isRead && styles.cardUnread]} onPress={() => onPress(item)}>
@@ -58,6 +59,8 @@ function NotificationCard({
 }
 
 export default function NotificationsScreen() {
+    const { tokens } = useAppTheme();
+    const styles = useThemedStyles(createStyles);
     const [manualRefreshing, setManualRefreshing] = useState(false);
 
     const query = useQuery({
@@ -112,7 +115,7 @@ export default function NotificationsScreen() {
     if (query.isLoading) {
         body = (
             <View style={styles.center}>
-                <ActivityIndicator size="large" />
+                <ActivityIndicator size="large" color={tokens.colors.primary} />
             </View>
         );
     } else if (query.isError) {
@@ -131,7 +134,7 @@ export default function NotificationsScreen() {
                     <RefreshControl
                         refreshing={manualRefreshing}
                         onRefresh={() => void onManualRefresh()}
-                        tintColor={theme.colors.primary}
+                        tintColor={tokens.colors.primary}
                     />
                 }
                 renderItem={({ item }) => <NotificationCard item={item} onPress={onOpenNotification} />}
@@ -146,7 +149,7 @@ export default function NotificationsScreen() {
 
             <View style={styles.actions}>
                 <Pressable style={styles.actionBtn} onPress={onReadAll}>
-                    <Ionicons name="checkmark-done-outline" size={18} color={theme.colors.primary} />
+                    <Ionicons name="checkmark-done-outline" size={18} color={tokens.colors.primary} />
                     <Text style={styles.actionText}>Marcar todo como leido</Text>
                 </Pressable>
 
@@ -157,7 +160,7 @@ export default function NotificationsScreen() {
                             : "Push no activo en este dispositivo"}
                     </Text>
                     <Pressable style={styles.syncBtn} onPress={() => void onRetryPushSync()}>
-                        <Ionicons name="refresh" size={14} color={theme.colors.primary} />
+                        <Ionicons name="refresh" size={14} color={tokens.colors.primary} />
                         <Text style={styles.syncText}>Reintentar</Text>
                     </Pressable>
                 </View>
@@ -168,62 +171,74 @@ export default function NotificationsScreen() {
     );
 }
 
-const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: theme.colors.bgSecondary },
-    actions: {
-        padding: theme.spacing.md,
-        borderBottomWidth: 1,
-        borderBottomColor: theme.colors.borderPrimary,
-        backgroundColor: theme.colors.bgPrimary,
-    },
-    actionBtn: {
-        height: 44,
-        borderRadius: theme.radius.md,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-        backgroundColor: theme.colors.bgPrimary,
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: 10,
-    },
-    actionText: { color: theme.colors.primary, fontWeight: "900" },
-    pushStatusRow: {
-        marginTop: 8,
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        gap: 8,
-    },
-    pushStatusText: { flex: 1, color: theme.colors.textTertiary, fontWeight: "700", fontSize: 12 },
-    syncBtn: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 4,
-        borderRadius: theme.radius.full,
-        borderWidth: 1,
-        borderColor: theme.colors.primaryLight,
-        paddingHorizontal: 10,
-        paddingVertical: 6,
-        backgroundColor: theme.colors.primaryLighter,
-    },
-    syncText: { color: theme.colors.primary, fontWeight: "800", fontSize: 12 },
-    center: { flex: 1, alignItems: "center", justifyContent: "center", padding: theme.spacing.lg },
-    errorText: { color: theme.colors.error, fontWeight: "900" },
-    list: { padding: theme.spacing.lg, gap: theme.spacing.md, paddingBottom: theme.spacing.xl },
-    emptyText: { color: theme.colors.textSecondary, fontWeight: "800", textAlign: "center", marginTop: theme.spacing.lg },
-    card: {
-        backgroundColor: theme.colors.bgPrimary,
-        borderRadius: theme.radius.lg,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-        padding: theme.spacing.md,
-        ...theme.shadow.sm,
-    },
-    cardUnread: { borderColor: theme.colors.primary },
-    cardTop: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 10 },
-    title: { flex: 1, fontWeight: "900", color: theme.colors.textPrimary },
-    dot: { width: 10, height: 10, borderRadius: 5, backgroundColor: theme.colors.primary },
-    body: { marginTop: 8, color: theme.colors.textSecondary, lineHeight: 18 },
-    meta: { marginTop: 8, color: theme.colors.textTertiary, fontWeight: "700" },
-});
+function createStyles(theme: ThemeTokens) {
+    return {
+        container: { flex: 1, backgroundColor: theme.colors.bgSecondary },
+        actions: {
+            padding: theme.spacing.md,
+            borderBottomWidth: 1,
+            borderBottomColor: theme.colors.borderPrimary,
+            backgroundColor: theme.colors.bgCard,
+        },
+        actionBtn: {
+            height: 44,
+            borderRadius: theme.radius.md,
+            borderWidth: 1,
+            borderColor: theme.colors.borderPrimary,
+            backgroundColor: theme.colors.bgSecondary,
+            flexDirection: "row" as const,
+            alignItems: "center" as const,
+            justifyContent: "center" as const,
+            gap: 10,
+        },
+        actionText: { color: theme.colors.primary, fontWeight: "900" as const },
+        pushStatusRow: {
+            marginTop: 8,
+            flexDirection: "row" as const,
+            alignItems: "center" as const,
+            justifyContent: "space-between" as const,
+            gap: 8,
+        },
+        pushStatusText: { flex: 1, color: theme.colors.textTertiary, fontWeight: "700" as const, fontSize: 12 },
+        syncBtn: {
+            flexDirection: "row" as const,
+            alignItems: "center" as const,
+            gap: 4,
+            borderRadius: theme.radius.full,
+            borderWidth: 1,
+            borderColor: theme.colors.primaryLight,
+            paddingHorizontal: 10,
+            paddingVertical: 6,
+            backgroundColor: theme.colors.primaryLighter,
+        },
+        syncText: { color: theme.colors.primary, fontWeight: "800" as const, fontSize: 12 },
+        center: { flex: 1, alignItems: "center" as const, justifyContent: "center" as const, padding: theme.spacing.lg },
+        errorText: { color: theme.colors.error, fontWeight: "900" as const },
+        list: { padding: theme.spacing.lg, gap: theme.spacing.md, paddingBottom: theme.spacing.xl },
+        emptyText: {
+            color: theme.colors.textSecondary,
+            fontWeight: "800" as const,
+            textAlign: "center" as const,
+            marginTop: theme.spacing.lg,
+        },
+        card: {
+            backgroundColor: theme.colors.bgCard,
+            borderRadius: theme.radius.lg,
+            borderWidth: 1,
+            borderColor: theme.colors.borderPrimary,
+            padding: theme.spacing.md,
+            ...theme.shadow.sm,
+        },
+        cardUnread: { borderColor: theme.colors.primary },
+        cardTop: {
+            flexDirection: "row" as const,
+            alignItems: "center" as const,
+            justifyContent: "space-between" as const,
+            gap: 10,
+        },
+        title: { flex: 1, fontWeight: "900" as const, color: theme.colors.textPrimary },
+        dot: { width: 10, height: 10, borderRadius: 5, backgroundColor: theme.colors.primary },
+        body: { marginTop: 8, color: theme.colors.textSecondary, lineHeight: 18 },
+        meta: { marginTop: 8, color: theme.colors.textTertiary, fontWeight: "700" as const },
+    };
+}

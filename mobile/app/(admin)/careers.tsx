@@ -4,7 +4,6 @@ import {
     Alert,
     FlatList,
     Pressable,
-    StyleSheet,
     Text,
     TextInput,
     View,
@@ -22,7 +21,7 @@ import {
     fetchFaculties,
     type Career,
 } from "../../src/api/adminCareers";
-import { theme } from "../../src/shared";
+import { useAppTheme, useThemedStyles, type ThemeTokens } from "../../src/shared";
 
 function fullName(firstName: string, lastName: string) {
     return `${firstName} ${lastName}`.trim();
@@ -39,6 +38,9 @@ function CareerCard({
     onToggle: () => void;
     onDeletePermanent: () => void;
 }>) {
+    const { tokens } = useAppTheme();
+    const styles = useThemedStyles(createStyles);
+
     return (
         <View style={styles.itemCard}>
             <View style={styles.itemHeaderRow}>
@@ -74,7 +76,7 @@ function CareerCard({
 
             <View style={styles.actionRow}>
                 <Pressable style={[styles.actionBtn, styles.actionBtnPrimary]} onPress={onEdit}>
-                    <Ionicons name="create-outline" size={16} color={theme.colors.textInverse} />
+                    <Ionicons name="create-outline" size={16} color={tokens.colors.onPrimary} />
                     <Text style={styles.actionBtnTextPrimary}>Editar</Text>
                 </Pressable>
 
@@ -82,13 +84,13 @@ function CareerCard({
                     <Ionicons
                         name={career.isActive ? "pause-outline" : "play-outline"}
                         size={16}
-                        color={theme.colors.textPrimary}
+                        color={tokens.colors.textPrimary}
                     />
                     <Text style={styles.actionBtnTextGhost}>{career.isActive ? "Desactivar" : "Activar"}</Text>
                 </Pressable>
 
                 <Pressable style={[styles.actionBtn, styles.actionBtnDanger]} onPress={onDeletePermanent}>
-                    <Ionicons name="trash-outline" size={16} color={theme.colors.textInverse} />
+                    <Ionicons name="trash-outline" size={16} color={tokens.colors.onPrimary} />
                     <Text style={styles.actionBtnTextPrimary}>Eliminar</Text>
                 </Pressable>
             </View>
@@ -97,6 +99,8 @@ function CareerCard({
 }
 
 export default function AdminCareersScreen() {
+    const { tokens } = useAppTheme();
+    const styles = useThemedStyles(createStyles);
     const router = useRouter();
     const queryClient = useQueryClient();
     const [search, setSearch] = useState("");
@@ -173,7 +177,7 @@ export default function AdminCareersScreen() {
     if (careersQuery.isLoading) {
         listEmptyComponent = (
             <View style={styles.center}>
-                <ActivityIndicator color={theme.colors.primary} />
+                <ActivityIndicator color={tokens.colors.primary} />
                 <Text style={styles.helperText}>Cargando carreras...</Text>
             </View>
         );
@@ -202,17 +206,17 @@ export default function AdminCareersScreen() {
                 ListHeaderComponent={
                     <View style={styles.headerArea}>
                         <View style={styles.searchWrap}>
-                            <Ionicons name="search" size={18} color={theme.colors.textSecondary} />
+                            <Ionicons name="search" size={18} color={tokens.colors.textSecondary} />
                             <TextInput
                                 placeholder="Buscar carrera..."
-                                placeholderTextColor={theme.colors.textTertiary}
+                                placeholderTextColor={tokens.colors.textTertiary}
                                 value={search}
                                 onChangeText={setSearch}
                                 style={styles.searchInput}
                             />
                             {search.length > 0 ? (
                                 <Pressable style={styles.clearIconBtn} onPress={() => setSearch("")}>
-                                    <Ionicons name="close" size={16} color={theme.colors.textSecondary} />
+                                    <Ionicons name="close" size={16} color={tokens.colors.textSecondary} />
                                 </Pressable>
                             ) : null}
                         </View>
@@ -221,7 +225,7 @@ export default function AdminCareersScreen() {
                             style={styles.createBtn}
                             onPress={() => router.push("/(admin)/career-form")}
                         >
-                            <Ionicons name="add" size={18} color={theme.colors.textInverse} />
+                            <Ionicons name="add" size={18} color={tokens.colors.onPrimary} />
                             <Text style={styles.createBtnText}>Nueva carrera</Text>
                         </Pressable>
                     </View>
@@ -266,75 +270,77 @@ export default function AdminCareersScreen() {
     );
 }
 
-const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: theme.colors.bgSecondary },
-    center: { flex: 1, alignItems: "center", justifyContent: "center", padding: theme.spacing.lg, gap: 10 },
-    helperText: { color: theme.colors.textSecondary, fontWeight: "800" },
-    errorText: { color: theme.colors.error, fontWeight: "900" },
+function createStyles(theme: ThemeTokens) {
+    return {
+        container: { flex: 1, backgroundColor: theme.colors.bgSecondary },
+        center: { flex: 1, alignItems: "center", justifyContent: "center", padding: theme.spacing.lg, gap: 10 },
+        helperText: { color: theme.colors.textSecondary, fontWeight: "800" },
+        errorText: { color: theme.colors.error, fontWeight: "900" },
 
-    list: { padding: theme.spacing.lg, gap: theme.spacing.md, paddingBottom: theme.spacing.xl },
-    headerArea: { gap: theme.spacing.md, marginBottom: theme.spacing.md },
-    searchWrap: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 10,
-        backgroundColor: theme.colors.bgPrimary,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-        borderRadius: theme.radius.lg,
-        paddingHorizontal: 12,
-        height: 48,
-    },
-    searchInput: { flex: 1, color: theme.colors.textPrimary, fontWeight: "700" },
-    clearIconBtn: { width: 32, height: 32, borderRadius: 16, alignItems: "center", justifyContent: "center" },
+        list: { padding: theme.spacing.lg, gap: theme.spacing.md, paddingBottom: theme.spacing.xl },
+        headerArea: { gap: theme.spacing.md, marginBottom: theme.spacing.md },
+        searchWrap: {
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 10,
+            backgroundColor: theme.colors.bgCard,
+            borderWidth: 1,
+            borderColor: theme.colors.borderPrimary,
+            borderRadius: theme.radius.lg,
+            paddingHorizontal: 12,
+            height: 48,
+        },
+        searchInput: { flex: 1, color: theme.colors.textPrimary, fontWeight: "700" },
+        clearIconBtn: { width: 32, height: 32, borderRadius: 16, alignItems: "center", justifyContent: "center" },
 
-    createBtn: {
-        height: 46,
-        borderRadius: 999,
-        backgroundColor: theme.colors.primary,
-        alignItems: "center",
-        justifyContent: "center",
-        flexDirection: "row",
-        gap: 10,
-        ...theme.shadow.primary,
-    },
-    createBtnText: { color: theme.colors.textInverse, fontWeight: "900" },
+        createBtn: {
+            height: 46,
+            borderRadius: 999,
+            backgroundColor: theme.colors.primary,
+            alignItems: "center",
+            justifyContent: "center",
+            flexDirection: "row",
+            gap: 10,
+            ...theme.shadow.primary,
+        },
+        createBtnText: { color: theme.colors.onPrimary, fontWeight: "900" },
 
-    itemCard: {
-        backgroundColor: theme.colors.bgPrimary,
-        borderRadius: theme.radius.lg,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-        padding: theme.spacing.md,
-        gap: 10,
-        ...theme.shadow.md,
-    },
-    itemHeaderRow: { flexDirection: "row", alignItems: "flex-start", gap: 12 },
-    itemTitle: { fontSize: 16, fontWeight: "900", color: theme.colors.textPrimary },
-    itemSubtitle: { color: theme.colors.textSecondary, fontWeight: "800" },
-    itemDesc: { color: theme.colors.textSecondary, fontWeight: "700" },
-    itemMetaRow: { flexDirection: "row", justifyContent: "space-between", gap: 12 },
-    itemMetaText: { color: theme.colors.textTertiary, fontWeight: "800" },
+        itemCard: {
+            backgroundColor: theme.colors.bgCard,
+            borderRadius: theme.radius.lg,
+            borderWidth: 1,
+            borderColor: theme.colors.borderPrimary,
+            padding: theme.spacing.md,
+            gap: 10,
+            ...theme.shadow.md,
+        },
+        itemHeaderRow: { flexDirection: "row", alignItems: "flex-start", gap: 12 },
+        itemTitle: { fontSize: 16, fontWeight: "900", color: theme.colors.textPrimary },
+        itemSubtitle: { color: theme.colors.textSecondary, fontWeight: "800" },
+        itemDesc: { color: theme.colors.textSecondary, fontWeight: "700" },
+        itemMetaRow: { flexDirection: "row", justifyContent: "space-between", gap: 12 },
+        itemMetaText: { color: theme.colors.textTertiary, fontWeight: "800" },
 
-    badge: { borderRadius: 999, paddingHorizontal: 12, paddingVertical: 6 },
-    badgeSuccess: { backgroundColor: theme.colors.success },
-    badgeMuted: { backgroundColor: theme.colors.bgSecondary, borderWidth: 1, borderColor: theme.colors.borderPrimary },
-    badgeText: { color: theme.colors.textInverse, fontWeight: "900", fontSize: 12 },
-    badgeTextMuted: { color: theme.colors.textSecondary },
+        badge: { borderRadius: 999, paddingHorizontal: 12, paddingVertical: 6 },
+        badgeSuccess: { backgroundColor: theme.colors.success },
+        badgeMuted: { backgroundColor: theme.colors.bgSecondary, borderWidth: 1, borderColor: theme.colors.borderPrimary },
+        badgeText: { color: theme.colors.onPrimary, fontWeight: "900", fontSize: 12 },
+        badgeTextMuted: { color: theme.colors.textSecondary },
 
-    actionRow: { flexDirection: "row", gap: 10, marginTop: 6 },
-    actionBtn: {
-        flex: 1,
-        height: 40,
-        borderRadius: 999,
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: 8,
-    },
-    actionBtnPrimary: { backgroundColor: theme.colors.primary },
-    actionBtnGhost: { backgroundColor: theme.colors.bgSecondary, borderWidth: 1, borderColor: theme.colors.borderPrimary },
-    actionBtnDanger: { backgroundColor: theme.colors.error },
-    actionBtnTextPrimary: { color: theme.colors.textInverse, fontWeight: "900" },
-    actionBtnTextGhost: { color: theme.colors.textPrimary, fontWeight: "900" },
-});
+        actionRow: { flexDirection: "row", gap: 10, marginTop: 6 },
+        actionBtn: {
+            flex: 1,
+            height: 40,
+            borderRadius: 999,
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 8,
+        },
+        actionBtnPrimary: { backgroundColor: theme.colors.primary },
+        actionBtnGhost: { backgroundColor: theme.colors.bgSecondary, borderWidth: 1, borderColor: theme.colors.borderPrimary },
+        actionBtnDanger: { backgroundColor: theme.colors.error },
+        actionBtnTextPrimary: { color: theme.colors.onPrimary, fontWeight: "900" },
+        actionBtnTextGhost: { color: theme.colors.textPrimary, fontWeight: "900" },
+    };
+}

@@ -7,7 +7,6 @@ import {
     Image,
     Pressable,
     ScrollView,
-    StyleSheet,
     Text,
     TextInput,
     View,
@@ -25,7 +24,7 @@ import {
     type AdminEvent,
     type AdminEventsFilters,
 } from "../../src/api/adminEvents";
-import { theme } from "../../src/shared";
+import { useAppTheme, useThemedStyles, type ThemeTokens } from "../../src/shared";
 
 type SelectOption = { label: string; value: string };
 
@@ -115,10 +114,12 @@ function CheckboxRow({
     checked,
     onPress,
 }: Readonly<{ label: string; checked: boolean; onPress: () => void }>) {
+    const { tokens } = useAppTheme();
+    const styles = useThemedStyles(createStyles);
     return (
         <Pressable style={styles.checkboxRow} onPress={onPress}>
             <View style={[styles.checkbox, checked && styles.checkboxChecked]}>
-                {checked ? <Ionicons name="checkmark" size={16} color={theme.colors.textInverse} /> : null}
+                {checked ? <Ionicons name="checkmark" size={16} color={tokens.colors.onPrimary} /> : null}
             </View>
             <Text style={styles.checkboxLabel} numberOfLines={2}>
                 {label}
@@ -147,6 +148,8 @@ function EventAdminCard({
     event: AdminEvent;
     onViewDetails: () => void;
 }>) {
+    const { tokens } = useAppTheme();
+    const styles = useThemedStyles(createStyles);
     const isFree = (event.price ?? 0) <= 0;
 
     return (
@@ -176,7 +179,7 @@ function EventAdminCard({
                 <View style={styles.actionRow}>
                     <Pressable style={[styles.actionBtn, styles.actionBtnGhost, { flex: 1 }]} onPress={onViewDetails}>
                         <Text style={[styles.actionBtnTextGhost, { textAlign: "center" }]}>Ver detalles</Text>
-                        <Ionicons name="arrow-forward" size={16} color={theme.colors.textPrimary} />
+                        <Ionicons name="arrow-forward" size={16} color={tokens.colors.textPrimary} />
                     </Pressable>
                 </View>
             </View>
@@ -185,6 +188,8 @@ function EventAdminCard({
 }
 
 export default function AdminEventsScreen() {
+    const { tokens } = useAppTheme();
+    const styles = useThemedStyles(createStyles);
     const router = useRouter();
     const queryClient = useQueryClient();
     const params = useLocalSearchParams<{ eventId?: string }>();
@@ -313,7 +318,7 @@ export default function AdminEventsScreen() {
         if (eventsQuery.isLoading) {
             return (
                 <View style={styles.center}>
-                    <ActivityIndicator color={theme.colors.primary} />
+                    <ActivityIndicator color={tokens.colors.primary} />
                     <Text style={styles.helperText}>Cargando eventos…</Text>
                 </View>
             );
@@ -331,7 +336,7 @@ export default function AdminEventsScreen() {
         if (events.length === 0) {
             return (
                 <View style={styles.center}>
-                    <Ionicons name="calendar-outline" size={40} color={theme.colors.textTertiary} />
+                    <Ionicons name="calendar-outline" size={40} color={tokens.colors.textTertiary} />
                     <Text style={styles.helperText}>No hay eventos con estos filtros.</Text>
                 </View>
             );
@@ -357,14 +362,14 @@ export default function AdminEventsScreen() {
                                     style={[styles.pageBtn, !pagination.hasPrevPage && styles.pageBtnDisabled]}
                                     onPress={() => pagination.hasPrevPage && setPage((p) => Math.max(1, p - 1))}
                                 >
-                                    <Ionicons name="chevron-back" size={18} color={theme.colors.textPrimary} />
+                                    <Ionicons name="chevron-back" size={18} color={tokens.colors.textPrimary} />
                                 </Pressable>
                                 <Text style={styles.pageIndicator}>Pág. {pagination.currentPage}</Text>
                                 <Pressable
                                     style={[styles.pageBtn, !pagination.hasNextPage && styles.pageBtnDisabled]}
                                     onPress={() => pagination.hasNextPage && setPage((p) => p + 1)}
                                 >
-                                    <Ionicons name="chevron-forward" size={18} color={theme.colors.textPrimary} />
+                                    <Ionicons name="chevron-forward" size={18} color={tokens.colors.textPrimary} />
                                 </Pressable>
                             </View>
                         </View>
@@ -389,10 +394,10 @@ export default function AdminEventsScreen() {
             <View style={styles.filtersShell}>
                 <View style={styles.searchRow}>
                     <View style={styles.searchInputWrap}>
-                        <Ionicons name="search" size={18} color={theme.colors.textSecondary} />
+                        <Ionicons name="search" size={18} color={tokens.colors.textSecondary} />
                         <TextInput
                             placeholder="Buscar por nombre, lugar…"
-                            placeholderTextColor={theme.colors.textTertiary}
+                            placeholderTextColor={tokens.colors.textTertiary}
                             style={styles.searchInput}
                             value={searchInput}
                             onChangeText={setSearchInput}
@@ -403,7 +408,7 @@ export default function AdminEventsScreen() {
                             <Pressable onPress={() => setSearchInput("")}
                                 style={styles.clearIconBtn}
                             >
-                                <Ionicons name="close" size={16} color={theme.colors.textSecondary} />
+                                <Ionicons name="close" size={16} color={tokens.colors.textSecondary} />
                             </Pressable>
                         ) : null}
                     </View>
@@ -412,24 +417,24 @@ export default function AdminEventsScreen() {
                         style={styles.primaryPill}
                         onPress={() => router.push({ pathname: "/(admin)/event-form", params: { mode: "create" } })}
                     >
-                        <Ionicons name="add" size={18} color={theme.colors.textInverse} />
+                        <Ionicons name="add" size={18} color={tokens.colors.onPrimary} />
                         <Text style={styles.primaryPillText}>Crear</Text>
                     </Pressable>
                 </View>
 
                 <View style={styles.filterHeaderRow}>
                     <Pressable style={styles.filterToggle} onPress={() => setFiltersOpen((v) => !v)}>
-                        <Ionicons name="options-outline" size={18} color={theme.colors.textPrimary} />
+                        <Ionicons name="options-outline" size={18} color={tokens.colors.textPrimary} />
                         <Text style={styles.filterToggleText}>{filtersOpen ? "Ocultar filtros" : "Filtros avanzados"}</Text>
                         <Ionicons
                             name={filtersOpen ? "chevron-up" : "chevron-down"}
                             size={18}
-                            color={theme.colors.textSecondary}
+                            color={tokens.colors.textSecondary}
                         />
                     </Pressable>
 
                     <Pressable style={styles.ghostPill} onPress={clearFilters}>
-                        <Ionicons name="refresh" size={16} color={theme.colors.textPrimary} />
+                        <Ionicons name="refresh" size={16} color={tokens.colors.textPrimary} />
                         <Text style={styles.ghostPillText}>Limpiar</Text>
                     </Pressable>
                 </View>
@@ -440,7 +445,7 @@ export default function AdminEventsScreen() {
                             <Text style={styles.filterCardTitle}>Tipo / Estado</Text>
                             <Pressable style={styles.selectBtn} onPress={() => setTipoOpen((v) => !v)}>
                                 <Text style={styles.selectBtnText}>Tipo: {currentTipoLabel}</Text>
-                                <Ionicons name={tipoOpen ? "chevron-up" : "chevron-down"} size={18} color={theme.colors.textSecondary} />
+                                <Ionicons name={tipoOpen ? "chevron-up" : "chevron-down"} size={18} color={tokens.colors.textSecondary} />
                             </Pressable>
                             {tipoOpen ? (
                                 <View style={styles.selectMenu}>
@@ -465,7 +470,7 @@ export default function AdminEventsScreen() {
                                 <Ionicons
                                     name={estadoOpen ? "chevron-up" : "chevron-down"}
                                     size={18}
-                                    color={theme.colors.textSecondary}
+                                    color={tokens.colors.textSecondary}
                                 />
                             </Pressable>
                             {estadoOpen ? (
@@ -494,7 +499,7 @@ export default function AdminEventsScreen() {
                                 <Ionicons
                                     name={carreraOpen ? "chevron-up" : "chevron-down"}
                                     size={18}
-                                    color={theme.colors.textSecondary}
+                                    color={tokens.colors.textSecondary}
                                 />
                             </Pressable>
                             {carreraOpen ? (
@@ -520,7 +525,7 @@ export default function AdminEventsScreen() {
                                 <Ionicons
                                     name={modalidadOpen ? "chevron-up" : "chevron-down"}
                                     size={18}
-                                    color={theme.colors.textSecondary}
+                                    color={tokens.colors.textSecondary}
                                 />
                             </Pressable>
                             {modalidadOpen ? (
@@ -547,7 +552,7 @@ export default function AdminEventsScreen() {
                             <View style={styles.row2}>
                                 <TextInput
                                     placeholder="Cap. mín"
-                                    placeholderTextColor={theme.colors.textTertiary}
+                                    placeholderTextColor={tokens.colors.textTertiary}
                                     keyboardType="numeric"
                                     style={styles.smallInput}
                                     value={filters.capacidadMin === "" ? "" : String(filters.capacidadMin)}
@@ -558,7 +563,7 @@ export default function AdminEventsScreen() {
                                 />
                                 <TextInput
                                     placeholder="Cap. máx"
-                                    placeholderTextColor={theme.colors.textTertiary}
+                                    placeholderTextColor={tokens.colors.textTertiary}
                                     keyboardType="numeric"
                                     style={styles.smallInput}
                                     value={filters.capacidadMax === "" ? "" : String(filters.capacidadMax)}
@@ -571,7 +576,7 @@ export default function AdminEventsScreen() {
                             <View style={styles.row2}>
                                 <TextInput
                                     placeholder="$ mín"
-                                    placeholderTextColor={theme.colors.textTertiary}
+                                    placeholderTextColor={tokens.colors.textTertiary}
                                     keyboardType="numeric"
                                     style={styles.smallInput}
                                     value={filters.valorMin === "" ? "" : String(filters.valorMin)}
@@ -582,7 +587,7 @@ export default function AdminEventsScreen() {
                                 />
                                 <TextInput
                                     placeholder="$ máx"
-                                    placeholderTextColor={theme.colors.textTertiary}
+                                    placeholderTextColor={tokens.colors.textTertiary}
                                     keyboardType="numeric"
                                     style={styles.smallInput}
                                     value={filters.valorMax === "" ? "" : String(filters.valorMax)}
@@ -594,7 +599,7 @@ export default function AdminEventsScreen() {
                             </View>
                             <TextInput
                                 placeholder="Asistencia mínima (%)"
-                                placeholderTextColor={theme.colors.textTertiary}
+                                placeholderTextColor={tokens.colors.textTertiary}
                                 keyboardType="numeric"
                                 style={styles.input}
                                 value={filters.asistenciaMin === "" ? "" : String(filters.asistenciaMin)}
@@ -634,7 +639,7 @@ export default function AdminEventsScreen() {
 
                             <Pressable style={styles.selectBtn} onPress={() => setSortOpen((v) => !v)}>
                                 <Text style={styles.selectBtnText}>Ordenar: {currentSortLabel}</Text>
-                                <Ionicons name={sortOpen ? "chevron-up" : "chevron-down"} size={18} color={theme.colors.textSecondary} />
+                                <Ionicons name={sortOpen ? "chevron-up" : "chevron-down"} size={18} color={tokens.colors.textSecondary} />
                             </Pressable>
                             {sortOpen ? (
                                 <View style={styles.selectMenu}>
@@ -682,7 +687,7 @@ export default function AdminEventsScreen() {
 
             {deleteMutation.isPending ? (
                 <View style={styles.mutationBanner}>
-                    <ActivityIndicator color={theme.colors.textInverse} />
+                    <ActivityIndicator color={tokens.colors.onPrimary} />
                     <Text style={styles.mutationBannerText}>Eliminando evento…</Text>
                 </View>
             ) : null}
@@ -716,39 +721,39 @@ export default function AdminEventsScreen() {
 
                                 <View style={styles.modalSection}>
                                     <View style={styles.modalDetailRow}>
-                                        <Ionicons name="calendar-outline" size={16} color={theme.colors.primary} />
+                                        <Ionicons name="calendar-outline" size={16} color={tokens.colors.primary} />
                                         <Text style={styles.modalDetailText}>{formatDateTime(selectedEvent?.startDate || "")} – {formatDateTime(selectedEvent?.endDate || "")}</Text>
                                     </View>
                                     <View style={styles.modalDetailRow}>
-                                        <Ionicons name="time-outline" size={16} color={theme.colors.primary} />
+                                        <Ionicons name="time-outline" size={16} color={tokens.colors.primary} />
                                         <Text style={styles.modalDetailText}>Duración: {selectedEvent?.durationHours} horas</Text>
                                     </View>
                                     <View style={styles.modalDetailRow}>
-                                        <Ionicons name="people-outline" size={16} color={theme.colors.primary} />
+                                        <Ionicons name="people-outline" size={16} color={tokens.colors.primary} />
                                         <Text style={styles.modalDetailText}>Cupos disponibles: {selectedEvent?.availableSpots} de {selectedEvent?.maxCapacity}</Text>
                                     </View>
                                     {selectedEvent?.minGrade !== null && selectedEvent?.minGrade !== undefined ? (
                                         <View style={styles.modalDetailRow}>
-                                            <Ionicons name="star-outline" size={16} color={theme.colors.primary} />
+                                            <Ionicons name="star-outline" size={16} color={tokens.colors.primary} />
                                             <Text style={styles.modalDetailText}>Nota mínima: {selectedEvent.minGrade}</Text>
                                         </View>
                                     ) : null}
                                     {selectedEvent?.minAttendancePercent !== null && selectedEvent?.minAttendancePercent !== undefined ? (
                                         <View style={styles.modalDetailRow}>
-                                            <Ionicons name="checkmark-circle-outline" size={16} color={theme.colors.primary} />
+                                            <Ionicons name="checkmark-circle-outline" size={16} color={tokens.colors.primary} />
                                             <Text style={styles.modalDetailText}>Asistencia mínima: {selectedEvent.minAttendancePercent}%</Text>
                                         </View>
                                     ) : null}
                                     <View style={styles.modalDetailRow}>
-                                        <Ionicons name="book-outline" size={16} color={theme.colors.primary} />
+                                        <Ionicons name="book-outline" size={16} color={tokens.colors.primary} />
                                         <Text style={styles.modalDetailText}>Carreras: {selectedEvent?.isGeneral ? "General (Todas)" : selectedEvent?.careers.join(", ")}</Text>
                                     </View>
                                     <View style={styles.modalDetailRow}>
-                                        <Ionicons name="flag-outline" size={16} color={theme.colors.primary} />
+                                        <Ionicons name="flag-outline" size={16} color={tokens.colors.primary} />
                                         <Text style={styles.modalDetailText}>Estado: {translateEventStatus(selectedEvent?.status || "")}</Text>
                                     </View>
                                     <View style={styles.modalDetailRow}>
-                                        <Ionicons name="layers-outline" size={16} color={theme.colors.primary} />
+                                        <Ionicons name="layers-outline" size={16} color={tokens.colors.primary} />
                                         <Text style={styles.modalDetailText}>Modalidad: {translateModality(selectedEvent?.modality || "")}</Text>
                                     </View>
                                 </View>
@@ -761,7 +766,7 @@ export default function AdminEventsScreen() {
                                 setSelectedEvent(null);
                                 if (id) router.push({ pathname: "/(admin)/registrations", params: { eventId: id } });
                             }}>
-                                <Ionicons name="people-outline" size={18} color={theme.colors.textPrimary} />
+                                <Ionicons name="people-outline" size={18} color={tokens.colors.textPrimary} />
                                 <Text style={styles.modalActionBtnTextGhost}>Ver inscritos</Text>
                             </Pressable>
 
@@ -784,7 +789,7 @@ export default function AdminEventsScreen() {
                                         ]
                                     );
                                 }}>
-                                    <Ionicons name="trash-outline" size={16} color={theme.colors.error} />
+                                    <Ionicons name="trash-outline" size={16} color={tokens.colors.error} />
                                     <Text style={styles.modalActionBtnTextDanger}>Eliminar</Text>
                                 </Pressable>
 
@@ -793,7 +798,7 @@ export default function AdminEventsScreen() {
                                     setSelectedEvent(null);
                                     if (id) router.push({ pathname: "/(admin)/event-form", params: { mode: "edit", id } });
                                 }}>
-                                    <Ionicons name="create-outline" size={16} color={theme.colors.textInverse} />
+                                    <Ionicons name="create-outline" size={16} color={tokens.colors.onPrimary} />
                                     <Text style={styles.modalActionBtnTextPrimary}>Editar</Text>
                                 </Pressable>
                             </View>
@@ -808,7 +813,8 @@ export default function AdminEventsScreen() {
     );
 }
 
-const styles = StyleSheet.create({
+function createStyles(theme: ThemeTokens) {
+    return {
     container: { flex: 1, backgroundColor: theme.colors.bgSecondary },
     center: { flex: 1, alignItems: "center", justifyContent: "center", padding: theme.spacing.lg, gap: 10 },
     errorText: { color: theme.colors.error, fontWeight: "900" },
@@ -849,7 +855,7 @@ const styles = StyleSheet.create({
         backgroundColor: theme.colors.primary,
         ...theme.shadow.primary,
     },
-    primaryPillText: { color: theme.colors.textInverse, fontWeight: "900" },
+    primaryPillText: { color: theme.colors.onPrimary, fontWeight: "900" },
 
     filterHeaderRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 12 },
     filterToggle: {
@@ -966,7 +972,7 @@ const styles = StyleSheet.create({
     smallPillTextActive: { color: theme.colors.primary, fontWeight: "900" },
 
     card: {
-        backgroundColor: theme.colors.bgPrimary,
+        backgroundColor: theme.colors.bgCard,
         borderRadius: theme.radius.lg,
         overflow: "hidden",
         borderWidth: 1,
@@ -987,7 +993,7 @@ const styles = StyleSheet.create({
     badge: { borderRadius: 999, paddingHorizontal: 12, paddingVertical: 6 },
     badgePrimary: { backgroundColor: theme.colors.primary },
     badgeSuccess: { backgroundColor: theme.colors.success },
-    badgeText: { color: theme.colors.textInverse, fontWeight: "900", fontSize: 12 },
+    badgeText: { color: theme.colors.onPrimary, fontWeight: "900", fontSize: 12 },
     cardTitle: { color: theme.colors.textPrimary, fontSize: 16, fontWeight: "900" },
     metaText: { color: theme.colors.textSecondary, fontWeight: "800" },
     metaSubText: { color: theme.colors.textTertiary, fontWeight: "800" },
@@ -1009,7 +1015,7 @@ const styles = StyleSheet.create({
         borderColor: theme.colors.borderPrimary,
     },
     actionBtnDanger: { backgroundColor: theme.colors.error },
-    actionBtnTextPrimary: { color: theme.colors.textInverse, fontWeight: "900" },
+    actionBtnTextPrimary: { color: theme.colors.onPrimary, fontWeight: "900" },
     actionBtnTextGhost: { color: theme.colors.textPrimary, fontWeight: "900" },
 
     paginationRow: {
@@ -1043,7 +1049,7 @@ const styles = StyleSheet.create({
         paddingVertical: theme.spacing.sm,
         backgroundColor: theme.colors.primary,
     },
-    mutationBannerText: { color: theme.colors.textInverse, fontWeight: "900" },
+    mutationBannerText: { color: theme.colors.onPrimary, fontWeight: "900" },
 
     // Modal Styles
     modalBackdrop: {
@@ -1088,7 +1094,7 @@ const styles = StyleSheet.create({
         borderRadius: 999,
     },
     modalBadgeTextPrimary: {
-        color: theme.colors.textInverse,
+        color: theme.colors.onPrimary,
         fontSize: 12,
         fontWeight: "700",
         textTransform: "uppercase",
@@ -1182,7 +1188,7 @@ const styles = StyleSheet.create({
         backgroundColor: theme.colors.primary,
     },
     modalActionBtnTextPrimary: {
-        color: theme.colors.textInverse,
+        color: theme.colors.onPrimary,
         fontWeight: "900",
         fontSize: 14,
     },
@@ -1196,4 +1202,5 @@ const styles = StyleSheet.create({
         fontWeight: "800",
         fontSize: 14,
     },
-});
+    };
+}

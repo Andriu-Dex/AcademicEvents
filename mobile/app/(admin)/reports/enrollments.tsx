@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { ActivityIndicator, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, RefreshControl, ScrollView, Text, View } from "react-native";
 import { useQuery } from "@tanstack/react-query";
 import { Ionicons } from "@expo/vector-icons";
 import { AppHeader } from "../../../src/components/AppHeader";
@@ -11,7 +11,7 @@ import {
 } from "../../../src/api/adminReports";
 import { downloadReportPdf } from "../../../src/utils/reportDownload";
 import { joinReportText, pickReportText } from "../../../src/utils/reportText";
-import { theme } from "../../../src/shared";
+import { useAppTheme, useThemedStyles, type ThemeTokens } from "../../../src/shared";
 
 const STATUS_OPTIONS = [
     { value: "todos", label: "Todos" },
@@ -38,6 +38,9 @@ function formatDateParam(date: Date) {
 }
 
 export default function AdminReportEnrollmentsScreen() {
+    const { tokens } = useAppTheme();
+    const styles = useThemedStyles(createStyles);
+
     const [status, setStatus] = useState("todos");
     const [rangeDays, setRangeDays] = useState(30);
     const [loadingPdf, setLoadingPdf] = useState(false);
@@ -129,7 +132,7 @@ export default function AdminReportEnrollmentsScreen() {
 
             {isLoading ? (
                 <View style={styles.center}>
-                    <ActivityIndicator size="large" color={theme.colors.primary} />
+                    <ActivityIndicator size="large" color={tokens.colors.primary} />
                 </View>
             ) : (
                 <ScrollView
@@ -142,7 +145,7 @@ export default function AdminReportEnrollmentsScreen() {
                                 void trendsQuery.refetch();
                                 void validationsQuery.refetch();
                             }}
-                            tintColor={theme.colors.primary}
+                            tintColor={tokens.colors.primary}
                         />
                     }
                 >
@@ -184,7 +187,7 @@ export default function AdminReportEnrollmentsScreen() {
                             onPress={() => void handleDownloadPdf()}
                             disabled={loadingPdf || !rangeStart || !rangeEnd}
                         >
-                            <Ionicons name="download-outline" size={18} color={theme.colors.textInverse} />
+                            <Ionicons name="download-outline" size={18} color={tokens.colors.onPrimary} />
                             <Text style={styles.actionButtonText}>{loadingPdf ? "Generando PDF..." : "Descargar Reporte PDF"}</Text>
                         </Pressable>
                     </SectionCard>
@@ -225,7 +228,8 @@ export default function AdminReportEnrollmentsScreen() {
     );
 }
 
-const styles = StyleSheet.create({
+function createStyles(theme: ThemeTokens) {
+    return {
     container: { flex: 1, backgroundColor: theme.colors.bgSecondary },
     center: { flex: 1, alignItems: "center", justifyContent: "center" },
     content: { padding: theme.spacing.md, gap: theme.spacing.md, paddingBottom: theme.spacing.xl },
@@ -236,13 +240,13 @@ const styles = StyleSheet.create({
         borderRadius: theme.radius.full,
         borderWidth: 1,
         borderColor: theme.colors.borderPrimary,
-        backgroundColor: theme.colors.bgSecondary,
+        backgroundColor: theme.colors.bgCard,
         paddingHorizontal: 12,
         paddingVertical: 7,
     },
     chipSelected: { backgroundColor: theme.colors.primary, borderColor: theme.colors.primary },
     chipText: { color: theme.colors.textSecondary, fontWeight: "700", fontSize: 12 },
-    chipTextSelected: { color: theme.colors.textInverse },
+    chipTextSelected: { color: theme.colors.onPrimary },
     actionButton: {
         flexDirection: "row",
         alignItems: "center",
@@ -254,5 +258,6 @@ const styles = StyleSheet.create({
         backgroundColor: theme.colors.primary,
     },
     actionButtonDisabled: { opacity: 0.65 },
-    actionButtonText: { color: theme.colors.textInverse, fontWeight: "900", fontSize: 13 },
-});
+    actionButtonText: { color: theme.colors.onPrimary, fontWeight: "900", fontSize: 13 },
+    };
+}

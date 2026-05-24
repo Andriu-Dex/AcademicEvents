@@ -26,7 +26,7 @@ import {
     type RegistrationsValidationInput,
     validateRegistration,
 } from "../../src/api/adminRegistrations";
-import { theme } from "../../src/shared";
+import { useAppTheme, useThemedStyles, type ThemeTokens } from "../../src/shared";
 
 type SelectOption = { label: string; value: string };
 
@@ -97,7 +97,7 @@ function isCourseEventType(typeRaw: string) {
     return key.includes("CURSO") || key.includes("COURSE");
 }
 
-function statusBadgeStyle(statusRaw: string) {
+function statusBadgeStyle(statusRaw: string, styles: ReturnType<typeof createStyles>) {
     const key = normalizeStatus(statusRaw);
     if (key === "REJECTED" || key === "RECHAZADA") return styles.badgeDanger;
     if (key === "ACCEPTED" || key === "ACEPTADA") return styles.badgeSuccess;
@@ -152,10 +152,12 @@ function renderEventSelectorContent({
     selectedEventId: string;
     onSelect: (id: string) => void;
 }>) {
+    const { tokens } = useAppTheme();
+    const styles = useThemedStyles(createStyles);
     if (isLoading) {
         return (
             <View style={styles.selectLoading}>
-                <ActivityIndicator color={theme.colors.primary} />
+                <ActivityIndicator color={tokens.colors.primary} />
                 <Text style={styles.loadingText}>Cargando eventos…</Text>
             </View>
         );
@@ -195,6 +197,8 @@ function RegistrationDocumentsSection({
     onPreviewReceipt: (url: string) => void;
     onToggleLetter: (id: string) => void;
 }>) {
+    const { tokens } = useAppTheme();
+    const styles = useThemedStyles(createStyles);
     return (
         <View style={styles.docsSection}>
             <Text style={styles.detailLabel}>Documentación</Text>
@@ -209,7 +213,7 @@ function RegistrationDocumentsSection({
                             if (first) onPreviewReceipt(first);
                         }}
                     >
-                        <Ionicons name="cash-outline" size={16} color={theme.colors.textPrimary} />
+                        <Ionicons name="cash-outline" size={16} color={tokens.colors.textPrimary} />
                         <Text style={styles.docBtnText}>Ver comprobante</Text>
                     </Pressable>
                 ) : (
@@ -221,7 +225,7 @@ function RegistrationDocumentsSection({
                 <Text style={styles.docLabel}>Documentos personales:</Text>
                 {docUrl ? (
                     <Pressable style={styles.docBtn} onPress={() => safeOpenUrl(docUrl)}>
-                        <Ionicons name="document-text-outline" size={16} color={theme.colors.textPrimary} />
+                        <Ionicons name="document-text-outline" size={16} color={tokens.colors.textPrimary} />
                         <Text style={styles.docBtnText}>Ver documentos</Text>
                     </Pressable>
                 ) : (
@@ -234,7 +238,7 @@ function RegistrationDocumentsSection({
                 {letterCount > 0 ? (
                     <Pressable style={styles.letterToggleBtn} onPress={() => onToggleLetter(item.id)}>
                         <View style={styles.docInlineRow}>
-                            <Ionicons name="mail-outline" size={16} color={theme.colors.primary} />
+                            <Ionicons name="mail-outline" size={16} color={tokens.colors.primary} />
                             <Text style={styles.docBtnText}>{isLetterExpanded ? "Ocultar carta" : "Ver carta"}</Text>
                         </View>
                         <Text style={styles.docPillText}>({letterCount})</Text>
@@ -280,6 +284,8 @@ function RegistrationDetailsSection({
     onReject: (reg: AdminRegistration) => void;
     onFinalize: (reg: AdminRegistration) => void;
 }>) {
+    const { tokens } = useAppTheme();
+    const styles = useThemedStyles(createStyles);
     const isCourse = isCourseEventType(item.event?.type ?? "");
     const canGrade = isAcceptedRegistration(item.status);
 
@@ -294,7 +300,7 @@ function RegistrationDetailsSection({
                 value={observation}
                 onChangeText={(v) => onSetObs(item.id, v)}
                 placeholder="Escriba una observación sobre esta inscripción..."
-                placeholderTextColor={theme.colors.textTertiary}
+                placeholderTextColor={tokens.colors.textTertiary}
                 multiline
             />
 
@@ -309,7 +315,7 @@ function RegistrationDetailsSection({
                                 value={attendance}
                                 onChangeText={(v) => onSetAttendance(item.id, v)}
                                 placeholder="0 - 100"
-                                placeholderTextColor={theme.colors.textTertiary}
+                                placeholderTextColor={tokens.colors.textTertiary}
                                 keyboardType="numeric"
                             />
                         </View>
@@ -320,7 +326,7 @@ function RegistrationDetailsSection({
                                 value={grade}
                                 onChangeText={(v) => onSetGrade(item.id, v)}
                                 placeholder={isCourse ? "0 - 10" : "N/A"}
-                                placeholderTextColor={theme.colors.textTertiary}
+                                placeholderTextColor={tokens.colors.textTertiary}
                                 keyboardType="numeric"
                                 editable={isCourse}
                             />
@@ -337,9 +343,9 @@ function RegistrationDetailsSection({
                     disabled={isPendingAction}
                 >
                     {isPendingAction ? (
-                        <ActivityIndicator color={theme.colors.textInverse} />
+                        <ActivityIndicator color={tokens.colors.onPrimary} />
                     ) : (
-                        <Ionicons name="checkmark" size={18} color={theme.colors.textInverse} />
+                        <Ionicons name="checkmark" size={18} color={tokens.colors.onPrimary} />
                     )}
                     <Text style={styles.actionBtnText}>Aceptar</Text>
                 </Pressable>
@@ -349,7 +355,7 @@ function RegistrationDetailsSection({
                     onPress={() => onReject(item)}
                     disabled={isPendingAction}
                 >
-                    <Ionicons name="close" size={18} color={theme.colors.textInverse} />
+                    <Ionicons name="close" size={18} color={tokens.colors.onPrimary} />
                     <Text style={styles.actionBtnText}>Rechazar</Text>
                 </Pressable>
                 {canGrade ? (
@@ -358,12 +364,12 @@ function RegistrationDetailsSection({
                         onPress={() => onFinalize(item)}
                         disabled={isPendingAction}
                     >
-                        <Ionicons name="ribbon-outline" size={18} color={theme.colors.textInverse} />
+                        <Ionicons name="ribbon-outline" size={18} color={tokens.colors.onPrimary} />
                         <Text style={styles.actionBtnText}>Finalizar</Text>
                     </Pressable>
                 ) : (
                     <View style={[styles.actionBtn, styles.actionHintBtn]}>
-                        <Ionicons name="lock-closed-outline" size={18} color={theme.colors.textPrimary} />
+                        <Ionicons name="lock-closed-outline" size={18} color={tokens.colors.textPrimary} />
                         <Text style={styles.actionBtnHintText}>Valide primero para calificar</Text>
                     </View>
                 )}
@@ -413,6 +419,8 @@ function RegistrationCard({
     onReject: (reg: AdminRegistration) => void;
     onFinalize: (reg: AdminRegistration) => void;
 }>) {
+    const { tokens } = useAppTheme();
+    const styles = useThemedStyles(createStyles);
     const statusLabel = getStatusLabel(item.status);
     const userName = pickUserName(item);
 
@@ -424,10 +432,10 @@ function RegistrationCard({
 
     return (
         <View style={styles.card}>
-            <LinearGradient colors={theme.gradients.primary} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.cardAccent} />
+            <LinearGradient colors={tokens.gradients.primary} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.cardAccent} />
 
             <View style={styles.cardHeaderRow}>
-                <View style={[styles.badgeSoft, statusBadgeStyle(item.status)]}>
+                <View style={[styles.badgeSoft, statusBadgeStyle(item.status, styles)]}>
                     <Text style={styles.badgeText}>{statusLabel}</Text>
                 </View>
                 <Text style={styles.cardDate}>{formatDateTime(item.registeredAt)}</Text>
@@ -464,7 +472,7 @@ function RegistrationCard({
                 <Ionicons
                     name={expanded ? "chevron-up" : "chevron-down"}
                     size={18}
-                    color={theme.colors.textSecondary}
+                    color={tokens.colors.textSecondary}
                 />
             </Pressable>
 
@@ -489,6 +497,8 @@ function RegistrationCard({
 }
 
 export default function AdminRegistrationsScreen() {
+    const { tokens } = useAppTheme();
+    const styles = useThemedStyles(createStyles);
     const queryClient = useQueryClient();
     const params = useLocalSearchParams<{ eventId?: string }>();
 
@@ -676,23 +686,23 @@ export default function AdminRegistrationsScreen() {
                             <Ionicons
                                 name={eventOpen ? "chevron-up" : "chevron-down"}
                                 size={18}
-                                color={theme.colors.textSecondary}
+                                color={tokens.colors.textSecondary}
                             />
                         </Pressable>
                         {eventOpen ? (
                             <View style={styles.selectMenu}>
                                 <View style={styles.searchRow}>
-                                    <Ionicons name="search" size={16} color={theme.colors.textSecondary} />
+                                    <Ionicons name="search" size={16} color={tokens.colors.textSecondary} />
                                     <TextInput
                                         style={styles.searchInput}
                                         value={eventSearch}
                                         onChangeText={setEventSearch}
                                         placeholder="Buscar evento…"
-                                        placeholderTextColor={theme.colors.textTertiary}
+                                        placeholderTextColor={tokens.colors.textTertiary}
                                     />
                                     {eventSearch ? (
                                         <Pressable style={styles.clearIconBtn} onPress={() => setEventSearch("")}>
-                                            <Ionicons name="close" size={16} color={theme.colors.textSecondary} />
+                                            <Ionicons name="close" size={16} color={tokens.colors.textSecondary} />
                                         </Pressable>
                                     ) : null}
                                 </View>
@@ -723,17 +733,17 @@ export default function AdminRegistrationsScreen() {
 
                         <Text style={styles.label}>Buscar (usuario/correo/evento)</Text>
                         <View style={styles.searchRow}>
-                            <Ionicons name="search" size={16} color={theme.colors.textSecondary} />
+                            <Ionicons name="search" size={16} color={tokens.colors.textSecondary} />
                             <TextInput
                                 style={styles.searchInput}
                                 value={searchInput}
                                 onChangeText={setSearchInput}
                                 placeholder="Buscar por nombre, correo o evento..."
-                                placeholderTextColor={theme.colors.textTertiary}
+                                placeholderTextColor={tokens.colors.textTertiary}
                             />
                             {searchInput ? (
                                 <Pressable style={styles.clearIconBtn} onPress={() => setSearchInput("")}>
-                                    <Ionicons name="close" size={16} color={theme.colors.textSecondary} />
+                                    <Ionicons name="close" size={16} color={tokens.colors.textSecondary} />
                                 </Pressable>
                             ) : null}
                         </View>
@@ -744,7 +754,7 @@ export default function AdminRegistrationsScreen() {
                                 onPress={() => setPage((p) => Math.max(1, p - 1))}
                                 disabled={!pagination?.hasPrevPage}
                             >
-                                <Ionicons name="chevron-back" size={18} color={theme.colors.textPrimary} />
+                                <Ionicons name="chevron-back" size={18} color={tokens.colors.textPrimary} />
                                 <Text style={styles.ghostBtnText}>Anterior</Text>
                             </Pressable>
                             <Text style={styles.pageText}>
@@ -756,13 +766,13 @@ export default function AdminRegistrationsScreen() {
                                 disabled={!pagination?.hasNextPage}
                             >
                                 <Text style={styles.ghostBtnText}>Siguiente</Text>
-                                <Ionicons name="chevron-forward" size={18} color={theme.colors.textPrimary} />
+                                <Ionicons name="chevron-forward" size={18} color={tokens.colors.textPrimary} />
                             </Pressable>
                         </View>
 
                         {registrationsQuery.isFetching ? (
                             <View style={styles.inlineLoading}>
-                                <ActivityIndicator color={theme.colors.primary} />
+                                <ActivityIndicator color={tokens.colors.primary} />
                                 <Text style={styles.loadingText}>Actualizando…</Text>
                             </View>
                         ) : null}
@@ -773,7 +783,7 @@ export default function AdminRegistrationsScreen() {
                 ListEmptyComponent={
                     registrationsQuery.isLoading ? (
                         <View style={styles.center}>
-                            <ActivityIndicator color={theme.colors.primary} />
+                            <ActivityIndicator color={tokens.colors.primary} />
                             <Text style={styles.loadingText}>Cargando inscripciones…</Text>
                         </View>
                     ) : (
@@ -812,7 +822,7 @@ export default function AdminRegistrationsScreen() {
                         <View style={styles.previewHeader}>
                             <Text style={styles.previewTitle}>Comprobante</Text>
                             <Pressable style={styles.previewCloseBtn} onPress={() => setReceiptPreviewUrl("")}>
-                                <Ionicons name="close" size={18} color={theme.colors.textPrimary} />
+                                <Ionicons name="close" size={18} color={tokens.colors.textPrimary} />
                             </Pressable>
                         </View>
                         {receiptPreviewUrl ? <Image source={{ uri: receiptPreviewUrl }} style={styles.previewImage} resizeMode="contain" /> : null}
@@ -823,12 +833,13 @@ export default function AdminRegistrationsScreen() {
     );
 }
 
-const styles = StyleSheet.create({
+function createStyles(theme: ThemeTokens) {
+    return {
     container: { flex: 1, backgroundColor: theme.colors.bgSecondary },
     listContent: { padding: theme.spacing.md, paddingBottom: theme.spacing.xl },
 
     filtersCard: {
-        backgroundColor: theme.colors.bgElevated,
+        backgroundColor: theme.colors.bgCard,
         borderRadius: theme.radius.lg,
         padding: theme.spacing.md,
         borderWidth: 1,
@@ -921,7 +932,7 @@ const styles = StyleSheet.create({
     emptyText: { color: theme.colors.textSecondary, fontWeight: "800" },
 
     card: {
-        backgroundColor: theme.colors.bgElevated,
+        backgroundColor: theme.colors.bgCard,
         borderRadius: theme.radius.lg,
         padding: theme.spacing.md,
         borderWidth: 1,
@@ -1035,7 +1046,7 @@ const styles = StyleSheet.create({
         paddingVertical: 12,
         borderRadius: theme.radius.md,
     },
-    actionBtnText: { color: theme.colors.textInverse, fontWeight: "900" },
+    actionBtnText: { color: theme.colors.onPrimary, fontWeight: "900" },
     btnPrimary: { backgroundColor: theme.colors.primary },
     btnSuccess: { backgroundColor: theme.colors.success },
     btnDanger: { backgroundColor: theme.colors.error },
@@ -1101,4 +1112,5 @@ const styles = StyleSheet.create({
         borderColor: theme.colors.borderPrimary,
     },
     previewImage: { width: "100%", height: 420, backgroundColor: theme.colors.bgSecondary },
-});
+    };
+}

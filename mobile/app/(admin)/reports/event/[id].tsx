@@ -1,11 +1,11 @@
 import { useLocalSearchParams } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
-import { ActivityIndicator, Image, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Image, RefreshControl, ScrollView, Text, View } from "react-native";
 import { AppHeader } from "../../../../src/components/AppHeader";
 import { DataList, JsonPreview, SectionCard, formatNumber } from "../../../../src/components/AdminReportWidgets";
 import { fetchEventReportById } from "../../../../src/api/adminReports";
 import { toAbsoluteUrl } from "../../../../src/api/client";
-import { theme } from "../../../../src/shared";
+import { useAppTheme, useThemedStyles, type ThemeTokens } from "../../../../src/shared";
 
 const DEFAULT_EVENT_IMAGE = "https://via.placeholder.com/320x90?text=Sin+Imagen";
 
@@ -17,6 +17,9 @@ function formatDate(raw: unknown) {
 }
 
 export default function AdminEventReportScreen() {
+    const { tokens } = useAppTheme();
+    const styles = useThemedStyles(createStyles);
+
     const params = useLocalSearchParams<{ id?: string }>();
     const eventId = params.id ?? "";
 
@@ -41,10 +44,10 @@ export default function AdminEventReportScreen() {
         const fullName = `${String(ins.nom_usu ?? ins.firstName ?? "")} ${String(ins.ape_usu ?? ins.lastName ?? "")}`.trim();
         const attendance = formatNumber(ins.por_asi_fin_usu ?? ins.finalAttendancePercent ?? 0);
         const gradeRaw = ins.not_fin_usu ?? ins.finalGrade;
-        const gradeSuffix = gradeRaw === null || gradeRaw === undefined ? "" : ` � Nota: ${String(gradeRaw)}`;
+        const gradeSuffix = gradeRaw === null || gradeRaw === undefined ? "" : ` · Nota: ${String(gradeRaw)}`;
         return {
             title: `${index + 1}. ${fullName || "Participante"}`,
-            subtitle: `Cedula: ${String(ins.ced_usu ?? ins.idNumber ?? "-")} � Asistencia: ${attendance}%${gradeSuffix}`,
+            subtitle: `Cedula: ${String(ins.ced_usu ?? ins.idNumber ?? "-")} · Asistencia: ${attendance}%${gradeSuffix}`,
             right: String(ins.est_ins ?? ins.status ?? "-"),
         };
     });
@@ -54,7 +57,7 @@ export default function AdminEventReportScreen() {
             <View style={styles.container}>
                 <AppHeader title="Reporte de evento" showNotifications />
                 <View style={styles.center}>
-                    <ActivityIndicator size="large" color={theme.colors.primary} />
+                    <ActivityIndicator size="large" color={tokens.colors.primary} />
                 </View>
             </View>
         );
@@ -70,7 +73,7 @@ export default function AdminEventReportScreen() {
                     <RefreshControl
                         refreshing={query.isRefetching && !query.isLoading}
                         onRefresh={() => void query.refetch()}
-                        tintColor={theme.colors.primary}
+                        tintColor={tokens.colors.primary}
                     />
                 }
             >
@@ -107,11 +110,13 @@ export default function AdminEventReportScreen() {
     );
 }
 
-const styles = StyleSheet.create({
+function createStyles(theme: ThemeTokens) {
+    return {
     container: { flex: 1, backgroundColor: theme.colors.bgSecondary },
     center: { flex: 1, alignItems: "center", justifyContent: "center", padding: theme.spacing.lg },
     content: { padding: theme.spacing.md, gap: theme.spacing.md, paddingBottom: theme.spacing.xl },
     cover: { width: "100%", height: 140, borderRadius: 12, backgroundColor: theme.colors.bgTertiary },
     infoRow: { flexDirection: "row", justifyContent: "space-between", gap: 10 },
     infoText: { color: theme.colors.textSecondary, fontWeight: "700", fontSize: 12 },
-});
+    };
+}

@@ -6,7 +6,6 @@ import {
     Image,
     Pressable,
     ScrollView,
-    StyleSheet,
     Text,
     TextInput,
     View,
@@ -26,7 +25,7 @@ import {
     type AdminEventUpsertInput,
     type ImageAsset,
 } from "../../src/api/adminEvents";
-import { theme } from "../../src/shared";
+import { useAppTheme, useThemedStyles, type ThemeTokens } from "../../src/shared";
 
 type Params = { mode?: "create" | "edit"; id?: string };
 
@@ -166,6 +165,7 @@ function CareersSection({
     isGeneral: boolean;
     onToggleCareer: (id: string) => void;
 }>) {
+    const styles = useThemedStyles(createStyles);
     if (isLoading) return <Text style={styles.hint}>Cargando carreras…</Text>;
     if (isError) return <Text style={styles.errorText}>No se pudieron cargar las carreras.</Text>;
 
@@ -209,6 +209,7 @@ function RulesSection({
     price: string;
     setPrice: (value: string) => void;
 }>) {
+    const styles = useThemedStyles(createStyles);
     return (
         <View style={styles.card}>
             <Text style={styles.cardTitle}>Reglas / Cupos / Precio</Text>
@@ -256,13 +257,15 @@ function CheckboxRow({
     onPress,
     disabled,
 }: Readonly<{ label: string; checked: boolean; onPress: () => void; disabled?: boolean }>) {
+    const { tokens } = useAppTheme();
+    const styles = useThemedStyles(createStyles);
     return (
         <Pressable
             style={[styles.checkboxRow, disabled && styles.rowDisabled]}
             onPress={disabled ? undefined : onPress}
         >
             <View style={[styles.checkbox, checked && styles.checkboxChecked, disabled && styles.checkboxDisabled]}>
-                {checked ? <Ionicons name="checkmark" size={16} color={theme.colors.textInverse} /> : null}
+                {checked ? <Ionicons name="checkmark" size={16} color={tokens.colors.onPrimary} /> : null}
             </View>
             <Text style={[styles.checkboxLabel, disabled && styles.textDisabled]} numberOfLines={2}>
                 {label}
@@ -279,6 +282,8 @@ function toNumber(value: string, fallback: number) {
 }
 
 export default function AdminEventFormScreen() {
+    const { tokens } = useAppTheme();
+    const styles = useThemedStyles(createStyles);
     const router = useRouter();
     const queryClient = useQueryClient();
     const params = useLocalSearchParams<Params>();
@@ -416,7 +421,7 @@ export default function AdminEventFormScreen() {
             <View style={styles.container}>
                 <AppHeader title="Editar evento" showBack />
                 <View style={styles.center}>
-                    <ActivityIndicator color={theme.colors.primary} />
+                    <ActivityIndicator color={tokens.colors.primary} />
                     <Text style={styles.helperText}>Cargando evento…</Text>
                 </View>
             </View>
@@ -438,12 +443,12 @@ export default function AdminEventFormScreen() {
 
                     <View style={styles.row2}>
                         <Pressable style={styles.ghostBtn} onPress={pickImage}>
-                            <Ionicons name="image-outline" size={18} color={theme.colors.textPrimary} />
+                            <Ionicons name="image-outline" size={18} color={tokens.colors.textPrimary} />
                             <Text style={styles.ghostBtnText}>Seleccionar imagen</Text>
                         </Pressable>
                         {image ? (
                             <Pressable style={styles.ghostBtn} onPress={() => setImage(null)}>
-                                <Ionicons name="close" size={18} color={theme.colors.textPrimary} />
+                                <Ionicons name="close" size={18} color={tokens.colors.textPrimary} />
                                 <Text style={styles.ghostBtnText}>Quitar</Text>
                             </Pressable>
                         ) : null}
@@ -472,7 +477,7 @@ export default function AdminEventFormScreen() {
 
                     <Pressable style={styles.selectBtn} onPress={() => setTypeOpen((v) => !v)}>
                         <Text style={styles.selectBtnText}>Tipo: {selectedTypeLabel}</Text>
-                        <Ionicons name={typeOpen ? "chevron-up" : "chevron-down"} size={18} color={theme.colors.textSecondary} />
+                        <Ionicons name={typeOpen ? "chevron-up" : "chevron-down"} size={18} color={tokens.colors.textSecondary} />
                     </Pressable>
                     {typeOpen ? (
                         <View style={styles.selectMenu}>
@@ -496,7 +501,7 @@ export default function AdminEventFormScreen() {
                         <Ionicons
                             name={modalityOpen ? "chevron-up" : "chevron-down"}
                             size={18}
-                            color={theme.colors.textSecondary}
+                            color={tokens.colors.textSecondary}
                         />
                     </Pressable>
                     {modalityOpen ? (
@@ -528,7 +533,7 @@ export default function AdminEventFormScreen() {
                             <Ionicons
                                 name={statusOpen ? "chevron-up" : "chevron-down"}
                                 size={18}
-                                color={theme.colors.textSecondary}
+                                color={tokens.colors.textSecondary}
                             />
                         </Pressable>
 
@@ -611,9 +616,9 @@ export default function AdminEventFormScreen() {
                     }}
                 >
                     {mutation.isPending ? (
-                        <ActivityIndicator color={theme.colors.textInverse} />
+                        <ActivityIndicator color={tokens.colors.onPrimary} />
                     ) : (
-                        <Ionicons name="save-outline" size={18} color={theme.colors.textInverse} />
+                        <Ionicons name="save-outline" size={18} color={tokens.colors.onPrimary} />
                     )}
                     <Text style={styles.primaryBtnText}>{mode === "edit" ? "Guardar cambios" : "Crear evento"}</Text>
                 </Pressable>
@@ -628,7 +633,7 @@ export default function AdminEventFormScreen() {
                         router.back();
                     }}
                 >
-                    <Ionicons name="arrow-back" size={18} color={theme.colors.textPrimary} />
+                    <Ionicons name="arrow-back" size={18} color={tokens.colors.textPrimary} />
                     <Text style={styles.ghostBtnText}>Volver</Text>
                 </Pressable>
             </ScrollView>
@@ -636,7 +641,8 @@ export default function AdminEventFormScreen() {
     );
 }
 
-const styles = StyleSheet.create({
+function createStyles(theme: ThemeTokens) {
+    return {
     container: { flex: 1, backgroundColor: theme.colors.bgSecondary },
     center: { flex: 1, alignItems: "center", justifyContent: "center", padding: theme.spacing.lg, gap: 10 },
     helperText: { color: theme.colors.textSecondary, fontWeight: "800" },
@@ -644,7 +650,7 @@ const styles = StyleSheet.create({
     content: { padding: theme.spacing.lg, gap: theme.spacing.md, paddingBottom: theme.spacing.xl },
 
     card: {
-        backgroundColor: theme.colors.bgPrimary,
+        backgroundColor: theme.colors.bgCard,
         borderWidth: 1,
         borderColor: theme.colors.borderPrimary,
         borderRadius: theme.radius.lg,
@@ -760,7 +766,7 @@ const styles = StyleSheet.create({
         backgroundColor: theme.colors.primary,
         ...theme.shadow.primary,
     },
-    primaryBtnText: { color: theme.colors.textInverse, fontWeight: "900" },
+    primaryBtnText: { color: theme.colors.onPrimary, fontWeight: "900" },
     btnDisabled: { opacity: 0.7 },
 
     checkboxRow: { flexDirection: "row", alignItems: "center", gap: 10, paddingVertical: 6 },
@@ -790,4 +796,5 @@ const styles = StyleSheet.create({
         backgroundColor: theme.colors.bgPrimary,
     },
     errorText: { color: theme.colors.error, fontWeight: "900" },
-});
+    };
+}

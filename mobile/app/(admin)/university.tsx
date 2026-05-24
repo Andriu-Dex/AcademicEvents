@@ -4,7 +4,6 @@ import {
     Image,
     Pressable,
     ScrollView,
-    StyleSheet,
     Text,
     TextInput,
     View,
@@ -32,7 +31,7 @@ import {
     uploadMvaImage,
     type MvaAuthority,
 } from "../../src/api/mva";
-import { theme } from "../../src/shared";
+import { useAppTheme, useThemedStyles, type ThemeTokens } from "../../src/shared";
 
 type EditableSocialLink = UniversitySocialLink & {
     localId: string;
@@ -120,6 +119,8 @@ function formatApiError(error: unknown, fallback: string) {
 }
 
 export default function AdminUniversityScreen() {
+    const { tokens } = useAppTheme();
+    const styles = useThemedStyles(createStyles);
     const queryClient = useQueryClient();
 
     const universityQuery = useQuery({
@@ -412,7 +413,7 @@ export default function AdminUniversityScreen() {
                 <View style={styles.sectionCard}>
                     <View style={styles.sectionHeaderRow}>
                         <View style={styles.sectionHeader}>
-                            <Ionicons name="business-outline" size={18} color={theme.colors.primary} />
+                            <Ionicons name="business-outline" size={18} color={tokens.colors.primary} />
                             <Text style={styles.sectionTitle}>Datos Universidad</Text>
                         </View>
                         <Pressable
@@ -422,14 +423,14 @@ export default function AdminUniversityScreen() {
                             <Ionicons
                                 name={showUniversitySection ? "chevron-up" : "chevron-down"}
                                 size={18}
-                                color={theme.colors.textSecondary}
+                                color={tokens.colors.textSecondary}
                             />
                         </Pressable>
                     </View>
                     {showUniversitySection ? (
                         universityQuery.isLoading || !universityForm ? (
                             <View style={styles.centerBlock}>
-                                <ActivityIndicator color={theme.colors.primary} />
+                                <ActivityIndicator color={tokens.colors.primary} />
                                 <Text style={styles.mutedText}>Cargando universidad...</Text>
                             </View>
                         ) : (
@@ -497,7 +498,7 @@ export default function AdminUniversityScreen() {
                                     disabled={universityMutation.isPending}
                                 >
                                     {universityMutation.isPending ? (
-                                        <ActivityIndicator color={theme.colors.textInverse} />
+                                        <ActivityIndicator color={tokens.colors.onPrimary} />
                                     ) : (
                                         <Text style={styles.primaryButtonText}>Guardar universidad</Text>
                                     )}
@@ -510,7 +511,7 @@ export default function AdminUniversityScreen() {
                 <View style={styles.sectionCard}>
                     <View style={styles.sectionHeaderRow}>
                         <View style={styles.sectionHeader}>
-                            <Ionicons name="link-outline" size={18} color={theme.colors.primary} />
+                            <Ionicons name="link-outline" size={18} color={tokens.colors.primary} />
                             <Text style={styles.sectionTitle}>Enlaces institucionales</Text>
                         </View>
                         <Pressable
@@ -520,14 +521,14 @@ export default function AdminUniversityScreen() {
                             <Ionicons
                                 name={showSocialSection ? "chevron-up" : "chevron-down"}
                                 size={18}
-                                color={theme.colors.textSecondary}
+                                color={tokens.colors.textSecondary}
                             />
                         </Pressable>
                     </View>
                     {showSocialSection ? (
                         socialLinksQuery.isLoading ? (
                             <View style={styles.centerBlock}>
-                                <ActivityIndicator color={theme.colors.primary} />
+                                <ActivityIndicator color={tokens.colors.primary} />
                                 <Text style={styles.mutedText}>Cargando enlaces...</Text>
                             </View>
                         ) : (
@@ -667,7 +668,7 @@ export default function AdminUniversityScreen() {
                 <View style={styles.sectionCard}>
                     <View style={styles.sectionHeaderRow}>
                         <View style={styles.sectionHeader}>
-                            <Ionicons name="school-outline" size={18} color={theme.colors.primary} />
+                            <Ionicons name="school-outline" size={18} color={tokens.colors.primary} />
                             <Text style={styles.sectionTitle}>Datos de la Facultad</Text>
                         </View>
                         <Pressable
@@ -677,14 +678,14 @@ export default function AdminUniversityScreen() {
                             <Ionicons
                                 name={showFacultySection ? "chevron-up" : "chevron-down"}
                                 size={18}
-                                color={theme.colors.textSecondary}
+                                color={tokens.colors.textSecondary}
                             />
                         </Pressable>
                     </View>
                     {showFacultySection ? (
                         facultyQuery.isLoading ? (
                             <View style={styles.centerBlock}>
-                                <ActivityIndicator color={theme.colors.primary} />
+                                <ActivityIndicator color={tokens.colors.primary} />
                                 <Text style={styles.mutedText}>Cargando facultad...</Text>
                             </View>
                         ) : (
@@ -725,7 +726,7 @@ export default function AdminUniversityScreen() {
                                     disabled={facultyMutation.isPending}
                                 >
                                     {facultyMutation.isPending ? (
-                                        <ActivityIndicator color={theme.colors.textInverse} />
+                                        <ActivityIndicator color={tokens.colors.onPrimary} />
                                     ) : (
                                         <Text style={styles.primaryButtonText}>Guardar facultad</Text>
                                     )}
@@ -738,7 +739,7 @@ export default function AdminUniversityScreen() {
                 <View style={styles.sectionCard}>
                     <View style={styles.sectionHeaderRow}>
                         <View style={styles.sectionHeader}>
-                            <Ionicons name="document-text-outline" size={18} color={theme.colors.primary} />
+                            <Ionicons name="document-text-outline" size={18} color={tokens.colors.primary} />
                             <Text style={styles.sectionTitle}>Mision, Vision y Autoridades</Text>
                         </View>
                         <Pressable
@@ -748,14 +749,14 @@ export default function AdminUniversityScreen() {
                             <Ionicons
                                 name={showMvaSection ? "chevron-up" : "chevron-down"}
                                 size={18}
-                                color={theme.colors.textSecondary}
+                                color={tokens.colors.textSecondary}
                             />
                         </Pressable>
                     </View>
                     {showMvaSection ? (
                         mvaQuery.isLoading ? (
                             <View style={styles.centerBlock}>
-                                <ActivityIndicator color={theme.colors.primary} />
+                                <ActivityIndicator color={tokens.colors.primary} />
                                 <Text style={styles.mutedText}>Cargando MVA...</Text>
                             </View>
                         ) : (
@@ -873,7 +874,7 @@ export default function AdminUniversityScreen() {
                                     disabled={mvaMutation.isPending}
                                 >
                                     {mvaMutation.isPending ? (
-                                        <ActivityIndicator color={theme.colors.textInverse} />
+                                        <ActivityIndicator color={tokens.colors.onPrimary} />
                                     ) : (
                                         <Text style={styles.primaryButtonText}>Guardar MVA</Text>
                                     )}
@@ -886,7 +887,7 @@ export default function AdminUniversityScreen() {
                 <View style={styles.sectionCard}>
                     <View style={styles.sectionHeaderRow}>
                         <View style={styles.sectionHeader}>
-                            <Ionicons name="bar-chart-outline" size={18} color={theme.colors.primary} />
+                            <Ionicons name="bar-chart-outline" size={18} color={tokens.colors.primary} />
                             <Text style={styles.sectionTitle}>Estadisticas del Home</Text>
                         </View>
                         <Pressable
@@ -896,7 +897,7 @@ export default function AdminUniversityScreen() {
                             <Ionicons
                                 name={showStatsSection ? "chevron-up" : "chevron-down"}
                                 size={18}
-                                color={theme.colors.textSecondary}
+                                color={tokens.colors.textSecondary}
                             />
                         </Pressable>
                     </View>
@@ -951,12 +952,13 @@ export default function AdminUniversityScreen() {
     );
 }
 
-const styles = StyleSheet.create({
+function createStyles(theme: ThemeTokens) {
+    return {
     container: { flex: 1, backgroundColor: theme.colors.bgSecondary },
     content: { padding: theme.spacing.md, gap: theme.spacing.md, paddingBottom: theme.spacing.xl },
 
     sectionCard: {
-        backgroundColor: theme.colors.bgPrimary,
+        backgroundColor: theme.colors.bgCard,
         borderRadius: theme.radius.lg,
         padding: theme.spacing.md,
         gap: 12,
@@ -1020,7 +1022,7 @@ const styles = StyleSheet.create({
         paddingVertical: 12,
         alignItems: "center",
     },
-    primaryButtonText: { color: theme.colors.textInverse, fontWeight: "800" },
+    primaryButtonText: { color: theme.colors.onPrimary, fontWeight: "800" },
     secondaryButton: {
         borderWidth: 1,
         borderColor: theme.colors.primary,
@@ -1075,4 +1077,5 @@ const styles = StyleSheet.create({
         backgroundColor: theme.colors.bgSecondary,
     },
     authorityAvatar: { width: 52, height: 52, borderRadius: 26, backgroundColor: theme.colors.bgSecondary },
-});
+    };
+}
