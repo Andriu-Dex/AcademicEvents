@@ -1,17 +1,17 @@
-import React from "react";
 import { Tabs, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect } from "react";
 import { View, StyleSheet, Platform } from "react-native";
-import { theme } from "../../src/shared";
+import { useAppTheme } from "../../src/shared";
 import { useAuthStore } from "../../src/store/authStore";
 import { isAdminRole } from "../../src/utils/roles";
 
 const TAB_BAR_HEIGHT = Platform.OS === "ios" ? 96 : 84;
 
 function TabIcon({ name, color, size, focused }: Readonly<{ name: keyof typeof Ionicons.glyphMap; color: string; size: number; focused: boolean }>) {
+    const { tokens } = useAppTheme();
     return (
-        <View style={[iconStyles.wrap, focused && iconStyles.wrapActive]}>
+        <View style={[iconStyles.wrap, focused && { backgroundColor: tokens.colors.primaryLight }]}>
             <Ionicons name={name} color={color} size={size} />
         </View>
     );
@@ -24,9 +24,6 @@ const iconStyles = StyleSheet.create({
         borderRadius: 16,
         alignItems: "center",
         justifyContent: "center",
-    },
-    wrapActive: {
-        backgroundColor: theme.colors.primaryLight,
     },
 });
 
@@ -67,6 +64,7 @@ export default function AdminLayout() {
     const router = useRouter();
     const token = useAuthStore((s) => s.accessToken);
     const role = useAuthStore((s) => s.user?.role);
+    const { tokens } = useAppTheme();
 
     useEffect(() => {
         if (!token) {
@@ -83,15 +81,15 @@ export default function AdminLayout() {
         <Tabs
             screenOptions={{
                 headerShown: false,
-                tabBarActiveTintColor: theme.colors.primary,
-                tabBarInactiveTintColor: theme.colors.textTertiary,
+                tabBarActiveTintColor: tokens.colors.primary,
+                tabBarInactiveTintColor: tokens.colors.textTertiary,
                 tabBarStyle: {
-                    backgroundColor: theme.colors.bgPrimary,
+                    backgroundColor: tokens.colors.bgPrimary,
                     borderTopWidth: 0,
                     height: TAB_BAR_HEIGHT,
                     paddingBottom: Platform.OS === "ios" ? 26 : 14,
                     paddingTop: 10,
-                    ...theme.shadow.tab,
+                    ...tokens.shadow.tab,
                 },
                 tabBarItemStyle: {
                     flex: 1,

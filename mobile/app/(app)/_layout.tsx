@@ -1,20 +1,36 @@
-import { Tabs } from "expo-router";
+import { Tabs, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect } from "react";
-import { useRouter } from "expo-router";
 import { View, StyleSheet, Platform } from "react-native";
-import { theme } from "../../src/shared";
+import { useAppTheme } from "../../src/shared";
 import { useAuthStore } from "../../src/store/authStore";
 import { isAdminRole } from "../../src/utils/roles";
 
 const TAB_BAR_HEIGHT = Platform.OS === "ios" ? 96 : 84;
 
 function TabIcon({ name, color, size, focused }: Readonly<{ name: keyof typeof Ionicons.glyphMap; color: string; size: number; focused: boolean }>) {
+    const { tokens } = useAppTheme();
     return (
-        <View style={[iconStyles.wrap, focused && iconStyles.wrapActive]}>
+        <View style={[iconStyles.wrap, focused && { backgroundColor: tokens.colors.primaryLight }]}>
             <Ionicons name={name} color={color} size={size} />
         </View>
     );
+}
+
+function HomeTabIcon({ color, size, focused }: Readonly<{ color: string; size: number; focused: boolean }>) {
+    return <TabIcon name="home-outline" color={color} size={size} focused={focused} />;
+}
+
+function EventsTabIcon({ color, size, focused }: Readonly<{ color: string; size: number; focused: boolean }>) {
+    return <TabIcon name="calendar-outline" color={color} size={size} focused={focused} />;
+}
+
+function RegistrationsTabIcon({ color, size, focused }: Readonly<{ color: string; size: number; focused: boolean }>) {
+    return <TabIcon name="clipboard-outline" color={color} size={size} focused={focused} />;
+}
+
+function ProfileTabIcon({ color, size, focused }: Readonly<{ color: string; size: number; focused: boolean }>) {
+    return <TabIcon name="person-outline" color={color} size={size} focused={focused} />;
 }
 
 const iconStyles = StyleSheet.create({
@@ -25,15 +41,13 @@ const iconStyles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
     },
-    wrapActive: {
-        backgroundColor: theme.colors.primaryLight,
-    },
 });
 
 export default function AppLayout() {
     const router = useRouter();
     const token = useAuthStore((s) => s.accessToken);
     const role = useAuthStore((s) => s.user?.role);
+    const { tokens } = useAppTheme();
 
     useEffect(() => {
         if (!token) {
@@ -50,15 +64,15 @@ export default function AppLayout() {
         <Tabs
             screenOptions={{
                 headerShown: false,
-                tabBarActiveTintColor: theme.colors.primary,
-                tabBarInactiveTintColor: theme.colors.textTertiary,
+                tabBarActiveTintColor: tokens.colors.primary,
+                tabBarInactiveTintColor: tokens.colors.textTertiary,
                 tabBarStyle: {
-                    backgroundColor: theme.colors.bgPrimary,
+                    backgroundColor: tokens.colors.bgPrimary,
                     borderTopWidth: 0,
                     height: TAB_BAR_HEIGHT,
                     paddingBottom: Platform.OS === "ios" ? 26 : 14,
                     paddingTop: 10,
-                    ...theme.shadow.tab,
+                    ...tokens.shadow.tab,
                 },
                 tabBarItemStyle: {
                     alignItems: "center",
@@ -75,27 +89,21 @@ export default function AppLayout() {
                 name="index"
                 options={{
                     title: "Inicio",
-                    tabBarIcon: ({ color, size, focused }) => (
-                        <TabIcon name="home-outline" color={color} size={size} focused={focused} />
-                    ),
+                    tabBarIcon: HomeTabIcon,
                 }}
             />
             <Tabs.Screen
                 name="events"
                 options={{
                     title: "Eventos",
-                    tabBarIcon: ({ color, size, focused }) => (
-                        <TabIcon name="calendar-outline" color={color} size={size} focused={focused} />
-                    ),
+                    tabBarIcon: EventsTabIcon,
                 }}
             />
             <Tabs.Screen
                 name="registrations"
                 options={{
                     title: "Inscripciones",
-                    tabBarIcon: ({ color, size, focused }) => (
-                        <TabIcon name="clipboard-outline" color={color} size={size} focused={focused} />
-                    ),
+                    tabBarIcon: RegistrationsTabIcon,
                 }}
             />
 
@@ -103,9 +111,7 @@ export default function AppLayout() {
                 name="profile"
                 options={{
                     title: "Perfil",
-                    tabBarIcon: ({ color, size, focused }) => (
-                        <TabIcon name="person-outline" color={color} size={size} focused={focused} />
-                    ),
+                    tabBarIcon: ProfileTabIcon,
                 }}
             />
 

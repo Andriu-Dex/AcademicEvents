@@ -4,6 +4,7 @@ import {
     ActivityIndicator,
     Animated,
     Dimensions,
+    Platform,
     FlatList,
     Image,
     LayoutChangeEvent,
@@ -22,7 +23,7 @@ import { useQuery } from "@tanstack/react-query";
 import { apiClient, getCurrentApiBaseUrl, getLastApiProbeLog, toAbsoluteUrl } from "../src/api/client";
 import { useFeaturedEvents } from "../src/features/events/useFeaturedEvents";
 import { useAuthStore } from "../src/store/authStore";
-import { theme } from "../src/shared";
+import { ThemeToggleButton, useAppTheme, useThemeToggleHost } from "../src/shared";
 import type { PublicEvent } from "../src/api/publicEvents";
 import { fetchMyRegistrations } from "../src/api/registrations";
 
@@ -326,13 +327,19 @@ export function HomeContent(
     const router = useRouter();
     const segments = useSegments();
     const user = useAuthStore((s) => s.user);
+    const { tokens } = useAppTheme();
+    useThemeToggleHost();
+    const theme = tokens;
+    const styles = createStyles(theme);
     const isAdminArea = segments.includes("(admin)");
+    const hasBottomTabs = segments.includes("(app)") || segments.includes("(admin)");
+    const themeToggleBottom = hasBottomTabs ? (Platform.OS === "ios" ? 110 : 96) : 28;
     let rightNavNode: React.ReactNode = null;
     if (user) {
         rightNavNode = (
             <View style={styles.navCtas}>
                 <Pressable style={styles.iconBtnHeader} onPress={() => router.push("/notifications")}>
-                    <Ionicons name="notifications-outline" size={22} color={theme.colors.textInverse} />
+                    <Ionicons name="notifications-outline" size={22} color={theme.colors.onPrimary} />
                 </Pressable>
                 <Pressable style={styles.navUserChip} onPress={() => router.push(isAdminArea ? "/(admin)/profile" : "/profile")}>
                     {user.profileImageUrl ? (
@@ -343,7 +350,7 @@ export function HomeContent(
                     <Text style={styles.navUserName} numberOfLines={1}>
                         {(user.firstName ?? "").trim() || user.email}
                     </Text>
-                    <Ionicons name="chevron-forward" size={16} color={theme.colors.textInverse} />
+                    <Ionicons name="chevron-forward" size={16} color={theme.colors.onPrimary} />
                 </Pressable>
             </View>
         );
@@ -511,9 +518,15 @@ export function HomeContent(
             </LinearGradient>
 
             <ScrollView ref={scrollRef} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-                <View onLayout={handleSectionLayout("inicio")} style={styles.heroCard}>
+                <LinearGradient
+                    colors={theme.gradients.hero}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    onLayout={handleSectionLayout("inicio")}
+                    style={styles.heroCard}
+                >
                     <View style={styles.heroBadge}>
-                        <Ionicons name="school-outline" size={16} color={theme.colors.textInverse} />
+                        <Ionicons name="school-outline" size={16} color={theme.colors.onPrimary} />
                         <Text style={styles.heroBadgeText}>{faculty?.acronym ?? "FISEI"}</Text>
                     </View>
 
@@ -528,7 +541,7 @@ export function HomeContent(
 
                     <View style={styles.heroActions}>
                         <Pressable style={styles.primaryAction} onPress={() => router.push(eventsRoute)}>
-                            <Ionicons name="calendar-outline" size={16} color={theme.colors.textInverse} />
+                            <Ionicons name="calendar-outline" size={16} color={theme.colors.onPrimary} />
                             <Text style={styles.primaryActionText}>Explorar eventos públicos</Text>
                         </Pressable>
                         <Pressable style={styles.secondaryAction} onPress={() => scrollToSection("carreras")}>
@@ -555,7 +568,7 @@ export function HomeContent(
                             <Text style={styles.statLabel}>Participación de Usuarios</Text>
                         </View>
                     </View>
-                </View>
+                </LinearGradient>
 
                 <View onLayout={handleSectionLayout("eventos")}>
                     <View style={styles.sectionHeaderCentered}>
@@ -1002,6 +1015,8 @@ export function HomeContent(
                 </View>
             </ScrollView>
 
+            <ThemeToggleButton bottom={themeToggleBottom} right={18} />
+
             <Modal visible={!!selectedEvent} animationType="slide" transparent onRequestClose={() => setSelectedEvent(null)}>
                 <View style={styles.modalBackdrop}>
                     <View style={styles.modalCard}>
@@ -1089,7 +1104,8 @@ export function HomeContent(
     );
 }
 
-const styles = StyleSheet.create({
+function createStyles(theme: typeof import("../src/shared").theme) {
+    return StyleSheet.create({
     container: {
         flex: 1,
     },
@@ -1127,7 +1143,7 @@ const styles = StyleSheet.create({
         gap: 10,
     },
     brandLabel: {
-        color: theme.colors.textInverse,
+        color: theme.colors.onPrimary,
         fontWeight: "900",
         fontSize: 15,
         letterSpacing: 0.6,
@@ -1169,7 +1185,7 @@ const styles = StyleSheet.create({
     },
     navUserAvatar: { width: 26, height: 26, borderRadius: 13, backgroundColor: theme.colors.bgSecondary },
     navUserAvatarFallback: { width: 26, height: 26, borderRadius: 13, backgroundColor: theme.colors.bgSecondary },
-    navUserName: { maxWidth: 140, color: theme.colors.textInverse, fontWeight: "900", fontSize: 12 },
+    navUserName: { maxWidth: 140, color: theme.colors.onPrimary, fontWeight: "900", fontSize: 12 },
     navCtaPrimary: {
         paddingHorizontal: 14,
         paddingVertical: 10,
@@ -1179,7 +1195,7 @@ const styles = StyleSheet.create({
         borderColor: theme.colors.overlayWhite55,
     },
     navCtaPrimaryText: {
-        color: theme.colors.textInverse,
+        color: theme.colors.onPrimary,
         fontWeight: "800",
         fontSize: 12,
     },
@@ -1187,9 +1203,9 @@ const styles = StyleSheet.create({
         paddingHorizontal: 14,
         paddingVertical: 10,
         borderRadius: 999,
-        backgroundColor: theme.colors.bgPrimary,
+        backgroundColor: theme.colors.bgElevated,
         borderWidth: 1,
-        borderColor: theme.colors.overlayWhite85,
+        borderColor: theme.colors.borderPrimary,
     },
     navCtaSecondaryText: {
         color: theme.colors.utaPrimary,
@@ -1214,7 +1230,7 @@ const styles = StyleSheet.create({
     },
     navTabText: {
         fontSize: 13,
-        color: theme.colors.textInverse,
+        color: theme.colors.onPrimary,
         fontWeight: "700",
     },
     content: {
@@ -1223,15 +1239,15 @@ const styles = StyleSheet.create({
         alignSelf: "center",
         paddingHorizontal: theme.spacing.md,
         paddingTop: 156,
-        paddingBottom: theme.spacing.xl,
+        paddingBottom: theme.spacing.xxl + 56,
         gap: theme.spacing.lg,
     },
     heroCard: {
         borderRadius: theme.radius.lg,
         padding: theme.spacing.lg,
-        backgroundColor: theme.colors.primary,
         ...theme.shadow.primary,
         gap: 10,
+        overflow: "hidden",
     },
     heroBadge: {
         flexDirection: "row",
@@ -1355,12 +1371,12 @@ const styles = StyleSheet.create({
         fontSize: 14,
     },
     heroBadgeText: {
-        color: theme.colors.textInverse,
+        color: theme.colors.onPrimary,
         fontSize: 11,
         fontWeight: "800",
     },
     heroTitle: {
-        color: theme.colors.textInverse,
+        color: theme.colors.onPrimary,
         fontSize: 24,
         lineHeight: 32,
         fontWeight: "800",
@@ -1394,7 +1410,7 @@ const styles = StyleSheet.create({
         borderColor: theme.colors.overlayWhite30,
     },
     primaryActionText: {
-        color: theme.colors.textInverse,
+        color: theme.colors.onPrimary,
         fontSize: 13,
         fontWeight: "800",
         textAlign: "center",
@@ -1403,7 +1419,9 @@ const styles = StyleSheet.create({
         flex: 1,
         minHeight: 48,
         borderRadius: theme.radius.md,
-        backgroundColor: theme.colors.bgPrimary,
+        backgroundColor: theme.colors.bgElevated,
+        borderWidth: 1,
+        borderColor: theme.colors.borderPrimary,
         alignItems: "center",
         justifyContent: "center",
         flexDirection: "row",
@@ -1463,21 +1481,19 @@ const styles = StyleSheet.create({
     },
     sectionSubtitle: {
         fontSize: 14,
-        color: theme.colors.textPrimary,
-        opacity: 0.8,
+        color: theme.colors.textSecondary,
         textAlign: "center",
     },
     sectionSubtitleLong: {
         fontSize: 14,
-        color: theme.colors.textPrimary,
-        opacity: 0.82,
+        color: theme.colors.textSecondary,
         textAlign: "center",
         lineHeight: 22,
     },
     loadingCard: {
         borderRadius: theme.radius.md,
         padding: theme.spacing.lg,
-        backgroundColor: theme.colors.bgPrimary,
+        backgroundColor: theme.colors.bgCard,
         borderWidth: 1,
         borderColor: theme.colors.borderPrimary,
         alignItems: "center",
@@ -1521,7 +1537,7 @@ const styles = StyleSheet.create({
     emptyCard: {
         borderRadius: theme.radius.md,
         padding: theme.spacing.lg,
-        backgroundColor: theme.colors.bgPrimary,
+        backgroundColor: theme.colors.bgCard,
         borderWidth: 1,
         borderColor: theme.colors.borderPrimary,
         alignItems: "center",
@@ -1540,7 +1556,9 @@ const styles = StyleSheet.create({
     },
     featuredCard: {
         borderRadius: theme.radius.lg,
-        backgroundColor: theme.colors.bgPrimary,
+        backgroundColor: theme.colors.bgCard,
+        borderWidth: 1,
+        borderColor: theme.colors.borderPrimary,
         overflow: "hidden",
         ...theme.shadow.md,
     },
@@ -1608,7 +1626,9 @@ const styles = StyleSheet.create({
     },
     eventCard: {
         borderRadius: theme.radius.lg,
-        backgroundColor: theme.colors.bgPrimary,
+        backgroundColor: theme.colors.bgCard,
+        borderWidth: 1,
+        borderColor: theme.colors.borderPrimary,
         flexDirection: "row",
         overflow: "hidden",
         ...theme.shadow.sm,
@@ -1687,7 +1707,7 @@ const styles = StyleSheet.create({
     authorityCardWide: {
         flexDirection: "row",
         borderRadius: theme.radius.md,
-        backgroundColor: theme.colors.bgPrimary,
+        backgroundColor: theme.colors.bgCard,
         borderWidth: 1,
         borderColor: theme.colors.borderPrimary,
         padding: theme.spacing.md,
@@ -1766,8 +1786,9 @@ const styles = StyleSheet.create({
     gridCard: {
         width: "48.5%",
         borderRadius: theme.radius.lg,
-        backgroundColor: theme.colors.bgPrimary,
-        borderWidth: 0,
+        backgroundColor: theme.colors.bgCard,
+        borderWidth: 1,
+        borderColor: theme.colors.borderPrimary,
         padding: theme.spacing.md,
         ...theme.shadow.sm,
     },
@@ -1809,7 +1830,9 @@ const styles = StyleSheet.create({
     },
     identityCard: {
         borderRadius: theme.radius.lg,
-        backgroundColor: theme.colors.bgPrimary,
+        backgroundColor: theme.colors.bgCard,
+        borderWidth: 1,
+        borderColor: theme.colors.borderPrimary,
         padding: theme.spacing.md,
         ...theme.shadow.sm,
     },
@@ -1835,7 +1858,9 @@ const styles = StyleSheet.create({
     },
     contactCard: {
         borderRadius: theme.radius.lg,
-        backgroundColor: theme.colors.bgPrimary,
+        backgroundColor: theme.colors.bgCard,
+        borderWidth: 1,
+        borderColor: theme.colors.borderPrimary,
         padding: theme.spacing.md,
         gap: 12,
         ...theme.shadow.sm,
@@ -1894,7 +1919,7 @@ const styles = StyleSheet.create({
     },
     footerBrandName: {
         fontSize: 17,
-        color: theme.colors.textInverse,
+        color: theme.colors.onPrimary,
         fontWeight: "800",
         marginTop: 1,
     },
@@ -1928,7 +1953,7 @@ const styles = StyleSheet.create({
         gap: 4,
     },
     footerColumnTitle: {
-        color: theme.colors.textInverse,
+        color: theme.colors.onPrimary,
         fontSize: 13,
         fontWeight: "800",
         marginBottom: 2,
@@ -1958,4 +1983,5 @@ const styles = StyleSheet.create({
         backgroundColor: theme.colors.overlayWhite16,
     },
 });
+}
 
