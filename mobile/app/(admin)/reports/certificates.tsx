@@ -38,7 +38,7 @@ export default function AdminReportCertificatesScreen() {
     const { tokens } = useAppTheme();
     const styles = useThemedStyles(createStyles);
 
-    const [rangeDays, setRangeDays] = useState(180);
+    const [rangeDays, setRangeDays] = useState(90);
     const [loadingPdf, setLoadingPdf] = useState(false);
 
     const params = useMemo(() => {
@@ -154,12 +154,12 @@ export default function AdminReportCertificatesScreen() {
                             })}
 
                             <Pressable
-                                style={[styles.actionButton, loadingPdf && styles.actionButtonDisabled]}
-                                onPress={() => void handleDownloadPdf()}
+                                style={[styles.actionButtonSmall, loadingPdf && styles.actionButtonDisabled]}
+                                onPress={handleDownloadPdf}
                                 disabled={loadingPdf}
                             >
-                                <Ionicons name="download-outline" size={16} color={tokens.colors.onPrimary} />
-                                <Text style={styles.actionButtonText}>{loadingPdf ? "Generando PDF..." : "Descargar Reporte PDF"}</Text>
+                                <Ionicons name="download-outline" size={14} color={tokens.colors.onPrimary} />
+                                <Text style={styles.actionButtonTextSmall}>{loadingPdf ? "Generando PDF..." : "Descargar Reporte PDF"}</Text>
                             </Pressable>
                         </View>
                     </SectionCard>
@@ -237,8 +237,20 @@ function createStyles(theme: ThemeTokens) {
             paddingVertical: 13,
             backgroundColor: theme.colors.primary,
         },
+        actionButtonSmall: {
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 8,
+            marginTop: theme.spacing.sm,
+            borderRadius: theme.radius.full,
+            paddingVertical: 8,
+            paddingHorizontal: 10,
+            backgroundColor: theme.colors.primary,
+        },
         actionButtonDisabled: { opacity: 0.65 },
         actionButtonText: { color: theme.colors.onPrimary, fontWeight: "900", fontSize: 13 },
+        actionButtonTextSmall: { color: theme.colors.onPrimary, fontWeight: "900", fontSize: 12 },
         progressStack: { gap: 10, marginTop: 2 },
     };
 }

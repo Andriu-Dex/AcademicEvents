@@ -138,10 +138,15 @@ function normalizeRegistration(item: Record<string, unknown>): AdminRegistration
             item.finalAttendance ??
             item.porcentaje_asistencia_final ??
             item.porcentajeFinalAsistencia ??
-            item.asistencia_final
+            item.asistencia_final ??
+            item.por_asi_fin_usu ??
+            item.por_asi_fin ??
+            item.porc_asistencia_final ??
+            item.asistencia_porcentaje ??
+            item.asistencia_final_porcentaje
         ),
         finalGrade: toFiniteNumberOrNull(
-            item.finalGrade ?? item.final_grade ?? item.nota_final ?? item.notaFinal ?? item.final_score
+            item.finalGrade ?? item.final_grade ?? item.nota_final ?? item.notaFinal ?? item.final_score ?? item.nota_final_usu ?? item.nota_final_usuario ?? item.nota_alumno
         ),
         event: {
             id: pickString(eventObjSource, "id", "id_eve"),

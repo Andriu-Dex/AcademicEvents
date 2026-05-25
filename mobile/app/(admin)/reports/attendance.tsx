@@ -226,8 +226,10 @@ export default function AdminReportAttendanceScreen() {
         const list = Array.isArray(noShowsQuery.data) ? (noShowsQuery.data as Array<Record<string, unknown>>) : [];
         const map = new Map<string, { displayName: string; cantidadEventos: number; totalInscritos: number; totalNoShows: number }>();
         for (const item of list) {
-            const tipoRaw = pickReportText(item.tipoEvento, "Tipo") || "Otro";
-            const tipoKey = (tipoRaw ?? "").toString().trim().toLowerCase() || "otro";
+            const tipoRaw = (pickReportText(item.tipoEvento, "Tipo") || "Otro").toString().trim();
+            // collapse repeated words like "course course" -> "course"
+            const tipoClean = tipoRaw.replace(/\b(\w+)\b(?:\s+\1\b)+/gi, "$1").trim();
+            const tipoKey = (tipoClean ?? "").toString().toLowerCase() || "otro";
             const cantidadEventos = Number(item.cantidadEventos ?? 0) || 0;
             const totalInscritos = Number(item.totalInscritos ?? 0) || 0;
             const totalNoShows = Number(item.totalNoShows ?? 0) || 0;
@@ -237,7 +239,7 @@ export default function AdminReportAttendanceScreen() {
                 existing.totalInscritos += totalInscritos;
                 existing.totalNoShows += totalNoShows;
             } else {
-                map.set(tipoKey, { displayName: tipoRaw, cantidadEventos, totalInscritos, totalNoShows });
+                map.set(tipoKey, { displayName: tipoClean || tipoRaw, cantidadEventos, totalInscritos, totalNoShows });
             }
         }
 
@@ -270,8 +272,9 @@ export default function AdminReportAttendanceScreen() {
         const list = Array.isArray(noShowsQuery.data) ? (noShowsQuery.data as Array<Record<string, unknown>>) : [];
         const map = new Map<string, { displayName: string; cantidadEventos: number; totalInscritos: number; totalNoShows: number }>();
         for (const item of list) {
-            const tipoRaw = pickReportText(item.tipoEvento, "Tipo") || "Otro";
-            const tipoKey = (tipoRaw ?? "").toString().trim().toLowerCase() || "otro";
+            const tipoRaw = (pickReportText(item.tipoEvento, "Tipo") || "Otro").toString().trim();
+            const tipoClean = tipoRaw.replace(/\b(\w+)\b(?:\s+\1\b)+/gi, "$1").trim();
+            const tipoKey = (tipoClean ?? "").toString().toLowerCase() || "otro";
             const cantidadEventos = Number(item.cantidadEventos ?? 0) || 0;
             const totalInscritos = Number(item.totalInscritos ?? 0) || 0;
             const totalNoShows = Number(item.totalNoShows ?? 0) || 0;
@@ -281,7 +284,7 @@ export default function AdminReportAttendanceScreen() {
                 existing.totalInscritos += totalInscritos;
                 existing.totalNoShows += totalNoShows;
             } else {
-                map.set(tipoKey, { displayName: tipoRaw, cantidadEventos, totalInscritos, totalNoShows });
+                map.set(tipoKey, { displayName: tipoClean || tipoRaw, cantidadEventos, totalInscritos, totalNoShows });
             }
         }
 

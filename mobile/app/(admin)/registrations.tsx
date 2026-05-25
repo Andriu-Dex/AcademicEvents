@@ -340,7 +340,7 @@ function RegistrationDetailsSection({
 
             {(() => {
                 const st = (item.status ?? "").toString().toUpperCase();
-                const isFinal = st.includes("APROB") || st.includes("REPROB") || st.includes("FAILED");
+                const isFinal = st.includes("APROB") || st.includes("REPROB") || st.includes("FAILED") || st.includes("APPROV");
                 if (isFinal) {
                     return (
                         <View style={styles.finalInfoWrap}>

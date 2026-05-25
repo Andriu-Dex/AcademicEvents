@@ -201,7 +201,7 @@ function RegistrationCard({
                 {/* Mostrar calificaciones si la inscripción está finalizada */}
                 {(() => {
                     const st = (item.status ?? "").toString().toUpperCase();
-                    const isFinal = st.includes("APROB") || st.includes("REPROB") || st.includes("FAILED");
+                    const isFinal = st.includes("APROB") || st.includes("REPROB") || st.includes("FAILED") || st.includes("APPROV");
                     if (isFinal) {
                         const attendance = item.finalAttendancePercent ?? 0;
                         const grade = item.finalGrade ?? null;

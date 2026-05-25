@@ -57,6 +57,17 @@ function normalizeEvent(raw: Record<string, unknown>): RegistrationEventSummary 
     };
 }
 
+function toFiniteNumberOrNull(value: unknown): number | null {
+    if (typeof value === "number") return Number.isFinite(value) ? value : null;
+    if (typeof value === "string") {
+        const trimmed = value.trim();
+        if (!trimmed) return null;
+        const parsed = Number(trimmed);
+        return Number.isFinite(parsed) ? parsed : null;
+    }
+    return null;
+}
+
 function normalizeRegistration(raw: Record<string, unknown>): RegistrationItem {
     const event = raw.evento && typeof raw.evento === "object" ? normalizeEvent(raw.evento as Record<string, unknown>) : null;
     const certificateRaw =
@@ -77,8 +88,10 @@ function normalizeRegistration(raw: Record<string, unknown>): RegistrationItem {
         paymentProofUrl: pickString(raw, "comprobante", "com_ins", "paymentProofUrl") || null,
         certificate,
         event,
-        finalAttendancePercent: raw.por_asi_fin_usu ?? raw.finalAttendancePercent ?? raw.por_asi_fin ?? null,
-        finalGrade: raw.nota_final ?? raw.finalGrade ?? raw.nota ?? null,
+        finalAttendancePercent: toFiniteNumberOrNull(
+            raw.por_asi_fin_usu ?? raw.finalAttendancePercent ?? raw.por_asi_fin ?? raw.final_attendance_percent ?? raw.porcentaje_asistencia_final
+        ),
+        finalGrade: toFiniteNumberOrNull(raw.nota_final ?? raw.finalGrade ?? raw.nota ?? raw.notaFinal ?? raw.final_score),
     };
 }
 
