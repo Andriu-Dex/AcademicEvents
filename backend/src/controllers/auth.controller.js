@@ -219,6 +219,7 @@ const registrarEstudiante = async (req, res) => {
 
     // Obtener IP del cliente
     const ip = req.ip || req.connection.remoteAddress;
+    const requestBaseUrl = `${req.protocol}://${req.get("host")}`;
 
     // Crear el usuario y la cuenta en una transacción
     const resultado = await prisma.$transaction(async (prisma) => {
@@ -255,7 +256,8 @@ const registrarEstudiante = async (req, res) => {
         ...resultado.cuenta,
         user: resultado.usuario,
       },
-      ip
+      ip,
+      requestBaseUrl
     );
 
     return res.status(201).json({

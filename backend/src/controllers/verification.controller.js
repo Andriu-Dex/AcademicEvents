@@ -81,6 +81,38 @@ const verificarToken = async (req, res) => {
 };
 
 /**
+ * Endpoint puente para verificación desde correo.
+ * Redirige al frontend de verificación.
+ * En local, si FRONTEND_URL usa localhost, reemplaza host por el host real de la solicitud
+ * para que sea accesible desde dispositivos móviles en la misma red.
+ */
+const openVerificationLink = async (req, res) => {
+  const token = req.params.token || "";
+  const safeToken = encodeURIComponent(token);
+  const frontendRaw = (process.env.FRONTEND_URL || "http://localhost:5173").replace(/\/$/, "");
+
+  let frontendTarget = frontendRaw;
+
+  try {
+    const parsedFrontend = new URL(frontendRaw);
+    const frontendHostIsLocal = /^(localhost|127\.0\.0\.1)$/i.test(parsedFrontend.hostname);
+
+    if (frontendHostIsLocal) {
+      const requestHostHeader = req.get("host") || "";
+      const requestHostname = requestHostHeader.split(":")[0];
+      if (requestHostname) {
+        parsedFrontend.hostname = requestHostname;
+        frontendTarget = parsedFrontend.toString().replace(/\/$/, "");
+      }
+    }
+  } catch (error) {
+    console.warn("⚠️ [OPEN-VERIFICATION-LINK] FRONTEND_URL inválida, usando valor por defecto", error?.message);
+  }
+
+  return res.redirect(302, `${frontendTarget}/verificar-correo/${safeToken}`);
+};
+
+/**
  * Reenvía un correo de verificación
  * @param {Object} req - Objeto request de Express
  * @param {Object} res - Objeto response de Express
@@ -90,12 +122,14 @@ const reenviarVerificacion = async (req, res) => {
   try {
     const { email } = req.params;
     const ip = req.ip || req.connection.remoteAddress;
+    const requestHost = req.get("host") || req.headers.host || "";
 
     // Reenviar verificación
     const resultado = await emailVerificationService.reenviarVerificacion(
       email,
       ip,
-      req.tenantId
+      req.tenantId,
+      requestHost
     );
 
     if (!resultado.success) {
@@ -137,12 +171,14 @@ const solicitarReenvio = async (req, res) => {
     }
 
     const ip = req.ip || req.connection.remoteAddress;
+    const requestHost = req.get("host") || req.headers.host || "";
 
     // Reenviar verificación
     const resultado = await emailVerificationService.reenviarVerificacion(
       correo,
       ip,
-      req.tenantId
+      req.tenantId,
+      requestHost
     );
 
     if (!resultado.success) {
@@ -168,6 +204,7 @@ const solicitarReenvio = async (req, res) => {
 
 module.exports = {
   verificarToken,
+  openVerificationLink,
   reenviarVerificacion,
   solicitarReenvio,
 };

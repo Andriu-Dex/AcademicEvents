@@ -52,6 +52,7 @@ const corregirCorreo = async (req, res) => {
 
     // Obtener IP del cliente
     const ip = req.ip || req.connection.remoteAddress;
+    const requestBaseUrl = `${req.protocol}://${req.get("host")}`;
 
     // Procesar la corrección
     const resultado = await emailVerificationService.corregirCorreo(
@@ -59,7 +60,8 @@ const corregirCorreo = async (req, res) => {
       correoNuevo,
       carreraNueva,
       ip,
-      req.tenantId
+      req.tenantId,
+      requestBaseUrl
     );
     if (!resultado.success) {
       return res.status(400).json(resultado);

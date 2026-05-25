@@ -1,6 +1,21 @@
 const { prisma } = require("../config/db");
 const jwt = require("jsonwebtoken");
 
+const buildBackendUrl = (requestBaseUrl) => {
+  return (
+    requestBaseUrl ||
+    process.env.BACKEND_URL ||
+    process.env.API_BASE_URL ||
+    process.env.PUBLIC_BACKEND_URL ||
+    "http://localhost:3000"
+  ).replace(/\/$/, "");
+};
+
+const isSameCorrectionSelection = (cuenta, correoAnteriorNormalizado, correoNuevoNormalizado, carreraNuevaNormalizada) => {
+  const carreraActual = cuenta?.user?.careerId ? String(cuenta.user.careerId).trim() : "";
+  return correoAnteriorNormalizado === correoNuevoNormalizado && carreraActual === carreraNuevaNormalizada;
+};
+
 /**
  * @class EmailVerificationService
  * @description Servicio para gestionar el proceso de verificación de correo electrónico
@@ -17,7 +32,7 @@ class EmailVerificationService {
    * @param {string} ip - Dirección IP desde donde se solicita la verificación
    * @returns {Promise<Object>} Resultado de la operación
    */
-  async enviarVerificacion(cuenta, ip) {
+  async enviarVerificacion(cuenta, ip, requestBaseUrl) {
     try {
       // Crear token de verificación
       const token = await this.tokenService.crearToken({
@@ -27,9 +42,9 @@ class EmailVerificationService {
         tenantId: cuenta.tenantId,
       });
 
-      // Generar URL para el frontend
-      const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
-      const urlVerificacion = `${frontendUrl}/verificar-correo/${token.value}`;
+      // Generar URL puente en el backend para que funcione en web y móvil
+      const backendUrl = buildBackendUrl(requestBaseUrl);
+      const urlVerificacion = `${backendUrl}/api/verificacion/open/${token.value}`;
 
       // Obtener plantilla de correo
       const { asunto, cuerpoHtml } =
@@ -119,7 +134,7 @@ class EmailVerificationService {
         `[${new Date().toISOString()}] Iniciando transacción para token ${tokenValue}`
       );
       // Usar transacción para asegurar atomicidad
-      const resultado = await prisma.$transaction(async (tx) => {
+      await prisma.$transaction(async (tx) => {
         // Verificar nuevamente que el token esté activo dentro de la transacción
         const tokenActual = await tx.accountToken.findUnique({
           where: { value: tokenValue },
@@ -133,7 +148,7 @@ class EmailVerificationService {
           }
         );
 
-        if (!tokenActual || tokenActual.status !== "ACTIVE") {
+        if (tokenActual?.status !== "ACTIVE") {
           console.log(
             `[${new Date().toISOString()}] Token ${tokenValue} ya no válido durante la transacción. Estado: ${
               tokenActual?.status || "NO_EXISTE"
@@ -252,7 +267,7 @@ class EmailVerificationService {
    * @param {string} tenantId - ID del tenant
    * @returns {Promise<Object>} Resultado de la operación
    */
-  async reenviarVerificacion(correo, ip, tenantId) {
+  async reenviarVerificacion(correo, ip, tenantId, requestBaseUrl) {
     try {
       // Verificar rate limiting (máximo 3 reenvíos por hora)
       const puedeReenviar = await this.tokenService.verificarRateLimit(
@@ -296,7 +311,7 @@ class EmailVerificationService {
       );
 
       // Enviar nueva verificación
-      return await this.enviarVerificacion(cuenta, ip);
+      return await this.enviarVerificacion(cuenta, ip, requestBaseUrl);
     } catch (error) {
       console.error("Error al reenviar verificación:", error);
       throw new Error("Error al reenviar el correo de verificación");
@@ -312,11 +327,15 @@ class EmailVerificationService {
    * @param {string} tenantId - ID del tenant
    * @returns {Promise<Object>} Resultado de la operación
    */
-  async corregirCorreo(correoAnterior, correoNuevo, carreraNueva, ip, tenantId) {
+  async corregirCorreo(correoAnterior, correoNuevo, carreraNueva, ip, tenantId, requestBaseUrl) {
     try {
+      const correoAnteriorNormalizado = String(correoAnterior || "").trim().toLowerCase();
+      const correoNuevoNormalizado = String(correoNuevo || "").trim().toLowerCase();
+      const carreraNuevaNormalizada = carreraNueva ? String(carreraNueva).trim() : "";
+
       // 1. Obtener cuenta por correo antiguo
       const cuenta = await this.tokenService.obtenerCuentaPorCorreo(
-        correoAnterior,
+        correoAnteriorNormalizado,
         tenantId
       );
       console.log("=== Corrección de correo - Detalles ===");
@@ -350,9 +369,17 @@ class EmailVerificationService {
         };
       }
 
+      if (isSameCorrectionSelection(cuenta, correoAnteriorNormalizado, correoNuevoNormalizado, carreraNuevaNormalizada)) {
+        return {
+          success: false,
+          message: "Se ha seleccionado el mismo correo y la misma carrera",
+        };
+      }
+
       // 3. Verificar que el nuevo correo no exista ya
       const existeCorreoNuevo =
-        await this.tokenService.verificarExistenciaCorreo(correoNuevo, tenantId);
+        correoAnteriorNormalizado !== correoNuevoNormalizado &&
+        (await this.tokenService.verificarExistenciaCorreo(correoNuevoNormalizado, tenantId));
       if (existeCorreoNuevo) {
         return {
           success: false,
@@ -361,20 +388,21 @@ class EmailVerificationService {
       }
 
       // 4. Determinar el tipo de cuenta basado en el nuevo correo
-      const esUTA = correoNuevo.endsWith("@uta.edu.ec");
-      const nuevoRol = esUTA ? "STUDENT" : "GENERAL"; // 5. Actualizar en transacción para garantizar atomicidad
+      const esUTA = correoNuevoNormalizado.endsWith("@uta.edu.ec");
+      const nuevoRol = esUTA ? "STUDENT" : "GENERAL";
+      // 5. Actualizar en transacción para garantizar atomicidad
       console.log("=== Iniciando transacción ===");
       console.log("Es correo UTA:", esUTA);
       console.log("Nuevo rol:", nuevoRol);
-      console.log("Carrera nueva:", carreraNueva);
+      console.log("Carrera nueva:", carreraNuevaNormalizada || "N/A");
 
       const resultado = await prisma.$transaction(async (prisma) => {
         // 5.1 Actualizar la carrera del usuario si es necesario
-        if (esUTA && carreraNueva) {
-          console.log("Actualizando usuario con carrera:", carreraNueva);
+        if (esUTA && carreraNuevaNormalizada) {
+          console.log("Actualizando usuario con carrera:", carreraNuevaNormalizada);
           await prisma.user.update({
             where: { id: cuenta.user.id },
-            data: { careerId: carreraNueva },
+            data: { careerId: carreraNuevaNormalizada },
           });
         } else if (!esUTA) {
           // Si cambia a correo no institucional, quitar la carrera
@@ -390,7 +418,7 @@ class EmailVerificationService {
         const accountUpdated = await prisma.account.update({
           where: { id: cuenta.id },
           data: {
-            email: correoNuevo,
+            email: correoNuevoNormalizado,
             role: nuevoRol,
           },
           include: { user: true },
@@ -412,14 +440,14 @@ class EmailVerificationService {
 
       // 7. Enviar nueva verificación al correo corregido
       console.log("=== Enviando nueva verificación ===");
-      console.log("Correo destino:", correoNuevo);
-      await this.enviarVerificacion(resultado, ip);
+      console.log("Correo destino:", correoNuevoNormalizado);
+      await this.enviarVerificacion(resultado, ip, requestBaseUrl);
       console.log("Verificación enviada con éxito");
 
       return {
         success: true,
         message: "Correo actualizado y nueva verificación enviada",
-        email: correoNuevo,
+        email: correoNuevoNormalizado,
         tipoCorreo: esUTA ? "institucional" : "general",
       };
     } catch (error) {

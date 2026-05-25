@@ -38,8 +38,10 @@ export default function CorrectEmailScreen() {
     const router = useRouter();
     const params = useLocalSearchParams();
     const { data: careers, isLoading: careersLoading } = useCareers();
-    const { tokens } = useAppTheme();
+    const { mode, tokens } = useAppTheme();
     const styles = createStyles(tokens);
+    const pickerSelectedTextColor = mode === "dark" ? tokens.colors.textInverse : tokens.colors.textPrimary;
+    const pickerOptionTextColor = "#111827";
 
     const incomingEmail = useMemo(() => readParam(params.email as any), [params.email]);
     const [currentEmail, setCurrentEmail] = useState("");
@@ -180,16 +182,16 @@ export default function CorrectEmailScreen() {
                                     <Picker
                                         selectedValue={careerId}
                                         onValueChange={(value) => setCareerId(String(value))}
-                                        style={styles.picker}
-                                        itemStyle={styles.pickerItem}
+                                        style={[styles.picker, { color: pickerSelectedTextColor }]}
+                                        itemStyle={[styles.pickerDropdownItem, { color: pickerOptionTextColor }]}
                                     >
-                                        <Picker.Item label="Selecciona una carrera" value="" color={tokens.colors.textInverse} />
+                                        <Picker.Item label="Selecciona una carrera" value="" color={pickerOptionTextColor} />
                                         {careers?.map((career) => (
                                             <Picker.Item
                                                 key={career.id}
                                                 label={career.nombre}
                                                 value={career.id}
-                                                color={tokens.colors.textInverse}
+                                                color={pickerOptionTextColor}
                                             />
                                         ))}
                                     </Picker>
@@ -307,10 +309,10 @@ function createStyles(tokens: typeof import("../../src/shared").theme) {
             borderColor: tokens.colors.border,
         },
         picker: {
-            color: tokens.colors.textInverse,
+            color: tokens.colors.textPrimary,
         },
-        pickerItem: {
-            color: tokens.colors.textInverse,
+        pickerDropdownItem: {
+            color: tokens.colors.textPrimary,
         },
         error: {
             marginTop: tokens.spacing.md,

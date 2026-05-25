@@ -31,6 +31,7 @@ export default function VerifyEmailTokenScreen() {
 
                 if (res.authToken && res.user) {
                     await setSession(res.authToken, res.user);
+
                     setStatus("success");
                     setMessage("Correo verificado. Iniciando sesión...");
                     setTimeout(() => router.replace("/(app)"), 1200);
