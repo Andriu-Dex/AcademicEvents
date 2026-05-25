@@ -4,7 +4,6 @@ import {
     FlatList,
     Image,
     Pressable,
-    StyleSheet,
     Text,
     TextInput,
     View,
@@ -19,7 +18,7 @@ import {
     PublicEventsFilters,
 } from "../src/api/publicEvents";
 import { toAbsoluteUrl } from "../src/api/client";
-import { theme } from "../src/shared";
+import { useAppTheme, useThemedStyles, type ThemeTokens } from "../src/shared";
 
 type ClientOnlyFilters = {
     completo: boolean;
@@ -95,6 +94,8 @@ function FilterChip({
     selected: boolean;
     onPress: () => void;
 }>) {
+    const styles = useThemedStyles<any>(createStyles as any);
+
     return (
         <Pressable
             onPress={onPress}
@@ -109,6 +110,8 @@ function FilterChip({
 
 export default function PublicEventsScreen() {
     const router = useRouter();
+    const { tokens } = useAppTheme();
+    const styles = useThemedStyles<any>(createStyles as any);
 
     const [page, setPage] = useState(1);
     const limit = 12;
@@ -226,7 +229,7 @@ export default function PublicEventsScreen() {
         if (isLoading) {
             return (
                 <View style={styles.stateCard}>
-                    <ActivityIndicator color={theme.colors.primary} />
+                    <ActivityIndicator color={tokens.colors.primary} />
                     <Text style={styles.stateText}>Cargando eventos…</Text>
                 </View>
             );
@@ -247,11 +250,15 @@ export default function PublicEventsScreen() {
 
         return (
             <View style={styles.stateCard}>
-                <Ionicons name="calendar-clear-outline" size={26} color={theme.colors.textTertiary} />
+                <Ionicons
+                    name="calendar-clear-outline"
+                    size={26}
+                    color={tokens.colors.textTertiary}
+                />
                 <Text style={styles.stateText}>No hay eventos con los filtros seleccionados.</Text>
             </View>
         );
-    }, [error, isError, isLoading, refetch]);
+    }, [error, isError, isLoading, refetch, styles, tokens]);
 
     const renderItem = ({ item }: { item: PublicEventExtended }) => {
         const modalityLabel = translateEventModality(item.modality);
@@ -295,7 +302,11 @@ export default function PublicEventsScreen() {
                         ) : null}
                         {modalityLabel ? (
                             <View style={styles.badgeSuccess}>
-                                <Ionicons name="desktop-outline" size={14} color={theme.colors.success} />
+                                <Ionicons
+                                    name="desktop-outline"
+                                    size={14}
+                                    color={tokens.colors.success}
+                                />
                                 <Text style={styles.badgeSuccessText}>Modalidad: {modalityLabel}</Text>
                             </View>
                         ) : null}
@@ -306,14 +317,14 @@ export default function PublicEventsScreen() {
     };
 
     return (
-        <LinearGradient colors={theme.gradients.home} style={styles.container}>
+        <LinearGradient colors={tokens.gradients.home} style={styles.container}>
             <View style={styles.header}>
                 <Pressable onPress={() => router.back()} style={styles.headerButton}>
-                    <Ionicons name="arrow-back" size={20} color={theme.colors.textInverse} />
+                    <Ionicons name="arrow-back" size={20} color={tokens.colors.textInverse} />
                 </Pressable>
                 <Text style={styles.headerTitle}>Eventos públicos</Text>
                 <Pressable onPress={() => refetch()} style={styles.headerButton}>
-                    <Ionicons name="refresh" size={20} color={theme.colors.textInverse} />
+                    <Ionicons name="refresh" size={20} color={tokens.colors.textInverse} />
                 </Pressable>
             </View>
 
@@ -328,13 +339,17 @@ export default function PublicEventsScreen() {
 
                         <View style={styles.searchRow}>
                             <View style={styles.searchInputWrap}>
-                                <Ionicons name="search-outline" size={16} color={theme.colors.textSecondary} />
+                                <Ionicons
+                                    name="search-outline"
+                                    size={16}
+                                    color={tokens.colors.textSecondary}
+                                />
                                 <TextInput
                                     style={styles.searchInput}
                                     value={searchInput}
                                     onChangeText={setSearchInput}
                                     placeholder="Buscar por nombre o descripción"
-                                    placeholderTextColor={theme.colors.textTertiary}
+                                    placeholderTextColor={tokens.colors.textTertiary}
                                     returnKeyType="search"
                                     onSubmitEditing={applySearch}
                                 />
@@ -412,7 +427,7 @@ export default function PublicEventsScreen() {
 
                             {isFetching ? (
                                 <View style={styles.fetchingRow}>
-                                    <ActivityIndicator size="small" color={theme.colors.primary} />
+                                    <ActivityIndicator size="small" color={tokens.colors.primary} />
                                     <Text style={styles.fetchingText}>Actualizando…</Text>
                                 </View>
                             ) : null}
@@ -450,291 +465,293 @@ export default function PublicEventsScreen() {
     );
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
-    header: {
-        backgroundColor: theme.colors.primary,
-        paddingTop: 54,
-        paddingBottom: 14,
-        paddingHorizontal: theme.spacing.md,
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-    },
-    headerTitle: {
-        color: theme.colors.textInverse,
-        fontSize: 18,
-        fontWeight: "700",
-    },
-    headerButton: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-        backgroundColor: theme.colors.overlayWhite18,
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    listContent: {
-        padding: theme.spacing.md,
-        paddingBottom: 40,
-        gap: theme.spacing.md,
-    },
-    filtersCard: {
-        backgroundColor: theme.colors.bgElevated,
-        borderRadius: theme.radius.md,
-        padding: theme.spacing.md,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-        gap: theme.spacing.sm,
-    },
-    filtersTitle: {
-        fontSize: 16,
-        fontWeight: "700",
-        color: theme.colors.textPrimary,
-    },
-    subTitle: {
-        marginTop: 6,
-        fontSize: 13,
-        fontWeight: "700",
-        color: theme.colors.textSecondary,
-    },
-    searchRow: {
-        flexDirection: "row",
-        gap: theme.spacing.sm,
-        alignItems: "center",
-    },
-    searchInputWrap: {
-        flex: 1,
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 8,
-        backgroundColor: theme.colors.bgSecondary,
-        borderRadius: theme.radius.sm,
-        paddingHorizontal: 12,
-        paddingVertical: 10,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-    },
-    searchInput: {
-        flex: 1,
-        color: theme.colors.textPrimary,
-    },
-    searchButton: {
-        backgroundColor: theme.colors.primary,
-        borderRadius: theme.radius.sm,
-        paddingHorizontal: 14,
-        paddingVertical: 12,
-    },
-    searchButtonText: {
-        color: theme.colors.textInverse,
-        fontWeight: "700",
-        fontSize: 13,
-    },
-    chipsRow: {
-        flexDirection: "row",
-        flexWrap: "wrap",
-        gap: 10,
-    },
-    chip: {
-        paddingHorizontal: 12,
-        paddingVertical: 8,
-        borderRadius: 999,
-        borderWidth: 1,
-    },
-    chipSelected: {
-        backgroundColor: theme.colors.primaryLight,
-        borderColor: theme.colors.primary,
-    },
-    chipUnselected: {
-        backgroundColor: theme.colors.bgSecondary,
-        borderColor: theme.colors.borderPrimary,
-    },
-    chipText: {
-        fontSize: 12,
-        fontWeight: "700",
-    },
-    chipTextSelected: {
-        color: theme.colors.primary,
-    },
-    chipTextUnselected: {
-        color: theme.colors.textSecondary,
-    },
-    actionsRow: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        marginTop: 4,
-    },
-    clearButton: {
-        paddingVertical: 10,
-        paddingHorizontal: 12,
-        borderRadius: theme.radius.sm,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-        backgroundColor: theme.colors.bgSecondary,
-    },
-    clearButtonText: {
-        color: theme.colors.textSecondary,
-        fontWeight: "700",
-        fontSize: 12,
-    },
-    fetchingRow: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 8,
-    },
-    fetchingText: {
-        color: theme.colors.textSecondary,
-        fontSize: 12,
-        fontWeight: "600",
-    },
-    eventCard: {
-        backgroundColor: theme.colors.bgElevated,
-        borderRadius: theme.radius.md,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-        overflow: "hidden",
-    },
-    coverImage: {
-        width: "100%",
-        height: 150,
-        backgroundColor: theme.colors.bgSecondary,
-    },
-    coverImageFallback: {
-        width: "100%",
-        height: 150,
-        backgroundColor: theme.colors.bgSecondary,
-    },
-    body: {
-        padding: theme.spacing.md,
-        gap: 8,
-    },
-    eventTitle: {
-        fontSize: 16,
-        fontWeight: "800",
-        color: theme.colors.textPrimary,
-    },
-    eventType: {
-        color: theme.colors.primary,
-        fontWeight: "900",
-        letterSpacing: 1.1,
-        fontSize: 12,
-    },
-    priceText: {
-        color: theme.colors.textSecondary,
-        fontWeight: "700",
-        fontSize: 13,
-    },
-    metaLine: {
-        color: theme.colors.textSecondary,
-        fontWeight: "600",
-        fontSize: 13,
-        lineHeight: 18,
-    },
-    badgesRow: {
-        flexDirection: "row",
-        flexWrap: "wrap",
-        gap: 10,
-        marginTop: 4,
-    },
-    badgePrimary: {
-        paddingHorizontal: 12,
-        paddingVertical: 10,
-        borderRadius: theme.radius.sm,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-        backgroundColor: theme.colors.bgSecondary,
-    },
-    badgePrimaryText: {
-        color: theme.colors.primary,
-        fontWeight: "800",
-        fontSize: 12,
-    },
-    badgeSuccess: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 8,
-        paddingHorizontal: 12,
-        paddingVertical: 10,
-        borderRadius: 999,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-        backgroundColor: theme.colors.bgSecondary,
-    },
-    badgeSuccessText: {
-        color: theme.colors.success,
-        fontWeight: "800",
-        fontSize: 12,
-    },
-    eventDescription: {
-        color: theme.colors.textSecondary,
-        fontSize: 13,
-        fontWeight: "500",
-        lineHeight: 18,
-    },
-    stateCard: {
-        backgroundColor: theme.colors.bgElevated,
-        borderRadius: theme.radius.md,
-        padding: theme.spacing.lg,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-        alignItems: "center",
-        justifyContent: "center",
-        gap: 10,
-    },
-    stateText: {
-        textAlign: "center",
-        color: theme.colors.textSecondary,
-        fontSize: 13,
-        fontWeight: "600",
-    },
-    retryButton: {
-        marginTop: 6,
-        backgroundColor: theme.colors.primary,
-        borderRadius: theme.radius.sm,
-        paddingHorizontal: 14,
-        paddingVertical: 10,
-    },
-    retryButtonText: {
-        color: theme.colors.textInverse,
-        fontWeight: "800",
-        fontSize: 13,
-    },
-    paginationCard: {
-        marginTop: 4,
-        backgroundColor: theme.colors.bgElevated,
-        borderRadius: theme.radius.md,
-        padding: theme.spacing.md,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        gap: 10,
-    },
-    pageButton: {
-        backgroundColor: theme.colors.primary,
-        borderRadius: theme.radius.sm,
-        paddingHorizontal: 14,
-        paddingVertical: 10,
-        minWidth: 96,
-        alignItems: "center",
-    },
-    pageButtonDisabled: {
-        opacity: 0.45,
-    },
-    pageButtonText: {
-        color: theme.colors.textInverse,
-        fontWeight: "800",
-        fontSize: 13,
-    },
-    pageInfo: {
-        flex: 1,
-        textAlign: "center",
-        color: theme.colors.textSecondary,
-        fontSize: 13,
-        fontWeight: "700",
-    },
-});
+function createStyles(tokens: ThemeTokens) {
+    return {
+        container: {
+            flex: 1,
+        },
+        header: {
+            backgroundColor: tokens.colors.primary,
+            paddingTop: 54,
+            paddingBottom: 14,
+            paddingHorizontal: tokens.spacing.md,
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+        },
+        headerTitle: {
+            color: tokens.colors.textInverse,
+            fontSize: 18,
+            fontWeight: "700",
+        },
+        headerButton: {
+            width: 40,
+            height: 40,
+            borderRadius: 20,
+            backgroundColor: tokens.colors.overlayWhite18,
+            alignItems: "center",
+            justifyContent: "center",
+        },
+        listContent: {
+            padding: tokens.spacing.md,
+            paddingBottom: 40,
+            gap: tokens.spacing.md,
+        },
+        filtersCard: {
+            backgroundColor: tokens.colors.bgElevated,
+            borderRadius: tokens.radius.md,
+            padding: tokens.spacing.md,
+            borderWidth: 1,
+            borderColor: tokens.colors.borderPrimary,
+            gap: tokens.spacing.sm,
+        },
+        filtersTitle: {
+            fontSize: 16,
+            fontWeight: "700",
+            color: tokens.colors.textPrimary,
+        },
+        subTitle: {
+            marginTop: 6,
+            fontSize: 13,
+            fontWeight: "700",
+            color: tokens.colors.textSecondary,
+        },
+        searchRow: {
+            flexDirection: "row",
+            gap: tokens.spacing.sm,
+            alignItems: "center",
+        },
+        searchInputWrap: {
+            flex: 1,
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 8,
+            backgroundColor: tokens.colors.bgSecondary,
+            borderRadius: tokens.radius.sm,
+            paddingHorizontal: 12,
+            paddingVertical: 10,
+            borderWidth: 1,
+            borderColor: tokens.colors.borderPrimary,
+        },
+        searchInput: {
+            flex: 1,
+            color: tokens.colors.textPrimary,
+        },
+        searchButton: {
+            backgroundColor: tokens.colors.primary,
+            borderRadius: tokens.radius.sm,
+            paddingHorizontal: 14,
+            paddingVertical: 12,
+        },
+        searchButtonText: {
+            color: tokens.colors.textInverse,
+            fontWeight: "700",
+            fontSize: 13,
+        },
+        chipsRow: {
+            flexDirection: "row",
+            flexWrap: "wrap",
+            gap: 10,
+        },
+        chip: {
+            paddingHorizontal: 12,
+            paddingVertical: 8,
+            borderRadius: 999,
+            borderWidth: 1,
+        },
+        chipSelected: {
+            backgroundColor: tokens.colors.primaryLight,
+            borderColor: tokens.colors.primary,
+        },
+        chipUnselected: {
+            backgroundColor: tokens.colors.bgSecondary,
+            borderColor: tokens.colors.borderPrimary,
+        },
+        chipText: {
+            fontSize: 12,
+            fontWeight: "700",
+        },
+        chipTextSelected: {
+            color: tokens.colors.primary,
+        },
+        chipTextUnselected: {
+            color: tokens.colors.textSecondary,
+        },
+        actionsRow: {
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginTop: 4,
+        },
+        clearButton: {
+            paddingVertical: 10,
+            paddingHorizontal: 12,
+            borderRadius: tokens.radius.sm,
+            borderWidth: 1,
+            borderColor: tokens.colors.borderPrimary,
+            backgroundColor: tokens.colors.bgSecondary,
+        },
+        clearButtonText: {
+            color: tokens.colors.textSecondary,
+            fontWeight: "700",
+            fontSize: 12,
+        },
+        fetchingRow: {
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 8,
+        },
+        fetchingText: {
+            color: tokens.colors.textSecondary,
+            fontSize: 12,
+            fontWeight: "600",
+        },
+        eventCard: {
+            backgroundColor: tokens.colors.bgElevated,
+            borderRadius: tokens.radius.md,
+            borderWidth: 1,
+            borderColor: tokens.colors.borderPrimary,
+            overflow: "hidden",
+        },
+        coverImage: {
+            width: "100%",
+            height: 150,
+            backgroundColor: tokens.colors.bgSecondary,
+        },
+        coverImageFallback: {
+            width: "100%",
+            height: 150,
+            backgroundColor: tokens.colors.bgSecondary,
+        },
+        body: {
+            padding: tokens.spacing.md,
+            gap: 8,
+        },
+        eventTitle: {
+            fontSize: 16,
+            fontWeight: "800",
+            color: tokens.colors.textPrimary,
+        },
+        eventType: {
+            color: tokens.colors.primary,
+            fontWeight: "900",
+            letterSpacing: 1.1,
+            fontSize: 12,
+        },
+        priceText: {
+            color: tokens.colors.textSecondary,
+            fontWeight: "700",
+            fontSize: 13,
+        },
+        metaLine: {
+            color: tokens.colors.textSecondary,
+            fontWeight: "600",
+            fontSize: 13,
+            lineHeight: 18,
+        },
+        badgesRow: {
+            flexDirection: "row",
+            flexWrap: "wrap",
+            gap: 10,
+            marginTop: 4,
+        },
+        badgePrimary: {
+            paddingHorizontal: 12,
+            paddingVertical: 10,
+            borderRadius: tokens.radius.sm,
+            borderWidth: 1,
+            borderColor: tokens.colors.borderPrimary,
+            backgroundColor: tokens.colors.bgSecondary,
+        },
+        badgePrimaryText: {
+            color: tokens.colors.primary,
+            fontWeight: "800",
+            fontSize: 12,
+        },
+        badgeSuccess: {
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 8,
+            paddingHorizontal: 12,
+            paddingVertical: 10,
+            borderRadius: 999,
+            borderWidth: 1,
+            borderColor: tokens.colors.borderPrimary,
+            backgroundColor: tokens.colors.bgSecondary,
+        },
+        badgeSuccessText: {
+            color: tokens.colors.success,
+            fontWeight: "800",
+            fontSize: 12,
+        },
+        eventDescription: {
+            color: tokens.colors.textSecondary,
+            fontSize: 13,
+            fontWeight: "500",
+            lineHeight: 18,
+        },
+        stateCard: {
+            backgroundColor: tokens.colors.bgElevated,
+            borderRadius: tokens.radius.md,
+            padding: tokens.spacing.lg,
+            borderWidth: 1,
+            borderColor: tokens.colors.borderPrimary,
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 10,
+        },
+        stateText: {
+            textAlign: "center",
+            color: tokens.colors.textSecondary,
+            fontSize: 13,
+            fontWeight: "600",
+        },
+        retryButton: {
+            marginTop: 6,
+            backgroundColor: tokens.colors.primary,
+            borderRadius: tokens.radius.sm,
+            paddingHorizontal: 14,
+            paddingVertical: 10,
+        },
+        retryButtonText: {
+            color: tokens.colors.textInverse,
+            fontWeight: "800",
+            fontSize: 13,
+        },
+        paginationCard: {
+            marginTop: 4,
+            backgroundColor: tokens.colors.bgElevated,
+            borderRadius: tokens.radius.md,
+            padding: tokens.spacing.md,
+            borderWidth: 1,
+            borderColor: tokens.colors.borderPrimary,
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 10,
+        },
+        pageButton: {
+            backgroundColor: tokens.colors.primary,
+            borderRadius: tokens.radius.sm,
+            paddingHorizontal: 14,
+            paddingVertical: 10,
+            minWidth: 96,
+            alignItems: "center",
+        },
+        pageButtonDisabled: {
+            opacity: 0.45,
+        },
+        pageButtonText: {
+            color: tokens.colors.textInverse,
+            fontWeight: "800",
+            fontSize: 13,
+        },
+        pageInfo: {
+            flex: 1,
+            textAlign: "center",
+            color: tokens.colors.textSecondary,
+            fontSize: 13,
+            fontWeight: "700",
+        },
+    };
+}
