@@ -97,6 +97,7 @@ function isImageProof(url: string) {
 
 function filterColor(key: string, colors: ThemeTokens["colors"]) {
     if (key === "PEND") return colors.warning;
+    if (key === "ACEP") return colors.primary;
     if (key === "APROB") return colors.success;
     if (key === "REPROB") return colors.error;
     return colors.primary;
@@ -104,12 +105,13 @@ function filterColor(key: string, colors: ThemeTokens["colors"]) {
 
 function filterLabel(key: string) {
     if (key === "PEND") return "Pendientes";
-    if (key === "ACCEPTED") return "Aceptadas";
+    if (key === "ACEP") return "Aceptadas";
     if (key === "REPROB") return "Rechazados";
+    if (key === "APROB") return "Aprobadas";
     return "Todos";
 }
 
-const FILTER_KEYS = ["TODOS", "PEND", "ACCEPTED", "REPROB"];
+const FILTER_KEYS = ["TODOS", "PEND", "ACEP", "REPROB", "APROB"];
 
 function FilterChip({
     label,
@@ -118,7 +120,7 @@ function FilterChip({
     onPress,
 }: Readonly<{ label: string; selected: boolean; color: string; onPress: () => void }>) {
     const { tokens } = useAppTheme();
-    const styles = useThemedStyles(createStyles);
+    const styles = useThemedStyles<any>(createStyles as any);
     return (
         <Pressable
             onPress={onPress}
@@ -150,7 +152,7 @@ function RegistrationCard({
     onOpenProof: (url: string) => void;
 }>) {
     const { tokens } = useAppTheme();
-    const styles = useThemedStyles(createStyles);
+    const styles = useThemedStyles<any>(createStyles as any);
     const event = item.event;
     const color = statusColor(item.status, tokens.colors);
     const label = statusLabel(item.status);
@@ -201,7 +203,7 @@ function RegistrationCard({
 
 export default function RegistrationsScreen() {
     const { tokens } = useAppTheme();
-    const styles = useThemedStyles(createStyles);
+    const styles = useThemedStyles<any>(createStyles as any);
     const [statusFilter, setStatusFilter] = useState<string>("TODOS");
     const [proofPreviewUrl, setProofPreviewUrl] = useState<string | null>(null);
     const [manualRefreshing, setManualRefreshing] = useState(false);
@@ -225,16 +227,22 @@ export default function RegistrationsScreen() {
         if (statusFilter === "PEND") {
             return list.filter((r) => r.status.trim().toUpperCase().includes("PEND"));
         }
-        if (statusFilter === "ACCEPTED") {
+        if (statusFilter === "ACEP") {
             return list.filter((r) => {
                 const status = r.status.trim().toUpperCase();
-                return status.includes("ACCEPT") || status.includes("ACEPT") || status.includes("APPROVED") || status.includes("APROB");
+                return status.includes("ACCEPT") || status.includes("ACEPT");
             });
         }
         if (statusFilter === "REPROB") {
             return list.filter((r) => {
                 const status = r.status.trim().toUpperCase();
                 return status.includes("REPROB") || status.includes("REJECT");
+            });
+        }
+        if (statusFilter === "APROB") {
+            return list.filter((r) => {
+                const status = r.status.trim().toUpperCase();
+                return status.includes("APPROVED") || status.includes("APROBADO") || status.includes("APROB");
             });
         }
         return list;
@@ -335,13 +343,17 @@ export default function RegistrationsScreen() {
         return {
             TODOS: all.length,
             PEND: all.filter((r) => r.status.trim().toUpperCase().includes("PEND")).length,
-            ACCEPTED: all.filter((r) => {
+            ACEP: all.filter((r) => {
                 const s = r.status.trim().toUpperCase();
-                return s.includes("ACCEPT") || s.includes("ACEPT") || s.includes("APPROVED") || s.includes("APROB");
+                return s.includes("ACCEPT") || s.includes("ACEPT");
             }).length,
             REPROB: all.filter((r) => {
                 const s = r.status.trim().toUpperCase();
                 return s.includes("REPROB") || s.includes("REJECT");
+            }).length,
+            APROB: all.filter((r) => {
+                const s = r.status.trim().toUpperCase();
+                return s.includes("APPROVED") || s.includes("APROBADO") || s.includes("APROB");
             }).length,
         };
     }, [query.data]);
@@ -439,122 +451,122 @@ export default function RegistrationsScreen() {
 
 function createStyles(theme: ThemeTokens) {
     return {
-    container: { flex: 1, backgroundColor: theme.colors.bgSecondary },
-    filtersWrap: {
-        backgroundColor: theme.colors.bgPrimary,
-        paddingHorizontal: theme.spacing.md,
-        paddingTop: theme.spacing.md,
-        paddingBottom: theme.spacing.sm,
-        borderBottomWidth: 1,
-        borderBottomColor: theme.colors.borderLight,
-        ...theme.shadow.xs,
-    },
-    filtersHeader: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        marginBottom: 10,
-    },
-    filtersTitle: { fontSize: 14, fontWeight: "800", color: theme.colors.textPrimary },
-    totalCount: { fontSize: 12, fontWeight: "700", color: theme.colors.textTertiary },
-    chipsRow: { gap: 8, paddingBottom: 4 },
-    chip: {
-        paddingVertical: 7,
-        paddingHorizontal: 14,
-        borderRadius: theme.radius.full,
-        borderWidth: 1.5,
-    },
-    chipText: { fontSize: 12, fontWeight: "800" },
-    center: { flex: 1, alignItems: "center", justifyContent: "center", padding: theme.spacing.lg, gap: 10 },
-    loadingText: { color: theme.colors.textSecondary, fontWeight: "700" },
-    errorText: { color: theme.colors.error, fontWeight: "700", textAlign: "center" },
-    list: { padding: theme.spacing.md, gap: 12, paddingBottom: theme.spacing.xl },
-    card: {
-        backgroundColor: theme.colors.bgCard,
-        borderRadius: theme.radius.lg,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-        flexDirection: "row",
-        overflow: "hidden",
-        ...theme.shadow.sm,
-    },
-    cardAccent: { width: 5 },
-    cardBody: { flex: 1, padding: theme.spacing.md },
-    rowTop: {
-        flexDirection: "row",
-        alignItems: "flex-start",
-        justifyContent: "space-between",
-        gap: 10,
-    },
-    cardTitle: { flex: 1, fontWeight: "800", fontSize: 15, color: theme.colors.textPrimary, lineHeight: 21 },
-    statusBadge: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 4,
-        paddingHorizontal: 9,
-        paddingVertical: 5,
-        borderRadius: theme.radius.full,
-        borderWidth: 1,
-    },
-    statusBadgeText: { fontSize: 11, fontWeight: "800" },
-    metaRow: { flexDirection: "row", alignItems: "center", gap: 6, marginTop: 8 },
-    metaText: { color: theme.colors.textTertiary, fontWeight: "600", fontSize: 12 },
-    proofBtn: {
-        marginTop: 12,
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 8,
-        paddingVertical: 10,
-        paddingHorizontal: 12,
-        borderRadius: theme.radius.sm,
-        backgroundColor: theme.colors.primaryLighter,
-        borderWidth: 1,
-        borderColor: theme.colors.primaryLight,
-    },
-    proofBtnText: { flex: 1, color: theme.colors.primary, fontWeight: "700", fontSize: 13 },
-    certificateBtn: {
-        marginTop: 10,
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 8,
-        paddingVertical: 10,
-        paddingHorizontal: 12,
-        borderRadius: theme.radius.sm,
-        backgroundColor: theme.colors.successLight,
-        borderWidth: 1,
-        borderColor: theme.colors.successBorder,
-    },
-    certificateBtnText: { flex: 1, color: theme.colors.success, fontWeight: "800", fontSize: 13 },
-    emptyState: { alignItems: "center", paddingVertical: theme.spacing.xxl, gap: 12 },
-    emptyTitle: { fontSize: 16, fontWeight: "800", color: theme.colors.textSecondary },
-    emptySubtitle: { color: theme.colors.textTertiary, textAlign: "center", lineHeight: 20, paddingHorizontal: theme.spacing.lg },
-    modalOverlay: {
-        flex: 1,
-        backgroundColor: theme.colors.overlayBlack65,
-        alignItems: "center",
-        justifyContent: "center",
-        padding: 16,
-    },
-    modalCard: {
-        width: "100%",
-        maxWidth: 440,
-        backgroundColor: theme.colors.bgPrimary,
-        borderRadius: theme.radius.lg,
-        padding: 12,
-        gap: 12,
-    },
-    proofImage: { width: "100%", height: 320, backgroundColor: theme.colors.bgSecondary, borderRadius: 12 },
-    modalActions: { flexDirection: "row", gap: 8 },
-    modalBtn: {
-        flex: 1,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-        borderRadius: theme.radius.sm,
-        paddingVertical: 10,
-        alignItems: "center",
-    },
-    modalPrimaryBtn: { backgroundColor: theme.colors.primary, borderColor: theme.colors.primary },
-    modalBtnText: { color: theme.colors.textPrimary, fontWeight: "700" },
-    modalPrimaryText: { color: theme.colors.onPrimary },
+        container: { flex: 1, backgroundColor: theme.colors.bgSecondary },
+        filtersWrap: {
+            backgroundColor: theme.colors.bgPrimary,
+            paddingHorizontal: theme.spacing.md,
+            paddingTop: theme.spacing.md,
+            paddingBottom: theme.spacing.sm,
+            borderBottomWidth: 1,
+            borderBottomColor: theme.colors.borderLight,
+            ...theme.shadow.xs,
+        },
+        filtersHeader: {
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginBottom: 10,
+        },
+        filtersTitle: { fontSize: 14, fontWeight: "800", color: theme.colors.textPrimary },
+        totalCount: { fontSize: 12, fontWeight: "700", color: theme.colors.textTertiary },
+        chipsRow: { gap: 8, paddingBottom: 4 },
+        chip: {
+            paddingVertical: 7,
+            paddingHorizontal: 14,
+            borderRadius: theme.radius.full,
+            borderWidth: 1.5,
+        },
+        chipText: { fontSize: 12, fontWeight: "800" },
+        center: { flex: 1, alignItems: "center", justifyContent: "center", padding: theme.spacing.lg, gap: 10 },
+        loadingText: { color: theme.colors.textSecondary, fontWeight: "700" },
+        errorText: { color: theme.colors.error, fontWeight: "700", textAlign: "center" },
+        list: { padding: theme.spacing.md, gap: 12, paddingBottom: theme.spacing.xl },
+        card: {
+            backgroundColor: theme.colors.bgCard,
+            borderRadius: theme.radius.lg,
+            borderWidth: 1,
+            borderColor: theme.colors.borderPrimary,
+            flexDirection: "row",
+            overflow: "hidden",
+            ...theme.shadow.sm,
+        },
+        cardAccent: { width: 5 },
+        cardBody: { flex: 1, padding: theme.spacing.md },
+        rowTop: {
+            flexDirection: "row",
+            alignItems: "flex-start",
+            justifyContent: "space-between",
+            gap: 10,
+        },
+        cardTitle: { flex: 1, fontWeight: "800", fontSize: 15, color: theme.colors.textPrimary, lineHeight: 21 },
+        statusBadge: {
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 4,
+            paddingHorizontal: 9,
+            paddingVertical: 5,
+            borderRadius: theme.radius.full,
+            borderWidth: 1,
+        },
+        statusBadgeText: { fontSize: 11, fontWeight: "800" },
+        metaRow: { flexDirection: "row", alignItems: "center", gap: 6, marginTop: 8 },
+        metaText: { color: theme.colors.textTertiary, fontWeight: "600", fontSize: 12 },
+        proofBtn: {
+            marginTop: 12,
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 8,
+            paddingVertical: 10,
+            paddingHorizontal: 12,
+            borderRadius: theme.radius.sm,
+            backgroundColor: theme.colors.primaryLighter,
+            borderWidth: 1,
+            borderColor: theme.colors.primaryLight,
+        },
+        proofBtnText: { flex: 1, color: theme.colors.primary, fontWeight: "700", fontSize: 13 },
+        certificateBtn: {
+            marginTop: 10,
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 8,
+            paddingVertical: 10,
+            paddingHorizontal: 12,
+            borderRadius: theme.radius.sm,
+            backgroundColor: theme.colors.successLight,
+            borderWidth: 1,
+            borderColor: theme.colors.successBorder,
+        },
+        certificateBtnText: { flex: 1, color: theme.colors.success, fontWeight: "800", fontSize: 13 },
+        emptyState: { alignItems: "center", paddingVertical: theme.spacing.xxl, gap: 12 },
+        emptyTitle: { fontSize: 16, fontWeight: "800", color: theme.colors.textSecondary },
+        emptySubtitle: { color: theme.colors.textTertiary, textAlign: "center", lineHeight: 20, paddingHorizontal: theme.spacing.lg },
+        modalOverlay: {
+            flex: 1,
+            backgroundColor: theme.colors.overlayBlack65,
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 16,
+        },
+        modalCard: {
+            width: "100%",
+            maxWidth: 440,
+            backgroundColor: theme.colors.bgPrimary,
+            borderRadius: theme.radius.lg,
+            padding: 12,
+            gap: 12,
+        },
+        proofImage: { width: "100%", height: 320, backgroundColor: theme.colors.bgSecondary, borderRadius: 12 },
+        modalActions: { flexDirection: "row", gap: 8 },
+        modalBtn: {
+            flex: 1,
+            borderWidth: 1,
+            borderColor: theme.colors.borderPrimary,
+            borderRadius: theme.radius.sm,
+            paddingVertical: 10,
+            alignItems: "center",
+        },
+        modalPrimaryBtn: { backgroundColor: theme.colors.primary, borderColor: theme.colors.primary },
+        modalBtnText: { color: theme.colors.textPrimary, fontWeight: "700" },
+        modalPrimaryText: { color: theme.colors.onPrimary },
     };
 }
