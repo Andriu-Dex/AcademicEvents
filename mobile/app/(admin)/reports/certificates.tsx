@@ -38,7 +38,7 @@ export default function AdminReportCertificatesScreen() {
     const { tokens } = useAppTheme();
     const styles = useThemedStyles(createStyles);
 
-    const [rangeDays, setRangeDays] = useState(30);
+    const [rangeDays, setRangeDays] = useState(180);
     const [loadingPdf, setLoadingPdf] = useState(false);
 
     const params = useMemo(() => {
@@ -158,7 +158,7 @@ export default function AdminReportCertificatesScreen() {
                                 onPress={() => void handleDownloadPdf()}
                                 disabled={loadingPdf}
                             >
-                                <Ionicons name="download-outline" size={18} color={tokens.colors.onPrimary} />
+                                <Ionicons name="download-outline" size={16} color={tokens.colors.onPrimary} />
                                 <Text style={styles.actionButtonText}>{loadingPdf ? "Generando PDF..." : "Descargar Reporte PDF"}</Text>
                             </Pressable>
                         </View>
@@ -211,34 +211,34 @@ export default function AdminReportCertificatesScreen() {
 
 function createStyles(theme: ThemeTokens) {
     return {
-    container: { flex: 1, backgroundColor: theme.colors.bgSecondary },
-    center: { flex: 1, alignItems: "center", justifyContent: "center" },
-    content: { padding: theme.spacing.md, gap: theme.spacing.md, paddingBottom: theme.spacing.xl },
-    metricsWrap: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
-    chipsWrap: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
-    chip: {
-        borderRadius: theme.radius.full,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-        backgroundColor: theme.colors.bgCard,
-        paddingHorizontal: 12,
-        paddingVertical: 7,
-    },
-    chipSelected: { backgroundColor: theme.colors.primary, borderColor: theme.colors.primary },
-    chipText: { color: theme.colors.textSecondary, fontWeight: "700", fontSize: 12 },
-    chipTextSelected: { color: theme.colors.onPrimary },
-    actionButton: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: 8,
-        marginTop: theme.spacing.sm,
-        borderRadius: theme.radius.full,
-        paddingVertical: 13,
-        backgroundColor: theme.colors.primary,
-    },
-    actionButtonDisabled: { opacity: 0.65 },
-    actionButtonText: { color: theme.colors.onPrimary, fontWeight: "900", fontSize: 13 },
-    progressStack: { gap: 10, marginTop: 2 },
+        container: { flex: 1, backgroundColor: theme.colors.bgSecondary },
+        center: { flex: 1, alignItems: "center", justifyContent: "center" },
+        content: { padding: theme.spacing.md, gap: theme.spacing.md, paddingBottom: theme.spacing.xl },
+        metricsWrap: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
+        chipsWrap: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
+        chip: {
+            borderRadius: theme.radius.full,
+            borderWidth: 1,
+            borderColor: theme.colors.borderPrimary,
+            backgroundColor: theme.colors.bgCard,
+            paddingHorizontal: 12,
+            paddingVertical: 7,
+        },
+        chipSelected: { backgroundColor: theme.colors.primary, borderColor: theme.colors.primary },
+        chipText: { color: theme.colors.textSecondary, fontWeight: "700", fontSize: 12 },
+        chipTextSelected: { color: theme.colors.onPrimary },
+        actionButton: {
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 8,
+            marginTop: theme.spacing.sm,
+            borderRadius: theme.radius.full,
+            paddingVertical: 13,
+            backgroundColor: theme.colors.primary,
+        },
+        actionButtonDisabled: { opacity: 0.65 },
+        actionButtonText: { color: theme.colors.onPrimary, fontWeight: "900", fontSize: 13 },
+        progressStack: { gap: 10, marginTop: 2 },
     };
 }

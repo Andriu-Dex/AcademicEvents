@@ -23,7 +23,6 @@ import {
     fetchRegistrationsByEventPaginated,
     fetchRegistrationsPaginated,
     type AdminRegistration,
-    type RegistrationsValidationInput,
     validateRegistration,
 } from "../../src/api/adminRegistrations";
 import { useAppTheme, useThemedStyles, type ThemeTokens } from "../../src/shared";
@@ -137,23 +136,26 @@ function getErrorMessage(error: unknown, fallback: string): string {
     return error instanceof Error ? error.message : fallback;
 }
 
-function renderEventSelectorContent({
-    isLoading,
-    isError,
-    error,
-    events,
-    selectedEventId,
-    onSelect,
-}: Readonly<{
-    isLoading: boolean;
-    isError: boolean;
-    error: unknown;
-    events: Array<{ id: string; name: string }>;
-    selectedEventId: string;
-    onSelect: (id: string) => void;
-}>) {
-    const { tokens } = useAppTheme();
-    const styles = useThemedStyles(createStyles);
+function renderEventSelectorContent(
+    {
+        isLoading,
+        isError,
+        error,
+        events,
+        selectedEventId,
+        onSelect,
+    }: Readonly<{
+        isLoading: boolean;
+        isError: boolean;
+        error: unknown;
+        events: Array<{ id: string; name: string }>;
+        selectedEventId: string;
+        onSelect: (id: string) => void;
+    }>,
+    tokens: ReturnType<typeof useAppTheme>["tokens"],
+    styles: ReturnType<typeof useThemedStyles>
+) {
+    // tokens and styles are provided by caller to avoid using hooks here
     if (isLoading) {
         return (
             <View style={styles.selectLoading}>
@@ -336,44 +338,60 @@ function RegistrationDetailsSection({
             ) : null}
 
 
-            <View style={styles.actionRow}>
-                <Pressable
-                    style={[styles.actionBtn, styles.btnSuccess, isPendingAction && styles.btnDisabled]}
-                    onPress={() => onAccept(item)}
-                    disabled={isPendingAction}
-                >
-                    {isPendingAction ? (
-                        <ActivityIndicator color={tokens.colors.onPrimary} />
-                    ) : (
-                        <Ionicons name="checkmark" size={18} color={tokens.colors.onPrimary} />
-                    )}
-                    <Text style={styles.actionBtnText}>Aceptar</Text>
-                </Pressable>
+            {(() => {
+                const st = (item.status ?? "").toString().toUpperCase();
+                const isFinal = st.includes("APROB") || st.includes("REPROB") || st.includes("FAILED");
+                if (isFinal) {
+                    return (
+                        <View style={styles.finalInfoWrap}>
+                            <Text style={styles.finalInfoTitle}>Inscripción finalizada</Text>
+                            <Text style={styles.finalInfoText}>Asistencia: {item.finalAttendancePercent !== null && item.finalAttendancePercent !== undefined ? `${item.finalAttendancePercent}%` : "-"}</Text>
+                            <Text style={styles.finalInfoText}>Nota Final: {item.finalGrade !== null && item.finalGrade !== undefined ? String(item.finalGrade) : "-"}</Text>
+                        </View>
+                    );
+                }
 
-                <Pressable
-                    style={[styles.actionBtn, styles.btnDanger, isPendingAction && styles.btnDisabled]}
-                    onPress={() => onReject(item)}
-                    disabled={isPendingAction}
-                >
-                    <Ionicons name="close" size={18} color={tokens.colors.onPrimary} />
-                    <Text style={styles.actionBtnText}>Rechazar</Text>
-                </Pressable>
-                {canGrade ? (
-                    <Pressable
-                        style={[styles.actionBtn, styles.btnPrimary, isPendingAction && styles.btnDisabled]}
-                        onPress={() => onFinalize(item)}
-                        disabled={isPendingAction}
-                    >
-                        <Ionicons name="ribbon-outline" size={18} color={tokens.colors.onPrimary} />
-                        <Text style={styles.actionBtnText}>Finalizar</Text>
-                    </Pressable>
-                ) : (
-                    <View style={[styles.actionBtn, styles.actionHintBtn]}>
-                        <Ionicons name="lock-closed-outline" size={18} color={tokens.colors.textPrimary} />
-                        <Text style={styles.actionBtnHintText}>Valide primero para calificar</Text>
+                return (
+                    <View style={styles.actionRow}>
+                        <Pressable
+                            style={[styles.actionBtn, styles.btnSuccess, isPendingAction && styles.btnDisabled]}
+                            onPress={() => onAccept(item)}
+                            disabled={isPendingAction}
+                        >
+                            {isPendingAction ? (
+                                <ActivityIndicator color={tokens.colors.onPrimary} />
+                            ) : (
+                                <Ionicons name="checkmark" size={18} color={tokens.colors.onPrimary} />
+                            )}
+                            <Text style={styles.actionBtnText}>Aceptar</Text>
+                        </Pressable>
+
+                        <Pressable
+                            style={[styles.actionBtn, styles.btnDanger, isPendingAction && styles.btnDisabled]}
+                            onPress={() => onReject(item)}
+                            disabled={isPendingAction}
+                        >
+                            <Ionicons name="close" size={18} color={tokens.colors.onPrimary} />
+                            <Text style={styles.actionBtnText}>Rechazar</Text>
+                        </Pressable>
+                        {canGrade ? (
+                            <Pressable
+                                style={[styles.actionBtn, styles.btnPrimary, isPendingAction && styles.btnDisabled]}
+                                onPress={() => onFinalize(item)}
+                                disabled={isPendingAction}
+                            >
+                                <Ionicons name="ribbon-outline" size={18} color={tokens.colors.onPrimary} />
+                                <Text style={styles.actionBtnText}>Finalizar</Text>
+                            </Pressable>
+                        ) : (
+                            <View style={[styles.actionBtn, styles.actionHintBtn]}>
+                                <Ionicons name="lock-closed-outline" size={18} color={tokens.colors.textPrimary} />
+                                <Text style={styles.actionBtnHintText}>Valide primero para calificar</Text>
+                            </View>
+                        )}
                     </View>
-                )}
-            </View>
+                );
+            })()}
 
             {validateErrorMessage ? <Text style={styles.errorText}>Error: {validateErrorMessage}</Text> : null}
         </View>
@@ -536,11 +554,10 @@ export default function AdminRegistrationsScreen() {
     const eventsQuery = useQuery({
         queryKey: ["admin-report-events-pick", { q: debouncedEventSearch }],
         queryFn: async () => {
-            // El endpoint es paginado, pero para selector tomamos un lote.
-            const res = await fetchReportEventsPaginated(1, EVENT_PICK_LIMIT);
-            const q = (debouncedEventSearch ?? "").trim().toLowerCase();
-            if (!q) return res.data;
-            return res.data.filter((e) => (e.name ?? "").toLowerCase().includes(q));
+            // Use server-side paginated endpoint with optional search query for efficiency.
+            const q = (debouncedEventSearch ?? "").trim();
+            const res = await fetchReportEventsPaginated(1, EVENT_PICK_LIMIT, q || undefined);
+            return res.data;
         },
         staleTime: 60_000,
     });
@@ -717,17 +734,21 @@ export default function AdminRegistrationsScreen() {
                                     <Text style={styles.selectItemText}>Todos los eventos</Text>
                                 </Pressable>
 
-                                {renderEventSelectorContent({
-                                    isLoading: eventsQuery.isLoading,
-                                    isError: eventsQuery.isError,
-                                    error: eventsQuery.error,
-                                    events: eventsQuery.data ?? [],
-                                    selectedEventId,
-                                    onSelect: (id) => {
-                                        setSelectedEventId(id);
-                                        setEventOpen(false);
+                                {renderEventSelectorContent(
+                                    {
+                                        isLoading: eventsQuery.isLoading,
+                                        isError: eventsQuery.isError,
+                                        error: eventsQuery.error,
+                                        events: eventsQuery.data ?? [],
+                                        selectedEventId,
+                                        onSelect: (id) => {
+                                            setSelectedEventId(id);
+                                            setEventOpen(false);
+                                        },
                                     },
-                                })}
+                                    tokens,
+                                    styles
+                                )}
                             </View>
                         ) : null}
 
@@ -835,282 +856,285 @@ export default function AdminRegistrationsScreen() {
 
 function createStyles(theme: ThemeTokens) {
     return {
-    container: { flex: 1, backgroundColor: theme.colors.bgSecondary },
-    listContent: { padding: theme.spacing.md, paddingBottom: theme.spacing.xl },
+        container: { flex: 1, backgroundColor: theme.colors.bgSecondary },
+        listContent: { padding: theme.spacing.md, paddingBottom: theme.spacing.xl },
 
-    filtersCard: {
-        backgroundColor: theme.colors.bgCard,
-        borderRadius: theme.radius.lg,
-        padding: theme.spacing.md,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-        ...theme.shadow.sm,
-        marginBottom: theme.spacing.md,
-    },
-    filtersTitle: { color: theme.colors.textPrimary, fontWeight: "900", fontSize: 16, marginBottom: theme.spacing.sm },
+        filtersCard: {
+            backgroundColor: theme.colors.bgCard,
+            borderRadius: theme.radius.lg,
+            padding: theme.spacing.md,
+            borderWidth: 1,
+            borderColor: theme.colors.borderPrimary,
+            ...theme.shadow.sm,
+            marginBottom: theme.spacing.md,
+        },
+        filtersTitle: { color: theme.colors.textPrimary, fontWeight: "900", fontSize: 16, marginBottom: theme.spacing.sm },
 
-    label: { color: theme.colors.textSecondary, fontWeight: "800", marginBottom: 6, marginTop: 10 },
-    labelSmall: { color: theme.colors.textSecondary, fontWeight: "800", marginBottom: 6, fontSize: 12 },
+        label: { color: theme.colors.textSecondary, fontWeight: "800", marginBottom: 6, marginTop: 10 },
+        labelSmall: { color: theme.colors.textSecondary, fontWeight: "800", marginBottom: 6, fontSize: 12 },
 
-    searchRow: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 8,
-        backgroundColor: theme.colors.bgTertiary,
-        borderRadius: theme.radius.md,
-        paddingHorizontal: theme.spacing.sm,
-        paddingVertical: 10,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-    },
-    searchInput: { flex: 1, color: theme.colors.textPrimary, fontWeight: "700" },
-    clearIconBtn: { padding: 4 },
+        searchRow: {
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 8,
+            backgroundColor: theme.colors.bgTertiary,
+            borderRadius: theme.radius.md,
+            paddingHorizontal: theme.spacing.sm,
+            paddingVertical: 10,
+            borderWidth: 1,
+            borderColor: theme.colors.borderPrimary,
+        },
+        searchInput: { flex: 1, color: theme.colors.textPrimary, fontWeight: "700" },
+        clearIconBtn: { padding: 4 },
 
-    selectBtn: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        paddingHorizontal: theme.spacing.sm,
-        paddingVertical: 12,
-        borderRadius: theme.radius.md,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-        backgroundColor: theme.colors.bgTertiary,
-    },
-    selectBtnText: { color: theme.colors.textPrimary, fontWeight: "800", flex: 1, paddingRight: 10 },
-    selectMenu: {
-        borderRadius: theme.radius.md,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-        backgroundColor: theme.colors.bgPrimary,
-        padding: theme.spacing.sm,
-        marginTop: 8,
-        gap: 8,
-    },
-    selectItem: {
-        paddingVertical: 10,
-        paddingHorizontal: theme.spacing.sm,
-        borderRadius: theme.radius.md,
-        backgroundColor: theme.colors.bgTertiary,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-    },
-    selectItemActive: {
-        borderColor: theme.colors.primary,
-        backgroundColor: theme.colors.primaryLighter,
-    },
-    selectItemText: { color: theme.colors.textPrimary, fontWeight: "800" },
-    selectLoading: { flexDirection: "row", alignItems: "center", gap: 10, paddingVertical: 8 },
+        selectBtn: {
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            paddingHorizontal: theme.spacing.sm,
+            paddingVertical: 12,
+            borderRadius: theme.radius.md,
+            borderWidth: 1,
+            borderColor: theme.colors.borderPrimary,
+            backgroundColor: theme.colors.bgTertiary,
+        },
+        selectBtnText: { color: theme.colors.textPrimary, fontWeight: "800", flex: 1, paddingRight: 10 },
+        selectMenu: {
+            borderRadius: theme.radius.md,
+            borderWidth: 1,
+            borderColor: theme.colors.borderPrimary,
+            backgroundColor: theme.colors.bgPrimary,
+            padding: theme.spacing.sm,
+            marginTop: 8,
+            gap: 8,
+        },
+        selectItem: {
+            paddingVertical: 10,
+            paddingHorizontal: theme.spacing.sm,
+            borderRadius: theme.radius.md,
+            backgroundColor: theme.colors.bgTertiary,
+            borderWidth: 1,
+            borderColor: theme.colors.borderPrimary,
+        },
+        selectItemActive: {
+            borderColor: theme.colors.primary,
+            backgroundColor: theme.colors.primaryLighter,
+        },
+        selectItemText: { color: theme.colors.textPrimary, fontWeight: "800" },
+        selectLoading: { flexDirection: "row", alignItems: "center", gap: 10, paddingVertical: 8 },
 
-    paginationRow: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        marginTop: theme.spacing.md,
-        gap: 10,
-    },
-    pageText: { color: theme.colors.textSecondary, fontWeight: "800" },
-    ghostBtn: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 8,
-        paddingHorizontal: theme.spacing.sm,
-        paddingVertical: 10,
-        borderRadius: theme.radius.md,
-        backgroundColor: theme.colors.bgTertiary,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-    },
-    ghostBtnText: { color: theme.colors.textPrimary, fontWeight: "900" },
-    btnDisabled: { opacity: 0.5 },
+        paginationRow: {
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginTop: theme.spacing.md,
+            gap: 10,
+        },
+        pageText: { color: theme.colors.textSecondary, fontWeight: "800" },
+        ghostBtn: {
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 8,
+            paddingHorizontal: theme.spacing.sm,
+            paddingVertical: 10,
+            borderRadius: theme.radius.md,
+            backgroundColor: theme.colors.bgTertiary,
+            borderWidth: 1,
+            borderColor: theme.colors.borderPrimary,
+        },
+        ghostBtnText: { color: theme.colors.textPrimary, fontWeight: "900" },
+        btnDisabled: { opacity: 0.5 },
 
-    inlineLoading: { flexDirection: "row", alignItems: "center", gap: 10, marginTop: 12 },
-    loadingText: { color: theme.colors.textSecondary, fontWeight: "800" },
-    errorText: { color: theme.colors.error, fontWeight: "800", marginTop: 10 },
+        inlineLoading: { flexDirection: "row", alignItems: "center", gap: 10, marginTop: 12 },
+        loadingText: { color: theme.colors.textSecondary, fontWeight: "800" },
+        errorText: { color: theme.colors.error, fontWeight: "800", marginTop: 10 },
 
-    center: { alignItems: "center", justifyContent: "center", padding: theme.spacing.lg, gap: 12 },
-    emptyText: { color: theme.colors.textSecondary, fontWeight: "800" },
+        center: { alignItems: "center", justifyContent: "center", padding: theme.spacing.lg, gap: 12 },
+        emptyText: { color: theme.colors.textSecondary, fontWeight: "800" },
 
-    card: {
-        backgroundColor: theme.colors.bgCard,
-        borderRadius: theme.radius.lg,
-        padding: theme.spacing.md,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-        ...theme.shadow.sm,
-        marginBottom: theme.spacing.md,
-    },
-    cardHeaderRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 10 },
-    cardDate: { color: theme.colors.textTertiary, fontWeight: "800" },
+        card: {
+            backgroundColor: theme.colors.bgCard,
+            borderRadius: theme.radius.lg,
+            padding: theme.spacing.md,
+            borderWidth: 1,
+            borderColor: theme.colors.borderPrimary,
+            ...theme.shadow.sm,
+            marginBottom: theme.spacing.md,
+        },
+        cardHeaderRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 10 },
+        cardDate: { color: theme.colors.textTertiary, fontWeight: "800" },
 
-    badgeSoft: {
-        paddingVertical: 6,
-        paddingHorizontal: 10,
-        borderRadius: 999,
-        backgroundColor: theme.colors.bgTertiary,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-    },
-    badgeText: { color: theme.colors.textPrimary, fontWeight: "900" },
-    badgeSuccess: { backgroundColor: theme.colors.bgTertiary, borderColor: theme.colors.success },
-    badgeDanger: { backgroundColor: theme.colors.bgTertiary, borderColor: theme.colors.error },
-    badgeWarning: { backgroundColor: theme.colors.bgTertiary, borderColor: theme.colors.warning },
+        badgeSoft: {
+            paddingVertical: 6,
+            paddingHorizontal: 10,
+            borderRadius: 999,
+            backgroundColor: theme.colors.bgTertiary,
+            borderWidth: 1,
+            borderColor: theme.colors.borderPrimary,
+        },
+        badgeText: { color: theme.colors.textPrimary, fontWeight: "900" },
+        badgeSuccess: { backgroundColor: theme.colors.bgTertiary, borderColor: theme.colors.success },
+        badgeDanger: { backgroundColor: theme.colors.bgTertiary, borderColor: theme.colors.error },
+        badgeWarning: { backgroundColor: theme.colors.bgTertiary, borderColor: theme.colors.warning },
 
-    cardTitle: { color: theme.colors.textPrimary, fontWeight: "900", fontSize: 16, marginTop: 10 },
-    cardSub: { color: theme.colors.textSecondary, fontWeight: "800", marginTop: 4 },
-    metaText: { color: theme.colors.textSecondary, fontWeight: "800", marginTop: 8 },
-    hintText: { color: theme.colors.textSecondary, fontWeight: "700", lineHeight: 18 },
+        cardTitle: { color: theme.colors.textPrimary, fontWeight: "900", fontSize: 16, marginTop: 10 },
+        cardSub: { color: theme.colors.textSecondary, fontWeight: "800", marginTop: 4 },
+        metaText: { color: theme.colors.textSecondary, fontWeight: "800", marginTop: 8 },
+        hintText: { color: theme.colors.textSecondary, fontWeight: "700", lineHeight: 18 },
 
-    docsSection: {
-        marginTop: theme.spacing.sm,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-        borderRadius: theme.radius.md,
-        padding: theme.spacing.sm,
-        gap: 10,
-        backgroundColor: theme.colors.bgTertiary,
-    },
-    docRowColumn: { gap: 6 },
-    docLabel: { color: theme.colors.textPrimary, fontWeight: "900" },
-    docMissing: { color: theme.colors.textTertiary, fontWeight: "700" },
-    docInlineRow: { flexDirection: "row", alignItems: "center", gap: 8 },
+        docsSection: {
+            marginTop: theme.spacing.sm,
+            borderWidth: 1,
+            borderColor: theme.colors.borderPrimary,
+            borderRadius: theme.radius.md,
+            padding: theme.spacing.sm,
+            gap: 10,
+            backgroundColor: theme.colors.bgTertiary,
+        },
+        docRowColumn: { gap: 6 },
+        docLabel: { color: theme.colors.textPrimary, fontWeight: "900" },
+        docMissing: { color: theme.colors.textTertiary, fontWeight: "700" },
+        docInlineRow: { flexDirection: "row", alignItems: "center", gap: 8 },
 
-    docRow: { flexDirection: "row", flexWrap: "wrap", gap: 10, marginTop: theme.spacing.sm },
-    docBtn: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 8,
-        paddingHorizontal: theme.spacing.sm,
-        paddingVertical: 10,
-        borderRadius: theme.radius.md,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-        backgroundColor: theme.colors.bgTertiary,
-    },
-    docBtnText: { color: theme.colors.textPrimary, fontWeight: "900" },
-    docPill: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 8,
-        paddingHorizontal: theme.spacing.sm,
-        paddingVertical: 10,
-        borderRadius: theme.radius.md,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-        backgroundColor: theme.colors.bgTertiary,
-    },
-    docPillText: { color: theme.colors.textPrimary, fontWeight: "900" },
+        docRow: { flexDirection: "row", flexWrap: "wrap", gap: 10, marginTop: theme.spacing.sm },
+        docBtn: {
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 8,
+            paddingHorizontal: theme.spacing.sm,
+            paddingVertical: 10,
+            borderRadius: theme.radius.md,
+            borderWidth: 1,
+            borderColor: theme.colors.borderPrimary,
+            backgroundColor: theme.colors.bgTertiary,
+        },
+        docBtnText: { color: theme.colors.textPrimary, fontWeight: "900" },
+        docPill: {
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 8,
+            paddingHorizontal: theme.spacing.sm,
+            paddingVertical: 10,
+            borderRadius: theme.radius.md,
+            borderWidth: 1,
+            borderColor: theme.colors.borderPrimary,
+            backgroundColor: theme.colors.bgTertiary,
+        },
+        docPillText: { color: theme.colors.textPrimary, fontWeight: "900" },
 
-    expandRow: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        paddingTop: theme.spacing.sm,
-    },
-    expandText: { color: theme.colors.primary, fontWeight: "900" },
+        expandRow: {
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            paddingTop: theme.spacing.sm,
+        },
+        expandText: { color: theme.colors.primary, fontWeight: "900" },
 
-    detailsBox: { marginTop: theme.spacing.sm, gap: 10 },
-    detailLabel: { color: theme.colors.textPrimary, fontWeight: "900" },
-    input: {
-        backgroundColor: theme.colors.bgTertiary,
-        borderRadius: theme.radius.md,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-        paddingHorizontal: theme.spacing.sm,
-        paddingVertical: 10,
-        color: theme.colors.textPrimary,
-        fontWeight: "700",
-    },
-    inputDisabled: { opacity: 0.6 },
-    multiline: { minHeight: 80, textAlignVertical: "top" },
-    row2: { flexDirection: "row", gap: 10 },
-    col: { flex: 1 },
+        detailsBox: { marginTop: theme.spacing.sm, gap: 10 },
+        detailLabel: { color: theme.colors.textPrimary, fontWeight: "900" },
+        input: {
+            backgroundColor: theme.colors.bgTertiary,
+            borderRadius: theme.radius.md,
+            borderWidth: 1,
+            borderColor: theme.colors.borderPrimary,
+            paddingHorizontal: theme.spacing.sm,
+            paddingVertical: 10,
+            color: theme.colors.textPrimary,
+            fontWeight: "700",
+        },
+        inputDisabled: { opacity: 0.6 },
+        multiline: { minHeight: 80, textAlignVertical: "top" },
+        row2: { flexDirection: "row", gap: 10 },
+        col: { flex: 1 },
 
-    letterBox: {
-        backgroundColor: theme.colors.bgTertiary,
-        borderRadius: theme.radius.md,
-        padding: theme.spacing.sm,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-        gap: 8,
-    },
-    letterText: { color: theme.colors.textSecondary, fontWeight: "700", lineHeight: 18 },
+        letterBox: {
+            backgroundColor: theme.colors.bgTertiary,
+            borderRadius: theme.radius.md,
+            padding: theme.spacing.sm,
+            borderWidth: 1,
+            borderColor: theme.colors.borderPrimary,
+            gap: 8,
+        },
+        letterText: { color: theme.colors.textSecondary, fontWeight: "700", lineHeight: 18 },
 
-    actionRow: { flexDirection: "row", gap: 10, marginTop: 6 },
-    actionBtn: {
-        flex: 1,
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: 8,
-        paddingVertical: 12,
-        borderRadius: theme.radius.md,
-    },
-    actionBtnText: { color: theme.colors.onPrimary, fontWeight: "900" },
-    btnPrimary: { backgroundColor: theme.colors.primary },
-    btnSuccess: { backgroundColor: theme.colors.success },
-    btnDanger: { backgroundColor: theme.colors.error },
-    letterToggleBtn: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        gap: 12,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-        borderRadius: theme.radius.md,
-        paddingHorizontal: theme.spacing.sm,
-        paddingVertical: 10,
-        backgroundColor: theme.colors.bgSecondary,
-    },
-    actionHintBtn: {
-        backgroundColor: theme.colors.bgSecondary,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-    },
-    actionBtnHintText: { color: theme.colors.textSecondary, fontWeight: "800" },
-    cardAccent: {
-        position: "absolute",
-        top: 0,
-        left: 0,
-        right: 0,
-        height: 6,
-        borderTopLeftRadius: theme.radius.lg,
-        borderTopRightRadius: theme.radius.lg,
-    },
-    previewBackdrop: {
-        flex: 1,
-        backgroundColor: theme.colors.overlayBlack68,
-        justifyContent: "center",
-        padding: theme.spacing.lg,
-    },
-    previewModal: {
-        backgroundColor: theme.colors.bgPrimary,
-        borderRadius: theme.radius.lg,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-        overflow: "hidden",
-        maxHeight: "90%",
-    },
-    previewHeader: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        paddingHorizontal: theme.spacing.md,
-        paddingVertical: theme.spacing.sm,
-        borderBottomWidth: 1,
-        borderBottomColor: theme.colors.borderPrimary,
-    },
-    previewTitle: { color: theme.colors.textPrimary, fontWeight: "900", fontSize: 16 },
-    previewCloseBtn: {
-        width: 36,
-        height: 36,
-        borderRadius: 999,
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: theme.colors.bgSecondary,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-    },
-    previewImage: { width: "100%", height: 420, backgroundColor: theme.colors.bgSecondary },
+        actionRow: { flexDirection: "row", gap: 10, marginTop: 6 },
+        actionBtn: {
+            flex: 1,
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 8,
+            paddingVertical: 12,
+            borderRadius: theme.radius.md,
+        },
+        actionBtnText: { color: theme.colors.onPrimary, fontWeight: "900" },
+        btnPrimary: { backgroundColor: theme.colors.primary },
+        btnSuccess: { backgroundColor: theme.colors.success },
+        btnDanger: { backgroundColor: theme.colors.error },
+        letterToggleBtn: {
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 12,
+            borderWidth: 1,
+            borderColor: theme.colors.borderPrimary,
+            borderRadius: theme.radius.md,
+            paddingHorizontal: theme.spacing.sm,
+            paddingVertical: 10,
+            backgroundColor: theme.colors.bgSecondary,
+        },
+        actionHintBtn: {
+            backgroundColor: theme.colors.bgSecondary,
+            borderWidth: 1,
+            borderColor: theme.colors.borderPrimary,
+        },
+        actionBtnHintText: { color: theme.colors.textSecondary, fontWeight: "800" },
+        finalInfoWrap: { marginTop: 10, padding: 12, borderRadius: theme.radius.md, backgroundColor: theme.colors.bgTertiary, borderWidth: 1, borderColor: theme.colors.borderPrimary },
+        finalInfoTitle: { fontWeight: "900", color: theme.colors.textPrimary, marginBottom: 6 },
+        finalInfoText: { color: theme.colors.textSecondary, fontWeight: "700" },
+        cardAccent: {
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            height: 6,
+            borderTopLeftRadius: theme.radius.lg,
+            borderTopRightRadius: theme.radius.lg,
+        },
+        previewBackdrop: {
+            flex: 1,
+            backgroundColor: theme.colors.overlayBlack68,
+            justifyContent: "center",
+            padding: theme.spacing.lg,
+        },
+        previewModal: {
+            backgroundColor: theme.colors.bgPrimary,
+            borderRadius: theme.radius.lg,
+            borderWidth: 1,
+            borderColor: theme.colors.borderPrimary,
+            overflow: "hidden",
+            maxHeight: "90%",
+        },
+        previewHeader: {
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            paddingHorizontal: theme.spacing.md,
+            paddingVertical: theme.spacing.sm,
+            borderBottomWidth: 1,
+            borderBottomColor: theme.colors.borderPrimary,
+        },
+        previewTitle: { color: theme.colors.textPrimary, fontWeight: "900", fontSize: 16 },
+        previewCloseBtn: {
+            width: 36,
+            height: 36,
+            borderRadius: 999,
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: theme.colors.bgSecondary,
+            borderWidth: 1,
+            borderColor: theme.colors.borderPrimary,
+        },
+        previewImage: { width: "100%", height: 420, backgroundColor: theme.colors.bgSecondary },
     };
 }

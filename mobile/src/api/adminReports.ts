@@ -63,11 +63,12 @@ function normalizeEventSummary(raw: Record<string, unknown>, index = 0): AdminRe
 
 export async function fetchReportEventsPaginated(
     page: number,
-    limit: number
+    limit: number,
+    q?: string
 ): Promise<PaginatedResponse<AdminReportEventSummary>> {
     try {
         const response = await apiClient.get<unknown>("/api/admin/reports/events-paginated", {
-            params: { page, limit },
+            params: q ? { page, limit, q } : { page, limit },
         });
 
         const payload = unwrapPayload<Record<string, unknown>>(response.data);
@@ -79,7 +80,7 @@ export async function fetchReportEventsPaginated(
         const pagination = payload.pagination as Record<string, unknown>;
 
         return {
-            data: rawItems.map(normalizeEventSummary),
+            data: rawItems.map((r, i) => normalizeEventSummary(r, i)),
             pagination: {
                 currentPage: Number(pagination.currentPage ?? page) || page,
                 totalPages: Number(pagination.totalPages ?? 1) || 1,
@@ -115,12 +116,11 @@ export async function fetchReportEventsPaginated(
 export async function fetchReportEventsForSelector(): Promise<AdminReportEventSummary[]> {
     const response = await apiClient.get<unknown>("/api/admin/reports/events");
     const payload = unwrapPayload<Record<string, unknown>>(response.data);
-    const list = Array.isArray(payload.eve)
-        ? (payload.eve as Array<Record<string, unknown>>)
-        : Array.isArray(payload.data)
-            ? (payload.data as Array<Record<string, unknown>>)
-            : [];
-    return list.map(normalizeEventSummary).filter((item) => item.id.length > 0);
+    let list: Array<Record<string, unknown>> = [];
+    if (Array.isArray(payload.eve)) list = payload.eve as Array<Record<string, unknown>>;
+    else if (Array.isArray(payload.data)) list = payload.data as Array<Record<string, unknown>>;
+
+    return list.map((r, i) => normalizeEventSummary(r, i)).filter((item) => item.id.length > 0);
 }
 
 export async function fetchEventReportById(eventId: string): Promise<unknown> {
@@ -172,6 +172,7 @@ export async function fetchEnrollmentsReportValidations(params?: ReportDateParam
 }
 
 export async function fetchAttendanceEventReport(eventId: string): Promise<unknown> {
+    if (!eventId) return {};
     const response = await apiClient.get<unknown>(`/api/admin/reports/attendance/event/${eventId}`);
     return unwrapPayload<unknown>(response.data);
 }

@@ -132,8 +132,17 @@ function normalizeRegistration(item: Record<string, unknown>): AdminRegistration
         registeredAt: pickString(item, "registeredAt", "fec_ins"),
         validatedAt: pickString(item, "validatedAt") || null,
         observation: pickString(item, "observation", "observacion") || null,
-        finalAttendancePercent: toFiniteNumberOrNull(item.finalAttendancePercent ?? item.final_attendance_percent ?? item.finalAttendance),
-        finalGrade: toFiniteNumberOrNull(item.finalGrade ?? item.final_grade),
+        finalAttendancePercent: toFiniteNumberOrNull(
+            item.finalAttendancePercent ??
+            item.final_attendance_percent ??
+            item.finalAttendance ??
+            item.porcentaje_asistencia_final ??
+            item.porcentajeFinalAsistencia ??
+            item.asistencia_final
+        ),
+        finalGrade: toFiniteNumberOrNull(
+            item.finalGrade ?? item.final_grade ?? item.nota_final ?? item.notaFinal ?? item.final_score
+        ),
         event: {
             id: pickString(eventObjSource, "id", "id_eve"),
             name: pickString(eventObjSource, "name", "nom_eve") || "Evento",

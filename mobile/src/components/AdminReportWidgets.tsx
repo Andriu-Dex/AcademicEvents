@@ -22,7 +22,8 @@ export function formatPercent(value: unknown) {
     const num = typeof value === "number" ? value : Number(value);
     if (!Number.isFinite(num)) return "0%";
     const normalized = num <= 1 ? num * 100 : num;
-    return `${normalized.toFixed(1)}%`;
+    const capped = Math.max(0, Math.min(normalized, 100));
+    return `${capped.toFixed(1)}%`;
 }
 
 function useReportStyles() {

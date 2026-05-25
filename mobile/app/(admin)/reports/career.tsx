@@ -51,7 +51,7 @@ export default function AdminReportCareerScreen() {
         return list.map((item) => ({
             title: pickReportText(item.nom_car, "Carrera"),
             subtitle: joinReportText([`${formatNumber(item.totalInscripciones)} inscripciones`, `${formatNumber(item.totalEstudiantes)} estudiantes`]),
-            right: formatPercent(item.porcentajeParticipacion),
+            right: formatPercent(Math.min(Number(item.porcentajeParticipacion ?? 0), 100)),
         }));
     }, [stats.comparativaCarreras]);
 
@@ -59,7 +59,13 @@ export default function AdminReportCareerScreen() {
         const list = Array.isArray(eventsQuery.data) ? (eventsQuery.data as Array<Record<string, unknown>>) : [];
         return list.map((item) => ({
             title: pickReportText(item.nom_eve ?? item.nombreEvento, "Evento"),
-            subtitle: joinReportText([pickReportText(item.tip_eve ?? item.tipoEvento, ""), `Asistencia ${formatPercent(item.porcentajeAsistencia)}`]),
+            subtitle: joinReportText([
+                pickReportText(
+                    item.tip_eve ?? item.tipoEvento ?? item.tipo ?? item.tip ?? item.tip_eve,
+                    ""
+                ),
+                `Asistencia ${formatPercent(Math.min(Number(item.porcentajeAsistencia ?? 0), 100))}`,
+            ]),
             right: `${formatNumber(item.totalInscritos)} insc.`,
         }));
     }, [eventsQuery.data]);
@@ -163,36 +169,36 @@ export default function AdminReportCareerScreen() {
 
 function createStyles(theme: ThemeTokens) {
     return {
-    container: { flex: 1, backgroundColor: theme.colors.bgSecondary },
-    center: { flex: 1, alignItems: "center", justifyContent: "center" },
-    content: { padding: theme.spacing.md, gap: theme.spacing.md, paddingBottom: theme.spacing.xl },
-    chipsRow: { gap: 8 },
-    chip: {
-        borderRadius: theme.radius.full,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-        backgroundColor: theme.colors.bgCard,
-        paddingHorizontal: 12,
-        paddingVertical: 8,
-    },
-    chipSelected: {
-        backgroundColor: theme.colors.primary,
-        borderColor: theme.colors.primary,
-    },
-    chipText: { color: theme.colors.textSecondary, fontWeight: "700", fontSize: 12 },
-    chipTextSelected: { color: theme.colors.onPrimary },
-    metricsWrap: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
-    actionButton: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: 8,
-        marginTop: theme.spacing.sm,
-        borderRadius: theme.radius.full,
-        paddingVertical: 13,
-        backgroundColor: theme.colors.primary,
-    },
-    actionButtonDisabled: { opacity: 0.65 },
-    actionButtonText: { color: theme.colors.onPrimary, fontWeight: "900", fontSize: 13 },
+        container: { flex: 1, backgroundColor: theme.colors.bgSecondary },
+        center: { flex: 1, alignItems: "center", justifyContent: "center" },
+        content: { padding: theme.spacing.md, gap: theme.spacing.md, paddingBottom: theme.spacing.xl },
+        chipsRow: { gap: 8 },
+        chip: {
+            borderRadius: theme.radius.full,
+            borderWidth: 1,
+            borderColor: theme.colors.borderPrimary,
+            backgroundColor: theme.colors.bgCard,
+            paddingHorizontal: 12,
+            paddingVertical: 8,
+        },
+        chipSelected: {
+            backgroundColor: theme.colors.primary,
+            borderColor: theme.colors.primary,
+        },
+        chipText: { color: theme.colors.textSecondary, fontWeight: "700", fontSize: 12 },
+        chipTextSelected: { color: theme.colors.onPrimary },
+        metricsWrap: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
+        actionButton: {
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 8,
+            marginTop: theme.spacing.sm,
+            borderRadius: theme.radius.full,
+            paddingVertical: 13,
+            backgroundColor: theme.colors.primary,
+        },
+        actionButtonDisabled: { opacity: 0.65 },
+        actionButtonText: { color: theme.colors.onPrimary, fontWeight: "900", fontSize: 13 },
     };
 }

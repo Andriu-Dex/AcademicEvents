@@ -18,6 +18,8 @@ export type RegistrationItem = {
     paymentProofUrl: string | null;
     certificate: RegistrationCertificate | null;
     event: RegistrationEventSummary | null;
+    finalAttendancePercent?: number | null;
+    finalGrade?: number | null;
 };
 
 export type RegistrationCertificate = {
@@ -75,6 +77,8 @@ function normalizeRegistration(raw: Record<string, unknown>): RegistrationItem {
         paymentProofUrl: pickString(raw, "comprobante", "com_ins", "paymentProofUrl") || null,
         certificate,
         event,
+        finalAttendancePercent: raw.por_asi_fin_usu ?? raw.finalAttendancePercent ?? raw.por_asi_fin ?? null,
+        finalGrade: raw.nota_final ?? raw.finalGrade ?? raw.nota ?? null,
     };
 }
 
@@ -82,7 +86,7 @@ export async function fetchMyRegistrations(): Promise<RegistrationItem[]> {
     const response = await apiClient.get<unknown>("/api/inscripciones/propias");
 
     if (!Array.isArray(response.data)) {
-        throw new Error("Respuesta inválida de inscripciones");
+        throw new TypeError("Respuesta inválida de inscripciones");
     }
 
     return (response.data as Array<Record<string, unknown>>)

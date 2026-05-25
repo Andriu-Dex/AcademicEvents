@@ -16,6 +16,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
 import { useFocusEffect } from "@react-navigation/native";
 import { AppHeader } from "../../src/components/AppHeader";
+import { formatPercent } from "../../src/components/AdminReportWidgets";
 import {
     fetchMyRegistrations,
     generateCertificateForRegistration,
@@ -196,6 +197,24 @@ function RegistrationCard({
                         <Ionicons name="download-outline" size={14} color={tokens.colors.success} />
                     </Pressable>
                 ) : null}
+
+                {/* Mostrar calificaciones si la inscripción está finalizada */}
+                {(() => {
+                    const st = (item.status ?? "").toString().toUpperCase();
+                    const isFinal = st.includes("APROB") || st.includes("REPROB") || st.includes("FAILED");
+                    if (isFinal) {
+                        const attendance = item.finalAttendancePercent ?? 0;
+                        const grade = item.finalGrade ?? null;
+                        return (
+                            <View style={styles.gradesWrap}>
+                                <Text style={styles.gradesTitle}>Calificaciones</Text>
+                                <Text style={styles.gradeLine}>Asistencia: {formatPercent(attendance)}</Text>
+                                <Text style={styles.gradeLine}>Nota Final: {grade == null ? "-" : String(grade)}</Text>
+                            </View>
+                        );
+                    }
+                    return null;
+                })()}
             </View>
         </View>
     );
@@ -537,6 +556,9 @@ function createStyles(theme: ThemeTokens) {
             borderColor: theme.colors.successBorder,
         },
         certificateBtnText: { flex: 1, color: theme.colors.success, fontWeight: "800", fontSize: 13 },
+        gradesWrap: { marginTop: 10, padding: 10, borderRadius: theme.radius.sm, backgroundColor: theme.colors.bgSecondary, borderWidth: 1, borderColor: theme.colors.borderPrimary },
+        gradesTitle: { fontWeight: "900", color: theme.colors.textPrimary, marginBottom: 6 },
+        gradeLine: { color: theme.colors.textTertiary, fontWeight: "700" },
         emptyState: { alignItems: "center", paddingVertical: theme.spacing.xxl, gap: 12 },
         emptyTitle: { fontSize: 16, fontWeight: "800", color: theme.colors.textSecondary },
         emptySubtitle: { color: theme.colors.textTertiary, textAlign: "center", lineHeight: 20, paddingHorizontal: theme.spacing.lg },

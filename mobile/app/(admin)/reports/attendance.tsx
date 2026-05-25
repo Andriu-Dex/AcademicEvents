@@ -1,5 +1,6 @@
-import { useMemo, useState } from "react";
-import { ActivityIndicator, Pressable, RefreshControl, ScrollView, Text, View } from "react-native";
+/* eslint-disable complexity */
+import { useEffect, useMemo, useState } from "react";
+import { ActivityIndicator, Pressable, RefreshControl, ScrollView, Text, View, TextInput } from "react-native";
 import { useQuery } from "@tanstack/react-query";
 import { Ionicons } from "@expo/vector-icons";
 import { AppHeader } from "../../../src/components/AppHeader";
@@ -16,7 +17,9 @@ import {
     fetchAttendanceComparativeReport,
     fetchAttendanceEventReport,
     fetchAttendanceNoShowsReport,
-    fetchReportEventsForSelector,
+    fetchReportEventsPaginated,
+    type PaginatedResponse,
+    type AdminReportEventSummary,
 } from "../../../src/api/adminReports";
 import { downloadReportPdf } from "../../../src/utils/reportDownload";
 import { joinReportText, pickReportText } from "../../../src/utils/reportText";
@@ -30,6 +33,110 @@ const EVENT_TYPES = [
     { value: "TALK", label: "Charla" },
     { value: "SOCIALIZATION", label: "Socialización" },
 ];
+
+function EventFilters({
+    styles,
+    tokens,
+    selectedEventId,
+    setSelectedEventId,
+    eventSearch,
+    setEventSearch,
+    eventsQuery,
+    setEventsPage,
+    selectedType,
+    setSelectedType,
+    loadingPdf,
+    handleDownloadPdf,
+}: any) {
+    return (
+        <SectionCard title="Filtros">
+            <Text style={styles.filterLabel}>Evento</Text>
+            <View style={{ marginTop: 8, marginBottom: 8 }}>
+                <TextInput
+                    style={{
+                        backgroundColor: tokens.colors.bgCard,
+                        borderRadius: 8,
+                        paddingHorizontal: 12,
+                        paddingVertical: 8,
+                        color: tokens.colors.textPrimary,
+                    }}
+                    placeholder="Buscar evento por nombre..."
+                    placeholderTextColor={tokens.colors.textTertiary}
+                    value={eventSearch}
+                    onChangeText={(t: string) => {
+                        setEventSearch(t);
+                        setEventsPage(1);
+                    }}
+                />
+            </View>
+
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipsRow}>
+                <Pressable
+                    style={[styles.chip, !selectedEventId && styles.chipSelected]}
+                    onPress={() => {
+                        setSelectedEventId("");
+                        setEventSearch("");
+                    }}
+                >
+                    <Text style={[styles.chipText, !selectedEventId && styles.chipTextSelected]}>Todos</Text>
+                </Pressable>
+                {(Array.isArray(eventsQuery.data?.data) ? eventsQuery.data.data : []).map((event: any) => {
+                    const selected = selectedEventId === event.id;
+                    return (
+                        <Pressable
+                            key={event.id}
+                            style={[styles.chip, selected && styles.chipSelected]}
+                            onPress={() => {
+                                setSelectedEventId(event.id);
+                                setEventSearch(event.name);
+                            }}
+                        >
+                            <Text style={[styles.chipText, selected && styles.chipTextSelected]}>{event.name}</Text>
+                        </Pressable>
+                    );
+                })}
+                {eventsQuery.isFetching ? (
+                    <View style={[styles.chip, { justifyContent: "center" }]}>
+                        <ActivityIndicator color={tokens.colors.primary} />
+                    </View>
+                ) : null}
+            </ScrollView>
+            {eventsQuery.data?.pagination?.hasNextPage ? (
+                <Pressable
+                    style={[styles.actionButton, { marginTop: 8 }]}
+                    onPress={() => setEventsPage((p: number) => p + 1)}
+                >
+                    <Text style={[styles.actionButtonText]}>Cargar más eventos</Text>
+                </Pressable>
+            ) : null}
+
+            <Text style={[styles.filterLabel, { marginTop: 10 }]}>Tipo</Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipsRow}>
+                {EVENT_TYPES.map((type) => {
+                    const selected = selectedType === type.value;
+                    return (
+                        <Pressable
+                            key={type.value}
+                            style={[styles.chip, selected && styles.chipSelected]}
+                            onPress={() => setSelectedType(type.value)}
+                        >
+                            <Text style={[styles.chipText, selected && styles.chipTextSelected]}>{type.label}</Text>
+                        </Pressable>
+                    );
+                })}
+            </ScrollView>
+
+            <Pressable
+                style={[styles.actionButton, loadingPdf && styles.actionButtonDisabled]}
+                onPress={handleDownloadPdf}
+                disabled={loadingPdf}
+            >
+                <Ionicons name="download-outline" size={18} color={tokens.colors.onPrimary} />
+                <Text style={styles.actionButtonText}>{loadingPdf ? "Generando PDF..." : "Descargar Reporte PDF"}</Text>
+            </Pressable>
+        </SectionCard>
+    );
+}
 
 function toPercentValue(value: unknown) {
     const numericValue = typeof value === "number" ? value : Number(value);
@@ -60,16 +167,25 @@ function composeReportLabel(title: string, subtitle: string) {
 
 export default function AdminReportAttendanceScreen() {
     const { tokens } = useAppTheme();
-    const styles = useThemedStyles(createStyles);
+    const styles: any = useThemedStyles(createStyles as any);
 
     const [selectedEventId, setSelectedEventId] = useState("");
+    const [eventSearch, setEventSearch] = useState("");
+    const [debouncedEventSearch, setDebouncedEventSearch] = useState("");
+    const [eventsPage, setEventsPage] = useState(1);
+
+    useEffect(() => {
+        const t = setTimeout(() => setDebouncedEventSearch(eventSearch.trim()), 400);
+        return () => clearTimeout(t);
+    }, [eventSearch]);
     const [selectedType, setSelectedType] = useState("todos");
     const [loadingPdf, setLoadingPdf] = useState(false);
 
-    const eventsQuery = useQuery({
-        queryKey: ["admin-report-events-selector"],
-        queryFn: fetchReportEventsForSelector,
-        staleTime: 60000,
+    // Paginated server-side events search for selector (autocomplete)
+    const eventsQuery = useQuery<PaginatedResponse<AdminReportEventSummary> | undefined>({
+        queryKey: ["admin-report-events-paginated", eventsPage, debouncedEventSearch],
+        queryFn: () => fetchReportEventsPaginated(eventsPage, 20, debouncedEventSearch),
+        staleTime: 30000,
         refetchInterval: 45000,
     });
 
@@ -108,11 +224,33 @@ export default function AdminReportAttendanceScreen() {
 
     const noShowRows = useMemo(() => {
         const list = Array.isArray(noShowsQuery.data) ? (noShowsQuery.data as Array<Record<string, unknown>>) : [];
-        return list.map((item) => ({
-            title: pickReportText(item.tipoEvento, "Tipo"),
-            subtitle: joinReportText([`${formatNumber(item.cantidadEventos)} eventos`, `${formatNumber(item.totalInscritos)} inscritos`]),
-            right: formatPercent(item.porcentajeNoShows),
-        }));
+        const map = new Map<string, { displayName: string; cantidadEventos: number; totalInscritos: number; totalNoShows: number }>();
+        for (const item of list) {
+            const tipoRaw = pickReportText(item.tipoEvento, "Tipo") || "Otro";
+            const tipoKey = (tipoRaw ?? "").toString().trim().toLowerCase() || "otro";
+            const cantidadEventos = Number(item.cantidadEventos ?? 0) || 0;
+            const totalInscritos = Number(item.totalInscritos ?? 0) || 0;
+            const totalNoShows = Number(item.totalNoShows ?? 0) || 0;
+            const existing = map.get(tipoKey);
+            if (existing) {
+                existing.cantidadEventos += cantidadEventos;
+                existing.totalInscritos += totalInscritos;
+                existing.totalNoShows += totalNoShows;
+            } else {
+                map.set(tipoKey, { displayName: tipoRaw, cantidadEventos, totalInscritos, totalNoShows });
+            }
+        }
+
+        const rows: Array<{ title: string; subtitle: string; right: string }> = [];
+        for (const [_, agg] of map.entries()) {
+            const porcentaje = agg.totalInscritos > 0 ? agg.totalNoShows / agg.totalInscritos : 0;
+            rows.push({
+                title: agg.displayName || "Otro",
+                subtitle: joinReportText([`${formatNumber(agg.cantidadEventos)} eventos`, `${formatNumber(agg.totalInscritos)} inscritos`]),
+                right: formatPercent(porcentaje),
+            });
+        }
+        return rows;
     }, [noShowsQuery.data]);
 
     const comparativeItems = useMemo(() => {
@@ -130,12 +268,28 @@ export default function AdminReportAttendanceScreen() {
 
     const noShowItems = useMemo(() => {
         const list = Array.isArray(noShowsQuery.data) ? (noShowsQuery.data as Array<Record<string, unknown>>) : [];
+        const map = new Map<string, { displayName: string; cantidadEventos: number; totalInscritos: number; totalNoShows: number }>();
+        for (const item of list) {
+            const tipoRaw = pickReportText(item.tipoEvento, "Tipo") || "Otro";
+            const tipoKey = (tipoRaw ?? "").toString().trim().toLowerCase() || "otro";
+            const cantidadEventos = Number(item.cantidadEventos ?? 0) || 0;
+            const totalInscritos = Number(item.totalInscritos ?? 0) || 0;
+            const totalNoShows = Number(item.totalNoShows ?? 0) || 0;
+            const existing = map.get(tipoKey);
+            if (existing) {
+                existing.cantidadEventos += cantidadEventos;
+                existing.totalInscritos += totalInscritos;
+                existing.totalNoShows += totalNoShows;
+            } else {
+                map.set(tipoKey, { displayName: tipoRaw, cantidadEventos, totalInscritos, totalNoShows });
+            }
+        }
 
-        return list.map((item) => ({
-            title: pickReportText(item.tipoEvento, "Tipo"),
-            subtitle: `${formatNumber(item.cantidadEventos)} eventos`,
-            value: toPercentValue(item.porcentajeNoShows),
-            helper: `${formatNumber(item.totalInscritos)} inscritos`,
+        return Array.from(map.entries()).map(([_, agg]) => ({
+            title: agg.displayName || "Otro",
+            subtitle: `${formatNumber(agg.cantidadEventos)} eventos`,
+            value: toPercentValue(agg.totalInscritos > 0 ? agg.totalNoShows / agg.totalInscritos : 0),
+            helper: `${formatNumber(agg.totalInscritos)} inscritos`,
         }));
     }, [noShowsQuery.data]);
 
@@ -202,54 +356,20 @@ export default function AdminReportAttendanceScreen() {
                         />
                     }
                 >
-                    <SectionCard title="Filtros">
-                        <Text style={styles.filterLabel}>Evento</Text>
-                        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipsRow}>
-                            <Pressable
-                                style={[styles.chip, !selectedEventId && styles.chipSelected]}
-                                onPress={() => setSelectedEventId("")}
-                            >
-                                <Text style={[styles.chipText, !selectedEventId && styles.chipTextSelected]}>Todos</Text>
-                            </Pressable>
-                            {(eventsQuery.data ?? []).slice(0, 30).map((event) => {
-                                const selected = selectedEventId === event.id;
-                                return (
-                                    <Pressable
-                                        key={event.id}
-                                        style={[styles.chip, selected && styles.chipSelected]}
-                                        onPress={() => setSelectedEventId(event.id)}
-                                    >
-                                        <Text style={[styles.chipText, selected && styles.chipTextSelected]}>{event.name}</Text>
-                                    </Pressable>
-                                );
-                            })}
-                        </ScrollView>
-
-                        <Text style={[styles.filterLabel, { marginTop: 10 }]}>Tipo</Text>
-                        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipsRow}>
-                            {EVENT_TYPES.map((type) => {
-                                const selected = selectedType === type.value;
-                                return (
-                                    <Pressable
-                                        key={type.value}
-                                        style={[styles.chip, selected && styles.chipSelected]}
-                                        onPress={() => setSelectedType(type.value)}
-                                    >
-                                        <Text style={[styles.chipText, selected && styles.chipTextSelected]}>{type.label}</Text>
-                                    </Pressable>
-                                );
-                            })}
-                        </ScrollView>
-
-                        <Pressable
-                            style={[styles.actionButton, loadingPdf && styles.actionButtonDisabled]}
-                            onPress={() => void handleDownloadPdf()}
-                            disabled={loadingPdf}
-                        >
-                            <Ionicons name="download-outline" size={18} color={tokens.colors.onPrimary} />
-                            <Text style={styles.actionButtonText}>{loadingPdf ? "Generando PDF..." : "Descargar Reporte PDF"}</Text>
-                        </Pressable>
-                    </SectionCard>
+                    <EventFilters
+                        styles={styles}
+                        tokens={tokens}
+                        selectedEventId={selectedEventId}
+                        setSelectedEventId={setSelectedEventId}
+                        eventSearch={eventSearch}
+                        setEventSearch={setEventSearch}
+                        eventsQuery={eventsQuery}
+                        setEventsPage={setEventsPage}
+                        selectedType={selectedType}
+                        setSelectedType={setSelectedType}
+                        loadingPdf={loadingPdf}
+                        handleDownloadPdf={handleDownloadPdf}
+                    />
 
                     {selectedEventId && eventQuery.data ? (
                         <SectionCard title="Asistencia del evento seleccionado">
@@ -323,35 +443,35 @@ export default function AdminReportAttendanceScreen() {
 
 function createStyles(theme: ThemeTokens) {
     return {
-    container: { flex: 1, backgroundColor: theme.colors.bgSecondary },
-    center: { flex: 1, alignItems: "center", justifyContent: "center" },
-    content: { padding: theme.spacing.md, gap: theme.spacing.md, paddingBottom: theme.spacing.xl },
-    metricsWrap: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
-    filterLabel: { color: theme.colors.textPrimary, fontWeight: "800", fontSize: 13 },
-    chipsRow: { gap: 8 },
-    chip: {
-        borderRadius: theme.radius.full,
-        borderWidth: 1,
-        borderColor: theme.colors.borderPrimary,
-        backgroundColor: theme.colors.bgCard,
-        paddingHorizontal: 12,
-        paddingVertical: 7,
-    },
-    chipSelected: { backgroundColor: theme.colors.primary, borderColor: theme.colors.primary },
-    chipText: { color: theme.colors.textSecondary, fontWeight: "700", fontSize: 12 },
-    chipTextSelected: { color: theme.colors.onPrimary },
-    actionButton: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: 8,
-        marginTop: theme.spacing.sm,
-        borderRadius: theme.radius.full,
-        paddingVertical: 13,
-        backgroundColor: theme.colors.primary,
-    },
-    actionButtonDisabled: { opacity: 0.65 },
-    actionButtonText: { color: theme.colors.onPrimary, fontWeight: "900", fontSize: 13 },
-    progressStack: { gap: 10, marginTop: 2 },
+        container: { flex: 1, backgroundColor: theme.colors.bgSecondary },
+        center: { flex: 1, alignItems: "center", justifyContent: "center" },
+        content: { padding: theme.spacing.md, gap: theme.spacing.md, paddingBottom: theme.spacing.xl },
+        metricsWrap: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
+        filterLabel: { color: theme.colors.textPrimary, fontWeight: "800", fontSize: 13 },
+        chipsRow: { gap: 8 },
+        chip: {
+            borderRadius: theme.radius.full,
+            borderWidth: 1,
+            borderColor: theme.colors.borderPrimary,
+            backgroundColor: theme.colors.bgCard,
+            paddingHorizontal: 12,
+            paddingVertical: 7,
+        },
+        chipSelected: { backgroundColor: theme.colors.primary, borderColor: theme.colors.primary },
+        chipText: { color: theme.colors.textSecondary, fontWeight: "700", fontSize: 12 },
+        chipTextSelected: { color: theme.colors.onPrimary },
+        actionButton: {
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 8,
+            marginTop: theme.spacing.sm,
+            borderRadius: theme.radius.full,
+            paddingVertical: 13,
+            backgroundColor: theme.colors.primary,
+        },
+        actionButtonDisabled: { opacity: 0.65 },
+        actionButtonText: { color: theme.colors.onPrimary, fontWeight: "900", fontSize: 13 },
+        progressStack: { gap: 10, marginTop: 2 },
     };
 }
