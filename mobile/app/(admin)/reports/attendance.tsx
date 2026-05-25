@@ -22,7 +22,7 @@ import {
     type AdminReportEventSummary,
 } from "../../../src/api/adminReports";
 import { downloadReportPdf } from "../../../src/utils/reportDownload";
-import { joinReportText, pickReportText } from "../../../src/utils/reportText";
+import { pickReportText } from "../../../src/utils/reportText";
 import { useAppTheme, useThemedStyles, type ThemeTokens } from "../../../src/shared";
 
 const EVENT_TYPES = [
@@ -180,6 +180,44 @@ function formatDateShort(dateRaw: unknown) {
     return "";
 }
 
+function normalizeTipoKey(raw: unknown) {
+    if (raw === null || raw === undefined) return "otro";
+    let candidate = "";
+    if (typeof raw === "string" || typeof raw === "number") {
+        candidate = String(raw);
+    } else if (typeof raw === "object" && raw !== null) {
+        const o = raw as Record<string, unknown>;
+        const candidates = ["tipoEvento", "tipo", "name", "nombre", "tipo_evento"];
+        for (const k of candidates) {
+            const v = o[k];
+            if (typeof v === "string" || typeof v === "number") {
+                candidate = String(v);
+                break;
+            }
+        }
+    }
+
+    let s = candidate.normalize("NFKC").trim();
+    if (!s) return "otro";
+    // remove diacritics
+    s = s.normalize("NFD").replace(/\p{M}/gu, "");
+    // replace non letters/numbers with space
+    s = s.replace(/[^\p{L}\p{N}\s]+/gu, " ");
+    // collapse repeated words: "course course" -> "course"
+    s = s.replace(/\b(\w+)\b(?:\s+\1\b)+/giu, "$1");
+    // collapse spaces and lowercase
+    s = s.replace(/\s+/g, " ").trim().toLowerCase();
+    return s || "otro";
+}
+
+function humanizeTipoKey(key: string) {
+    if (!key) return "Otro";
+    return key
+        .split(/\s+/)
+        .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+        .join(" ");
+}
+
 export default function AdminReportAttendanceScreen() {
     const { tokens } = useAppTheme();
     const styles: any = useThemedStyles(createStyles as any);
@@ -228,38 +266,7 @@ export default function AdminReportAttendanceScreen() {
 
     /* comparativeRows removed — using progress bars only */
 
-    const noShowRows = useMemo(() => {
-        const list = Array.isArray(noShowsQuery.data) ? (noShowsQuery.data as Array<Record<string, unknown>>) : [];
-        const map = new Map<string, { displayName: string; cantidadEventos: number; totalInscritos: number; totalNoShows: number }>();
-        for (const item of list) {
-            const tipoRaw = (pickReportText(item.tipoEvento, "Tipo") || "Otro").toString().trim();
-            // collapse repeated words like "course course" -> "course"
-            const tipoClean = tipoRaw.replace(/\b(\w+)\b(?:\s+\1\b)+/gi, "$1").trim();
-            const tipoKey = (tipoClean ?? "").toString().toLowerCase() || "otro";
-            const cantidadEventos = Number(item.cantidadEventos ?? 0) || 0;
-            const totalInscritos = Number(item.totalInscritos ?? 0) || 0;
-            const totalNoShows = Number(item.totalNoShows ?? 0) || 0;
-            const existing = map.get(tipoKey);
-            if (existing) {
-                existing.cantidadEventos += cantidadEventos;
-                existing.totalInscritos += totalInscritos;
-                existing.totalNoShows += totalNoShows;
-            } else {
-                map.set(tipoKey, { displayName: tipoClean || tipoRaw, cantidadEventos, totalInscritos, totalNoShows });
-            }
-        }
-
-        const rows: Array<{ title: string; subtitle: string; right: string }> = [];
-        for (const [_, agg] of map.entries()) {
-            const porcentaje = agg.totalInscritos > 0 ? agg.totalNoShows / agg.totalInscritos : 0;
-            rows.push({
-                title: agg.displayName || "Otro",
-                subtitle: joinReportText([`${formatNumber(agg.cantidadEventos)} eventos`, `${formatNumber(agg.totalInscritos)} inscritos`]),
-                right: formatPercent(porcentaje),
-            });
-        }
-        return rows;
-    }, [noShowsQuery.data]);
+    /* noShowRows removed — show only ProgressBar entries in the UI to avoid duplicates */
 
     const comparativeItems = useMemo(() => {
         const list = Array.isArray(comparativeQuery.data)
@@ -287,9 +294,9 @@ export default function AdminReportAttendanceScreen() {
         const list = Array.isArray(noShowsQuery.data) ? (noShowsQuery.data as Array<Record<string, unknown>>) : [];
         const map = new Map<string, { displayName: string; cantidadEventos: number; totalInscritos: number; totalNoShows: number }>();
         for (const item of list) {
-            const tipoRaw = (pickReportText(item.tipoEvento, "Tipo") || "Otro").toString().trim();
-            const tipoClean = tipoRaw.replace(/\b(\w+)\b(?:\s+\1\b)+/gi, "$1").trim();
-            const tipoKey = (tipoClean ?? "").toString().toLowerCase() || "otro";
+            const tipoRaw = pickReportText(item.tipoEvento, "Tipo") || "Otro";
+            const tipoKey = normalizeTipoKey(tipoRaw);
+            // display will be derived from normalized key to ensure consistency
             const cantidadEventos = Number(item.cantidadEventos ?? 0) || 0;
             const totalInscritos = Number(item.totalInscritos ?? 0) || 0;
             const totalNoShows = Number(item.totalNoShows ?? 0) || 0;
@@ -299,7 +306,7 @@ export default function AdminReportAttendanceScreen() {
                 existing.totalInscritos += totalInscritos;
                 existing.totalNoShows += totalNoShows;
             } else {
-                map.set(tipoKey, { displayName: tipoClean || tipoRaw, cantidadEventos, totalInscritos, totalNoShows });
+                map.set(tipoKey, { displayName: humanizeTipoKey(tipoKey), cantidadEventos, totalInscritos, totalNoShows });
             }
         }
 
@@ -425,7 +432,6 @@ export default function AdminReportAttendanceScreen() {
                     </SectionCard>
 
                     <SectionCard title="Análisis de no-shows">
-                        <DataList rows={noShowRows} />
                         <View style={styles.progressStack}>
                             {noShowItems.map((item, index) => (
                                 <ProgressBar
