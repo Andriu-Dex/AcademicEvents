@@ -13,6 +13,13 @@
 # Ignora archivos que contienen variables de entorno sensibles como claves API, URIs de bases de datos, etc.
 # Incluye tanto el archivo base como posibles variantes como .env.local, .env.development, etc.
 .env
+backend/.env
+backend/.env.*
+frontend/.env
+frontend/.env.*
+mobile/.env
+mobile/.env.*
+backend/firebase-service-account.json
 
 ##################################
 # Ignorar carpetas de construcción
@@ -39,6 +46,11 @@ backend/prisma/migrations/
 
 # Archivos generados por Prisma (se regeneran automáticamente)
 backend/src/generated/
+
+# Caché y artefactos de Expo/React Native que no deben compartirse
+**/.expo/
+**/.expo-shared/
+mobile/expo-env.d.ts
 
 # Archivos de debug y desarrollo
 debug_reporte.html
