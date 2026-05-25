@@ -43,8 +43,7 @@ const verificarToken = async (req, res) => {
 
     if (!resultado.success) {
       console.log(
-        `[${new Date().toISOString()}] Controller: Verificación fallida para token ${token}: ${
-          resultado.message
+        `[${new Date().toISOString()}] Controller: Verificación fallida para token ${token}: ${resultado.message
         }`
       );
       return res.status(400).json({

@@ -118,8 +118,7 @@ class EmailVerificationService {
         }
 
         console.log(
-          `[${new Date().toISOString()}] Token inválido ${tokenValue}. Motivo: ${
-            resultadoValidacion.motivo || "ERROR_GENERICO"
+          `[${new Date().toISOString()}] Token inválido ${tokenValue}. Motivo: ${resultadoValidacion.motivo || "ERROR_GENERICO"
           }`
         );
         return {
@@ -150,8 +149,7 @@ class EmailVerificationService {
 
         if (tokenActual?.status !== "ACTIVE") {
           console.log(
-            `[${new Date().toISOString()}] Token ${tokenValue} ya no válido durante la transacción. Estado: ${
-              tokenActual?.status || "NO_EXISTE"
+            `[${new Date().toISOString()}] Token ${tokenValue} ya no válido durante la transacción. Estado: ${tokenActual?.status || "NO_EXISTE"
             }`
           );
           throw new Error("Token ya no válido durante la transacción");
@@ -179,8 +177,7 @@ class EmailVerificationService {
         });
 
         console.log(
-          `[${new Date().toISOString()}] Actualizando estado de verificación para la cuenta ${
-            resultadoValidacion.token.accountId
+          `[${new Date().toISOString()}] Actualizando estado de verificación para la cuenta ${resultadoValidacion.token.accountId
           }`
         );
         // Actualizar estado de verificación en la cuenta
@@ -193,8 +190,7 @@ class EmailVerificationService {
         });
 
         console.log(
-          `[${new Date().toISOString()}] Verificación completada con éxito para token ${tokenValue}, cuenta ${
-            resultadoValidacion.token.accountId
+          `[${new Date().toISOString()}] Verificación completada con éxito para token ${tokenValue}, cuenta ${resultadoValidacion.token.accountId
           }`
         );
         return cuentaActualizada;
