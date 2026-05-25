@@ -326,9 +326,9 @@ export function HomeContent(
     const router = useRouter();
     const segments = useSegments();
     const user = useAuthStore((s) => s.user);
-    const { tokens } = useAppTheme();
+    const { tokens, mode } = useAppTheme();
     const theme = tokens;
-    const styles = createStyles(theme);
+    const styles = createStyles(theme, mode);
     const isAdminArea = segments.includes("(admin)");
     let rightNavNode: React.ReactNode = null;
     if (user) {
@@ -1098,7 +1098,7 @@ export function HomeContent(
     );
 }
 
-function createStyles(theme: typeof import("../src/shared").theme) {
+function createStyles(theme: typeof import("../src/shared").theme, mode: "light" | "dark") {
     return StyleSheet.create({
         container: {
             flex: 1,
@@ -1202,7 +1202,7 @@ function createStyles(theme: typeof import("../src/shared").theme) {
             borderColor: theme.colors.borderPrimary,
         },
         navCtaSecondaryText: {
-            color: theme.colors.utaPrimary,
+            color: mode === "dark" ? theme.colors.textInverse : theme.colors.utaPrimary,
             fontWeight: "800",
             fontSize: 12,
         },
@@ -1423,7 +1423,7 @@ function createStyles(theme: typeof import("../src/shared").theme) {
             paddingHorizontal: 10,
         },
         secondaryActionText: {
-            color: theme.colors.primary,
+            color: mode === "dark" ? theme.colors.textInverse : theme.colors.primary,
             fontSize: 13,
             fontWeight: "800",
             textAlign: "center",
