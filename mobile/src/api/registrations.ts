@@ -3,6 +3,7 @@ import { apiClient } from "./client";
 export type RegistrationEventSummary = {
     id: string;
     title: string;
+    type: string;
     description: string;
     coverImageUrl: string;
     startDate: string;
@@ -15,6 +16,7 @@ export type RegistrationItem = {
     id: string;
     status: string;
     createdAt: string;
+    observation: string | null;
     paymentProofUrl: string | null;
     certificate: RegistrationCertificate | null;
     event: RegistrationEventSummary | null;
@@ -48,6 +50,7 @@ function normalizeEvent(raw: Record<string, unknown>): RegistrationEventSummary 
     return {
         id: pickString(raw, "id", "id_eve"),
         title: pickString(raw, "name", "nom_eve", "nombre") || "Evento",
+        type: pickString(raw, "type", "tip_eve", "tipoEvento", "tipo", "eventType"),
         description: pickString(raw, "description", "des_eve") || "",
         coverImageUrl: pickString(raw, "coverImageUrl", "img_por_eve", "imageUrl") || "",
         startDate: pickString(raw, "startDate", "fec_ini_eve") || "",
@@ -85,6 +88,7 @@ function normalizeRegistration(raw: Record<string, unknown>): RegistrationItem {
         id: pickString(raw, "id_ins", "id", "registrationId"),
         status: pickString(raw, "est_ins", "status") || "",
         createdAt: pickString(raw, "fec_ins", "createdAt") || "",
+        observation: pickString(raw, "observacion", "observation", "reason", "obs_ins") || null,
         paymentProofUrl: pickString(raw, "comprobante", "com_ins", "paymentProofUrl") || null,
         certificate,
         event,

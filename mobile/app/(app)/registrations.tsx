@@ -58,6 +58,23 @@ function statusIcon(status: string): keyof typeof Ionicons.glyphMap {
     return "ellipse";
 }
 
+function formatDateRange(startDate: string, endDate: string) {
+    const from = formatDate(startDate);
+    const to = formatDate(endDate);
+
+    if (from && to) {
+        return `${from} - ${to}`;
+    }
+
+    return from || to || "Sin fecha";
+}
+
+function formatEventType(type: string) {
+    const normalized = type.trim();
+    if (!normalized) return "Sin tipo";
+    return normalized.toUpperCase();
+}
+
 function isCertificateEligible(status: string) {
     const normalized = status.trim().toUpperCase();
     return normalized.includes("APROB") || normalized.includes("APPROVED");
@@ -148,11 +165,13 @@ function RegistrationCard({
     onDownloadCertificate,
     onSendCertificateByEmail,
     onOpenProof,
+    onOpenDetails,
 }: Readonly<{
     item: RegistrationItem;
     onDownloadCertificate: (item: RegistrationItem) => void;
     onSendCertificateByEmail: (item: RegistrationItem) => void;
     onOpenProof: (url: string) => void;
+    onOpenDetails: (item: RegistrationItem) => void;
 }>) {
     const { tokens } = useAppTheme();
     const styles = useThemedStyles<any>(createStyles as any);
@@ -161,6 +180,7 @@ function RegistrationCard({
     const label = statusLabel(item.status);
     const icon = statusIcon(item.status);
     const canDownloadCertificate = isCertificateEligible(item.status);
+    const hasDetails = Boolean(event || item.observation);
 
     return (
         <View style={styles.card}>
@@ -207,6 +227,14 @@ function RegistrationCard({
                     </View>
                 ) : null}
 
+                {hasDetails ? (
+                    <Pressable style={styles.detailsBtn} onPress={() => onOpenDetails(item)}>
+                        <Ionicons name="information-circle-outline" size={15} color={tokens.colors.primary} />
+                        <Text style={styles.detailsBtnText}>Ver detalles</Text>
+                        <Ionicons name="chevron-forward-outline" size={14} color={tokens.colors.primary} />
+                    </Pressable>
+                ) : null}
+
                 {/* Mostrar calificaciones si la inscripción está finalizada */}
                 {(() => {
                     const st = (item.status ?? "").toString().toUpperCase();
@@ -234,6 +262,7 @@ export default function RegistrationsScreen() {
     const styles = useThemedStyles<any>(createStyles as any);
     const [statusFilter, setStatusFilter] = useState<string>("TODOS");
     const [proofPreviewUrl, setProofPreviewUrl] = useState<string | null>(null);
+    const [detailsItem, setDetailsItem] = useState<RegistrationItem | null>(null);
     const [manualRefreshing, setManualRefreshing] = useState(false);
 
     const query = useQuery({
@@ -375,6 +404,14 @@ export default function RegistrationsScreen() {
         }
     };
 
+    const onOpenDetails = (item: RegistrationItem) => {
+        setDetailsItem(item);
+    };
+
+    const onCloseDetails = () => {
+        setDetailsItem(null);
+    };
+
     const onManualRefresh = async () => {
         setManualRefreshing(true);
         try {
@@ -439,6 +476,7 @@ export default function RegistrationsScreen() {
                         onDownloadCertificate={onDownloadCertificate}
                         onSendCertificateByEmail={onSendCertificateByEmail}
                         onOpenProof={onOpenProof}
+                        onOpenDetails={onOpenDetails}
                     />
                 )}
                 ListEmptyComponent={
@@ -491,6 +529,40 @@ export default function RegistrationsScreen() {
                         </View>
                     </View>
                 </View>
+            </Modal>
+
+            <Modal visible={Boolean(detailsItem)} transparent animationType="fade" onRequestClose={onCloseDetails}>
+                <Pressable style={styles.detailsOverlay} onPress={onCloseDetails}>
+                    <Pressable style={styles.detailsSheet} onPress={(event) => event.stopPropagation()}>
+                        <View style={styles.detailsHandle} />
+                        <Text style={styles.detailsTitle}>Detalles de la inscripción</Text>
+
+                        <View style={styles.detailsSection}>
+                            <Text style={styles.detailsLabel}>Tipo</Text>
+                            <Text style={styles.detailsValue}>
+                                {detailsItem?.event?.type ? formatEventType(detailsItem.event.type) : "Sin tipo"}
+                            </Text>
+                        </View>
+
+                        <View style={styles.detailsSection}>
+                            <Text style={styles.detailsLabel}>Fecha</Text>
+                            <Text style={styles.detailsValue}>
+                                {detailsItem?.event ? formatDateRange(detailsItem.event.startDate, detailsItem.event.endDate) : "Sin fecha"}
+                            </Text>
+                        </View>
+
+                        <View style={styles.detailsSection}>
+                            <Text style={styles.detailsLabel}>Observación del administrador</Text>
+                            <Text style={styles.detailsValue}>
+                                {detailsItem?.observation?.trim() ? detailsItem.observation : "Sin observación"}
+                            </Text>
+                        </View>
+
+                        <Pressable style={styles.detailsCloseBtn} onPress={onCloseDetails}>
+                            <Text style={styles.detailsCloseText}>Cerrar</Text>
+                        </Pressable>
+                    </Pressable>
+                </Pressable>
             </Modal>
         </View>
     );
@@ -591,6 +663,24 @@ function createStyles(theme: ThemeTokens) {
         },
         certificateBtnText: { flex: 1, color: theme.colors.success, fontWeight: "800", fontSize: 13 },
         certificateBtnTextSecondary: { color: theme.colors.primary },
+        detailsBtn: {
+            marginTop: 10,
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 6,
+            paddingVertical: 10,
+            paddingHorizontal: 12,
+            borderRadius: theme.radius.sm,
+            borderWidth: 1,
+            borderColor: theme.colors.primaryLight,
+            backgroundColor: theme.colors.primaryLighter,
+        },
+        detailsBtnText: {
+            color: theme.colors.primary,
+            fontWeight: "800",
+            fontSize: 13,
+        },
         gradesWrap: { marginTop: 10, padding: 10, borderRadius: theme.radius.sm, backgroundColor: theme.colors.bgSecondary, borderWidth: 1, borderColor: theme.colors.borderPrimary },
         gradesTitle: { fontWeight: "900", color: theme.colors.textPrimary, marginBottom: 6 },
         gradeLine: { color: theme.colors.textTertiary, fontWeight: "700" },
@@ -625,5 +715,59 @@ function createStyles(theme: ThemeTokens) {
         modalPrimaryBtn: { backgroundColor: theme.colors.primary, borderColor: theme.colors.primary },
         modalBtnText: { color: theme.colors.textPrimary, fontWeight: "700" },
         modalPrimaryText: { color: theme.colors.onPrimary },
+        detailsOverlay: {
+            flex: 1,
+            backgroundColor: theme.colors.overlayBlack65,
+            justifyContent: "flex-end",
+        },
+        detailsSheet: {
+            backgroundColor: theme.colors.bgPrimary,
+            borderTopLeftRadius: 24,
+            borderTopRightRadius: 24,
+            paddingHorizontal: theme.spacing.md,
+            paddingTop: 10,
+            paddingBottom: theme.spacing.lg,
+            gap: 12,
+        },
+        detailsHandle: {
+            alignSelf: "center",
+            width: 48,
+            height: 5,
+            borderRadius: theme.radius.full,
+            backgroundColor: theme.colors.borderPrimary,
+        },
+        detailsTitle: {
+            fontSize: 18,
+            fontWeight: "900",
+            color: theme.colors.textPrimary,
+        },
+        detailsSection: {
+            gap: 4,
+        },
+        detailsLabel: {
+            fontSize: 12,
+            fontWeight: "800",
+            color: theme.colors.textTertiary,
+            textTransform: "uppercase",
+            letterSpacing: 0.5,
+        },
+        detailsValue: {
+            fontSize: 15,
+            lineHeight: 21,
+            fontWeight: "700",
+            color: theme.colors.textPrimary,
+        },
+        detailsCloseBtn: {
+            alignSelf: "flex-end",
+            paddingHorizontal: 16,
+            paddingVertical: 10,
+            borderRadius: theme.radius.full,
+            backgroundColor: theme.colors.primary,
+            marginTop: 4,
+        },
+        detailsCloseText: {
+            color: theme.colors.onPrimary,
+            fontWeight: "800",
+        },
     };
 }
