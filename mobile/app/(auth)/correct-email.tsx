@@ -27,6 +27,13 @@ function readParam(value: string | string[] | undefined) {
     return undefined;
 }
 
+async function persistPendingVerification(email: string, careerId: string | null) {
+    await SecureStore.setItemAsync(PENDING_EMAIL_KEY, email);
+    if (careerId) {
+        await SecureStore.setItemAsync(PENDING_CAREER_KEY, careerId);
+    }
+}
+
 export default function CorrectEmailScreen() {
     const router = useRouter();
     const params = useLocalSearchParams();
@@ -48,10 +55,11 @@ export default function CorrectEmailScreen() {
             const storedEmail = (incomingEmail ?? (await SecureStore.getItemAsync(PENDING_EMAIL_KEY)) ?? "")
                 .trim()
                 .toLowerCase();
-            const storedCareer = (await SecureStore.getItemAsync(PENDING_CAREER_KEY)) ?? "";
+            const storedCareer = (readParam(params.careerId as any) ?? (await SecureStore.getItemAsync(PENDING_CAREER_KEY)) ?? "")
+                .trim();
 
             if (!storedEmail) {
-                router.replace("/(auth)/verification-pending");
+                router.back();
                 return;
             }
 
@@ -59,15 +67,16 @@ export default function CorrectEmailScreen() {
                 setCurrentEmail(storedEmail);
                 setNewEmail(storedEmail);
                 setCareerId(storedCareer);
+                await persistPendingVerification(storedEmail, storedCareer || null);
             }
         };
 
-        hydrate().catch(() => router.replace("/(auth)/verification-pending"));
+        hydrate().catch(() => router.back());
 
         return () => {
             cancelled = true;
         };
-    }, [incomingEmail, router]);
+    }, [incomingEmail, params.careerId, router]);
 
     const institutional = useMemo(() => newEmail.trim().toLowerCase().endsWith("@uta.edu.ec"), [newEmail]);
 
@@ -168,10 +177,20 @@ export default function CorrectEmailScreen() {
                                 <ActivityIndicator style={{ marginTop: 8 }} />
                             ) : (
                                 <View style={styles.pickerBlock}>
-                                    <Picker selectedValue={careerId} onValueChange={(value) => setCareerId(String(value))}>
-                                        <Picker.Item label="Selecciona una carrera" value="" />
+                                    <Picker
+                                        selectedValue={careerId}
+                                        onValueChange={(value) => setCareerId(String(value))}
+                                        style={styles.picker}
+                                        itemStyle={styles.pickerItem}
+                                    >
+                                        <Picker.Item label="Selecciona una carrera" value="" color={tokens.colors.textInverse} />
                                         {careers?.map((career) => (
-                                            <Picker.Item key={career.id} label={career.nombre} value={career.id} />
+                                            <Picker.Item
+                                                key={career.id}
+                                                label={career.nombre}
+                                                value={career.id}
+                                                color={tokens.colors.textInverse}
+                                            />
                                         ))}
                                     </Picker>
                                 </View>
@@ -189,7 +208,7 @@ export default function CorrectEmailScreen() {
                         )}
                     </Pressable>
 
-                    <Pressable style={styles.secondaryButton} onPress={() => router.replace("/(auth)/verification-pending")}>
+                    <Pressable style={styles.secondaryButton} onPress={() => router.back()}>
                         <Text style={styles.secondaryButtonText}>Volver</Text>
                     </Pressable>
                 </View>
@@ -286,6 +305,12 @@ function createStyles(tokens: typeof import("../../src/shared").theme) {
             backgroundColor: tokens.colors.surfaceAlt,
             borderWidth: 1,
             borderColor: tokens.colors.border,
+        },
+        picker: {
+            color: tokens.colors.textInverse,
+        },
+        pickerItem: {
+            color: tokens.colors.textInverse,
         },
         error: {
             marginTop: tokens.spacing.md,

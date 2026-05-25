@@ -6,7 +6,7 @@ import { usePushTokenSync } from "../src/features/notifications/usePushTokenSync
 import { useRealtimeSync } from "../src/features/realtime/useRealtimeSync";
 import { queryClient } from "../src/shared/queryClient";
 import { useAuthStore } from "../src/store/authStore";
-import { ThemeProvider, ThemeToggleButton, useAppTheme } from "../src/shared";
+import { ThemeProvider, ThemeToggleButton } from "../src/shared";
 
 export default function RootLayout() {
     const hydrate = useAuthStore((state) => state.hydrate);
@@ -19,7 +19,7 @@ export default function RootLayout() {
         hydrate();
     }, [hydrate]);
 
-    usePushTokenSync(accessToken);
+    usePushTokenSync({ accessToken, userId, isHydrated });
     useRealtimeSync({ accessToken, userId, role, isHydrated });
 
     if (!isHydrated) {

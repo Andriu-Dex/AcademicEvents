@@ -10,7 +10,7 @@ let expoGoWarningShown = false;
 let notificationsModulePromise: Promise<NotificationsModule | null> | null = null;
 
 function isExpoGo() {
-    return Constants.appOwnership === "expo";
+    return Constants.executionEnvironment === "storeClient";
 }
 
 async function loadNotificationsModule(): Promise<NotificationsModule | null> {
@@ -26,14 +26,12 @@ async function loadNotificationsModule(): Promise<NotificationsModule | null> {
         return null;
     }
 
-    if (!notificationsModulePromise) {
-        notificationsModulePromise = import("expo-notifications")
-            .then((module) => module)
-            .catch((error) => {
-                notificationsModulePromise = null;
-                throw error;
-            });
-    }
+    notificationsModulePromise ??= import("expo-notifications")
+        .then((module) => module)
+        .catch((error) => {
+            notificationsModulePromise = null;
+            throw error;
+        });
 
     return notificationsModulePromise;
 }
@@ -110,9 +108,11 @@ export async function syncPushTokenNow() {
     await syncPushToken();
 }
 
-export function usePushTokenSync(accessToken: string | null) {
+export function usePushTokenSync(params: { accessToken: string | null; userId: string | null; isHydrated: boolean }) {
+    const { accessToken, userId, isHydrated } = params;
+
     useEffect(() => {
-        if (!accessToken) return;
+        if (!isHydrated || !accessToken || !userId) return;
 
         void syncPushToken().catch((error) => {
             if (__DEV__) {
@@ -130,5 +130,5 @@ export function usePushTokenSync(accessToken: string | null) {
         });
 
         return () => sub.remove();
-    }, [accessToken]);
+    }, [accessToken, isHydrated, userId]);
 }

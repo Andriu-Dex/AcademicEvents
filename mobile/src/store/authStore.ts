@@ -42,7 +42,7 @@ export const useAuthStore = create<AuthState>((set) => ({
             if (!current) return state;
             const next = { ...current, ...patch };
             try {
-                SecureStore.setItemAsync(USER_KEY, JSON.stringify(next)).catch(() => {});
+                SecureStore.setItemAsync(USER_KEY, JSON.stringify(next)).catch(() => { });
             } catch {
                 // ignore
             }

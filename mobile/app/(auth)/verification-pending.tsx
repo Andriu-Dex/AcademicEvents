@@ -9,6 +9,13 @@ import { useAppTheme } from "../../src/shared";
 const PENDING_EMAIL_KEY = "academicevents.verificationPendingEmail";
 const PENDING_CAREER_KEY = "academicevents.verificationPendingCareerId";
 
+async function persistPendingVerification(email: string, careerId: string | null) {
+    await SecureStore.setItemAsync(PENDING_EMAIL_KEY, email);
+    if (careerId) {
+        await SecureStore.setItemAsync(PENDING_CAREER_KEY, careerId);
+    }
+}
+
 export default function VerificationPendingScreen() {
     const router = useRouter();
     const params = useLocalSearchParams();
@@ -16,7 +23,7 @@ export default function VerificationPendingScreen() {
     const styles = createStyles(tokens as any);
 
     const incomingEmail = useMemo(() => {
-        const val = params.email as string | string[] | undefined;
+        const val = params.email;
         if (!val) return null;
         return Array.isArray(val) ? val[0] : val;
     }, [params.email]);
@@ -38,6 +45,9 @@ export default function VerificationPendingScreen() {
                 if (mounted) {
                     setEmail(storedEmail || null);
                     setCareerId(storedCareer || null);
+                    if (storedEmail) {
+                        await persistPendingVerification(storedEmail, storedCareer || null);
+                    }
                 }
             } catch {
                 if (mounted) router.replace("/(auth)/login");
@@ -80,7 +90,18 @@ export default function VerificationPendingScreen() {
                         {loading ? <ActivityIndicator color={tokens.colors.textInverse} /> : <Text style={styles.buttonText}>Reenviar verificación</Text>}
                     </Pressable>
 
-                    <Pressable style={styles.secondaryButton} onPress={() => router.push("/(auth)/correct-email")}> 
+                    <Pressable
+                        style={styles.secondaryButton}
+                        onPress={() =>
+                            router.push({
+                                pathname: "/(auth)/correct-email",
+                                params: {
+                                    email: email ?? undefined,
+                                    careerId: careerId ?? undefined,
+                                },
+                            })
+                        }
+                    >
                         <Text style={styles.secondaryButtonText}>Corregir correo</Text>
                     </Pressable>
 

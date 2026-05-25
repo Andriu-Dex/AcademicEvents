@@ -67,13 +67,13 @@ export async function verifyEmailToken(token: string) {
 
     const user: AuthUser | null = rawUser
         ? {
-              id: rawUser.id,
-              email: rawUser.correo,
-              role: rawUser.rol_usu,
-              firstName: rawUser.nom_usu,
-              lastName: rawUser.ape_usu,
-              profileImageUrl: null,
-          }
+            id: rawUser.id,
+            email: rawUser.correo,
+            role: rawUser.rol_usu,
+            firstName: rawUser.nom_usu,
+            lastName: rawUser.ape_usu,
+            profileImageUrl: null,
+        }
         : null;
 
     return {
