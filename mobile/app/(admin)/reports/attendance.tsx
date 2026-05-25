@@ -165,6 +165,21 @@ function composeReportLabel(title: string, subtitle: string) {
     return subtitle ? [title, subtitle].join(" · ") : title;
 }
 
+function formatDateShort(dateRaw: unknown) {
+    if (!dateRaw) return "";
+    if (dateRaw instanceof Date) {
+        return dateRaw.toLocaleDateString("es-EC", { day: "2-digit", month: "2-digit", year: "numeric" });
+    }
+    if (typeof dateRaw === "string" || typeof dateRaw === "number") {
+        const s = String(dateRaw).trim();
+        if (!s) return "";
+        const d = new Date(s);
+        if (!Number.isFinite(d.getTime())) return s;
+        return d.toLocaleDateString("es-EC", { day: "2-digit", month: "2-digit", year: "numeric" });
+    }
+    return "";
+}
+
 export default function AdminReportAttendanceScreen() {
     const { tokens } = useAppTheme();
     const styles: any = useThemedStyles(createStyles as any);
@@ -211,16 +226,7 @@ export default function AdminReportAttendanceScreen() {
         refetchInterval: 30000,
     });
 
-    const comparativeRows = useMemo(() => {
-        const list = Array.isArray(comparativeQuery.data)
-            ? (comparativeQuery.data as Array<Record<string, unknown>>)
-            : [];
-        return list.map((item) => ({
-            title: pickReportText(item.nombreEvento, "Evento"),
-            subtitle: joinReportText([pickReportText(item.tipoEvento, ""), `${formatNumber(item.totalInscritos)} inscritos`]),
-            right: formatPercent(item.porcentajeAsistencia),
-        }));
-    }, [comparativeQuery.data]);
+    /* comparativeRows removed — using progress bars only */
 
     const noShowRows = useMemo(() => {
         const list = Array.isArray(noShowsQuery.data) ? (noShowsQuery.data as Array<Record<string, unknown>>) : [];
@@ -260,12 +266,21 @@ export default function AdminReportAttendanceScreen() {
             ? (comparativeQuery.data as Array<Record<string, unknown>>)
             : [];
 
-        return list.map((item) => ({
-            title: pickReportText(item.nombreEvento, "Evento"),
-            subtitle: pickReportText(item.tipoEvento, ""),
-            value: toPercentValue(item.porcentajeAsistencia),
-            helper: `${formatNumber(item.totalInscritos)} inscritos`,
-        }));
+        return list.map((item) => {
+            const title = pickReportText(item.nombreEvento, "Evento");
+            const tipo = pickReportText(item.tipoEvento, "");
+            const fecha = formatDateShort(item.fechaEvento ?? item.fecha ?? item.startDate ?? item.fec_ini_eve);
+            const inscritos = Number(item.totalInscritos ?? item.total_inscritos ?? item.inscritos ?? item.totalInscripcion ?? 0) || 0;
+            const asistencias = Number(item.totalAsistencias ?? item.total_asistencias ?? item.asistencias ?? item.totalAsist ?? 0) || 0;
+            const pct = inscritos > 0 ? asistencias / inscritos : toPercentValue(item.porcentajeAsistencia ?? 0) / 100;
+
+            return {
+                label: [title, tipo, fecha].filter(Boolean).join(" · "),
+                value: toPercentValue(pct * 100) || toPercentValue(item.porcentajeAsistencia),
+                helper: `${formatNumber(inscritos)} inscritos · ${formatNumber(asistencias)} asist.`,
+                raw: item,
+            };
+        });
     }, [comparativeQuery.data]);
 
     const noShowItems = useMemo(() => {
@@ -292,7 +307,7 @@ export default function AdminReportAttendanceScreen() {
             title: agg.displayName || "Otro",
             subtitle: `${formatNumber(agg.cantidadEventos)} eventos`,
             value: toPercentValue(agg.totalInscritos > 0 ? agg.totalNoShows / agg.totalInscritos : 0),
-            helper: `${formatNumber(agg.totalInscritos)} inscritos`,
+            helper: `${formatNumber(agg.cantidadEventos)} eventos · ${formatNumber(agg.totalInscritos)} inscritos · ${formatNumber(agg.totalNoShows)} no-shows`,
         }));
     }, [noShowsQuery.data]);
 
@@ -393,15 +408,13 @@ export default function AdminReportAttendanceScreen() {
                     ) : null}
 
                     <SectionCard title="Comparativa de eventos">
-                        <DataList rows={comparativeRows} />
                         <View style={styles.progressStack}>
                             {comparativeItems.map((item, index) => {
                                 const accentColor = getAttendanceAccent(item.value, tokens.colors);
-                                const label = composeReportLabel(item.title, item.subtitle);
                                 return (
                                     <ProgressBar
-                                        key={`${item.title}-${item.subtitle}-${index}`}
-                                        label={label}
+                                        key={`${item.label}-${index}`}
+                                        label={item.label}
                                         value={item.value}
                                         accentColor={accentColor}
                                         helperText={item.helper}
