@@ -1,7 +1,7 @@
 const { prisma } = require("../config/db");
 const { enviarCorreoConCertificado } = require("../services/mailer");
-const fs = require("fs");
-const path = require("path");
+const fs = require("node:fs");
+const path = require("node:path");
 const {
   generarCertificadoPDF,
   cumpleRequisitosCertificado,
@@ -116,9 +116,8 @@ const generarCertificado = async (req, res) => {
           codigoValidacion,
         };
 
-        const nombreArchivo = `certificado_${
-          inscripcion.id
-        }_${Date.now()}.pdf`;
+        const nombreArchivo = `certificado_${inscripcion.id
+          }_${Date.now()}.pdf`;
         const rutaArchivo = path.join(certificadosDir, nombreArchivo);
 
         const pdfBuffer = await generarCertificadoPDF(datosCertificado);
@@ -238,7 +237,6 @@ const generarCertificado = async (req, res) => {
         },
       });
 
-      // Si todo ha ido bien, enviamos el archivo al cliente
       res.setHeader("Content-Type", "application/pdf");
       res.setHeader(
         "Content-Disposition",
@@ -296,10 +294,81 @@ const enviarCertificadoPorCorreo = async (req, res) => {
       where: withTenantWhere(req.tenantId, { registrationId: id }),
     });
 
-    // Si no existe, primero lo generamos
+    // Si no existe, lo generamos aquí mismo para poder enviar el correo sin depender de un redirect.
     if (!certificado) {
-      // Redirigir a la generación de certificado
-      return res.redirect(`/api/certificados/${id}`);
+      const inscripcion = await prisma.registration.findFirst({
+        where: withTenantWhere(req.tenantId, { id: id }),
+        include: {
+          account: {
+            include: {
+              user: {
+                include: { career: true },
+              },
+            },
+          },
+          event: {
+            include: { eventCourse: true },
+          },
+          registrationCourse: true,
+        },
+      });
+
+      if (!inscripcion) {
+        return res.status(404).json({ msg: "Inscripción no encontrada" });
+      }
+
+      const eventoLegacy = mapEventToLegacy(inscripcion.event);
+      const registrationCourseLegacy = mapRegistrationCourseToLegacy(inscripcion.registrationCourse);
+
+      if (
+        !cumpleRequisitosCertificado(
+          { ...inscripcion, por_asi_fin_usu: inscripcion.finalAttendancePercent },
+          eventoLegacy,
+          registrationCourseLegacy
+        )
+      ) {
+        return res.status(403).json({
+          msg: "No cumple requisitos para certificado",
+        });
+      }
+
+      const tipoCertificado = determinarTipoCertificado(eventoLegacy);
+      const tipoCertificadoDb = mapCertificateTypeToDb(tipoCertificado);
+      const codigoValidacion = generarCodigoValidacion();
+      const datosCertificado = {
+        usuario: mapUserToLegacy(inscripcion.account.user),
+        evento: eventoLegacy,
+        inscripcion: {
+          ...inscripcion,
+          por_asi_fin_usu: inscripcion.finalAttendancePercent,
+        },
+        asistencia: inscripcion.finalAttendancePercent || 0,
+        notaFinal: inscripcion.registrationCourse?.finalGrade || null,
+        tipoCertificado,
+        codigoValidacion,
+      };
+
+      const nombreArchivo = `certificado_${inscripcion.id}_${Date.now()}.pdf`;
+      const rutaArchivo = path.join(certificadosDir, nombreArchivo);
+      const pdfBuffer = await generarCertificadoPDF(datosCertificado);
+
+      fs.writeFileSync(rutaArchivo, pdfBuffer);
+
+      certificado = await prisma.certificate.upsert({
+        where: { registrationId: id },
+        update: {
+          fileUrl: rutaArchivo,
+          type: tipoCertificadoDb,
+          validationCode: codigoValidacion,
+        },
+        create: {
+          tenantId: inscripcion.tenantId,
+          registrationId: id,
+          fileUrl: rutaArchivo,
+          type: tipoCertificadoDb,
+          validationCode: codigoValidacion,
+        },
+      });
     }
 
     // Obtener datos de la inscripción para el correo

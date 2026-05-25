@@ -146,10 +146,12 @@ function FilterChip({
 function RegistrationCard({
     item,
     onDownloadCertificate,
+    onSendCertificateByEmail,
     onOpenProof,
 }: Readonly<{
     item: RegistrationItem;
     onDownloadCertificate: (item: RegistrationItem) => void;
+    onSendCertificateByEmail: (item: RegistrationItem) => void;
     onOpenProof: (url: string) => void;
 }>) {
     const { tokens } = useAppTheme();
@@ -191,11 +193,18 @@ function RegistrationCard({
                 ) : null}
 
                 {canDownloadCertificate ? (
-                    <Pressable style={styles.certificateBtn} onPress={() => onDownloadCertificate(item)}>
-                        <Ionicons name="ribbon-outline" size={15} color={tokens.colors.success} />
-                        <Text style={styles.certificateBtnText}>Descargar certificado</Text>
-                        <Ionicons name="download-outline" size={14} color={tokens.colors.success} />
-                    </Pressable>
+                    <View style={styles.certificateActions}>
+                        <Pressable style={[styles.certificateBtn, styles.certificateBtnPrimary]} onPress={() => onDownloadCertificate(item)}>
+                            <Ionicons name="ribbon-outline" size={15} color={tokens.colors.success} />
+                            <Text style={styles.certificateBtnText}>Descargar certificado</Text>
+                            <Ionicons name="download-outline" size={14} color={tokens.colors.success} />
+                        </Pressable>
+                        <Pressable style={[styles.certificateBtn, styles.certificateBtnSecondary]} onPress={() => onSendCertificateByEmail(item)}>
+                            <Ionicons name="mail-outline" size={15} color={tokens.colors.primary} />
+                            <Text style={[styles.certificateBtnText, styles.certificateBtnTextSecondary]}>Enviar por correo</Text>
+                            <Ionicons name="send-outline" size={14} color={tokens.colors.primary} />
+                        </Pressable>
+                    </View>
                 ) : null}
 
                 {/* Mostrar calificaciones si la inscripción está finalizada */}
@@ -348,6 +357,24 @@ export default function RegistrationsScreen() {
         }
     };
 
+    const onSendCertificateByEmail = async (item: RegistrationItem) => {
+        try {
+            Alert.alert("Enviar certificado", "Se enviará el certificado al correo registrado. ¿Deseas continuar?", [
+                { text: "Cancelar", style: "cancel" },
+                {
+                    text: "Enviar",
+                    onPress: () => {
+                        void sendCertificateByEmail(item.id)
+                            .then(() => Alert.alert("Listo", "Tu certificado fue enviado al correo registrado."))
+                            .catch(() => Alert.alert("No se pudo enviar", "Intenta nuevamente en unos segundos."));
+                    },
+                },
+            ]);
+        } catch {
+            Alert.alert("No se pudo enviar", "Intenta nuevamente en unos segundos.");
+        }
+    };
+
     const onManualRefresh = async () => {
         setManualRefreshing(true);
         try {
@@ -410,6 +437,7 @@ export default function RegistrationsScreen() {
                     <RegistrationCard
                         item={item}
                         onDownloadCertificate={onDownloadCertificate}
+                        onSendCertificateByEmail={onSendCertificateByEmail}
                         onOpenProof={onOpenProof}
                     />
                 )}
@@ -555,7 +583,14 @@ function createStyles(theme: ThemeTokens) {
             borderWidth: 1,
             borderColor: theme.colors.successBorder,
         },
+        certificateActions: { marginTop: 10, gap: 8 },
+        certificateBtnPrimary: {},
+        certificateBtnSecondary: {
+            backgroundColor: theme.colors.primaryLighter,
+            borderColor: theme.colors.primaryLight,
+        },
         certificateBtnText: { flex: 1, color: theme.colors.success, fontWeight: "800", fontSize: 13 },
+        certificateBtnTextSecondary: { color: theme.colors.primary },
         gradesWrap: { marginTop: 10, padding: 10, borderRadius: theme.radius.sm, backgroundColor: theme.colors.bgSecondary, borderWidth: 1, borderColor: theme.colors.borderPrimary },
         gradesTitle: { fontWeight: "900", color: theme.colors.textPrimary, marginBottom: 6 },
         gradeLine: { color: theme.colors.textTertiary, fontWeight: "700" },
