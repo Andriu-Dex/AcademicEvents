@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { AppState, type AppStateStatus } from "react-native";
 import { getCurrentApiBaseUrl } from "../../api/client";
+import { type NotificationItem } from "../../api/notifications";
 import { queryClient } from "../../shared/queryClient";
 
 type SessionLike = {
@@ -91,6 +92,96 @@ function authenticateSocket(socket: RealtimeSocket, session: SessionLike) {
     });
 }
 
+function pickString(input: Record<string, unknown> | undefined, ...keys: string[]) {
+    if (!input) return "";
+
+    for (const key of keys) {
+        const value = input[key];
+        if (typeof value === "string" && value.trim()) {
+            return value.trim();
+        }
+    }
+
+    return "";
+}
+
+function normalizeStatus(statusRaw: unknown) {
+    return typeof statusRaw === "string" ? statusRaw.trim().toUpperCase() : "";
+}
+
+function buildInscriptionNotification(payload: Record<string, unknown>): NotificationItem | null {
+    const rawData = (payload.data && typeof payload.data === "object" ? payload.data : payload) as Record<string, unknown>;
+    const status = normalizeStatus(rawData.estadoNuevo ?? rawData.status ?? rawData.est_ins);
+    const eventData = (rawData.event && typeof rawData.event === "object" ? rawData.event : rawData.evento) as
+        | Record<string, unknown>
+        | undefined;
+    const eventName = pickString(eventData, "name", "nom_eve", "title", "nombre") || "el evento";
+    const registrationId = pickString(rawData, "id", "registrationId", "id_ins") || `${Date.now()}`;
+
+    if (status === "ACCEPTED" || status === "ACEPTADA" || status === "APPROVED" || status === "APROBADO") {
+        const title = status === "APPROVED" || status === "APROBADO" ? "Inscripción aprobada" : "Inscripción aceptada";
+        const body =
+            status === "APPROVED" || status === "APROBADO"
+                ? `Tu inscripción para "${eventName}" fue aprobada.`
+                : `Tu inscripción para "${eventName}" fue aceptada.`;
+
+        return {
+            id: `socket-registration-${registrationId}-${status}-${Date.now()}`,
+            title,
+            body,
+            createdAt: new Date().toISOString(),
+            readAt: null,
+            type: "REGISTRATION_APPROVED",
+            data: {
+                type: "REGISTRATION_APPROVED",
+                status,
+                link: "/(app)/registrations",
+                source: "socket",
+                registrationId,
+                eventName,
+            },
+        };
+    }
+
+    if (status === "REJECTED" || status === "RECHAZADA") {
+        return {
+            id: `socket-registration-${registrationId}-${status}-${Date.now()}`,
+            title: "Inscripción rechazada",
+            body: `Tu inscripción para "${eventName}" fue rechazada.`,
+            createdAt: new Date().toISOString(),
+            readAt: null,
+            type: "REGISTRATION_REJECTED",
+            data: {
+                type: "REGISTRATION_REJECTED",
+                status,
+                link: "/(app)/registrations",
+                source: "socket",
+                registrationId,
+                eventName,
+            },
+        };
+    }
+
+    return null;
+}
+
+function upsertLiveNotification(notification: NotificationItem) {
+    queryClient.setQueryData<NotificationItem[]>(["notifications-live"], (current) => {
+        const list = Array.isArray(current) ? current : [];
+        const alreadyExists = list.some(
+            (item) =>
+                item.data?.source === "socket" &&
+                item.data?.registrationId === notification.data.registrationId &&
+                item.type === notification.type &&
+                item.data?.status === notification.data.status
+        );
+
+        if (alreadyExists) return list;
+
+        return [notification, ...list];
+    });
+}
+
 export function useRealtimeSync(session: SessionLike) {
     useEffect(() => {
         if (!session.isHydrated) return;
@@ -108,6 +199,14 @@ export function useRealtimeSync(session: SessionLike) {
         const handleRegistrationChange = () => {
             void invalidateRegistrationQueries();
             void invalidateDashboardQueries();
+        };
+
+        const handleUserInscriptionUpdate = (payload: Record<string, unknown>) => {
+            const notification = buildInscriptionNotification(payload);
+            if (notification) {
+                upsertLiveNotification(notification);
+            }
+            void invalidateRegistrationQueries();
         };
 
         const handleCuposChange = () => {
@@ -139,6 +238,7 @@ export function useRealtimeSync(session: SessionLike) {
         socket.on("evento-change-hm", handleEventChange);
         socket.on("inscripcion-change-hm", handleRegistrationChange);
         socket.on("user-inscription-update", handleRegistrationChange);
+        socket.on("user-inscription-update", handleUserInscriptionUpdate);
         socket.on("cupos-change-hm", handleCuposChange);
         socket.on("carrera-change-hm", handleCareerChange);
         socket.on("system-notification-hm", handleNotifications);
@@ -152,6 +252,7 @@ export function useRealtimeSync(session: SessionLike) {
             socket.off("evento-change-hm", handleEventChange);
             socket.off("inscripcion-change-hm", handleRegistrationChange);
             socket.off("user-inscription-update", handleRegistrationChange);
+            socket.off("user-inscription-update", handleUserInscriptionUpdate);
             socket.off("cupos-change-hm", handleCuposChange);
             socket.off("carrera-change-hm", handleCareerChange);
             socket.off("system-notification-hm", handleNotifications);

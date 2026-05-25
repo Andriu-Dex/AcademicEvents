@@ -9,7 +9,6 @@ import {
     Pressable,
     RefreshControl,
     ScrollView,
-    StyleSheet,
     Text,
     View,
 } from "react-native";
@@ -105,12 +104,12 @@ function filterColor(key: string, colors: ThemeTokens["colors"]) {
 
 function filterLabel(key: string) {
     if (key === "PEND") return "Pendientes";
-    if (key === "APROB") return "Aprobados";
+    if (key === "ACCEPTED") return "Aceptadas";
     if (key === "REPROB") return "Rechazados";
     return "Todos";
 }
 
-const FILTER_KEYS = ["TODOS", "PEND", "APROB", "REPROB"];
+const FILTER_KEYS = ["TODOS", "PEND", "ACCEPTED", "REPROB"];
 
 function FilterChip({
     label,
@@ -226,10 +225,10 @@ export default function RegistrationsScreen() {
         if (statusFilter === "PEND") {
             return list.filter((r) => r.status.trim().toUpperCase().includes("PEND"));
         }
-        if (statusFilter === "APROB") {
+        if (statusFilter === "ACCEPTED") {
             return list.filter((r) => {
                 const status = r.status.trim().toUpperCase();
-                return status.includes("APROB") || status.includes("APPROVED");
+                return status.includes("ACCEPT") || status.includes("ACEPT") || status.includes("APPROVED") || status.includes("APROB");
             });
         }
         if (statusFilter === "REPROB") {
@@ -336,9 +335,9 @@ export default function RegistrationsScreen() {
         return {
             TODOS: all.length,
             PEND: all.filter((r) => r.status.trim().toUpperCase().includes("PEND")).length,
-            APROB: all.filter((r) => {
+            ACCEPTED: all.filter((r) => {
                 const s = r.status.trim().toUpperCase();
-                return s.includes("APROB") || s.includes("APPROVED");
+                return s.includes("ACCEPT") || s.includes("ACEPT") || s.includes("APPROVED") || s.includes("APROB");
             }).length,
             REPROB: all.filter((r) => {
                 const s = r.status.trim().toUpperCase();

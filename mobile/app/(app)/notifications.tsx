@@ -4,7 +4,6 @@ import {
     FlatList,
     Pressable,
     RefreshControl,
-    StyleSheet,
     Text,
     View,
 } from "react-native";
@@ -75,6 +74,12 @@ export default function NotificationsScreen() {
         staleTime: 10000,
         refetchOnWindowFocus: false,
     });
+    const liveQuery = useQuery({
+        queryKey: ["notifications-live"],
+        queryFn: async () => [] as NotificationItem[],
+        staleTime: Number.POSITIVE_INFINITY,
+        refetchOnWindowFocus: false,
+    });
 
     useFocusEffect(
         useCallback(() => {
@@ -84,14 +89,37 @@ export default function NotificationsScreen() {
     );
 
     const items = useMemo(() => query.data ?? [], [query.data]);
+    const liveItems = useMemo(() => liveQuery.data ?? [], [liveQuery.data]);
+    const visibleItems = useMemo(() => {
+        const merged = [...liveItems, ...items];
+        const seen = new Set<string>();
+
+        return merged.filter((item) => {
+            if (seen.has(item.id)) return false;
+            seen.add(item.id);
+            return true;
+        });
+    }, [items, liveItems]);
 
     const onReadAll = async () => {
         await markAllNotificationsAsRead();
+        queryClient.setQueryData<NotificationItem[]>(["notifications-live"], []);
         await queryClient.invalidateQueries({ queryKey: ["notifications-history"] });
     };
 
     const onOpenNotification = async (item: NotificationItem) => {
         if (item.readAt) return;
+
+        if (item.data?.source === "socket") {
+            queryClient.setQueryData<NotificationItem[]>(["notifications-live"], (current) => {
+                const list = Array.isArray(current) ? current : [];
+                return list.map((notification) =>
+                    notification.id === item.id ? { ...notification, readAt: new Date().toISOString() } : notification
+                );
+            });
+            return;
+        }
+
         await markNotificationAsRead(item.id);
         await queryClient.invalidateQueries({ queryKey: ["notifications-history"] });
     };
@@ -127,7 +155,6 @@ export default function NotificationsScreen() {
     } else {
         body = (
             <FlatList
-                data={items}
                 keyExtractor={(item) => item.id}
                 contentContainerStyle={styles.list}
                 refreshControl={
@@ -137,6 +164,7 @@ export default function NotificationsScreen() {
                         tintColor={tokens.colors.primary}
                     />
                 }
+                data={visibleItems}
                 renderItem={({ item }) => <NotificationCard item={item} onPress={onOpenNotification} />}
                 ListEmptyComponent={<Text style={styles.emptyText}>No tienes notificaciones todavia.</Text>}
             />

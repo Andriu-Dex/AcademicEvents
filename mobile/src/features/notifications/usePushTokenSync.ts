@@ -2,6 +2,8 @@ import { useEffect } from "react";
 import { AppState, Platform } from "react-native";
 import Constants from "expo-constants";
 import { registerPushToken } from "../../api/notifications";
+import { theme } from "../../shared";
+import { queryClient } from "../../shared/queryClient";
 
 type NotificationsModule = typeof import("expo-notifications");
 
@@ -11,6 +13,15 @@ let notificationsModulePromise: Promise<NotificationsModule | null> | null = nul
 
 function isExpoGo() {
     return Constants.executionEnvironment === "storeClient";
+}
+
+function getExpoProjectId() {
+    const expoConfig = Constants.expoConfig as
+        | { extra?: { eas?: { projectId?: string } } }
+        | undefined;
+    const easConfig = Constants.easConfig as { projectId?: string } | undefined;
+
+    return expoConfig?.extra?.eas?.projectId ?? easConfig?.projectId ?? null;
 }
 
 async function loadNotificationsModule(): Promise<NotificationsModule | null> {
@@ -88,7 +99,10 @@ async function syncPushToken() {
 
     if (!token) {
         try {
-            const expoToken = await Notifications.getExpoPushTokenAsync();
+            const projectId = getExpoProjectId();
+            const expoToken = await Notifications.getExpoPushTokenAsync(
+                projectId ? { projectId } : undefined
+            );
             token = expoToken.data;
         } catch {
             return;
@@ -102,6 +116,9 @@ async function syncPushToken() {
         platform: Platform.OS === "ios" ? "IOS" : "ANDROID",
         deviceInfo: `${Platform.OS}-${String(Platform.Version)}`,
     });
+
+    await queryClient.invalidateQueries({ queryKey: ["push-token-status"] });
+    await queryClient.invalidateQueries({ queryKey: ["notifications-history"] });
 }
 
 export async function syncPushTokenNow() {
