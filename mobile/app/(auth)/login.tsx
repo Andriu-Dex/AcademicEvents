@@ -18,7 +18,7 @@ import {
     View,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { login } from "../../src/api/auth";
+import { login, RequireVerificationError } from "../../src/api/auth";
 import { useAuthStore } from "../../src/store/authStore";
 import { isAdminRole } from "../../src/utils/roles";
 import { useFacultyInfo } from "../../src/features/faculty/useFacultyInfo";
@@ -77,6 +77,13 @@ export default function LoginScreen() {
             await setSession(result.token, result.user);
             router.replace(isAdminRole(result.user.role) ? "/(admin)" : "/(app)");
         } catch (error) {
+            if (error instanceof RequireVerificationError) {
+                router.replace({
+                    pathname: "/(auth)/verification-pending",
+                    params: { email: error.email },
+                });
+                return;
+            }
             const message = error instanceof Error ? error.message : "Error al iniciar sesión";
             const normalized = message.toLowerCase();
             const finalMessage =

@@ -13,13 +13,20 @@ export const theme = {
         bgTertiary: "#edf1f7",
         bgElevated: "#ffffff",
         bgCard: "#ffffff",
+        // Backwards-compatible aliases
+        surface: "#ffffff",
+        surfaceAlt: "#f5f7fa",
         bgHover: "#edf1f7",
         textPrimary: "#1a1f2e",
+        // alias expected by some components
+        text: "#1a1f2e",
         textSecondary: "#6b7280",
         textTertiary: "#9ca3af",
         textInverse: "#ffffff",
         onPrimary: "#ffffff",
         borderPrimary: "#e8ecf2",
+        // alias for older screens
+        border: "#e8ecf2",
         borderSecondary: "#d1d5db",
         borderLight: "#f0f2f7",
         success: "#10b981",
@@ -106,6 +113,13 @@ export const theme = {
         /* Success borders */
         successBorder: "#86efac",
     },
+    // Legacy / convenience aliases expected by some screens
+    fontSize: {
+        xs: 12,
+        sm: 14,
+        md: 16,
+        lg: 20,
+    },
     gradients: {
         primary: ["#8a1538", "#5f1027"] as const,
         header: ["#8a1538", "#6e0e2d"] as const,
@@ -185,4 +199,11 @@ export const theme = {
         headerHeight: 60,
         iconBtn: 44,
     },
+    // Provide a few color aliases used across the app to keep older components working
+    // These map to the semantic tokens already defined in `colors`.
+    // Example: tokens.colors.surface -> tokens.colors.bgCard
+    // Added to avoid breaking changes when screens reference older token names.
+    // Note: keep in sync with colors above when adjusting palettes.
+    // (kept at root for backwards compatibility where code expects tokens.colors.*)
+    // No runtime behavior changes, just aliases.
 };

@@ -26,12 +26,17 @@ import { useAppTheme } from "../../src/shared";
 function validarCedulaEcuatoriana(cedulaRaw: string) {
     const cedula = String(cedulaRaw ?? "").trim();
     if (!/^\d{10}$/.test(cedula)) return false;
+    // Rechazar casos evidentes inválidos (todos los dígitos iguales)
+    if (/^(\d)\1{9}$/.test(cedula)) return false;
 
     const coeficientes = [2, 1, 2, 1, 2, 1, 2, 1, 2];
     const verificador = Number.parseInt(cedula.substring(9, 10), 10);
     const provincia = Number.parseInt(cedula.substring(0, 2), 10);
 
+    // Provincias válidas: 01-24
     if (provincia < 1 || provincia > 24) return false;
+
+    // Tercer dígito debe ser 0-6 según reglas de cédula ecuatoriana
     if (Number.parseInt(cedula.charAt(2), 10) > 6) return false;
 
     let suma = 0;
@@ -200,7 +205,17 @@ export default function RegisterScreen() {
             return;
         }
         try {
-            await registerStudent(values);
+            const result = await registerStudent(values);
+            if (result.requireVerification) {
+                router.replace({
+                    pathname: "/(auth)/verification-pending",
+                    params: {
+                        email: result.email ?? values.email,
+                        careerId: values.careerId ?? "",
+                    },
+                });
+                return;
+            }
             router.replace("/(auth)/login");
         } catch (error) {
             const message = error instanceof Error ? error.message : "Error al registrar";

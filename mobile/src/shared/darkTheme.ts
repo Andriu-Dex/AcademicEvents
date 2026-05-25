@@ -17,10 +17,15 @@ export const darkTheme = {
         bgTertiary: "#222c3a",
         bgElevated: "#293547",
         bgCard: "#18202b",
+        // Backwards-compatible aliases
+        surface: "#18202b",
+        surfaceAlt: "#0f141d",
         bgHover: "#222c3a",
         textPrimary: "#edf2f7",
         textSecondary: "#b7c2cf",
         textTertiary: "#8391a3",
+        // alias expected by some components
+        text: "#edf2f7",
         textInverse: "#edf2f7",
         onPrimary: "#edf2f7",
         borderPrimary: "#2d394b",
@@ -101,6 +106,13 @@ export const darkTheme = {
         errorBorderLight: "rgba(248, 113, 113, 0.35)",
         errorTextStrong: "#fca5a5",
         successBorder: "rgba(74, 222, 128, 0.35)",
+    },
+    // Legacy / convenience aliases expected by some screens
+    fontSize: {
+        xs: 12,
+        sm: 14,
+        md: 16,
+        lg: 20,
     },
     gradients: {
         primary: ["#d46680", "#a7445d"] as const,

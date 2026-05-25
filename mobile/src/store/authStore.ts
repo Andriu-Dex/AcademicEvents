@@ -28,26 +28,44 @@ export const useAuthStore = create<AuthState>((set) => ({
     user: null,
     isHydrated: false,
     setSession: async (token, user) => {
-        await SecureStore.deleteItemAsync(TOKEN_KEY);
-        await SecureStore.deleteItemAsync(USER_KEY);
-        set({ accessToken: token, user });
+        try {
+            await SecureStore.setItemAsync(TOKEN_KEY, token);
+            await SecureStore.setItemAsync(USER_KEY, JSON.stringify(user));
+        } catch {
+            // ignore storage errors
+        }
+        set({ accessToken: token, user, isHydrated: true });
     },
     updateUser: async (patch) => {
         set((state) => {
             const current = state.user;
             if (!current) return state;
             const next = { ...current, ...patch };
+            try {
+                SecureStore.setItemAsync(USER_KEY, JSON.stringify(next)).catch(() => {});
+            } catch {
+                // ignore
+            }
             return { ...state, user: next };
         });
     },
     clearSession: async () => {
-        await SecureStore.deleteItemAsync(TOKEN_KEY);
-        await SecureStore.deleteItemAsync(USER_KEY);
-        set({ accessToken: null, user: null });
+        try {
+            await SecureStore.deleteItemAsync(TOKEN_KEY);
+            await SecureStore.deleteItemAsync(USER_KEY);
+        } catch {
+            // ignore
+        }
+        set({ accessToken: null, user: null, isHydrated: true });
     },
     hydrate: async () => {
-        await SecureStore.deleteItemAsync(TOKEN_KEY);
-        await SecureStore.deleteItemAsync(USER_KEY);
-        set({ accessToken: null, user: null, isHydrated: true });
+        try {
+            const token = await SecureStore.getItemAsync(TOKEN_KEY);
+            const rawUser = await SecureStore.getItemAsync(USER_KEY);
+            const user = rawUser ? JSON.parse(rawUser) : null;
+            set({ accessToken: token ?? null, user: user ?? null, isHydrated: true });
+        } catch {
+            set({ accessToken: null, user: null, isHydrated: true });
+        }
     },
 }));
