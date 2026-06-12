@@ -259,7 +259,7 @@ export async function createEvent(input: AdminEventUpsertInput, image?: ImageAss
     appendIfPresent(form, "dur_hor_eve", input.durationHours);
     appendIfPresent(form, "cup_max_eve", input.maxCapacity);
     appendIfPresent(form, "por_min_asi_eve", input.minAttendancePercent);
-    appendIfPresent(form, "not_min_eve", input.minGrade ?? "");
+    appendIfPresent(form, "minPassingGrade", input.minGrade ?? "");
     appendIfPresent(form, "val_eve", input.price);
 
     form.append("esEventoGeneral", input.isGeneral ? "true" : "false");
@@ -296,7 +296,7 @@ export async function updateEvent(eventId: string, input: AdminEventUpsertInput,
     appendIfPresent(form, "dur_hor_eve", input.durationHours);
     appendIfPresent(form, "cup_max_eve", input.maxCapacity);
     appendIfPresent(form, "por_min_asi_eve", input.minAttendancePercent);
-    appendIfPresent(form, "not_min_eve", input.minGrade ?? "");
+    appendIfPresent(form, "minPassingGrade", input.minGrade ?? "");
     appendIfPresent(form, "val_eve", input.price);
 
     form.append("esEventoGeneral", input.isGeneral ? "true" : "false");

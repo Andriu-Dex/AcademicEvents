@@ -1,5 +1,5 @@
 import { useMemo, useEffect, useState } from "react";
-import { Modal, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
 import { Calendar } from "react-native-calendars";
 import { Ionicons } from "@expo/vector-icons";
 import { useAppTheme, type ThemeTokens } from "../shared";
@@ -15,13 +15,22 @@ function formatDateLabel(dateISO: string) {
     if (!dateISO) return "Seleccionar fecha";
     const parsed = new Date(dateISO);
     if (Number.isNaN(parsed.getTime())) return "Seleccionar fecha";
-    return parsed.toLocaleString("es-EC", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-    });
+
+    // Mostrar siempre en UTC para que coincida con lo que el usuario seleccionó
+    const day = String(parsed.getUTCDate()).padStart(2, "0");
+    const month = String(parsed.getUTCMonth() + 1).padStart(2, "0");
+    const year = parsed.getUTCFullYear();
+    const hours = String(parsed.getUTCHours()).padStart(2, "0");
+    const minutes = String(parsed.getUTCMinutes()).padStart(2, "0");
+
+    return `${day}/${month}/${year}  ${hours}:${minutes}`;
+}
+
+/** Wrap-around clamp: 0–max inclusive */
+function wrapClamp(value: number, max: number): number {
+    if (value < 0) return max;
+    if (value > max) return 0;
+    return value;
 }
 
 export function DatePickerField({ label, valueISO, onChangeISO }: Readonly<Props>) {
@@ -29,8 +38,8 @@ export function DatePickerField({ label, valueISO, onChangeISO }: Readonly<Props
     const styles = useMemo(() => createStyles(tokens), [tokens]);
     const [open, setOpen] = useState(false);
     const [selectedDay, setSelectedDay] = useState(valueISO ? valueISO.slice(0, 10) : "");
-    const [hour, setHour] = useState("08");
-    const [minute, setMinute] = useState("00");
+    const [hour, setHour] = useState(8);
+    const [minute, setMinute] = useState(0);
 
     useEffect(() => {
         if (!valueISO) {
@@ -40,20 +49,31 @@ export function DatePickerField({ label, valueISO, onChangeISO }: Readonly<Props
         const parsed = new Date(valueISO);
         if (Number.isNaN(parsed.getTime())) return;
         setSelectedDay(valueISO.slice(0, 10));
-        setHour(String(parsed.getHours()).padStart(2, "0"));
-        setMinute(String(parsed.getMinutes()).padStart(2, "0"));
+        // Usar getUTCHours/getUTCMinutes para que la hora mostrada coincida
+        // con la que el usuario seleccionó originalmente (almacenada como UTC)
+        setHour(parsed.getUTCHours());
+        setMinute(parsed.getUTCMinutes());
     }, [valueISO]);
 
     const applySelection = () => {
         if (!selectedDay) return;
-        const hourValue = Math.max(0, Math.min(23, Number(hour) || 0));
-        const minuteValue = Math.max(0, Math.min(59, Number(minute) || 0));
-        const iso = new Date(`${selectedDay}T${String(hourValue).padStart(2, "0")}:${String(minuteValue).padStart(2, "0")}:00.000Z`).toISOString();
-
+        const hh = String(Math.max(0, Math.min(23, hour))).padStart(2, "0");
+        const mm = String(Math.max(0, Math.min(59, minute))).padStart(2, "0");
+        // Construimos directamente la cadena ISO con Z para que la hora
+        // que el usuario eligió se almacene tal cual en UTC.
+        const iso = `${selectedDay}T${hh}:${mm}:00.000Z`;
         onChangeISO(iso);
-
         setOpen(false);
     };
+
+    const adjustHour = (delta: number) => setHour((prev) => wrapClamp(prev + delta, 23));
+    const adjustMinute = (delta: number) =>
+        setMinute((prev) => {
+            const next = prev + delta;
+            if (next < 0) return 45;
+            if (next >= 60) return 0;
+            return next;
+        });
 
     return (
         <View style={styles.wrapper}>
@@ -68,7 +88,11 @@ export function DatePickerField({ label, valueISO, onChangeISO }: Readonly<Props
             {open ? (
                 <Modal transparent animationType="fade" visible onRequestClose={() => setOpen(false)}>
                     <Pressable style={styles.backdrop} onPress={() => setOpen(false)}>
-                        <View style={styles.pickerCard}>
+                        <View
+                            style={styles.pickerCard}
+                            onStartShouldSetResponder={() => true}
+                            onTouchEnd={(e) => e.stopPropagation()}
+                        >
                             <Calendar
                                 initialDate={selectedDay || undefined}
                                 markedDates={
@@ -95,30 +119,51 @@ export function DatePickerField({ label, valueISO, onChangeISO }: Readonly<Props
                                     textDisabledColor: tokens.colors.textTertiary,
                                 }}
                             />
+
+                            {/* ── Time stepper ── */}
+                            <View style={styles.timeSection}>
+                                <Ionicons name="time-outline" size={16} color={tokens.colors.primary} />
+                                <Text style={styles.timeSectionTitle}>Hora</Text>
+                            </View>
+
                             <View style={styles.timeRow}>
-                                <View style={styles.timeField}>
-                                    <Text style={styles.timeLabel}>Hora</Text>
-                                    <TextInput
-                                        value={hour}
-                                        onChangeText={setHour}
-                                        keyboardType="numeric"
-                                        maxLength={2}
-                                        style={styles.timeInput}
-                                    />
+                                {/* Hour stepper */}
+                                <View style={styles.stepperGroup}>
+                                    <Pressable style={styles.stepperBtn} onPress={() => adjustHour(1)}>
+                                        <Ionicons name="chevron-up" size={22} color={tokens.colors.primary} />
+                                    </Pressable>
+                                    <View style={styles.stepperValueBox}>
+                                        <Text style={styles.stepperValue}>{String(hour).padStart(2, "0")}</Text>
+                                    </View>
+                                    <Pressable style={styles.stepperBtn} onPress={() => adjustHour(-1)}>
+                                        <Ionicons name="chevron-down" size={22} color={tokens.colors.primary} />
+                                    </Pressable>
+                                    <Text style={styles.stepperLabel}>Horas</Text>
                                 </View>
-                                <View style={styles.timeField}>
-                                    <Text style={styles.timeLabel}>Min</Text>
-                                    <TextInput
-                                        value={minute}
-                                        onChangeText={setMinute}
-                                        keyboardType="numeric"
-                                        maxLength={2}
-                                        style={styles.timeInput}
-                                    />
+
+                                <Text style={styles.timeSeparator}>:</Text>
+
+                                {/* Minute stepper */}
+                                <View style={styles.stepperGroup}>
+                                    <Pressable style={styles.stepperBtn} onPress={() => adjustMinute(15)}>
+                                        <Ionicons name="chevron-up" size={22} color={tokens.colors.primary} />
+                                    </Pressable>
+                                    <View style={styles.stepperValueBox}>
+                                        <Text style={styles.stepperValue}>{String(minute).padStart(2, "0")}</Text>
+                                    </View>
+                                    <Pressable style={styles.stepperBtn} onPress={() => adjustMinute(-15)}>
+                                        <Ionicons name="chevron-down" size={22} color={tokens.colors.primary} />
+                                    </Pressable>
+                                    <Text style={styles.stepperLabel}>Minutos</Text>
                                 </View>
                             </View>
-                            <Text style={styles.timeHint}>La hora se guarda junto a la fecha en formato ISO.</Text>
+
+                            <Text style={styles.timeHint}>
+                                Usa las flechas para ajustar. Minutos avanzan de 15 en 15.
+                            </Text>
+
                             <Pressable style={styles.applyBtn} onPress={applySelection}>
+                                <Ionicons name="checkmark-circle-outline" size={18} color={tokens.colors.onPrimary} />
                                 <Text style={styles.applyText}>Aplicar</Text>
                             </Pressable>
                             <Pressable style={styles.closeBtn} onPress={() => setOpen(false)}>
@@ -164,26 +209,78 @@ function createStyles(theme: ThemeTokens) {
             borderWidth: 1,
             borderColor: theme.colors.borderPrimary,
             padding: theme.spacing.md,
-            gap: 12,
+            gap: 10,
         },
-        timeRow: { flexDirection: "row", gap: 12 },
-        timeField: { flex: 1, gap: 6 },
-        timeLabel: { color: theme.colors.textSecondary, fontWeight: "900", fontSize: 12 },
-        timeInput: {
-            height: 44,
+
+        /* ── Time stepper ── */
+        timeSection: {
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 6,
+            marginTop: 4,
+        },
+        timeSectionTitle: {
+            color: theme.colors.textPrimary,
+            fontWeight: "900",
+            fontSize: 14,
+        },
+        timeRow: {
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 8,
+        },
+        stepperGroup: {
+            alignItems: "center",
+            gap: 2,
+        },
+        stepperBtn: {
+            width: 52,
+            height: 36,
             borderRadius: theme.radius.sm,
             borderWidth: 1,
             borderColor: theme.colors.borderPrimary,
-            paddingHorizontal: 12,
-            backgroundColor: theme.colors.bgTertiary,
-            color: theme.colors.textPrimary,
-            fontWeight: "800",
-        },
-        timeHint: { color: theme.colors.textTertiary, fontWeight: "700", fontSize: 11 },
-        applyBtn: {
-            alignSelf: "stretch",
+            backgroundColor: theme.colors.bgSecondary,
             alignItems: "center",
             justifyContent: "center",
+        },
+        stepperValueBox: {
+            width: 64,
+            height: 52,
+            borderRadius: theme.radius.md,
+            borderWidth: 2,
+            borderColor: theme.colors.primary,
+            backgroundColor: theme.colors.bgPrimary,
+            alignItems: "center",
+            justifyContent: "center",
+        },
+        stepperValue: {
+            fontSize: 26,
+            fontWeight: "900",
+            fontFamily: "monospace",
+            color: theme.colors.textPrimary,
+        },
+        stepperLabel: {
+            fontSize: 10,
+            fontWeight: "800",
+            color: theme.colors.textTertiary,
+            marginTop: 2,
+        },
+        timeSeparator: {
+            fontSize: 28,
+            fontWeight: "900",
+            color: theme.colors.textSecondary,
+            marginHorizontal: 4,
+            marginBottom: 18,
+        },
+
+        timeHint: { color: theme.colors.textTertiary, fontWeight: "700", fontSize: 11, textAlign: "center" },
+        applyBtn: {
+            alignSelf: "stretch",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 8,
             paddingVertical: 12,
             borderRadius: 999,
             backgroundColor: theme.colors.primary,

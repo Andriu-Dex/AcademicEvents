@@ -111,7 +111,7 @@ export default function VerificationPendingScreen() {
                     await SecureStore.deleteItemAsync(PENDING_EMAIL_KEY);
                     await SecureStore.deleteItemAsync(PENDING_CAREER_KEY);
                     Alert.alert("¡Verificado!", "Tu correo ha sido verificado exitosamente.", [
-                        { text: "Continuar", onPress: () => router.replace("/(tabs)") },
+                        { text: "Continuar", onPress: () => router.replace("/(app)") },
                     ]);
                 } else {
                     Alert.alert("¡Verificado!", res.message ?? "Correo verificado.", [
