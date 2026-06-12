@@ -1,12 +1,30 @@
-# React + Vite
+# AcademicEvents - Frontend Web
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Este directorio contiene el cliente web del sistema **AcademicEvents**, desarrollado con React 19.1, Vite, Tailwind CSS y Socket.io-client.
 
-Currently, two official plugins are available:
+## Instalación y Configuración
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Para evitar duplicación de documentación y garantizar consistencia, todas las instrucciones detalladas de instalación de dependencias, variables de entorno (.env) y comandos de ejecución local o despliegue con Docker se encuentran centralizadas en el documento principal:
 
-## Expanding the ESLint configuration
+👉 **[Consultar el README principal en la raíz del proyecto](../README.md)**
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Comandos Rápidos
+
+Si ya tienes las variables de entorno configuradas en `frontend/.env`:
+
+```bash
+# Instalar dependencias
+npm install
+
+# Iniciar servidor de desarrollo (Vite)
+npm run dev
+
+# Compilar para producción
+npm run build
+
+# Previsualizar compilación de producción
+npm run preview
+
+# Ejecutar análisis de accesibilidad y linting
+npm run lint
+```

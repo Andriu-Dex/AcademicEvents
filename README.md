@@ -153,11 +153,21 @@ HOST=localhost
 FRONTEND_URL=http://localhost:5173
 BACKEND_URL=http://localhost:3000
 
-# Email (opcional para notificaciones)
+# Email (Proveedores API HTTP o SMTP Legacy)
+# Para Brevo (Recomendado para producción/Render - Sin dominio propio necesario):
+BREVO_API_KEY=xkeysib-...
+BREVO_SENDER_EMAIL=tu_correo_verificado@gmail.com
+BREVO_SENDER_NAME="AcademicEvents"
+
+# Para Resend (Opcional - Requiere dominio verificado):
+RESEND_API_KEY=re_...
+RESEND_FROM_EMAIL="AcademicEvents <onboarding@resend.dev>"
+
+# SMTP Legacy (Opcional - Nota: Render bloquea puertos SMTP por defecto):
 SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
+SMTP_PORT=465
 SMTP_USER=tu_email@gmail.com
-SMTP_PASS=tu_contraseña_de_aplicacion
+SMTP_PASS=tu_contraseña_de_aplicacion_gmail
 
 # Firebase Admin (obligatorio para notificaciones push)
 FIREBASE_PROJECT_ID=tu_project_id_firebase

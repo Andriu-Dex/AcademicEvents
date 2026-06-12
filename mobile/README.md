@@ -98,6 +98,13 @@ Abre la version web de Expo solo para pruebas rapidas.
 4. Abre Expo Go o el emulador.
 5. Verifica que `EXPO_PUBLIC_API_URL` apunte al backend correcto.
 
+## Verificación de Correo por Código (OTP)
+
+La aplicación móvil cuenta con un flujo moderno para validar el correo mediante un código de 6 dígitos (OTP):
+- **Cajas de Entrada Secuenciales:** Consta de 6 entradas individuales que manejan foco automático y navegación con tecla de retroceso (Backspace).
+- **Auto-envío:** Al ingresar el último dígito del código, la aplicación envía automáticamente la petición de verificación.
+- **Inicio de Sesión Automático:** Tras una verificación exitosa, la aplicación almacena de forma segura la sesión (`useAuthStore`) y redirige automáticamente al usuario al Dashboard (`/(tabs)`).
+
 ## Notas practicas
 
 - Si usas telefono fisico, ambos equipos deben estar en la misma red Wi-Fi.
