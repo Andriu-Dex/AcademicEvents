@@ -1,30 +1,9 @@
-const nodemailer = require("nodemailer");
+const { Resend } = require("resend");
 
-// Crear el transporter con la configuración SMTP
-const port = Number(process.env.SMTP_PORT) || 587;
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: port,
-  secure: port === 465, // true para 465, false para otros puertos
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-  tls: {
-    // Acepta certificados autofirmados sin desactivar toda la seguridad
-    rejectUnauthorized: false,
-  },
-  debug: true, // Activar debug para ver más información de errores
-});
+const apiKey = process.env.RESEND_API_KEY || process.env.RENDER_API_KEY;
+const resend = new Resend(apiKey);
 
-// Verificar la conexión al iniciar
-transporter.verify(function (error, success) {
-  if (error) {
-    console.error("Error de configuración SMTP:", error);
-  } else {
-    console.log("Servidor SMTP listo para enviar emails");
-  }
-});
+console.log("Servicio de correo Resend inicializado para certificados");
 
 const enviarCorreoConCertificado = async (
   correoDestino,
@@ -34,10 +13,7 @@ const enviarCorreoConCertificado = async (
 ) => {
   try {
     console.log(`Intentando enviar certificado por correo a: ${correoDestino}`);
-    console.log(
-      `Configuración SMTP: ${process.env.SMTP_HOST}:${process.env.SMTP_PORT}`
-    );
-    console.log(`Usuario SMTP: ${process.env.SMTP_USER}`);
+    const fromEmail = process.env.RESEND_FROM_EMAIL || "AcademicEvents <onboarding@resend.dev>";
 
     // Preparar un HTML amigable para el correo
     const html = `
@@ -79,11 +55,10 @@ const enviarCorreoConCertificado = async (
       </div>
     `;
 
-    await transporter.sendMail({
-      from: `"AcademicEvents" <${process.env.SMTP_USER}>`,
+    const { data, error } = await resend.emails.send({
+      from: fromEmail,
       to: correoDestino,
       subject: `Certificado - ${nombreEvento}`,
-      text: `Felicitaciones ${nombreEstudiante}. Adjunto encontrarás tu certificado oficial por tu participación en: ${nombreEvento}.`,
       html: html,
       attachments: [
         {
@@ -93,9 +68,14 @@ const enviarCorreoConCertificado = async (
       ],
     });
 
+    if (error) {
+      throw error;
+    }
+
+    console.log("Certificado enviado via Resend:", data.id);
     return true;
   } catch (error) {
-    console.error("Error al enviar correo:", error);
+    console.error("Error al enviar correo con Resend:", error);
     return false;
   }
 };

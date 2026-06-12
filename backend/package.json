@@ -37,6 +37,7 @@
     "pdf-lib": "1.17.1",
     "pdfkit": "0.17.1",
     "puppeteer": "24.10.0",
+    "resend": "^6.12.4",
     "sharp": "0.34.2",
     "socket.io": "4.8.1",
     "uuid": "11.1.0"

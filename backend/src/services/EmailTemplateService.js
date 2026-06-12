@@ -1,4 +1,4 @@
-const nodemailer = require("nodemailer");
+const { Resend } = require("resend");
 const { prisma } = require("../config/db");
 const emailConfig = require("../config/emailConfig");
 const UniversidadService = require("./universidad.service");
@@ -9,17 +9,9 @@ const UniversidadService = require("./universidad.service");
  */
 class EmailTemplateService {
   constructor() {
-    // Configurar transporter de nodemailer
-    const port = Number(process.env.SMTP_PORT) || 587;
-    this.transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: port,
-      secure: port === 465, // true para 465, false para otros puertos
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-    });
+    // Configurar cliente de Resend
+    const apiKey = process.env.RESEND_API_KEY || process.env.RENDER_API_KEY;
+    this.resend = new Resend(apiKey);
 
     // Inicializar cliente de Prisma
     this.prisma = prisma;
@@ -808,17 +800,22 @@ class EmailTemplateService {
    */
   async enviarEmail({ destinatario, asunto, cuerpoHtml }) {
     try {
-      const info = await this.transporter.sendMail({
-        from: `"AcademicEvents" <${process.env.SMTP_USER}>`,
+      const fromEmail = process.env.RESEND_FROM_EMAIL || "AcademicEvents <onboarding@resend.dev>";
+      const { data, error } = await this.resend.emails.send({
+        from: fromEmail,
         to: destinatario,
         subject: asunto,
         html: cuerpoHtml,
       });
 
-      console.log("Correo enviado:", info.messageId);
-      return { success: true, messageId: info.messageId };
+      if (error) {
+        throw error;
+      }
+
+      console.log("Correo enviado via Resend:", data.id);
+      return { success: true, messageId: data.id };
     } catch (error) {
-      console.error("Error al enviar correo:", error);
+      console.error("Error al enviar correo con Resend:", error);
       throw new Error("Error al enviar correo electrónico");
     }
   }
