@@ -22,7 +22,8 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.andriu_dex.academicevents"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -32,6 +33,12 @@
       "expo-secure-store",
       "expo-notifications",
       "@react-native-community/datetimepicker"
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "1bdb48d8-7777-488b-93aa-986dcfe98707"
+      }
+    }
   }
 }
