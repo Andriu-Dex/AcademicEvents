@@ -440,10 +440,10 @@ const generarCertificadoPDF = async (datos) => {
     const tipoCertificado = determinarTipoCertificado(datos.evento);
     const dimensiones = DIMENSIONES_CERTIFICADOS[tipoCertificado];
 
-    // Configuración robusta para Docker
+    // Detectar si estamos en un contenedor Docker
     const isDocker =
-      process.env.NODE_ENV === "production" ||
-      process.env.PUPPETEER_EXECUTABLE_PATH;
+      fs.existsSync("/.dockerenv") ||
+      Boolean(process.env.PUPPETEER_EXECUTABLE_PATH);
 
     const browserConfig = {
       headless: "new", // Usar el nuevo modo headless
@@ -465,10 +465,11 @@ const generarCertificadoPDF = async (datos) => {
       ],
     };
 
-    // Solo agregar executablePath si estamos en Docker
-    if (isDocker) {
-      browserConfig.executablePath =
-        process.env.PUPPETEER_EXECUTABLE_PATH || "/usr/bin/chromium-browser";
+    // Usar executablePath específico si está definido o si estamos en Docker
+    if (process.env.PUPPETEER_EXECUTABLE_PATH) {
+      browserConfig.executablePath = process.env.PUPPETEER_EXECUTABLE_PATH;
+    } else if (isDocker) {
+      browserConfig.executablePath = "/usr/bin/chromium-browser";
     }
 
     console.log("🔧 Configuración de Puppeteer:", {

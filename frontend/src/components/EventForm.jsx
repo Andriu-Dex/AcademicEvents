@@ -429,7 +429,7 @@ const EventForm = ({ eventId = null, mode = "create" }) => {
       formDataToSend.append("endDate", formData.endDate);
 
       formDataToSend.append("price", formData.price);
-      formDataToSend.append("coverImage", formData.coverImage);
+      formDataToSend.append("img_por_eve", formData.coverImage);
       formDataToSend.append("status", formData.status);
       formDataToSend.append("modality", formData.modality); // Añadir la modalidad del evento
       formDataToSend.append("durationHours", formData.durationHours);

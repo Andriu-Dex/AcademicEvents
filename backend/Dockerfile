@@ -28,15 +28,16 @@ WORKDIR /app
 # Copiar archivos de dependencias
 COPY package*.json ./
 
-# Instalar dependencias
-RUN npm ci --no-audit --no-fund
+# Instalar dependencias (ignorando scripts de post-install temporalmente)
+RUN npm ci --no-audit --no-fund --ignore-scripts
 
 # Configurar Puppeteer para usar Chromium instalado
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
-# Copiar archivos de Prisma
+# Copiar archivos de Prisma y generar cliente
 COPY prisma ./prisma
+RUN npx prisma generate
 
 # Copiar código fuente
 COPY src ./src

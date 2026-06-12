@@ -4,6 +4,30 @@ const path = require("path");
 
 const pick = (...values) => values.find((value) => value !== undefined && value !== null);
 
+const obtenerPuppeteerConfig = () => {
+  const isDocker =
+    fs.existsSync("/.dockerenv") ||
+    Boolean(process.env.PUPPETEER_EXECUTABLE_PATH);
+
+  const config = {
+    headless: "new",
+    args: [
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-dev-shm-usage",
+      "--disable-web-security"
+    ]
+  };
+
+  if (process.env.PUPPETEER_EXECUTABLE_PATH) {
+    config.executablePath = process.env.PUPPETEER_EXECUTABLE_PATH;
+  } else if (isDocker) {
+    config.executablePath = "/usr/bin/chromium-browser";
+  }
+
+  return config;
+};
+
 async function generarReporteEventoPDF(datos, filePath) {
   const evento = datos.cab_eve || {};
   const eventoNombre = pick(evento.name, evento.nom_eve, "Sin nombre");
@@ -70,10 +94,7 @@ async function generarReporteEventoPDF(datos, filePath) {
     );
 
   // 4. Generar el PDF con Puppeteer
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: ["--no-sandbox", "--disable-web-security"],
-  });
+  const browser = await puppeteer.launch(obtenerPuppeteerConfig());
   const page = await browser.newPage();
   fs.writeFileSync("debug_reporte.html", html);
   await page.setContent(html, { waitUntil: "networkidle0" });
@@ -128,10 +149,7 @@ async function generarReporteMensualPDF(datos, filePath) {
     .replaceAll("{{tot_tod_eve}}", datos.tot_tod_eve ?? 0);
 
   // 4. Genera el PDF con Puppeteer
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: ["--no-sandbox"],
-  });
+  const browser = await puppeteer.launch(obtenerPuppeteerConfig());
   const page = await browser.newPage();
   await page.setContent(html, { waitUntil: "networkidle0" });
 
@@ -282,10 +300,7 @@ async function generarReporteCarreraPDF(datos, filePath) {
 
   // 5. Generar el PDF con Puppeteer
   console.log("🖨️ [PDF] Iniciando generación de PDF con Puppeteer...");
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: ["--no-sandbox", "--disable-web-security"],
-  });
+  const browser = await puppeteer.launch(obtenerPuppeteerConfig());
   const page = await browser.newPage();
   await page.setContent(html, { waitUntil: "networkidle0" });
 
@@ -435,10 +450,7 @@ async function generarReporteInscripcionesPDF(datos, filePath) {
   console.log(
     "🖨️ [PDF INSCRIPCIONES] Iniciando generación de PDF con Puppeteer..."
   );
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: ["--no-sandbox", "--disable-web-security"],
-  });
+  const browser = await puppeteer.launch(obtenerPuppeteerConfig());
 
   const page = await browser.newPage();
   await page.setContent(html, { waitUntil: "networkidle0" });
@@ -631,10 +643,7 @@ async function generarReporteAsistenciaPDF(datos, filePath) {
     .replaceAll("{{fecha_generacion}}", datos.fechaGeneracion);
 
   // 4. Generar PDF con Puppeteer
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
-  });
+  const browser = await puppeteer.launch(obtenerPuppeteerConfig());
 
   const page = await browser.newPage();
   await page.setContent(html, { waitUntil: "networkidle0" });
@@ -765,10 +774,7 @@ async function generarReporteCertificadosPDF(datos, filePath) {
   console.log(
     "🖨️ [PDF CERTIFICADOS] Iniciando generación de PDF con Puppeteer..."
   );
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: ["--no-sandbox", "--disable-web-security"],
-  });
+  const browser = await puppeteer.launch(obtenerPuppeteerConfig());
 
   const page = await browser.newPage();
   await page.setContent(html, { waitUntil: "networkidle0" });
@@ -977,10 +983,7 @@ async function generarReporteIngresosPagosPDF(datos, filePath) {
 
   // 11. Generar PDF con Puppeteer
   console.log("🖨️ [PDF INGRESOS] Iniciando generación de PDF con Puppeteer...");
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: ["--no-sandbox", "--disable-web-security"],
-  });
+  const browser = await puppeteer.launch(obtenerPuppeteerConfig());
 
   const page = await browser.newPage();
   await page.setContent(html, { waitUntil: "networkidle0" });
