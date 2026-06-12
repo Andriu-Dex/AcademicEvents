@@ -1,0 +1,99 @@
+/* 
+ * Estilos para el componente OtpInput
+ * OTP - One Time Password input
+ */
+
+.otp-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 1.5rem 0;
+}
+
+.otp-inputs {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.otp-digit {
+  width: 52px;
+  height: 62px;
+  text-align: center;
+  font-size: 1.75rem;
+  font-weight: 700;
+  font-family: 'Courier New', Courier, monospace;
+  border: 2px solid #d1d5db;
+  border-radius: 10px;
+  background-color: #fff;
+  color: #1f2937;
+  outline: none;
+  transition: all 0.2s ease;
+  caret-color: var(--color-UTA, #8a1538);
+}
+
+.otp-digit:focus {
+  border-color: var(--color-UTA, #8a1538);
+  box-shadow: 0 0 0 3px rgba(138, 21, 56, 0.15);
+  transform: scale(1.05);
+}
+
+.otp-digit-filled {
+  border-color: var(--color-UTA, #8a1538);
+  background-color: rgba(138, 21, 56, 0.04);
+}
+
+.otp-digit-error {
+  border-color: #dc3545 !important;
+  background-color: rgba(220, 53, 69, 0.05);
+  animation: shake-otp 0.4s ease;
+}
+
+.otp-digit:disabled {
+  background-color: #f3f4f6;
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Error state for the container */
+.otp-error .otp-digit {
+  border-color: #dc3545;
+}
+
+@keyframes shake-otp {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .otp-inputs {
+    gap: 6px;
+  }
+
+  .otp-digit {
+    width: 44px;
+    height: 54px;
+    font-size: 1.5rem;
+  }
+}
+
+/* Dark mode */
+[data-theme="dark"] .otp-digit {
+  background-color: var(--color-bg-secondary, #1e1e2e);
+  border-color: var(--color-border-primary, #444);
+  color: var(--color-text-primary, #e0e0e0);
+}
+
+[data-theme="dark"] .otp-digit:focus {
+  border-color: var(--color-primary, #8a1538);
+  box-shadow: 0 0 0 3px rgba(138, 21, 56, 0.25);
+}
+
+[data-theme="dark"] .otp-digit-filled {
+  border-color: var(--color-primary, #8a1538);
+  background-color: rgba(138, 21, 56, 0.1);
+}

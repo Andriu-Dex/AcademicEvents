@@ -10,10 +10,11 @@ const UniversidadService = require("./universidad.service");
 class EmailTemplateService {
   constructor() {
     // Configurar transporter de nodemailer
+    const port = Number(process.env.SMTP_PORT) || 587;
     this.transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
-      port: process.env.SMTP_PORT,
-      secure: false, // true para 465, false para otros puertos
+      port: port,
+      secure: port === 465, // true para 465, false para otros puertos
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
@@ -85,11 +86,10 @@ class EmailTemplateService {
   }
 
   /**
-   * Genera una plantilla de correo para verificación de email
+   * Genera una plantilla de correo para verificación de email con código numérico
    * @param {Object} options - Opciones para la plantilla
    * @param {string} options.nombre - Nombre del destinatario
-   * @param {string} options.urlVerificacion - URL para verificar correo
-   * @param {string} options.token - Token de verificación
+   * @param {string} options.codigo - Código numérico de 6 dígitos
    * @param {Object} options.facultad - Información de la facultad (opcional)
    * @param {string} options.facultad.nom_fac - Nombre de la facultad
    * @param {string} options.facultad.acr_fac - Acrónimo de la facultad
@@ -97,8 +97,7 @@ class EmailTemplateService {
    */
   obtenerPlantillaVerificacion({
     nombre,
-    urlVerificacion,
-    token,
+    codigo,
     facultad = null,
   }) {
     const asunto = emailConfig.plantillas.verificacion.asunto;
@@ -110,6 +109,9 @@ class EmailTemplateService {
       : config.universidad.nombre;
 
     const acronimoFacultad = facultad?.acr_fac || config.universidad.acronimo;
+
+    // Formatear código para la visualización (el espaciado se maneja con CSS)
+    const codigoFormateado = codigo;
 
     const cuerpoHtml = `
     <!DOCTYPE html>
@@ -233,39 +235,39 @@ class EmailTemplateService {
           border: none;
         }
 
-        /* Botón de acción */
-        .button-container {
+        /* Contenedor del código */
+        .code-container {
           text-align: center;
           margin: 30px 0;
+          padding: 25px 15px;
+          background-color: #f8f9fa;
+          border: 2px dashed ${config.colores.primary};
+          border-radius: 8px;
         }
 
-        .button {
-          display: inline-block;
-          padding: 12px 24px;
-          background-color: ${config.colores.primary};
-          color: white !important;
-          text-decoration: none;
-          font-weight: bold;
-          border-radius: 4px;
-          font-size: 16px;
-          border: 2px solid ${config.colores.primary};
-        }
-
-        /* Link alternativo */
-        .link-container {
-          margin: 25px 0;
-          padding: 15px;
-          background-color: #f5f5f5;
-          border: 1px solid #e0e0e0;
-          border-radius: 4px;
-        }
-
-        .link-text {
-          word-break: break-all;
-          font-family: monospace;
+        .code-label {
           font-size: 14px;
-          color: #444444;
-          text-align: center;
+          color: #666666;
+          margin-bottom: 12px;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+        }
+
+        .code-value {
+          font-size: 36px;
+          font-weight: bold;
+          color: ${config.colores.primary};
+          letter-spacing: 12px;
+          text-indent: 12px; /* Centra el texto compensando el espaciado a la derecha */
+          font-family: 'Courier New', Courier, monospace;
+          padding: 10px 0;
+          white-space: nowrap;
+        }
+
+        .code-expiry {
+          font-size: 13px;
+          color: #888888;
+          margin-top: 12px;
         }
 
         /* Aviso de seguridad */
@@ -334,28 +336,22 @@ class EmailTemplateService {
           <p class="greeting">Estimado/a ${nombre}:</p>
           
           <p class="message">
-            Le damos la más cordial bienvenida a <strong>AcademicEvents</strong>, el sistema oficial para la gestión de eventos académicos de la Universidad Técnica de Ambato. Para completar su proceso de registro y garantizar la seguridad de su cuenta, es necesario verificar su dirección de correo electrónico.
+            Le damos la más cordial bienvenida a <strong>AcademicEvents</strong>, el sistema oficial para la gestión de eventos académicos de la Universidad Técnica de Ambato. Para completar su proceso de registro y garantizar la seguridad de su cuenta, ingrese el siguiente código de verificación:
           </p>
           
           <hr class="divider">
           
-          <p class="message">Por favor, haga clic en el siguiente botón para validar su cuenta:</p>
-          
-          <div class="button-container">
-            <a href="${urlVerificacion}" class="button">
-              ${config.plantillas.verificacion.icono} Verificar mi cuenta
-            </a>
+          <div class="code-container">
+            <p class="code-label">Tu código de verificación</p>
+            <p class="code-value">${codigoFormateado}</p>
+            <p class="code-expiry">⏱️ Este código caduca en <strong>15 minutos</strong></p>
           </div>
           
-          <p class="message">Si el botón anterior no funciona, puede copiar y pegar la siguiente URL en su navegador web:</p>
-          
-          <div class="link-container">
-            <p class="link-text">${urlVerificacion}</p>
-          </div>
+          <p class="message">Ingresa este código en la pantalla de verificación de la aplicación para activar tu cuenta.</p>
           
           <div class="security-notice">
             <p class="notice-title">Importante:</p>
-            <p>Este enlace caducará en <strong>24 horas</strong> por motivos de seguridad. Si no ha solicitado esta verificación, puede ignorar este mensaje.</p>
+            <p>Si no has solicitado esta verificación, puedes ignorar este mensaje. Nunca compartas este código con nadie.</p>
           </div>
           
           <hr class="divider">

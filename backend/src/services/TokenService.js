@@ -44,6 +44,138 @@ class TokenService {
   }
 
   /**
+   * Crea un token con código numérico de 6 dígitos para verificación
+   * @param {Object} options - Opciones para la creación
+   * @param {string} options.idCuenta - ID de la cuenta
+   * @param {string} options.tipoToken - Tipo de token
+   * @param {string} options.ip - Dirección IP
+   * @param {number} options.minutosValidez - Minutos de validez (default: 15)
+   * @param {string} options.tenantId - ID del tenant
+   * @returns {Promise<Object>} Token creado con código
+   */
+  async crearTokenConCodigo({ idCuenta, tipoToken, ip, minutosValidez = 15, tenantId }) {
+    try {
+      // Generar código numérico de 6 dígitos (100000-999999)
+      const codigoNumerico = String(
+        100000 + Math.floor(Math.random() * 900000)
+      );
+
+      // Generar value interno para tracking (no se muestra al usuario)
+      const tokenValue = randomBytes(32).toString("hex");
+
+      // Calcular fecha de expiración (15 minutos por defecto)
+      const fechaExpiracion = new Date();
+      fechaExpiracion.setMinutes(fechaExpiracion.getMinutes() + minutosValidez);
+
+      // Crear token en la base de datos
+      const token = await prisma.accountToken.create({
+        data: {
+          tenantId,
+          accountId: idCuenta,
+          value: tokenValue,
+          code: codigoNumerico,
+          type: tipoToken,
+          expiresAt: fechaExpiracion,
+          requestIp: ip || null,
+        },
+      });
+
+      return token;
+    } catch (error) {
+      console.error("Error al crear token con código:", error);
+      throw new Error("Error al generar el código de verificación");
+    }
+  }
+
+  /**
+   * Valida un código de verificación de 6 dígitos
+   * @param {Object} options - Opciones para la validación
+   * @param {string} options.accountId - ID de la cuenta
+   * @param {string} options.code - Código de 6 dígitos ingresado por el usuario
+   * @param {string} options.tipoToken - Tipo de token esperado
+   * @param {string} options.ip - IP desde donde se realiza la validación
+   * @returns {Promise<Object>} Resultado de la validación
+   */
+  async validarCodigo({ accountId, code, tipoToken, ip }) {
+    try {
+      // Buscar token activo con ese código para esa cuenta
+      const token = await prisma.accountToken.findFirst({
+        where: {
+          accountId,
+          code,
+          type: tipoToken,
+          status: "ACTIVE",
+        },
+        include: {
+          invalidation: true,
+          usage: true,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
+
+      // Verificar existencia del token
+      if (!token) {
+        // Verificar si el código ya fue usado (para dar mejor mensaje)
+        const tokenUsado = await prisma.accountToken.findFirst({
+          where: {
+            accountId,
+            code,
+            type: tipoToken,
+            status: "USED",
+          },
+        });
+
+        if (tokenUsado) {
+          const cuenta = await prisma.account.findUnique({
+            where: { id: accountId },
+            select: { isEmailVerified: true },
+          });
+
+          return {
+            valido: false,
+            mensaje: "Este código ya ha sido utilizado.",
+            motivo: "USO_NORMAL",
+            cuentaVerificada: cuenta?.isEmailVerified || false,
+          };
+        }
+
+        return {
+          valido: false,
+          mensaje: "El código ingresado no es válido.",
+          motivo: "CODIGO_INVALIDO",
+        };
+      }
+
+      // Verificar expiración
+      if (new Date() > token.expiresAt) {
+        await prisma.accountToken.update({
+          where: { id: token.id },
+          data: { status: "EXPIRED" },
+        });
+
+        return {
+          valido: false,
+          mensaje: "El código ha expirado. Por favor solicita uno nuevo.",
+          motivo: "EXPIRADO",
+          expirado: true,
+          token,
+        };
+      }
+
+      return {
+        valido: true,
+        mensaje: "Código válido",
+        token,
+      };
+    } catch (error) {
+      console.error("Error al validar código:", error);
+      throw new Error("Error al validar el código");
+    }
+  }
+
+  /**
    * Valida un token existente
    * @param {Object} options - Opciones para la validación
    * @param {string} options.tokenValue - Valor del token a validar

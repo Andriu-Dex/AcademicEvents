@@ -475,6 +475,7 @@ model AccountToken {
   tenantId        String
   accountId       String
   value           String    @unique
+  code            String?             // Código numérico de 6 dígitos (null para tokens legacy de tipo link)
   type            TokenType
   status          TokenStatus @default(ACTIVE)
   expiresAt       DateTime
@@ -494,6 +495,7 @@ model AccountToken {
   @@index([accountId])
   @@index([value])
   @@index([value, status])
+  @@index([accountId, code, status])
 }
 
 model TokenInvalidation {

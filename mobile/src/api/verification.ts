@@ -84,3 +84,36 @@ export async function verifyEmailToken(token: string) {
         user,
     };
 }
+
+/**
+ * Verifica el correo electrónico mediante código numérico de 6 dígitos
+ */
+export async function verifyEmailCode(email: string, code: string) {
+    const response = await apiClient.post<VerifyEmailResponse>("/api/verificacion/codigo", {
+        email,
+        code,
+    });
+
+    const authToken = response.data?.authToken;
+    const rawUser = response.data?.usuario;
+
+    const user: AuthUser | null = rawUser
+        ? {
+            id: rawUser.id,
+            email: rawUser.correo,
+            role: rawUser.rol_usu,
+            firstName: rawUser.nom_usu,
+            lastName: rawUser.ape_usu,
+            profileImageUrl: null,
+        }
+        : null;
+
+    return {
+        success: Boolean(response.data?.success),
+        message: response.data?.message ?? "Solicitud procesada",
+        motivo: response.data?.motivo,
+        authToken,
+        user,
+    };
+}
+

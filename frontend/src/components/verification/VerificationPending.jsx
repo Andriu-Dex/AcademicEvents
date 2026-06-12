@@ -1,12 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Mail, Loader2, AlertTriangle, ArrowLeft } from "lucide-react";
+import { Mail, Loader2, AlertTriangle, ArrowLeft, ShieldCheck } from "lucide-react";
+import OtpInput from "./OtpInput";
 import "./styles/VerificationPending.css";
 import HomeButton from "../common/HomeButton";
 
 /**
  * @class VerificationPendingComponent
- * @description Componente que muestra una pantalla de verificación pendiente
+ * @description Componente que muestra una pantalla de verificación pendiente con input OTP de 6 dígitos
  */
 class VerificationPendingComponent extends React.Component {
   /**
@@ -17,6 +18,7 @@ class VerificationPendingComponent extends React.Component {
     super(props);
     this.handleResendClick = this.handleResendClick.bind(this);
     this.handleCorrectEmail = this.handleCorrectEmail.bind(this);
+    this.handleCodeComplete = this.handleCodeComplete.bind(this);
   }
 
   /**
@@ -40,25 +42,25 @@ class VerificationPendingComponent extends React.Component {
       this.props.onCorrectEmail();
     }
   }
+
+  /**
+   * Maneja cuando el usuario completa el código OTP
+   * @param {string} code - Código de 6 dígitos completo
+   */
+  handleCodeComplete(code) {
+    if (this.props.onCodeSubmit) {
+      this.props.onCodeSubmit(code);
+    }
+  }
+
   /**
    * Render del componente
    * @returns {JSX.Element} Componente JSX
    */
   render() {
-    console.log("🔍 VerificationPending - Iniciando render");
-
-    const { email, loading, error } = this.props;
-
-    console.log("📊 VerificationPending - Props:", {
-      email,
-      loading,
-      error,
-      allProps: this.props,
-    });
+    const { email, loading, error, verifying, codeError } = this.props;
 
     try {
-      console.log("🏠 VerificationPending - Intentando renderizar HomeButton");
-
       return (
         <>
           {/* Botón de inicio usando el componente HomeButton */}
@@ -70,27 +72,53 @@ class VerificationPendingComponent extends React.Component {
 
           <div className="container-vp">
             <div className="header-vp">
-              <h2 className="title-vp">Verificación Pendiente</h2>
+              <h2 className="title-vp">Verificar tu correo</h2>
             </div>
             <div className="content-vp">
               <div className="icon-vp">
-                <Mail className="status-icon-warning-vp" size={38} />
+                <ShieldCheck className="status-icon-warning-vp" size={38} />
               </div>
 
               <div className="message-vp">
                 <p className="notificacion-vp">
-                  Hemos enviado un enlace de verificación a:
+                  Hemos enviado un código de verificación a:
                 </p>
                 <p className="email-highlight-vp">{email}</p>
                 <p>
-                  Por favor, revise su bandeja de entrada (y carpeta de spam)
-                  para completar el proceso de registro.
+                  Ingresa el código de 6 dígitos que recibiste en tu correo
+                  electrónico.
                 </p>
               </div>
+
+              {/* Input OTP de 6 dígitos */}
+              <OtpInput
+                length={6}
+                onComplete={this.handleCodeComplete}
+                disabled={loading || verifying}
+                error={!!codeError}
+              />
+
+              {/* Mensaje de error del código */}
+              {codeError && (
+                <div className="error-message-vp" style={{ textAlign: "center" }}>
+                  {codeError}
+                </div>
+              )}
+
+              {/* Indicador de verificación */}
+              {verifying && (
+                <div className="verifying-indicator-vp">
+                  <Loader2 className="spinner-vp" size={20} />
+                  <span>Verificando código...</span>
+                </div>
+              )}
 
               {error && <div className="error-message-vp">{error}</div>}
 
               <div className="actions-vp">
+                <p className="resend-text-vp">
+                  ¿No recibiste el código?
+                </p>
                 <button
                   onClick={this.handleResendClick}
                   disabled={loading}
@@ -102,7 +130,7 @@ class VerificationPendingComponent extends React.Component {
                       Enviando...
                     </>
                   ) : (
-                    "Reenviar verificación"
+                    "Reenviar código"
                   )}
                 </button>
 
@@ -116,6 +144,9 @@ class VerificationPendingComponent extends React.Component {
               </div>
 
               <div className="footer-vp">
+                <p className="code-expiry-info-vp">
+                  ⏱️ El código caduca en <strong>15 minutos</strong>
+                </p>
                 <Link to="/login" className="link-vp">
                   <ArrowLeft size={16} />
                   Volver al inicio de sesión
@@ -127,13 +158,12 @@ class VerificationPendingComponent extends React.Component {
       );
     } catch (renderError) {
       console.error("❌ VerificationPending - Error en render:", renderError);
-      console.error("📚 VerificationPending - Stack trace:", renderError.stack);
 
       // Fallback sin HomeButton
       return (
         <div className="container-vp">
           <div className="header-vp">
-            <h2 className="title-vp">Verificación Pendiente</h2>
+            <h2 className="title-vp">Verificar tu correo</h2>
           </div>
           <div className="content-vp">
             <div className="icon-vp">
@@ -142,14 +172,26 @@ class VerificationPendingComponent extends React.Component {
 
             <div className="message-vp">
               <p className="notificacion-vp">
-                Hemos enviado un enlace de verificación a:
+                Hemos enviado un código de verificación a:
               </p>
               <p className="email-highlight-vp">{email}</p>
               <p>
-                Por favor, revise su bandeja de entrada (y carpeta de spam) para
-                completar el proceso de registro.
+                Ingresa el código de 6 dígitos que recibiste en tu correo.
               </p>
             </div>
+
+            <OtpInput
+              length={6}
+              onComplete={this.handleCodeComplete}
+              disabled={loading || verifying}
+              error={!!codeError}
+            />
+
+            {codeError && (
+              <div className="error-message-vp" style={{ textAlign: "center" }}>
+                {codeError}
+              </div>
+            )}
 
             {error && <div className="error-message-vp">{error}</div>}
 
@@ -165,7 +207,7 @@ class VerificationPendingComponent extends React.Component {
                     Enviando...
                   </>
                 ) : (
-                  "Reenviar verificación"
+                  "Reenviar código"
                 )}
               </button>
 

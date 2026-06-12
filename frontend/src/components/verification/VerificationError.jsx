@@ -13,7 +13,7 @@ class VerificationErrorComponent extends React.Component {
    * @returns {JSX.Element} Componente JSX
    */
   render() {
-    const { message, email, onResendClick, loading, motivo } = this.props;
+    const { message, email, onResendClick, onGoToCodeVerification, loading, motivo } = this.props;
 
     // Determinar icono y mensaje basado en el motivo del error
     let icon = <AlertTriangle className="status-icon-error-vs" />;
@@ -25,11 +25,11 @@ class VerificationErrorComponent extends React.Component {
       icon = <Mail className="status-icon-warning-vs" />;
       title = "Correo actualizado";
       helpText =
-        "Se ha enviado un nuevo enlace de verificación a tu correo actualizado.";
+        "Se ha enviado un nuevo código de verificación a tu correo actualizado.";
     } else if (motivo === "EXPIRADO") {
       icon = <RefreshCw className="status-icon-warning-vs" />;
       title = "Enlace expirado";
-      helpText = "El enlace de verificación ha expirado.";
+      helpText = "El enlace de verificación ha expirado. Puedes verificar tu cuenta con un código.";
     }
 
     return (
@@ -50,7 +50,7 @@ class VerificationErrorComponent extends React.Component {
               <div className="correction-message-vs">
                 <p>
                   Has corregido tu dirección de correo electrónico. Por favor,
-                  revisa tu bandeja de entrada y utiliza el enlace más reciente
+                  revisa tu bandeja de entrada y utiliza el código más reciente
                   que te hemos enviado.
                 </p>
               </div>
@@ -59,12 +59,23 @@ class VerificationErrorComponent extends React.Component {
             {email && <p>{helpText}</p>}
           </div>
 
-          {email && (
-            <div className="actions-vs">
+          <div className="actions-vs">
+            {/* Botón para ir a verificación por código */}
+            {onGoToCodeVerification && (
+              <button
+                onClick={onGoToCodeVerification}
+                className="button-vs"
+              >
+                Verificar con código
+              </button>
+            )}
+
+            {email && (
               <button
                 onClick={onResendClick}
                 disabled={loading}
                 className="button-vs"
+                style={{ backgroundColor: "transparent", color: "var(--color-UTA, #8a1538)", border: "1px solid var(--color-UTA, #8a1538)" }}
               >
                 {loading ? (
                   <>
@@ -74,8 +85,8 @@ class VerificationErrorComponent extends React.Component {
                   "Reenviar verificación"
                 )}
               </button>
-            </div>
-          )}
+            )}
+          </div>
 
           <div className="footer-vs">
             <Link to="/login" className="link-vs">

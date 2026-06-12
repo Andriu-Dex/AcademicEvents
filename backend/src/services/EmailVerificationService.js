@@ -34,24 +34,20 @@ class EmailVerificationService {
    */
   async enviarVerificacion(cuenta, ip, requestBaseUrl) {
     try {
-      // Crear token de verificación
-      const token = await this.tokenService.crearToken({
+      // Crear token con código de verificación de 6 dígitos
+      const token = await this.tokenService.crearTokenConCodigo({
         idCuenta: cuenta.id,
         tipoToken: "VERIFY_EMAIL",
         ip,
+        minutosValidez: 15,
         tenantId: cuenta.tenantId,
       });
 
-      // Generar URL puente en el backend para que funcione en web y móvil
-      const backendUrl = buildBackendUrl(requestBaseUrl);
-      const urlVerificacion = `${backendUrl}/api/verificacion/open/${token.value}`;
-
-      // Obtener plantilla de correo
+      // Obtener plantilla de correo con código
       const { asunto, cuerpoHtml } =
         this.emailTemplateService.obtenerPlantillaVerificacion({
           nombre: cuenta.user?.firstName || "Usuario",
-          urlVerificacion,
-          token: token.value,
+          codigo: token.code,
         });
 
       // Enviar correo electrónico
@@ -63,12 +59,139 @@ class EmailVerificationService {
 
       return {
         success: true,
-        message: "Email de verificación enviado correctamente",
-        token: token.value,
+        message: "Código de verificación enviado al correo electrónico",
+        // No exponemos el código en la respuesta por seguridad
       };
     } catch (error) {
       console.error("Error al enviar verificación de correo:", error);
       throw new Error("Error al enviar el correo de verificación");
+    }
+  }
+
+  /**
+   * Verifica un código de 6 dígitos ingresado por el usuario
+   * @param {string} correo - Correo electrónico de la cuenta
+   * @param {string} code - Código de 6 dígitos
+   * @param {string} ip - Dirección IP
+   * @param {string} tenantId - ID del tenant
+   * @returns {Promise<Object>} Resultado de la verificación
+   */
+  async verificarCodigo(correo, code, ip, tenantId) {
+    try {
+      // Obtener la cuenta por correo
+      const cuenta = await this.tokenService.obtenerCuentaPorCorreo(correo, tenantId);
+
+      if (!cuenta) {
+        return {
+          success: false,
+          message: "No existe una cuenta con este correo electrónico",
+          motivo: "CUENTA_NO_ENCONTRADA",
+        };
+      }
+
+      if (cuenta.isEmailVerified) {
+        return {
+          success: false,
+          message: "Esta cuenta ya ha sido verificada",
+          motivo: "YA_VERIFICADA",
+        };
+      }
+
+      // Validar el código
+      const resultadoValidacion = await this.tokenService.validarCodigo({
+        accountId: cuenta.id,
+        code,
+        tipoToken: "VERIFY_EMAIL",
+        ip,
+      });
+
+      if (!resultadoValidacion.valido) {
+        return {
+          success: false,
+          message: resultadoValidacion.mensaje,
+          motivo: resultadoValidacion.motivo || "ERROR_GENERICO",
+        };
+      }
+
+      // Usar transacción para asegurar atomicidad
+      await prisma.$transaction(async (tx) => {
+        // Verificar que el token siga activo dentro de la transacción
+        const tokenActual = await tx.accountToken.findUnique({
+          where: { id: resultadoValidacion.token.id },
+        });
+
+        if (tokenActual?.status !== "ACTIVE") {
+          throw new Error("Código ya no válido durante la transacción");
+        }
+
+        // Marcar token como usado
+        await tx.accountToken.update({
+          where: { id: resultadoValidacion.token.id },
+          data: { status: "USED" },
+        });
+
+        // Registrar el uso del token
+        await tx.tokenUsage.create({
+          data: {
+            tenantId: tokenActual.tenantId,
+            tokenId: tokenActual.id,
+            ip: ip || "0.0.0.0",
+            successful: true,
+          },
+        });
+
+        // Actualizar estado de verificación en la cuenta
+        await tx.account.update({
+          where: { id: cuenta.id },
+          data: {
+            isEmailVerified: true,
+            emailVerifiedAt: new Date(),
+          },
+        });
+      });
+
+      // Obtener información completa de la cuenta para generar JWT
+      const accountComplete = await prisma.account.findUnique({
+        where: { id: cuenta.id },
+        include: { user: true },
+      });
+
+      // Generar token JWT para autenticación automática
+      const jwt = require("jsonwebtoken");
+      const jwtToken = jwt.sign(
+        {
+          id: accountComplete.id,
+          rol_usu: accountComplete.role,
+        },
+        process.env.JWT_SECRET,
+        { expiresIn: "2h" }
+      );
+
+      return {
+        success: true,
+        message: "¡Correo verificado exitosamente!",
+        idCuenta: cuenta.id,
+        authToken: jwtToken,
+        usuario: {
+          id: accountComplete.id,
+          correo: accountComplete.email,
+          rol_usu: accountComplete.role,
+          nom_usu: accountComplete.user.firstName,
+          ape_usu: accountComplete.user.lastName,
+        },
+      };
+    } catch (error) {
+      console.error("Error al verificar código:", error);
+
+      if (error.message === "Código ya no válido durante la transacción") {
+        return {
+          success: false,
+          message: "Este código ya ha sido utilizado.",
+          motivo: "USO_NORMAL",
+        };
+      }
+
+      throw new Error("Error al verificar el código");
     }
   }
   /**

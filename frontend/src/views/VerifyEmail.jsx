@@ -8,7 +8,8 @@ import VerificationError from "../components/verification/VerificationError";
 import RedirectingVerification from "../components/verification/RedirectingVerification";
 
 /**
- * Página para verificar el correo electrónico
+ * Página para verificar el correo electrónico via link (legacy)
+ * Si el token falla, redirige a la pantalla de verificación por código
  * @returns {JSX.Element} Componente JSX
  */
 const VerifyEmail = () => {
@@ -28,15 +29,7 @@ const VerifyEmail = () => {
 
       hasExecutedRef.current = true;
 
-      console.log(`[Frontend] Iniciando verificación para token: ${token}`);
-
       try {
-        console.log(
-          `[Frontend] Enviando solicitud a: ${
-            import.meta.env.VITE_API_URL
-          }/api/verificacion/${token}`
-        );
-
         const response = await axios.get(
           `${import.meta.env.VITE_API_URL}/api/verificacion/${token}`
         );
@@ -52,7 +45,7 @@ const VerifyEmail = () => {
             // Redirigir al home después del delay con feedback visual
             setTimeout(() => {
               navigate("/");
-            }, 5000); // 3 segundos para mostrar la pantalla de redirección
+            }, 5000);
           } else {
             // Fallback al comportamiento anterior si no hay datos de auth
             setStatus("success");
@@ -76,19 +69,23 @@ const VerifyEmail = () => {
     verifyToken();
   }, [token]);
 
-  // Manejar el reenvío de verificación
+  // Redirigir a la página de verificación por código
+  const handleGoToCodeVerification = () => {
+    navigate("/verification-pending");
+  };
+
+  // Manejar el reenvío de verificación (legacy)
   const handleResendClick = async () => {
     setLoading(true);
 
     try {
-      // Intentar obtener información del token (incluso si ha expirado)
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/verificacion/reenviar/${token}`
       );
 
       if (response.data.success) {
         toast.success(
-          "Se ha enviado un nuevo correo de verificación. Por favor, revisa tu bandeja de entrada."
+          "Se ha enviado un nuevo código de verificación. Por favor, revisa tu bandeja de entrada."
         );
       } else {
         toast.error(
@@ -98,7 +95,7 @@ const VerifyEmail = () => {
     } catch (error) {
       toast.error(
         error.response?.data?.message ||
-          "Error al reenviar la verificación. Por favor, intenta iniciar sesión para solicitar un nuevo enlace."
+          "Error al reenviar la verificación. Por favor, intenta iniciar sesión para solicitar un nuevo código."
       );
     } finally {
       setLoading(false);
@@ -109,6 +106,7 @@ const VerifyEmail = () => {
   const handleContinue = () => {
     navigate("/");
   };
+
   // Renderizar el componente según el estado
   if (status === "verifying") {
     return (
@@ -126,7 +124,6 @@ const VerifyEmail = () => {
   }
 
   if (status === "success") {
-    // Mostrar componente de éxito para casos fallback (sin auto-login)
     return <VerificationSuccess onContinue={handleContinue} />;
   }
 
@@ -134,6 +131,7 @@ const VerifyEmail = () => {
     <VerificationError
       message={error}
       onResendClick={handleResendClick}
+      onGoToCodeVerification={handleGoToCodeVerification}
       loading={loading}
     />
   );

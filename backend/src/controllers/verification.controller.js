@@ -11,7 +11,70 @@ const emailVerificationService = new EmailVerificationService(
 );
 
 /**
- * Verifica un token de correo electrónico
+ * Verifica un código de 6 dígitos para confirmar el correo electrónico
+ * @param {Object} req - Objeto request de Express
+ * @param {Object} res - Objeto response de Express
+ * @returns {Promise<Object>} Respuesta HTTP
+ */
+const verificarCodigo = async (req, res) => {
+  try {
+    const { email, code } = req.body;
+
+    if (!email || !code) {
+      return res.status(400).json({
+        success: false,
+        message: "El correo electrónico y el código son obligatorios",
+      });
+    }
+
+    // Validar formato del código (6 dígitos)
+    if (!/^\d{6}$/.test(code)) {
+      return res.status(400).json({
+        success: false,
+        message: "El código debe ser de 6 dígitos numéricos",
+      });
+    }
+
+    const ip = req.ip || req.connection.remoteAddress;
+
+    const resultado = await emailVerificationService.verificarCodigo(
+      email.trim().toLowerCase(),
+      code,
+      ip,
+      req.tenantId
+    );
+
+    if (!resultado.success) {
+      return res.status(400).json({
+        success: false,
+        message: resultado.message,
+        motivo: resultado.motivo || "ERROR_GENERICO",
+      });
+    }
+
+    // Respuesta exitosa con datos de autenticación
+    const response = {
+      success: true,
+      message: resultado.message,
+    };
+
+    if (resultado.authToken && resultado.usuario) {
+      response.authToken = resultado.authToken;
+      response.usuario = resultado.usuario;
+    }
+
+    return res.status(200).json(response);
+  } catch (error) {
+    console.error("Error en verificación de código:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error en el servidor al verificar el código",
+    });
+  }
+};
+
+/**
+ * Verifica un token de correo electrónico (legacy - para links ya enviados)
  * @param {Object} req - Objeto request de Express
  * @param {Object} res - Objeto response de Express
  * @returns {Promise<Object>} Respuesta HTTP
@@ -202,6 +265,7 @@ const solicitarReenvio = async (req, res) => {
 };
 
 module.exports = {
+  verificarCodigo,
   verificarToken,
   openVerificationLink,
   reenviarVerificacion,

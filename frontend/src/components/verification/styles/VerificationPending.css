@@ -308,3 +308,48 @@
   background-color: var(--color-primary-light);
   color: var(--color-primary-hover);
 }
+
+/* Indicador de verificación en progreso */
+.verifying-indicator-vp {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px;
+  margin: 1rem 0;
+  background-color: rgba(138, 21, 56, 0.06);
+  border-radius: 8px;
+  color: var(--color-UTA);
+  font-weight: 500;
+  animation: fadeIn-vp 0.3s ease;
+}
+
+/* Texto de reenvío */
+.resend-text-vp {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 0.25rem;
+}
+
+/* Info de expiración del código */
+.code-expiry-info-vp {
+  font-size: 0.85rem;
+  color: #888;
+  margin-bottom: 0.75rem;
+}
+
+@keyframes fadeIn-vp {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+[data-theme="dark"] .verifying-indicator-vp {
+  background-color: rgba(138, 21, 56, 0.15);
+  color: var(--color-primary);
+}
+
+[data-theme="dark"] .resend-text-vp,
+[data-theme="dark"] .code-expiry-info-vp {
+  color: var(--color-text-secondary);
+}
+

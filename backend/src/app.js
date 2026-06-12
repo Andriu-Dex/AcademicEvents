@@ -7,6 +7,7 @@ const helmet = require("helmet");
 const dotenv = require("dotenv");
 const path = require("path");
 const http = require("http");
+const dns = require("dns"); // Importar dns para forzar ipv4 en la resolución del host de correo
 const { Server } = require("socket.io");
 const { scheduledCleanup } = require("./services/cleanupService");
 const { setupDirectories } = require("./utils/directory.utils");
@@ -14,12 +15,16 @@ const socketService = require("./services/socket.service");
 const eventStatusService = require("./services/eventStatusService");
 const { apiLimiter, authLimiter } = require("./middlewares/rateLimit");
 
+// Forzar a Node a priorizar IPv4 sobre IPv6 (evita ETIMEDOUT en Render con servidores SMTP)
+dns.setDefaultResultOrder("ipv4first");
+
 // ============================
 //  Configuración inicial
 // ============================
 dotenv.config(); // Cargar variables de entorno desde .env
 
 const app = express(); // Crear instancia de la aplicación
+app.set("trust proxy", 1); // Confiar en el proxy de Render para el Rate Limiter
 const server = http.createServer(app); // Crear servidor HTTP
 
 const allowedOrigins = new Set([
