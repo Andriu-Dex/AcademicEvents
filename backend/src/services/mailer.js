@@ -1,9 +1,13 @@
 const { Resend } = require("resend");
+const axios = require("axios");
 
-const apiKey = process.env.RESEND_API_KEY || process.env.RENDER_API_KEY;
-const resend = new Resend(apiKey);
+const resendKey = process.env.RESEND_API_KEY || process.env.RENDER_API_KEY;
+let resend = null;
+if (resendKey) {
+  resend = new Resend(resendKey);
+}
 
-console.log("Servicio de correo Resend inicializado para certificados");
+console.log("Servicio de correo para certificados inicializado");
 
 const enviarCorreoConCertificado = async (
   correoDestino,
@@ -13,7 +17,7 @@ const enviarCorreoConCertificado = async (
 ) => {
   try {
     console.log(`Intentando enviar certificado por correo a: ${correoDestino}`);
-    const fromEmail = process.env.RESEND_FROM_EMAIL || "AcademicEvents <onboarding@resend.dev>";
+    const brevoKey = process.env.BREVO_API_KEY;
 
     // Preparar un HTML amigable para el correo
     const html = `
@@ -55,27 +59,67 @@ const enviarCorreoConCertificado = async (
       </div>
     `;
 
-    const { data, error } = await resend.emails.send({
-      from: fromEmail,
-      to: correoDestino,
-      subject: `Certificado - ${nombreEvento}`,
-      html: html,
-      attachments: [
+    const attachmentFilename = `Certificado_${nombreEvento.replace(/\s+/g, "_")}.pdf`;
+
+    if (brevoKey) {
+      console.log("[Mailer] Enviando certificado vía Brevo HTTP API");
+      const senderEmail = process.env.BREVO_SENDER_EMAIL || process.env.SMTP_USER || "andriudex@gmail.com";
+      const senderName = process.env.BREVO_SENDER_NAME || "AcademicEvents";
+
+      const base64Content = Buffer.isBuffer(pdfBuffer) ? pdfBuffer.toString("base64") : pdfBuffer;
+
+      const response = await axios.post(
+        "https://api.brevo.com/v3/smtp/email",
         {
-          filename: `Certificado_${nombreEvento.replace(/\s+/g, "_")}.pdf`,
-          content: pdfBuffer,
+          sender: { name: senderName, email: senderEmail },
+          to: [{ email: correoDestino }],
+          subject: `Certificado - ${nombreEvento}`,
+          htmlContent: html,
+          attachment: [
+            {
+              name: attachmentFilename,
+              content: base64Content,
+            },
+          ],
         },
-      ],
-    });
+        {
+          headers: {
+            "api-key": brevoKey,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-    if (error) {
-      throw error;
+      console.log("Certificado enviado via Brevo. ID:", response.data.messageId);
+      return true;
+    } else if (resend) {
+      console.log("[Mailer] Enviando certificado vía Resend");
+      const fromEmail = process.env.RESEND_FROM_EMAIL || "AcademicEvents <onboarding@resend.dev>";
+      
+      const { data, error } = await resend.emails.send({
+        from: fromEmail,
+        to: correoDestino,
+        subject: `Certificado - ${nombreEvento}`,
+        html: html,
+        attachments: [
+          {
+            filename: attachmentFilename,
+            content: pdfBuffer,
+          },
+        ],
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      console.log("Certificado enviado via Resend:", data.id);
+      return true;
+    } else {
+      throw new Error("No hay un proveedor de correo configurado (Brevo ni Resend)");
     }
-
-    console.log("Certificado enviado via Resend:", data.id);
-    return true;
   } catch (error) {
-    console.error("Error al enviar correo con Resend:", error);
+    console.error("Error al enviar correo:", error.response ? error.response.data : error.message);
     return false;
   }
 };

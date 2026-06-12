@@ -1,4 +1,5 @@
 const { Resend } = require("resend");
+const axios = require("axios");
 const { prisma } = require("../config/db");
 const emailConfig = require("../config/emailConfig");
 const UniversidadService = require("./universidad.service");
@@ -9,9 +10,11 @@ const UniversidadService = require("./universidad.service");
  */
 class EmailTemplateService {
   constructor() {
-    // Configurar cliente de Resend
+    // Configurar cliente de Resend si existe la clave
     const apiKey = process.env.RESEND_API_KEY || process.env.RENDER_API_KEY;
-    this.resend = new Resend(apiKey);
+    if (apiKey) {
+      this.resend = new Resend(apiKey);
+    }
 
     // Inicializar cliente de Prisma
     this.prisma = prisma;
@@ -800,22 +803,52 @@ class EmailTemplateService {
    */
   async enviarEmail({ destinatario, asunto, cuerpoHtml }) {
     try {
-      const fromEmail = process.env.RESEND_FROM_EMAIL || "AcademicEvents <onboarding@resend.dev>";
-      const { data, error } = await this.resend.emails.send({
-        from: fromEmail,
-        to: destinatario,
-        subject: asunto,
-        html: cuerpoHtml,
-      });
+      const brevoKey = process.env.BREVO_API_KEY;
 
-      if (error) {
-        throw error;
+      if (brevoKey) {
+        console.log(`[EmailTemplateService] Enviando correo vía Brevo a: ${destinatario}`);
+        const senderEmail = process.env.BREVO_SENDER_EMAIL || process.env.SMTP_USER || "andriudex@gmail.com";
+        const senderName = process.env.BREVO_SENDER_NAME || "AcademicEvents";
+
+        const response = await axios.post(
+          "https://api.brevo.com/v3/smtp/email",
+          {
+            sender: { name: senderName, email: senderEmail },
+            to: [{ email: destinatario }],
+            subject: asunto,
+            htmlContent: cuerpoHtml,
+          },
+          {
+            headers: {
+              "api-key": brevoKey,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        console.log("Correo enviado via Brevo. ID:", response.data.messageId);
+        return { success: true, messageId: response.data.messageId };
+      } else if (this.resend) {
+        console.log(`[EmailTemplateService] Enviando correo vía Resend a: ${destinatario}`);
+        const fromEmail = process.env.RESEND_FROM_EMAIL || "AcademicEvents <onboarding@resend.dev>";
+        const { data, error } = await this.resend.emails.send({
+          from: fromEmail,
+          to: destinatario,
+          subject: asunto,
+          html: cuerpoHtml,
+        });
+
+        if (error) {
+          throw error;
+        }
+
+        console.log("Correo enviado via Resend:", data.id);
+        return { success: true, messageId: data.id };
+      } else {
+        throw new Error("No hay un proveedor de correo configurado (Brevo ni Resend)");
       }
-
-      console.log("Correo enviado via Resend:", data.id);
-      return { success: true, messageId: data.id };
     } catch (error) {
-      console.error("Error al enviar correo con Resend:", error);
+      console.error("Error al enviar correo:", error.response ? error.response.data : error.message);
       throw new Error("Error al enviar correo electrónico");
     }
   }
